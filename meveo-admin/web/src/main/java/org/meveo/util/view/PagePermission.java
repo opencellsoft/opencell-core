@@ -7,12 +7,12 @@ import java.util.regex.Matcher;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jboss.seam.security.Identity;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.filter.config.ConstraintType;
 import org.meveo.admin.web.filter.config.Page;
 import org.meveo.admin.web.filter.config.Param;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,17 +65,17 @@ public class PagePermission {
 		return exists;
 	}
 
-	public boolean hasAccessToPage(HttpServletRequest request, Identity currentUser) throws BusinessException {
+	public boolean hasAccessToPage(HttpServletRequest request, MeveoUser currentUser) throws BusinessException {
 		boolean allow = checkConstraints(request, currentUser, ConstraintType.READ);
 		return allow;
 	}
 
-	public boolean hasWriteAccess(HttpServletRequest request, Identity currentUser) throws BusinessException {
+	public boolean hasWriteAccess(HttpServletRequest request, MeveoUser currentUser) throws BusinessException {
 		boolean allow = checkConstraints(request, currentUser, ConstraintType.WRITE);
 		return allow;
 	}
 
-	private boolean checkConstraints(HttpServletRequest request, Identity currentUser, ConstraintType type)
+	private boolean checkConstraints(HttpServletRequest request, MeveoUser currentUser, ConstraintType type)
 			throws BusinessException {
 		boolean allow = false;
 		if (this.pages == null) {
@@ -89,7 +89,7 @@ public class PagePermission {
 				return false;
 			}
 
-			if ((currentUser != null && currentUser.isLoggedIn() && page != null)) {
+			if ((currentUser != null && page != null)) { // && currentUser.isLoggedIn()
 				Map<Object, Object> parameters = fetchParameters(page, request, currentUser);
 				try {
 					allow = (Boolean) ValueExpressionWrapper.evaluateExpression(page.getExpression(type), parameters,
@@ -106,7 +106,7 @@ public class PagePermission {
 		return allow;
 	}
 
-	private Map<Object, Object> fetchParameters(Page page, HttpServletRequest request, Identity currentUser) {
+	private Map<Object, Object> fetchParameters(Page page, HttpServletRequest request, MeveoUser currentUser) {
 
 		Map<Object, Object> parameters = new HashMap<>();
 

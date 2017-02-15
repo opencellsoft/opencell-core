@@ -16,7 +16,7 @@ import org.meveo.model.scripts.RevenueRecognitionEventEnum;
 import org.meveo.model.scripts.ScriptInstance;
 
 @Entity
-@Table(name = "AR_REVENUE_RECOG_RULE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
+@Table(name = "AR_REVENUE_RECOG_RULE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_REVENUE_RECOG_RULE_SEQ")
 public class RevenueRecognitionRule extends BusinessEntity {
 

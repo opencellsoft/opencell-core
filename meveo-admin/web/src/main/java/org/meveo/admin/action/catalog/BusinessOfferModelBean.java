@@ -84,7 +84,7 @@ public class BusinessOfferModelBean extends GenericModuleBean<BusinessOfferModel
 			serviceCodeDtos.add(serviceCodeDto);
 		}
 
-		businessOfferModelService.createOfferFromBOM(getEntity(), null, bomOfferInstancePrefix, null, "", serviceCodeDtos, currentUser);
+		businessOfferModelService.createOfferFromBOM(getEntity(), null, bomOfferInstancePrefix, null, "", serviceCodeDtos);
 		RequestContext.getCurrentInstance().closeDialog(getEntity());
 	}
 
@@ -138,7 +138,7 @@ public class BusinessOfferModelBean extends GenericModuleBean<BusinessOfferModel
 		if (bomEntity != null && bomEntity.getModuleItems() != null) {
 			for (MeveoModuleItem item : bomEntity.getModuleItems()) {
 				if (item.getItemClass().equals(BusinessServiceModel.class.getName())) {
-					result.add(businessServiceModelService.findByCode(item.getItemCode(), currentUser.getProvider()));
+					result.add(businessServiceModelService.findByCode(item.getItemCode()));
 				}
 			}
 		}

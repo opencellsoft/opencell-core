@@ -44,10 +44,10 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.payments.OCCTemplate;
 
 @Entity
-@ExportIdentifier({ "code", "provider" })
-@Table(name = "BILLING_INVOICE_TYPE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID","OCC_TEMPLATE_ID" }))
+@ExportIdentifier({ "code"})
+@Table(name = "BILLING_INVOICE_TYPE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "OCC_TEMPLATE_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_TYPE_SEQ")
-@NamedQueries({ @NamedQuery(name = "InvoiceType.currentInvoiceNb", query = "select max(sequence.currentInvoiceNb) from InvoiceType i where i.provider=:provider and i.code=:invoiceTypeCode") })
+@NamedQueries({ @NamedQuery(name = "InvoiceType.currentInvoiceNb", query = "select max(sequence.currentInvoiceNb) from InvoiceType i where i.code=:invoiceTypeCode") })
 public class InvoiceType extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;

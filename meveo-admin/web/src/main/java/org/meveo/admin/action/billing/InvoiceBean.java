@@ -32,14 +32,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.DiscriminatorValue;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
@@ -70,6 +68,7 @@ import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.XMLInvoiceCreator;
 import org.meveo.service.payments.impl.CustomerAccountService;
+import org.omnifaces.cdi.Param;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.UnselectEvent;
@@ -116,12 +115,12 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 	XMLInvoiceCreator xmlInvoiceCreator;
 	
 	@Inject
-	@RequestParam()
-	private Instance<Long> adjustedInvoiceIdParam;
+	@Param
+	private Long adjustedInvoiceIdParam;
 
 	@Inject
-	@RequestParam()
-	private Instance<Boolean> detailedParam;
+	@Param
+	private Boolean detailedParam;
 
 	private Boolean detailedInvoiceAdjustment;
 
@@ -145,7 +144,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 	public Invoice initEntity() {
 		Invoice invoice = super.initEntity();
 
-		if (adjustedInvoiceIdParam != null && adjustedInvoiceIdParam.get() != null) {
+		if (adjustedInvoiceIdParam != null) {
 			if (detailedParam != null && invoice.isTransient()) {
 				if (isDetailed()) {
 					invoice.setDetailedInvoice(true);
@@ -155,16 +154,16 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 			}
 		}
 
-		if (invoice.isTransient() && adjustedInvoiceIdParam != null && adjustedInvoiceIdParam.get() != null) {
+		if (invoice.isTransient() && adjustedInvoiceIdParam != null) {
 			if (invoice.getAdjustedInvoice() == null) {
-				Invoice adjustedInvoice = invoiceService.findById(adjustedInvoiceIdParam.get());
+				Invoice adjustedInvoice = invoiceService.findById(adjustedInvoiceIdParam);
 				invoice.setAdjustedInvoice(adjustedInvoice);
 				invoice.setBillingRun(adjustedInvoice.getBillingRun());
 				invoice.setDueDate(new Date());
 				invoice.setInvoiceDate(new Date());				
 				invoice.setPaymentMethod(adjustedInvoice.getPaymentMethod());				
 				try {
-					invoice.setInvoiceType(invoiceTypeService.getDefaultAdjustement(getCurrentUser()));
+					invoice.setInvoiceType(invoiceTypeService.getDefaultAdjustement());
 				} catch (BusinessException e) {					
 					log.error("cant get InvoiceType ",e);
 				}
@@ -187,9 +186,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 						uiRatedTransactions.add(newRatedTransaction);
 					}
 				} else {
-					Auditable auditable = new Auditable();
-					auditable.setCreator(getCurrentUser());
-					auditable.setCreated(new Date());
+					Auditable auditable = new Auditable(currentUser);
 					uiSubCategoryInvoiceAgregates = new ArrayList<SubCategoryInvoiceAgregate>();
 					for (InvoiceAgregate invoiceAgregate : adjustedInvoice.getInvoiceAgregates()) {
 						if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
@@ -243,7 +240,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 					}
 				}
 			}
-		} else if (adjustedInvoiceIdParam != null && adjustedInvoiceIdParam.get() != null) {
+		} else if (adjustedInvoiceIdParam != null) {
 			if (!isDetailed()) {
 				// load subCategoryInvoiceAggregates
 				uiSubCategoryInvoiceAgregates = (List<SubCategoryInvoiceAgregate>) invoiceAgregateService
@@ -271,7 +268,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 		} else {
 			filters.put("billingAccount", ba);
 			try {
-				filters.put("invoiceType", invoiceTypeService.getDefaultCommertial(ba.getAuditable().getCreator()));
+				filters.put("invoiceType", invoiceTypeService.getDefaultCommertial());
 			} catch (BusinessException e) {				
 				log.error("Error on geting invoiceType",e);
 			}
@@ -354,7 +351,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 	public void deleteInvoicePdf() {
 		try {
 			entity.setPdf(null);
-			invoiceService.update(entity, getCurrentUser());
+			invoiceService.update(entity);
 			messages.info(new BundleKey("messages", "delete.successful"));
 		} catch (Exception e) {
 			log.error("failed to generate PDF ", e);
@@ -363,7 +360,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
 	public void generatePdf() {
 		try {
-			invoiceService.producePdf(entity.getId(), getCurrentUser());
+			invoiceService.producePdf(entity.getId());
 			entity=invoiceService.refreshOrRetrieve(entity);
 			messages.info(new BundleKey("messages", "invoice.pdfGeneration"));
 			
@@ -381,12 +378,12 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 	}
 
 	public File getXmlInvoiceDir() {	
-		return new File(invoiceService.getBillingRunPath(getEntity().getBillingRun(), getEntity().getInvoiceDate(), getCurrentProvider().getCode()));
+		return new File(invoiceService.getBillingRunPath(getEntity().getBillingRun(), getEntity().getInvoiceDate()));
 	}
 
 	public void generateXMLInvoice() throws BusinessException {
 		try {
-			xmlInvoiceCreator.createXMLInvoice(entity.getId(),getCurrentUser());
+			xmlInvoiceCreator.createXMLInvoice(entity.getId());
 			messages.info(new BundleKey("messages", "invoice.xmlGeneration"));
 		} catch (Exception e) {
 			log.error("failed to generate xml invoice", e);
@@ -648,23 +645,23 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
 	public void reComputeInvoiceAdjustment(SubCategoryInvoiceAgregate subCategoryInvoiceAgregate)
 			throws BusinessException {
-		// invoiceService.recomputeSubCategoryAggregate(entity, currentUser);
-		invoiceService.recomputeAggregates(entity, currentUser);
+		// invoiceService.recomputeSubCategoryAggregate(entity);
+		invoiceService.recomputeAggregates(entity);
 	}
 
 	public void reComputeDetailedInvoiceAdjustment(RatedTransaction ratedTx) {
-		ratedTx.recompute(entity.getProvider().isEntreprise());
+		ratedTx.recompute(appProvider.isEntreprise());
 	}
 
 	public void testListener() {
 		log.debug("testListener");
 	}
 
-	public Instance<Long> getAdjustedInvoiceIdParam() {
+	public Long getAdjustedInvoiceIdParam() {
 		return adjustedInvoiceIdParam;
 	}
 
-	public void setAdjustedInvoiceIdParam(Instance<Long> adjustedInvoiceIdParam) {
+	public void setAdjustedInvoiceIdParam(Long adjustedInvoiceIdParam) {
 		this.adjustedInvoiceIdParam = adjustedInvoiceIdParam;
 	}
 
@@ -673,42 +670,42 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 			return getEntity().getAdjustedInvoice().getId();
 		}
 
-		return adjustedInvoiceIdParam.get();
+		return adjustedInvoiceIdParam;
 	}
 
 	public String saveOrUpdateInvoiceAdjustment() throws Exception {
 		if (entity.isTransient()) {			
 			if (isDetailed()) {
 				for (RatedTransaction rt : uiRatedTransactions) {
-					ratedTransactionService.create(rt, getCurrentUser());
+					ratedTransactionService.create(rt);
 				}	
 			}
 			super.saveOrUpdate(false);
 			if(billingAccountId!=0){
 				BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
 				entity.setBillingAccount(billingAccount);
-				String invoiceNumber=invoiceService.getInvoiceNumber(entity, getCurrentUser());
+				String invoiceNumber=invoiceService.getInvoiceNumber(entity);
 				entity.setInvoiceNumber(invoiceNumber);
 			} 	 
 		}	
 		if (isDetailed()) {
-			ratedTransactionService.createInvoiceAndAgregates(entity.getBillingAccount(), entity,null, null, new Date(),getCurrentUser());
+			ratedTransactionService.createInvoiceAndAgregates(entity.getBillingAccount(), entity,null, null, new Date());
 		} else {
 			if (entity.getAmountWithoutTax() == null) {
-				invoiceService.recomputeAggregates(entity, getCurrentUser());
+				invoiceService.recomputeAggregates(entity);
 			}
-			entity = invoiceService.update(entity, getCurrentUser());
+			entity = invoiceService.update(entity);
 		} 
 		entity = invoiceService.refreshOrRetrieve(entity);
 		entity.getAdjustedInvoice().getLinkedInvoices().add(entity);
-		invoiceService.update(entity.getAdjustedInvoice(), getCurrentUser());
+		invoiceService.update(entity.getAdjustedInvoice());
 
 		invoiceService.commit();
 		// create xml invoice adjustment
-		xmlInvoiceCreator.createXMLInvoice(entity.getId(),getCurrentUser());
+		xmlInvoiceCreator.createXMLInvoice(entity.getId());
 		
 		// create pdf
-		invoiceService.producePdf(entity.getId(), currentUser);
+		invoiceService.producePdf(entity.getId());
 
 		return "/pages/billing/invoices/invoiceDetail.jsf?objectId=" + entity.getAdjustedInvoice().getId() + "&cid="
 				+ conversation.getId() + "&faces-redirect=true&includeViewParams=true";
@@ -730,18 +727,18 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 	}
 
 	public boolean isDetailed() {
-		if (detailedInvoiceAdjustment == null && detailedParam != null && detailedParam.get() != null) {
-			detailedInvoiceAdjustment = detailedParam.get();
+		if (detailedInvoiceAdjustment == null && detailedParam != null) {
+			detailedInvoiceAdjustment = detailedParam;
 		}
 
 		return detailedInvoiceAdjustment;
 	}
 
-	public Instance<Boolean> getDetailedParam() {
+	public Boolean getDetailedParam() {
 		return detailedParam;
 	}
 
-	public void setDetailedParam(Instance<Boolean> detailedParam) {
+	public void setDetailedParam(Boolean detailedParam) {
 		this.detailedParam = detailedParam;
 	}
 

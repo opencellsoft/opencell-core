@@ -25,7 +25,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.meveo.model.catalog.RecurringChargeTemplate;
-import org.meveo.model.crm.Provider;
 
 /**
  * Charge Template service implementation.
@@ -34,37 +33,36 @@ import org.meveo.model.crm.Provider;
 @Stateless
 public class RecurringChargeTemplateService extends ChargeTemplateService<RecurringChargeTemplate> {
 
-	public void removeByCode(EntityManager em, String code, Provider provider) {
-		Query query = em.createQuery("DELETE RecurringChargeTemplate t WHERE t.code=:code AND t.provider=:provider");
+	public void removeByCode(EntityManager em, String code) {
+		Query query = em.createQuery("DELETE RecurringChargeTemplate t WHERE t.code=:code ");
 		query.setParameter("code", code);
-		query.setParameter("provider", provider);
 		query.executeUpdate();
 	}
 
-	public int getNbrRecurringChrgWithNotPricePlan(Provider provider) {
+	public int getNbrRecurringChrgWithNotPricePlan() {
 		return ((Long) getEntityManager()
 				.createNamedQuery("recurringChargeTemplate.getNbrRecurringChrgWithNotPricePlan", Long.class)
-				.setParameter("provider", provider).getSingleResult()).intValue();
+				.getSingleResult()).intValue();
 	}
 
-	public List<RecurringChargeTemplate> getRecurringChrgWithNotPricePlan(Provider provider) {
+	public List<RecurringChargeTemplate> getRecurringChrgWithNotPricePlan() {
 		return (List<RecurringChargeTemplate>) getEntityManager()
 				.createNamedQuery("recurringChargeTemplate.getRecurringChrgWithNotPricePlan",
 						RecurringChargeTemplate.class)
-				.setParameter("provider", provider).getResultList();
+				.getResultList();
 	}
 
-	public int getNbrRecurringChrgNotAssociated(Provider provider) {
+	public int getNbrRecurringChrgNotAssociated() {
 		return ((Long) getEntityManager()
 				.createNamedQuery("recurringChargeTemplate.getNbrRecurringChrgNotAssociated", Long.class)
-				.setParameter("provider", provider).getSingleResult()).intValue();
+				.getSingleResult()).intValue();
 	}
 
-	public List<RecurringChargeTemplate> getRecurringChrgNotAssociated(Provider provider) {
+	public List<RecurringChargeTemplate> getRecurringChrgNotAssociated() {
 		return (List<RecurringChargeTemplate>) getEntityManager()
 				.createNamedQuery("recurringChargeTemplate.getRecurringChrgNotAssociated",
 						RecurringChargeTemplate.class)
-				.setParameter("provider", provider).getResultList();
+				.getResultList();
 	}
 
 }

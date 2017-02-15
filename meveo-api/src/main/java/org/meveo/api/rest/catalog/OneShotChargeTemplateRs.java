@@ -16,7 +16,6 @@ import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateWithPriceListDto;
 import org.meveo.api.dto.response.catalog.GetOneShotChargeTemplateResponseDto;
 import org.meveo.api.rest.IBaseRs;
-import org.meveo.api.rest.security.RSSecured;
 
 /**
  * Web service for managing {@link org.meveo.model.catalog.OneShotChargeTemplate}.
@@ -26,7 +25,7 @@ import org.meveo.api.rest.security.RSSecured;
 @Path("/catalog/oneShotChargeTemplate")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-@RSSecured
+
 public interface OneShotChargeTemplateRs extends IBaseRs {
 
     /**

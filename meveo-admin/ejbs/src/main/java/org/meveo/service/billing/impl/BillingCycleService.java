@@ -19,84 +19,14 @@
 package org.meveo.service.billing.impl;
 
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
 
-import org.meveo.admin.exception.ElementNotFoundException;
-import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingCycle;
-import org.meveo.model.crm.Provider;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.BusinessService;
 
 /**
  * BillingCycle service implementation.
  */
 @Stateless
-public class BillingCycleService extends PersistenceService<BillingCycle> {
-	/**
-	 * Find BillingCycle by its billing cycle code.
-	 * 
-	 * @param billingCycleCode
-	 *            Billing Cycle Code
-	 * @return Billing cycle found or null.
-	 * @throws ElementNotFoundException
-	 */
+public class BillingCycleService extends BusinessService<BillingCycle> {
 
-	public BillingCycle findByBillingCycleCode(String billingCycleCode, Provider provider) {
-        QueryBuilder qb = new QueryBuilder(BillingCycle.class, "b", null, provider);
-        qb.addCriterion("code", "=", billingCycleCode, true);
-        try {
-            return (BillingCycle) qb.getQuery(getEntityManager()).getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-	
-	public BillingCycle findByBillingCycleCode(EntityManager em,
-			String billingCycleCode, Provider provider) {
-		try {
-			log.info("findByBillingCycleCode billingCycleCode={},provider={}",
-					billingCycleCode, provider != null ? provider.getCode()
-							: null);
-			Query query = em
-					.createQuery("select b from BillingCycle b where b.code = :billingCycleCode and b.provider=:provider");
-			query.setParameter("billingCycleCode", billingCycleCode);
-			query.setParameter("provider", provider);
-			return (BillingCycle) query.getSingleResult();
-		} catch (NoResultException e) {
-			log.warn(
-					"findByBillingCycleCode billing cycle not found : billingCycleCode={},provider={}",
-					billingCycleCode, provider != null ? provider.getCode()
-							: null);
-			return null;
-		}
-	}
-
-	public BillingCycle findByBillingCycleCode(String billingCycleCode,
-			User currentUser, Provider provider) {
-		return findByBillingCycleCode(getEntityManager(), billingCycleCode,
-				currentUser, provider);
-	}
-
-	public BillingCycle findByBillingCycleCode(EntityManager em,
-			String billingCycleCode, User currentUser, Provider provider) {
-		try {
-			log.info("findByBillingCycleCode billingCycleCode={},provider={}",
-					billingCycleCode, provider != null ? provider.getCode()
-							: null);
-			Query query = em
-					.createQuery("select b from BillingCycle b where b.code = :billingCycleCode and b.provider=:provider");
-			query.setParameter("billingCycleCode", billingCycleCode);
-			query.setParameter("provider", provider);
-			return (BillingCycle) query.getSingleResult();
-		} catch (NoResultException e) {
-			log.warn(
-					"findByBillingCycleCode billing cycle not found : billingCycleCode={},provider={}",
-					billingCycleCode, provider != null ? provider.getCode()
-							: null);
-			return null;
-		}
-	}
 }

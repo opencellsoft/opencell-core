@@ -23,7 +23,7 @@ public class PermissionRsImpl extends BaseRs implements PermissionRs {
     public PermissionResponseDto list() {
         PermissionResponseDto result = new PermissionResponseDto();
         try {
-            result.setPermissionsDto(permissionApi.list(getCurrentUser().getProvider()));
+            result.setPermissionsDto(permissionApi.list());
         } catch (Exception e) {
             log.error("Failed to execute API", e);
             result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);

@@ -52,9 +52,9 @@ public class OfferTemplateListBean extends OfferTemplateBean {
 
     @Override
     public void preRenderView() {
-        activeCount = offerTemplateService.countActive(getCurrentProvider());
-        inactiveCount = offerTemplateService.countDisabled(getCurrentProvider());
-        almostExpiredCount = offerTemplateService.countExpiring(getCurrentProvider());
+        activeCount = offerTemplateService.countActive();
+        inactiveCount = offerTemplateService.countDisabled();
+        almostExpiredCount = offerTemplateService.countExpiring();
         super.preRenderView();
     }
 	

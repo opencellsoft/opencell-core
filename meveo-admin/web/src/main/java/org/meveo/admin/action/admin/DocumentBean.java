@@ -46,6 +46,7 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.Document;
 import org.meveo.model.crm.Provider;
+import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
 @Named
@@ -61,8 +62,8 @@ public class DocumentBean implements Serializable {
 	private List<Document> documents;
 
     @Inject
-	@CurrentProvider
-    private Provider currentProvider;
+	@ApplicationProvider
+    private Provider appProvider;
 
 	private String filename;
 	private Date fromDate;
@@ -299,8 +300,7 @@ public class DocumentBean implements Serializable {
 				result = false;
 			}
 
-			if (currentProvider != null
-					&& !name.startsWith(currentProvider.getCode())) {
+			if (!name.startsWith(appProvider.getCode())) {
 				result = false;
 			}
 			if (this.filename != null && !this.filename.equals("")

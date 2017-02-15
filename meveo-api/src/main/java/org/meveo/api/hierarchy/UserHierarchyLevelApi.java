@@ -11,13 +11,11 @@ import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.hierarchy.UserHierarchyLevelDto;
+import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.hierarchy.HierarchyLevel;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
@@ -34,7 +32,7 @@ public class UserHierarchyLevelApi extends BaseApi {
      * @throws org.meveo.api.exception.MeveoApiException
      * @throws org.meveo.admin.exception.BusinessException
      */
-    public void create(UserHierarchyLevelDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void create(UserHierarchyLevelDto postData) throws MeveoApiException, BusinessException {
 
         String hierarchyLevelCode = postData.getCode();
         String parentLevelCode = postData.getParentLevel();
@@ -45,7 +43,7 @@ public class UserHierarchyLevelApi extends BaseApi {
 
         handleMissingParameters();
 
-        UserHierarchyLevel userHierarchyLevel = userHierarchyLevelService.findByCode(hierarchyLevelCode, currentUser.getProvider());
+        UserHierarchyLevel userHierarchyLevel = userHierarchyLevelService.findByCode(hierarchyLevelCode);
 
         if (userHierarchyLevel != null) {
             throw new EntityAlreadyExistsException(UserHierarchyLevel.class, hierarchyLevelCode);
@@ -53,7 +51,7 @@ public class UserHierarchyLevelApi extends BaseApi {
 
         UserHierarchyLevel parentLevel = null;
         if (!StringUtils.isBlank(postData.getParentLevel())) {
-            parentLevel = userHierarchyLevelService.findByCode(parentLevelCode, currentUser.getProvider());
+            parentLevel = userHierarchyLevelService.findByCode(parentLevelCode);
             if (parentLevel == null) {
                 throw new EntityDoesNotExistsException(UserHierarchyLevel.class, parentLevelCode);
             }
@@ -61,7 +59,7 @@ public class UserHierarchyLevelApi extends BaseApi {
 
         userHierarchyLevel = fromDto(postData, parentLevel, null);
 
-        userHierarchyLevelService.create(userHierarchyLevel, currentUser);
+        userHierarchyLevelService.create(userHierarchyLevel);
 
     }
 
@@ -69,11 +67,11 @@ public class UserHierarchyLevelApi extends BaseApi {
      * Updates a User Hierarchy Level Entity based on title code.
      *
      * @param postData
-     * @param currentUser
+
      * @throws org.meveo.api.exception.MeveoApiException
      * @throws org.meveo.admin.exception.BusinessException
      */
-    public void update(UserHierarchyLevelDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void update(UserHierarchyLevelDto postData) throws MeveoApiException, BusinessException {
         String hierarchyLevelCode = postData.getCode();
         String parentLevelCode = postData.getParentLevel();
 
@@ -83,17 +81,17 @@ public class UserHierarchyLevelApi extends BaseApi {
 
         handleMissingParameters();
 
-        UserHierarchyLevel userHierarchyLevel = userHierarchyLevelService.findByCode(hierarchyLevelCode, currentUser.getProvider());
+        UserHierarchyLevel userHierarchyLevel = userHierarchyLevelService.findByCode(hierarchyLevelCode);
         UserHierarchyLevel parentLevel = null;
         if (userHierarchyLevel != null) {
             if (!StringUtils.isBlank(postData.getParentLevel())) {
-                parentLevel = userHierarchyLevelService.findByCode(parentLevelCode, currentUser.getProvider());
+                parentLevel = userHierarchyLevelService.findByCode(parentLevelCode);
                 if (parentLevel == null) {
                     throw new EntityDoesNotExistsException(UserHierarchyLevel.class, parentLevelCode);
                 }
             }
             userHierarchyLevel = fromDto(postData, parentLevel, userHierarchyLevel);
-            userHierarchyLevelService.update(userHierarchyLevel, currentUser);
+            userHierarchyLevelService.update(userHierarchyLevel);
         } else {
             throw new EntityDoesNotExistsException(UserHierarchyLevel.class, hierarchyLevelCode);
         }
@@ -107,12 +105,12 @@ public class UserHierarchyLevelApi extends BaseApi {
      * @return
      * @throws org.meveo.api.exception.MeveoApiException
      */
-    public UserHierarchyLevelDto find(String hierarchyLevelCode, Provider provider) throws MeveoApiException {
+    public UserHierarchyLevelDto find(String hierarchyLevelCode) throws MeveoApiException {
         if (StringUtils.isBlank(hierarchyLevelCode)) {
             missingParameters.add("hierarchyLevelCode");
         }
         handleMissingParameters();
-        UserHierarchyLevel userHierarchyLevel = userHierarchyLevelService.findByCode(hierarchyLevelCode, provider, Arrays.asList("parentLevel", "childLevels"));
+        UserHierarchyLevel userHierarchyLevel = userHierarchyLevelService.findByCode(hierarchyLevelCode, Arrays.asList("parentLevel", "childLevels"));
         if (userHierarchyLevel != null) {
             UserHierarchyLevelDto userHierarchyLevelDto = new UserHierarchyLevelDto(userHierarchyLevel);
             if (userHierarchyLevel.getParentLevel() != null) {
@@ -130,11 +128,11 @@ public class UserHierarchyLevelApi extends BaseApi {
      * Removes a User Hierarchy Level based on user hierarchy level code.
      *
      * @param hierarchyLevelCode
-     * @param currentUser
+
      * @throws org.meveo.api.exception.MeveoApiException
      * @throws BusinessException 
      */
-    public void remove(String hierarchyLevelCode, User currentUser) throws MeveoApiException, BusinessException {
+    public void remove(String hierarchyLevelCode) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(hierarchyLevelCode)) {
             missingParameters.add("hierarchyLevelCode");
@@ -142,12 +140,12 @@ public class UserHierarchyLevelApi extends BaseApi {
 
         handleMissingParameters();
 
-        UserHierarchyLevel userHierarchyLevel = userHierarchyLevelService.findByCode(hierarchyLevelCode, currentUser.getProvider());
+        UserHierarchyLevel userHierarchyLevel = userHierarchyLevelService.findByCode(hierarchyLevelCode);
         if (userHierarchyLevel != null) {
             if (!userHierarchyLevelService.canDeleteUserHierarchyLevel(userHierarchyLevel.getId())) {
                 throw new DeleteReferencedEntityException(UserHierarchyLevel.class, hierarchyLevelCode);
             }
-            userHierarchyLevelService.remove(userHierarchyLevel,currentUser);
+            userHierarchyLevelService.remove(userHierarchyLevel);
 
         } else {
             throw new EntityDoesNotExistsException(UserHierarchyLevel.class, hierarchyLevelCode);
@@ -159,21 +157,21 @@ public class UserHierarchyLevelApi extends BaseApi {
      * Create or Update a User Hierarchy Level Entity based on title code.
      *
      * @param postData
-     * @param currentUser
+
      * @throws org.meveo.api.exception.MeveoApiException
      * @throws org.meveo.admin.exception.BusinessException
      */
-    public void createOrUpdate(UserHierarchyLevelDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void createOrUpdate(UserHierarchyLevelDto postData) throws MeveoApiException, BusinessException {
         String hierarchyLevelCode = postData.getCode();   
         if (StringUtils.isBlank(hierarchyLevelCode)) {
             missingParameters.add("hierarchyLevelCode");
         }
         handleMissingParameters();
-        UserHierarchyLevel userHierarchyLevel = userHierarchyLevelService.findByCode(hierarchyLevelCode, currentUser.getProvider());
+        UserHierarchyLevel userHierarchyLevel = userHierarchyLevelService.findByCode(hierarchyLevelCode);
         if (userHierarchyLevel != null) {
-           update(postData, currentUser);
+           update(postData);
         } else {
-            create(postData, currentUser);
+            create(postData);
         }
     }
     

@@ -39,8 +39,8 @@ import org.meveo.model.scripts.ScriptInstance;
 @Entity
 @ObservableEntity
 @ModuleItem
-@ExportIdentifier({ "code", "provider" })
-@Table(name = "MEVEO_MODULE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
+@ExportIdentifier({ "code"})
+@Table(name = "MEVEO_MODULE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEVEO_MODULE_SEQ")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class MeveoModule extends BusinessEntity implements Serializable {

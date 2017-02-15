@@ -34,8 +34,8 @@ import org.meveo.model.MultilanguageEntity;
 @MultilanguageEntity(key = "menu.charges", group = "ChargeTemplate")
 @Table(name = "CAT_PRODUCT_CHARGE_TEMPL")
 @NamedQueries({
-		@NamedQuery(name = "productChargeTemplate.getNbrProductWithNotPricePlan", query = "select count (*) from ProductChargeTemplate o where o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) and o.provider=:provider"),
-		@NamedQuery(name = "productChargeTemplate.getProductWithNotPricePlan", query = "from ProductChargeTemplate o where o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) and o.provider=:provider"), })
+		@NamedQuery(name = "productChargeTemplate.getNbrProductWithNotPricePlan", query = "select count (*) from ProductChargeTemplate o where o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) "),
+		@NamedQuery(name = "productChargeTemplate.getProductWithNotPricePlan", query = "from ProductChargeTemplate o where o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) "), })
 public class ProductChargeTemplate extends ChargeTemplate {
 
 	private static final long serialVersionUID = 1L;

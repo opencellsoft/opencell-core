@@ -33,15 +33,15 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.EnableEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
-@ExportIdentifier({ "name", "value", "provider" })
+@ExportIdentifier({ "name", "value"})
 @Table(name = "WF_DECISION_RULE", uniqueConstraints = @UniqueConstraint(columnNames = {
-		"NAME", "VALUE", "PROVIDER_ID"}))
+		"NAME", "VALUE"}))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "WF_DECISION_RULE_SEQ")
-public class WFDecisionRule extends AuditableEntity implements Comparable<WFDecisionRule>{
+public class WFDecisionRule extends EnableEntity implements Comparable<WFDecisionRule>{
 
 	private static final long serialVersionUID = 1L;
  

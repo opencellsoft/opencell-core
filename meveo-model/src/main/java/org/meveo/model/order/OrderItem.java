@@ -31,7 +31,7 @@ import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.shared.Address;
 
 @Entity
-@ExportIdentifier({ "order.code", "itemId", "provider" })
+@ExportIdentifier({ "order.code", "itemId"})
 @Table(name = "ORD_ORDER_ITEM")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ORD_ORDER_ITEM_SEQ")
 public class OrderItem extends BaseEntity {

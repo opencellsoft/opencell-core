@@ -82,7 +82,7 @@
                     <c:if test="#{fkToEntity}">
                         <f:selectItems value="#{elements}" var="elem" itemLabel="#{elem[valueLabelField]}" itemValue="#{elem[valueField]}" />
                     </c:if>
-                    <s:objectConverter />
+                    <hftl:objectConverter />
                     <c:if test="#{not empty listenerUpdate and empty actionListenerBean}">
                         <p:ajax update="#{listenerUpdate}" event="valueChange" />
                     </c:if>

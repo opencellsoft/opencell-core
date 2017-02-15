@@ -78,7 +78,7 @@ public class UsageChargeTemplateBean extends CustomFieldBean<UsageChargeTemplate
 
 	@Override
 	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider", "edrTemplates");
+		return Arrays.asList("edrTemplates");
 	}
 
 	@Override
@@ -102,9 +102,9 @@ public class UsageChargeTemplateBean extends CustomFieldBean<UsageChargeTemplate
     @ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		// check for unicity
-		if (oneShotChargeTemplateService.findByCode(entity.getCode(), entity.getProvider()) != null
-				|| recurringChargeTemplateService.findByCode(entity.getCode(), entity.getProvider()) != null
-				|| productChargeTemplateService.findByCode(entity.getCode(), entity.getProvider()) != null) {
+		if (oneShotChargeTemplateService.findByCode(entity.getCode()) != null
+				|| recurringChargeTemplateService.findByCode(entity.getCode()) != null
+				|| productChargeTemplateService.findByCode(entity.getCode()) != null) {
 			messages.error(new BundleKey("messages", "chargeTemplate.uniqueField.code"));
 			return null;
 		}
@@ -159,7 +159,7 @@ public class UsageChargeTemplateBean extends CustomFieldBean<UsageChargeTemplate
         
         if (entity != null && entity.getId() != null) {
         	try {
-                usageChargeTemplateService.duplicate(entity,getCurrentUser());
+                usageChargeTemplateService.duplicate(entity);
                 messages.info(new BundleKey("messages", "save.successful"));
             } catch (BusinessException e) {
                 log.error("Error encountered persisting usage charge template entity: #{0}:#{1}", entity.getCode(), e);
@@ -170,7 +170,7 @@ public class UsageChargeTemplateBean extends CustomFieldBean<UsageChargeTemplate
 	
 	public boolean isUsedInSubscription() {
 		return (getEntity() != null && !getEntity().isTransient() && (usageChargeTemplateService.findByCode(getEntity()
-				.getCode(), getCurrentProvider()) != null)) ? true : false;
+				.getCode()) != null)) ? true : false;
 	}
 	
 }

@@ -36,8 +36,8 @@ import org.meveo.model.billing.BillingWalletTypeEnum;
 
 @Entity
 @ObservableEntity
-@ExportIdentifier({ "code", "provider" })
-@Table(name = "CAT_WALLET_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
+@ExportIdentifier({ "code"})
+@Table(name = "CAT_WALLET_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_WALLET_TEMPLATE_SEQ")
 public class WalletTemplate extends BusinessEntity {
 

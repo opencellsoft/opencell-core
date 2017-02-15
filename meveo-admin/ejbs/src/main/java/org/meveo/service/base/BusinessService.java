@@ -20,15 +20,12 @@ package org.meveo.service.base;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
-import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.QueryBuilder.QueryLikeStyleEnum;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.admin.User;
-import org.meveo.model.crm.Provider;
 
 public abstract class BusinessService<P extends BusinessEntity> extends
 		PersistenceService<P> {
@@ -37,71 +34,66 @@ public abstract class BusinessService<P extends BusinessEntity> extends
      * Find entity by code - strict match
      * 
      * @param code Code to match
-     * @param provider Provider
-     * @return A single entity matching code for a given provider
+     * @return A single entity matching code
      */
-	public P findByCode(String code, Provider provider) {
-		return findByCode(code, provider, null);
+	public P findByCode(String code) {
+		return findByCode(code, null);
 	}
 
     /**
      * Find entity by code - strict match
      * 
      * @param code Code to match
-     * @param provider Provider
      * @param fetchFields Fields to fetch
-     * @return A single entity matching code for a given provider
+     * @return A single entity matching code
      */
     @SuppressWarnings("unchecked")
-    public P findByCode(String code, Provider provider, List<String> fetchFields) {
-        QueryBuilder qb = new QueryBuilder(getEntityClass(), "be", fetchFields, provider);
+    public P findByCode(String code, List<String> fetchFields) {
+        QueryBuilder qb = new QueryBuilder(getEntityClass(), "be", fetchFields);
         qb.addCriterion("be.code", "=", code, true);
-        qb.addCriterionEntity("be.provider", provider);
 
 		try {
 			return (P) qb.getQuery(getEntityManager()).getSingleResult();
         } catch (NoResultException e) {
-            log.debug("No {} of code {} for provider {} found", getEntityClass().getSimpleName(), code, provider.getId());
+            log.debug("No {} of code {} found", getEntityClass().getSimpleName(), code);
             return null;
         } catch (NonUniqueResultException e) {
-            log.error("More than one entity of type {} with code {} and provider {} found", entityClass, code, provider);
+            log.error("More than one entity of type {} with code {} found", entityClass, code);
             return null;
         }
 	}
 
-	@SuppressWarnings("unchecked")
-	public P findByCode(EntityManager em, String code, Provider provider) {
-		log.debug("start of find {} by code (code={}) ..", getEntityClass()
-				.getSimpleName(), code);
-		final Class<? extends P> productClass = getEntityClass();
-		StringBuilder queryString = new StringBuilder("from "
-				+ productClass.getName() + " a");
-		queryString.append(" where a.code = :code and a.provider=:provider");
-		Query query = em.createQuery(queryString.toString());
-		query.setParameter("code", code);
-		query.setParameter("provider", provider);
-		if (query.getResultList().size() == 0) {
-			return null;
-		}
-		P e = (P) query.getResultList().get(0);
-		log.debug("end of find {} by code (code={}). Result found={}.",
-				new Object[] { getEntityClass().getSimpleName(), code,
-						e != null });
-
-		return e;
-	}
-	
-	public String findDuplicateCode(BusinessEntity entity, User currentUser) {
-		return findDuplicateCode(entity, " - Copy", currentUser);
+    /**
+     * Find entity by code - match the beginning of code
+     * 
+     * @param codePrefix Beginning of code
+     * @return A list of entities which code starts with a given value
+     */
+    @SuppressWarnings("unchecked")
+    public List<P> findStartsWithCode(String codePrefix) {
+        try {
+            QueryBuilder qb = new QueryBuilder(getEntityClass(), "be");
+            qb.like("be.code", codePrefix, QueryLikeStyleEnum.MATCH_BEGINNING, false);
+            
+            return (List<P>) qb.getQuery(getEntityManager()).getResultList();
+        } catch (NoResultException ne) {
+            return null;
+        } catch (NonUniqueResultException nre) {
+            return null;
+        }
+    }
+    
+	public String findDuplicateCode(BusinessEntity entity) {
+		return findDuplicateCode(entity, " - Copy");
 	}
 
-	public String findDuplicateCode(BusinessEntity entity, String suffix, User currentUser) {
+	public String findDuplicateCode(BusinessEntity entity, String suffix) {
 		String code = entity.getCode() + suffix;
 		int id = 1;
 		String criteria = code;
 		BusinessEntity temp = null;
 		while (true) {
-			temp = findByCode(criteria, currentUser.getProvider());
+			temp = findByCode(criteria);
 			if (temp == null) {
 				break;
 			}

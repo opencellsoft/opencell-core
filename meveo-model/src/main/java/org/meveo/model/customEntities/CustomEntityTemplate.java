@@ -17,8 +17,8 @@ import org.meveo.model.ModuleItem;
 
 @Entity
 @ModuleItem
-@ExportIdentifier({ "code", "provider" })
-@Table(name = "CUST_CET", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
+@ExportIdentifier({ "code"})
+@Table(name = "CUST_CET", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CUST_CET_SEQ")
 @NamedQueries({ @NamedQuery(name = "CustomEntityTemplate.getCETForCache", query = "SELECT cet from CustomEntityTemplate cet where cet.disabled=false  ") })
 public class CustomEntityTemplate extends BusinessEntity implements Comparable<CustomEntityTemplate> {

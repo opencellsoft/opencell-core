@@ -30,11 +30,9 @@ import javax.persistence.NoResultException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.WalletTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -111,8 +109,8 @@ public class WalletService extends PersistenceService<WalletInstance> {
 		}
 	}
 
-	public List<WalletInstance> getWalletsToMatch(Date date,Provider currentProvider) {
-		return getEntityManager().createNamedQuery("WalletInstance.listPrepaidWalletsToMatch", WalletInstance.class).setParameter("matchingDate", date).setParameter("currentProvider", currentProvider).getResultList();
+	public List<WalletInstance> getWalletsToMatch(Date date) {
+		return getEntityManager().createNamedQuery("WalletInstance.listPrepaidWalletsToMatch", WalletInstance.class).setParameter("matchingDate", date).getResultList();
 	}
 
 	/**

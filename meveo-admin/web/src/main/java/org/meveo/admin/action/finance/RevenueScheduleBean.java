@@ -1,8 +1,5 @@
 package org.meveo.admin.action.finance;
 
-import java.util.Arrays;
-import java.util.List;
-
 import javax.faces.bean.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -35,10 +32,4 @@ public class RevenueScheduleBean extends BaseBean<RevenueSchedule> {
 	protected String getDefaultSort() {
 		return "chargeInstance.code";
 	}
-
-	@Override
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
-
 }

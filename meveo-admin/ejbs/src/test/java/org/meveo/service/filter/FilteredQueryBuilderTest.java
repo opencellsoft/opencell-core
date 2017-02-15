@@ -147,7 +147,7 @@ public class FilteredQueryBuilderTest extends BaseFilterTest {
 		filter.setOrderCondition(orderCondition);
 
 		try {
-			String result = filterService.filteredList(filter, 1, 2,null);
+			String result = filterService.filteredList(filter, 1, 2);
 
 			System.out.println(result);
 

@@ -32,7 +32,7 @@ public class UserRsImpl extends BaseRs implements UserRs {
         ActionStatus result = new ActionStatus();
 
         try {
-            userApi.create(postData, getCurrentUser());
+            userApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -52,7 +52,7 @@ public class UserRsImpl extends BaseRs implements UserRs {
         ActionStatus result = new ActionStatus();
 
         try {
-            userApi.update(postData, getCurrentUser());
+            userApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -72,7 +72,7 @@ public class UserRsImpl extends BaseRs implements UserRs {
         ActionStatus result = new ActionStatus();
 
         try {
-            userApi.remove(username, getCurrentUser());
+            userApi.remove(username);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -92,7 +92,7 @@ public class UserRsImpl extends BaseRs implements UserRs {
         GetUserResponse result = new GetUserResponse();
 
         try {
-            result.setUser(userApi.find(username, getCurrentUser()));
+            result.setUser(userApi.find(username));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -112,7 +112,7 @@ public class UserRsImpl extends BaseRs implements UserRs {
         ActionStatus result = new ActionStatus();
 
         try {
-            userApi.createOrUpdate(postData, getCurrentUser());
+            userApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

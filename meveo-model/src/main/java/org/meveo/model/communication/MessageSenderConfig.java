@@ -36,8 +36,8 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
-@ExportIdentifier({ "code", "provider" })
-@Table(name = "COM_SENDER_CONFIG", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
+@ExportIdentifier({ "code"})
+@Table(name = "COM_SENDER_CONFIG", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
 @DiscriminatorColumn(name = "MEDIA")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "COM_SNDR_CONF_SEQ")

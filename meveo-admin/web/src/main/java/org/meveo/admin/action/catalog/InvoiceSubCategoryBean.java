@@ -22,13 +22,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
@@ -40,6 +38,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.InvoiceSubCategoryCountryService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
+import org.omnifaces.cdi.Param;
 import org.omnifaces.cdi.ViewScoped;
 
 /**
@@ -79,8 +78,8 @@ public class InvoiceSubCategoryBean extends CustomFieldBean<InvoiceSubCategory> 
 	 * InvoiceCategory will be set on newly created InvoiceSubCategory.
 	 */
 	@Inject
-	@RequestParam
-	private Instance<Long> invoiceCategoryId;
+	@Param
+	private Long invoiceCategoryId;
 
 	private InvoiceSubcategoryCountry invoiceSubcategoryCountry = new InvoiceSubcategoryCountry();
 
@@ -97,7 +96,7 @@ public class InvoiceSubCategoryBean extends CustomFieldBean<InvoiceSubCategory> 
 
 				if (invoiceSubcategoryCountry.getId() != null) {
 					invoiceSubCategoryCountryService
-							.update(invoiceSubcategoryCountry, getCurrentUser());
+							.update(invoiceSubcategoryCountry);
 					messages.info(new BundleKey("messages", "update.successful"));
 				} else {
 					
@@ -122,7 +121,7 @@ public class InvoiceSubCategoryBean extends CustomFieldBean<InvoiceSubCategory> 
 						if (!found) {
 							invoiceSubcategoryCountry.setInvoiceSubCategory(entity);
 							invoiceSubCategoryCountryService
-									.create(invoiceSubcategoryCountry, getCurrentUser());
+									.create(invoiceSubcategoryCountry);
 							entity.getInvoiceSubcategoryCountries().add(
 									invoiceSubcategoryCountry);
 							messages.info(new BundleKey("messages", "save.successful"));
@@ -132,7 +131,7 @@ public class InvoiceSubCategoryBean extends CustomFieldBean<InvoiceSubCategory> 
 					} else {
 						invoiceSubcategoryCountry.setInvoiceSubCategory(entity);
 						invoiceSubCategoryCountryService
-								.create(invoiceSubcategoryCountry, getCurrentUser());
+								.create(invoiceSubcategoryCountry);
 						entity.getInvoiceSubcategoryCountries().add(
 								invoiceSubcategoryCountry);
 						messages.info(new BundleKey("messages", "save.successful"));
@@ -163,7 +162,7 @@ public class InvoiceSubCategoryBean extends CustomFieldBean<InvoiceSubCategory> 
             List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries = entity.getInvoiceSubcategoryCountries();
             invoiceSubcategoryCountries.remove(invoiceSubcategoryCountry);
             invoiceSubcategoryCountry = (InvoiceSubcategoryCountry) invoiceSubCategoryCountryService.attach(invoiceSubcategoryCountry);
-            invoiceSubCategoryCountryService.remove(invoiceSubcategoryCountry, getCurrentUser());
+            invoiceSubCategoryCountryService.remove(invoiceSubcategoryCountry);
             entity.setInvoiceSubcategoryCountries(new ArrayList<>(invoiceSubcategoryCountries));
 
         } catch (Exception e) {
@@ -195,9 +194,9 @@ public class InvoiceSubCategoryBean extends CustomFieldBean<InvoiceSubCategory> 
 	public InvoiceSubCategory initEntity() {
 		InvoiceSubCategory invoiceCatSub = super.initEntity();
 
-		if (invoiceCategoryId.get() != null) {
+		if (invoiceCategoryId != null) {
 			entity.setInvoiceCategory(invoiceCategoryService
-					.findById(invoiceCategoryId.get()));
+					.findById(invoiceCategoryId));
 		}
 		return invoiceCatSub;
 	}
@@ -256,7 +255,7 @@ public class InvoiceSubCategoryBean extends CustomFieldBean<InvoiceSubCategory> 
 
 	@Override
 	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider", "invoiceSubcategoryCountries");
+		return Arrays.asList("invoiceSubcategoryCountries");
 	}
 
 	public InvoiceSubcategoryCountry getInvoiceSubcategoryCountry() {

@@ -143,9 +143,9 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 			mvSeries.set("NO RECORDS", 0);
 			log.info("No measured values found for : " + mq.getCode());
 		}
-		boolean isAdmin = chart.getAuditable().getCreator().hasRole("administrateur");
-		boolean equalUser = chart.getAuditable().getCreator().getId() == getCurrentUser().getId();
-		boolean sameRoleWithChart = chart.getRole() != null ? getCurrentUser().hasRole(chart.getRole().getDescription()) : false;
+		boolean isAdmin = currentUser.hasRole("administrateur");
+		boolean equalUser = chart.getAuditable().getCreator() == currentUser.getSubject();
+		boolean sameRoleWithChart = chart.getRole() != null ? currentUser.hasRole(chart.getRole().getDescription()) : false;
 		chart.setVisible(isAdmin || equalUser || sameRoleWithChart);
 		if (chart instanceof BarChart) {
 			BarChartModel chartModel = new BarChartModel();
@@ -436,7 +436,7 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 		beforeDate.add(Calendar.MONTH, -1);
 		StatModel result = new StatModel();
 
-		MeasurableQuantity mq = mqService.findByCode("CHURN", getCurrentProvider());
+		MeasurableQuantity mq = mqService.findByCode("CHURN");
 
 		if (mq == null) {
 			mq = new MeasurableQuantity();
@@ -445,16 +445,16 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 			mq.setDescription("Churn");
 			mq.setSqlQuery("WITH acc_new AS (SELECT count(ua.id) as nb FROM billing_user_account ua JOIN account_entity ae ON ae.id=ua.id"
 					+ " WHERE ua.subscription_date >= '#{date}' AND ua.subscription_date < '#{nextDate}'"
-					+ " AND (ua.termination_date IS NULL OR ua.termination_date >= '#{nextDate}') AND ae.provider_id = #{provider}), acc_end AS ("
+					+ " AND (ua.termination_date IS NULL OR ua.termination_date >= '#{nextDate}') ), acc_end AS ("
 					+ " SELECT count(ua.id) as nb FROM billing_user_account ua JOIN account_entity ae ON ae.id=ua.id WHERE ua.termination_date >= ' #{date}'"
-					+ " AND ua.termination_date < '#{nextDate}' AND ae.provider_id = #{provider}), acc_period AS ("
+					+ " AND ua.termination_date < '#{nextDate}' ), acc_period AS ("
 					+ " SELECT count(ua.id) as nb FROM billing_user_account ua JOIN account_entity ae ON ae.id=ua.id WHERE ua.subscription_date < '#{date}'"
-					+ " AND (ua.termination_date IS NULL  OR ua.termination_date>='#{nextDate}') AND ae.provider_id = #{provider}" + ") SELECT"
+					+ " AND (ua.termination_date IS NULL  OR ua.termination_date>='#{nextDate}') " + ") SELECT"
 					+ " CASE WHEN (acc_period.nb+(acc_new.nb+acc_end.nb)/2)<>0 THEN acc_end.nb/(acc_period.nb +(acc_new.nb+acc_end.nb)/2) ELSE 0"
 					+ " END as churn FROM acc_new ,acc_end,acc_period");
 			mq.setEditable(true);
 			mq.setMeasurementPeriod(MeasurementPeriodEnum.MONTHLY);
-			mqService.create(mq, getCurrentUser());
+			mqService.create(mq);
 		}
 
 		List<MeasuredValue> currentMVs = mvService.getByDateAndPeriod("CHURN", currentDate.getTime(), null, MeasurementPeriodEnum.MONTHLY, mq);
@@ -482,7 +482,7 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 		beforeDate.add(Calendar.MONTH, -1);
 		StatModel result = new StatModel();
 
-		MeasurableQuantity mq = mqService.findByCode("MRR", getCurrentProvider());
+		MeasurableQuantity mq = mqService.findByCode("MRR");
 
 		if (mq == null) {
 			mq = new MeasurableQuantity();
@@ -497,15 +497,15 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 			mq.setMeasurementPeriod(MeasurementPeriodEnum.MONTHLY);
 			mq.setSqlQuery("SELECT  wo.amount_without_tax/((EXTRACT(epoch FROM (wo.end_date - wo.start_date))/86400)) as mrr_value,"
 					+ " wo.offer_code as offer_code,ba.code as ba_code,ca.code as ca_code,cust.code as cust_code FROM billing_wallet_operation wo"
-					+ "	LEFT JOIN crm_provider p ON p.id=wo.provider_id	LEFT JOIN billing_charge_instance ci ON ci.id=wo.charge_instance_id"
+					+ "	LEFT JOIN billing_charge_instance ci ON ci.id=wo.charge_instance_id"
 					+ "	LEFT JOIN billing_subscription sub ON sub.id = ci.subscription_id LEFT JOIN billing_wallet w ON w.id=wo.wallet_id"
 					+ "	LEFT JOIN billing_user_account uaa ON uaa.id= w.user_account_id	LEFT JOIN account_entity ua ON ua.id= uaa.id"
 					+ "	LEFT JOIN billing_billing_account baa ON baa.id= uaa.billing_account_id	LEFT JOIN account_entity ba ON ba.id= baa.id"
 					+ "	LEFT JOIN ar_customer_account caa ON caa.id= baa.customer_account_id LEFT JOIN account_entity ca ON ca.id= caa.id"
 					+ "	LEFT JOIN crm_customer custa ON custa.id= caa.customer_id LEFT JOIN account_entity cust ON cust.id= custa.id"
-					+ "	WHERE wo.disabled=FALSE	AND wo.provider_id=#{provider}	AND NOT(wo.end_date IS NULL)"
+					+ "	WHERE wo.disabled=FALSE	AND NOT(wo.end_date IS NULL)"
 					+ "	AND ((EXTRACT(epoch FROM (wo.end_date - wo.start_date))/86400))>0 AND (wo.start_date <= '#{date}') AND (wo.end_date > '#{date}')");
-			mqService.create(mq, getCurrentUser());
+			mqService.create(mq);
 		}
 
 		List<MeasuredValue> currentMVs = mvService.getByDateAndPeriod("MRR", currentDate.getTime(), null, MeasurementPeriodEnum.MONTHLY, mq);
@@ -536,7 +536,7 @@ public class ChartEntityBean<T extends Chart, CM extends ChartModel, EM extends 
 
 		List<MeasuredValue> result = new ArrayList<>();
 
-		MeasurableQuantity mq = mqService.findByCode(mqCode, getCurrentProvider());
+		MeasurableQuantity mq = mqService.findByCode(mqCode);
 		List<MeasuredValue> measuredValues = mvService.getByDateAndPeriod(code, beforeDate.getTime(), currentDate.getTime(),mq == null ? null: mq.getMeasurementPeriod(), mq);
 		if(measuredValues != null){
 			for(MeasuredValue value : measuredValues){

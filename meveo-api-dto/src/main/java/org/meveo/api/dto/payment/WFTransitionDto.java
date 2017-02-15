@@ -29,8 +29,8 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.BaseDto;
 import org.meveo.model.wf.WFAction;
-import org.meveo.model.wf.WFTransition;
 import org.meveo.model.wf.WFDecisionRule;
+import org.meveo.model.wf.WFTransition;
 
 
 @XmlType(name = "WFTransition")

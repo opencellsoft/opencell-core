@@ -47,7 +47,7 @@ import org.meveo.model.shared.ContactInformation;
 
 @Entity
 @CustomFieldEntity(cftCodePrefix = "CUST")
-@ExportIdentifier({ "code", "provider" })
+@ExportIdentifier({ "code"})
 @DiscriminatorValue(value = "ACCT_CUST")
 @Table(name = "CRM_CUSTOMER")
 public class Customer extends AccountEntity{

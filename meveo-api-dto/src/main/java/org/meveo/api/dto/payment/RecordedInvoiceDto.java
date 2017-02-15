@@ -8,7 +8,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.RecordedInvoice;
 
 /**

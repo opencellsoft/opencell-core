@@ -33,13 +33,13 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.EnableEntity;
 import org.meveo.model.admin.DunningHistory;
 
 @Entity
 @Table(name = "AR_DUNNING_LOT")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_DUNNING_LOT_SEQ")
-public class DunningLOT extends AuditableEntity {
+public class DunningLOT extends EnableEntity {
 
 	private static final long serialVersionUID = 1L;
 

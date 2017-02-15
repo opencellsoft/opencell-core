@@ -22,7 +22,6 @@ import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -389,10 +388,10 @@ public class MeasurementBean extends BaseBean<MeasuredValue> {
 	public String saveMV() throws BusinessException, ParseException {
 		if (selectedMV.getValue() != null) {
 			if (selectedMV.isTransient() && selectedMV != null) {
-				getPersistenceService().create(selectedMV, getCurrentUser());
+				getPersistenceService().create(selectedMV);
 				Messages.addGlobalInfo("save.successful", new Object[] {});
 			} else if (!selectedMV.isTransient() && selectedMV != null) {
-				getPersistenceService().update(selectedMV, getCurrentUser());
+				getPersistenceService().update(selectedMV);
 				Messages.addGlobalInfo("update.successful", new Object[] {});
 			}
 		}
@@ -599,16 +598,4 @@ public class MeasurementBean extends BaseBean<MeasuredValue> {
 	protected String getListViewName() {
 		return "measuredValueDetail";
 	}
-
-	@Override
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
-
-	@Override
-	protected List<String> getListFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
-
 }
-

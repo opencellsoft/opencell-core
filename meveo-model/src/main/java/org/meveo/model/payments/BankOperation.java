@@ -30,12 +30,12 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.EnableEntity;
 
 @Entity
 @Table(name = "AR_BANK_OPERATION")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_BANK_OPERATION_SEQ")
-public class BankOperation extends AuditableEntity {
+public class BankOperation extends EnableEntity {
 
 	private static final long serialVersionUID = 1L;
 

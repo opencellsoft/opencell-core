@@ -9,7 +9,6 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.Language;
 import org.meveo.service.admin.impl.LanguageService;
 
@@ -23,7 +22,7 @@ public class LanguageIsoApi extends BaseApi {
     @Inject
     private LanguageService languageService;
 
-    public void create(LanguageIsoDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void create(LanguageIsoDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -38,11 +37,11 @@ public class LanguageIsoApi extends BaseApi {
         Language language = new Language();
         language.setLanguageCode(postData.getCode());
         language.setDescriptionEn(postData.getDescription());
-        languageService.create(language, currentUser);
+        languageService.create(language);
 
     }
 
-    public void update(LanguageIsoDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void update(LanguageIsoDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -57,7 +56,7 @@ public class LanguageIsoApi extends BaseApi {
         }
         language.setDescriptionEn(postData.getDescription());
 
-        languageService.update(language, currentUser);
+        languageService.update(language);
     }
 
     public LanguageIsoDto find(String languageCode) throws MeveoApiException {
@@ -79,7 +78,7 @@ public class LanguageIsoApi extends BaseApi {
         return result;
     }
 
-    public void remove(String languageCode, User currentUser) throws MeveoApiException, BusinessException {
+    public void remove(String languageCode) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(languageCode)) {
             missingParameters.add("languageCode");
             handleMissingParameters();
@@ -90,16 +89,16 @@ public class LanguageIsoApi extends BaseApi {
             throw new EntityDoesNotExistsException(Language.class, languageCode);
         }
 
-        languageService.remove(language, currentUser);
+        languageService.remove(language);
     }
 
-    public void createOrUpdate(LanguageIsoDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void createOrUpdate(LanguageIsoDto postData) throws MeveoApiException, BusinessException {
 
         Language language = languageService.findByCode(postData.getCode());
         if (language == null) {
-            create(postData, currentUser);
+            create(postData);
         } else {
-            update(postData, currentUser);
+            update(postData);
         }
     }
 }

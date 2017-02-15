@@ -49,7 +49,6 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.ApplicationTypeEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
@@ -74,7 +73,6 @@ import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.Customer;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
@@ -122,37 +120,27 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		str_tooPerceived = resourceBundle.getString("str_tooPerceived");
 	}
 
-	public BigDecimal getRatedAmount(Provider provider, Seller seller, Customer customer, CustomerAccount customerAccount, BillingAccount billingAccount, UserAccount userAccount,
+	public BigDecimal getRatedAmount(Seller seller, Customer customer, CustomerAccount customerAccount, BillingAccount billingAccount, UserAccount userAccount,
 			Date startDate, Date endDate, boolean amountWithTax) {
-		return getRatedAmount(getEntityManager(), provider, seller, customer, customerAccount, billingAccount, userAccount, startDate, endDate, amountWithTax);
-	}
-
-	public BigDecimal getRatedAmount(EntityManager em, Provider provider, Seller seller, Customer customer, CustomerAccount customerAccount, BillingAccount billingAccount,
-			UserAccount userAccount, Date startDate, Date endDate, boolean amountWithTax) {
-
+	
 		BigDecimal result = BigDecimal.ZERO;
 		LevelEnum level = LevelEnum.PROVIDER;
 
 		if (userAccount != null) {
 			level = LevelEnum.USER_ACCOUNT;
-			provider = userAccount.getProvider();
 		} else if (billingAccount != null) {
 			level = LevelEnum.BILLING_ACCOUNT;
-			provider = billingAccount.getProvider();
 		} else if (customerAccount != null) {
 			level = LevelEnum.CUSTOMER_ACCOUNT;
-			provider = customerAccount.getProvider();
 		} else if (customer != null) {
 			level = LevelEnum.CUSTOMER;
-			provider = customer.getProvider();
 		} else if (seller != null) {
 			level = LevelEnum.SELLER;
-			provider = seller.getProvider();
 		}
 
 		try {
 			String strQuery = "select SUM(r." + (amountWithTax ? "amountWithTax" : "amountWithoutTax") + ") from " + WalletOperation.class.getSimpleName() + " r "
-					+ "WHERE r.operationDate>=:startDate AND r.operationDate<:endDate " + "AND (r.status=:open OR r.status=:treated) " + "AND r.provider=:provider ";
+					+ "WHERE r.operationDate>=:startDate AND r.operationDate<:endDate " + "AND (r.status=:open OR r.status=:treated) ";
 			switch (level) {
 			case BILLING_ACCOUNT:
 				strQuery += "AND r.wallet.userAccount.billingAccount=:billingAccount ";
@@ -175,10 +163,9 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				break;
 			}
 
-			Query query = em.createQuery(strQuery);
+			Query query = getEntityManager().createQuery(strQuery);
 			query.setParameter("startDate", startDate);
 			query.setParameter("endDate", endDate);
-			query.setParameter("provider", provider);
 			query.setParameter("open", WalletOperationStatusEnum.OPEN);
 			query.setParameter("treated", WalletOperationStatusEnum.TREATED);
 
@@ -218,7 +205,6 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	 * Get wallet operation balance.
 	 * 
 	 * @param em
-	 * @param provider
 	 * @param seller
 	 * @param customer
 	 * @param customerAccount
@@ -232,7 +218,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	 *            open (OPEN)
 	 * @return
 	 */
-	public BigDecimal getBalanceAmount(Provider provider, Seller seller, Customer customer, CustomerAccount customerAccount, BillingAccount billingAccount,
+	public BigDecimal getBalanceAmount(Seller seller, Customer customer, CustomerAccount customerAccount, BillingAccount billingAccount,
 			UserAccount userAccount, Date startDate, Date endDate, boolean amountWithTax, int mode) {
 
 		BigDecimal result = BigDecimal.ZERO;
@@ -240,25 +226,20 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 		if (userAccount != null) {
 			level = LevelEnum.USER_ACCOUNT;
-			provider = userAccount.getProvider();
 		} else if (billingAccount != null) {
 			level = LevelEnum.BILLING_ACCOUNT;
-			provider = billingAccount.getProvider();
 		} else if (customerAccount != null) {
 			level = LevelEnum.CUSTOMER_ACCOUNT;
-			provider = customerAccount.getProvider();
 		} else if (customer != null) {
 			level = LevelEnum.CUSTOMER;
-			provider = customer.getProvider();
 		} else if (seller != null) {
 			level = LevelEnum.SELLER;
-			provider = seller.getProvider();
 		}
 
 		try {
 			StringBuilder strQuery = new StringBuilder();
 			strQuery.append("select SUM(r." + (amountWithTax ? "amountWithTax" : "amountWithoutTax") + ") from " + WalletOperation.class.getSimpleName() + " r "
-					+ "WHERE r.provider=:provider ");
+					+ "WHERE 1=1 ");
 
 			if (startDate != null) {
 				strQuery.append("AND r.operationDate>=:startDate ");
@@ -275,7 +256,6 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			}
 
 			// + "AND (r.status=:open OR r.status=:treated) "
-			strQuery.append("AND r.provider=:provider ");
 			switch (level) {
 			case BILLING_ACCOUNT:
 				strQuery.append("AND r.wallet.userAccount.billingAccount=:billingAccount ");
@@ -314,7 +294,6 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			if (endDate != null) {
 				query.setParameter("endDate", endDate);
 			}
-			query.setParameter("provider", provider);
 
 			switch (level) {
 			case BILLING_ACCOUNT:
@@ -353,7 +332,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	 * OneShotChargeInstance chargeInstance, Integer quantity, Date
 	 * applicationDate) throws BusinessException { return
 	 * rateOneShotApplication(getEntityManager(), subscription, chargeInstance,
-	 * quantity, applicationDate, getCurrentUser()); }
+	 * quantity, applicationDate); }
 	 */
 
 	public WalletOperation rateOneShotApplication(Subscription subscription, OneShotChargeInstance chargeInstance, BigDecimal inputQuantity, BigDecimal quantity, Date applicationDate,
@@ -380,8 +359,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		}
 
 		Long countryId = country.getId();
-		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), countryId,
-				creator.getProvider());
+		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), countryId);
 
 		if (invoiceSubcategoryCountry == null) {
 			throw new IncorrectChargeTemplateException("No invoiceSubcategoryCountry exists for invoiceSubCategory code=" + invoiceSubCategory.getCode() + " and trading country="
@@ -479,8 +457,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		}
 
 		Long countryId = country.getId();
-		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), countryId,
-				creator.getProvider());
+		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), countryId);
 
 		if (invoiceSubcategoryCountry == null) {
 			throw new IncorrectChargeTemplateException("No invoiceSubcategoryCountry exists for invoiceSubCategory code=" + invoiceSubCategory.getCode() + " and trading country="
@@ -518,12 +495,12 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 //     * @param criteria1 Criteria 1
 //     * @param criteria2 Criteria 2
 //     * @param criteria3 Criteria 3
-//     * @param currentUser Current user
+//
 //     * @return Wallet operation
 //     * @throws BusinessException
 //     */
 //    public WalletOperation rateProductApplicationVirtual(ProductChargeTemplate chargeTemplate, UserAccount userAccount, String offerCode, BigDecimal inputQuantity,
-//            BigDecimal quantity, Date applicationDate, BigDecimal amountWithoutTax, BigDecimal amountWithTax, String criteria1, String criteria2, String criteria3, User currentUser)
+//            BigDecimal quantity, Date applicationDate, BigDecimal amountWithoutTax, BigDecimal amountWithTax, String criteria1, String criteria2, String criteria3)
 //            throws BusinessException {
 //
 //        InvoiceSubCategory invoiceSubCategory = chargeTemplate.getInvoiceSubCategory();
@@ -542,8 +519,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 //        }
 //
 //        Long countryId = country.getId();
-//        InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), countryId,
-//            currentUser.getProvider());
+//        InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), countryId);
 //
 //        if (invoiceSubcategoryCountry == null) {
 //            throw new IncorrectChargeTemplateException("No invoiceSubcategoryCountry exists for invoiceSubCategory code=" + invoiceSubCategory.getCode() + " and trading country="
@@ -557,7 +533,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 //
 //        WalletOperation chargeApplication = chargeApplicationRatingService.rateChargeApplicationVirtual(chargeTemplate, userAccount, offerCode, null, ApplicationTypeEnum.PUNCTUAL,
 //            applicationDate, null, null, inputQuantity, quantity, currency, countryId, tax.getPercent(), null, null, invoiceSubCategory, criteria1, criteria2, criteria3, null,
-//            null, null, false, currentUser);
+//            null, null, false);
 //
 //        return chargeApplication;
 //    }
@@ -579,15 +555,15 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		return nextapplicationDate;
 	}
 
-	public WalletOperation prerateSubscription(Date subscriptionDate, RecurringChargeInstance chargeInstance, Date nextapplicationDate,User currentUser) throws BusinessException {
-		return rateSubscription(subscriptionDate, chargeInstance, nextapplicationDate, true,currentUser);
+	public WalletOperation prerateSubscription(Date subscriptionDate, RecurringChargeInstance chargeInstance, Date nextapplicationDate) throws BusinessException {
+		return rateSubscription(subscriptionDate, chargeInstance, nextapplicationDate, true);
 	}
 
-	public WalletOperation rateSubscription(Date subscriptionDate, RecurringChargeInstance chargeInstance, Date nextapplicationDate,User currentUser) throws BusinessException {
-		return rateSubscription(subscriptionDate, chargeInstance, nextapplicationDate, false,currentUser);
+	public WalletOperation rateSubscription(Date subscriptionDate, RecurringChargeInstance chargeInstance, Date nextapplicationDate) throws BusinessException {
+		return rateSubscription(subscriptionDate, chargeInstance, nextapplicationDate, false);
 	}
 	
-	public WalletOperation rateSubscription(Date subscriptionDate, RecurringChargeInstance chargeInstance, Date nextapplicationDate, boolean preRateOnly,User currentUser) throws BusinessException {
+	public WalletOperation rateSubscription(Date subscriptionDate, RecurringChargeInstance chargeInstance, Date nextapplicationDate, boolean preRateOnly) throws BusinessException {
 				WalletOperation result = null;
 		Date applicationDate = chargeInstance.getChargeDate();
 
@@ -641,8 +617,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		}
 
 		Long countryId = country.getId();
-		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), countryId,
-				getCurrentProvider());
+		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), countryId);
 		if (invoiceSubcategoryCountry == null) {
 			throw new IncorrectChargeTemplateException("no invoiceSubcategoryCountry exists for invoiceSubCategory code=" + invoiceSubCategory.getCode() + " and trading country="
 					+ country.getCountryCode());
@@ -664,7 +639,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					ApplicationTypeEnum.PRORATA_SUBSCRIPTION, applicationDate, chargeInstance.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), inputQuantity, quantity, currency,
 					countryId, tax.getPercent(), null, nextapplicationDate, recurringChargeTemplate.getInvoiceSubCategory(), chargeInstance.getCriteria1(),
 					chargeInstance.getCriteria2(), chargeInstance.getCriteria3(), chargeInstance.getOrderNumber(),
-					applicationDate, DateUtils.addDaysToDate(nextapplicationDate, -1), null, false, false, currentUser);
+					applicationDate, DateUtils.addDaysToDate(nextapplicationDate, -1), null, false, false);
 		} else {
 		    String languageCode = chargeInstance.getUserAccount().getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
 			result = chargeApplicationRatingService.prerateChargeApplication(chargeInstance.getChargeTemplate(), subscriptionDate, chargeInstance.getServiceInstance().getSubscription()
@@ -672,7 +647,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					chargeInstance.getAmountWithTax(), inputQuantity, quantity, currency, countryId, languageCode, tax.getPercent(), null, nextapplicationDate,
 					recurringChargeTemplate.getInvoiceSubCategory(), chargeInstance.getCriteria1(), chargeInstance.getCriteria2(),
 					chargeInstance.getCriteria3(), chargeInstance.getOrderNumber(), applicationDate,
-					DateUtils.addDaysToDate(nextapplicationDate, -1), null,chargeInstance.getUserAccount(), currentUser);
+					DateUtils.addDaysToDate(nextapplicationDate, -1), null,chargeInstance.getUserAccount());
 		}
 		return result;
 	}
@@ -697,8 +672,8 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		}
 
 		if (recurringChargeTemplate.getApplyInAdvance() != null && recurringChargeTemplate.getApplyInAdvance()) {
-			WalletOperation chargeApplication = rateSubscription(chargeInstance.getSubscriptionDate(), chargeInstance, nextapplicationDate,creator);
-			// create(chargeApplication, chargeInstance.getProvider());
+			WalletOperation chargeApplication = rateSubscription(chargeInstance.getSubscriptionDate(), chargeInstance, nextapplicationDate);
+			// create(chargeApplication);
 			chargeWalletOperation(chargeApplication);
 			chargeInstance.setNextChargeDate(nextapplicationDate);
 		} else {
@@ -789,8 +764,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			}
 			Long countryId = country.getId();
 
-			InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), countryId,
-					creator.getProvider());
+			InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), countryId);
 			if (invoiceSubcategoryCountry == null) {
 				throw new IncorrectChargeTemplateException("no invoiceSubcategoryCountry exists for invoiceSubCategory code=" + invoiceSubCategory.getCode()
 						+ " and trading country=" + country.getCountryCode());
@@ -811,7 +785,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					ChargeApplicationModeEnum.REIMBURSMENT, false, false);
 
 			chargeWalletOperation(chargeApplication);
-			// create(chargeApplication, chargeInstance.getProvider());
+			// create(chargeApplication);
 		}
 
 		if (recurringChargeTemplate.getApplyInAdvance() != null && recurringChargeTemplate.getApplyInAdvance()) {
@@ -819,7 +793,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			log.debug("reimbursment-applyInAdvance applicationDate={}, nextapplicationDate={},nextChargeDate={}", applicationDate, nextapplicationDate, nextChargeDate);
 
 			if (nextChargeDate != null && nextChargeDate.getTime() > nextapplicationDate.getTime()) {
-				applyReccuringCharge(chargeInstance, true, recurringChargeTemplate, false,creator);
+				applyReccuringCharge(chargeInstance, true, recurringChargeTemplate, false);
 			}
 		} else {
 			Date nextChargeDate = chargeInstance.getChargeDate();
@@ -881,8 +855,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		}
 		Long countryId = country.getId();
 
-		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), countryId,
-				creator.getProvider());
+		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), countryId);
 		if (invoiceSubcategoryCountry == null) {
 			throw new IncorrectChargeTemplateException("No invoiceSubcategoryCountry exists for invoiceSubCategory code=" + invoiceSubCategory.getCode() + " and trading country="
 					+ country.getCountryCode());
@@ -934,7 +907,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			
 			chargeWalletOperation(walletOperation);
           
-			// create(chargeApplication, chargeInstance.getProvider());
+			// create(chargeApplication);
 			chargeInstance.setChargeDate(applicationDate);
 			applicationDate = nextapplicationDate;
 		}
@@ -952,12 +925,10 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
      * @param quantity Quantity as calculated
      * @param fromDate Recurring charge application start
      * @param toDate Recurring charge application end
-     * @param currentUser Current user
      * @return Wallet operations
      * @throws BusinessException
      */
-    public List<WalletOperation> applyReccuringChargeVirtual(RecurringChargeInstance chargeInstance, BigDecimal inputQuantity, BigDecimal quantity, Date fromDate, Date toDate,
-            User currentUser) throws BusinessException {
+    public List<WalletOperation> applyReccuringChargeVirtual(RecurringChargeInstance chargeInstance, BigDecimal inputQuantity, BigDecimal quantity, Date fromDate, Date toDate) throws BusinessException {
 
         List<WalletOperation> walletOperations = new ArrayList<>();
         Date applicationDate = fromDate;
@@ -983,8 +954,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
         }
         Long countryId = country.getId();
 
-        InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), countryId,
-            currentUser.getProvider());
+        InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), countryId);
         if (invoiceSubcategoryCountry == null) {
             throw new IncorrectChargeTemplateException("No invoiceSubcategoryCountry exists for invoiceSubCategory code=" + invoiceSubCategory.getCode() + " and trading country="
                     + country.getCountryCode());
@@ -1005,7 +975,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
             WalletOperation walletOperation = chargeApplicationRatingService.rateChargeApplication(chargeInstance, ApplicationTypeEnum.RECURRENT, applicationDate,
                 chargeInstance.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), inputQuantity, quantity, currency, countryId, tax.getPercent(), null, nextapplicationDate,
                 invoiceSubCategory, chargeInstance.getCriteria1(), chargeInstance.getCriteria2(), chargeInstance.getCriteria3(), chargeInstance.getOrderNumber(), applicationDate,
-                DateUtils.addDaysToDate(nextapplicationDate, -1), ChargeApplicationModeEnum.SUBSCRIPTION, false, true, currentUser);
+                DateUtils.addDaysToDate(nextapplicationDate, -1), ChargeApplicationModeEnum.SUBSCRIPTION, false, true);
 
             walletOperations.add(walletOperation);
 
@@ -1051,8 +1021,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		}
 		Long countryId = country.getId();
 
-		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), countryId,
-				creator.getProvider());
+		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), countryId);
 		if (invoiceSubcategoryCountry == null) {
 			throw new IncorrectChargeTemplateException("No invoiceSubcategoryCountry exists for invoiceSubCategory code=" + invoiceSubCategory.getCode() + " and trading country="
 					+ country.getCountryCode());
@@ -1121,7 +1090,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			walletOperation.setSubscriptionDate(chargeInstance.getServiceInstance().getSubscriptionDate());
 
 			List<WalletOperation> oprations = chargeWalletOperation(walletOperation);
-			// create(walletOperation, chargeInstance.getProvider());
+			// create(walletOperation);
 			// em.flush();
 			// em.refresh(chargeInstance);
 			chargeInstance.setChargeDate(applicationDate);
@@ -1175,8 +1144,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		}
 		Long countryId = country.getId();
 
-		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), countryId,
-				creator.getProvider());
+		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), countryId);
 		if (invoiceSubcategoryCountry == null) {
 			throw new IncorrectChargeTemplateException("no invoiceSubcategoryCountry exists for invoiceSubCategory code=" + invoiceSubCategory.getCode() + " and trading country="
 					+ country.getCountryCode());
@@ -1228,24 +1196,23 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					chargeInstance.getCriteria3(), chargeInstance.getOrderNumber(), applicationDate, endDate, ChargeApplicationModeEnum.AGREEMENT, false, false);
 
 			chargeWalletOperation(chargeApplication);
-			// create(chargeApplication, chargeInstance.getProvider());
+			// create(chargeApplication);
 			chargeInstance.setChargeDate(applicationDate);
 			applicationDate = nextapplicationDate;
 		}
 	}
 
-	public List<WalletOperation> findByStatus(WalletOperationStatusEnum status, Provider provider) {
-		return findByStatus(getEntityManager(), status, provider);
+	public List<WalletOperation> findByStatus(WalletOperationStatusEnum status) {
+		return findByStatus(getEntityManager(), status);
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<WalletOperation> findByStatus(EntityManager em, WalletOperationStatusEnum status, Provider provider) {
+	public List<WalletOperation> findByStatus(EntityManager em, WalletOperationStatusEnum status) {
 		List<WalletOperation> walletOperations = null;
 		try {
 			log.debug("start of find {} by status (status={})) ..", "WalletOperation", status);
 			QueryBuilder qb = new QueryBuilder(WalletOperation.class, "c");
 			qb.addCriterion("c.status", "=", status, true);
-			qb.addCriterionEntity("c.provider", provider);
 
 			walletOperations = qb.getQuery(em).getResultList();
 			log.debug("end of find {} by status (status={}). Result size found={}.", new Object[] { "WalletOperation", status,
@@ -1258,10 +1225,10 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<WalletOperation> listToInvoice(Date invoicingDate, Provider provider) {
+	public List<WalletOperation> listToInvoice(Date invoicingDate) {
 		List<WalletOperation> walletOperations = null;
 		try {
-			walletOperations = getEntityManager().createNamedQuery("WalletOperation.listToInvoice").setParameter("invoicingDate", invoicingDate).setParameter("provider", provider)
+			walletOperations = getEntityManager().createNamedQuery("WalletOperation.listToInvoice").setParameter("invoicingDate", invoicingDate)
 					.getResultList();
 		} catch (Exception e) {
 			log.error("listToInvoice error ",e);
@@ -1270,10 +1237,10 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<WalletOperation> listToInvoiceByUserAccount(Date invoicingDate, Provider provider,UserAccount userAccount) {
+	public List<WalletOperation> listToInvoiceByUserAccount(Date invoicingDate, UserAccount userAccount) {
 		List<WalletOperation> walletOperations = null;
 		try {
-			walletOperations = getEntityManager().createNamedQuery("WalletOperation.listToInvoiceByUA").setParameter("invoicingDate", invoicingDate).setParameter("provider", provider)
+			walletOperations = getEntityManager().createNamedQuery("WalletOperation.listToInvoiceByUA").setParameter("invoicingDate", invoicingDate)
 					.setParameter("userAccount", userAccount).getResultList();
 		} catch (Exception e) {
 			log.error("listToInvoiceByUserAccount error ",e);
@@ -1283,10 +1250,10 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	
 	
 	@SuppressWarnings("unchecked")
-	public List<Long> listToInvoiceIds(Date invoicingDate, Provider provider) {
+	public List<Long> listToInvoiceIds(Date invoicingDate) {
 		List<Long> ids = null;
 		try {
-			ids = getEntityManager().createNamedQuery("WalletOperation.listToInvoiceIds").setParameter("invoicingDate", invoicingDate).setParameter("provider", provider)
+			ids = getEntityManager().createNamedQuery("WalletOperation.listToInvoiceIds").setParameter("invoicingDate", invoicingDate)
 					.getResultList();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1309,10 +1276,10 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		}
 	}
 
-	public WalletOperation findByUserAccountAndCode(String code, UserAccount userAccount, Provider provider) {
+	public WalletOperation findByUserAccountAndCode(String code, UserAccount userAccount) {
 		QueryBuilder qb = new QueryBuilder(WalletOperation.class, "w");
 		qb.addCriterionEntity("wallet.userAccount", userAccount);
-		qb.addCriterionEntity("provider", provider);
+		
 		qb.addCriterion("code", "=", code, true);
 
 		try {
@@ -1326,10 +1293,9 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	@SuppressWarnings("unchecked")
 	public List<WalletOperation> findByUserAccountAndWalletCode(String walletCode, UserAccount userAccount, Boolean orderAscending) {
 		
-		QueryBuilder qb = new QueryBuilder(WalletOperation.class, "w", Arrays.asList("chargeInstance"), null);
+		QueryBuilder qb = new QueryBuilder(WalletOperation.class, "w", Arrays.asList("chargeInstance"));
 		
 		qb.addCriterionEntity("w.wallet.userAccount", userAccount);
-        // qb.addCriterionEntity("provider", userAccount.getProvider()); // No need as userAccount is provider based already
 		qb.addCriterion("w.wallet.code", "=", walletCode, true);
 		if (orderAscending != null) {
 			qb.addOrderCriterion("w.operationDate", orderAscending);
@@ -1344,7 +1310,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	}
 
 	// charging
-	private List<WalletOperation> chargeOnWalletIds(List<Long> walletIds, WalletOperation op, User currentUser) throws BusinessException {
+	private List<WalletOperation> chargeOnWalletIds(List<Long> walletIds, WalletOperation op) throws BusinessException {
 		List<WalletOperation> result = new ArrayList<>();
 		BigDecimal remainingAmountToCharge = op.getAmountWithTax();
 		BigDecimal totalBalance = walletCacheContainerProvider.getReservedBalance(walletIds);
@@ -1359,7 +1325,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				if (balance.compareTo(op.getAmountWithTax()) >= 0) {
 					op.setWallet(getEntityManager().find(WalletInstance.class, walletId));
 					log.debug("prepaid walletoperation fit in walletInstance {}", op.getWallet());
-					create(op, currentUser);
+					create(op);
 					result.add(op);
 					walletCacheContainerProvider.updateBalanceCache(op);
 					break;
@@ -1368,9 +1334,9 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					remainingAmountToCharge = remainingAmountToCharge.subtract(balance);
 					BigDecimal newOpAmountWithTax = balance;
 					BigDecimal newOpAmountWithoutTax = op.getAmountWithoutTax().multiply(newOverOldCoeff);
-					if (currentUser.getProvider().getRounding() != null && currentUser.getProvider().getRounding() > 0) {
-						newOpAmountWithoutTax = NumberUtils.round(newOpAmountWithoutTax, currentUser.getProvider().getRounding());
-						newOpAmountWithTax = NumberUtils.round(newOpAmountWithTax, currentUser.getProvider().getRounding());
+					if (appProvider.getRounding() != null && appProvider.getRounding() > 0) {
+						newOpAmountWithoutTax = NumberUtils.round(newOpAmountWithoutTax, appProvider.getRounding());
+						newOpAmountWithTax = NumberUtils.round(newOpAmountWithTax, appProvider.getRounding());
 					}
 					BigDecimal newOpAmountTax = newOpAmountWithTax.subtract(newOpAmountWithoutTax);
 					BigDecimal newOpQuantity = op.getQuantity().multiply(newOverOldCoeff);
@@ -1387,7 +1353,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					newOp.setAmountWithoutTax(newOpAmountWithoutTax);
 					newOp.setQuantity(newOpQuantity);
 					log.debug("prepaid walletoperation partially fit in walletInstance {}, we charge {} and remains ", newOp.getWallet(), newOpAmountTax, opAmountTax);
-					create(newOp, currentUser);
+					create(newOp);
 					result.add(newOp);
 					walletCacheContainerProvider.updateBalanceCache(newOp);
 
@@ -1452,33 +1418,33 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Long> listToRerate(Provider provider) {
+	public List<Long> listToRerate() {
 		return (List<Long>) getEntityManager()
-				.createQuery("SELECT o.id FROM WalletOperation o " + "WHERE o.status=org.meveo.model.billing.WalletOperationStatusEnum.TO_RERATE" + " AND o.provider=:provider")
-				.setParameter("provider", provider).getResultList();
+				.createQuery("SELECT o.id FROM WalletOperation o " + "WHERE o.status=org.meveo.model.billing.WalletOperationStatusEnum.TO_RERATE ")
+				.getResultList();
 	}
 
-	public Long getNbrWalletOperationByStatus(WalletOperationStatusEnum status, Provider provider) {
+	public Long getNbrWalletOperationByStatus(WalletOperationStatusEnum status) {
 		QueryBuilder qb = new QueryBuilder(WalletOperation.class, "w");
 		qb.addCriterionEnum("w.status", status);
-		qb.addCriterionEntity("provider", provider);
+		
 		log.debug("totalCount: queryString={}", qb);
 		return ((Long) qb.getCountQuery(getEntityManager()).getSingleResult());
 	}
 
-	public Long getNbrEdrByStatus(EDRStatusEnum status, Provider provider) {
+	public Long getNbrEdrByStatus(EDRStatusEnum status) {
 		QueryBuilder qb = new QueryBuilder(EDR.class, "e");
 		qb.addCriterionEnum("e.status", status);
-		qb.addCriterionEntity("provider", provider);
+		
 		log.debug("totalCount: queryString={}", qb);
 		return ((Long) qb.getCountQuery(getEntityManager()).getSingleResult());
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<WalletOperation> findWalletOperation(WalletOperationStatusEnum status, WalletTemplate walletTemplate, WalletInstance walletInstance, UserAccount userAccount,
-			List<String> fetchFields, Provider provider, int maxResult) {
+			List<String> fetchFields, int maxResult) {
 		try {
-			QueryBuilder qb = new QueryBuilder(WalletOperation.class, "w", fetchFields, provider);
+			QueryBuilder qb = new QueryBuilder(WalletOperation.class, "w", fetchFields);
 
 			if (status != null) {
 				qb.addCriterionEnum("w.status", status);
@@ -1504,7 +1470,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	
 	@SuppressWarnings("unchecked")
 	public List<WalletOperation> openWalletOperationsBySubCat(WalletInstance walletInstance , InvoiceSubCategory invoiceSubCategory ,Date from, Date to) {
-		QueryBuilder qb = new QueryBuilder(WalletOperation.class, "op", null,walletInstance.getProvider());
+		QueryBuilder qb = new QueryBuilder(WalletOperation.class, "op", null);
 		if(invoiceSubCategory != null){
 			qb.addCriterionEntity("op.chargeInstance.chargeTemplate.invoiceSubCategory", invoiceSubCategory);
 		}

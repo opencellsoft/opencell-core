@@ -11,13 +11,12 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.usage.UsageChargeAggregateResponseDto;
 import org.meveo.api.dto.usage.UsageResponseDto;
-import org.meveo.api.rest.security.RSSecured;
 
 
 @Path("/usage")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-@RSSecured
+
 public interface UsageRs extends IBaseRs {
 
     

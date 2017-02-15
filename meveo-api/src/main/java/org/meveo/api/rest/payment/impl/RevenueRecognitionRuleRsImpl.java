@@ -29,7 +29,7 @@ public class RevenueRecognitionRuleRsImpl extends BaseRs implements RevenueRecog
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-        	revenueRecognitionRuleApi.create(postData, getCurrentUser());
+        	revenueRecognitionRuleApi.create(postData);
         } catch (MeveoApiException e) {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
@@ -48,7 +48,7 @@ public class RevenueRecognitionRuleRsImpl extends BaseRs implements RevenueRecog
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-        	revenueRecognitionRuleApi.update(postData, getCurrentUser());
+        	revenueRecognitionRuleApi.update(postData);
         } catch (MeveoApiException e) {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
@@ -67,7 +67,7 @@ public class RevenueRecognitionRuleRsImpl extends BaseRs implements RevenueRecog
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-        	revenueRecognitionRuleApi.createOrUpdate(postData, getCurrentUser());
+        	revenueRecognitionRuleApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
@@ -86,7 +86,7 @@ public class RevenueRecognitionRuleRsImpl extends BaseRs implements RevenueRecog
 		RevenueRecognitionRuleDtoResponse result = new RevenueRecognitionRuleDtoResponse();
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 		try {
-			result.setRevenueRecognitionRuleDto(revenueRecognitionRuleApi.find(revenueRecognitionRuleCode, getCurrentUser()));
+			result.setRevenueRecognitionRuleDto(revenueRecognitionRuleApi.find(revenueRecognitionRuleCode));
 		} catch (MeveoApiException | BusinessException e) {
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
             result.getActionStatus().setMessage(e.getMessage());
@@ -99,7 +99,7 @@ public class RevenueRecognitionRuleRsImpl extends BaseRs implements RevenueRecog
 	public ActionStatus remove(String revenueRecognitionRuleCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		try {
-			revenueRecognitionRuleApi.remove(revenueRecognitionRuleCode, getCurrentUser());
+			revenueRecognitionRuleApi.remove(revenueRecognitionRuleCode);
 			
         } catch (Exception e) {
             log.error("Failed to execute API", e);
@@ -115,7 +115,7 @@ public class RevenueRecognitionRuleRsImpl extends BaseRs implements RevenueRecog
 		RevenueRecognitionRuleDtosResponse result=new RevenueRecognitionRuleDtosResponse();
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
         try {
-			result.setRevenueRecognitionRules(revenueRecognitionRuleApi.list(getCurrentUser()));
+			result.setRevenueRecognitionRules(revenueRecognitionRuleApi.list());
         } catch (Exception e) {
             log.error("Failed to execute API", e);
             result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);

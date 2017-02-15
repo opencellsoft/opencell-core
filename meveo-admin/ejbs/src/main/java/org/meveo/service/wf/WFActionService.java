@@ -23,7 +23,6 @@ import java.util.List;
 import javax.ejb.Stateless;
 
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.wf.WFAction;
 import org.meveo.model.wf.WFTransition;
 import org.meveo.service.base.PersistenceService;
@@ -32,10 +31,10 @@ import org.meveo.service.base.PersistenceService;
 public class WFActionService extends PersistenceService<WFAction> {
 
 
-	public WFAction findWFActionByUUID(String uuid, Provider provider) {
+	public WFAction findWFActionByUUID(String uuid) {
 		WFAction wfAction = null;
 		try {
-			QueryBuilder qb = new QueryBuilder(WFAction.class, "a", null, provider);
+			QueryBuilder qb = new QueryBuilder(WFAction.class, "a", null);
 			qb.addCriterion("a.uuid", "=", uuid, true);
 			wfAction = (WFAction) qb.getQuery(getEntityManager()).getSingleResult();
 		} catch (Exception e) {

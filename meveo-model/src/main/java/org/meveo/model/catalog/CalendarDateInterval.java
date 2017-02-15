@@ -10,7 +10,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.StringUtils;
-import org.meveo.model.BaseProviderlessEntity;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 
 /**
@@ -20,10 +20,10 @@ import org.meveo.model.ExportIdentifier;
  * 
  */
 @Entity
-@ExportIdentifier({  "calendar.code", "calendar.provider", "intervalBegin", "intervalEnd" })
+@ExportIdentifier({  "calendar.code", "intervalBegin", "intervalEnd" })
 @Table(name = "CAT_CALENDAR_INTERVAL")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_CALENDAR_INTERVAL_SEQ")
-public class CalendarDateInterval extends BaseProviderlessEntity implements Comparable<CalendarDateInterval> {
+public class CalendarDateInterval extends BaseEntity implements Comparable<CalendarDateInterval> {
 
     private static final long serialVersionUID = -8419267880869260329L;
 

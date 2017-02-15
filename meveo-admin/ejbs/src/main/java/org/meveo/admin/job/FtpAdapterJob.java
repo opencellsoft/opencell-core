@@ -17,7 +17,6 @@ import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
@@ -60,7 +59,7 @@ public class FtpAdapterJob extends Job {
 		String ftpProtocol = null;
 		
 		try {
-			distDirectory = ParamBean.getInstance().getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + currentUser.getProvider().getCode() + ((String) customFieldInstanceService.getCFValue(jobInstance, "FtpAdapterJob_distDirectory")).replaceAll("\\..", "");
+			distDirectory = ParamBean.getInstance().getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + appProvider.getCode() + ((String) customFieldInstanceService.getCFValue(jobInstance, "FtpAdapterJob_distDirectory")).replaceAll("\\..", "");
 		    remoteServer = (String) customFieldInstanceService.getCFValue(jobInstance, "FtpAdapterJob_remoteServer");
 			remotePort = ((Long) customFieldInstanceService.getCFValue(jobInstance, "FtpAdapterJob_remotePort")).intValue();
 			removeDistantFile = (String) customFieldInstanceService.getCFValue(jobInstance, "FtpAdapterJob_removeDistantFile");

@@ -38,7 +38,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
@@ -48,7 +47,6 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.CustomerCategory;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.AccountService;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -71,10 +69,6 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		if (billingAccount.getNextInvoiceDate() == null) {
 			billingAccount.setNextInvoiceDate(new Date());
 		}
-
-		if (billingAccount.getCustomerAccount() != null) {
-			billingAccount.setProvider(billingAccount.getCustomerAccount().getProvider());
-		}
 	}
 
 	public void createBillingAccount(BillingAccount billingAccount) throws BusinessException {
@@ -88,15 +82,10 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 			billingAccount.setNextInvoiceDate(new Date());
 		}
 
-		if (billingAccount.getCustomerAccount() != null) {
-			billingAccount.setProvider(billingAccount.getCustomerAccount().getProvider());
-		}
-
 		create(billingAccount);
 	}
 
-	public BillingAccount updateElectronicBilling(BillingAccount billingAccount, Boolean electronicBilling,
-			Provider provider) throws BusinessException {
+	public BillingAccount updateElectronicBilling(BillingAccount billingAccount, Boolean electronicBilling) throws BusinessException {
 		billingAccount.setElectronicBilling(electronicBilling);
 		return update(billingAccount);
 	}
@@ -194,9 +183,9 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 	}
 
 	@SuppressWarnings("unchecked")
-    public List<BillingAccount> findBillingAccounts(BillingCycle billingCycle, Date startdate, Date endDate,Provider currentProvider) {
+    public List<BillingAccount> findBillingAccounts(BillingCycle billingCycle, Date startdate, Date endDate) {
 		try {
-			QueryBuilder qb = new QueryBuilder(BillingAccount.class, "b",null,currentProvider);
+			QueryBuilder qb = new QueryBuilder(BillingAccount.class, "b",null);
 			qb.addCriterionEntity("b.billingCycle", billingCycle);
 
 			if (startdate != null) {
@@ -218,7 +207,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 	
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public boolean updateBillingAccountTotalAmounts(BillingAccount billingAccount, BillingRun billingRun, User currentUser) {
+	public boolean updateBillingAccountTotalAmounts(BillingAccount billingAccount, BillingRun billingRun) {
 
 		log.debug("updateBillingAccountTotalAmounts  billingAccount:" + billingAccount.getCode());
 		billingAccount = findById(billingAccount.getId(), true);
@@ -293,7 +282,6 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 	 * Evatuate the exoneration Taxes EL
 	 * 
 	 * @param ba The BillingAccount
-	 * @param provider The Provider
 	 * @return
 	 */
 	public boolean isExonerated(BillingAccount ba){

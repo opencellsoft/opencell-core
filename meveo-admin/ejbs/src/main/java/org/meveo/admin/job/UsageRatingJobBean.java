@@ -18,7 +18,6 @@ import org.meveo.admin.async.UsageRatingAsync;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.event.qualifier.Rejected;
 import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.EdrService;
@@ -48,7 +47,7 @@ public class UsageRatingJobBean {
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NEVER)
 	public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
-		log.debug("Running for user={}, parameter={}", currentUser, jobInstance.getParametres());
+		log.debug("Running with parameter={}", jobInstance.getParametres());
 		
 		try {
 			

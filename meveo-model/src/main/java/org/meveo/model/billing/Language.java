@@ -24,8 +24,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
-import org.meveo.model.ProviderlessEntity;
 
 /**
  * Language entity.
@@ -34,7 +34,7 @@ import org.meveo.model.ProviderlessEntity;
 @ExportIdentifier("languageCode")
 @Table(name = "ADM_LANGUAGE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_LANGUAGE_SEQ")
-public class Language extends ProviderlessEntity {
+public class Language extends AuditableEntity {
 	private static final long serialVersionUID = 1L;
 
 	@Column(name = "LANGUAGE_CODE", length = 3)

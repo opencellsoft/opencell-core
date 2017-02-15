@@ -26,17 +26,15 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.InvalidPermissionException;
 import org.meveo.admin.exception.InvalidScriptException;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ReflectionUtils;
-import org.meveo.model.admin.User;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.scripts.CustomScript;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.scripts.ScriptSourceTypeEnum;
@@ -47,25 +45,23 @@ import org.meveo.model.security.Role;
 public class ScriptInstanceService extends CustomScriptService<ScriptInstance, ScriptInterface> {
 
     /**
-     * Get all ScriptInstances with error for a provider
+     * Get all ScriptInstances with error
      *
-     * @param provider
      * @return
      */
-    public List<CustomScript> getScriptInstancesWithError(Provider provider) {
+    public List<CustomScript> getScriptInstancesWithError() {
         return ((List<CustomScript>) getEntityManager().createNamedQuery("CustomScript.getScriptInstanceOnError", CustomScript.class).setParameter("isError", Boolean.TRUE)
-                .setParameter("provider", provider).getResultList());
+                .getResultList());
     }
 
     /**
-     * Count scriptInstances with error for a provider
+     * Count scriptInstances with error
      *
-     * @param provider
      * @return
      */
-    public long countScriptInstancesWithError(Provider provider) {
+    public long countScriptInstancesWithError() {
         return ((Long) getEntityManager().createNamedQuery("CustomScript.countScriptInstanceOnError", Long.class).setParameter("isError", Boolean.TRUE)
-                .setParameter("provider", provider).getSingleResult());
+                .getSingleResult());
     }
 
     /**
@@ -90,13 +86,13 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
      * @throws BusinessException          Any execution exception
      */
     @Override
-    public Map<String, Object> execute(String scriptCode, Map<String, Object> context, User currentUser) throws ElementNotFoundException, InvalidScriptException,
+    public Map<String, Object> execute(String scriptCode, Map<String, Object> context) throws ElementNotFoundException, InvalidScriptException,
             InvalidPermissionException, BusinessException {
 
-        ScriptInstance scriptInstance = findByCode(scriptCode, currentUser.getProvider());
+        ScriptInstance scriptInstance = findByCode(scriptCode);
         // Check access to the script
-        isUserHasExecutionRole(scriptInstance, currentUser);
-        return super.execute(scriptCode, context, currentUser);
+        isUserHasExecutionRole(scriptInstance);
+        return super.execute(scriptCode, context);
     }
 
     /**
@@ -105,16 +101,16 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
      * @param scriptCode
      * @param context
      */
-    public void test(String scriptCode, Map<String, Object> context, User currentUser) {
+    public void test(String scriptCode, Map<String, Object> context) {
         try {
-            clearLogs(currentUser.getProvider().getCode(), scriptCode);
-            ScriptInstance scriptInstance = findByCode(scriptCode, currentUser.getProvider());
-            isUserHasExecutionRole(scriptInstance, currentUser);
+            clearLogs(scriptCode);
+            ScriptInstance scriptInstance = findByCode(scriptCode);
+            isUserHasExecutionRole(scriptInstance);
             String javaSrc = scriptInstance.getScript();
             javaSrc = javaSrc.replaceAll("LoggerFactory.getLogger", "new org.meveo.service.script.RunTimeLogger(" + getClassName(javaSrc) + ".class,\""
-                    + currentUser.getProvider().getCode() + "\",\"" + scriptCode + "\",\"ScriptInstanceService\");//");
+                    + appProvider.getCode() + "\",\"" + scriptCode + "\",\"ScriptInstanceService\");//");
             Class<ScriptInterface> compiledScript = compileJavaSource(javaSrc, getFullClassname(scriptInstance.getScript()));
-            execute(compiledScript.newInstance(), context, currentUser);
+            execute(compiledScript.newInstance(), context);
 
         } catch (Exception e) {
             log.error("Script test failed", e);
@@ -129,23 +125,27 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
      * @param user
      * @throws InvalidPermissionException
      */
-    public void isUserHasExecutionRole(ScriptInstance scriptInstance, User user) throws InvalidPermissionException {
-        if (scriptInstance != null && user != null && scriptInstance.getExecutionRoles() != null && !scriptInstance.getExecutionRoles().isEmpty()) {
+    public void isUserHasExecutionRole(ScriptInstance scriptInstance) throws InvalidPermissionException {
+        if (scriptInstance != null && scriptInstance.getExecutionRoles() != null && !scriptInstance.getExecutionRoles().isEmpty()) {
             Set<Role> execRoles = scriptInstance.getExecutionRoles();
-            execRoles.retainAll(user.getRoles());
-            if (execRoles.isEmpty()) {
-                throw new InvalidPermissionException();
+            for (Role role : execRoles) {
+                if (currentUser.hasRole(role.getName())){
+                    return;
+                }
             }
+            throw new InvalidPermissionException();            
         }
     }
 
-    public boolean isUserHasSourcingRole(ScriptInstance scriptInstance, User user) {
-        if (scriptInstance != null && user != null && scriptInstance.getSourcingRoles() != null && !scriptInstance.getSourcingRoles().isEmpty()) {
+    public boolean isUserHasSourcingRole(ScriptInstance scriptInstance) {
+        if (scriptInstance != null && scriptInstance.getSourcingRoles() != null && !scriptInstance.getSourcingRoles().isEmpty()) {
             Set<Role> sourcingRoles = scriptInstance.getSourcingRoles();
-            sourcingRoles.retainAll(user.getRoles());
-            if (sourcingRoles.isEmpty()) {
-                return false;
+            for (Role role : sourcingRoles) {
+                if (currentUser.hasRole(role.getName())){
+                    return true;
+                }
             }
+            return false;
         }
         return true;
     }

@@ -44,8 +44,8 @@ import org.meveo.model.ModuleItem;
 @Entity
 @ModuleItem
 @CustomFieldEntity(cftCodePrefix = "JOB", cftCodeFields = "jobTemplate")
-@ExportIdentifier({ "code", "provider" })
-@Table(name = "MEVEO_JOB_INSTANCE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
+@ExportIdentifier({ "code"})
+@Table(name = "MEVEO_JOB_INSTANCE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEVEO_JOB_INSTANCE_SEQ")
 public class JobInstance extends BusinessCFEntity {
 

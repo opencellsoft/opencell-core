@@ -52,7 +52,6 @@ public class GriegDunningInputHistory extends InputHistory {
 		this.setSucceededTickets(inputInfo.getSucceededTickets());
 		this.setRejectedTickets(inputInfo.getRejectedTickets());
 		this.setIgnoredTickets(inputInfo.getIgnoredTickets());
-		this.setProvider(inputInfo.getProvider());
 	}
 
 }

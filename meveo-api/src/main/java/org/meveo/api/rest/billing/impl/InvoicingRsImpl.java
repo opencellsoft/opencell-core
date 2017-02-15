@@ -31,7 +31,7 @@ public class InvoicingRsImpl extends BaseRs implements InvoicingRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         log.info("createBillingRun request={}", createBillingRunDto);
         try {
-        	long billingRunId=invoicingApi.createBillingRun(createBillingRunDto, getCurrentUser());
+        	long billingRunId=invoicingApi.createBillingRun(createBillingRunDto);
         	result.setMessage(billingRunId + "");
         } catch (MeveoApiException mpe) {
             result.setErrorCode(mpe.getErrorCode());
@@ -53,7 +53,7 @@ public class InvoicingRsImpl extends BaseRs implements InvoicingRs {
         log.info("getBillingRunInfo request={}", billingRunId);
         try {
 
-            result.setBillingRunDto(invoicingApi.getBillingRunInfo(billingRunId, getCurrentUser()));
+            result.setBillingRunDto(invoicingApi.getBillingRunInfo(billingRunId));
 
         } catch (MeveoApiException mpe) {
             result.getActionStatus().setErrorCode(mpe.getErrorCode());
@@ -75,7 +75,7 @@ public class InvoicingRsImpl extends BaseRs implements InvoicingRs {
         log.info("getBillingAccountListInRun request={}", billingRunId);
         try {
 
-            result.setBillingAccountsDto(invoicingApi.getBillingAccountListInRun(billingRunId, getCurrentUser()));
+            result.setBillingAccountsDto(invoicingApi.getBillingAccountListInRun(billingRunId));
 
         } catch (MeveoApiException mpe) {
             result.getActionStatus().setErrorCode(mpe.getErrorCode());
@@ -97,7 +97,7 @@ public class InvoicingRsImpl extends BaseRs implements InvoicingRs {
         log.info("getPreInvoicingReport request={}", billingRunId);
         try {
 
-            result.setPreInvoicingReportsDTO(invoicingApi.getPreInvoicingReport(billingRunId, getCurrentUser()));
+            result.setPreInvoicingReportsDTO(invoicingApi.getPreInvoicingReport(billingRunId));
 
         } catch (MeveoApiException mpe) {
             result.getActionStatus().setErrorCode(mpe.getErrorCode());
@@ -123,7 +123,7 @@ public class InvoicingRsImpl extends BaseRs implements InvoicingRs {
         log.info("getPreInvoicingReport request={}", billingRunId);
         try {
 
-            result.setPostInvoicingReportsDTO(invoicingApi.getPostInvoicingReport(billingRunId, getCurrentUser()));
+            result.setPostInvoicingReportsDTO(invoicingApi.getPostInvoicingReport(billingRunId));
 
         } catch (MeveoApiException mpe) {
             result.getActionStatus().setErrorCode(mpe.getErrorCode());
@@ -149,7 +149,7 @@ public class InvoicingRsImpl extends BaseRs implements InvoicingRs {
         log.info("validateBillingRun request={}", billingRunId);
         try {
 
-            invoicingApi.validateBillingRun(billingRunId, getCurrentUser());
+            invoicingApi.validateBillingRun(billingRunId);
 
         } catch (MeveoApiException mpe) {
             result.setErrorCode(mpe.getErrorCode());
@@ -171,7 +171,7 @@ public class InvoicingRsImpl extends BaseRs implements InvoicingRs {
         log.info("cancelBillingRun request={}", billingRunId);
         try {
 
-            invoicingApi.cancelBillingRun(billingRunId, getCurrentUser());
+            invoicingApi.cancelBillingRun(billingRunId);
 
         } catch (MeveoApiException mpe) {
             result.setErrorCode(mpe.getErrorCode());

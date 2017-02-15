@@ -23,7 +23,7 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.OfferServiceTemplate;
 
 @Entity
-@ExportIdentifier({ "invoiceType.code", "seller.code", "seller.provider" })
+@ExportIdentifier({ "invoiceType.code", "seller.code" })
 @Table(name = "BILLING_SEQ_INVTYP_SELL")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILL_SEQ_IT_SELL_SEQ")
 public class InvoiceTypeSellerSequence implements IEntity {

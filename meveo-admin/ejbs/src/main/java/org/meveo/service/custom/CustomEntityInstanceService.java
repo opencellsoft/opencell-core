@@ -6,7 +6,6 @@ import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.service.base.BusinessService;
 
@@ -17,8 +16,8 @@ import org.meveo.service.base.BusinessService;
 @Stateless
 public class CustomEntityInstanceService extends BusinessService<CustomEntityInstance> {
 
-    public CustomEntityInstance findByCodeByCet(String cetCode, String code, Provider provider) {
-        QueryBuilder qb = new QueryBuilder(getEntityClass(), "cei", null, provider);
+    public CustomEntityInstance findByCodeByCet(String cetCode, String code) {
+        QueryBuilder qb = new QueryBuilder(getEntityClass(), "cei", null);
         qb.addCriterion("cei.cetCode", "=", cetCode, true);
         qb.addCriterion("cei.code", "=", code, true);
 
@@ -31,9 +30,9 @@ public class CustomEntityInstanceService extends BusinessService<CustomEntityIns
     }
 
     @SuppressWarnings("unchecked")
-    public List<CustomEntityInstance> findChildEntities(String cetCode, String parentEntityUuid, Provider provider) {
+    public List<CustomEntityInstance> findChildEntities(String cetCode, String parentEntityUuid) {
 
-        QueryBuilder qb = new QueryBuilder(getEntityClass(), "cei", null, provider);
+        QueryBuilder qb = new QueryBuilder(getEntityClass(), "cei", null);
         qb.addCriterion("cei.cetCode", "=", cetCode, true);
         qb.addCriterion("cei.parentEntityUuid", "=", parentEntityUuid, true);
 

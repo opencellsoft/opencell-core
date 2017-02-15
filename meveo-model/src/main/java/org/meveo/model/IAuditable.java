@@ -18,6 +18,8 @@
  */
 package org.meveo.model;
 
+import org.meveo.security.MeveoUser;
+
 public interface IAuditable {
 
     public Auditable getAuditable();

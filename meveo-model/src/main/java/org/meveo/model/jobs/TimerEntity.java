@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.ejb.ScheduleExpression;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -41,8 +40,8 @@ import org.meveo.model.ModuleItem;
 
 @Entity
 @ModuleItem
-@ExportIdentifier({ "code", "provider" })
-@Table(name = "MEVEO_TIMER", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
+@ExportIdentifier({ "code"})
+@Table(name = "MEVEO_TIMER", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEVEO_TIMER_SEQ")
 public class TimerEntity extends BusinessEntity{
 
@@ -185,21 +184,6 @@ public class TimerEntity extends BusinessEntity{
 	 */
 	public void setJobInstances(List<JobInstance> jobInstances) {
 		this.jobInstances = jobInstances;
-	}
-
-
-	public ScheduleExpression getScheduleExpression() {
-		ScheduleExpression expression = new ScheduleExpression();
-		expression.dayOfMonth(dayOfMonth);
-		expression.dayOfWeek(dayOfWeek);
-		expression.end(end);
-		expression.hour(hour);
-		expression.minute(minute);
-		expression.month(month);
-		expression.second(second);
-		expression.start(start);
-		expression.year(year);
-		return expression;
 	}
 
 	public String getTimerSchedule() {

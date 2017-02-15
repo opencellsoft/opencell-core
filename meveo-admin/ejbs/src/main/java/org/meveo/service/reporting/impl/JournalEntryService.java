@@ -38,16 +38,14 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 
 	@SuppressWarnings("unchecked")
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public List<Object> getTaxRecodsBetweenDate(String providerCode,
-			Date startDate, Date endDate) {
+	public List<Object> getTaxRecodsBetweenDate(Date startDate, Date endDate) {
 		List<Object> result = null;
 		log.info("getTaxRecodsBetweenDate ( {}, {})", startDate, endDate);
 		Query query = getEntityManager()
 				.createQuery(
 						"select a.taxCode, a.taxDescription, a.taxPercent, sum(amountWithoutTax) as amountWithoutTax,  sum(amountTax) as amountTax from "
 								+ getEntityClass().getSimpleName()
-								+ " a where a.providerCode=:providerCode and a.type='T' and a.invoiceDate>=:startDate and a.invoiceDate <=:endDate group by a.taxCode, a.taxDescription, a.taxPercent")
-				.setParameter("providerCode", providerCode)
+								+ " a where a.type='T' and a.invoiceDate>=:startDate and a.invoiceDate <=:endDate group by a.taxCode, a.taxDescription, a.taxPercent")
 				.setParameter("startDate", startDate)
 				.setParameter("endDate", endDate);
 		log.debug("getTaxRecodsBetweenDate : query={}", query);
@@ -58,7 +56,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 
 	@SuppressWarnings("unchecked")
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public List<Object> getJournalRecords(String providerCode, Date startDate,
+	public List<Object> getJournalRecords(Date startDate,
 			Date endDate) {
 		List<Object> result = null;
 		log.info("getJournalRecords ( {}, {})", startDate, endDate);
@@ -66,11 +64,10 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 				.createQuery(
 						"select a.type, a.invoiceDate, a.invoiceNumber,a.customerAccountCode, a.accountingCode, sum(a.amountWithoutTax),sum(a.amountTax),sum(a.amountWithTax) from "
 								+ getEntityClass().getSimpleName()
-								+ " a where a.providerCode=:providerCode and a.invoiceDate>=:startDate and a.invoiceDate<=:endDate"
+								+ " a where a.invoiceDate>=:startDate and a.invoiceDate<=:endDate"
 								+ " group by (a.type, a.invoiceDate, a.invoiceNumber,a.customerAccountCode, a.accountingCode)"
 								+ " having sum(a.amountWithoutTax)<>0 or  sum(a.amountTax)<>0 "
 								+ " order by a.invoiceNumber,a.accountingCode desc")
-				.setParameter("providerCode", providerCode)
 				.setParameter("startDate", startDate)
 				.setParameter("endDate", endDate);
 		log.debug("getJournalRecords : query={}", query);
@@ -81,7 +78,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 
 	@SuppressWarnings("unchecked")
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public List<Object> getSIMPACRecords(String providerCode, Date startDate,
+	public List<Object> getSIMPACRecords(Date startDate,
 			Date endDate) {
 		List<Object> result = null;
 		log.info("getSIMPACRecords( {}, {})", startDate, endDate);
@@ -89,11 +86,10 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
 				.createQuery(
 						"select a.type,a.accountingCode, sum(amountWithoutTax) as amountWithoutTax , sum(amountTax) as amountTax, sum(amountWithTax) as amountWithTax  from "
 								+ getEntityClass().getSimpleName()
-								+ " a where a.providerCode=:providerCode and a.invoiceDate>=:startDate and a.invoiceDate<=:endDate "
+								+ " a where a.invoiceDate>=:startDate and a.invoiceDate<=:endDate "
 								+ " group by a.accountingCode,a.type"
 								+ " having sum(amountWithoutTax)<>0 or  sum(amountTax)<>0 "
 								+ " order by a.accountingCode desc")
-				.setParameter("providerCode", providerCode)
 				.setParameter("startDate", startDate)
 				.setParameter("endDate", endDate);
 		log.debug("getSIMPACRecords : query={}", query);

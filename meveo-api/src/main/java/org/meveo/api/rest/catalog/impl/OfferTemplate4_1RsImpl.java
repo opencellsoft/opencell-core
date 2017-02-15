@@ -39,7 +39,7 @@ public class OfferTemplate4_1RsImpl extends BaseRs implements OfferTemplate4_1Rs
         OfferTemplateDto offerTemplateDto = convertOfferTemplateDto(postData);
 
         try {
-            offerTemplateApi.create(offerTemplateDto, getCurrentUser());
+            offerTemplateApi.create(offerTemplateDto);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -61,7 +61,7 @@ public class OfferTemplate4_1RsImpl extends BaseRs implements OfferTemplate4_1Rs
         OfferTemplateDto offerTemplateDto = convertOfferTemplateDto(postData);
 
         try {
-            offerTemplateApi.update(offerTemplateDto, getCurrentUser());
+            offerTemplateApi.update(offerTemplateDto);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -81,7 +81,7 @@ public class OfferTemplate4_1RsImpl extends BaseRs implements OfferTemplate4_1Rs
         GetOfferTemplateResponseDto result = new GetOfferTemplateResponseDto();
 
         try {
-            result.setOfferTemplate(offerTemplateApi.find(offerTemplateCode, getCurrentUser()));
+            result.setOfferTemplate(offerTemplateApi.find(offerTemplateCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -101,7 +101,7 @@ public class OfferTemplate4_1RsImpl extends BaseRs implements OfferTemplate4_1Rs
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            offerTemplateApi.remove(offerTemplateCode, getCurrentUser());
+            offerTemplateApi.remove(offerTemplateCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -123,7 +123,7 @@ public class OfferTemplate4_1RsImpl extends BaseRs implements OfferTemplate4_1Rs
         OfferTemplateDto offerTemplateDto = convertOfferTemplateDto(postData);
 
         try {
-            offerTemplateApi.createOrUpdate(offerTemplateDto, getCurrentUser());
+            offerTemplateApi.createOrUpdate(offerTemplateDto);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

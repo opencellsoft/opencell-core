@@ -22,7 +22,7 @@ import org.meveo.model.IEntity;
  * @author Edward P. Legaspi
  */
 @Entity
-@ExportIdentifier({ "offerTemplate.code", "productTemplate.code", "provider" })
+@ExportIdentifier({ "offerTemplate.code", "productTemplate.code"})
 @Table(name = "CAT_OFFER_PRODUCT_TEMPLATE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_OFFER_PRODUCT_TEMPLATE_SEQ")
 public class OfferProductTemplate implements IEntity {

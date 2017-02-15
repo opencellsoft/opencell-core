@@ -31,7 +31,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.Query;
 
 import org.apache.commons.collections.IteratorUtils;
 import org.apache.poi.ss.usermodel.Cell;
@@ -42,16 +41,13 @@ import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.Auditable;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.base.MultilanguageEntityService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 
@@ -75,22 +71,22 @@ public class PricePlanMatrixService extends MultilanguageEntityService<PricePlan
 	}
 
 	@Override
-	public PricePlanMatrix disable(PricePlanMatrix pricePlan, User currentUser) throws BusinessException {
-		pricePlan = super.disable(pricePlan, currentUser);
+	public PricePlanMatrix disable(PricePlanMatrix pricePlan) throws BusinessException {
+		pricePlan = super.disable(pricePlan);
 		ratingCacheContainerProvider.removePricePlanFromCache(pricePlan);
 		return pricePlan;
 	}
 
 	@Override
-	public PricePlanMatrix enable(PricePlanMatrix pricePlan, User currentUser) throws BusinessException {
-		pricePlan = super.enable(pricePlan, currentUser);
+	public PricePlanMatrix enable(PricePlanMatrix pricePlan) throws BusinessException {
+		pricePlan = super.enable(pricePlan);
 		ratingCacheContainerProvider.addPricePlanToCache(pricePlan);
 		return pricePlan;
 	}
 
 	@Override
-	public void remove(PricePlanMatrix pricePlan, User currentUser) throws BusinessException {
-		super.remove(pricePlan, currentUser);
+	public void remove(PricePlanMatrix pricePlan) throws BusinessException {
+		super.remove(pricePlan);
 		ratingCacheContainerProvider.removePricePlanFromCache(pricePlan);
 	}
 
@@ -100,28 +96,26 @@ public class PricePlanMatrixService extends MultilanguageEntityService<PricePlan
 		ratingCacheContainerProvider.updatePricePlanInCache(pricePlan);
 		return pricePlan;
 	}
-
-	@SuppressWarnings("unchecked")
-	public void removeByPrefix(EntityManager em, String prefix, User currentUser) throws BusinessException {
-		Query query = em.createQuery(
-				"select m from PricePlanMatrix m WHERE m.eventCode LIKE '" + prefix + "%' AND m.provider=:provider");
-		query.setParameter("provider", currentUser.getProvider());
-		List<PricePlanMatrix> pricePlans = query.getResultList();
-		for (PricePlanMatrix pricePlan : pricePlans) {
-			remove(pricePlan, currentUser);
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	public void removeByCode(EntityManager em, String code, User currentUser) throws BusinessException {
-		Query query = em.createQuery("select m PricePlanMatrix m WHERE m.eventCode=:code AND m.provider=:provider");
-		query.setParameter("code", code);
-		query.setParameter("provider", currentUser.getProvider());
-		List<PricePlanMatrix> pricePlans = query.getResultList();
-		for (PricePlanMatrix pricePlan : pricePlans) {
-			remove(pricePlan, currentUser);
-		}
-	}
+//
+//	@SuppressWarnings("unchecked")
+//	public void removeByPrefix(EntityManager em, String prefix) throws BusinessException {
+//		Query query = em.createQuery(
+//				"select m from PricePlanMatrix m WHERE m.eventCode LIKE '" + prefix + "%'");
+//		List<PricePlanMatrix> pricePlans = query.getResultList();
+//		for (PricePlanMatrix pricePlan : pricePlans) {
+//			remove(pricePlan);
+//		}
+//	}
+//
+//	@SuppressWarnings("unchecked")
+//	public void removeByCode(EntityManager em, String code) throws BusinessException {
+//		Query query = em.createQuery("select m PricePlanMatrix m WHERE m.eventCode=:code");
+//		query.setParameter("code", code);
+//		List<PricePlanMatrix> pricePlans = query.getResultList();
+//		for (PricePlanMatrix pricePlan : pricePlans) {
+//			remove(pricePlan);
+//		}
+//	}
 
 	private String getCellAsString(Cell cell) {
 		switch (cell.getCellType()) {
@@ -160,7 +154,7 @@ public class PricePlanMatrixService extends MultilanguageEntityService<PricePlan
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void importExcelLine(Row row, User user, Provider provider) throws BusinessException {
+	public void importExcelLine(Row row) throws BusinessException {
 		EntityManager em = getEntityManager();
 		Object[] cellsObj = IteratorUtils.toArray(row.cellIterator());
 		int rowIndex = row.getRowNum();
@@ -170,16 +164,12 @@ public class PricePlanMatrixService extends MultilanguageEntityService<PricePlan
 		PricePlanMatrix pricePlan = null;
 		QueryBuilder qb = new QueryBuilder(PricePlanMatrix.class, "p");
 		qb.addCriterion("code", "=", pricePlanCode, false);
-		qb.addCriterionEntity("provider", provider);
+		
 		@SuppressWarnings("unchecked")
 		List<PricePlanMatrix> pricePlans = qb.getQuery(em).getResultList();
 
 		if (pricePlans == null || pricePlans.size() == 0) {
 			pricePlan = new PricePlanMatrix();
-			pricePlan.setProvider(provider);
-			pricePlan.setAuditable(new Auditable());
-			pricePlan.getAuditable().setCreated(new Date());
-			pricePlan.getAuditable().setCreator(user);
 		} else if (pricePlans.size() == 1) {
 			pricePlan = pricePlans.get(0);
 		} else {
@@ -248,7 +238,7 @@ public class PricePlanMatrixService extends MultilanguageEntityService<PricePlan
 		if (!StringUtils.isBlank(eventCode)) {
 			qb = new QueryBuilder(ChargeTemplate.class, "p");
 			qb.addCriterion("code", "=", eventCode, false);
-			qb.addCriterionEntity("provider", provider);
+			
 			@SuppressWarnings("unchecked")
 			List<Seller> charges = qb.getQuery(em).getResultList();
 			if (charges.size() == 0) {
@@ -265,7 +255,7 @@ public class PricePlanMatrixService extends MultilanguageEntityService<PricePlan
 		if (!StringUtils.isBlank(sellerCode)) {
 			qb = new QueryBuilder(Seller.class, "p");
 			qb.addCriterion("code", "=", sellerCode, false);
-			qb.addCriterionEntity("provider", provider);
+			
 			@SuppressWarnings("unchecked")
 			List<Seller> sellers = qb.getQuery(em).getResultList();
 			Seller seller = null;
@@ -284,7 +274,7 @@ public class PricePlanMatrixService extends MultilanguageEntityService<PricePlan
 		if (!StringUtils.isBlank(countryCode)) {
 			qb = new QueryBuilder(TradingCountry.class, "p");
 			qb.addCriterion("p.country.countryCode", "=", countryCode, false);
-			qb.addCriterionEntity("provider", provider);
+			
 			@SuppressWarnings("unchecked")
 			List<TradingCountry> countries = qb.getQuery(em).getResultList();
 			TradingCountry tradingCountry = null;
@@ -303,7 +293,7 @@ public class PricePlanMatrixService extends MultilanguageEntityService<PricePlan
 		if (!StringUtils.isBlank(currencyCode)) {
 			qb = new QueryBuilder(TradingCurrency.class, "p");
 			qb.addCriterion("p.currency.currencyCode", "=", currencyCode, false);
-			qb.addCriterionEntity("provider", provider);
+			
 			@SuppressWarnings("unchecked")
 			List<TradingCurrency> currencies = qb.getQuery(em).getResultList();
 			TradingCurrency tradingCurrency = null;
@@ -334,7 +324,7 @@ public class PricePlanMatrixService extends MultilanguageEntityService<PricePlan
 		if (!StringUtils.isBlank(offerCode)) {
 			qb = new QueryBuilder(OfferTemplate.class, "p");
 			qb.addCriterion("code", "=", offerCode, false);
-			qb.addCriterionEntity("provider", provider);
+			
 			@SuppressWarnings("unchecked")
 			List<OfferTemplate> offers = qb.getQuery(em).getResultList();
 			OfferTemplate offer = null;
@@ -352,7 +342,7 @@ public class PricePlanMatrixService extends MultilanguageEntityService<PricePlan
 		if (!StringUtils.isBlank(validityCalendarCode)) {
 			qb = new QueryBuilder(Calendar.class, "p");
 			qb.addCriterion("code", "=", validityCalendarCode, false);
-			qb.addCriterionEntity("provider", provider);
+			
 			@SuppressWarnings("unchecked")
 			List<Calendar> calendars = qb.getQuery(em).getResultList();
 			Calendar calendar = null;
@@ -504,24 +494,13 @@ public class PricePlanMatrixService extends MultilanguageEntityService<PricePlan
 		}
 
 		if (pricePlan.getId() == null) {
-			create(pricePlan, user);
+			create(pricePlan);
 		} else {
-			pricePlan.updateAudit(user);
+			updateAudit(pricePlan);
 			updateNoCheck(pricePlan);
 		}
 	}
 
-	@Override
-	public PricePlanMatrix findByCode(String code, Provider provider) {
-		QueryBuilder qb = new QueryBuilder(PricePlanMatrix.class, "m", null, provider);
-		qb.addCriterion("code", "=", code, true);
-
-		try {
-			return (PricePlanMatrix) qb.getQuery(getEntityManager()).getSingleResult();
-		} catch (NoResultException e) {
-			return null;
-		}
-	}
 
 	/**
 	 * Get a list of priceplans to populate a cache
@@ -546,13 +525,11 @@ public class PricePlanMatrixService extends MultilanguageEntityService<PricePlan
 		}
 	}
 
-	public List<PricePlanMatrix> findByOfferTemplateAndEventCode(String offerTemplateCode, String chargeCode,
-			Provider provider) {
+	public List<PricePlanMatrix> findByOfferTemplateAndEventCode(String offerTemplateCode, String chargeCode) {
 
 		List<PricePlanMatrix> priceplansByOffer = new ArrayList<>();
 
-		List<PricePlanMatrix> priceplans = ratingCacheContainerProvider.getPricePlansByChargeCode(provider.getId(),
-				chargeCode);
+		List<PricePlanMatrix> priceplans = ratingCacheContainerProvider.getPricePlansByChargeCode(chargeCode);
 		if (priceplans == null) {
 			return priceplansByOffer;
 		}
@@ -572,8 +549,8 @@ public class PricePlanMatrixService extends MultilanguageEntityService<PricePlan
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<PricePlanMatrix> listByEventCode(String eventCode, Provider provider) {
-		QueryBuilder qb = new QueryBuilder(PricePlanMatrix.class, "m", null, provider);
+	public List<PricePlanMatrix> listByEventCode(String eventCode) {
+		QueryBuilder qb = new QueryBuilder(PricePlanMatrix.class, "m", null);
 		qb.addCriterion("eventCode", "=", eventCode, true);
 
 		try {
@@ -583,10 +560,9 @@ public class PricePlanMatrixService extends MultilanguageEntityService<PricePlan
 		}
 	}
 
-	public Long getLastPricePlanByCharge(String eventCode, Provider provider) {
+	public Long getLastPricePlanByCharge(String eventCode) {
 		QueryBuilder qb = new QueryBuilder("select max(sequence) from PricePlanMatrix m");
 		qb.addCriterion("m.eventCode", "=", eventCode, true);
-		qb.addCriterionEntity("m.provider", provider);
 		try {
 			Long result = (Long) qb.getQuery(getEntityManager()).getSingleResult();
 			return result == null ? 0L : result;
@@ -595,12 +571,12 @@ public class PricePlanMatrixService extends MultilanguageEntityService<PricePlan
 		}
 	}
 
-	public boolean updateCellEdit(PricePlanMatrix entity, User currentUser) throws BusinessException {
+	public boolean updateCellEdit(PricePlanMatrix entity) throws BusinessException {
 		boolean result = false;
 		PricePlanMatrix pricePlanMatrix = findById(entity.getId());
 		if (pricePlanMatrix != null) {
 			if (!equal(entity.getCode(), pricePlanMatrix.getCode())) {
-				PricePlanMatrix existed = findByCode(entity.getCode(), getCurrentProvider());
+				PricePlanMatrix existed = findByCode(entity.getCode());
 				if (existed != null) {
 					throw new BusinessException("Price plan " + entity.getCode() + " is existed!");
 				} else {
@@ -705,7 +681,7 @@ public class PricePlanMatrixService extends MultilanguageEntityService<PricePlan
 				result = true;
 			}
 			if (result) {
-				update(pricePlanMatrix, currentUser);
+				update(pricePlanMatrix);
 				this.ratingCacheContainerProvider.updatePricePlanInCache(pricePlanMatrix);
 			}
 		}
@@ -719,20 +695,20 @@ public class PricePlanMatrixService extends MultilanguageEntityService<PricePlan
 		return obj1 != null ? obj1.equals(obj2) : (obj2 != null ? false : true);
 	}
 	
-	public synchronized void duplicate(PricePlanMatrix entity,User currentUser) throws BusinessException{
+	public synchronized void duplicate(PricePlanMatrix entity) throws BusinessException{
 		entity=refreshOrRetrieve(entity);
-		String code=findDuplicateCode(entity, currentUser);
+		String code=findDuplicateCode(entity);
 		detach(entity);
 		entity.setId(null);
 		String sourceAppliesToEntity=entity.clearUuid();
 		entity.setCode(code);
-		create(entity, getCurrentUser());
-		customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity, getCurrentUser());
+		create(entity);
+		customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity);
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<PricePlanMatrix> listByEventCodeWithOrder(String eventCode, Provider provider, String priority) {
-		QueryBuilder qb = new QueryBuilder(PricePlanMatrix.class, "p", null, provider);
+	public List<PricePlanMatrix> listByEventCodeWithOrder(String eventCode, String priority) {
+		QueryBuilder qb = new QueryBuilder(PricePlanMatrix.class, "p", null);
 		qb.addCriterion("eventCode", "=", eventCode, true);
 		qb.addOrderCriterion(priority, true);
 

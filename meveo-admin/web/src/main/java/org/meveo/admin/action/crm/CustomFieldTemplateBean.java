@@ -1,7 +1,6 @@
 package org.meveo.admin.action.crm;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -65,7 +64,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
 
         updateMapTypeFieldInEntity(entity.getListValues(), "listValues");
 
-        CustomFieldTemplate cfDuplicate = customFieldTemplateService.findByCodeAndAppliesTo(entity.getCode(), entity.getAppliesTo(), getCurrentProvider());
+        CustomFieldTemplate cfDuplicate = customFieldTemplateService.findByCodeAndAppliesTo(entity.getCode(), entity.getAppliesTo());
         if (cfDuplicate != null && !cfDuplicate.getId().equals(entity.getId())) {
             messages.error(new BundleKey("messages", "customFieldTemplate.alreadyExists"));
             return null;
@@ -98,11 +97,6 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
         return "code";
     }
 
-    @Override
-    protected List<String> getFormFieldsToFetch() {
-        return Arrays.asList("provider");
-    }
-
     /**
      * Autocomplete method for selecting a class/custom entity template for entity reference type Custom field template
      * 
@@ -112,7 +106,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
     public List<String> autocompleteClassNames(String query) {
         List<String> clazzNames = new ArrayList<String>();
 
-        List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(query, false, true, null, null, getCurrentProvider());
+        List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(query, false, true, null, null);
 
         for (CustomizedEntity customizedEntity : entities) {
             clazzNames.add(customizedEntity.getClassnameToDisplay());
@@ -130,7 +124,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
     public List<String> autocompleteClassNamesCEIOnly(String query) {
         List<String> clazzNames = new ArrayList<String>();
 
-        List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(query, true, false, null, null, getCurrentProvider());
+        List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(query, true, false, null, null);
 
         for (CustomizedEntity customizedEntity : entities) {
             clazzNames.add(customizedEntity.getClassnameToDisplay());
@@ -148,7 +142,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
     public List<String> autocompleteClassNamesHuman(String query) {
         List<String> clazzNames = new ArrayList<String>();
 
-        List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(query, false, true, null, null, getCurrentProvider());
+        List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(query, false, true, null, null);
 
         for (CustomizedEntity customizedEntity : entities) {
             clazzNames.add(customizedEntity.getClassnameToDisplayHuman());
@@ -183,7 +177,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
             perksSource.add(new CustomFieldMatrixColumn("description", "Description"));
 
             Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(
-                EntityCustomizationUtils.getAppliesTo(CustomEntityTemplate.class, CustomFieldTemplate.retrieveCetCode(entity.getEntityClazz())), getCurrentProvider());
+                EntityCustomizationUtils.getAppliesTo(CustomEntityTemplate.class, CustomFieldTemplate.retrieveCetCode(entity.getEntityClazz())));
 
             for (CustomFieldTemplate cft : cfts.values()) {
                 perksSource.add(new CustomFieldMatrixColumn(cft.getCode(), cft.getDescription()));

@@ -19,24 +19,11 @@
 package org.meveo.service.job;
 
 import javax.ejb.Stateless;
-import javax.persistence.NoResultException;
 
-import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.FtpImportedFile;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.BusinessService;
 
 @Stateless
-public class FtpImportedFileService extends PersistenceService<FtpImportedFile> {
+public class FtpImportedFileService extends BusinessService<FtpImportedFile> {
 
-    public FtpImportedFile findByCode(String code, Provider provider) {
-            QueryBuilder qb = new QueryBuilder(FtpImportedFile.class, "t");
-            qb.addCriterion("t.code", "=", code, true);
-            qb.addCriterionEntity("provider", provider);
-            try {
-                return (FtpImportedFile) qb.getQuery(getEntityManager()).getSingleResult();
-            } catch (NoResultException e) {
-                return null;
-            }
-        }
 }

@@ -26,9 +26,11 @@ import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
+import org.meveo.model.crm.Provider;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.admin.impl.UserService;
+import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +40,10 @@ public abstract class BaseService {
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
+    
+    @Inject
+    @ApplicationProvider
+    protected Provider appProvider;
 
 	protected Logger log = LoggerFactory.getLogger(getClass());
 

@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -38,7 +37,6 @@ import org.meveo.commons.utils.JsonUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
@@ -55,7 +53,6 @@ import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -116,26 +113,24 @@ public class InvoiceApi extends BaseApi {
 	 * Create an invoice based on the DTO object data and current user
      * 
 	 * @param invoiceDTO invoice DTO
-	 * @param currentUser current logged user
+
 	 * @return CreateInvoiceResponseDto
 	 * @throws MeveoApiException Meveo Api exception
 	 * @throws BusinessException Business exception
 	 * @throws Exception exception
 	 */
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public CreateInvoiceResponseDto create(InvoiceDto invoiceDTO, User currentUser) throws MeveoApiException, BusinessException, Exception {
+	public CreateInvoiceResponseDto create(InvoiceDto invoiceDTO) throws MeveoApiException, BusinessException, Exception {
         log.debug("InvoiceDto:" + JsonUtils.toJson(invoiceDTO, true));
-		validateInvoiceDto(invoiceDTO, currentUser);						 
-		Auditable auditable = new Auditable();
-		auditable.setCreated(new Date());
-		auditable.setCreator(currentUser);
+		validateInvoiceDto(invoiceDTO);						 
+		Auditable auditable = new Auditable(currentUser);
 		Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap = new HashMap<Long, TaxInvoiceAgregate>();
-		Provider provider = currentUser.getProvider();
-		BillingAccount billingAccount = billingAccountService.findByCode(invoiceDTO.getBillingAccountCode(), provider);
+		
+		BillingAccount billingAccount = billingAccountService.findByCode(invoiceDTO.getBillingAccountCode());
 		if (billingAccount == null) {
 			throw new EntityDoesNotExistsException(BillingAccount.class, invoiceDTO.getBillingAccountCode());
 		}
-		InvoiceType invoiceType = invoiceTypeService.findByCode(invoiceDTO.getInvoiceType(), provider);
+		InvoiceType invoiceType = invoiceTypeService.findByCode(invoiceDTO.getInvoiceType());
 		if (invoiceType == null) {
 			throw new EntityDoesNotExistsException(InvoiceType.class, invoiceDTO.getInvoiceType());
 		}
@@ -145,7 +140,6 @@ public class InvoiceApi extends BaseApi {
 		BigDecimal invoiceAmountWithTax = BigDecimal.ZERO;
 		Invoice invoice = new Invoice();
 		invoice.setBillingAccount(billingAccount);
-		invoice.setAuditable(auditable);
 
 		invoice.setInvoiceDate(invoiceDTO.getInvoiceDate());
 		invoice.setDueDate(invoiceDTO.getDueDate());
@@ -155,7 +149,7 @@ public class InvoiceApi extends BaseApi {
 		}
 		invoice.setPaymentMethod(paymentMethod);
 		invoice.setInvoiceType(invoiceType);
-		invoiceService.create(invoice, currentUser);
+		invoiceService.create(invoice);
 		if (invoiceDTO.getListInvoiceIdToLink() != null) {
 			for (Long invoiceId : invoiceDTO.getListInvoiceIdToLink()) {
 				Invoice invoiceTmp = invoiceService.findById(invoiceId);
@@ -167,10 +161,10 @@ public class InvoiceApi extends BaseApi {
 				}
 				invoice.getLinkedInvoices().add(invoiceTmp);
 				invoiceTmp.getLinkedInvoices().add(invoice);
-				invoiceService.update(invoiceTmp, currentUser);
+				invoiceService.update(invoiceTmp);
 			}
 		}
-		invoiceService.update(invoice, currentUser);
+		invoiceService.update(invoice);
 		List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
 		if (userAccounts == null || userAccounts.isEmpty()) {
 			throw new BusinessApiException("BillingAccount " + invoiceDTO.getBillingAccountCode() + " has no userAccount");
@@ -189,9 +183,9 @@ public class InvoiceApi extends BaseApi {
 			invoiceAgregateCat.setItemNumber(catInvAgrDto.getListSubCategoryInvoiceAgregateDto().size());
 			invoiceAgregateCat.setUserAccount(userAccount);
 			invoiceAgregateCat.setBillingAccount(billingAccount);
-			invoiceAgregateCat.setInvoiceCategory(invoiceCategoryService.findByCode(catInvAgrDto.getCategoryInvoiceCode(), currentUser.getProvider()));
+			invoiceAgregateCat.setInvoiceCategory(invoiceCategoryService.findByCode(catInvAgrDto.getCategoryInvoiceCode()));
 			invoiceAgregateCat.setUserAccount(userAccount);
-			invoiceAgregateService.create(invoiceAgregateCat, currentUser);
+			invoiceAgregateService.create(invoiceAgregateCat);
 			
 			for (SubCategoryInvoiceAgregateDto subCatInvAgrDTO : catInvAgrDto.getListSubCategoryInvoiceAgregateDto()) {
 				BigDecimal subCatAmountWithoutTax = BigDecimal.ZERO;
@@ -199,7 +193,7 @@ public class InvoiceApi extends BaseApi {
 				BigDecimal subCatAmountWithTax = BigDecimal.ZERO;
 				Tax currentTax = null;
 				List<Tax> taxes = new ArrayList<Tax>();
-				InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(subCatInvAgrDTO.getInvoiceSubCategoryCode(), provider);
+				InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(subCatInvAgrDTO.getInvoiceSubCategoryCode());
 				for (InvoiceSubcategoryCountry invoicesubcatCountry : invoiceSubCategory.getInvoiceSubcategoryCountries()) {
                     if ((invoicesubcatCountry.getSellingCountry()==null || 
                     		(billingAccount.getCustomerAccount().getCustomer().getSeller().getTradingCountry()!=null 
@@ -235,14 +229,14 @@ public class InvoiceApi extends BaseApi {
 					
 					RatedTransaction meveoRatedTransaction = new RatedTransaction(null, ratedTransaction.getUsageDate(), ratedTransaction.getUnitAmountWithoutTax(),
                         ratedTransaction.getUnitAmountWithTax(), ratedTransaction.getUnitAmountTax(), ratedTransaction.getQuantity(), amountWithoutTax, amountWithTax, amountTax,
-                        RatedTransactionStatusEnum.BILLED, provider, userAccount.getWallet(), billingAccount, invoiceSubCategory, null, null, null,null
+                        RatedTransactionStatusEnum.BILLED, userAccount.getWallet(), billingAccount, invoiceSubCategory, null, null, null,null
                         , null, null, null, null);
 					meveoRatedTransaction.setCode(ratedTransaction.getCode());
 					meveoRatedTransaction.setDescription(ratedTransaction.getDescription());
 					meveoRatedTransaction.setUnityDescription(ratedTransaction.getUnityDescription());
 					meveoRatedTransaction.setInvoice(invoice);
 					meveoRatedTransaction.setWallet(userAccount.getWallet());
-					ratedTransactionService.create(meveoRatedTransaction, currentUser);
+					ratedTransactionService.create(meveoRatedTransaction);
 
 					subCatAmountWithoutTax = subCatAmountWithoutTax.add(amountWithoutTax);
 					subCatAmountTax = subCatAmountTax.add(amountTax);
@@ -256,7 +250,7 @@ public class InvoiceApi extends BaseApi {
 						subCatAmountWithTax = subCatAmountWithTax.add(ratedTransaction.getAmountWithTax());
 						ratedTransaction.setStatus(RatedTransactionStatusEnum.BILLED);
 						ratedTransaction.setInvoice(invoice);
-						ratedTransactionService.update(ratedTransaction, currentUser);
+						ratedTransactionService.update(ratedTransaction);
 					}
 		     	}
 
@@ -285,7 +279,7 @@ public class InvoiceApi extends BaseApi {
 					invoiceAgregateSubcat.setAmountTax(getAmountTax(invoiceAgregateSubcat.getAmountWithTax(), invoiceAgregateSubcat.getAmountWithoutTax()));
 				}
 
-				invoiceAgregateService.create(invoiceAgregateSubcat, currentUser);
+				invoiceAgregateService.create(invoiceAgregateSubcat);
 				for (Tax tax : taxes) {
 					TaxInvoiceAgregate invoiceAgregateTax = null;
 					Long taxId = tax.getId();
@@ -328,7 +322,7 @@ public class InvoiceApi extends BaseApi {
 		}
 
 		for (Entry<Long, TaxInvoiceAgregate> entry : taxInvoiceAgregateMap.entrySet()) {
-			invoiceAgregateService.create(entry.getValue(), currentUser);
+			invoiceAgregateService.create(entry.getValue());
 		}
 
 		invoice.setAmountWithoutTax(invoiceAmountWithoutTax);
@@ -336,9 +330,8 @@ public class InvoiceApi extends BaseApi {
 		invoice.setAmountWithTax(invoiceAmountWithTax);
 		
 		BigDecimal netToPay = invoice.getAmountWithTax();
-		if (!provider.isEntreprise() && invoiceDTO.isIncludeBalance()) {
-            BigDecimal balance = customerAccountService.customerAccountBalanceDue(null, invoice.getBillingAccount().getCustomerAccount().getCode(), invoice.getDueDate(),
-                invoice.getProvider());
+		if (!appProvider.isEntreprise() && invoiceDTO.isIncludeBalance()) {
+            BigDecimal balance = customerAccountService.customerAccountBalanceDue(null, invoice.getBillingAccount().getCustomerAccount().getCode(), invoice.getDueDate());
 
 			if (balance == null) {
 				throw new BusinessException("account balance calculation failed");
@@ -346,10 +339,10 @@ public class InvoiceApi extends BaseApi {
 			netToPay = invoice.getAmountWithTax().add(balance);
 		}
 		invoice.setNetToPay(netToPay);
-		invoiceService.update(invoice, currentUser);
+		invoiceService.update(invoice);
 	
 		try {
-			populateCustomFields(invoiceDTO.getCustomFields(), invoice, true, currentUser, true);
+			populateCustomFields(invoiceDTO.getCustomFields(), invoice, true, true);
 
         } catch (MissingParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
@@ -370,7 +363,7 @@ public class InvoiceApi extends BaseApi {
 		
 		//pdf and xml are added to response in the ws impl
 		if (invoiceDTO.isAutoValidation()) {
-			response.setInvoiceNumber(validateInvoice(invoice.getId(), currentUser));
+			response.setInvoiceNumber(validateInvoice(invoice.getId()));
 		}
 		return response;
 	}
@@ -385,8 +378,8 @@ public class InvoiceApi extends BaseApi {
 	 * @return list of invoice DTOs
 	 * @throws MeveoApiException Meveo Api exception
 	 */
-	public List<InvoiceDto> list(String customerAccountCode, Provider provider) throws MeveoApiException {
-		return listByPresentInAR(customerAccountCode, provider, false)	;
+	public List<InvoiceDto> list(String customerAccountCode) throws MeveoApiException {
+		return listByPresentInAR(customerAccountCode, false)	;
 	}
 	
 	/**
@@ -396,11 +389,11 @@ public class InvoiceApi extends BaseApi {
 	 * @return list of invoice DTOs
 	 * @throws MeveoApiException Meveo Api exception
 	 */
-	public List<InvoiceDto> listPresentInAR(String customerAccountCode, Provider provider) throws MeveoApiException {
-		return listByPresentInAR(customerAccountCode, provider, true)	;
+	public List<InvoiceDto> listPresentInAR(String customerAccountCode) throws MeveoApiException {
+		return listByPresentInAR(customerAccountCode, true)	;
 	}
 
-	public List<InvoiceDto> listByPresentInAR(String customerAccountCode, Provider provider,boolean isPresentInAR) throws MeveoApiException {
+	public List<InvoiceDto> listByPresentInAR(String customerAccountCode, boolean isPresentInAR) throws MeveoApiException {
 		if (StringUtils.isBlank(customerAccountCode)) {
             missingParameters.add("customerAccountCode");
             handleMissingParameters();
@@ -408,7 +401,7 @@ public class InvoiceApi extends BaseApi {
 
         List<InvoiceDto> customerInvoiceDtos = new ArrayList<InvoiceDto>();
 
-        CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode, provider);
+        CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
         if (customerAccount == null) {
             throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
         }
@@ -416,7 +409,7 @@ public class InvoiceApi extends BaseApi {
         for (BillingAccount billingAccount : customerAccount.getBillingAccounts()) {
             List<Invoice> invoiceList = new ArrayList<Invoice>();
             if(isPresentInAR){
-            	invoiceList = invoiceService.getInvoicesWithAccountOperation(billingAccount, provider);
+            	invoiceList = invoiceService.getInvoicesWithAccountOperation(billingAccount);
             }else{
             	invoiceList =  billingAccount.getInvoices();
             }          
@@ -437,11 +430,11 @@ public class InvoiceApi extends BaseApi {
 	 * @param status status of billing run
 	 * @param billingAccountNumber billing account number
 	 * @param billableBillingAcountNumber billable Billing account number
-	 * @param currentUser current logged user
+
 	 * @return the billing run
 	 * @throws BusinessException Business exception
 	 */
-    public BillingRun updateBR(BillingRun billingRun, BillingRunStatusEnum status, Integer billingAccountNumber, Integer billableBillingAcountNumber, User currentUser)
+    public BillingRun updateBR(BillingRun billingRun, BillingRunStatusEnum status, Integer billingAccountNumber, Integer billableBillingAcountNumber)
             throws BusinessException {
 		billingRun.setStatus(status);
 		if (billingAccountNumber != null) {
@@ -450,7 +443,7 @@ public class InvoiceApi extends BaseApi {
 		if (billableBillingAcountNumber != null) {
 			billingRun.setBillableBillingAcountNumber(billableBillingAcountNumber);
 		}
-		return billingRunService.update(billingRun, currentUser);
+		return billingRunService.update(billingRun);
 	}
 	
 	/**
@@ -460,8 +453,8 @@ public class InvoiceApi extends BaseApi {
 	 * @param user current logged user
 	 * @throws BusinessException business exception
 	 */
-	public void validateBR(BillingRun billingRun, User user) throws BusinessException {
-		billingRunService.forceValidate(billingRun.getId(), user);
+	public void validateBR(BillingRun billingRun) throws BusinessException {
+		billingRunService.forceValidate(billingRun.getId());
 	}
 
 
@@ -470,7 +463,7 @@ public class InvoiceApi extends BaseApi {
      * the preinvoicing resport <li>Validate the postinvoicing report <li>Vaidate the BillingRun </lu>
 	 * 
 	 * @param generateInvoiceRequestDto
-	 * @param currentUser
+
 	 * @return The invoiceNumber
 	 * @throws BusinessException
 	 * @throws MeveoApiException 
@@ -479,10 +472,10 @@ public class InvoiceApi extends BaseApi {
 	 * @throws InvoiceExistException 
 	 * @throws Exception
 	 */
-	 public GenerateInvoiceResultDto generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto, User currentUser) throws BusinessException, MeveoApiException, FileNotFoundException, InvoiceExistException, ImportInvoiceException {
-		 return generateInvoice(generateInvoiceRequestDto,false, currentUser);
+	 public GenerateInvoiceResultDto generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto) throws BusinessException, MeveoApiException, FileNotFoundException, InvoiceExistException, ImportInvoiceException {
+		 return generateInvoice(generateInvoiceRequestDto,false);
 	 }
-    public GenerateInvoiceResultDto generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto, boolean isDraft, User currentUser) throws BusinessException, MeveoApiException, FileNotFoundException, InvoiceExistException, ImportInvoiceException {
+    public GenerateInvoiceResultDto generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto, boolean isDraft) throws BusinessException, MeveoApiException, FileNotFoundException, InvoiceExistException, ImportInvoiceException {
 
 		if (generateInvoiceRequestDto == null) {
 			missingParameters.add("generateInvoiceRequest");
@@ -503,20 +496,20 @@ public class InvoiceApi extends BaseApi {
 
 		handleMissingParameters();
 		
-		BillingAccount billingAccount = billingAccountService.findByCode(generateInvoiceRequestDto.getBillingAccountCode(), currentUser.getProvider(), Arrays.asList("billingRun"));
+		BillingAccount billingAccount = billingAccountService.findByCode(generateInvoiceRequestDto.getBillingAccountCode(), Arrays.asList("billingRun"));
 		if (billingAccount == null) {
 			throw new EntityDoesNotExistsException(BillingAccount.class, generateInvoiceRequestDto.getBillingAccountCode());
 		}
 
 		Filter ratedTransactionFilter =null;
 		if(generateInvoiceRequestDto.getFilter()!=null){			
-			ratedTransactionFilter=filteredListApi.getFilterFromDto(generateInvoiceRequestDto.getFilter(), currentUser);
+			ratedTransactionFilter=filteredListApi.getFilterFromDto(generateInvoiceRequestDto.getFilter());
 			if(ratedTransactionFilter == null){
 				throw new EntityDoesNotExistsException(Filter.class, generateInvoiceRequestDto.getFilter().getCode());
 			}
 		}		
 		Invoice invoice = invoiceService.generateInvoice(billingAccount, generateInvoiceRequestDto.getInvoicingDate() , generateInvoiceRequestDto.getLastTransactionDate(), 
-				ratedTransactionFilter, generateInvoiceRequestDto.getOrderNumber(), isDraft,currentUser);				
+				ratedTransactionFilter, generateInvoiceRequestDto.getOrderNumber(), isDraft);				
 		invoiceService.commit();
 		
 		if(isDraft){
@@ -525,13 +518,13 @@ public class InvoiceApi extends BaseApi {
 			}
 		}
 		if((generateInvoiceRequestDto.getGenerateXML() != null && generateInvoiceRequestDto.getGenerateXML())||(generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF())){
-        	 invoiceService.getXMLInvoice(invoice,invoice.getInvoiceNumber(), currentUser, false);
+        	 invoiceService.getXMLInvoice(invoice,invoice.getInvoiceNumber(), false);
         }
         if((generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF())){
-        	invoice.setPdf(invoiceService.generatePdfInvoice(invoice,invoice.getInvoiceNumber(), currentUser));
+        	invoice.setPdf(invoiceService.generatePdfInvoice(invoice,invoice.getInvoiceNumber()));
         }
         if(generateInvoiceRequestDto.getGenerateAO() != null && generateInvoiceRequestDto.getGenerateAO()){
-        	recordedInvoiceService.generateRecordedInvoice(invoice, currentUser);
+        	recordedInvoiceService.generateRecordedInvoice(invoice);
         }    
         
         GenerateInvoiceResultDto generateInvoiceResultDto = new GenerateInvoiceResultDto(invoice, true);
@@ -542,12 +535,12 @@ public class InvoiceApi extends BaseApi {
 		return generateInvoiceResultDto;
 	}
 
-	public String getXMLInvoice(String invoiceNumber, User currentUser) throws FileNotFoundException, MissingParameterException, EntityDoesNotExistsException, BusinessException {
-		return getXMLInvoice(invoiceNumber, invoiceTypeService.getDefaultCommertial(currentUser).getCode(), currentUser);
+	public String getXMLInvoice(String invoiceNumber) throws FileNotFoundException, MissingParameterException, EntityDoesNotExistsException, BusinessException {
+		return getXMLInvoice(invoiceNumber, invoiceTypeService.getDefaultCommertial().getCode());
 	}
 
 
-    public String getXMLInvoice(String invoiceNumber, String invoiceTypeCode, User currentUser) throws FileNotFoundException, MissingParameterException,
+    public String getXMLInvoice(String invoiceNumber, String invoiceTypeCode) throws FileNotFoundException, MissingParameterException,
             EntityDoesNotExistsException, BusinessException {
 		log.debug("getXMLInvoice  invoiceNumber:{}", invoiceNumber);
 		if (StringUtils.isBlank(invoiceNumber)) {
@@ -558,43 +551,43 @@ public class InvoiceApi extends BaseApi {
 		}
 		handleMissingParameters();
 
-		InvoiceType invoiceType = invoiceTypeService.findByCode(invoiceTypeCode, currentUser.getProvider());
+		InvoiceType invoiceType = invoiceTypeService.findByCode(invoiceTypeCode);
 		if (invoiceType == null) {
 			throw new EntityDoesNotExistsException(InvoiceType.class, invoiceTypeCode);
 		}
 
-		Invoice invoice = invoiceService.findByInvoiceNumberAndType(invoiceNumber, invoiceType, currentUser.getProvider());
+		Invoice invoice = invoiceService.findByInvoiceNumberAndType(invoiceNumber, invoiceType);
 		if (invoice == null) {
 			throw new EntityDoesNotExistsException(Invoice.class, invoiceNumber, "invoiceNumber", invoiceTypeCode, "invoiceTypeCode");
 		}
 		
-		return invoiceService.getXMLInvoice(invoice, invoiceNumber, currentUser, true);
+		return invoiceService.getXMLInvoice(invoice, invoiceNumber, true);
 	}
 	
     /**
      * 
      * @param invoiceNumber
-     * @param currentUser
+
      * @return
      * @throws MissingParameterException
      * @throws EntityDoesNotExistsException
      * @throws Exception
      */
-	public byte[] getPdfInvoince(String invoiceNumber, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, Exception {
-		return getPdfInvoince(invoiceNumber, invoiceTypeService.getDefaultCommertial(currentUser).getCode(), currentUser);
+	public byte[] getPdfInvoince(String invoiceNumber) throws MissingParameterException, EntityDoesNotExistsException, Exception {
+		return getPdfInvoince(invoiceNumber, invoiceTypeService.getDefaultCommertial().getCode());
 	}
 
 	/**
 	 * 
 	 * @param invoiceNumber
 	 * @param invoiceTypeCode
-	 * @param currentUser
+
 	 * @return
 	 * @throws MissingParameterException
 	 * @throws EntityDoesNotExistsException
 	 * @throws Exception
 	 */
-	public byte[] getPdfInvoince(String invoiceNumber, String invoiceTypeCode, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, Exception {
+	public byte[] getPdfInvoince(String invoiceNumber, String invoiceTypeCode) throws MissingParameterException, EntityDoesNotExistsException, Exception {
 		log.debug("getPdfInvoince  invoiceNumber:{}", invoiceNumber);
 		if (StringUtils.isBlank(invoiceNumber)) {
 			missingParameters.add("invoiceNumber");
@@ -604,29 +597,29 @@ public class InvoiceApi extends BaseApi {
 		}
 		handleMissingParameters();
 
-		InvoiceType invoiceType = invoiceTypeService.findByCode(invoiceTypeCode, currentUser.getProvider());
+		InvoiceType invoiceType = invoiceTypeService.findByCode(invoiceTypeCode);
 		if (invoiceType == null) {
 			throw new EntityDoesNotExistsException(InvoiceType.class, invoiceTypeCode);
 		}
 
-		Invoice invoice = invoiceService.findByInvoiceNumberAndType(invoiceNumber, invoiceType, currentUser.getProvider());
+		Invoice invoice = invoiceService.findByInvoiceNumberAndType(invoiceNumber, invoiceType);
 		if (invoice == null) {
 			throw new EntityDoesNotExistsException(Invoice.class, invoiceNumber, "invoiceNumber", invoiceTypeCode, "invoiceTypeCode");
 		}
 		
-		return invoiceService.generatePdfInvoice(invoice, invoiceNumber, currentUser);
+		return invoiceService.generatePdfInvoice(invoice, invoiceNumber);
 	}
 
 	/**
 	 * 
 	 * @param invoiceId
-	 * @param currentUser
+
 	 * @return
 	 * @throws MissingParameterException
 	 * @throws EntityDoesNotExistsException
 	 * @throws BusinessException
 	 */
-	public String validateInvoice(Long invoiceId, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
+	public String validateInvoice(Long invoiceId) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
 		if (StringUtils.isBlank(invoiceId)) {
 			missingParameters.add("invoiceId");
 		}
@@ -637,20 +630,20 @@ public class InvoiceApi extends BaseApi {
 			throw new EntityDoesNotExistsException(Invoice.class, invoiceId);
 		}
 		invoice.setInvoiceNumber(invoiceService.getInvoiceNumber(invoice));		
-		invoiceService.update(invoice, currentUser);
+		invoiceService.update(invoice);
 		return invoice.getInvoiceNumber();
 	}
 
 	/**
 	 * 
 	 * @param invoiceId
-	 * @param currentUser
+
 	 * @throws MissingParameterException
 	 * @throws EntityDoesNotExistsException
 	 * @throws MeveoApiException
 	 * @throws BusinessException
 	 */
-	public void cancelInvoice(Long invoiceId, User currentUser) throws MeveoApiException, BusinessException {
+	public void cancelInvoice(Long invoiceId) throws MeveoApiException, BusinessException {
 		if (StringUtils.isBlank(invoiceId)) {
 			missingParameters.add("invoiceId");
 		}
@@ -665,11 +658,11 @@ public class InvoiceApi extends BaseApi {
 	/**
 	 * 
 	 * @param invoiceDTO
-	 * @param currentUser
+
 	 * @throws MissingParameterException
 	 * @throws EntityDoesNotExistsException
 	 */
-	private void validateInvoiceDto(InvoiceDto invoiceDTO, User currentUser) throws MissingParameterException, EntityDoesNotExistsException {
+	private void validateInvoiceDto(InvoiceDto invoiceDTO) throws MissingParameterException, EntityDoesNotExistsException {
 		if (StringUtils.isBlank(invoiceDTO.getInvoiceMode())) {
 			missingParameters.add("invoiceMode");
 		}
@@ -699,7 +692,7 @@ public class InvoiceApi extends BaseApi {
 			if (StringUtils.isBlank(catInvAgrDto.getCategoryInvoiceCode())) {
 				missingParameters.add("categoryInvoiceAgregateDto.categoryInvoiceCode");
 			}
-			if (invoiceCategoryService.findByCode(catInvAgrDto.getCategoryInvoiceCode(), currentUser.getProvider()) == null) {
+			if (invoiceCategoryService.findByCode(catInvAgrDto.getCategoryInvoiceCode()) == null) {
 				throw new EntityDoesNotExistsException(InvoiceSubCategory.class, catInvAgrDto.getCategoryInvoiceCode());
 			}
 			if (catInvAgrDto.getListSubCategoryInvoiceAgregateDto() == null || catInvAgrDto.getListSubCategoryInvoiceAgregateDto().isEmpty()) {
@@ -710,7 +703,7 @@ public class InvoiceApi extends BaseApi {
 				if (StringUtils.isBlank(subCatInvAgrDto.getInvoiceSubCategoryCode())) {
 					missingParameters.add("subCategoryInvoiceAgregateDto.invoiceSubCategoryCode");
 				}
-				if (invoiceSubCategoryService.findByCode(subCatInvAgrDto.getInvoiceSubCategoryCode(), currentUser.getProvider()) == null) {
+				if (invoiceSubCategoryService.findByCode(subCatInvAgrDto.getInvoiceSubCategoryCode()) == null) {
 					throw new EntityDoesNotExistsException(InvoiceSubCategory.class, subCatInvAgrDto.getInvoiceSubCategoryCode());
 				}
 
@@ -758,7 +751,7 @@ public class InvoiceApi extends BaseApi {
 	 * @throws MeveoApiException
 	 * @throws BusinessException
 	 */
-    public InvoiceDto find(Long id, String invoiceNumber, String invoiceTypeCode, boolean includeTransactions, Provider provider) throws MissingParameterException, EntityDoesNotExistsException,
+    public InvoiceDto find(Long id, String invoiceNumber, String invoiceTypeCode, boolean includeTransactions) throws MissingParameterException, EntityDoesNotExistsException,
             MeveoApiException, BusinessException {
 		boolean searchById = true;
 		
@@ -776,13 +769,13 @@ public class InvoiceApi extends BaseApi {
         Invoice invoice = null;
         
         if(searchById) {
-        	invoice = invoiceService.findById(id, provider);
+        	invoice = invoiceService.findById(id);
         } else {
-        	InvoiceType invoiceType = invoiceTypeService.findByCode(invoiceTypeCode, provider);
+        	InvoiceType invoiceType = invoiceTypeService.findByCode(invoiceTypeCode);
         	if (invoiceType == null) {
     			throw new EntityDoesNotExistsException(InvoiceType.class, invoiceTypeCode);
     		}
-        	invoice = invoiceService.findByInvoiceNumberAndType(invoiceNumber, invoiceType, provider);
+        	invoice = invoiceService.findByInvoiceNumberAndType(invoiceNumber, invoiceType);
         }
 
         if (invoice == null) {
@@ -804,7 +797,7 @@ public class InvoiceApi extends BaseApi {
 	 * @return
 	 */
 	private BigDecimal getAmountWithTax(Tax tax,BigDecimal amountWithoutTax ){
-		Integer rounding =  tax.getProvider().getRounding()==null?2:tax.getProvider().getRounding();
+		Integer rounding =  appProvider.getRounding()==null?2:appProvider.getRounding();
 		BigDecimal ttc = amountWithoutTax.add(amountWithoutTax.multiply(tax.getPercent()).divide(new BigDecimal(100),rounding,RoundingMode.HALF_UP));
 		return ttc;	
 	}

@@ -37,12 +37,12 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.EnableEntity;
 
 @Entity
 @Table(name = "AR_DDREQUEST_LOT")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_DDREQUEST_LOT_SEQ")
-public class DDRequestLOT extends AuditableEntity {
+public class DDRequestLOT extends EnableEntity {
 
 	private static final long serialVersionUID = 1L;
 

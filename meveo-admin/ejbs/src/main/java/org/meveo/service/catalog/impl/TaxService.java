@@ -21,14 +21,8 @@ package org.meveo.service.catalog.impl;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
 
-import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.commons.utils.QueryBuilder.QueryLikeStyleEnum;
 import org.meveo.model.billing.Tax;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.base.MultilanguageEntityService;
 
 /**
@@ -37,48 +31,14 @@ import org.meveo.service.base.MultilanguageEntityService;
 @Stateless
 public class TaxService extends MultilanguageEntityService<Tax> {
 
-	@Override
-	public Tax findByCode(String code, Provider provider) {
-		return findByCode(getEntityManager(), code, provider);
-	}
-
-	@Override
-	public Tax findByCode(EntityManager em, String code, Provider provider) {
-		QueryBuilder qb = new QueryBuilder(Tax.class, "t");
-		qb.addCriterion("t.code", "=", code, false);
-		qb.addCriterionEntity("t.provider", provider);
-
-		try {
-			return (Tax) qb.getQuery(em).getSingleResult();
-		} catch (NoResultException ne) {
-			return null;
-		} catch (NonUniqueResultException nre) {
-			return null;
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	public List<Tax> findStartsWithCode(EntityManager em, String taxId, Provider provider) {
-		try {
-			QueryBuilder qb = new QueryBuilder(Tax.class, "t");
-			qb.like("t.code", taxId, QueryLikeStyleEnum.MATCH_BEGINNING, false);
-			qb.addCriterionEntity("t.provider", provider);
-			return (List<Tax>) qb.getQuery(em).getResultList();
-		} catch (NoResultException ne) {
-			return null;
-		} catch (NonUniqueResultException nre) {
-			return null;
-		}
-	}
-
-	public int getNbTaxesNotAssociated(Provider provider) {
+	public int getNbTaxesNotAssociated() {
 		return ((Long) getEntityManager().createNamedQuery("tax.getNbTaxesNotAssociated", Long.class)
-				.setParameter("provider", provider).getSingleResult()).intValue();
+				.getSingleResult()).intValue();
 	}
 
-	public List<Tax> getTaxesNotAssociated(Provider provider) {
+	public List<Tax> getTaxesNotAssociated() {
 		return (List<Tax>) getEntityManager().createNamedQuery("tax.getTaxesNotAssociated", Tax.class)
-				.setParameter("provider", provider).getResultList();
+				.getResultList();
 	}
 
 }

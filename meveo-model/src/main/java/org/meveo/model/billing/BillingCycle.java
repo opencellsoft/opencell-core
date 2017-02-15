@@ -43,9 +43,9 @@ import org.meveo.model.catalog.Calendar;
  * Billing cycle.
  */
 @Entity
-@ExportIdentifier({ "code", "provider" })
+@ExportIdentifier({ "code"})
 @CustomFieldEntity(cftCodePrefix = "BILLING_CYCLE")
-@Table(name = "BILLING_CYCLE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
+@Table(name = "BILLING_CYCLE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_CYCLE_SEQ")
 public class BillingCycle extends BusinessCFEntity {
 

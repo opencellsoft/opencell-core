@@ -14,7 +14,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.IEntity;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.CurrentUser;
@@ -40,10 +39,9 @@ public class FilteringJobBean {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, String parameter, String filterCode, ScriptInterface scriptInterface, Map<String, Object> variables,
             String recordVariableName) {
-        log.debug("Running for user={}, parameter={}", currentUser, parameter);
+        log.debug("Running for parameter={}", parameter);
 
-        Provider provider = currentUser.getProvider();
-        Filter filter = filterService.findByCode(filterCode, provider);
+        Filter filter = filterService.findByCode(filterCode);
         if (filter == null) {
             return;
         }

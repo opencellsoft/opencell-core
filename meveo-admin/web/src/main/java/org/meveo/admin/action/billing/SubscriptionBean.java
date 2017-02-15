@@ -22,7 +22,6 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -38,7 +37,6 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.EntityListDataModelPF;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.model.Auditable;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
@@ -313,7 +311,6 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 			}
 			
 			entity = subscriptionService.attach(entity);
-			entity.getProvider().getCode();
 			String description = oneShotChargeInstance.getDescription();
 			oneShotChargeInstance.setChargeTemplate(oneShotChargeTemplateService.attach((OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate()));
 			oneShotChargeInstance.setDescription(description);
@@ -333,7 +330,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
 			oneShotChargeInstanceService.oneShotChargeApplication(entity, (OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate(), selectedWalletTemplate.getCode(),
 					oneShotChargeInstance.getChargeDate(), oneShotChargeInstance.getAmountWithoutTax(), oneShotChargeInstance.getAmountWithTax(), oneShotChargeInstanceQuantity,
-					oneShotChargeInstance.getCriteria1(), oneShotChargeInstance.getCriteria2(), oneShotChargeInstance.getCriteria3(), null, getCurrentUser(), true);
+					oneShotChargeInstance.getCriteria1(), oneShotChargeInstance.getCriteria2(), oneShotChargeInstance.getCriteria3(), null, true);
 
 			oneShotChargeInstance = null;
 			oneShotChargeInstances = null;
@@ -365,7 +362,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         try {
             if ((recurringChargeInstance != null) && (recurringChargeInstance.getId() != null)) {
                 log.debug("update RecurringChargeIns {}, id={}", recurringChargeInstance, recurringChargeInstance.getId());
-                recurringChargeInstanceService.update(recurringChargeInstance, getCurrentUser());
+                recurringChargeInstanceService.update(recurringChargeInstance);
 
                 recurringChargeInstance = null;
                 recurringChargeInstances = null;
@@ -486,7 +483,6 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 				log.debug("instanciateManyServices id={} checked, quantity={}", serviceTemplate.getId(), quantity);
 
 				ServiceInstance serviceInstance = new ServiceInstance();
-				serviceInstance.setProvider(serviceTemplate.getProvider());
 				serviceInstance.setCode(serviceTemplate.getCode());
 				serviceInstance.setDescription(serviceTemplate.getDescription());
 				serviceInstance.setServiceTemplate(serviceTemplate);
@@ -503,7 +499,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 				serviceInstance.setSubscriptionDate(calendar.getTime());
 			    }
 				serviceInstance.setQuantity(quantity);
-				serviceInstanceService.serviceInstanciation(serviceInstance, getCurrentUser());
+				serviceInstanceService.serviceInstanciation(serviceInstance);
 				serviceInstances.add(serviceInstance);
 				serviceTemplates.remove(serviceTemplate);
 			}
@@ -546,7 +542,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
                 
                 log.debug("activateService:serviceInstance.getRecurrringChargeInstances.size={}", selectedServiceInstance.getRecurringChargeInstances().size());
 
-				serviceInstanceService.serviceActivation(selectedServiceInstance, null, null, getCurrentUser());
+				serviceInstanceService.serviceActivation(selectedServiceInstance, null, null);
 				
 	            initServiceInstances(entity.getServiceInstances());
                 resetChargesDataModels();
@@ -573,10 +569,6 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 			if (productInstance.getApplicationDate() == null) {
 				productInstance.setApplicationDate(new Date());
 			}
-			Auditable auditable = new Auditable();
-			auditable.setCreated(new Date());
-			auditable.setCreator(currentUser);
-			productInstance.setAuditable(auditable);
 		}
 
 		productInstance.setSubscription(getPersistenceService().refreshOrRetrieve(entity));
@@ -584,8 +576,8 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 		productInstance.setProductTemplate(productTemplateService.refreshOrRetrieve(productInstance.getProductTemplate()));
 
 		try {
-			productInstanceService.create(productInstance, currentUser);
-			productInstanceService.applyProductInstance(productInstance, null, null, null, currentUser, true);
+			productInstanceService.create(productInstance);
+			productInstanceService.applyProductInstance(productInstance, null, null, null, true);
 		} catch (BusinessException e) {
 			messages.error(new BundleKey("messages", "message.product.application.fail"), e.getMessage());
 		} catch (Exception e) {
@@ -615,9 +607,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             entity.getServiceInstances().add(index, selectedServiceInstance);
             
             if (selectedServiceInstance.getStatus() != InstanceStatusEnum.TERMINATED) {
-                serviceInstanceService.terminateService(selectedServiceInstance, terminationDate, newSubscriptionTerminationReason, ChargeInstance.NO_ORDER_NUMBER, getCurrentUser());
+                serviceInstanceService.terminateService(selectedServiceInstance, terminationDate, newSubscriptionTerminationReason, ChargeInstance.NO_ORDER_NUMBER);
             } else {
-                serviceInstanceService.updateTerminationMode(selectedServiceInstance, terminationDate, getCurrentUser());
+                serviceInstanceService.updateTerminationMode(selectedServiceInstance, terminationDate);
             }           
 
             initServiceInstances(entity.getServiceInstances());           
@@ -640,7 +632,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     	try { 
 			log.debug("selected subscriptionTerminationReason={},terminationDate={},subscriptionId={},status={}",
 					new Object[] { entity.getSubscriptionTerminationReason(), entity.getTerminationDate(), entity.getCode(), entity.getStatus() });
-    		subscriptionService.terminateSubscription(entity,entity.getTerminationDate(), entity.getSubscriptionTerminationReason(), ChargeInstance.NO_ORDER_NUMBER, getCurrentUser());
+    		subscriptionService.terminateSubscription(entity,entity.getTerminationDate(), entity.getSubscriptionTerminationReason(), ChargeInstance.NO_ORDER_NUMBER);
     		messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
     	} catch (BusinessException e1) {
     		messages.error(e1.getMessage());
@@ -678,7 +670,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             entity.getServiceInstances().remove(index);
             entity.getServiceInstances().add(index, selectedServiceInstance);
             
-			serviceInstanceService.serviceSuspension(selectedServiceInstance, new Date(), getCurrentUser());
+			serviceInstanceService.serviceSuspension(selectedServiceInstance, new Date());
 			
 			initServiceInstances(entity.getServiceInstances()); 
 			
@@ -719,7 +711,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
 	public void populateAccounts(UserAccount userAccount) {
 		entity.setUserAccount(userAccount);
-		if (userAccount != null && userAccount.getProvider() != null && userAccount.getProvider().isLevelDuplication()) {
+		if (userAccount != null && appProvider.isLevelDuplication()) {
 			entity.setCode(userAccount.getCode());
 			entity.setDescription(userAccount.getDescription());
 		}
@@ -747,17 +739,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 	protected String getDefaultSort() {
 		return "code";
 	}
-
-	@Override
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
-
-	@Override
-	protected List<String> getListFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
-
+	
 	public UsageChargeInstance getUsageChargeInstance() {
 		return usageChargeInstance;
 	}
@@ -776,7 +758,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         try {
             if (usageChargeInstance != null && usageChargeInstance.getId() != null) {
                 log.debug("update usageChargeIns {}, id={}", usageChargeInstance, usageChargeInstance.getId());
-                usageChargeInstanceService.update(usageChargeInstance, getCurrentUser());
+                usageChargeInstanceService.update(usageChargeInstance);
                 
                 usageChargeInstance = null;
                 usageChargeInstances = null;
@@ -806,8 +788,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         
         OneShotChargeTemplate chargeTemplate = oneShotChargeTemplateService.attach(oneShotChargeTemplate);
 
-        List<ServiceChargeTemplateSubscription> serviceChargeTemplateSubscriptions = serviceChargeTemplateSubscriptionService.findBySubscriptionChargeTemplate(chargeTemplate,
-            getCurrentProvider());
+        List<ServiceChargeTemplateSubscription> serviceChargeTemplateSubscriptions = serviceChargeTemplateSubscriptionService.findBySubscriptionChargeTemplate(chargeTemplate);
 
         if (serviceChargeTemplateSubscriptions != null) {
             for (ServiceChargeTemplateSubscription serviceChargeTemplateSubscription : serviceChargeTemplateSubscriptions) {
@@ -834,7 +815,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     public void deleteServiceInstance(ServiceInstance serviceInstance) {
         try {
             serviceTemplates.add(serviceInstance.getServiceTemplate());
-            serviceInstanceService.remove(serviceInstance.getId(), getCurrentUser());
+            serviceInstanceService.remove(serviceInstance.getId());
             serviceInstances.remove(serviceInstance);
             selectedServiceInstance = null;
             messages.info(new BundleKey("messages", "delete.successful"));

@@ -21,7 +21,6 @@ import org.meveo.api.dto.invoice.GetXmlInvoiceResponseDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.dto.response.CustomerInvoicesResponse;
 import org.meveo.api.rest.IBaseRs;
-import org.meveo.api.rest.security.RSSecured;
 
 /**
  * Web service for managing {@link org.meveo.model.billing.Invoice}.
@@ -31,7 +30,7 @@ import org.meveo.api.rest.security.RSSecured;
 @Path("/invoice")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-@RSSecured
+
 public interface InvoiceRs extends IBaseRs {
 	
 	

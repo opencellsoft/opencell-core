@@ -129,7 +129,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
      * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
      */
     protected List<String> getFormFieldsToFetch() {
-        return Arrays.asList("provider", "offerTemplateCategories", "channels", "businessAccountModels");
+        return Arrays.asList("offerTemplateCategories", "channels", "businessAccountModels");
     }
 
     public List<OfferTemplate> listActive() {
@@ -149,7 +149,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
     public void duplicate() {
         if (entity != null && entity.getId() != null) {
             try {
-                offerTemplateService.duplicate(entity, getCurrentUser());
+                offerTemplateService.duplicate(entity);
                 messages.info(new BundleKey("messages", "save.successful"));
             } catch (BusinessException e) {
                 log.error("Error encountered persisting offer template entity: {}: {}", entity.getCode(), e);
@@ -162,7 +162,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
     public void duplicateCatalogHierarchy() {
         if (entity != null && entity.getId() != null) {
             try {
-                offerTemplateService.duplicate(entity, getCurrentUser(), true);
+                offerTemplateService.duplicate(entity, true);
                 messages.info(new BundleKey("messages", "save.successful"));
             } catch (BusinessException e) {
                 log.error("Error encountered persisting offer template entity: {}: {}", entity.getCode(), e);
@@ -204,7 +204,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 			OfferTemplate newOfferTemplate = businessOfferModelService.createOfferFromBOM(businessOfferModel, cfsDto != null ? cfsDto.getCustomField() : null, entity.getCode(),
 					entity.getName(), entity.getDescription(), servicesConfigurations, entity.getChannels(), entity.getBusinessAccountModels(),
-					entity.getOfferTemplateCategories(), entity.getLifeCycleStatus(), entity.getImagePath(), currentUser);
+					entity.getOfferTemplateCategories(), entity.getLifeCycleStatus(), entity.getImagePath());
 
             // populate service custom fields
             for (OfferServiceTemplate ost : entity.getOfferServiceTemplates()) {
@@ -396,7 +396,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
             if (offerServiceTemplate == null || offerServiceTemplate.isTransient()) {
                 source = serviceTemplateService.listActive();
             } else {
-                source = serviceTemplateService.listAllActiveExcept(offerServiceTemplate.getServiceTemplate(), getCurrentProvider());
+                source = serviceTemplateService.listAllActiveExcept(offerServiceTemplate.getServiceTemplate());
             }
 
             List<ServiceTemplate> target = new ArrayList<ServiceTemplate>();

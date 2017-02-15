@@ -11,18 +11,18 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.admin.CurrentUser;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.admin.User;
 import org.meveo.model.catalog.BundleTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
+import org.meveo.service.base.BusinessEntityService;
 import org.meveo.service.index.ElasticClient;
 import org.meveo.service.index.ElasticSearchClassInfo;
-import org.meveo.service.base.BusinessEntityService;
 import org.meveo.util.view.ESBasedDataModel;
 import org.primefaces.model.LazyDataModel;
 import org.slf4j.Logger;
@@ -38,7 +38,7 @@ public class FullTextSearchBean implements Serializable {
 
     @Inject
     @CurrentUser
-    protected User currentUser;
+    protected MeveoUser currentUser;
 
     @Inject
     private BusinessEntityService businessEntityService;
@@ -83,15 +83,10 @@ public class FullTextSearchBean implements Serializable {
                 }
 
                 @Override
-                public User getCurrentUser() {
-                    return FullTextSearchBean.this.getCurrentUser();
-                }
-
-                @Override
                 public String[] getSearchScope() {
 
                     // Limit search scope to offers, product, offer template categories, user groups for marketing manager application
-                    if (FullTextSearchBean.this.getCurrentUser().hasPermission("marketing", "marketingCatalogManager") || FullTextSearchBean.this.getCurrentUser().hasPermission("marketing", "marketingCatalogVisualization")) {
+                    if (FullTextSearchBean.this.getCurrentUser().hasRole("marketingCatalogManager") || FullTextSearchBean.this.getCurrentUser().hasRole("marketingCatalogVisualization")) {
                         return new String[] { OfferTemplate.class.getName(), ProductTemplate.class.getName(), BundleTemplate.class.getName(),
                                 OfferTemplateCategory.class.getName(), UserHierarchyLevel.class.getName() };
                     }
@@ -103,7 +98,7 @@ public class FullTextSearchBean implements Serializable {
         return esDataModel;
     }
 
-    protected User getCurrentUser() {
+    protected MeveoUser getCurrentUser() {
         return currentUser;
     }
 
@@ -145,9 +140,9 @@ public class FullTextSearchBean implements Serializable {
 
         String[] viewInfo = new String[2];
 
-        ElasticSearchClassInfo scopeInfo = elasticClient.getSearchScopeInfo(esType, getCurrentUser());
+        ElasticSearchClassInfo scopeInfo = elasticClient.getSearchScopeInfo(esType);
 
-        QueryBuilder qb = new QueryBuilder(scopeInfo.getClazz(), "be", null, getCurrentUser().getProvider());
+        QueryBuilder qb = new QueryBuilder(scopeInfo.getClazz(), "be", null);
         qb.addCriterion("be.code", "=", code, true);
 
         List<? extends BusinessEntity> results = qb.getQuery(businessEntityService.getEntityManager()).getResultList();
@@ -156,7 +151,7 @@ public class FullTextSearchBean implements Serializable {
             viewInfo[0] = BaseBean.getEditViewName(entity.getClass());
             viewInfo[1] = entity.getId().toString();
 
-            if (getCurrentUser().hasPermission("marketing", "marketingCatalogManager") || getCurrentUser().hasPermission("marketing", "marketingCatalogVisualization")) {
+            if (getCurrentUser().hasRole("marketingCatalogManager") || getCurrentUser().hasRole("marketingCatalogVisualization")) {
                 viewInfo[0] = "mm_" + viewInfo[0];
             }
 

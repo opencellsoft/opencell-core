@@ -4,7 +4,6 @@ import javax.inject.Inject;
 
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.model.admin.SecuredEntity;
-import org.meveo.model.admin.User;
 import org.slf4j.Logger;
 
 /**
@@ -39,6 +38,6 @@ public abstract class SecureMethodResultFilter {
 	 *            The user account that will be used to verify authorization.
 	 * @return The filtered result object.
 	 */
-	public abstract Object filterResult(Object result, User user) throws MeveoApiException;
+	public abstract Object filterResult(Object result) throws MeveoApiException;
 
 }

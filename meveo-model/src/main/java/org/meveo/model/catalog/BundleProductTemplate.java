@@ -16,12 +16,14 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
+import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
 
 /**
  * @author Edward P. Legaspi
  */
 @Entity
+@ExportIdentifier({ "bundleTemplate.code", "productTemplate.code"})
 @Table(name = "CAT_BUNDLE_PRODUCT_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "PRODUCT_TEMPLATE_ID", "BUNDLE_TEMPLATE_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_BUNDLE_PRODUCT_TEMPLATE_SEQ")
 public class BundleProductTemplate implements IEntity {

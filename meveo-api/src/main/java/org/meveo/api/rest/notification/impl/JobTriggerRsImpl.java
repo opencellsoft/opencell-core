@@ -29,7 +29,7 @@ public class JobTriggerRsImpl extends BaseRs implements JobTriggerRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            jobTriggerApi.create(postData, getCurrentUser());
+            jobTriggerApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -49,7 +49,7 @@ public class JobTriggerRsImpl extends BaseRs implements JobTriggerRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            jobTriggerApi.update(postData, getCurrentUser());
+            jobTriggerApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -69,7 +69,7 @@ public class JobTriggerRsImpl extends BaseRs implements JobTriggerRs {
         GetJobTriggerResponseDto result = new GetJobTriggerResponseDto();
 
         try {
-            result.setJobTriggerDto(jobTriggerApi.find(notificationCode, getCurrentUser()));
+            result.setJobTriggerDto(jobTriggerApi.find(notificationCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -89,7 +89,7 @@ public class JobTriggerRsImpl extends BaseRs implements JobTriggerRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            jobTriggerApi.remove(notificationCode, getCurrentUser());
+            jobTriggerApi.remove(notificationCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -109,7 +109,7 @@ public class JobTriggerRsImpl extends BaseRs implements JobTriggerRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            jobTriggerApi.createOrUpdate(postData, getCurrentUser());
+            jobTriggerApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

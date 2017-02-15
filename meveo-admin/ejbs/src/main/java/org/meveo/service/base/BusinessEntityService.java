@@ -25,8 +25,7 @@ import org.meveo.model.BusinessEntity;
 @Stateless
 public class BusinessEntityService extends BusinessService<BusinessEntity>{
 
-	
     public void setEntityClass(Class<BusinessEntity> clazz) {
-   	 this.entityClass = (Class<BusinessEntity>) clazz;
-   }
+        this.entityClass = (Class<BusinessEntity>) clazz;
+    }
 }

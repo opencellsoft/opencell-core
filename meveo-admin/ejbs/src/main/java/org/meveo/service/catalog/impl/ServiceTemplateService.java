@@ -29,13 +29,11 @@ import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.admin.User;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 
@@ -72,27 +70,26 @@ public class ServiceTemplateService extends BusinessService<ServiceTemplate> {
 		return result;
 	}
 
-	public void removeByCode(EntityManager em, String code, Provider provider) {
-		Query query = em.createQuery("DELETE ServiceTemplate t WHERE t.code=:code AND t.provider=:provider");
+	public void removeByCode(EntityManager em, String code) {
+		Query query = em.createQuery("DELETE ServiceTemplate t WHERE t.code=:code ");
 		query.setParameter("code", code);
-		query.setParameter("provider", provider);
 		query.executeUpdate();
 	}
 
-	public int getNbServiceWithNotOffer(Provider provider) {
+	public int getNbServiceWithNotOffer() {
 		return ((Long) getEntityManager().createNamedQuery("serviceTemplate.getNbServiceWithNotOffer", Long.class)
-				.setParameter("provider", provider).getSingleResult()).intValue();
+				.getSingleResult()).intValue();
 	}
 
-	public List<ServiceTemplate> getServicesWithNotOffer(Provider provider) {
+	public List<ServiceTemplate> getServicesWithNotOffer() {
 		return (List<ServiceTemplate>) getEntityManager()
 				.createNamedQuery("serviceTemplate.getServicesWithNotOffer", ServiceTemplate.class)
-				.setParameter("provider", provider).getResultList();
+				.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<ServiceTemplate> listAllActiveExcept(ServiceTemplate st, Provider provider) {
-		QueryBuilder qb = new QueryBuilder(ServiceTemplate.class, "s", null, provider);
+	public List<ServiceTemplate> listAllActiveExcept(ServiceTemplate st) {
+		QueryBuilder qb = new QueryBuilder(ServiceTemplate.class, "s", null);
 		qb.addCriterion("id", "<>", st.getId(), true);
 
 		try {
@@ -102,7 +99,7 @@ public class ServiceTemplateService extends BusinessService<ServiceTemplate> {
 		}
 	}
 	
-	public synchronized void duplicate(ServiceTemplate entity,User currentUser) throws BusinessException{
+	public synchronized void duplicate(ServiceTemplate entity) throws BusinessException{
 		entity = refreshOrRetrieve(entity);
         
         // Lazy load related values first 
@@ -110,7 +107,7 @@ public class ServiceTemplateService extends BusinessService<ServiceTemplate> {
 		entity.getServiceSubscriptionCharges().size();
 		entity.getServiceTerminationCharges().size();
 		entity.getServiceUsageCharges().size();
-		String code=findDuplicateCode(entity,currentUser);
+		String code=findDuplicateCode(entity);
 
 		// Detach and clear ids of entity and related entities
 		detach(entity);
@@ -162,8 +159,8 @@ public class ServiceTemplateService extends BusinessService<ServiceTemplate> {
 		}
 		entity.setCode(code);
 		
-		create(entity, getCurrentUser());
-		customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity, getCurrentUser());
+		create(entity);
+		customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity);
 	}
             
 }

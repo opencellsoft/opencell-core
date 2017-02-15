@@ -12,8 +12,6 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.api.dto.catalog.ServiceConfigurationDto;
-import org.meveo.model.Auditable;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.ChargeTemplate;
@@ -37,6 +35,8 @@ import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,6 +81,10 @@ public class CatalogHierarchyBuilderService {
 
 	@Inject
 	private CustomFieldInstanceService customFieldInstanceService;
+	
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
 
 	@Inject
 	private ProductTemplateService productTemplateService;
@@ -88,7 +92,7 @@ public class CatalogHierarchyBuilderService {
 	@Inject
 	private ProductChargeTemplateService productChargeTemplateService;
 
-	public void buildOfferServiceTemplate(OfferTemplate entity, List<OfferServiceTemplate> offerServiceTemplates, String prefix, Auditable auditable, User currentUser)
+	public void buildOfferServiceTemplate(OfferTemplate entity, List<OfferServiceTemplate> offerServiceTemplates, String prefix)
 			throws BusinessException {
 		List<OfferServiceTemplate> newOfferServiceTemplates = new ArrayList<>();
 		List<PricePlanMatrix> pricePlansInMemory = new ArrayList<>();
@@ -96,7 +100,7 @@ public class CatalogHierarchyBuilderService {
 
 		if (offerServiceTemplates != null) {
 			for (OfferServiceTemplate offerServiceTemplate : offerServiceTemplates) {
-				newOfferServiceTemplates.add(duplicateService(offerServiceTemplate, prefix, pricePlansInMemory, chargeTemplateInMemory, currentUser));
+				newOfferServiceTemplates.add(duplicateService(offerServiceTemplate, prefix, pricePlansInMemory, chargeTemplateInMemory));
 			}
 
 			// add to offer
@@ -106,7 +110,7 @@ public class CatalogHierarchyBuilderService {
 		}
 	}
 
-	public void buildOfferProductTemplate(OfferTemplate entity, List<OfferProductTemplate> offerProductTemplates, String prefix, Auditable auditable, User currentUser)
+	public void buildOfferProductTemplate(OfferTemplate entity, List<OfferProductTemplate> offerProductTemplates, String prefix)
 			throws BusinessException {
 		List<OfferProductTemplate> newOfferProductTemplates = new ArrayList<>();
 		List<PricePlanMatrix> pricePlansInMemory = new ArrayList<>();
@@ -114,7 +118,7 @@ public class CatalogHierarchyBuilderService {
 
 		if (offerProductTemplates != null) {
 			for (OfferProductTemplate offerProductTemplate : offerProductTemplates) {
-				newOfferProductTemplates.add(duplicateProduct(offerProductTemplate, prefix, pricePlansInMemory, chargeTemplateInMemory, currentUser));
+				newOfferProductTemplates.add(duplicateProduct(offerProductTemplate, prefix, pricePlansInMemory, chargeTemplateInMemory));
 			}
 
 			// add to offer
@@ -135,12 +139,12 @@ public class CatalogHierarchyBuilderService {
 	 * @throws BusinessException
 	 */
 	public OfferProductTemplate duplicateProduct(OfferProductTemplate offerProductTemplate, String prefix, List<PricePlanMatrix> pricePlansInMemory,
-			List<ChargeTemplate> chargeTemplateInMemory, User currentUser) throws BusinessException {
+			List<ChargeTemplate> chargeTemplateInMemory) throws BusinessException {
 		OfferProductTemplate newOfferProductTemplate = new OfferProductTemplate();
 
 		newOfferProductTemplate.setMandatory(offerProductTemplate.isMandatory());
 
-		ProductTemplate productTemplate = productTemplateService.findByCode(offerProductTemplate.getProductTemplate().getCode(), currentUser.getProvider());
+		ProductTemplate productTemplate = productTemplateService.findByCode(offerProductTemplate.getProductTemplate().getCode());
 
 		ProductTemplate newProductTemplate = new ProductTemplate();
 		String sourceAppliesToEntity = productTemplate.getUuid();
@@ -169,22 +173,21 @@ public class CatalogHierarchyBuilderService {
 			}
 
 			try {
-				ImageUploadEventHandler<ProductTemplate> serviceImageUploadEventHandler = new ImageUploadEventHandler<>();
-				String newImagePath = serviceImageUploadEventHandler.duplicateImage(newProductTemplate, productTemplate.getImagePath(), prefix + productTemplate.getCode(),
-						currentUser.getProvider().getCode());
+				ImageUploadEventHandler<ProductTemplate> serviceImageUploadEventHandler = new ImageUploadEventHandler<>(currentUser);
+				String newImagePath = serviceImageUploadEventHandler.duplicateImage(newProductTemplate, productTemplate.getImagePath(), prefix + productTemplate.getCode());
 				newProductTemplate.setImagePath(newImagePath);
 			} catch (IOException e1) {
 				log.error("IPIEL: Failed duplicating product image: {}", e1.getMessage());
 			}
 
-			productTemplateService.create(newProductTemplate, currentUser);
+			productTemplateService.create(newProductTemplate);
 
 			// duplicate custom field instances
-			customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, newProductTemplate, currentUser);
+			customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, newProductTemplate);
 
-			duplicateProductPrices(productTemplate, prefix, pricePlansInMemory, chargeTemplateInMemory, currentUser);
+			duplicateProductPrices(productTemplate, prefix, pricePlansInMemory, chargeTemplateInMemory);
 			duplicateProductOffering(productTemplate, newProductTemplate);
-			duplicateProductCharges(productTemplate, newProductTemplate, prefix, chargeTemplateInMemory, currentUser);
+			duplicateProductCharges(productTemplate, newProductTemplate, prefix, chargeTemplateInMemory);
 
 			newOfferProductTemplate.setProductTemplate(newProductTemplate);
 			return newOfferProductTemplate;
@@ -193,8 +196,7 @@ public class CatalogHierarchyBuilderService {
 		}
 	}
 
-	private void duplicateProductCharges(ProductTemplate productTemplate, ProductTemplate newProductTemplate, String prefix, List<ChargeTemplate> chargeTemplateInMemory,
-			User currentUser) throws BusinessException, IllegalAccessException, InvocationTargetException {
+	private void duplicateProductCharges(ProductTemplate productTemplate, ProductTemplate newProductTemplate, String prefix, List<ChargeTemplate> chargeTemplateInMemory) throws BusinessException, IllegalAccessException, InvocationTargetException {
 		if (productTemplate.getProductChargeTemplates() != null && productTemplate.getProductChargeTemplates().size() > 0) {
 			for (ProductChargeTemplate productCharge : productTemplate.getProductChargeTemplates()) {
 				ProductChargeTemplate newChargeTemplate = new ProductChargeTemplate();
@@ -208,7 +210,7 @@ public class CatalogHierarchyBuilderService {
 					chargeTemplateInMemory.add(newChargeTemplate);
 				}
 
-				productChargeTemplateService.create(newChargeTemplate, currentUser);
+				productChargeTemplateService.create(newChargeTemplate);
 
 				copyEdrTemplates((ChargeTemplate) productCharge, newChargeTemplate);
 
@@ -248,19 +250,18 @@ public class CatalogHierarchyBuilderService {
 		}
 	}
 
-	private void duplicateProductPrices(ProductTemplate productTemplate, String prefix, List<PricePlanMatrix> pricePlansInMemory, List<ChargeTemplate> chargeTemplateInMemory,
-			User currentUser) throws BusinessException {
+	private void duplicateProductPrices(ProductTemplate productTemplate, String prefix, List<PricePlanMatrix> pricePlansInMemory, List<ChargeTemplate> chargeTemplateInMemory) throws BusinessException {
 		// create price plans
 		if (productTemplate.getProductChargeTemplates() != null && productTemplate.getProductChargeTemplates().size() > 0) {
 			for (ProductChargeTemplate productCharge : productTemplate.getProductChargeTemplates()) {
 				// create price plan
 				String chargeTemplateCode = productCharge.getCode();
-				List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCode(chargeTemplateCode, currentUser.getProvider());
+				List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCode(chargeTemplateCode);
 				if (pricePlanMatrixes != null) {
 					try {
 						for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
 							String ppCode = prefix + pricePlanMatrix.getCode();
-							PricePlanMatrix ppMatrix = pricePlanMatrixService.findByCode(ppCode, currentUser.getProvider());
+							PricePlanMatrix ppMatrix = pricePlanMatrixService.findByCode(ppCode);
 							if (ppMatrix != null) {
 								continue;
 							}
@@ -280,7 +281,7 @@ public class CatalogHierarchyBuilderService {
 								pricePlansInMemory.add(newPriceplanmaMatrix);
 							}
 
-							pricePlanMatrixService.create(newPriceplanmaMatrix, currentUser);
+							pricePlanMatrixService.create(newPriceplanmaMatrix);
 						}
 					} catch (IllegalAccessException | InvocationTargetException e) {
 						throw new BusinessException(e.getMessage());
@@ -291,12 +292,12 @@ public class CatalogHierarchyBuilderService {
 	}
 
 	public OfferServiceTemplate duplicateService(OfferServiceTemplate offerServiceTemplate, String prefix, List<PricePlanMatrix> pricePlansInMemory,
-			List<ChargeTemplate> chargeTemplateInMemory, User currentUser) throws BusinessException {
-		return duplicateService(offerServiceTemplate, null, prefix, pricePlansInMemory, chargeTemplateInMemory, currentUser);
+			List<ChargeTemplate> chargeTemplateInMemory) throws BusinessException {
+		return duplicateService(offerServiceTemplate, null, prefix, pricePlansInMemory, chargeTemplateInMemory);
 	}
 
 	public OfferServiceTemplate duplicateService(OfferServiceTemplate offerServiceTemplate, ServiceConfigurationDto serviceConfiguration, String prefix,
-			List<PricePlanMatrix> pricePlansInMemory, List<ChargeTemplate> chargeTemplateInMemory, User currentUser) throws BusinessException {
+			List<PricePlanMatrix> pricePlansInMemory, List<ChargeTemplate> chargeTemplateInMemory) throws BusinessException {
 		OfferServiceTemplate newOfferServiceTemplate = new OfferServiceTemplate();
 
 		if (serviceConfiguration != null) {
@@ -311,7 +312,7 @@ public class CatalogHierarchyBuilderService {
 		newOfferServiceTemplate.setValidFrom(offerServiceTemplate.getValidFrom());
 		newOfferServiceTemplate.setValidTo(offerServiceTemplate.getValidTo());
 
-		ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(offerServiceTemplate.getServiceTemplate().getCode(), currentUser.getProvider());
+		ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(offerServiceTemplate.getServiceTemplate().getCode());
 		serviceTemplate.getServiceRecurringCharges().size();
 		serviceTemplate.getServiceSubscriptionCharges().size();
 		serviceTemplate.getServiceTerminationCharges().size();
@@ -334,21 +335,20 @@ public class CatalogHierarchyBuilderService {
 			newServiceTemplate.setServiceSubscriptionCharges(new ArrayList<ServiceChargeTemplateSubscription>());
 			newServiceTemplate.setServiceUsageCharges(new ArrayList<ServiceChargeTemplateUsage>());
 			try {
-				ImageUploadEventHandler<ServiceTemplate> serviceImageUploadEventHandler = new ImageUploadEventHandler<>();
-				String newImagePath = serviceImageUploadEventHandler.duplicateImage(newServiceTemplate, serviceTemplate.getImagePath(), prefix + serviceTemplate.getCode(),
-						currentUser.getProvider().getCode());
+				ImageUploadEventHandler<ServiceTemplate> serviceImageUploadEventHandler = new ImageUploadEventHandler<>(currentUser);
+				String newImagePath = serviceImageUploadEventHandler.duplicateImage(newServiceTemplate, serviceTemplate.getImagePath(), prefix + serviceTemplate.getCode());
 				newServiceTemplate.setImagePath(newImagePath);
 			} catch (IOException e1) {
 				log.error("IPIEL: Failed duplicating service image: {}", e1.getMessage());
 			}
 
-			serviceTemplateService.create(newServiceTemplate, currentUser);
+			serviceTemplateService.create(newServiceTemplate);
 
 			// duplicate custom field instances
-			customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, newServiceTemplate, currentUser);
+			customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, newServiceTemplate);
 
-			duplicatePrices(serviceTemplate, prefix, pricePlansInMemory, currentUser);
-			duplicateCharges(serviceTemplate, newServiceTemplate, prefix, chargeTemplateInMemory, currentUser);
+			duplicatePrices(serviceTemplate, prefix, pricePlansInMemory);
+			duplicateCharges(serviceTemplate, newServiceTemplate, prefix, chargeTemplateInMemory);
 
 			newOfferServiceTemplate.setServiceTemplate(newServiceTemplate);
 			return newOfferServiceTemplate;
@@ -357,19 +357,19 @@ public class CatalogHierarchyBuilderService {
 		}
 	}
 
-	private void duplicatePrices(ServiceTemplate serviceTemplate, String prefix, List<PricePlanMatrix> pricePlansInMemory, User currentUser) throws BusinessException,
+	private void duplicatePrices(ServiceTemplate serviceTemplate, String prefix, List<PricePlanMatrix> pricePlansInMemory) throws BusinessException,
 			IllegalAccessException, InvocationTargetException {
 		// create price plans
 		if (serviceTemplate.getServiceRecurringCharges() != null && serviceTemplate.getServiceRecurringCharges().size() > 0) {
 			for (ServiceChargeTemplateRecurring serviceCharge : serviceTemplate.getServiceRecurringCharges()) {
 				// create price plan
 				String chargeTemplateCode = serviceCharge.getChargeTemplate().getCode();
-				List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCode(chargeTemplateCode, currentUser.getProvider());
+				List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCode(chargeTemplateCode);
 				if (pricePlanMatrixes != null) {
 					try {
 						for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
 							String ppCode = prefix + pricePlanMatrix.getCode();
-							PricePlanMatrix ppMatrix = pricePlanMatrixService.findByCode(ppCode, currentUser.getProvider());
+							PricePlanMatrix ppMatrix = pricePlanMatrixService.findByCode(ppCode);
 							if (ppMatrix != null) {
 								continue;
 							}
@@ -389,7 +389,7 @@ public class CatalogHierarchyBuilderService {
 								pricePlansInMemory.add(newPriceplanmaMatrix);
 							}
 
-							pricePlanMatrixService.create(newPriceplanmaMatrix, currentUser);
+							pricePlanMatrixService.create(newPriceplanmaMatrix);
 						}
 					} catch (IllegalAccessException | InvocationTargetException e) {
 						throw new BusinessException(e.getMessage());
@@ -402,12 +402,12 @@ public class CatalogHierarchyBuilderService {
 			for (ServiceChargeTemplateSubscription serviceCharge : serviceTemplate.getServiceSubscriptionCharges()) {
 				// create price plan
 				String chargeTemplateCode = serviceCharge.getChargeTemplate().getCode();
-				List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCode(chargeTemplateCode, currentUser.getProvider());
+				List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCode(chargeTemplateCode);
 				if (pricePlanMatrixes != null) {
 					try {
 						for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
 							String ppCode = prefix + pricePlanMatrix.getCode();
-							if (pricePlanMatrixService.findByCode(ppCode, currentUser.getProvider()) != null) {
+							if (pricePlanMatrixService.findByCode(ppCode) != null) {
 								continue;
 							}
 
@@ -426,7 +426,7 @@ public class CatalogHierarchyBuilderService {
 								pricePlansInMemory.add(newPriceplanmaMatrix);
 							}
 
-							pricePlanMatrixService.create(newPriceplanmaMatrix, currentUser);
+							pricePlanMatrixService.create(newPriceplanmaMatrix);
 						}
 					} catch (IllegalAccessException | InvocationTargetException e) {
 						throw new BusinessException(e.getMessage());
@@ -439,12 +439,12 @@ public class CatalogHierarchyBuilderService {
 			for (ServiceChargeTemplateTermination serviceCharge : serviceTemplate.getServiceTerminationCharges()) {
 				// create price plan
 				String chargeTemplateCode = serviceCharge.getChargeTemplate().getCode();
-				List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCode(chargeTemplateCode, currentUser.getProvider());
+				List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCode(chargeTemplateCode);
 				if (pricePlanMatrixes != null) {
 					try {
 						for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
 							String ppCode = prefix + pricePlanMatrix.getCode();
-							if (pricePlanMatrixService.findByCode(ppCode, currentUser.getProvider()) != null) {
+							if (pricePlanMatrixService.findByCode(ppCode) != null) {
 								continue;
 							}
 
@@ -463,7 +463,7 @@ public class CatalogHierarchyBuilderService {
 								pricePlansInMemory.add(newPriceplanmaMatrix);
 							}
 
-							pricePlanMatrixService.create(newPriceplanmaMatrix, currentUser);
+							pricePlanMatrixService.create(newPriceplanmaMatrix);
 						}
 					} catch (IllegalAccessException | InvocationTargetException e) {
 						throw new BusinessException(e.getMessage());
@@ -475,11 +475,11 @@ public class CatalogHierarchyBuilderService {
 		if (serviceTemplate.getServiceUsageCharges() != null && serviceTemplate.getServiceUsageCharges().size() > 0) {
 			for (ServiceChargeTemplateUsage serviceCharge : serviceTemplate.getServiceUsageCharges()) {
 				String chargeTemplateCode = serviceCharge.getChargeTemplate().getCode();
-				List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCode(chargeTemplateCode, currentUser.getProvider());
+				List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCode(chargeTemplateCode);
 				if (pricePlanMatrixes != null) {
 					for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
 						String ppCode = prefix + pricePlanMatrix.getCode();
-						if (pricePlanMatrixService.findByCode(ppCode, currentUser.getProvider()) != null) {
+						if (pricePlanMatrixService.findByCode(ppCode) != null) {
 							continue;
 						}
 
@@ -498,14 +498,14 @@ public class CatalogHierarchyBuilderService {
 							pricePlansInMemory.add(newPriceplanmaMatrix);
 						}
 
-						pricePlanMatrixService.create(newPriceplanmaMatrix, currentUser);
+						pricePlanMatrixService.create(newPriceplanmaMatrix);
 					}
 				}
 			}
 		}
 	}
 
-	private void duplicateCharges(ServiceTemplate serviceTemplate, ServiceTemplate newServiceTemplate, String prefix, List<ChargeTemplate> chargeTemplateInMemory, User currentUser)
+	private void duplicateCharges(ServiceTemplate serviceTemplate, ServiceTemplate newServiceTemplate, String prefix, List<ChargeTemplate> chargeTemplateInMemory)
 			throws BusinessException, IllegalAccessException, InvocationTargetException {
 		// get charges
 		if (serviceTemplate.getServiceRecurringCharges() != null && serviceTemplate.getServiceRecurringCharges().size() > 0) {
@@ -521,7 +521,7 @@ public class CatalogHierarchyBuilderService {
 					chargeTemplateInMemory.add(newChargeTemplate);
 				}
 
-				recurringChargeTemplateService.create(newChargeTemplate, currentUser);
+				recurringChargeTemplateService.create(newChargeTemplate);
 
 				copyEdrTemplates(chargeTemplate, newChargeTemplate);
 
@@ -532,7 +532,7 @@ public class CatalogHierarchyBuilderService {
 					serviceChargeTemplate.setWalletTemplates(new ArrayList<WalletTemplate>());
 					serviceChargeTemplate.getWalletTemplates().addAll(serviceCharge.getWalletTemplates());
 				}
-				serviceChargeTemplateRecurringService.create(serviceChargeTemplate, currentUser);
+				serviceChargeTemplateRecurringService.create(serviceChargeTemplate);
 
 				newServiceTemplate.getServiceRecurringCharges().add(serviceChargeTemplate);
 			}
@@ -551,7 +551,7 @@ public class CatalogHierarchyBuilderService {
 					chargeTemplateInMemory.add(newChargeTemplate);
 				}
 
-				oneShotChargeTemplateService.create(newChargeTemplate, currentUser);
+				oneShotChargeTemplateService.create(newChargeTemplate);
 
 				copyEdrTemplates(chargeTemplate, newChargeTemplate);
 
@@ -562,7 +562,7 @@ public class CatalogHierarchyBuilderService {
 					serviceChargeTemplate.setWalletTemplates(new ArrayList<WalletTemplate>());
 					serviceChargeTemplate.getWalletTemplates().addAll(serviceCharge.getWalletTemplates());
 				}
-				serviceChargeTemplateSubscriptionService.create(serviceChargeTemplate, currentUser);
+				serviceChargeTemplateSubscriptionService.create(serviceChargeTemplate);
 
 				newServiceTemplate.getServiceSubscriptionCharges().add(serviceChargeTemplate);
 			}
@@ -581,7 +581,7 @@ public class CatalogHierarchyBuilderService {
 					chargeTemplateInMemory.add(newChargeTemplate);
 				}
 
-				oneShotChargeTemplateService.create(newChargeTemplate, currentUser);
+				oneShotChargeTemplateService.create(newChargeTemplate);
 
 				copyEdrTemplates(chargeTemplate, newChargeTemplate);
 
@@ -592,7 +592,7 @@ public class CatalogHierarchyBuilderService {
 					serviceChargeTemplate.setWalletTemplates(new ArrayList<WalletTemplate>());
 					serviceChargeTemplate.getWalletTemplates().addAll(serviceCharge.getWalletTemplates());
 				}
-				serviceChargeTemplateTerminationService.create(serviceChargeTemplate, currentUser);
+				serviceChargeTemplateTerminationService.create(serviceChargeTemplate);
 
 				newServiceTemplate.getServiceTerminationCharges().add(serviceChargeTemplate);
 			}
@@ -611,7 +611,7 @@ public class CatalogHierarchyBuilderService {
 					chargeTemplateInMemory.add(newChargeTemplate);
 				}
 
-				usageChargeTemplateService.create(newChargeTemplate, currentUser);
+				usageChargeTemplateService.create(newChargeTemplate);
 
 				copyEdrTemplates(chargeTemplate, newChargeTemplate);
 
@@ -622,7 +622,7 @@ public class CatalogHierarchyBuilderService {
 					serviceChargeTemplate.setWalletTemplates(new ArrayList<WalletTemplate>());
 					serviceChargeTemplate.getWalletTemplates().addAll(serviceCharge.getWalletTemplates());
 				}
-				serviceChargeTemplateUsageService.create(serviceChargeTemplate, currentUser);
+				serviceChargeTemplateUsageService.create(serviceChargeTemplate);
 
 				if (serviceCharge.getCounterTemplate() != null) {
 					CounterTemplate newCounterTemplate = new CounterTemplate();
@@ -631,7 +631,7 @@ public class CatalogHierarchyBuilderService {
 					newCounterTemplate.setId(null);
 					newCounterTemplate.setCode(prefix + serviceCharge.getCounterTemplate().getCode());
 
-					counterTemplateService.create(newCounterTemplate, currentUser);
+					counterTemplateService.create(newCounterTemplate);
 
 					serviceChargeTemplate.setCounterTemplate(newCounterTemplate);
 				}

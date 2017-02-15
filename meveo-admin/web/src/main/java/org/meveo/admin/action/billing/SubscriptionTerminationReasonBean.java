@@ -28,7 +28,6 @@ import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
-import org.primefaces.context.RequestContext;
 
 @Named
 @ConversationScoped

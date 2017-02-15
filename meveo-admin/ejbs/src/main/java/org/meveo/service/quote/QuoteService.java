@@ -11,7 +11,6 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InsufficientBalanceException;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
@@ -79,12 +78,12 @@ public class QuoteService extends BusinessService<Quote> {
      * @param productInstances Sumulated product instances
      * @param fromDate Date range for recuring charges - from
      * @param toDate Date range for recuring charges - to
-     * @param currentUser Current user
+
      * @return
      * @throws BusinessException
      */
     @SuppressWarnings("unused")
-    public List<Invoice> provideQuote(Map<String, List<QuoteInvoiceInfo>> quoteInvoiceInfos, User currentUser) throws BusinessException {
+    public List<Invoice> provideQuote(Map<String, List<QuoteInvoiceInfo>> quoteInvoiceInfos) throws BusinessException {
 
         log.info("Creating simulated invoice for {}", quoteInvoiceInfos);
 
@@ -105,7 +104,7 @@ public class QuoteService extends BusinessService<Quote> {
                             billingAccount = productInstance.getUserAccount().getBillingAccount();
                         }
                         for (ProductChargeInstance productChargeInstance : productInstance.getProductChargeInstances()) {
-                            walletOperations.addAll(productChargeInstanceService.applyProductChargeInstance(productChargeInstance, currentUser, true));
+                            walletOperations.addAll(productChargeInstanceService.applyProductChargeInstance(productChargeInstance, true));
                         }
                     }
                 }
@@ -117,13 +116,13 @@ public class QuoteService extends BusinessService<Quote> {
                     for (ServiceInstance serviceInstance : quoteInvoiceInfo.getSubscription().getServiceInstances()) {
                         for (OneShotChargeInstance subscriptionCharge : serviceInstance.getSubscriptionChargeInstances()) {
                             walletOperations.add(oneShotChargeInstanceService.oneShotChargeApplicationVirtual(quoteInvoiceInfo.getSubscription(), subscriptionCharge,
-                                serviceInstance.getSubscriptionDate(), serviceInstance.getQuantity(), currentUser));
+                                serviceInstance.getSubscriptionDate(), serviceInstance.getQuantity()));
                         }
 
                         // Add recurring charges
                         for (RecurringChargeInstance recurringCharge : serviceInstance.getRecurringChargeInstances()) {
                             List<WalletOperation> walletOps = recurringChargeInstanceService.applyRecurringChargeVirtual(recurringCharge, quoteInvoiceInfo.getFromDate(),
-                                quoteInvoiceInfo.getToDate(), currentUser);
+                                quoteInvoiceInfo.getToDate());
                             if (walletOperations != null) {
                                 walletOperations.addAll(walletOps);
                             }
@@ -133,14 +132,14 @@ public class QuoteService extends BusinessService<Quote> {
                     // Process CDRS
                     if (quoteInvoiceInfo.getCdrs() != null && !quoteInvoiceInfo.getCdrs().isEmpty() && quoteInvoiceInfo.getSubscription() != null) {
 
-                        cdrParsingService.initByApi(currentUser.getUserName(), "quote");
+                        cdrParsingService.initByApi(currentUser.getSubject(), "quote");
 
                         List<EDR> edrs = new ArrayList<>();
 
                         // Parse CDRs to Edrs
                         try {
                             for (String cdr : quoteInvoiceInfo.getCdrs()) {
-                                edrs.add(cdrParsingService.getEDRForVirtual(cdr, CDRParsingService.CDR_ORIGIN_API, quoteInvoiceInfo.getSubscription(), currentUser));
+                                edrs.add(cdrParsingService.getEDRForVirtual(cdr, CDRParsingService.CDR_ORIGIN_API, quoteInvoiceInfo.getSubscription()));
                             }
 
                         } catch (CDRParsingException e) {
@@ -152,7 +151,7 @@ public class QuoteService extends BusinessService<Quote> {
                         for (EDR edr : edrs) {
                             log.debug("edr={}", edr);
                             try {
-                                List<WalletOperation> walletOperationsFromEdr = usageRatingService.rateUsageDontChangeTransaction(edr, true, currentUser);
+                                List<WalletOperation> walletOperationsFromEdr = usageRatingService.rateUsageDontChangeTransaction(edr, true);
                                 if (edr.getStatus() == EDRStatusEnum.REJECTED) {
                                     log.error("edr rejected={}", edr.getRejectReason());
                                     throw new BusinessException(edr.getRejectReason());
@@ -174,13 +173,13 @@ public class QuoteService extends BusinessService<Quote> {
             
             // Create rated transactions from wallet operations
             for (WalletOperation walletOperation : walletOperations) {
-                ratedTransactions.add(ratedTransactionService.createRatedTransaction(walletOperation, true, currentUser));
+                ratedTransactions.add(ratedTransactionService.createRatedTransaction(walletOperation, true));
             }
 
-            Invoice invoice = invoiceService.createAgregatesAndInvoiceVirtual(ratedTransactions, billingAccount, invoiceTypeService.getDefaultQuote(currentUser), currentUser);
+            Invoice invoice = invoiceService.createAgregatesAndInvoiceVirtual(ratedTransactions, billingAccount, invoiceTypeService.getDefaultQuote());
 
-            File xmlInvoiceFile = xmlInvoiceCreator.createXMLInvoice(invoice, true,currentUser);
-            invoiceService.producePdf(invoice, true, currentUser);
+            File xmlInvoiceFile = xmlInvoiceCreator.createXMLInvoice(invoice, true);
+            invoiceService.producePdf(invoice, true);
 
             // Clean up data (left only the methods that remove FK data that would fail to persist in case of virtual operations)
             // invoice.setBillingAccount(null);
@@ -207,7 +206,7 @@ public class QuoteService extends BusinessService<Quote> {
                     ((SubCategoryInvoiceAgregate) invoiceAgregate).setRatedtransactions(null);
                 }
             }
-            invoiceService.create(invoice, currentUser);
+            invoiceService.create(invoice);
             invoices.add(invoice);
         }
         return invoices;

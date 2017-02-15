@@ -32,7 +32,6 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -43,22 +42,18 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
+import org.meveo.model.AuditableEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
-import org.meveo.model.ProviderlessEntity;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Country;
 import org.meveo.model.billing.InvoiceConfiguration;
 import org.meveo.model.billing.Language;
-import org.meveo.model.billing.TradingCountry;
-import org.meveo.model.billing.TradingCurrency;
-import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.billing.UserAccount;
-import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.InterBankTitle;
@@ -69,7 +64,7 @@ import org.meveo.model.shared.InterBankTitle;
 @ExportIdentifier("code")
 @Table(name = "CRM_PROVIDER", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_PROVIDER_SEQ")
-public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
+public class Provider extends AuditableEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -128,17 +123,6 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
     @JoinColumn(name = "USER_ACCOUNT_ID")
     private UserAccount userAccount;
 
-    @OneToMany(mappedBy = "provider", fetch = FetchType.LAZY)
-    private List<WalletTemplate> prepaidWalletTemplates;
-
-    @OneToMany(mappedBy = "provider", fetch = FetchType.LAZY)
-    private List<TradingCountry> tradingCountries;
-
-    // @ManyToMany(fetch = FetchType.LAZY)
-    // @JoinTable(name = "ADM_USER_PROVIDER", joinColumns = @JoinColumn(name =
-    // "PROVIDER_ID"), inverseJoinColumns = @JoinColumn(name = "USER_ID"))
-    // private List<User> users = new ArrayList<User>();
-
     private static final String PM_SEP = ",";
 
     @Column(name = "PAYMENT_METHODS", length = 255)
@@ -182,12 +166,6 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
     @Pattern(regexp = ".+@.+\\..{2,4}")
     @Size(max = 100)
     protected String email;
-
-    @OneToMany(mappedBy = "provider", fetch = FetchType.LAZY)
-    private List<TradingLanguage> tradingLanguages;
-
-    @OneToMany(mappedBy = "provider", fetch = FetchType.LAZY)
-    private List<TradingCurrency> tradingCurrencies;
 
     @Type(type="numeric_boolean")
     @Column(name = "DISPLAY_FREE_TX_IN_INVOICE")
@@ -443,59 +421,6 @@ public class Provider extends ProviderlessEntity implements ICustomFieldEntity {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public List<TradingCountry> getTradingCountries() {
-        return tradingCountries;
-    }
-
-    public void setTradingCountries(List<TradingCountry> tradingCountries) {
-        this.tradingCountries = tradingCountries;
-    }
-
-    public List<TradingLanguage> getTradingLanguages() {
-        return tradingLanguages;
-    }
-
-    public void setTradingLanguages(List<TradingLanguage> tradingLanguage) {
-        this.tradingLanguages = tradingLanguage;
-    }
-
-    public List<TradingCurrency> getTradingCurrencies() {
-        return tradingCurrencies;
-    }
-
-    public void setTradingCurrencies(List<TradingCurrency> tradingCurrencies) {
-        this.tradingCurrencies = tradingCurrencies;
-    }
-
-    public void addTradingCurrency(TradingCurrency tradingCurrency) {
-        if (tradingCurrencies == null) {
-            tradingCurrencies = new ArrayList<TradingCurrency>();
-        }
-        tradingCurrencies.add(tradingCurrency);
-    }
-
-    public void addTradingLanguage(TradingLanguage tradingLanguage) {
-        if (tradingLanguages == null) {
-            tradingLanguages = new ArrayList<TradingLanguage>();
-        }
-        tradingLanguages.add(tradingLanguage);
-    }
-
-    public void addTradingCountry(TradingCountry tradingCountry) {
-        if (tradingCountries == null) {
-            tradingCountries = new ArrayList<TradingCountry>();
-        }
-        tradingCountries.add(tradingCountry);
-    }
-
-    public void setPrepaidWalletTemplates(List<WalletTemplate> prepaidWalletTemplates) {
-        this.prepaidWalletTemplates = prepaidWalletTemplates;
-    }
-
-    public List<WalletTemplate> getPrepaidWalletTemplates() {
-        return prepaidWalletTemplates;
     }
 
     public boolean isDisplayFreeTransacInInvoice() {

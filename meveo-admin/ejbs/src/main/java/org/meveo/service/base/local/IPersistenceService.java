@@ -225,9 +225,5 @@ public interface IPersistenceService<E extends IEntity> {
 
     public EntityManager getEntityManager();
 
-    public E findByIdNoCheck(Long id);
-
-    public E findByIdNoCheck(Long id, boolean refresh);
-
 	public Set<E> refreshOrRetrieve(Set<E> entities);
 }

@@ -6,7 +6,6 @@ import java.util.List;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.wf.WorkflowType;
 import org.meveo.admin.wf.WorkflowTypeClass;
-import org.meveo.model.admin.User;
 import org.meveo.model.quote.Quote;
 import org.meveo.model.quote.QuoteItem;
 import org.meveo.model.quote.QuoteStatusEnum;
@@ -32,7 +31,7 @@ public class QuoteWF extends WorkflowType<Quote> {
     }
 
     @Override
-    public void changeStatus(String newStatus, User currentUser) throws BusinessException {
+    public void changeStatus(String newStatus) throws BusinessException {
         entity.setStatus(QuoteStatusEnum.valueOf(newStatus));
         for (QuoteItem quoteItem : entity.getQuoteItems()) {
             quoteItem.setStatus(entity.getStatus());

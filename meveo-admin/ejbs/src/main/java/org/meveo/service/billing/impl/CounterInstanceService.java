@@ -38,7 +38,6 @@ import javax.persistence.TemporalType;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.CounterInstance;
@@ -50,7 +49,6 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.CounterTemplateLevel;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.notification.Notification;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -81,9 +79,6 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
             throw new BusinessException("counterTemplate is null");
         }
 
-        if (creator == null) {
-            throw new BusinessException("creator is null");
-        }
 
         // we instanciate the counter only if there is no existing instance for
         // the same template
@@ -95,7 +90,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
                 result.setBillingAccount(billingAccount);
                 
                 if (!isVirtual){
-                    create(result); // AKK was with billingAccount.getProvider()
+                    create(result);
                 }
                 
                 billingAccount.getCounters().put(counterTemplate.getCode(), result);
@@ -113,7 +108,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
                 result.setUserAccount(userAccount);
 
                 if (!isVirtual){
-                    create(result); // AKK was with userAccount.getProvider()
+                    create(result);
                 }
                 userAccount.getCounters().put(counterTemplate.getCode(), result);
 
@@ -129,10 +124,6 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     }
 
     public CounterInstance counterInstanciation(Notification notification, CounterTemplate counterTemplate) throws BusinessException {
-        return counterInstanciation(getEntityManager(), notification, counterTemplate);
-    }
-
-    public CounterInstance counterInstanciation(EntityManager em, Notification notification, CounterTemplate counterTemplate) throws BusinessException {
         CounterInstance counterInstance = null;
 
         if (notification == null) {
@@ -143,9 +134,6 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
             throw new BusinessException("counterTemplate is null");
         }
 
-        if (creator == null) {
-            throw new BusinessException("creator is null");
-        }
 
         // Remove current counter instance if it does not match the counter
         // template to be instantiated
@@ -159,7 +147,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         if (notification.getCounterInstance() == null) {
             counterInstance = new CounterInstance();
             counterInstance.setCounterTemplate(counterTemplate);
-            create(counterInstance); // AKK was with notification.getProvider()
+            create(counterInstance);
 
             notification.setCounterTemplate(counterTemplate);
             notification.setCounterInstance(counterInstance);
@@ -172,15 +160,14 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 
     // we must make sure the counter period is persisted in db before storing it in cache
     // @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW) - problem with MariaDB. See #2393 - Issue with counter period creation in MariaDB
-    public CounterPeriod createPeriod(CounterInstance counterInstance, Date chargeDate, Date initDate, UsageChargeInstance usageChargeInstance, User currentUser)
+    public CounterPeriod createPeriod(CounterInstance counterInstance, Date chargeDate, Date initDate, UsageChargeInstance usageChargeInstance)
             throws BusinessException {
         refresh(counterInstance);
         counterInstance = (CounterInstance) attach(counterInstance);
 
         CounterPeriod counterPeriod = instantiateCounterPeriod(counterInstance.getCounterTemplate(), chargeDate, initDate, usageChargeInstance);                                
         counterPeriod.setCounterInstance(counterInstance);
-        counterPeriod.setProvider(counterInstance.getProvider());
-        counterPeriodService.create(counterPeriod, counterInstance.getAuditable().getCreator()); // AKK was with counterInstance.getProvider()
+        counterPeriodService.create(counterPeriod); 
 
         counterInstance.getCounterPeriods().add(counterPeriod);
         counterInstance.updateAudit(currentUser);
@@ -211,7 +198,6 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         counterPeriod.setDescription(counterTemplate.getDescription());
         counterPeriod.setLevel(initialValue);
         counterPeriod.setCounterType(counterTemplate.getCounterType());
-        counterPeriod.setProvider(counterTemplate.getProvider());
         counterPeriod.setNotificationLevels(counterTemplate.getNotificationLevels(), initialValue);
         return counterPeriod;
     }
@@ -221,11 +207,10 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * 
      * @param counterInstance Counter instance
      * @param date Date to match
-     * @param currentUser User performing operation
      * @return Found or created counter period
      * @throws BusinessException
      */
-    public CounterPeriod getCounterPeriod(CounterInstance counterInstance, Date date, Date initDate, User currentUser) throws BusinessException {
+    public CounterPeriod getCounterPeriod(CounterInstance counterInstance, Date date, Date initDate) throws BusinessException {
         Query query = getEntityManager().createNamedQuery("CounterPeriod.findByPeriodDate");
         query.setParameter("counterInstance", counterInstance);
         query.setParameter("date", date, TemporalType.TIMESTAMP);
@@ -233,7 +218,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         try {
             return (CounterPeriod) query.getSingleResult();
         } catch (NoResultException e) {
-            return createPeriod(counterInstance, date, initDate, null, currentUser);
+            return createPeriod(counterInstance, date, initDate, null);
         }
     }
 
@@ -246,10 +231,10 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @param valueDate Date to calculate period (used to create counter period if one was not found)
      * @param initDate initialization date to calculate period by calendar(used to create counter period if one was not found)
      * @param usageChargeInstanceId Usage charge instance identifier for initial value calculation (used to create counter period if one was not found)
-     * @param currentUser User performing an action
+     * @throws BusinessException
      * @throws BusinessException If counter period was not found and required values for counter period creation were not passed
      */
-    public void updateOrCreatePeriodValue(Long counterPeriodId, BigDecimal value, Long counterInstanceId, Date valueDate, Date initDate, Long usageChargeInstanceId, User currentUser) throws BusinessException {
+    public void updateOrCreatePeriodValue(Long counterPeriodId, BigDecimal value, Long counterInstanceId, Date valueDate, Date initDate, Long usageChargeInstanceId) throws BusinessException {
         CounterPeriod counterPeriod = counterPeriodService.findById(counterPeriodId);
 
         if (counterPeriod == null) {
@@ -257,7 +242,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
             if (counterInstanceId != null) { // Fix for #2393 - Issue with counter period creation in MariaDB
                 CounterInstance counterInstance = findById(counterInstanceId);
                 UsageChargeInstance usageChargeInstance = usageChargeInstanceService.findById(usageChargeInstanceId);
-                counterPeriod = createPeriod(counterInstance, valueDate, initDate, usageChargeInstance, currentUser);
+                counterPeriod = createPeriod(counterInstance, valueDate, initDate, usageChargeInstance);
             } else {
                 throw new BusinessException("CounterPeriod with id=" + counterPeriodId + " does not exists.");
             }
@@ -273,15 +258,14 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @param counterInstance Counter instance
      * @param date Date of event
      * @param value Value to deduce
-     * @param currentUser User performing an action
      * @return
      * @throws CounterValueInsufficientException
      * @throws BusinessException
      */
-    public BigDecimal deduceCounterValue(CounterInstance counterInstance, Date date, Date initDate, BigDecimal value, User currentUser) throws CounterValueInsufficientException,
+    public BigDecimal deduceCounterValue(CounterInstance counterInstance, Date date, Date initDate, BigDecimal value) throws CounterValueInsufficientException,
             BusinessException {
 
-        CounterPeriod counterPeriod = getCounterPeriod(counterInstance, date, initDate, currentUser);
+        CounterPeriod counterPeriod = getCounterPeriod(counterInstance, date, initDate);
 
         if (counterPeriod == null || counterPeriod.getValue().compareTo(value) < 0) {
             throw new CounterValueInsufficientException();
@@ -301,7 +285,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     }
 
     public BigDecimal evaluateCeilingElExpression(String expression, ChargeInstance charge, ServiceInstance serviceInstance, Subscription subscription) throws BusinessException {
-        int rounding = subscription.getProvider().getRounding() == null ? 3 : subscription.getProvider().getRounding();
+        int rounding = appProvider.getRounding() == null ? 3 : appProvider.getRounding();
         BigDecimal result = null;
         if (StringUtils.isBlank(expression)) {
             return result;
@@ -331,15 +315,13 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * Count counter periods which end date is older then a given date
      * 
      * @param date Date to check
-     * @param provider Provider
      * @return A number of counter periods which end date is older then a given date
      */
-    public long countCounterPeriodsToDelete(Date date, Provider provider) {
+    public long countCounterPeriodsToDelete(Date date) {
         long result = 0;
         String sql = "select cp from CounterPeriod cp";
         QueryBuilder qb = new QueryBuilder(sql);
         qb.addCriterion("cp.periodEndDate", "<", date, false);
-        qb.addCriterionEntity("cp.provider", provider);
         result = qb.count(getEntityManager());
 
         return result;
@@ -349,18 +331,16 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * Remove counter periods which end date is older then a given date
      * 
      * @param date Date to check
-     * @param provider Provider
      * @return A number of counter periods that were removed
      */
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public long deleteCounterPeriods(Date date, Provider provider) {
-        log.trace("Removing counter periods which end date is older then a {} date for provider {}", date, provider);
+    public long deleteCounterPeriods(Date date) {
+        log.trace("Removing counter periods which end date is older then a {} date", date);
         long itemsDeleted = 0;
         String sql = "select cp from CounterPeriod cp";
         QueryBuilder qb = new QueryBuilder(sql);
         qb.addCriterion("cp.periodEndDate", "<", date, false);
-        qb.addCriterionEntity("cp.provider", provider);
         EntityManager em = getEntityManager();
         List<CounterPeriod> periods = qb.find(em);
         for (CounterPeriod counterPeriod : periods) {
@@ -368,7 +348,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
             itemsDeleted++;
         }
 
-        log.info("Removed {} counter periods which end date is older then a {} date for provider {}", itemsDeleted, date, provider);
+        log.info("Removed {} counter periods which end date is older then a {} date", itemsDeleted, date);
 
         return itemsDeleted;
     }

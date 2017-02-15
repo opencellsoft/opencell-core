@@ -211,7 +211,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 		try {
 
 		    entity = billingAccountService.attach(entity);
-			entity = billingAccountService.billingAccountTermination(entity, entity.getTerminationDate(), entity.getTerminationReason(), getCurrentUser());
+			entity = billingAccountService.billingAccountTermination(entity, entity.getTerminationDate(), entity.getTerminationReason());
 			messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
 			
 		} catch (Exception e) {
@@ -226,7 +226,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 		log.info("cancelAccount billingAccountId:" + entity.getId());
 		try {
 		    entity = billingAccountService.attach(entity);
-            entity = billingAccountService.billingAccountCancellation(entity, new Date(), getCurrentUser());
+            entity = billingAccountService.billingAccountCancellation(entity, new Date());
 			messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
 					
         } catch (Exception e) {
@@ -239,7 +239,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	public String closeAccount() {
 		log.info("closeAccount billingAccountId:" + entity.getId());
 		try {
-			entity = billingAccountService.closeBillingAccount(entity, getCurrentUser());
+			entity = billingAccountService.closeBillingAccount(entity);
 			messages.info(new BundleKey("messages", "close.closeSuccessful"));
 			
         } catch (Exception e) {
@@ -253,10 +253,10 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	public String generateInvoice() {
 		log.info("generateInvoice billingAccountId:" + entity.getId());
 		try {
-			Invoice invoice = invoiceService.generateInvoice(entity, new Date(), new Date(), null, null,false, currentUser);
-       	    invoiceService.getXMLInvoice(invoice,invoice.getInvoiceNumber(), currentUser, false);
-        	invoice.setPdf(invoiceService.generatePdfInvoice(invoice,invoice.getInvoiceNumber(), currentUser));
-        	recordedInvoiceService.generateRecordedInvoice(invoice, currentUser);
+			Invoice invoice = invoiceService.generateInvoice(entity, new Date(), new Date(), null, null,false);
+       	    invoiceService.getXMLInvoice(invoice,invoice.getInvoiceNumber(), false);
+        	invoice.setPdf(invoiceService.generatePdfInvoice(invoice,invoice.getInvoiceNumber()));
+        	recordedInvoiceService.generateRecordedInvoice(invoice);
 
 			messages.info(new BundleKey("messages", "generateInvoice.successful"),invoice.getInvoiceNumber());
 			
@@ -315,7 +315,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 			for (BillingAccount ba : getSelectedEntities()) {
 				baIds.add(ba.getId());
 			}
-			billingRunService.launchExceptionalInvoicing(baIds, exceptionalInvoicingDate, exceptionalLastTransactionDate,BillingProcessTypesEnum.MANUAL,getCurrentUser()); 
+			billingRunService.launchExceptionalInvoicing(baIds, exceptionalInvoicingDate, exceptionalLastTransactionDate,BillingProcessTypesEnum.MANUAL); 
 			return "/pages/billing/invoicing/billingRuns.xhtml?edit=true&faces-redirect=true";
 		} catch (BusinessException e) {
 			messages.error(e.getMessage());
@@ -377,7 +377,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	public void setInvoicePrefix() {
 		if (returnToAgency) {
 			String invoicePrefix = null;
-			if (entity.getProvider().isEntreprise()) {
+			if (appProvider.isEntreprise()) {
 				invoicePrefix = "R_PRO_";
 			} else {
 				invoicePrefix = "R_PART_";
@@ -400,7 +400,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	public void populateAccounts(CustomerAccount customerAccount) {
 		entity.setCustomerAccount(customerAccount);
 		
-		if (customerAccount != null && customerAccount.getProvider() != null && customerAccount.getProvider().isLevelDuplication()) {
+		if (customerAccount != null && appProvider.isLevelDuplication()) {
 
 			entity.setCode(customerAccount.getCode());
 			entity.setDescription(customerAccount.getDescription());
@@ -411,7 +411,6 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 			entity.setProviderContact(customerAccount.getProviderContact());
 			entity.setName(customerAccount.getName());
 			entity.setPaymentMethod(customerAccount.getPaymentMethod());
-			entity.setProvider(customerAccount.getProvider());
 			entity.setPrimaryContact(customerAccount.getPrimaryContact());
 		}
 	}
@@ -423,12 +422,12 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
 	@Override
 	protected List<String> getListFieldsToFetch() {
-		return Arrays.asList("provider", "customerAccount", "customerAccount.customer");
+		return Arrays.asList("customerAccount", "customerAccount.customer");
 	}
 
 	@Override
 	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider", "customerAccount", "customerAccount.billingAccounts", "billingCycle");
+		return Arrays.asList("customerAccount", "customerAccount.billingAccounts", "billingCycle");
 	}
 
 	public CounterInstance getSelectedCounterInstance() {

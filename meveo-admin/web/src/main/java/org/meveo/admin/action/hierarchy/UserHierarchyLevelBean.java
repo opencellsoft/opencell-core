@@ -23,8 +23,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-
 import java.util.Set;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -89,7 +89,7 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
     }
 
     protected List<String> getFormFieldsToFetch() {
-        return Arrays.asList("provider", "users", "childLevels");
+        return Arrays.asList("users", "childLevels");
     }
 
     @Override
@@ -121,12 +121,8 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
     public TreeNode getRootNode() {
         if (rootNode == null) {
             rootNode = new SortedTreeNode(ROOT, null);
-            List<UserHierarchyLevel> roots;
-            if (entity != null && entity.getProvider() != null) {
-                roots = userHierarchyLevelService.findRoots(entity.getProvider());
-            } else {
-                roots = userHierarchyLevelService.findRoots();
-            }
+            List<UserHierarchyLevel> roots  = userHierarchyLevelService.findRoots();
+
             if (CollectionUtils.isNotEmpty(roots)) {
                 Collections.sort(roots);
                 for (UserHierarchyLevel tree : roots) {
@@ -167,6 +163,7 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
         isEdit = true;
     }
 
+    @SuppressWarnings("unchecked")
     public void onDragDrop(TreeDragDropEvent event) {
         TreeNode dragNode = event.getDragNode();
         TreeNode dropNode = event.getDropNode();
@@ -190,7 +187,7 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
             previousIndex = child.getOrderLevel();
             hasPreviousParent = child.getParentLevel() != null;
             if (hasPreviousParent) {
-                previousParent = userHierarchyLevelService.findByCode(child.getParentLevel().getCode(), getCurrentProvider());
+                previousParent = userHierarchyLevelService.findByCode(child.getParentLevel().getCode());
                 sameParent = previousParent.equals(parent);
                 if (!sameParent) {
                     for (HierarchyLevel<User> sibling : previousParent.getChildLevels()) {
@@ -225,7 +222,7 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
                     }
                 } else {
                     if(!hasPreviousParent) {
-                        List<UserHierarchyLevel> roots = userHierarchyLevelService.findRoots(getCurrentProvider());
+                        List<UserHierarchyLevel> roots = userHierarchyLevelService.findRoots();
                         for(UserHierarchyLevel root : roots) {
                             if (root.getOrderLevel() > previousIndex) {
                                 root.setOrderLevel(root.getOrderLevel() - 1);
@@ -240,7 +237,7 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
             }
             parent.getChildLevels().add(child);
         } else if(!hasParent && !hasPreviousParent) {
-            List<UserHierarchyLevel> roots = userHierarchyLevelService.findRoots(getCurrentProvider());
+            List<UserHierarchyLevel> roots = userHierarchyLevelService.findRoots();
             for(UserHierarchyLevel root : roots) {
                 Long rootIndex = root.getOrderLevel();
                 boolean movedUp = previousIndex - index > 0;
@@ -257,7 +254,7 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
                 }
             }
         } else if(!hasParent && hasPreviousParent) {
-            List<UserHierarchyLevel> roots = userHierarchyLevelService.findRoots(getCurrentProvider());
+            List<UserHierarchyLevel> roots = userHierarchyLevelService.findRoots();
             for(UserHierarchyLevel root : roots) {
                 Long rootIndex = root.getOrderLevel();
                 if (rootIndex >= index) {
@@ -269,15 +266,15 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
 
         try {
             child.setOrderLevel(index);
-            userHierarchyLevelService.update(child, getCurrentUser());
+            userHierarchyLevelService.update(child);
             if (parent != null) {
-                userHierarchyLevelService.update(parent, getCurrentUser());
+                userHierarchyLevelService.update(parent);
             }
             if (previousParent != null && !sameParent) {
-                userHierarchyLevelService.update(previousParent, getCurrentUser());
+                userHierarchyLevelService.update(previousParent);
             }
             for (UserHierarchyLevel sibling : updatedSiblings) {
-                userHierarchyLevelService.update(sibling, getCurrentUser());
+                userHierarchyLevelService.update(sibling);
             }
         } catch (BusinessException e) {
             messages.error(new BundleKey("messages", "userGroupHierarchy.errorChangeLevel"));
@@ -320,7 +317,7 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
         UserHierarchyLevel userHierarchyLevel = (UserHierarchyLevel) selectedNode.getData();
         if (userHierarchyLevel != null) {
             try {
-                userHierarchyLevelService.remove(userHierarchyLevel.getId(), getCurrentUser());
+                userHierarchyLevelService.remove(userHierarchyLevel.getId());
                 selectedNode.getParent().getChildren().remove(selectedNode);
                 selectedNode = null;
                 showUserGroupDetail = false;
@@ -442,7 +439,7 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
 
                 userHierarchyLevel.setParentLevel(parent);
                 userHierarchyLevel.setOrderLevel(order + 1);
-                userHierarchyLevelService.update(userHierarchyLevel, getCurrentUser());
+                userHierarchyLevelService.update(userHierarchyLevel);
             }
         }
         // selectedNode = null;
@@ -564,7 +561,7 @@ public class UserHierarchyLevelBean extends BaseBean<UserHierarchyLevel> {
     }
 
     public UserHierarchyLevel getUserHierarchyLevelFromCode(String code) {
-        UserHierarchyLevel userLevelFound = userHierarchyLevelService.findByCode(code, getCurrentProvider());
+        UserHierarchyLevel userLevelFound = userHierarchyLevelService.findByCode(code);
         if (userLevelFound == null) {
             return new UserHierarchyLevel();
         }

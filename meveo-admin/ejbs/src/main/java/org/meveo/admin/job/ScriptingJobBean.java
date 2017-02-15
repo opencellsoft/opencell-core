@@ -10,7 +10,6 @@ import javax.inject.Inject;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
@@ -32,7 +31,7 @@ public class ScriptingJobBean {
 		ScriptInterface script = null;
 		try {
 			script = scriptInstanceService.getScriptInstance(scriptCode);			
-			script.init(context, currentUser);
+			script.init(context);
 		} catch (Exception e) {
 			log.error("Exception on init script", e);
 			result.registerError("Error in " + scriptCode + " init :" + e.getMessage());
@@ -50,7 +49,7 @@ public class ScriptingJobBean {
 		ScriptInterface script = null;
 		try {
 			script = scriptInstanceService.getScriptInstance(scriptCode);			
-			script.execute(context, currentUser);
+			script.execute(context);
 			if(context.containsKey(Script.JOB_RESULT_NB_OK)){
 				result.setNbItemsCorrectlyProcessed(convert(context.get(Script.JOB_RESULT_NB_OK)));
 			} else {
@@ -79,7 +78,7 @@ public class ScriptingJobBean {
 		ScriptInterface script = null;
 		try {
 			script = scriptInstanceService.getScriptInstance(scriptCode);
-			script.finalize(context, currentUser);
+			script.finalize(context);
 			
 		} catch (Exception e) {
 			log.error("Exception on finalize script", e);

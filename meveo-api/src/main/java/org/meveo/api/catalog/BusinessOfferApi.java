@@ -12,7 +12,6 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
 import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
@@ -25,7 +24,7 @@ public class BusinessOfferApi extends BaseApi {
 	@Inject
 	private BusinessOfferModelService businessOfferModelService;
 
-	public Long createOfferFromBOM(BomOfferDto postData, User currentUser) throws MeveoApiException {
+	public Long createOfferFromBOM(BomOfferDto postData) throws MeveoApiException {
 
 
 		if (StringUtils.isBlank(postData.getBomCode())) {
@@ -37,7 +36,7 @@ public class BusinessOfferApi extends BaseApi {
 	    validate(postData);
 	      
 		// find bom
-		BusinessOfferModel businessOfferModel = businessOfferModelService.findByCode(postData.getBomCode(), currentUser.getProvider());
+		BusinessOfferModel businessOfferModel = businessOfferModelService.findByCode(postData.getBomCode());
 		if (businessOfferModel == null) {
 			throw new EntityDoesNotExistsException(BusinessOfferModel.class, postData.getBomCode());
 		}
@@ -55,7 +54,7 @@ public class BusinessOfferApi extends BaseApi {
 		OfferTemplate newOfferTemplate = null;
 		try {
 			newOfferTemplate = businessOfferModelService.createOfferFromBOM(businessOfferModel, postData.getCustomFields(), postData.getCode(), postData.getName(),
-					postData.getDescription(), postData.getServicesToActivate(), currentUser);
+					postData.getDescription(), postData.getServicesToActivate());
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e.getMessage());
 		}
@@ -72,7 +71,7 @@ public class BusinessOfferApi extends BaseApi {
 						try {
 							CustomFieldsDto cfsDto = new CustomFieldsDto();
 							cfsDto.setCustomField(serviceCodeDto.getCustomFields());
-							populateCustomFields(cfsDto, serviceTemplate, true, currentUser);
+							populateCustomFields(cfsDto, serviceTemplate, true);
 			            } catch (MissingParameterException e) {
 			                log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
 			                throw e;
@@ -91,7 +90,7 @@ public class BusinessOfferApi extends BaseApi {
 			try {
 				CustomFieldsDto cfsDto = new CustomFieldsDto();
 				cfsDto.setCustomField(postData.getCustomFields());
-				populateCustomFields(cfsDto, newOfferTemplate, true, currentUser);
+				populateCustomFields(cfsDto, newOfferTemplate, true);
             } catch (MissingParameterException e) {
                 log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
                 throw e;

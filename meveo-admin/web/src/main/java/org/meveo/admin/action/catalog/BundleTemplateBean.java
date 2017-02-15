@@ -185,12 +185,7 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 
 	public DualListModel<OfferTemplateCategory> getOfferTemplateCategoriesDM() {
 		if (offerTemplateCategoriesDM == null) {
-			List<OfferTemplateCategory> perksSource = null;
-			if (entity != null && entity.getProvider() != null) {
-				perksSource = offerTemplateCategoryService.list(entity.getProvider(), true);
-			} else {
-				perksSource = offerTemplateCategoryService.listActive();
-			}
+			List<OfferTemplateCategory> perksSource = offerTemplateCategoryService.listActive();
 
 			List<OfferTemplateCategory> perksTarget = new ArrayList<OfferTemplateCategory>();
 			if (entity.getOfferTemplateCategories() != null) {
@@ -210,12 +205,7 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 
 	public DualListModel<BusinessAccountModel> getBamDM() {
 		if (bamDM == null) {
-			List<BusinessAccountModel> perksSource = null;
-			if (entity != null && entity.getProvider() != null) {
-				perksSource = businessAccountModelService.list(entity.getProvider(), true);
-			} else {
-				perksSource = businessAccountModelService.listActive();
-			}
+			List<BusinessAccountModel> perksSource = businessAccountModelService.listActive();
 
 			List<BusinessAccountModel> perksTarget = new ArrayList<BusinessAccountModel>();
 			if (entity.getBusinessAccountModels() != null) {
@@ -235,12 +225,7 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 
 	public DualListModel<Channel> getChannelDM() {
 		if (channelDM == null) {
-			List<Channel> perksSource = null;
-			if (entity != null && entity.getProvider() != null) {
-				perksSource = channelService.list(entity.getProvider(), true);
-			} else {
-				perksSource = channelService.listActive();
-			}
+			List<Channel> perksSource = channelService.listActive();
 
 			List<Channel> perksTarget = new ArrayList<Channel>();
 			if (entity.getChannels() != null) {
@@ -265,12 +250,7 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 
 	public DualListModel<DigitalResource> getAttachmentsDM() {
 		if (attachmentsDM == null) {
-			List<DigitalResource> perksSource = null;
-			if (entity != null && entity.getProvider() != null) {
-				perksSource = digitalResourceService.list(entity.getProvider(), true);
-			} else {
-				perksSource = digitalResourceService.list(currentUser.getProvider(), true);
-			}
+			List<DigitalResource> perksSource = digitalResourceService.list( true);
 
 			List<DigitalResource> perksTarget = new ArrayList<DigitalResource>();
 			if (entity.getAttachments() != null) {
@@ -292,7 +272,7 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 	public void duplicate() {
 		if (entity != null && entity.getId() != null) {
 			try {
-				bundleTemplateService.duplicate(entity, getCurrentUser());
+				bundleTemplateService.duplicate(entity);
 				messages.info(new BundleKey("messages", "save.successful"));
 			} catch (BusinessException e) {
 				log.error("Error encountered persisting product template entity: {}: {}", entity.getCode(), e);

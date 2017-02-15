@@ -19,7 +19,6 @@
 package org.meveo.admin.action.billing;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -93,12 +92,5 @@ public class CounterPeriodBean extends BaseBean<CounterPeriod> {
                 return new ArrayList<CounterPeriod>();
             }
         };
-    }
-	
-	 
-	@Override
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
-
+    }	
 }

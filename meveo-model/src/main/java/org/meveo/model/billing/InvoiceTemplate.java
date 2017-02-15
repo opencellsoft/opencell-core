@@ -34,10 +34,10 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
-@ExportIdentifier({ "code", "provider" })
+@ExportIdentifier({ "code"})
 @Table(name = "BILLING_INVOICE_TEMPLATE", uniqueConstraints = {
-		@UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }),
-		@UniqueConstraint(columnNames = { "FILE_NAME", "PROVIDER_ID" }) })
+		@UniqueConstraint(columnNames = { "CODE"}),
+		@UniqueConstraint(columnNames = { "FILE_NAME" }) })
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_TEMPLATE_SEQ")
 public class InvoiceTemplate extends BaseEntity {
 

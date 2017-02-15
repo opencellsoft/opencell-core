@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.finance.RevenueSchedule;
@@ -18,7 +17,7 @@ public interface RevenueRecognitionScriptInterface extends ScriptInterface {
      * @param user Current user
      * @throws BusinessException
      */
-	public void createRevenueSchedule(ChargeInstance chargeInstance,User user) throws BusinessException;
+	public void createRevenueSchedule(ChargeInstance chargeInstance) throws BusinessException;
 		
 	
     /**
@@ -31,6 +30,6 @@ public interface RevenueRecognitionScriptInterface extends ScriptInterface {
      * @param user Current user
      * @throws BusinessException
      */
-    public List<RevenueSchedule> scheduleRevenue(ChargeInstance chargeInstance,List<WalletOperation> woList,Date startDate,Date endDate, User user) throws BusinessException;
+    public List<RevenueSchedule> scheduleRevenue(ChargeInstance chargeInstance,List<WalletOperation> woList,Date startDate,Date endDate) throws BusinessException;
 
 }

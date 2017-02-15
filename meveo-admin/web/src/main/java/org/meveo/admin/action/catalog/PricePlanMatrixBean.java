@@ -23,13 +23,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.inject.Instance;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
@@ -47,6 +45,7 @@ import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.ProductChargeTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
+import org.omnifaces.cdi.Param;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.ToggleEvent;
@@ -85,8 +84,8 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
 	private ProductChargeTemplateService productChargeTemplateService;
 	
 	@Inject
-	@RequestParam
-	private Instance<Long> chargeId; 
+	@Param
+	private Long chargeId; 
 	
 	private String backPage;
 	
@@ -116,9 +115,9 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
 			obj.setMinSubscriptionAgeInMonth(0L);
 			obj.setMaxSubscriptionAgeInMonth(9999L);
 		}
-		if (chargeId.get() != null) {
+		if (chargeId != null) {
 			RecurringChargeTemplate recurring = recurringChargeTemplateService
-					.findById(chargeId.get());
+					.findById(chargeId);
 			if (recurring != null) {
 				if (getObjectId() == null) {
 					obj.setCode(getPricePlanCode(recurring));
@@ -129,7 +128,7 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
 				backPage = "recurringChargeTemplateDetail";
 			} else {
 				OneShotChargeTemplate oneShot = oneShotChargeTemplateService
-						.findById(chargeId.get());
+						.findById(chargeId);
 				if (oneShot != null) {
 					if (getObjectId() == null) {
 						obj.setCode(getPricePlanCode(oneShot));
@@ -140,7 +139,7 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
 					backPage = "oneShotChargeTemplateDetail";
 				} else {
 					UsageChargeTemplate usageCharge = usageChargeTemplateService
-							.findById(chargeId.get());
+							.findById(chargeId);
 					if (usageCharge != null) {
 						if (getObjectId() == null) {
 							obj.setCode(getPricePlanCode(usageCharge));
@@ -151,7 +150,7 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
 						backPage = "usageChargeTemplateDetail";
 					} else {
 						ProductChargeTemplate productCharge = productChargeTemplateService
-								.findById(chargeId.get());
+								.findById(chargeId);
 						if (getObjectId() == null) {
 							obj.setCode(getPricePlanCode(productCharge));
 							obj.setEventCode(productCharge.getCode());
@@ -162,7 +161,7 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
 					}
 				}
 			}
-			chargeTemplateId = chargeId.get();
+			chargeTemplateId = chargeId;
 		}
 		return obj;
 	}
@@ -196,16 +195,6 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
 	@Override
 	protected String getDefaultSort() {
 		return "code";
-	}
-
-	@Override
-	protected List<String> getListFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
-
-	@Override
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider");
 	}
 
 	//show advanced button in search panel
@@ -253,7 +242,7 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
 		long result = 0;
 		try {
 		if (chargetemplate != null) {
-			result = pricePlanMatrixService.getLastPricePlanByCharge(chargetemplate.getCode(), chargetemplate.getProvider()) + 1;
+			result = pricePlanMatrixService.getLastPricePlanByCharge(chargetemplate.getCode()) + 1;
 		}
 		} catch (Exception e) {
 			log.warn("error while getting next sequence", e);
@@ -301,7 +290,7 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
 	 public void duplicate(){
 			if (entity != null && entity.getId() != null) {
 				try {
-					pricePlanMatrixService.duplicate(entity, getCurrentUser());
+					pricePlanMatrixService.duplicate(entity);
 					messages.info(new BundleKey("messages", "save.successful"));
 	            } catch (BusinessException e) {
 	                log.error("Error encountered persisting price plan matrix entity: #{0}:#{1}", entity.getCode(), e);

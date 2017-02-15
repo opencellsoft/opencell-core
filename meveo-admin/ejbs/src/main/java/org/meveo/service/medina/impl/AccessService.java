@@ -30,9 +30,7 @@ import javax.persistence.Query;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.mediation.Access;
 import org.meveo.service.base.PersistenceService;
 
@@ -43,14 +41,13 @@ public class AccessService extends PersistenceService<Access> {
     private CdrEdrProcessingCacheContainerProvider cdrEdrProcessingCacheContainerProvider;
 
 	@SuppressWarnings("unchecked")
-	public List<Access> findByUserID(String userId,Provider provider) {
+	public List<Access> findByUserID(String userId) {
 		log.info("findByUserID '" + userId + "'");
 		List<Access> result = new ArrayList<Access>();
 		if (userId != null && userId.length() > 0) {
 			Query query = getEntityManager().createQuery("from Access a where a.accessUserId=:accessUserId "
-					+ "and a.provider=:provider and a.disabled=false")
-					.setParameter("accessUserId", userId)
-					.setParameter("provider", provider);
+					+ "and a.disabled=false")
+					.setParameter("accessUserId", userId);
 			result = query.getResultList();
 		}
 		return result;
@@ -118,21 +115,21 @@ public class AccessService extends PersistenceService<Access> {
     }
 
     @Override
-    public void remove(Access access, User currentUser) throws BusinessException {
-        super.remove(access, currentUser);
+    public void remove(Access access) throws BusinessException {
+        super.remove(access);
         cdrEdrProcessingCacheContainerProvider.removeAccessFromCache(access);
     }
     
     @Override
-    public Access disable(Access access, User currentUser) throws BusinessException {
-        access = super.disable(access, currentUser);
+    public Access disable(Access access) throws BusinessException {
+        access = super.disable(access);
         cdrEdrProcessingCacheContainerProvider.removeAccessFromCache(access);
         return access;
     }
 
     @Override
-    public Access enable(Access access, User currentUser) throws BusinessException {
-        access = super.enable(access, currentUser);
+    public Access enable(Access access) throws BusinessException {
+        access = super.enable(access);
         cdrEdrProcessingCacheContainerProvider.addAccessToCache(access);
         return access;
     }

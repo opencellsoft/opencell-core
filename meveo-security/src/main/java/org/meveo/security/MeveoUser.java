@@ -2,53 +2,76 @@ package org.meveo.security;
 
 import java.io.Serializable;
 
+/**
+ * Represents a current application user
+ * 
+ * @author Andrius Karpavicius
+ *
+ */
 public abstract class MeveoUser implements Serializable {
 
-    private static final long serialVersionUID = 5535661206200553250L;
+	private static final long serialVersionUID = 5535661206200553250L;
 
-    protected String subject;
+	/*
+	 * User identifier - could or could not match the userName value
+	 */
+	protected String subject;
 
-    protected String userName;
+	/**
+	 * User login name
+	 */
+	protected String userName;
 
-    protected String fullName;
+	/**
+	 * Full name of a user
+	 */
+	protected String fullName;
 
-    protected String providerCode;
-    
-    protected Provider providerEntity;
+	/**
+	 * Provider code
+	 */
+	protected String providerCode;
 
-    protected boolean authenticated;
+	/**
+	 * Is user authenticated
+	 */
+	protected boolean authenticated;
 
-    protected boolean forcedAuthentication;
+	/**
+	 * Was authentication forced (applies to jobs only)
+	 */
+	protected boolean forcedAuthentication;
 
-    public MeveoUser() {
+	public MeveoUser() {
+	}
+
+	public String getSubject() {
+		return subject;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public String getProviderCode() {
+		return providerCode;
+	}
+
+	public String getFullName() {
+		return fullName;
+	}
+
+	public boolean isAuthenticated() {
+        return authenticated;
     }
+	
+	public abstract boolean hasRole(String role);
 
-    public String getSubject() {
-        return subject;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public String getProviderCode() {
-        return providerCode;
-    }
-    
-    public Provider getProvider() {
-        return providerEntity;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public abstract boolean hasRole(String role);
-
-    @Override
-    public String toString() {
-        return "MeveoUser [" + hasRole("user") + " " + hasRole("adminas") + " auth=" + authenticated + ", forced=" + forcedAuthentication + ", sub=" + subject + ", userName="
-                + userName + ", fullName=" + fullName + ", provider=" + providerCode + "]";
-    }
+	@Override
+	public String toString() {
+		return "MeveoUser [" + hasRole("user") + " " + hasRole("adminas") + " auth=" + authenticated + ", forced="
+				+ forcedAuthentication + ", sub=" + subject + ", userName=" + userName + ", fullName=" + fullName
+				+ ", provider=" + providerCode + "]";
+	}
 
 }

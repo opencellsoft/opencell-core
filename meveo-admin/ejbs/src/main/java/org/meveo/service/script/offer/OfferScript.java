@@ -3,7 +3,6 @@ package org.meveo.service.script.offer;
 import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.admin.User;
 import org.meveo.service.script.module.ModuleScript;
 
 /**
@@ -18,33 +17,33 @@ public class OfferScript extends ModuleScript implements OfferScriptInterface {
     public static String CONTEXT_PARAMETERS = "CONTEXT_PARAMETERS";
 
     @Override
-    public void subscribe(Map<String, Object> methodContext, User user) throws BusinessException {
+    public void subscribe(Map<String, Object> methodContext) throws BusinessException {
 
     }
 
     @Override
-    public void suspendSubscription(Map<String, Object> methodContext, User user) throws BusinessException {
+    public void suspendSubscription(Map<String, Object> methodContext) throws BusinessException {
 
     }
 
     @Override
-    public void reactivateSubscription(Map<String, Object> methodContext, User user) throws BusinessException {
+    public void reactivateSubscription(Map<String, Object> methodContext) throws BusinessException {
 
     }
 
     @Override
-    public void terminateSubscription(Map<String, Object> methodContext, User user) throws BusinessException {
+    public void terminateSubscription(Map<String, Object> methodContext) throws BusinessException {
 
     }
 
 	@Override
-	public void beforeCreateOfferFromBOM(Map<String, Object> methodContext, User user) throws BusinessException {
+	public void beforeCreateOfferFromBOM(Map<String, Object> methodContext) throws BusinessException {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void afterCreateOfferFromBOM(Map<String, Object> methodContext, User user) throws BusinessException {
+	public void afterCreateOfferFromBOM(Map<String, Object> methodContext) throws BusinessException {
 		// TODO Auto-generated method stub
 		
 	}

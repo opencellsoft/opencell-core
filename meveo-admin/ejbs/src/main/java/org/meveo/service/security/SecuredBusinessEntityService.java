@@ -13,7 +13,6 @@ import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.User;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 import org.slf4j.Logger;
 
@@ -27,24 +26,23 @@ public class SecuredBusinessEntityService extends PersistenceService<BusinessEnt
 	@Inject
 	protected Logger log;
 
-	public BusinessEntity getEntityByCode(Class<? extends BusinessEntity> entityClass, String code, User user) {
+	public BusinessEntity getEntityByCode(Class<? extends BusinessEntity> entityClass, String code) {
 		if (entityClass == null) {
 			return null;
 		}
-		return getEntityByCode(entityClass.getName(), code, user);
+		return getEntityByCode(entityClass.getName(), code);
 	}
 
-	public BusinessEntity getEntityByCode(String entityClassName, String code, User user) {
-		Provider provider = user.getProvider();
+	public BusinessEntity getEntityByCode(String entityClassName, String code) {
 		try {
 			Class<?> businessEntityClass = Class.forName(ReflectionUtils.getCleanClassName(entityClassName));
-			QueryBuilder qb = new QueryBuilder(businessEntityClass, "e", null, provider);
+			QueryBuilder qb = new QueryBuilder(businessEntityClass, "e", null);
 			qb.addCriterion("e.code", "=", code, true);
 			return (BusinessEntity) qb.getQuery(getEntityManager()).getSingleResult();
 		} catch (NoResultException e) {
-			log.debug("No {} of code {} for provider {} found", getEntityClass().getSimpleName(), code, provider.getId(), e);
+			log.debug("No {} of code {} found", getEntityClass().getSimpleName(), code, e);
 		} catch (NonUniqueResultException e) {
-			log.error("More than one entity of type {} with code {} and provider {} found", entityClass, code, provider, e);
+			log.error("More than one entity of type {} with code {} found", entityClass, code, e);
 		} catch (ClassNotFoundException e) {
 			log.error("Unable to create entity class for query", e);
 		}
@@ -71,7 +69,7 @@ public class SecuredBusinessEntityService extends PersistenceService<BusinessEnt
 				return false;
 			}
 			// Get entity from DB to get parent entities as well.
-			entity = getEntityByCode(entity.getClass(), entity.getCode(), user);
+			entity = getEntityByCode(entity.getClass(), entity.getCode());
 		}
 		if (entity == null && !isParentEntity) {
 			// If entity does not exist and it is not a parent entity, then

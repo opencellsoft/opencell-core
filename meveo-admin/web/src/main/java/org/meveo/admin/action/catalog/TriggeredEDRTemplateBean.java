@@ -18,9 +18,6 @@
  */
 package org.meveo.admin.action.catalog;
 
-import java.util.Arrays;
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -94,11 +91,6 @@ public class TriggeredEDRTemplateBean extends BaseBean<TriggeredEDRTemplate> {
 	}
 
 	@Override
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
-
-	@Override
 	@ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		String result = super.saveOrUpdate(killConversation);
@@ -111,7 +103,7 @@ public class TriggeredEDRTemplateBean extends BaseBean<TriggeredEDRTemplate> {
 			return;
 		}
 		try {
-			triggeredEdrService.duplicate(entity, getCurrentUser());
+			triggeredEdrService.duplicate(entity);
 			messages.info(new BundleKey("messages", "save.successful"));
 		} catch (BusinessException e) {
 			log.error("Error encountered persisting triggered EDR template entity: {}: {}", entity.getCode(), e);

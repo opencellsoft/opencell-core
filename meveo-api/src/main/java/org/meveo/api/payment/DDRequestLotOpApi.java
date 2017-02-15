@@ -12,8 +12,6 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.dto.payment.DDRequestLotOpDto;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.DDRequestOpEnum;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
@@ -29,7 +27,7 @@ public class DDRequestLotOpApi extends BaseApi {
 	@Inject
 	private DDRequestLotOpService ddrequestLotOpService;
 	
-	public void create(DDRequestLotOpDto dto,User currentUser) throws BusinessException, MissingParameterException{
+	public void create(DDRequestLotOpDto dto) throws BusinessException, MissingParameterException{
 		if(StringUtils.isBlank(dto.getFileFormat())){
 			this.missingParameters.add("fileFormat");
 		}
@@ -56,12 +54,12 @@ public class DDRequestLotOpApi extends BaseApi {
 			lot.setStatus(dto.getStatus());
 		}
 		lot.setErrorCause(dto.getErrorCause());
-		ddrequestLotOpService.create(lot, currentUser);
+		ddrequestLotOpService.create(lot);
 	}
 	
-	public List<DDRequestLotOpDto> listDDRequestLotOps(Date fromDueDate,Date toDueDate,DDRequestOpStatusEnum status,Provider currentProvider){
+	public List<DDRequestLotOpDto> listDDRequestLotOps(Date fromDueDate,Date toDueDate,DDRequestOpStatusEnum status){
 		List<DDRequestLotOpDto> result=new ArrayList<DDRequestLotOpDto>();
-		List<DDRequestLotOp> lots=ddrequestLotOpService.findByDateStatus(fromDueDate,toDueDate,status, currentProvider);
+		List<DDRequestLotOp> lots=ddrequestLotOpService.findByDateStatus(fromDueDate,toDueDate,status);
 		if(lots!=null&&!lots.isEmpty()){
 			for(DDRequestLotOp lot:lots){
 				result.add(new DDRequestLotOpDto(lot));

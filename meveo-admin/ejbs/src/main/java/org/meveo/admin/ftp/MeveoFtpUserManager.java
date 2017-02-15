@@ -125,7 +125,7 @@ public class MeveoFtpUserManager extends AbstractUserManager {
 	 * @return ftp user
 	 */
 	private User getUserFromMeveoUser(org.meveo.model.admin.User meveoUser) throws FtpException{
-		String homeDir = String.format("%s%s%s", PREFIX,File.separator, meveoUser.getProvider().getCode());
+		String homeDir = String.format("%s%s%s", PREFIX,File.separator, "appProvider.getCode()");
 		log.debug("ftp user home {}",homeDir);
 		File home = new File(homeDir);
 		if (!home.exists()) {

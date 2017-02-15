@@ -32,7 +32,6 @@ import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
@@ -40,7 +39,6 @@ import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.mediation.Access;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.medina.impl.AccessService;
@@ -72,7 +70,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
         }
     }
 
-    public void terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber, User user)
+    public void terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
 
         if (terminationReason == null) {
@@ -80,7 +78,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
         }
 
         terminateSubscription(subscription, terminationDate, terminationReason, terminationReason.isApplyAgreement(), terminationReason.isApplyReimbursment(),
-            terminationReason.isApplyTerminationCharges(), orderNumber, user);
+            terminationReason.isApplyTerminationCharges(), orderNumber);
     }
 
     public void subscriptionCancellation(Subscription subscription, Date cancelationDate) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException,
@@ -158,7 +156,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
     }
 
     private void terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, boolean applyAgreement,
-            boolean applyReimbursment, boolean applyTerminationCharges, String orderNumber, User user) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+            boolean applyReimbursment, boolean applyTerminationCharges, String orderNumber) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
         if (terminationDate == null) {
             terminationDate = new Date();
         }
@@ -169,27 +167,26 @@ public class SubscriptionService extends BusinessService<Subscription> {
         for (ServiceInstance serviceInstance : serviceInstances) {
             if (InstanceStatusEnum.ACTIVE.equals(serviceInstance.getStatus()) || InstanceStatusEnum.SUSPENDED.equals(serviceInstance.getStatus())) {
                 if (terminationReason != null) {
-                    serviceInstanceService.terminateService(serviceInstance, terminationDate, terminationReason, orderNumber, user);
+                    serviceInstanceService.terminateService(serviceInstance, terminationDate, terminationReason, orderNumber);
                 } else {
-                    serviceInstanceService.terminateService(serviceInstance, terminationDate, applyAgreement, applyReimbursment, applyTerminationCharges, orderNumber, user, null);
+                    serviceInstanceService.terminateService(serviceInstance, terminationDate, applyAgreement, applyReimbursment, applyTerminationCharges, orderNumber, null);
                 }
             }
         }
         for (Access access : subscription.getAccessPoints()) {
             access.setEndDate(terminationDate);
-            accessService.update(access, user);
+            accessService.update(access);
         }
         if (terminationReason != null) {
             subscription.setSubscriptionTerminationReason(terminationReason);
         }
         subscription.setTerminationDate(terminationDate);
         subscription.setStatus(SubscriptionStatusEnum.RESILIATED);
-        update(subscription, user);
+        update(subscription);
         
         // execute termination script
         if (subscription.getOffer().getBusinessOfferModel() != null && subscription.getOffer().getBusinessOfferModel().getScript() != null) {
-            offerModelScriptService.terminateSubscription(subscription, subscription.getOffer().getBusinessOfferModel().getScript().getCode(), terminationDate, terminationReason,
-                user);
+            offerModelScriptService.terminateSubscription(subscription, subscription.getOffer().getBusinessOfferModel().getScript().getCode(), terminationDate, terminationReason);
         }
     }
 
@@ -207,11 +204,11 @@ public class SubscriptionService extends BusinessService<Subscription> {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Subscription> findByOfferTemplate(EntityManager em, OfferTemplate offerTemplate, Provider provider) {
+    public List<Subscription> findByOfferTemplate(EntityManager em, OfferTemplate offerTemplate) {
         QueryBuilder qb = new QueryBuilder(Subscription.class, "s");
 
         try {
-            qb.addCriterionEntity("provider", provider);
+            
             qb.addCriterionEntity("offer", offerTemplate);
 
             return (List<Subscription>) qb.getQuery(em).getResultList();

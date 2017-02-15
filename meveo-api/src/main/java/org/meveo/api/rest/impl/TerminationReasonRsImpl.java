@@ -27,7 +27,7 @@ public class TerminationReasonRsImpl extends BaseRs implements TerminationReason
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            terminationReasonApi.create(postData, getCurrentUser());
+            terminationReasonApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -47,7 +47,7 @@ public class TerminationReasonRsImpl extends BaseRs implements TerminationReason
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            terminationReasonApi.update(postData, getCurrentUser());
+            terminationReasonApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -67,7 +67,7 @@ public class TerminationReasonRsImpl extends BaseRs implements TerminationReason
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            terminationReasonApi.createOrUpdate(postData, getCurrentUser());
+            terminationReasonApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -87,7 +87,7 @@ public class TerminationReasonRsImpl extends BaseRs implements TerminationReason
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            terminationReasonApi.remove(code, getCurrentUser());
+            terminationReasonApi.remove(code);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -107,7 +107,7 @@ public class TerminationReasonRsImpl extends BaseRs implements TerminationReason
         GetTerminationReasonResponse result = new GetTerminationReasonResponse();
 
         try {
-            result.getTerminationReason().add(terminationReasonApi.find(code, getCurrentUser()));
+            result.getTerminationReason().add(terminationReasonApi.find(code));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -127,7 +127,7 @@ public class TerminationReasonRsImpl extends BaseRs implements TerminationReason
         GetTerminationReasonResponse result = new GetTerminationReasonResponse();
 
         try {
-            result.getTerminationReason().addAll(terminationReasonApi.list(getCurrentUser().getProvider()));
+            result.getTerminationReason().addAll(terminationReasonApi.list());
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

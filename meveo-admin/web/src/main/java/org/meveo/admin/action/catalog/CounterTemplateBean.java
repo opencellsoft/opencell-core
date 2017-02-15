@@ -19,8 +19,6 @@
 package org.meveo.admin.action.catalog;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
@@ -64,11 +62,6 @@ public class CounterTemplateBean extends BaseBean<CounterTemplate> {
     @Override
     protected String getDefaultSort() {
         return "code";
-    }
-
-    @Override
-    protected List<String> getFormFieldsToFetch() {
-        return Arrays.asList("provider");
     }
 
     /**

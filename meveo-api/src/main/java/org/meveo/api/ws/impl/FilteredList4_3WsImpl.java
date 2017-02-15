@@ -30,7 +30,7 @@ public class FilteredList4_3WsImpl extends BaseWs implements FilteredList4_3Ws {
     public FilteredListResponseDto list(String filter, Integer firstRow, Integer numberOfRows) {
         FilteredListResponseDto result = new FilteredListResponseDto();
         try {
-            String response = filteredListApi.list(filter, firstRow, numberOfRows, getCurrentUser());
+            String response = filteredListApi.list(filter, firstRow, numberOfRows);
             result.getActionStatus().setMessage(response);
             result.setSearchResults(response);
         } catch (MeveoApiException e) {
@@ -52,7 +52,7 @@ public class FilteredList4_3WsImpl extends BaseWs implements FilteredList4_3Ws {
     public FilteredListResponseDto listByXmlInput(FilteredListDto postData) {
         FilteredListResponseDto result = new FilteredListResponseDto();
         try {
-            String response = filteredListApi.listByXmlInput(postData, getCurrentUser());
+            String response = filteredListApi.listByXmlInput(postData);
             result.getActionStatus().setMessage(response);
             result.setSearchResults(response);
         } catch (MeveoApiException e) {

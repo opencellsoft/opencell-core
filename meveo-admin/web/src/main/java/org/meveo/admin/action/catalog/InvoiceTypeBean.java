@@ -19,7 +19,6 @@
 package org.meveo.admin.action.catalog;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -68,7 +67,7 @@ public class InvoiceTypeBean extends BaseBean<InvoiceType> {
 	        getEntity().getAppliesTo().clear();
 	        getEntity().getAppliesTo().addAll(invoiceTypeService.refreshOrRetrieve(invoiceTypesDM.getTarget()));
 	        if(entity.getSequence().getCurrentInvoiceNb().longValue() 
-					< invoiceTypeService.getMaxCurrentInvoiceNumber(getCurrentProvider(), entity.getCode()).longValue()) {
+					< invoiceTypeService.getMaxCurrentInvoiceNumber(entity.getCode()).longValue()) {
 				messages.error(new BundleKey("messages", "invoice.downgrade.cuurrentNb.error.msg"));
 				return null;
 			}
@@ -94,16 +93,6 @@ public class InvoiceTypeBean extends BaseBean<InvoiceType> {
 	}
 
 	@Override
-	protected List<String> getListFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
-
-	@Override
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
-
-	@Override
 	protected String getDefaultSort() {
 		return "code";
 	}
@@ -113,12 +102,8 @@ public class InvoiceTypeBean extends BaseBean<InvoiceType> {
      */
     public DualListModel<InvoiceType> getDualListModel() {
         if (invoiceTypesDM == null) {
-            List<InvoiceType> perksSource = null;
-            if (entity != null && entity.getProvider() != null) {
-                perksSource = invoiceTypeService.list(entity.getProvider());
-            } else {
-                perksSource = invoiceTypeService.list();
-            }
+            List<InvoiceType> perksSource = invoiceTypeService.listActive();
+            
             List<InvoiceType> perksTarget = new ArrayList<InvoiceType>();
             if (getEntity().getAppliesTo() != null) {
                 perksTarget.addAll(getEntity().getAppliesTo());

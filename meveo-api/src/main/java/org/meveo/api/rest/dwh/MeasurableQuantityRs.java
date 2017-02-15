@@ -17,13 +17,12 @@ import org.meveo.api.dto.dwh.GetListMeasurableQuantityResponse;
 import org.meveo.api.dto.dwh.GetMeasurableQuantityResponse;
 import org.meveo.api.dto.dwh.MeasurableQuantityDto;
 import org.meveo.api.rest.IBaseRs;
-import org.meveo.api.rest.security.RSSecured;
 import org.meveo.model.dwh.MeasurementPeriodEnum;
 
 @Path("/measurableQuantity")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-@RSSecured
+
 public interface MeasurableQuantityRs extends IBaseRs {
 
 	@POST

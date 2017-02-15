@@ -29,35 +29,32 @@ import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
 public class ServiceChargeTemplateTerminationService extends PersistenceService<ServiceChargeTemplateTermination> {
 
-	public void removeByPrefix(EntityManager em, String prefix, Provider provider) {
+	public void removeByPrefix(EntityManager em, String prefix) {
 		Query query = em.createQuery("DELETE ServiceChargeTemplateTermination t WHERE t.chargeTemplate.code LIKE '"
-				+ prefix + "%' AND t.provider=:provider");
-		query.setParameter("provider", provider);
+				+ prefix + "%' ");
 		query.executeUpdate();
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<ServiceChargeTemplateTermination> findByTerminationChargeTemplate(EntityManager em,
-			OneShotChargeTemplate chargeTemplate, Provider provider) {
+			OneShotChargeTemplate chargeTemplate) {
 		QueryBuilder qb = new QueryBuilder(ServiceChargeTemplateTermination.class, "a");
 		qb.addCriterionEntity("chargeTemplate", chargeTemplate);
-		qb.addCriterionEntity("provider", provider);
+		
 
 		return (List<ServiceChargeTemplateTermination>) qb.getQuery(em).getResultList();
 	}
 
-	public void removeByServiceTemplate(ServiceTemplate serviceTemplate, Provider provider) {
+	public void removeByServiceTemplate(ServiceTemplate serviceTemplate) {
 		Query query = getEntityManager()
 				.createQuery(
-						"DELETE ServiceChargeTemplateTermination t WHERE t.serviceTemplate=:serviceTemplate AND t.provider=:provider");
+						"DELETE ServiceChargeTemplateTermination t WHERE t.serviceTemplate=:serviceTemplate ");
 		query.setParameter("serviceTemplate", serviceTemplate);
-		query.setParameter("provider", provider);
 		query.executeUpdate();
 	}
 	@SuppressWarnings("unchecked")

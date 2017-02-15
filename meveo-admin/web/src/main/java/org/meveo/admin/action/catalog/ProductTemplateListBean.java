@@ -38,9 +38,9 @@ public class ProductTemplateListBean extends ProductTemplateBean {
 
 	@Override
 	public void preRenderView() {
-		activeCount = productTemplateService.countProductTemplateActive(true, getCurrentProvider());
-		inactiveCount = productTemplateService.countProductTemplateActive(false, getCurrentProvider());
-		almostExpiredCount = productTemplateService.countProductTemplateExpiring(getCurrentProvider());
+		activeCount = productTemplateService.countProductTemplateActive(true);
+		inactiveCount = productTemplateService.countProductTemplateActive(false);
+		almostExpiredCount = productTemplateService.countProductTemplateExpiring();
 		super.preRenderView();
 	}
 
@@ -54,7 +54,7 @@ public class ProductTemplateListBean extends ProductTemplateBean {
 	}
 
 	public void updateProductTemplateStatus(ProductTemplate pt) throws BusinessException {
-		productTemplateService.update(pt, getCurrentUser());
+		productTemplateService.update(pt);
 	}
 
 	public void addProductTemplateToExport(ProductTemplate pt) {

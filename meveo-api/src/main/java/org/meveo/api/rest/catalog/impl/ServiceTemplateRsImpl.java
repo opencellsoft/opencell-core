@@ -31,7 +31,7 @@ public class ServiceTemplateRsImpl extends BaseRs implements ServiceTemplateRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            serviceTemplateApi.create(postData, getCurrentUser());
+            serviceTemplateApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -51,7 +51,7 @@ public class ServiceTemplateRsImpl extends BaseRs implements ServiceTemplateRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            serviceTemplateApi.update(postData, getCurrentUser());
+            serviceTemplateApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -71,7 +71,7 @@ public class ServiceTemplateRsImpl extends BaseRs implements ServiceTemplateRs {
         GetServiceTemplateResponseDto result = new GetServiceTemplateResponseDto();
 
         try {
-            result.setServiceTemplate(serviceTemplateApi.find(serviceTemplateCode, getCurrentUser()));
+            result.setServiceTemplate(serviceTemplateApi.find(serviceTemplateCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -91,7 +91,7 @@ public class ServiceTemplateRsImpl extends BaseRs implements ServiceTemplateRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            serviceTemplateApi.remove(serviceTemplateCode, getCurrentUser());
+            serviceTemplateApi.remove(serviceTemplateCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -111,7 +111,7 @@ public class ServiceTemplateRsImpl extends BaseRs implements ServiceTemplateRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            serviceTemplateApi.createOrUpdate(postData, getCurrentUser());
+            serviceTemplateApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

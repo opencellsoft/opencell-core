@@ -1,8 +1,6 @@
 package org.meveo.admin.action.medina;
 
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.enterprise.context.ConversationScoped;
@@ -38,7 +36,7 @@ public class EdrBean extends BaseBean<EDR> {
 	public void updateStatus(EDR selectedEdr) throws BusinessException {
 		if(EDRStatusEnum.REJECTED.equals(selectedEdr.getStatus())) {
 			selectedEdr.setStatus(EDRStatusEnum.OPEN);
-			getPersistenceService().update(selectedEdr, getCurrentUser());
+			getPersistenceService().update(selectedEdr);
 		} else {
 			messages.warn(new BundleKey("messages", "edr.onlyRejectedCanBeUpdated"));
 		}
@@ -57,7 +55,7 @@ public class EdrBean extends BaseBean<EDR> {
 			}
 
 			if(selectedIds.size() > 0){
-				edrService.massUpdate(EDRStatusEnum.OPEN, selectedIds, getCurrentProvider());
+				edrService.massUpdate(EDRStatusEnum.OPEN, selectedIds);
 			}
 
 			if(hasNotRejected){
@@ -70,15 +68,4 @@ public class EdrBean extends BaseBean<EDR> {
 	protected IPersistenceService<EDR> getPersistenceService() {
 		return edrService;
 	}
-
-	@Override
-	protected List<String> getListFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
-
-	@Override
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
-
 }

@@ -32,7 +32,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.TradingCurrency;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
@@ -80,9 +79,7 @@ public class TradingCurrencyBean extends BaseBean<TradingCurrency> {
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		String back = null;
 		try {
-			Provider currentProvider = providerService
-					.findById(getCurrentProvider().getId());
-			for (TradingCurrency tr : currentProvider.getTradingCurrencies()) {
+			for (TradingCurrency tr : tradingCurrencyService.list()) {
 				if (tr.getCurrency()
 						.getCurrencyCode()
 						.equalsIgnoreCase(
@@ -152,7 +149,7 @@ public class TradingCurrencyBean extends BaseBean<TradingCurrency> {
 
 	@Override
 	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider", "currency");
+		return Arrays.asList("currency");
 	}
 
 	@Override

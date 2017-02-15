@@ -35,12 +35,12 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.EnableEntity;
 
 @Entity
 @Table(name = "WF_HISTORY")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "WF_HISTORY_SEQ")
-public class WorkflowHistory extends AuditableEntity {
+public class WorkflowHistory extends EnableEntity {
 
 	private static final long serialVersionUID = 1L;
 	

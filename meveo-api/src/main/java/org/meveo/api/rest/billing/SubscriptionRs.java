@@ -21,7 +21,6 @@ import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsResponseDto;
 import org.meveo.api.rest.IBaseRs;
-import org.meveo.api.rest.security.RSSecured;
 
 /**
  * @author Edward P. Legaspi
@@ -29,7 +28,7 @@ import org.meveo.api.rest.security.RSSecured;
 @Path("/billing/subscription")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-@RSSecured
+
 public interface SubscriptionRs extends IBaseRs {
 
     /**

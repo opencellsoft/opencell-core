@@ -14,7 +14,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.InvalidScriptException;
 import org.meveo.api.dto.CustomFieldDto;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.catalog.OfferTemplate;
@@ -33,55 +32,55 @@ public class OfferModelScriptService implements Serializable {
 	@Inject
 	private ScriptInstanceService scriptInstanceService;
 
-	public void subscribe(Subscription entity, String scriptCode, User currentUser) throws ElementNotFoundException, InvalidScriptException, BusinessException {
-		OfferScriptInterface scriptInterface = (OfferScriptInterface) scriptInstanceService.getScriptInstance(currentUser.getProvider(), scriptCode);
+	public void subscribe(Subscription entity, String scriptCode) throws ElementNotFoundException, InvalidScriptException, BusinessException {
+		OfferScriptInterface scriptInterface = (OfferScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
 		Map<String, Object> scriptContext = new HashMap<String, Object>();
 		scriptContext.put(Script.CONTEXT_ENTITY, entity);
-		scriptInterface.subscribe(scriptContext, currentUser);
+		scriptInterface.subscribe(scriptContext);
 	}
 
-	public void terminateSubscription(Subscription entity, String scriptCode, Date terminationDate, SubscriptionTerminationReason terminationReason, User currentUser)
+	public void terminateSubscription(Subscription entity, String scriptCode, Date terminationDate, SubscriptionTerminationReason terminationReason)
 			throws ElementNotFoundException, InvalidScriptException, BusinessException {
-		OfferScriptInterface scriptInterface = (OfferScriptInterface) scriptInstanceService.getScriptInstance(currentUser.getProvider(), scriptCode);
+		OfferScriptInterface scriptInterface = (OfferScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
 		Map<String, Object> scriptContext = new HashMap<>();
 		scriptContext.put(OfferScript.CONTEXT_TERMINATION_DATE, terminationDate);
 		scriptContext.put(OfferScript.CONTEXT_TERMINATION_REASON, terminationReason);
 		scriptContext.put(Script.CONTEXT_ENTITY, entity);
-		scriptInterface.terminateSubscription(scriptContext, currentUser);
+		scriptInterface.terminateSubscription(scriptContext);
 	}
 
-	public void suspendSubscription(Subscription entity, String scriptCode, Date suspensionDate, User currentUser) throws ElementNotFoundException, InvalidScriptException,
+	public void suspendSubscription(Subscription entity, String scriptCode, Date suspensionDate) throws ElementNotFoundException, InvalidScriptException,
 			BusinessException {
-		OfferScriptInterface scriptInterface = (OfferScriptInterface) scriptInstanceService.getScriptInstance(currentUser.getProvider(), scriptCode);
+		OfferScriptInterface scriptInterface = (OfferScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
 		Map<String, Object> scriptContext = new HashMap<String, Object>();
 		scriptContext.put(OfferScript.CONTEXT_SUSPENSION_DATE, suspensionDate);
 		scriptContext.put(Script.CONTEXT_ENTITY, entity);
-		scriptInterface.suspendSubscription(scriptContext, currentUser);
+		scriptInterface.suspendSubscription(scriptContext);
 	}
 
-	public void reactivateSubscription(Subscription entity, String scriptCode, Date activationDate, User currentUser) throws ElementNotFoundException, InvalidScriptException,
+	public void reactivateSubscription(Subscription entity, String scriptCode, Date activationDate) throws ElementNotFoundException, InvalidScriptException,
 			BusinessException {
-		OfferScriptInterface scriptInterface = (OfferScriptInterface) scriptInstanceService.getScriptInstance(currentUser.getProvider(), scriptCode);
+		OfferScriptInterface scriptInterface = (OfferScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
 		Map<String, Object> scriptContext = new HashMap<String, Object>();
 		scriptContext.put(OfferScript.CONTEXT_ACTIVATION_DATE, activationDate);
 		scriptContext.put(Script.CONTEXT_ENTITY, entity);
-		scriptInterface.reactivateSubscription(scriptContext, currentUser);
+		scriptInterface.reactivateSubscription(scriptContext);
 	}
 
-	public void beforeCreateOfferFromBOM(List<CustomFieldDto> customFields, String scriptCode, User currentUser) throws BusinessException {
-		OfferScriptInterface scriptInterface = (OfferScriptInterface) scriptInstanceService.getScriptInstance(currentUser.getProvider(), scriptCode);
+	public void beforeCreateOfferFromBOM(List<CustomFieldDto> customFields, String scriptCode) throws BusinessException {
+		OfferScriptInterface scriptInterface = (OfferScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
 		Map<String, Object> scriptContext = new HashMap<String, Object>();
 		scriptContext.put(OfferScript.CONTEXT_PARAMETERS, customFields);
-		scriptInterface.beforeCreateOfferFromBOM(scriptContext, currentUser);
+		scriptInterface.beforeCreateOfferFromBOM(scriptContext);
 	}
 
-	public void afterCreateOfferFromBOM(OfferTemplate entity, List<CustomFieldDto> customFields, String scriptCode, User currentUser) throws ElementNotFoundException,
+	public void afterCreateOfferFromBOM(OfferTemplate entity, List<CustomFieldDto> customFields, String scriptCode) throws ElementNotFoundException,
 			InvalidScriptException, BusinessException {
-		OfferScriptInterface scriptInterface = (OfferScriptInterface) scriptInstanceService.getScriptInstance(currentUser.getProvider(), scriptCode);
+		OfferScriptInterface scriptInterface = (OfferScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
 		Map<String, Object> scriptContext = new HashMap<String, Object>();
 		scriptContext.put(Script.CONTEXT_ENTITY, entity);
 		scriptContext.put(OfferScript.CONTEXT_PARAMETERS, customFields);
-		scriptInterface.afterCreateOfferFromBOM(scriptContext, currentUser);
+		scriptInterface.afterCreateOfferFromBOM(scriptContext);
 	}
 
 }

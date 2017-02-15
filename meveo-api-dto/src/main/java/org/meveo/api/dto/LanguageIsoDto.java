@@ -6,7 +6,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.billing.Language;
-import org.meveo.model.billing.TradingLanguage;
 
 /**
  * @author Edward P. Legaspi

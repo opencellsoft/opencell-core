@@ -20,7 +20,6 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.SubscriptionImportHisto;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.crm.Provider;
@@ -39,6 +38,7 @@ import org.meveo.service.crm.impl.CheckedSubscription;
 import org.meveo.service.crm.impl.ImportIgnoredException;
 import org.meveo.service.crm.impl.SubscriptionImportService;
 import org.meveo.service.crm.impl.SubscriptionServiceException;
+import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
 @Stateless
@@ -62,6 +62,10 @@ public class ImportSubscriptionsJobBean {
 	@Inject
 	private SubscriptionImportService subscriptionImportService;
 
+    @Inject
+    @ApplicationProvider
+    protected Provider appProvider;
+	
 	ParamBean paramBean = ParamBean.getInstance();
 
 	Subscriptions subscriptionsError;
@@ -77,10 +81,9 @@ public class ImportSubscriptionsJobBean {
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public void execute(JobExecutionResultImpl result) {
-		Provider provider = currentUser.getProvider();
 
 		String importDir = paramBean.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator
-				+ provider.getCode() + File.separator + "imports" + File.separator + "subscriptions" + File.separator;
+				+ appProvider.getCode() + File.separator + "imports" + File.separator + "subscriptions" + File.separator;
 
 		String dirIN = importDir + "input";
 		log.info("dirIN=" + dirIN);
@@ -129,7 +132,6 @@ public class ImportSubscriptionsJobBean {
 	public void importFile(File file, String fileName) throws JAXBException, Exception {
 		log.info("start import file :" + fileName);
 
-		Provider provider = currentUser.getProvider();
 		subscriptionsError = new Subscriptions();
 		subscriptionsWarning = new Subscriptions();
 		nbSubscriptions = 0;
@@ -144,8 +146,8 @@ public class ImportSubscriptionsJobBean {
 
 		if (file.length() < 100) {
 			createSubscriptionWarning(null, "Empty file.");
-			generateReport(fileName, provider);
-			createHistory(currentUser);
+			generateReport(fileName);
+			createHistory();
 			return;
 		}
 
@@ -161,7 +163,7 @@ public class ImportSubscriptionsJobBean {
 		for (org.meveo.model.jaxb.subscription.Subscription jaxbSubscription : jaxbSubscriptions.getSubscription()) {
 			try {
 				log.debug("importing subscription index={}, code={}", i++, jaxbSubscription.getCode());
-				CheckedSubscription checkSubscription = subscriptionCheckError(provider, jaxbSubscription);
+				CheckedSubscription checkSubscription = subscriptionCheckError(jaxbSubscription);
 
 				if (checkSubscription == null) {
 					nbSubscriptionsError++;
@@ -192,25 +194,23 @@ public class ImportSubscriptionsJobBean {
 			}
 		}
 
-		generateReport(fileName, provider);
-		createHistory(currentUser);
+		generateReport(fileName);
+		createHistory();
 		log.info("end import file ");
 	}
 
-	private void createHistory(User currentUser) throws Exception {
-		Provider provider = currentUser.getProvider();
+	private void createHistory() throws Exception {
 		subscriptionImportHisto.setLinesRead(nbSubscriptions);
 		subscriptionImportHisto.setLinesInserted(nbSubscriptionsCreated);
 		subscriptionImportHisto.setLinesRejected(nbSubscriptionsError);
 		subscriptionImportHisto.setNbSubscriptionsIgnored(nbSubscriptionsIgnored);
 		subscriptionImportHisto.setNbSubscriptionsTerminated(nbSubscriptionsTerminated);
-		subscriptionImportHisto.setProvider(provider);
 		subscriptionImportHistoService.create(subscriptionImportHisto);
 	}
 
-	private void generateReport(String fileName, Provider provider) throws Exception {
+	private void generateReport(String fileName) throws Exception {
 		String importDir = paramBean.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator
-				+ provider.getCode() + File.separator + "imports" + File.separator + "subscriptions" + File.separator;
+				+ appProvider.getCode() + File.separator + "imports" + File.separator + "subscriptions" + File.separator;
 
 		if (subscriptionsWarning.getWarnings() != null) {
 			String warningDir = importDir + "output" + File.separator + "warnings";
@@ -252,7 +252,7 @@ public class ImportSubscriptionsJobBean {
 		return files;
 	}
 
-	private CheckedSubscription subscriptionCheckError(Provider provider,
+	private CheckedSubscription subscriptionCheckError(
 			org.meveo.model.jaxb.subscription.Subscription jaxbSubscription) {
 		CheckedSubscription checkSubscription = new CheckedSubscription();
 
@@ -288,7 +288,7 @@ public class ImportSubscriptionsJobBean {
 
 		OfferTemplate offerTemplate = null;
 		try {
-			offerTemplate = offerTemplateService.findByCode(jaxbSubscription.getOfferCode().toUpperCase(), provider);
+			offerTemplate = offerTemplateService.findByCode(jaxbSubscription.getOfferCode().toUpperCase());
 		} catch (Exception e) {
 			log.warn("failed to find offerTemplate",e);
 		}
@@ -302,7 +302,7 @@ public class ImportSubscriptionsJobBean {
 
 		UserAccount userAccount = null;
 		try {
-			userAccount = userAccountService.findByCode(jaxbSubscription.getUserAccountId(), provider);
+			userAccount = userAccountService.findByCode(jaxbSubscription.getUserAccountId());
 		} catch (Exception e) {
 			log.error("error generated while getting user account",e);
 		}
@@ -315,7 +315,7 @@ public class ImportSubscriptionsJobBean {
 		checkSubscription.userAccount = userAccount;
 
 		try {
-			checkSubscription.subscription = subscriptionService.findByCode(jaxbSubscription.getCode(), provider);
+			checkSubscription.subscription = subscriptionService.findByCode(jaxbSubscription.getCode());
 		} catch (Exception e) {
 			log.error("failed to find subscription",e);
 		}

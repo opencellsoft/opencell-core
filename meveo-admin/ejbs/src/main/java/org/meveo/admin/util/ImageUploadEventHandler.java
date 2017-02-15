@@ -17,33 +17,40 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.security.MeveoUser;
 import org.primefaces.model.UploadedFile;
 
 /**
  * @author Edward P. Legaspi
  **/
 public class ImageUploadEventHandler<T extends IEntity> {
+    
+    private MeveoUser currentUser;
+    
+    public ImageUploadEventHandler(MeveoUser currentUser) {
+        this.currentUser = currentUser;
+    }
 
-	public String getPicturePath(T entity, String providerCode) {
+	public String getPicturePath(T entity) {
 		if (entity instanceof OfferTemplateCategory) {
-			return ModuleUtil.getPicturePath(providerCode, "offerCategory");
+			return ModuleUtil.getPicturePath(currentUser.getProviderCode(), "offerCategory");
 		} else if (entity instanceof OfferTemplate) {
-			return ModuleUtil.getPicturePath(providerCode, "offer");
+			return ModuleUtil.getPicturePath(currentUser.getProviderCode(), "offer");
 		} else if (entity instanceof ServiceTemplate) {
-			return ModuleUtil.getPicturePath(providerCode, "service");
+			return ModuleUtil.getPicturePath(currentUser.getProviderCode(), "service");
 		} else if (entity instanceof ProductTemplate) {
-			return ModuleUtil.getPicturePath(providerCode, "product");
+			return ModuleUtil.getPicturePath(currentUser.getProviderCode(), "product");
 		}
 
 		return "";
 	}
 
-	public void handleImageUpload(T entity, String code, UploadedFile uploadedFile, String providerCode) throws IOException {
+	public void handleImageUpload(T entity, String code, UploadedFile uploadedFile) throws IOException {
 		if (uploadedFile != null) {
 			String newExtension = FilenameUtils.getExtension(uploadedFile.getFileName());
 			String oldExtension = FilenameUtils.getExtension(((IImageUpload) entity).getImagePath());
-			String filePath = processImageUpload(entity, code, uploadedFile, providerCode);
-			handleChangeExtension(entity, oldExtension, newExtension, providerCode);
+			String filePath = processImageUpload(entity, code, uploadedFile);
+			handleChangeExtension(entity, oldExtension, newExtension);
 			((IImageUpload) entity).setImagePath(filePath);
 		}
 	}
@@ -55,11 +62,10 @@ public class ImageUploadEventHandler<T extends IEntity> {
 	 * @param entity
 	 * @param code
 	 * @param uploadedFile
-	 * @param providerCode
 	 * @return
 	 * @throws IOException
 	 */
-	private String processImageUpload(T entity, String code, UploadedFile uploadedFile, String providerCode) throws IOException {
+	private String processImageUpload(T entity, String code, UploadedFile uploadedFile) throws IOException {
 		String filename = code;
 		if (org.meveo.commons.utils.StringUtils.isBlank(code)) {
 			filename = FilenameUtils.getBaseName(uploadedFile.getFileName());
@@ -67,7 +73,7 @@ public class ImageUploadEventHandler<T extends IEntity> {
 
 		String extension = FilenameUtils.getExtension(uploadedFile.getFileName());
 
-		String folder = getPicturePath(entity, providerCode);
+		String folder = getPicturePath(entity);
 		Path file = Paths.get(folder, filename + "." + extension);
 		if (!Files.exists(file)) {
 			file = Files.createFile(file);
@@ -85,11 +91,10 @@ public class ImageUploadEventHandler<T extends IEntity> {
 	 * 
 	 * @param entity
 	 * @param newFileExt
-	 * @param providerCode
 	 * @throws IOException
 	 */
-	private void handleChangeExtension(T entity, String oldExtension, String newFileExt, String providerCode) throws IOException {
-		String folder = getPicturePath(entity, providerCode);
+	private void handleChangeExtension(T entity, String oldExtension, String newFileExt) throws IOException {
+		String folder = getPicturePath(entity);
 
 		String imagePath = ((IImageUpload) entity).getImagePath();
 		if (oldExtension != null && !oldExtension.equals(newFileExt)) {
@@ -97,9 +102,9 @@ public class ImageUploadEventHandler<T extends IEntity> {
 		}
 	}
 
-	public void saveImageUpload(T entity, String providerCode) throws IOException {
+	public void saveImageUpload(T entity) throws IOException {
 		// check if image path is the same as entity.code
-		String folder = getPicturePath(entity, providerCode);
+		String folder = getPicturePath(entity);
 
 		String imagePath = ((IImageUpload) entity).getImagePath();
 		String code = ((BusinessEntity) entity).getCode();
@@ -118,12 +123,11 @@ public class ImageUploadEventHandler<T extends IEntity> {
 	 * 
 	 * @param entity
 	 * @param imageData
-	 * @param providerCode
 	 * @throws IOException
 	 */
-	public void saveImageUpload(T entity, String filename, byte[] imageData, String providerCode) throws IOException {
+	public void saveImageUpload(T entity, String filename, byte[] imageData) throws IOException {
 		// check if image path is the same as entity.code
-		String folder = getPicturePath(entity, providerCode);
+		String folder = getPicturePath(entity);
 
 		if (!org.meveo.commons.utils.StringUtils.isBlank(filename)) {
 			String extension = FilenameUtils.getExtension(filename);
@@ -145,8 +149,8 @@ public class ImageUploadEventHandler<T extends IEntity> {
 		}
 	}
 
-	public void deleteImage(T entity, String providerCode) throws IOException {
-		String folder = getPicturePath(entity, providerCode);
+	public void deleteImage(T entity) throws IOException {
+		String folder = getPicturePath(entity);
 
 		String imagePath = ((IImageUpload) entity).getImagePath();
 		if (!org.meveo.commons.utils.StringUtils.isBlank(imagePath)) {
@@ -155,8 +159,8 @@ public class ImageUploadEventHandler<T extends IEntity> {
 		}
 	}
 
-	public String duplicateImage(T entity, String sourceFilename, String targetFilename, String providerCode) throws IOException {
-		String folder = getPicturePath(entity, providerCode);
+	public String duplicateImage(T entity, String sourceFilename, String targetFilename) throws IOException {
+		String folder = getPicturePath(entity);
 		Path target = null;		
 
 		if (!org.meveo.commons.utils.StringUtils.isBlank(sourceFilename)) {

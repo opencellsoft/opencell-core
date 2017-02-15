@@ -29,12 +29,10 @@ import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor
 import org.meveo.api.security.parameter.SecureMethodParameter;
 import org.meveo.api.security.parameter.UserParser;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Customer;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CreditCategory;
 import org.meveo.model.payments.CustomerAccount;
@@ -74,15 +72,15 @@ public class CustomerAccountApi extends AccountApi {
 	@EJB
 	private AccountHierarchyApi accountHierarchyApi;
 
-	public void create(CustomerAccountDto postData, User currentUser) throws MeveoApiException, BusinessException {
-		create(postData, currentUser, true);
+	public void create(CustomerAccountDto postData) throws MeveoApiException, BusinessException {
+		create(postData, true);
 	}
 
-	public CustomerAccount create(CustomerAccountDto postData, User currentUser, boolean checkCustomFields) throws MeveoApiException, BusinessException {
-		return create(postData, currentUser, true, null);
+	public CustomerAccount create(CustomerAccountDto postData, boolean checkCustomFields) throws MeveoApiException, BusinessException {
+		return create(postData, true, null);
 	}
 
-	public CustomerAccount create(CustomerAccountDto postData, User currentUser, boolean checkCustomFields, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
+	public CustomerAccount create(CustomerAccountDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
@@ -102,36 +100,36 @@ public class CustomerAccountApi extends AccountApi {
 
 		handleMissingParameters();
 
-		Provider provider = currentUser.getProvider();
+		
 		// check if already exists
-		if (customerAccountService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
+		if (customerAccountService.findByCode(postData.getCode()) != null) {
 			throw new EntityAlreadyExistsException(CustomerAccount.class, postData.getCode());
 		}
 
-		Customer customer = customerService.findByCode(postData.getCustomer(), provider);
+		Customer customer = customerService.findByCode(postData.getCustomer());
 		if (customer == null) {
 			throw new EntityDoesNotExistsException(Customer.class, postData.getCustomer());
 		}
 
-		TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrency(), provider);
+		TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrency());
 		if (tradingCurrency == null) {
 			throw new EntityDoesNotExistsException(TradingCurrency.class, postData.getCurrency());
 		}
 
-		TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(postData.getLanguage(), provider);
+		TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(postData.getLanguage());
 		if (tradingLanguage == null) {
 			throw new EntityDoesNotExistsException(TradingLanguage.class, postData.getLanguage());
 		}
 
 		CustomerAccount customerAccount = new CustomerAccount();
-		populate(postData, customerAccount, currentUser);
+		populate(postData, customerAccount);
 		customerAccount.setDateDunningLevel(new Date());
 		customerAccount.setCustomer(customer);
 		customerAccount.setTradingCurrency(tradingCurrency);
 		customerAccount.setTradingLanguage(tradingLanguage);
 		customerAccount.setPaymentMethod(postData.getPaymentMethod());
 		if (!StringUtils.isBlank(postData.getCreditCategory())) {
-			customerAccount.setCreditCategory(creditCategoryService.findByCode(postData.getCreditCategory(), provider));
+			customerAccount.setCreditCategory(creditCategoryService.findByCode(postData.getCreditCategory()));
 		}
 		customerAccount.setMandateDate(postData.getMandateDate());
 		customerAccount.setMandateIdentification(postData.getMandateIdentification());
@@ -149,11 +147,11 @@ public class CustomerAccountApi extends AccountApi {
 			customerAccount.setBusinessAccountModel(businessAccountModel);
 		}
 
-		customerAccountService.create(customerAccount, currentUser);
+		customerAccountService.create(customerAccount);
 
 		// Validate and populate customFields
 		try {
-			populateCustomFields(postData.getCustomFields(), customerAccount, true, currentUser, checkCustomFields);
+			populateCustomFields(postData.getCustomFields(), customerAccount, true, checkCustomFields);
         } catch (MissingParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
@@ -165,15 +163,15 @@ public class CustomerAccountApi extends AccountApi {
 		return customerAccount;
 	}
 
-	public void update(CustomerAccountDto postData, User currentUser) throws MeveoApiException, DuplicateDefaultAccountException {
-		update(postData, currentUser, true);
+	public void update(CustomerAccountDto postData) throws MeveoApiException, DuplicateDefaultAccountException {
+		update(postData, true);
 	}
 
-	public CustomerAccount update(CustomerAccountDto postData, User currentUser, boolean checkCustomFields) throws MeveoApiException, DuplicateDefaultAccountException {
-		return update(postData, currentUser, true, null);
+	public CustomerAccount update(CustomerAccountDto postData, boolean checkCustomFields) throws MeveoApiException, DuplicateDefaultAccountException {
+		return update(postData, true, null);
 	}
 
-	public CustomerAccount update(CustomerAccountDto postData, User currentUser, boolean checkCustomFields, BusinessAccountModel businessAccountModel) throws MeveoApiException, DuplicateDefaultAccountException {
+	public CustomerAccount update(CustomerAccountDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel) throws MeveoApiException, DuplicateDefaultAccountException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
@@ -190,15 +188,15 @@ public class CustomerAccountApi extends AccountApi {
 
 		handleMissingParameters();
 
-		Provider provider = currentUser.getProvider();
+		
 		// check if already exists
-		CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCode(), currentUser.getProvider());
+		CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCode());
 		if (customerAccount == null) {
 			throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCode());
 		}
 
 		if (!StringUtils.isBlank(postData.getCustomer())) {
-			Customer customer = customerService.findByCode(postData.getCustomer(), provider);
+			Customer customer = customerService.findByCode(postData.getCustomer());
 			if (customer == null) {
 				throw new EntityDoesNotExistsException(Customer.class, postData.getCustomer());
             } else if (!customerAccount.getCustomer().equals(customer)) {
@@ -208,7 +206,7 @@ public class CustomerAccountApi extends AccountApi {
 		}
 
 		if (!StringUtils.isBlank(postData.getCurrency())) {
-			TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrency(), provider);
+			TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrency());
 			if (tradingCurrency == null) {
 				throw new EntityDoesNotExistsException(TradingCurrency.class, postData.getCurrency());
 			}
@@ -216,7 +214,7 @@ public class CustomerAccountApi extends AccountApi {
 		}
 
 		if (!StringUtils.isBlank(postData.getLanguage())) {
-			TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(postData.getLanguage(), provider);
+			TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(postData.getLanguage());
 			if (tradingLanguage == null) {
 				throw new EntityDoesNotExistsException(TradingLanguage.class, postData.getLanguage());
 			}
@@ -238,13 +236,13 @@ public class CustomerAccountApi extends AccountApi {
 			}
 		}
 
-		updateAccount(customerAccount, postData, currentUser, checkCustomFields);
+		updateAccount(customerAccount, postData, checkCustomFields);
 
 		if (postData.getPaymentMethod() != null) {
 			customerAccount.setPaymentMethod(postData.getPaymentMethod());
 		}
 		if (!StringUtils.isBlank(postData.getCreditCategory())) {
-			customerAccount.setCreditCategory(creditCategoryService.findByCode(postData.getCreditCategory(), provider));
+			customerAccount.setCreditCategory(creditCategoryService.findByCode(postData.getCreditCategory()));
 		}
 		if (!StringUtils.isBlank(postData.getMandateDate())) {
 			customerAccount.setMandateDate(postData.getMandateDate());
@@ -265,14 +263,14 @@ public class CustomerAccountApi extends AccountApi {
 		}
 
 		try {
-			customerAccount = customerAccountService.update(customerAccount, currentUser);
+			customerAccount = customerAccountService.update(customerAccount);
 		} catch (BusinessException e1) {
 			throw new MeveoApiException(e1.getMessage());
 		}
 
 		// Validate and populate customFields
 		try {
-			populateCustomFields(postData.getCustomFields(), customerAccount, false, currentUser, checkCustomFields);
+			populateCustomFields(postData.getCustomFields(), customerAccount, false, checkCustomFields);
         } catch (MissingParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
@@ -287,22 +285,22 @@ public class CustomerAccountApi extends AccountApi {
 	@SecuredBusinessEntityMethod(
 			validate = @SecureMethodParameter(entity = CustomerAccount.class), 
 			user = @SecureMethodParameter(index = 1, parser = UserParser.class))
-	public CustomerAccountDto find(String customerAccountCode, User currentUser) throws Exception {
+	public CustomerAccountDto find(String customerAccountCode) throws Exception {
 
 		if (StringUtils.isBlank(customerAccountCode)) {
 			missingParameters.add("customerAccountCode");
 			handleMissingParameters();
 		}
 
-		Provider provider = currentUser.getProvider();
-		CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode, provider);
+		
+		CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
 		if (customerAccount == null) {
 			throw new BusinessException("Cannot find customer account with code=" + customerAccountCode);
 		}
 
 		CustomerAccountDto customerAccountDto = accountHierarchyApi.customerAccountToDto(customerAccount);
 
-		BigDecimal balance = customerAccountService.customerAccountBalanceDue(null, customerAccount.getCode(), new Date(), customerAccount.getProvider());
+		BigDecimal balance = customerAccountService.customerAccountBalanceDue(null, customerAccount.getCode(), new Date());
 
 		if (balance == null) {
 			throw new BusinessException("account balance calculation failed");
@@ -313,19 +311,19 @@ public class CustomerAccountApi extends AccountApi {
 		return customerAccountDto;
 	}
 
-	public void remove(String customerAccountCode, User currentUser) throws MeveoApiException {
+	public void remove(String customerAccountCode) throws MeveoApiException {
 
 		if (StringUtils.isBlank(customerAccountCode)) {
 			missingParameters.add("customerAccountCode");
 			handleMissingParameters();
 		}
 
-		CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode, currentUser.getProvider());
+		CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
 		if (customerAccount == null) {
 			throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
 		}
 		try {
-			customerAccountService.remove(customerAccount, currentUser);
+			customerAccountService.remove(customerAccount);
 			customerAccountService.commit();
 		} catch (Exception e) {
 			if (e.getMessage().indexOf("ConstraintViolationException") > -1) {
@@ -336,13 +334,13 @@ public class CustomerAccountApi extends AccountApi {
 
 	}
 
-	public CustomerAccountsDto listByCustomer(String customerCode, Provider provider) throws MeveoApiException {
+	public CustomerAccountsDto listByCustomer(String customerCode) throws MeveoApiException {
 
 		if (StringUtils.isBlank(customerCode)) {
 			missingParameters.add("customerCode");
 			handleMissingParameters();
 		}
-		Customer customer = customerService.findByCode(customerCode, provider);
+		Customer customer = customerService.findByCode(customerCode);
 		if (customer == null) {
 			throw new EntityDoesNotExistsException(Customer.class, customerCode);
 		}
@@ -358,16 +356,16 @@ public class CustomerAccountApi extends AccountApi {
 		return result;
 	}
 
-	public void dunningExclusionInclusion(DunningInclusionExclusionDto dunningDto, User currentUser) throws EntityDoesNotExistsException, BusinessApiException {
+	public void dunningExclusionInclusion(DunningInclusionExclusionDto dunningDto) throws EntityDoesNotExistsException, BusinessApiException {
 		try {
 			for (String ref : dunningDto.getInvoiceReferences()) {
-				AccountOperation accountOp = accountOperationService.findByReference(ref, currentUser.getProvider());
+				AccountOperation accountOp = accountOperationService.findByReference(ref);
 				if (accountOp == null) {
 					throw new EntityDoesNotExistsException(AccountOperation.class, "no account operation with this reference " + ref);
 				}
 				if (accountOp instanceof RecordedInvoice) {
 					accountOp.setExcludedFromDunning(dunningDto.getExclude());
-					accountOperationService.update(accountOp, currentUser);
+					accountOperationService.update(accountOp);
 				} else {
 					throw new BusinessEntityException(accountOp.getReference() + " is not an invoice account operation");
 				}
@@ -377,7 +375,7 @@ public class CustomerAccountApi extends AccountApi {
 						for (MatchingAmount ma : matchingCode.getMatchingAmounts()) {
 							AccountOperation accountoperation = ma.getAccountOperation();
 							accountoperation.setExcludedFromDunning(dunningDto.getExclude());
-							accountOperationService.update(accountoperation, currentUser);
+							accountOperationService.update(accountoperation);
 						}
 					}
 				}
@@ -387,14 +385,14 @@ public class CustomerAccountApi extends AccountApi {
 		}
 	}
 
-	public void createCreditCategory(CreditCategoryDto postData, User currentUser) throws MeveoApiException, BusinessException {
+	public void createCreditCategory(CreditCategoryDto postData) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
 			handleMissingParameters();
 		}
 
-		if (creditCategoryService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
+		if (creditCategoryService.findByCode(postData.getCode()) != null) {
 			throw new EntityAlreadyExistsException(CreditCategory.class, postData.getCode());
 		}
 
@@ -402,24 +400,24 @@ public class CustomerAccountApi extends AccountApi {
 		creditCategory.setCode(postData.getCode());
 		creditCategory.setDescription(postData.getDescription());
 
-		creditCategoryService.create(creditCategory, currentUser);
+		creditCategoryService.create(creditCategory);
 	}
 
 	/**
 	 * 
 	 * @param postData
-	 * @param currentUser
+
 	 * @throws MeveoApiException
 	 * @throws BusinessException
 	 */
-	public void updateCreditCategory(CreditCategoryDto postData, User currentUser) throws MeveoApiException, BusinessException {
+	public void updateCreditCategory(CreditCategoryDto postData) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
 			handleMissingParameters();
 		}
 
-		CreditCategory creditCategory = creditCategoryService.findByCode(postData.getCode(), currentUser.getProvider());
+		CreditCategory creditCategory = creditCategoryService.findByCode(postData.getCode());
 
 		if (creditCategory == null) {
 			throw new EntityDoesNotExistsException(CreditCategory.class, postData.getCode());
@@ -428,41 +426,41 @@ public class CustomerAccountApi extends AccountApi {
 		creditCategory.setCode(postData.getCode());
 		creditCategory.setDescription(postData.getDescription());
 
-		creditCategoryService.update(creditCategory, currentUser);
+		creditCategoryService.update(creditCategory);
 	}
 
 	/**
 	 * 
 	 * @param postData
-	 * @param currentUser
+
 	 * @throws MeveoApiException
 	 * @throws BusinessException
 	 */
-	public void createOrUpdateCreditCategory(CreditCategoryDto postData, User currentUser) throws MeveoApiException, BusinessException {
+	public void createOrUpdateCreditCategory(CreditCategoryDto postData) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
 			handleMissingParameters();
 		}
 
-		if (creditCategoryService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
-			createCreditCategory(postData, currentUser);
+		if (creditCategoryService.findByCode(postData.getCode()) == null) {
+			createCreditCategory(postData);
 		} else {
-			updateCreditCategory(postData, currentUser);
+			updateCreditCategory(postData);
 		}
 	}
 
-	public void removeCreditCategory(String code, User currentUser) throws MeveoApiException {
+	public void removeCreditCategory(String code) throws MeveoApiException {
 		if (StringUtils.isBlank(code)) {
 			missingParameters.add("creditCategoryCode");
 			handleMissingParameters();
 		}
-		CreditCategory creditCategory = creditCategoryService.findByCode(code, currentUser.getProvider());
+		CreditCategory creditCategory = creditCategoryService.findByCode(code);
 		if (creditCategory == null) {
 			throw new EntityDoesNotExistsException(CreditCategory.class, code);
 		}
 		try {
-			creditCategoryService.remove(creditCategory, currentUser);
+			creditCategoryService.remove(creditCategory);
 			creditCategoryService.commit();
 		} catch (Exception e) {
 			if (e.getMessage().indexOf("ConstraintViolationException") > -1) {
@@ -472,36 +470,36 @@ public class CustomerAccountApi extends AccountApi {
 		}
 	}
 
-	public void createOrUpdate(CustomerAccountDto postData, User currentUser) throws MeveoApiException, BusinessException {
+	public void createOrUpdate(CustomerAccountDto postData) throws MeveoApiException, BusinessException {
 
-		if (customerAccountService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
-			create(postData, currentUser);
+		if (customerAccountService.findByCode(postData.getCode()) == null) {
+			create(postData);
 		} else {
-			update(postData, currentUser);
+			update(postData);
 		}
 	}
 
-	public CustomerAccount closeAccount(CustomerAccountDto postData, User currentUser) throws EntityDoesNotExistsException, BusinessException {
-		CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCode(), currentUser.getProvider());
+	public CustomerAccount closeAccount(CustomerAccountDto postData) throws EntityDoesNotExistsException, BusinessException {
+		CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCode());
 		if (customerAccount == null) {
 			throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCode());
 		}
 
-		customerAccountService.closeCustomerAccount(customerAccount, currentUser);
+		customerAccountService.closeCustomerAccount(customerAccount);
 
 		return customerAccount;
 	}
 
-	public void createOrUpdatePartial(CustomerAccountDto customerAccountDto, User currentUser) throws MeveoApiException, BusinessException {
+	public void createOrUpdatePartial(CustomerAccountDto customerAccountDto) throws MeveoApiException, BusinessException {
 		CustomerAccountDto existedCustomerAccountDto = null;
 		try {
-			existedCustomerAccountDto = find(customerAccountDto.getCode(), currentUser);
+			existedCustomerAccountDto = find(customerAccountDto.getCode());
 		} catch (Exception e) {
 			existedCustomerAccountDto = null;
 		}
 		log.debug("createOrUpdate customerAccount {}", customerAccountDto);
 		if (existedCustomerAccountDto == null) {// create
-			create(customerAccountDto, currentUser);
+			create(customerAccountDto);
 		} else {// update
 
             if (!StringUtils.isBlank(customerAccountDto.getCustomer())) {
@@ -554,11 +552,11 @@ public class CustomerAccountApi extends AccountApi {
 					existedCustomerAccountDto.getContactInformation().setFax(customerAccountDto.getContactInformation().getFax());
 				}
 			}
-			accountHierarchyApi.populateNameAddress(existedCustomerAccountDto, customerAccountDto, currentUser);
+			accountHierarchyApi.populateNameAddress(existedCustomerAccountDto, customerAccountDto);
 			if (StringUtils.isBlank(customerAccountDto.getCustomFields())) {
 				existedCustomerAccountDto.setCustomFields(customerAccountDto.getCustomFields());
 			}
-			update(existedCustomerAccountDto, currentUser);
+			update(existedCustomerAccountDto);
 		}
 	}
 }

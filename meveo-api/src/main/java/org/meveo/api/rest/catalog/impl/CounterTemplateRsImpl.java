@@ -31,7 +31,7 @@ public class CounterTemplateRsImpl extends BaseRs implements CounterTemplateRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            counterTemplateApi.create(postData, getCurrentUser());
+            counterTemplateApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -51,7 +51,7 @@ public class CounterTemplateRsImpl extends BaseRs implements CounterTemplateRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            counterTemplateApi.update(postData, getCurrentUser());
+            counterTemplateApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -71,7 +71,7 @@ public class CounterTemplateRsImpl extends BaseRs implements CounterTemplateRs {
         GetCounterTemplateResponseDto result = new GetCounterTemplateResponseDto();
 
         try {
-            result.setCounterTemplate(counterTemplateApi.find(counterTemplateCode, getCurrentUser()));
+            result.setCounterTemplate(counterTemplateApi.find(counterTemplateCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -91,7 +91,7 @@ public class CounterTemplateRsImpl extends BaseRs implements CounterTemplateRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            counterTemplateApi.remove(counterTemplateCode, getCurrentUser());
+            counterTemplateApi.remove(counterTemplateCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -111,7 +111,7 @@ public class CounterTemplateRsImpl extends BaseRs implements CounterTemplateRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            counterTemplateApi.createOrUpdate(postData, getCurrentUser());
+            counterTemplateApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

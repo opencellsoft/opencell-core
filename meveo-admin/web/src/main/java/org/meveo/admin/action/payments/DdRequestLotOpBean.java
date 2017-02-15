@@ -18,9 +18,6 @@
  */
 package org.meveo.admin.action.payments;
 
-import java.util.Arrays;
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -84,15 +81,5 @@ public class DdRequestLotOpBean extends BaseBean<DDRequestLotOp> {
 	@Override
 	protected IPersistenceService<DDRequestLotOp> getPersistenceService() {
 		return ddRequestLotOpService;
-	}
-
-	@Override
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
-
-	@Override
-	protected List<String> getListFieldsToFetch() {
-		return Arrays.asList("provider");
 	}
 }

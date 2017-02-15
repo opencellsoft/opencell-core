@@ -33,7 +33,7 @@ import javax.persistence.Table;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
-@ExportIdentifier({ "chargeTemplate.code", "serviceTemplate.code", "provider" })
+@ExportIdentifier({ "chargeTemplate.code", "serviceTemplate.code"})
 @Table(name = "CAT_SERV_USAGE_CHARGE_TEMPLATE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_SERV_USAGECHRG_TEMPLT_SEQ")
 public class ServiceChargeTemplateUsage extends ServiceChargeTemplate<UsageChargeTemplate> {

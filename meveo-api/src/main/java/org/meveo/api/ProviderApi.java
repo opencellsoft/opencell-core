@@ -26,14 +26,12 @@ import org.meveo.api.dto.response.GetCustomerConfigurationResponseDto;
 import org.meveo.api.dto.response.GetInvoicingConfigurationResponseDto;
 import org.meveo.api.dto.response.GetTradingConfigurationResponseDto;
 import org.meveo.api.dto.response.TitleDto;
-import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.LoginException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Currency;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.Country;
@@ -133,27 +131,24 @@ public class ProviderApi extends BaseApi {
     @Inject
     private TitleService titleService;
 
-    public void create(ProviderDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void create(ProviderDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
 
         handleMissingParameters();
-        if (!currentUser.hasPermission("superAdmin", "superAdminManagement")) {
+        if (!currentUser.hasRole("superAdminManagement")) {
             throw new LoginException("User has no permission to create new providers");
         }
 
-        Provider provider = providerService.findByCode(postData.getCode());
-        if (provider != null) {
-            throw new EntityAlreadyExistsException(Provider.class, postData.getCode());
-        }
+        Provider provider = providerService.findById(appProvider.getId());
 
-        provider=fromDto(postData,currentUser.getProvider(),provider);
-        providerService.create(provider, currentUser);
+        provider=fromDto(postData,provider);
+        providerService.create(provider);
 
         // populate customFields
         try {
-            populateCustomFields(postData.getCustomFields(), provider, true, currentUser);
+            populateCustomFields(postData.getCustomFields(), provider, true);
         } catch (MissingParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
@@ -164,26 +159,17 @@ public class ProviderApi extends BaseApi {
 
     }
 
-    public ProviderDto find(String providerCode, User currentUser) throws MeveoApiException {
-        if (StringUtils.isBlank(providerCode)) {
-            providerCode = currentUser.getProvider().getCode();
+    public ProviderDto find() throws MeveoApiException {
+
+        Provider provider = providerService.findById(appProvider.getId(), Arrays.asList("currency", "country", "language"));
+        if (currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationVisualization"))) {
+            return new ProviderDto(provider, entityToDtoConverter.getCustomFieldsDTO(provider));
+        } else {
+            throw new LoginException("User has no permission to access provider");
         }
-
-        Provider provider = providerService.findByCodeWithFetch(providerCode, Arrays.asList("currency", "country", "language"));
-        if (provider != null) {
-            if (currentUser.hasPermission("superAdmin", "superAdminManagement")
-                    || (currentUser.hasPermission("administration", "administrationVisualization") && provider.getId().equals(currentUser.getProvider().getId()))) {
-                return new ProviderDto(provider, entityToDtoConverter.getCustomFieldsDTO(provider));
-            } else {
-                throw new LoginException("User has no permission to access provider " + provider.getCode());
-            }
-        }
-
-        throw new EntityDoesNotExistsException(Provider.class, providerCode);
-
     }
 
-    public void update(ProviderDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void update(ProviderDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -192,22 +178,21 @@ public class ProviderApi extends BaseApi {
         handleMissingParameters();
 
         // search for provider
-        Provider provider = providerService.findByCodeWithFetch(postData.getCode(), Arrays.asList("currency", "country", "language"));
+        Provider provider = providerService.findById(appProvider.getId(), Arrays.asList("currency", "country", "language"));
         if (provider == null) {
             throw new EntityDoesNotExistsException(Provider.class, postData.getCode());
         }
 
-        if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || (currentUser.hasPermission("administration", "administrationManagement") && provider.getId()
-            .equals(currentUser.getProvider().getId())))) {
+        if (!(currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationManagement")))) {
             throw new LoginException("User has no permission to manage provider " + provider.getCode());
         }
 
-        provider=fromDto(postData,currentUser.getProvider(),provider);
-        provider = providerService.update(provider, currentUser);
+        provider=fromDto(postData, provider);
+        provider = providerService.update(provider);
 
         // populate customFields
         try {
-            populateCustomFields(postData.getCustomFields(), provider, false, currentUser);
+            populateCustomFields(postData.getCustomFields(), provider, false);
         } catch (MissingParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
@@ -220,43 +205,33 @@ public class ProviderApi extends BaseApi {
     /**
      * Return a list of all the countryCode, currencyCode and languageCode of the provider.
      * 
-     * @param currentUser
+
      * @return
      * @throws MeveoApiException
      */
-    public GetTradingConfigurationResponseDto getTradingConfiguration(String providerCode, User currentUser) throws MeveoApiException {
-
-        if (StringUtils.isBlank(providerCode)) {
-            providerCode = currentUser.getProvider().getCode();
-        }
-
-        Provider provider = providerService.findByCode(providerCode);
-        if (provider == null) {
-            throw new EntityDoesNotExistsException(Provider.class, providerCode);
-        }
-
-        if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || (currentUser.hasPermission("administration", "administrationVisualization") && provider.getId()
-            .equals(currentUser.getProvider().getId())))) {
-            throw new LoginException("User has no permission to access provider " + provider.getCode());
+    public GetTradingConfigurationResponseDto getTradingConfiguration() throws MeveoApiException {
+       
+        if (!(currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationVisualization")))) {
+            throw new LoginException("User has no permission to access provider");
         }
 
         GetTradingConfigurationResponseDto result = new GetTradingConfigurationResponseDto();
 
-        List<TradingLanguage> tradingLanguages = tradingLanguageService.list(provider);
+        List<TradingLanguage> tradingLanguages = tradingLanguageService.list();
         if (tradingLanguages != null) {
             for (TradingLanguage tradingLanguage : tradingLanguages) {
                 result.getLanguages().getLanguage().add(new LanguageDto(tradingLanguage));
             }
         }
 
-        List<TradingCurrency> tradingCurrencies = tradingCurrencyService.list(provider);
+        List<TradingCurrency> tradingCurrencies = tradingCurrencyService.list();
         if (tradingCurrencies != null) {
             for (TradingCurrency tradingCurrency : tradingCurrencies) {
                 result.getCurrencies().getCurrency().add(new CurrencyDto(tradingCurrency));
             }
         }
 
-        List<TradingCountry> tradingCountries = tradingCountryService.list(provider);
+        List<TradingCountry> tradingCountries = tradingCountryService.list();
         if (tradingCountries != null) {
             for (TradingCountry tradingCountry : tradingCountries) {
                 result.getCountries().getCountry().add(new CountryDto(tradingCountry));
@@ -269,30 +244,22 @@ public class ProviderApi extends BaseApi {
     /**
      * Return a list of all the calendar, tax, invoice categories, invoice subcategories, billingCycle and termination reason of the provider.
      * 
-     * @param currentUser
+
      * @return
      */
-    public GetInvoicingConfigurationResponseDto getInvoicingConfiguration(String providerCode, User currentUser) throws MeveoApiException {
+    public GetInvoicingConfigurationResponseDto getInvoicingConfiguration() throws MeveoApiException {
 
-        if (StringUtils.isBlank(providerCode)) {
-            providerCode = currentUser.getProvider().getCode();
-        }
 
-        Provider provider = providerService.findByCode(providerCode);
-        if (provider == null) {
-            throw new EntityDoesNotExistsException(Provider.class, providerCode);
-        }
 
-        if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || ((currentUser.hasPermission("administration", "administrationVisualization")
-                || currentUser.hasPermission("billing", "billingVisualization") || currentUser.hasPermission("catalog", "catalogVisualization")) && provider.getId().equals(
-            currentUser.getProvider().getId())))) {
-            throw new LoginException("User has no permission to access provider " + provider.getCode());
+        if (!(currentUser.hasRole("superAdminManagement") || ((currentUser.hasRole("administrationVisualization")
+                || currentUser.hasRole("billingVisualization") || currentUser.hasRole("catalogVisualization"))))) {
+            throw new LoginException("User has no permission to access provider");
         }
 
         GetInvoicingConfigurationResponseDto result = new GetInvoicingConfigurationResponseDto();
 
         // calendar
-        List<Calendar> calendars = calendarService.list(provider);
+        List<Calendar> calendars = calendarService.list();
         if (calendars != null) {
             for (Calendar calendar : calendars) {
                 result.getCalendars().getCalendar().add(new CalendarDto(calendar));
@@ -300,7 +267,7 @@ public class ProviderApi extends BaseApi {
         }
 
         // tax
-        List<Tax> taxes = taxService.list(provider);
+        List<Tax> taxes = taxService.list();
         if (taxes != null) {
             for (Tax tax : taxes) {
                 result.getTaxes().getTax().add(new TaxDto(tax,entityToDtoConverter.getCustomFieldsDTO(tax)));
@@ -308,7 +275,7 @@ public class ProviderApi extends BaseApi {
         }
 
         // invoice categories
-        List<InvoiceCategory> invoiceCategories = invoiceCategoryService.list(provider);
+        List<InvoiceCategory> invoiceCategories = invoiceCategoryService.list();
         if (invoiceCategories != null) {
             for (InvoiceCategory invoiceCategory : invoiceCategories) {
                 result.getInvoiceCategories().getInvoiceCategory().add(new InvoiceCategoryDto(invoiceCategory, entityToDtoConverter.getCustomFieldsDTO(invoiceCategory)));
@@ -316,7 +283,7 @@ public class ProviderApi extends BaseApi {
         }
 
         // invoice sub-categories
-        List<InvoiceSubCategory> invoiceSubCategories = invoiceSubCategoryService.list(provider);
+        List<InvoiceSubCategory> invoiceSubCategories = invoiceSubCategoryService.list();
         if (invoiceSubCategories != null) {
             for (InvoiceSubCategory invoiceSubCategory : invoiceSubCategories) {
                 result.getInvoiceSubCategories().getInvoiceSubCategory()
@@ -325,7 +292,7 @@ public class ProviderApi extends BaseApi {
         }
 
         // billingCycle
-        List<BillingCycle> billingCycles = billingCycleService.list(provider);
+        List<BillingCycle> billingCycles = billingCycleService.list();
         if (billingCycles != null) {
             for (BillingCycle billingCycle : billingCycles) {
                 result.getBillingCycles().getBillingCycle().add(new BillingCycleDto(billingCycle,entityToDtoConverter.getCustomFieldsDTO(billingCycle)));
@@ -333,7 +300,7 @@ public class ProviderApi extends BaseApi {
         }
 
         // terminationReasons
-        List<SubscriptionTerminationReason> terminationReasons = terminationReasonService.list(provider);
+        List<SubscriptionTerminationReason> terminationReasons = terminationReasonService.list();
         if (terminationReasons != null) {
             for (SubscriptionTerminationReason terminationReason : terminationReasons) {
                 result.getTerminationReasons().getTerminationReason().add(new TerminationReasonDto(terminationReason));
@@ -343,25 +310,17 @@ public class ProviderApi extends BaseApi {
         return result;
     }
 
-    public GetCustomerConfigurationResponseDto getCustomerConfiguration(String providerCode, User currentUser) throws MeveoApiException {
+    public GetCustomerConfigurationResponseDto getCustomerConfiguration() throws MeveoApiException {
 
-        if (StringUtils.isBlank(providerCode)) {
-            providerCode = currentUser.getProvider().getCode();
-        }
 
-        Provider provider = providerService.findByCode(providerCode);
-        if (provider == null) {
-            throw new EntityDoesNotExistsException(Provider.class, providerCode);
-        }
-
-        if (!currentUser.hasPermission("superAdmin", "superAdminManagement") && !provider.getId().equals(currentUser.getProvider().getId())) {
-            throw new LoginException("User has no permission to access provider " + provider.getCode());
+        if (!currentUser.hasRole("superAdminManagement")) {
+            throw new LoginException("User has no permission to access provider");
         }
 
         GetCustomerConfigurationResponseDto result = new GetCustomerConfigurationResponseDto();
 
         // customerBrands
-        List<CustomerBrand> customerBrands = customerBrandService.list(provider);
+        List<CustomerBrand> customerBrands = customerBrandService.list();
         if (customerBrands != null) {
             for (CustomerBrand customerBrand : customerBrands) {
                 result.getCustomerBrands().getCustomerBrand().add(new CustomerBrandDto(customerBrand));
@@ -369,7 +328,7 @@ public class ProviderApi extends BaseApi {
         }
 
         // customerCategories
-        List<CustomerCategory> customerCategories = customerCategoryService.list(provider);
+        List<CustomerCategory> customerCategories = customerCategoryService.list();
         if (customerCategories != null) {
             for (CustomerCategory customerCategory : customerCategories) {
                 result.getCustomerCategories().getCustomerCategory().add(new CustomerCategoryDto(customerCategory));
@@ -377,7 +336,7 @@ public class ProviderApi extends BaseApi {
         }
 
         // titles
-        List<Title> titles = titleService.list(provider);
+        List<Title> titles = titleService.list();
         if (titles != null) {
             for (Title title : titles) {
                 result.getTitles().getTitle().add(new TitleDto(title));
@@ -387,24 +346,15 @@ public class ProviderApi extends BaseApi {
         return result;
     }
 
-    public GetCustomerAccountConfigurationResponseDto getCustomerAccountConfiguration(String providerCode, User currentUser) throws MeveoApiException {
+    public GetCustomerAccountConfigurationResponseDto getCustomerAccountConfiguration() throws MeveoApiException {
 
-        if (StringUtils.isBlank(providerCode)) {
-            providerCode = currentUser.getProvider().getCode();
-        }
-
-        Provider provider = providerService.findByCode(providerCode);
-        if (provider == null) {
-            throw new EntityDoesNotExistsException(Provider.class, providerCode);
-        }
-
-        if (!currentUser.hasPermission("superAdmin", "superAdminManagement") && !provider.getId().equals(currentUser.getProvider().getId())) {
-            throw new LoginException("User has no permission to access provider " + provider.getCode());
+        if (!currentUser.hasRole("superAdminManagement")) {
+            throw new LoginException("User has no permission to access provider");
         }
 
         GetCustomerAccountConfigurationResponseDto result = new GetCustomerAccountConfigurationResponseDto();
 
-        List<CreditCategory> creditCategories = creditCategoryService.list(provider);
+        List<CreditCategory> creditCategories = creditCategoryService.list();
         for (CreditCategory cc : creditCategories) {
             result.getCreditCategories().getCreditCategory().add(new CreditCategoryDto(cc));
         }
@@ -412,45 +362,18 @@ public class ProviderApi extends BaseApi {
         return result;
     }
 
-    /**
-     * Create or update Provider based on provider code
-     * 
-     * @param postData
-     * @param currentUser
-     * @throws MeveoApiException
-     * @throws BusinessException
-     */
-    public void createOrUpdate(ProviderDto postData, User currentUser) throws MeveoApiException, BusinessException {
-        Provider provider = providerService.findByCode(postData.getCode());
 
-        if (provider == null) {
-            create(postData, currentUser);
-        } else {
-            update(postData, currentUser);
-        }
-    }
-
-    public void updateProviderCF(ProviderDto postData, User currentUser) throws MeveoApiException {
-        if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-        }
+    public void updateProviderCF(ProviderDto postData) throws MeveoApiException {
 
         handleMissingParameters();
 
-        // search for provider
-        Provider provider = providerService.findByCodeWithFetch(postData.getCode(), Arrays.asList("currency", "country", "language"));
-        if (provider == null) {
-            throw new EntityDoesNotExistsException(Provider.class, postData.getCode());
-        }
-
-        if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || (currentUser.hasPermission("administration", "administrationManagement") && provider.getId()
-            .equals(currentUser.getProvider().getId())))) {
-            throw new LoginException("User has no permission to manage provider " + provider.getCode());
+        if (!(currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationManagement")))) {
+            throw new LoginException("User has no permission to manage provider ");
         }
 
         // populate customFields
         try {
-            populateCustomFields(postData.getCustomFields(), provider, false, currentUser);
+            populateCustomFields(postData.getCustomFields(), appProvider, false);
         } catch (MissingParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
@@ -460,24 +383,18 @@ public class ProviderApi extends BaseApi {
         }
     }
 
-    public ProviderDto findProviderCF(String providerCode, User currentUser) throws MeveoApiException {
-        if (StringUtils.isBlank(providerCode)) {
-            providerCode = currentUser.getProvider().getCode();
-        }
+    public ProviderDto findProviderCF() throws MeveoApiException {
 
-        Provider provider = providerService.findByCode(providerCode);
-        if (provider != null) {
-            if (currentUser.hasPermission("superAdmin", "superAdminManagement")
-                    || (currentUser.hasPermission("administration", "administrationVisualization") && provider.getId().equals(currentUser.getProvider().getId()))) {
-                return new ProviderDto(provider, entityToDtoConverter.getCustomFieldsDTO(provider), false);
-            } else {
-                throw new LoginException("User has no permission to access provider " + provider.getCode());
-            }
+        Provider provider = providerService.findById(appProvider.getId());
+        if (currentUser.hasRole("superAdminManagement")
+                || (currentUser.hasRole("administrationVisualization"))) {
+            return new ProviderDto(provider, entityToDtoConverter.getCustomFieldsDTO(provider), false);
+        } else {
+            throw new LoginException("User has no permission to access provider");
         }
-
-        throw new EntityDoesNotExistsException(Provider.class, providerCode);
     }
-    public Provider fromDto(ProviderDto postData,Provider currentProvider,Provider entity)throws MeveoApiException{
+    
+    public Provider fromDto(ProviderDto postData,Provider entity)throws MeveoApiException{
 
     	Provider provider=null;
     	if(entity==null){
@@ -523,7 +440,7 @@ public class ProviderApi extends BaseApi {
     		provider.setMultilanguageFlag(postData.isMultiLanguage());
     	}
     	if (!StringUtils.isBlank(postData.getUserAccount())) {
-            UserAccount ua = userAccountService.findByCode(postData.getUserAccount(),currentProvider);
+            UserAccount ua = userAccountService.findByCode(postData.getUserAccount());
             provider.setUserAccount(ua);
         }
     	if(postData.isEnterprise()!=null){
@@ -632,22 +549,5 @@ public class ProviderApi extends BaseApi {
             }
         }
         return provider;
-    }
-    
-	public boolean isOwnProvider(String providerCode, User currentUser) throws MeveoApiException {
-
-		if (StringUtils.isBlank(providerCode)) {
-			missingParameters.add("code");
-		}
-
-		handleMissingParameters();
-
-		// search for provider
-		Provider provider = providerService.findByCodeWithFetch(providerCode, Arrays.asList("currency", "country", "language"));
-		if (provider == null) {
-			throw new EntityDoesNotExistsException(Provider.class, providerCode);
-		}
-
-		return currentUser.getProvider().equals(provider) ? true : false;
-	}
+    }    
 }

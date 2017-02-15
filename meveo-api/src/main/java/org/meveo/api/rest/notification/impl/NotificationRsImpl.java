@@ -31,7 +31,7 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            notificationApi.create(postData, getCurrentUser());
+            notificationApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -51,7 +51,7 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            notificationApi.update(postData, getCurrentUser());
+            notificationApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -71,7 +71,7 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
         GetNotificationResponseDto result = new GetNotificationResponseDto();
 
         try {
-            result.setNotificationDto(notificationApi.find(notificationCode, getCurrentUser()));
+            result.setNotificationDto(notificationApi.find(notificationCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -91,7 +91,7 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            notificationApi.remove(notificationCode, getCurrentUser());
+            notificationApi.remove(notificationCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -111,7 +111,7 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
         NotificationHistoriesResponseDto result = new NotificationHistoriesResponseDto();
 
         try {
-            result.setNotificationHistories(notificationApi.listNotificationHistory(getCurrentUser().getProvider()));
+            result.setNotificationHistories(notificationApi.listNotificationHistory());
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -131,7 +131,7 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
         InboundRequestsResponseDto result = new InboundRequestsResponseDto();
 
         try {
-            result.setInboundRequests(notificationApi.listInboundRequest(getCurrentUser().getProvider()));
+            result.setInboundRequests(notificationApi.listInboundRequest());
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -151,7 +151,7 @@ public class NotificationRsImpl extends BaseRs implements NotificationRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            notificationApi.createOrUpdate(postData, getCurrentUser());
+            notificationApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

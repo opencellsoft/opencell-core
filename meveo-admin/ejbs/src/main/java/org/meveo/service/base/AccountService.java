@@ -31,7 +31,6 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.CounterPeriod;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.shared.Name;
@@ -55,11 +54,11 @@ public abstract class AccountService<P extends AccountEntity> extends BusinessSe
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<P> findByNameAndAddress(Name name, Address address, Provider provider) {
+	public List<P> findByNameAndAddress(Name name, Address address) {
 		log.debug("start of find {} by name={}, address={}", getEntityClass().getSimpleName(), name, address);
 		final Class<? extends P> productClass = getEntityClass();
 		StringBuilder queryString = new StringBuilder("from " + productClass.getName() + " a");
-		queryString.append(" WHERE 1=1 AND a.provider=:provider");
+		queryString.append(" WHERE 1=1 ");
 
 		if (name != null) {
 			if (!StringUtils.isBlank(name.getFirstName())) {
@@ -96,8 +95,6 @@ public abstract class AccountService<P extends AccountEntity> extends BusinessSe
 
 		Query query = getEntityManager().createQuery(queryString.toString());
 		
-		query.setParameter("provider", provider);
-
 		if (name != null) {
 			if (!StringUtils.isBlank(name.getFirstName())) {
 				query.setParameter("firstName", "%" + name.getFirstName().toLowerCase() + "%");

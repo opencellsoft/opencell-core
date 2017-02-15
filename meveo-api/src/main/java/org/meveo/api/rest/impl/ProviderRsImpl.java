@@ -34,7 +34,7 @@ public class ProviderRsImpl extends BaseRs implements ProviderRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            providerApi.create(postData, getCurrentUser());
+            providerApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -54,7 +54,7 @@ public class ProviderRsImpl extends BaseRs implements ProviderRs {
         GetProviderResponse result = new GetProviderResponse();
 
         try {
-            result.setProvider(providerApi.find(providerCode, getCurrentUser()));
+            result.setProvider(providerApi.find());
 
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
@@ -75,7 +75,7 @@ public class ProviderRsImpl extends BaseRs implements ProviderRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            providerApi.update(postData, getCurrentUser());
+            providerApi.update(postData);
 
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
@@ -96,7 +96,7 @@ public class ProviderRsImpl extends BaseRs implements ProviderRs {
         GetTradingConfigurationResponseDto result = new GetTradingConfigurationResponseDto();
 
         try {
-            result = providerApi.getTradingConfiguration(providerCode, getCurrentUser());
+            result = providerApi.getTradingConfiguration();
 
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
@@ -117,7 +117,7 @@ public class ProviderRsImpl extends BaseRs implements ProviderRs {
         GetInvoicingConfigurationResponseDto result = new GetInvoicingConfigurationResponseDto();
 
         try {
-            result = providerApi.getInvoicingConfiguration(providerCode, getCurrentUser());
+            result = providerApi.getInvoicingConfiguration();
 
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
@@ -138,7 +138,7 @@ public class ProviderRsImpl extends BaseRs implements ProviderRs {
         GetCustomerConfigurationResponseDto result = new GetCustomerConfigurationResponseDto();
 
         try {
-            result = providerApi.getCustomerConfiguration(providerCode, getCurrentUser());
+            result = providerApi.getCustomerConfiguration();
 
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
@@ -159,7 +159,7 @@ public class ProviderRsImpl extends BaseRs implements ProviderRs {
         GetCustomerAccountConfigurationResponseDto result = new GetCustomerAccountConfigurationResponseDto();
 
         try {
-            result = providerApi.getCustomerAccountConfiguration(providerCode, getCurrentUser());
+            result = providerApi.getCustomerAccountConfiguration();
 
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
@@ -180,7 +180,7 @@ public class ProviderRsImpl extends BaseRs implements ProviderRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            providerApi.createOrUpdate(postData, getCurrentUser());
+            providerApi.update(postData);
 
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
@@ -201,7 +201,7 @@ public class ProviderRsImpl extends BaseRs implements ProviderRs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            providerApi.updateProviderCF(postData, getCurrentUser());
+            providerApi.updateProviderCF(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -221,7 +221,7 @@ public class ProviderRsImpl extends BaseRs implements ProviderRs {
 		GetProviderResponse result = new GetProviderResponse();
 
         try {
-            result.setProvider(providerApi.findProviderCF(providerCode, getCurrentUser()));
+            result.setProvider(providerApi.findProviderCF());
 
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());

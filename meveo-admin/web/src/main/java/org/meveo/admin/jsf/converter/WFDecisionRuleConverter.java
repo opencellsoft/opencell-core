@@ -18,26 +18,20 @@
  */
 package org.meveo.admin.jsf.converter;
 
-import org.meveo.admin.action.admin.CurrentProvider;
-import org.meveo.model.crm.Provider;
-import org.meveo.model.wf.WFDecisionRule;
-import org.meveo.service.wf.WFDecisionRuleService;
-
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
 
+import org.meveo.model.wf.WFDecisionRule;
+import org.meveo.service.wf.WFDecisionRuleService;
+
 @FacesConverter("wfDecisionRuleConverter")
 public class WFDecisionRuleConverter implements Converter {
 
     @Inject
     private WFDecisionRuleService wFDecisionServiceRule;
-
-    @Inject
-    @CurrentProvider
-    private Provider currentProvider;
 
 	@Override
 	public Object getAsObject(FacesContext fc, UIComponent uic, String value) {

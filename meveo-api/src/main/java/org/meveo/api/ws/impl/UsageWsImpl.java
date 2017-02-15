@@ -25,7 +25,7 @@ public class UsageWsImpl extends BaseWs implements UsageWs {
 	public UsageResponseDto findUsage(UsageRequestDto usageRequestDto) {
 		UsageResponseDto result = new UsageResponseDto();
 		try {
-			result = usageApi.find(usageRequestDto, getCurrentUser());
+			result = usageApi.find(usageRequestDto);
 		} catch (Exception e) {
 			processException(e, result.getActionStatus());
 		}
@@ -37,7 +37,7 @@ public class UsageWsImpl extends BaseWs implements UsageWs {
 	public UsageChargeAggregateResponseDto chargeAggregate(UsageRequestDto usageRequestDto) {
 		UsageChargeAggregateResponseDto result = new UsageChargeAggregateResponseDto();
 		try {
-			result = usageApi.chargeAggregate(usageRequestDto, getCurrentUser());
+			result = usageApi.chargeAggregate(usageRequestDto);
 		} catch (Exception e) {
 			processException(e, result.getActionStatus());
 		}

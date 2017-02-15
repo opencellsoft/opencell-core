@@ -42,13 +42,13 @@ import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.EnableEntity;
 import org.meveo.model.admin.Currency;
 
 @Entity
 @Table(name = "BILLING_BILLING_RUN")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_BILLING_RUN_SEQ")
-public class BillingRun extends AuditableEntity {
+public class BillingRun extends EnableEntity {
 
 	private static final long serialVersionUID = 1L;
 

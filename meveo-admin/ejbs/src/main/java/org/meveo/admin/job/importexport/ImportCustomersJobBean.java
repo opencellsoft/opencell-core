@@ -24,7 +24,6 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.CustomerImportHisto;
-import org.meveo.model.admin.User;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jaxb.customer.ErrorCustomer;
@@ -47,6 +46,7 @@ import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.crm.impl.CustomerImportService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
 @Stateless
@@ -82,6 +82,10 @@ public class ImportCustomersJobBean {
 	@Inject
 	private TitleService titleService;
 
+    @Inject
+    @ApplicationProvider
+    protected Provider appProvider;
+
 	Sellers sellersWarning;
 	Sellers sellersError;
 
@@ -113,9 +117,8 @@ public class ImportCustomersJobBean {
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	public void execute(JobExecutionResultImpl result) {
-		Provider provider = currentUser.getProvider();
 
-		String importDir = param.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + provider.getCode() + File.separator + "imports" + File.separator + "customers"
+		String importDir = param.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + appProvider.getCode() + File.separator + "imports" + File.separator + "customers"
 				+ File.separator;
 		String dirIN = importDir + "input";
 		log.info("dirIN=" + dirIN);
@@ -181,7 +184,6 @@ public class ImportCustomersJobBean {
 
 		log.info("start import file :" + fileName);
 
-		Provider provider = currentUser.getProvider();
 		sellersWarning = new Sellers();
 		sellersError = new Sellers();
 
@@ -214,8 +216,8 @@ public class ImportCustomersJobBean {
 
 		if (file.length() < 83) {
 			createSellerWarning(null, "File empty");
-			generateReport(fileName, provider);
-			createHistory(currentUser);
+			generateReport(fileName);
+			createHistory();
 			return;
 		}
 
@@ -240,10 +242,10 @@ public class ImportCustomersJobBean {
 					continue;
 				}
 
-				seller = createSeller(sell, fileName, i, provider);
+				seller = createSeller(sell, fileName, i);
 
 				for (org.meveo.model.jaxb.customer.Customer cust : sell.getCustomers().getCustomer()) {
-					if (customerCheckError(sell, cust.getProvider())) {
+					if (customerCheckError(sell, cust)) {
 						nbCustomersError++;
 						log.error("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode() + ", status:Error");
 						continue;
@@ -260,16 +262,16 @@ public class ImportCustomersJobBean {
 			}
 		}
 
-		generateReport(fileName, provider);
-		createHistory(currentUser);
+		generateReport(fileName);
+		createHistory();
 		log.info("end import file ");
 	}
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	private org.meveo.model.admin.Seller createSeller(Seller sell, String fileName, int i, Provider provider) throws BusinessException {
+	private org.meveo.model.admin.Seller createSeller(Seller sell, String fileName, int i) throws BusinessException {
 		org.meveo.model.admin.Seller seller = null;
 		try {
-			seller = sellerService.findByCode(sell.getCode(), provider);
+			seller = sellerService.findByCode(sell.getCode());
 		} catch (Exception e) {
 			log.warn("error while getting seller ",e);
 		}
@@ -278,21 +280,20 @@ public class ImportCustomersJobBean {
 			nbSellersUpdated++;
 			seller.setDescription(sell.getDescription());
             if (!StringUtils.isBlank(sell.getTradingCountryCode())) {
-                seller.setTradingCountry(tradingCountryService.findByTradingCountryCode(sell.getTradingCountryCode(), provider));
+                seller.setTradingCountry(tradingCountryService.findByTradingCountryCode(sell.getTradingCountryCode()));
             } else {
                 seller.setTradingCountry(null);
             }
             if (!StringUtils.isBlank(sell.getTradingCurrencyCode())) {
-                seller.setTradingCurrency(tradingCurrencyService.findByTradingCurrencyCode(sell.getTradingCurrencyCode(), provider));
+                seller.setTradingCurrency(tradingCurrencyService.findByTradingCurrencyCode(sell.getTradingCurrencyCode()));
             } else {
                 seller.setTradingCurrency(null);
             }
             if (!StringUtils.isBlank(sell.getTradingLanguageCode())) {
-                seller.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(sell.getTradingLanguageCode(), provider));
+                seller.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(sell.getTradingLanguageCode()));
             } else {
                 seller.setTradingLanguage(null);
             }
-			seller.updateAudit(currentUser);
 			customerImportService.updateSeller(seller);
 			log.info("File:" + fileName + ", typeEntity:Seller, index:" + i + ", code:" + sell.getCode() + ", status:Updated");
 		} else {
@@ -303,15 +304,14 @@ public class ImportCustomersJobBean {
 			seller.setCode(sell.getCode());
 			seller.setDescription(sell.getDescription());
             if (!StringUtils.isBlank(sell.getTradingCountryCode())) {
-                seller.setTradingCountry(tradingCountryService.findByTradingCountryCode(sell.getTradingCountryCode(), provider));
+                seller.setTradingCountry(tradingCountryService.findByTradingCountryCode(sell.getTradingCountryCode()));
             }
             if (!StringUtils.isBlank(sell.getTradingCurrencyCode())) {
-                seller.setTradingCurrency(tradingCurrencyService.findByTradingCurrencyCode(sell.getTradingCurrencyCode(), provider));
+                seller.setTradingCurrency(tradingCurrencyService.findByTradingCurrencyCode(sell.getTradingCurrencyCode()));
             }
             if (!StringUtils.isBlank(sell.getTradingLanguageCode())) {
-                seller.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(sell.getTradingLanguageCode(), provider));
+                seller.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(sell.getTradingLanguageCode()));
             }
-			seller.setProvider(provider);
 			customerImportService.createSeller(seller);
 		}
 
@@ -321,7 +321,7 @@ public class ImportCustomersJobBean {
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	private void createCustomer(String fileName, org.meveo.model.admin.Seller seller, org.meveo.model.jaxb.customer.Seller sell,
 			org.meveo.model.jaxb.customer.Customer cust, int i) {
-		Provider provider = currentUser.getProvider();
+	    
 		nbSellers++;
 		int j = 0;
 		Customer customer = null;
@@ -330,7 +330,7 @@ public class ImportCustomersJobBean {
 			log.debug("customer found code={}", cust.getCode());
 
 			try {
-				customer = customerService.findByCodeAndFetch(cust.getCode(), Arrays.asList("seller", "customFields"), provider);
+				customer = customerService.findByCodeAndFetch(cust.getCode(), Arrays.asList("seller", "customFields"));
 			} catch (Exception e) {
 				log.warn("failed to find custom by code and fetch ",e);
 			}
@@ -347,7 +347,7 @@ public class ImportCustomersJobBean {
 				customer = customerImportService.updateCustomer(customer, seller, sell, cust);
 				log.info("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode() + ", status:Updated");
 			} else {
-				customer = customerImportService.createCustomer(currentUser, seller, sell, cust);
+				customer = customerImportService.createCustomer(seller, sell, cust);
 				nbCustomersCreated++;
 				log.info("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode() + ", status:Created");
 			}
@@ -383,7 +383,7 @@ public class ImportCustomersJobBean {
 		CustomerAccount customerAccountTmp = null;
 
 		try {
-			customerAccountTmp = customerAccountService.findByCode(custAcc.getCode().getProvider(), Arrays.asList("customer","customFields"));
+			customerAccountTmp = customerAccountService.findByCode(custAcc.getCode(), Arrays.asList("customer","customFields"));
 		} catch (Exception e) {
 			log.error("failed to create customer account",e);
 		}
@@ -400,14 +400,14 @@ public class ImportCustomersJobBean {
 			log.info("File:" + fileName + ", typeEntity:CustomerAccount,  indexCustomer:" + i + ", index:" + j + " code:" + custAcc.getCode() + ", status:Updated");
 			
 		} else {
-			customerImportService.createCustomerAccount(currentUser, customer, seller, custAcc, cust, sell);
+			customerImportService.createCustomerAccount(customer, seller, custAcc, cust, sell);
 			nbCustomerAccountsCreated++;
 			log.info("File:" + fileName + ", typeEntity:CustomerAccount,  indexCustomer:" + i + ", index:" + j + " code:" + custAcc.getCode() + ", status:Created");
 		}
 	}
 
-	private void createHistory(User currentUser) throws Exception {
-		Provider provider = currentUser.getProvider();
+	private void createHistory() throws Exception {
+	    
 		customerImportHisto.setNbCustomerAccounts(nbCustomerAccounts);
 		customerImportHisto.setNbCustomerAccountsCreated(nbCustomerAccountsCreated);
 		customerImportHisto.setNbCustomerAccountsError(nbCustomerAccountsError);
@@ -423,12 +423,11 @@ public class ImportCustomersJobBean {
 		customerImportHisto.setNbSellersError(nbSellersError);
 		customerImportHisto.setNbSellersIgnored(nbSellersIgnored);
 		customerImportHisto.setNbSellersWarning(nbSellersWarning);
-		customerImportHisto.setProvider(provider);
 		customerImportHistoService.create(customerImportHisto);
 	}
 
-	private void generateReport(String fileName, Provider provider) throws Exception {
-		String importDir = param.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + provider.getCode() + File.separator + "imports" + File.separator + "customers"
+	private void generateReport(String fileName) throws Exception {
+		String importDir = param.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + appProvider.getCode() + File.separator + "imports" + File.separator + "customers"
 				+ File.separator;
 
 		if (sellersWarning.getWarnings() != null) {
@@ -556,7 +555,7 @@ public class ImportCustomersJobBean {
 		return false;
 	}
 
-	private boolean customerCheckError(org.meveo.model.jaxb.customer.Seller sell, org.meveo.model.jaxb.customer.Customer cust, Provider provider) {
+	private boolean customerCheckError(org.meveo.model.jaxb.customer.Seller sell, org.meveo.model.jaxb.customer.Customer cust) {
 
 		if (StringUtils.isBlank(cust.getCode())) {
 			createCustomerError(sell, cust, "Code is null");
@@ -584,7 +583,7 @@ public class ImportCustomersJobBean {
 				createCustomerError(sell, cust, "name.lastName is null");
 			}
 
-			if (titleService.findByCode(cust.getName().getTitle(), provider) == null) {
+			if (titleService.findByCode(cust.getName().getTitle()) == null) {
 				createCustomerError(sell, cust, "Title with code=" + cust.getName().getTitle() + " does not exists");
 				return true;
 			}

@@ -22,7 +22,6 @@ import org.meveo.api.dto.response.EntityCustomActionResponseDto;
 import org.meveo.api.dto.response.EntityCustomizationResponseDto;
 import org.meveo.api.dto.response.GetCustomFieldTemplateReponseDto;
 import org.meveo.api.rest.IBaseRs;
-import org.meveo.api.rest.security.RSSecured;
 
 /**
  * @author Andrius Karpavicius
@@ -30,7 +29,7 @@ import org.meveo.api.rest.security.RSSecured;
 @Path("/entityCustomization")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-@RSSecured
+
 public interface EntityCustomizationRs extends IBaseRs {
 
     /**

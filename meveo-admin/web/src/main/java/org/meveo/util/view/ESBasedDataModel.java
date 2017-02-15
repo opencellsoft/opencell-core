@@ -26,7 +26,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.model.admin.User;
 import org.meveo.service.index.ElasticClient;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
@@ -199,7 +198,7 @@ public abstract class ESBasedDataModel extends LazyDataModel<Map<String, Object>
     private String retrieveData(PaginationConfiguration paginationConfig) {
         try {
 
-            String dataJson = getElasticClientImpl().search(paginationConfig, getCurrentUser(), getSearchScope());
+            String dataJson = getElasticClientImpl().search(paginationConfig, getSearchScope());
 
             return dataJson;
 
@@ -289,7 +288,7 @@ public abstract class ESBasedDataModel extends LazyDataModel<Map<String, Object>
     /**
      * Get a list of classes (full or simple name) or CET codes to determine a search scope
      * 
-     * @return An array of classnames (full or simple name) or CET codes. Null will search all entities for current provider.
+     * @return An array of classnames (full or simple name) or CET codes. Null will search all entities.
      */
     public String[] getSearchScope() {
         return null;
@@ -324,10 +323,4 @@ public abstract class ESBasedDataModel extends LazyDataModel<Map<String, Object>
      */
     protected abstract ElasticClient getElasticClientImpl();
 
-    /**
-     * Get current User to determine provider
-     * 
-     * @return Current user
-     */
-    public abstract User getCurrentUser();
 }

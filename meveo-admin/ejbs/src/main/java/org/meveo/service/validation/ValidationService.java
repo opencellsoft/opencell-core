@@ -24,7 +24,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.ReflectionUtils;
-import org.meveo.model.crm.Provider;
 
 /**
  * @author Ignas Lelys
@@ -41,18 +40,17 @@ public class ValidationService {
 	 * @see org.meveo.service.validation.ValidationServiceLocal#validateUniqueField(java.lang.String,
 	 *      java.lang.String, java.lang.String, java.lang.Object)
 	 */
-	public boolean validateUniqueField(String className, String fieldName, Object id, Object value,
-			Provider provider) {
+	public boolean validateUniqueField(String className, String fieldName, Object id, Object value) {
 
         className = ReflectionUtils.getCleanClassName(className);
 
         String queryString = null;
         if (id == null) {
-            queryString = String.format("select count(*) from %s where lower(%s)='%s' and provider.id = %s", className, fieldName,
-                (value != null && value instanceof String) ? ((String) value).toLowerCase().replaceAll("'", "''") : value, provider.getId());
+            queryString = String.format("select count(*) from %s where lower(%s)='%s'", className, fieldName,
+                (value != null && value instanceof String) ? ((String) value).toLowerCase().replaceAll("'", "''") : value);
         } else {
-            queryString = String.format("select count(*) from %s where lower(%s)='%s' and provider.id = %s and id != %s", className, fieldName,
-                (value != null && value instanceof String) ? ((String) value).toLowerCase().replaceAll("'", "''") : value, provider.getId(), id);
+            queryString = String.format("select count(*) from %s where lower(%s)='%s' and id != %s", className, fieldName,
+                (value != null && value instanceof String) ? ((String) value).toLowerCase().replaceAll("'", "''") : value, id);
         }
         Query query = em.createQuery(queryString);
 		long count = (Long) query.getSingleResult();

@@ -32,7 +32,7 @@ public class AccountOperationRsImpl extends BaseRs implements AccountOperationRs
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            accountOperationApi.create(postData, getCurrentUser());
+            accountOperationApi.create(postData);
         } catch (MeveoApiException e) {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
@@ -51,7 +51,7 @@ public class AccountOperationRsImpl extends BaseRs implements AccountOperationRs
         AccountOperationsResponseDto result = new AccountOperationsResponseDto();
 
         try {
-            result = accountOperationApi.list(customerAccountCode, getCurrentUser().getProvider());
+            result = accountOperationApi.list(customerAccountCode);
         } catch (MeveoApiException e) {
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
             result.getActionStatus().setMessage(e.getMessage());
@@ -69,7 +69,7 @@ public class AccountOperationRsImpl extends BaseRs implements AccountOperationRs
     public ActionStatus matchOperations(MatchOperationRequestDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            accountOperationApi.matchOperations(postData, getCurrentUser());
+            accountOperationApi.matchOperations(postData);
         } catch (MeveoApiException e) {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
@@ -87,7 +87,7 @@ public class AccountOperationRsImpl extends BaseRs implements AccountOperationRs
     public ActionStatus unMatchingOperations(UnMatchingOperationRequestDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            accountOperationApi.unMatchingOperations(postData, getCurrentUser());
+            accountOperationApi.unMatchingOperations(postData);
         } catch (MeveoApiException e) {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
@@ -105,7 +105,7 @@ public class AccountOperationRsImpl extends BaseRs implements AccountOperationRs
     public ActionStatus addLitigation(LitigationRequestDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            accountOperationApi.addLitigation(postData, getCurrentUser());
+            accountOperationApi.addLitigation(postData);
         } catch (MeveoApiException e) {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
@@ -123,7 +123,7 @@ public class AccountOperationRsImpl extends BaseRs implements AccountOperationRs
     public ActionStatus cancelLitigation(LitigationRequestDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            accountOperationApi.cancelLitigation(postData, getCurrentUser());
+            accountOperationApi.cancelLitigation(postData);
         } catch (MeveoApiException e) {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());

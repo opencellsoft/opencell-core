@@ -19,7 +19,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.EnableEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
@@ -30,19 +30,19 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
 @Entity
-@ExportIdentifier({ "appliesToEntity", "code", "periodStartDate", "periodEndDate", "provider" })
-@Table(name = "CRM_CUSTOM_FIELD_INST", uniqueConstraints = @UniqueConstraint(columnNames = { "APPLIES_TO_UUID", "CODE", "PERIOD_START_DATE", "PERIOD_END_DATE", "PROVIDER_ID" }))
+@ExportIdentifier({ "appliesToEntity", "code", "periodStartDate", "periodEndDate"})
+@Table(name = "CRM_CUSTOM_FIELD_INST", uniqueConstraints = @UniqueConstraint(columnNames = { "APPLIES_TO_UUID", "CODE", "PERIOD_START_DATE", "PERIOD_END_DATE" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_CUSTOM_FIELD_INST_SEQ")
 @NamedQueries({
         @NamedQuery(name = "CustomFieldInstance.getCfiForCache", query = "select cfi from CustomFieldInstance cfi where cfi.disabled=false"),
-        @NamedQuery(name = "CustomFieldInstance.getCfiByCode", query = "select cfi from CustomFieldInstance cfi where cfi.appliesToEntity=:appliesToEntity and cfi.code=:code and cfi.provider=:provider"),
-        @NamedQuery(name = "CustomFieldInstance.getCfiByCodeAndDate", query = "select cfi from CustomFieldInstance cfi where cfi.appliesToEntity=:appliesToEntity and cfi.code=:code and cfi.provider=:provider and ((cfi.periodStartDate<=:date and :date<cfi.periodEndDate) or (cfi.periodStartDate<=:date and cfi.periodEndDate IS NULL) or (cfi.periodStartDate IS NULL and :date<cfi.periodEndDate)) order by cfi.priority desc "),
-        @NamedQuery(name = "CustomFieldInstance.getCfiByCodeAndDateRange", query = "select cfi from CustomFieldInstance cfi where cfi.appliesToEntity=:appliesToEntity and cfi.code=:code and cfi.provider=:provider and (cfi.periodStartDate=:dateFrom and cfi.periodEndDate=:dateTo)  order by cfi.priority desc "),
-        @NamedQuery(name = "CustomFieldInstance.getCfiByEntity", query = "select cfi from CustomFieldInstance cfi where cfi.appliesToEntity=:appliesToEntity and cfi.provider=:provider"),
-        @NamedQuery(name = "CustomFieldInstance.getCfiByEntityListForIndex", query = "select cfi from CustomFieldInstance cfi where cfi.appliesToEntity in :appliesToEntityList and cfi.code in (select cft.code from CustomFieldTemplate cft where cft.indexType is not null and cft.provider = cfi.provider)"),
-        @NamedQuery(name = "CustomFieldInstance.getCfiValueByCode", query = "select cfi.cfValue from CustomFieldInstance cfi where cfi.appliesToEntity=:appliesToEntity and cfi.code=:code and cfi.provider=:provider"),
-        @NamedQuery(name = "CustomFieldInstance.getCfiValueByCodeAndDate", query = "select cfi.cfValue from CustomFieldInstance cfi where cfi.appliesToEntity=:appliesToEntity and cfi.code=:code and cfi.provider=:provider and ((cfi.periodStartDate<=:date and :date<cfi.periodEndDate) or (cfi.periodStartDate<=:date and cfi.periodEndDate IS NULL) or (cfi.periodStartDate IS NULL and :date<cfi.periodEndDate)) order by cfi.priority desc ") })
-public class CustomFieldInstance extends AuditableEntity {
+        @NamedQuery(name = "CustomFieldInstance.getCfiByCode", query = "select cfi from CustomFieldInstance cfi where cfi.appliesToEntity=:appliesToEntity and cfi.code=:code "),
+        @NamedQuery(name = "CustomFieldInstance.getCfiByCodeAndDate", query = "select cfi from CustomFieldInstance cfi where cfi.appliesToEntity=:appliesToEntity and cfi.code=:code  and ((cfi.periodStartDate<=:date and :date<cfi.periodEndDate) or (cfi.periodStartDate<=:date and cfi.periodEndDate IS NULL) or (cfi.periodStartDate IS NULL and :date<cfi.periodEndDate)) order by cfi.priority desc "),
+        @NamedQuery(name = "CustomFieldInstance.getCfiByCodeAndDateRange", query = "select cfi from CustomFieldInstance cfi where cfi.appliesToEntity=:appliesToEntity and cfi.code=:code  and (cfi.periodStartDate=:dateFrom and cfi.periodEndDate=:dateTo)  order by cfi.priority desc "),
+        @NamedQuery(name = "CustomFieldInstance.getCfiByEntity", query = "select cfi from CustomFieldInstance cfi where cfi.appliesToEntity=:appliesToEntity "),
+        @NamedQuery(name = "CustomFieldInstance.getCfiByEntityListForIndex", query = "select cfi from CustomFieldInstance cfi where cfi.appliesToEntity in :appliesToEntityList and cfi.code in (select cft.code from CustomFieldTemplate cft where cft.indexType is not null )"),
+        @NamedQuery(name = "CustomFieldInstance.getCfiValueByCode", query = "select cfi.cfValue from CustomFieldInstance cfi where cfi.appliesToEntity=:appliesToEntity and cfi.code=:code "),
+        @NamedQuery(name = "CustomFieldInstance.getCfiValueByCodeAndDate", query = "select cfi.cfValue from CustomFieldInstance cfi where cfi.appliesToEntity=:appliesToEntity and cfi.code=:code  and ((cfi.periodStartDate<=:date and :date<cfi.periodEndDate) or (cfi.periodStartDate<=:date and cfi.periodEndDate IS NULL) or (cfi.periodStartDate IS NULL and :date<cfi.periodEndDate)) order by cfi.priority desc ") })
+public class CustomFieldInstance extends EnableEntity {
 
     private static final long serialVersionUID = 8691447585410651639L;
 

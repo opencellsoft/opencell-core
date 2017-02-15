@@ -28,7 +28,7 @@ public class ChannelRsImpl extends BaseRs implements ChannelRs {
 	        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 	        try {
-	        	channelApi.create(postData, getCurrentUser());
+	        	channelApi.create(postData);
 	        } catch (MeveoApiException e) {
 	            result.setErrorCode(e.getErrorCode());
 	            result.setStatus(ActionStatusEnum.FAIL);
@@ -48,7 +48,7 @@ public class ChannelRsImpl extends BaseRs implements ChannelRs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            channelApi.update(postData, getCurrentUser());
+            channelApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -68,7 +68,7 @@ public class ChannelRsImpl extends BaseRs implements ChannelRs {
 		GetChannelResponseDto result = new GetChannelResponseDto();
 
 	        try {
-	            result.setChannel(channelApi.find(channelCode, getCurrentUser().getProvider()));
+	            result.setChannel(channelApi.find(channelCode));
 	        } catch (MeveoApiException e) {
 	            result.getActionStatus().setErrorCode(e.getErrorCode());
 	            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -88,7 +88,7 @@ public class ChannelRsImpl extends BaseRs implements ChannelRs {
 		 ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 	        try {
-	            channelApi.remove(channelCode, getCurrentUser());
+	            channelApi.remove(channelCode);
 	        } catch (MeveoApiException e) {
 	            result.setErrorCode(e.getErrorCode());
 	            result.setStatus(ActionStatusEnum.FAIL);
@@ -108,7 +108,7 @@ public class ChannelRsImpl extends BaseRs implements ChannelRs {
 		 ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 	        try {
-	            channelApi.createOrUpdate(postData, getCurrentUser());
+	            channelApi.createOrUpdate(postData);
 	        } catch (MeveoApiException e) {
 	            result.setErrorCode(e.getErrorCode());
 	            result.setStatus(ActionStatusEnum.FAIL);

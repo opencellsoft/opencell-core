@@ -25,7 +25,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.admin.User;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.service.base.MultilanguageEntityService;
@@ -44,12 +43,12 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends Multilangua
 	@Inject
     private CustomFieldInstanceService customFieldInstanceService;
 	
-	public synchronized void duplicate(P entity,User currentUser) throws BusinessException{
+	public synchronized void duplicate(P entity) throws BusinessException{
 		
 		entity = refreshOrRetrieve(entity);
         // Lazy load related values first 
 		entity.getEdrTemplates().size();
-		String code=findDuplicateCode(entity,currentUser);
+		String code=findDuplicateCode(entity);
 		
         // Detach and clear ids of entity and related entities
 		detach(entity);
@@ -66,7 +65,7 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends Multilangua
 		}
 		entity.setChargeInstances(null);
 		entity.setCode(code);
-		create(entity, getCurrentUser());
-        customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity, getCurrentUser());
+		create(entity);
+        customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity);
 	}
 }

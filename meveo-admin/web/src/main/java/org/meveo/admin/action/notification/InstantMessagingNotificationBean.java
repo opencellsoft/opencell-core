@@ -92,16 +92,6 @@ public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingN
         return imNotificationService;
     }
 
-    @Override
-    protected List<String> getFormFieldsToFetch() {
-        return Arrays.asList("provider");
-    }
-
-    @Override
-    protected List<String> getListFieldsToFetch() {
-        return Arrays.asList("provider");
-    }
-
     public void exportToFile() throws Exception {
         CsvBuilder csv = new CsvBuilder();
         csv.appendValue("Code");
@@ -172,14 +162,14 @@ public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingN
         csvReader.readHeaders();
 
         String existingEntitiesCSV = paramBean.getProperty("existingEntities.csv.dir", "existingEntitiesCSV");
-        File dir = new File(providerDir + File.separator + getCurrentProvider().getCode() + File.separator + existingEntitiesCSV);
+        File dir = new File(providerDir + File.separator + appProvider.getCode() + File.separator + existingEntitiesCSV);
         dir.mkdirs();
         existingEntitiesCsvFile = dir.getAbsolutePath() + File.separator + "InstantMessagingNotifications_" + new SimpleDateFormat("ddMMyyyyHHmmSS").format(new Date()) + ".csv";
         csv = new CsvBuilder();
         boolean isEntityAlreadyExist = false;
         while (csvReader.readRecord()) {
             String[] values = csvReader.getValues();
-            InstantMessagingNotification existingEntity = imNotificationService.findByCode(values[CODE], getCurrentProvider());
+            InstantMessagingNotification existingEntity = imNotificationService.findByCode(values[CODE]);
             if (existingEntity != null) {
                 checkSelectedStrategy(values, existingEntity, isEntityAlreadyExist);
                 isEntityAlreadyExist = true;
@@ -190,7 +180,7 @@ public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingN
                 instMessNotif.setEventTypeFilter(NotificationEventTypeEnum.valueOf(values[EVENT_TYPE_FILTER]));
                 instMessNotif.setElFilter(values[EL_FILTER]);
                 if (!StringUtils.isBlank(values[SCRIPT_INSTANCE_CODE])) {
-                    ScriptInstance scriptInstance = scriptInstanceService.findByCode(values[SCRIPT_INSTANCE_CODE], getCurrentProvider());
+                    ScriptInstance scriptInstance = scriptInstanceService.findByCode(values[SCRIPT_INSTANCE_CODE]);
                     instMessNotif.setScriptInstance(scriptInstance);
                 }
                 instMessNotif.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
@@ -225,10 +215,10 @@ public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingN
                 }
                 instMessNotif.setMessage(values[MESSAGE]);
                 if (!StringUtils.isBlank(values[COUNTER_TEMPLATE])) {
-                    CounterTemplate counterTemplate = counterTemplateService.findByCode(values[COUNTER_TEMPLATE], getCurrentProvider());
+                    CounterTemplate counterTemplate = counterTemplateService.findByCode(values[COUNTER_TEMPLATE]);
                     instMessNotif.setCounterTemplate(counterTemplate != null ? counterTemplate : null);
                 }
-                imNotificationService.create(instMessNotif, getCurrentUser());
+                imNotificationService.create(instMessNotif);
             }
         }
         if (isEntityAlreadyExist && strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)) {
@@ -242,7 +232,7 @@ public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingN
             existingEntity.setEventTypeFilter(NotificationEventTypeEnum.valueOf(values[EVENT_TYPE_FILTER]));
             existingEntity.setElFilter(values[EL_FILTER]);
             if (!StringUtils.isBlank(values[SCRIPT_INSTANCE_CODE])) {
-                ScriptInstance scriptInstance = scriptInstanceService.findByCode(values[SCRIPT_INSTANCE_CODE], getCurrentProvider());
+                ScriptInstance scriptInstance = scriptInstanceService.findByCode(values[SCRIPT_INSTANCE_CODE]);
                 existingEntity.setScriptInstance(scriptInstance);
             }
             existingEntity.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
@@ -276,10 +266,10 @@ public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingN
             }
             existingEntity.setMessage(values[MESSAGE]);
             if (!StringUtils.isBlank(values[COUNTER_TEMPLATE])) {
-                CounterTemplate counterTemplate = counterTemplateService.findByCode(values[COUNTER_TEMPLATE], getCurrentProvider());
+                CounterTemplate counterTemplate = counterTemplateService.findByCode(values[COUNTER_TEMPLATE]);
                 existingEntity.setCounterTemplate(counterTemplate != null ? counterTemplate : null);
             }
-            imNotificationService.update(existingEntity, getCurrentUser());
+            imNotificationService.update(existingEntity);
         } else if (strategyImportType.equals(StrategyImportTypeEnum.REJECTE_IMPORT)) {
             throw new RejectedImportException("notification.rejectImport");
         } else if (strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)) {

@@ -13,9 +13,7 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
 import org.meveo.model.catalog.Channel;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.catalog.impl.ChannelService;
 
 @Stateless
@@ -27,11 +25,11 @@ public class ChannelApi extends BaseApi {
     /**
      * 
      * @param postData
-     * @param currentUser
+
      * @throws MeveoApiException
      * @throws BusinessException 
      */
-    public void create(ChannelDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void create(ChannelDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -40,16 +38,16 @@ public class ChannelApi extends BaseApi {
         handleMissingParameters();
         
 
-        Provider provider = currentUser.getProvider();
+        
 
-        if (channelService.findByCode(postData.getCode(), provider) != null) {
+        if (channelService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(Channel.class, postData.getCode());
         } else {
 
             Channel channel = new Channel();
             channel.setCode(postData.getCode());
             channel.setDescription(postData.getDescription());
-            channelService.create(channel, currentUser);
+            channelService.create(channel);
 
         }
     }
@@ -57,11 +55,11 @@ public class ChannelApi extends BaseApi {
     /**
      * 
      * @param postData
-     * @param currentUser
+
      * @throws MeveoApiException
      * @throws BusinessException 
      */
-    public void update(ChannelDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void update(ChannelDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -70,16 +68,16 @@ public class ChannelApi extends BaseApi {
         handleMissingParameters();
         
 
-        Provider provider = currentUser.getProvider();
+        
 
-        Channel channel = channelService.findByCode(postData.getCode(), provider);
+        Channel channel = channelService.findByCode(postData.getCode());
 
         if (channel == null) {
             throw new EntityAlreadyExistsException(Channel.class, postData.getCode());
         } else {
 
             channel.setDescription(postData.getDescription());
-            channelService.update(channel, currentUser);
+            channelService.update(channel);
 
         }
     }
@@ -91,7 +89,7 @@ public class ChannelApi extends BaseApi {
      * @return
      * @throws MeveoApiException
      */
-    public ChannelDto find(String code, Provider provider) throws MeveoApiException {
+    public ChannelDto find(String code) throws MeveoApiException {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
@@ -100,7 +98,7 @@ public class ChannelApi extends BaseApi {
 
         ChannelDto ChannelDto = null;
 
-        Channel Channel = channelService.findByCode(code, provider);
+        Channel Channel = channelService.findByCode(code);
 
         if (Channel == null) {
             throw new EntityDoesNotExistsException(Channel.class, code);
@@ -119,31 +117,31 @@ public class ChannelApi extends BaseApi {
      * @throws MeveoApiException
      * @throws BusinessException 
      */
-    public void remove(String code, User currentUser) throws MeveoApiException, BusinessException {
+    public void remove(String code) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
             handleMissingParameters();
         }
 
-        Channel Channel = channelService.findByCode(code, currentUser.getProvider());
+        Channel Channel = channelService.findByCode(code);
 
         if (Channel == null) {
             throw new EntityDoesNotExistsException(Channel.class, code);
         }
 
-        channelService.remove(Channel, currentUser);
+        channelService.remove(Channel);
 
     }
 
     /**
      * 
      * @param postData
-     * @param currentUser
+
      * @throws MeveoApiException
      * @throws BusinessException 
      */
-    public void createOrUpdate(ChannelDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void createOrUpdate(ChannelDto postData) throws MeveoApiException, BusinessException {
 
         String code = postData.getCode();
 
@@ -152,10 +150,10 @@ public class ChannelApi extends BaseApi {
             handleMissingParameters();
         }
 
-        if (channelService.findByCode(code, currentUser.getProvider()) == null) {
-            create(postData, currentUser);
+        if (channelService.findByCode(code) == null) {
+            create(postData);
         } else {
-            update(postData, currentUser);
+            update(postData);
         }
     }
 
@@ -183,11 +181,11 @@ public class ChannelApi extends BaseApi {
     /**
      * 
      * @param ChannelId
-     * @param currentUser
+
      * @return
      * @throws MeveoApiException
      */
-    public ChannelDto findById(String ChannelId, User currentUser) throws MeveoApiException {
+    public ChannelDto findById(String ChannelId) throws MeveoApiException {
         ChannelDto ChannelDto = null;
 
         if (!StringUtils.isBlank(ChannelId)) {

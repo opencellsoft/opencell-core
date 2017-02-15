@@ -10,11 +10,9 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.catalog.Calendar;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.catalog.impl.CalendarService;
@@ -34,7 +32,7 @@ public class BillingCycleApi extends BaseApi {
     @Inject
     private InvoiceTypeService invoiceTypeService;
 
-    public void create(BillingCycleDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void create(BillingCycleDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -54,20 +52,20 @@ public class BillingCycleApi extends BaseApi {
 
         handleMissingParameters();
      
-        Provider provider = currentUser.getProvider();
+        
 
-        if (billingCycleService.findByBillingCycleCode(postData.getCode(), provider) != null) {
+        if (billingCycleService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(BillingCycle.class, postData.getCode());
         }
 
-        Calendar calendar = calendarService.findByCode(postData.getCalendar(), provider);
+        Calendar calendar = calendarService.findByCode(postData.getCalendar());
         if (calendar == null) {
             throw new EntityDoesNotExistsException(Calendar.class, postData.getCalendar());
         }
         
         InvoiceType invoiceType = null;
         if (!StringUtils.isBlank(postData.getInvoiceTypeCode())) {
-			invoiceType = invoiceTypeService.findByCode(postData.getInvoiceTypeCode(), currentUser.getProvider());
+			invoiceType = invoiceTypeService.findByCode(postData.getInvoiceTypeCode());
 			if(invoiceType == null){
 				 throw new EntityDoesNotExistsException(InvoiceType.class, postData.getInvoiceTypeCode());
 			}
@@ -85,10 +83,10 @@ public class BillingCycleApi extends BaseApi {
         billingCycle.setInvoicingThreshold(postData.getInvoicingThreshold());
         billingCycle.setInvoiceType(invoiceType);
 
-        billingCycleService.create(billingCycle, currentUser);
+        billingCycleService.create(billingCycle);
         // populate customFields
         try {
-            populateCustomFields(postData.getCustomFields(), billingCycle, true, currentUser, true);
+            populateCustomFields(postData.getCustomFields(), billingCycle, true, true);
 
         } catch (MissingParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
@@ -99,7 +97,7 @@ public class BillingCycleApi extends BaseApi {
         }
     }
 
-    public void update(BillingCycleDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void update(BillingCycleDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -120,22 +118,22 @@ public class BillingCycleApi extends BaseApi {
         handleMissingParameters();
         
 
-        Provider provider = currentUser.getProvider();
+        
 
-        BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(postData.getCode(), provider);
+        BillingCycle billingCycle = billingCycleService.findByCode(postData.getCode());
 
         if (billingCycle == null) {
             throw new EntityDoesNotExistsException(BillingCycle.class, postData.getCode());
         }
 
-        Calendar calendar = calendarService.findByCode(postData.getCalendar(), provider);
+        Calendar calendar = calendarService.findByCode(postData.getCalendar());
         if (calendar == null) {
             throw new EntityDoesNotExistsException(Calendar.class, postData.getCalendar());
         }
 
         InvoiceType invoiceType = null;
         if (!StringUtils.isBlank(postData.getInvoiceTypeCode())) {
-			invoiceType = invoiceTypeService.findByCode(postData.getInvoiceTypeCode(), currentUser.getProvider());
+			invoiceType = invoiceTypeService.findByCode(postData.getInvoiceTypeCode());
 			if(invoiceType == null){
 				 throw new EntityDoesNotExistsException(InvoiceType.class, postData.getInvoiceTypeCode());
 			}
@@ -151,10 +149,10 @@ public class BillingCycleApi extends BaseApi {
         billingCycle.setInvoicingThreshold(postData.getInvoicingThreshold());
         billingCycle.setInvoiceType(invoiceType);
         
-        billingCycleService.update(billingCycle, currentUser);
+        billingCycleService.update(billingCycle);
 	   // populate customFields
 	    try {
-	        populateCustomFields(postData.getCustomFields(), billingCycle, true, currentUser, true);
+	        populateCustomFields(postData.getCustomFields(), billingCycle, true, true);
 	
         } catch (MissingParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
@@ -165,7 +163,7 @@ public class BillingCycleApi extends BaseApi {
         }  
     }
     
-    public BillingCycleDto find(String billingCycleCode, Provider provider) throws MeveoApiException {
+    public BillingCycleDto find(String billingCycleCode) throws MeveoApiException {
 
         if (StringUtils.isBlank(billingCycleCode)) {
             missingParameters.add("billingCycleCode");
@@ -174,7 +172,7 @@ public class BillingCycleApi extends BaseApi {
 
         BillingCycleDto result = new BillingCycleDto();
 
-        BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(billingCycleCode, provider);
+        BillingCycle billingCycle = billingCycleService.findByCode(billingCycleCode);
         if (billingCycle == null) {
             throw new EntityDoesNotExistsException(BillingCycle.class, billingCycleCode);
         }
@@ -184,27 +182,27 @@ public class BillingCycleApi extends BaseApi {
         return result;
     }
 
-    public void remove(String billingCycleCode, User currentUser) throws MeveoApiException, BusinessException {
+    public void remove(String billingCycleCode) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(billingCycleCode)) {
             missingParameters.add("billingCycleCode");
             handleMissingParameters();
         }
 
-        BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(billingCycleCode, currentUser.getProvider());
+        BillingCycle billingCycle = billingCycleService.findByCode(billingCycleCode);
         if (billingCycle == null) {
             throw new EntityDoesNotExistsException(BillingCycle.class, billingCycleCode);
         }
 
-        billingCycleService.remove(billingCycle, currentUser);
+        billingCycleService.remove(billingCycle);
     }
 
-    public void createOrUpdate(BillingCycleDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void createOrUpdate(BillingCycleDto postData) throws MeveoApiException, BusinessException {
        
-        BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(postData.getCode(), currentUser.getProvider());
+        BillingCycle billingCycle = billingCycleService.findByCode(postData.getCode());
         if (billingCycle == null) {
-            create(postData, currentUser);
+            create(postData);
         } else {
-            update(postData, currentUser);
+            update(postData);
         }
     }
     

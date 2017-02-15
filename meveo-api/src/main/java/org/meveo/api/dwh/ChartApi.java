@@ -17,7 +17,6 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
 import org.meveo.model.dwh.BarChart;
 import org.meveo.model.dwh.Chart;
 import org.meveo.model.dwh.LineChart;
@@ -50,7 +49,7 @@ public class ChartApi extends BaseCrudApi<Chart, ChartDto> {
     @Inject
     private ChartService<Chart> chartService;
 
-    public Chart create(ChartDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public Chart create(ChartDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -61,24 +60,24 @@ public class ChartApi extends BaseCrudApi<Chart, ChartDto> {
 
         handleMissingParameters();
 
-        Chart chart = chartService.findByCode(postData.getCode(), currentUser.getProvider());
+        Chart chart = chartService.findByCode(postData.getCode());
         if (chart != null) {
             throw new EntityAlreadyExistsException(Chart.class, postData.getCode());
         }
 
         if (postData instanceof PieChartDto) {
-            PieChart pieChart = fromDTO((PieChartDto) postData, currentUser, null);
-            pieChartService.create(pieChart, currentUser);
+            PieChart pieChart = fromDTO((PieChartDto) postData, null);
+            pieChartService.create(pieChart);
             return pieChart;
 
         } else if (postData instanceof LineChartDto) {
-            LineChart lineChart = fromDTO((LineChartDto) postData, currentUser, null);
-            lineChartService.create(lineChart, currentUser);
+            LineChart lineChart = fromDTO((LineChartDto) postData, null);
+            lineChartService.create(lineChart);
             return lineChart;
 
         } else if (postData instanceof BarChartDto) {
-            BarChart barChart = fromDTO((BarChartDto) postData, currentUser, null);
-            barChartService.create(barChart, currentUser);
+            BarChart barChart = fromDTO((BarChartDto) postData, null);
+            barChartService.create(barChart);
             return barChart;
 
         } else {
@@ -86,7 +85,7 @@ public class ChartApi extends BaseCrudApi<Chart, ChartDto> {
         }
     }
 
-    public Chart update(ChartDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public Chart update(ChartDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -97,24 +96,24 @@ public class ChartApi extends BaseCrudApi<Chart, ChartDto> {
 
         handleMissingParameters();
 
-        Chart chart = chartService.findByCode(postData.getCode(), currentUser.getProvider());
+        Chart chart = chartService.findByCode(postData.getCode());
         if (chart == null) {
             throw new EntityDoesNotExistsException(Chart.class, postData.getCode());
         }
 
         if (chart instanceof PieChart) {
-            PieChart pieChart = fromDTO((PieChartDto) postData, currentUser, (PieChart) chart);
-            pieChart = pieChartService.update(pieChart, currentUser);
+            PieChart pieChart = fromDTO((PieChartDto) postData, (PieChart) chart);
+            pieChart = pieChartService.update(pieChart);
             return pieChart;
 
         } else if (chart instanceof LineChart) {
-            LineChart lineChart = fromDTO((LineChartDto) postData, currentUser, (LineChart) chart);
-            lineChart = lineChartService.update(lineChart, currentUser);
+            LineChart lineChart = fromDTO((LineChartDto) postData, (LineChart) chart);
+            lineChart = lineChartService.update(lineChart);
             return lineChart;
 
         } else if (chart instanceof BarChart) {
-            BarChart barChart = fromDTO((BarChartDto) postData, currentUser, (BarChart) chart);
-            barChart = barChartService.update(barChart, currentUser);
+            BarChart barChart = fromDTO((BarChartDto) postData, (BarChart) chart);
+            barChart = barChartService.update(barChart);
             return barChart;
 
         } else {
@@ -122,7 +121,7 @@ public class ChartApi extends BaseCrudApi<Chart, ChartDto> {
         }
     }
 
-    public ChartDto find(String chartCode, User currentUser) throws MeveoApiException {
+    public ChartDto find(String chartCode) throws MeveoApiException {
 
         if (StringUtils.isBlank(chartCode)) {
             missingParameters.add("chartCode");
@@ -131,7 +130,7 @@ public class ChartApi extends BaseCrudApi<Chart, ChartDto> {
 
         ChartDto result = null;
 
-        Chart chart = chartService.findByCode(chartCode, currentUser.getProvider());
+        Chart chart = chartService.findByCode(chartCode);
 
         if (chart == null) {
             throw new EntityDoesNotExistsException(Chart.class, chartCode);
@@ -148,39 +147,39 @@ public class ChartApi extends BaseCrudApi<Chart, ChartDto> {
         return result;
     }
 
-    public void remove(String chartCode, User currentUser) throws MeveoApiException, BusinessException {
+    public void remove(String chartCode) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(chartCode)) {
             missingParameters.add("chartCode");
             handleMissingParameters();
         }
 
-        Chart chart = chartService.findByCode(chartCode, currentUser.getProvider());
+        Chart chart = chartService.findByCode(chartCode);
         if (chart == null) {
             throw new EntityDoesNotExistsException(Chart.class, chartCode);
         }
 
-        chartService.remove(chart, currentUser);
+        chartService.remove(chart);
     }
 
-    public Chart createOrUpdate(ChartDto postData, User currentUser) throws MeveoApiException, BusinessException {
-        Chart chart = chartService.findByCode(postData.getCode(), currentUser.getProvider());
+    public Chart createOrUpdate(ChartDto postData) throws MeveoApiException, BusinessException {
+        Chart chart = chartService.findByCode(postData.getCode());
         if (chart == null) {
             // create
-            return create(postData, currentUser);
+            return create(postData);
         } else {
             // update
-            return update(postData, currentUser);
+            return update(postData);
         }
     }
 
-    public List<ChartDto> list(String chartCode, User currentUser) {
+    public List<ChartDto> list(String chartCode) {
 
         List<Chart> charts = null;
         if (StringUtils.isBlank(chartCode)) {
-            charts = chartService.list(currentUser.getProvider());
+            charts = chartService.list();
         } else {
-            charts = chartService.findByCodeLike(chartCode, currentUser.getProvider());
+            charts = chartService.findByCodeLike(chartCode);
         }
 
         List<ChartDto> chartDtos = new ArrayList<ChartDto>();
@@ -198,13 +197,13 @@ public class ChartApi extends BaseCrudApi<Chart, ChartDto> {
         return chartDtos;
     }
 
-    private PieChart fromDTO(PieChartDto dto, User currentUser, PieChart chartToUpdate) throws MeveoApiException, BusinessException {
+    private PieChart fromDTO(PieChartDto dto, PieChart chartToUpdate) throws MeveoApiException, BusinessException {
 
         PieChart chart = new PieChart();
         if (chartToUpdate != null) {
             chart = chartToUpdate;
         }
-        populateChartFromDto(dto, currentUser, chart);
+        populateChartFromDto(dto, chart);
 
         chart.setFilled(dto.isFilled());
         chart.setLegendPosition(dto.getLegendPosition());
@@ -219,13 +218,13 @@ public class ChartApi extends BaseCrudApi<Chart, ChartDto> {
         return chart;
     }
 
-    private LineChart fromDTO(LineChartDto dto, User currentUser, LineChart chartToUpdate) throws MeveoApiException, BusinessException {
+    private LineChart fromDTO(LineChartDto dto, LineChart chartToUpdate) throws MeveoApiException, BusinessException {
 
         LineChart chart = new LineChart();
         if (chartToUpdate != null) {
             chart = chartToUpdate;
         }
-        populateChartFromDto(dto, currentUser, chart);
+        populateChartFromDto(dto, chart);
 
         chart.setFilled(dto.isFilled());
         chart.setLegendPosition(dto.getLegendPosition());
@@ -251,13 +250,13 @@ public class ChartApi extends BaseCrudApi<Chart, ChartDto> {
         return chart;
     }
 
-    private BarChart fromDTO(BarChartDto dto, User currentUser, BarChart chartToUpdate) throws MeveoApiException, BusinessException {
+    private BarChart fromDTO(BarChartDto dto, BarChart chartToUpdate) throws MeveoApiException, BusinessException {
 
         BarChart chart = new BarChart();
         if (chartToUpdate != null) {
             chart = chartToUpdate;
         }
-        populateChartFromDto(dto, currentUser, chart);
+        populateChartFromDto(dto, chart);
 
         chart.setLegendPosition(dto.getLegendPosition());
         chart.setBarPadding(dto.getBarPadding());
@@ -281,15 +280,15 @@ public class ChartApi extends BaseCrudApi<Chart, ChartDto> {
         return chart;
     }
 
-    private void populateChartFromDto(ChartDto dto, User currentUser, Chart chartToUpdate) throws MeveoApiException, BusinessException {
+    private void populateChartFromDto(ChartDto dto, Chart chartToUpdate) throws MeveoApiException, BusinessException {
 
         chartToUpdate.setCode(dto.getCode());
         chartToUpdate.setDescription(dto.getDescription());
         // Should create it or update measurableQuantity only it has full information only
         if (!dto.getMeasurableQuantity().isCodeOnly()) {
-            measurableQuantityApi.createOrUpdate(dto.getMeasurableQuantity(), currentUser);
+            measurableQuantityApi.createOrUpdate(dto.getMeasurableQuantity());
         }
-        MeasurableQuantity measurableQuantity = measurableQuantityService.findByCode(dto.getMeasurableQuantity().getCode(), currentUser.getProvider());
+        MeasurableQuantity measurableQuantity = measurableQuantityService.findByCode(dto.getMeasurableQuantity().getCode());
         if (measurableQuantity == null) {
             throw new EntityDoesNotExistsException(MeasurableQuantity.class, dto.getMeasurableQuantity().getCode());
         }

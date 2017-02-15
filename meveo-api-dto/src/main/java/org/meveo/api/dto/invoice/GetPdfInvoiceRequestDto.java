@@ -3,6 +3,7 @@ package org.meveo.api.dto.invoice;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+
 import org.meveo.api.dto.BaseDto;
 
 

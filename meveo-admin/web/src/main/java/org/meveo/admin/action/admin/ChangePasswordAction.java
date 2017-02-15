@@ -26,12 +26,8 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.jboss.seam.security.Identity;
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.LoginException;
 import org.meveo.admin.util.security.Sha1Encrypt;
 import org.meveo.model.admin.User;
-import org.meveo.security.MeveoUser;
 import org.meveo.service.admin.impl.UserService;
 import org.slf4j.Logger;
 
@@ -46,9 +42,6 @@ public class ChangePasswordAction implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	protected Logger log;
-
-	@Inject
-	private Identity identity;
 
 	@Inject
 	private UserService userService;
@@ -66,33 +59,33 @@ public class ChangePasswordAction implements Serializable {
 
 	public String update() {
 
-		User currentUser = null;
-		if (identity.isLoggedIn()) {
-			currentUser = userService.findById(((MeveoUser) identity.getUser()).getUser().getId());
-
-		} else {
-			try {
-				currentUser = userService.loginChecks(username, currentPassword, true);
-
-			} catch (LoginException e) {
-				messages.error(new BundleKey("messages", "changePassword.err.badUsernameOrPassword"));
-				return null;
-			}
-		}
-
-		if (validate(currentUser)) {
-			try {
-				userService.changePassword(currentUser, newPassword, currentUser);
-
-			} catch (BusinessException e) {
-				log.error("Error when update the password of #{currentUser.username} with password="
-						+ currentPassword);
-				messages.error(new BundleKey("messages", "changePassword.err.badUsernameOrPassword"));
-				return null;
-			}
-			messages.info(new BundleKey("messages", "changePassword.msg.passwordChanged"));
-			//return "/home.xhtml?faces-redirect=true";
-		}
+//		User currentUser = null;
+//		if (identity.isLoggedIn()) {
+//			currentUser = userService.findById(((MeveoUser) identity.getUser()).getUser().getId());
+//
+//		} else {
+//			try {
+//				currentUser = userService.loginChecks(username, currentPassword, true);
+//
+//			} catch (LoginException e) {
+//				messages.error(new BundleKey("messages", "changePassword.err.badUsernameOrPassword"));
+//				return null;
+//			}
+//		}
+//
+//		if (validate(currentUser)) {
+//			try {
+//				userService.changePassword(currentUser, newPassword);
+//
+//			} catch (BusinessException e) {
+//				log.error("Error when update the password of #{currentUser.username} with password="
+//						+ currentPassword);
+//				messages.error(new BundleKey("messages", "changePassword.err.badUsernameOrPassword"));
+//				return null;
+//			}
+//			messages.info(new BundleKey("messages", "changePassword.msg.passwordChanged"));
+//			//return "/home.xhtml?faces-redirect=true";
+//		}
 		return null;
 	}
 

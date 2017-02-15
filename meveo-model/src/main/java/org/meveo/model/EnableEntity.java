@@ -25,7 +25,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.Type;
 
 @MappedSuperclass
-public class EnableEntity extends BaseEntity implements IEnable {
+public class EnableEntity extends AuditableEntity implements IEnable {
 
 	private static final long serialVersionUID = 1L;
 

@@ -50,7 +50,7 @@ public class AgedBalance extends FileProducer implements Reporting {
 
 	protected Logger log;
 
-	public void generateAgedBalanceFile(String providerCode, Date date,
+	public void generateAgedBalanceFile(Date date,
 			OutputFormatEnum outputFormat) {
 		try {
 			date = new Date();
@@ -58,7 +58,7 @@ public class AgedBalance extends FileProducer implements Reporting {
 			if (outputFormat == OutputFormatEnum.PDF) {
 				file = File.createTempFile("tempAgedBalance", ".csv");
 			} else if (outputFormat == OutputFormatEnum.CSV) {
-				StringBuilder sb = new StringBuilder(getFilename(providerCode, date));
+				StringBuilder sb = new StringBuilder(getFilename( date));
 				sb.append(".csv");
 				file = new File(sb.toString());
 			}
@@ -67,77 +67,77 @@ public class AgedBalance extends FileProducer implements Reporting {
 			writer.append("Type;Dont non echue;Moins de 3 mois;De 3 a 6 mois;De 6 mois a 1 an;De 1 an a 2 ans;De 2 ans a 3 ans;Plus de 3 ans;Total");
 			writer.append('\n');
 			writer.append("DEBIT;");
-			writer.append((accountOperationService.calculateRecordsBetweenDueMonth(providerCode,
+			writer.append((accountOperationService.calculateRecordsBetweenDueMonth(
 					endMonth, null, DEBIT) + ";").replace('.', ','));
-			writer.append((accountOperationService.calculateRecordsBetweenDueMonth(providerCode,
+			writer.append((accountOperationService.calculateRecordsBetweenDueMonth(
 					endMonth - 3, endMonth, DEBIT) + ";").replace('.', ','));
-			writer.append((accountOperationService.calculateRecordsBetweenDueMonth(providerCode,
+			writer.append((accountOperationService.calculateRecordsBetweenDueMonth(
 					endMonth - 6, endMonth - 3, DEBIT) + ";").replace('.', ','));
-			writer.append((accountOperationService.calculateRecordsBetweenDueMonth(providerCode,
+			writer.append((accountOperationService.calculateRecordsBetweenDueMonth(
 					endMonth - 12, endMonth - 6, DEBIT) + ";").replace('.', ','));
-			writer.append((accountOperationService.calculateRecordsBetweenDueMonth(providerCode,
+			writer.append((accountOperationService.calculateRecordsBetweenDueMonth(
 					endMonth - 24, endMonth - 12, DEBIT) + ";").replace('.', ','));
-			writer.append((accountOperationService.calculateRecordsBetweenDueMonth(providerCode,
+			writer.append((accountOperationService.calculateRecordsBetweenDueMonth(
 					endMonth - 36, endMonth - 24, DEBIT) + ";").replace('.', ','));
-			writer.append((accountOperationService.calculateRecordsBetweenDueMonth(providerCode,
+			writer.append((accountOperationService.calculateRecordsBetweenDueMonth(
 					null, endMonth - 36, DEBIT) + ";").replace('.', ','));
-			writer.append((accountOperationService.totalAmount(providerCode, DEBIT).toString())
+			writer.append((accountOperationService.totalAmount( DEBIT).toString())
 					.replace('.', ','));
 			writer.append('\n');
 			writer.append("NB DEBIT;");
-			writer.append((accountOperationService.countRecordsBetweenDueMonth(providerCode,
+			writer.append((accountOperationService.countRecordsBetweenDueMonth(
 					endMonth, null, DEBIT) + ";").replace('.', ','));
-			writer.append((accountOperationService.countRecordsBetweenDueMonth(providerCode,
+			writer.append((accountOperationService.countRecordsBetweenDueMonth(
 					endMonth - 3, endMonth, DEBIT) + ";").replace('.', ','));
-			writer.append((accountOperationService.countRecordsBetweenDueMonth(providerCode,
+			writer.append((accountOperationService.countRecordsBetweenDueMonth(
 					endMonth - 6, endMonth - 3, DEBIT) + ";").replace('.', ','));
-			writer.append((accountOperationService.countRecordsBetweenDueMonth(providerCode,
+			writer.append((accountOperationService.countRecordsBetweenDueMonth(
 					endMonth - 12, endMonth - 6, DEBIT) + ";").replace('.', ','));
-			writer.append((accountOperationService.countRecordsBetweenDueMonth(providerCode,
+			writer.append((accountOperationService.countRecordsBetweenDueMonth(
 					endMonth - 24, endMonth - 12, DEBIT) + ";").replace('.', ','));
-			writer.append((accountOperationService.countRecordsBetweenDueMonth(providerCode,
+			writer.append((accountOperationService.countRecordsBetweenDueMonth(
 					endMonth - 36, endMonth - 24, DEBIT) + ";").replace('.', ','));
-			writer.append((accountOperationService.countRecordsBetweenDueMonth(providerCode, null,
+			writer.append((accountOperationService.countRecordsBetweenDueMonth( null,
 					endMonth - 36, DEBIT) + ";").replace('.', ','));
-			writer.append(Double.toString(accountOperationService.totalCount(providerCode, DEBIT))
+			writer.append(Double.toString(accountOperationService.totalCount( DEBIT))
 					.replace('.', ','));
 			writer.append('\n');
 
 			writer.append('\n');
 			writer.append("CREDIT;");
-			writer.append((accountOperationService.calculateRecordsBetweenDueMonth(providerCode,
+			writer.append((accountOperationService.calculateRecordsBetweenDueMonth(
 					endMonth, null, CREDIT) + ";").replace('.', ','));
-			writer.append((accountOperationService.calculateRecordsBetweenDueMonth(providerCode,
+			writer.append((accountOperationService.calculateRecordsBetweenDueMonth(
 					endMonth - 3, endMonth, CREDIT) + ";").replace('.', ','));
-			writer.append((accountOperationService.calculateRecordsBetweenDueMonth(providerCode,
+			writer.append((accountOperationService.calculateRecordsBetweenDueMonth(
 					endMonth - 6, endMonth - 3, CREDIT) + ";").replace('.', ','));
-			writer.append((accountOperationService.calculateRecordsBetweenDueMonth(providerCode,
+			writer.append((accountOperationService.calculateRecordsBetweenDueMonth(
 					endMonth - 12, endMonth - 6, CREDIT) + ";").replace('.', ','));
-			writer.append((accountOperationService.calculateRecordsBetweenDueMonth(providerCode,
+			writer.append((accountOperationService.calculateRecordsBetweenDueMonth(
 					endMonth - 24, endMonth - 12, CREDIT) + ";").replace('.', ','));
-			writer.append((accountOperationService.calculateRecordsBetweenDueMonth(providerCode,
+			writer.append((accountOperationService.calculateRecordsBetweenDueMonth(
 					endMonth - 36, endMonth - 24, CREDIT) + ";").replace('.', ','));
-			writer.append((accountOperationService.calculateRecordsBetweenDueMonth(providerCode,
+			writer.append((accountOperationService.calculateRecordsBetweenDueMonth(
 					null, endMonth - 36, CREDIT) + ";").replace('.', ','));
-			writer.append((accountOperationService.totalAmount(providerCode, CREDIT).toString())
+			writer.append((accountOperationService.totalAmount( CREDIT).toString())
 					.replace('.', ','));
 			writer.append('\n');
 			writer.append("NB CREDIT;");
-			writer.append((accountOperationService.countRecordsBetweenDueMonth(providerCode,
+			writer.append((accountOperationService.countRecordsBetweenDueMonth(
 					endMonth, null, CREDIT) + ";").replace('.', ','));
-			writer.append((accountOperationService.countRecordsBetweenDueMonth(providerCode,
+			writer.append((accountOperationService.countRecordsBetweenDueMonth(
 					endMonth - 3, endMonth, CREDIT) + ";").replace('.', ','));
-			writer.append((accountOperationService.countRecordsBetweenDueMonth(providerCode,
+			writer.append((accountOperationService.countRecordsBetweenDueMonth(
 					endMonth - 6, endMonth - 3, CREDIT) + ";").replace('.', ','));
-			writer.append((accountOperationService.countRecordsBetweenDueMonth(providerCode,
+			writer.append((accountOperationService.countRecordsBetweenDueMonth(
 					endMonth - 12, endMonth - 6, CREDIT) + ";").replace('.', ','));
-			writer.append((accountOperationService.countRecordsBetweenDueMonth(providerCode,
+			writer.append((accountOperationService.countRecordsBetweenDueMonth(
 					endMonth - 24, endMonth - 12, CREDIT) + ";").replace('.', ','));
-			writer.append((accountOperationService.countRecordsBetweenDueMonth(providerCode,
+			writer.append((accountOperationService.countRecordsBetweenDueMonth(
 					endMonth - 36, endMonth - 24, CREDIT) + ";").replace('.', ','));
-			writer.append((accountOperationService.countRecordsBetweenDueMonth(providerCode, null,
+			writer.append((accountOperationService.countRecordsBetweenDueMonth( null,
 					endMonth - 36, CREDIT) + ";").replace('.', ','));
-			writer.append(Double.toString(accountOperationService.totalCount(providerCode, CREDIT))
+			writer.append(Double.toString(accountOperationService.totalCount( CREDIT))
 					.replace('.', ','));
 			writer.append('\n');
 
@@ -145,8 +145,7 @@ public class AgedBalance extends FileProducer implements Reporting {
 			writer.close();
 			if (outputFormat == OutputFormatEnum.PDF) {
 				parameters.put("startDate", date);
-				parameters.put("provider", providerCode);
-				StringBuilder sb = new StringBuilder(getFilename(providerCode, date));
+				StringBuilder sb = new StringBuilder(getFilename( date));
 				sb.append(".pdf");
 				generatePDFfile(file, sb.toString(), templateFilename, parameters);
 			}
@@ -163,13 +162,13 @@ public class AgedBalance extends FileProducer implements Reporting {
 		return endYear * 12 + monthInYear;
 	}
 
-	public String getFilename(String providerName, Date date) {
+	public String getFilename(Date date) {
 
 		String DATE_FORMAT = "dd-MM-yyyy";
 		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
 		StringBuilder sb = new StringBuilder();
 		sb.append(reportsFolder);
-		sb.append(providerName);
+		sb.append(appProvider.getCode());
 		sb.append("_BALANCE_AGEE_");
 		sb.append(sdf.format(date).toString());
 		return sb.toString();
@@ -180,7 +179,6 @@ public class AgedBalance extends FileProducer implements Reporting {
 		reportsFolder = param.getProperty("reportsURL","/opt/jboss/files/reports/");
 		String jasperTemplatesFolder = param.getProperty("reports.jasperTemplatesFolder","/opt/jboss/files/reports/JasperTemplates/");
 		templateFilename = jasperTemplatesFolder + "agedBalance.jasper";
-		generateAgedBalanceFile(report.getProvider() == null ? null : report.getProvider()
-				.getCode(), report.getSchedule(), report.getOutputFormat());
+		generateAgedBalanceFile(report.getSchedule(), report.getOutputFormat());
 	}
 }

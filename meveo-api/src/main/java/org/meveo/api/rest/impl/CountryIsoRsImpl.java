@@ -41,7 +41,7 @@ public class CountryIsoRsImpl extends BaseRs implements CountryIsoRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            countryIsoApi.create(countryDto, getCurrentUser());
+            countryIsoApi.create(countryDto);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -82,7 +82,7 @@ public class CountryIsoRsImpl extends BaseRs implements CountryIsoRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            countryIsoApi.remove(countryCode, getCurrentUser());
+            countryIsoApi.remove(countryCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -102,7 +102,7 @@ public class CountryIsoRsImpl extends BaseRs implements CountryIsoRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            countryIsoApi.update(countryDto, getCurrentUser());
+            countryIsoApi.update(countryDto);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -122,7 +122,7 @@ public class CountryIsoRsImpl extends BaseRs implements CountryIsoRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            countryIsoApi.createOrUpdate(countryDto, getCurrentUser());
+            countryIsoApi.createOrUpdate(countryDto);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

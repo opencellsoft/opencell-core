@@ -16,7 +16,6 @@ import javax.ws.rs.core.UriInfo;
 import org.meveo.api.dto.catalog.BomOfferDto;
 import org.meveo.api.dto.catalog.ProductChargeTemplateDto;
 import org.meveo.api.dto.catalog.ProductTemplateDto;
-import org.meveo.api.rest.security.RSSecured;
 
 /**
  * TMForum Product catalog API specification implementation. Note: only READ type methods are implemented.
@@ -26,7 +25,7 @@ import org.meveo.api.rest.security.RSSecured;
 @Path("/catalogManagement")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-@RSSecured
+
 public interface CatalogRs {
 
     /**

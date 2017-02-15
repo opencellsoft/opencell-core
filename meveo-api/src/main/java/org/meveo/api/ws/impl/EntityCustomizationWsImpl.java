@@ -25,7 +25,6 @@ import org.meveo.api.dto.response.GetCustomFieldTemplateReponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.EntityCustomizationWs;
-import org.meveo.model.customEntities.CustomEntityTemplate;
 
 /**
  * @author Andrius Karpavicius
@@ -51,7 +50,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customFieldTemplateApi.create(postData, null, getCurrentUser());
+            customFieldTemplateApi.create(postData, null);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -71,7 +70,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customFieldTemplateApi.update(postData, null, getCurrentUser());
+            customFieldTemplateApi.update(postData, null);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -91,7 +90,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customFieldTemplateApi.remove(customFieldTemplateCode, appliesTo, getCurrentUser());
+            customFieldTemplateApi.remove(customFieldTemplateCode, appliesTo);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -111,7 +110,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
         GetCustomFieldTemplateReponseDto result = new GetCustomFieldTemplateReponseDto();
 
         try {
-            result.setCustomFieldTemplate(customFieldTemplateApi.find(customFieldTemplateCode, appliesTo, getCurrentUser()));
+            result.setCustomFieldTemplate(customFieldTemplateApi.find(customFieldTemplateCode, appliesTo));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -130,7 +129,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
     public ActionStatus createOrUpdateField(CustomFieldTemplateDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            customFieldTemplateApi.createOrUpdate(postData, null, getCurrentUser());
+            customFieldTemplateApi.createOrUpdate(postData, null);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -152,7 +151,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         try {
-            result.setCustomEntityTemplate(customEntityTemplateApi.find(code, getCurrentUser()));
+            result.setCustomEntityTemplate(customEntityTemplateApi.find(code));
 
         } catch (Exception e) {
             super.processException(e, result.getActionStatus());
@@ -167,7 +166,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customEntityTemplateApi.removeEntityTemplate(code, getCurrentUser());
+            customEntityTemplateApi.removeEntityTemplate(code);
 
         } catch (Exception e) {
             super.processException(e, result);
@@ -182,7 +181,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customEntityTemplateApi.create(postData, getCurrentUser());
+            customEntityTemplateApi.create(postData);
 
         } catch (Exception e) {
             super.processException(e, result);
@@ -196,7 +195,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customEntityTemplateApi.updateEntityTemplate(postData, getCurrentUser());
+            customEntityTemplateApi.updateEntityTemplate(postData);
 
         } catch (Exception e) {
             super.processException(e, result);
@@ -210,7 +209,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customEntityTemplateApi.createOrUpdate(postData, getCurrentUser());
+            customEntityTemplateApi.createOrUpdate(postData);
 
         } catch (Exception e) {
             super.processException(e, result);
@@ -225,8 +224,9 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
         CustomEntityInstanceResponseDto result = new CustomEntityInstanceResponseDto();
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
+        // TODO check  getCurrentUser(CustomEntityTemplate.getPermissionResourceName(cetCode), "read")
         try {
-            result.setCustomEntityInstance(customEntityInstanceApi.find(cetCode, code, getCurrentUser(CustomEntityTemplate.getPermissionResourceName(cetCode), "read")));
+            result.setCustomEntityInstance(customEntityInstanceApi.find(cetCode, code));
 
         } catch (Exception e) {
             super.processException(e, result.getActionStatus());
@@ -240,8 +240,9 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
 
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
+        // TODO check getCurrentUser(CustomEntityTemplate.getPermissionResourceName(cetCode), "modify")
         try {
-            customEntityInstanceApi.remove(cetCode, code, getCurrentUser(CustomEntityTemplate.getPermissionResourceName(cetCode), "modify"));
+            customEntityInstanceApi.remove(cetCode, code);
 
         } catch (Exception e) {
             super.processException(e, result);
@@ -254,8 +255,9 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
     public ActionStatus createCustomEntityInstance(CustomEntityInstanceDto dto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
+        // TODO check getCurrentUser(CustomEntityTemplate.getPermissionResourceName(dto.getCetCode()), "modify")
         try {
-            customEntityInstanceApi.create(dto, getCurrentUser(CustomEntityTemplate.getPermissionResourceName(dto.getCetCode()), "modify"));
+            customEntityInstanceApi.create(dto);
 
         } catch (Exception e) {
             super.processException(e, result);
@@ -268,8 +270,9 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
     public ActionStatus updateCustomEntityInstance(CustomEntityInstanceDto dto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
+        // TODO check getCurrentUser(CustomEntityTemplate.getPermissionResourceName(dto.getCetCode()), "modify")
         try {
-            customEntityInstanceApi.update(dto, getCurrentUser(CustomEntityTemplate.getPermissionResourceName(dto.getCetCode()), "modify"));
+            customEntityInstanceApi.update(dto);
 
         } catch (Exception e) {
             super.processException(e, result);
@@ -282,8 +285,9 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
     public ActionStatus createOrUpdateCustomEntityInstance(CustomEntityInstanceDto dto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
+        // TODO check getCurrentUser(CustomEntityTemplate.getPermissionResourceName(dto.getCetCode()), "modify")
         try {
-            customEntityInstanceApi.createOrUpdate(dto, getCurrentUser(CustomEntityTemplate.getPermissionResourceName(dto.getCetCode()), "modify"));
+            customEntityInstanceApi.createOrUpdate(dto);
 
         } catch (Exception e) {
             super.processException(e, result);
@@ -303,7 +307,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            entityCustomActionApi.create(dto, null, getCurrentUser());
+            entityCustomActionApi.create(dto, null);
 
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
@@ -330,7 +334,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            entityCustomActionApi.update(dto, null, getCurrentUser());
+            entityCustomActionApi.update(dto, null);
 
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
@@ -359,7 +363,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            entityCustomActionApi.remove(actionCode, appliesTo, getCurrentUser());
+            entityCustomActionApi.remove(actionCode, appliesTo);
 
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
@@ -388,7 +392,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
         EntityCustomActionResponseDto result = new EntityCustomActionResponseDto();
 
         try {
-            result.setEntityAction(entityCustomActionApi.find(actionCode, appliesTo, getCurrentUser()));
+            result.setEntityAction(entityCustomActionApi.find(actionCode, appliesTo));
 
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
@@ -416,7 +420,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            entityCustomActionApi.createOrUpdate(dto, null, getCurrentUser());
+            entityCustomActionApi.createOrUpdate(dto, null);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -437,7 +441,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customEntityTemplateApi.customizeEntity(dto, getCurrentUser());
+            customEntityTemplateApi.customizeEntity(dto);
 
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
@@ -465,7 +469,7 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
         EntityCustomizationResponseDto result = new EntityCustomizationResponseDto();
 
         try {
-            result.setEntityCustomization(customEntityTemplateApi.findEntityCustomizations(customizedEntityClass, getCurrentUser()));
+            result.setEntityCustomization(customEntityTemplateApi.findEntityCustomizations(customizedEntityClass));
 
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());

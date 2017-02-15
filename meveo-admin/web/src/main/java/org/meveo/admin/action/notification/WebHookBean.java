@@ -195,14 +195,14 @@ public class WebHookBean extends BaseNotificationBean<WebHook> {
         csvReader.readHeaders();
 
         String existingEntitiesCSV = paramBean.getProperty("existingEntities.csv.dir", "existingEntitiesCSV");
-        File dir = new File(providerDir + File.separator + getCurrentProvider().getCode() + File.separator + existingEntitiesCSV);
+        File dir = new File(providerDir + File.separator + appProvider.getCode() + File.separator + existingEntitiesCSV);
         dir.mkdirs();
         existingEntitiesCsvFile = dir.getAbsolutePath() + File.separator + "WebHooks_" + new SimpleDateFormat("ddMMyyyyHHmmSS").format(new Date()) + ".csv";
         csv = new CsvBuilder();
         boolean isEntityAlreadyExist = false;
         while (csvReader.readRecord()) {
             String[] values = csvReader.getValues();
-            WebHook existingEntity = webHookService.findByCode(values[CODE], getCurrentProvider());
+            WebHook existingEntity = webHookService.findByCode(values[CODE]);
             if (existingEntity != null) {
                 checkSelectedStrategy(values, existingEntity, isEntityAlreadyExist);
                 isEntityAlreadyExist = true;
@@ -214,7 +214,7 @@ public class WebHookBean extends BaseNotificationBean<WebHook> {
                 webHook.setElFilter(values[EL_FILTER]);
                 webHook.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
                 if (!StringUtils.isBlank(values[SCRIPT_INSTANCE_CODE])) {
-                    ScriptInstance scriptInstance = scriptInstanceService.findByCode(values[SCRIPT_INSTANCE_CODE], getCurrentProvider()); 
+                    ScriptInstance scriptInstance = scriptInstanceService.findByCode(values[SCRIPT_INSTANCE_CODE]); 
                     webHook.setScriptInstance(scriptInstance);
                 } 
                 webHook.setHost(values[HOST]);
@@ -249,10 +249,10 @@ public class WebHookBean extends BaseNotificationBean<WebHook> {
                     }
                 }
                 if (!StringUtils.isBlank(values[COUNTER_TEMPLATE])) {
-                    CounterTemplate counterTemplate = counterTemplateService.findByCode(values[COUNTER_TEMPLATE], getCurrentProvider());
+                    CounterTemplate counterTemplate = counterTemplateService.findByCode(values[COUNTER_TEMPLATE]);
                     webHook.setCounterTemplate(counterTemplate != null ? counterTemplate : null);
                 }
-                webHookService.create(webHook, getCurrentUser());
+                webHookService.create(webHook);
             }
         }
         if (isEntityAlreadyExist && strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)) {
@@ -268,7 +268,7 @@ public class WebHookBean extends BaseNotificationBean<WebHook> {
 			existingEntity.setElFilter(values[EL_FILTER]);
 			existingEntity.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
             if (!StringUtils.isBlank(values[SCRIPT_INSTANCE_CODE])) {
-                ScriptInstance scriptInstance = scriptInstanceService.findByCode(values[SCRIPT_INSTANCE_CODE], getCurrentProvider()); 
+                ScriptInstance scriptInstance = scriptInstanceService.findByCode(values[SCRIPT_INSTANCE_CODE]); 
                 existingEntity.setScriptInstance(scriptInstance);
             } 
 			existingEntity.setHost(values[HOST]);
@@ -305,13 +305,12 @@ public class WebHookBean extends BaseNotificationBean<WebHook> {
 					}
 			if (!StringUtils.isBlank(values[COUNTER_TEMPLATE])) {
 				CounterTemplate counterTemplate = counterTemplateService
-						.findByCode(values[COUNTER_TEMPLATE],
-								getCurrentProvider());
+						.findByCode(values[COUNTER_TEMPLATE]);
 				existingEntity
 						.setCounterTemplate(counterTemplate != null ? counterTemplate
 								: null);
 			}
-			webHookService.update(existingEntity, getCurrentUser());
+			webHookService.update(existingEntity);
 			
 		}else if (strategyImportType
 					.equals(StrategyImportTypeEnum.REJECTE_IMPORT)) {

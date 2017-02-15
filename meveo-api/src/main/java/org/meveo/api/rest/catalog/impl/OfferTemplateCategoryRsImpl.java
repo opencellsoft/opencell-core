@@ -28,7 +28,7 @@ public class OfferTemplateCategoryRsImpl extends BaseRs implements OfferTemplate
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            offerTemplateCategoryApi.create(postData, getCurrentUser());
+            offerTemplateCategoryApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -48,7 +48,7 @@ public class OfferTemplateCategoryRsImpl extends BaseRs implements OfferTemplate
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            offerTemplateCategoryApi.update(postData, getCurrentUser());
+            offerTemplateCategoryApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -68,7 +68,7 @@ public class OfferTemplateCategoryRsImpl extends BaseRs implements OfferTemplate
         GetOfferTemplateCategoryResponseDto result = new GetOfferTemplateCategoryResponseDto();
 
         try {
-            result.setOfferTemplateCategory(offerTemplateCategoryApi.find(offerTemplateCategoryCode, getCurrentUser()));
+            result.setOfferTemplateCategory(offerTemplateCategoryApi.find(offerTemplateCategoryCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -88,7 +88,7 @@ public class OfferTemplateCategoryRsImpl extends BaseRs implements OfferTemplate
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            offerTemplateCategoryApi.remove(offerTemplateCategoryCode, getCurrentUser());
+            offerTemplateCategoryApi.remove(offerTemplateCategoryCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -108,7 +108,7 @@ public class OfferTemplateCategoryRsImpl extends BaseRs implements OfferTemplate
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            offerTemplateCategoryApi.createOrUpdate(postData, getCurrentUser());
+            offerTemplateCategoryApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

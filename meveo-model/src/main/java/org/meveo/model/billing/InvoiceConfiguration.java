@@ -2,21 +2,16 @@ package org.meveo.model.billing;
 
 import java.io.Serializable;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.persistence.Version;
 
 import org.hibernate.annotations.Type;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
 import org.meveo.model.crm.Provider;
@@ -28,20 +23,10 @@ import org.meveo.model.crm.Provider;
 @ExportIdentifier({ "provider" })
 @Table(name = "BILLING_INVOICE_CONFIGURATION", uniqueConstraints = @UniqueConstraint(columnNames = { "PROVIDER_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_CONFIGURATION_SEQ")
-public class InvoiceConfiguration implements Serializable, IEntity {
+public class InvoiceConfiguration extends BaseEntity implements Serializable, IEntity {
 
     private static final long serialVersionUID = -735961368678724497L;
     
-    @Id
-    @GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)
-    @Column(name = "ID")
-    @Access(AccessType.PROPERTY)
-    private Long id;
-
-    @Version
-    @Column(name = "VERSION")
-    private Integer version;
-
     @Type(type="numeric_boolean")
     @Column(name = "DISPLAY_SUBSCRIPTIONS")
     private Boolean displaySubscriptions = false;
@@ -178,27 +163,6 @@ public class InvoiceConfiguration implements Serializable, IEntity {
 				+ "displayPricePlans=" + displayPricePlans + ", displayEdrs=" + displayEdrs + ", displayProvider=" + displayProvider + ", "
 				+ "displayDetail=" + displayDetail + ", displayCfAsXML=" + displayCfAsXML + ", displayChargesPeriods=" + displayChargesPeriods
 				+ ", displayBillingCycle=" + displayBillingCycle +",displayOrders="+displayOrders + "]";
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public Integer getVersion() {
-		return version;
-	}
-
-	public void setVersion(Integer version) {
-		this.version = version;
-	}
-
-	@Override
-	public boolean isTransient() {
-		return id==null;
 	}
 
 	public Provider getProvider() {

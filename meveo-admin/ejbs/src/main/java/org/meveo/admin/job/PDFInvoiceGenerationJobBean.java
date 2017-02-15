@@ -15,7 +15,6 @@ import org.meveo.admin.async.PdfInvoiceAsync;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
@@ -46,7 +45,7 @@ public class PDFInvoiceGenerationJobBean {
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NEVER)
 	public void execute(JobExecutionResultImpl result,JobInstance jobInstance) {
-		log.debug("Running for user={}, parameter={}", currentUser, jobInstance.getParametres());
+		log.debug("Running with parameter={}", jobInstance.getParametres());
 		
 		try{
 			List<Invoice> invoices = new ArrayList<Invoice>();
@@ -54,14 +53,13 @@ public class PDFInvoiceGenerationJobBean {
 			if (parameter != null && parameter.trim().length() > 0) {			
 				try {
 					invoices = invoiceService.getInvoices(billingRunService
-							.getBillingRunById(Long.parseLong(parameter),
-									currentUser.getProvider()));
+							.getBillingRunById(Long.parseLong(parameter)));
 				} catch (Exception e) {
 					log.error("error while getting invoices ",e);
 					result.registerError(e.getMessage());
 				}
 			} else {
-				invoices = invoiceService.getValidatedInvoicesWithNoPdf(null,currentUser.getProvider());
+				invoices = invoiceService.getValidatedInvoicesWithNoPdf(null);
 			}
 
 			result.setNbItemsToProcess(invoices.size());

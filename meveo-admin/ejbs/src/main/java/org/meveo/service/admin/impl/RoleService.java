@@ -26,7 +26,6 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.security.Role;
 import org.meveo.service.base.PersistenceService;
 
@@ -37,35 +36,21 @@ import org.meveo.service.base.PersistenceService;
 public class RoleService extends PersistenceService<Role> {
 
     @SuppressWarnings("unchecked")
-    public List<Role> getAllRoles(Provider provider) {
-        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, provider);
+    public List<Role> getAllRoles() {
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
         Query query = queryBuilder.getQuery(getEntityManager());
         return query.getResultList();
     }
 
-    public Role findByName(String role, Provider provider) {
-        QueryBuilder qb = new QueryBuilder(Role.class, "r", null, provider);
+    public Role findByName(String role) {
+        QueryBuilder qb = new QueryBuilder(Role.class, "r", null);
 
         try {
             qb.addCriterion("name", "=", role, true);
             return (Role) qb.getQuery(getEntityManager()).getSingleResult();
         } catch (NoResultException | NonUniqueResultException e) {
-            log.trace("No role {} in provider {} was found. Reason {}", role, provider, e.getClass().getSimpleName());
+            log.trace("No role {} was found. Reason {}", role, e.getClass().getSimpleName());
             return null;
-        }
-    }
-
-    /**
-     * Check entity provider if not super admin user
-     */
-    @Override
-    protected void checkProvider(Role entity) {
-        // Super administrator - don't care
-        if (currentUser.hasRole("superAdminManagement")) {
-            return;
-            // Other users - a regular check
-        } else {
-            super.checkProvider(entity);
         }
     }
 }

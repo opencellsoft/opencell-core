@@ -10,10 +10,8 @@ import javax.interceptor.Interceptors;
 
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.BillingRunService;
@@ -36,11 +34,10 @@ public class InvoicingJobBean {
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NEVER)
 	public void execute(JobExecutionResultImpl result,JobInstance jobInstance) {
-		log.debug("Running for user={}, parameter={}", currentUser, jobInstance.getParametres());
+		log.debug("Running for parameter={}", jobInstance.getParametres());
 
 		try {
-			Provider provider = currentUser.getProvider();
-			List<BillingRun> billingRuns = billingRunService.getbillingRuns(provider, BillingRunStatusEnum.NEW,
+			List<BillingRun> billingRuns = billingRunService.getbillingRuns(BillingRunStatusEnum.NEW,
 					BillingRunStatusEnum.PREVALIDATED, BillingRunStatusEnum.POSTVALIDATED);
 			log.info("billingRuns to process={}", billingRuns.size());
 			result.setNbItemsToProcess(billingRuns.size());

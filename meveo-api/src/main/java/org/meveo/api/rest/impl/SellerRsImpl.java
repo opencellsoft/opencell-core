@@ -32,7 +32,7 @@ public class SellerRsImpl extends BaseRs implements SellerRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            sellerApi.create(postData, getCurrentUser());
+            sellerApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -52,7 +52,7 @@ public class SellerRsImpl extends BaseRs implements SellerRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            sellerApi.update(postData, getCurrentUser());
+            sellerApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -72,7 +72,7 @@ public class SellerRsImpl extends BaseRs implements SellerRs {
         GetSellerResponse result = new GetSellerResponse();
 
         try {
-            result.setSeller(sellerApi.find(sellerCode, getCurrentUser()));
+            result.setSeller(sellerApi.find(sellerCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -92,7 +92,7 @@ public class SellerRsImpl extends BaseRs implements SellerRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            sellerApi.remove(sellerCode, getCurrentUser());
+            sellerApi.remove(sellerCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -112,11 +112,11 @@ public class SellerRsImpl extends BaseRs implements SellerRs {
         SellerResponseDto result = new SellerResponseDto();
 
         try {
-            result.setSellers(sellerApi.list(getCurrentUser().getProvider()));
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            result.setSellers(sellerApi.list());
+//        } catch (MeveoApiException e) {
+//            result.getActionStatus().setErrorCode(e.getErrorCode());
+//            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+//            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
             log.error("Failed to execute API", e);
             result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
@@ -132,11 +132,11 @@ public class SellerRsImpl extends BaseRs implements SellerRs {
         SellerCodesResponseDto result = new SellerCodesResponseDto();
 
         try {
-            result = sellerApi.listSellerCodes(getCurrentUser().getProvider());
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            result = sellerApi.listSellerCodes();
+//        } catch (MeveoApiException e) {
+//            result.getActionStatus().setErrorCode(e.getErrorCode());
+//            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+//            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
             log.error("Failed to execute API", e);
             result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
@@ -151,7 +151,7 @@ public class SellerRsImpl extends BaseRs implements SellerRs {
     public ActionStatus createOrUpdate(SellerDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            sellerApi.createOrUpdate(postData, getCurrentUser());
+            sellerApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

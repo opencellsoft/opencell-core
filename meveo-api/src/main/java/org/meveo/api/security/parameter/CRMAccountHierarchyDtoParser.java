@@ -9,7 +9,6 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.admin.User;
 import org.meveo.model.crm.AccountHierarchyTypeEnum;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.service.crm.impl.BusinessAccountModelService;
@@ -31,7 +30,7 @@ public class CRMAccountHierarchyDtoParser extends SecureMethodParameterParser<Bu
 	private SecuredBusinessEntityService securedBusinessEntityService;
 
 	@Override
-	public BusinessEntity getParameterValue(SecureMethodParameter parameter, Object[] values, User user) throws MeveoApiException {
+	public BusinessEntity getParameterValue(SecureMethodParameter parameter, Object[] values) throws MeveoApiException {
 
 		if (parameter == null) {
 			return null;
@@ -41,11 +40,11 @@ public class CRMAccountHierarchyDtoParser extends SecureMethodParameterParser<Bu
 
 		// retrieve the type of account hierarchy based on the dto that was
 		// received.
-		AccountHierarchyTypeEnum accountHierarchyTypeEnum = extractAccountHierarchyTypeEnum(dto, user);
+		AccountHierarchyTypeEnum accountHierarchyTypeEnum = extractAccountHierarchyTypeEnum(dto);
 
 		// using the account hierarchy type and dto, get the corresponding
 		// entity that will be checked for authorization.
-		BusinessEntity entity = getEntity(accountHierarchyTypeEnum, dto, user);
+		BusinessEntity entity = getEntity(accountHierarchyTypeEnum, dto);
 
 		return entity;
 	}
@@ -65,7 +64,7 @@ public class CRMAccountHierarchyDtoParser extends SecureMethodParameterParser<Bu
 		return dto;
 	}
 
-	private AccountHierarchyTypeEnum extractAccountHierarchyTypeEnum(CRMAccountHierarchyDto dto, User user) throws MeveoApiException {
+	private AccountHierarchyTypeEnum extractAccountHierarchyTypeEnum(CRMAccountHierarchyDto dto) throws MeveoApiException {
 
 		// retrieve the account hierarchy type by using the getCrmAccountType
 		// property of the dto
@@ -74,7 +73,7 @@ public class CRMAccountHierarchyDtoParser extends SecureMethodParameterParser<Bu
 		log.debug("Retrieving AccountHierarchyTypeEnum of type: {}", crmAccountType);
 
 		AccountHierarchyTypeEnum accountHierarchyTypeEnum = null;
-		BusinessAccountModel businessAccountModel = businessAccountModelService.findByCode(crmAccountType, user.getProvider());
+		BusinessAccountModel businessAccountModel = businessAccountModelService.findByCode(crmAccountType);
 		if (businessAccountModel != null) {
 			accountHierarchyTypeEnum = businessAccountModel.getHierarchyType();
 		} else {
@@ -89,7 +88,7 @@ public class CRMAccountHierarchyDtoParser extends SecureMethodParameterParser<Bu
 		return accountHierarchyTypeEnum;
 	}
 
-	private BusinessEntity getEntity(AccountHierarchyTypeEnum accountHierarchyTypeEnum, CRMAccountHierarchyDto dto, User user) throws MeveoApiException {
+	private BusinessEntity getEntity(AccountHierarchyTypeEnum accountHierarchyTypeEnum, CRMAccountHierarchyDto dto) throws MeveoApiException {
 
 		// immediately throw an error if the account hierarchy type is null.
 		if (accountHierarchyTypeEnum == null) {
@@ -109,7 +108,7 @@ public class CRMAccountHierarchyDtoParser extends SecureMethodParameterParser<Bu
 		// validation from the given entity. Otherwise, if the account does not
 		// exist, we need to start the authorization check starting with the
 		// parent class.
-		boolean accountExist = securedBusinessEntityService.getEntityByCode(entityClass, code, user) != null;
+		boolean accountExist = securedBusinessEntityService.getEntityByCode(entityClass, code) != null;
 
 		log.debug("Creating BusinessEntity using [code={}, parentCode={}, accountExist={}]", code, parentCode, accountExist);
 

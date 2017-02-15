@@ -21,12 +21,12 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.model.admin.User;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.dwh.MeasurableQuantity;
 import org.meveo.model.dwh.MeasuredValue;
 import org.meveo.model.dwh.MeasurementPeriodEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveocrm.services.dwh.MeasurableQuantityService;
 import org.meveocrm.services.dwh.MeasuredValueService;
 import org.slf4j.Logger;
@@ -44,6 +44,10 @@ public class DWHQueryBean {
     private EntityManager em;
 
     @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
+    
+    @Inject
     private Logger log;
 
     // iso 8601 date and datetime format
@@ -54,7 +58,6 @@ public class DWHQueryBean {
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     public void executeQuery(JobExecutionResultImpl result, String parameter) throws BusinessException {
 
-        Provider provider = currentUser.getProvider();
         String measurableQuantityCode = parameter;
         Date toDate = new Date();
 
@@ -78,13 +81,12 @@ public class DWHQueryBean {
             }
         }
         log.debug("measurableQuantityCode={}, toDate={}", measurableQuantityCode, toDate);
-        // first we check that there is a measurable quantity for the given
-        // provider
+
         List<MeasurableQuantity> mqList = new ArrayList<>();
         if (StringUtils.isBlank(measurableQuantityCode)) {
-            mqList = mqService.listToBeExecuted(new Date(), provider);
+            mqList = mqService.listToBeExecuted(new Date());
         } else {
-            MeasurableQuantity mq = mqService.findByCode(em, measurableQuantityCode, provider);
+            MeasurableQuantity mq = mqService.findByCode(measurableQuantityCode);
             if (mq == null) {
                 result.registerError("Cannot find measurable quantity with code " + measurableQuantityCode);
                 return;
@@ -97,23 +99,18 @@ public class DWHQueryBean {
                 result.registerError("Measurable quantity with code " + measurableQuantityCode + " has no SQL query set.");
                 log.info("Measurable quantity with code {} has no SQL query set.", measurableQuantityCode);
                 continue;
-            } else if (mq.getSqlQuery().indexOf("#{provider}") < 0) {
-                result.registerError("Measurable quantity with code " + measurableQuantityCode + " must filter result by provider using the #{provider} variable.");
-                log.info("Measurable quantity with code " + measurableQuantityCode + " must filter result by provider using the #{provider} variable.");
-            }
+            } 
 
             try {
                 if (mq.getLastMeasureDate() == null) {
                     mq.setLastMeasureDate(mq.getPreviousDate(toDate));
                 }
                 while (mq.getNextMeasureDate().before(toDate)) {
-                    log.debug("resolve query:{}, nextMeasureDate={}, lastMeasureDate={}, provider={} ", mq.getSqlQuery(), mq.getNextMeasureDate(), mq.getLastMeasureDate(),
-                        provider.getId());
+                    log.debug("resolve query:{}, nextMeasureDate={}, lastMeasureDate={}", mq.getSqlQuery(), mq.getNextMeasureDate(), mq.getLastMeasureDate());
                     String queryStr = mq.getSqlQuery().replaceAll("#\\{date\\}", df.format(mq.getLastMeasureDate()));
                     queryStr = queryStr.replaceAll("#\\{dateTime\\}", tf.format(mq.getLastMeasureDate()));
                     queryStr = queryStr.replaceAll("#\\{nextDate\\}", df.format(mq.getNextMeasureDate()));
                     queryStr = queryStr.replaceAll("#\\{nextDateTime\\}", tf.format(mq.getNextMeasureDate()));
-                    queryStr = queryStr.replaceAll("#\\{provider\\}", "" + provider.getId());
                     log.debug("execute query:{}", queryStr);
                     Query query = em.createNativeQuery(queryStr);
                     @SuppressWarnings("unchecked")
@@ -160,7 +157,6 @@ public class DWHQueryBean {
                         if (mv == null) {
                             mv = new MeasuredValue();
                         }
-                        mv.setProvider(provider);
                         mv.setMeasurableQuantity(mq);
                         mv.setMeasurementPeriod(mve);
                         mv.setValue(value);

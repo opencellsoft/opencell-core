@@ -34,15 +34,15 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.StringUtils;
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.EnableEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
-@ExportIdentifier({ "uuid", "provider" })
-@Table(name = "WF_ACTION", uniqueConstraints = @UniqueConstraint(columnNames = {"PROVIDER_ID", "UUID" }))
+@ExportIdentifier({ "uuid"})
+@Table(name = "WF_ACTION", uniqueConstraints = @UniqueConstraint(columnNames = {"UUID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "WF_ACTION_SEQ")
 @NamedQueries({ @NamedQuery(name = "WFAction.listByTransition", query = "SELECT wfa FROM WFAction wfa where  wfa.wfTransition=:wfTransition order by priority ASC") })
-public class WFAction extends AuditableEntity {
+public class WFAction extends EnableEntity {
 
 	private static final long serialVersionUID = 1L;
 

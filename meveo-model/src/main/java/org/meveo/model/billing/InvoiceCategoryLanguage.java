@@ -27,17 +27,17 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.EnableEntity;
 import org.meveo.model.ExportIdentifier;
 
 /**
  * InvoiceCategoryLanguage entity.
  */
 @Entity
-@ExportIdentifier({ "invoiceCategory.code", "tradingLanguage.language.languageCode", "provider" })
+@ExportIdentifier({ "invoiceCategory.code", "tradingLanguage.language.languageCode"})
 @Table(name = "BILLING_INVOICE_CAT_LANG")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_CAT_LANG_SEQ")
-public class InvoiceCategoryLanguage extends AuditableEntity {
+public class InvoiceCategoryLanguage extends EnableEntity {
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne(fetch = FetchType.LAZY)

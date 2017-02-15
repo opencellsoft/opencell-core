@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
-	version="3.0">
-	
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+	version="3.1">
+
 	<module-name>meveo</module-name>
 
 	<display-name>MEVEO Admin</display-name>
@@ -12,7 +10,7 @@
 		<param-name>pageAccessFile</param-name>
 		<param-value>/WEB-INF/page-access.xml</param-value>
 	</context-param>
-	
+
 	<context-param>
 		<param-name>javax.faces.FACELETS_BUFFER_SIZE</param-name>
 		<param-value>65535</param-value> <!-- 64KB. -->
@@ -45,12 +43,12 @@
 		<param-name>javax.faces.INTERPRET_EMPTY_STRING_SUBMITTED_VALUES_AS_NULL</param-name>
 		<param-value>true</param-value>
 	</context-param>
-	
+
 	<!-- Primefaces Theme -->
-<!-- 	<context-param> -->
-<!-- 		<param-name>primefaces.THEME</param-name> -->
-<!-- 		<param-value>modena</param-value> -->
-<!-- 	</context-param> -->
+	<!-- <context-param> -->
+	<!-- <param-name>primefaces.THEME</param-name> -->
+	<!-- <param-value>modena</param-value> -->
+	<!-- </context-param> -->
 
 	<!-- Primefaces FontAwesome -->
 	<context-param>
@@ -111,7 +109,7 @@
 		<filter-name>noCache</filter-name>
 		<servlet-name>Faces Servlet</servlet-name>
 	</filter-mapping>
-	
+
 	<!-- MIME types for fonts -->
 
 	<mime-mapping>
@@ -138,7 +136,58 @@
 		<extension>svg</extension>
 		<mime-type>image/svg+xml</mime-type>
 	</mime-mapping>
-	
+
+
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>AdminPages</web-resource-name>
+			<url-pattern>/pages/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>adminas</role-name>
+		</auth-constraint>
+	</security-constraint>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Users</web-resource-name>
+			<url-pattern>/users/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>user</role-name>
+		</auth-constraint>
+	</security-constraint>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>RS</web-resource-name>
+			<url-pattern>/rs/hello/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>user</role-name>
+			<role-name>adminas</role-name>
+		</auth-constraint>
+	</security-constraint>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>WS</web-resource-name>
+			<url-pattern>/ws/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>user</role-name>
+		</auth-constraint>
+	</security-constraint>
+	<login-config>
+		<auth-method>KEYCLOAK</auth-method>
+		<realm-name>master</realm-name>
+	</login-config>
+	<security-role>
+		<role-name>adminas</role-name>
+	</security-role>
+	<security-role>
+		<role-name>user</role-name>
+	</security-role>
+
+
+
 	<!-- <filter> -->
 	<!-- <filter-name>UTF8CharacterEncodingFilter</filter-name> -->
 	<!-- <filter-class>org.meveo.admin.filter.UTF8CharacterEncodingFilter</filter-class> -->

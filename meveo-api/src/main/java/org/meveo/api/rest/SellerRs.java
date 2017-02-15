@@ -16,7 +16,6 @@ import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.response.GetSellerResponse;
 import org.meveo.api.dto.response.SellerCodesResponseDto;
 import org.meveo.api.dto.response.SellerResponseDto;
-import org.meveo.api.rest.security.RSSecured;
 
 /**
  * Web service for managing {@link org.meveo.model.admin.Seller}.
@@ -26,7 +25,7 @@ import org.meveo.api.rest.security.RSSecured;
 @Path("/seller")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-@RSSecured
+
 public interface SellerRs extends IBaseRs {
 
     /**

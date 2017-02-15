@@ -3,10 +3,6 @@ package org.meveo.service.notification;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import org.jboss.resteasy.client.ClientRequest;
-import org.jboss.resteasy.client.ClientResponse;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 
 @SuppressWarnings("deprecation")

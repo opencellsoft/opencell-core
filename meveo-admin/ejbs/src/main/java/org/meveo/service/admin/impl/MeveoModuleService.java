@@ -48,11 +48,9 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.export.RemoteAuthenticationException;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.admin.User;
 import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.BusinessServiceModel;
 import org.meveo.model.communication.MeveoInstance;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.module.MeveoModule;
 import org.meveo.model.module.MeveoModuleItem;
 import org.meveo.service.api.EntityToDtoConverter;
@@ -162,161 +160,6 @@ public class MeveoModuleService extends GenericModuleService<MeveoModule> {
         }
     }
 
-    // /**
-    // * Convert MeveoModule or its subclass object to DTO representation
-    // *
-    // * @param module Module object
-    // * @param provider Provider
-    // * @return MeveoModuleDto object
-    // */
-    // public ModuleDto moduleToDto(MeveoModule module, Provider provider) throws BusinessException {
-    //
-    // if (module.isDownloaded() && !module.isInstalled()) {
-    // try {
-    // return MeveoModuleService.moduleSourceToDto(module);
-    // } catch (Exception e) {
-    // log.error("Failed to load module source {}", module.getCode(), e);
-    // throw new BusinessException("Failed to load module source", e);
-    // }
-    // }
-    //
-    // Class<? extends ModuleDto> dtoClass = ModuleDto.class;
-    // if (module instanceof BusinessServiceModel) {
-    // dtoClass = BusinessServiceModelDto.class;
-    // } else if (module instanceof BusinessOfferModel) {
-    // dtoClass = BusinessOfferModelDto.class;
-    // } else if (module instanceof BusinessAccountModel) {
-    // dtoClass = BusinessAccountModelDto.class;
-    // }
-    //
-    // ModuleDto moduleDto = null;
-    // try {
-    // moduleDto = dtoClass.getConstructor(MeveoModule.class).newInstance(module);
-    // } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
-    // log.error("Failed to instantiate Module Dto. No reason for it to happen. ", e);
-    // throw new RuntimeException("Failed to instantiate Module Dto. No reason for it to happen. ", e);
-    // }
-    //
-    // if (StringUtils.isNotBlank(module.getLogoPicture())) {
-    // try {
-    // moduleDto.setLogoPictureFile(ModuleUtil.readModulePicture(module.getProvider().getCode(), module.getLogoPicture()));
-    // } catch (Exception e) {
-    // log.error("Failed to read module files {}, info {}", module.getLogoPicture(), e.getMessage(), e);
-    // }
-    // }
-    //
-    // List<MeveoModuleItem> moduleItems = module.getModuleItems();
-    // if (moduleItems != null) {
-    // for (MeveoModuleItem item : moduleItems) {
-    // loadModuleItem(item, provider);
-    //
-    // if (item.getItemEntity() == null) {
-    // continue;
-    // }
-    // if (item.getItemEntity() instanceof CustomEntityTemplate) {
-    // CustomEntityTemplate customEntityTemplate = (CustomEntityTemplate) item.getItemEntity();
-    // Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(customEntityTemplate.getAppliesTo(), module.getProvider());
-    // Map<String, EntityCustomAction> customActions = entityActionScriptService.findByAppliesTo(customEntityTemplate.getAppliesTo(), module.getProvider());
-    //
-    // CustomEntityTemplateDto dto = CustomEntityTemplateDto.toDTO(customEntityTemplate, customFieldTemplates != null ? customFieldTemplates.values() : null,
-    // customActions != null ? customActions.values() : null);
-    // moduleDto.addModuleItem(dto);
-    //
-    // } else if (item.getItemEntity() instanceof CustomFieldTemplate) {
-    // moduleDto.addModuleItem(new CustomFieldTemplateDto((CustomFieldTemplate) item.getItemEntity()));
-    //
-    // } else if (item.getItemEntity() instanceof Filter) {
-    // moduleDto.addModuleItem(FilterDto.toDto((Filter) item.getItemEntity()));
-    //
-    // } else if (item.getItemEntity() instanceof JobInstance) {
-    // exportJobInstance((JobInstance) item.getItemEntity(), moduleDto);
-    //
-    // } else if (item.getItemEntity() instanceof Notification) {
-    //
-    // Notification notification = (Notification) item.getItemEntity();
-    // if (notification.getScriptInstance() != null) {
-    // moduleDto.addModuleItem(new ScriptInstanceDto(notification.getScriptInstance()));
-    // }
-    //
-    // if (notification.getCounterTemplate() != null) {
-    // moduleDto.addModuleItem(new CounterTemplateDto(notification.getCounterTemplate()));
-    // }
-    //
-    // if (notification instanceof EmailNotification) {
-    // moduleDto.addModuleItem(new EmailNotificationDto((EmailNotification) notification));
-    //
-    // } else if (notification instanceof JobTrigger) {
-    // exportJobInstance(((JobTrigger) notification).getJobInstance(), moduleDto);
-    // moduleDto.addModuleItem(new JobTriggerDto((JobTrigger) notification));
-    //
-    // } else if (notification instanceof ScriptNotification) {
-    // moduleDto.addModuleItem(new NotificationDto(notification));
-    //
-    // } else if (notification instanceof WebHook) {
-    // moduleDto.addModuleItem(new WebhookNotificationDto((WebHook) notification));
-    // }
-    //
-    // } else if (item.getItemEntity() instanceof ScriptInstance) {
-    // moduleDto.addModuleItem(new ScriptInstanceDto((ScriptInstance) item.getItemEntity()));
-    //
-    // } else if (item.getItemEntity() instanceof PieChart) {
-    // moduleDto.addModuleItem(new PieChartDto((PieChart) item.getItemEntity()));
-    //
-    // } else if (item.getItemEntity() instanceof LineChart) {
-    // moduleDto.addModuleItem(new LineChartDto((LineChart) item.getItemEntity()));
-    //
-    // } else if (item.getItemEntity() instanceof BarChart) {
-    // moduleDto.addModuleItem(new BarChartDto((BarChart) item.getItemEntity()));
-    //
-    // } else if (item.getItemEntity() instanceof MeasurableQuantity) {
-    // moduleDto.addModuleItem(new MeasurableQuantityDto((MeasurableQuantity) item.getItemEntity()));
-    //
-    // } else if (item.getItemEntity() instanceof MeveoModule) {
-    // moduleDto.addModuleItem(moduleToDto((MeveoModule) item.getItemEntity(), provider));
-    //
-    // }
-    // }
-    // }
-    //
-    // // Finish converting subclasses of MeveoModule class
-    // if (module instanceof BusinessServiceModel) {
-    // businessServiceModelToDto((BusinessServiceModel) module, (BusinessServiceModelDto) moduleDto, provider);
-    //
-    // } else if (module instanceof BusinessOfferModel) {
-    // businessOfferModelToDto((BusinessOfferModel) module, (BusinessOfferModelDto) moduleDto, provider);
-    //
-    // } else if (module instanceof BusinessAccountModel) {
-    // businessAccountModelToDto((BusinessAccountModel) module, (BusinessAccountModelDto) moduleDto, provider);
-    // }
-    //
-    // return moduleDto;
-    // }
-
-    // /**
-    // * export jobInstance to remote meveo instance
-    // *
-    // * @param meveoInstance
-    // * @param jobInstance
-    // * @return
-    // * @throws MeveoApiException
-    // */
-    // private void exportJobInstance(JobInstance jobInstance, ModuleDto moduleDto) {
-    // JobInstance nextJobInstance = jobInstance.getFollowingJob();
-    // if (nextJobInstance != null) {
-    // exportJobInstance(nextJobInstance, moduleDto);
-    // }
-    //
-    // if (jobInstance.getTimerEntity() != null) {
-    // TimerEntity timerEntity = jobInstance.getTimerEntity();
-    // if (timerEntity != null) {
-    // TimerEntityDto timerDto = new TimerEntityDto(timerEntity);
-    // moduleDto.addModuleItem(timerDto);
-    // }
-    // }
-    // JobInstanceDto dto = new JobInstanceDto(jobInstance, entityToDtoConverter.getCustomFieldsDTO(jobInstance));
-    // moduleDto.addModuleItem(dto);
-    // }
-
     @SuppressWarnings("unchecked")
     public List<MeveoModuleItem> findByCodeAndItemType(String code, String className) {
         QueryBuilder qb = new QueryBuilder(MeveoModuleItem.class, "m");
@@ -411,8 +254,8 @@ public class MeveoModuleService extends GenericModuleService<MeveoModule> {
     }
 
     @SuppressWarnings("unchecked")
-    public String getRelatedModulesAsString(String itemCode, String itemClazz, String appliesTo, Provider provider) {
-        QueryBuilder qb = new QueryBuilder(MeveoModule.class, "m", Arrays.asList("moduleItems as i"), provider);
+    public String getRelatedModulesAsString(String itemCode, String itemClazz, String appliesTo) {
+        QueryBuilder qb = new QueryBuilder(MeveoModule.class, "m", Arrays.asList("moduleItems as i"));
         qb.addCriterion("i.itemCode", "=", itemCode, true);
         qb.addCriterion("i.itemClass", "=", itemClazz, false);
         qb.addCriterion("i.appliesTo", "=", appliesTo, false);

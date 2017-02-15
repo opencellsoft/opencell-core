@@ -24,22 +24,17 @@ import java.text.SimpleDateFormat;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
-
-import org.meveo.model.crm.Provider;
 
 /**
  * Base class for all entity classes.
  */
 @MappedSuperclass
-public abstract class BaseEntity implements Serializable, IEntity, IVersionedEntity, IProvider {
+public abstract class BaseEntity implements Serializable, IEntity, IVersionedEntity {
 	private static final long serialVersionUID = 1L;
 
 	public static final int NB_PRECISION = 23;
@@ -56,10 +51,6 @@ public abstract class BaseEntity implements Serializable, IEntity, IVersionedEnt
 	@Column(name = "VERSION")
 	private Integer version;
 
-	@ManyToOne(optional = true, fetch = FetchType.LAZY)
-	@JoinColumn(name = "PROVIDER_ID")
-	private Provider provider;
-
 	public Long getId() {
 		return id;
 	}
@@ -74,14 +65,6 @@ public abstract class BaseEntity implements Serializable, IEntity, IVersionedEnt
 
 	public void setVersion(Integer version) {
 		this.version = version;
-	}
-
-	public Provider getProvider() {
-		return provider;
-	}
-
-	public void setProvider(Provider provider) {
-		this.provider = provider;
 	}
 
 	public boolean isTransient() {
@@ -110,41 +93,5 @@ public abstract class BaseEntity implements Serializable, IEntity, IVersionedEnt
 	@Override
     public String toString() {
         return String.format("id=%s", id);
-    }
-
-    /**
-	 * Check whether [current] provider matches the provider field of an entity
-	 * 
-	 * @param providerToMatch
-	 *            [Current] provider value to match
-	 * @return
-	 */
-	public boolean doesProviderMatch(Provider providerToMatch) {
-
-		if (providerToMatch == null && provider == null) {
-			return true;
-		} else if (providerToMatch != null && provider != null) {
-			return providerToMatch.getId().longValue() == provider.getId().longValue();
-		}
-
-		return false;
-	}
-	
-    /**
-     * Check whether [current] provider matches the provider field of an entity
-     * 
-     * @param providerToMatch
-     *            [Current] provider id value to match
-     * @return
-     */
-    public boolean doesProviderMatch(Long providerToMatch) {
-
-        if (providerToMatch == null && provider == null) {
-            return true;
-        } else if (providerToMatch != null && provider != null) {
-            return provider.getId().equals(providerToMatch);
-        }
-
-        return false;
     }
 }

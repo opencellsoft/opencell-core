@@ -80,7 +80,7 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 
 		SecureMethodParameter userParameter = annotation.user();
 		Object[] values = context.getParameters();
-		User user = parameterHandler.getParameterValue(userParameter, values, User.class, null);
+		User user = parameterHandler.getParameterValue(userParameter, values, User.class);
 
 		boolean hasRestrictions = user != null && user.getSecuredEntities() != null && !user.getSecuredEntities().isEmpty();
 
@@ -92,7 +92,7 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 		log.debug("Checking method {}.{} for secured BusinessEntities", objectName, methodName);
 		SecureMethodParameter[] parametersForValidation = annotation.validate();
 		for (SecureMethodParameter parameter : parametersForValidation) {
-			BusinessEntity entity = parameterHandler.getParameterValue(parameter, values, BusinessEntity.class, user);
+			BusinessEntity entity = parameterHandler.getParameterValue(parameter, values, BusinessEntity.class);
 			if (!securedBusinessEntityService.isEntityAllowed(entity, user, false)) {
 				throw new AccessDeniedException("Access to entity details is not allowed.");
 			}
@@ -103,7 +103,7 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 
 		SecureMethodResultFilter filter = filterFactory.getFilter(annotation.resultFilter());
 		log.debug("Results will be filtered using {} filter.", filter);
-		result = filter.filterResult(result, user);
+		result = filter.filterResult(result);
 		return result;
 
 	}

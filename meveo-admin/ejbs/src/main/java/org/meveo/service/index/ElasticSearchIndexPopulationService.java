@@ -51,8 +51,8 @@ import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
-import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.custom.CustomEntityTemplateService;
+import org.meveo.util.ApplicationProvider;
 import org.meveo.util.EntityCustomizationUtils;
 import org.meveo.util.MeveoJpa;
 import org.meveo.util.MeveoJpaForJobs;
@@ -88,11 +88,12 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     @EJB
     private CustomEntityTemplateService customEntityTemplateService;
 
-    @EJB
-    private ProviderService providerService;
-
     @Inject
-    private Logger log;
+    private Logger log;    
+    
+    @Inject
+    @ApplicationProvider
+    protected Provider appProvider;
 
     private ParamBean paramBean = ParamBean.getInstance();
 
@@ -348,39 +349,21 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     }
 
     /**
-     * Recreate indexes for all providers
+     * Recreate index
      * 
      * @throws BusinessException
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void createIndexes() throws BusinessException {
 
-        // Recreate all indexes
-        List<Provider> providers = providerService.list();
-
-        for (Provider provider : providers) {
-            createIndexes(provider);
-        }
-    }
-
-    /**
-     * Recreate index for a given provider
-     * 
-     * @param provider Provider
-     * @throws BusinessException
-     */
-    public void createIndexes(Provider provider) throws BusinessException {
-
-        log.debug("Creating Elastic Search indexes for provider {}", provider.getCode());
+        log.debug("Creating Elastic Search indexes with prefix {}", appProvider.getCode());
 
         ResteasyClient client = new ResteasyClientBuilder().build();
 
-        String providerCode = ElasticClient.cleanUpCode(provider.getCode()).toLowerCase();
-
         // Create indexes
         for (Entry<String, String> model : esConfiguration.getDataModel().entrySet()) {
-            String indexName = model.getKey().replace(INDEX_PROVIDER_PREFIX, providerCode);
-            String modelJson = model.getValue().replace(INDEX_PROVIDER_PREFIX, providerCode);
+            String indexName = model.getKey().replace(INDEX_PROVIDER_PREFIX, appProvider.getCode());
+            String modelJson = model.getValue().replace(INDEX_PROVIDER_PREFIX, appProvider.getCode());
 
             String uri = paramBean.getProperty("elasticsearch.restUri", "http://localhost:9200");
 
@@ -394,18 +377,18 @@ public class ElasticSearchIndexPopulationService implements Serializable {
             }
         }
 
-        log.trace("Creating Elastic Search mappings for CETs for provider {}", provider.getCode());
+        log.trace("Creating Elastic Search mappings for CETs with prefix {}", appProvider.getCode());
 
         // Create mappings for custom entity templates
-        List<CustomEntityTemplate> cets = customEntityTemplateService.listNoCache(provider);
+        List<CustomEntityTemplate> cets = customEntityTemplateService.listNoCache();
         for (CustomEntityTemplate cet : cets) {
             createCETMapping(cet);
         }
 
-        log.trace("Updating Elastic Search mappings for CFTs for provider {}", provider.getCode());
+        log.trace("Updating Elastic Search mappings for CFTs with prefix {}", appProvider.getCode());
 
         // Update model mapping with custom fields
-        List<CustomFieldTemplate> cfts = customFieldTemplateService.getCFTForIndex(provider);
+        List<CustomFieldTemplate> cfts = customFieldTemplateService.getCFTForIndex();
         for (CustomFieldTemplate cft : cfts) {
             updateCFMapping(cft);
         }
@@ -420,7 +403,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
      */
     public void createCETMapping(CustomEntityTemplate cet) throws BusinessException {
 
-        String index = esConfiguration.getIndex(CustomEntityInstance.class, cet.getProvider());
+        String index = esConfiguration.getIndex(CustomEntityInstance.class);
         // Not interested in storing and indexing this entity in Elastic Search
         if (index == null) {
             log.warn("No matching index found for CET {}", cet);
@@ -491,7 +474,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
             return;
         }
 
-        String index = esConfiguration.getIndex(entityClass, cft.getProvider());
+        String index = esConfiguration.getIndex(entityClass);
         // Not interested in storing and indexing this entity in Elastic Search
         if (index == null) {
             return;

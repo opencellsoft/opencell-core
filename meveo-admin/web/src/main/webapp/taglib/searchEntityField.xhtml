@@ -32,7 +32,7 @@
             <p:selectOneMenu id="#{id}" value="#{backingBean.filters[field]}">
                 <f:selectItem itemLabel="" itemValue="" />
                 <f:selectItems value="#{elements}" var="elem" itemLabel="#{elem[valueLabelField]}" itemValue="#{elem}" />
-                <s:objectConverter />
+                <hftl:objectConverter />
             </p:selectOneMenu>
         </c:if>
     </hftl:decorateFormField>

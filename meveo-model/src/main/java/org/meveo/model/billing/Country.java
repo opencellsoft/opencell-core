@@ -31,15 +31,15 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
-import org.meveo.model.ProviderlessEntity;
 import org.meveo.model.admin.Currency;
 
 @Entity
 @ExportIdentifier("countryCode")
 @Table(name = "ADM_COUNTRY")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_COUNTRY_SEQ")
-public class Country extends ProviderlessEntity {
+public class Country extends AuditableEntity {
 	private static final long serialVersionUID = 1L;
 
 	@Column(name = "COUNTRY_CODE", length = 10)

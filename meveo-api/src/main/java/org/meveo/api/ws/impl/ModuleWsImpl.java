@@ -35,7 +35,7 @@ public class ModuleWsImpl extends BaseWs implements ModuleWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            moduleApi.create(moduleDto, getCurrentUser());
+            moduleApi.create(moduleDto);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -55,7 +55,7 @@ public class ModuleWsImpl extends BaseWs implements ModuleWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            moduleApi.update(moduleDto, getCurrentUser());
+            moduleApi.update(moduleDto);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -75,7 +75,7 @@ public class ModuleWsImpl extends BaseWs implements ModuleWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            moduleApi.delete(code, getCurrentUser());
+            moduleApi.delete(code);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -96,7 +96,7 @@ public class ModuleWsImpl extends BaseWs implements ModuleWs {
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
         result.getActionStatus().setMessage("");
         try {
-            List<MeveoModuleDto> dtos = moduleApi.list(null, getCurrentUser());
+            List<MeveoModuleDto> dtos = moduleApi.list(null);
             result.setModules(dtos);
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
@@ -118,7 +118,7 @@ public class ModuleWsImpl extends BaseWs implements ModuleWs {
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
         result.getActionStatus().setMessage("");
         try {
-            MeveoModuleDto dto = moduleApi.find(code, getCurrentUser());
+            MeveoModuleDto dto = moduleApi.find(code);
             result.setModule(dto);
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
@@ -139,7 +139,7 @@ public class ModuleWsImpl extends BaseWs implements ModuleWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            moduleApi.createOrUpdate(moduleDto, getCurrentUser());
+            moduleApi.createOrUpdate(moduleDto);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -159,7 +159,7 @@ public class ModuleWsImpl extends BaseWs implements ModuleWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            moduleApi.install(moduleDto, getCurrentUser());
+            moduleApi.install(moduleDto);
 
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
@@ -180,7 +180,7 @@ public class ModuleWsImpl extends BaseWs implements ModuleWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            moduleApi.uninstall(code, MeveoModule.class, getCurrentUser());
+            moduleApi.uninstall(code, MeveoModule.class);
 
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
@@ -201,7 +201,7 @@ public class ModuleWsImpl extends BaseWs implements ModuleWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            moduleApi.enable(code, MeveoModule.class, getCurrentUser());
+            moduleApi.enable(code, MeveoModule.class);
 
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
@@ -222,7 +222,7 @@ public class ModuleWsImpl extends BaseWs implements ModuleWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            moduleApi.disable(code, MeveoModule.class, getCurrentUser());
+            moduleApi.disable(code, MeveoModule.class);
 
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());

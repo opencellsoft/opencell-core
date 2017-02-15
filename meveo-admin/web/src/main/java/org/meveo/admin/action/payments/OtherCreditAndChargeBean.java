@@ -21,12 +21,10 @@ package org.meveo.admin.action.payments;
 import java.util.Date;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
@@ -41,6 +39,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.OtherCreditAndChargeService;
+import org.omnifaces.cdi.Param;
 import org.omnifaces.cdi.ViewScoped;
 
 /**
@@ -86,19 +85,19 @@ public class OtherCreditAndChargeBean extends CustomFieldBean<OtherCreditAndChar
 	 * CustomerAccoiunt Id passed as a parameter.
 	 */
 	@Inject
-	@RequestParam
-	private Instance<Long> customerAccountId;
+	@Param
+	private Long customerAccountId;
 
 	/**
 	 * OCCTemplate Id passed as a parameter.
 	 */
 	@Inject
-	@RequestParam
-	private Instance<Long> occTemplateId;
+	@Param
+	private Long occTemplateId;
 
 	@Inject
-	@RequestParam
-	private Instance<String> initType = null;
+	@Param
+	private String initType = null;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -111,12 +110,11 @@ public class OtherCreditAndChargeBean extends CustomFieldBean<OtherCreditAndChar
 	@PostConstruct
 	public void init() {
 
-		if (customerAccountId != null && customerAccountId.get() != null) {
-			customerAccount = customerAccountService.findById(customerAccountId
-					.get());
+		if (customerAccountId != null) {
+			customerAccount = customerAccountService.findById(customerAccountId);
 		}
-		if (occTemplateId != null && occTemplateId.get() != null) {
-			occTemplate = occTemplateService.findById(occTemplateId.get());
+		if (occTemplateId != null) {
+			occTemplate = occTemplateService.findById(occTemplateId);
 		}
 	}
 
@@ -130,33 +128,31 @@ public class OtherCreditAndChargeBean extends CustomFieldBean<OtherCreditAndChar
 	public OtherCreditAndCharge initEntity() {
 
 		// Initialize a new one from ID or empty
-		if (initType == null || initType.get() == null) {
+		if (initType == null || initType == null) {
 			super.initEntity();
 
 			// Either create a new entity from a user selected template
-		} else if ("loadFromTemplate".equals(initType.get())) {
-			if (occTemplateId != null && occTemplateId.get() != null) {
-				copyFromTemplate(occTemplateService.findById(occTemplateId
-						.get()));
+		} else if ("loadFromTemplate".equals(initType)) {
+			if (occTemplateId != null) {
+				copyFromTemplate(occTemplateService.findById(occTemplateId));
 
 			}
 			return entity;
 
 			// Create a new entity from a rejectPayment template
-		} else if ("loadFromTemplateRejectPayment".equals(initType.get())) {
+		} else if ("loadFromTemplateRejectPayment".equals(initType)) {
 			String occTemplateRejectPaymentCode = paramBean.getProperty(
 					"occ.templateRejectPaymentCode", "IP_PLVT");
 			OCCTemplate occ = occTemplateService.findByCode(
-					occTemplateRejectPaymentCode, getCurrentProvider()
-							.getCode());
+					occTemplateRejectPaymentCode);
 			copyFromTemplate(occ);
 
 			// Create a new entity from a paymentCheck template
-		} else if ("loadFromTemplatePaymentCheck".equals(initType.get())) {
+		} else if ("loadFromTemplatePaymentCheck".equals(initType)) {
 			String occTemplatePaymentCode = paramBean.getProperty(
 					"occ.templatePaymentCheckCode", "RG_CHQ");
 			OCCTemplate occ = occTemplateService.findByCode(
-					occTemplatePaymentCode, getCurrentProvider().getCode());
+					occTemplatePaymentCode);
 			copyFromTemplate(occ);
 
 		}
@@ -201,7 +197,7 @@ public class OtherCreditAndChargeBean extends CustomFieldBean<OtherCreditAndChar
 	public String loadFromTemplatePaymentCheck(Long customerAccountId){  
 		String occTemplatePaymentCode = paramBean.getProperty("occ.templatePaymentCheckCode", "RG_CHQ");
 		OCCTemplate occ = occTemplateService.findByCode(
-				occTemplatePaymentCode, getCurrentProvider().getCode());
+				occTemplatePaymentCode);
 		if(occ==null){
 			messages.error(new BundleKey("messages", "accountOperation.occTemplatePaymentCheckNotFound"));
 			return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?customerAccountId="

@@ -14,7 +14,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.job.UnitRatedTransactionsJobBean;
-import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 
 /**
@@ -30,9 +29,9 @@ public class RatedTransactionAsync {
 	
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result, User currentUser) {
+	public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result) {
 		for (Long walletOperationId : ids) {
-			unitRatedTransactionsJobBean.execute(result, currentUser, walletOperationId);
+			unitRatedTransactionsJobBean.execute(result, walletOperationId);
 		}
 		return new AsyncResult<String>("OK");
 	}

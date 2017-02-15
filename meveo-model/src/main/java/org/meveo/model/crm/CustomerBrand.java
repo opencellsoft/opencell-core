@@ -27,8 +27,8 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
-@ExportIdentifier({ "code", "provider" })
-@Table(name = "CRM_CUSTOMER_BRAND", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
+@ExportIdentifier({ "code"})
+@Table(name = "CRM_CUSTOMER_BRAND", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_CUSTOMER_BRAND_SEQ")
 public class CustomerBrand extends BusinessEntity {
 

@@ -55,7 +55,6 @@ import javax.xml.transform.stream.StreamResult;
  *       &lt;sequence>
  *         &lt;element ref="{}errors"/>
  *         &lt;element ref="{}warnings"/>
- *         &lt;element ref="{}providerCode"/>
  *         &lt;element ref="{}seller" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -69,7 +68,6 @@ import javax.xml.transform.stream.StreamResult;
 @XmlType(name = "", propOrder = {
 	    "errors",
 	    "warnings",
-	    "providerCode",
     "seller"
 })
 @XmlRootElement(name = "sellers")
@@ -79,14 +77,11 @@ public class Sellers {
     protected Errors errors;
     @XmlElement(required = true)
     protected Warnings warnings;
-    @XmlElement(required = true)
-    protected String providerCode;
     protected List<Seller> seller;
 
     public Sellers(){}
     
-    public Sellers(List<org.meveo.model.admin.Seller> sellersInDB,String providerCode) {
-		this.providerCode=providerCode;
+    public Sellers(List<org.meveo.model.admin.Seller> sellersInDB) {
 		if(sellersInDB!=null){
 			seller=new ArrayList<Seller>(sellersInDB.size());
 			for(org.meveo.model.admin.Seller sell:sellersInDB){
@@ -143,15 +138,6 @@ public class Sellers {
         this.warnings = value;
     }
     
-    
-    public String getProviderCode() {
-		return providerCode;
-	}
-
-	public void setProviderCode(String providerCode) {
-		this.providerCode = providerCode;
-	}
-
 	/**
      *   Gets the value of the seller property.
      * 

@@ -72,7 +72,7 @@ public class FilterBean extends BaseBean<Filter> {
 			forceUpdateParameters = false;
 			parameters = new ArrayList<>();
 			if(this.getEntity() != null){
-				Map<String, CustomFieldTemplate> customFieldTemplateMap = customFieldTemplateService.findByAppliesTo(this.getEntity(), currentUser.getProvider());
+				Map<String, CustomFieldTemplate> customFieldTemplateMap = customFieldTemplateService.findByAppliesTo(this.getEntity());
 				for (Map.Entry<String, CustomFieldTemplate> customFieldTemplateEntry : customFieldTemplateMap.entrySet()) {
 					parameters.add(customFieldTemplateEntry.getValue());
 				}

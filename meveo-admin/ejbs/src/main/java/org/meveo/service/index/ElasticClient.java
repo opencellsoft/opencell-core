@@ -42,13 +42,10 @@ import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
-import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.index.ElasticSearchChangeset.ElasticSearchAction;
 import org.slf4j.Logger;
@@ -87,9 +84,6 @@ public class ElasticClient {
 
     @Inject
     private ElasticSearchConfiguration esConfiguration;
-
-    @EJB
-    private ProviderService providerService;
 
     @EJB
     private CustomFieldTemplateService customFieldTemplateService;
@@ -364,29 +358,28 @@ public class ElasticClient {
      * Execute a search compatible primefaces data table component search
      * 
      * @param paginationConfig Query, pagination and sorting configuration
-     * @param currentUser Current user
      * @param classnamesOrCetCodes An array of full classnames or CET codes
      * @return Json result
      * @throws BusinessException
      */
-    public String search(PaginationConfiguration paginationConfig, User currentUser, String[] classnamesOrCetCodes) throws BusinessException {
+    public String search(PaginationConfiguration paginationConfig, String[] classnamesOrCetCodes) throws BusinessException {
 
         if (!esEnabled) {
             return "{}";
         }
 
-        SortOrder sortOrder = (paginationConfig.getOrdering() == null || paginationConfig.getOrdering() == org.primefaces.model.SortOrder.UNSORTED) ? null : paginationConfig
-            .getOrdering() == org.primefaces.model.SortOrder.ASCENDING ? SortOrder.ASC : SortOrder.DESC;
+        SortOrder sortOrder = (paginationConfig.getOrdering() == null || paginationConfig.getOrdering() == org.primefaces.model.SortOrder.UNSORTED) ? null
+                : paginationConfig.getOrdering() == org.primefaces.model.SortOrder.ASCENDING ? SortOrder.ASC : SortOrder.DESC;
 
         String[] returnFields = paginationConfig.getFetchFields() == null ? null : (String[]) paginationConfig.getFetchFields().toArray();
 
         // Search either by a field
         if (StringUtils.isBlank(paginationConfig.getFullTextFilter()) && paginationConfig.getFilters() != null && !paginationConfig.getFilters().isEmpty()) {
             return search(paginationConfig.getFilters(), paginationConfig.getFirstRow(), paginationConfig.getNumberOfRows(), paginationConfig.getSortField(), sortOrder,
-                returnFields, currentUser, getSearchScopeInfo(classnamesOrCetCodes, true, currentUser));
+                returnFields, getSearchScopeInfo(classnamesOrCetCodes, true));
         } else {
             return search(paginationConfig.getFullTextFilter(), paginationConfig.getFirstRow(), paginationConfig.getNumberOfRows(), paginationConfig.getSortField(), sortOrder,
-                returnFields, currentUser, getSearchScopeInfo(classnamesOrCetCodes, true, currentUser));
+                returnFields, getSearchScopeInfo(classnamesOrCetCodes, true));
         }
     }
 
@@ -399,24 +392,23 @@ public class ElasticClient {
      * @param sortField - Field to sort by. If omitted, will sort by score.
      * @param sortOrder Sorting order
      * @param returnFields Return only certain fields - see Elastic Search documentation for details
-     * @param currentUser Current user
      * @param classInfo Entity classes to match
      * @return Json result
      * @throws BusinessException
      */
-    public String search(String query, Integer from, Integer size, String sortField, SortOrder sortOrder, String[] returnFields, User currentUser,
-            List<ElasticSearchClassInfo> classInfo) throws BusinessException {
+    public String search(String query, Integer from, Integer size, String sortField, SortOrder sortOrder, String[] returnFields, List<ElasticSearchClassInfo> classInfo)
+            throws BusinessException {
 
         if (!esEnabled) {
             return "{}";
         }
 
         Set<String> indexes = null;
-        // Not clear where to look, return al indexes for provider
+        // Not clear where to look, return all indexes for provider
         if (classInfo == null || classInfo.isEmpty()) {
-            indexes = esConfiguration.getIndexes(currentUser.getProvider());
+            indexes = esConfiguration.getIndexes();
         } else {
-            indexes = esConfiguration.getIndexes(currentUser.getProvider(), classInfo);
+            indexes = esConfiguration.getIndexes(classInfo);
         }
 
         // None of the classes are stored in Elastic Search, return empty json
@@ -481,12 +473,11 @@ public class ElasticClient {
      * @param sortField - Field to sort by. If omitted, will sort by score.
      * @param sortOrder Sorting order
      * @param returnFields Return only certain fields - see Elastic Search documentation for details
-     * @param currentUser Current user
      * @param classInfo Entity classes to match
      * @return Json result
      * @throws BusinessException
      */
-    public String search(Map<String, ?> queryValues, Integer from, Integer size, String sortField, SortOrder sortOrder, String[] returnFields, User currentUser,
+    public String search(Map<String, ?> queryValues, Integer from, Integer size, String sortField, SortOrder sortOrder, String[] returnFields,
             List<ElasticSearchClassInfo> classInfo) throws BusinessException {
 
         if (!esEnabled) {
@@ -494,11 +485,11 @@ public class ElasticClient {
         }
 
         Set<String> indexes = null;
-        // Not clear where to look, return al indexes for provider
+        // Not clear where to look, return all indexes for provider
         if (classInfo == null || classInfo.isEmpty()) {
-            indexes = esConfiguration.getIndexes(currentUser.getProvider());
+            indexes = esConfiguration.getIndexes();
         } else {
-            indexes = esConfiguration.getIndexes(currentUser.getProvider(), classInfo);
+            indexes = esConfiguration.getIndexes(classInfo);
         }
 
         // None of the classes are stored in Elastic Search, return empty json
@@ -651,18 +642,16 @@ public class ElasticClient {
     }
 
     /**
-     * Recreate index for a given provider
-     * 
-     * @param provider Provider
+     * Recreate index 
      * @throws BusinessException
      */
-    public void createIndexes(Provider provider) throws BusinessException {
+    public void createIndexes() throws BusinessException {
 
         if (!esEnabled) {
             return;
         }
 
-        elasticSearchIndexPopulationService.createIndexes(provider);
+        elasticSearchIndexPopulationService.createIndexes();
     }
 
     /**
@@ -710,18 +699,17 @@ public class ElasticClient {
      * 
      * @param classnamesOrCetCodes An array of classnames (full or simple name) or CET codes
      * @param ignoreUnknownNames Should unknown classnames or CET codes throw an exception?
-     * @param currentUser Current user to determine provider
      * @return
      * @throws BusinessException
      */
-    public List<ElasticSearchClassInfo> getSearchScopeInfo(String[] classnamesOrCetCodes, boolean ignoreUnknownNames, User currentUser) throws BusinessException {
+    public List<ElasticSearchClassInfo> getSearchScopeInfo(String[] classnamesOrCetCodes, boolean ignoreUnknownNames) throws BusinessException {
 
         List<ElasticSearchClassInfo> classInfos = new ArrayList<>();
 
         if (classnamesOrCetCodes != null) {
             for (String classnameOrCetCode : classnamesOrCetCodes) {
 
-                ElasticSearchClassInfo classInfo = getSearchScopeInfo(classnameOrCetCode, currentUser);
+                ElasticSearchClassInfo classInfo = getSearchScopeInfo(classnameOrCetCode);
                 if (classInfo == null) {
                     if (ignoreUnknownNames) {
                         log.warn("Class or custom entity template by name {} not found", classnameOrCetCode);
@@ -740,11 +728,10 @@ public class ElasticClient {
      * Convert classname (full or simple name) or CET code into a information used to determine index and type in Elastic Search
      * 
      * @param classnameOrCetCode Classname (full or simple name ) or CET code
-     * @param currentUser Current user to determine provider
      * @return Information used to determine index and type in Elastic Search
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public ElasticSearchClassInfo getSearchScopeInfo(String classnameOrCetCode, User currentUser) {
+    public ElasticSearchClassInfo getSearchScopeInfo(String classnameOrCetCode) {
         ElasticSearchClassInfo classInfo = null;
         try {
             classInfo = new ElasticSearchClassInfo((Class<? extends BusinessEntity>) Class.forName(classnameOrCetCode), null);
@@ -759,13 +746,13 @@ public class ElasticClient {
             } else {
 
                 // Try first matching the CET name as is
-                CustomEntityTemplate cet = cfCache.getCustomEntityTemplate(classnameOrCetCode, currentUser.getProvider());
+                CustomEntityTemplate cet = cfCache.getCustomEntityTemplate(classnameOrCetCode);
                 if (cet != null) {
                     classInfo = new ElasticSearchClassInfo(CustomEntityInstance.class, classnameOrCetCode);
 
                     // If still not matched - try how code is stored in ES with spaces cleanedup
                 } else {
-                    Collection<CustomEntityTemplate> cets = cfCache.getCustomEntityTemplates(currentUser.getProvider());
+                    Collection<CustomEntityTemplate> cets = cfCache.getCustomEntityTemplates();
                     for (CustomEntityTemplate cetToClean : cets) {
                         if (cleanUpCode(cetToClean.getCode()).equals(classnameOrCetCode)) {
                             classInfo = new ElasticSearchClassInfo(CustomEntityInstance.class, cetToClean.getCode());

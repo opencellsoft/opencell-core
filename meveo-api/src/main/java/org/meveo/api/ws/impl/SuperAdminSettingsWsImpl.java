@@ -47,7 +47,7 @@ public class SuperAdminSettingsWsImpl extends BaseWs implements SuperAdminSettin
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			providerApi.create(postData, getCurrentUser());
+			providerApi.create(postData);
 
 		} catch (Exception e) {
 			super.processException(e, result);
@@ -61,7 +61,7 @@ public class SuperAdminSettingsWsImpl extends BaseWs implements SuperAdminSettin
 		GetProviderResponse result = new GetProviderResponse();
 
 		try {
-			result.setProvider(providerApi.find(providerCode, getCurrentUser()));
+			result.setProvider(providerApi.find());
 
 		} catch (Exception e) {
 			super.processException(e, result.getActionStatus());
@@ -75,7 +75,7 @@ public class SuperAdminSettingsWsImpl extends BaseWs implements SuperAdminSettin
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			providerApi.update(postData, getCurrentUser(postData.getCode()));
+			providerApi.update(postData);
 		} catch (Exception e) {
 			super.processException(e, result);
 		}
@@ -88,7 +88,7 @@ public class SuperAdminSettingsWsImpl extends BaseWs implements SuperAdminSettin
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			providerApi.createOrUpdate(postData, getCurrentUser());
+			providerApi.update(postData);
 		} catch (Exception e) {
 			super.processException(e, result);
 		}
@@ -101,7 +101,7 @@ public class SuperAdminSettingsWsImpl extends BaseWs implements SuperAdminSettin
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			languageIsoApi.create(postData, getCurrentUser());
+			languageIsoApi.create(postData);
 		} catch (Exception e) {
 			super.processException(e, result);
 		}
@@ -126,7 +126,7 @@ public class SuperAdminSettingsWsImpl extends BaseWs implements SuperAdminSettin
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			languageIsoApi.remove(languageCode, getCurrentUser());
+			languageIsoApi.remove(languageCode);
 		} catch (Exception e) {
 			super.processException(e, result);
 		}
@@ -139,7 +139,7 @@ public class SuperAdminSettingsWsImpl extends BaseWs implements SuperAdminSettin
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			languageIsoApi.update(postData, getCurrentUser());
+			languageIsoApi.update(postData);
 		} catch (Exception e) {
 			super.processException(e, result);
 		}
@@ -151,7 +151,7 @@ public class SuperAdminSettingsWsImpl extends BaseWs implements SuperAdminSettin
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			languageIsoApi.createOrUpdate(postData, getCurrentUser());
+			languageIsoApi.createOrUpdate(postData);
 		} catch (Exception e) {
 			super.processException(e, result);
 		}
@@ -164,7 +164,7 @@ public class SuperAdminSettingsWsImpl extends BaseWs implements SuperAdminSettin
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			countryIsoApi.create(countryIsoDto, getCurrentUser());
+			countryIsoApi.create(countryIsoDto);
 		} catch (Exception e) {
 			super.processException(e, result);
 		}
@@ -190,7 +190,7 @@ public class SuperAdminSettingsWsImpl extends BaseWs implements SuperAdminSettin
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			countryIsoApi.remove(countryCode, getCurrentUser());
+			countryIsoApi.remove(countryCode);
 		} catch (Exception e) {
 			super.processException(e, result);
 		}
@@ -203,7 +203,7 @@ public class SuperAdminSettingsWsImpl extends BaseWs implements SuperAdminSettin
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			countryIsoApi.update(countryIsoDto, getCurrentUser());
+			countryIsoApi.update(countryIsoDto);
 		} catch (Exception e) {
 			super.processException(e, result);
 		}
@@ -216,7 +216,7 @@ public class SuperAdminSettingsWsImpl extends BaseWs implements SuperAdminSettin
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			countryIsoApi.createOrUpdate(countryIsoDto, getCurrentUser());
+			countryIsoApi.createOrUpdate(countryIsoDto);
 		} catch (Exception e) {
 			super.processException(e, result);
 		}
@@ -229,7 +229,7 @@ public class SuperAdminSettingsWsImpl extends BaseWs implements SuperAdminSettin
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			currencyIsoApi.create(currencyIsoDto, getCurrentUser());
+			currencyIsoApi.create(currencyIsoDto);
 		} catch (Exception e) {
 			super.processException(e, result);
 		}
@@ -255,7 +255,7 @@ public class SuperAdminSettingsWsImpl extends BaseWs implements SuperAdminSettin
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			currencyIsoApi.remove(currencyCode, getCurrentUser());
+			currencyIsoApi.remove(currencyCode);
 		} catch (Exception e) {
 			super.processException(e, result);
 		}
@@ -268,7 +268,7 @@ public class SuperAdminSettingsWsImpl extends BaseWs implements SuperAdminSettin
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			currencyIsoApi.update(currencyIsoDto, getCurrentUser());
+			currencyIsoApi.update(currencyIsoDto);
 		} catch (Exception e) {
 			super.processException(e, result);
 		}
@@ -281,7 +281,7 @@ public class SuperAdminSettingsWsImpl extends BaseWs implements SuperAdminSettin
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			currencyIsoApi.createOrUpdate(currencyIsoDto, getCurrentUser());
+			currencyIsoApi.createOrUpdate(currencyIsoDto);
 		} catch (Exception e) {
 			super.processException(e, result);
 		}

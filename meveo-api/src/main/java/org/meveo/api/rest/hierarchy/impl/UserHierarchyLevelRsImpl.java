@@ -31,7 +31,7 @@ public class UserHierarchyLevelRsImpl extends BaseRs implements UserHierarchyLev
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            userHierarchyLevelApi.create(postData, getCurrentUser());
+            userHierarchyLevelApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -51,7 +51,7 @@ public class UserHierarchyLevelRsImpl extends BaseRs implements UserHierarchyLev
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            userHierarchyLevelApi.update(postData, getCurrentUser());
+            userHierarchyLevelApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -72,7 +72,7 @@ public class UserHierarchyLevelRsImpl extends BaseRs implements UserHierarchyLev
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         try {
-            result.setUserHierarchyLevel(userHierarchyLevelApi.find(hierarchyLevelCode, getCurrentUser().getProvider()));
+            result.setUserHierarchyLevel(userHierarchyLevelApi.find(hierarchyLevelCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -92,7 +92,7 @@ public class UserHierarchyLevelRsImpl extends BaseRs implements UserHierarchyLev
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            userHierarchyLevelApi.remove(hierarchyLevelCode, getCurrentUser());
+            userHierarchyLevelApi.remove(hierarchyLevelCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -111,7 +111,7 @@ public class UserHierarchyLevelRsImpl extends BaseRs implements UserHierarchyLev
 	public ActionStatus createOrUpdate(UserHierarchyLevelDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		try {
-			userHierarchyLevelApi.update(postData, getCurrentUser());
+			userHierarchyLevelApi.update(postData);
 		} catch (Exception e) {
 			processException(e, result);
 		}

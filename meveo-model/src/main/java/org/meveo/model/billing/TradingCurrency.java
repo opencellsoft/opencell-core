@@ -31,18 +31,18 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.EnableEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Currency;
 
 @Entity
 @ObservableEntity
-@ExportIdentifier({ "currency.currencyCode", "provider" })
+@ExportIdentifier({ "currency.currencyCode"})
 @Cacheable
 @Table(name = "BILLING_TRADING_CURRENCY")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_TRADING_CURRENCY_SEQ")
-public class TradingCurrency extends AuditableEntity {
+public class TradingCurrency extends EnableEntity {
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne(fetch = FetchType.LAZY)

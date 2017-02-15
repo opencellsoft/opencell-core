@@ -12,8 +12,6 @@ import javax.interceptor.Interceptors;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.model.admin.User;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.shared.DateUtils;
@@ -45,8 +43,6 @@ public class PurgeJobBean implements Serializable {
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
-        Provider currentProvider = currentUser.getProvider();
-        log.debug("Running for user={}", currentUser);
 
         try {
             // Purge job execution history
@@ -54,7 +50,7 @@ public class PurgeJobBean implements Serializable {
             Long nbDays = (Long) customFieldInstanceService.getCFValue(jobInstance, "PurgeJob_jobExecHistory_nbDays");
             if (jobname != null || nbDays != null) {
                 Date date = DateUtils.addDaysToDate(new Date(), nbDays.intValue() * (-1));
-                long nbItemsToProcess = jobExecutionService.countJobExecutionHistoryToDelete(jobname, date, currentProvider);
+                long nbItemsToProcess = jobExecutionService.countJobExecutionHistoryToDelete(jobname, date);
                 if (nbItemsToProcess > 0) {
                     result.setNbItemsToProcess(nbItemsToProcess); // it might well happen we dont know in advance how many items we have to process,in that case comment this method
                     int nbSuccess = jobExecutionService.deleteJobExecutionHistory(jobname, date);
@@ -70,7 +66,7 @@ public class PurgeJobBean implements Serializable {
             nbDays = (Long) customFieldInstanceService.getCFValue(jobInstance, "PurgeJob_counterPeriod_nbDays");
             if (nbDays != null) {
                 Date date = DateUtils.addDaysToDate(new Date(), nbDays.intValue() * (-1));
-                long nbItemsToProcess = counterInstanceService.countCounterPeriodsToDelete(date, currentProvider);
+                long nbItemsToProcess = counterInstanceService.countCounterPeriodsToDelete(date);
                 if (nbItemsToProcess > 0) {
                     result.addNbItemsToProcess(nbItemsToProcess); // it might well happen we dont know in advance how many items we have to process,in that case comment this method
                     long nbSuccess = counterInstanceService.deleteCounterPeriods(date);

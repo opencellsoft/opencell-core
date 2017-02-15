@@ -60,9 +60,9 @@ public class ProductChargeTemplateBean extends BaseBean<ProductChargeTemplate> {
 	@ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		// check for unicity
-		if (oneShotChargeTemplateService.findByCode(entity.getCode(), entity.getProvider()) != null
-				|| usageChargeTemplateService.findByCode(entity.getCode(), entity.getProvider()) != null
-				|| recurringChargeTemplateService.findByCode(entity.getCode(), entity.getProvider()) != null) {
+		if (oneShotChargeTemplateService.findByCode(entity.getCode()) != null
+				|| usageChargeTemplateService.findByCode(entity.getCode()) != null
+				|| recurringChargeTemplateService.findByCode(entity.getCode()) != null) {
 			messages.error(new BundleKey("messages", "chargeTemplate.uniqueField.code"));
 			return null;
 		}

@@ -12,7 +12,6 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.security.parameter.ObjectPropertyParser;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.admin.User;
 import org.meveo.service.security.SecuredBusinessEntityService;
 
 public class AccountDtoListFilter extends SecureMethodResultFilter {
@@ -22,7 +21,7 @@ public class AccountDtoListFilter extends SecureMethodResultFilter {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Object filterResult(Object result, User user) throws MeveoApiException {
+	public Object filterResult(Object result) throws MeveoApiException {
 		if (result == null) {
 			// result is empty. no need to filter.
 			log.warn("Result is empty. Skipping filter...");
@@ -61,7 +60,7 @@ public class AccountDtoListFilter extends SecureMethodResultFilter {
 				throw new InvalidParameterException(String.format("Failed to create new instance of: %s", filterResults.entityClass()));
 			}
 			account.setCode(accountDto.getCode());
-			if (securedBusinessEntityService.isEntityAllowed(account, user, false)) {
+			if (securedBusinessEntityService.isEntityAllowed(account, null, false)) {
 				log.debug("Adding account {} to filtered list.", account);
 				filteredList.add(accountDto);
 			}

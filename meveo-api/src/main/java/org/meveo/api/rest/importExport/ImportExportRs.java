@@ -11,7 +11,6 @@ import javax.ws.rs.core.MediaType;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.meveo.api.dto.response.utilities.ImportExportResponseDto;
 import org.meveo.api.rest.IBaseRs;
-import org.meveo.api.rest.security.RSSecured;
 
 /**
  * Web service for importing and exporting data to another instance of application.
@@ -21,7 +20,7 @@ import org.meveo.api.rest.security.RSSecured;
 @Path("/importExport")
 @Consumes({ MediaType.MULTIPART_FORM_DATA })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-@RSSecured
+
 public interface ImportExportRs extends IBaseRs {
 
     /**

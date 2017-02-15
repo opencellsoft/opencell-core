@@ -30,7 +30,6 @@ import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -103,7 +102,7 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 		}
 		
         if (!isVirtual) {
-            create(usageChargeInstance); // AKK was with serviceInstance.getProvider()
+            create(usageChargeInstance);
 
             if (usageChargeInstance.getPrepaid()) {
                 walletCacheContainerProvider.updateCache(usageChargeInstance);
@@ -122,38 +121,37 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 		return usageChargeInstance;
 	}
 
-	public void activateUsageChargeInstance(UsageChargeInstance usageChargeInstance, User currentUser) throws BusinessException {
+	public void activateUsageChargeInstance(UsageChargeInstance usageChargeInstance) throws BusinessException {
 		usageChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
-		update(usageChargeInstance, currentUser);
+		update(usageChargeInstance);
 		ratingCacheContainerProvider.updateUsageChargeInstanceInCache(usageChargeInstance);
 	}
 
-	public void terminateUsageChargeInstance(UsageChargeInstance usageChargeInstance, Date terminationDate,
-			User currentUser) throws BusinessException {
+	public void terminateUsageChargeInstance(UsageChargeInstance usageChargeInstance, Date terminationDate) throws BusinessException {
 		usageChargeInstance.setTerminationDate(terminationDate);
 		usageChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
 		ratingCacheContainerProvider.updateUsageChargeInstanceInCache(usageChargeInstance);
-		update(usageChargeInstance, currentUser);
+		update(usageChargeInstance);
 	}
 
-	public void suspendUsageChargeInstance(UsageChargeInstance usageChargeInstance, Date suspensionDate, User currentUser) throws BusinessException {
+	public void suspendUsageChargeInstance(UsageChargeInstance usageChargeInstance, Date suspensionDate) throws BusinessException {
 		usageChargeInstance.setTerminationDate(suspensionDate);
 		usageChargeInstance.setStatus(InstanceStatusEnum.SUSPENDED);
 		ratingCacheContainerProvider.updateUsageChargeInstanceInCache(usageChargeInstance);
-		update(usageChargeInstance, currentUser);
+		update(usageChargeInstance);
 	}
 
-	public void reactivateUsageChargeInstance(UsageChargeInstance usageChargeInstance, Date reactivationDate, User currentUser) throws BusinessException {
+	public void reactivateUsageChargeInstance(UsageChargeInstance usageChargeInstance, Date reactivationDate) throws BusinessException {
 		usageChargeInstance.setChargeDate(reactivationDate);
 		usageChargeInstance.setTerminationDate(null);
 		usageChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
 		ratingCacheContainerProvider.updateUsageChargeInstanceInCache(usageChargeInstance);
-		update(usageChargeInstance, currentUser);
+		update(usageChargeInstance);
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<UsageChargeInstance> findUsageChargeInstanceBySubscriptionId(Long subscriptionId) {
-		QueryBuilder qb = new QueryBuilder(UsageChargeInstance.class, "c", Arrays.asList("chargeTemplate"), null);
+		QueryBuilder qb = new QueryBuilder(UsageChargeInstance.class, "c", Arrays.asList("chargeTemplate"));
 		qb.addCriterion("c.subscription.id", "=", subscriptionId, true);
 		return qb.getQuery(getEntityManager()).getResultList();
 	}

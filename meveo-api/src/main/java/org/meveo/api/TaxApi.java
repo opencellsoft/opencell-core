@@ -16,11 +16,10 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingLanguage;
-import org.meveo.model.crm.Provider;
+import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.TaxService;
 
@@ -35,8 +34,11 @@ public class TaxApi extends BaseApi {
 
     @Inject
     private CatMessagesService catMessagesService;
+    
+    @Inject
+    private TradingLanguageService tradingLanguageService;
 
-    public ActionStatus create(TaxDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public ActionStatus create(TaxDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -51,10 +53,10 @@ public class TaxApi extends BaseApi {
 
         ActionStatus result = new ActionStatus();
 
-        Provider provider = currentUser.getProvider();
+        
 
         // check if tax exists
-        if (taxService.findByCode(postData.getCode(), provider) != null) {
+        if (taxService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(Tax.class, postData.getCode());
         }
 
@@ -64,12 +66,13 @@ public class TaxApi extends BaseApi {
         tax.setPercent(postData.getPercent());
         tax.setAccountingCode(postData.getAccountingCode());
 
-        if (provider.getTradingLanguages() != null) {
+        List<TradingLanguage> tradingLanguages = tradingLanguageService.list();
+        if (!tradingLanguages.isEmpty()) {
             if (postData.getLanguageDescriptions() != null) {
                 for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
                     boolean match = false;
 
-                    for (TradingLanguage tl : provider.getTradingLanguages()) {
+                    for (TradingLanguage tl : tradingLanguages) {
                         if (tl.getLanguageCode().equals(ld.getLanguageCode())) {
                             match = true;
                             break;
@@ -83,20 +86,20 @@ public class TaxApi extends BaseApi {
             }
         }
 
-        taxService.create(tax, currentUser);
+        taxService.create(tax);
 
         // create cat messages
         if (postData.getLanguageDescriptions() != null) {
             for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
                 CatMessages catMsg = new CatMessages(Tax.class.getSimpleName() , tax.getCode(), ld.getLanguageCode(), ld.getDescription());
 
-                catMessagesService.create(catMsg, currentUser);
+                catMessagesService.create(catMsg);
             }
         }
      
         // populate customFields
         try {
-            populateCustomFields(postData.getCustomFields(), tax, true, currentUser, true);
+            populateCustomFields(postData.getCustomFields(), tax, true, true);
 
         } catch (MissingParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
@@ -109,7 +112,7 @@ public class TaxApi extends BaseApi {
         return result;
     }
 
-    public ActionStatus update(TaxDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public ActionStatus update(TaxDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -124,10 +127,10 @@ public class TaxApi extends BaseApi {
 
         ActionStatus result = new ActionStatus();
 
-        Provider provider = currentUser.getProvider();
+        
 
         // check if tax exists
-        Tax tax = taxService.findByCode(postData.getCode(), provider);
+        Tax tax = taxService.findByCode(postData.getCode());
         if (tax == null) {
             throw new EntityDoesNotExistsException(Tax.class, postData.getCode());
         }
@@ -136,12 +139,13 @@ public class TaxApi extends BaseApi {
         tax.setPercent(postData.getPercent());
         tax.setAccountingCode(postData.getAccountingCode());
 
-        if (provider.getTradingLanguages() != null) {
+        List<TradingLanguage> tradingLanguages = tradingLanguageService.list();
+        if (!tradingLanguages.isEmpty()) {
             if (postData.getLanguageDescriptions() != null) {
                 for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
                     boolean match = false;
 
-                    for (TradingLanguage tl : provider.getTradingLanguages()) {
+                    for (TradingLanguage tl : tradingLanguages) {
                         if (tl.getLanguageCode().equals(ld.getLanguageCode())) {
                             match = true;
                             break;
@@ -155,24 +159,24 @@ public class TaxApi extends BaseApi {
 
                 // create cat messages
                 for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-                    CatMessages catMsg = catMessagesService.getCatMessages( tax.getCode(),Tax.class.getSimpleName() , ld.getLanguageCode(),provider);
+                    CatMessages catMsg = catMessagesService.getCatMessages( tax.getCode(),Tax.class.getSimpleName() , ld.getLanguageCode());
 
                     if (catMsg != null) {
                         catMsg.setDescription(ld.getDescription());
-                        catMessagesService.update(catMsg, currentUser);
+                        catMessagesService.update(catMsg);
                     } else {
                         CatMessages catMessages = new CatMessages(Tax.class.getSimpleName() , tax.getCode(), ld.getLanguageCode(), ld.getDescription());
-                        catMessagesService.create(catMessages, currentUser);
+                        catMessagesService.create(catMessages);
                     }
                 }
             }
         }
 
-        taxService.update(tax, currentUser);
+        taxService.update(tax);
         
      // populate customFields
         try {
-            populateCustomFields(postData.getCustomFields(), tax, true, currentUser, true);
+            populateCustomFields(postData.getCustomFields(), tax, true, true);
 
         } catch (MissingParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
@@ -185,7 +189,7 @@ public class TaxApi extends BaseApi {
         return result;
     }
 
-    public TaxDto find(String taxCode, Provider provider) throws MeveoApiException {
+    public TaxDto find(String taxCode) throws MeveoApiException {
 
         if (StringUtils.isBlank(taxCode)) {
             missingParameters.add("code");
@@ -194,7 +198,7 @@ public class TaxApi extends BaseApi {
 
         TaxDto result = new TaxDto();
 
-        Tax tax = taxService.findByCode(taxCode, provider);
+        Tax tax = taxService.findByCode(taxCode);
         if (tax == null) {
             throw new EntityDoesNotExistsException(Tax.class, taxCode);
         }
@@ -202,7 +206,7 @@ public class TaxApi extends BaseApi {
         result = new TaxDto(tax,entityToDtoConverter.getCustomFieldsDTO(tax));
 
         List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
-        for (CatMessages msg : catMessagesService.getCatMessagesList(Tax.class.getSimpleName() , tax.getCode(),provider)) {
+        for (CatMessages msg : catMessagesService.getCatMessagesList(Tax.class.getSimpleName() , tax.getCode())) {
             languageDescriptions.add(new LanguageDescriptionDto(msg.getLanguageCode(), msg.getDescription()));
         }
 
@@ -211,7 +215,7 @@ public class TaxApi extends BaseApi {
         return result;
     }
 
-    public ActionStatus remove(String taxCode, User currentUser) throws MeveoApiException, BusinessException {
+    public ActionStatus remove(String taxCode) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(taxCode)) {
             missingParameters.add("code");
@@ -220,35 +224,33 @@ public class TaxApi extends BaseApi {
 
         ActionStatus result = new ActionStatus();
 
-        Tax tax = taxService.findByCode(taxCode, currentUser.getProvider());
+        Tax tax = taxService.findByCode(taxCode);
         if (tax == null) {
             throw new EntityDoesNotExistsException(Tax.class, taxCode);
         }
 
-        taxService.remove(tax, currentUser);
+        taxService.remove(tax);
         return result;
     }
 
-    public void createOrUpdate(TaxDto postData, User currentUser) throws MeveoApiException, BusinessException {
-        Tax tax = taxService.findByCode(postData.getCode(), currentUser.getProvider());
+    public void createOrUpdate(TaxDto postData) throws MeveoApiException, BusinessException {
+        Tax tax = taxService.findByCode(postData.getCode());
 
         if (tax == null) {
-            create(postData, currentUser);
+            create(postData);
         } else {
-            update(postData, currentUser);
+            update(postData);
         }
     }
 
-    public TaxesDto list(Provider provider) throws MeveoApiException {
+    public TaxesDto list() throws MeveoApiException {
         TaxesDto taxesDto = new TaxesDto();
 
-        if (provider != null) {
-            List<Tax> taxes = taxService.list(provider);
-            if (taxes != null && !taxes.isEmpty()) {
-                for (Tax tax : taxes) {
-                    TaxDto taxDto = new TaxDto(tax,entityToDtoConverter.getCustomFieldsDTO(tax));
-                    taxesDto.getTax().add(taxDto);
-                }
+        List<Tax> taxes = taxService.list();
+        if (taxes != null && !taxes.isEmpty()) {
+            for (Tax tax : taxes) {
+                TaxDto taxDto = new TaxDto(tax,entityToDtoConverter.getCustomFieldsDTO(tax));
+                taxesDto.getTax().add(taxDto);
             }
         }
 

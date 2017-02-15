@@ -11,9 +11,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
 import org.meveo.model.catalog.CounterTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.notification.WebHook;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.catalog.impl.CounterTemplateService;
@@ -36,7 +34,7 @@ public class WebHookApi extends BaseCrudApi<WebHook, WebHookDto> {
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
-    public WebHook create(WebHookDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public WebHook create(WebHookDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -59,12 +57,12 @@ public class WebHookApi extends BaseCrudApi<WebHook, WebHookDto> {
 
         handleMissingParameters();
 
-        if (webHookService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
+        if (webHookService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(WebHook.class, postData.getCode());
         }
         ScriptInstance scriptInstance = null;
         if (!StringUtils.isBlank(postData.getScriptInstanceCode())) {
-            scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode(), currentUser.getProvider());
+            scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode());
             if (scriptInstance == null) {
                 throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getScriptInstanceCode());
             }
@@ -78,14 +76,13 @@ public class WebHookApi extends BaseCrudApi<WebHook, WebHookDto> {
 
         CounterTemplate counterTemplate = null;
         if (!StringUtils.isBlank(postData.getCounterTemplate())) {
-            counterTemplate = counterTemplateService.findByCode(postData.getCounterTemplate(), currentUser.getProvider());
+            counterTemplate = counterTemplateService.findByCode(postData.getCounterTemplate());
             if (counterTemplate == null) {
                 throw new EntityDoesNotExistsException(CounterTemplate.class, postData.getCounterTemplate());
             }
         }
 
         WebHook webHook = new WebHook();
-        webHook.setProvider(currentUser.getProvider());
         webHook.setCode(postData.getCode());
         webHook.setClassNameFilter(postData.getClassNameFilter());
         webHook.setEventTypeFilter(postData.getEventTypeFilter());
@@ -107,17 +104,17 @@ public class WebHookApi extends BaseCrudApi<WebHook, WebHookDto> {
             webHook.getWebhookParams().putAll(postData.getParams());
         }
 
-        webHookService.create(webHook, currentUser);
+        webHookService.create(webHook);
 
         return webHook;
     }
 
     @Override
-    public WebHookDto find(String notificationCode, User currentUser) throws MeveoApiException {
+    public WebHookDto find(String notificationCode) throws MeveoApiException {
         WebHookDto result = new WebHookDto();
 
         if (!StringUtils.isBlank(notificationCode)) {
-            WebHook notif = webHookService.findByCode(notificationCode, currentUser.getProvider());
+            WebHook notif = webHookService.findByCode(notificationCode);
 
             if (notif == null) {
                 throw new EntityDoesNotExistsException(WebHook.class, notificationCode);
@@ -133,7 +130,7 @@ public class WebHookApi extends BaseCrudApi<WebHook, WebHookDto> {
         return result;
     }
 
-    public WebHook update(WebHookDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public WebHook update(WebHookDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -156,14 +153,14 @@ public class WebHookApi extends BaseCrudApi<WebHook, WebHookDto> {
 
         handleMissingParameters();
 
-        WebHook webHook = webHookService.findByCode(postData.getCode(), currentUser.getProvider());
+        WebHook webHook = webHookService.findByCode(postData.getCode());
         if (webHook == null) {
             throw new EntityDoesNotExistsException(WebHook.class, postData.getCode());
         }
 
         ScriptInstance scriptInstance = null;
         if (!StringUtils.isBlank(postData.getScriptInstanceCode())) {
-            scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode(), currentUser.getProvider());
+            scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode());
             if (scriptInstance == null) {
                 throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getScriptInstanceCode());
             }
@@ -178,7 +175,7 @@ public class WebHookApi extends BaseCrudApi<WebHook, WebHookDto> {
 
         CounterTemplate counterTemplate = null;
         if (!StringUtils.isBlank(postData.getCounterTemplate())) {
-            counterTemplate = counterTemplateService.findByCode(postData.getCounterTemplate(), currentUser.getProvider());
+            counterTemplate = counterTemplateService.findByCode(postData.getCounterTemplate());
             if (counterTemplate == null) {
                 throw new EntityDoesNotExistsException(CounterTemplate.class, postData.getCounterTemplate());
             }
@@ -204,20 +201,20 @@ public class WebHookApi extends BaseCrudApi<WebHook, WebHookDto> {
             webHook.getWebhookParams().putAll(postData.getParams());
         }
 
-        webHook = webHookService.update(webHook, currentUser);
+        webHook = webHookService.update(webHook);
 
         return webHook;
     }
 
-    public void remove(String notificationCode, User currentUser) throws MeveoApiException, BusinessException {
+    public void remove(String notificationCode) throws MeveoApiException, BusinessException {
         if (!StringUtils.isBlank(notificationCode)) {
-            WebHook webHook = webHookService.findByCode(notificationCode, currentUser.getProvider());
+            WebHook webHook = webHookService.findByCode(notificationCode);
 
             if (webHook == null) {
                 throw new EntityDoesNotExistsException(WebHook.class, notificationCode);
             }
 
-            webHookService.remove(webHook, currentUser);
+            webHookService.remove(webHook);
         } else {
             missingParameters.add("code");
 
@@ -226,11 +223,11 @@ public class WebHookApi extends BaseCrudApi<WebHook, WebHookDto> {
     }
 
     @Override
-    public WebHook createOrUpdate(WebHookDto postData, User currentUser) throws MeveoApiException, BusinessException {
-        if (webHookService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
-            return create(postData, currentUser);
+    public WebHook createOrUpdate(WebHookDto postData) throws MeveoApiException, BusinessException {
+        if (webHookService.findByCode(postData.getCode()) == null) {
+            return create(postData);
         } else {
-            return update(postData, currentUser);
+            return update(postData);
         }
     }
 }

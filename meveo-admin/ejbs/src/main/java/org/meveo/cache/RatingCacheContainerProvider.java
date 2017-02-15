@@ -68,7 +68,7 @@ public class RatingCacheContainerProvider {
     private CalendarService calendarService;
 
     /**
-     * Contains association between charge code and price plans. Key format: <provider id>_<charge template code, which is pricePlanMatrix.eventCode>
+     * Contains association between charge code and price plans. Key format: <charge template code, which is pricePlanMatrix.eventCode>
      */
     @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-price-plan")
     private BasicCache<String, List<PricePlanMatrix>> pricePlanCache;
@@ -125,7 +125,7 @@ public class RatingCacheContainerProvider {
         List<PricePlanMatrix> activePricePlans = pricePlanMatrixService.getPricePlansForCache();
 
         for (PricePlanMatrix pricePlan : activePricePlans) {
-            String cacheKey = pricePlan.getProvider().getId() + "_" + pricePlan.getEventCode();
+            String cacheKey = pricePlan.getEventCode();
             if (!pricePlanCache.containsKey(cacheKey)) {
                 pricePlanCache.put(cacheKey, new ArrayList<PricePlanMatrix>());
             }
@@ -155,7 +155,7 @@ public class RatingCacheContainerProvider {
                 preloadCache(pricePlan.getValidityCalendar());
             }
 
-            log.debug("Added pricePlan to cache for provider=" + pricePlan.getProvider().getCode() + "; chargeCode=" + pricePlan.getEventCode() + "; priceplan=" + pricePlan);
+            log.debug("Added pricePlan to cache chargeCode {} ; priceplan {}", pricePlan.getEventCode(), pricePlan);
             chargePriceList.add(pricePlan);
 
         }
@@ -181,7 +181,7 @@ public class RatingCacheContainerProvider {
      */
     public void addPricePlanToCache(PricePlanMatrix pricePlan) {
 
-        String cacheKey = pricePlan.getProvider().getId() + "_" + pricePlan.getEventCode();
+        String cacheKey = pricePlan.getEventCode();
         if (!pricePlanCache.containsKey(cacheKey)) {
             pricePlanCache.put(cacheKey, new ArrayList<PricePlanMatrix>());
         }
@@ -223,7 +223,7 @@ public class RatingCacheContainerProvider {
 
         Collections.sort(chargePriceList);
 
-        log.debug("Added pricePlan to cache for provider=" + pricePlan.getProvider().getCode() + "; chargeCode=" + pricePlan.getEventCode() + "; priceplan=" + pricePlan);
+        log.debug("Added pricePlan to cache chargeCode {} pricePlan {}", pricePlan.getEventCode(), pricePlan);
     }
 
     /**
@@ -233,7 +233,7 @@ public class RatingCacheContainerProvider {
      */
     public void removePricePlanFromCache(PricePlanMatrix pricePlan) {
 
-        String cacheKey = pricePlan.getProvider().getId() + "_" + pricePlan.getEventCode();
+        String cacheKey = pricePlan.getEventCode();
         List<PricePlanMatrix> chargePriceList = pricePlanCache.get(cacheKey);
 
         if (chargePriceList == null)
@@ -243,7 +243,7 @@ public class RatingCacheContainerProvider {
         for (PricePlanMatrix chargePricePlan : chargePriceList) {
             if (pricePlan.getId().equals(chargePricePlan.getId())) {
                 chargePriceList.remove(index);
-                log.debug("Removed pricePlan from cache for provider=" + pricePlan.getProvider().getCode() + "; chargeCode=" + pricePlan.getEventCode() + "; priceplan=" + pricePlan);
+                log.debug("Removed pricePlan from cache chargeCode {} priceplan {}", pricePlan.getEventCode(), pricePlan);
                 break;
             }
             index++;
@@ -258,14 +258,13 @@ public class RatingCacheContainerProvider {
     }
 
     /**
-     * Get applicable price plans for a given provider and charge code
+     * Get applicable price plans for a given charge code
      * 
-     * @param providerId Provider id
      * @param chargeCode Charge code
      * @return A list of applicable price plans
      */
-    public List<PricePlanMatrix> getPricePlansByChargeCode(Long providerId, String chargeCode) {
-        return pricePlanCache.get(providerId + "_" + chargeCode);
+    public List<PricePlanMatrix> getPricePlansByChargeCode(String chargeCode) {
+        return pricePlanCache.get(chargeCode);
     }
 
     private void populateUsageChargeCache() {
@@ -294,7 +293,7 @@ public class RatingCacheContainerProvider {
         CachedUsageChargeInstance cachedCharge = new CachedUsageChargeInstance();
         // UsageChargeTemplate usageChargeTemplate=(UsageChargeTemplate)
         // usageChargeInstance.getChargeTemplate();
-        UsageChargeTemplate usageChargeTemplate = usageChargeTemplateService.findByIdNoCheck(usageChargeInstance.getChargeTemplate().getId());
+        UsageChargeTemplate usageChargeTemplate = usageChargeTemplateService.findById(usageChargeInstance.getChargeTemplate().getId());
         Long subscriptionId = usageChargeInstance.getServiceInstance().getSubscription().getId();
         log.debug("Updating usageChargeInstance cache with usageChargeInstance: subscription Id: {}, charge id={}, usageChargeTemplate id: {}", subscriptionId,
             usageChargeInstance.getId(), usageChargeTemplate.getId());

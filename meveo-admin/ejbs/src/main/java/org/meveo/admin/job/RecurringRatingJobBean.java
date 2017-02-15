@@ -19,9 +19,7 @@ import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.event.qualifier.Rejected;
 import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.InstanceStatusEnum;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.shared.DateUtils;
@@ -57,11 +55,10 @@ public class RecurringRatingJobBean implements Serializable {
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NEVER)
 	public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
-		log.debug("start in running for user={}, parameter={}", currentUser, jobInstance.getParametres());
-		Provider currentProvider=currentUser.getProvider();
+		log.debug("start in running with parameter={}",  jobInstance.getParametres());
 		try {
 			Date maxDate = DateUtils.addDaysToDate(new Date(), 1);
-			List<Long> ids = recurringChargeInstanceService.findIdsByStatus(InstanceStatusEnum.ACTIVE, maxDate,currentProvider);
+			List<Long> ids = recurringChargeInstanceService.findIdsByStatus(InstanceStatusEnum.ACTIVE, maxDate);
 			int inputSize =  ids.size();
 			result.setNbItemsToProcess(inputSize);
 			log.info("in job - charges to rate={}", inputSize);

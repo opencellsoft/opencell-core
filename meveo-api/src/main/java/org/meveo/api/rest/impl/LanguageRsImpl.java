@@ -32,7 +32,7 @@ public class LanguageRsImpl extends BaseRs implements LanguageRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            languageApi.create(postData, getCurrentUser());
+            languageApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -52,7 +52,7 @@ public class LanguageRsImpl extends BaseRs implements LanguageRs {
         GetLanguageResponse result = new GetLanguageResponse();
 
         try {
-            result.setLanguage(languageApi.find(languageCode,getCurrentUser().getProvider()));
+            result.setLanguage(languageApi.find(languageCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -72,7 +72,7 @@ public class LanguageRsImpl extends BaseRs implements LanguageRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            languageApi.remove(languageCode,getCurrentUser());
+            languageApi.remove(languageCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -92,7 +92,7 @@ public class LanguageRsImpl extends BaseRs implements LanguageRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            languageApi.update(postData, getCurrentUser());
+            languageApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -112,7 +112,7 @@ public class LanguageRsImpl extends BaseRs implements LanguageRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            languageApi.createOrUpdate(postData, getCurrentUser());
+            languageApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

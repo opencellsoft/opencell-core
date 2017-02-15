@@ -14,7 +14,6 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.LanguageIsoDto;
 import org.meveo.api.dto.response.GetLanguageIsoResponse;
-import org.meveo.api.rest.security.RSSecured;
 
 /**
  * * Web service for managing {@link org.meveo.model.billing.Language}
@@ -24,7 +23,7 @@ import org.meveo.api.rest.security.RSSecured;
 @Path("/languageIso")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-@RSSecured
+
 public interface LanguageIsoRs extends IBaseRs {
 
     /**

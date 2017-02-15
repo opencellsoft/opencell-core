@@ -46,7 +46,7 @@ import org.meveo.model.billing.Subscription;
 @Entity
 @Table(name = "RATING_EDR")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "RATING_EDR_SEQ")
-@NamedQueries({ @NamedQuery(name = "EDR.getEdrsForCache", query = "select CONCAT(p.id,'_',e.originBatch,'_',e.originRecord) from EDR e join e.provider p where e.status= org.meveo.model.rating.EDRStatusEnum.OPEN ORDER BY e.eventDate DESC") })
+@NamedQueries({ @NamedQuery(name = "EDR.getEdrsForCache", query = "select CONCAT(e.originBatch,'_',e.originRecord) from EDR e where e.status= org.meveo.model.rating.EDRStatusEnum.OPEN ORDER BY e.eventDate DESC") })
 public class EDR extends BaseEntity {
 
 	private static final long serialVersionUID = 1278336655583933747L;

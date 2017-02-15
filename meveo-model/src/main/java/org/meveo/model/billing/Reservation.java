@@ -21,13 +21,13 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.EnableEntity;
 import org.meveo.model.rating.EDR;
 
 @Entity
 @Table(name = "BILLING_RESERVATION")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_RESERVATION_SEQ")
-public class Reservation extends AuditableEntity {
+public class Reservation extends EnableEntity {
 
 	private static final long serialVersionUID = 4110616902439820101L;
 

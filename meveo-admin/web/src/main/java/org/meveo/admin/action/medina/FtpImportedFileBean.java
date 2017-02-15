@@ -18,9 +18,6 @@
  */
 package org.meveo.admin.action.medina;
 
-import java.util.Arrays;
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -67,10 +64,6 @@ public class FtpImportedFileBean extends BaseBean<FtpImportedFile> {
 		return ftpImportedFileService;
 	}
 
-	@Override
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
 	@Override
 	protected String getDefaultSort() {
 		return "lastModified";

@@ -34,8 +34,6 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.MatchingReturnObject;
 import org.meveo.model.PartialMatchingOccToSelect;
-import org.meveo.model.admin.User;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingAmount;
@@ -59,11 +57,11 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 	private AccountOperationService accountOperationService;
 
 	//first call from gui
-	public MatchingReturnObject matchOperations(Long customerAccountId, String customerAccountCode, List<Long> operationIds, Long operationIdForPartialMatching, User user) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException, Exception {
-		return matchOperations(customerAccountId, customerAccountCode, operationIds, operationIdForPartialMatching, MatchingTypeEnum.M, user);
+	public MatchingReturnObject matchOperations(Long customerAccountId, String customerAccountCode, List<Long> operationIds, Long operationIdForPartialMatching) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException, Exception {
+		return matchOperations(customerAccountId, customerAccountCode, operationIds, operationIdForPartialMatching, MatchingTypeEnum.M);
 	}
 
-	private void matching(List<AccountOperation> listOcc, BigDecimal amount, AccountOperation partialOcc, MatchingTypeEnum matchingTypeEnum, User user) throws BusinessException  {
+	private void matching(List<AccountOperation> listOcc, BigDecimal amount, AccountOperation partialOcc, MatchingTypeEnum matchingTypeEnum) throws BusinessException  {
 		MatchingCode matchingCode = new MatchingCode();		
 		BigDecimal amountToMatch = BigDecimal.ZERO;
 		for (AccountOperation accountOperation : listOcc) {
@@ -80,10 +78,9 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 				accountOperation.setMatchingStatus(MatchingStatusEnum.L);
 				matchingAmount.setMatchingAmount(amountToMatch);
 			}
-			accountOperationService.update(accountOperation, user);
+			accountOperationService.update(accountOperation);
 			
-			matchingAmount.setProvider(accountOperation.getProvider());
-			((AuditableEntity) matchingAmount).updateAudit(user);
+			((AuditableEntity) matchingAmount).updateAudit(currentUser);
 			matchingAmount.setAccountOperation(accountOperation);
 			matchingAmount.setMatchingCode(matchingCode);
 			
@@ -94,16 +91,14 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 		matchingCode.setMatchingAmountCredit(amount);
 		matchingCode.setMatchingDate(new Date());
 		matchingCode.setMatchingType(matchingTypeEnum);
-		create(matchingCode, user);
+		create(matchingCode);
 
 	}
 
-	public void unmatching(Long idMatchingCode, User currentUser) throws BusinessException {
-		log.info("start cancelMatching with id:#0,user:#1", idMatchingCode, currentUser);
-		if (idMatchingCode == null)
+	public void unmatching(Long idMatchingCode) throws BusinessException {
+		log.info("start cancelMatching with id {}", idMatchingCode);
+		if (idMatchingCode == null) {
 			throw new BusinessException("Error when idMatchingCode is null!");
-		if (currentUser == null || currentUser.getId() == null) {
-			throw new BusinessException("Error when user is null!");
 		}
 		MatchingCode matchingCode = findById(idMatchingCode);
 		if (matchingCode == null) {
@@ -127,18 +122,18 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 					operation.setMatchingStatus(MatchingStatusEnum.P);
 				}
 				operation.getMatchingAmounts().remove(matchingAmount);
-				accountOperationService.update(operation, currentUser);
+				accountOperationService.update(operation);
 				log.info("cancel one accountOperation!");
 			}
 		}
 		log.info("remove matching code ....");
-		remove(matchingCode, currentUser);
+		remove(matchingCode);
 		log.info("successfully end cancelMatching!");
 	}
 
-	public MatchingReturnObject matchOperations(Long customerAccountId, String customerAccountCode, List<Long> operationIds, Long operationIdForPartialMatching, MatchingTypeEnum matchingTypeEnum, User user) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
-		log.info("matchOperations   customerAccountId:{}  customerAccountCode:{} operationIds:{} user:{}", new Object[] { customerAccountId, customerAccountCode, operationIds, user == null ? "null" : user.getName() });
-		CustomerAccount customerAccount = customerAccountService.findCustomerAccount(customerAccountId, customerAccountCode, user.getProvider());
+	public MatchingReturnObject matchOperations(Long customerAccountId, String customerAccountCode, List<Long> operationIds, Long operationIdForPartialMatching, MatchingTypeEnum matchingTypeEnum) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
+		log.info("matchOperations   customerAccountId:{}  customerAccountCode:{} operationIds:{} ", new Object[] { customerAccountId, customerAccountCode, operationIds });
+		CustomerAccount customerAccount = customerAccountService.findCustomerAccount(customerAccountId, customerAccountCode);
 
 		BigDecimal amoutDebit = new BigDecimal(0);
 		BigDecimal amoutCredit = new BigDecimal(0);
@@ -188,7 +183,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 		log.info("matchOperations  balance:" + balance);
 
 		if (balance.compareTo(BigDecimal.ZERO) == 0) {
-			matching(listOcc, matchedAmount, null, matchingTypeEnum, user);
+			matching(listOcc, matchedAmount, null, matchingTypeEnum);
 			matchingReturnObject.setOk(true);
 			log.info("matchOperations successful : no partial");
 			return matchingReturnObject;
@@ -199,7 +194,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 		}
 
 		if (operationIdForPartialMatching != null) {
-			matching(listOcc, matchedAmount, accountOperationService.findById(operationIdForPartialMatching), matchingTypeEnum, user);
+			matching(listOcc, matchedAmount, accountOperationService.findById(operationIdForPartialMatching), matchingTypeEnum);
 			matchingReturnObject.setOk(true);
 			log.info("matchOperations successful :  partial ok (idPartial recu)");
 			return matchingReturnObject;
@@ -230,7 +225,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 		}
 
 		if (cptPartialAllowed == 1) {
-			matching(listOcc, matchedAmount, accountOperationForPartialMatching, matchingTypeEnum, user);
+			matching(listOcc, matchedAmount, accountOperationForPartialMatching, matchingTypeEnum);
 			matchingReturnObject.setOk(true);
 			log.info("matchOperations successful :  partial ok (un idPartial possible)");
 			return matchingReturnObject;
@@ -250,10 +245,9 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 		return matchingReturnObject;
 	}
 
-	public MatchingCode findByCode(String code, Provider provider) {
-		QueryBuilder qb = new QueryBuilder(MatchingCode.class, "m", null, provider);
+	public MatchingCode findByCode(String code) {
+		QueryBuilder qb = new QueryBuilder(MatchingCode.class, "m", null);
 		qb.addCriterion("code", "=", code, true);
-		qb.addCriterionEntity("m.provider", provider);
 
 		try {
 			return (MatchingCode) qb.getQuery(getEntityManager()).getSingleResult();

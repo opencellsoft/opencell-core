@@ -13,10 +13,9 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.communication.EmailTemplateDto;
-import org.meveo.api.dto.response.communication.EmailTemplatesResponseDto;
 import org.meveo.api.dto.response.communication.EmailTemplateResponseDto;
+import org.meveo.api.dto.response.communication.EmailTemplatesResponseDto;
 import org.meveo.api.rest.IBaseRs;
-import org.meveo.api.rest.security.RSSecured;
 
 /**
  * 
@@ -27,7 +26,7 @@ import org.meveo.api.rest.security.RSSecured;
 @Path("/communication/emailTemplate")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-@RSSecured
+
 public interface EmailTemplateRs extends IBaseRs {
 
 	/**

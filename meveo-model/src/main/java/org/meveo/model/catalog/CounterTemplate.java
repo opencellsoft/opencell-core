@@ -44,17 +44,15 @@ import org.meveo.model.ObservableEntity;
 @Entity
 @ModuleItem
 @ObservableEntity
-@ExportIdentifier({ "code", "provider" })
-@Table(name = "CAT_COUNTER_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
+@ExportIdentifier({ "code"})
+@Table(name = "CAT_COUNTER_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_COUNTER_TEMPLATE_SEQ")
 @NamedQueries({
 @NamedQuery(name = "counterTemplate.getNbrCounterWithNotService", 
-	           query = "select count(*) from CounterTemplate c where c.id not in (select serv.counterTemplate from ServiceChargeTemplateUsage serv)"
-                + " and c.provider=:provider"),
+	           query = "select count(*) from CounterTemplate c where c.id not in (select serv.counterTemplate from ServiceChargeTemplateUsage serv)"),
 
 @NamedQuery(name = "counterTemplate.getCounterWithNotService", 
-	           query = "from CounterTemplate c where c.id not in (select serv.counterTemplate from ServiceChargeTemplateUsage serv) "
-	           		+ " and c.provider=:provider")         	                  	         
+	           query = "from CounterTemplate c where c.id not in (select serv.counterTemplate from ServiceChargeTemplateUsage serv) ")         	                  	         
 })
 public class CounterTemplate extends BusinessEntity {
 

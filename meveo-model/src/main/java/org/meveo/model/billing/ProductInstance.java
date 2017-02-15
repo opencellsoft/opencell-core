@@ -38,19 +38,17 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 
-import org.meveo.model.Auditable;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
-import org.meveo.model.admin.User;
 import org.meveo.model.catalog.ProductTemplate;
 
 @Entity
 @ObservableEntity
 @CustomFieldEntity(cftCodePrefix = "PRODUCT")
-@ExportIdentifier({ "code", "provider" })
+@ExportIdentifier({ "code"})
 @Table(name = "BILLING_PRODUCT_INSTANCE")
 @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "code", unique = false)) })
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_PRODUCT_INSTANCE_SEQ")
@@ -91,7 +89,7 @@ public class ProductInstance extends BusinessCFEntity {
     }
 
     public ProductInstance(UserAccount userAccount,Subscription subscription, ProductTemplate productTemplate, BigDecimal quantity,
-    		Date applicationDate, String code, String description, String orderNumber,User user) {
+    		Date applicationDate, String code, String description, String orderNumber) {
         this.applicationDate = applicationDate;
         this.code = code;
         this.description = description;
@@ -105,10 +103,6 @@ public class ProductInstance extends BusinessCFEntity {
         } else {
         	this.userAccount=subscription.getUserAccount();
         }
-        Auditable auditable = new Auditable();
-        auditable.setCreated(new Date());
-        auditable.setCreator(user);
-        this.setAuditable(auditable);
     }
 
 	public ProductTemplate getProductTemplate() {

@@ -13,7 +13,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -35,10 +34,10 @@ public class InvoicingAsync {
 
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public Future<Integer> launchAndForget(List<BillingAccount> billingAccounts,BillingRun billingRun,User currentUser) {
+	public Future<Integer> launchAndForget(List<BillingAccount> billingAccounts,BillingRun billingRun) {
 		int count=0;
 		for (BillingAccount billingAccount : billingAccounts) {
-			if (billingAccountService.updateBillingAccountTotalAmounts(billingAccount,billingRun,currentUser)) {
+			if (billingAccountService.updateBillingAccountTotalAmounts(billingAccount,billingRun)) {
 				count++;
 			}
 		}

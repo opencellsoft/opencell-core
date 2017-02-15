@@ -50,9 +50,6 @@ public class UserDto extends BaseDto {
 	@XmlElement(required = true)
 	private String email;
 
-	@XmlElement()
-	private String provider;
-
 	private String firstName;
 	private String lastName;
 
@@ -87,7 +84,6 @@ public class UserDto extends BaseDto {
 		lastName = user.getName().getLastName();	
 		}
 		username = user.getUserName();
-		provider = user.getProvider().getCode();
 		email=user.getEmail();
 
 		if (user.getRoles() != null) {
@@ -146,14 +142,6 @@ public class UserDto extends BaseDto {
 		this.password = password;
 	}
 
-	public String getProvider() {
-		return provider;
-	}
-
-	public void setProvider(String provider) {
-		this.provider = provider;
-	}
-
 	public List<String> getRoles() {
 		return roles;
 	}
@@ -194,7 +182,7 @@ public class UserDto extends BaseDto {
 
     @Override
 	public String toString() {
-		return "UserDto [username=" + username + ", password=" + password + ", email=" + email + ", provider=" + provider + ", firstName=" + firstName + ", lastName=" + lastName + ", roles=" + roles + ", role=" + role + ", userLevel=" + userLevel  + ", securedEntities=" + securedEntities + " ]";
+		return "UserDto [username=" + username + ", password=" + password + ", email=" + email + ", firstName=" + firstName + ", lastName=" + lastName + ", roles=" + roles + ", role=" + role + ", userLevel=" + userLevel  + ", securedEntities=" + securedEntities + " ]";
 	}
 
 }

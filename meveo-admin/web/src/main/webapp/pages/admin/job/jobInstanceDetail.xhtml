@@ -48,7 +48,7 @@
 
                         <hftl:decorateFormField fieldId="timer" label="#{messages['jobInstance.timer']}">
                             <p:selectOneMenu id="timer" value="#{jobInstanceBean.entity.timerEntity}" rendered="#{jobInstanceBean.edit}">
-                                <s:objectConverter />
+                                <hftl:objectConverter />
                                 <f:selectItem itemLabel="#{messages['commons.select']}" />
                                 <f:selectItems value="#{timerEntityBean.getTimerEntityList()}" var="t_" itemLabel="#{t_.code}" itemValue="#{t_}" />
                             </p:selectOneMenu>
@@ -57,7 +57,7 @@
                         <hftl:formField label="#{messages['jobInstance.parametres']}" field="parametres" />
                         <hftl:decorateFormField fieldId="timerFollowingJob" label="#{messages['timer.followingJob']}">
                             <p:selectOneMenu id="timerFollowingJob" value="#{jobInstanceBean.entity.followingJob}" rendered="#{jobInstanceBean.edit}">
-                                <s:objectConverter />
+                                <hftl:objectConverter />
                                 <f:selectItem itemLabel="#{messages['commons.select']}" />
                                 <f:selectItems value="#{jobInstanceBean.getTimerEntityList()}" var="t_" itemLabel="#{t_.code}" itemValue="#{t_}" />
                             </p:selectOneMenu>

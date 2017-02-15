@@ -18,7 +18,6 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.CalendarDaily;
 import org.meveo.model.catalog.CalendarDateInterval;
@@ -29,7 +28,6 @@ import org.meveo.model.catalog.CalendarPeriod;
 import org.meveo.model.catalog.CalendarYearly;
 import org.meveo.model.catalog.DayInYear;
 import org.meveo.model.catalog.HourInDay;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.DayInYearService;
 import org.meveo.service.catalog.impl.HourInDayService;
@@ -49,7 +47,7 @@ public class CalendarApi extends BaseApi {
     @Inject
     private HourInDayService hourInDayService;
 
-    public void create(CalendarDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void create(CalendarDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -61,9 +59,9 @@ public class CalendarApi extends BaseApi {
         handleMissingParameters();
         
 
-        Provider provider = currentUser.getProvider();
+        
 
-        if (calendarService.findByCode(postData.getCode(), provider) != null) {
+        if (calendarService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(Calendar.class, postData.getCode());
         }
 
@@ -84,7 +82,7 @@ public class CalendarApi extends BaseApi {
                 calendar.setDays(days);
             }
 
-            calendarService.create(calendar, currentUser);
+            calendarService.create(calendar);
 
         } else if (postData.getCalendarType() == CalendarTypeEnum.DAILY) {
 
@@ -105,7 +103,7 @@ public class CalendarApi extends BaseApi {
                 calendar.setHours(hours);
             }
 
-            calendarService.create(calendar, currentUser);
+            calendarService.create(calendar);
 
         } else if (postData.getCalendarType() == CalendarTypeEnum.PERIOD) {
 
@@ -121,7 +119,7 @@ public class CalendarApi extends BaseApi {
             calendar.setNbPeriods(postData.getNbPeriods());
             calendar.setPeriodUnit(postData.getPeriodUnit().getUnitValue());
 
-            calendarService.create(calendar, currentUser);
+            calendarService.create(calendar);
 
         } else if (postData.getCalendarType() == CalendarTypeEnum.INTERVAL) {
 
@@ -139,7 +137,7 @@ public class CalendarApi extends BaseApi {
                 calendar.setIntervals(intervals);
             }
 
-            calendarService.create(calendar, currentUser);
+            calendarService.create(calendar);
 
         } else if (postData.getCalendarType().isJoin()) {
 
@@ -153,8 +151,8 @@ public class CalendarApi extends BaseApi {
             handleMissingParameters();
             
 
-            Calendar cal1 = calendarService.findByCode(postData.getJoinCalendar1Code(), provider);
-            Calendar cal2 = calendarService.findByCode(postData.getJoinCalendar2Code(), provider);
+            Calendar cal1 = calendarService.findByCode(postData.getJoinCalendar1Code());
+            Calendar cal2 = calendarService.findByCode(postData.getJoinCalendar2Code());
 
             if (cal1 == null) {
                 throw new InvalidParameterException("joinCalendar1Code", postData.getJoinCalendar1Code());
@@ -170,14 +168,14 @@ public class CalendarApi extends BaseApi {
             calendar.setJoinCalendar1(cal1);
             calendar.setJoinCalendar2(cal2);
 
-            calendarService.create(calendar, currentUser);
+            calendarService.create(calendar);
         } else {
             throw new BusinessApiException("invalid calendar type, possible values YEARLY, DAILY, PERIOD, INTERVAL, JOIN");
         }
 
     }
 
-    public void update(CalendarDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void update(CalendarDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -189,9 +187,9 @@ public class CalendarApi extends BaseApi {
         handleMissingParameters();
         
 
-        Provider provider = currentUser.getProvider();
+        
 
-        Calendar calendar = calendarService.findByCode(postData.getCode(), provider);
+        Calendar calendar = calendarService.findByCode(postData.getCode());
         if (calendar == null) {
             throw new EntityDoesNotExistsException(Calendar.class, postData.getCode());
         }
@@ -257,8 +255,8 @@ public class CalendarApi extends BaseApi {
             handleMissingParameters();
             
 
-            Calendar cal1 = calendarService.findByCode(postData.getJoinCalendar1Code(), provider);
-            Calendar cal2 = calendarService.findByCode(postData.getJoinCalendar2Code(), provider);
+            Calendar cal1 = calendarService.findByCode(postData.getJoinCalendar1Code());
+            Calendar cal2 = calendarService.findByCode(postData.getJoinCalendar2Code());
 
             if (cal1 == null) {
                 throw new InvalidParameterException("joinCalendar1Code", postData.getJoinCalendar1Code());
@@ -273,14 +271,14 @@ public class CalendarApi extends BaseApi {
             calendarJoin.setJoinCalendar2(cal2);
         }
 
-        calendarService.update(calendar, currentUser);
+        calendarService.update(calendar);
     }
 
-    public CalendarDto find(String calendarCode, Provider provider) throws MeveoApiException {
+    public CalendarDto find(String calendarCode) throws MeveoApiException {
         CalendarDto result = new CalendarDto();
 
         if (!StringUtils.isBlank(calendarCode)) {
-            Calendar calendar = calendarService.findByCode(calendarCode, provider);
+            Calendar calendar = calendarService.findByCode(calendarCode);
             if (calendar == null) {
                 throw new EntityDoesNotExistsException(Calendar.class, calendarCode);
             }
@@ -297,22 +295,22 @@ public class CalendarApi extends BaseApi {
         return result;
     }
     
-    public List<CalendarDto> list(Provider provider) throws MeveoApiException{
+    public List<CalendarDto> list() throws MeveoApiException{
     	List<CalendarDto> result = new ArrayList<CalendarDto>();
-		for(Calendar calendar : calendarService.list(provider)){
+		for(Calendar calendar : calendarService.list()){
     		result.add(new CalendarDto(calendar));
     	}
     	return result;
     }
 
-    public void remove(String calendarCode, User currentUser) throws MeveoApiException, BusinessException {
+    public void remove(String calendarCode) throws MeveoApiException, BusinessException {
         if (!StringUtils.isBlank(calendarCode)) {
-            Calendar calendar = calendarService.findByCode(calendarCode, currentUser.getProvider());
+            Calendar calendar = calendarService.findByCode(calendarCode);
             if (calendar == null) {
                 throw new EntityDoesNotExistsException(Calendar.class, calendarCode);
             }
 
-            calendarService.remove(calendar, currentUser);
+            calendarService.remove(calendar);
         } else {
             if (StringUtils.isBlank(calendarCode)) {
                 missingParameters.add("calendarCode");
@@ -322,14 +320,14 @@ public class CalendarApi extends BaseApi {
         }
     }
 
-    public void createOrUpdate(CalendarDto postData, User currentUser) throws MeveoApiException, BusinessException {
-        Calendar calendar = calendarService.findByCode(postData.getCode(), currentUser.getProvider());
+    public void createOrUpdate(CalendarDto postData) throws MeveoApiException, BusinessException {
+        Calendar calendar = calendarService.findByCode(postData.getCode());
         if (calendar == null) {
             // create
-            create(postData, currentUser);
+            create(postData);
         } else {
             // update
-            update(postData, currentUser);
+            update(postData);
         }
     }
 

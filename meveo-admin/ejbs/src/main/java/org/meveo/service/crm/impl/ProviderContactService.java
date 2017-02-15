@@ -24,7 +24,7 @@ import org.meveo.model.crm.ProviderContact;
 import org.meveo.service.base.BusinessService;
 
 /**
- * Provider service implementation.
+ * Provider contact service implementation.
  */
 @Stateless
 public class ProviderContactService extends BusinessService<ProviderContact> {

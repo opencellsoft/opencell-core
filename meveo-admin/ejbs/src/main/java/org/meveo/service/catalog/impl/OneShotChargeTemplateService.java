@@ -22,13 +22,11 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
-import org.meveo.model.crm.Provider;
 
 /**
  * Charge Template service implementation.
@@ -42,7 +40,7 @@ public class OneShotChargeTemplateService extends ChargeTemplateService<OneShotC
 	@SuppressWarnings("unchecked")
 	public List<OneShotChargeTemplate> getTerminationChargeTemplates() {
 
-		Query query = new QueryBuilder(OneShotChargeTemplate.class, "c", null, getCurrentProvider())
+		Query query = new QueryBuilder(OneShotChargeTemplate.class, "c", null)
 				.addCriterionEnum("oneShotChargeTemplateType", OneShotChargeTemplateTypeEnum.TERMINATION)
 				.getQuery(getEntityManager());
 		return query.getResultList();
@@ -54,73 +52,56 @@ public class OneShotChargeTemplateService extends ChargeTemplateService<OneShotC
 	@SuppressWarnings("unchecked")
 	public List<OneShotChargeTemplate> getSubscriptionChargeTemplates() {
 
-		Query query = new QueryBuilder(OneShotChargeTemplate.class, "c", null, getCurrentProvider())
+		Query query = new QueryBuilder(OneShotChargeTemplate.class, "c", null)
 				.addCriterionEnum("oneShotChargeTemplateType", OneShotChargeTemplateTypeEnum.SUBSCRIPTION)
 				.getQuery(getEntityManager());
 		return query.getResultList();
 	}
 
-	public void removeByCode(EntityManager em, String code, Provider provider) {
-		Query query = em.createQuery("DELETE OneShotChargeTemplate t WHERE t.code=:code AND t.provider=:provider");
+	public void removeByCode(EntityManager em, String code) {
+		Query query = em.createQuery("DELETE OneShotChargeTemplate t WHERE t.code=:code");
 		query.setParameter("code", code);
-		query.setParameter("provider", provider);
 		query.executeUpdate();
 	}
 
-	public List<OneShotChargeTemplate> getSubscriptionChargeTemplates(Provider provider) {
-		return getSubscriptionChargeTemplates(getEntityManager(), provider);
-	}
 
-	@SuppressWarnings("unchecked")
-	public List<OneShotChargeTemplate> getSubscriptionChargeTemplates(EntityManager em, Provider provider) {
-		QueryBuilder qb = new QueryBuilder(OneShotChargeTemplate.class, "t");
-		qb.addCriterionEntity("provider", provider);
-
-		try {
-			return (List<OneShotChargeTemplate>) qb.getQuery(em).getResultList();
-		} catch (NoResultException e) {
-			log.warn("failed to get subscriptionChargeTemplates", e);
-			return null;
-		}
-	}
-
-	public int getNbrOneShotWithNotPricePlan(Provider provider) {
+	public int getNbrOneShotWithNotPricePlan() {
 		return ((Long) getEntityManager()
 				.createNamedQuery("oneShotChargeTemplate.getNbrOneShotWithNotPricePlan", Long.class)
-				.setParameter("provider", provider).getSingleResult()).intValue();
+				.getSingleResult()).intValue();
 	}
 
-	public List<OneShotChargeTemplate> getOneShotChrgWithNotPricePlan(Provider provider) {
+	public List<OneShotChargeTemplate> getOneShotChrgWithNotPricePlan() {
 		return (List<OneShotChargeTemplate>) getEntityManager()
 				.createNamedQuery("oneShotChargeTemplate.getOneShotWithNotPricePlan", OneShotChargeTemplate.class)
-				.setParameter("provider", provider).getResultList();
+				.getResultList();
 	}
 
-	public int getNbrSubscriptionChrgNotAssociated(Provider provider) {
+	public int getNbrSubscriptionChrgNotAssociated() {
 		return ((Long) getEntityManager()
 				.createNamedQuery("oneShotChargeTemplate.getNbrSubscriptionChrgNotAssociated", Long.class)
 				.setParameter("oneShotChargeTemplateType", OneShotChargeTemplateTypeEnum.SUBSCRIPTION)
-				.setParameter("provider", provider).getSingleResult()).intValue();
+				.getSingleResult()).intValue();
 	}
 
-	public List<OneShotChargeTemplate> getSubscriptionChrgNotAssociated(Provider provider) {
+	public List<OneShotChargeTemplate> getSubscriptionChrgNotAssociated() {
 		return (List<OneShotChargeTemplate>) getEntityManager()
 				.createNamedQuery("oneShotChargeTemplate.getSubscriptionChrgNotAssociated", OneShotChargeTemplate.class)
 				.setParameter("oneShotChargeTemplateType", OneShotChargeTemplateTypeEnum.SUBSCRIPTION)
-				.setParameter("provider", provider).getResultList();
+				.getResultList();
 	}
 
-	public int getNbrTerminationChrgNotAssociated(Provider provider) {
+	public int getNbrTerminationChrgNotAssociated() {
 		return ((Long) getEntityManager()
 				.createNamedQuery("oneShotChargeTemplate.getNbrTerminationChrgNotAssociated", Long.class)
 				.setParameter("oneShotChargeTemplateType", OneShotChargeTemplateTypeEnum.TERMINATION)
-				.setParameter("provider", provider).getSingleResult()).intValue();
+				.getSingleResult()).intValue();
 	}
 
-	public List<OneShotChargeTemplate> getTerminationChrgNotAssociated(Provider provider) {
+	public List<OneShotChargeTemplate> getTerminationChrgNotAssociated() {
 		return (List<OneShotChargeTemplate>) getEntityManager()
 				.createNamedQuery("oneShotChargeTemplate.getTerminationChrgNotAssociated", OneShotChargeTemplate.class)
 				.setParameter("oneShotChargeTemplateType", OneShotChargeTemplateTypeEnum.TERMINATION)
-				.setParameter("provider", provider).getResultList();
+				.getResultList();
 	}
 }

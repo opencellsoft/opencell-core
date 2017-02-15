@@ -11,7 +11,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.exception.AccessDeniedException;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.model.admin.User;
 import org.meveo.service.index.ElasticClient;
 import org.meveo.service.index.ElasticSearchClassInfo;
 import org.meveo.service.index.ReindexingStatistics;
@@ -25,9 +24,9 @@ public class FullTextSearchApi extends BaseApi {
     @Inject
     private ElasticClient elasticClient;
 
-    public void cleanAndReindex(User currentUser) throws AccessDeniedException, BusinessException {
+    public void cleanAndReindex() throws AccessDeniedException, BusinessException {
 
-        if (!currentUser.hasPermission("superAdmin", "superAdminManagement")) {
+        if (!currentUser.hasRole("superAdminManagement")) {
             throw new AccessDeniedException("Super administrator permission is required to clean and reindex full text search");
         }
         try {
@@ -38,7 +37,7 @@ public class FullTextSearchApi extends BaseApi {
         }
     }
 
-    public String search(String[] classnamesOrCetCodes, String query, Integer from, Integer size, User currentUser) throws MissingParameterException, BusinessException {
+    public String search(String[] classnamesOrCetCodes, String query, Integer from, Integer size) throws MissingParameterException, BusinessException {
 
         if (classnamesOrCetCodes == null || classnamesOrCetCodes.length == 0) {
             missingParameters.add("classnamesOrCetCodes");
@@ -46,12 +45,12 @@ public class FullTextSearchApi extends BaseApi {
 
         handleMissingParameters();
 
-        List<ElasticSearchClassInfo> classInfo = elasticClient.getSearchScopeInfo(classnamesOrCetCodes, false, currentUser);
+        List<ElasticSearchClassInfo> classInfo = elasticClient.getSearchScopeInfo(classnamesOrCetCodes, false);
 
-        return elasticClient.search(query, from, size, null, null, null, currentUser, classInfo);
+        return elasticClient.search(query, from, size, null, null, null, classInfo);
     }
 
-    public String search(String[] classnamesOrCetCodes, Map<String, String> queryValues, Integer from, Integer size, User currentUser) throws MissingParameterException,
+    public String search(String[] classnamesOrCetCodes, Map<String, String> queryValues, Integer from, Integer size) throws MissingParameterException,
             BusinessException {
 
         if (classnamesOrCetCodes == null || classnamesOrCetCodes.length == 0) {
@@ -60,8 +59,8 @@ public class FullTextSearchApi extends BaseApi {
 
         handleMissingParameters();
 
-        List<ElasticSearchClassInfo> classInfo = elasticClient.getSearchScopeInfo(classnamesOrCetCodes, false, currentUser);
+        List<ElasticSearchClassInfo> classInfo = elasticClient.getSearchScopeInfo(classnamesOrCetCodes, false);
 
-        return elasticClient.search(queryValues, from, size, null, null, null, currentUser, classInfo);
+        return elasticClient.search(queryValues, from, size, null, null, null, classInfo);
     }
 }

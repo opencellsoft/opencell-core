@@ -37,7 +37,6 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.BusinessCFEntity;
-import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
@@ -49,14 +48,14 @@ import org.meveo.model.annotation.ImageType;
 @ObservableEntity
 @ImageType
 @CustomFieldEntity(cftCodePrefix = "SERVICE")
-@ExportIdentifier({ "code", "provider" })
-@Table(name = "CAT_SERVICE_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
+@ExportIdentifier({ "code"})
+@Table(name = "CAT_SERVICE_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_SERVICE_TEMPLATE_SEQ")
 @NamedQueries({			
 @NamedQuery(name = "serviceTemplate.getNbServiceWithNotOffer", 
-	           query = "select count(*) from ServiceTemplate s where s.id not in (select serv.serviceTemplate from OfferTemplate o join o.offerServiceTemplates serv) and s.provider=:provider"),
+	           query = "select count(*) from ServiceTemplate s where s.id not in (select serv.serviceTemplate from OfferTemplate o join o.offerServiceTemplates serv) "),
 @NamedQuery(name = "serviceTemplate.getServicesWithNotOffer", 
-	           query = "from ServiceTemplate s where s.id not in (select serv from OfferTemplate o join o.offerServiceTemplates serv) and s.provider=:provider"),
+	           query = "from ServiceTemplate s where s.id not in (select serv from OfferTemplate o join o.offerServiceTemplates serv) "),
 @NamedQuery(name = "serviceTemplate.getServicesWithRecurringsByChargeTemplate",
 	           query = "from ServiceTemplate s left join s.serviceRecurringCharges c where c.chargeTemplate=:chargeTemplate")
 //@NamedQuery(name = "serviceTemplate.getServicesWithSubscriptionsByChargeTemplate", 

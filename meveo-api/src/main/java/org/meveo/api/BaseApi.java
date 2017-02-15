@@ -41,20 +41,23 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
-import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.customEntities.CustomEntityInstance;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,6 +84,14 @@ public abstract class BaseApi {
     @Inject
     private Validator validator;
 
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
+    
+    @Inject
+    @ApplicationProvider
+    protected Provider appProvider;
+    
     protected List<String> missingParameters = new ArrayList<String>();
 
     /**
@@ -121,11 +132,11 @@ public abstract class BaseApi {
      * @param customFieldsDto Custom field values
      * @param entity Entity
      * @param isNewEntity Is entity a newly saved entity
-     * @param currentUser User that authenticated for API
+
      * @throws MeveoApiException
      */
-    protected void populateCustomFields(CustomFieldsDto customFieldsDto, ICustomFieldEntity entity, boolean isNewEntity, User currentUser) throws MeveoApiException {
-        populateCustomFields(customFieldsDto, entity, isNewEntity, currentUser, true);
+    protected void populateCustomFields(CustomFieldsDto customFieldsDto, ICustomFieldEntity entity, boolean isNewEntity) throws MeveoApiException {
+        populateCustomFields(customFieldsDto, entity, isNewEntity, true);
     }
 
     /**
@@ -134,14 +145,14 @@ public abstract class BaseApi {
      * @param customFieldsDto Custom field values
      * @param entity Entity
      * @param isNewEntity Is entity a newly saved entity
-     * @param currentUser User that authenticated for API
+
      * @param checkCustomField Should a check be made if CF field is required
      * @throws MeveoApiException
      */
-    protected void populateCustomFields(CustomFieldsDto customFieldsDto, ICustomFieldEntity entity, boolean isNewEntity, User currentUser, boolean checkCustomField)
+    protected void populateCustomFields(CustomFieldsDto customFieldsDto, ICustomFieldEntity entity, boolean isNewEntity, boolean checkCustomField)
             throws MeveoApiException {
 
-        Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(entity, currentUser.getProvider());
+        Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(entity);
 
         List<CustomFieldDto> customFieldDtos = null;
         if (customFieldsDto != null) {
@@ -150,7 +161,7 @@ public abstract class BaseApi {
             customFieldDtos = new ArrayList<CustomFieldDto>();
         }
 
-        populateCustomFields(customFieldTemplates, customFieldDtos, entity, isNewEntity, currentUser, checkCustomField);
+        populateCustomFields(customFieldTemplates, customFieldDtos, entity, isNewEntity, checkCustomField);
     }
 
     /**
@@ -160,7 +171,7 @@ public abstract class BaseApi {
      * @param customFieldDtos Custom field values
      * @param entity Entity
      * @param isNewEntity Is entity a newly saved entity
-     * @param currentUser User that authenticated for API
+
      * @param checkCustomFields Should a check be made if CF field is required
      * @throws IllegalArgumentException
      * @throws IllegalAccessException
@@ -168,7 +179,7 @@ public abstract class BaseApi {
      */
     @SuppressWarnings("unchecked")
     private void populateCustomFields(Map<String, CustomFieldTemplate> customFieldTemplates, List<CustomFieldDto> customFieldDtos, ICustomFieldEntity entity, boolean isNewEntity,
-            User currentUser, boolean checkCustomFields) throws MeveoApiException {
+            boolean checkCustomFields) throws MeveoApiException {
 
         // check if any templates are applicable
         if (customFieldTemplates == null || customFieldTemplates.isEmpty()) {
@@ -186,7 +197,7 @@ public abstract class BaseApi {
         if (customFieldDtos != null && !customFieldDtos.isEmpty()) {
 
             // Validate fields
-            validateAndConvertCustomFields(customFieldTemplates, customFieldDtos, checkCustomFields, isNewEntity, entity, currentUser);
+            validateAndConvertCustomFields(customFieldTemplates, customFieldDtos, checkCustomFields, isNewEntity, entity);
 
             // Save the values
             for (CustomFieldDto cfDto : customFieldDtos) {
@@ -210,25 +221,25 @@ public abstract class BaseApi {
                         List<EntityReferenceWrapper> childEntityReferences = new ArrayList<>();
 
                         for (CustomEntityInstanceDto ceiDto : ((List<CustomEntityInstanceDto>) valueConverted)) {
-                            customEntityInstanceApi.createOrUpdate(ceiDto, currentUser);
+                            customEntityInstanceApi.createOrUpdate(ceiDto);
                             childEntityReferences.add(new EntityReferenceWrapper(CustomEntityInstance.class.getName(), ceiDto.getCetCode(), ceiDto.getCode()));
                         }
 
-                        customFieldInstanceService.setCFValue(entity, cfDto.getCode(), childEntityReferences, currentUser);
+                        customFieldInstanceService.setCFValue(entity, cfDto.getCode(), childEntityReferences);
 
                     } else {
 
                         if (cft.isVersionable()) {
                             if (cft.getCalendar() != null) {
-                                customFieldInstanceService.setCFValue(entity, cfDto.getCode(), valueConverted, cfDto.getValueDate(), currentUser);
+                                customFieldInstanceService.setCFValue(entity, cfDto.getCode(), valueConverted, cfDto.getValueDate());
 
                             } else {
                                 customFieldInstanceService.setCFValue(entity, cfDto.getCode(), valueConverted, cfDto.getValuePeriodStartDate(), cfDto.getValuePeriodEndDate(),
-                                    cfDto.getValuePeriodPriority(), currentUser);
+                                    cfDto.getValuePeriodPriority());
                             }
 
                         } else {
-                            customFieldInstanceService.setCFValue(entity, cfDto.getCode(), valueConverted, currentUser);
+                            customFieldInstanceService.setCFValue(entity, cfDto.getCode(), valueConverted);
                         }
                     }
 
@@ -264,11 +275,11 @@ public abstract class BaseApi {
                 if (cft.isVersionable()) {
                     hasValue = customFieldInstanceService.hasInheritedOnlyCFValue(entity, cft.getCode());
                 } else {
-                    Object value = customFieldInstanceService.getInheritedOnlyCFValue(entity, cft.getCode(), currentUser);
+                    Object value = customFieldInstanceService.getInheritedOnlyCFValue(entity, cft.getCode());
                     hasValue = value != null;
                 }
                 if (!hasValue && isNewEntity) {
-                    Object value = customFieldInstanceService.instantiateCFWithDefaultValue(entity, cft.getCode(), currentUser);
+                    Object value = customFieldInstanceService.instantiateCFWithDefaultValue(entity, cft.getCode());
                     hasValue = value != null;
                 }
                 if (!hasValue && cft.isValueRequired()) {
@@ -291,9 +302,9 @@ public abstract class BaseApi {
                 }
 
                 if (noCfi || emptyValue) {
-                    Object value = customFieldInstanceService.getInheritedOnlyCFValue(entity, cft.getCode(), currentUser);
+                    Object value = customFieldInstanceService.getInheritedOnlyCFValue(entity, cft.getCode());
                     if (value == null && isNewEntity && !emptyValue) {
-                        value = customFieldInstanceService.instantiateCFWithDefaultValue(entity, cft.getCode(), currentUser);
+                        value = customFieldInstanceService.instantiateCFWithDefaultValue(entity, cft.getCode());
                     }
                     if (value == null && cft.isValueRequired()) {
                         missingParameters.add(cft.getCode());
@@ -307,14 +318,14 @@ public abstract class BaseApi {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     protected void validateAndConvertCustomFields(Map<String, CustomFieldTemplate> customFieldTemplates, List<CustomFieldDto> customFieldDtos, boolean checkCustomFields,
-            boolean isNewEntity, ICustomFieldEntity entity, User currentUser) throws InvalidParameterException, MissingParameterException {
+            boolean isNewEntity, ICustomFieldEntity entity) throws InvalidParameterException, MissingParameterException {
 
         for (CustomFieldDto cfDto : customFieldDtos) {
             CustomFieldTemplate cft = customFieldTemplates.get(cfDto.getCode());
 
             if (checkCustomFields && cft == null) {
                 log.error("No custom field template found with code={} for entity {}. Value will be ignored.", cfDto.getCode(), entity.getClass());
-                throw new InvalidParameterException("Custom field template with code " + cfDto.getCode() + " and provider " + currentUser.getProvider() + " not found.");
+                throw new InvalidParameterException("Custom field template with code " + cfDto.getCode() + " not found.");
             }
 
             // Ignore the value when creating entity and CFT.hideOnNew=true or editing entity and CFT.allowEdit=false or when CFT.applicableOnEL expression evaluates to false
@@ -432,7 +443,7 @@ public abstract class BaseApi {
                     } else if (cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY) {
                         // Just in case, set CET code to whatever CFT definition requires.
                         ((CustomEntityInstanceDto) valueToCheck).setCetCode(CustomFieldTemplate.retrieveCetCode(cft.getEntityClazz()));
-                        customEntityInstanceApi.validateEntityInstanceDto((CustomEntityInstanceDto) valueToCheck, currentUser);
+                        customEntityInstanceApi.validateEntityInstanceDto((CustomEntityInstanceDto) valueToCheck);
                     }
                 }
             }
@@ -527,11 +538,11 @@ public abstract class BaseApi {
      * @param entityToPopulate JPA Entity to populate with data from DTO object
      * @param dto DTO object
      * @param partialUpdate Is this a partial update - fields with null values will be ignored
-     * @param currentUser Current user
+
      * @throws MeveoApiException
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    protected void convertDtoToEntityWithChildProcessing(Object entityToPopulate, Object dto, boolean partialUpdate, User currentUser) throws MeveoApiException {
+    protected void convertDtoToEntityWithChildProcessing(Object entityToPopulate, Object dto, boolean partialUpdate) throws MeveoApiException {
 
         String dtoClassName = dto.getClass().getName();
         for (Field dtoField : FieldUtils.getAllFieldsList(dto.getClass())) {
@@ -549,7 +560,7 @@ public abstract class BaseApi {
 
                 // Process custom fields as special case
                 if (dtoField.getType().isAssignableFrom(CustomFieldsDto.class)) {
-                    populateCustomFields((CustomFieldsDto) dtoValue, (ICustomFieldEntity) entityToPopulate, true, currentUser);
+                    populateCustomFields((CustomFieldsDto) dtoValue, (ICustomFieldEntity) entityToPopulate, true);
                     continue;
 
                 } else if (dtoField.getName().equals("active")) {
@@ -600,7 +611,7 @@ public abstract class BaseApi {
                             if (isEntityReferenceOnly(dtoValue)) {
                                 // log.trace("A lookup for {} with code {} will be done as reference was passed", entityClass, codeValue);
                                 PersistenceService persistenceService = getPersistenceService(entityClass, true);
-                                valueAsEntity = ((BusinessService) persistenceService).findByCode(codeValue, currentUser.getProvider());
+                                valueAsEntity = ((BusinessService) persistenceService).findByCode(codeValue);
                                 if (valueAsEntity == null) {
                                     throw new EntityDoesNotExistsException(entityClass, codeValue);
                                 }
@@ -609,7 +620,7 @@ public abstract class BaseApi {
                             } else {
 
                                 ApiService apiService = getApiService((BaseDto) dtoValue, true);
-                                valueAsEntity = (BusinessEntity) apiService.createOrUpdate((BaseDto) dtoValue, currentUser);
+                                valueAsEntity = (BusinessEntity) apiService.createOrUpdate((BaseDto) dtoValue);
                             }
 
                             // Update field with a new entity
@@ -619,7 +630,7 @@ public abstract class BaseApi {
                         } else {
 
                             ApiService apiService = getApiService((BaseDto) dtoValue, true);
-                            IEntity valueAsEntity = (BusinessEntity) apiService.createOrUpdate((BaseDto) dtoValue, currentUser);
+                            IEntity valueAsEntity = (BusinessEntity) apiService.createOrUpdate((BaseDto) dtoValue);
 
                             // Update field with a new entity
                             FieldUtils.writeField(entityToPopulate, dtoField.getName(), valueAsEntity, true);
@@ -633,7 +644,7 @@ public abstract class BaseApi {
                         if (embededEntity == null) {
                             embededEntity = entityClass.newInstance();
                         }
-                        convertDtoToEntityWithChildProcessing(embededEntity, dtoValue, partialUpdate, currentUser);
+                        convertDtoToEntityWithChildProcessing(embededEntity, dtoValue, partialUpdate);
 
                         FieldUtils.writeField(entityToPopulate, dtoField.getName(), embededEntity, true);
                     }
@@ -646,7 +657,7 @@ public abstract class BaseApi {
                     // Find an entity referenced
 
                     PersistenceService persistenceService = getPersistenceService(entityClass, true);
-                    IEntity valueAsEntity = ((BusinessService) persistenceService).findByCode((String) dtoValue, currentUser.getProvider());
+                    IEntity valueAsEntity = ((BusinessService) persistenceService).findByCode((String) dtoValue);
                     if (valueAsEntity == null) {
                         throw new EntityDoesNotExistsException(entityClass, (String) dtoValue);
                     }
@@ -812,7 +823,7 @@ public abstract class BaseApi {
         return persistenceService;
     }
 
-    protected void saveImage(IEntity entity, String imagePath, String imageData, String providerCode) throws IOException, InvalidImageData, MissingParameterException {
+    protected void saveImage(IEntity entity, String imagePath, String imageData) throws IOException, InvalidImageData, MissingParameterException {
         if (StringUtils.isBlank(imageData)) {
             return;
         } else {
@@ -823,8 +834,8 @@ public abstract class BaseApi {
         }
 
         try {
-            ImageUploadEventHandler<IEntity> imageUploadEventHandler = new ImageUploadEventHandler<>();
-            imageUploadEventHandler.saveImageUpload(entity, imagePath, Base64.decodeBase64(imageData), providerCode);
+            ImageUploadEventHandler<IEntity> imageUploadEventHandler = new ImageUploadEventHandler<>(currentUser);
+            imageUploadEventHandler.saveImageUpload(entity, imagePath, Base64.decodeBase64(imageData));
         } catch (AccessDeniedException e1) {
             throw new InvalidImageData("Failed saving image. Access is denied: " + e1.getMessage());
         } catch (IOException e) {
@@ -832,10 +843,10 @@ public abstract class BaseApi {
         }
     }
 
-    protected void deleteImage(IEntity entity, String providerCode) throws InvalidImageData {
+    protected void deleteImage(IEntity entity) throws InvalidImageData {
         try {
-            ImageUploadEventHandler<IEntity> imageUploadEventHandler = new ImageUploadEventHandler<>();
-            imageUploadEventHandler.deleteImage(entity, providerCode);
+            ImageUploadEventHandler<IEntity> imageUploadEventHandler = new ImageUploadEventHandler<>(currentUser);
+            imageUploadEventHandler.deleteImage(entity);
         } catch (AccessDeniedException e1) {
             throw new InvalidImageData("Failed deleting image. Access is denied: " + e1.getMessage());
         } catch (IOException e) {

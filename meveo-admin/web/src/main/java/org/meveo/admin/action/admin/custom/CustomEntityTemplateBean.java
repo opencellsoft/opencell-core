@@ -11,7 +11,6 @@ import javax.inject.Named;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.admin.CurrentProviderBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ReflectionUtils;
@@ -34,9 +33,6 @@ import org.primefaces.model.TreeNode;
 public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
 
     private static final long serialVersionUID = 1187554162639618526L;
-
-    @Inject
-    private CurrentProviderBean currentProviderBean;
 
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
@@ -148,7 +144,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
         // Convert appliesTo parameter to a entityClassName of objectId value in case of customEntity template
         if (customizedEntity == null && appliesTo != null) {
 
-            CustomizedEntity customizedEntityMatched = customizedEntityService.getCustomizedEntity(appliesTo, getCurrentProvider());
+            CustomizedEntity customizedEntityMatched = customizedEntityService.getCustomizedEntity(appliesTo);
             if (customizedEntityMatched != null) {
                 setEntityClassName(customizedEntityMatched.getEntityClass().getName());
                 if (customizedEntityMatched.getCustomEntityId() != null) {
@@ -170,7 +166,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
 
                 // Create missing custom field templates if needed
                 try {
-                    customFieldTemplateService.createMissingTemplates(cetPrefix, jobCustomFields.values(), getCurrentUser());
+                    customFieldTemplateService.createMissingTemplates(cetPrefix, jobCustomFields.values());
 
                 } catch (BusinessException e) {
                     log.error("Failed to construct customized entity", e);
@@ -187,7 +183,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
             return groupedFields;
         }
 
-        Map<String, CustomFieldTemplate> fields = customFieldTemplateService.findByAppliesToNoCache(cetPrefix, getCurrentProvider());
+        Map<String, CustomFieldTemplate> fields = customFieldTemplateService.findByAppliesToNoCache(cetPrefix);
 
         GroupedCustomField groupedCFT = new GroupedCustomField(fields.values(), CustomEntityTemplate.class.isAssignableFrom(entityClass) ? entity.getName() : "Custom fields", true);
 
@@ -245,7 +241,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
             return entityActions;
         }
 
-        Map<String, EntityCustomAction> scripts = entityActionScriptService.findByAppliesTo(cetPrefix, getCurrentProvider());
+        Map<String, EntityCustomAction> scripts = entityActionScriptService.findByAppliesTo(cetPrefix);
 
         entityActions = new ArrayList<EntityCustomAction>();
         entityActions.addAll(scripts.values());
@@ -303,7 +299,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
         boolean isNew = entity.isTransient();
         super.saveOrUpdate(killConversation);
         if (isNew) {
-            currentProviderBean.refreshCurrentUser();
+//            currentProviderBean.refreshCurrentUser();
         }
 
         return getEditViewName();
@@ -362,10 +358,10 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
         try {
             for (TreeNode childNode : selectedFieldGrouping.getChildren()) {
                 if (childNode.getType().equals(GroupedCustomField.TYPE_FIELD)) {
-                    customFieldTemplateService.remove(((CustomFieldTemplate) childNode.getData()).getId(), getCurrentUser());
+                    customFieldTemplateService.remove(((CustomFieldTemplate) childNode.getData()).getId());
                 } else if (childNode.getType().equals(GroupedCustomField.TYPE_FIELD_GROUP)) {
                     for (TreeNode childChildNode : childNode.getChildren()) {
-                        customFieldTemplateService.remove(((CustomFieldTemplate) childChildNode.getData()).getId(), getCurrentUser());
+                        customFieldTemplateService.remove(((CustomFieldTemplate) childChildNode.getData()).getId());
                     }
                 }
             }
@@ -478,7 +474,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
                     cft = customFieldTemplateService.refreshOrRetrieve(cft);
                     if (!guiPosition.equals(cft.getGuiPosition())) {
                         cft.setGuiPosition(guiPosition);
-                        cft = customFieldTemplateService.update(cft, getCurrentUser());
+                        cft = customFieldTemplateService.update(cft);
                         sortedChildNode.setData(cft);
                     }
 
@@ -492,7 +488,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
                         cft = customFieldTemplateService.refreshOrRetrieve(cft);
                         if (!guiPosition.equals(cft.getGuiPosition())) {
                             cft.setGuiPosition(guiPosition);
-                            cft = customFieldTemplateService.update(cft, getCurrentUser());
+                            cft = customFieldTemplateService.update(cft);
                             sortedChildChildNode.setData(cft);
                         }
                     }

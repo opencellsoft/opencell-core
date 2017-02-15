@@ -20,8 +20,6 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.meveo.admin.action.admin.CurrentProvider;
-import org.meveo.admin.action.admin.CurrentUser;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.ParamBean;
@@ -31,11 +29,9 @@ import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
-import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
 import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
@@ -46,6 +42,8 @@ import org.meveo.model.crm.custom.EntityCustomAction;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
@@ -102,12 +100,8 @@ public class CustomFieldDataEntryBean implements Serializable {
     private CustomEntityInstanceService customEntityInstanceService;
 
     @Inject
-    @CurrentProvider
-    protected Provider currentProvider;
-
-    @Inject
     @CurrentUser
-    protected User currentUser;
+    protected MeveoUser currentUser;
 
     @Inject
     protected Messages messages;
@@ -190,7 +184,7 @@ public class CustomFieldDataEntryBean implements Serializable {
      */
     private void initCustomActions(ICustomFieldEntity entity) {
 
-        Map<String, EntityCustomAction> actions = entityActionScriptService.findByAppliesTo(entity, currentProvider);
+        Map<String, EntityCustomAction> actions = entityActionScriptService.findByAppliesTo(entity);
 
         List<EntityCustomAction> actionList = new ArrayList<EntityCustomAction>(actions.values());
         customActions.put(entity.getUuid(), actionList);
@@ -203,7 +197,7 @@ public class CustomFieldDataEntryBean implements Serializable {
      */
     private void initFields(ICustomFieldEntity entity) {
 
-        Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(entity, currentProvider);
+        Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(entity);
         log.trace("Found {} custom field templates for entity {}", customFieldTemplates.size(), entity.getClass());
 
         GroupedCustomField groupedCustomField = new GroupedCustomField(customFieldTemplates.values(), "Custom fields", false);
@@ -229,7 +223,7 @@ public class CustomFieldDataEntryBean implements Serializable {
      */
     private void refreshFieldsWhilePreservingValues(ICustomFieldEntity entity) {
 
-        Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(entity, currentProvider);
+        Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(entity);
         log.trace("Refreshing CFTS while preserving values. Found {} custom field templates for entity {}", customFieldTemplates.size(), entity.getClass());
 
         GroupedCustomField groupedCustomField = new GroupedCustomField(customFieldTemplates.values(), "Custom fields", false);
@@ -302,7 +296,7 @@ public class CustomFieldDataEntryBean implements Serializable {
     // */
     // private void initFields(ICustomFieldEntity entity, Map<String, List<CustomFieldInstance>> cfisAsMap) {
     //
-    // Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(entity, currentProvider);
+    // Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(entity);
     // log.debug("Found {} custom field templates for entity {}", customFieldTemplates.size(), entity.getClass());
     //
     // GroupedCustomField groupedCustomField = new GroupedCustomField(customFieldTemplates.values(), "Custom fields", false);
@@ -320,7 +314,7 @@ public class CustomFieldDataEntryBean implements Serializable {
     // private void initGroupedCustomFieldsForChildEntity(CustomFieldTemplate childEntityFieldDefinition) {
     //
     // Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(
-    // EntityCustomizationUtils.getAppliesTo(CustomEntityTemplate.class, CustomFieldTemplate.retrieveCetCode(childEntityFieldDefinition.getEntityClazz())), currentProvider);
+    // EntityCustomizationUtils.getAppliesTo(CustomEntityTemplate.class, CustomFieldTemplate.retrieveCetCode(childEntityFieldDefinition.getEntityClazz())));
     //
     // log.debug("Found {} custom field templates for entity {}", customFieldTemplates.size(), childEntityFieldDefinition.getEntityClazz());
     //
@@ -508,7 +502,7 @@ public class CustomFieldDataEntryBean implements Serializable {
      */
     public List<BusinessEntity> autocompleteEntityForCFV(String wildcode) {
         String classname = (String) UIComponent.getCurrentComponent(FacesContext.getCurrentInstance()).getAttributes().get("classname");
-        return customFieldInstanceService.findBusinessEntityForCFVByCode(classname, wildcode, this.currentProvider);
+        return customFieldInstanceService.findBusinessEntityForCFVByCode(classname, wildcode);
     }
 
     /**
@@ -574,7 +568,7 @@ public class CustomFieldDataEntryBean implements Serializable {
      * @return Custom field value
      */
     public Object getInheritedCFValue(ICustomFieldEntity entity, String code) {
-        return customFieldInstanceService.getInheritedOnlyCFValue(entity, code, currentUser);
+        return customFieldInstanceService.getInheritedOnlyCFValue(entity, code);
     }
 
     /**
@@ -586,7 +580,7 @@ public class CustomFieldDataEntryBean implements Serializable {
      */
     public CustomFieldValue getInheritedCFValueAsCFValue(ICustomFieldEntity entity, CustomFieldTemplate cft, String code) {
 
-        Object inheritedValue = customFieldInstanceService.getInheritedOnlyCFValueCumulative(entity, code, currentUser);
+        Object inheritedValue = customFieldInstanceService.getInheritedOnlyCFValueCumulative(entity, code);
         if (inheritedValue == null) {
             return null;
         }
@@ -695,7 +689,7 @@ public class CustomFieldDataEntryBean implements Serializable {
             Map<String, Object> context = CustomScriptService.parseParameters(encodedParameters);
             context.put(Script.CONTEXT_ACTION, action.getCode());
 
-            Map<String, Object> result = scriptInstanceService.execute((IEntity) entity, action.getScript().getCode(), context, currentUser);
+            Map<String, Object> result = scriptInstanceService.execute((IEntity) entity, action.getScript().getCode(), context);
 
             // Display a message accordingly on what is set in result
             if (result.containsKey(Script.RESULT_GUI_MESSAGE_KEY)) {
@@ -737,7 +731,7 @@ public class CustomFieldDataEntryBean implements Serializable {
             context.put(Script.CONTEXT_PARENT_ENTITY, parentEntity);
             context.put(Script.CONTEXT_ACTION, action.getCode());
 
-            Map<String, Object> result = scriptInstanceService.execute((IEntity) childEntity, action.getScript().getCode(), context, currentUser);
+            Map<String, Object> result = scriptInstanceService.execute((IEntity) childEntity, action.getScript().getCode(), context);
 
             // Display a message accordingly on what is set in result
             if (result.containsKey(Script.RESULT_GUI_MESSAGE_KEY)) {
@@ -799,7 +793,7 @@ public class CustomFieldDataEntryBean implements Serializable {
                     if ((cfi.isValueEmptyForGui() && (cft.getDefaultValue() == null || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE) && !cft.isVersionable())
                             || ((isNewEntity && cft.isHideOnNew()) || !ValueExpressionWrapper.evaluateToBoolean(cft.getApplicableOnEl(), "entity", entity))) {
                         if (!cfi.isTransient()) {
-                            customFieldInstanceService.remove(cfi, (ICustomFieldEntity) entity, currentUser);
+                            customFieldInstanceService.remove(cfi, (ICustomFieldEntity) entity);
                             log.trace("Remove empty cfi value {}", cfi);
                         } else {
                             log.trace("Will ommit from saving cfi {}", cfi);
@@ -813,9 +807,9 @@ public class CustomFieldDataEntryBean implements Serializable {
                     } else {
                         serializeFromGUI(entity, cfi.getCfValue(), cft);
                         if (cfi.isTransient()) {
-                            customFieldInstanceService.create(cfi, cft, (ICustomFieldEntity) entity, currentUser);
+                            customFieldInstanceService.create(cfi, cft, (ICustomFieldEntity) entity);
                         } else {
-                            customFieldInstanceService.update(cfi, cft, (ICustomFieldEntity) entity, currentUser);
+                            customFieldInstanceService.update(cfi, cft, (ICustomFieldEntity) entity);
                         }
                         saveChildEntities(entity, cfi.getCfValue(), cft);
                     }
@@ -834,8 +828,7 @@ public class CustomFieldDataEntryBean implements Serializable {
     public CustomFieldTemplate getChildEntityField(CustomFieldTemplate childEntityTypeFieldDefinition, String childFieldCode) {
 
         Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(
-            EntityCustomizationUtils.getAppliesTo(CustomEntityTemplate.class, CustomFieldTemplate.retrieveCetCode(childEntityTypeFieldDefinition.getEntityClazz())),
-            currentProvider);
+            EntityCustomizationUtils.getAppliesTo(CustomEntityTemplate.class, CustomFieldTemplate.retrieveCetCode(childEntityTypeFieldDefinition.getEntityClazz())));
 
         return cfts.get(childFieldCode);
     }
@@ -875,7 +868,7 @@ public class CustomFieldDataEntryBean implements Serializable {
         }
 
         // check that CEI code is unique
-        CustomEntityInstance ceiSameCode = customEntityInstanceService.findByCodeByCet(cei.getCetCode(), cei.getCode(), cei.getProvider());
+        CustomEntityInstance ceiSameCode = customEntityInstanceService.findByCodeByCet(cei.getCetCode(), cei.getCode());
         if ((cei.isTransient() && ceiSameCode != null) || (!cei.isTransient() && cei.getId().longValue() != ceiSameCode.getId().longValue())) {
             messages.error(new BundleKey("messages", "commons.uniqueField.code"));
             FacesContext.getCurrentInstance().validationFailed();
@@ -1031,19 +1024,19 @@ public class CustomFieldDataEntryBean implements Serializable {
 
         // Find current child entities, so the ones no longer referenced shall be removed
         List<CustomEntityInstance> previousChildEntities = customEntityInstanceService.findChildEntities(
-            CustomFieldTemplate.retrieveCetCode(childEntityFieldDefinition.getEntityClazz()), mainEntity.getUuid(), currentProvider);
+            CustomFieldTemplate.retrieveCetCode(childEntityFieldDefinition.getEntityClazz()), mainEntity.getUuid());
 
         for (CustomFieldValueHolder childEntityValueHolder : customFieldValue.getChildEntityValuesForGUI()) {
 
             CustomEntityInstance cei = (CustomEntityInstance) childEntityValueHolder.getEntity();
             boolean isNewEntity = cei.isTransient();
             if (isNewEntity) {
-                customEntityInstanceService.create(cei, currentUser);
+                customEntityInstanceService.create(cei);
                 saveCustomFieldsToEntity(cei, isNewEntity);
 
             } else {
                 if (childEntityValueHolder.isUpdated()) {
-                    customEntityInstanceService.update(cei, currentUser);
+                    customEntityInstanceService.update(cei);
                     saveCustomFieldsToEntity(cei, isNewEntity);
                 }
                 previousChildEntities.remove(cei);
@@ -1052,7 +1045,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
         // Remove child entities that are no longer referenced along with its custom field values
         for (CustomEntityInstance ceiNolongerReferenced : previousChildEntities) {
-            customEntityInstanceService.remove(ceiNolongerReferenced, currentUser);
+            customEntityInstanceService.remove(ceiNolongerReferenced);
         }
     }
 
@@ -1172,7 +1165,7 @@ public class CustomFieldDataEntryBean implements Serializable {
         }
         // NOTE: For PF autocomplete seems that fake BusinessEntity object with code value filled is sufficient - it does not have to be a full loaded JPA object
 
-        // BusinessEntity convertedEntity = customFieldInstanceService.convertToBusinessEntityFromCfV(entityReferenceValue, this.currentProvider);
+        // BusinessEntity convertedEntity = customFieldInstanceService.convertToBusinessEntityFromCfV(entityReferenceValue);
         // if (convertedEntity == null) {
         // convertedEntity = (BusinessEntity) ReflectionUtils.createObject(entityReferenceValue.getClassname());
         // if (convertedEntity != null) {
@@ -1213,7 +1206,7 @@ public class CustomFieldDataEntryBean implements Serializable {
             return null;
         }
 
-        CustomEntityInstance cei = customEntityInstanceService.findByCodeByCet(childEntityWrapper.getClassnameCode(), childEntityWrapper.getCode(), currentProvider);
+        CustomEntityInstance cei = customEntityInstanceService.findByCodeByCet(childEntityWrapper.getClassnameCode(), childEntityWrapper.getCode());
         if (cei == null) {
             return null;
         }

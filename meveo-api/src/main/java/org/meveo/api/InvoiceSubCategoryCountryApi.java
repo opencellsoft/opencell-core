@@ -11,12 +11,10 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCountry;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.billing.impl.InvoiceSubCategoryCountryService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
@@ -40,7 +38,7 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
     @Inject
     private TaxService taxService;
 
-    public void create(InvoiceSubCategoryCountryDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void create(InvoiceSubCategoryCountryDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getInvoiceSubCategory())) {
             missingParameters.add("invoiceSubCategory");
         }
@@ -53,20 +51,20 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
 
         handleMissingParameters();
 
-        Provider provider = currentUser.getProvider();
         
-        InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategory(), provider);
+        
+        InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategory());
         if (invoiceSubCategory == null) {
             throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getInvoiceSubCategory());
         }
 
         TradingCountry tradingCountry = null;
         if(!StringUtils.isBlank(postData.getCountry())){		
-	        tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountry(), provider);
+	        tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountry());
 	        if (tradingCountry == null) {
 	            throw new EntityDoesNotExistsException(TradingCountry.class, postData.getCountry());
 	        }
-	        if (invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountry(invoiceSubCategory, tradingCountry, provider) != null) {
+	        if (invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountry(invoiceSubCategory, tradingCountry) != null) {
 	            throw new EntityAlreadyExistsException("InvoiceSubCategoryCountry with invoiceSubCategory=" + postData.getInvoiceSubCategory() + ", tradingCountry="
 	                    + postData.getCountry() + " already exists.");
 	        }	        
@@ -74,7 +72,7 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
         
         Tax tax = null;
         if(!StringUtils.isBlank(postData.getTax())){
-	        tax = taxService.findByCode(postData.getTax(), provider);
+	        tax = taxService.findByCode(postData.getTax());
 	        if (tax == null) {
 	            throw new EntityDoesNotExistsException(Tax.class, postData.getTax());
 	        }
@@ -86,10 +84,10 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
         invoiceSubcategoryCountry.setTradingCountry(tradingCountry);
         invoiceSubcategoryCountry.setFilterEL(postData.getFilterEL());
         invoiceSubcategoryCountry.setTaxCodeEL(postData.getTaxCodeEL());
-        invoiceSubCategoryCountryService.create(invoiceSubcategoryCountry, currentUser);
+        invoiceSubCategoryCountryService.create(invoiceSubcategoryCountry);
     }
 
-    public void update(InvoiceSubCategoryCountryDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void update(InvoiceSubCategoryCountryDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getInvoiceSubCategory())) {
             missingParameters.add("invoiceSubCategory");
@@ -103,24 +101,24 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
 
         handleMissingParameters();
 
-        Provider provider = currentUser.getProvider();
+        
 
-        TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountry(), provider);
+        TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountry());
         if (tradingCountry == null) {
             throw new EntityDoesNotExistsException(TradingCountry.class, postData.getCountry());
         }
 
-        InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategory(), provider);
+        InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategory());
         if (invoiceSubCategory == null) {
             throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getInvoiceSubCategory());
         }
 
-        Tax tax = taxService.findByCode(postData.getTax(), provider);
+        Tax tax = taxService.findByCode(postData.getTax());
         if (tax == null) {
             throw new EntityDoesNotExistsException(Tax.class, postData.getTax());
         }
 
-        InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountry(invoiceSubCategory, tradingCountry, provider);
+        InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountry(invoiceSubCategory, tradingCountry);
         if (invoiceSubcategoryCountry == null) {
             throw new EntityDoesNotExistsException("InvoiceSubCategoryCountry with invoiceSubCategory=" + postData.getInvoiceSubCategory() + ", tradingCountry="
                     + postData.getCountry() + " does not exists.");
@@ -128,10 +126,10 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
 
         invoiceSubcategoryCountry.setTax(tax);
 
-        invoiceSubCategoryCountryService.update(invoiceSubcategoryCountry, currentUser);
+        invoiceSubCategoryCountryService.update(invoiceSubcategoryCountry);
     }
 
-    public InvoiceSubCategoryCountryDto find(String invoiceSubCategoryCode, String countryCode, Provider provider) throws MeveoApiException {
+    public InvoiceSubCategoryCountryDto find(String invoiceSubCategoryCode, String countryCode) throws MeveoApiException {
 
         if (StringUtils.isBlank(invoiceSubCategoryCode)) {
             missingParameters.add("invoiceSubCategoryCode");
@@ -142,18 +140,18 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
 
         handleMissingParameters();
 
-        TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(countryCode, provider);
+        TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(countryCode);
         if (tradingCountry == null) {
             throw new EntityDoesNotExistsException(TradingCountry.class, countryCode);
         }
 
-        InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(invoiceSubCategoryCode, provider);
+        InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(invoiceSubCategoryCode);
         if (invoiceSubCategory == null) {
             throw new EntityDoesNotExistsException(InvoiceSubCategory.class, invoiceSubCategoryCode);
         }
 
         InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountry(invoiceSubCategory, tradingCountry,
-            Arrays.asList("invoiceSubCategory", "tradingCountry", "tax"), provider);
+            Arrays.asList("invoiceSubCategory", "tradingCountry", "tax"));
         if (invoiceSubcategoryCountry == null) {
             throw new EntityDoesNotExistsException("InvoiceSubCategoryCountry with invoiceSubCategory=" + invoiceSubCategoryCode + ", tradingCountry=" + countryCode
                     + " already exists.");
@@ -162,7 +160,7 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
         return new InvoiceSubCategoryCountryDto(invoiceSubcategoryCountry);
     }
 
-    public void remove(String invoiceSubCategoryCode, String countryCode, User currentUser) throws MeveoApiException, BusinessException {
+    public void remove(String invoiceSubCategoryCode, String countryCode) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(invoiceSubCategoryCode)) {
             missingParameters.add("invoiceSubCategoryCode");
@@ -173,48 +171,48 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
 
         handleMissingParameters();
 
-        TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(countryCode, currentUser.getProvider());
+        TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(countryCode);
         if (tradingCountry == null) {
             throw new EntityDoesNotExistsException(TradingCountry.class, countryCode);
         }
 
-        InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(invoiceSubCategoryCode, currentUser.getProvider());
+        InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(invoiceSubCategoryCode);
         if (invoiceSubCategory == null) {
             throw new EntityDoesNotExistsException(InvoiceSubCategory.class, invoiceSubCategoryCode);
         }
 
         InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountry(invoiceSubCategory, tradingCountry,
-            Arrays.asList("invoiceSubCategory", "tradingCountry", "tax"), currentUser.getProvider());
+            Arrays.asList("invoiceSubCategory", "tradingCountry", "tax"));
         if (invoiceSubcategoryCountry == null) {
             throw new EntityDoesNotExistsException("InvoiceSubCategoryCountry with invoiceSubCategory=" + invoiceSubCategoryCode + ", tradingCountry=" + countryCode
                     + " already exists.");
         }
 
-        invoiceSubCategoryCountryService.remove(invoiceSubcategoryCountry, currentUser);
+        invoiceSubCategoryCountryService.remove(invoiceSubcategoryCountry);
     }
 
     /**
      * Create or update InvoiceSubCategoryCountry based on the invoice sub-category and country attached.
      * 
      * @param postData
-     * @param currentUser
+
      * @throws MeveoApiException
      * @throws BusinessException 
      */
-    public void createOrUpdate(InvoiceSubCategoryCountryDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void createOrUpdate(InvoiceSubCategoryCountryDto postData) throws MeveoApiException, BusinessException {
 
-        Provider provider = currentUser.getProvider();
+        
 
-        TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountry(), provider);
+        TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountry());
 
-        InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategory(), provider);
+        InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategory());
 
-        InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountry(invoiceSubCategory, tradingCountry, provider);
+        InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountry(invoiceSubCategory, tradingCountry);
 
         if (invoiceSubcategoryCountry == null) {
-            create(postData, currentUser);
+            create(postData);
         } else {
-            update(postData, currentUser);
+            update(postData);
         }
 
     }

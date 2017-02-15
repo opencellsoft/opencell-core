@@ -35,7 +35,7 @@ public class ModuleRsImpl extends BaseRs implements ModuleRs {
     public ActionStatus create(MeveoModuleDto moduleData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            moduleApi.create(moduleData, getCurrentUser());
+            moduleApi.create(moduleData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -54,7 +54,7 @@ public class ModuleRsImpl extends BaseRs implements ModuleRs {
     public ActionStatus update(MeveoModuleDto moduleDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            moduleApi.update(moduleDto, getCurrentUser());
+            moduleApi.update(moduleDto);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -73,7 +73,7 @@ public class ModuleRsImpl extends BaseRs implements ModuleRs {
     public ActionStatus delete(String code) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            moduleApi.delete(code, getCurrentUser());
+            moduleApi.delete(code);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -94,7 +94,7 @@ public class ModuleRsImpl extends BaseRs implements ModuleRs {
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
         result.getActionStatus().setMessage("");
         try {
-            List<MeveoModuleDto> dtos = moduleApi.list(null, getCurrentUser());
+            List<MeveoModuleDto> dtos = moduleApi.list(null);
             result.setModules(dtos);
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
@@ -115,7 +115,7 @@ public class ModuleRsImpl extends BaseRs implements ModuleRs {
         MeveoModuleDtoResponse result = new MeveoModuleDtoResponse();
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
         try {
-            result.setModule(moduleApi.find(code, getCurrentUser()));
+            result.setModule(moduleApi.find(code));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -135,7 +135,7 @@ public class ModuleRsImpl extends BaseRs implements ModuleRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            moduleApi.createOrUpdate(moduleDto, getCurrentUser());
+            moduleApi.createOrUpdate(moduleDto);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -155,7 +155,7 @@ public class ModuleRsImpl extends BaseRs implements ModuleRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            moduleApi.install(moduleDto, getCurrentUser());
+            moduleApi.install(moduleDto);
 
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
@@ -176,7 +176,7 @@ public class ModuleRsImpl extends BaseRs implements ModuleRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            moduleApi.uninstall(code, MeveoModule.class, getCurrentUser());
+            moduleApi.uninstall(code, MeveoModule.class);
 
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
@@ -197,7 +197,7 @@ public class ModuleRsImpl extends BaseRs implements ModuleRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            moduleApi.enable(code, MeveoModule.class, getCurrentUser());
+            moduleApi.enable(code, MeveoModule.class);
 
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
@@ -218,7 +218,7 @@ public class ModuleRsImpl extends BaseRs implements ModuleRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            moduleApi.disable(code, MeveoModule.class, getCurrentUser());
+            moduleApi.disable(code, MeveoModule.class);
 
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());

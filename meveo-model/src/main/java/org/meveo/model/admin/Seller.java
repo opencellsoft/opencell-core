@@ -44,13 +44,14 @@ import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.BusinessAccountModel;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.Address;
 
 @Entity
 @ObservableEntity
 @CustomFieldEntity(cftCodePrefix = "SELLER")
-@ExportIdentifier({ "code", "provider" })
-@Table(name = "CRM_SELLER", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
+@ExportIdentifier({ "code"})
+@Table(name = "CRM_SELLER", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_SELLER_SEQ")
 public class Seller extends BusinessCFEntity {
 
@@ -134,7 +135,7 @@ public class Seller extends BusinessCFEntity {
 		if (seller != null) {
 			return new ICustomFieldEntity[]{seller};
 		}
-		return new ICustomFieldEntity[]{getProvider()};
+		return new ICustomFieldEntity[]{new Provider()};
 	}
 
 

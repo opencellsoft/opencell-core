@@ -37,7 +37,7 @@ public class MeveoInstanceRsImpl extends BaseRs implements MeveoInstanceRs {
 
         try {
         	log.debug("start to create in meveoInstanceApi");
-            meveoInstanceApi.create(meveoInstanceDto, getCurrentUser());
+            meveoInstanceApi.create(meveoInstanceDto);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -57,7 +57,7 @@ log.debug("end create meveoInstance");
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            meveoInstanceApi.update(meveoInstanceDto, getCurrentUser());
+            meveoInstanceApi.update(meveoInstanceDto);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -76,7 +76,7 @@ log.debug("end create meveoInstance");
     public MeveoInstanceResponseDto find(String code) {
         MeveoInstanceResponseDto result = new MeveoInstanceResponseDto();
         try {
-            result.setMeveoInstance(meveoInstanceApi.find(code, getCurrentUser().getProvider()));
+            result.setMeveoInstance(meveoInstanceApi.find(code));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -96,7 +96,7 @@ log.debug("end create meveoInstance");
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            meveoInstanceApi.remove(code, getCurrentUser());
+            meveoInstanceApi.remove(code);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -116,7 +116,7 @@ log.debug("end create meveoInstance");
         MeveoInstancesResponseDto result = new MeveoInstancesResponseDto();
 
         try {
-            result.setMeveoInstances(meveoInstanceApi.list(getCurrentUser().getProvider()));
+            result.setMeveoInstances(meveoInstanceApi.list());
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -136,7 +136,7 @@ log.debug("end create meveoInstance");
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            meveoInstanceApi.createOrUpdate(meveoInstanceDto, getCurrentUser());
+            meveoInstanceApi.createOrUpdate(meveoInstanceDto);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

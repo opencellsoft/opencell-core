@@ -15,12 +15,11 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.OccTemplateDto;
 import org.meveo.api.dto.response.GetOccTemplateResponseDto;
 import org.meveo.api.dto.response.GetOccTemplatesResponseDto;
-import org.meveo.api.rest.security.RSSecured;
 
 @Path("/occTemplate")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-@RSSecured
+
 public interface OccTemplateRs extends IBaseRs {
 
     /**

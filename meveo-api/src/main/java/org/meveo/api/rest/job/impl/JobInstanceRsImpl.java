@@ -32,7 +32,7 @@ public class JobInstanceRsImpl extends BaseRs implements JobInstanceRs {
     public ActionStatus create(JobInstanceDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            jobInstanceApi.create(postData, getCurrentUser());
+            jobInstanceApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -51,7 +51,7 @@ public class JobInstanceRsImpl extends BaseRs implements JobInstanceRs {
     public ActionStatus update(JobInstanceDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            jobInstanceApi.update(postData, getCurrentUser());
+            jobInstanceApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -70,7 +70,7 @@ public class JobInstanceRsImpl extends BaseRs implements JobInstanceRs {
     public ActionStatus createOrUpdate(JobInstanceDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            jobInstanceApi.createOrUpdate(postData, getCurrentUser());
+            jobInstanceApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -90,7 +90,7 @@ public class JobInstanceRsImpl extends BaseRs implements JobInstanceRs {
         JobInstanceResponseDto result = new JobInstanceResponseDto();
 
         try {
-            result.setJobInstanceDto(jobInstanceApi.find(jobInstanceCode, getCurrentUser()));
+            result.setJobInstanceDto(jobInstanceApi.find(jobInstanceCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -109,7 +109,7 @@ public class JobInstanceRsImpl extends BaseRs implements JobInstanceRs {
     public ActionStatus remove(String jobInstanceCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            jobInstanceApi.remove(jobInstanceCode, getCurrentUser());
+            jobInstanceApi.remove(jobInstanceCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

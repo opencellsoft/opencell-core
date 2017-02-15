@@ -78,7 +78,7 @@ public class InvoiceCategoryBean extends CustomFieldBean<InvoiceCategory> {
 
 	@Override
 	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider", "invoiceSubCategories");
+		return Arrays.asList("invoiceSubCategories");
 	}
 
 	@Override

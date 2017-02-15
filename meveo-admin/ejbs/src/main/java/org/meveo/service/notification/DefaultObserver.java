@@ -38,7 +38,6 @@ import org.meveo.event.qualifier.Terminated;
 import org.meveo.event.qualifier.Updated;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
-import org.meveo.model.IProvider;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.mediation.MeveoFtpFile;
@@ -122,16 +121,16 @@ public class DefaultObserver {
         log.debug("execute notification script: {}", scriptInstance.getCode());
 
         try {
-            ScriptInterface scriptInterface = scriptInstanceService.getScriptInstance(scriptInstance.getProvider(), scriptInstance.getCode());
+            ScriptInterface scriptInterface = scriptInstanceService.getScriptInstance(scriptInstance.getCode());
             Map<Object, Object> userMap = new HashMap<>();
             userMap.put("event", entityOrEvent);
             userMap.put("manager", manager);
             for (Map.Entry<String, String> entry : params.entrySet()) {
                 context.put(entry.getKey(), ValueExpressionWrapper.evaluateExpression(entry.getValue(), userMap, Object.class));
             }
-            scriptInterface.init(context, scriptInstance.getAuditable().getCreator());
-            scriptInterface.execute(context, scriptInstance.getAuditable().getCreator());
-            scriptInterface.finalize(context, scriptInstance.getAuditable().getCreator());
+            scriptInterface.init(context);
+            scriptInterface.execute(context);
+            scriptInterface.finalize(context);
         } catch (Exception e) {
             log.error("failed script execution", e);
             if(e instanceof BusinessException) {
@@ -165,8 +164,7 @@ public class DefaultObserver {
             // Check if the counter associated to notification was not exhausted yet
             if (notif.getCounterInstance() != null) {
                 try {
-                    counterInstanceService.deduceCounterValue(notif.getCounterInstance(), new Date(), notif.getAuditable().getCreated(), new BigDecimal(1), notif.getAuditable()
-                        .getCreator());
+                    counterInstanceService.deduceCounterValue(notif.getCounterInstance(), new Date(), notif.getAuditable().getCreated(), new BigDecimal(1));
                 } catch (CounterValueInsufficientException ex) {
                     sendNotify = false;
                 }
@@ -211,7 +209,7 @@ public class DefaultObserver {
             }
 
         } catch (Exception e1) {
-            log.error("Error while firing notification {} for provider {}: {} ", notif.getCode(), notif.getProvider().getCode(), e1);
+            log.error("Error while firing notification {}: {} ", notif.getCode(), e1);
             try {
                 NotificationHistory notificationHistory = notificationHistoryService.create(notif, entityOrEvent, e1.getMessage(), NotificationHistoryStatusEnum.FAILED);
                 if (entityOrEvent instanceof InboundRequest) {
@@ -225,14 +223,14 @@ public class DefaultObserver {
         return true;
     }
 
-    private void fireCdrNotification(Notification notif, IProvider cdr) {
+    private void fireCdrNotification(Notification notif, Object cdr) {
         log.debug("Fire Cdr Notification for notif {} and  cdr {}", notif, cdr);
         try {
             if (!StringUtils.isBlank(notif.getScriptInstance()) && matchExpression(notif.getElFilter(), cdr)) {
                 executeScript(notif.getScriptInstance(), cdr, notif.getParams(), new HashMap<String, Object>());
             }
         } catch (BusinessException e1) {
-            log.error("Error while firing notification {} for provider {}: {} ", notif.getCode(), notif.getProvider().getCode(), e1);
+            log.error("Error while firing notification {}: {} ", notif.getCode(), e1);
         }
 
     }
@@ -292,7 +290,7 @@ public class DefaultObserver {
         checkEvent(NotificationEventTypeEnum.REJECTED, e);
     }
 
-    public void cdrRejected(@Observes @RejectedCDR IProvider cdr) {
+    public void cdrRejected(@Observes @RejectedCDR Object cdr) {
         log.debug("Defaut observer : cdr {} rejected", cdr);
         for (Notification notif : notificationCacheContainerProvider.getApplicableNotifications(NotificationEventTypeEnum.REJECTED_CDR, cdr)) {
             fireCdrNotification(notif, cdr);

@@ -30,10 +30,10 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
     	CreateInvoiceResponseDto result = new CreateInvoiceResponseDto();
 
         try {
-        	result = invoiceApi.create(invoiceDto, getCurrentUser());  
+        	result = invoiceApi.create(invoiceDto);  
         	if(invoiceDto.isAutoValidation()){
-        		String invoiceXml = invoiceApi.getXMLInvoice(result.getInvoiceNumber(), invoiceDto.getInvoiceType(), getCurrentUser());
-        		byte[] invoicePdf = invoiceApi.getPdfInvoince(result.getInvoiceNumber(), invoiceDto.getInvoiceType(), getCurrentUser());
+        		String invoiceXml = invoiceApi.getXMLInvoice(result.getInvoiceNumber(), invoiceDto.getInvoiceType());
+        		byte[] invoicePdf = invoiceApi.getPdfInvoince(result.getInvoiceNumber(), invoiceDto.getInvoiceType());
         		if(invoiceDto.isReturnXml()){
         			result.setXmlInvoice(invoiceXml);
         		}
@@ -56,7 +56,7 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
         CustomerInvoicesResponse result = new CustomerInvoicesResponse();
 
         try {
-            result.setCustomerInvoiceDtoList(invoiceApi.list(customerAccountCode, getCurrentUser().getProvider()));
+            result.setCustomerInvoiceDtoList(invoiceApi.list(customerAccountCode));
 
 		} catch (Exception e) {
 			super.processException(e, result.getActionStatus());
@@ -70,7 +70,7 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
         GenerateInvoiceResponseDto result = new GenerateInvoiceResponseDto();
         try {
 
-            result.setGenerateInvoiceResultDto(invoiceApi.generateInvoice(generateInvoiceRequestDto, getCurrentUser()));
+            result.setGenerateInvoiceResultDto(invoiceApi.generateInvoice(generateInvoiceRequestDto));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
 		} catch (Exception e) {
@@ -85,7 +85,7 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
         GetXmlInvoiceResponseDto result = new GetXmlInvoiceResponseDto();
         try {
 
-            result.setXmlContent(invoiceApi.getXMLInvoice(invoiceNumber, getCurrentUser()));
+            result.setXmlContent(invoiceApi.getXMLInvoice(invoiceNumber));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
 		} catch (Exception e) {
@@ -101,7 +101,7 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
         GetXmlInvoiceResponseDto result = new GetXmlInvoiceResponseDto();
         try {
 
-            result.setXmlContent(invoiceApi.getXMLInvoice(invoiceNumber, invoiceType, getCurrentUser()));
+            result.setXmlContent(invoiceApi.getXMLInvoice(invoiceNumber, invoiceType));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
 		} catch (Exception e) {
@@ -116,7 +116,7 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
         GetPdfInvoiceResponseDto result = new GetPdfInvoiceResponseDto();
         try {
 
-            result.setPdfContent(invoiceApi.getPdfInvoince(invoiceNumber, getCurrentUser()));
+            result.setPdfContent(invoiceApi.getPdfInvoince(invoiceNumber));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
 		} catch (Exception e) {
@@ -131,7 +131,7 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
         GetPdfInvoiceResponseDto result = new GetPdfInvoiceResponseDto();
         try {
 
-            result.setPdfContent(invoiceApi.getPdfInvoince(invoiceNumber, invoiceType, getCurrentUser()));
+            result.setPdfContent(invoiceApi.getPdfInvoince(invoiceNumber, invoiceType));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
 		} catch (Exception e) {
@@ -145,7 +145,7 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
 	public ActionStatus cancelInvoice(Long invoiceId) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		try {
-			invoiceApi.cancelInvoice(invoiceId, getCurrentUser());
+			invoiceApi.cancelInvoice(invoiceId);
 		} catch (Exception e) {
 			super.processException(e, result);
 		}
@@ -156,7 +156,7 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
 	public ActionStatus validateInvoice(Long invoiceId) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		try {
-			result.setMessage(invoiceApi.validateInvoice(invoiceId, getCurrentUser()));
+			result.setMessage(invoiceApi.validateInvoice(invoiceId));
 		} catch (Exception e) {
 			super.processException(e, result);
 		}
@@ -167,7 +167,7 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
 	public GetInvoiceResponseDto findInvoiceByIdOrType(Long id, String invoiceNumber, String invoiceType, boolean includeTransactions) {
 		GetInvoiceResponseDto result = new GetInvoiceResponseDto();
 		try {
-            result.setInvoice(invoiceApi.find(id, invoiceNumber, invoiceType, includeTransactions, getCurrentUser().getProvider()));
+            result.setInvoice(invoiceApi.find(id, invoiceNumber, invoiceType, includeTransactions));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
         } catch (Exception e) {
             processException(e, result.getActionStatus());
@@ -180,7 +180,7 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
 	public CustomerInvoicesResponse listPresentInAR(String customerAccountCode) {
 		CustomerInvoicesResponse result = new CustomerInvoicesResponse();
 		try {
-			result.setCustomerInvoiceDtoList(invoiceApi.listPresentInAR(customerAccountCode, getCurrentUser().getProvider()));
+			result.setCustomerInvoiceDtoList(invoiceApi.listPresentInAR(customerAccountCode));
 
 		} catch (Exception e) {
 			super.processException(e, result.getActionStatus());
@@ -194,7 +194,7 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
 		 GenerateInvoiceResponseDto result = new GenerateInvoiceResponseDto();
 	        try {
 
-	            result.setGenerateInvoiceResultDto(invoiceApi.generateInvoice(generateInvoiceRequestDto,true, getCurrentUser()));
+	            result.setGenerateInvoiceResultDto(invoiceApi.generateInvoice(generateInvoiceRequestDto,true));
 	            result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
 			} catch (Exception e) {

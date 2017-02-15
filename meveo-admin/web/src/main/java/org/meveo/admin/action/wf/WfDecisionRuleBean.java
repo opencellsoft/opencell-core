@@ -18,9 +18,6 @@
  */
 package org.meveo.admin.action.wf;
 
-import java.util.Arrays;
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -93,15 +90,4 @@ public class WfDecisionRuleBean extends BaseBean<WFDecisionRule> {
     protected IPersistenceService<WFDecisionRule> getPersistenceService() {
         return wFDecisionRuleService;
     }
-
-    @Override
-    protected List<String> getFormFieldsToFetch() {
-        return Arrays.asList("provider");
-    }
-
-    @Override
-    protected List<String> getListFieldsToFetch() {
-        return Arrays.asList("provider");
-    }
-
 }

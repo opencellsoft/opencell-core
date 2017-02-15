@@ -15,7 +15,6 @@ import org.meveo.admin.async.RatedTransactionAsync;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.WalletOperationService;
@@ -41,10 +40,10 @@ public class RatedTransactionsJobBean {
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NEVER)
 	public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
-		log.debug("Running for user={}, parameter={}", currentUser, jobInstance.getParametres());
+		log.debug("Running for with parameter={}", jobInstance.getParametres());
 		
 		try {			
-			List<Long> walletOperationIds = walletOperationService.listToInvoiceIds(new Date().getProvider());
+			List<Long> walletOperationIds = walletOperationService.listToInvoiceIds(new Date());
 			log.info("WalletOperations to convert into rateTransactions={}", walletOperationIds.size());
 			result.setNbItemsToProcess(walletOperationIds.size());
 			Long nbRuns = new Long(1);		

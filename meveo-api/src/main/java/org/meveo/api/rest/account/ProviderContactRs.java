@@ -20,7 +20,6 @@ import org.meveo.api.dto.account.ProviderContactDto;
 import org.meveo.api.dto.response.account.ProviderContactResponseDto;
 import org.meveo.api.dto.response.account.ProviderContactsResponseDto;
 import org.meveo.api.rest.IBaseRs;
-import org.meveo.api.rest.security.RSSecured;
 
 /**
  * @author Tyshan　Shi(tyshan@manaty.net)
@@ -31,7 +30,7 @@ import org.meveo.api.rest.security.RSSecured;
 @Path("/account/providerContact")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-@RSSecured
+
 public interface ProviderContactRs extends IBaseRs {
 
 	/**

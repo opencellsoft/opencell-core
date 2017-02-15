@@ -11,7 +11,6 @@ import javax.ws.rs.core.UriInfo;
 import org.meveo.api.BaseApi;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
 import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
@@ -39,44 +38,44 @@ public class CatalogApi extends BaseApi {
 	@Inject
 	private PricePlanMatrixService pricePlanMatrixService;
 
-	public ProductOffering findProductOffering(String code, User currentUser, UriInfo uriInfo, Category category) throws EntityDoesNotExistsException {
-		OfferTemplate offerTemplate = offerTemplateService.findByCode(code, currentUser.getProvider());
+	public ProductOffering findProductOffering(String code, UriInfo uriInfo, Category category) throws EntityDoesNotExistsException {
+		OfferTemplate offerTemplate = offerTemplateService.findByCode(code);
 		if (offerTemplate == null) {
 			throw new EntityDoesNotExistsException(OfferTemplate.class, code);
 		}
-		List<ProductOfferingPrice> offerPrices = getOfferPrices(offerTemplate, currentUser);
+		List<ProductOfferingPrice> offerPrices = getOfferPrices(offerTemplate);
 		return new ProductOffering(offerTemplate, uriInfo, category, offerPrices);
 	}
 
-	public List<ProductOffering> findProductOfferings(UriInfo uriInfo, Category category, User currentUser) {
+	public List<ProductOffering> findProductOfferings(UriInfo uriInfo, Category category) {
 		List<ProductOffering> productOfferings = new ArrayList<ProductOffering>();
-		List<OfferTemplate> offerTemplates = offerTemplateService.list(currentUser.getProvider(), true);
+		List<OfferTemplate> offerTemplates = offerTemplateService.list(true);
 
 		for (OfferTemplate offerTemplate : offerTemplates) {
-			List<ProductOfferingPrice> offerPrices = getOfferPrices(offerTemplate, currentUser);
+			List<ProductOfferingPrice> offerPrices = getOfferPrices(offerTemplate);
 			ProductOffering productOffering = new ProductOffering(offerTemplate, uriInfo, category, offerPrices);
-			productOffering.setProductOfferingPrice(getOfferPrices(offerTemplate, currentUser));
+			productOffering.setProductOfferingPrice(getOfferPrices(offerTemplate));
 			productOfferings.add(productOffering);
 		}
 		return productOfferings;
 	}
 
-	private List<ProductOfferingPrice> getOfferPrices(OfferTemplate offerTemplate, User currentUser) {
+	private List<ProductOfferingPrice> getOfferPrices(OfferTemplate offerTemplate) {
 		List<ProductOfferingPrice> offerPrices = new ArrayList<>();
 		for (OfferServiceTemplate offerServiceTemplate : offerTemplate.getOfferServiceTemplates()) {
 			if (!offerServiceTemplate.isMandatory()) {
 				continue;
 			}
 			ServiceTemplate serviceTemplate = offerServiceTemplate.getServiceTemplate();
-			offerPrices.addAll(getProductOfferingPricesFromSubscriptionCharges(offerTemplate, currentUser, serviceTemplate));
-			offerPrices.addAll(getProductOfferingPricesFromRecurringCharges(offerTemplate, currentUser, serviceTemplate));
-			offerPrices.addAll(getProductOfferingPricesFromOfferProducts(offerTemplate, currentUser, serviceTemplate));
+			offerPrices.addAll(getProductOfferingPricesFromSubscriptionCharges(offerTemplate, serviceTemplate));
+			offerPrices.addAll(getProductOfferingPricesFromRecurringCharges(offerTemplate, serviceTemplate));
+			offerPrices.addAll(getProductOfferingPricesFromOfferProducts(offerTemplate, serviceTemplate));
 		}
 
 		return offerPrices;
 	}
 
-	private List<ProductOfferingPrice> getProductOfferingPricesFromSubscriptionCharges(OfferTemplate offerTemplate, User currentUser, ServiceTemplate serviceTemplate) {
+	private List<ProductOfferingPrice> getProductOfferingPricesFromSubscriptionCharges(OfferTemplate offerTemplate, ServiceTemplate serviceTemplate) {
 		List<ProductOfferingPrice> offerPrices = new ArrayList<>();
 		if (serviceTemplate.getServiceSubscriptionCharges() != null) {
 			Price price = new Price();
@@ -85,7 +84,7 @@ public class CatalogApi extends BaseApi {
 
 			for (ServiceChargeTemplateSubscription serviceChargeTemplateSubscription : serviceTemplate.getServiceSubscriptionCharges()) {
 				List<PricePlanMatrix> offerPricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(offerTemplate.getCode(),
-						serviceChargeTemplateSubscription.getChargeTemplate().getCode(), currentUser.getProvider());
+						serviceChargeTemplateSubscription.getChargeTemplate().getCode());
 				if (serviceChargeTemplateSubscription.getChargeTemplate().getInvoiceSubCategory().getInvoiceSubcategoryCountries() != null
 						&& serviceChargeTemplateSubscription.getChargeTemplate().getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax() != null) {
 					price.setTaxRate(serviceChargeTemplateSubscription.getChargeTemplate().getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax().getPercent());
@@ -93,22 +92,21 @@ public class CatalogApi extends BaseApi {
 
 				if (offerPricePlans != null && offerPricePlans.size() > 0) {
 					price.setDutyFreeAmount(price.getDutyFreeAmount().add(offerPricePlans.get(0).getAmountWithoutTax()));
-					if (!currentUser.getProvider().isEntreprise()) {
+					if (!appProvider.isEntreprise()) {
 						price.setTaxIncludedAmount(price.getTaxIncludedAmount().add(offerPricePlans.get(0).getAmountWithTax()));
 					}
 				} else {
-					List<PricePlanMatrix> pricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(null, serviceChargeTemplateSubscription.getChargeTemplate().getCode(),
-							currentUser.getProvider());
+					List<PricePlanMatrix> pricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(null, serviceChargeTemplateSubscription.getChargeTemplate().getCode());
 					if (pricePlans != null && pricePlans.size() > 0) {
 						price.setDutyFreeAmount(price.getDutyFreeAmount().add(pricePlans.get(0).getAmountWithoutTax()));
-						if (!currentUser.getProvider().isEntreprise()) {
+						if (!appProvider.isEntreprise()) {
 							price.setTaxIncludedAmount(price.getTaxIncludedAmount().add(pricePlans.get(0).getAmountWithTax()));
 						}
 					}
 				}
 			}
 
-			if (currentUser.getProvider().isEntreprise()) {
+			if (appProvider.isEntreprise()) {
 				if (price.getDutyFreeAmount() != null && price.getTaxRate() != null) {
 					BigDecimal taxRate = price.getTaxRate().divide(new BigDecimal(100)).add(new BigDecimal(1));
 					price.setTaxIncludedAmount(price.getDutyFreeAmount().multiply(taxRate));
@@ -130,7 +128,7 @@ public class CatalogApi extends BaseApi {
 		return offerPrices;
 	}
 
-	private List<ProductOfferingPrice> getProductOfferingPricesFromRecurringCharges(OfferTemplate offerTemplate, User currentUser, ServiceTemplate serviceTemplate) {
+	private List<ProductOfferingPrice> getProductOfferingPricesFromRecurringCharges(OfferTemplate offerTemplate, ServiceTemplate serviceTemplate) {
 		List<ProductOfferingPrice> offerPrices = new ArrayList<>();
 		if (serviceTemplate.getServiceRecurringCharges() != null) {
 			ProductOfferingPrice offerPrice = null;
@@ -142,7 +140,7 @@ public class CatalogApi extends BaseApi {
 				price.setTaxIncludedAmount(new BigDecimal(0));
 
 				List<PricePlanMatrix> offerPricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(offerTemplate.getCode(),
-						serviceChargeTemplateRecurring.getChargeTemplate().getCode(), currentUser.getProvider());
+						serviceChargeTemplateRecurring.getChargeTemplate().getCode());
 				if (serviceChargeTemplateRecurring.getChargeTemplate().getInvoiceSubCategory().getInvoiceSubcategoryCountries() != null
 						&& serviceChargeTemplateRecurring.getChargeTemplate().getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax() != null) {
 					price.setTaxRate(serviceChargeTemplateRecurring.getChargeTemplate().getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax().getPercent());
@@ -150,15 +148,14 @@ public class CatalogApi extends BaseApi {
 
 				if (offerPricePlans != null && offerPricePlans.size() > 0) {
 					price.setDutyFreeAmount(price.getDutyFreeAmount().add(offerPricePlans.get(0).getAmountWithoutTax()));
-					if (!currentUser.getProvider().isEntreprise()) {
+					if (!appProvider.isEntreprise()) {
 						price.setTaxIncludedAmount(price.getTaxIncludedAmount().add(offerPricePlans.get(0).getAmountWithTax()));
 					}
 				} else {
-					List<PricePlanMatrix> pricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(null, serviceChargeTemplateRecurring.getChargeTemplate().getCode(),
-							currentUser.getProvider());
+					List<PricePlanMatrix> pricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(null, serviceChargeTemplateRecurring.getChargeTemplate().getCode());
 					if (pricePlans != null && pricePlans.size() > 0) {
 						price.setDutyFreeAmount(price.getDutyFreeAmount().add(pricePlans.get(0).getAmountWithoutTax()));
-						if (!currentUser.getProvider().isEntreprise()) {
+						if (!appProvider.isEntreprise()) {
 							if (price.getTaxIncludedAmount() != null) {
 								price.setTaxIncludedAmount(
 										price.getTaxIncludedAmount().add(pricePlans.get(0).getAmountWithTax() != null ? pricePlans.get(0).getAmountWithTax() : BigDecimal.ZERO));
@@ -167,7 +164,7 @@ public class CatalogApi extends BaseApi {
 					}
 				}
 
-				if (currentUser.getProvider().isEntreprise()) {
+				if (appProvider.isEntreprise()) {
 					if (price.getDutyFreeAmount() != null && price.getTaxRate() != null) {
 						BigDecimal taxRate = price.getTaxRate().divide(new BigDecimal(100)).add(new BigDecimal(1));
 						price.setTaxIncludedAmount(price.getDutyFreeAmount().multiply(taxRate));
@@ -192,7 +189,7 @@ public class CatalogApi extends BaseApi {
 		return offerPrices;
 	}
 
-	private List<ProductOfferingPrice> getProductOfferingPricesFromOfferProducts(OfferTemplate offerTemplate, User currentUser, ServiceTemplate serviceTemplate) {
+	private List<ProductOfferingPrice> getProductOfferingPricesFromOfferProducts(OfferTemplate offerTemplate, ServiceTemplate serviceTemplate) {
 		List<ProductOfferingPrice> productOfferingPrices = new ArrayList<>();
 		List<OfferProductTemplate> offerProductTemplates = offerTemplate.getOfferProductTemplates();
 
@@ -204,7 +201,7 @@ public class CatalogApi extends BaseApi {
 
 			// load all prices from the offer template
 			OfferTemplate productOfferTemplate = offerProductTemplate.getOfferTemplate();
-			productOfferingPrices.addAll(getOfferPrices(productOfferTemplate, currentUser));
+			productOfferingPrices.addAll(getOfferPrices(productOfferTemplate));
 			
 			// load the prices form the product template
 			ProductTemplate productTemplate = offerProductTemplate.getProductTemplate();
@@ -222,24 +219,24 @@ public class CatalogApi extends BaseApi {
 					price.setTaxRate(productChargeTemplate.getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax().getPercent());
 				}
 				
-				List<PricePlanMatrix> offerPricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(offerTemplate.getCode(), chargeCode, currentUser.getProvider());
+				List<PricePlanMatrix> offerPricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(offerTemplate.getCode(), chargeCode);
 
 				if (offerPricePlans != null && offerPricePlans.size() > 0) {
 					price.setDutyFreeAmount(price.getDutyFreeAmount().add(offerPricePlans.get(0).getAmountWithoutTax()));
-					if (!currentUser.getProvider().isEntreprise()) {
+					if (!appProvider.isEntreprise()) {
 						price.setTaxIncludedAmount(price.getTaxIncludedAmount().add(offerPricePlans.get(0).getAmountWithTax()));
 					}
 				} else {
-					List<PricePlanMatrix> pricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(null, productChargeTemplate.getCode(), currentUser.getProvider());
+					List<PricePlanMatrix> pricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(null, productChargeTemplate.getCode());
 					if (pricePlans != null && pricePlans.size() > 0) {
 						price.setDutyFreeAmount(price.getDutyFreeAmount().add(pricePlans.get(0).getAmountWithoutTax()));
-						if (!currentUser.getProvider().isEntreprise()) {
+						if (!appProvider.isEntreprise()) {
 							price.setTaxIncludedAmount(price.getTaxIncludedAmount().add(pricePlans.get(0).getAmountWithTax()));
 						}
 					}
 				}
 
-				if (currentUser.getProvider().isEntreprise()) {
+				if (appProvider.isEntreprise()) {
 					if (price.getDutyFreeAmount() != null && price.getTaxRate() != null) {
 						BigDecimal taxRate = price.getTaxRate().divide(new BigDecimal(100)).add(new BigDecimal(1));
 						price.setTaxIncludedAmount(price.getDutyFreeAmount().multiply(taxRate));
@@ -261,8 +258,8 @@ public class CatalogApi extends BaseApi {
 		return productOfferingPrices;
 	}
 
-	public ProductSpecification findProductSpecification(String code, User currentUser, UriInfo uriInfo) throws EntityDoesNotExistsException {
-		OfferTemplate offerTemplate = offerTemplateService.findByCode(code, currentUser.getProvider());
+	public ProductSpecification findProductSpecification(String code, UriInfo uriInfo) throws EntityDoesNotExistsException {
+		OfferTemplate offerTemplate = offerTemplateService.findByCode(code);
 		if (offerTemplate != null) {
 			return ProductSpecification.parseFromOfferTemplate(offerTemplate, uriInfo);
 		} else {
@@ -270,8 +267,8 @@ public class CatalogApi extends BaseApi {
 		}
 	}
 
-	public List<ProductSpecification> findProductSpecifications(User currentUser, UriInfo uriInfo) {
-		List<OfferTemplate> offerTemplates = offerTemplateService.list(currentUser.getProvider(), true);
+	public List<ProductSpecification> findProductSpecifications(UriInfo uriInfo) {
+		List<OfferTemplate> offerTemplates = offerTemplateService.list(true);
 		return ProductSpecification.parseFromOfferTemplates(offerTemplates, uriInfo);
 	}
 

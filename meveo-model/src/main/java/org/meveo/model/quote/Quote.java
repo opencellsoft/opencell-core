@@ -31,9 +31,9 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 
 @Entity
-@ExportIdentifier({ "code", "provider" })
+@ExportIdentifier({ "code"})
 @CustomFieldEntity(cftCodePrefix = "QUOTE")
-@Table(name = "ORD_QUOTE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
+@Table(name = "ORD_QUOTE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ORD_QUOTE_SEQ")
 public class Quote extends BusinessCFEntity {
 

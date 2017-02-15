@@ -32,9 +32,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.base.PersistenceService;
@@ -56,9 +54,8 @@ public class EdrService extends PersistenceService<EDR> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Long> getEDRidsToRate(Provider provider) {
+	public List<Long> getEDRidsToRate() {
 		QueryBuilder qb = new QueryBuilder("SELECT c.id FROM "+EDR.class.getName()+" c");
-		qb.addCriterionEntity("c.provider", provider);
 		qb.addCriterion("c.status", "=", EDRStatusEnum.OPEN, true);
 
 		try {
@@ -69,9 +66,9 @@ public class EdrService extends PersistenceService<EDR> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<EDR> getEDRToRate(Provider provider) {
+	public List<EDR> getEDRToRate() {
 		QueryBuilder qb = new QueryBuilder(EDR.class, "e");
-		qb.addCriterionEntity("provider", provider);
+		
 		qb.addCriterion("status", "=", EDRStatusEnum.OPEN, true);
 
 		try {
@@ -94,10 +91,10 @@ public class EdrService extends PersistenceService<EDR> {
 	}
 
 
-    public boolean duplicateFound(Provider provider, String originBatch, String originRecord) {
+    public boolean duplicateFound(String originBatch, String originRecord) {
         boolean result = false;
         if (useInMemoryDeduplication) {
-            result = cdrEdrProcessingCacheContainerProvider.isEDRCached(provider.getId(), originBatch, originRecord);
+            result = cdrEdrProcessingCacheContainerProvider.isEDRCached(originBatch, originRecord);
         } else {
             result = findByBatchAndRecordId(originBatch, originRecord) != null;
         }
@@ -105,43 +102,43 @@ public class EdrService extends PersistenceService<EDR> {
     }
 
     @Override
-	public void create(EDR edr, User user) throws BusinessException {
-		super.create(edr, user);
+	public void create(EDR edr) throws BusinessException {
+		super.create(edr);
 		if (useInMemoryDeduplication) {
 		    cdrEdrProcessingCacheContainerProvider.addEdrToCache(edr);
 		}
 	}
 
-	public void massUpdate(EDRStatusEnum status, Subscription subscription, Provider provider) {
+	public void massUpdate(EDRStatusEnum status, Subscription subscription) {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("UPDATE "
 				+ EDR.class.getSimpleName()
-				+ " e SET e.status=:newStatus, e.lastUpdate=:lastUpdate WHERE e.status=:oldStatus AND e.subscription=:subscription AND e.provider=:provider");
+				+ " e SET e.status=:newStatus, e.lastUpdate=:lastUpdate WHERE e.status=:oldStatus AND e.subscription=:subscription");
 
 		try {
 			getEntityManager().createQuery(sb.toString()).setParameter("newStatus", status)
 					.setParameter("subscription", subscription).setParameter("oldStatus", EDRStatusEnum.REJECTED)
-					.setParameter("provider", provider).setParameter("lastUpdate", new Date()).executeUpdate();
+					.setParameter("lastUpdate", new Date()).executeUpdate();
 			
 		} catch (Exception e) {
 			log.error("error while updating edr",e);
 		}
 	}
 
-	public void massUpdate(EDRStatusEnum status, Set<Long> selectedIds, Provider provider) {
+	public void massUpdate(EDRStatusEnum status, Set<Long> selectedIds) {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("UPDATE "
 				+ EDR.class.getSimpleName()
-				+ " e SET e.status=:newStatus, e.lastUpdate=:lastUpdate WHERE e.status=:oldStatus AND e.id IN :selectedIds AND e.provider=:provider");
+				+ " e SET e.status=:newStatus, e.lastUpdate=:lastUpdate WHERE e.status=:oldStatus AND e.id IN :selectedIds ");
 
 		try {
 			log.debug(
 					"{} rows updated",
 					getEntityManager().createQuery(sb.toString()).setParameter("newStatus", status)
 							.setParameter("selectedIds", selectedIds).setParameter("oldStatus", EDRStatusEnum.REJECTED)
-							.setParameter("provider", provider).setParameter("lastUpdate", new Date()).executeUpdate());
+							.setParameter("lastUpdate", new Date()).executeUpdate());
 		} catch (Exception e) {
 			log.error("failed to updating edr",e);
 		}

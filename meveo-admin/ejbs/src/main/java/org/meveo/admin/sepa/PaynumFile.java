@@ -15,7 +15,7 @@ import org.meveo.admin.util.ArConfig;
 import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.CsvReader;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.admin.User;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDRequestItem;
 import org.meveo.model.payments.DDRequestLOT;
@@ -25,6 +25,7 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.payments.impl.DDRequestItemService;
 import org.meveo.service.payments.impl.DDRequestLOTService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
+import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,19 +46,22 @@ public class PaynumFile {
 	@Inject
 	private DDRequestLOTService dDRequestLOTService;
 	
+    @Inject
+    @ApplicationProvider
+    private Provider appProvider;
+	
 	public String getDDFileName(DDRequestLOT ddRequestLot) throws BusinessException {
 		String fileName = null;
 		
 		String codeCreancier_paramKey = "paynum.codeCreancier";
-		String codeCreancier = (String) customFieldInstanceService.getOrCreateCFValueFromParamValue(codeCreancier_paramKey, null,
-				ddRequestLot.getProvider(), true, ddRequestLot.getAuditable().getCreator());			
+		String codeCreancier = (String) customFieldInstanceService.getOrCreateCFValueFromParamValue(codeCreancier_paramKey, null, appProvider, true);			
 		fileName =  DateUtils.formatDateWithPattern(new Date(), "yyyyMMdd")+"_"+(ddRequestLot.getInvoicesNumber() - ddRequestLot.getRejectedInvoices() )+
-		"_"+(ddRequestLot.getInvoicesAmount().setScale((ddRequestLot.getProvider().getRounding()==null?2:ddRequestLot.getProvider().getRounding()), RoundingMode.HALF_UP).multiply(new BigDecimal(100)).longValue())+
+		"_"+(ddRequestLot.getInvoicesAmount().setScale((appProvider.getRounding()==null?2:appProvider.getRounding()), RoundingMode.HALF_UP).multiply(new BigDecimal(100)).longValue())+
 		"_ppf_factures_"+codeCreancier+".csv";	
 			
 		String outputDir = ParamBean.getInstance().getProperty("providers.rootDir", "/tmp/meveo");
 
-		outputDir = outputDir + File.separator + ddRequestLot.getProvider().getCode() + File.separator + ArConfig.getDDRequestOutputDirectory();
+		outputDir = outputDir + File.separator + appProvider.getCode() + File.separator + ArConfig.getDDRequestOutputDirectory();
 		outputDir = outputDir.replaceAll("\\..", "");
 
 		log.info("DDRequest output directory=" + outputDir);
@@ -85,7 +89,7 @@ public class PaynumFile {
 //	       code facture secondaire (optionnel)
 		lineAsArray[6] =  ddrequestItem.getReference();
 //	       montant en centimes
-		lineAsArray[7] =   ""+(ddrequestItem.getAmount().setScale((ddrequestItem.getProvider().getRounding() == null ? 2 :ddrequestItem.getProvider().getRounding()), 
+		lineAsArray[7] =   ""+(ddrequestItem.getAmount().setScale((appProvider.getRounding() == null ? 2 : appProvider.getRounding()), 
 				RoundingMode.HALF_UP).multiply(new BigDecimal(100)).longValue());
 //	       devise (code ISO sur 3 caractères, exemples: "EUR", "USD")
 		lineAsArray[8] = ddrequestItem.getRecordedInvoice().getCustomerAccount().getTradingCurrency().getCurrencyCode();
@@ -117,7 +121,7 @@ public class PaynumFile {
 	}	
 	
 	
-	public void processRejectFile(File currentFile, String fileName, User currentUser) throws Exception{
+	public void processRejectFile(File currentFile, String fileName) throws Exception{
 		CsvReader csvReader = new CsvReader(currentFile.getAbsolutePath(),';');
 		
 		while(csvReader.readRecord()){
@@ -125,12 +129,11 @@ public class PaynumFile {
 			
 			String codeFacture  = fields[3];
 			String causeRejet = fields[12];
-			RecordedInvoice recordedInvoice =  recordedInvoiceService.getRecordedInvoice(codeFacture, currentUser.getProvider());
+			RecordedInvoice recordedInvoice =  recordedInvoiceService.getRecordedInvoice(codeFacture);
 			if(recordedInvoice.getPayedDDRequestItem() != null){		
-				ddRequestItemService.rejectPayment(recordedInvoice, causeRejet, currentUser);
+				ddRequestItemService.rejectPayment(recordedInvoice, causeRejet);
 			    DDRequestLOT dDRequestLOT = recordedInvoice.getPayedDDRequestItem().getDdRequestLOT();
 				dDRequestLOT.setReturnFileName(fileName);
-				dDRequestLOT.updateAudit(currentUser);
 				dDRequestLOTService.updateNoCheck(dDRequestLOT);
 			}
 		}
@@ -139,7 +142,7 @@ public class PaynumFile {
 	}
 	
 	public static String getSecretCode(CustomerAccount customerAccount) throws Exception{
-		String code = customerAccount.getProvider().getCode() + customerAccount.getContactInformation().getEmail();				
+		String code = customerAccount.getContactInformation().getEmail();				
 		MessageDigest digest = MessageDigest.getInstance("SHA-256");
 		byte[] hash = digest.digest(code.getBytes("UTF-8"));
 		return Base64.encodeBase64URLSafeString(hash);		

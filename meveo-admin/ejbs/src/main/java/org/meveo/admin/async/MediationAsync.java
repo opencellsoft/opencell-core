@@ -15,7 +15,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.job.MediationJobBean;
-import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.slf4j.Logger;
 
@@ -35,9 +34,9 @@ public class MediationAsync {
 
     @Asynchronous
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> launchAndForget(List<File> files, JobExecutionResultImpl result, String parameter, User currentUser) {
+    public Future<String> launchAndForget(List<File> files, JobExecutionResultImpl result, String parameter) {
         for (File file : files) {
-            mediationJobBean.execute(result, parameter, currentUser, file);
+            mediationJobBean.execute(result, parameter, file);
         }
 
         return new AsyncResult<String>("OK");

@@ -24,9 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -91,18 +89,6 @@ public class MeasurableQuantityBean extends BaseBean<MeasurableQuantity> {
 	protected String getListViewName() {
 		return "measurableQuantities";
 	}
-
-	@Override
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
-
-	@Override
-	protected List<String> getListFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
-	
-	
 	
 	public void exportToFile() throws Exception {
 
@@ -154,14 +140,14 @@ public class MeasurableQuantityBean extends BaseBean<MeasurableQuantity> {
         csvReader = new CsvReader(file.getInputstream(), ';', Charset.forName("ISO-8859-1"));
         csvReader.readHeaders();
         String existingEntitiesCSV = paramBean.getProperty("existingEntities.csv.dir", "existingEntitiesCSV");
-        File dir = new File(providerDir + File.separator + getCurrentProvider().getCode() + File.separator + existingEntitiesCSV);
+        File dir = new File(providerDir + File.separator + appProvider.getCode() + File.separator + existingEntitiesCSV);
         dir.mkdirs();
         existingEntitiesCsvFile = dir.getAbsolutePath() + File.separator + "MeasurableQuantitys_" + new SimpleDateFormat("ddMMyyyyHHmmSS").format(new Date()) + ".csv";
         csv = new CsvBuilder();
         boolean isEntityAlreadyExist = false;
         while (csvReader.readRecord()) {
             String[] values = csvReader.getValues();
-            MeasurableQuantity existingEntity = measurableQuantityService.findByCode(values[CODE], getCurrentProvider());
+            MeasurableQuantity existingEntity = measurableQuantityService.findByCode(values[CODE]);
             if (existingEntity != null) {
                 checkSelectedStrategy(values, existingEntity, isEntityAlreadyExist);
                 isEntityAlreadyExist = true;
@@ -179,7 +165,7 @@ public class MeasurableQuantityBean extends BaseBean<MeasurableQuantity> {
                 }
                 measurableQuantity.setLastMeasureDate(DateUtils.parseDateWithPattern((values[LAST_MEASURE_DATE]), "dd/MM/yyyy"));
                 measurableQuantity.setEditable(Boolean.parseBoolean(values[EDITABLE]));
-                measurableQuantityService.create(measurableQuantity, getCurrentUser());
+                measurableQuantityService.create(measurableQuantity);
             }
         }
         if (isEntityAlreadyExist && strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)) {
@@ -201,7 +187,7 @@ public class MeasurableQuantityBean extends BaseBean<MeasurableQuantity> {
 			}
 			existingEntity.setLastMeasureDate(DateUtils.parseDateWithPattern((values[LAST_MEASURE_DATE]),"dd/MM/yyyy"));
 			existingEntity.setEditable(Boolean.parseBoolean(values[EDITABLE]));
-			measurableQuantityService.update(existingEntity, getCurrentUser());
+			measurableQuantityService.update(existingEntity);
 		}else if (strategyImportType
 				.equals(StrategyImportTypeEnum.REJECTE_IMPORT)) {
 			throw new RejectedImportException("notification.rejectImport");

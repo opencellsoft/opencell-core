@@ -34,7 +34,6 @@ import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.Reservation;
 import org.meveo.model.billing.ReservationStatus;
 import org.meveo.model.billing.Subscription;
@@ -44,7 +43,6 @@ import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.billing.WalletReservation;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
@@ -80,22 +78,21 @@ public class ReservationService extends PersistenceService<Reservation> {
     private RatingCacheContainerProvider ratingCacheContainerProvider;
 
 	// FIXME: rethink this service in term of prepaid wallets
-	public Long createReservation(User currentUser, String sellerCode, String offerCode, String userAccountCode,
+	public Long createReservation(String sellerCode, String offerCode, String userAccountCode,
 			Date subscriptionDate, Date expiryDate, BigDecimal creditLimit, String param1, String param2,
 			String param3, boolean amountWithTax) throws BusinessException {
 		
-		Provider provider = currentUser.getProvider();
 
 		// #1 Check the credit limit (servicesSum + getCurrentAmount) & return
 		// error if KO.
-		OfferTemplate offerTemplate = offerTemplateService.findByCode(offerCode, provider);
+		OfferTemplate offerTemplate = offerTemplateService.findByCode(offerCode);
 
-		UserAccount userAccount = userAccountService.findByCode(userAccountCode, provider);
+		UserAccount userAccount = userAccountService.findByCode(userAccountCode);
 		if (userAccount == null) {
 			throw new BusinessException("UserAccount with code=" + userAccountCode + " does not exists.");
 		}
 
-		Seller seller = sellerService.findByCode(sellerCode, provider);
+		Seller seller = sellerService.findByCode(sellerCode);
 		if (seller == null) {
 			throw new BusinessException("Seller with code=" + sellerCode + " does not exists.");
 		}
@@ -120,9 +117,9 @@ public class ReservationService extends PersistenceService<Reservation> {
 		}
 
 		BigDecimal servicesSum = walletReservationService.computeServicesSum(offerTemplate, userAccount,
-				subscriptionDate, param1, param2, param3, new BigDecimal(1),currentUser);
+				subscriptionDate, param1, param2, param3, new BigDecimal(1));
 
-		BigDecimal ratedAmount = walletReservationService.computeRatedAmount(currentUser, seller, userAccount,
+		BigDecimal ratedAmount = walletReservationService.computeRatedAmount(seller, userAccount,
 				subscriptionDate);
 
 		BigDecimal spentCredit = servicesSum.add(ratedAmount);
@@ -138,7 +135,6 @@ public class ReservationService extends PersistenceService<Reservation> {
 		Auditable auditable = new Auditable();
 		auditable.setCreated(new Date());
 		Reservation reservation = new Reservation();
-		reservation.setProvider(provider);
 		reservation.setAuditable(auditable);
 		reservation.setStatus(ReservationStatus.OPEN);
 		reservation.setUserAccount(userAccount);
@@ -170,41 +166,32 @@ public class ReservationService extends PersistenceService<Reservation> {
 		walletReservation.setStartDate(null);
 		walletReservation.setEndDate(null);
 		walletReservation.setCurrency(currency.getCurrency());
-		walletReservation.setProvider(provider);
 		if (amountWithTax) {
 			walletReservation.setAmountWithTax(servicesSum);
 		} else {
 			walletReservation.setAmountWithoutTax(servicesSum);
 		}
 
-		walletReservationService.create(walletReservation, currentUser);
+		walletReservationService.create(walletReservation);
 
 		// #4 Return the reservationId.
 		return reservation.getId();
 	}
 
-	public void updateReservation(Long reservationId, User currentUser, String sellerCode, String offerCode,
+	public void updateReservation(Long reservationId, String sellerCode, String offerCode,
 			String userAccountCode, Date subscriptionDate, Date expiryDate, BigDecimal creditLimit, String param1,
 			String param2, String param3, boolean amountWithTax) throws BusinessException {
-		updateReservation(getEntityManager(), reservationId, currentUser, sellerCode, offerCode, userAccountCode,
-				subscriptionDate, expiryDate, creditLimit, param1, param2, param3, amountWithTax);
-	}
-
-	public void updateReservation(EntityManager em, Long reservationId, User currentUser, String sellerCode,
-			String offerCode, String userAccountCode, Date subscriptionDate, Date expiryDate, BigDecimal creditLimit,
-			String param1, String param2, String param3, boolean amountWithTax) throws BusinessException {
-		Provider provider = currentUser.getProvider();
-		
+	
 		// #1 Check the credit limit (servicesSum + getCurrentAmount) & return
 		// error if KO.
-		OfferTemplate offerTemplate = offerTemplateService.findByCode(offerCode, provider);
+		OfferTemplate offerTemplate = offerTemplateService.findByCode(offerCode);
 
-		UserAccount userAccount = userAccountService.findByCode(userAccountCode, provider);
+		UserAccount userAccount = userAccountService.findByCode(userAccountCode);
 		if (userAccount == null) {
 			throw new BusinessException("UserAccount with code=" + userAccountCode + " does not exists.");
 		}
 
-		Seller seller = sellerService.findByCode(sellerCode, provider);
+		Seller seller = sellerService.findByCode(sellerCode);
 		if (seller == null) {
 			throw new BusinessException("Seller with code=" + sellerCode + " does not exists.");
 		}
@@ -229,9 +216,9 @@ public class ReservationService extends PersistenceService<Reservation> {
 		}
 
 		BigDecimal servicesSum = walletReservationService.computeServicesSum(offerTemplate, userAccount,
-				subscriptionDate, param1, param2, param3, new BigDecimal(1),currentUser);
+				subscriptionDate, param1, param2, param3, new BigDecimal(1));
 
-		BigDecimal ratedAmount = walletReservationService.computeRatedAmount(currentUser, seller, userAccount,
+		BigDecimal ratedAmount = walletReservationService.computeRatedAmount(seller, userAccount,
 				subscriptionDate);
 
 		BigDecimal spentCredit = servicesSum.add(ratedAmount);
@@ -324,23 +311,16 @@ public class ReservationService extends PersistenceService<Reservation> {
 		reservation.setStatus(ReservationStatus.CONFIRMED);
 	}
 
-	public BigDecimal confirmReservation(Long reservationId, User currentUser, String sellerCode, String offerCode,
+	public BigDecimal confirmReservation(Long reservationId, String sellerCode, String offerCode,
 			Date subscriptionDate, Date terminationDate, String param1, String param2, String param3)
 			throws BusinessException {
-		return confirmReservation(getEntityManager(), reservationId, currentUser, sellerCode, offerCode, subscriptionDate,
-				terminationDate, param1, param2, param3);
-	}
 
-	public BigDecimal confirmReservation(EntityManager em, Long reservationId, User currentUser, String sellerCode,
-			String offerCode, Date subscriptionDate, Date terminationDate, String param1, String param2, String param3)
-			throws BusinessException {
-		Provider provider = currentUser.getProvider();
 		Reservation reservation = findById(reservationId);
 		if (reservation == null) {
 			throw new BusinessException("Reservation with id=" + reservationId + " does not exists.");
 		}
 
-		OfferTemplate offerTemplate = offerTemplateService.findByCode(offerCode, provider);
+		OfferTemplate offerTemplate = offerTemplateService.findByCode(offerCode);
 		if (offerTemplate == null) {
 			throw new BusinessException("OfferTemplate with id=" + offerCode + " does not exists.");
 		}
@@ -350,7 +330,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 			throw new BusinessException("Reservation with id=" + reservationId + " is not " + ReservationStatus.OPEN);
 		}
 
-		Seller seller = sellerService.findByCode(sellerCode, provider);
+		Seller seller = sellerService.findByCode(sellerCode);
 		if (seller == null) {
 			throw new BusinessException("Seller with code=" + sellerCode + " does not exists.");
 		}
@@ -373,7 +353,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 		subscription.setStatusDate(new Date());
 		subscription.setSubscriptionDate(subscriptionDate);
 		subscription.setTerminationDate(terminationDate);
-		subscriptionService.create(subscription, currentUser);
+		subscriptionService.create(subscription);
 
 		reservation.setSubscription(subscription);
 
@@ -381,9 +361,9 @@ public class ReservationService extends PersistenceService<Reservation> {
 		// difference in amount when the credit is reserved and on the actual
 		// date of the subscription.
 		BigDecimal servicesSum = walletReservationService.computeServicesSum(offerTemplate,
-				reservation.getUserAccount(), subscriptionDate, param1, param2, param3, new BigDecimal(1),currentUser);
+				reservation.getUserAccount(), subscriptionDate, param1, param2, param3, new BigDecimal(1));
 
-		BigDecimal ratedAmount = walletReservationService.computeRatedAmount(currentUser, seller,
+		BigDecimal ratedAmount = walletReservationService.computeRatedAmount(seller,
 				reservation.getUserAccount(), subscriptionDate);
 
 		if (servicesSum != null && ratedAmount != null) {
@@ -399,17 +379,17 @@ public class ReservationService extends PersistenceService<Reservation> {
 		}
 	}
 
-	public int updateExpiredReservation(Provider provider) {
+	public int updateExpiredReservation() {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("UPDATE " + Reservation.class.getName()
-				+ " r SET r.status=:expiredStatus WHERE r.status=:openStatus AND r.expiryDate<:expiryDate and r.provider=:provider");
+				+ " r SET r.status=:expiredStatus WHERE r.status=:openStatus AND r.expiryDate<:expiryDate ");
 
 		try {
 			return getEntityManager().createQuery(sb.toString())
 					.setParameter("expiredStatus", ReservationStatus.EXPIRED)
 					.setParameter("openStatus", ReservationStatus.OPEN).setParameter("expiryDate", new Date())
-					.setParameter("provider", provider)
+					
 					.executeUpdate();
 		} catch (Exception e) {
 			log.error("failed to update expired reservation",e);

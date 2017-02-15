@@ -28,7 +28,6 @@ import org.meveo.model.billing.Language;
 import org.meveo.service.admin.impl.LanguageService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.context.RequestContext;
 
 @Named
 @ViewScoped

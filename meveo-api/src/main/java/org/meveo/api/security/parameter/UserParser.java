@@ -14,7 +14,7 @@ import org.meveo.model.admin.User;
 public class UserParser extends SecureMethodParameterParser<User> {
 
 	@Override
-	public User getParameterValue(SecureMethodParameter parameter, Object[] values, User user) throws MeveoApiException {
+	public User getParameterValue(SecureMethodParameter parameter, Object[] values) throws MeveoApiException {
 		if (parameter == null) {
 			return null;
 		}

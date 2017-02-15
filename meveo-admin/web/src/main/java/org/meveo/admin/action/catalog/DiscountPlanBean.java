@@ -39,7 +39,7 @@ public class DiscountPlanBean extends BaseBean<DiscountPlan> {
 
     @Override
     public DiscountPlan initEntity() {
-        discountPlanItem.setAccountingCode(getCurrentProvider().getDiscountAccountingCode());
+        discountPlanItem.setAccountingCode(appProvider.getDiscountAccountingCode());
 
         return super.initEntity();
     }
@@ -85,7 +85,7 @@ public class DiscountPlanBean extends BaseBean<DiscountPlan> {
         }
 
         if (discountPlanItem.getId() != null) {
-            discountPlanItemService.update(discountPlanItem, getCurrentUser());
+            discountPlanItemService.update(discountPlanItem);
             messages.info(new BundleKey("messages", "update.successful"));
         }
 
@@ -94,7 +94,7 @@ public class DiscountPlanBean extends BaseBean<DiscountPlan> {
                 if (getEntity().getDiscountPlanItems().contains(discountPlanItem)) {
                     messages.error(new BundleKey("messages", "discountPlan.discountPlanItem.unique"));
                 } else {
-                    discountPlanItemService.create(discountPlanItem, getCurrentUser());
+                    discountPlanItemService.create(discountPlanItem);
                     getEntity().getDiscountPlanItems().add(discountPlanItem);
                     messages.info(new BundleKey("messages", "save.successful"));
                 }
@@ -106,7 +106,7 @@ public class DiscountPlanBean extends BaseBean<DiscountPlan> {
         }
 
         discountPlanItem = new DiscountPlanItem();
-        discountPlanItem.setAccountingCode(getCurrentProvider().getDiscountAccountingCode());
+        discountPlanItem.setAccountingCode(appProvider.getDiscountAccountingCode());
     }
 
     public void newDiscountPlanItem() {
@@ -117,7 +117,7 @@ public class DiscountPlanBean extends BaseBean<DiscountPlan> {
     public void deleteDiscountPlan(DiscountPlanItem discountPlanItem) {
         try {
             getEntity().getDiscountPlanItems().remove(discountPlanItem);
-            discountPlanItemService.remove(discountPlanItem.getId(), getCurrentUser());
+            discountPlanItemService.remove(discountPlanItem.getId());
             messages.info(new BundleKey("messages", "delete.successful"));
 
         } catch (Exception e) {

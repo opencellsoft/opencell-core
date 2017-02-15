@@ -47,7 +47,6 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.IEntity;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.scripts.CustomScript;
 import org.meveo.model.scripts.ScriptInstanceError;
 import org.meveo.model.scripts.ScriptSourceTypeEnum;
@@ -62,15 +61,15 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     
     @Inject
     @CurrentUser
-    private MeveoUser currentUser;
+    protected MeveoUser currentUser;
     
     protected final Class<SI> scriptInterfaceClass;
 
-    private Map<String, Map<String, List<String>>> allLogs = new HashMap<String, Map<String, List<String>>>();
+    private Map<String, List<String>> allLogs = new HashMap<String, List<String>>();
 
-    private Map<String, Map<String, Class<SI>>> allScriptInterfaces = new HashMap<String, Map<String, Class<SI>>>();
+    private Map<String, Class<SI>> allScriptInterfaces = new HashMap<String, Class<SI>>();
 
-	private Map<String, Map<String, SI>> allScriptInstances=new HashMap<String,Map<String,SI>>();
+	private Map<String, SI> allScriptInstances=new HashMap<String,SI>();
 	
     private CharSequenceCompiler<SI> compiler;
 
@@ -259,24 +258,14 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
             Class<SI> compiledScript = compileJavaSource(codeSource, qName);
 
             if (!testCompile) {
-                if (!allScriptInterfaces.containsKey(script.getProvider().getCode())) {
-                    allScriptInterfaces.put(script.getProvider().getCode(), new HashMap<String, Class<SI>>());
-                    allScriptInstances.put(script.getCode(),new HashMap<String, SI>());
-                          log.debug("create Map for {}", script.getProvider().getCode());
-                }
-                Map<String, Class<SI>> providerScriptInterfaces = allScriptInterfaces.get(script.getProvider().getCode());
-                providerScriptInterfaces.put(script.getCode(), compiledScript);
-                Map<String,SI> providerScriptInstances = allScriptInstances.get(script.getProvider().getCode());
-                log.debug("get providerScriptInstances {}",providerScriptInstances);
-                if(providerScriptInstances==null){
-                	providerScriptInstances=new HashMap<String,SI>();
-                	allScriptInstances.put(script.getProvider().getCode(), providerScriptInstances);
-                }
-                providerScriptInstances.put(script.getCode(),compiledScript.newInstance());
-                log.debug("Added script {} for provider {} to Map", script.getCode(), script.getProvider().getCode());
+                
+                allScriptInterfaces.put(script.getCode(), compiledScript);
+
+                allScriptInstances.put(script.getCode(),compiledScript.newInstance());
+                log.debug("Added script {} to Map", script.getCode());
             }
         } catch (CharSequenceCompilerException e) {
-            log.error("Failed to compile script {} for provider {}. Compilation errors:", script.getCode(), script.getProvider().getCode());
+            log.error("Failed to compile script {}. Compilation errors:", script.getCode());
             List<Diagnostic<? extends JavaFileObject>> diagnosticList = e.getDiagnostics().getDiagnostics();
             for (Diagnostic<? extends JavaFileObject> diagnostic : diagnosticList) {
                 if ("ERROR".equals(diagnostic.getKind().name())) {
@@ -287,7 +276,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
                     scriptInstanceError.setSourceFile(diagnostic.getSource().toString());
                     // scriptInstanceError.setScript(scriptInstance);
                     script.getScriptErrors().add(scriptInstanceError);
-                    // scriptInstanceErrorService.create(scriptInstanceError, scriptInstance.getAuditable().getCreator(), scriptInstance.getProvider());
+                    // scriptInstanceErrorService.create(scriptInstanceError, scriptInstance.getAuditable().getCreator());
                     log.warn("{} script {} location {}:{}: {}", diagnostic.getKind().name(), script.getCode(), diagnostic.getLineNumber(), diagnostic.getColumnNumber(),
                         diagnostic.getMessage(Locale.getDefault()));
                 }
@@ -317,20 +306,18 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     /**
      * Find the script class for a given script code
      * 
-     * @param provider Provider
      * @param scriptCode Script code
      * @return Script interface Class
      * @throws InvalidScriptException Were not able to instantiate or compile a script
      * @throws ElementNotFoundException Script not found
      */
-    public Class<SI> getScriptInterface(Provider provider, String scriptCode) throws ElementNotFoundException, InvalidScriptException {
+    public Class<SI> getScriptInterface(String scriptCode) throws ElementNotFoundException, InvalidScriptException {
         Class<SI> result = null;
-
-        if (allScriptInterfaces.containsKey(provider.getCode())) {
-            result = allScriptInterfaces.get(provider.getCode()).get(scriptCode);
-        }
+        
+        result = allScriptInterfaces.get(scriptCode);
+        
         if (result == null) {
-            T script = findByCode(scriptCode, provider);
+            T script = findByCode(scriptCode);
             if (script == null) {
                 log.debug("ScriptInstance with {} does not exist", scriptCode);
                 throw new ElementNotFoundException(scriptCode, getEntityClass().getName());
@@ -340,7 +327,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
                 log.debug("ScriptInstance {} failed to compile. Errors: {}", scriptCode, script.getScriptErrors());
                 throw new InvalidScriptException(scriptCode, getEntityClass().getName());
             }
-            result = allScriptInterfaces.get(provider.getCode()).get(scriptCode);
+            result = allScriptInterfaces.get(scriptCode);
         }
 
         if (result == null) {
@@ -348,21 +335,20 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
             throw new ElementNotFoundException(scriptCode, getEntityClass().getName());
         }
 
-        log.debug("getScriptInterface provider:{} scriptCode:{} -> {}", provider.getCode(), scriptCode, result);
+        log.debug("getScriptInterface scriptCode:{} -> {}", scriptCode, result);
         return result;
     }
 
     /**
      * Get a compiled script class
      * 
-     * @param provider Provider
      * @param scriptCode Script code
      * @return A compiled script class
      * @throws InvalidScriptException Were not able to instantiate or compile a script
      * @throws ElementNotFoundException Script not found
      */
-    public SI getScriptInstance(Provider provider, String scriptCode) throws ElementNotFoundException, InvalidScriptException {
-        Class<SI> scriptClass = getScriptInterface(provider, scriptCode);
+    public SI getScriptInstance(String scriptCode) throws ElementNotFoundException, InvalidScriptException {
+        Class<SI> scriptClass = getScriptInterface(scriptCode);
 
         try {
             SI script = scriptClass.newInstance();
@@ -374,9 +360,9 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         }
     }
 
-    public SI getCachedScriptInstance(Provider provider, String scriptCode) throws ElementNotFoundException, InvalidScriptException {
+    public SI getCachedScriptInstance(String scriptCode) throws ElementNotFoundException, InvalidScriptException {
     	SI script = null;
-        script = allScriptInstances.get(provider.getCode()).get(scriptCode);
+        script = allScriptInstances.get(scriptCode);
         return script;
     }
     
@@ -384,47 +370,38 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * Add a log line for a script
      * 
      * @param message
-     * @param providerCode
      * @param scriptCode
      */
-    public void addLog(String message, String providerCode, String scriptCode) {
-        if (!allLogs.containsKey(providerCode)) {
-            allLogs.put(providerCode, new HashMap<String, List<String>>());
+    public void addLog(String message, String scriptCode) {
+        
+        if (!allLogs.containsKey(scriptCode)) {
+            allLogs.put(scriptCode, new ArrayList<String>());
         }
-        if (!allLogs.get(providerCode).containsKey(scriptCode)) {
-            allLogs.get(providerCode).put(scriptCode, new ArrayList<String>());
-        }
-        allLogs.get(providerCode).get(scriptCode).add(message);
+        allLogs.get(scriptCode).add(message);
     }
 
     /**
      * Get logs for script
      * 
-     * @param providerCode
      * @param scriptCode
      * @return
      */
-    public List<String> getLogs(String providerCode, String scriptCode) {
-        if (!allLogs.containsKey(providerCode)) {
+    public List<String> getLogs(String scriptCode) {
+        
+        if (!allLogs.containsKey(scriptCode)) {
             return new ArrayList<String>();
         }
-        if (!allLogs.get(providerCode).containsKey(scriptCode)) {
-            return new ArrayList<String>();
-        }
-        return allLogs.get(providerCode).get(scriptCode);
+        return allLogs.get(scriptCode);
     }
 
     /**
      * Clear all logs for a script
      * 
-     * @param providerCode
      * @param scriptCode
      */
-    public void clearLogs(String providerCode, String scriptCode) {
-        if (allLogs.containsKey(providerCode)) {
-            if (allLogs.get(providerCode).containsKey(scriptCode)) {
-                allLogs.get(providerCode).get(scriptCode).clear();
-            }
+    public void clearLogs(String scriptCode) {
+        if (allLogs.containsKey(scriptCode)) {
+            allLogs.get(scriptCode).clear();
         }
     }
 
@@ -510,7 +487,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @param entity Entity to execute action on
      * @param scriptCode Script to execute, identified by a code
      * @param context Method context
-     * @param currentUser Current user
+
      * @return Context parameters. Will not be null even if "context" parameter is null.
      * @throws InvalidScriptException Were not able to instantiate or compile a script
      * @throws ElementNotFoundException Script not found
@@ -522,8 +499,8 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
 
         log.trace("Script {} to be executed with parameters {}", scriptCode, context);
 
-        SI classInstance = getScriptInstance(currentUser.getProvider(), scriptCode);
-        classInstance.execute(context, currentUser);
+        SI classInstance = getScriptInstance(scriptCode);
+        classInstance.execute(context);
 
         log.trace("Script {} executed with parameters {}", scriptCode, context);
         return context;
@@ -534,7 +511,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * 
      * @param compiledScript Compiled script class
      * @param context Method context
-     * @param currentUser Current user
+
      * @return Context parameters. Will not be null even if "context" parameter is null.
      * @throws BusinessException Any execution exception
      */
@@ -543,7 +520,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
             context = new HashMap<String, Object>();
         }
 
-        compiledScript.execute(context, currentUser);
+        compiledScript.execute(context);
         return context;
     }
 
@@ -573,11 +550,10 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     }
 
     /**
-     * Get all script interfaces for a given provider
-     * 
+     * Get all script interfaces     * 
      * @return the allScriptInterfaces
      */
-    public Map<String, Class<SI>> getAllScriptInterfaces(Provider provider) {
-        return allScriptInterfaces.get(provider.getCode());
+    public Map<String, Class<SI>> getAllScriptInterfaces() {
+        return allScriptInterfaces;
     } 
 }

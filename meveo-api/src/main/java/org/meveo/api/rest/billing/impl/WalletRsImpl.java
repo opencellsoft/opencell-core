@@ -36,7 +36,7 @@ public class WalletRsImpl extends BaseRs implements WalletRs {
         ActionStatus result = new ActionStatus();
 
         try {
-            result.setMessage("" + walletApi.getCurrentAmount(postData, getCurrentUser().getProvider()));
+            result.setMessage("" + walletApi.getCurrentAmount(postData));
         } catch (MeveoApiException e) {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
@@ -55,7 +55,7 @@ public class WalletRsImpl extends BaseRs implements WalletRs {
         ActionStatus result = new ActionStatus();
 
         try {
-            result.setMessage("" + walletApi.getReservedAmount(postData, getCurrentUser().getProvider()));
+            result.setMessage("" + walletApi.getReservedAmount(postData));
         } catch (MeveoApiException e) {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
@@ -74,7 +74,7 @@ public class WalletRsImpl extends BaseRs implements WalletRs {
         ActionStatus result = new ActionStatus();
 
         try {
-            result.setMessage("" + walletApi.getOpenAmount(postData, getCurrentUser().getProvider()));
+            result.setMessage("" + walletApi.getOpenAmount(postData));
         } catch (MeveoApiException e) {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
@@ -93,7 +93,7 @@ public class WalletRsImpl extends BaseRs implements WalletRs {
         ActionStatus result = new ActionStatus();
 
         try {
-            result.setMessage("" + walletApi.createReservation(postData, getCurrentUser()));
+            result.setMessage("" + walletApi.createReservation(postData));
         } catch (MeveoApiException e) {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
@@ -112,7 +112,7 @@ public class WalletRsImpl extends BaseRs implements WalletRs {
         ActionStatus result = new ActionStatus();
 
         try {
-            walletApi.updateReservation(postData, getCurrentUser());
+            walletApi.updateReservation(postData);
         } catch (MeveoApiException e) {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
@@ -131,7 +131,7 @@ public class WalletRsImpl extends BaseRs implements WalletRs {
         ActionStatus result = new ActionStatus();
 
         try {
-            walletApi.cancelReservation(reservationId, getCurrentUser().getProvider());
+            walletApi.cancelReservation(reservationId);
         } catch (MeveoApiException e) {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
@@ -150,7 +150,7 @@ public class WalletRsImpl extends BaseRs implements WalletRs {
         ActionStatus result = new ActionStatus();
 
         try {
-            result.setMessage("" + walletApi.confirmReservation(postData, getCurrentUser()));
+            result.setMessage("" + walletApi.confirmReservation(postData));
         } catch (MeveoApiException e) {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
@@ -169,7 +169,7 @@ public class WalletRsImpl extends BaseRs implements WalletRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            walletApi.createOperation(postData, getCurrentUser());
+            walletApi.createOperation(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -189,7 +189,7 @@ public class WalletRsImpl extends BaseRs implements WalletRs {
         FindWalletOperationsResponseDto result = new FindWalletOperationsResponseDto();
 
         try {
-            result = walletApi.findOperations(postData, getCurrentUser().getProvider());
+            result = walletApi.findOperations(postData);
         } catch (MeveoApiException e) {
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
             result.getActionStatus().setMessage(e.getMessage());
@@ -208,7 +208,7 @@ public class WalletRsImpl extends BaseRs implements WalletRs {
         ActionStatus result = new ActionStatus();
 
         try {
-            walletApi.create(postData, getCurrentUser());
+            walletApi.create(postData);
         } catch (MeveoApiException e) {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
@@ -227,7 +227,7 @@ public class WalletRsImpl extends BaseRs implements WalletRs {
         ActionStatus result = new ActionStatus();
 
         try {
-            walletApi.update(postData, getCurrentUser());
+            walletApi.update(postData);
         } catch (MeveoApiException e) {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
@@ -246,7 +246,7 @@ public class WalletRsImpl extends BaseRs implements WalletRs {
         GetWalletTemplateResponseDto result = new GetWalletTemplateResponseDto();
 
         try {
-            result.setWalletTemplate(walletApi.find(walletTemplateCode, getCurrentUser().getProvider()));
+            result.setWalletTemplate(walletApi.find(walletTemplateCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
             result.getActionStatus().setMessage(e.getMessage());
@@ -265,7 +265,7 @@ public class WalletRsImpl extends BaseRs implements WalletRs {
         ActionStatus result = new ActionStatus();
 
         try {
-            walletApi.remove(walletTemplateCode, getCurrentUser());
+            walletApi.remove(walletTemplateCode);
         } catch (MeveoApiException e) {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
@@ -284,7 +284,7 @@ public class WalletRsImpl extends BaseRs implements WalletRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            walletApi.createOrUpdate(postData, getCurrentUser());
+            walletApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

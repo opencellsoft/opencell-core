@@ -36,7 +36,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.bi.OutputFormatEnum;
 import org.meveo.model.bi.Report;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.datawarehouse.DWHAccountOperation;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
@@ -67,14 +66,14 @@ public class AccountingDetail extends FileProducer implements Reporting {
 
 	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
-	public void generateAccountingDetailFile(String providerCode, Date startDate, Date endDate,
+	public void generateAccountingDetailFile(Date startDate, Date endDate,
 			OutputFormatEnum outputFormat) {
 		try {
 			File file = null;
 			if (outputFormat == OutputFormatEnum.PDF) {
 				file = File.createTempFile("tempAccountingDetail", ".csv");
 			} else if (outputFormat == OutputFormatEnum.CSV) {
-				StringBuilder sb = new StringBuilder(getFilename(providerCode));
+				StringBuilder sb = new StringBuilder(getFilename());
 				sb.append(".csv");
 				file = new File(sb.toString());
 			}
@@ -82,7 +81,7 @@ public class AccountingDetail extends FileProducer implements Reporting {
 			writer.append("N° compte client;Nom du compte client;Code operation;Référence comptable;Date de l'opération;Date d'exigibilité;Débit;Credit;Solde client");
 			writer.append('\n');
 			List<DWHAccountOperation> list = accountOperationTransformationService
-					.getAccountingDetailRecords(providerCode, new Date());
+					.getAccountingDetailRecords(new Date());
 			Iterator<DWHAccountOperation> itr = list.iterator();
 			String previousAccountCode = null;
 			BigDecimal solde = BigDecimal.ZERO;
@@ -99,7 +98,7 @@ public class AccountingDetail extends FileProducer implements Reporting {
 				}
 				if (accountOperationTransformation.getStatus() == 2) {
 					AccountOperation accountOperation = accountOperationService
-							.findByIdNoCheck(accountOperationTransformation.getId());
+							.findById(accountOperationTransformation.getId());
 					amount = accountOperation.getUnMatchingAmount();
 				} else {
 					amount = accountOperationTransformation.getAmount();
@@ -138,9 +137,8 @@ public class AccountingDetail extends FileProducer implements Reporting {
 			if (outputFormat == OutputFormatEnum.PDF) {
 				parameters.put("startDate", startDate);
 				parameters.put("endDate", endDate);
-				parameters.put("provider", providerCode);
 
-				StringBuilder sb = new StringBuilder(getFilename(providerCode));
+				StringBuilder sb = new StringBuilder(getFilename());
 				sb.append(".pdf");
 				generatePDFfile(file, sb.toString(), templateFilename, parameters);
 			}
@@ -150,12 +148,12 @@ public class AccountingDetail extends FileProducer implements Reporting {
 
 	}
 
-	public String getCustomerName(String customerAccountCode,Provider provider) {
+	public String getCustomerName(String customerAccountCode) {
 		String result = "";
 		if (customerNames.containsKey(customerAccountCode)) {
 			result = customerNames.get(customerAccountCode);
 		} else {
-			CustomerAccount account = customerAccountService.findByCode(customerAccountCode,provider);
+			CustomerAccount account = customerAccountService.findByCode(customerAccountCode);
 			if (account.getName() != null) {
 				result = account.getName().getTitle().getCode();
 				if (account.getName().getFirstName() != null) {
@@ -169,14 +167,14 @@ public class AccountingDetail extends FileProducer implements Reporting {
 		return result;
 	}
 
-	public BigDecimal getCustomerBalanceDue(String customerAccountCode, Date atDate,Provider provider) {
+	public BigDecimal getCustomerBalanceDue(String customerAccountCode, Date atDate) {
 		BigDecimal result = BigDecimal.ZERO;
 		if (balances.containsKey(customerAccountCode)) {
 			result = balances.get(customerAccountCode);
 		} else {
 			try {
 				result = customerAccountService.customerAccountBalanceDue(null,
-						customerAccountCode, atDate,provider);
+						customerAccountCode, atDate);
 				balances.put(customerAccountCode, result);
 			} catch (BusinessException e) {
 				log.error("Error while getting balance dues", e);
@@ -185,13 +183,13 @@ public class AccountingDetail extends FileProducer implements Reporting {
 		return result;
 	}
 
-	public String getFilename(String providerName) {
+	public String getFilename() {
 
 		String DATE_FORMAT = "dd-MM-yyyy";
 		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
 		StringBuilder sb = new StringBuilder();
 		sb.append(reportsFolder);
-		sb.append(providerName + "_");
+		sb.append(appProvider.getCode() + "_");
 		sb.append("INVENTAIRE_CCLIENT_");
 		sb.append(sdf.format(new Date()).toString());
 		return sb.toString();
@@ -206,8 +204,7 @@ public class AccountingDetail extends FileProducer implements Reporting {
 		customerAccountService = null; 
 		accountOperationService = null; 
 
-		generateAccountingDetailFile(report.getProvider() == null ? null : report.getProvider()
-				.getCode(), report.getStartDate(), report.getEndDate(), report.getOutputFormat());
+		generateAccountingDetailFile(report.getStartDate(), report.getEndDate(), report.getOutputFormat());
 
 	}
 

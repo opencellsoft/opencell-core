@@ -1,9 +1,9 @@
 package org.meveo.admin.job;
 
-import static org.meveo.model.billing.BillingRunStatusEnum.POSTVALIDATED;
 import static org.meveo.model.billing.BillingRunStatusEnum.NEW;
-import static org.meveo.model.billing.BillingRunStatusEnum.PREVALIDATED;
+import static org.meveo.model.billing.BillingRunStatusEnum.POSTVALIDATED;
 import static org.meveo.model.billing.BillingRunStatusEnum.PREINVOICED;
+import static org.meveo.model.billing.BillingRunStatusEnum.PREVALIDATED;
 
 import java.util.Date;
 import java.util.List;
@@ -17,12 +17,10 @@ import javax.interceptor.Interceptors;
 import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
@@ -50,21 +48,20 @@ public class BillingRunJobBean {
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(JobExecutionResultImpl result, String parameter,String billingCycleCode,Date invoiceDate,Date lastTransactionDate) {
-		log.debug("Running for user={}, parameter={}", currentUser, parameter);
+		log.debug("Running with parameter={}", parameter);
 		
-		Provider provider = currentUser.getProvider();
 		if(!StringUtils.isBlank(billingCycleCode)){
 			parameter=billingCycleCode;
 		}
 		try {
-			List<BillingRun> billruns = billingRunService.getBillingRuns(provider,parameter, POSTVALIDATED,NEW,PREVALIDATED,PREINVOICED);
+			List<BillingRun> billruns = billingRunService.getBillingRuns(parameter, POSTVALIDATED,NEW,PREVALIDATED,PREINVOICED);
 			boolean notTerminatedBillRun = false;
 			if (billruns != null&&billruns.size()>0) {
 				notTerminatedBillRun = true;
 			}
 
 			if (!notTerminatedBillRun && !StringUtils.isEmpty(parameter)) {
-				BillingCycle billingCycle = billingCycleService.findByBillingCycleCode(parameter, provider);
+				BillingCycle billingCycle = billingCycleService.findByCode(parameter);
 
 				if (billingCycle != null) {
 					BillingRun billingRun = new BillingRun();

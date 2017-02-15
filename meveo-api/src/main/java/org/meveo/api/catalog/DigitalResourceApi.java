@@ -10,9 +10,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
 import org.meveo.model.catalog.DigitalResource;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.catalog.impl.DigitalResourceService;
 
 public class DigitalResourceApi extends BaseApi {
@@ -20,14 +18,14 @@ public class DigitalResourceApi extends BaseApi {
 	@Inject
 	private DigitalResourceService digitalResourceService;
 
-	public DigitalResourcesDto find(String code, User currentUser) throws MeveoApiException {
+	public DigitalResourcesDto find(String code) throws MeveoApiException {
 
 		if (StringUtils.isBlank(code)) {
 			missingParameters.add("digitalResource code");
 			handleMissingParameters();
 		}
 
-		DigitalResource digitalResource = digitalResourceService.findByCode(code, currentUser.getProvider());
+		DigitalResource digitalResource = digitalResourceService.findByCode(code);
 		if (digitalResource == null) {
 			throw new EntityDoesNotExistsException(DigitalResource.class, code);
 		}
@@ -35,70 +33,70 @@ public class DigitalResourceApi extends BaseApi {
 		return new DigitalResourcesDto(digitalResource);
 	}
 
-	public void createOrUpdate(DigitalResourcesDto digitalResourcesDto, User currentUser) throws MeveoApiException, BusinessException {
+	public void createOrUpdate(DigitalResourcesDto digitalResourcesDto) throws MeveoApiException, BusinessException {
 
-		DigitalResource digitalResource = digitalResourceService.findByCode(digitalResourcesDto.getCode(), currentUser.getProvider());
+		DigitalResource digitalResource = digitalResourceService.findByCode(digitalResourcesDto.getCode());
 
 		if (digitalResource == null) {
-			create(digitalResourcesDto, currentUser);
+			create(digitalResourcesDto);
 		} else {
-			update(digitalResourcesDto, currentUser);
+			update(digitalResourcesDto);
 		}
 	}
 
-	public void create(DigitalResourcesDto postData, User currentUser) throws MeveoApiException, BusinessException {
+	public void create(DigitalResourcesDto postData) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
 			handleMissingParameters();
 		}
 
-		Provider provider = currentUser.getProvider();
+		
 
-		DigitalResource digitalResource = digitalResourceService.findByCode(postData.getCode(), provider);
+		DigitalResource digitalResource = digitalResourceService.findByCode(postData.getCode());
 		if ( digitalResource != null) {
 			throw new EntityAlreadyExistsException(DigitalResource.class, postData.getCode());
 		}
 
-		digitalResource = populateDigitalResourceEntity(digitalResource, postData, currentUser);
-		digitalResourceService.create(digitalResource, currentUser);
+		digitalResource = populateDigitalResourceEntity(digitalResource, postData);
+		digitalResourceService.create(digitalResource);
 	}
 
-	public void update(DigitalResourcesDto postData, User currentUser) throws MeveoApiException, BusinessException {
+	public void update(DigitalResourcesDto postData) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
 			handleMissingParameters();
 		}
 
-		Provider provider = currentUser.getProvider();
+		
 
-		DigitalResource digitalResource = digitalResourceService.findByCode(postData.getCode(), provider);
+		DigitalResource digitalResource = digitalResourceService.findByCode(postData.getCode());
 		if ( digitalResource == null) {
 			throw new EntityDoesNotExistsException(DigitalResource.class, postData.getCode());
 		}
 
-		digitalResource = populateDigitalResourceEntity(digitalResource, postData, currentUser);
+		digitalResource = populateDigitalResourceEntity(digitalResource, postData);
 
-		digitalResourceService.update(digitalResource, currentUser);
+		digitalResourceService.update(digitalResource);
 	}
 
-	public void remove(String code, User currentUser) throws MeveoApiException, BusinessException {
+	public void remove(String code) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(code)) {
 			missingParameters.add("digitalResource code");
 			handleMissingParameters();
 		}
 
-		DigitalResource digitalResource = digitalResourceService.findByCode(code, currentUser.getProvider());
+		DigitalResource digitalResource = digitalResourceService.findByCode(code);
 		if (digitalResource == null) {
 			throw new EntityDoesNotExistsException(DigitalResource.class, code);
 		}
 
-		digitalResourceService.remove(digitalResource, currentUser);
+		digitalResourceService.remove(digitalResource);
 	}
 
-	public DigitalResource populateDigitalResourceEntity(DigitalResource digitalResource, DigitalResourcesDto digitalResourcesDto, User user) throws MeveoApiException {
+	public DigitalResource populateDigitalResourceEntity(DigitalResource digitalResource, DigitalResourcesDto digitalResourcesDto) throws MeveoApiException {
 		String code = digitalResourcesDto.getCode();
 		if (StringUtils.isBlank(code)) {
 			throw new MissingParameterException("DigitalResource code for DTO: " + digitalResourcesDto);

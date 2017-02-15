@@ -32,7 +32,7 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            pricePlanApi.create(postData, getCurrentUser());
+            pricePlanApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -52,7 +52,7 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            pricePlanApi.update(postData, getCurrentUser());
+            pricePlanApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -72,7 +72,7 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
         GetPricePlanResponseDto result = new GetPricePlanResponseDto();
 
         try {
-            result.setPricePlan(pricePlanApi.find(pricePlanCode, getCurrentUser()));
+            result.setPricePlan(pricePlanApi.find(pricePlanCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -92,7 +92,7 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            pricePlanApi.remove(pricePlanCode, getCurrentUser());
+            pricePlanApi.remove(pricePlanCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -112,7 +112,7 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
         PricePlanMatrixesResponseDto result = new PricePlanMatrixesResponseDto();
 
         try {
-            result.getPricePlanMatrixes().setPricePlanMatrix(pricePlanApi.list(eventCode, getCurrentUser().getProvider()));
+            result.getPricePlanMatrixes().setPricePlanMatrix(pricePlanApi.list(eventCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -132,7 +132,7 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            pricePlanApi.createOrUpdate(postData, getCurrentUser());
+            pricePlanApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

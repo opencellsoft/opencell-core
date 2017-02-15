@@ -4,7 +4,6 @@ import javax.inject.Inject;
 
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
-import org.meveo.model.admin.User;
 import org.slf4j.Logger;
 
 /**
@@ -36,6 +35,6 @@ public abstract class SecureMethodParameterParser<T> {
 	 * @return The resulting object that was retrieved by the parser.
 	 * @throws MeveoApiException
 	 */
-	public abstract T getParameterValue(SecureMethodParameter parameter, Object[] values, User user) throws MeveoApiException;
+	public abstract T getParameterValue(SecureMethodParameter parameter, Object[] values) throws MeveoApiException;
 
 }

@@ -38,7 +38,7 @@ public class BillingAccountRsImpl extends BaseRs implements BillingAccountRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            billingAccountApi.create(postData, getCurrentUser());
+            billingAccountApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -58,7 +58,7 @@ public class BillingAccountRsImpl extends BaseRs implements BillingAccountRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            billingAccountApi.update(postData, getCurrentUser());
+            billingAccountApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -78,7 +78,7 @@ public class BillingAccountRsImpl extends BaseRs implements BillingAccountRs {
         GetBillingAccountResponseDto result = new GetBillingAccountResponseDto();
 
         try {
-            result.setBillingAccount(billingAccountApi.find(billingAccountCode, getCurrentUser()));
+            result.setBillingAccount(billingAccountApi.find(billingAccountCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -98,7 +98,7 @@ public class BillingAccountRsImpl extends BaseRs implements BillingAccountRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            billingAccountApi.remove(billingAccountCode, getCurrentUser());
+            billingAccountApi.remove(billingAccountCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -118,7 +118,7 @@ public class BillingAccountRsImpl extends BaseRs implements BillingAccountRs {
         BillingAccountsResponseDto result = new BillingAccountsResponseDto();
 
         try {
-            result.setBillingAccounts(billingAccountApi.listByCustomerAccount(customerAccountCode, getCurrentUser().getProvider()));
+            result.setBillingAccounts(billingAccountApi.listByCustomerAccount(customerAccountCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -138,7 +138,7 @@ public class BillingAccountRsImpl extends BaseRs implements BillingAccountRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            billingAccountApi.createOrUpdate(postData, getCurrentUser());
+            billingAccountApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -158,7 +158,7 @@ public class BillingAccountRsImpl extends BaseRs implements BillingAccountRs {
     	GetCountersInstancesResponseDto result = new GetCountersInstancesResponseDto();
     	
     	try {
-    		List<CounterInstance> counters = billingAccountApi.filterCountersByPeriod(billingAccountCode, DateUtils.parseDateWithPattern(date, "yyyy-MM-dd"), getCurrentUser().getProvider());
+    		List<CounterInstance> counters = billingAccountApi.filterCountersByPeriod(billingAccountCode, DateUtils.parseDateWithPattern(date, "yyyy-MM-dd"));
     		for(CounterInstance ci : counters) {
     			result.getCountersInstances().getCounterInstance().add(new CounterInstanceDto(ci));
     		}

@@ -13,9 +13,7 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
 import org.meveo.model.communication.email.EmailTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.communication.impl.EmailTemplateService;
 
 /**
@@ -29,7 +27,7 @@ public class EmailTemplateApi extends BaseApi {
 
 	@Inject
 	private EmailTemplateService emailTemplateService;
-	public void create(EmailTemplateDto emailTemplateDto,User currentUser) throws MeveoApiException,BusinessException{
+	public void create(EmailTemplateDto emailTemplateDto) throws MeveoApiException,BusinessException{
 		if(StringUtils.isBlank(emailTemplateDto.getCode())){
 			missingParameters.add("code");
 		}
@@ -37,7 +35,7 @@ public class EmailTemplateApi extends BaseApi {
 			missingParameters.add("subject");
 		}
 		handleMissingParameters();
-		EmailTemplate emailTemplate=emailTemplateService.findByCode(emailTemplateDto.getCode(), currentUser.getProvider());
+		EmailTemplate emailTemplate=emailTemplateService.findByCode(emailTemplateDto.getCode());
 		if(emailTemplate!=null){
 			throw new EntityAlreadyExistsException(EmailTemplate.class, emailTemplateDto.getCode());
 		}
@@ -57,9 +55,9 @@ public class EmailTemplateApi extends BaseApi {
 		emailTemplate.setSubject(emailTemplateDto.getSubject());
 		emailTemplate.setHtmlContent(emailTemplateDto.getHtmlContent());
 		emailTemplate.setTextContent(emailTemplateDto.getTextContent());
-		emailTemplateService.create(emailTemplate, currentUser);
+		emailTemplateService.create(emailTemplate);
 	}
-	public void update(EmailTemplateDto emailTemplateDto,User currentUser) throws MeveoApiException,BusinessException{
+	public void update(EmailTemplateDto emailTemplateDto) throws MeveoApiException,BusinessException{
 		if(StringUtils.isBlank(emailTemplateDto.getCode())){
 			missingParameters.add("code");
 		}
@@ -67,7 +65,7 @@ public class EmailTemplateApi extends BaseApi {
 			missingParameters.add("subject");
 		}
 		handleMissingParameters();
-		EmailTemplate emailTemplate=emailTemplateService.findByCode(emailTemplateDto.getCode(), currentUser.getProvider());
+		EmailTemplate emailTemplate=emailTemplateService.findByCode(emailTemplateDto.getCode());
 		if(emailTemplate==null){
 			throw new EntityDoesNotExistsException(EmailTemplate.class, emailTemplateDto.getCode());
 		}
@@ -87,33 +85,33 @@ public class EmailTemplateApi extends BaseApi {
 		emailTemplate.setSubject(emailTemplateDto.getSubject());
 		emailTemplate.setHtmlContent(emailTemplateDto.getHtmlContent());
 		emailTemplate.setTextContent(emailTemplateDto.getTextContent());
-		emailTemplateService.update(emailTemplate, currentUser);
+		emailTemplateService.update(emailTemplate);
 	}
-	public EmailTemplateDto find(String emailTemplateCode,Provider currentProvider) throws MeveoApiException,BusinessException{
+	public EmailTemplateDto find(String emailTemplateCode) throws MeveoApiException,BusinessException{
 		if(StringUtils.isBlank(emailTemplateCode)){
 			missingParameters.add("emailTemplateCode");
 			handleMissingParameters();
 		}
-		EmailTemplate emailTemplate=emailTemplateService.findByCode(emailTemplateCode, currentProvider);
+		EmailTemplate emailTemplate=emailTemplateService.findByCode(emailTemplateCode);
 		if(emailTemplate==null){
 			throw new EntityDoesNotExistsException(EmailTemplate.class, emailTemplateCode);
 		}
 		return new EmailTemplateDto(emailTemplate);
 	}
-	public void remove(String emailTemplateCode, User currentUser) throws MeveoApiException,BusinessException{
+	public void remove(String emailTemplateCode) throws MeveoApiException,BusinessException{
 		if(StringUtils.isBlank(emailTemplateCode)){
 			missingParameters.add("emailTemplateCode");
 		}
 		handleMissingParameters();
-		EmailTemplate emailTemplate=emailTemplateService.findByCode(emailTemplateCode, currentUser.getProvider());
+		EmailTemplate emailTemplate=emailTemplateService.findByCode(emailTemplateCode);
 		if(emailTemplate==null){
 			throw new EntityDoesNotExistsException(EmailTemplate.class, emailTemplateCode);
 		}
-		emailTemplateService.remove(emailTemplate, currentUser);
+		emailTemplateService.remove(emailTemplate);
 	}
-	public List<EmailTemplateDto> list(Provider provider) throws MeveoApiException{
+	public List<EmailTemplateDto> list() throws MeveoApiException{
 		List<EmailTemplateDto> result=new ArrayList<EmailTemplateDto>();
-		List<EmailTemplate> emailTemplates=emailTemplateService.list(provider);
+		List<EmailTemplate> emailTemplates=emailTemplateService.list();
 		if(emailTemplates!=null){
 			for(EmailTemplate emailTemplate:emailTemplates){
 				result.add(new EmailTemplateDto(emailTemplate));
@@ -121,12 +119,12 @@ public class EmailTemplateApi extends BaseApi {
 		}
 		return result;
 	}
-	public void createOrUpdate(EmailTemplateDto emailTemplateDto,User currentUser) throws MeveoApiException,BusinessException{
-		EmailTemplate emailTemplate=emailTemplateService.findByCode(emailTemplateDto.getCode(), currentUser.getProvider());
+	public void createOrUpdate(EmailTemplateDto emailTemplateDto) throws MeveoApiException,BusinessException{
+		EmailTemplate emailTemplate=emailTemplateService.findByCode(emailTemplateDto.getCode());
 		if(emailTemplate!=null){
-			update(emailTemplateDto,currentUser);
+			update(emailTemplateDto);
 		}else{
-			create(emailTemplateDto,currentUser);
+			create(emailTemplateDto);
 		}
 	}
 }

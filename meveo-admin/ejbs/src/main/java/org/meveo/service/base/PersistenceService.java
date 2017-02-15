@@ -40,7 +40,6 @@ import javax.persistence.Query;
 import javax.transaction.TransactionSynchronizationRegistry;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.ProviderNotAllowedException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.commons.utils.QueryBuilder;
@@ -56,21 +55,15 @@ import org.meveo.model.EnableEntity;
 import org.meveo.model.IAuditable;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
-import org.meveo.model.IProvider;
 import org.meveo.model.IdentifiableEnum;
 import org.meveo.model.MultilanguageEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.UniqueEntity;
-import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
-import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.index.ElasticClient;
 import org.meveo.util.MeveoJpa;
 import org.meveo.util.MeveoJpaForJobs;
@@ -81,9 +74,7 @@ import org.meveo.util.MeveoJpaForJobs;
 public abstract class PersistenceService<E extends IEntity> extends BaseService implements IPersistenceService<E> {
     protected Class<E> entityClass;
 
-    public static String SEARCH_SKIP_PROVIDER_CONSTRAINT = "skipProviderConstraint";
     public static String SEARCH_CURRENT_USER = "currentUser";
-    public static String SEARCH_CURRENT_PROVIDER = "currentProvider";
     public static String SEARCH_ATTR_TYPE_CLASS = "type_class";
     public static String SEARCH_IS_NULL = "IS_NULL";
     public static String SEARCH_IS_NOT_NULL = "IS_NOT_NULL";
@@ -108,32 +99,29 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     @Inject
     @Created
-    protected Event<E> entityCreatedEventProducer;
+    protected Event<BaseEntity> entityCreatedEventProducer;
 
     @Inject
     @Updated
-    protected Event<E> entityUpdatedEventProducer;
+    protected Event<BaseEntity> entityUpdatedEventProducer;
 
     @Inject
     @Disabled
-    protected Event<E> entityDisabledEventProducer;
+    protected Event<BaseEntity> entityDisabledEventProducer;
 
     @Inject
     @Enabled
-    protected Event<E> entityEnabledEventProducer;
+    protected Event<BaseEntity> entityEnabledEventProducer;
 
     @Inject
     @Removed
-    protected Event<E> entityRemovedEventProducer;
+    protected Event<BaseEntity> entityRemovedEventProducer;
 
     @EJB
     private CustomFieldInstanceService customFieldInstanceService;
 
     @EJB
     private CatMessagesService catMessagesService;
-
-    @EJB
-    private ProviderService providerService;
 
     /**
      * Constructor.
@@ -163,6 +151,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public E updateNoCheck(E e) {
         log.debug("start of update {} entity (id={}) ..", e.getClass().getSimpleName(), e.getId());
 
+        updateAudit(e);
         E mergedEntity = getEntityManager().merge(e);
 
         return mergedEntity;
@@ -180,12 +169,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * Use by API.
      */
     @Override
-    public E findById(Long id, Provider provider, boolean refresh) {
+    public E findById(Long id, boolean refresh) {
         log.debug("start of find {} by id (id={}) ..", getEntityClass().getSimpleName(), id);
         final Class<? extends E> productClass = getEntityClass();
         E e = getEntityManager().find(productClass, id);
         if (e != null) {
-            checkProvider(e, provider);
             if (refresh) {
                 log.debug("refreshing loaded entity");
                 getEntityManager().refresh(e);
@@ -203,32 +191,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return findById(id, fetchFields, false);
     }
 
-    /**
-     * @see org.meveo.service.base.local.IPersistenceService#findById(java.lang.Long, boolean)
-     */
-    public E findById(Long id, boolean refresh) {
-        log.debug("start of find {} by id (id={}) ..", getEntityClass().getSimpleName(), id);
-        final Class<? extends E> productClass = getEntityClass();
-        E e = getEntityManager().find(productClass, id);
-        if (e != null) {
-            checkProvider(e);
-            if (refresh) {
-                log.debug("refreshing loaded entity");
-                getEntityManager().refresh(e);
-            }
-        }
-        log.trace("end of find {} by id (id={}). Result found={}.", getEntityClass().getSimpleName(), id, e != null);
-        return e;
-    }
-
-    @SuppressWarnings("unchecked")
-    public E findById(Long id, Provider provider) {
-        final Class<? extends E> entityClass = getEntityClass();
-        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, provider != null ? provider.getId() : currentUser.getProviderId());
-        queryBuilder.addCriterion("id", "=", id, true);
-        Query query = queryBuilder.getQuery(getEntityManager());
-        return (E) query.getSingleResult();
-    }
 
     /**
      * @see org.meveo.service.base.local.IPersistenceService#findById(java.lang.Long, java.util.List, boolean)
@@ -251,7 +213,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         E e = null;
         if (!results.isEmpty()) {
             e = (E) results.get(0);
-            checkProvider(e);
             if (refresh) {
                 log.debug("refreshing loaded entity");
                 getEntityManager().refresh(e);
@@ -261,25 +222,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return e;
     }
 
-    @Override
-    public E findByIdNoCheck(Long id) {
-        return findByIdNoCheck(id, false);
-    }
-
-    @Override
-    public E findByIdNoCheck(Long id, boolean refresh) {
-        log.debug("start of find {} by id (id={}) ..", getEntityClass().getSimpleName(), id);
-        final Class<? extends E> productClass = getEntityClass();
-        E e = getEntityManager().find(productClass, id);
-        if (e != null) {
-            if (refresh) {
-                log.debug("refreshing loaded entity");
-                getEntityManager().refresh(e);
-            }
-        }
-        log.trace("end of find {} by id (id={}). Result found={}.", getEntityClass().getSimpleName(), id, e != null);
-        return e;
-    }
 
     /**
      * @see org.meveo.service.base.local.IPersistenceService#disable(java.lang.Long, org.meveo.model.admin.User)
@@ -300,10 +242,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             if (e instanceof IAuditable) {
                 ((IAuditable) e).updateAudit(currentUser);
             }
-            checkProvider(e);
             e = getEntityManager().merge(e);
-            if (e.getClass().isAnnotationPresent(ObservableEntity.class)) {
-                entityDisabledEventProducer.fire(e);
+            if (e instanceof BaseEntity && e.getClass().isAnnotationPresent(ObservableEntity.class)) {
+                entityDisabledEventProducer.fire((BaseEntity)e);
             }
             log.trace("end of disable {} entity (id={}).", e.getClass().getSimpleName(), e.getId());
         }
@@ -329,10 +270,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             if (e instanceof IAuditable) {
                 ((IAuditable) e).updateAudit(currentUser);
             }
-            checkProvider(e);
             e = getEntityManager().merge(e);
-            if (e.getClass().isAnnotationPresent(ObservableEntity.class)) {
-                entityEnabledEventProducer.fire(e);
+            if (e instanceof BaseEntity && e.getClass().isAnnotationPresent(ObservableEntity.class)) {
+                entityEnabledEventProducer.fire((BaseEntity)e);
             }
             log.trace("end of enable {} entity (id={}).", e.getClass().getSimpleName(), e.getId());
         }
@@ -342,10 +282,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     @Override
     public void remove(E e) throws BusinessException {
         log.debug("start of remove {} entity (id={}) ..", getEntityClass().getSimpleName(), e.getId());
-        checkProvider(e);
         getEntityManager().remove(e);
-        if (e.getClass().isAnnotationPresent(ObservableEntity.class)) {
-            entityRemovedEventProducer.fire(e);
+        if (e instanceof BaseEntity && e.getClass().isAnnotationPresent(ObservableEntity.class)) {
+            entityRemovedEventProducer.fire((BaseEntity)e);
         }
         // getEntityManager().flush();
 
@@ -383,9 +322,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      */
     @Override
     public void remove(Set<Long> ids) throws BusinessException {
-        Query query = getEntityManager().createQuery("delete from " + getEntityClass().getName() + " where id in (:ids) and provider.id = :providerId");
+        Query query = getEntityManager().createQuery("delete from " + getEntityClass().getName() + " where id in (:ids)");
         query.setParameter("ids", ids);
-        query.setParameter("providerId", currentUser.getProvider().getId());
         query.executeUpdate();
     }
 
@@ -399,13 +337,13 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         if (e instanceof IAuditable) {
             ((IAuditable) e).updateAudit(currentUser);
         }
-        checkProvider(e);
 
         e = getEntityManager().merge(e);
 
         log.trace("updated class {}, is BusinessEntity {}", e.getClass(), BusinessEntity.class.isAssignableFrom(e.getClass()));
 
-        // Update entity in Elastic Search. ICustomFieldEntity is updated partially, as entity itself does not have Custom field values
+        // Update entity in Elastic Search. ICustomFieldEntity is updated
+        // partially, as entity itself does not have Custom field values
         if (e instanceof BusinessCFEntity) {
             elasticClient.partialUpdate((BusinessEntity) e);
 
@@ -413,8 +351,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             elasticClient.createOrFullUpdate((BusinessEntity) e);
         }
 
-        if (e.getClass().isAnnotationPresent(ObservableEntity.class)) {
-            entityUpdatedEventProducer.fire(e);
+        if (e instanceof BaseEntity && e.getClass().isAnnotationPresent(ObservableEntity.class)) {
+            entityUpdatedEventProducer.fire((BaseEntity)e);
         }
 
         log.trace("end of update {} entity (id={}).", e.getClass().getSimpleName(), e.getId());
@@ -433,10 +371,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             ((IAuditable) e).updateAudit(currentUser);
         }
 
-        if (e instanceof IProvider && (((IProvider) e).getProvider() == null)) {
-            ((BaseEntity) e).setProvider(creator.getProvider());
-        }
-
         getEntityManager().persist(e);
 
         // Add entity to Elastic Search
@@ -444,8 +378,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             elasticClient.createOrFullUpdate((BusinessEntity) e);
         }
 
-        if (e.getClass().isAnnotationPresent(ObservableEntity.class)) {
-            entityCreatedEventProducer.fire(e);
+        if (e instanceof BaseEntity && e.getClass().isAnnotationPresent(ObservableEntity.class)) {
+            entityCreatedEventProducer.fire((BaseEntity)e);
         }
 
         log.trace("end of create {}. entity id={}.", e.getClass().getSimpleName(), e.getId());
@@ -457,22 +391,18 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      */
     @Override
     public List<E> list() {
-        return list(null, null);
+        return list((Boolean) null);
     }
 
     @Override
     public List<E> listActive() {
-        return list(null, true);
-    }
-
-    public List<E> list(Provider provider) {
-        return list(provider, null);
+        return list(true);
     }
 
     @SuppressWarnings("unchecked")
-    public List<E> list(Provider provider, Boolean active) {
+    public List<E> list(Boolean active) {
         final Class<? extends E> entityClass = getEntityClass();
-        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, provider != null ? provider : currentUser.getProvider());
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
         if (active != null && EnableEntity.class.isAssignableFrom(entityClass)) {
             queryBuilder.addBooleanCriterion("disabled", !active);
         }
@@ -484,13 +414,12 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * Find entities by code - wild match
      * 
      * @param code Code to match
-     * @param provider Provider
-     * @return A list of entities matching code for a given provider
+     * @return A list of entities matching code
      */
     @SuppressWarnings("unchecked")
-    public List<E> findByCodeLike(String wildcode, Provider provider) {
+    public List<E> findByCodeLike(String wildcode) {
         final Class<? extends E> entityClass = getEntityClass();
-        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, provider != null ? provider : currentUser.getProvider());
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
         if (EnableEntity.class.isAssignableFrom(entityClass)) {
             queryBuilder.addBooleanCriterion("disabled", false);
         }
@@ -537,7 +466,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     @Override
     public long count() {
         final Class<? extends E> entityClass = getEntityClass();
-        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null, null);
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
         return queryBuilder.count(getEntityManager());
     }
 
@@ -628,35 +557,22 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         final Class<? extends E> entityClass = getEntityClass();
 
         Map<String, Object> filters = config.getFilters();
-
-        // If provider is not retrievable from service, get it from a filter
-        Provider provider = currentUser.getProvider();
-        if (provider == null && filters.containsKey(SEARCH_CURRENT_PROVIDER)) {
-            provider = (Provider) filters.get(SEARCH_CURRENT_PROVIDER);
-        }
-
-        // Ignore current provider constraint if "skipProviderConstraint" parameter was passed to search
-        if (filters != null && filters.containsKey(SEARCH_SKIP_PROVIDER_CONSTRAINT)) {
-            provider = null;
-        }
-
-        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", config.getFetchFields(), provider);
+       
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", config.getFetchFields());
 
         if (filters != null && !filters.isEmpty()) {
 
             if (filters.containsKey("$FILTER")) {
                 Filter filter = (Filter) filters.get("$FILTER");
                 Map<CustomFieldTemplate, Object> parameterMap = (Map<CustomFieldTemplate, Object>) filters.get("$FILTER_PARAMETERS");
-                queryBuilder = new FilteredQueryBuilder(filter, parameterMap, false, false, provider);
+                queryBuilder = new FilteredQueryBuilder(filter, parameterMap, false, false);
             } else {
 
                 for (String key : filters.keySet()) {
-                    if (SEARCH_SKIP_PROVIDER_CONSTRAINT.equals(key) || SEARCH_CURRENT_PROVIDER.equals(key) || SEARCH_CURRENT_USER.equals(key)) {
-                        continue;
-                    }
-
+                    
                     // condition field1 field2
-                    // example1 ne code, condition=code, fieldName=code, fieldName2=null
+                    // example1 ne code, condition=code, fieldName=code,
+                    // fieldName2=null
                     String[] fieldInfo = key.split(" ");
                     String condition = fieldInfo.length == 1 ? null : fieldInfo[0];
                     String fieldName = fieldInfo.length == 1 ? fieldInfo[0] : fieldInfo[1];
@@ -837,26 +753,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return queryBuilder;
     }
 
-    /**
-     * Check entity provider. If current provider is not same as entity provider exception is thrown since different provider should not be allowed to modify (update or delete)
-     * entity.
-     */
-    protected void checkProvider(E e) throws ProviderNotAllowedException {
-
-        if (isConversationScoped() && currentUser != null) {
-            if (e instanceof BaseEntity) {
-                boolean notSameProvider = !((BaseEntity) e).doesProviderMatch(currentUser.getProvider());
-                if (notSameProvider) {
-                    if (!currentUser.hasRole("superAdminManagement")) {
-                        log.debug("CheckProvider getCurrentProvider() code={}, entityProvider id={}",
-                            new Object[] { currentUser.getProviderCode(), ((BaseEntity) e).getProvider().getId() });
-                        throw new ProviderNotAllowedException();
-                    }
-                }
-            }
-        }
-    }
-
     public E attach(E e) {
         return (E) getEntityManager().merge(e);
     }
@@ -889,7 +785,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     public void updateAudit(E e) {
-        
+
         if (e instanceof IAuditable) {
             ((IAuditable) e).updateAudit(currentUser);
         }

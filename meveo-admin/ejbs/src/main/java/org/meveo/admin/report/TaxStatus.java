@@ -34,7 +34,9 @@ import javax.inject.Named;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.bi.OutputFormatEnum;
 import org.meveo.model.bi.Report;
+import org.meveo.model.crm.Provider;
 import org.meveo.service.reporting.impl.JournalEntryService;
+import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
 @Named
@@ -45,12 +47,16 @@ public class TaxStatus extends FileProducer implements Reporting {
 
 	@Inject
 	private JournalEntryService salesTransformationService;
-
+	
+    @Inject
+    @ApplicationProvider
+    private Provider appProvider;
+    
 	private String reportsFolder;
 	private String templateFilename;
 	public Map<String, Object> parameters = new HashMap<String, Object>();
 
-	public void generateTaxStatusFile(String providerCode, Date startDate, Date endDate,
+	public void generateTaxStatusFile(Date startDate, Date endDate,
 			OutputFormatEnum outputFormat) {
 		// log.info("generateTaxStatusFile({},{})", startDate,endDate);
 		try {
@@ -60,15 +66,14 @@ public class TaxStatus extends FileProducer implements Reporting {
 			if (outputFormat == OutputFormatEnum.PDF) {
 				file = File.createTempFile("tempAccountingDetail", ".csv");
 			} else if (outputFormat == OutputFormatEnum.CSV) {
-				StringBuilder sb = new StringBuilder(getFilename(providerCode, startDate, endDate));
+				StringBuilder sb = new StringBuilder(getFilename(startDate, endDate));
 				sb.append(".csv");
 				file = new File(sb.toString());
 			}
 			FileWriter writer = new FileWriter(file);
 			writer.append("Code;Description;Pourcentage;Base HT;Taxe due");
 			writer.append('\n');
-			List<Object> taxes = salesTransformationService.getTaxRecodsBetweenDate(providerCode,
-					startDate, endDate);
+			List<Object> taxes = salesTransformationService.getTaxRecodsBetweenDate(startDate, endDate);
 			Iterator<Object> itr = taxes.iterator();
 			while (itr.hasNext()) {
 				Object[] row = (Object[]) itr.next();
@@ -97,8 +102,7 @@ public class TaxStatus extends FileProducer implements Reporting {
 			if (outputFormat == OutputFormatEnum.PDF) {
 				parameters.put("startDate", startDate);
 				parameters.put("endDate", endDate);
-				parameters.put("provider", providerCode);
-				StringBuilder sb = new StringBuilder(getFilename(providerCode, startDate, endDate));
+				StringBuilder sb = new StringBuilder(getFilename(startDate, endDate));
 				sb.append(".pdf");
 				generatePDFfile(file, sb.toString(), templateFilename, parameters);
 			}
@@ -107,13 +111,13 @@ public class TaxStatus extends FileProducer implements Reporting {
 		}
 	}
 
-	public String getFilename(String providerName, Date startDate, Date endDate) {
+	public String getFilename(Date startDate, Date endDate) {
 
 		String DATE_FORMAT = "dd-MM-yyyy";
 		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
 		StringBuilder sb = new StringBuilder();
 		sb.append(reportsFolder);
-		sb.append(providerName);
+		sb.append(appProvider.getCode());
 		sb.append("_TAX_");
 		sb.append(sdf.format(startDate).toString());
 		sb.append("_");
@@ -126,7 +130,7 @@ public class TaxStatus extends FileProducer implements Reporting {
 		reportsFolder = param.getProperty("reportsURL","/opt/jboss/files/reports/");
 		String jasperTemplatesFolder = param.getProperty("reports.jasperTemplatesFolder","/opt/jboss/files/reports/JasperTemplates/");
 		templateFilename = jasperTemplatesFolder + "taxStatus.jasper";
-		generateTaxStatusFile(report.getProvider() == null ? null : report.getProvider().getCode(),
+		generateTaxStatusFile(
 				report.getStartDate(), report.getEndDate(), report.getOutputFormat());
 
 	}

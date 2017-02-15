@@ -20,7 +20,7 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
-@ExportIdentifier({ "name", "provider" })
+@ExportIdentifier({ "name"})
 @Table(name = "ADM_ROLE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_ROLE_SEQ")
 public class Role extends BaseEntity {

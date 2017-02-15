@@ -36,7 +36,7 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            userAccountApi.create(postData, getCurrentUser());
+            userAccountApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -56,7 +56,7 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            userAccountApi.update(postData, getCurrentUser());
+            userAccountApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -76,7 +76,7 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
         GetUserAccountResponseDto result = new GetUserAccountResponseDto();
 
         try {
-            result.setUserAccount(userAccountApi.find(userAccountCode, getCurrentUser()));
+            result.setUserAccount(userAccountApi.find(userAccountCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -96,7 +96,7 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            userAccountApi.remove(userAccountCode, getCurrentUser());
+            userAccountApi.remove(userAccountCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -116,7 +116,7 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
         UserAccountsResponseDto result = new UserAccountsResponseDto();
 
         try {
-            result.setUserAccounts(userAccountApi.listByBillingAccount(billingAccountCode, getCurrentUser().getProvider()));
+            result.setUserAccounts(userAccountApi.listByBillingAccount(billingAccountCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -136,7 +136,7 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            userAccountApi.createOrUpdate(postData, getCurrentUser());
+            userAccountApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -156,7 +156,7 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
     	GetCountersInstancesResponseDto result = new GetCountersInstancesResponseDto();
     	
     	try {
-    		List<CounterInstance> counters = userAccountApi.filterCountersByPeriod(userAccountCode, DateUtils.parseDateWithPattern(date, "yyyy-MM-dd"), getCurrentUser().getProvider());
+    		List<CounterInstance> counters = userAccountApi.filterCountersByPeriod(userAccountCode, DateUtils.parseDateWithPattern(date, "yyyy-MM-dd"));
     		for(CounterInstance ci : counters) {
     			result.getCountersInstances().getCounterInstance().add(new CounterInstanceDto(ci));
     		}
@@ -179,7 +179,7 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
 	       ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 	        try {
-	            userAccountApi.applyProduct(postData, getCurrentUser());
+	            userAccountApi.applyProduct(postData);
 	        } catch (MeveoApiException e) {
 	            result.setErrorCode(e.getErrorCode());
 	            result.setStatus(ActionStatusEnum.FAIL);

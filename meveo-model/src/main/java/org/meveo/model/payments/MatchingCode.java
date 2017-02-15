@@ -35,14 +35,14 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.EnableEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
-@ExportIdentifier({ "code", "provider" })
+@ExportIdentifier({ "code"})
 @Table(name = "AR_MATCHING_CODE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_MATCHING_CODE_SEQ")
-public class MatchingCode extends AuditableEntity {
+public class MatchingCode extends EnableEntity {
 
 	private static final long serialVersionUID = 1L;
 

@@ -18,21 +18,14 @@
  */
 package org.meveo.service.crm.impl;
 
-import java.util.List;
-
 import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Produces;
+import javax.inject.Named;
 
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.IEntity;
-import org.meveo.model.IProvider;
-import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
-import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.index.ElasticClient;
+import org.meveo.util.ApplicationProvider;
 
 /**
  * Provider service implementation.
@@ -40,61 +33,17 @@ import org.meveo.service.index.ElasticClient;
 @Stateless
 public class ProviderService extends PersistenceService<Provider> {
 
-    @Inject
-    private UserService userService;
-
-    @Inject
-    private ElasticClient elasticClient;
-
-    public Provider findByCode(String code) {
-        return findByCodeWithFetch(code, null);
-    }
-
-    public Provider findUsersProvider(String userName) {
-        User user = userService.findByUsername(userName);
-        if (user != null) {
-            return user.getProvider();
-        }
-        return null;
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<Provider> getProviders() {
-        List<Provider> providers = (List<Provider>) getEntityManager().createQuery("from " + Provider.class.getSimpleName()).getResultList();
-        return providers;
-    }
-
-    public Provider findByCodeWithFetch(String code, List<String> fetchFields) {
-        QueryBuilder qb = new QueryBuilder(Provider.class, "p", fetchFields, null);
-
-        qb.addCriterion("p.code", "=", code, true);
-
-        try {
-            return (Provider) qb.getQuery(getEntityManager()).getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-
-    @Override
-    public void create(Provider provider) throws BusinessException {
-        super.create(provider);
-        elasticClient.createIndexes(provider);
-    }
-    
     /**
-     * Get provider of and entity. Handles cases when entity itself is a provider
+     * Expose application provider
      * 
-     * @param entity Entity
-     * @return Provider
+     * @return
      */
-    public static Provider getProvider(IEntity entity) {
-
-        if (entity instanceof Provider) {
-            return (Provider) entity;
-
-        } else {
-            return ((IProvider) entity).getProvider();
-        }
+    @Produces
+    @ApplicationScoped
+    @Named()
+    @ApplicationProvider
+    public Provider getProvider() {
+        return list().get(0);
     }
+
 }

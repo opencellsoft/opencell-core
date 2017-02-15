@@ -19,7 +19,6 @@
 package org.meveo.admin.action.wf;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -84,17 +83,6 @@ public class WorkflowHistoryBean extends BaseBean<WorkflowHistory> {
 		return "workflowHistories";
 	}
 
-	/**
-	 * Fetch customer field so no LazyInitialize exception is thrown when we
-	 * access it from account edit view.
-	 * 
-	 * @see org.manaty.beans.base.BaseBean#getFormFieldsToFetch()
-	 */
-	@Override
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
-
 	@Override
 	protected String getDefaultSort() {
 		return "actionDate";
@@ -110,8 +98,8 @@ public class WorkflowHistoryBean extends BaseBean<WorkflowHistory> {
 	public List<WorkflowHistory> getWorkflowHistory(BusinessEntity entity){		
 		if(oldConsultedEntity == null || !entity.equals(oldConsultedEntity) ){	
 			oldConsultedEntity = entity;
-			List<Workflow> workflows = workflowService.findByEntity(entity.getClass(), entity.getProvider());		
-			wfHistories = workflowHistoryService.findByEntityCode(entity.getCode(), workflows, entity.getProvider());
+			List<Workflow> workflows = workflowService.findByEntity(entity.getClass());		
+			wfHistories = workflowHistoryService.findByEntityCode(entity.getCode(), workflows);
 		}
 		return wfHistories;
 	}

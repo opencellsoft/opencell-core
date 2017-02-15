@@ -5,12 +5,10 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.meveo.model.IProvider;
 import org.meveo.model.NotifiableEntity;
-import org.meveo.model.crm.Provider;
 
 @NotifiableEntity
-public class CDR  implements Serializable,IProvider{
+public class CDR  implements Serializable{
 
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 	
@@ -40,7 +38,6 @@ public class CDR  implements Serializable,IProvider{
 	private BigDecimal decimalParam3; 
 	private BigDecimal decimalParam4; 
 	private BigDecimal decimalParam5;
-	private Provider provider;
 	
 	public CDR(){
 		
@@ -386,16 +383,4 @@ public class CDR  implements Serializable,IProvider{
 		}
 		return result;
 	}
-	
-	@Override
-	public Provider getProvider() {
-		return provider;
-	}
-
-	@Override
-	public void setProvider(Provider provider) {
-		this.provider=provider;
-		
-	}
-
 }

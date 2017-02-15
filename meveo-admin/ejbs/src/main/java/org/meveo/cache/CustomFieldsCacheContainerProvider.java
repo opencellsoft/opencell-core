@@ -22,18 +22,15 @@ import javax.inject.Inject;
 
 import org.infinispan.commons.api.BasicCache;
 import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.IEntity;
 import org.meveo.model.catalog.CalendarDaily;
 import org.meveo.model.catalog.CalendarInterval;
 import org.meveo.model.catalog.CalendarYearly;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.crm.impl.CustomFieldException;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
-import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.util.PersistenceUtils;
 import org.slf4j.Logger;
@@ -60,20 +57,20 @@ public class CustomFieldsCacheContainerProvider {
     CustomEntityTemplateService customEntityTemplateService;
 
     /**
-     * How long custom field period value should be cached. Key format: <provider id>_<custom field template code>. Value is a number of days to cache custom field value
+     * How long custom field period value should be cached. Key format: <custom field template code>. Value is a number of days to cache custom field value
      */
     private Map<String, Integer> cfValueCacheTime = new HashMap<String, Integer>();
 
     /**
-     * Group custom field templates applicable to the same entity type. Key format: <provider id>_<custom field template appliesTo code>. Value is a map of custom field templates
+     * Group custom field templates applicable to the same entity type. Key format: <custom field template appliesTo code>. Value is a map of custom field templates
      * identified by a template code
      */
     private Map<String, Map<String, CustomFieldTemplate>> cftsByAppliesTo = new HashMap<String, Map<String, CustomFieldTemplate>>();
 
     /**
-     * Cache custom entity templates by provider. Key format: <provider id>. Value is a map of custom entity templates identified by a template code
+     * Cache custom entity templates. Is a map of custom entity templates identified by a template code
      */
-    private Map<String, Map<String, CustomEntityTemplate>> cetsByProvider = new HashMap<String, Map<String, CustomEntityTemplate>>();
+    private Map<String, CustomEntityTemplate> cetsByCode = new TreeMap<String, CustomEntityTemplate>();
 
     /**
      * Contains association between entity, and custom field value(s). Key format: <entity class>_<entity id>. Value is a map where key is CFI code and value is a list of values
@@ -155,22 +152,18 @@ public class CustomFieldsCacheContainerProvider {
         // Start to populate custom entity template cache
         log.debug("Start to populate custom entity template cache");
 
-        cetsByProvider.clear();
+        cetsByCode.clear();
 
         // Cache custom entity templates sorted by a cet.name
-        List<CustomEntityTemplate> cets = customEntityTemplateService.getCETForCache();
-        Collections.sort(cets);
+        List<CustomEntityTemplate> allCets = customEntityTemplateService.getCETForCache();
+        Collections.sort(allCets);
 
-        for (CustomEntityTemplate cet : cets) {
+        for (CustomEntityTemplate cet : allCets) {
 
-            if (!cetsByProvider.containsKey(cet.getProvider().getId().toString())) {
-                cetsByProvider.put(cet.getProvider().getId().toString(), new TreeMap<String, CustomEntityTemplate>());
-            }
-
-            cetsByProvider.get(cet.getProvider().getId().toString()).put(cet.getCode(), cet);
+            cetsByCode.put(cet.getCode(), cet);
         }
 
-        log.info("Custom entity template cache populated with {} values.", cets.size());
+        log.info("Custom entity template cache populated with {} values.", allCets.size());
 
         // Start to populate custom field value cache
         log.debug("Start to populate custom field value cache");
@@ -184,7 +177,7 @@ public class CustomFieldsCacheContainerProvider {
 
         for (CustomFieldInstance cfi : cfis) {
 
-            // CustomFieldTemplate cft = getCustomFieldTemplate(cfi.getCode(), cfi.getAppliesToEntity(), cfi.getProvider());
+            // CustomFieldTemplate cft = getCustomFieldTemplate(cfi.getCode(), cfi.getAppliesToEntity());
             // if (!cft.isCacheValue()) {
             // continue;
             // }
@@ -193,7 +186,7 @@ public class CustomFieldsCacheContainerProvider {
 
             log.trace("Add CustomFieldInstance {} to CustomFieldInstance cache for entity uuid {}", cfi.getCode(), cacheKey);
 
-            CachedCFPeriodValue cfvValue = convertFromCFI(cfi, cfValueCacheTimeAsDate.get(cfi.getProvider().getId() + "_" + cfi.getCode()));
+            CachedCFPeriodValue cfvValue = convertFromCFI(cfi, cfValueCacheTimeAsDate.get(cfi.getCode()));
             if (cfvValue != null) {
                 customFieldValueCache.putIfAbsent(cacheKey, new TreeMap<String, List<CachedCFPeriodValue>>());
                 if (!customFieldValueCache.get(cacheKey).containsKey(cfi.getCode())) {
@@ -502,15 +495,13 @@ public class CustomFieldsCacheContainerProvider {
      * Calculate until what date the versionable custom field value should be stored in cache
      * 
      * @param code Custom field template cache
-     * @param entity Entity (only to find provider)
+     * @param entity Entity - not used for now
      * @return A date or null if not applicable
      */
     private Date calculateCutoffDate(String code, ICustomFieldEntity entity) {
 
-        Long providerId = ProviderService.getProvider((IEntity) entity).getId();
-
         Date cutoffDate = null;
-        Integer cutoffPeriod = cfValueCacheTime.get(providerId + "_" + code);
+        Integer cutoffPeriod = cfValueCacheTime.get(code);
         if (cutoffPeriod != null) {
             Calendar calendar = new GregorianCalendar();
             calendar.add(Calendar.DATE, (-1) * cutoffPeriod.intValue());
@@ -600,15 +591,10 @@ public class CustomFieldsCacheContainerProvider {
      */
     public void addUpdateCustomEntityTemplate(CustomEntityTemplate cet) {
 
-        if (!cetsByProvider.containsKey(cet.getProvider().getId().toString())) {
-            cetsByProvider.put(cet.getProvider().getId().toString(), new TreeMap<String, CustomEntityTemplate>());
-        } else {
-            cetsByProvider.get(cet.getProvider().getId().toString()).remove(cet.getCode());
-        }
-        cetsByProvider.get(cet.getProvider().getId().toString()).put(cet.getCode(), cet);
+        cetsByCode.put(cet.getCode(), cet);
 
         // Sort values by cet.name
-        // Collections.sort(cetsByProvider.get(cet.getProvider().getId().toString()));
+        // Collections.sort(cetsByProvider);
 
     }
 
@@ -619,26 +605,26 @@ public class CustomFieldsCacheContainerProvider {
      */
     public void removeCustomEntityTemplate(CustomEntityTemplate cet) {
 
-        cetsByProvider.get(cet.getProvider().getId().toString()).remove(cet.getCode());
+        cetsByCode.remove(cet.getCode());
     }
 
     private String getCFTCacheKeyByCode(CustomFieldTemplate cft) {
-        return cft.getProvider().getId() + "_" + cft.getCode();
+        return cft.getCode();
     }
 
     private String getCFTCacheKeyByAppliesTo(CustomFieldTemplate cft) {
-        return cft.getProvider().getId() + "_" + cft.getAppliesTo();
+        return cft.getAppliesTo();
     }
 
     /**
-     * Get custom field templates for a given entity (appliesTo value) and provider
+     * Get custom field templates for a given entity (appliesTo value)
      * 
      * @param appliesTo entity (appliesTo value)
      * @param provider Provider
      * @return A map of custom field templates with template code as a key
      */
-    public Map<String, CustomFieldTemplate> getCustomFieldTemplates(String appliesTo, Provider provider) {
-        String key = provider.getId() + "_" + appliesTo;
+    public Map<String, CustomFieldTemplate> getCustomFieldTemplates(String appliesTo) {
+        String key = appliesTo;
         if (cftsByAppliesTo.containsKey(key)) {
             return cftsByAppliesTo.get(key);
 
@@ -648,36 +634,24 @@ public class CustomFieldsCacheContainerProvider {
     }
 
     /**
-     * Get custom entity templates for a given provider
+     * Get custom entity templates
      * 
-     * @param provider Provider
      * @return A list of custom entity templates
      */
-    public Collection<CustomEntityTemplate> getCustomEntityTemplates(Provider provider) {
+    public Collection<CustomEntityTemplate> getCustomEntityTemplates() {
 
-        if (cetsByProvider.containsKey(provider.getId().toString())) {
-            return cetsByProvider.get(provider.getId().toString()).values();
-
-        } else {
-            return new ArrayList<CustomEntityTemplate>();
-        }
+        return cetsByCode.values();
     }
 
     /**
-     * Get custom entity template by code for a given provider
+     * Get custom entity template by code
      * 
      * @param code Custom entity template code
-     * @param provider Provider
      * @return A list of custom entity templates
      */
-    public CustomEntityTemplate getCustomEntityTemplate(String code, Provider provider) {
+    public CustomEntityTemplate getCustomEntityTemplate(String code) {
 
-        if (cetsByProvider.containsKey(provider.getId().toString())) {
-            return cetsByProvider.get(provider.getId().toString()).get(code);
-
-        } else {
-            return null;
-        }
+        return cetsByCode.get(code);
     }
 
     /**
@@ -689,7 +663,7 @@ public class CustomFieldsCacheContainerProvider {
      */
     public CustomFieldTemplate getCustomFieldTemplate(String code, ICustomFieldEntity entity) {
         try {
-            return getCustomFieldTemplate(code, CustomFieldTemplateService.calculateAppliesToValue(entity), ProviderService.getProvider((IEntity) entity));
+            return getCustomFieldTemplate(code, CustomFieldTemplateService.calculateAppliesToValue(entity));
 
         } catch (CustomFieldException e) {
             log.error("Can not determine applicable CFT type for entity of {} class.", entity.getClass().getSimpleName());
@@ -702,14 +676,12 @@ public class CustomFieldsCacheContainerProvider {
      * 
      * @param code Custom field template code
      * @param appliesTo Entity appliesTo value
-     * @param provider Provider
      * @return Custom field template
      */
-    public CustomFieldTemplate getCustomFieldTemplate(String code, String appliesTo, Provider provider) {
+    public CustomFieldTemplate getCustomFieldTemplate(String code, String appliesTo) {
 
-        String key = provider.getId() + "_" + appliesTo;
-        if (cftsByAppliesTo.containsKey(key)) {
-            return cftsByAppliesTo.get(key).get(code);
+        if (cftsByAppliesTo.containsKey(appliesTo)) {
+            return cftsByAppliesTo.get(appliesTo).get(code);
 
         } else {
             return null;

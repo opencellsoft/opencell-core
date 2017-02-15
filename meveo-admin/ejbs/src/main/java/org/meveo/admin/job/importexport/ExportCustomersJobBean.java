@@ -17,7 +17,6 @@ import org.meveo.commons.utils.JAXBUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.admin.User;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jaxb.account.Address;
@@ -30,6 +29,7 @@ import org.meveo.model.jaxb.customer.Sellers;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
 @Stateless
@@ -45,6 +45,10 @@ public class ExportCustomersJobBean {
 	
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
+    
+    @Inject
+    @ApplicationProvider
+    protected Provider appProvider;
 
 	Sellers sellers;
 	ParamBean param = ParamBean.getInstance();
@@ -56,9 +60,8 @@ public class ExportCustomersJobBean {
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(JobExecutionResultImpl result, String parameter) {
-		Provider provider = currentUser.getProvider();
 
-		String exportDir = param.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + provider.getCode()
+		String exportDir = param.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + appProvider.getCode()
 				+ File.separator + "exports" + File.separator + "customers" + File.separator;
 		log.info("exportDir=" + exportDir);
 		File dir = new File(exportDir);
@@ -67,11 +70,11 @@ public class ExportCustomersJobBean {
 		}
 
         String timestamp = sdf.format(new Date());
-        List<Seller> sellersInDB = customerService.listSellersWithCustomers(provider);
-        sellers = new Sellers(sellersInDB, provider.getCode());// ,param.getProperty("connectorCRM.dateFormat",
+        List<Seller> sellersInDB = customerService.listSellersWithCustomers();
+        sellers = new Sellers(sellersInDB);// ,param.getProperty("connectorCRM.dateFormat",
                                                                // "yyyy-MM-dd"));
         for (org.meveo.model.jaxb.customer.Seller seller : sellers.getSeller()) {
-            List<Customer> customers = customerService.listBySellerCode(provider, seller.getCode());
+            List<Customer> customers = customerService.listBySellerCode(seller.getCode());
             seller.setCustomers(customersToDto(customers));
         }
         try {

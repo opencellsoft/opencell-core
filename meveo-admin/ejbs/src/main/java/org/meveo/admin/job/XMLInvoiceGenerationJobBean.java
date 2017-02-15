@@ -15,10 +15,8 @@ import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.async.XmlInvoiceAsync;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.BillingRunService;
@@ -47,21 +45,20 @@ public class XMLInvoiceGenerationJobBean {
 	@SuppressWarnings("unchecked")
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public void execute(JobExecutionResultImpl result, String parameter, User currentUser, JobInstance jobInstance) {
-		log.debug("Running for user={}, parameter={}", currentUser, parameter);
+	public void execute(JobExecutionResultImpl result, String parameter, JobInstance jobInstance) {
+		log.debug("Running for parameter={}",  parameter);
 		
-		Provider provider = currentUser.getProvider();
 		List<BillingRun> billingRuns = new ArrayList<BillingRun>();
 
 		if (parameter != null && parameter.trim().length() > 0) {
 			try {
-				billingRuns.add(billingRunService.getBillingRunById(Long.parseLong(parameter), provider));
+				billingRuns.add(billingRunService.getBillingRunById(Long.parseLong(parameter)));
 			} catch (Exception e) {
 				log.error("error while getting billing run",e);
 				result.registerError(e.getMessage());
 			}
 		} else {
-			billingRuns = billingRunService.getValidatedBillingRuns(provider);
+			billingRuns = billingRunService.getValidatedBillingRuns();
 		}
 
 		log.info("billingRuns to process={}", billingRuns.size());
@@ -72,8 +69,8 @@ public class XMLInvoiceGenerationJobBean {
 				Long nbRuns = new Long(1);		
 				Long waitingMillis = new Long(0);
 				try{
-					nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "nbRuns", currentUser);             
-	                waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis", currentUser);
+					nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "nbRuns");             
+	                waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis");
 					if(nbRuns == -1){
 						nbRuns = (long) Runtime.getRuntime().availableProcessors();
 					}
@@ -89,9 +86,9 @@ public class XMLInvoiceGenerationJobBean {
 				result.setNbItemsToProcess(subListCreator.getListSize());
 
 				while (subListCreator.isHasNext()) {
-					futures.add(xmlInvoiceAsync.launchAndForget((List<Invoice>) subListCreator.getNextWorkSet(), result,currentUser));
+					futures.add(xmlInvoiceAsync.launchAndForget((List<Invoice>) subListCreator.getNextWorkSet(), result));
 					if(result.getNbItemsProcessedWithError()==0){
-					updateBillingRun(billingRun.getId(), currentUser);
+					updateBillingRun(billingRun.getId());
 					}
 	                if (subListCreator.isHasNext()) {
 	                    try {
@@ -126,10 +123,9 @@ public class XMLInvoiceGenerationJobBean {
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void updateBillingRun(Long billingRunId ,User currentUser) {
-		BillingRun billingRun = billingRunService.findById(billingRunId, currentUser.getProvider());
+	public void updateBillingRun(Long billingRunId) {
+		BillingRun billingRun = billingRunService.findById(billingRunId);
 		billingRun.setXmlInvoiceGenerated(true);
-		billingRun.updateAudit(currentUser);
 		billingRunService.updateNoCheck(billingRun);
 
 	}

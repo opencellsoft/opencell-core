@@ -29,7 +29,7 @@ public class FilteredListWsImpl extends BaseWs implements FilteredListWs {
     public FilteredListResponseDto listByFilter(FilterDto filter, Integer firstRow, Integer numberOfRows, Map<String, String> parameters) {
         FilteredListResponseDto result = new FilteredListResponseDto();
         try {
-            String searchResults = filteredListApi.listByFilter(filter, firstRow, numberOfRows, getCurrentUser(), parameters);
+            String searchResults = filteredListApi.listByFilter(filter, firstRow, numberOfRows,  parameters);
             result.setSearchResults(searchResults);
         } catch (Exception e) {
             super.processException(e, result.getActionStatus());
@@ -43,7 +43,7 @@ public class FilteredListWsImpl extends BaseWs implements FilteredListWs {
 
         FilteredListResponseDto result = new FilteredListResponseDto();
         try {
-            String searchResults = fullTextSearchApi.search(classnamesOrCetCodes, query, from, size, getCurrentUser());
+            String searchResults = fullTextSearchApi.search(classnamesOrCetCodes, query, from, size);
             result.setSearchResults(searchResults);
         } catch (Exception e) {
             super.processException(e, result.getActionStatus());
@@ -57,7 +57,7 @@ public class FilteredListWsImpl extends BaseWs implements FilteredListWs {
 
         FilteredListResponseDto result = new FilteredListResponseDto();
         try {
-            String searchResults = fullTextSearchApi.search(classnamesOrCetCodes, query, from, size, getCurrentUser());
+            String searchResults = fullTextSearchApi.search(classnamesOrCetCodes, query, from, size);
             result.setSearchResults(searchResults);
         } catch (Exception e) {
             super.processException(e, result.getActionStatus());
@@ -70,8 +70,9 @@ public class FilteredListWsImpl extends BaseWs implements FilteredListWs {
     public ActionStatus reindex() {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
+        // TODO check getCurrentUser("superAdmin", "superAdminManagement")
         try {
-            fullTextSearchApi.cleanAndReindex(getCurrentUser("superAdmin", "superAdminManagement"));
+            fullTextSearchApi.cleanAndReindex();
         } catch (Exception e) {
             super.processException(e, result);
 }

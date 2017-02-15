@@ -22,13 +22,11 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
@@ -39,6 +37,7 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
+import org.omnifaces.cdi.Param;
 import org.omnifaces.cdi.ViewScoped;
 
 /**
@@ -66,8 +65,8 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
      * Offer Id passed as a parameter. Used when creating new Service from Offer window, so default offer will be set on newly created service.
      */
     @Inject
-    @RequestParam
-    private Instance<Long> offerInstanceId;
+    @Param
+    private Long offerInstanceId;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -86,7 +85,7 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
     public ServiceInstance initEntity() {
         super.initEntity();
 
-        if (offerInstanceId != null && offerInstanceId.get() != null) {
+        if (offerInstanceId != null) {
             // entity.setOfferInstance(offerInstanceService.findById(offerInstanceId.get());
         }
 
@@ -104,7 +103,7 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
     public String serviceInstanciation(ServiceInstance serviceInstance) {
         log.info("serviceInstanciation serviceInstanceId:" + serviceInstance.getId());
         try {
-            serviceInstanceService.serviceInstanciation(serviceInstance, getCurrentUser());
+            serviceInstanceService.serviceInstanciation(serviceInstance);
 
         } catch (BusinessException e) {
             log.error("error occurred in service instanciation ", e);
@@ -121,7 +120,7 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
 
         try {
             entity = serviceInstanceService.refreshOrRetrieve(entity);
-            serviceInstanceService.serviceActivation(entity, null, null, getCurrentUser());
+            serviceInstanceService.serviceActivation(entity, null, null);
             messages.info(new BundleKey("messages", "activation.activateSuccessful"));
 
         } catch (BusinessException e) {
@@ -140,7 +139,7 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
 
         try {
             // serviceInstanceService.serviceTermination(serviceInstance, new
-            // Date(), currentUser);
+            // Date());
             messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
 
         } catch (Exception e) {
@@ -155,7 +154,7 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
 
         try {
             // serviceInstanceService.serviceCancellation(serviceInstance, new
-            // Date(), currentUser);
+            // Date());
             messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
 
         } catch (Exception e) {
@@ -170,7 +169,7 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
 
         try {
             entity.setStatus(InstanceStatusEnum.CANCELED);
-            serviceInstanceService.update(entity, getCurrentUser());
+            serviceInstanceService.update(entity);
             messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
 
         } catch (Exception e) {
@@ -185,7 +184,7 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
 
         try {
             entity = serviceInstanceService.refreshOrRetrieve(entity);
-            serviceInstanceService.serviceSuspension(entity, new Date(), getCurrentUser());
+            serviceInstanceService.serviceSuspension(entity, new Date());
             messages.info(new BundleKey("messages", "suspension.suspendSuccessful"));
 
         } catch (BusinessException e) {

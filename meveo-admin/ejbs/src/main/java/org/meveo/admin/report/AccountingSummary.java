@@ -60,14 +60,14 @@ public class AccountingSummary extends FileProducer implements Reporting {
     private String templateFilename;
     public Map<String, Object> parameters = new HashMap<String, Object>();
 
-    public void generateAccountingSummaryFile(String providerCode, Date startDate, Date endDate,
+    public void generateAccountingSummaryFile(Date startDate, Date endDate,
             OutputFormatEnum outputFormat) {
         try {
             File file = null;
             if (outputFormat == OutputFormatEnum.PDF) {
                 file = File.createTempFile("tempAccountingSummary", ".csv");
             } else if (outputFormat == OutputFormatEnum.CSV) {
-                StringBuilder sb = new StringBuilder(getFilename(providerCode));
+                StringBuilder sb = new StringBuilder(getFilename());
                 sb.append(".csv");
                 file = new File(sb.toString());
             }
@@ -75,9 +75,9 @@ public class AccountingSummary extends FileProducer implements Reporting {
             writer.append("Code opération;Libellé de l'opération;Débit;Crédit");
             writer.append('\n');
             List<Object> listCategory1 = accountOperationTransformationService.getAccountingSummaryRecords(
-                    providerCode, new Date(), 1);
+                    new Date(), 1);
             List<Object> listCategory0 = accountOperationTransformationService.getAccountingSummaryRecords(
-                    providerCode, new Date(), 0);
+                    new Date(), 0);
             List<AccountingSummaryObject> list = new ArrayList<AccountingSummaryObject>();
             list.addAll(parseObjectList(listCategory0, 0));
             list.addAll(parseObjectList(listCategory1, 1));
@@ -103,8 +103,7 @@ public class AccountingSummary extends FileProducer implements Reporting {
             if (outputFormat == OutputFormatEnum.PDF) {
                 parameters.put("startDate", startDate);
                 parameters.put("endDate", endDate);
-                parameters.put("provider", providerCode);
-                StringBuilder sb = new StringBuilder(getFilename(providerCode));
+                StringBuilder sb = new StringBuilder(getFilename());
                 sb.append(".pdf");
                 generatePDFfile(file, sb.toString(), templateFilename, parameters);
             }
@@ -129,13 +128,13 @@ public class AccountingSummary extends FileProducer implements Reporting {
         return accountingSummaryObjectList;
     }
 
-    public String getFilename(String providerName) {
+    public String getFilename() {
 
         String DATE_FORMAT = "dd-MM-yyyy";
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
         StringBuilder sb = new StringBuilder();
         sb.append(reportsFolder);
-        sb.append(providerName);
+        sb.append(appProvider.getCode());
         sb.append("_RECAP_INVENTAIRE_CCLIENT_");
         sb.append(sdf.format(new Date()).toString());
         return sb.toString();
@@ -146,8 +145,7 @@ public class AccountingSummary extends FileProducer implements Reporting {
 		reportsFolder = param.getProperty("reportsURL","/opt/jboss/files/reports/");
 		String jasperTemplatesFolder = param.getProperty("reports.jasperTemplatesFolder","/opt/jboss/files/reports/JasperTemplates/");
         templateFilename = jasperTemplatesFolder + "accountingSummary.jasper";
-        generateAccountingSummaryFile(report.getProvider() == null ? null : report.getProvider().getCode(), report
-                .getStartDate(), report.getEndDate(), report.getOutputFormat());
+        generateAccountingSummaryFile(report.getStartDate(), report.getEndDate(), report.getOutputFormat());
     }
 
 }

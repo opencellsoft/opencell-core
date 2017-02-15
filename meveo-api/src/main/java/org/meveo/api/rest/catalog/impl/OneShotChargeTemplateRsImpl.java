@@ -35,7 +35,7 @@ public class OneShotChargeTemplateRsImpl extends BaseRs implements OneShotCharge
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            oneShotChargeTemplateApi.create(postData, getCurrentUser());
+            oneShotChargeTemplateApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -55,7 +55,7 @@ public class OneShotChargeTemplateRsImpl extends BaseRs implements OneShotCharge
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            oneShotChargeTemplateApi.update(postData, getCurrentUser());
+            oneShotChargeTemplateApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -78,7 +78,7 @@ public class OneShotChargeTemplateRsImpl extends BaseRs implements OneShotCharge
 
         try {
             result.setOneShotChargeTemplateDtos(oneShotChargeTemplateApi.listWithPrice(languageCode, countryCode, currencyCode, sellerCode,
-                DateUtils.parseDateWithPattern(date, "yyyy-MM-dd"), getCurrentUser()));
+                DateUtils.parseDateWithPattern(date, "yyyy-MM-dd")));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -98,7 +98,7 @@ public class OneShotChargeTemplateRsImpl extends BaseRs implements OneShotCharge
         GetOneShotChargeTemplateResponseDto result = new GetOneShotChargeTemplateResponseDto();
 
         try {
-            result.setOneShotChargeTemplate(oneShotChargeTemplateApi.find(oneShotChargeTemplateCode, getCurrentUser()));
+            result.setOneShotChargeTemplate(oneShotChargeTemplateApi.find(oneShotChargeTemplateCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -118,7 +118,7 @@ public class OneShotChargeTemplateRsImpl extends BaseRs implements OneShotCharge
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            oneShotChargeTemplateApi.remove(oneShotChargeTemplateCode, getCurrentUser());
+            oneShotChargeTemplateApi.remove(oneShotChargeTemplateCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -138,7 +138,7 @@ public class OneShotChargeTemplateRsImpl extends BaseRs implements OneShotCharge
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            oneShotChargeTemplateApi.createOrUpdate(postData, getCurrentUser());
+            oneShotChargeTemplateApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

@@ -26,7 +26,6 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -35,11 +34,9 @@ import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.crm.Customer;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
@@ -101,7 +98,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 	}
 
 	private BigDecimal computeOccAmount(CustomerAccount customerAccount, OperationCategoryEnum operationCategoryEnum,
-			boolean isDue, Date to, boolean activeDunningExclusion ,MatchingStatusEnum... status) throws Exception {
+			boolean isDue, Date to, boolean activeDunningExclusion, MatchingStatusEnum... status) throws Exception {
 
 		BigDecimal balance = null;
 		QueryBuilder queryBuilder = new QueryBuilder("select sum(unMatchingAmount) from AccountOperation");
@@ -173,11 +170,11 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 	}
 
 	public BigDecimal customerAccountBalanceExigibleWithoutLitigation(Long customerAccountId,
-			String customerAccountCode, Date to,Provider provider) throws BusinessException {
+			String customerAccountCode, Date to) throws BusinessException {
 		log.info("customerAccountBalanceExigibleWithoutLitigation with id:{},code:{},toDate:{}", customerAccountId,
 				customerAccountCode, to);
 		return customerAccountBalanceExigibleWithoutLitigation(
-				findCustomerAccount(customerAccountId, customerAccountCode,provider), to);
+				findCustomerAccount(customerAccountId, customerAccountCode), to);
 	}
 
 	public BigDecimal customerAccountBalanceExigibleWithoutLitigation(CustomerAccount customerAccount, Date to)
@@ -195,10 +192,10 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 	}
 
 	public BigDecimal customerAccountBalanceDueWithoutLitigation(Long customerAccountId, String customerAccountCode,
-			Date to,Provider provider) throws BusinessException {
+			Date to) throws BusinessException {
 		log.info("customerAccountBalanceDueWithoutLitigation with id" + customerAccountId + ",code:"
 				+ customerAccountCode + ",toDate:" + to);
-		return customerAccountBalanceDueWithoutLitigation(findCustomerAccount(customerAccountId, customerAccountCode,provider),
+		return customerAccountBalanceDueWithoutLitigation(findCustomerAccount(customerAccountId, customerAccountCode),
 				to);
 	}
 
@@ -213,45 +210,38 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 	 * @see org.meveo.service.payments.local.CustomerAccountServiceLocal#customerAccountBalanceExigible(java.lang.Long,
 	 *      java.lang.String, java.util.Date)
 	 */
-	public BigDecimal customerAccountBalanceExigible(Long customerAccountId, String customerAccountCode, Date to,Provider provider)
+	public BigDecimal customerAccountBalanceExigible(Long customerAccountId, String customerAccountCode, Date to)
 			throws BusinessException {
 		log.info("customerAccountBalanceExligible with id:" + customerAccountId + ",code:" + customerAccountCode
 				+ ",toDate:" + to);
-		return customerAccountBalanceExigible(findCustomerAccount(customerAccountId, customerAccountCode,provider), to);
+		return customerAccountBalanceExigible(findCustomerAccount(customerAccountId, customerAccountCode), to);
 	}
 
 	/**
 	 * @see org.meveo.service.payments.local.CustomerAccountServiceLocal#customerAccountBalanceDue(java.lang.Long,
 	 *      java.lang.String, java.util.Date)
 	 */
-	public BigDecimal customerAccountBalanceDue(Long customerAccountId, String customerAccountCode, Date to,Provider provider)
+	public BigDecimal customerAccountBalanceDue(Long customerAccountId, String customerAccountCode, Date to)
 			throws BusinessException {
 
-		return customerAccountBalanceDue(getEntityManager(), customerAccountId, customerAccountCode, to,provider);
-
-	}
-
-	public BigDecimal customerAccountBalanceDue(EntityManager em, Long customerAccountId, String customerAccountCode,
-			Date to,Provider provider) throws BusinessException {
 		log.info("start customerAccountBalanceDue with id:" + customerAccountId + ",code:" + customerAccountCode
 				+ ",toDate:" + to);
 
-		return customerAccountBalanceDue(findCustomerAccount(em, customerAccountId, customerAccountCode,provider), to);
+		return customerAccountBalanceDue(findCustomerAccount(customerAccountId, customerAccountCode), to);
 	}
 
 	public void createCustomerAccount(String code, String title, String firstName, String lastName, String address1,
 			String address2, String zipCode, String city, String state, String email, Long customerId,
-			String creditCategory, PaymentMethodEnum paymentMethod, User user) throws BusinessException {
+			String creditCategory, PaymentMethodEnum paymentMethod) throws BusinessException {
 		log.info("start createCustomerAccount with code:" + code + ",customerId:" + customerId);
-		if (code == null || code.trim().equals("") || customerId == null || user == null) {
-			log.warn("Error: requried value(s) is null with code:#0,customerId:#1,creator:#2", code, customerId,
-					user != null ? user.getUserName() : "NULL");
+		if (code == null || code.trim().equals("") || customerId == null ) {
+			log.warn("Error: requried value(s) is null with code:{},customerId:{}", code, customerId);
 			throw new BusinessException("Error when required value(s) is required");
 		}
-		log.info("create customer account with code:" + code + " by creator:" + user.getUserName());
+		log.info("create customer account with code:" + code);
 		CustomerAccount customerAccount = null;
 		try {
-			customerAccount = findCustomerAccount(null, code,user.getProvider());
+			customerAccount = findCustomerAccount(null, code);
 		} catch (Exception e) {
 		}
 
@@ -266,7 +256,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 		customerAccount.setCustomer(customer);
 		customerAccount.setCode(code);
 		customerAccount.setName(new org.meveo.model.shared.Name());
-		customerAccount.getName().setTitle(titleService.findByCode(title, customer.getProvider()));
+		customerAccount.getName().setTitle(titleService.findByCode(title));
 		customerAccount.getName().setFirstName(firstName);
 		customerAccount.getName().setLastName(lastName);
 		customerAccount.setAddress(new Address());
@@ -283,20 +273,17 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 		customerAccount.setDateDunningLevel(new Date());
 		customerAccount.setPaymentMethod(paymentMethod);
 		if (!StringUtils.isBlank(creditCategory)) {
-			customerAccount.setCreditCategory(creditCategoryService.findByCode(creditCategory, user.getProvider()));
+			customerAccount.setCreditCategory(creditCategoryService.findByCode(creditCategory));
 		}
-		customerAccount.setProvider(customer.getProvider());
 
 		try {
-			this.create(customerAccount, user);
+			this.create(customerAccount);
 		} catch (Exception e) {
-			log.warn("Error when create one customer account with code:" + code + ",customerId:" + customerId
-					+ ",creator:" + user.getUserName());
+			log.warn("Error when create one customer account with code {}, customerId {}", code, customerId);
 			throw new BusinessException("Error:" + e.getMessage() + " when create a new customer account with code:"
-					+ code + ",customerId:" + customerId + ",creator:" + user.getUserName());
+					+ code + ",customerId:" + customerId);
 		}
-		log.info("successfully create one customer account with code:" + code + ",customerId:" + customerId
-				+ ",creator:" + user.getUserName());
+		log.info("successfully create one customer account with code:" + code + ",customerId:" + customerId);
 	}
 
 	/**
@@ -310,18 +297,17 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 	 */
 	public void updateCustomerAccount(Long id, String code, String title, String firstName, String lastName,
 			String address1, String address2, String zipCode, String city, String state, String email,
-			String creditCategory, PaymentMethodEnum paymentMethod, User user) throws BusinessException {
-		log.info("start updateCustomerAccount with code:#0,id:#1,updator=#2", code, id,
-				(user != null ? user.getUserName() : "NULL"));
-		if ((code == null || code.trim().equals("")) || user == null) {
+			String creditCategory, PaymentMethodEnum paymentMethod) throws BusinessException {
+		log.info("start updateCustomerAccount with code:{},id:{}", code, id);
+		if ((code == null || code.trim().equals(""))) {
 			log.warn("Error when require value(s) is null!");
 			throw new BusinessException("Error when required values(s) is null!");
 		}
-		CustomerAccount customerAccount = findCustomerAccount(id, code,user.getProvider());
+		CustomerAccount customerAccount = findCustomerAccount(id, code);
 
 		if (customerAccount.getName() == null)
 			customerAccount.setName(new org.meveo.model.shared.Name());
-		customerAccount.getName().setTitle(titleService.findByCode(code, customerAccount.getProvider()));
+		customerAccount.getName().setTitle(titleService.findByCode(code));
 		customerAccount.getName().setFirstName(firstName);
 		customerAccount.getName().setLastName(lastName);
 		if (customerAccount.getAddress() == null)
@@ -333,7 +319,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 		customerAccount.getAddress().setState(state);
 		customerAccount.setPaymentMethod(paymentMethod);
 		if (!StringUtils.isBlank(creditCategory)) {
-			customerAccount.setCreditCategory(creditCategoryService.findByCode(creditCategory, user.getProvider()));
+			customerAccount.setCreditCategory(creditCategoryService.findByCode(creditCategory));
 		}
 		
 		if (customerAccount.getContactInformation() == null) {
@@ -342,7 +328,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 		customerAccount.getContactInformation().setEmail(email);
 
 		try {
-			this.update(customerAccount, user);
+			this.update(customerAccount);
 		} catch (Exception e) {
 			log.warn("Error: " + e.getMessage() + " whne update one customer acount with code:" + code);
 			throw new BusinessException("Error: " + e.getMessage() + " when update one customer account with code:"
@@ -351,14 +337,9 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 		log.info("successfully update customer account with code:" + code);
 	}
 
-	public void closeCustomerAccount(CustomerAccount customerAccount, User user) throws BusinessException {
-		log.info("closeCustomerAccount customerAccount:"
-				+ (customerAccount == null ? "null" : customerAccount.getCode()) + " user:"
-				+ (user != null ? user.getUserName() : "NULL"));
-		if (user == null) {
-			log.warn("Error in closeCustomerAccount when required user is null!");
-			throw new BusinessException("Error in closeCustomerAccount when required user is null!");
-		}
+	public void closeCustomerAccount(CustomerAccount customerAccount) throws BusinessException {
+		log.info("closeCustomerAccount customerAccount {}", (customerAccount == null ? "null" : customerAccount.getCode()));
+
 		if (customerAccount == null) {
 			log.warn("closeCustomerAccount customerAccount is null");
 			throw new BusinessException("customerAccount is null");
@@ -382,31 +363,27 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 			}
 			if (balanceDue.compareTo(BigDecimal.ZERO) > 0) {
 				otherCreditAndChargeService
-						.addOCC(codeOCCTemplate, null, customerAccount, balanceDue, new Date(), user);
+						.addOCC(codeOCCTemplate, null, customerAccount, balanceDue, new Date());
 				log.debug("closeCustomerAccount  add occ ok");
 			}
 			customerAccount.setStatus(CustomerAccountStatusEnum.CLOSE);
 			customerAccount.setDateStatus(new Date());
-			update(customerAccount, user);
+			update(customerAccount);
 			log.info("closeCustomerAccount customerAccountCode:" + customerAccount.getCode() + " closed successfully");
 		} catch (BusinessException be) {
 			throw be;
 		}
 	}
 
-	public void closeCustomerAccount(Long customerAccountId, String customerAccountCode, User user)
+	public void closeCustomerAccount(Long customerAccountId, String customerAccountCode)
 			throws BusinessException, Exception {
-		log.info("closeCustomerAccount customerAccountCode:" + customerAccountCode + ", customerAccountID:"
-				+ customerAccountId + "user:" + (user != null ? user.getUserName() : "NULL"));
-		closeCustomerAccount(findCustomerAccount(customerAccountId, customerAccountCode,user.getProvider()), user);
+		log.info("closeCustomerAccount customerAccountCode {}, customerAccountID {}", customerAccountCode, customerAccountId);
+		closeCustomerAccount(findCustomerAccount(customerAccountId, customerAccountCode));
 	}
 
 	public void transferAccount(CustomerAccount fromCustomerAccount, CustomerAccount toCustomerAccount,
-			BigDecimal amount, User user) throws BusinessException, Exception {
-		log.info("transfertAccount fromCustomerAccount:"
-				+ (fromCustomerAccount == null ? "null" : fromCustomerAccount.getCode()) + " toCustomerAccount:"
-				+ (toCustomerAccount == null ? "null" : toCustomerAccount.getCode()) + "amount :" + amount + " user:"
-				+ (user != null ? user.getUserName() : "NULL"));
+			BigDecimal amount) throws BusinessException, Exception {
+		log.info("transfertAccount fromCustomerAccount {} toCustomerAccount {} amount {}", (fromCustomerAccount == null ? "null" : fromCustomerAccount.getCode()), (toCustomerAccount == null ? "null" : toCustomerAccount.getCode()),  amount);
 
 		if (fromCustomerAccount == null) {
 			log.warn("transfertAccount fromCustomerAccount is null");
@@ -420,11 +397,6 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 			log.warn("Error in transfertAccount amount is null");
 			throw new BusinessException("amount is null");
 		}
-		if (user == null) {
-			log.warn("Error in transfertAccount when required user is null!");
-			throw new BusinessException("user is null!");
-		}
-
 		try {
 			ParamBean param = ParamBean.getInstance("meveo-admin.properties");
 			String occTransferAccountCredit = param.getProperty("occ.templateTransferAccountCredit", "TRANS_CRED");
@@ -433,10 +405,9 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 			String descTransfertTo = paramBean.getProperty("occ.descTransfertFrom", "transfer from");
 
 			otherCreditAndChargeService.addOCC(occTransferAccountDebit,
-					descTransfertFrom + " " + toCustomerAccount.getCode(), fromCustomerAccount, amount, new Date(),
-					user);
+					descTransfertFrom + " " + toCustomerAccount.getCode(), fromCustomerAccount, amount, new Date());
 			otherCreditAndChargeService.addOCC(occTransferAccountCredit,
-					descTransfertTo + " " + fromCustomerAccount.getCode(), toCustomerAccount, amount, new Date(), user);
+					descTransfertTo + " " + fromCustomerAccount.getCode(), toCustomerAccount, amount, new Date());
 			log.info("Successful transfertAccount fromCustomerAccountCode:" + fromCustomerAccount.getCode()
 					+ " toCustomerAccountCode:" + toCustomerAccount.getCode());
 
@@ -452,17 +423,15 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 	 *      java.math.BigDecimal, org.meveo.model.admin.User)
 	 */
 	public void transferAccount(Long fromCustomerAccountId, String fromCustomerAccountCode, Long toCustomerAccountId,
-			String toCustomerAccountCode, BigDecimal amount, User user) throws BusinessException, Exception {
-		log.info("transfertAccount fromCustomerAccountCode:" + fromCustomerAccountCode + " fromCustomerAccountId:"
-				+ fromCustomerAccountId + " toCustomerAccountCode:" + toCustomerAccountCode + " toCustomerAccountId:"
-				+ toCustomerAccountId + "toCustomerAccountId :" + toCustomerAccountId + "amount :" + amount + " user:"
-				+ (user != null ? user.getUserName() : "NULL"));
-		transferAccount(findCustomerAccount(fromCustomerAccountId, fromCustomerAccountCode,user.getProvider()),
-				findCustomerAccount(toCustomerAccountId, toCustomerAccountCode,user.getProvider()), amount, user);
+			String toCustomerAccountCode, BigDecimal amount) throws BusinessException, Exception {
+        log.info("transfertAccount fromCustomerAccountCode {} fromCustomerAccountId {} toCustomerAccountCode {} toCustomerAccountId {}, amount {}", fromCustomerAccountCode,
+            fromCustomerAccountId, toCustomerAccountCode, +toCustomerAccountId, amount);
+		transferAccount(findCustomerAccount(fromCustomerAccountId, fromCustomerAccountCode),
+				findCustomerAccount(toCustomerAccountId, toCustomerAccountCode), amount);
 	}
 
-	public CustomerAccount consultCustomerAccount(Long id, String code,Provider provider) throws BusinessException {
-		return findCustomerAccount(id, code,provider);
+	public CustomerAccount consultCustomerAccount(Long id, String code) throws BusinessException {
+		return findCustomerAccount(id, code);
 	}
 
 	/**
@@ -470,61 +439,52 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 	 *      java.lang.String, org.meveo.model.payments.CreditCategoryEnum,
 	 *      org.meveo.model.admin.User)
 	 */
-	public void updateCreditCategory(Long id, String code, String creditCategory, User updator)
+	public void updateCreditCategory(Long id, String code, String creditCategory)
 			throws BusinessException {
 		log.info("start updateCreditCategory with id:" + id + ",code:" + code);
 		if (creditCategory == null) {
 			log.warn("Error when required creditCategory is null!");
 			throw new BusinessException("Error when required creditCategory is null");
 		}
-		if (updator == null || updator.getId() == null) {
-			throw new BusinessException("Error when user is null!");
-		}
-		CustomerAccount customerAccount = findCustomerAccount(id, code,updator.getProvider());
+		CustomerAccount customerAccount = findCustomerAccount(id, code);
 		if (!StringUtils.isBlank(creditCategory)) {
-			customerAccount.setCreditCategory(creditCategoryService.findByCode(creditCategory, updator.getProvider()));
+			customerAccount.setCreditCategory(creditCategoryService.findByCode(creditCategory));
 		}
 		
-		update(customerAccount, updator);
+		update(customerAccount);
 		log.info("successfully end updateCreditCategory!");
 	}
 
 	/**
 	 * update dunningLevel for one existed customer account by id or code
 	 */
-	public void updateDunningLevel(Long id, String code, DunningLevelEnum dunningLevel, User updator)
+	public void updateDunningLevel(Long id, String code, DunningLevelEnum dunningLevel)
 			throws BusinessException {
 		log.info("start updateDunningLevel with id:" + id + ",code:" + code);
 		if (dunningLevel == null) {
 			log.warn("Error when required dunningLevel is null!");
 			throw new BusinessException("Error when required dunningLevel is null");
 		}
-		if (updator == null || updator.getId() == null) {
-			throw new BusinessException("Error when user is null!");
-		}
-		CustomerAccount customerAccount = findCustomerAccount(id, code,updator.getProvider());
+		CustomerAccount customerAccount = findCustomerAccount(id, code);
 		customerAccount.setDunningLevel(dunningLevel);
 		customerAccount.setDateDunningLevel(new Date());
-		update(customerAccount, updator);
+		update(customerAccount);
 		log.info("successfully end updateDunningLevel!");
 	}
 
 	/**
 	 * update paymentMethod for one existed customer account by id or code
 	 */
-	public void updatePaymentMethod(Long id, String code, PaymentMethodEnum paymentMethod, User updator)
+	public void updatePaymentMethod(Long id, String code, PaymentMethodEnum paymentMethod)
 			throws BusinessException {
 		log.info("start updatePaymentMethod with id:" + id + ",code:" + code);
 		if (paymentMethod == null) {
 			log.warn("Error when required paymentMethod is null!");
 			throw new BusinessException("Error when required paymentMethod is null");
 		}
-		if (updator == null || updator.getId() == null) {
-			throw new BusinessException("Error when user is null!");
-		}
-		CustomerAccount customerAccount = findCustomerAccount(id, code,updator.getProvider());
+		CustomerAccount customerAccount = findCustomerAccount(id, code);
 		customerAccount.setPaymentMethod(paymentMethod);
-		update(customerAccount, updator);
+		update(customerAccount);
 		log.info("successfully end updatePaymentMethod!");
 
 	}
@@ -532,9 +492,9 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 	/**
 	 * get operations from one existed customerAccount by id or code
 	 */
-	public List<AccountOperation> consultOperations(Long id, String code, Date from, Date to,Provider provider) throws BusinessException {
+	public List<AccountOperation> consultOperations(Long id, String code, Date from, Date to) throws BusinessException {
 		log.info("start consultOperations with id:" + id + ",code:" + code + "from:" + from + ",to:" + to);
-		CustomerAccount customerAccount = findCustomerAccount(id, code,provider);
+		CustomerAccount customerAccount = findCustomerAccount(id, code);
 		List<AccountOperation> operations = customerAccount.getAccountOperations();
 		log.info("found accountOperation size:" + (operations != null ? operations.size() : 0)
 				+ " from customerAccount code:" + code + ",id:" + id);
@@ -573,11 +533,8 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 		return result;
 	}
 
-	public CustomerAccount findCustomerAccount(Long id, String code,Provider provider) throws BusinessException {
-		return findCustomerAccount(getEntityManager(), id, code,provider);
-	}
-
-	public CustomerAccount findCustomerAccount(EntityManager em, Long id, String code,Provider provider) throws BusinessException {
+	public CustomerAccount findCustomerAccount(Long id, String code) throws BusinessException {
+		
 		log.info("findCustomerAccount with code:" + code + ",id:" + id);
 
 		if ((code == null || code.equals("")) && (id == null || id == 0)) {
@@ -587,8 +544,8 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 
 		CustomerAccount customerAccount = null;
 		try {
-			customerAccount = (CustomerAccount) em.createQuery("from CustomerAccount where id=:id or code=:code  and provider=:provider ")
-					.setParameter("id", id).setParameter("code", code).setParameter("provider",provider).getSingleResult();
+			customerAccount = (CustomerAccount) getEntityManager().createQuery("from CustomerAccount where id=:id or code=:code")
+					.setParameter("id", id).setParameter("code", code).getSingleResult();
 		} catch (Exception e) {
 			log.warn("failed to fin customer account ",e);
 		}
@@ -620,14 +577,14 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 
 	@SuppressWarnings("unchecked")
 	public List<CustomerAccount> getCustomerAccounts(String creditCategory,
-			PaymentMethodEnum paymentMethod, String providerCode) {
+			PaymentMethodEnum paymentMethod) {
 		List<CustomerAccount> customerAccounts = getEntityManager()
 				.createQuery(
 						"from "
 								+ CustomerAccount.class.getSimpleName()
-								+ " where paymentMethod=:paymentMethod and creditCategory.code=:creditCategoryCode and status=:status and provider.code=:providerCode ")
+								+ " where paymentMethod=:paymentMethod and creditCategory.code=:creditCategoryCode and status=:status ")
 				.setParameter("paymentMethod", paymentMethod).setParameter("creditCategoryCode", creditCategory)
-				.setParameter("status", CustomerAccountStatusEnum.ACTIVE).setParameter("providerCode", providerCode)
+				.setParameter("status", CustomerAccountStatusEnum.ACTIVE)
 				.getResultList();
 		return customerAccounts;
 	}

@@ -43,7 +43,7 @@ public class CdrEdrProcessingCacheContainerProvider {
     private ParamBean paramBean = ParamBean.getInstance();
 
     /**
-     * Contains association between access code and accesses sharing this code. Key format: <provider id>_<Access.accessUserId>
+     * Contains association between access code and accesses sharing this code. Key format: <Access.accessUserId>
      */
     @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-access-cache")
     private BasicCache<String, List<Access>> accessCache;
@@ -52,7 +52,7 @@ public class CdrEdrProcessingCacheContainerProvider {
     // private CacheContainer meveoContainer;
 
     /**
-     * Stores a list of processed EDR's. Key format: <provider id>_<originBatch>_<originRecord>
+     * Stores a list of processed EDR's. Key format: <originBatch>_<originRecord>
      */
     @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-edr-cache")
     private BasicCache<String, Integer> edrCache;
@@ -97,7 +97,7 @@ public class CdrEdrProcessingCacheContainerProvider {
      * @param access Access to add
      */
     public void addAccessToCache(Access access) {
-        String cacheKey = access.getProvider().getId() + "_" + access.getAccessUserId();
+        String cacheKey = access.getAccessUserId();
         accessCache.putIfAbsent(cacheKey, new ArrayList<Access>());
         // because acccessed later, to avoid lazy init
         access.getSubscription().getId();
@@ -113,9 +113,9 @@ public class CdrEdrProcessingCacheContainerProvider {
     public void removeAccessFromCache(Access access) {
 
         // Case when AccessUserId value has not changed
-        if (accessCache.containsKey(access.getProvider().getId() + "_" + access.getAccessUserId())
-                && accessCache.get(access.getProvider().getId() + "_" + access.getAccessUserId()).contains(access)) {
-            accessCache.get(access.getProvider().getId() + "_" + access.getAccessUserId()).remove(access);
+        if (accessCache.containsKey(access.getAccessUserId())
+                && accessCache.get(access.getAccessUserId()).contains(access)) {
+            accessCache.get(access.getAccessUserId()).remove(access);
             log.trace("Removed access {} from access cache", access);
             return;
 
@@ -143,15 +143,14 @@ public class CdrEdrProcessingCacheContainerProvider {
     }
 
     /**
-     * Get a list of accesses for a given provider and access user id
+     * Get a list of accesses for a given access user id
      * 
-     * @param providerId Provider id
      * @param accessUserId Access user id
      * @return A list of accesses
      */
-    public List<Access> getAccessesByAccessUserId(Long providerId, String accessUserId) {
-        log.trace("lookup access {}_{}",providerId,accessUserId);
-    	return accessCache.get(providerId + "_" + accessUserId);
+    public List<Access> getAccessesByAccessUserId(String accessUserId) {
+        log.trace("lookup access {}",accessUserId);
+    	return accessCache.get(accessUserId);
     }
 
     /**
@@ -178,16 +177,15 @@ public class CdrEdrProcessingCacheContainerProvider {
     }
 
     /**
-     * Check if EDR is cached for a given provider, originBatch and originRecord
+     * Check if EDR is cached for a given originBatch and originRecord
      * 
-     * @param providerId Provider id
      * @param originBatch Origin batch
      * @param originRecord Origin record
      * @return True if EDR is cached
      */
-    public boolean isEDRCached(Long providerId, String originBatch, String originRecord) {
+    public boolean isEDRCached(String originBatch, String originRecord) {
 
-        return edrCache.containsKey(providerId + "_" + originBatch + '_' + originRecord);
+        return edrCache.containsKey(originBatch + '_' + originRecord);
     }
 
     /**
@@ -196,7 +194,7 @@ public class CdrEdrProcessingCacheContainerProvider {
      * @param edr EDR to add to cache
      */
     public void addEdrToCache(EDR edr) {
-        edrCache.putIfAbsent(edr.getProvider().getId() + "_" + edr.getOriginBatch() + "_" + edr.getOriginRecord(), 0);
+        edrCache.putIfAbsent(edr.getOriginBatch() + "_" + edr.getOriginRecord(), 0);
     }
 
     /**

@@ -55,7 +55,7 @@
                                      required="true">
                         <f:selectItems value="#{chargeTemplateBean.listAll}" var="item"
                                        itemLabel="#{item.code}" itemValue="#{item.code}"/>
-                        <s:objectConverter/>
+                        <hftl:objectConverter/>
                     </h:selectOneMenu>
                 </f:facet>
             </p:cellEditor>
@@ -89,7 +89,7 @@
                         <f:selectItem itemLabel="" itemValue=""/>
                         <f:selectItems value="#{offerTemplateBean.listAll}" var="item"
                                        itemLabel="#{item.code}" itemValue="#{item}"/>
-                        <s:objectConverter/>
+                        <hftl:objectConverter/>
                     </h:selectOneMenu>
                 </f:facet>
             </p:cellEditor>
@@ -109,7 +109,7 @@
                         <f:selectItem itemLabel="" itemValue=""/>
                         <f:selectItems value="#{sellerBean.listAll}" var="item"
                                        itemLabel="#{item.code}" itemValue="#{item}"/>
-                        <s:objectConverter/>
+                        <hftl:objectConverter/>
                     </h:selectOneMenu>
                 </f:facet>
             </p:cellEditor>
@@ -239,7 +239,7 @@
                         <f:selectItem itemLabel="" itemValue=""/>
                         <f:selectItems value="#{tradingCountryBean.listAll}" var="item"
                                        itemLabel="#{item.countryCode}" itemValue="#{item}"/>
-                        <s:objectConverter/>
+                        <hftl:objectConverter/>
                     </h:selectOneMenu>
                 </f:facet>
             </p:cellEditor>
@@ -259,7 +259,7 @@
                         <f:selectItem itemLabel="" itemValue=""/>
                         <f:selectItems value="#{tradingCurrencyBean.listAll}" var="item"
                                        itemLabel="#{item.currencyCode}" itemValue="#{item}"/>
-                        <s:objectConverter/>
+                        <hftl:objectConverter/>
                     </h:selectOneMenu>
                 </f:facet>
             </p:cellEditor>
@@ -404,7 +404,7 @@
                         <f:selectItem itemLabel="" itemValue=""/>
                         <f:selectItems value="#{calendarBean.listAll}" var="item"
                                        itemLabel="#{item.code}" itemValue="#{item}"/>
-                        <s:objectConverter/>
+                        <hftl:objectConverter/>
                     </h:selectOneMenu>
                 </f:facet>
             </p:cellEditor>

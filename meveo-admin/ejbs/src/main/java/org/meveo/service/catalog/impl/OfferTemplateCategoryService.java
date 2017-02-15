@@ -9,9 +9,7 @@ import javax.persistence.Query;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ExistsRelatedEntityException;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.admin.User;
 import org.meveo.model.catalog.OfferTemplateCategory;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.base.BusinessService;
 
 /**
@@ -31,7 +29,7 @@ public class OfferTemplateCategoryService extends BusinessService<OfferTemplateC
 
 	@SuppressWarnings("unchecked")
 	public List<OfferTemplateCategory> listAllExceptId(Long id, boolean isParent) {
-		QueryBuilder qb = new QueryBuilder(OfferTemplateCategory.class, "o", null, getCurrentProvider());
+		QueryBuilder qb = new QueryBuilder(OfferTemplateCategory.class, "o", null);
 		qb.addCriterion("id", "<>", id, true);
 		if (isParent) {
 			qb.addCriterion("level", "<>", 3, true);
@@ -46,7 +44,7 @@ public class OfferTemplateCategoryService extends BusinessService<OfferTemplateC
 
 	@SuppressWarnings("unchecked")
 	public List<OfferTemplateCategory> listAllRootsExceptId(Long id) {
-		QueryBuilder qb = new QueryBuilder(OfferTemplateCategory.class, "o", null, getCurrentProvider());
+		QueryBuilder qb = new QueryBuilder(OfferTemplateCategory.class, "o", null);
 		qb.addCriterion("level", "=", 1, true);
 		if (id != null) {
 			qb.addCriterion("id", "<>", id, true);
@@ -60,12 +58,11 @@ public class OfferTemplateCategoryService extends BusinessService<OfferTemplateC
 	}
 
     @SuppressWarnings("unchecked")
-    public List<OfferTemplateCategory> findRoots(Provider provider) {
+    public List<OfferTemplateCategory> findRoots() {
         Query query = getEntityManager()
                 .createQuery(
                         "from " + OfferTemplateCategory.class.getSimpleName()
-                                + " where offerTemplateCategory.id IS NULL and provider=:provider");
-        query.setParameter("provider", provider);
+                                + " where offerTemplateCategory.id IS NULL");
         if (query.getResultList().size() == 0) {
             return null;
         }
@@ -74,11 +71,11 @@ public class OfferTemplateCategoryService extends BusinessService<OfferTemplateC
     }
 
     @Override
-    public void remove(OfferTemplateCategory entity, User currentUser) throws BusinessException {
+    public void remove(OfferTemplateCategory entity) throws BusinessException {
      
         if (entity.isAssignedToProductOffering()){
             throw new ExistsRelatedEntityException();
         }
-        super.remove(entity, currentUser);
+        super.remove(entity);
     }
 }

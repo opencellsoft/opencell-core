@@ -28,7 +28,6 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.model.IEntity;
-import org.meveo.model.admin.User;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.index.ElasticClient;
 import org.primefaces.model.LazyDataModel;
@@ -136,7 +135,7 @@ public abstract class ServiceBasedLazyDataModel<T extends IEntity> extends LazyD
 
         String dataJson = null;
         try {
-            dataJson = getElasticClientImpl().search(paginationConfig, getCurrentUser(), new String[] { getPersistenceServiceImpl().getEntityClass().getName() });
+            dataJson = getElasticClientImpl().search(paginationConfig, new String[] { getPersistenceServiceImpl().getEntityClass().getName() });
 
             if (StringUtils.isEmpty(dataJson) || dataJson.equals("{}")) {
                 return new ElasticSearchResults(0);
@@ -300,13 +299,6 @@ public abstract class ServiceBasedLazyDataModel<T extends IEntity> extends LazyD
      * @return Elastic client
      */
     protected abstract ElasticClient getElasticClientImpl();
-
-    /**
-     * Get current User to determine provider
-     * 
-     * @return Current user
-     */
-    public abstract User getCurrentUser();
 
     /**
      * Elastic Search search results- number of total records matched and entity identifiers(codes) of records matched in current page

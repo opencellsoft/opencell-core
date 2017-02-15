@@ -19,8 +19,8 @@ import org.meveo.model.ObservableEntity;
  **/
 @Entity
 @ObservableEntity
-@ExportIdentifier({ "code", "provider" })
-@Table(name = "CAT_DISCOUNT_PLAN", uniqueConstraints = { @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }) })
+@ExportIdentifier({ "code"})
+@Table(name = "CAT_DISCOUNT_PLAN", uniqueConstraints = { @UniqueConstraint(columnNames = { "CODE"}) })
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_DISCOUNT_PLAN_SEQ")
 public class DiscountPlan extends BusinessEntity {
 

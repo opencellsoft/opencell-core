@@ -25,7 +25,6 @@ import javax.persistence.NoResultException;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.catalog.Calendar;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -36,8 +35,8 @@ import org.meveo.service.base.PersistenceService;
 public class CalendarService extends PersistenceService<Calendar> {
 
 
-   public Calendar findByCode(String code, Provider provider) {
-	        QueryBuilder qb = new QueryBuilder(Calendar.class, "c", null, provider);
+   public Calendar findByCode(String code) {
+	        QueryBuilder qb = new QueryBuilder(Calendar.class, "c", null);
 	        qb.addCriterion("code", "=", code, true);
 	
 	        try {

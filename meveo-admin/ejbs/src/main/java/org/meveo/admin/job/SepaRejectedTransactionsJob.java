@@ -20,9 +20,7 @@ import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ImportFileFiltre;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -47,16 +45,15 @@ public class SepaRejectedTransactionsJob extends Job {
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @Override
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
-        Provider provider = currentUser.getProvider();
         String fileFormat = (String) customFieldInstanceService.getCFValue(jobInstance, "fileFormat");
         String defaultPrefix = "PAYNUM".equalsIgnoreCase(fileFormat) ? "*":"Pain002_";
         String defaultExtension =  "PAYNUM".equalsIgnoreCase(fileFormat) ? "csv":"xml";
         
        
-        String dirIN = importDir + File.separator + provider.getCode() + File.separator + "rejectedSepaTransactions" + File.separator + "input";
+        String dirIN = importDir + File.separator + appProvider.getCode() + File.separator + "rejectedSepaTransactions" + File.separator + "input";
         log.info("dirIN=" + dirIN);
-        String dirOK = importDir + File.separator + provider.getCode() + File.separator + "rejectedSepaTransactions" + File.separator + "output";
-        String dirKO = importDir + File.separator + provider.getCode() + File.separator + "rejectedSepaTransactions" + File.separator + "reject";
+        String dirOK = importDir + File.separator + appProvider.getCode() + File.separator + "rejectedSepaTransactions" + File.separator + "output";
+        String dirKO = importDir + File.separator + appProvider.getCode() + File.separator + "rejectedSepaTransactions" + File.separator + "reject";
         String prefix = param.getProperty(fileFormat.toLowerCase()+"RejectedTransactionsJob.file.prefix", defaultPrefix );
         String ext = param.getProperty(fileFormat.toLowerCase()+"RejectedTransactionsJob.file.extension", defaultExtension);
 

@@ -20,7 +20,6 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
@@ -47,7 +46,7 @@ public class EntityToDtoConverter {
 
     public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity, Map<String, List<CustomFieldInstance>> customFields) {       
 
-        Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(entity, null); // provider will be determined from the entity
+        Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(entity);
 
         Set<String> childEntityTypeFields = new HashSet<>();
         for (CustomFieldTemplate cft : cfts.values()) {
@@ -73,7 +72,7 @@ public class EntityToDtoConverter {
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public CustomFieldDto customFieldToDTO(String code, Object value, boolean isChildEntityTypeField, Provider provider) {
+    public CustomFieldDto customFieldToDTO(String code, Object value, boolean isChildEntityTypeField) {
 
         CustomFieldDto dto = new CustomFieldDto();
         dto.setCode(code);
@@ -86,7 +85,7 @@ public class EntityToDtoConverter {
         } else if (value instanceof Double) {
             dto.setDoubleValue((Double) value);
         } else if (value instanceof List) {
-            dto.setListValue(customFieldValueToDTO((List) value, isChildEntityTypeField, provider));
+            dto.setListValue(customFieldValueToDTO((List) value, isChildEntityTypeField));
         } else if (value instanceof Map) {
             dto.setMapValue(customFieldValueToDTO((Map) value));
         } else if (value instanceof EntityReferenceWrapper) {
@@ -109,7 +108,7 @@ public class EntityToDtoConverter {
         dto.setDateValue(cfi.getCfValue().getDateValue());
         dto.setLongValue(cfi.getCfValue().getLongValue());
         dto.setDoubleValue(cfi.getCfValue().getDoubleValue());
-        dto.setListValue(customFieldValueToDTO(cfi.getCfValue().getListValue(), childEntityTypeFields.contains(cfi.getCode()), cfi.getProvider()));
+        dto.setListValue(customFieldValueToDTO(cfi.getCfValue().getListValue(), childEntityTypeFields.contains(cfi.getCode())));
         dto.setMapValue(customFieldValueToDTO(cfi.getCfValue().getMapValue()));
         if (cfi.getCfValue().getEntityReferenceValue() != null) {
             dto.setEntityReferenceValue(new EntityReferenceDto(cfi.getCfValue().getEntityReferenceValue()));
@@ -118,7 +117,7 @@ public class EntityToDtoConverter {
         return dto;
     }
 
-    private List<CustomFieldValueDto> customFieldValueToDTO(List<Object> listValue, boolean isChildEntityTypeField, Provider provider) {
+    private List<CustomFieldValueDto> customFieldValueToDTO(List<Object> listValue, boolean isChildEntityTypeField) {
 
         if (listValue == null) {
             return null;
@@ -131,7 +130,7 @@ public class EntityToDtoConverter {
                 if (isChildEntityTypeField) {
 
                     CustomEntityInstance cei = customEntityInstanceService.findByCodeByCet(((EntityReferenceWrapper) listItem).getClassnameCode(),
-                        ((EntityReferenceWrapper) listItem).getCode(), provider);
+                        ((EntityReferenceWrapper) listItem).getCode());
 
                     if (cei == null) {
                         continue;

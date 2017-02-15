@@ -7,8 +7,8 @@ import javax.faces.event.PhaseId;
 import javax.faces.event.PhaseListener;
 import javax.servlet.http.HttpServletRequest;
 
-import org.jboss.seam.security.Identity;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.security.MeveoUser;
 import org.meveo.util.view.PagePermission;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +18,7 @@ public class PageAccessListener implements PhaseListener {
     private static final long serialVersionUID = 6092965175755558330L;
     private static final String FORBIDDEN = "forbidden";
     private static final String NOT_FOUND = "notFound";
-    private static final String IDENTITY = "#{identity}";
+    private static final String CURRENT_USER = "#{currentUser}";
 
     private static final Logger logger = LoggerFactory.getLogger(PageAccessListener.class);
 
@@ -39,9 +39,9 @@ public class PageAccessListener implements PhaseListener {
 
 		boolean allowed = false;
 		try {
-			Identity identity = context.getApplication().evaluateExpressionGet(context, IDENTITY, Identity.class);
-			if (identity != null && identity.isLoggedIn()) {
-				allowed = PagePermission.getInstance().hasAccessToPage(request, identity);
+			MeveoUser currentUser = context.getApplication().evaluateExpressionGet(context, CURRENT_USER, MeveoUser.class);
+			if (currentUser != null && currentUser.isAuthenticated()) {
+				allowed = PagePermission.getInstance().hasAccessToPage(request, currentUser);
 			} else {
 				// if user is not logged in, allow session handler to redirect to session expired page.
 				return;

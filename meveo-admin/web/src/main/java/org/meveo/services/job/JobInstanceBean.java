@@ -137,7 +137,7 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
         }
      
         try {
-            customFieldTemplateService.createMissingTemplates((ICustomFieldEntity) entity, jobTemplatesFromJob, getCurrentUser());
+            customFieldTemplateService.createMissingTemplates((ICustomFieldEntity) entity, jobTemplatesFromJob);
         } catch (BusinessException e) {
             log.error("Failed to create missing custom field templates", e);
         }

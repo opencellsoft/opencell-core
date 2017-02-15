@@ -6,9 +6,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceService;
@@ -34,7 +32,7 @@ public class PdfInvoiceApi extends BaseApi {
     @Inject
     private CustomerAccountService customerAccountService;
 
-    public byte[] getPDFInvoice(String invoiceNumber, String customerAccountCode, User currentUser) throws Exception {
+    public byte[] getPDFInvoice(String invoiceNumber, String customerAccountCode) throws Exception {
         if (StringUtils.isBlank(invoiceNumber)) {
             missingParameters.add("invoiceNumber");
         }
@@ -48,8 +46,8 @@ public class PdfInvoiceApi extends BaseApi {
         
         Invoice invoice = new Invoice();
 
-        Provider provider = currentUser.getProvider();
-        CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode, provider);
+        
+        CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
         if (customerAccount == null) {
             throw new BusinessException("Cannot find customer account with code=" + customerAccountCode);
         }

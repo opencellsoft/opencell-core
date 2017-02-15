@@ -41,6 +41,7 @@ import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.api.billing.OrderApi;
 import org.meveo.api.order.OrderProductCharacteristicEnum;
 import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.admin.User;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
@@ -51,7 +52,6 @@ import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.order.Order;
@@ -60,6 +60,7 @@ import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.model.order.OrderItemProductOffering;
 import org.meveo.model.order.OrderStatusEnum;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.UserAccountService;
@@ -110,6 +111,9 @@ public class OrderBean extends CustomFieldBean<Order> {
 
     @Inject
     private UserHierarchyLevelService userHierarchyLevelService;
+    
+    @Inject
+    private UserService userService;
 
     private OrderItem selectedOrderItem;
 
@@ -335,7 +339,6 @@ public class OrderBean extends CustomFieldBean<Order> {
             }
             if (!entity.getOrderItems().contains(selectedOrderItem)) {
                 selectedOrderItem.setOrder(getEntity());
-                selectedOrderItem.setProvider(getCurrentProvider());
                 entity.getOrderItems().add(selectedOrderItem);
             } else {
                 entity.getOrderItems().set(entity.getOrderItems().indexOf(selectedOrderItem), selectedOrderItem);
@@ -360,7 +363,7 @@ public class OrderBean extends CustomFieldBean<Order> {
 
         // Execute workflow with every update
         if (entity.getStatus() != OrderStatusEnum.IN_CREATION) {
-            entity = orderApi.initiateWorkflow(entity, getCurrentUser());
+            entity = orderApi.initiateWorkflow(entity);
         }
         return result;
     }
@@ -373,7 +376,7 @@ public class OrderBean extends CustomFieldBean<Order> {
     public void sendToProcess() {
 
         try {
-            entity = orderApi.initiateWorkflow(entity, getCurrentUser());
+            entity = orderApi.initiateWorkflow(entity);
             messages.info(new BundleKey("messages", "order.sendToProcess.ok"));
 
         } catch (BusinessException e) {
@@ -433,7 +436,7 @@ public class OrderBean extends CustomFieldBean<Order> {
 
         // Extract and update custom fields in GUI
         if (orderItemDto != null && orderItemDto.getProduct() != null) {
-            extractAndMakeAvailableInGUICustomFields(orderItemDto.getProduct().getProductCharacteristic(), offerItemInfo.getEntityForCFValues(), getCurrentProvider());
+            extractAndMakeAvailableInGUICustomFields(orderItemDto.getProduct().getProductCharacteristic(), offerItemInfo.getEntityForCFValues());
         }
 
         // For offer templates list services and products subscribed
@@ -495,8 +498,7 @@ public class OrderBean extends CustomFieldBean<Order> {
 
                             // Extract and update custom fields in GUI
                             if (serviceProductMatched != null) {
-                                extractAndMakeAvailableInGUICustomFields(serviceProductMatched.getProductCharacteristic(), offerItemInfo.getEntityForCFValues(),
-                                    getCurrentProvider());
+                                extractAndMakeAvailableInGUICustomFields(serviceProductMatched.getProductCharacteristic(), offerItemInfo.getEntityForCFValues());
                             }
                         }
                     }
@@ -559,8 +561,7 @@ public class OrderBean extends CustomFieldBean<Order> {
 
                             // Extract and update custom fields in GUI
                             if (productProductMatched != null) {
-                                extractAndMakeAvailableInGUICustomFields(productProductMatched.getProductCharacteristic(), offerItemInfo.getEntityForCFValues(),
-                                    getCurrentProvider());
+                                extractAndMakeAvailableInGUICustomFields(productProductMatched.getProductCharacteristic(), offerItemInfo.getEntityForCFValues());
                             }
                         }
 
@@ -754,10 +755,9 @@ public class OrderBean extends CustomFieldBean<Order> {
      * 
      * @param characteristics Product characteristics
      * @param cfEntity Custom field entity values will be applied to
-     * @param provider Provider
      * @return
      */
-    private void extractAndMakeAvailableInGUICustomFields(List<ProductCharacteristic> characteristics, BusinessCFEntity cfEntity, Provider provider) {
+    private void extractAndMakeAvailableInGUICustomFields(List<ProductCharacteristic> characteristics, BusinessCFEntity cfEntity) {
 
         Map<CustomFieldTemplate, Object> cfValues = new HashMap<>();
 
@@ -765,7 +765,7 @@ public class OrderBean extends CustomFieldBean<Order> {
             return;
         }
 
-        Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(cfEntity, provider);
+        Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(cfEntity);
 
         for (ProductCharacteristic characteristic : characteristics) {
             if (characteristic.getName() != null && cfts.containsKey(characteristic.getName())) {
@@ -816,7 +816,8 @@ public class OrderBean extends CustomFieldBean<Order> {
 
         if (editable && entity.getRoutedToUserGroup() != null) {
             UserHierarchyLevel userGroup = userHierarchyLevelService.refreshOrRetrieve(entity.getRoutedToUserGroup());
-            editable = userGroup.isUserBelongsHereOrHigher(getCurrentUser());
+            User user = userService.findByUsername(currentUser.getSubject());
+            editable = userGroup.isUserBelongsHereOrHigher(user);
         }
 
         return editable;

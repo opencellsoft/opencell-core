@@ -84,12 +84,12 @@
                 <!--                 </c:if> -->
                 <c:if test="#{not empty(valueLabelField2)}">
                     <p:pickList required="#{required}" id="#{id}" value="#{elements}" var="elem" itemLabel="#{elem[valueLabelField]} #{elem[valueLabelField2]}" itemValue="#{elem}">
-                        <s:objectConverter />
+                        <hftl:objectConverter />
                     </p:pickList>
                 </c:if>
                 <c:if test="#{empty(valueLabelField2)}">
                     <p:pickList required="#{required}" id="#{id}" value="#{elements}" var="elem" itemLabel="#{elem[valueLabelField]}" itemValue="#{elem}">
-                        <s:objectConverter />
+                        <hftl:objectConverter />
                     </p:pickList>
                 </c:if>
 
@@ -135,7 +135,7 @@
                     <p:selectCheckboxMenu required="#{required}" id="#{id}" value="#{fieldItem}" filter="true" filterMatchMode="startsWith">
                     	<f:attribute name="collectionType" value="java.util.ArrayList" />
 						<f:selectItems value="#{elements}" var="elem" itemLabel="#{elem[valueLabelField]} #{elem[valueLabelField2]}" itemValue="#{elem}" />
-						<s:objectConverter />
+						<hftl:objectConverter />
 						<p:ajax event="change" update="#{id}_selectedItemPanel" process="@this" partialSubmit="true" immediate="true"></p:ajax>
 						<p:ajax event="toggleSelect" update="#{id}_selectedItemPanel" process="@this" partialSubmit="true" immediate="true"></p:ajax>
 					</p:selectCheckboxMenu>
@@ -144,7 +144,7 @@
 					<p:selectCheckboxMenu required="#{required}" id="#{id}" value="#{fieldItem}" filter="true" filterMatchMode="startsWith">
 					 	<f:attribute name="collectionType" value="java.util.ArrayList" />
 						<f:selectItems value="#{elements}" var="elem" itemLabel="#{elem[valueLabelField]}" itemValue="#{elem}" />
-						<s:objectConverter />
+						<hftl:objectConverter />
 						<p:ajax event="change" update="#{id}_selectedItemPanel" process="@this" partialSubmit="true" immediate="true"></p:ajax>
 						<p:ajax event="toggleSelect" update="#{id}_selectedItemPanel" process="@this" partialSubmit="true" immediate="true"></p:ajax>
 					</p:selectCheckboxMenu>

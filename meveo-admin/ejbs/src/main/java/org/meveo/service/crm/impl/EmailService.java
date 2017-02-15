@@ -43,7 +43,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.communication.MediaEnum;
 import org.meveo.model.communication.MessageSenderConfig;
 import org.meveo.model.crm.Email;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -150,12 +149,12 @@ public class EmailService extends PersistenceService<Email> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public HashMap<MediaEnum, List<MessageSenderConfig>> getMediaConfig(Provider provider) {
+	public HashMap<MediaEnum, List<MessageSenderConfig>> getMediaConfig() {
 		HashMap<MediaEnum, List<MessageSenderConfig>> result = new HashMap<MediaEnum, List<MessageSenderConfig>>();
 		List<MessageSenderConfig> allConfig = (List<MessageSenderConfig>) getEntityManager()
 				.createQuery(
 						"from " + MessageSenderConfig.class.getSimpleName()
-								+ " where provider=:provider and disabled=false").setParameter("provider", provider)
+								+ " where provider=:provider and disabled=false")
 				.getResultList();
 		if (allConfig != null && allConfig.size() > 0) {
 			for (MessageSenderConfig config : allConfig) {

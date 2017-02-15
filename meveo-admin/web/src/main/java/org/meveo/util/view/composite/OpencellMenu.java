@@ -15,11 +15,12 @@
  */
 package org.meveo.util.view.composite;
 
-import org.primefaces.component.menu.AbstractMenu;
-import javax.faces.context.FacesContext;
-import javax.faces.component.UINamingContainer;
 import javax.faces.application.ResourceDependencies;
 import javax.faces.application.ResourceDependency;
+import javax.faces.component.UINamingContainer;
+import javax.faces.context.FacesContext;
+
+import org.primefaces.component.menu.AbstractMenu;
 
 @ResourceDependencies({
     @ResourceDependency(library = "primefaces", name = "primefaces.css"),

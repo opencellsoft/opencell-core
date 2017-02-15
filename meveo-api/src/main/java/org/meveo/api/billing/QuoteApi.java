@@ -25,7 +25,6 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.order.OrderProductCharacteristicEnum;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.ServiceInstance;
@@ -35,7 +34,6 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.order.OrderItemActionEnum;
@@ -112,7 +110,7 @@ public class QuoteApi extends BaseApi {
      * Register a quote from TMForumApi
      * 
      * @param productQuote Quote
-     * @param currentUser Current user
+
      * @return Quote updated
      * @throws MissingParameterException
      * @throws IncorrectSusbcriptionException
@@ -120,7 +118,7 @@ public class QuoteApi extends BaseApi {
      * @throws BusinessException
      * @throws MeveoApiException
      */
-    public ProductQuote createQuote(ProductQuote productQuote, User currentUser) throws MeveoApiException, BusinessException {
+    public ProductQuote createQuote(ProductQuote productQuote) throws MeveoApiException, BusinessException {
 
         if (productQuote.getQuoteItem() == null || productQuote.getQuoteItem().isEmpty()) {
             missingParameters.add("quoteItem");
@@ -130,7 +128,7 @@ public class QuoteApi extends BaseApi {
         }
 
         handleMissingParameters();
-        Provider provider = currentUser.getProvider();
+        
 
         if (productQuote.getCharacteristic().size() > 0) {
             for (Characteristic quoteCharacteristic : productQuote.getCharacteristic()) {
@@ -138,7 +136,7 @@ public class QuoteApi extends BaseApi {
                     String scriptCode = quoteCharacteristic.getValue();
                     Map<String, Object> context = new HashMap<>();
                     context.put("productQuote", productQuote);
-                    scriptInstanceService.execute(scriptCode, context, currentUser);
+                    scriptInstanceService.execute(scriptCode, context);
                     productQuote = (ProductQuote) context.get(Script.RESULT_VALUE);
                     break;
                 }
@@ -173,7 +171,7 @@ public class QuoteApi extends BaseApi {
             String billingAccountId = productQuote.getBillingAccount().get(0).getId();
             if (!StringUtils.isEmpty(billingAccountId)) {
 
-                quoteLevelUserAccount = userAccountService.findByCode(billingAccountId, currentUser.getProvider());
+                quoteLevelUserAccount = userAccountService.findByCode(billingAccountId);
                 if (quoteLevelUserAccount == null) {
                     throw new EntityDoesNotExistsException(UserAccount.class, billingAccountId);
                 }
@@ -188,7 +186,7 @@ public class QuoteApi extends BaseApi {
             if (productQuoteItem.getBillingAccount() != null && !productQuoteItem.getBillingAccount().isEmpty()) {
                 String billingAccountId = productQuoteItem.getBillingAccount().get(0).getId();
                 if (!StringUtils.isEmpty(billingAccountId)) {
-                    itemLevelUserAccount = userAccountService.findByCode(billingAccountId, currentUser.getProvider());
+                    itemLevelUserAccount = userAccountService.findByCode(billingAccountId);
                     if (itemLevelUserAccount == null) {
                         throw new EntityDoesNotExistsException(UserAccount.class, billingAccountId);
                     }
@@ -216,7 +214,7 @@ public class QuoteApi extends BaseApi {
 
             // For modify and delete actions, product offering might not be specified
             if (productQuoteItem.getProductOffering() != null) {
-                ProductOffering productOfferingInDB = productOfferingService.findByCode(productQuoteItem.getProductOffering().getId(), provider);
+                ProductOffering productOfferingInDB = productOfferingService.findByCode(productQuoteItem.getProductOffering().getId());
                 if (productOfferingInDB == null) {
                     throw new EntityDoesNotExistsException(ProductOffering.class, productQuoteItem.getProductOffering().getId());
                 }
@@ -224,7 +222,7 @@ public class QuoteApi extends BaseApi {
 
                 if (productQuoteItem.getProductOffering().getBundledProductOffering() != null) {
                     for (BundledProductReference bundledProductOffering : productQuoteItem.getProductOffering().getBundledProductOffering()) {
-                        productOfferingInDB = productOfferingService.findByCode(bundledProductOffering.getReferencedId(), provider);
+                        productOfferingInDB = productOfferingService.findByCode(bundledProductOffering.getReferencedId());
                         if (productOfferingInDB == null) {
                             throw new EntityDoesNotExistsException(ProductOffering.class, bundledProductOffering.getReferencedId());
                         }
@@ -241,7 +239,6 @@ public class QuoteApi extends BaseApi {
             quoteItem.setQuote(quote);
             quoteItem.setSource(ProductQuoteItem.serializeQuoteItem(productQuoteItem));
             quoteItem.setQuoteItemProductOfferings(productOfferings);
-            quoteItem.setProvider(currentUser.getProvider());
             quoteItem.setUserAccount(itemLevelUserAccount != null ? itemLevelUserAccount : quoteLevelUserAccount);
 
             if (productQuoteItem.getState() != null) {
@@ -281,11 +278,11 @@ public class QuoteApi extends BaseApi {
             quote.addQuoteItem(quoteItem);
         }
 
-        quoteService.create(quote, currentUser);
+        quoteService.create(quote);
 
         // populate customFields
         try {
-            populateCustomFields(productQuote.getCustomFields(), quote, true, currentUser);
+            populateCustomFields(productQuote.getCustomFields(), quote, true);
 
         } catch (MissingParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
@@ -302,7 +299,7 @@ public class QuoteApi extends BaseApi {
                     Map<String, Object> context = new HashMap<>();
                     context.put("productQuote", productQuote);
                     context.put("quote", quote);
-                    scriptInstanceService.execute(scriptCode, context, currentUser);
+                    scriptInstanceService.execute(scriptCode, context);
                     break;
                 }
             }
@@ -311,7 +308,7 @@ public class QuoteApi extends BaseApi {
         // Commit before initiating workflow/quote processing
         quoteService.commit();
 
-        quote = initiateWorkflow(quote, currentUser);
+        quote = initiateWorkflow(quote);
 
         return quoteToDto(quote);
     }
@@ -320,19 +317,19 @@ public class QuoteApi extends BaseApi {
      * Initiate workflow on quote. If workflow is enabled on Quote class, then execute workflow. If workflow is not enabled - then process the quote right away.
      * 
      * @param quote Quote
-     * @param currentUser
+
      * @return
      * @throws BusinessException
      * @throws MeveoApiException
      */
-    public Quote initiateWorkflow(Quote quote, User currentUser) throws BusinessException {
+    public Quote initiateWorkflow(Quote quote) throws BusinessException {
 
-        if (workflowService.isWorkflowSetup(Quote.class, currentUser.getProvider())) {
-            quote = (Quote) workflowService.executeMatchingWorkflows(quote, currentUser);
+        if (workflowService.isWorkflowSetup(Quote.class)) {
+            quote = (Quote) workflowService.executeMatchingWorkflows(quote);
 
         } else {
             try {
-                quote = processQuote(quote, currentUser);
+                quote = processQuote(quote);
             } catch (MeveoApiException e) {
                 throw new BusinessException(e);
             }
@@ -346,11 +343,11 @@ public class QuoteApi extends BaseApi {
      * Process the quote for workflow
      * 
      * @param quote
-     * @param currentUser
+
      * @throws BusinessException
      * @throws MeveoApiException
      */
-    public Quote processQuote(Quote quote, User currentUser) throws BusinessException, MeveoApiException {
+    public Quote processQuote(Quote quote) throws BusinessException, MeveoApiException {
 
         // Nothing to process in final state
         if (quote.getStatus() == QuoteStatusEnum.CANCELLED || quote.getStatus() == QuoteStatusEnum.ACCEPTED || quote.getStatus() == QuoteStatusEnum.REJECTED) {
@@ -360,7 +357,7 @@ public class QuoteApi extends BaseApi {
         log.info("Processing quote {}", quote.getCode());
 
         for (QuoteItem quoteItem : quote.getQuoteItems()) {
-            processQuoteItem(quote, quoteItem, currentUser);
+            processQuoteItem(quote, quoteItem);
         }
 
         quote.setStatus(QuoteStatusEnum.PENDING);
@@ -368,9 +365,9 @@ public class QuoteApi extends BaseApi {
             quoteItem.setStatus(QuoteStatusEnum.PENDING);
         }
 
-        quote = invoiceQuote(quote, currentUser);
+        quote = invoiceQuote(quote);
 
-        quote = quoteService.update(quote, currentUser);
+        quote = quoteService.update(quote);
 
         log.trace("Finished processing quote {}", quote.getCode());
 
@@ -382,11 +379,11 @@ public class QuoteApi extends BaseApi {
      * 
      * @param quote Quote
      * @param quoteItem Quote item
-     * @param currentUser
+
      * @throws BusinessException
      * @throws MeveoApiException
      */
-    private void processQuoteItem(Quote quote, QuoteItem quoteItem, User currentUser) throws BusinessException, MeveoApiException {
+    private void processQuoteItem(Quote quote, QuoteItem quoteItem) throws BusinessException, MeveoApiException {
 
         log.info("Processing quote item {} {}", quote.getCode(), quoteItem.getItemId());
 
@@ -397,11 +394,11 @@ public class QuoteApi extends BaseApi {
      * Create invoices for the quote
      * 
      * @param quote Quote
-     * @param currentUser Current user
+
      * @throws BusinessException
      * @throws MeveoApiException
      */
-    public Quote invoiceQuote(Quote quote, User currentUser) throws BusinessException {
+    public Quote invoiceQuote(Quote quote) throws BusinessException {
 
         log.info("Creating invoices for quote {}", quote.getCode());
 
@@ -414,17 +411,17 @@ public class QuoteApi extends BaseApi {
                 if (!quoteInvoiceInfos.containsKey(baCode)) {
                     quoteInvoiceInfos.put(baCode, new ArrayList<QuoteInvoiceInfo>());
                 }
-                quoteInvoiceInfos.get(baCode).add(preInvoiceQuoteItem(quote, quoteItem, currentUser));
+                quoteInvoiceInfos.get(baCode).add(preInvoiceQuoteItem(quote, quoteItem));
             }
 
-            List<Invoice> invoices = quoteService.provideQuote(quoteInvoiceInfos, currentUser);
+            List<Invoice> invoices = quoteService.provideQuote(quoteInvoiceInfos);
 
             for (Invoice invoice : invoices) {
                 invoice.setQuote(quote);
-                invoice = invoiceService.update(invoice, currentUser);
+                invoice = invoiceService.update(invoice);
                 quote.getInvoices().add(invoice);
             }
-            quote = quoteService.update(quote, currentUser);
+            quote = quoteService.update(quote);
 
         } catch (MeveoApiException e) {
             throw new BusinessException(e);
@@ -440,12 +437,12 @@ public class QuoteApi extends BaseApi {
      * 
      * @param quote Quote
      * @param quoteItem Quote item
-     * @param currentUser Current user
+
      * @return Instantiated product instances and subscriptions and other grouped information of quote item ready for invoicing
      * @throws BusinessException
      * @throws MeveoApiException
      */
-    private QuoteInvoiceInfo preInvoiceQuoteItem(Quote quote, QuoteItem quoteItem, User currentUser) throws BusinessException, MeveoApiException {
+    private QuoteInvoiceInfo preInvoiceQuoteItem(Quote quote, QuoteItem quoteItem) throws BusinessException, MeveoApiException {
 
         log.info("Processing quote item {} {}", quote.getCode(), quoteItem.getItemId());
 
@@ -460,8 +457,7 @@ public class QuoteApi extends BaseApi {
         // Just a simple case of ordering a single product
         if (primaryOffering instanceof ProductTemplate) {
 
-            ProductInstance productInstance = instantiateVirtualProduct((ProductTemplate) primaryOffering, productQuoteItem.getProduct(), quoteItem, productQuoteItem, null,
-                currentUser);
+            ProductInstance productInstance = instantiateVirtualProduct((ProductTemplate) primaryOffering, productQuoteItem.getProduct(), quoteItem, productQuoteItem, null);
             productInstances.add(productInstance);
 
             // A complex case of ordering from offer template with services and optional products
@@ -484,13 +480,13 @@ public class QuoteApi extends BaseApi {
             }
 
             // Instantiate a service
-            subscription = instantiateVirtualSubscription((OfferTemplate) primaryOffering, productQuoteItem.getProduct(), services, quoteItem, productQuoteItem, currentUser);
+            subscription = instantiateVirtualSubscription((OfferTemplate) primaryOffering, productQuoteItem.getProduct(), services, quoteItem, productQuoteItem);
 
             // Instantiate products - find a matching product offering. The order of products must match the order of productOfferings
             index = 1;
             for (Product product : products) {
                 ProductTemplate productOffering = (ProductTemplate) quoteItem.getQuoteItemProductOfferings().get(index).getProductOffering();
-                ProductInstance productInstance = instantiateVirtualProduct(productOffering, product, quoteItem, productQuoteItem, subscription, currentUser);
+                ProductInstance productInstance = instantiateVirtualProduct(productOffering, product, quoteItem, productQuoteItem, subscription);
                 productInstances.add(productInstance);
                 index++;
             }
@@ -537,7 +533,7 @@ public class QuoteApi extends BaseApi {
     }
 
     private Subscription instantiateVirtualSubscription(OfferTemplate offerTemplate, Product product, List<Product> services, QuoteItem quoteItem,
-            ProductQuoteItem productQuoteItem, User currentUser) throws BusinessException, MeveoApiException {
+            ProductQuoteItem productQuoteItem) throws BusinessException, MeveoApiException {
 
         log.debug("Instantiating virtual subscription from offer template {} for quote {} line {}", offerTemplate.getCode(), quoteItem.getQuote().getCode(), quoteItem.getItemId());
 
@@ -552,12 +548,11 @@ public class QuoteApi extends BaseApi {
             Date.class, DateUtils.setTimeToZero(quoteItem.getQuote().getQuoteDate())));
         subscription.setEndAgreementDate((Date) getProductCharacteristic(productQuoteItem.getProduct(),
             OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(), Date.class, null));
-        subscription.setProvider(currentUser.getProvider());
 
         // // Validate and populate customFields
-        // CustomFieldsDto customFields = extractCustomFields(productQuoteItem.getProduct(), Subscription.class, currentUser.getProvider());
+        // CustomFieldsDto customFields = extractCustomFields(productQuoteItem.getProduct(), Subscription.class);
         // try {
-        // populateCustomFields(customFields, subscription, true, currentUser, true);
+        // populateCustomFields(customFields, subscription, true, true);
         // } catch (MissingParameterException e) {
         // log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
         // throw e;
@@ -567,13 +562,13 @@ public class QuoteApi extends BaseApi {
         // }
 
         // instantiate and activate services
-        processServices(subscription, services, currentUser);
+        processServices(subscription, services);
 
         return subscription;
     }
 
     private ProductInstance instantiateVirtualProduct(ProductTemplate productTemplate, Product product, QuoteItem quoteItem, ProductQuoteItem productQuoteItem,
-            Subscription subscription, User currentUser) throws BusinessException {
+            Subscription subscription) throws BusinessException {
 
         log.debug("Instantiating virtual product from product template {} for quote {} line {}", productTemplate.getCode(), quoteItem.getQuote().getCode(), quoteItem.getItemId());
 
@@ -585,14 +580,13 @@ public class QuoteApi extends BaseApi {
         String code = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.PRODUCT_INSTANCE_CODE.getCharacteristicName(), String.class, UUID.randomUUID()
             .toString());
         ProductInstance productInstance = new ProductInstance(quoteItem.getUserAccount(), subscription, productTemplate, quantity, chargeDate, code,
-            productTemplate.getDescription(), null, currentUser);
-        productInstance.setProvider(currentUser.getProvider());
+            productTemplate.getDescription(), null);
 
-        productInstanceService.instantiateProductInstance(productInstance, null, null, null, currentUser, true);
+        productInstanceService.instantiateProductInstance(productInstance, null, null, null, true);
 
         // try {
-        // CustomFieldsDto customFields = extractCustomFields(product, ProductInstance.class, currentUser.getProvider());
-        // populateCustomFields(customFields, productInstance, true, currentUser, true);
+        // CustomFieldsDto customFields = extractCustomFields(product, ProductInstance.class);
+        // populateCustomFields(customFields, productInstance, true, true);
         // } catch (MissingParameterException e) {
         // log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
         // throw e;
@@ -604,7 +598,7 @@ public class QuoteApi extends BaseApi {
     }
 
     @SuppressWarnings({ "rawtypes", "unused" })
-    private CustomFieldsDto extractCustomFields(Product product, Class appliesToClass, Provider provider) {
+    private CustomFieldsDto extractCustomFields(Product product, Class appliesToClass) {
 
         if (product.getProductCharacteristic() == null || product.getProductCharacteristic().isEmpty()) {
             return null;
@@ -612,14 +606,14 @@ public class QuoteApi extends BaseApi {
 
         CustomFieldsDto customFieldsDto = new CustomFieldsDto();
 
-        Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(EntityCustomizationUtils.getAppliesTo(appliesToClass, null), provider);
+        Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(EntityCustomizationUtils.getAppliesTo(appliesToClass, null));
 
         for (ProductCharacteristic characteristic : product.getProductCharacteristic()) {
             if (characteristic.getName() != null && cfts.containsKey(characteristic.getName())) {
 
                 CustomFieldTemplate cft = cfts.get(characteristic.getName());
                 CustomFieldDto cftDto = entityToDtoConverter.customFieldToDTO(characteristic.getName(), CustomFieldValue.parseValueFromString(cft, characteristic.getValue()),
-                    cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY, provider);
+                    cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY);
                 customFieldsDto.getCustomField().add(cftDto);
             }
         }
@@ -663,7 +657,7 @@ public class QuoteApi extends BaseApi {
         return value;
     }
 
-    private void processServices(Subscription subscription, List<Product> services, User currentUser) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException,
+    private void processServices(Subscription subscription, List<Product> services) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException,
             BusinessException, MeveoApiException {
 
         for (Product serviceProduct : services) {
@@ -683,16 +677,15 @@ public class QuoteApi extends BaseApi {
             serviceInstance.setSubscriptionDate((Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(),
                 Date.class, DateUtils.setTimeToZero(new Date())));
             serviceInstance.setSubscription(subscription);
-            serviceInstance.setServiceTemplate(serviceTemplateService.findByCode(serviceCode, currentUser.getProvider()));
-            serviceInstance.setProvider(currentUser.getProvider());
+            serviceInstance.setServiceTemplate(serviceTemplateService.findByCode(serviceCode));
 
-            serviceInstanceService.serviceInstanciation(serviceInstance, currentUser, null, null, true);
+            serviceInstanceService.serviceInstanciation(serviceInstance, null, null, true);
         }
     }
 
-    public ProductQuote getQuote(String quoteId, User currentUser) throws EntityDoesNotExistsException, BusinessException {
+    public ProductQuote getQuote(String quoteId) throws EntityDoesNotExistsException, BusinessException {
 
-        Quote quote = quoteService.findByCode(quoteId, currentUser.getProvider());
+        Quote quote = quoteService.findByCode(quoteId);
 
         if (quote == null) {
             throw new EntityDoesNotExistsException(ProductQuote.class, quoteId);
@@ -701,9 +694,9 @@ public class QuoteApi extends BaseApi {
         return quoteToDto(quote);
     }
 
-    public List<ProductQuote> findQuotes(Map<String, List<String>> filterCriteria, User currentUser) throws BusinessException {
+    public List<ProductQuote> findQuotes(Map<String, List<String>> filterCriteria) throws BusinessException {
 
-        List<Quote> quotes = quoteService.list(currentUser.getProvider());
+        List<Quote> quotes = quoteService.list();
 
         List<ProductQuote> productQuotes = new ArrayList<>();
         for (Quote quote : quotes) {
@@ -713,16 +706,16 @@ public class QuoteApi extends BaseApi {
         return productQuotes;
     }
 
-    public ProductQuote updatePartiallyQuote(String quoteId, ProductQuote productQuote, User currentUser) throws BusinessException, MeveoApiException {
+    public ProductQuote updatePartiallyQuote(String quoteId, ProductQuote productQuote) throws BusinessException, MeveoApiException {
 
-        Quote quote = quoteService.findByCode(quoteId, currentUser.getProvider());
+        Quote quote = quoteService.findByCode(quoteId);
         if (quote == null) {
             throw new EntityDoesNotExistsException(ProductQuote.class, quoteId);
         }
 
         // populate customFields
         try {
-            populateCustomFields(productQuote.getCustomFields(), quote, true, currentUser);
+            populateCustomFields(productQuote.getCustomFields(), quote, true);
         } catch (MissingParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
@@ -739,12 +732,12 @@ public class QuoteApi extends BaseApi {
 
     }
 
-    public void deleteQuote(String quoteId, User currentUser) throws EntityDoesNotExistsException, ActionForbiddenException, BusinessException {
+    public void deleteQuote(String quoteId) throws EntityDoesNotExistsException, ActionForbiddenException, BusinessException {
 
-        Quote quote = quoteService.findByCode(quoteId, currentUser.getProvider());
+        Quote quote = quoteService.findByCode(quoteId);
 
         if (quote.getStatus() == QuoteStatusEnum.IN_PROGRESS || quote.getStatus() == QuoteStatusEnum.PENDING) {
-            quoteService.remove(quote, currentUser);
+            quoteService.remove(quote);
         }
     }
 
@@ -838,12 +831,12 @@ public class QuoteApi extends BaseApi {
      * Place an order from a quote
      * 
      * @param quote Quote to convert to an order
-     * @param currentUser Current user
+
      * @return Product order DTO object
      * @throws BusinessException
      * @throws MeveoApiException
      */
-    public ProductOrder placeOrder(String quoteCode, User currentUser) throws BusinessException, MeveoApiException {
+    public ProductOrder placeOrder(String quoteCode) throws BusinessException, MeveoApiException {
 
         if (StringUtils.isEmpty(quoteCode)) {
             missingParameters.add("quoteCode");
@@ -851,7 +844,7 @@ public class QuoteApi extends BaseApi {
 
         handleMissingParameters();
 
-        Quote quote = quoteService.findByCode(quoteCode, currentUser.getProvider());
+        Quote quote = quoteService.findByCode(quoteCode);
         ProductOrder productOrder = new ProductOrder();
         productOrder.setOrderDate(new Date());
         productOrder.setRequestedStartDate(quote.getFulfillmentStartDate());
@@ -871,7 +864,7 @@ public class QuoteApi extends BaseApi {
             productOrder.getOrderItem().add(orderItem);
         }
 
-        productOrder = orderApi.createProductOrder(productOrder, currentUser);
+        productOrder = orderApi.createProductOrder(productOrder);
 
         return productOrder;
     }

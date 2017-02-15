@@ -24,9 +24,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -74,10 +72,9 @@ public class MediationJob extends Job {
 				log.warn("Cant get customFields for " + jobInstance.getJobTemplate(),e);
 			}
 
-			Provider provider = currentUser.getProvider();
 
 			ParamBean parambean = ParamBean.getInstance();
-			String meteringDir = parambean.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + provider.getCode() + File.separator + "imports" + File.separator
+			String meteringDir = parambean.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + appProvider.getCode() + File.separator + "imports" + File.separator
 					+ "metering" + File.separator;
 
 			String inputDir = meteringDir + "input";

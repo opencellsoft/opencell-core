@@ -18,8 +18,6 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
-import org.meveo.model.IProvider;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.medina.impl.CDRParsingService;
 import org.meveo.service.medina.impl.CSVCDRParser;
 import org.meveo.service.medina.impl.EDRDAO;
@@ -49,7 +47,7 @@ public class CustomCdrParser implements CSVCDRParser {
 		}
 	}
 
-	class CDR implements Serializable, IProvider {
+	class CDR implements Serializable {
 		private static final long serialVersionUID = -536798105625877375L;
 		public long timestamp;
 		public String access_id;
@@ -58,22 +56,11 @@ public class CustomCdrParser implements CSVCDRParser {
 		public String param2;
 		public String param3;
 		public String param4;
-		public transient Provider provider;
 		
 		public String toString() {
 			return (new Date(timestamp)) + ";" + quantity + ";" + access_id + ";" + param1 + ";" + param2
 					+ ";" + param3 + ";" + param4;
 		}
-
-        @Override
-        public Provider getProvider() {
-            return provider;
-        }
-
-        @Override
-        public void setProvider(Provider provider) {
-            this.provider = provider;            
-        }
 	}
 
 	private String batchName;

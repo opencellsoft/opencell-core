@@ -18,7 +18,6 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.TradingLanguage;
@@ -27,8 +26,8 @@ import org.meveo.model.catalog.LevelEnum;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.finance.RevenueRecognitionRule;
+import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
@@ -59,8 +58,11 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
     
     @Inject
     private RevenueRecognitionRuleService revenueRecognitionRuleService;
+    
+    @Inject
+    private TradingLanguageService tradingLanguageService;
 
-    public RecurringChargeTemplate create(RecurringChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public RecurringChargeTemplate create(RecurringChargeTemplateDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -75,28 +77,29 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         handleMissingParameters();
         
 
-        Provider provider = currentUser.getProvider();
+        
         // check if code already exists
-        if (recurringChargeTemplateService.findByCode(postData.getCode(), provider) != null) {
+        if (recurringChargeTemplateService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(RecurringChargeTemplate.class, postData.getCode());
         }
 
-        InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategory(), provider);
+        InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategory());
         if (invoiceSubCategory == null) {
             throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getInvoiceSubCategory());
         }
 
-        Calendar calendar = calendarService.findByCode(postData.getCalendar(), provider);
+        Calendar calendar = calendarService.findByCode(postData.getCalendar());
         if (calendar == null) {
             throw new EntityDoesNotExistsException(Calendar.class, postData.getCalendar());
         }
 
-        if (provider.getTradingLanguages() != null) {
+        List<TradingLanguage> tradingLanguages = tradingLanguageService.list();
+        if (!tradingLanguages.isEmpty()) {
             if (postData.getLanguageDescriptions() != null) {
                 for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
                     boolean match = false;
 
-                    for (TradingLanguage tl : provider.getTradingLanguages()) {
+                    for (TradingLanguage tl : tradingLanguages) {
                         if (tl.getLanguageCode().equals(ld.getLanguageCode())) {
                             match = true;
                             break;
@@ -134,7 +137,7 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         }
         
         if(postData.getRevenueRecognitionRuleCode()!=null){
-        	RevenueRecognitionRule revenueRecognitionRule = revenueRecognitionRuleService.findByCode(postData.getRevenueRecognitionRuleCode(), provider);
+        	RevenueRecognitionRule revenueRecognitionRule = revenueRecognitionRuleService.findByCode(postData.getRevenueRecognitionRuleCode());
         	chargeTemplate.setRevenueRecognitionRule(revenueRecognitionRule);
         }
 
@@ -142,7 +145,7 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
             List<TriggeredEDRTemplate> edrTemplates = new ArrayList<TriggeredEDRTemplate>();
 
             for (TriggeredEdrTemplateDto triggeredEdrTemplateDto : postData.getTriggeredEdrs().getTriggeredEdr()) {
-                TriggeredEDRTemplate triggeredEdrTemplate = triggeredEDRTemplateService.findByCode(triggeredEdrTemplateDto.getCode(), provider);
+                TriggeredEDRTemplate triggeredEdrTemplate = triggeredEDRTemplateService.findByCode(triggeredEdrTemplateDto.getCode());
                 if (triggeredEdrTemplate == null) {
                     throw new EntityDoesNotExistsException(TriggeredEDRTemplate.class, triggeredEdrTemplateDto.getCode());
                 }
@@ -153,11 +156,11 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
             chargeTemplate.setEdrTemplates(edrTemplates);
         }
 
-        recurringChargeTemplateService.create(chargeTemplate, currentUser);
+        recurringChargeTemplateService.create(chargeTemplate);
 
         // populate customFields
         try {
-            populateCustomFields(postData.getCustomFields(), chargeTemplate, true, currentUser);
+            populateCustomFields(postData.getCustomFields(), chargeTemplate, true);
         } catch (MissingParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
@@ -171,14 +174,14 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
             for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
                 CatMessages catMsg = new CatMessages(RecurringChargeTemplate.class.getSimpleName() , chargeTemplate.getCode(), ld.getLanguageCode(), ld.getDescription());
 
-                catMessagesService.create(catMsg, currentUser);
+                catMessagesService.create(catMsg);
             }
         }
 
         return chargeTemplate;
     }
 
-    public RecurringChargeTemplate update(RecurringChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public RecurringChargeTemplate update(RecurringChargeTemplateDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -193,19 +196,19 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         handleMissingParameters();
         
 
-        Provider provider = currentUser.getProvider();
+        
         // check if code already exists
-        RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService.findByCode(postData.getCode(), provider);
+        RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService.findByCode(postData.getCode());
         if (chargeTemplate == null) {
             throw new EntityDoesNotExistsException(RecurringChargeTemplate.class, postData.getCode());
         }
 
-        InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategory(), provider);
+        InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategory());
         if (invoiceSubCategory == null) {
             throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getInvoiceSubCategory());
         }
 
-        Calendar calendar = calendarService.findByCode(postData.getCalendar(), provider);
+        Calendar calendar = calendarService.findByCode(postData.getCalendar());
         if (calendar == null) {
             throw new EntityDoesNotExistsException(Calendar.class, postData.getCalendar());
         }
@@ -232,16 +235,17 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         }
         
         if(postData.getRevenueRecognitionRuleCode()!=null){
-        	RevenueRecognitionRule revenueRecognitionRule = revenueRecognitionRuleService.findByCode(postData.getRevenueRecognitionRuleCode(), provider);
+        	RevenueRecognitionRule revenueRecognitionRule = revenueRecognitionRuleService.findByCode(postData.getRevenueRecognitionRuleCode());
         	chargeTemplate.setRevenueRecognitionRule(revenueRecognitionRule);
         }
 
-        if (provider.getTradingLanguages() != null) {
+        List<TradingLanguage> tradingLanguages = tradingLanguageService.list();
+        if (!tradingLanguages.isEmpty()) {
             if (postData.getLanguageDescriptions() != null) {
                 for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
                     boolean match = false;
 
-                    for (TradingLanguage tl : provider.getTradingLanguages()) {
+                    for (TradingLanguage tl : tradingLanguages) {
                         if (tl.getLanguageCode().equals(ld.getLanguageCode())) {
                             match = true;
                             break;
@@ -255,15 +259,15 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
 
                 // create cat messages
                 for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-                    CatMessages catMsg = catMessagesService.getCatMessages(chargeTemplate.getCode(),RecurringChargeTemplate.class.getSimpleName(), ld.getLanguageCode(),provider);
+                    CatMessages catMsg = catMessagesService.getCatMessages(chargeTemplate.getCode(),RecurringChargeTemplate.class.getSimpleName(), ld.getLanguageCode());
 
                     if (catMsg != null) {
                         catMsg.setDescription(ld.getDescription());
-                        catMessagesService.update(catMsg, currentUser);
+                        catMessagesService.update(catMsg);
                     } else {
                         CatMessages catMessages = new CatMessages(RecurringChargeTemplate.class.getSimpleName() , chargeTemplate.getCode(), ld.getLanguageCode(),
                             ld.getDescription());
-                        catMessagesService.create(catMessages, currentUser);
+                        catMessagesService.create(catMessages);
                     }
                 }
             }
@@ -273,7 +277,7 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
             List<TriggeredEDRTemplate> edrTemplates = new ArrayList<TriggeredEDRTemplate>();
 
             for (TriggeredEdrTemplateDto triggeredEdrTemplateDto : postData.getTriggeredEdrs().getTriggeredEdr()) {
-                TriggeredEDRTemplate triggeredEdrTemplate = triggeredEDRTemplateService.findByCode(triggeredEdrTemplateDto.getCode(), provider);
+                TriggeredEDRTemplate triggeredEdrTemplate = triggeredEDRTemplateService.findByCode(triggeredEdrTemplateDto.getCode());
                 if (triggeredEdrTemplate == null) {
                     throw new EntityDoesNotExistsException(TriggeredEDRTemplate.class, triggeredEdrTemplateDto.getCode());
                 }
@@ -284,11 +288,11 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
             chargeTemplate.setEdrTemplates(edrTemplates);
         }
 
-        chargeTemplate = recurringChargeTemplateService.update(chargeTemplate, currentUser);
+        chargeTemplate = recurringChargeTemplateService.update(chargeTemplate);
 
         // populate customFields
         try {
-            populateCustomFields(postData.getCustomFields(), chargeTemplate, false, currentUser);
+            populateCustomFields(postData.getCustomFields(), chargeTemplate, false);
         } catch (MissingParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
@@ -300,7 +304,7 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         return chargeTemplate;
     }
 
-    public RecurringChargeTemplateDto find(String code, User currentUser) throws MeveoApiException {
+    public RecurringChargeTemplateDto find(String code) throws MeveoApiException {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("recurringChargeTemplateCode");
@@ -309,7 +313,7 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
 
 
         // check if code already exists
-        RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService.findByCode(code, currentUser.getProvider(), Arrays.asList("invoiceSubCategory", "calendar"));
+        RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService.findByCode(code, Arrays.asList("invoiceSubCategory", "calendar"));
         if (chargeTemplate == null) {
             throw new EntityDoesNotExistsException(RecurringChargeTemplate.class, code);
         }
@@ -317,7 +321,7 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         RecurringChargeTemplateDto result = new RecurringChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate));
 
         List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
-        for (CatMessages msg : catMessagesService.getCatMessagesList(RecurringChargeTemplate.class.getSimpleName() , chargeTemplate.getCode(),currentUser.getProvider())) {
+        for (CatMessages msg : catMessagesService.getCatMessagesList(RecurringChargeTemplate.class.getSimpleName() , chargeTemplate.getCode())) {
             languageDescriptions.add(new LanguageDescriptionDto(msg.getLanguageCode(), msg.getDescription()));
         }
 
@@ -326,7 +330,7 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         return result;
     }
 
-    public void remove(String code, User currentUser) throws MeveoApiException, BusinessException {
+    public void remove(String code) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("recurringChargeTemplateCode");
@@ -334,20 +338,20 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         }
 
         // check if code already exists
-        RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService.findByCode(code, currentUser.getProvider());
+        RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService.findByCode(code);
         if (chargeTemplate == null) {
             throw new EntityDoesNotExistsException(RecurringChargeTemplate.class, code);
         }
 
-        recurringChargeTemplateService.remove(chargeTemplate, currentUser);
+        recurringChargeTemplateService.remove(chargeTemplate);
     }
 
-    public RecurringChargeTemplate createOrUpdate(RecurringChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public RecurringChargeTemplate createOrUpdate(RecurringChargeTemplateDto postData) throws MeveoApiException, BusinessException {
 
-        if (recurringChargeTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
-            return create(postData, currentUser);
+        if (recurringChargeTemplateService.findByCode(postData.getCode()) == null) {
+            return create(postData);
         } else {
-            return update(postData, currentUser);
+            return update(postData);
         }
     }
 }

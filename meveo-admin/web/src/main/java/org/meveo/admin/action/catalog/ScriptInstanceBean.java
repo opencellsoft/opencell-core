@@ -87,7 +87,7 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
     public DualListModel<Role> getExecRolesDM() {
 
         if (execRolesDM == null) {
-            List<Role> perksSource = roleService.getAllRoles(getCurrentProvider());
+            List<Role> perksSource = roleService.getAllRoles();
             List<Role> perksTarget = new ArrayList<Role>();
             if (getEntity().getExecutionRoles() != null) {
                 perksTarget.addAll(getEntity().getExecutionRoles());
@@ -101,7 +101,7 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
     public DualListModel<Role> getSourcRolesDM() {
 
         if (sourcRolesDM == null) {
-            List<Role> perksSource = roleService.getAllRoles(getCurrentProvider());
+            List<Role> perksSource = roleService.getAllRoles();
             List<Role> perksTarget = new ArrayList<Role>();
             if (getEntity().getSourcingRoles() != null) {
                 perksTarget.addAll(getEntity().getSourcingRoles());
@@ -148,7 +148,7 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
      */
     @Override
     protected List<String> getFormFieldsToFetch() {
-        return Arrays.asList("provider", "executionRoles", "sourcingRoles");
+        return Arrays.asList("executionRoles", "sourcingRoles");
     }
 
     @Override
@@ -169,7 +169,7 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
         }
 
         // check duplicate script
-        CustomScript scriptDuplicate = genericScriptService.findByCode(code, getCurrentProvider());
+        CustomScript scriptDuplicate = genericScriptService.findByCode(code);
         if (scriptDuplicate != null && !scriptDuplicate.getId().equals(entity.getId())) {
             messages.error(new BundleKey("messages", "scriptInstance.scriptAlreadyExists"), code);
             return null;
@@ -203,16 +203,16 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
     }
 
     public String execute() {
-        scriptInstanceService.test(entity.getCode(), null, getCurrentUser());
+        scriptInstanceService.test(entity.getCode(), null);
         return null;
     }
 
     public List<String> getLogs() {
-        return scriptInstanceService.getLogs(getCurrentProvider().getCode(), entity.getCode());
+        return scriptInstanceService.getLogs(entity.getCode());
     }
 
     public boolean isUserHasSourcingRole(ScriptInstance scriptInstance) {
-        return scriptInstanceService.isUserHasSourcingRole(scriptInstance, getCurrentUser());
+        return scriptInstanceService.isUserHasSourcingRole(scriptInstance);
     }
 
     public void testCompilation() {
@@ -225,7 +225,7 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
         }
 
         // check duplicate script
-        CustomScript scriptDuplicate = genericScriptService.findByCode(code, getCurrentProvider());
+        CustomScript scriptDuplicate = genericScriptService.findByCode(code);
         if (scriptDuplicate != null && !scriptDuplicate.getId().equals(entity.getId())) {
             messages.error(new BundleKey("messages", "scriptInstance.scriptAlreadyExists"), code);
             return;

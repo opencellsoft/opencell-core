@@ -31,7 +31,7 @@ public class CustomFieldTemplateRsImpl extends BaseRs implements CustomFieldTemp
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customFieldTemplateApi.create(postData, null, getCurrentUser());
+            customFieldTemplateApi.create(postData, null);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -51,7 +51,7 @@ public class CustomFieldTemplateRsImpl extends BaseRs implements CustomFieldTemp
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customFieldTemplateApi.update(postData, null, getCurrentUser());
+            customFieldTemplateApi.update(postData, null);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -71,7 +71,7 @@ public class CustomFieldTemplateRsImpl extends BaseRs implements CustomFieldTemp
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customFieldTemplateApi.remove(customFieldTemplateCode, appliesTo, getCurrentUser());
+            customFieldTemplateApi.remove(customFieldTemplateCode, appliesTo);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -91,7 +91,7 @@ public class CustomFieldTemplateRsImpl extends BaseRs implements CustomFieldTemp
         GetCustomFieldTemplateReponseDto result = new GetCustomFieldTemplateReponseDto();
 
         try {
-            result.setCustomFieldTemplate(customFieldTemplateApi.find(customFieldTemplateCode, appliesTo, getCurrentUser()));
+            result.setCustomFieldTemplate(customFieldTemplateApi.find(customFieldTemplateCode, appliesTo));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -111,7 +111,7 @@ public class CustomFieldTemplateRsImpl extends BaseRs implements CustomFieldTemp
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customFieldTemplateApi.createOrUpdate(postData, null, getCurrentUser());
+            customFieldTemplateApi.createOrUpdate(postData, null);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

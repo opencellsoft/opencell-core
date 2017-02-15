@@ -13,7 +13,6 @@ public class RunTimeLogger implements org.slf4j.Logger {
 
     private Class<?> clazz;
     private String scriptCode;
-    private String providerCode;
 
     private String SEP = "  ";
     private String DEBUG = "DEBUG";
@@ -28,13 +27,11 @@ public class RunTimeLogger implements org.slf4j.Logger {
     /**
      * 
      * @param clazz
-     * @param providerCode
      * @param scriptCode
      */
-    public RunTimeLogger(Class<?> clazz, String providerCode, String scriptCode, String scriptServiceName) {
+    public RunTimeLogger(Class<?> clazz, String scriptCode, String scriptServiceName) {
         this.clazz = clazz;
         this.scriptCode = scriptCode;
-        this.providerCode = providerCode;
         scriptService = (ScriptInstanceService) EjbUtils.getServiceInterface(scriptServiceName);
     }
 
@@ -67,7 +64,7 @@ public class RunTimeLogger implements org.slf4j.Logger {
         sb.append(SEP);
         sb.append(MessageFormatter.arrayFormat(message, args).getMessage());
         sb.append("\n");
-        scriptService.addLog(sb.toString(), providerCode, scriptCode);
+        scriptService.addLog(sb.toString(), scriptCode);
     }
 
     @Override

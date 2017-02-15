@@ -17,7 +17,6 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
@@ -40,7 +39,7 @@ public class CustomEntityInstanceApi extends BaseApi {
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
 
-    public void create(CustomEntityInstanceDto dto, User currentUser) throws MeveoApiException, BusinessException {
+    public void create(CustomEntityInstanceDto dto) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(dto.getCode())) {
             missingParameters.add("code");
@@ -51,22 +50,22 @@ public class CustomEntityInstanceApi extends BaseApi {
 
         handleMissingParameters();
 
-        CustomEntityTemplate cet = customEntityTemplateService.findByCode(dto.getCetCode(), currentUser.getProvider());
+        CustomEntityTemplate cet = customEntityTemplateService.findByCode(dto.getCetCode());
         if (cet == null) {
             throw new EntityDoesNotExistsException(CustomEntityTemplate.class, dto.getCetCode());
         }
 
-        if (customEntityInstanceService.findByCodeByCet(dto.getCetCode(), dto.getCode(), currentUser.getProvider()) != null) {
+        if (customEntityInstanceService.findByCodeByCet(dto.getCetCode(), dto.getCode()) != null) {
             throw new EntityAlreadyExistsException(CustomEntityInstance.class, dto.getCode());
         }
 
         CustomEntityInstance cei = CustomEntityInstanceDto.fromDTO(dto, null);
 
-        customEntityInstanceService.create(cei, currentUser);
+        customEntityInstanceService.create(cei);
 
         // populate customFields
         try {
-            populateCustomFields(dto.getCustomFields(), cei, true, currentUser);
+            populateCustomFields(dto.getCustomFields(), cei, true);
         } catch (MissingParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
@@ -76,7 +75,7 @@ public class CustomEntityInstanceApi extends BaseApi {
         }
     }
 
-    public void update(CustomEntityInstanceDto dto, User currentUser) throws MeveoApiException, BusinessException {
+    public void update(CustomEntityInstanceDto dto) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(dto.getCode())) {
             missingParameters.add("code");
@@ -87,23 +86,23 @@ public class CustomEntityInstanceApi extends BaseApi {
 
         handleMissingParameters();
 
-        CustomEntityTemplate cet = customEntityTemplateService.findByCode(dto.getCetCode(), currentUser.getProvider());
+        CustomEntityTemplate cet = customEntityTemplateService.findByCode(dto.getCetCode());
         if (cet == null) {
             throw new EntityDoesNotExistsException(CustomEntityTemplate.class, dto.getCetCode());
         }
 
-        CustomEntityInstance cei = customEntityInstanceService.findByCodeByCet(dto.getCetCode(), dto.getCode(), currentUser.getProvider());
+        CustomEntityInstance cei = customEntityInstanceService.findByCodeByCet(dto.getCetCode(), dto.getCode());
         if (cei == null) {
             throw new EntityDoesNotExistsException(CustomEntityInstance.class, dto.getCode());
         }
 
         cei = CustomEntityInstanceDto.fromDTO(dto, cei);
 
-        cei = customEntityInstanceService.update(cei, currentUser);
+        cei = customEntityInstanceService.update(cei);
 
         // populate customFields
         try {
-            populateCustomFields(dto.getCustomFields(), cei, false, currentUser);
+            populateCustomFields(dto.getCustomFields(), cei, false);
         } catch (MissingParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
@@ -113,7 +112,7 @@ public class CustomEntityInstanceApi extends BaseApi {
         }
     }
 
-    public void remove(String cetCode, String code, User currentUser) throws EntityDoesNotExistsException, MissingParameterException, BusinessException {
+    public void remove(String cetCode, String code) throws EntityDoesNotExistsException, MissingParameterException, BusinessException {
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
         }
@@ -123,15 +122,15 @@ public class CustomEntityInstanceApi extends BaseApi {
 
         handleMissingParameters();
 
-        CustomEntityInstance cei = customEntityInstanceService.findByCodeByCet(cetCode, code, currentUser.getProvider());
+        CustomEntityInstance cei = customEntityInstanceService.findByCodeByCet(cetCode, code);
         if (cei != null) {
-            customEntityInstanceService.remove(cei, currentUser);
+            customEntityInstanceService.remove(cei);
         } else {
             throw new EntityDoesNotExistsException(CustomEntityInstance.class, code);
         }
     }
 
-    public CustomEntityInstanceDto find(String cetCode, String code, User currentUser) throws MeveoApiException {
+    public CustomEntityInstanceDto find(String cetCode, String code) throws MeveoApiException {
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
         }
@@ -141,7 +140,7 @@ public class CustomEntityInstanceApi extends BaseApi {
 
         handleMissingParameters();
 
-        CustomEntityInstance cei = customEntityInstanceService.findByCodeByCet(cetCode, code, currentUser.getProvider());
+        CustomEntityInstance cei = customEntityInstanceService.findByCodeByCet(cetCode, code);
 
         if (cei == null) {
             throw new EntityDoesNotExistsException(CustomEntityTemplate.class, code);
@@ -149,7 +148,7 @@ public class CustomEntityInstanceApi extends BaseApi {
         return CustomEntityInstanceDto.toDTO(cei, entityToDtoConverter.getCustomFieldsDTO(cei));
     }
 
-    public List<CustomEntityInstanceDto> list(String cetCode, User currentUser) throws MeveoApiException {
+    public List<CustomEntityInstanceDto> list(String cetCode) throws MeveoApiException {
         if (StringUtils.isBlank(cetCode)) {
             missingParameters.add("customEntityTemplateCode");
         }
@@ -170,13 +169,13 @@ public class CustomEntityInstanceApi extends BaseApi {
         return customEntityInstanceDtos;
     }
 
-    public void createOrUpdate(CustomEntityInstanceDto dto, User currentUser) throws MeveoApiException, BusinessException {
+    public void createOrUpdate(CustomEntityInstanceDto dto) throws MeveoApiException, BusinessException {
 
-        CustomEntityInstance cei = customEntityInstanceService.findByCodeByCet(dto.getCetCode(), dto.getCode(), currentUser.getProvider());
+        CustomEntityInstance cei = customEntityInstanceService.findByCodeByCet(dto.getCetCode(), dto.getCode());
         if (cei == null) {
-            create(dto, currentUser);
+            create(dto);
         } else {
-            update(dto, currentUser);
+            update(dto);
         }
     }
 
@@ -184,11 +183,11 @@ public class CustomEntityInstanceApi extends BaseApi {
      * Validate CustomEntityInstance DTO without saving it
      * 
      * @param ceiDto CustomEntityInstance DTO to validate
-     * @param currentUser Current user
+
      * @throws MissingParameterException
      * @throws InvalidParameterException
      */
-    public void validateEntityInstanceDto(CustomEntityInstanceDto ceiDto, User currentUser) throws InvalidParameterException, MissingParameterException {
+    public void validateEntityInstanceDto(CustomEntityInstanceDto ceiDto) throws InvalidParameterException, MissingParameterException {
 
         if (StringUtils.isBlank(ceiDto.getCode())) {
             missingParameters.add("code");
@@ -198,15 +197,15 @@ public class CustomEntityInstanceApi extends BaseApi {
         }
         handleMissingParameters();
 
-        CustomEntityInstance cei = customEntityInstanceService.findByCodeByCet(ceiDto.getCetCode(), ceiDto.getCode(), currentUser.getProvider());
+        CustomEntityInstance cei = customEntityInstanceService.findByCodeByCet(ceiDto.getCetCode(), ceiDto.getCode());
         boolean isNew = cei == null;
         if (cei == null) {
             cei = new CustomEntityInstance();
             cei.setCetCode(ceiDto.getCetCode());
         }
 
-        Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(cei, currentUser.getProvider());
+        Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(cei);
 
-        validateAndConvertCustomFields(customFieldTemplates, ceiDto.getCustomFields().getCustomField(), true, isNew, cei, currentUser);
+        validateAndConvertCustomFields(customFieldTemplates, ceiDto.getCustomFields().getCustomField(), true, isNew, cei);
     }
 }

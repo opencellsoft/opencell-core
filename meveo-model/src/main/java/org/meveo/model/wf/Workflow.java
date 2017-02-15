@@ -40,8 +40,8 @@ import org.meveo.model.ModuleItem;
 
 @Entity
 @ModuleItem
-@ExportIdentifier({ "code", "provider" })
-@Table(name = "WF_WORKFLOW", uniqueConstraints = @UniqueConstraint(columnNames = {"PROVIDER_ID", "CODE" }))
+@ExportIdentifier({ "code"})
+@Table(name = "WF_WORKFLOW", uniqueConstraints = @UniqueConstraint(columnNames = {"CODE" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "WF_WORKFLOW_SEQ")
 public class Workflow extends BusinessEntity {
 

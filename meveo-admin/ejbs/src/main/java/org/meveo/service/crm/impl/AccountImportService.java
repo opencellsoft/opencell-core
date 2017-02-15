@@ -10,7 +10,6 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
@@ -18,7 +17,6 @@ import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.WalletTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.Address;
@@ -63,7 +61,7 @@ public class AccountImportService extends ImportService{
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public org.meveo.model.billing.BillingAccount importBillingAccount(
-			org.meveo.model.jaxb.account.BillingAccount billAccount, Provider provider, User userJob)
+			org.meveo.model.jaxb.account.BillingAccount billAccount)
 			throws BusinessException, ImportWarningException {
 		log.debug("create billingAccount found code:" + billAccount.getCode());
 
@@ -72,7 +70,7 @@ public class AccountImportService extends ImportService{
 		BillingCycle billingCycle = null;
 
 		try {
-			billingCycle = billingCycleService.findByBillingCycleCode(billAccount.getBillingCycle(), provider);
+			billingCycle = billingCycleService.findByCode(billAccount.getBillingCycle());
 		} catch (Exception e) {
 			log.warn("failed to find billingCycle",e);
 		}
@@ -82,7 +80,7 @@ public class AccountImportService extends ImportService{
 		}
 
 		try {
-			customerAccount = customerAccountService.findByCode(billAccount.getCustomerAccountId(), provider);
+			customerAccount = customerAccountService.findByCode(billAccount.getCustomerAccountId());
 		} catch (Exception e) {
 			log.warn("failed to find customer account",e);
 		}
@@ -151,21 +149,20 @@ public class AccountImportService extends ImportService{
 		if (billAccount.getName() != null) {
 			name.setFirstName(billAccount.getName().getFirstName());
 			name.setLastName(billAccount.getName().getLastName());
-			name.setTitle(titleService.findByCode(billAccount.getName().getTitle().trim(), provider));
+			name.setTitle(titleService.findByCode(billAccount.getName().getTitle().trim()));
 			billingAccount.setName(name);
 		}
 		
 		billingAccount.setTradingCountry(tradingCountryService.findByTradingCountryCode(
-				billAccount.getTradingCountryCode(), provider));
+				billAccount.getTradingCountryCode()));
 		billingAccount.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(
-				billAccount.getTradingLanguageCode(), provider));
+				billAccount.getTradingLanguageCode()));
 
-		billingAccount.setProvider(provider);
 
-		billingAccountService.create(billingAccount, userJob);
+		billingAccountService.create(billingAccount);
         
         if (billAccount.getCustomFields() != null){
-            populateCustomFields(billAccount.getCustomFields().getCustomField(), billingAccount, userJob);
+            populateCustomFields(billAccount.getCustomFields().getCustomField(), billingAccount);
         } 
         
 		return billingAccount;
@@ -173,7 +170,7 @@ public class AccountImportService extends ImportService{
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public org.meveo.model.billing.BillingAccount updateBillingAccount(
-			org.meveo.model.jaxb.account.BillingAccount billingAccountDto, Provider provider, User userJob)
+			org.meveo.model.jaxb.account.BillingAccount billingAccountDto)
 			throws BusinessException, ImportWarningException {
 		log.debug("update billingAccount found code:" + billingAccountDto.getCode());
 
@@ -181,7 +178,7 @@ public class AccountImportService extends ImportService{
 		BillingCycle billingCycle = null;
 
 		try {
-			billingCycle = billingCycleService.findByBillingCycleCode(billingAccountDto.getBillingCycle(), provider);
+			billingCycle = billingCycleService.findByCode(billingAccountDto.getBillingCycle());
 		} catch (Exception e) {
 			log.warn("failed to find billingCycle",e);
 		}
@@ -191,7 +188,7 @@ public class AccountImportService extends ImportService{
 		}
 
 		try {
-			customerAccount = customerAccountService.findByCode(billingAccountDto.getCustomerAccountId(), provider);
+			customerAccount = customerAccountService.findByCode(billingAccountDto.getCustomerAccountId());
 		} catch (Exception e) {
 			log.warn("failed to find customerAccount",e);
 		}
@@ -206,7 +203,7 @@ public class AccountImportService extends ImportService{
 		billingAccountCheckWarning(billingAccountDto);
 
 		org.meveo.model.billing.BillingAccount billingAccount = billingAccountService.findByCode(
-				billingAccountDto.getCode(), provider);
+				billingAccountDto.getCode());
 		if (billingAccount == null) {
 			throw new BusinessException("Cannot find billingAccount with code=" + billingAccountDto.getCode());
 		}
@@ -261,20 +258,19 @@ public class AccountImportService extends ImportService{
 		if (billingAccountDto.getName() != null) {
 			name.setFirstName(billingAccountDto.getName().getFirstName());
 			name.setLastName(billingAccountDto.getName().getLastName());
-			name.setTitle(titleService.findByCode(billingAccountDto.getName().getTitle().trim(), provider));
+			name.setTitle(titleService.findByCode(billingAccountDto.getName().getTitle().trim()));
 			billingAccount.setName(name);
 		}
 
 		billingAccount.setTradingCountry(tradingCountryService.findByTradingCountryCode(
-				billingAccountDto.getTradingCountryCode(), provider));
+				billingAccountDto.getTradingCountryCode()));
 		billingAccount.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(
-				billingAccountDto.getTradingLanguageCode(), provider));
-		billingAccount.updateAudit(userJob);
+				billingAccountDto.getTradingLanguageCode()));
 
 		billingAccount = billingAccountService.updateNoCheck(billingAccount);
 
         if (billingAccountDto.getCustomFields() != null){
-            populateCustomFields(billingAccountDto.getCustomFields().getCustomField(), billingAccount, userJob);
+            populateCustomFields(billingAccountDto.getCustomFields().getCustomField(), billingAccount);
         } 
 		
 		return billingAccount;
@@ -282,8 +278,8 @@ public class AccountImportService extends ImportService{
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void importUserAccount(org.meveo.model.billing.BillingAccount billingAccount,
-			org.meveo.model.jaxb.account.BillingAccount billAccount, org.meveo.model.jaxb.account.UserAccount uAccount,
-			Provider provider, User userJob) throws BusinessException, ImportWarningException {
+			org.meveo.model.jaxb.account.BillingAccount billAccount, org.meveo.model.jaxb.account.UserAccount uAccount
+			) throws BusinessException, ImportWarningException {
 		userAccountCheckError(billAccount, uAccount);
 		userAccountCheckWarning(billAccount, uAccount);
 		UserAccount userAccount = new UserAccount();
@@ -309,25 +305,24 @@ public class AccountImportService extends ImportService{
 		if (uAccount.getName() != null) {
 			nameUA.setFirstName(uAccount.getName().getFirstName());
 			nameUA.setLastName(uAccount.getName().getLastName());
-			nameUA.setTitle(titleService.findByCode(uAccount.getName().getTitle().trim(), provider));
+			nameUA.setTitle(titleService.findByCode(uAccount.getName().getTitle().trim()));
 			userAccount.setName(nameUA);
 		}
 
 		userAccount.setStatus(AccountStatusEnum.ACTIVE);
 		userAccount.setStatusDate(new Date());
-		userAccount.setProvider(provider);
 
-		userAccountService.create(userAccount, userJob);
+		userAccountService.create(userAccount);
 
         if (uAccount.getCustomFields() != null){
-            populateCustomFields(uAccount.getCustomFields().getCustomField(), userAccount, userJob);
+            populateCustomFields(uAccount.getCustomFields().getCustomField(), userAccount);
         } 
         
 		// create wallet
 		WalletInstance wallet = new WalletInstance();
 		wallet.setCode(WalletTemplate.PRINCIPAL);
 		wallet.setUserAccount(userAccount);
-		walletService.create(wallet, userJob);
+		walletService.create(wallet);
 
 		userAccount.setWallet(wallet);
 		userAccount.setBillingAccount(billingAccount);
@@ -336,12 +331,12 @@ public class AccountImportService extends ImportService{
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void updateUserAccount(org.meveo.model.billing.BillingAccount billingAccount,
 			org.meveo.model.jaxb.account.BillingAccount billAccount,
-			org.meveo.model.jaxb.account.UserAccount userAccountDto, Provider provider, User userJob)
+			org.meveo.model.jaxb.account.UserAccount userAccountDto)
 			throws BusinessException, ImportWarningException {
 		userAccountCheckError(billAccount, userAccountDto);
 		userAccountCheckWarning(billAccount, userAccountDto);
 
-		UserAccount userAccount = userAccountService.findByCode(userAccountDto.getCode(), provider);
+		UserAccount userAccount = userAccountService.findByCode(userAccountDto.getCode());
 		if (userAccount == null) {
 			throw new BusinessException("Cannot find userAccount with code=" + userAccountDto.getCode());
 		}
@@ -368,18 +363,17 @@ public class AccountImportService extends ImportService{
 		if (userAccountDto.getName() != null) {
 			nameUA.setFirstName(userAccountDto.getName().getFirstName());
 			nameUA.setLastName(userAccountDto.getName().getLastName());
-			nameUA.setTitle(titleService.findByCode(userAccountDto.getName().getTitle().trim(), provider));
+			nameUA.setTitle(titleService.findByCode(userAccountDto.getName().getTitle().trim()));
 			userAccount.setName(nameUA);
 		}
 
 		// userAccount.setStatus(AccountStatusEnum.ACTIVE);
 		userAccount.setStatusDate(new Date());
-		userAccount.updateAudit(userJob);
 
 		userAccount = userAccountService.updateNoCheck(userAccount);
 		
         if (userAccountDto.getCustomFields() != null) {
-            populateCustomFields(userAccountDto.getCustomFields().getCustomField(), userAccount, userJob);
+            populateCustomFields(userAccountDto.getCustomFields().getCustomField(), userAccount);
         }
 	}
 

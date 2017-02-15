@@ -7,7 +7,6 @@ import java.util.List;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.wf.WorkflowType;
 import org.meveo.admin.wf.WorkflowTypeClass;
-import org.meveo.model.admin.User;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DunningLevelEnum;
 
@@ -34,7 +33,7 @@ public class DunningWF extends WorkflowType<CustomerAccount> {
     }
 
     @Override
-    public void changeStatus(String newStatus, User currentUser) throws BusinessException {
+    public void changeStatus(String newStatus) throws BusinessException {
         entity.setDunningLevel(DunningLevelEnum.valueOf(newStatus));
         entity.setDateDunningLevel(new Date());
     }

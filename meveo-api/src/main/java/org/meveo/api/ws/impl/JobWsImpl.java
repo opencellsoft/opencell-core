@@ -39,7 +39,7 @@ public class JobWsImpl extends BaseWs implements JobWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            Long resultId = jobApi.executeJob(jobInstanceInfoDto, getCurrentUser());
+            Long resultId = jobApi.executeJob(jobInstanceInfoDto);
             result.setMessage(resultId == null ? "NOTHING_TO_DO" : String.valueOf(resultId));
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
@@ -59,7 +59,7 @@ public class JobWsImpl extends BaseWs implements JobWs {
     public ActionStatus create(JobInstanceDto jobInstanceDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            jobInstanceApi.create(jobInstanceDto, getCurrentUser());
+            jobInstanceApi.create(jobInstanceDto);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -79,7 +79,7 @@ public class JobWsImpl extends BaseWs implements JobWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            timerEntityApi.create(postData, getCurrentUser());
+            timerEntityApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -98,7 +98,7 @@ public class JobWsImpl extends BaseWs implements JobWs {
     public ActionStatus update(JobInstanceDto jobInstanceDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            jobInstanceApi.update(jobInstanceDto, getCurrentUser());
+            jobInstanceApi.update(jobInstanceDto);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -117,7 +117,7 @@ public class JobWsImpl extends BaseWs implements JobWs {
     public ActionStatus createOrUpdateJobInstance(JobInstanceDto jobInstanceDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            jobInstanceApi.createOrUpdate(jobInstanceDto, getCurrentUser());
+            jobInstanceApi.createOrUpdate(jobInstanceDto);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -137,7 +137,7 @@ public class JobWsImpl extends BaseWs implements JobWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            timerEntityApi.update(postData, getCurrentUser());
+            timerEntityApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -157,7 +157,7 @@ public class JobWsImpl extends BaseWs implements JobWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            timerEntityApi.createOrUpdate(postData, getCurrentUser());
+            timerEntityApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -177,7 +177,7 @@ public class JobWsImpl extends BaseWs implements JobWs {
         JobInstanceResponseDto result = new JobInstanceResponseDto();
 
         try {
-            result.setJobInstanceDto(jobInstanceApi.find(jobInstanceCode, getCurrentUser()));
+            result.setJobInstanceDto(jobInstanceApi.find(jobInstanceCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -197,7 +197,7 @@ public class JobWsImpl extends BaseWs implements JobWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            jobInstanceApi.remove(jobInstanceCode, getCurrentUser());
+            jobInstanceApi.remove(jobInstanceCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -217,7 +217,7 @@ public class JobWsImpl extends BaseWs implements JobWs {
         TimerEntityResponseDto result = new TimerEntityResponseDto();
 
         try {
-            result.setTimerEntity(timerEntityApi.find(timerCode, getCurrentUser()));
+            result.setTimerEntity(timerEntityApi.find(timerCode));
 
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
@@ -238,7 +238,7 @@ public class JobWsImpl extends BaseWs implements JobWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            timerEntityApi.remove(timerCode, getCurrentUser());
+            timerEntityApi.remove(timerCode);
 
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());

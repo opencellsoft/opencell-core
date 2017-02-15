@@ -41,8 +41,8 @@ import org.meveo.model.ObservableEntity;
 
 @Entity
 @ObservableEntity
-@ExportIdentifier({ "code", "hierarchyType", "provider" })
-@Table(name = "HIERARCHY_ENTITY", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "HIERARCHY_TYPE", "PROVIDER_ID" }))
+@ExportIdentifier({ "code", "hierarchyType"})
+@Table(name = "HIERARCHY_ENTITY", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "HIERARCHY_TYPE" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "HIERARCHY_ENTITY_SEQ")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "HIERARCHY_TYPE")

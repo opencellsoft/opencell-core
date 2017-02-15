@@ -34,9 +34,9 @@ import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.shared.Address;
 
 @Entity
-@ExportIdentifier({ "code", "provider" })
+@ExportIdentifier({ "code"})
 @CustomFieldEntity(cftCodePrefix = "ORDER")
-@Table(name = "ORD_ORDER", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
+@Table(name = "ORD_ORDER", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ORD_ORDER_SEQ")
 public class Order extends BusinessCFEntity {
 

@@ -14,12 +14,11 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.ChannelDto;
 import org.meveo.api.dto.response.catalog.GetChannelResponseDto;
 import org.meveo.api.rest.IBaseRs;
-import org.meveo.api.rest.security.RSSecured;
 
 @Path("/catalog/channel")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-@RSSecured
+
 public interface ChannelRs extends IBaseRs {
 
 

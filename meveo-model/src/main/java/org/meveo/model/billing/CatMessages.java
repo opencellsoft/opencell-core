@@ -35,7 +35,7 @@ import org.meveo.model.MultilanguageEntity;
 
 @Entity
 @Cacheable
-@Table(name = "ADM_MESSAGES", uniqueConstraints = @UniqueConstraint(columnNames = { "ENTITY_CODE", "ENTITY_CLASS","LANGUAGE_CODE","PROVIDER_ID" }))
+@Table(name = "ADM_MESSAGES", uniqueConstraints = @UniqueConstraint(columnNames = { "ENTITY_CODE", "ENTITY_CLASS","LANGUAGE_CODE" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_MESSAGES_SEQ")
 public class CatMessages extends BaseEntity {
 

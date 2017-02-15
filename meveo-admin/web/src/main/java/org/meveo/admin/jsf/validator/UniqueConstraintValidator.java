@@ -28,9 +28,7 @@ import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 import javax.inject.Inject;
 
-import org.meveo.admin.action.admin.CurrentProvider;
 import org.meveo.admin.util.ResourceBundle;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.validation.ValidationService;
 
 @FacesValidator("uniqueConstraintValidator")
@@ -40,11 +38,7 @@ public class UniqueConstraintValidator implements Validator {
 
     @Inject
     private ResourceBundle resourceMessages;
-
-    @Inject
-    @CurrentProvider
-    private Provider currentProvider;
-
+    
     public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
 
         /*
@@ -55,7 +49,7 @@ public class UniqueConstraintValidator implements Validator {
         String fieldName = (String) component.getAttributes().get("fieldName");
         Object id = component.getAttributes().get("idValue");
         
-        if (!validationService.validateUniqueField(className, fieldName, id, value, currentProvider)) {
+        if (!validationService.validateUniqueField(className, fieldName, id, value)) {
             FacesMessage facesMessage = new FacesMessage();
             String message = resourceMessages.getString("commons.unqueField");
             message = MessageFormat.format(message, getLabel(context, component));

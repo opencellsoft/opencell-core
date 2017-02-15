@@ -11,7 +11,6 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.crm.BusinessAccountModel;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.admin.impl.GenericModuleService;
 
 /**
@@ -33,8 +32,8 @@ public class BusinessAccountModelService extends GenericModuleService<BusinessAc
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<BusinessAccountModel> listInstalled(Provider provider) {
-		QueryBuilder queryBuilder = new QueryBuilder(BusinessAccountModel.class, "a", null, provider);
+	public List<BusinessAccountModel> listInstalled() {
+		QueryBuilder queryBuilder = new QueryBuilder(BusinessAccountModel.class, "a", null);
 		queryBuilder.addBooleanCriterion("disabled", false);
 		queryBuilder.addBooleanCriterion("installed", true);
 
@@ -43,9 +42,8 @@ public class BusinessAccountModelService extends GenericModuleService<BusinessAc
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<BusinessEntity> listParents(String searchTerm, Class<? extends BusinessEntity> parentClass, PaginationConfiguration paginationConfiguration, Provider provider) {
-		QueryBuilder queryBuilder = new QueryBuilder(parentClass, "p", null, provider);
-		queryBuilder.addCriterionEntity("p.provider", provider);
+	public List<BusinessEntity> listParents(String searchTerm, Class<? extends BusinessEntity> parentClass, PaginationConfiguration paginationConfiguration) {
+		QueryBuilder queryBuilder = new QueryBuilder(parentClass, "p", null);
 		if(!StringUtils.isBlank(searchTerm)){
 			queryBuilder.like("p.description", searchTerm, QueryBuilder.QueryLikeStyleEnum.MATCH_ANYWHERE, true);
 		}

@@ -98,7 +98,7 @@ public class MeveoModuleListBean extends MeveoModuleBean {
     public void downloadModule() {
         if (selectedModuleDto != null) {
             try {
-                moduleApi.createOrUpdate(selectedModuleDto, currentUser);
+                moduleApi.createOrUpdate(selectedModuleDto);
                 messages.info(new BundleKey("messages", "meveoModule.downloadSuccess"), selectedModuleDto.getCode());
 
             } catch (ActionForbiddenException e) {
@@ -120,7 +120,7 @@ public class MeveoModuleListBean extends MeveoModuleBean {
     public void downloadAndInstallModule() {
         if (selectedModuleDto != null) {
             try {
-                moduleApi.install(selectedModuleDto, currentUser);
+                moduleApi.install(selectedModuleDto);
                 messages.info(new BundleKey("messages", "meveoModule.installSuccess"), selectedModuleDto.getCode());
 
             } catch (ActionForbiddenException e) {

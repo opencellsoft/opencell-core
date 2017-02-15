@@ -14,7 +14,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.InvalidScriptException;
 import org.meveo.api.dto.CustomFieldDto;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.catalog.ServiceTemplate;
@@ -33,62 +32,62 @@ public class ServiceModelScriptService implements Serializable {
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
-    public void instantiateServiceInstance(ServiceInstance entity, String scriptCode, User currentUser) throws ElementNotFoundException, InvalidScriptException, BusinessException {
-        ServiceScriptInterface scriptInterface = (ServiceScriptInterface) scriptInstanceService.getScriptInstance(currentUser.getProvider(), scriptCode);
+    public void instantiateServiceInstance(ServiceInstance entity, String scriptCode) throws ElementNotFoundException, InvalidScriptException, BusinessException {
+        ServiceScriptInterface scriptInterface = (ServiceScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
         Map<String, Object> scriptContext = new HashMap<>();
         scriptContext.put(Script.CONTEXT_ENTITY, entity);
-        scriptInterface.instantiateServiceInstance(scriptContext, currentUser);
+        scriptInterface.instantiateServiceInstance(scriptContext);
     }
 
-    public void activateServiceInstance(ServiceInstance entity, String scriptCode, User currentUser) throws ElementNotFoundException, InvalidScriptException, BusinessException {
-        ServiceScriptInterface scriptInterface = (ServiceScriptInterface) scriptInstanceService.getScriptInstance(currentUser.getProvider(), scriptCode);
+    public void activateServiceInstance(ServiceInstance entity, String scriptCode) throws ElementNotFoundException, InvalidScriptException, BusinessException {
+        ServiceScriptInterface scriptInterface = (ServiceScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
         Map<String, Object> scriptContext = new HashMap<>();
         scriptContext.put(Script.CONTEXT_ENTITY, entity);
-        scriptInterface.activateServiceInstance(scriptContext, currentUser);
+        scriptInterface.activateServiceInstance(scriptContext);
     }
 
-    public void suspendServiceInstance(ServiceInstance entity, String scriptCode, Date suspensionDate, User currentUser) throws ElementNotFoundException, InvalidScriptException,
+    public void suspendServiceInstance(ServiceInstance entity, String scriptCode, Date suspensionDate) throws ElementNotFoundException, InvalidScriptException,
             BusinessException {
-        ServiceScriptInterface scriptInterface = (ServiceScriptInterface) scriptInstanceService.getScriptInstance(currentUser.getProvider(), scriptCode);
+        ServiceScriptInterface scriptInterface = (ServiceScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
         Map<String, Object> scriptContext = new HashMap<>();
         scriptContext.put(ServiceScript.CONTEXT_SUSPENSION_DATE, suspensionDate);
         scriptContext.put(Script.CONTEXT_ENTITY, entity);
-        scriptInterface.suspendServiceInstance(scriptContext, currentUser);
+        scriptInterface.suspendServiceInstance(scriptContext);
     }
 
-    public void reactivateServiceInstance(ServiceInstance entity, String scriptCode, Date reactivationDate, User currentUser) throws ElementNotFoundException,
+    public void reactivateServiceInstance(ServiceInstance entity, String scriptCode, Date reactivationDate) throws ElementNotFoundException,
             InvalidScriptException, BusinessException {
-        ServiceScriptInterface scriptInterface = (ServiceScriptInterface) scriptInstanceService.getScriptInstance(currentUser.getProvider(), scriptCode);
+        ServiceScriptInterface scriptInterface = (ServiceScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
         Map<String, Object> scriptContext = new HashMap<>();
         scriptContext.put(ServiceScript.CONTEXT_ACTIVATION_DATE, reactivationDate);
         scriptContext.put(Script.CONTEXT_ENTITY, entity);
-        scriptInterface.reactivateServiceInstance(scriptContext, currentUser);
+        scriptInterface.reactivateServiceInstance(scriptContext);
     }
 
-    public void terminateServiceInstance(ServiceInstance entity, String scriptCode, Date terminationDate, SubscriptionTerminationReason terminationReason, User currentUser)
+    public void terminateServiceInstance(ServiceInstance entity, String scriptCode, Date terminationDate, SubscriptionTerminationReason terminationReason)
             throws ElementNotFoundException, InvalidScriptException, BusinessException {
 
-        ServiceScriptInterface scriptInterface = (ServiceScriptInterface) scriptInstanceService.getScriptInstance(currentUser.getProvider(), scriptCode);
+        ServiceScriptInterface scriptInterface = (ServiceScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
         Map<String, Object> scriptContext = new HashMap<>();
         scriptContext.put(ServiceScript.CONTEXT_TERMINATION_DATE, terminationDate);
         scriptContext.put(ServiceScript.CONTEXT_TERMINATION_REASON, terminationReason);
         scriptContext.put(Script.CONTEXT_ENTITY, entity);
-        scriptInterface.terminateServiceInstance(scriptContext, currentUser);
+        scriptInterface.terminateServiceInstance(scriptContext);
     }
     
-    public void beforeCreateServiceFromBSM(List<CustomFieldDto> customFields, String scriptCode, User currentUser) throws ElementNotFoundException, InvalidScriptException, BusinessException {
-        ServiceScriptInterface scriptInterface = (ServiceScriptInterface) scriptInstanceService.getScriptInstance(currentUser.getProvider(), scriptCode);
+    public void beforeCreateServiceFromBSM(List<CustomFieldDto> customFields, String scriptCode) throws ElementNotFoundException, InvalidScriptException, BusinessException {
+        ServiceScriptInterface scriptInterface = (ServiceScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
         Map<String, Object> scriptContext = new HashMap<>();
         scriptContext.put(ServiceScript.CONTEXT_PARAMETERS, customFields);
-        scriptInterface.beforeCreateServiceFromBSM(scriptContext, currentUser);
+        scriptInterface.beforeCreateServiceFromBSM(scriptContext);
     }
 
-    public void afterCreateServiceFromBSM(ServiceTemplate entity, List<CustomFieldDto> customFields, String scriptCode, User currentUser) throws ElementNotFoundException, InvalidScriptException, BusinessException {
-        ServiceScriptInterface scriptInterface = (ServiceScriptInterface) scriptInstanceService.getScriptInstance(currentUser.getProvider(), scriptCode);
+    public void afterCreateServiceFromBSM(ServiceTemplate entity, List<CustomFieldDto> customFields, String scriptCode) throws ElementNotFoundException, InvalidScriptException, BusinessException {
+        ServiceScriptInterface scriptInterface = (ServiceScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
         Map<String, Object> scriptContext = new HashMap<>();
         scriptContext.put(Script.CONTEXT_ENTITY, entity);
         scriptContext.put(ServiceScript.CONTEXT_PARAMETERS, customFields);
-        scriptInterface.afterCreateServiceFromBSM(scriptContext, currentUser);
+        scriptInterface.afterCreateServiceFromBSM(scriptContext);
     }
     
 }

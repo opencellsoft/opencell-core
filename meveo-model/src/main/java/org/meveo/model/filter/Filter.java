@@ -14,14 +14,17 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
-import org.meveo.model.*;
+import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ModuleItem;
 
 /**
  * @author Edward P. Legaspi
  **/
 @Entity
 @ModuleItem
-@ExportIdentifier({ "code", "provider" })
+@ExportIdentifier({ "code"})
 @CustomFieldEntity(cftCodePrefix = "FILTER", cftCodeFields = "code", isManuallyManaged = false)
 @Table(name = "MEVEO_FILTER")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEVEO_FILTER_SEQ")

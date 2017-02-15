@@ -32,7 +32,7 @@ public class TimerEntityRsImpl extends BaseRs implements TimerEntityRs {
     public ActionStatus create(TimerEntityDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            timerEntityApi.create(postData, getCurrentUser());
+            timerEntityApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -51,7 +51,7 @@ public class TimerEntityRsImpl extends BaseRs implements TimerEntityRs {
     public ActionStatus update(TimerEntityDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            timerEntityApi.update(postData, getCurrentUser());
+            timerEntityApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -70,7 +70,7 @@ public class TimerEntityRsImpl extends BaseRs implements TimerEntityRs {
     public ActionStatus createOrUpdate(TimerEntityDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            timerEntityApi.createOrUpdate(postData, getCurrentUser());
+            timerEntityApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -89,7 +89,7 @@ public class TimerEntityRsImpl extends BaseRs implements TimerEntityRs {
     public GetTimerEntityResponseDto find(String timerEntityCode) {
         GetTimerEntityResponseDto result = new GetTimerEntityResponseDto();
         try {
-            result.setTimerEntity(timerEntityApi.find(timerEntityCode, getCurrentUser()));
+            result.setTimerEntity(timerEntityApi.find(timerEntityCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

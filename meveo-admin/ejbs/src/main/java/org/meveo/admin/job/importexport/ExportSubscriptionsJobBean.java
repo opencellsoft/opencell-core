@@ -16,7 +16,6 @@ import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.utils.JAXBUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jaxb.customer.CustomFields;
 import org.meveo.model.jaxb.subscription.Accesses;
@@ -28,6 +27,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
 @Stateless
@@ -43,6 +43,10 @@ public class ExportSubscriptionsJobBean {
 	
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
+    
+    @Inject
+    @ApplicationProvider
+    protected Provider appProvider;
 
 	Subscriptions subscriptions;
 	ParamBean param = ParamBean.getInstance();
@@ -50,9 +54,8 @@ public class ExportSubscriptionsJobBean {
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(JobExecutionResultImpl result, String parameter) {
-		Provider provider = currentUser.getProvider();
 
-		String exportDir = param.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + provider.getCode()
+		String exportDir = param.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + appProvider.getCode()
 				+ File.separator + "exports" + File.separator + "subscriptions" + File.separator;
 		log.info("exportDir=" + exportDir);
 		File dir = new File(exportDir);
@@ -61,7 +64,7 @@ public class ExportSubscriptionsJobBean {
 		}
 
 		String timestamp = sdf.format(new Date());
-		List<org.meveo.model.billing.Subscription> subs = subscriptionService.list(provider);
+		List<org.meveo.model.billing.Subscription> subs = subscriptionService.list();
 		subscriptions = subscriptionsToDto(subs, param.getProperty("connectorCRM.dateFormat", "yyyy-MM-dd"));
 		try {
 			JAXBUtils.marshaller(subscriptions, new File(dir + File.separator + "SUB_" + timestamp + ".xml"));

@@ -33,13 +33,13 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.EnableEntity;
 import org.meveo.model.wf.WFAction;
 
 @Entity
 @Table(name = "AR_ACTION_DUNNING")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_ACTION_DUNNING_SEQ")
-public class ActionDunning extends AuditableEntity {
+public class ActionDunning extends EnableEntity {
 
 	private static final long serialVersionUID = 1L;
 

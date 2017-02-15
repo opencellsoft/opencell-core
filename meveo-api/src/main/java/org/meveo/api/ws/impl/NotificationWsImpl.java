@@ -44,7 +44,7 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            notificationApi.create(postData, getCurrentUser());
+            notificationApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -64,7 +64,7 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            notificationApi.update(postData, getCurrentUser());
+            notificationApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -84,7 +84,7 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
         GetNotificationResponseDto result = new GetNotificationResponseDto();
 
         try {
-            result.setNotificationDto(notificationApi.find(notificationCode, getCurrentUser()));
+            result.setNotificationDto(notificationApi.find(notificationCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -104,7 +104,7 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            notificationApi.remove(notificationCode, getCurrentUser());
+            notificationApi.remove(notificationCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -124,7 +124,7 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            webhookNotificationApi.create(postData, getCurrentUser());
+            webhookNotificationApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -144,7 +144,7 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            webhookNotificationApi.update(postData, getCurrentUser());
+            webhookNotificationApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -164,7 +164,7 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
         GetWebHookNotificationResponseDto result = new GetWebHookNotificationResponseDto();
 
         try {
-            result.setWebhookDto(webhookNotificationApi.find(notificationCode, getCurrentUser()));
+            result.setWebhookDto(webhookNotificationApi.find(notificationCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -184,7 +184,7 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            webhookNotificationApi.remove(notificationCode, getCurrentUser());
+            webhookNotificationApi.remove(notificationCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -204,7 +204,7 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            emailNotificationApi.create(postData, getCurrentUser());
+            emailNotificationApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -224,7 +224,7 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            emailNotificationApi.update(postData, getCurrentUser());
+            emailNotificationApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -244,7 +244,7 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
         GetEmailNotificationResponseDto result = new GetEmailNotificationResponseDto();
 
         try {
-            result.setEmailNotificationDto(emailNotificationApi.find(notificationCode, getCurrentUser()));
+            result.setEmailNotificationDto(emailNotificationApi.find(notificationCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -264,7 +264,7 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            emailNotificationApi.remove(notificationCode, getCurrentUser());
+            emailNotificationApi.remove(notificationCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -284,7 +284,7 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
         NotificationHistoriesResponseDto result = new NotificationHistoriesResponseDto();
 
         try {
-            result.setNotificationHistories(notificationApi.listNotificationHistory(getCurrentUser().getProvider()));
+            result.setNotificationHistories(notificationApi.listNotificationHistory());
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -304,7 +304,7 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
         InboundRequestsResponseDto result = new InboundRequestsResponseDto();
 
         try {
-            result.setInboundRequests(notificationApi.listInboundRequest(getCurrentUser().getProvider()));
+            result.setInboundRequests(notificationApi.listInboundRequest());
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -324,7 +324,7 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            emailNotificationApi.createOrUpdate(postData, getCurrentUser());
+            emailNotificationApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -343,7 +343,7 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
     public ActionStatus createOrUpdateNotification(NotificationDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            notificationApi.createOrUpdate(postData, getCurrentUser());
+            notificationApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -363,7 +363,7 @@ public class NotificationWsImpl extends BaseWs implements NotificationWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            webhookNotificationApi.createOrUpdate(postData, getCurrentUser());
+            webhookNotificationApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

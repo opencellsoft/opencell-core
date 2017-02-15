@@ -4,13 +4,8 @@ import java.io.Serializable;
 import java.util.Locale;
 
 import javax.enterprise.context.SessionScoped;
-import javax.enterprise.event.Event;
 import javax.faces.context.FacesContext;
-import javax.inject.Inject;
 import javax.inject.Named;
-
-import org.jboss.seam.international.Alter;
-import org.jboss.solder.core.Client;
 
 @Named
 @SessionScoped

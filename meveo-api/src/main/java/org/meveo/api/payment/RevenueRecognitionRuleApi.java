@@ -15,7 +15,6 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
 import org.meveo.model.finance.RevenueRecognitionRule;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.finance.RevenueRecognitionRuleService;
@@ -33,7 +32,7 @@ public class RevenueRecognitionRuleApi extends BaseApi {
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
-    public void create(RevenueRecognitionRuleDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void create(RevenueRecognitionRuleDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
@@ -57,17 +56,17 @@ public class RevenueRecognitionRuleApi extends BaseApi {
         }
         handleMissingParameters();
 
-        if (revenueRecognitionRuleService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
+        if (revenueRecognitionRuleService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(RevenueRecognitionRule.class, postData.getCode());
         }
 
         RevenueRecognitionRule rrr = new RevenueRecognitionRule();
-        revenueRecognitionRuleFromDTO(postData, rrr, currentUser);
+        revenueRecognitionRuleFromDTO(postData, rrr);
 
-        revenueRecognitionRuleService.create(rrr, currentUser);
+        revenueRecognitionRuleService.create(rrr);
     }
 
-    public void update(RevenueRecognitionRuleDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void update(RevenueRecognitionRuleDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
@@ -90,22 +89,22 @@ public class RevenueRecognitionRuleApi extends BaseApi {
         }
         handleMissingParameters();
 
-        RevenueRecognitionRule rrr = revenueRecognitionRuleService.findByCode(postData.getCode(), currentUser.getProvider());
+        RevenueRecognitionRule rrr = revenueRecognitionRuleService.findByCode(postData.getCode());
         if (rrr == null) {
             throw new EntityDoesNotExistsException(RevenueRecognitionRule.class, postData.getCode());
         }
 
-        revenueRecognitionRuleFromDTO(postData, rrr, currentUser);
-        revenueRecognitionRuleService.update(rrr, currentUser);
+        revenueRecognitionRuleFromDTO(postData, rrr);
+        revenueRecognitionRuleService.update(rrr);
     }
 
-    public RevenueRecognitionRuleDto find(String revenueRecognitionRuleCode, User currentUser) throws MeveoApiException, BusinessException {
+    public RevenueRecognitionRuleDto find(String revenueRecognitionRuleCode) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(revenueRecognitionRuleCode)) {
             missingParameters.add("revenueRecognitionRuleCode");
         }
         handleMissingParameters();
 
-        RevenueRecognitionRule rrr = revenueRecognitionRuleService.findByCode(revenueRecognitionRuleCode, currentUser.getProvider());
+        RevenueRecognitionRule rrr = revenueRecognitionRuleService.findByCode(revenueRecognitionRuleCode);
         if (rrr == null) {
             throw new EntityDoesNotExistsException(RevenueRecognitionRule.class, revenueRecognitionRuleCode);
         }
@@ -113,32 +112,32 @@ public class RevenueRecognitionRuleApi extends BaseApi {
         return result;
     }
 
-    public void remove(String revenueRecognitionRuleCode, User currentUser) throws MeveoApiException, BusinessException {
+    public void remove(String revenueRecognitionRuleCode) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(revenueRecognitionRuleCode)) {
             missingParameters.add("revenueRecognitionRuleCode");
         }
 
         handleMissingParameters();
-        RevenueRecognitionRule rrr = revenueRecognitionRuleService.findByCode(revenueRecognitionRuleCode, currentUser.getProvider());
+        RevenueRecognitionRule rrr = revenueRecognitionRuleService.findByCode(revenueRecognitionRuleCode);
         if (rrr == null) {
             throw new EntityDoesNotExistsException(RevenueRecognitionRule.class, revenueRecognitionRuleCode);
         }
 
-        revenueRecognitionRuleService.remove(rrr, currentUser);
+        revenueRecognitionRuleService.remove(rrr);
     }
 
-    public void createOrUpdate(RevenueRecognitionRuleDto postData, User currentUser) throws MeveoApiException, BusinessException {
-        RevenueRecognitionRule rrr = revenueRecognitionRuleService.findByCode(postData.getCode(), currentUser.getProvider());
+    public void createOrUpdate(RevenueRecognitionRuleDto postData) throws MeveoApiException, BusinessException {
+        RevenueRecognitionRule rrr = revenueRecognitionRuleService.findByCode(postData.getCode());
         if (rrr == null) {
-            create(postData, currentUser);
+            create(postData);
         } else {
-            update(postData, currentUser);
+            update(postData);
         }
     }
 
-    public List<RevenueRecognitionRuleDto> list(User currentUser) {
+    public List<RevenueRecognitionRuleDto> list() {
         List<RevenueRecognitionRuleDto> result = new ArrayList<RevenueRecognitionRuleDto>();
-        List<RevenueRecognitionRule> rules = revenueRecognitionRuleService.list(currentUser.getProvider());
+        List<RevenueRecognitionRule> rules = revenueRecognitionRuleService.list();
         for (RevenueRecognitionRule rule : rules) {
             result.add(new RevenueRecognitionRuleDto(rule));
         }
@@ -153,12 +152,11 @@ public class RevenueRecognitionRuleApi extends BaseApi {
      * @return A new or updated RevenueRecognitionRule object
      * @throws MeveoApiException
      */
-    private void revenueRecognitionRuleFromDTO(RevenueRecognitionRuleDto dto, RevenueRecognitionRule rrr, User currentUser) throws MeveoApiException {
+    private void revenueRecognitionRuleFromDTO(RevenueRecognitionRuleDto dto, RevenueRecognitionRule rrr) throws MeveoApiException {
 
         rrr.setCode(dto.getCode());
         rrr.setDescription(dto.getDescription());
         rrr.setDisabled(dto.isDisabled());
-        rrr.setProvider(currentUser.getProvider());
         rrr.setStartDelay(dto.getStartDelay());
         rrr.setStartUnit(dto.getStartUnit());
         rrr.setStartEvent(dto.getStartEvent());
@@ -171,10 +169,10 @@ public class RevenueRecognitionRuleApi extends BaseApi {
 
         // Should create it or update script only if it has full information only
         if (!dto.getScript().isCodeOnly()) {
-            scriptInstanceApi.createOrUpdate(dto.getScript(), currentUser);
+            scriptInstanceApi.createOrUpdate(dto.getScript());
         }
 
-        scriptInstance = scriptInstanceService.findByCode(dto.getScript().getCode(), currentUser.getProvider());
+        scriptInstance = scriptInstanceService.findByCode(dto.getScript().getCode());
         if (scriptInstance == null) {
             throw new EntityDoesNotExistsException(ScriptInstance.class, dto.getScript().getCode());
         }

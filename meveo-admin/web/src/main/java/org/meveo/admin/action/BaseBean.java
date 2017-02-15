@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.enterprise.context.Conversation;
-import javax.enterprise.inject.Instance;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
@@ -43,10 +42,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.jboss.seam.security.Identity;
-import org.jboss.solder.servlet.http.RequestParam;
-import org.meveo.admin.action.admin.CurrentProvider;
-import org.meveo.admin.action.admin.CurrentUser;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -54,12 +49,9 @@ import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.IAuditable;
 import org.meveo.model.IEntity;
-import org.meveo.model.IProvider;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.MultilanguageEntity;
-import org.meveo.model.admin.User;
 import org.meveo.model.annotation.ImageType;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.TradingLanguage;
@@ -67,17 +59,20 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.EntityCustomAction;
 import org.meveo.model.filter.Filter;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.admin.impl.MeveoModuleService;
 import org.meveo.service.admin.impl.PermissionService;
-import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.catalog.impl.CatMessagesService;
-import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.index.ElasticClient;
+import org.meveo.util.ApplicationProvider;
 import org.meveo.util.view.ESBasedDataModel;
 import org.meveo.util.view.PagePermission;
 import org.meveo.util.view.ServiceBasedLazyDataModel;
+import org.omnifaces.cdi.Param;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
@@ -104,15 +99,12 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     protected Messages messages;
 
     @Inject
-    protected Identity identity;
-
-    @Inject
-    @CurrentProvider
-    protected Provider currentProvider;
-
-    @Inject
     @CurrentUser
-    protected User currentUser;
+    protected MeveoUser currentUser;
+    
+    @Inject
+    @ApplicationProvider
+    protected Provider appProvider;
 
     @Inject
     protected Conversation conversation;
@@ -125,9 +117,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     @Inject
     private FilterService filterService;
-
+    
     @Inject
-    private ProviderService providerService;
+    private TradingLanguageService tradingLanguageService;
 
     @Inject
     private FilterCustomFieldSearchBean filterCustomFieldSearchBean;
@@ -148,8 +140,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * Request parameter. Should form be displayed in create/edit or view mode
      */
     @Inject
-    @RequestParam()
-    private Instance<String> edit;
+    @Param
+    private String edit;
 
     // private boolean editSaved;
 
@@ -163,8 +155,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * Request parameter. A custom back view page instead of a regular list page
      */
     @Inject
-    @RequestParam()
-    private Instance<String> backView;
+    @Param()
+    private String backView;
 
     private String backViewSave;
 
@@ -280,9 +272,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         } else {
             try {
                 entity = getInstance();
-                if (entity instanceof IProvider) {
-                    ((IProvider) entity).setProvider(providerService.refreshOrRetrieve(currentProvider));
-                }
+                
                 // FIXME: If entity is Auditable, set here the creator and
                 // creation time
             } catch (InstantiationException e) {
@@ -329,7 +319,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         languageMessagesMap.clear();
         BusinessEntity businessEntity = (BusinessEntity) entity;
 
-        for (CatMessages msg : catMessagesService.getCatMessagesList(catMessagesService.getEntityClass(clazz), businessEntity.getCode(), currentProvider)) {
+        for (CatMessages msg : catMessagesService.getCatMessagesList(catMessagesService.getEntityClass(clazz), businessEntity.getCode())) {
             languageMessagesMap.put(msg.getLanguageCode(), msg.getDescription());
         }
     }
@@ -354,7 +344,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                 }
             }
 
-            partOfModules = meveoModuleService.getRelatedModulesAsString(businessEntity.getCode(), clazz.getName(), appliesTo, businessEntity.getProvider());
+            partOfModules = meveoModuleService.getRelatedModulesAsString(businessEntity.getCode(), clazz.getName(), appliesTo);
         }
     }
 
@@ -379,7 +369,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     // entities = new PaginationDataModel<T>(getPersistenceService());
     // }
     // filters.clear();
-    // filters.put("provider", getCurrentProvider());
     // entities.addFilters(filters);
     // entities.addFetchFields(getListFieldsToFetch());
     // entities.forceRefresh();
@@ -404,8 +393,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         
 		if (isImageUpload()) {
 			try {
-				ImageUploadEventHandler<T> imageUploadEventHandler = new ImageUploadEventHandler<>();
-				imageUploadEventHandler.saveImageUpload(entity, getCurrentProvider().getCode());
+				ImageUploadEventHandler<T> imageUploadEventHandler = new ImageUploadEventHandler<>(currentUser);
+				imageUploadEventHandler.saveImageUpload(entity);
 			} catch (IOException e) {
 				log.error("Failed moving image file");
 			}
@@ -423,10 +412,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                     CatMessages catMsg = catMessagesService.getCatMessages((BusinessEntity) entity, languageKey);
                     if (catMsg != null) {
                         catMsg.setDescription(description);
-                        catMessagesService.update(catMsg, getCurrentUser());
+                        catMessagesService.update(catMsg);
                     } else {
                         CatMessages catMessages = new CatMessages((BusinessEntity) entity, languageKey, description);
-                        catMessagesService.create(catMessages, getCurrentUser());
+                        catMessagesService.create(catMessages);
                     }
                 }
 
@@ -438,7 +427,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                 for (String msgKey : languageMessagesMap.keySet()) {
                     String description = languageMessagesMap.get(msgKey);
                     CatMessages catMessages = new CatMessages((BusinessEntity) entity, msgKey, description);
-                    catMessagesService.create(catMessages, getCurrentUser());
+                    catMessagesService.create(catMessages);
                 }
             }
         }
@@ -487,10 +476,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      */
     protected T saveOrUpdate(T entity) throws BusinessException {
         if (entity.isTransient()) {
-            getPersistenceService().create(entity, getCurrentUser());
+            getPersistenceService().create(entity);
 
         } else {
-            entity = getPersistenceService().update(entity, getCurrentUser());
+            entity = getPersistenceService().update(entity);
         }
 
         objectId = (Long) entity.getId();
@@ -523,9 +512,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * @return string for navigation
      */
     public String back() {
-        if (backViewSave == null && backView != null && backView.get() != null) {
+        if (backViewSave == null && backView != null) {
             // log.debug("backview parameter is " + backView.get());
-            backViewSave = backView.get();
+            backViewSave = backView;
         } else if (backViewSave == null) {
             return getListViewName();
         }
@@ -609,12 +598,12 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public void delete(Long id) {
         try {
             log.info("Deleting entity {} with id = {}", clazz.getName(), id);
-            getPersistenceService().remove(id, getCurrentUser());
+            getPersistenceService().remove(id);
             
             if (isImageUpload()) {
     			try {
-    				ImageUploadEventHandler<T> imageUploadEventHandler = new ImageUploadEventHandler<>();
-    				imageUploadEventHandler.deleteImage(entity, getCurrentProvider().getCode());
+    				ImageUploadEventHandler<T> imageUploadEventHandler = new ImageUploadEventHandler<>(currentUser);
+    				imageUploadEventHandler.deleteImage(entity);
     			} catch (IOException e) {
     				log.error("Failed deleting image file");
     			}
@@ -639,12 +628,12 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public void delete() {
         try {
             log.info("Deleting entity {} with id = {}", clazz.getName(), getEntity().getId());
-            getPersistenceService().remove((Long) getEntity().getId(), getCurrentUser());
+            getPersistenceService().remove((Long) getEntity().getId());
             
             if (isImageUpload()) {
     			try {
-    				ImageUploadEventHandler<T> imageUploadEventHandler = new ImageUploadEventHandler<>();
-    				imageUploadEventHandler.deleteImage(entity, getCurrentProvider().getCode());
+    				ImageUploadEventHandler<T> imageUploadEventHandler = new ImageUploadEventHandler<>(currentUser);
+    				imageUploadEventHandler.deleteImage(entity);
     			} catch (IOException e) {
     				log.error("Failed deleting image file");
     			}
@@ -679,7 +668,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                 }
                 log.info("Deleting multiple entities {} with ids = {}", clazz.getName(), idsString.toString());
 
-                getPersistenceService().remove(idsToDelete, getCurrentUser());
+                getPersistenceService().remove(idsToDelete);
                 getPersistenceService().commit();
                 messages.info(new BundleKey("messages", "delete.entitities.successful"));
             } else {
@@ -740,10 +729,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
         T newInstance = clazz.newInstance();
 
-        // A workaround for #1300 fix. Set auditable property if applicable, so current user would be available for EL expressions.
-        if (newInstance instanceof IAuditable) {
-            ((IAuditable) newInstance).updateAudit(getCurrentUser());
-        }
         return newInstance;
     }
 
@@ -784,7 +769,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public void disable() {
         try {
             log.info("Disabling entity {} with id = {}", clazz.getName(), entity.getId());
-            entity = getPersistenceService().disable(entity, getCurrentUser());
+            entity = getPersistenceService().disable(entity);
             messages.info(new BundleKey("messages", "disabled.successful"));
 
         } catch (Exception t) {
@@ -802,7 +787,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public void disable(Long id) {
         try {
             log.info("Disabling entity {} with id = {}", clazz.getName(), id);
-            getPersistenceService().disable(id, getCurrentUser());
+            getPersistenceService().disable(id);
             messages.info(new BundleKey("messages", "disabled.successful"));
 
         } catch (Throwable t) {
@@ -820,7 +805,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public void enable() {
         try {
             log.info("Enabling entity {} with id = {}", clazz.getName(), entity.getId());
-            entity = getPersistenceService().enable(entity, getCurrentUser());
+            entity = getPersistenceService().enable(entity);
             messages.info(new BundleKey("messages", "enabled.successful"));
 
         } catch (Exception t) {
@@ -838,7 +823,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public void enable(Long id) {
         try {
             log.info("Enabling entity {} with id = {}", clazz.getName(), id);
-            getPersistenceService().enable(id, getCurrentUser());
+            getPersistenceService().enable(id);
             messages.info(new BundleKey("messages", "enabled.successful"));
 
         } catch (Throwable t) {
@@ -888,8 +873,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                         cleanFilters.put(filterEntry.getKey(), filterEntry.getValue());
                     }
 
-                    // cleanFilters.put(PersistenceService.SEARCH_CURRENT_USER, getCurrentUser());
-                    cleanFilters.put(PersistenceService.SEARCH_CURRENT_PROVIDER, getCurrentProvider());
                     return BaseBean.this.supplementSearchCriteria(cleanFilters);
                 }
 
@@ -911,11 +894,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                 @Override
                 protected ElasticClient getElasticClientImpl() {
                     return elasticClient;
-                }
-
-                @Override
-                public User getCurrentUser() {
-                    return BaseBean.this.getCurrentUser();
                 }
 
                 @Override
@@ -982,30 +960,24 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * @return
      */
     public boolean isEdit() {
-        if (edit == null || org.meveo.commons.utils.StringUtils.isBlank(edit.get())) {
+        if (edit == null || org.meveo.commons.utils.StringUtils.isBlank(edit)) {
             return true;
         }
 
-        return Boolean.valueOf(edit.get());
+        return Boolean.valueOf(edit);
     }
 
     protected void clearObjectId() {
         objectId = null;
     }
 
-    protected User getCurrentUser() {
-        return currentUser;
-
-        // return ((MeveoUser) identity.getUser()).getUser();
-    }
-
     public List<TradingLanguage> getProviderLanguages() {
-        return getCurrentProvider().getTradingLanguages();
+        return  tradingLanguageService.list();
     }
 
     public String getProviderLanguageCode() {
-        if (getCurrentProvider() != null && getCurrentProvider().getLanguage() != null) {
-            return getCurrentProvider().getLanguage().getLanguageCode();
+        if (appProvider.getLanguage() != null) {
+            return appProvider.getLanguage().getLanguageCode();
         }
         return "";
     }
@@ -1016,10 +988,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     public void setLanguageMessagesMap(Map<String, String> languageMessagesMap) {
         this.languageMessagesMap = languageMessagesMap;
-    }
-
-    protected Provider getCurrentProvider() {
-        return currentProvider;
     }
 
     protected String getDefaultSort() {
@@ -1051,7 +1019,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     public String getBackView() {
-        return backView.get();
+        return backView;
     }
 
     public String getBackViewSave() {
@@ -1132,7 +1100,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                 messages.error(new BundleKey("messages", "error.delete.unexpected"));
             }
         }
-        
+                
         RequestContext requestContext = RequestContext.getCurrentInstance();
         requestContext.addCallbackParam("result", okFlag);
         
@@ -1299,7 +1267,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         if (writeAccessMap.get(requestURI) == null) {
             boolean hasWriteAccess = false;
             try {
-                hasWriteAccess = PagePermission.getInstance().hasWriteAccess(request, identity);
+                hasWriteAccess = PagePermission.getInstance().hasWriteAccess(request, currentUser);
             } catch (BusinessException e) {
                 log.error("Error encountered checking for write access to {}", requestURI, e);
                 hasWriteAccess = false;
@@ -1335,8 +1303,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 		String code = ((BusinessEntity) entity).getCode();
 
 		try {
-			ImageUploadEventHandler<T> uploadHandler = new ImageUploadEventHandler<T>();
-			uploadHandler.handleImageUpload(entity, code, uploadedFile, getCurrentProvider().getCode());
+			ImageUploadEventHandler<T> uploadHandler = new ImageUploadEventHandler<T>(currentUser);
+			uploadHandler.handleImageUpload(entity, code, uploadedFile);
 			messages.info(new BundleKey("messages", "message.upload.succesful"));
 		} catch (Exception e) {
 			messages.error(new BundleKey("messages", "message.upload.fail"), e.getMessage());

@@ -13,7 +13,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.action.admin.CurrentProvider;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.InvoiceCategory;
@@ -26,7 +25,6 @@ import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.model.scripts.CustomScript;
 import org.meveo.service.base.local.IPersistenceService;
@@ -86,10 +84,6 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
     
 	private ParamBean paramBean = ParamBean.getInstance();
 
-    @Inject
-    @CurrentProvider
-    private Provider currentProvider;
-
     private List<Entry<String, String>> jaspers;
 
     List<Tax> taxesNotAssociatedList = new ArrayList<Tax>();
@@ -109,66 +103,66 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
     Map<String, String> jasperFilesList = new HashMap<String, String>();
 
     public int getNbrUsagesWithNotPricePlan() {
-        return usageChargeTemplateService.getNbrUsagesChrgWithNotPricePlan(currentProvider);
+        return usageChargeTemplateService.getNbrUsagesChrgWithNotPricePlan();
     }
 
     public int getNbrRecurringWithNotPricePlan() {
-        return recurringChargeTemplateService.getNbrRecurringChrgWithNotPricePlan(currentProvider);
+        return recurringChargeTemplateService.getNbrRecurringChrgWithNotPricePlan();
     }
 
     public int getNbrOneShotWithNotPricePlan() {
-        return oneShotChargeTemplateService.getNbrOneShotWithNotPricePlan(currentProvider);
+        return oneShotChargeTemplateService.getNbrOneShotWithNotPricePlan();
     }
 
     public void constructChargesWithNotPricePlan(TabChangeEvent event) {
-        usagesWithNotPricePlList = usageChargeTemplateService.getUsagesChrgWithNotPricePlan(currentProvider);
-        recurringWithNotPricePlanList = recurringChargeTemplateService.getRecurringChrgWithNotPricePlan(currentProvider);
-        oneShotChrgWithNotPricePlanList = oneShotChargeTemplateService.getOneShotChrgWithNotPricePlan(currentProvider);
+        usagesWithNotPricePlList = usageChargeTemplateService.getUsagesChrgWithNotPricePlan();
+        recurringWithNotPricePlanList = recurringChargeTemplateService.getRecurringChrgWithNotPricePlan();
+        oneShotChrgWithNotPricePlanList = oneShotChargeTemplateService.getOneShotChrgWithNotPricePlan();
     }
 
     public void constructTaxesNotAssociated(TabChangeEvent event) {
-        taxesNotAssociatedList = taxService.getTaxesNotAssociated(currentProvider);
+        taxesNotAssociatedList = taxService.getTaxesNotAssociated();
     }
 
     public void constructLanguagesNotAssociated(TabChangeEvent event) {
-        languagesNotAssociatedList = tradingLanguageService.getLanguagesNotAssociated(currentProvider);
+        languagesNotAssociatedList = tradingLanguageService.getLanguagesNotAssociated();
     }
 
     public void constructInvoiceCatNotAssociated(TabChangeEvent event) {
-        invoiceCatNotAssociatedList = invoiceCategoryService.getInvoiceCatNotAssociated(currentProvider);
+        invoiceCatNotAssociatedList = invoiceCategoryService.getInvoiceCatNotAssociated();
     }
 
     public void constructInvoiceSubCatNotAssociated(TabChangeEvent event) {
-        invoiceSubCatNotAssociatedList = invoiceSubCategoryService.getInvoiceSubCatNotAssociated(currentProvider);
+        invoiceSubCatNotAssociatedList = invoiceSubCategoryService.getInvoiceSubCatNotAssociated();
     }
 
     public void constructServicesWithNotOffer(TabChangeEvent event) {
-        servicesWithNotOfferList = serviceTemplateService.getServicesWithNotOffer(currentProvider);
+        servicesWithNotOfferList = serviceTemplateService.getServicesWithNotOffer();
     }
 
     public void constructUsagesChrgNotAssociated(TabChangeEvent event) {
-        usagesChrgNotAssociatedList = usageChargeTemplateService.getUsagesChrgNotAssociated(currentProvider);
+        usagesChrgNotAssociatedList = usageChargeTemplateService.getUsagesChrgNotAssociated();
     }
 
     @SuppressWarnings("unchecked")
     public void constructCounterWithNotService(TabChangeEvent event) {
-        counterWithNotServicList = counterTemplateService.getCounterWithNotService(currentProvider);
+        counterWithNotServicList = counterTemplateService.getCounterWithNotService();
     }
 
     public void constructRecurringNotAssociated(TabChangeEvent event) {
-        recurringNotAssociatedList = recurringChargeTemplateService.getRecurringChrgNotAssociated(currentProvider);
+        recurringNotAssociatedList = recurringChargeTemplateService.getRecurringChrgNotAssociated();
     }
 
     public void constructTermChrgNotAssociated(TabChangeEvent event) {
-        terminationNotAssociatedList = oneShotChargeTemplateService.getTerminationChrgNotAssociated(currentProvider);
+        terminationNotAssociatedList = oneShotChargeTemplateService.getTerminationChrgNotAssociated();
     }
 
     public void constructSubChrgNotAssociated(TabChangeEvent event) {
-        subNotAssociatedList = oneShotChargeTemplateService.getSubscriptionChrgNotAssociated(currentProvider);
+        subNotAssociatedList = oneShotChargeTemplateService.getSubscriptionChrgNotAssociated();
     }
 
     public void constructScriptInstancesWithError(TabChangeEvent event) {
-        scriptInstanceWithErrorList = scriptInstanceService.getScriptInstancesWithError(currentProvider);
+        scriptInstanceWithErrorList = scriptInstanceService.getScriptInstancesWithError();
     }
     
     private  Map<String, String> getJasperFiles() throws IOException{
@@ -176,7 +170,7 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
     	String jasperCommercial = paramBean.getProperty("jasper.invoiceTemplate.commercial","invoice.jasper");
     	String jasperAdjustment = paramBean.getProperty("jasper.invoiceTemplate.adjustment","invoice.jasper");
     	//check jaspers files
-    	File jasperDir= new File(paramBean.getProperty("providers.rootDir","/tmp/meveo/")+ File.separator+ getCurrentProvider().getCode() + File.separator+"jasper");
+    	File jasperDir= new File(paramBean.getProperty("providers.rootDir","/tmp/meveo/")+ File.separator + appProvider.getCode() + File.separator+"jasper");
     	if(!jasperDir.exists()){
     		jasperDir.mkdirs();
     	}
@@ -215,15 +209,15 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
     @PostConstruct
     public void init() throws IOException {
         reportConfigDto = new ConfigIssuesReportingDTO();
-        reportConfigDto.setNbrWalletOpOpen(walletOperationService.getNbrWalletOperationByStatus(WalletOperationStatusEnum.OPEN, currentProvider).intValue());
-        reportConfigDto.setNbrWalletOpRerated(walletOperationService.getNbrWalletOperationByStatus(WalletOperationStatusEnum.RERATED, currentProvider).intValue());
-        reportConfigDto.setNbrWalletOpReserved(walletOperationService.getNbrWalletOperationByStatus(WalletOperationStatusEnum.RESERVED, currentProvider).intValue());
-        reportConfigDto.setNbrWalletOpCancled(walletOperationService.getNbrWalletOperationByStatus(WalletOperationStatusEnum.CANCELED, currentProvider).intValue());
-        reportConfigDto.setNbrWalletOpTorerate(walletOperationService.getNbrWalletOperationByStatus(WalletOperationStatusEnum.TO_RERATE, currentProvider).intValue());
-        reportConfigDto.setNbrWalletOpTreated(walletOperationService.getNbrWalletOperationByStatus(WalletOperationStatusEnum.TREATED, currentProvider).intValue());
-        reportConfigDto.setNbrEdrOpen(walletOperationService.getNbrEdrByStatus(EDRStatusEnum.OPEN, currentProvider).intValue());
-        reportConfigDto.setNbrEdrRated(walletOperationService.getNbrEdrByStatus(EDRStatusEnum.RATED, currentProvider).intValue());
-        reportConfigDto.setNbrEdrRejected(walletOperationService.getNbrEdrByStatus(EDRStatusEnum.REJECTED, currentProvider).intValue());
+        reportConfigDto.setNbrWalletOpOpen(walletOperationService.getNbrWalletOperationByStatus(WalletOperationStatusEnum.OPEN).intValue());
+        reportConfigDto.setNbrWalletOpRerated(walletOperationService.getNbrWalletOperationByStatus(WalletOperationStatusEnum.RERATED).intValue());
+        reportConfigDto.setNbrWalletOpReserved(walletOperationService.getNbrWalletOperationByStatus(WalletOperationStatusEnum.RESERVED).intValue());
+        reportConfigDto.setNbrWalletOpCancled(walletOperationService.getNbrWalletOperationByStatus(WalletOperationStatusEnum.CANCELED).intValue());
+        reportConfigDto.setNbrWalletOpTorerate(walletOperationService.getNbrWalletOperationByStatus(WalletOperationStatusEnum.TO_RERATE).intValue());
+        reportConfigDto.setNbrWalletOpTreated(walletOperationService.getNbrWalletOperationByStatus(WalletOperationStatusEnum.TREATED).intValue());
+        reportConfigDto.setNbrEdrOpen(walletOperationService.getNbrEdrByStatus(EDRStatusEnum.OPEN).intValue());
+        reportConfigDto.setNbrEdrRated(walletOperationService.getNbrEdrByStatus(EDRStatusEnum.RATED).intValue());
+        reportConfigDto.setNbrEdrRejected(walletOperationService.getNbrEdrByStatus(EDRStatusEnum.REJECTED).intValue());
         reportConfigDto.setNbrJasperDir(getJasperFiles().size());
     }
 
@@ -232,47 +226,47 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
     }
 
     public Integer getNbTaxesNotAssociated() {
-        return taxService.getNbTaxesNotAssociated(currentProvider);
+        return taxService.getNbTaxesNotAssociated();
     }
 
     public Integer getNbLanguageNotAssociated() {
-        return tradingLanguageService.getNbLanguageNotAssociated(currentProvider);
+        return tradingLanguageService.getNbLanguageNotAssociated();
     }
 
     public Integer getNbInvCatNotAssociated() {
-        return invoiceCategoryService.getNbInvCatNotAssociated(currentProvider);
+        return invoiceCategoryService.getNbInvCatNotAssociated();
     }
 
     public Integer getNbInvSubCatNotAssociated() {
-        return invoiceSubCategoryService.getNbInvSubCatNotAssociated(currentProvider);
+        return invoiceSubCategoryService.getNbInvSubCatNotAssociated();
     }
 
     public Integer getNbServiceWithNotOffer() {
-        return serviceTemplateService.getNbServiceWithNotOffer(currentProvider);
+        return serviceTemplateService.getNbServiceWithNotOffer();
     }
 
     public Integer getNbrUsagesChrgNotAssociated() {
-        return usageChargeTemplateService.getNbrUsagesChrgNotAssociated(currentProvider);
+        return usageChargeTemplateService.getNbrUsagesChrgNotAssociated();
     }
 
     public Integer getNbrCounterWithNotService() {
-        return counterTemplateService.getNbrCounterWithNotService(currentProvider);
+        return counterTemplateService.getNbrCounterWithNotService();
     }
 
     public Integer getNbrRecurringChrgNotAssociated() {
-        return recurringChargeTemplateService.getNbrRecurringChrgNotAssociated(currentProvider);
+        return recurringChargeTemplateService.getNbrRecurringChrgNotAssociated();
     }
 
     public Integer getNbrTerminationChrgNotAssociated() {
-        return oneShotChargeTemplateService.getNbrTerminationChrgNotAssociated(currentProvider);
+        return oneShotChargeTemplateService.getNbrTerminationChrgNotAssociated();
     }
 
     public Integer getNbrSubscriptionChrgNotAssociated() {
-        return oneShotChargeTemplateService.getNbrSubscriptionChrgNotAssociated(currentProvider);
+        return oneShotChargeTemplateService.getNbrSubscriptionChrgNotAssociated();
     }
 
     public long getNbrScriptInstanceWithError() {
-        return scriptInstanceService.countScriptInstancesWithError(currentProvider);
+        return scriptInstanceService.countScriptInstancesWithError();
     }
 
     public ConfigIssuesReportingDTO getReportConfigDto() {

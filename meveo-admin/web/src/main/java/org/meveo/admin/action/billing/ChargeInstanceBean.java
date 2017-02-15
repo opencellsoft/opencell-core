@@ -45,9 +45,8 @@ public class ChargeInstanceBean extends BaseBean<ChargeInstance> {
 	 * Injected @{link WalletInstance} service. Extends
 	 * {@link PersistenceService}.
 	 */
-	@SuppressWarnings("rawtypes")
 	@Inject
-	private ChargeInstanceService chargeInstanceService;
+	private ChargeInstanceService<ChargeInstance> chargeInstanceService;
 
 	/**
 	 * Customer account Id passed as a parameter. Used when creating new
@@ -78,7 +77,6 @@ public class ChargeInstanceBean extends BaseBean<ChargeInstance> {
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	protected IPersistenceService<ChargeInstance> getPersistenceService() {
 		return chargeInstanceService;

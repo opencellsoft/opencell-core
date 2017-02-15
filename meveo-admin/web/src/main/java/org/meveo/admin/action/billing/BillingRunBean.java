@@ -18,19 +18,16 @@
  */
 package org.meveo.admin.action.billing;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
-import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
@@ -45,6 +42,7 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingRunService;
+import org.omnifaces.cdi.Param;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.SortOrder;
 
@@ -69,12 +67,12 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 	private BillingRunService billingRunService;
 
 	@Inject
-	@RequestParam
-	private Instance<Boolean> preReport;
+	@Param
+	private Boolean preReport;
 
 	@Inject
-	@RequestParam
-	private Instance<Boolean> postReport;
+	@Param
+	private Boolean postReport;
 
 	private boolean launchInvoicingRejectedBA = false;
 
@@ -102,15 +100,15 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 		getPersistenceService().refresh(billingRun);
 
 		try {
-			log.info("postReport.get()=" + postReport.get());
+			log.info("postReport {}", postReport);
 			if (billingRun.getId() == null) {
 				billingRun.setProcessType(BillingProcessTypesEnum.MANUAL);
 			}
 
-			if (billingRun != null && billingRun.getId() != null && preReport.get() != null && preReport.get()) {
+			if (billingRun != null && billingRun.getId() != null && preReport != null && preReport) {
 				PreInvoicingReportsDTO preInvoicingReportsDTO = billingRunService.generatePreInvoicingReports(billingRun);
 				billingRun.setPreInvoicingReports(preInvoicingReportsDTO);
-			} else if (billingRun != null && billingRun.getId() != null && postReport.get() != null && postReport.get()) {
+			} else if (billingRun != null && billingRun.getId() != null && postReport != null && postReport) {
 				PostInvoicingReportsDTO postInvoicingReportsDTO = billingRunService.generatePostInvoicingReports(billingRun);
 				billingRun.setPostInvoicingReports(postInvoicingReportsDTO);
 			}
@@ -175,16 +173,15 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 			boolean isAllowed = Boolean.parseBoolean(allowManyInvoicing);
 			log.info("launchInvoicing allowManyInvoicing={}", isAllowed);
 
-			if (billingRunService.isActiveBillingRunsExist(getCurrentProvider()) && !isAllowed) {
+			if (billingRunService.isActiveBillingRunsExist() && !isAllowed) {
 				messages.error(new BundleKey("messages", "error.invoicing.alreadyLunched"));
 				return null;
 			}
 
 			entity.setStatus(BillingRunStatusEnum.NEW);
 			entity.setProcessDate(new Date());
-			entity.setProvider(entity.getBillingCycle().getProvider());
 
-			billingRunService.create(entity, getCurrentUser());
+			billingRunService.create(entity);
 			return "billingRuns";
 
 		} catch (Exception e) {
@@ -198,7 +195,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 		try {
 			// statusMessages.add("facturation confirmee avec succes");
 			entity.setStatus(BillingRunStatusEnum.PREVALIDATED);
-			billingRunService.update(entity, getCurrentUser());
+			billingRunService.update(entity);
 			return "billingRuns";
 
 		} catch (Exception e) {
@@ -212,9 +209,9 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 		try {
 			entity=billingRunService.refreshOrRetrieve(entity);
 			entity.setStatus(BillingRunStatusEnum.POSTVALIDATED);
-			billingRunService.update(entity, getCurrentUser());
+			billingRunService.update(entity);
 			if (launchInvoicingRejectedBA) {
-				boolean isBillable =  billingRunService.launchInvoicingRejectedBA(entity, getCurrentUser());
+				boolean isBillable =  billingRunService.launchInvoicingRejectedBA(entity);
 				if (!isBillable) {
 					messages.error(new BundleKey("messages", "error.invoicing.noTransactions"));
 					return null;
@@ -232,7 +229,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 	public String cancelInvoicing() {
 		try {
 			entity.setStatus(BillingRunStatusEnum.CANCELED);
-			billingRunService.update(entity, getCurrentUser());
+			billingRunService.update(entity);
 			return "billingRuns";
 		} catch (Exception e) {
 		    log.error("Failed to cancel invoicing", e);
@@ -246,7 +243,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 			entity=billingRunService.refreshOrRetrieve(entity);
 			entity.setStatus(BillingRunStatusEnum.CANCELED);
 			billingRunService.cleanBillingRun(entity);
-			billingRunService.update(entity, getCurrentUser());
+			billingRunService.update(entity);
 			return "billingRuns";
 
 		} catch (Exception e) {
@@ -258,7 +255,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 
 	public String rerateConfirmedInvoicing() {
 		try {
-			billingRunService.retateBillingRunTransactions(entity, getCurrentUser());
+			billingRunService.retateBillingRunTransactions(entity);
 			return cancelConfirmedInvoicing();
 
 		} catch (Exception e) {
@@ -270,7 +267,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 
 	public String rerateInvoicing() {
 		try {
-			billingRunService.retateBillingRunTransactions(entity, getCurrentUser());
+			billingRunService.retateBillingRunTransactions(entity);
 			return cancelInvoicing();
 
 		} catch (Exception e) {
@@ -324,15 +321,4 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 	public void setLaunchInvoicingRejectedBA(boolean launchInvoicingRejectedBA) {
 		this.launchInvoicingRejectedBA = launchInvoicingRejectedBA;
 	}
-
-	@Override
-	protected List<String> getListFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
-
-	@Override
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
-
 }

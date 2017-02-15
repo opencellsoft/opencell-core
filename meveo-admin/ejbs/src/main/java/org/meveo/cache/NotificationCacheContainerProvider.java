@@ -13,10 +13,10 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
 
-import org.infinispan.api.BasicCache;
+import org.infinispan.commons.api.BasicCache;
 import org.meveo.event.IEvent;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.IProvider;
+import org.meveo.model.IEntity;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.service.notification.NotificationService;
@@ -38,7 +38,7 @@ public class NotificationCacheContainerProvider {
     private NotificationService notificationService;
 
     /**
-     * Contains association between event type, entity class and notifications. Key format: <provider id>_<eventTypeFilter>
+     * Contains association between event type, entity class and notifications. Key format: <eventTypeFilter>
      */
     @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-notification-cache")
     private BasicCache<String, HashMap<Class<BusinessEntity>, List<Notification>>> eventNotificationCache;
@@ -85,7 +85,7 @@ public class NotificationCacheContainerProvider {
     public void addNotificationToCache(Notification notif) {
 
         try {
-            String cacheKey = notif.getProvider().getId() + "_" + notif.getEventTypeFilter().name();
+            String cacheKey = notif.getEventTypeFilter().name();
 
             Class<BusinessEntity> c = (Class<BusinessEntity>) Class.forName(notif.getClassNameFilter());
             eventNotificationCache.putIfAbsent(cacheKey, new HashMap<Class<BusinessEntity>, List<Notification>>());
@@ -107,7 +107,7 @@ public class NotificationCacheContainerProvider {
      * @param notif Notification to remove
      */
     public void removeNotificationFromCache(Notification notif) {
-        String cacheKey = notif.getProvider().getId() + "_" + notif.getEventTypeFilter().name();
+        String cacheKey = notif.getEventTypeFilter().name();
         if (eventNotificationCache.containsKey(cacheKey)) {
             for (Class<BusinessEntity> c : eventNotificationCache.get(cacheKey).keySet()) {
                 eventNotificationCache.get(cacheKey).get(c).remove(notif);
@@ -136,14 +136,14 @@ public class NotificationCacheContainerProvider {
     public List<Notification> getApplicableNotifications(NotificationEventTypeEnum eventType, Object entityOrEvent) {
         List<Notification> notifications = new ArrayList<Notification>();
 
-        IProvider entity = null;
-        if (entityOrEvent instanceof IProvider) {
-            entity = (IProvider) entityOrEvent;
+        IEntity entity = null;
+        if (entityOrEvent instanceof IEntity) {
+            entity = (IEntity) entityOrEvent;
         } else if (entityOrEvent instanceof IEvent) {
-            entity = (IProvider) ((IEvent) entityOrEvent).getEntity();
+            entity = (IEntity) ((IEvent) entityOrEvent).getEntity();
         }
 
-        String cacheKey = ((IProvider) entity).getProvider().getId() + "_" + eventType.name();
+        String cacheKey = eventType.name();
         if (eventNotificationCache.containsKey(cacheKey)) {
             for (Class<BusinessEntity> c : eventNotificationCache.get(cacheKey).keySet()) {
                 if (c.isAssignableFrom(entity.getClass())) {

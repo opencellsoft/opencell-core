@@ -13,7 +13,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.billing.impl.InvoiceService;
@@ -35,10 +34,10 @@ public class PdfInvoiceAsync {
 
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> launchAndForget(List<Invoice> invoices, User currentUser, JobExecutionResultImpl result) {
+    public Future<String> launchAndForget(List<Invoice> invoices, JobExecutionResultImpl result) {
         for (Invoice invoice : invoices) {
             try {
-                invoiceService.producePdfInNewTransaction(invoice.getId(), currentUser);
+                invoiceService.producePdfInNewTransaction(invoice.getId());
                 result.registerSucces();                              
             } catch (Exception e) {
                 result.registerError(invoice.getInvoiceNumber(), e.getMessage());

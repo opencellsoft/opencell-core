@@ -42,6 +42,7 @@ import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.api.billing.QuoteApi;
 import org.meveo.api.order.OrderProductCharacteristicEnum;
 import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.ServiceInstance;
@@ -54,7 +55,6 @@ import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.order.Order;
@@ -63,6 +63,7 @@ import org.meveo.model.quote.QuoteItem;
 import org.meveo.model.quote.QuoteItemProductOffering;
 import org.meveo.model.quote.QuoteStatusEnum;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -126,6 +127,9 @@ public class QuoteBean extends CustomFieldBean<Quote> {
 
     @Inject
     private BillingAccountService billingAccountService;
+    
+    @Inject
+    private UserService userService;
 
     private QuoteItem selectedQuoteItem;
 
@@ -348,7 +352,6 @@ public class QuoteBean extends CustomFieldBean<Quote> {
             }
             if (!entity.getQuoteItems().contains(selectedQuoteItem)) {
                 selectedQuoteItem.setQuote(getEntity());
-                selectedQuoteItem.setProvider(getCurrentProvider());
                 entity.getQuoteItems().add(selectedQuoteItem);
             } else {
                 entity.getQuoteItems().set(entity.getQuoteItems().indexOf(selectedQuoteItem), selectedQuoteItem);
@@ -397,7 +400,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
 
         // Execute workflow with every update
         if (isWorkflowEnabled() && entity.getStatus() != QuoteStatusEnum.IN_PROGRESS) {
-            entity = quoteApi.initiateWorkflow(entity, getCurrentUser());
+            entity = quoteApi.initiateWorkflow(entity);
         }
         return result;
     }
@@ -410,7 +413,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
     public void sendToProcess() {
 
         try {
-            entity = quoteApi.initiateWorkflow(entity, getCurrentUser());
+            entity = quoteApi.initiateWorkflow(entity);
             messages.info(new BundleKey("messages", "quote.sendToProcess.ok"));
 
         } catch (BusinessException e) {
@@ -462,7 +465,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
 
         // Extract and update custom fields in GUI
         if (quoteItemDto != null && quoteItemDto.getProduct() != null) {
-            extractAndMakeAvailableInGUICustomFields(quoteItemDto.getProduct().getProductCharacteristic(), offerItemInfo.getEntityForCFValues(), getCurrentProvider());
+            extractAndMakeAvailableInGUICustomFields(quoteItemDto.getProduct().getProductCharacteristic(), offerItemInfo.getEntityForCFValues());
         }
 
         // For offer templates list services and products subscribed
@@ -515,8 +518,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
 
                             // Extract and update custom fields in GUI
                             if (serviceProductMatched != null) {
-                                extractAndMakeAvailableInGUICustomFields(serviceProductMatched.getProductCharacteristic(), offerItemInfo.getEntityForCFValues(),
-                                    getCurrentProvider());
+                                extractAndMakeAvailableInGUICustomFields(serviceProductMatched.getProductCharacteristic(), offerItemInfo.getEntityForCFValues());
                             }
                         }
                     }
@@ -573,8 +575,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
 
                             // Extract and update custom fields in GUI
                             if (productProductMatched != null) {
-                                extractAndMakeAvailableInGUICustomFields(productProductMatched.getProductCharacteristic(), offerItemInfo.getEntityForCFValues(),
-                                    getCurrentProvider());
+                                extractAndMakeAvailableInGUICustomFields(productProductMatched.getProductCharacteristic(), offerItemInfo.getEntityForCFValues());
                             }
                         }
 
@@ -719,10 +720,9 @@ public class QuoteBean extends CustomFieldBean<Quote> {
      * 
      * @param characteristics Product characteristics
      * @param cfEntity Custom field entity values will be applied to
-     * @param provider Provider
      * @return
      */
-    private void extractAndMakeAvailableInGUICustomFields(List<ProductCharacteristic> characteristics, BusinessCFEntity cfEntity, Provider provider) {
+    private void extractAndMakeAvailableInGUICustomFields(List<ProductCharacteristic> characteristics, BusinessCFEntity cfEntity) {
 
         Map<CustomFieldTemplate, Object> cfValues = new HashMap<>();
 
@@ -730,7 +730,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
             return;
         }
 
-        Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(cfEntity, provider);
+        Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(cfEntity);
 
         for (ProductCharacteristic characteristic : characteristics) {
             if (characteristic.getName() != null && cfts.containsKey(characteristic.getName())) {
@@ -781,7 +781,8 @@ public class QuoteBean extends CustomFieldBean<Quote> {
 
         if (editable && entity.getRoutedToUserGroup() != null) {
             UserHierarchyLevel userGroup = userHierarchyLevelService.refreshOrRetrieve(entity.getRoutedToUserGroup());
-            editable = userGroup.isUserBelongsHereOrHigher(getCurrentUser());
+            User user = userService.findByUsername(currentUser.getSubject());
+            editable = userGroup.isUserBelongsHereOrHigher(user);
         }
 
         return editable;
@@ -789,7 +790,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
 
     public boolean isWorkflowEnabled() {
         if (workflowEnabled == null) {
-            workflowEnabled = workflowService.isWorkflowSetup(Quote.class, currentUser.getProvider());
+            workflowEnabled = workflowService.isWorkflowSetup(Quote.class);
         }
         return workflowEnabled;
     }
@@ -799,7 +800,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
         if (entity.getStatus() == QuoteStatusEnum.IN_PROGRESS || entity.getStatus() == QuoteStatusEnum.PENDING) {
             try {
                 entity = quoteService.refreshOrRetrieve(entity);
-                entity = quoteApi.invoiceQuote(entity, getCurrentUser());
+                entity = quoteApi.invoiceQuote(entity);
 
                 messages.info(new BundleKey("messages", "quote.createInvoices.ok"));
 
@@ -814,8 +815,8 @@ public class QuoteBean extends CustomFieldBean<Quote> {
     public String placeOrder() {
         if (entity.getStatus() == QuoteStatusEnum.IN_PROGRESS || entity.getStatus() == QuoteStatusEnum.PENDING) {
             try {
-                ProductOrder productOrder = quoteApi.placeOrder(entity.getCode(), getCurrentUser());
-                Order order = orderService.findByCode(productOrder.getId(), getCurrentProvider());
+                ProductOrder productOrder = quoteApi.placeOrder(entity.getCode());
+                Order order = orderService.findByCode(productOrder.getId());
 
                 messages.info(new BundleKey("messages", "quote.placeOrder.ok"));
 

@@ -42,9 +42,6 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
-import org.meveo.model.billing.TradingLanguage;
-import org.meveo.model.catalog.WalletTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.security.Role;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.shared.Title;
@@ -72,9 +69,7 @@ public class UserService extends PersistenceService<User> {
 		user.setUserName(user.getUserName().toUpperCase());
 		user.setPassword(Sha1Encrypt.encodePassword(user.getPassword()));
 		user.setLastPasswordModification(new Date());
-		// Set provider to the first provider from a user related provider list
-//		user.setProvider(user.getProviders().iterator().next());
-
+		
 		super.create(user);
 	}
 
@@ -110,10 +105,9 @@ public class UserService extends PersistenceService<User> {
 
 	@SuppressWarnings("unchecked")
 	public List<User> findUsersByRoles(String... roles) {
-		String queryString = "select distinct u from User u join u.roles as r where r.name in (:roles) and u.provider=:provider";
+		String queryString = "select distinct u from User u join u.roles as r where r.name in (:roles) ";
 		Query query = getEntityManager().createQuery(queryString);
 		query.setParameter("roles", Arrays.asList(roles));
-		query.setParameter("provider.id", currentUser.getProvider().getId());
 		query.setHint("org.hibernate.flushMode", "NEVER");
 		return query.getResultList();
 	}
@@ -140,14 +134,14 @@ public class UserService extends PersistenceService<User> {
 	}
 
 	public User findByUsernameAndPassword(EntityManager em, String username, String password) {
-		return findByUsernameAndPassword(em, username, password, Arrays.asList("roles", "provider"));
+		return findByUsernameAndPassword(em, username, password, Arrays.asList("roles"));
 	}
 
 	public User findByUsernameAndPassword(EntityManager em, String username, String password, List<String> fetchFields) {
 
 		password = Sha1Encrypt.encodePassword(password);
 
-		QueryBuilder qb = new QueryBuilder(User.class, "u", fetchFields, null);
+		QueryBuilder qb = new QueryBuilder(User.class, "u", fetchFields);
 
 		qb.addCriterion("userName", "=", username.toUpperCase(), true);
 		qb.addCriterion("password", "=", password, true);
@@ -180,7 +174,7 @@ public class UserService extends PersistenceService<User> {
 		}
 	}
 
-	public User changePassword(User user, String newPassword, User currentUser) throws BusinessException {
+	public User changePassword(User user, String newPassword) throws BusinessException {
 		getEntityManager().refresh(user);
 		user.setLastPasswordModification(new Date());
 		user.setPassword(Sha1Encrypt.encodePassword(newPassword));
@@ -260,21 +254,6 @@ public class UserService extends PersistenceService<User> {
 			}
 		}
 
-		Provider provider =user.getProvider();
-		provider.getCode();
-		if (provider.getLanguage() != null) {
-			provider.getLanguage().getLanguageCode();
-		}
-		
-		if(provider.getTradingLanguages() != null){
-			for (TradingLanguage language : provider.getTradingLanguages()) {
-				language.getLanguageCode();
-			}
-		}
-		
-		for (WalletTemplate template : provider.getPrepaidWalletTemplates()) {
-			template.getCode();
-		}
 		// End lazy loading issue
 
 		return user;
@@ -324,7 +303,7 @@ public class UserService extends PersistenceService<User> {
 	}
 
 	public User findByUsernameWithFetch(String username, List<String> fetchFields) {
-		QueryBuilder qb = new QueryBuilder(User.class, "u", fetchFields, null);
+		QueryBuilder qb = new QueryBuilder(User.class, "u", fetchFields);
 
 		qb.addCriterion("userName", "=", username, true);
 
@@ -335,30 +314,6 @@ public class UserService extends PersistenceService<User> {
 		}
 	}
 
-	/**
-	 * Check entity provider if not super admin user
-	 */
-	@Override
-	protected void checkProvider(User entity) {
-		// Super administrator - don't care
-		if (currentUser.hasRole("superAdminManagement")) {
-			return;
-			// Other users - a regular check
-		} else {
-			super.checkProvider(entity);
-		}
-	}
-
-	public User findByIdLoadProvider(Long id) {
-		QueryBuilder qb = new QueryBuilder(User.class, "u", Arrays.asList("provider"), null);
-		qb.addCriterion("u.id", "=", id, true);
-
-		try {
-			return (User) qb.getQuery(getEntityManager()).getSingleResult();
-		} catch (NoResultException e) {
-			return null;
-		}
-	}
 	/**
 	 * check and calculate number of days before password expiration
 	 * @author mhammam
@@ -407,11 +362,11 @@ public class UserService extends PersistenceService<User> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<User> listUsersInMM(List<String> roleNames, Provider provider) {
+	public List<User> listUsersInMM(List<String> roleNames) {
 		List<User> users = null;
 
 		try {
-			users = getEntityManager().createNamedQuery("User.listUsersInMM").setParameter("roleNames", roleNames).setParameter("provider", provider)
+			users = getEntityManager().createNamedQuery("User.listUsersInMM").setParameter("roleNames", roleNames)
 					.getResultList();
 		} catch (Exception e) {
 			log.error("listUserByPermissionResources error ", e.getMessage());

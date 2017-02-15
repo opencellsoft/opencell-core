@@ -22,13 +22,11 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Named;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.SubscriptionTerminationReason;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -39,21 +37,16 @@ import org.meveo.service.base.PersistenceService;
 public class SubscriptionTerminationReasonService extends
 		PersistenceService<SubscriptionTerminationReason> {
 
-	public SubscriptionTerminationReason findByCodeReason(String codeReason,
-			Provider provider) throws Exception {
-		return findByCodeReason(getEntityManager(), codeReason, provider);
-	}
-
-	public SubscriptionTerminationReason findByCodeReason(EntityManager em,
-			String codeReason, Provider provider) throws Exception {
+	public SubscriptionTerminationReason findByCodeReason(String codeReason) throws Exception {
+	
 		QueryBuilder qb = new QueryBuilder(SubscriptionTerminationReason.class,
 				"r");
 
 		qb.addCriterion("code", "=", codeReason, true);
-		qb.addCriterionEntity("provider", provider);
+		
 
 		try {
-			return (SubscriptionTerminationReason) qb.getQuery(em)
+			return (SubscriptionTerminationReason) qb.getQuery(getEntityManager())
 					.getSingleResult();
 		} catch (NoResultException e) {
 			log.warn("failed to subscription termination reason service",e);
@@ -65,7 +58,7 @@ public class SubscriptionTerminationReasonService extends
 	public List<SubscriptionTerminationReason> listReasons() {
 
 		Query query = new QueryBuilder(SubscriptionTerminationReason.class,
-				"c", null, getCurrentProvider()).getQuery(getEntityManager());
+				"c", null).getQuery(getEntityManager());
 		return query.getResultList();
 	}
 }

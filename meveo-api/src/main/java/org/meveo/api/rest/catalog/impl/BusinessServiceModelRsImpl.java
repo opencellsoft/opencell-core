@@ -36,7 +36,7 @@ public class BusinessServiceModelRsImpl extends BaseRs implements BusinessServic
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            moduleApi.create(postData, getCurrentUser());
+            moduleApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -56,7 +56,7 @@ public class BusinessServiceModelRsImpl extends BaseRs implements BusinessServic
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            moduleApi.update(postData, getCurrentUser());
+            moduleApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -76,7 +76,7 @@ public class BusinessServiceModelRsImpl extends BaseRs implements BusinessServic
         GetBusinessServiceModelResponseDto result = new GetBusinessServiceModelResponseDto();
 
         try {
-            result.setBusinessServiceModel((BusinessServiceModelDto) moduleApi.find(businessServiceModelCode, getCurrentUser()));
+            result.setBusinessServiceModel((BusinessServiceModelDto) moduleApi.find(businessServiceModelCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -96,7 +96,7 @@ public class BusinessServiceModelRsImpl extends BaseRs implements BusinessServic
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            moduleApi.delete(businessServiceModelCode, getCurrentUser());
+            moduleApi.delete(businessServiceModelCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -116,7 +116,7 @@ public class BusinessServiceModelRsImpl extends BaseRs implements BusinessServic
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            moduleApi.createOrUpdate(postData, getCurrentUser());
+            moduleApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -137,7 +137,7 @@ public class BusinessServiceModelRsImpl extends BaseRs implements BusinessServic
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
         result.getActionStatus().setMessage("");
         try {
-            List<MeveoModuleDto> dtos = moduleApi.list(BusinessServiceModel.class, getCurrentUser());
+            List<MeveoModuleDto> dtos = moduleApi.list(BusinessServiceModel.class);
             result.setModules(dtos);
 
         } catch (MeveoApiException e) {
@@ -159,7 +159,7 @@ public class BusinessServiceModelRsImpl extends BaseRs implements BusinessServic
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            moduleApi.install(moduleDto, getCurrentUser());
+            moduleApi.install(moduleDto);
 
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());

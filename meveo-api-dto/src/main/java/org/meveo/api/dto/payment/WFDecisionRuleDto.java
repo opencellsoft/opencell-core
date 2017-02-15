@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.BaseDto;
-import org.meveo.model.wf.DecisionRuleTypeEnum;
 import org.meveo.model.wf.WFDecisionRule;
 
 @XmlType(name = "WFDecisionRule")

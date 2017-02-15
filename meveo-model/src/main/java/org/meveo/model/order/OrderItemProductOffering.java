@@ -21,7 +21,7 @@ import org.meveo.model.IEntity;
 import org.meveo.model.catalog.ProductOffering;
 
 @Entity
-@ExportIdentifier({ "orderItem.code", "productOffering.code", "productOffering.provider" })
+@ExportIdentifier({ "orderItem.code", "productOffering.code" })
 @Table(name = "ORD_ITEM_OFFERINGS")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ORD_ITEM_OFFERINGS_SEQ")
 public class OrderItemProductOffering implements IEntity {

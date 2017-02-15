@@ -29,9 +29,9 @@ import org.meveo.export.ExportTemplate;
 import org.meveo.export.RemoteAuthenticationException;
 import org.meveo.export.RemoteImportException;
 import org.meveo.model.IEntity;
-import org.meveo.model.admin.User;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.crm.Provider;
+import org.meveo.util.ApplicationProvider;
 import org.meveo.util.view.LazyDataModelWSize;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.LazyDataModel;
@@ -63,18 +63,12 @@ public class EntityExportImportBean implements Serializable {
     protected Conversation conversation;
 
     @Inject
-    @CurrentProvider
-    private Provider currentProvider;
-
-    @Inject
-    @CurrentUser
-    protected User currentUser;
+    @ApplicationProvider
+    private Provider appProvider;
 
     private ParamBean param = ParamBean.getInstance();
 
     private boolean requireFK = true;
-
-    private Provider forceToProvider;
 
     private ExportTemplate selectedExportTemplate;
 
@@ -103,14 +97,6 @@ public class EntityExportImportBean implements Serializable {
 
     public void setRequireFK(boolean requireFK) {
         this.requireFK = requireFK;
-    }
-
-    public Provider getForceToProvider() {
-        return forceToProvider;
-    }
-
-    public void setForceToProvider(Provider forceToProvider) {
-        this.forceToProvider = forceToProvider;
     }
 
     public ExportTemplate getSelectedExportTemplate() {
@@ -275,7 +261,6 @@ public class EntityExportImportBean implements Serializable {
         remoteMeveoInstance = null;
 
         Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("provider", currentProvider);
 
         try {
             exportImportFuture = entityExportImportService.exportEntities(exportTemplate, parameters, null, null);
@@ -301,10 +286,6 @@ public class EntityExportImportBean implements Serializable {
         exportImportFuture = null;
         remoteImportResult = null;
         remoteMeveoInstance = (MeveoInstance) exportParameters.get(EntityExportImportService.EXPORT_PARAM_REMOTE_INSTANCE);
-
-        if (exportParameters.get("provider") == null) {
-            exportParameters.put("provider", currentProvider);
-        }
 
         try {
 
@@ -335,8 +316,7 @@ public class EntityExportImportBean implements Serializable {
                     "." + FilenameUtils.getExtension(event.getFile().getFileName()));
                 FileUtils.copyInputStreamToFile(event.getFile().getInputstream(), tempFile);
 
-                exportImportFuture = entityExportImportService.importEntities(tempFile, event.getFile().getFileName().replaceAll(" ", "_"), false, !requireFK, forceToProvider,
-                    currentUser);
+                exportImportFuture = entityExportImportService.importEntities(tempFile, event.getFile().getFileName().replaceAll(" ", "_"), false, !requireFK, null);
                 messages.info(new BundleKey("messages", "export.import.inProgress"), event.getFile().getFileName());
 
             } catch (Exception e) {

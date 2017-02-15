@@ -30,7 +30,7 @@ public class BillingCycleRsImpl extends BaseRs implements BillingCycleRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            billingCycleApi.create(postData, getCurrentUser());
+            billingCycleApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -50,7 +50,7 @@ public class BillingCycleRsImpl extends BaseRs implements BillingCycleRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            billingCycleApi.update(postData, getCurrentUser());
+            billingCycleApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -71,7 +71,7 @@ public class BillingCycleRsImpl extends BaseRs implements BillingCycleRs {
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         try {
-            result.setBillingCycle(billingCycleApi.find(billingCycleCode, getCurrentUser().getProvider()));
+            result.setBillingCycle(billingCycleApi.find(billingCycleCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -91,7 +91,7 @@ public class BillingCycleRsImpl extends BaseRs implements BillingCycleRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            billingCycleApi.remove(billingCycleCode, getCurrentUser());
+            billingCycleApi.remove(billingCycleCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -111,7 +111,7 @@ public class BillingCycleRsImpl extends BaseRs implements BillingCycleRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            billingCycleApi.createOrUpdate(postData, getCurrentUser());
+            billingCycleApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

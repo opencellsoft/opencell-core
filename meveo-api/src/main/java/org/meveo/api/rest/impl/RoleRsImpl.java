@@ -26,7 +26,7 @@ public class RoleRsImpl extends BaseRs implements RoleRs {
     public ActionStatus create(RoleDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            roleApi.create(postData, getCurrentUser());
+            roleApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -45,7 +45,7 @@ public class RoleRsImpl extends BaseRs implements RoleRs {
     public ActionStatus update(RoleDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            roleApi.update(postData, getCurrentUser());
+            roleApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -64,7 +64,7 @@ public class RoleRsImpl extends BaseRs implements RoleRs {
     public ActionStatus remove(String roleName, String provider) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            roleApi.remove(roleName, provider, getCurrentUser());
+            roleApi.remove(roleName, provider);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -83,7 +83,7 @@ public class RoleRsImpl extends BaseRs implements RoleRs {
     public GetRoleResponse find(String roleName, String provider) {
         GetRoleResponse result = new GetRoleResponse();
         try {
-            result.setRoleDto(roleApi.find(roleName, provider, getCurrentUser()));
+            result.setRoleDto(roleApi.find(roleName, provider));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -102,7 +102,7 @@ public class RoleRsImpl extends BaseRs implements RoleRs {
     public ActionStatus createOrUpdate(RoleDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            roleApi.createOrUpdate(postData, getCurrentUser());
+            roleApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

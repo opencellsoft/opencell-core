@@ -9,7 +9,6 @@ import javax.inject.Inject;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.admin.User;
 import org.meveo.model.catalog.BundleProductTemplate;
 import org.meveo.model.catalog.BundleTemplate;
 import org.meveo.model.catalog.Channel;
@@ -54,7 +53,7 @@ public class BundleTemplateService extends MultilanguageEntityService<BundleTemp
 		return result;
 	}
 
-	public synchronized void duplicate(BundleTemplate entity, User currentUser) throws BusinessException {
+	public synchronized void duplicate(BundleTemplate entity) throws BusinessException {
 		entity = refreshOrRetrieve(entity);
 
 		// Lazy load related values first
@@ -65,7 +64,7 @@ public class BundleTemplateService extends MultilanguageEntityService<BundleTemp
 		entity.getOfferTemplateCategories().size();
 		entity.getBundleProducts().size();
 
-		String code = findDuplicateCode(entity, currentUser);
+		String code = findDuplicateCode(entity);
 
 		// Detach and clear ids of entity and related entities
 		detach(entity);
@@ -134,7 +133,7 @@ public class BundleTemplateService extends MultilanguageEntityService<BundleTemp
 		}
 
 
-        create(entity, getCurrentUser());
-		customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity, getCurrentUser());
+        create(entity);
+		customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity);
 	}
 }

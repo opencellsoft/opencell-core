@@ -14,10 +14,8 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.model.admin.User;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
 import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
@@ -43,7 +41,7 @@ public class CustomFieldTemplateApi extends BaseApi {
     @Inject
     private CustomizedEntityService customizedEntityService;
 
-    public void create(CustomFieldTemplateDto postData, String appliesTo, User currentUser) throws MeveoApiException, BusinessException {
+    public void create(CustomFieldTemplateDto postData, String appliesTo) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -84,20 +82,20 @@ public class CustomFieldTemplateApi extends BaseApi {
             }
         }
 
-        if (!getCustomizedEntitiesAppliesTo(currentUser.getProvider()).contains(appliesTo)) {
+        if (!getCustomizedEntitiesAppliesTo().contains(appliesTo)) {
             throw new InvalidParameterException("appliesTo", appliesTo);
         }
 
-        if (customFieldTemplateService.findByCodeAndAppliesToNoCache(postData.getCode(), appliesTo, currentUser.getProvider()) != null) {
+        if (customFieldTemplateService.findByCodeAndAppliesToNoCache(postData.getCode(), appliesTo) != null) {
             throw new EntityAlreadyExistsException(CustomFieldTemplate.class, postData.getCode());
         }
 
-        CustomFieldTemplate cft = fromDTO(postData, currentUser, appliesTo, null);
-        customFieldTemplateService.create(cft, currentUser);
+        CustomFieldTemplate cft = fromDTO(postData, appliesTo, null);
+        customFieldTemplateService.create(cft);
 
     }
 
-    public void update(CustomFieldTemplateDto postData, String appliesTo, User currentUser) throws MeveoApiException, BusinessException {
+    public void update(CustomFieldTemplateDto postData, String appliesTo) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -139,22 +137,22 @@ public class CustomFieldTemplateApi extends BaseApi {
             }
         }
 
-        if (!getCustomizedEntitiesAppliesTo(currentUser.getProvider()).contains(appliesTo)) {
+        if (!getCustomizedEntitiesAppliesTo().contains(appliesTo)) {
             throw new InvalidParameterException("appliesTo", appliesTo);
         }
 
-        CustomFieldTemplate cft = customFieldTemplateService.findByCodeAndAppliesToNoCache(postData.getCode(), appliesTo, currentUser.getProvider());
+        CustomFieldTemplate cft = customFieldTemplateService.findByCodeAndAppliesToNoCache(postData.getCode(), appliesTo);
         if (cft == null) {
             throw new EntityDoesNotExistsException(CustomFieldTemplate.class, postData.getCode());
         }
 
-        cft = fromDTO(postData, currentUser, appliesTo, cft);
+        cft = fromDTO(postData, appliesTo, cft);
 
-        customFieldTemplateService.update(cft, currentUser);
+        customFieldTemplateService.update(cft);
 
     }
 
-    public void remove(String code, String appliesTo, User currentUser) throws MeveoApiException, BusinessException {
+    public void remove(String code, String appliesTo) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
         }
@@ -164,19 +162,19 @@ public class CustomFieldTemplateApi extends BaseApi {
 
         handleMissingParameters();
 
-        if (!getCustomizedEntitiesAppliesTo(currentUser.getProvider()).contains(appliesTo)) {
+        if (!getCustomizedEntitiesAppliesTo().contains(appliesTo)) {
             throw new InvalidParameterException("appliesTo", appliesTo);
         }
 
-        CustomFieldTemplate cft = customFieldTemplateService.findByCodeAndAppliesTo(code, appliesTo, currentUser.getProvider());
+        CustomFieldTemplate cft = customFieldTemplateService.findByCodeAndAppliesTo(code, appliesTo);
         if (cft != null) {
-            customFieldTemplateService.remove(cft.getId(), currentUser);
+            customFieldTemplateService.remove(cft.getId());
         } else {
             throw new EntityDoesNotExistsException(CustomFieldTemplate.class, code);
         }
     }
 
-    public CustomFieldTemplateDto find(String code, String appliesTo, User currentUser) throws MeveoApiException {
+    public CustomFieldTemplateDto find(String code, String appliesTo) throws MeveoApiException {
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
         }
@@ -186,13 +184,13 @@ public class CustomFieldTemplateApi extends BaseApi {
 
         handleMissingParameters();
 
-        Provider provider = currentUser.getProvider();
         
-        if (!getCustomizedEntitiesAppliesTo(provider).contains(appliesTo)) {
+        
+        if (!getCustomizedEntitiesAppliesTo().contains(appliesTo)) {
             throw new InvalidParameterException("appliesTo", appliesTo);
         }
 
-        CustomFieldTemplate cft = customFieldTemplateService.findByCodeAndAppliesToNoCache(code, appliesTo, provider);
+        CustomFieldTemplate cft = customFieldTemplateService.findByCodeAndAppliesToNoCache(code, appliesTo);
 
         if (cft == null) {
             throw new EntityDoesNotExistsException(CustomFieldTemplate.class, code + "/" + appliesTo);
@@ -200,7 +198,7 @@ public class CustomFieldTemplateApi extends BaseApi {
         return new CustomFieldTemplateDto(cft);
     }
 
-    public void createOrUpdate(CustomFieldTemplateDto postData, String appliesTo, User currentUser) throws MeveoApiException, BusinessException {
+    public void createOrUpdate(CustomFieldTemplateDto postData, String appliesTo) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
@@ -223,16 +221,16 @@ public class CustomFieldTemplateApi extends BaseApi {
             }
         }
 
-        CustomFieldTemplate customFieldTemplate = customFieldTemplateService.findByCodeAndAppliesToNoCache(postData.getCode(), appliesTo, currentUser.getProvider());
+        CustomFieldTemplate customFieldTemplate = customFieldTemplateService.findByCodeAndAppliesToNoCache(postData.getCode(), appliesTo);
 
         if (customFieldTemplate == null) {
-            create(postData, appliesTo, currentUser);
+            create(postData, appliesTo);
         } else {
-            update(postData, appliesTo, currentUser);
+            update(postData, appliesTo);
         }
     }
 
-    protected CustomFieldTemplate fromDTO(CustomFieldTemplateDto dto, User currentUser, String appliesTo, CustomFieldTemplate cftToUpdate) {
+    protected CustomFieldTemplate fromDTO(CustomFieldTemplateDto dto, String appliesTo, CustomFieldTemplate cftToUpdate) {
 
         // Set default values
         if (dto.getFieldType() == CustomFieldTypeEnum.STRING && dto.getMaxValue() == null) {
@@ -302,7 +300,7 @@ public class CustomFieldTemplateApi extends BaseApi {
         }
 
         if (!StringUtils.isBlank(dto.getCalendar())) {
-            Calendar calendar = calendarService.findByCode(dto.getCalendar(), currentUser.getProvider());
+            Calendar calendar = calendarService.findByCode(dto.getCalendar());
             if (calendar != null) {
                 cft.setCalendar(calendar);
             }
@@ -310,9 +308,9 @@ public class CustomFieldTemplateApi extends BaseApi {
         return cft;
     }
 
-    private List<String> getCustomizedEntitiesAppliesTo(Provider provider) {
+    private List<String> getCustomizedEntitiesAppliesTo() {
         List<String> cftAppliesto = new ArrayList<String>();
-        List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(null, false, true, null, null, provider);
+        List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(null, false, true, null, null);
         for (CustomizedEntity customizedEntity : entities) {
             cftAppliesto.add(EntityCustomizationUtils.getAppliesTo(customizedEntity.getEntityClass(), customizedEntity.getEntityCode()));
         }

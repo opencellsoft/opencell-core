@@ -58,7 +58,6 @@ public class SellerDto extends BaseDto {
 	private String countryCode;
 	private String languageCode;
 	private String parentSeller;
-	private String provider;
 
 	private CustomersDto customers;
 	
@@ -95,10 +94,6 @@ public class SellerDto extends BaseDto {
 
 		if (seller.getSeller() != null) {
 			parentSeller = seller.getSeller().getCode();
-		}
-
-		if (seller.getProvider() != null) {
-			provider = seller.getProvider().getCode();
 		}
 		
 		customFields = customFieldInstances;
@@ -154,16 +149,6 @@ public class SellerDto extends BaseDto {
 		this.parentSeller = parentSeller;
 	}
 
-
-
-	public String getProvider() {
-		return provider;
-	}
-
-	public void setProvider(String provider) {
-		this.provider = provider;
-	}
-
 	public CustomersDto getCustomers() {
 		return customers;
 	}
@@ -204,10 +189,6 @@ public class SellerDto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "SellerDto [code=" + code + ", description=" + description + ", currencyCode=" + currencyCode + ", countryCode=" + countryCode + ", languageCode=" + languageCode + ", parentSeller=" + parentSeller + ", provider=" + provider + ", customers=" + customers + ", customFields=" + customFields + ", invoiceTypeSequences=" + invoiceTypeSequences + ", businessAccountModel=" + businessAccountModel + "]";
-	}
-
-	
-	
-	
+		return "SellerDto [code=" + code + ", description=" + description + ", currencyCode=" + currencyCode + ", countryCode=" + countryCode + ", languageCode=" + languageCode + ", parentSeller=" + parentSeller + ", customers=" + customers + ", customFields=" + customFields + ", invoiceTypeSequences=" + invoiceTypeSequences + ", businessAccountModel=" + businessAccountModel + "]";
+	}	
 }

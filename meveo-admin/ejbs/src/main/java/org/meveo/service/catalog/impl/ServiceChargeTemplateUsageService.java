@@ -31,48 +31,38 @@ import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
 public class ServiceChargeTemplateUsageService extends PersistenceService<ServiceChargeTemplateUsage> {
 
-	public void removeByPrefix(EntityManager em, String prefix, Provider provider) {
+	public void removeByPrefix(EntityManager em, String prefix) {
 		Query query = em.createQuery("DELETE ServiceChargeTemplateUsage t WHERE t.chargeTemplate.code LIKE '" + prefix
-				+ "%' AND t.provider=:provider");
-		query.setParameter("provider", provider);
+				+ "%' ");
 		query.executeUpdate();
 	}
 
-	public void removeByServiceTemplate(ServiceTemplate serviceTemplate, Provider provider) {
+	public void removeByServiceTemplate(ServiceTemplate serviceTemplate) {
 		Query query = getEntityManager()
 				.createQuery(
-						"DELETE ServiceChargeTemplateUsage t WHERE t.serviceTemplate=:serviceTemplate AND t.provider=:provider");
+						"DELETE ServiceChargeTemplateUsage t WHERE t.serviceTemplate=:serviceTemplate ");
 		query.setParameter("serviceTemplate", serviceTemplate);
-		query.setParameter("provider", provider);
 		query.executeUpdate();
 	}
 
-	public List<ServiceChargeTemplateUsage> findByUsageChargeTemplate(UsageChargeTemplate usageChargeTemplate,
-			Provider provider) {
-		return findByUsageChargeTemplate(getEntityManager(), usageChargeTemplate, provider);
-	}
+	public List<ServiceChargeTemplateUsage> findByUsageChargeTemplate(UsageChargeTemplate usageChargeTemplate) {
 
-	@SuppressWarnings("unchecked")
-	public List<ServiceChargeTemplateUsage> findByUsageChargeTemplate(EntityManager em,
-			UsageChargeTemplate usageChargeTemplate, Provider provider) {
 		QueryBuilder qb = new QueryBuilder(ServiceChargeTemplateUsage.class, "a");
 		qb.addCriterionEntity("chargeTemplate", usageChargeTemplate);
-		qb.addCriterionEntity("provider", provider);
+		
 
-		return (List<ServiceChargeTemplateUsage>) qb.getQuery(em).getResultList();
+		return (List<ServiceChargeTemplateUsage>) qb.getQuery(getEntityManager()).getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<ServiceChargeTemplateUsage> findByServiceTemplate(ServiceTemplate serviceTemplate, Provider provider) {
+	public List<ServiceChargeTemplateUsage> findByServiceTemplate(ServiceTemplate serviceTemplate) {
 		QueryBuilder qb = new QueryBuilder(ServiceChargeTemplateUsage.class, "s");
 		qb.addCriterionEntity("s.serviceTemplate", serviceTemplate);
-		qb.addCriterionEntity("s.provider", provider);
 
 		try {
 			return (List<ServiceChargeTemplateUsage>) qb.getQuery(getEntityManager()).getResultList();

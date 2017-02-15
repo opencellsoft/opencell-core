@@ -15,7 +15,6 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
 import org.meveo.api.dto.response.catalog.GetTriggeredEdrResponseDto;
 import org.meveo.api.rest.IBaseRs;
-import org.meveo.api.rest.security.RSSecured;
 
 /**
  * @author Edward P. Legaspi
@@ -23,7 +22,7 @@ import org.meveo.api.rest.security.RSSecured;
 @Path("/catalog/triggeredEdr")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-@RSSecured
+
 public interface TriggeredEdrRs extends IBaseRs {
 
     /**

@@ -34,6 +34,13 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.bi.JobNameEnum;
+import org.meveo.model.bi.Report;
+import org.meveo.service.bi.impl.ReportService;
+import org.slf4j.Logger;
+
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -42,13 +49,6 @@ import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRXmlDataSource;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.util.JRLoader;
-
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.bi.JobNameEnum;
-import org.meveo.model.bi.Report;
-import org.meveo.service.bi.impl.ReportService;
-import org.slf4j.Logger;
 
 /**
  * Class to generate PDF reports.
@@ -183,7 +183,7 @@ public class ReportExecution implements Serializable{
 				generatePDF(report.getFileName(), report.getName(), xmlString,
 						report.getRecordPath(), report.getSchedule());
 				report.computeNextExecutionDate();
-				reportService.update(report, null);
+				reportService.update(report);
 			}
 			if (obj instanceof ReportXMLFileSourceProducer) {
 				log.info("executeReport report class is ReportXMLFileSourceProducer");
@@ -196,7 +196,7 @@ public class ReportExecution implements Serializable{
 				reporting.export(report);
 				log.info("computeNextExecutionDate");
 				report.computeNextExecutionDate();
-				reportService.update(report, null);
+				reportService.update(report);
 			}
 		} catch (Exception e) {
 			log.error("failed to executeReport, {} exception", e.getClass(), e);
@@ -248,7 +248,7 @@ public class ReportExecution implements Serializable{
 					} else if (report.getActionName() == JobNameEnum.RECURRING_CHARGES_APPLICATION) {
 						// recurringChargeCron.recurringChargeApplication();
 						report.computeNextExecutionDate();
-						reportService.update(report, null);
+						reportService.update(report);
 					}
 
 				}

@@ -27,12 +27,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.EnableEntity;
 
 @Entity
 @Table(name = "AR_MATCHING_AMOUNT")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_MATCHING_AMOUNT_SEQ")
-public class MatchingAmount extends AuditableEntity {
+public class MatchingAmount extends EnableEntity {
 
 	private static final long serialVersionUID = 1L;
 

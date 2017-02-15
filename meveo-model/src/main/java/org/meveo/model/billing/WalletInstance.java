@@ -46,8 +46,8 @@ import org.meveo.model.catalog.WalletTemplate;
 
 @Entity
 @ObservableEntity
-@ExportIdentifier({ "code", "userAccount.code", "provider" })
-@Table(name = "BILLING_WALLET", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "USER_ACCOUNT_ID", "PROVIDER_ID" }))
+@ExportIdentifier({ "code", "userAccount.code"})
+@Table(name = "BILLING_WALLET", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "USER_ACCOUNT_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_WALLET_SEQ")
 @NamedQueries({
 	@NamedQuery(name = "WalletInstance.listPrepaidActiveWalletIds", 
@@ -56,7 +56,7 @@ import org.meveo.model.catalog.WalletTemplate;
 	@NamedQuery(name = "WalletInstance.listPrepaidWalletsToMatch", 
 			query = "SELECT c FROM WalletInstance c where c.walletTemplate.walletType=org.meveo.model.billing.BillingWalletTypeEnum.PREPAID and "
 							+ "c.userAccount.status=org.meveo.model.billing.AccountStatusEnum.ACTIVE "
-							+ " AND (c.nextMatchingDate IS NULL OR nextMatchingDate <= :matchingDate) and c.provider=:currentProvider"),
+							+ " AND (c.nextMatchingDate IS NULL OR nextMatchingDate <= :matchingDate) "),
 })
 public class WalletInstance extends BusinessEntity {
 

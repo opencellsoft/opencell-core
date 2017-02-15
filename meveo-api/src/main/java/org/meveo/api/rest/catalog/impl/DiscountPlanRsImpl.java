@@ -29,7 +29,7 @@ public class DiscountPlanRsImpl extends BaseRs implements DiscountPlanRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            discountPlanApi.create(postData, getCurrentUser());
+            discountPlanApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -49,7 +49,7 @@ public class DiscountPlanRsImpl extends BaseRs implements DiscountPlanRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            discountPlanApi.update(postData, getCurrentUser());
+            discountPlanApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -69,7 +69,7 @@ public class DiscountPlanRsImpl extends BaseRs implements DiscountPlanRs {
         GetDiscountPlanResponseDto result = new GetDiscountPlanResponseDto();
 
         try {
-            result.setDiscountPlanDto(discountPlanApi.find(discountPlanCode, getCurrentUser().getProvider()));
+            result.setDiscountPlanDto(discountPlanApi.find(discountPlanCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -88,7 +88,7 @@ public class DiscountPlanRsImpl extends BaseRs implements DiscountPlanRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            discountPlanApi.remove(discountPlanCode, getCurrentUser());
+            discountPlanApi.remove(discountPlanCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -108,7 +108,7 @@ public class DiscountPlanRsImpl extends BaseRs implements DiscountPlanRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            discountPlanApi.createOrUpdate(postData, getCurrentUser());
+            discountPlanApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -128,7 +128,7 @@ public class DiscountPlanRsImpl extends BaseRs implements DiscountPlanRs {
         GetDiscountPlansResponseDto result = new GetDiscountPlansResponseDto();
 
         try {
-            result.setDiscountPlan(discountPlanApi.list(getCurrentUser().getProvider()));
+            result.setDiscountPlan(discountPlanApi.list());
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

@@ -317,7 +317,7 @@
                                                             value="#{itemConfiguration.characteristics[CharacteristicsEnum.TERMINATION_REASON]}"
                                                             required="#{orderBean.selectedOrderItem.action==OrderItemActionEnum.DELETE}"
                                                             rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION}">
-                                                            <s:objectConverter />
+                                                            <hftl:objectConverter />
                                                             <f:selectItem itemLabel="" itemValue="" />
                                                             <f:selectItems value="#{subscriptionTerminationReasonService.listReasons()}" var="elem"
                                                                 itemLabel="#{elem['descriptionOrCode']}" itemValue="#{elem['code']}" />

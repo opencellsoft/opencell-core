@@ -15,8 +15,6 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.LoginException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.model.admin.User;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.security.Permission;
 import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.PermissionService;
@@ -38,12 +36,12 @@ public class RoleApi extends BaseApi {
     /**
      * 
      * @param postData
-     * @param currentUser
+
      * @return Role entity
      * @throws MeveoApiException
      * @throws BusinessException
      */
-    public Role create(RoleDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public Role create(RoleDto postData) throws MeveoApiException, BusinessException {
 
         String name = postData.getName();
         if (StringUtils.isBlank(name)) {
@@ -56,31 +54,18 @@ public class RoleApi extends BaseApi {
 
         handleMissingParameters();
 
-        // Find provider and check if user has access to manage that provider data
-        Provider provider = null;
-        if (!StringUtils.isBlank(postData.getProvider())) {
-            provider = providerService.findByCode(postData.getProvider());
-            if (provider == null) {
-                throw new EntityDoesNotExistsException(Provider.class, postData.getProvider());
-            }
-        } else {
-            provider = currentUser.getProvider();
-        }
-
-        if (roleService.findByName(name, provider) != null) {
+        if (roleService.findByName(name) != null) {
             throw new EntityAlreadyExistsException(Role.class, name, "role name");
         }
 
-        if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || (currentUser.hasPermission("administration", "administrationManagement") && provider
-            .equals(currentUser.getProvider())))) {
-            throw new LoginException("User has no permission to manage roles for provider " + provider.getCode());
+        if (!(currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationManagement")))) {
+            throw new LoginException("User has no permission to manage roles for provider");
         }
 
         Role role = new Role();
         role.setName(name);
         role.setDescription(postData.getDescription());
-        role.setProvider(provider);
-
+        
         List<PermissionDto> permissionDtos = postData.getPermission();
         if (permissionDtos != null && !permissionDtos.isEmpty()) {
             Set<Permission> permissions = new HashSet<Permission>();
@@ -111,11 +96,11 @@ public class RoleApi extends BaseApi {
         // Create/Update and add child roles
         if (postData.getRoles() != null && !postData.getRoles().isEmpty()) {
             for (RoleDto roleDto : postData.getRoles()) {
-                role.getRoles().add(createOrUpdate(roleDto, currentUser));
+                role.getRoles().add(createOrUpdate(roleDto));
             }
         }
 
-        roleService.create(role, currentUser);
+        roleService.create(role);
 
         return role;
     }
@@ -124,12 +109,12 @@ public class RoleApi extends BaseApi {
      * Update role
      * 
      * @param postData Role DTO
-     * @param currentUser Current user
+
      * @return Updated Role entity
      * @throws MeveoApiException
      * @throws BusinessException
      */
-    public Role update(RoleDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public Role update(RoleDto postData) throws MeveoApiException, BusinessException {
 
         String name = postData.getName();
         if (StringUtils.isBlank(name)) {
@@ -142,23 +127,11 @@ public class RoleApi extends BaseApi {
 
         handleMissingParameters();
 
-        // Find provider and check if user has access to manage that provider data
-        Provider provider = null;
-        if (!StringUtils.isBlank(postData.getProvider())) {
-            provider = providerService.findByCode(postData.getProvider());
-            if (provider == null) {
-                throw new EntityDoesNotExistsException(Provider.class, postData.getProvider());
-            }
-        } else {
-            provider = currentUser.getProvider();
+        if (!(currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationManagement")))) {
+            throw new LoginException("User has no permission to manage roles for provider");
         }
 
-        if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || (currentUser.hasPermission("administration", "administrationManagement") && provider
-            .equals(currentUser.getProvider())))) {
-            throw new LoginException("User has no permission to manage roles for provider " + provider.getCode());
-        }
-
-        Role role = roleService.findByName(name, provider);
+        Role role = roleService.findByName(name);
 
         if (role == null) {
             throw new EntityDoesNotExistsException(Role.class, name, "name");
@@ -196,14 +169,14 @@ public class RoleApi extends BaseApi {
         // Create/Update and add child roles
         if (postData.getRoles() != null && !postData.getRoles().isEmpty()) {
             for (RoleDto roleDto : postData.getRoles()) {
-                role.getRoles().add(createOrUpdate(roleDto, currentUser));
+                role.getRoles().add(createOrUpdate(roleDto));
             }
         }
 
-        return roleService.update(role, currentUser);
+        return roleService.update(role);
     }
 
-    public RoleDto find(String name, String providerCode, User currentUser) throws MeveoApiException {
+    public RoleDto find(String name, String providerCode) throws MeveoApiException {
 
         if (StringUtils.isBlank(name)) {
             missingParameters.add("roleName");
@@ -211,24 +184,12 @@ public class RoleApi extends BaseApi {
 
         handleMissingParameters();
 
-        // Find provider and check if user has access to manage that provider data
-        Provider provider = null;
-        if (!StringUtils.isBlank(providerCode)) {
-            provider = providerService.findByCode(providerCode);
-            if (provider == null) {
-                throw new EntityDoesNotExistsException(Provider.class, providerCode);
-            }
-        } else {
-            provider = currentUser.getProvider();
-        }
-
-        if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || (currentUser.hasPermission("administration", "administrationVisualization") && provider
-            .equals(currentUser.getProvider())))) {
-            throw new LoginException("User has no permission to access roles for provider " + provider.getCode());
+        if (!(currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationVisualization")))) {
+            throw new LoginException("User has no permission to access roles for provider");
         }
 
         RoleDto roleDto = null;
-        Role role = roleService.findByName(name, provider);
+        Role role = roleService.findByName(name);
         if (role == null) {
             throw new EntityDoesNotExistsException(Role.class, name, "name");
         }
@@ -237,38 +198,26 @@ public class RoleApi extends BaseApi {
         return roleDto;
     }
 
-    public void remove(String name, String providerCode, User currentUser) throws MeveoApiException, BusinessException {
+    public void remove(String name, String providerCode) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(name)) {
             missingParameters.add("role");
         }
 
         handleMissingParameters();
 
-        // Find provider and check if user has access to manage that provider data
-        Provider provider = null;
-        if (!StringUtils.isBlank(providerCode)) {
-            provider = providerService.findByCode(providerCode);
-            if (provider == null) {
-                throw new EntityDoesNotExistsException(Provider.class, providerCode);
-            }
-        } else {
-            provider = currentUser.getProvider();
+        if (!(currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationManagement")))) {
+            throw new LoginException("User has no permission to manage roles for provider");
         }
 
-        if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || (currentUser.hasPermission("administration", "administrationManagement") && provider
-            .equals(currentUser.getProvider())))) {
-            throw new LoginException("User has no permission to manage roles for provider " + provider.getCode());
-        }
-
-        Role role = roleService.findByName(name, provider);
+        Role role = roleService.findByName(name);
         if (role == null) {
             throw new EntityDoesNotExistsException(Role.class, name, "name");
         }
         role.setPermissions(null);
-        roleService.remove(role, currentUser);
+        roleService.remove(role);
     }
 
-    public Role createOrUpdate(RoleDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public Role createOrUpdate(RoleDto postData) throws MeveoApiException, BusinessException {
 
         String name = postData.getName();
         if (name == null) {
@@ -277,27 +226,15 @@ public class RoleApi extends BaseApi {
 
         handleMissingParameters();
 
-        // Find provider and check if user has access to manage that provider data
-        Provider provider = null;
-        if (!StringUtils.isBlank(postData.getProvider())) {
-            provider = providerService.findByCode(postData.getProvider());
-            if (provider == null) {
-                throw new EntityDoesNotExistsException(Provider.class, postData.getProvider());
-            }
-        } else {
-            provider = currentUser.getProvider();
+        if (!(currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationManagement")))) {
+            throw new LoginException("User has no permission to manage roles for provider");
         }
 
-        if (!(currentUser.hasPermission("superAdmin", "superAdminManagement") || (currentUser.hasPermission("administration", "administrationManagement") && provider
-            .equals(currentUser.getProvider())))) {
-            throw new LoginException("User has no permission to manage roles for provider " + provider.getCode());
-        }
-
-        Role role = roleService.findByName(name, provider);
+        Role role = roleService.findByName(name);
         if (role == null) {
-            return create(postData, currentUser);
+            return create(postData);
         } else {
-            return update(postData, currentUser);
+            return update(postData);
         }
     }
 }

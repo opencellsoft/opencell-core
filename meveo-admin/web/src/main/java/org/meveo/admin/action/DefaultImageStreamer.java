@@ -12,6 +12,8 @@ import javax.inject.Named;
 
 import org.meveo.admin.util.ModuleUtil;
 import org.meveo.admin.web.servlet.PictureServlet;
+import org.meveo.model.crm.Provider;
+import org.meveo.util.ApplicationProvider;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.slf4j.Logger;
@@ -27,6 +29,10 @@ public class DefaultImageStreamer {
 
 	@Inject
 	private Logger log;
+	
+    @Inject
+    @ApplicationProvider
+    protected Provider appProvider;
 
 	public String getDefaultImage(String groupName) {
 		if (groupName.equals("offerCategory")) {
@@ -52,15 +58,15 @@ public class DefaultImageStreamer {
 			return new DefaultStreamedContent();
 		} else {
 			String fileName = context.getExternalContext().getRequestParameterMap().get("fileName");
-			String providerCode = context.getExternalContext().getRequestParameterMap().get("providerCode");
+//			String providerCode = context.getExternalContext().getRequestParameterMap().get("providerCode");
 			String groupName = context.getExternalContext().getRequestParameterMap().get("pictureGroupName");
 
-			String imagePath = ModuleUtil.getPicturePath(providerCode, groupName) + File.separator + fileName;
+			String imagePath = ModuleUtil.getPicturePath(appProvider.getCode(), groupName) + File.separator + fileName;
 			try {
 				streamedFile = new DefaultStreamedContent(new FileInputStream(imagePath));
 			} catch (FileNotFoundException | NullPointerException e) {
 				log.debug("failed loading image={}", imagePath);
-				imagePath = ModuleUtil.getPicturePath(providerCode, groupName) + File.separator + getDefaultImage(groupName);
+				imagePath = ModuleUtil.getPicturePath(appProvider.getCode(), groupName) + File.separator + getDefaultImage(groupName);
 				try {
 					streamedFile = new DefaultStreamedContent(new FileInputStream(imagePath), "image/png");
 				} catch (FileNotFoundException e1) {

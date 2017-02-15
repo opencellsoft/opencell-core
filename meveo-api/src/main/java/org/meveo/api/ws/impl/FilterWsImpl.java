@@ -29,7 +29,7 @@ public class FilterWsImpl extends BaseWs implements FilterWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            filterApi.createOrUpdate(postData, this.getCurrentUser());
+            filterApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

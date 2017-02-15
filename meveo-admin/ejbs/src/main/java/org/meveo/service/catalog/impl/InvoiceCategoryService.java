@@ -26,7 +26,6 @@ import javax.persistence.NoResultException;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.InvoiceCategory;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.base.MultilanguageEntityService;
 
 /**
@@ -36,14 +35,13 @@ import org.meveo.service.base.MultilanguageEntityService;
 public class InvoiceCategoryService extends MultilanguageEntityService<InvoiceCategory> {
 
 	@Override
-	public InvoiceCategory findByCode(String code, Provider provider) {
+	public InvoiceCategory findByCode(String code) {
 		if (code == null) {
 			return null;
 		}
 
 		QueryBuilder qb = new QueryBuilder(InvoiceCategory.class, "c");
 		qb.addCriterion("code", "=", code, false);
-		qb.addCriterionEntity("c.provider", provider);
 
 		try {
 			return (InvoiceCategory) qb.getQuery(getEntityManager()).getSingleResult();
@@ -67,14 +65,14 @@ public class InvoiceCategoryService extends MultilanguageEntityService<InvoiceCa
 		}
 	}
 
-	public int getNbInvCatNotAssociated(Provider provider) {
+	public int getNbInvCatNotAssociated() {
 		return ((Long) getEntityManager().createNamedQuery("invoiceCategory.getNbrInvoiceCatNotAssociated", Long.class)
-				.setParameter("provider", provider).getSingleResult()).intValue();
+				.getSingleResult()).intValue();
 	}
 
-	public List<InvoiceCategory> getInvoiceCatNotAssociated(Provider provider) {
+	public List<InvoiceCategory> getInvoiceCatNotAssociated() {
 		return (List<InvoiceCategory>) getEntityManager()
 				.createNamedQuery("invoiceCategory.getInvoiceCatNotAssociated", InvoiceCategory.class)
-				.setParameter("provider", provider).getResultList();
+				.getResultList();
 	}
 }

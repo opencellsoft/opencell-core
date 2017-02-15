@@ -31,8 +31,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ExistsRelatedEntityException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.hierarchy.HierarchyLevel;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.service.base.PersistenceService;
@@ -42,20 +40,6 @@ import org.meveo.service.base.PersistenceService;
  */
 @Stateless
 public class UserHierarchyLevelService extends PersistenceService<UserHierarchyLevel> {
-
-    /**
-     * Check entity provider if not super admin user
-     */
-    @Override
-    protected void checkProvider(UserHierarchyLevel entity) {
-        // Super administrator - don't care
-        if (currentUser.hasRole("superAdminManagement")) {
-            return;
-            // Other users - a regular check
-        } else {
-            super.checkProvider(entity);
-        }
-    }
 
     @SuppressWarnings("unchecked")
     public List<UserHierarchyLevel> findRoots() {
@@ -67,26 +51,14 @@ public class UserHierarchyLevelService extends PersistenceService<UserHierarchyL
         return query.getResultList();
     }
 
-    @SuppressWarnings("unchecked")
-    public List<UserHierarchyLevel> findRoots(Provider provider) {
-        Query query = getEntityManager().createQuery("from " + UserHierarchyLevel.class.getSimpleName() + " where parentLevel.id IS NULL and provider=:provider");
-        query.setParameter("provider", provider);
-        if (query.getResultList().size() == 0) {
-            return null;
-        }
-
-        return query.getResultList();
-    }
-
-    public UserHierarchyLevel findByCode(String code, Provider provider) {
+    public UserHierarchyLevel findByCode(String code) {
         UserHierarchyLevel userHierarchyLevel = null;
         if (StringUtils.isBlank(code)) {
             return null;
         }
         try {
-            Query query = getEntityManager().createQuery("from " + UserHierarchyLevel.class.getSimpleName() + " uhl where uhl.code =:code and uhl.provider=:provider");
+            Query query = getEntityManager().createQuery("from " + UserHierarchyLevel.class.getSimpleName() + " uhl where uhl.code =:code ");
             query.setParameter("code", code);
-            query.setParameter("provider", provider);
             userHierarchyLevel = (UserHierarchyLevel) query.getSingleResult();
         } catch (Exception e) {
             return null;
@@ -94,11 +66,10 @@ public class UserHierarchyLevelService extends PersistenceService<UserHierarchyL
         return userHierarchyLevel;
     }
 
-    public UserHierarchyLevel findByCode(String code, Provider provider, List<String> fetchFields) {
-        QueryBuilder qb = new QueryBuilder(UserHierarchyLevel.class, "u", fetchFields, provider);
+    public UserHierarchyLevel findByCode(String code, List<String> fetchFields) {
+        QueryBuilder qb = new QueryBuilder(UserHierarchyLevel.class, "u", fetchFields);
 
         qb.addCriterion("u.code", "=", code, true);
-        qb.addCriterionEntity("u.provider", provider);
 
         try {
             return (UserHierarchyLevel) qb.getQuery(getEntityManager()).getSingleResult();
@@ -135,12 +106,12 @@ public class UserHierarchyLevelService extends PersistenceService<UserHierarchyL
     }
 
     @Override
-    public void remove(UserHierarchyLevel entity, User currentUser) throws BusinessException {
+    public void remove(UserHierarchyLevel entity) throws BusinessException {
 
         if (!canDeleteUserHierarchyLevel(entity.getId())) {
             throw new ExistsRelatedEntityException();
         }
 
-        super.remove(entity, currentUser);
+        super.remove(entity);
     }
 }

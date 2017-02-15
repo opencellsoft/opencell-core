@@ -96,7 +96,7 @@ public class RecordedInvoiceBean extends CustomFieldBean<RecordedInvoice> {
 
 	public String addLitigation() {
 		try {
-			recordedInvoiceService.addLitigation(entity, getCurrentUser());
+			recordedInvoiceService.addLitigation(entity);
 			messages.info(new BundleKey("messages",
 					"customerAccount.addLitigationSuccessful"));
 		} catch (Exception e) {
@@ -109,7 +109,7 @@ public class RecordedInvoiceBean extends CustomFieldBean<RecordedInvoice> {
 	public String cancelLitigation() {
 
 		try {
-			recordedInvoiceService.cancelLitigation(entity, getCurrentUser());
+			recordedInvoiceService.cancelLitigation(entity);
 			messages.info(new BundleKey("messages",
 					"customerAccount.cancelLitigationSuccessful"));
 		} catch (Exception e) {

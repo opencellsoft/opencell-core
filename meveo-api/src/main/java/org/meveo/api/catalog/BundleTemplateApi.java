@@ -16,12 +16,10 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidImageData;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
 import org.meveo.model.catalog.BundleProductTemplate;
 import org.meveo.model.catalog.BundleTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.catalog.impl.BundleTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 
@@ -34,14 +32,14 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
 	@Inject
 	private ProductTemplateService productTemplateService;
 
-	public BundleTemplateDto find(String code, User currentUser) throws MeveoApiException {
+	public BundleTemplateDto find(String code) throws MeveoApiException {
 
 		if (StringUtils.isBlank(code)) {
 			missingParameters.add("bundleTemplate code");
 			handleMissingParameters();
 		}
 
-		BundleTemplate bundleTemplate = bundleTemplateService.findByCode(code, currentUser.getProvider());
+		BundleTemplate bundleTemplate = bundleTemplateService.findByCode(code);
 		if (bundleTemplate == null) {
 			throw new EntityDoesNotExistsException(BundleTemplate.class, code);
 		}
@@ -74,17 +72,17 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
 		return bundleTemplateDto;
 	}
 
-	public BundleTemplate createOrUpdate(BundleTemplateDto bundleTemplateDto, User currentUser) throws MeveoApiException, BusinessException {
-		BundleTemplate bundleTemplate = bundleTemplateService.findByCode(bundleTemplateDto.getCode(), currentUser.getProvider());
+	public BundleTemplate createOrUpdate(BundleTemplateDto bundleTemplateDto) throws MeveoApiException, BusinessException {
+		BundleTemplate bundleTemplate = bundleTemplateService.findByCode(bundleTemplateDto.getCode());
 
 		if (bundleTemplate == null) {
-			return create(bundleTemplateDto, currentUser);
+			return create(bundleTemplateDto);
 		} else {
-		    return update(bundleTemplateDto, currentUser);
+		    return update(bundleTemplateDto);
 		}
 	}
 
-	public BundleTemplate create(BundleTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
+	public BundleTemplate create(BundleTemplateDto postData) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
@@ -97,9 +95,9 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
 
 		handleMissingParameters();
 
-		Provider provider = currentUser.getProvider();
+		
 
-		if (bundleTemplateService.findByCode(postData.getCode(), provider) != null) {
+		if (bundleTemplateService.findByCode(postData.getCode()) != null) {
 			throw new EntityAlreadyExistsException(ProductTemplate.class, postData.getCode());
 		}
 
@@ -111,7 +109,7 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
 		bundleTemplate.setValidTo(postData.getValidTo());
 		bundleTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
 		try {
-			saveImage(bundleTemplate, postData.getImagePath(), postData.getImageBase64(), currentUser.getProvider().getCode());
+			saveImage(bundleTemplate, postData.getImagePath(), postData.getImageBase64());
 		} catch (IOException e1) {
 			log.error("Invalid image data={}", e1.getMessage());
 			throw new InvalidImageData();
@@ -119,23 +117,23 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
 
 		// save product template now so that they can be referenced by the
 		// related entities below.
-		bundleTemplateService.create(bundleTemplate, currentUser);
+		bundleTemplateService.create(bundleTemplate);
 
-		processProductChargeTemplate(postData, bundleTemplate, provider);
+		processProductChargeTemplate(postData, bundleTemplate);
 		
-		processDigitalResources(postData, bundleTemplate, currentUser);
+		processDigitalResources(postData, bundleTemplate);
 
-		processOfferTemplateCategories(postData, bundleTemplate, provider);
+		processOfferTemplateCategories(postData, bundleTemplate);
 
-		processBundleProductTemplates(postData, bundleTemplate, currentUser);
+		processBundleProductTemplates(postData, bundleTemplate);
 
-		bundleTemplateService.update(bundleTemplate, currentUser);
+		bundleTemplateService.update(bundleTemplate);
 		
 		return bundleTemplate;
 
 	}
 
-	public BundleTemplate update(BundleTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
+	public BundleTemplate update(BundleTemplateDto postData) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
@@ -148,9 +146,9 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
 
 		handleMissingParameters();
 
-		Provider provider = currentUser.getProvider();
+		
 
-		BundleTemplate bundleTemplate = bundleTemplateService.findByCode(postData.getCode(), provider);
+		BundleTemplate bundleTemplate = bundleTemplateService.findByCode(postData.getCode());
 
 		if (bundleTemplate == null) {
 			throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getCode());
@@ -162,43 +160,43 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
 		bundleTemplate.setValidTo(postData.getValidTo());
 		bundleTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
 		try {
-			saveImage(bundleTemplate, postData.getImagePath(), postData.getImageBase64(), currentUser.getProvider().getCode());
+			saveImage(bundleTemplate, postData.getImagePath(), postData.getImageBase64());
 		} catch (IOException e1) {
 			log.error("Invalid image data={}", e1.getMessage());
 			throw new InvalidImageData();
 		}
 
-		processProductChargeTemplate(postData, bundleTemplate, provider);
+		processProductChargeTemplate(postData, bundleTemplate);
 
-		processOfferTemplateCategories(postData, bundleTemplate, provider);
+		processOfferTemplateCategories(postData, bundleTemplate);
 
-		processDigitalResources(postData, bundleTemplate, currentUser);
+		processDigitalResources(postData, bundleTemplate);
 
-		processBundleProductTemplates(postData, bundleTemplate, currentUser);
+		processBundleProductTemplates(postData, bundleTemplate);
 
-		bundleTemplate = bundleTemplateService.update(bundleTemplate, currentUser);
+		bundleTemplate = bundleTemplateService.update(bundleTemplate);
 
 		return bundleTemplate;
 	}
 
-	public void remove(String code, User currentUser) throws MeveoApiException, BusinessException {
+	public void remove(String code) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(code)) {
 			missingParameters.add("bundleTemplate code");
 			handleMissingParameters();
 		}
 
-		BundleTemplate bundleTemplate = bundleTemplateService.findByCode(code, currentUser.getProvider());
+		BundleTemplate bundleTemplate = bundleTemplateService.findByCode(code);
 		if (bundleTemplate == null) {
 			throw new EntityDoesNotExistsException(BundleTemplate.class, code);
 		}
 		
-		deleteImage(bundleTemplate, currentUser.getProvider().getCode());
+		deleteImage(bundleTemplate);
 
-		bundleTemplateService.remove(bundleTemplate, currentUser);
+		bundleTemplateService.remove(bundleTemplate);
 	}
 
-	private void processBundleProductTemplates(BundleTemplateDto postData, BundleTemplate bundleTemplate, User user) throws MeveoApiException, BusinessException {
+	private void processBundleProductTemplates(BundleTemplateDto postData, BundleTemplate bundleTemplate) throws MeveoApiException, BusinessException {
 		List<BundleProductTemplateDto> bundleProductTemplates = postData.getBundleProductTemplates();
 		boolean hasBundleProductTemplateDtos = bundleProductTemplates != null && !bundleProductTemplates.isEmpty();
 		List<BundleProductTemplate> existingProductTemplates = bundleTemplate.getBundleProducts();
@@ -207,7 +205,7 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
 			List<BundleProductTemplate> newBundleProductTemplates = new ArrayList<>();
 			BundleProductTemplate bundleProductTemplate = null;
 			for (BundleProductTemplateDto bundleProductTemplateDto : bundleProductTemplates) {
-				bundleProductTemplate = getBundleProductTemplatesFromDto(bundleProductTemplateDto, user.getProvider());
+				bundleProductTemplate = getBundleProductTemplatesFromDto(bundleProductTemplateDto);
 				bundleProductTemplate.setBundleTemplate(bundleTemplate);
 				newBundleProductTemplates.add(bundleProductTemplate);
 			}
@@ -234,13 +232,13 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
 
 	}
 
-	private BundleProductTemplate getBundleProductTemplatesFromDto(BundleProductTemplateDto bundleProductTemplateDto, Provider provider)
+	private BundleProductTemplate getBundleProductTemplatesFromDto(BundleProductTemplateDto bundleProductTemplateDto)
 			throws MeveoApiException, BusinessException {
 
 		ProductTemplateDto productTemplateDto = bundleProductTemplateDto.getProductTemplate();
 		ProductTemplate productTemplate = null;
 		if (productTemplateDto != null) {
-			productTemplate = productTemplateService.findByCode(productTemplateDto.getCode(), provider);
+			productTemplate = productTemplateService.findByCode(productTemplateDto.getCode());
 			if (productTemplate == null) {
 				throw new MeveoApiException(String.format("ProductTemplate %s does not exist.", productTemplateDto.getCode()));
 			}

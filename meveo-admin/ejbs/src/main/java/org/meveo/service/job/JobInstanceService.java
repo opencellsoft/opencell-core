@@ -28,12 +28,12 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.ejb.EJB;
+import javax.ejb.ScheduleExpression;
 import javax.ejb.Stateless;
 import javax.ejb.Timer;
 import javax.ejb.TimerService;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.persistence.NoResultException;
@@ -45,12 +45,10 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.job.JobInstanceInfoDto;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.admin.User;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.service.admin.impl.UserService;
+import org.meveo.model.jobs.TimerEntity;
 import org.meveo.service.base.PersistenceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,9 +62,6 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
     @Resource
     private TimerService timerService;
 
-    @Inject
-    private UserService userService;
-
     @EJB
     private JobExecutionService jobExecutionService;
 
@@ -75,8 +70,6 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
     /* static boolean timersCleaned = false; */
 
     static ParamBean paramBean = ParamBean.getInstance();
-
-    static Long defaultProviderId = Long.parseLong(paramBean.getProperty("jobs.autoStart.providerId", "1"));
 
     static boolean allTimerCleanded = false;
 
@@ -121,7 +114,7 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
             int started = 0;
             for (JobInstance jobInstance : jobInstances) {
                 if (jobInstance.isActive() && jobInstance.getTimerEntity() != null) {
-                    jobTimers.put(jobInstance.getId(), job.createTimer(jobInstance.getTimerEntity().getScheduleExpression(), jobInstance));
+                    jobTimers.put(jobInstance.getId(), job.createTimer(getScheduleExpression(jobInstance.getTimerEntity()), jobInstance));
                     started++;
                 }
             }
@@ -160,23 +153,23 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
     }
 
     @Override
-    public void create(JobInstance jobInstance, User currentUser) throws BusinessException {
+    public void create(JobInstance jobInstance) throws BusinessException {
 
-        super.create(jobInstance, currentUser);
+        super.create(jobInstance);
         scheduleUnscheduleJob(jobInstance);
     }
 
     @Override
-    public JobInstance update(JobInstance jobInstance, User currentUser) throws BusinessException {
+    public JobInstance update(JobInstance jobInstance) throws BusinessException {
 
-        super.update(jobInstance, currentUser);
+        super.update(jobInstance);
         scheduleUnscheduleJob(jobInstance);
 
         return jobInstance;
     }
 
     @Override
-    public void remove(JobInstance entity, User currentUser) throws BusinessException {
+    public void remove(JobInstance entity) throws BusinessException {
         log.info("remove jobInstance {}, id={}", entity.getJobTemplate(), entity.getId());
         if (entity.getId() == null) {
             log.info("removing jobInstance entity with null id, something is wrong");
@@ -191,12 +184,12 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
         } else {
             log.info("jobInstance timer not found, cannot remove it");
         }
-        super.remove(entity, currentUser);
+        super.remove(entity);
     }
 
     @Override
-    public JobInstance enable(JobInstance jobInstance, User currentUser) throws BusinessException {
-        jobInstance = super.enable(jobInstance, currentUser);
+    public JobInstance enable(JobInstance jobInstance) throws BusinessException {
+        jobInstance = super.enable(jobInstance);
 
         log.info("Enabling jobInstance {}, id={}", jobInstance.getJobTemplate(), jobInstance.getId());
         scheduleUnscheduleJob(jobInstance);
@@ -205,8 +198,8 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
     }
 
     @Override
-    public JobInstance disable(JobInstance jobInstance, User currentUser) throws BusinessException {
-        jobInstance = super.disable(jobInstance, currentUser);
+    public JobInstance disable(JobInstance jobInstance) throws BusinessException {
+        jobInstance = super.disable(jobInstance);
 
         log.info("Disabling jobInstance {}, id={}", jobInstance.getJobTemplate(), jobInstance.getId());
         scheduleUnscheduleJob(jobInstance);
@@ -242,7 +235,7 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
                 InitialContext ic = new InitialContext();
                 Job job = (Job) ic.lookup(jobs.get(jobInstance.getJobTemplate()));
                 log.info("Scheduling job {} : timer {}", job, jobInstance.getId());
-                jobTimers.put(jobInstance.getId(), job.createTimer(jobInstance.getTimerEntity().getScheduleExpression(), jobInstance));
+                jobTimers.put(jobInstance.getId(), job.createTimer(getScheduleExpression(jobInstance.getTimerEntity()), jobInstance));
             } else {
                 log.debug("Job {} is inactive or has no timer and will not be scheduled", jobInstance.getCode());
             }
@@ -262,9 +255,7 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
                 if (entity.isActive() && jobs.containsKey(entity.getJobTemplate())) {
 
                     Job job = (Job) ic.lookup(jobs.get(entity.getJobTemplate()));
-
-                    User currentUser = userService.attach(entity.getAuditable().getUpdater() != null ? entity.getAuditable().getUpdater() : entity.getAuditable().getCreator());
-                    job.execute(entity, currentUser);
+                    job.execute(entity);
                 }
             }
         } catch (NamingException e) {
@@ -272,9 +263,9 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
         }
     }
 
-    public void triggerExecution(String jobInstanceCode, Map<String, String> params, User user) throws BusinessException {
+    public void triggerExecution(String jobInstanceCode, Map<String, String> params) throws BusinessException {
         log.info("triggerExecution jobInstance={} via trigger", jobInstanceCode);
-        execute(jobInstanceCode, user, params);
+        execute(jobInstanceCode, params);
 
     }
 
@@ -287,16 +278,12 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
             }
 
             InitialContext ic = new InitialContext();
-            User currentUser = userService.attach(entity.getAuditable().getUpdater() != null ? entity.getAuditable().getUpdater() : entity.getAuditable().getCreator());
-            if (!currentUser.doesProviderMatch(getCurrentProvider())) {
-                throw new BusinessException("Not authorized to execute this job");
-            }
-
+           
             if (jobEntries.containsKey(entity.getJobCategoryEnum())) {
                 HashMap<String, String> jobs = jobEntries.get(entity.getJobCategoryEnum());
                 if (jobs.containsKey(entity.getJobTemplate())) {
                     Job job = (Job) ic.lookup(jobs.get(entity.getJobTemplate()));
-                    job.execute(entity, getCurrentUser());
+                    job.execute(entity);
                 }
             } else {
                 throw new BusinessException("Cannot find job category " + entity.getJobCategoryEnum());
@@ -310,20 +297,20 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
         }
     }
 
-    public Long executeAPITimer(JobInstanceInfoDto jobInstanceInfoDTO, User currentUser) throws BusinessException {
+    public Long executeAPITimer(JobInstanceInfoDto jobInstanceInfoDTO) throws BusinessException {
         log.info("executeAPITimer jobInstance={} via api", jobInstanceInfoDTO.toString());
         String jobInstanceCode = jobInstanceInfoDTO.getCode();
 
         if (StringUtils.isBlank(jobInstanceCode)) {
             jobInstanceCode = jobInstanceInfoDTO.getTimerName();
         }
-        return execute(jobInstanceCode, currentUser, null);
+        return execute(jobInstanceCode, null);
     }
 
-    public Long execute(String jobInstanceCode, User currentUser, Map<String, String> params) throws BusinessException {
+    public Long execute(String jobInstanceCode, Map<String, String> params) throws BusinessException {
         log.info("execute timer={} ", jobInstanceCode);
         JobInstance entity = null;
-        entity = findByCode(jobInstanceCode, currentUser.getProvider());
+        entity = findByCode(jobInstanceCode);
         if (entity == null) {
             throw new JobDoesNotExistsException(jobInstanceCode);
         }
@@ -337,8 +324,8 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
                 HashMap<String, String> jobs = jobEntries.get(entity.getJobCategoryEnum());
                 if (jobs.containsKey(entity.getJobTemplate())) {
                     Job job = (Job) ic.lookup(jobs.get(entity.getJobTemplate()));
-                    jobExecutionService.create(result, currentUser);
-                    job.execute(entity, result, currentUser);
+                    jobExecutionService.create(result);
+                    job.execute(entity, result);
                 }
             } else {
                 throw new BusinessException("cannot find job category " + entity.getJobCategoryEnum());
@@ -366,7 +353,6 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
         QueryBuilder qb = new QueryBuilder(sql);// FIXME: .cacheable(); there is
         // no cacheable in MEVEO
         // QueryBuilder
-        qb.addCriterionEntity("provider", getCurrentProvider());
         qb.addPaginationConfiguration(configuration);
         return qb;
     }
@@ -390,15 +376,28 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
         return runningJobs.contains(timerEntityId);
     }
 
-    public JobInstance findByCode(String code, Provider provider) {
+    public JobInstance findByCode(String code) {
         // QueryBuilder qb = new QueryBuilder(JobInstance.class, "t");
-        QueryBuilder qb = new QueryBuilder(JobInstance.class, "t", Arrays.asList("timerEntity"), provider);
+        QueryBuilder qb = new QueryBuilder(JobInstance.class, "t", Arrays.asList("timerEntity"));
         qb.addCriterion("t.code", "=", code, true);
-        // qb.addCriterionEntity("t.provider", provider);
         try {
             return (JobInstance) qb.getQuery(getEntityManager()).getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
+    }
+    
+    private ScheduleExpression getScheduleExpression(TimerEntity timerEntity) {
+        ScheduleExpression expression = new ScheduleExpression();
+        expression.dayOfMonth(timerEntity.getDayOfMonth());
+        expression.dayOfWeek(timerEntity.getDayOfWeek());
+        expression.end(timerEntity.getEnd());
+        expression.hour(timerEntity.getHour());
+        expression.minute(timerEntity.getMinute());
+        expression.month(timerEntity.getMonth());
+        expression.second(timerEntity.getSecond());
+        expression.start(timerEntity.getStart());
+        expression.year(timerEntity.getYear());
+        return expression;
     }
 }

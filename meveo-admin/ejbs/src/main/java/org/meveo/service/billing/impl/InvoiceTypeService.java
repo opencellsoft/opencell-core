@@ -23,9 +23,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.service.base.BusinessService;
@@ -61,7 +59,7 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
 		}
 		String occTemplateCode = null;
 		try {
-			occTemplateCode = (String) customFieldInstanceService.getOrCreateCFValueFromParamValue(occCode, occCodeDefaultValue, true);
+			occTemplateCode = (String) customFieldInstanceService.getOrCreateCFValueFromParamValue(occCode, occCodeDefaultValue, appProvider, true);
 			log.debug("occTemplateCode:" + occTemplateCode);
 			occTemplate = oCCTemplateService.findByCode(occTemplateCode);
 		} catch (Exception e) {
@@ -84,10 +82,10 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
 		return defaultInvoiceType;
 	}
 	
-	public Long getMaxCurrentInvoiceNumber(Provider provider, String invoiceTypeCode) throws BusinessException {
+	public Long getMaxCurrentInvoiceNumber( String invoiceTypeCode) throws BusinessException {
 		Long max = getEntityManager()
 				.createNamedQuery("InvoiceType.currentInvoiceNb", Long.class)
-				.setParameter("provider", provider)
+				
 				.setParameter("invoiceTypeCode", invoiceTypeCode)
 				.getSingleResult();
 		
@@ -95,15 +93,15 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
 		
 	}
 
-	public InvoiceType getDefaultAdjustement(User currentUser) throws BusinessException {
+	public InvoiceType getDefaultAdjustement() throws BusinessException {
 		return getDefaultType(getAdjustementCode());
 	}
 
-	public InvoiceType getDefaultCommertial(User currentUser) throws BusinessException {
+	public InvoiceType getDefaultCommertial() throws BusinessException {
 		return getDefaultType(getCommercialCode());
 	}
 
-    public InvoiceType getDefaultQuote(User currentUser) throws BusinessException {
+    public InvoiceType getDefaultQuote() throws BusinessException {
         return getDefaultType(getQuoteCode());
     }
 

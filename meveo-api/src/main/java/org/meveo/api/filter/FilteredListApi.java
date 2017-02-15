@@ -14,7 +14,6 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
 import org.meveo.model.filter.Filter;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.index.ElasticClient;
@@ -29,23 +28,23 @@ public class FilteredListApi extends BaseApi {
     @Inject
     private ElasticClient elasticClient;
     
-    public Filter getFilterFromDto(FilterDto filter, User currentUser) throws MeveoApiException {
-    	return getFilterFromDto(filter, currentUser, null);
+    public Filter getFilterFromDto(FilterDto filter) throws MeveoApiException {
+    	return getFilterFromDto(filter, null);
     }
 
-    public Filter getFilterFromDto(FilterDto filter, User currentUser, Map<String, String> parameters) throws MeveoApiException {
+    public Filter getFilterFromDto(FilterDto filter, Map<String, String> parameters) throws MeveoApiException {
         Filter result = null;
         if (StringUtils.isBlank(filter.getCode()) && StringUtils.isBlank(filter.getInputXml())) {
             throw new MissingParameterException("code or inputXml");
         }
         if (!StringUtils.isBlank(filter.getCode())) {
-            result = filterService.findByCode(filter.getCode(), currentUser.getProvider());
+            result = filterService.findByCode(filter.getCode());
             if (result == null && StringUtils.isBlank(filter.getInputXml())) {
                 throw new EntityDoesNotExistsException(Filter.class, filter.getCode());
             }
             // check if user own the filter
             if (result != null && (result.getShared() == null || !result.getShared())) {
-                if (result.getAuditable().getCreator().getId() != currentUser.getId()) {
+                if (result.getAuditable().getCreator() != currentUser.getSubject()) {
                     throw new MeveoApiException("INVALID_FILTER_OWNER");
                 }
             }
@@ -73,19 +72,19 @@ public class FilteredListApi extends BaseApi {
 		return result;
 	}
 	
-	public String listByFilter(FilterDto filter, Integer firstRow, Integer numberOfRows, User currentUser) throws MeveoApiException, BusinessException {
-		return listByFilter(filter, firstRow, numberOfRows, currentUser, null);
+	public String listByFilter(FilterDto filter, Integer firstRow, Integer numberOfRows) throws MeveoApiException, BusinessException {
+		return listByFilter(filter, firstRow, numberOfRows, null);
 	}
 
-    public String listByFilter(FilterDto filter, Integer firstRow, Integer numberOfRows, User currentUser, Map<String, String> parameters) throws MeveoApiException, BusinessException {
+    public String listByFilter(FilterDto filter, Integer firstRow, Integer numberOfRows, Map<String, String> parameters) throws MeveoApiException, BusinessException {
 
         String result = "";
-        Filter filterEntity = getFilterFromDto(filter, currentUser, parameters);
-        result = filterService.filteredList(filterEntity, firstRow, numberOfRows, currentUser);
+        Filter filterEntity = getFilterFromDto(filter, parameters);
+        result = filterService.filteredList(filterEntity, firstRow, numberOfRows);
         return result;
     }
 
-    public String search(String[] classnamesOrCetCodes, String query, Integer from, Integer size, User currentUser) throws MissingParameterException, BusinessException {
+    public String search(String[] classnamesOrCetCodes, String query, Integer from, Integer size) throws MissingParameterException, BusinessException {
 
         if (classnamesOrCetCodes == null || classnamesOrCetCodes.length == 0) {
             missingParameters.add("classnamesOrCetCodes");
@@ -93,12 +92,12 @@ public class FilteredListApi extends BaseApi {
 
         handleMissingParameters();
 
-        List<ElasticSearchClassInfo> classInfo = elasticClient.getSearchScopeInfo(classnamesOrCetCodes, false, currentUser);
+        List<ElasticSearchClassInfo> classInfo = elasticClient.getSearchScopeInfo(classnamesOrCetCodes, false);
 
-        return elasticClient.search(query, from, size, null, null, null, currentUser, classInfo);
+        return elasticClient.search(query, from, size, null, null, null, classInfo);
     }
 
-    public String search(String[] classnamesOrCetCodes, Map<String, String> queryValues, Integer from, Integer size, User currentUser) throws MissingParameterException,
+    public String search(String[] classnamesOrCetCodes, Map<String, String> queryValues, Integer from, Integer size) throws MissingParameterException,
             BusinessException {
 
         if (classnamesOrCetCodes == null || classnamesOrCetCodes.length == 0) {
@@ -107,30 +106,30 @@ public class FilteredListApi extends BaseApi {
 
         handleMissingParameters();
 
-        List<ElasticSearchClassInfo> classInfo = elasticClient.getSearchScopeInfo(classnamesOrCetCodes, false, currentUser);
+        List<ElasticSearchClassInfo> classInfo = elasticClient.getSearchScopeInfo(classnamesOrCetCodes, false);
 
-        return elasticClient.search(queryValues, from, size, null, null, null, currentUser, classInfo);
+        return elasticClient.search(queryValues, from, size, null, null, null, classInfo);
     }
 
     @Deprecated
     // in 4.4
-    public String list(String filterCode, Integer firstRow, Integer numberOfRows, User currentUser) throws MeveoApiException {
+    public String list(String filterCode, Integer firstRow, Integer numberOfRows) throws MeveoApiException {
         String result = "";
 
-        Filter filter = filterService.findByCode(filterCode, currentUser.getProvider());
+        Filter filter = filterService.findByCode(filterCode);
         if (filter == null) {
             throw new EntityDoesNotExistsException(Filter.class, filterCode);
         }
 
         // check if user owned the filter
         if (filter.getShared() == null || !filter.getShared()) {
-            if (filter.getAuditable().getCreator().getId() != currentUser.getId()) {
+            if (filter.getAuditable().getCreator() != currentUser.getSubject()) {
                 throw new MeveoApiException("INVALID_FILTER_OWNER");
             }
         }
 
         try {
-            result = filterService.filteredList(filter, firstRow, numberOfRows, currentUser);
+            result = filterService.filteredList(filter, firstRow, numberOfRows);
         } catch (BusinessException e) {
             throw new MeveoApiException(e.getMessage());
         }
@@ -140,7 +139,7 @@ public class FilteredListApi extends BaseApi {
 
     @Deprecated
     // in 4.4
-    public String listByXmlInput(FilteredListDto postData, User currentUser) throws MeveoApiException {
+    public String listByXmlInput(FilteredListDto postData) throws MeveoApiException {
         String result = "";
 
         try {
@@ -149,13 +148,13 @@ public class FilteredListApi extends BaseApi {
             // check if user owned the filter
             if (filter.getShared() == null || !filter.getShared()) {
                 if (filter.getAuditable() != null) {
-                    if (filter.getAuditable().getCreator().getId() != currentUser.getId()) {
+                    if (filter.getAuditable().getCreator() != currentUser.getSubject()) {
                         throw new MeveoApiException("INVALID_FILTER_OWNER");
                     }
                 }
             }
 
-            result = filterService.filteredList(filter, postData.getFirstRow(), postData.getNumberOfRows(), currentUser);
+            result = filterService.filteredList(filter, postData.getFirstRow(), postData.getNumberOfRows());
         } catch (BusinessException e) {
             throw new MeveoApiException(e.getMessage());
         }

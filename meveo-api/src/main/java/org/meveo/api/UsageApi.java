@@ -17,7 +17,6 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.UserAccount;
@@ -51,7 +50,7 @@ public class UsageApi extends BaseApi {
 	 * @throws MissingParameterException
 	 * @throws EntityDoesNotExistsException
 	 */
-	public UsageChargeAggregateResponseDto chargeAggregate(UsageRequestDto usageRequestDto, User user) throws MissingParameterException, EntityDoesNotExistsException {
+	public UsageChargeAggregateResponseDto chargeAggregate(UsageRequestDto usageRequestDto) throws MissingParameterException, EntityDoesNotExistsException {
 
 		if (StringUtils.isBlank(usageRequestDto.getUserAccountCode())) {
 			missingParameters.add("UserAccountCode");
@@ -59,7 +58,7 @@ public class UsageApi extends BaseApi {
 
 		handleMissingParameters();
 
-		UserAccount userAccount = userAccountService.findByCode(usageRequestDto.getUserAccountCode(), user.getProvider());
+		UserAccount userAccount = userAccountService.findByCode(usageRequestDto.getUserAccountCode());
 
 		if (userAccount == null) {
 			throw new EntityDoesNotExistsException(UserAccount.class, usageRequestDto.getUserAccountCode());
@@ -107,7 +106,7 @@ public class UsageApi extends BaseApi {
 	 * @throws MissingParameterException
 	 * @throws EntityDoesNotExistsException
 	 */
-	public UsageResponseDto find(UsageRequestDto usageRequestDto, User user) throws MissingParameterException, EntityDoesNotExistsException {
+	public UsageResponseDto find(UsageRequestDto usageRequestDto) throws MissingParameterException, EntityDoesNotExistsException {
 
 		if (StringUtils.isBlank(usageRequestDto.getUserAccountCode())) {
 			missingParameters.add("UserAccountCode");
@@ -115,12 +114,12 @@ public class UsageApi extends BaseApi {
 		UsageResponseDto result = new UsageResponseDto();
 		handleMissingParameters();
 
-		UserAccount userAccount = userAccountService.findByCode(usageRequestDto.getUserAccountCode(), user.getProvider());
+		UserAccount userAccount = userAccountService.findByCode(usageRequestDto.getUserAccountCode());
 
 		if (userAccount == null) {
 			throw new EntityDoesNotExistsException(UserAccount.class, usageRequestDto.getUserAccountCode());
 		}
-		List<InvoiceCategory> invoiceCats = invoiceCategoryService.list(user.getProvider());
+		List<InvoiceCategory> invoiceCats = invoiceCategoryService.list();
 		ChargeTemplate chargeTemplate;
 		for (InvoiceCategory invoiceCategory : invoiceCats) {
 			List<InvoiceSubCategory> invoiceSubCats = invoiceCategory.getInvoiceSubCategories();

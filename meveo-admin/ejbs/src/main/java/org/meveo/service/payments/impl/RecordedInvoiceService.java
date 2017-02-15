@@ -30,10 +30,8 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.admin.exception.InvoiceExistException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingStatusEnum;
@@ -53,91 +51,74 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 	@Inject
 	private InvoiceService invoiceService;
 	
-
-	public void addLitigation(Long recordedInvoiceId, User user)
+	public void addLitigation(Long recordedInvoiceId)
 			throws BusinessException {
 		if (recordedInvoiceId == null) {
 			throw new BusinessException("recordedInvoiceId is null");
 		}
-		addLitigation(findById(recordedInvoiceId), user);
+		addLitigation(findById(recordedInvoiceId));
 	}
 
-	public void addLitigation(RecordedInvoice recordedInvoice, User user)
+	public void addLitigation(RecordedInvoice recordedInvoice)
 			throws BusinessException {
-		if (user == null) {
-			throw new BusinessException("user is null");
-		}
+
 		if (recordedInvoice == null) {
 			throw new BusinessException("recordedInvoice is null");
 		}
 		log.info("addLitigation recordedInvoice.Reference:"
 				+ recordedInvoice.getReference() + "status:"
-				+ recordedInvoice.getMatchingStatus() + " , user:"
-				+ user.getName());
+				+ recordedInvoice.getMatchingStatus());
 		if (recordedInvoice.getMatchingStatus() != MatchingStatusEnum.O) {
 			throw new BusinessException("recordedInvoice is not open");
 		}
 		recordedInvoice.setMatchingStatus(MatchingStatusEnum.I);
-		update(recordedInvoice, user);
+		update(recordedInvoice);
 		log.info("addLitigation recordedInvoice.Reference:"
-				+ recordedInvoice.getReference() + " , user:" + user.getName()
+				+ recordedInvoice.getReference() 
 				+ " ok");
 	}
 
-	public void cancelLitigation(Long recordedInvoiceId, User user)
+	public void cancelLitigation(Long recordedInvoiceId)
 			throws BusinessException {
 		if (recordedInvoiceId == null) {
 			throw new BusinessException("recordedInvoiceId is null");
 		}
-		cancelLitigation(findById(recordedInvoiceId), user);
+		cancelLitigation(findById(recordedInvoiceId));
 	}
 
-	public void cancelLitigation(RecordedInvoice recordedInvoice, User user)
+	public void cancelLitigation(RecordedInvoice recordedInvoice)
 			throws BusinessException {
-		if (user == null) {
-			throw new BusinessException("user is null");
-		}
+
 		if (recordedInvoice == null) {
 			throw new BusinessException("recordedInvoice is null");
 		}
 		log.info("cancelLitigation recordedInvoice.Reference:"
-				+ recordedInvoice.getReference() + " , user:" + user.getName());
+				+ recordedInvoice.getReference());
 		if (recordedInvoice.getMatchingStatus() != MatchingStatusEnum.I) {
 			throw new BusinessException("recordedInvoice is not on Litigation");
 		}
 		recordedInvoice.setMatchingStatus(MatchingStatusEnum.O);
-		update(recordedInvoice, user);
+		update(recordedInvoice);
 		log.info("cancelLitigation recordedInvoice.Reference:"
-				+ recordedInvoice.getReference() + " , user:" + user.getName()
+				+ recordedInvoice.getReference()
 				+ " ok");
 	}
 
-	public boolean isRecordedInvoiceExist(String reference, Provider provider) {
-		RecordedInvoice recordedInvoice = null;
-		try {
-			recordedInvoice = (RecordedInvoice) getEntityManager()
-					.createQuery(
-							"from "
-									+ RecordedInvoice.class.getSimpleName()
-									+ " where reference =:reference and provider=:provider")
-					.setParameter("reference", reference)
-					.setParameter("provider", provider).getSingleResult();
-		} catch (Exception e) {
-		}
+	public boolean isRecordedInvoiceExist(String reference) {
+		RecordedInvoice recordedInvoice = getRecordedInvoice(reference);
 		return recordedInvoice != null;
 	}
 
-	public RecordedInvoice getRecordedInvoice(String reference,
-			Provider provider) {
+	public RecordedInvoice getRecordedInvoice(String reference) {
 		RecordedInvoice recordedInvoice = null;
 		try {
 			recordedInvoice = (RecordedInvoice) getEntityManager()
 					.createQuery(
 							"from "
 									+ RecordedInvoice.class.getSimpleName()
-									+ " where reference =:reference and provider=:provider")
+									+ " where reference =:reference ")
 					.setParameter("reference", reference)
-					.setParameter("provider", provider).getSingleResult();
+					.getSingleResult();
 		} catch (Exception e) {
 		}
 		return recordedInvoice;
@@ -165,35 +146,33 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<RecordedInvoice> getInvoices(Date fromDueDate, Date toDueDate,
-			String providerCode) throws Exception {
+	public List<RecordedInvoice> getInvoices(Date fromDueDate, Date toDueDate) throws Exception {
 		return getEntityManager()
 				.createQuery(
 						"from "
 								+ RecordedInvoice.class.getSimpleName()
 								+ " where matchingStatus=:matchingStatus and dueDate >=:fromDueDate and"
-								+ " dueDate<=:toDueDate and paymentMethod=:paymentMethod  and provider.code=:providerCode ")
+								+ " dueDate<=:toDueDate and paymentMethod=:paymentMethod ")
 				.setParameter("fromDueDate", fromDueDate)
 				.setParameter("toDueDate", toDueDate)
 				.setParameter("matchingStatus", MatchingStatusEnum.O)
 				.setParameter("paymentMethod", PaymentMethodEnum.DIRECTDEBIT)
-				.setParameter("providerCode", providerCode).getResultList();
+				.getResultList();
 	}
 	
-	public void generateRecordedInvoice(Invoice invoice,User currentUser) throws InvoiceExistException, ImportInvoiceException, BusinessException{
+	public void generateRecordedInvoice(Invoice invoice) throws InvoiceExistException, ImportInvoiceException, BusinessException{
 	
 		CustomerAccount customerAccount = null;
 		RecordedInvoice recordedInvoice = new RecordedInvoice();
 		BillingAccount billingAccount = invoice.getBillingAccount();
 
-		if (isRecordedInvoiceExist(invoice.getInvoiceNumber(), invoice.getProvider())) {
+		if (isRecordedInvoiceExist(invoice.getInvoiceNumber())) {
 			throw new InvoiceExistException("Invoice id" + invoice.getId() + " already exist");
 		}
 
 		try {
 			customerAccount = invoice.getBillingAccount().getCustomerAccount();
 			recordedInvoice.setCustomerAccount(customerAccount);
-			recordedInvoice.setProvider(customerAccount.getProvider());
 		} catch (Exception e) {
 			log.error("error while getting customer account ", e);
 			throw new ImportInvoiceException("Cant find customerAccount");
@@ -282,9 +261,8 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 		}
 
 		recordedInvoice.setMatchingStatus(MatchingStatusEnum.O);
-		create(recordedInvoice, currentUser);
+		create(recordedInvoice);
 		invoice.setRecordedInvoice(recordedInvoice);
-		invoice.updateAudit(currentUser);
 		invoiceService.updateNoCheck(invoice);
 	}
 }

@@ -25,13 +25,13 @@
                             <p:selectOneMenu value="#{entityExportImportBean.exportParameters[parameter.key]}"
                                 rendered="#{!identity.hasPermission('superAdmin','superAdminManagement')}">
                                 <f:selectItem itemValue="#{identity.user.currentProvider}" itemLabel="#{identity.user.currentProvider.code}" />
-                                <s:objectConverter />
+                                <hftl:objectConverter />
                             </p:selectOneMenu>
                             <p:selectOneMenu value="#{entityExportImportBean.exportParameters[parameter.key]}"
                                 rendered="#{identity.hasPermission('superAdmin','superAdminManagement')}">
                                 <f:selectItem />
                                 <f:selectItems value="#{providerBean.listAll}" var="listVal" itemLabel="#{listVal.code}" itemValue="#{listVal}" />
-                                <s:objectConverter />
+                                <hftl:objectConverter />
                             </p:selectOneMenu>
                         </hftl:decorateFormField>
                         <hftl:decorateFormField label="#{messages['export.exportCriteria.'.concat(parameter.key)]}" rendered="#{parameter.value eq 'dateRange'}">
@@ -55,7 +55,7 @@
                     <p:selectOneMenu value="#{entityExportImportBean.exportParameters['remoteInstance']}">
                         <f:selectItem />
                         <f:selectItems value="#{meveoInstanceBean.listAll}" var="listVal" itemLabel="#{listVal.code}" itemValue="#{listVal}" />
-                        <s:objectConverter />
+                        <hftl:objectConverter />
                     </p:selectOneMenu>
                 </hftl:decorateFormField>
             </ui:define>

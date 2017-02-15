@@ -16,9 +16,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.CatMessages;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.base.MultilanguageEntityService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
@@ -37,7 +35,7 @@ public class CatMessagesApi extends BaseApi {
 	 * @return
 	 * @throws MeveoApiException
 	 */
-	public CatMessagesDto find(String entityClass, String code, String languageCode, Provider provider)
+	public CatMessagesDto find(String entityClass, String code, String languageCode)
 			throws MeveoApiException {
 
 		if (StringUtils.isBlank(entityClass)) {
@@ -56,7 +54,7 @@ public class CatMessagesApi extends BaseApi {
 			throw new EntityDoesNotExistsException(CatMessages.class, code);
 		}
 
-		BusinessEntity entity = entityService.findByCode(code, provider);
+		BusinessEntity entity = entityService.findByCode(code);
 
 		if (entity == null) {
 			throw new EntityDoesNotExistsException(CatMessages.class, code);
@@ -89,7 +87,7 @@ public class CatMessagesApi extends BaseApi {
 		return messageDto;
 	}
 
-	public void remove(String entityClass, String code, String languageCode, User currentUser)
+	public void remove(String entityClass, String code, String languageCode)
 			throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(entityClass)) {
@@ -108,7 +106,7 @@ public class CatMessagesApi extends BaseApi {
 			throw new EntityDoesNotExistsException(CatMessages.class, code);
 		}
 
-		BusinessEntity entity = entityService.findByCode(code, currentUser.getProvider());
+		BusinessEntity entity = entityService.findByCode(code);
 
 		if (entity == null) {
 			throw new EntityDoesNotExistsException(CatMessages.class, code);
@@ -131,12 +129,12 @@ public class CatMessagesApi extends BaseApi {
 		}
 
 		for (CatMessages message : messages) {
-			catMessagesService.remove(message, currentUser);
+			catMessagesService.remove(message);
 		}
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void createOrUpdate(CatMessagesDto postData, User currentUser) throws MeveoApiException, BusinessException {
+	public void createOrUpdate(CatMessagesDto postData) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(postData.getEntityClass())) {
 			missingParameters.add("entityClass");
@@ -149,20 +147,19 @@ public class CatMessagesApi extends BaseApi {
 
 		// retrieve entity
 		IPersistenceService service = catMessagesService.getMultilanguageEntityService(postData.getEntityClass());
-		BusinessEntity entity = ((MultilanguageEntityService<?>) service).findByCode(postData.getCode(),
-				currentUser.getProvider());
+		BusinessEntity entity = ((MultilanguageEntityService<?>) service).findByCode(postData.getCode());
 
 		// update default description only if it is not blank
 		if (!StringUtils.isBlank(postData.getDefaultDescription())) {
 			entity.setDescription(postData.getDefaultDescription());
-			service.update(entity, currentUser);
+			service.update(entity);
 		}
 		// save translations
-		saveTranslations(entity, postData.getTranslatedDescriptions(), currentUser);
+		saveTranslations(entity, postData.getTranslatedDescriptions());
 
 	}
 
-	private void saveTranslations(BusinessEntity entity, List<LanguageDescriptionDto> translations, User currentUser)
+	private void saveTranslations(BusinessEntity entity, List<LanguageDescriptionDto> translations)
 			throws MeveoApiException, BusinessException {
 
 		// loop over translations
@@ -178,20 +175,20 @@ public class CatMessagesApi extends BaseApi {
 			if (message != null && !isBlankDescription) {
 				// message exists and description is not blank
 				message.setDescription(translation.getDescription());
-				catMessagesService.update(message, currentUser);
+				catMessagesService.update(message);
 			} else if (message != null && isBlankDescription) {
 				// message exists and description is blank
-				catMessagesService.remove(message, currentUser);
+				catMessagesService.remove(message);
 				
 			} else if (message == null && !isBlankDescription) {
 				// message does not exist and description is not blank
 				message = new CatMessages(entity,translation.getLanguageCode(), translation.getDescription());
-				catMessagesService.create(message, currentUser);
+				catMessagesService.create(message);
 			}
 		}
 	}
 
-	public CatMessagesListDto list(Provider provider) {
+	public CatMessagesListDto list() {
 		CatMessagesListDto catMessagesListDto = new CatMessagesListDto();
 		List<CatMessages> catMessagesList = catMessagesService.list();
 
@@ -208,7 +205,7 @@ public class CatMessagesApi extends BaseApi {
 			for (String messageCode : entities.keySet()) {
 				messageList = entities.get(messageCode);
 				catMessages=messageList.get(0);
-				entity = catMessagesService.findBusinessEntityByCodeAndClass(catMessages.getEntityCode(),catMessages.getEntityClass(),provider);
+				entity = catMessagesService.findBusinessEntityByCodeAndClass(catMessages.getEntityCode(),catMessages.getEntityClass());
 				if (entity != null) {
 					messageDto = new CatMessagesDto();
 					messageDto.setCode(entity.getCode());

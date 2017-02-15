@@ -18,8 +18,6 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AutomatedPayment;
 import org.meveo.model.payments.CustomerAccount;
@@ -63,7 +61,7 @@ public class PaymentApi extends BaseApi {
 	
 	
 
-	public void createPayment(PaymentDto paymentDto, User currentUser) throws  NoAllOperationUnmatchedException, UnbalanceAmountException, BusinessException, MeveoApiException {
+	public void createPayment(PaymentDto paymentDto) throws  NoAllOperationUnmatchedException, UnbalanceAmountException, BusinessException, MeveoApiException {
 		log.info("create payment for amount:" + paymentDto.getAmount() + " paymentMethodEnum:" + paymentDto.getPaymentMethod() + " isToMatching:" + paymentDto.isToMatching() + "  customerAccount:" + paymentDto.getCustomerAccountCode() + "...");
 
 		if (StringUtils.isBlank(paymentDto.getAmount())) {
@@ -84,19 +82,18 @@ public class PaymentApi extends BaseApi {
 
 		handleMissingParameters();
 
-		Provider provider = currentUser.getProvider();
-		CustomerAccount customerAccount = customerAccountService.findByCode(paymentDto.getCustomerAccountCode(), provider);
+		
+		CustomerAccount customerAccount = customerAccountService.findByCode(paymentDto.getCustomerAccountCode());
 		if (customerAccount == null) {
 			throw new BusinessException("Cannot find customer account with code=" + paymentDto.getCustomerAccountCode());
 		}
 
-		OCCTemplate occTemplate = oCCTemplateService.findByCode(paymentDto.getOccTemplateCode(), provider.getCode());
+		OCCTemplate occTemplate = oCCTemplateService.findByCode(paymentDto.getOccTemplateCode());
 		if (occTemplate == null) {
 			throw new BusinessException("Cannot find OCC Template with code=" + paymentDto.getOccTemplateCode());
 		}
 
 		Payment payment = new Payment();
-		payment.setProvider(provider);
 		payment.setPaymentMethod(paymentDto.getPaymentMethod());
 		payment.setAmount(paymentDto.getAmount());
 		payment.setUnMatchingAmount(paymentDto.getAmount());
@@ -114,10 +111,10 @@ public class PaymentApi extends BaseApi {
 		payment.setPaymentOrder(paymentDto.getPaymentOrder());
 		payment.setFees(paymentDto.getFees());
 		payment.setComment(paymentDto.getComment());
-		paymentService.create(payment, currentUser);
+		paymentService.create(payment);
 		// populate customFields
         try {
-            populateCustomFields(paymentDto.getCustomFields(), payment, true, currentUser); 
+            populateCustomFields(paymentDto.getCustomFields(), payment, true); 
         } catch (MissingParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
@@ -132,14 +129,14 @@ public class PaymentApi extends BaseApi {
 			if(paymentDto.getListOCCReferenceforMatching() !=null){
 				nbOccMatched = paymentDto.getListOCCReferenceforMatching().size();
 				for (int i = 0; i < nbOccMatched; i++) {
-					RecordedInvoice accountOperationToMatch = recordedInvoiceService.getRecordedInvoice(paymentDto.getListOCCReferenceforMatching().get(i), provider);
+					RecordedInvoice accountOperationToMatch = recordedInvoiceService.getRecordedInvoice(paymentDto.getListOCCReferenceforMatching().get(i));
 					if(accountOperationToMatch == null){
 						throw new BusinessApiException("Cannot find account operation with reference:"+paymentDto.getListOCCReferenceforMatching().get(i));
 					}
 					listReferenceToMatch.add(accountOperationToMatch.getId());
 				}
 				listReferenceToMatch.add(payment.getId());
-				matchingCodeService.matchOperations(null, customerAccount.getCode(), listReferenceToMatch, null, MatchingTypeEnum.A, currentUser);
+				matchingCodeService.matchOperations(null, customerAccount.getCode(), listReferenceToMatch, null, MatchingTypeEnum.A);
 			}
 
 		}else {
@@ -148,15 +145,10 @@ public class PaymentApi extends BaseApi {
 		log.debug("payment created for amount:" + payment.getAmount());
 	}
 
-	public List<PaymentDto> getPaymentList(String customerAccountCode, User currentUser) throws Exception {
+	public List<PaymentDto> getPaymentList(String customerAccountCode) throws Exception {
 		List<PaymentDto> result = new ArrayList<PaymentDto>();
 
-		if (currentUser == null) {
-			throw new BusinessException("currentUser is empty");
-		}
-		Provider provider = currentUser.getProvider();
-
-		CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode, provider);
+		CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
 
 		if (customerAccount == null) {
 			throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
@@ -203,9 +195,9 @@ public class PaymentApi extends BaseApi {
 		return result;
 	}
 
-	public double getBalance(String customerAccountCode, User currentUser) throws BusinessException {
-		Provider provider = currentUser.getProvider();
-		CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode, provider);
+	public double getBalance(String customerAccountCode) throws BusinessException {
+		
+		CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
 
 		return customerAccountService.customerAccountBalanceDue(customerAccount, new Date()).doubleValue();
 	}

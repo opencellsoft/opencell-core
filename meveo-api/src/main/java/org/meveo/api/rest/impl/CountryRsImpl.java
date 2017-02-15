@@ -42,7 +42,7 @@ public class CountryRsImpl extends BaseRs implements CountryRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            countryApi.create(countryDto, getCurrentUser());
+            countryApi.create(countryDto);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -63,7 +63,7 @@ public class CountryRsImpl extends BaseRs implements CountryRs {
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         try {
-            result.setCountry(countryApi.find(countryCode, getCurrentUser().getProvider()));
+            result.setCountry(countryApi.find(countryCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -83,7 +83,7 @@ public class CountryRsImpl extends BaseRs implements CountryRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            countryApi.remove(countryCode, currencyCode, getCurrentUser());
+            countryApi.remove(countryCode, currencyCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -103,7 +103,7 @@ public class CountryRsImpl extends BaseRs implements CountryRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            countryApi.update(countryDto, getCurrentUser());
+            countryApi.update(countryDto);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -123,7 +123,7 @@ public class CountryRsImpl extends BaseRs implements CountryRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            countryApi.createOrUpdate(countryDto, getCurrentUser());
+            countryApi.createOrUpdate(countryDto);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

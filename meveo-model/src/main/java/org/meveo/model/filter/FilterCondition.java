@@ -22,7 +22,7 @@ import org.meveo.model.BaseEntity;
 @Table(name = "MEVEO_FILTER_CONDITION")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEVEO_FILTER_CONDITION_SEQ")
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "TYPE")
+@DiscriminatorColumn(name = "FILTER_CONDITION_TYPE")
 public class FilterCondition extends BaseEntity {
 
 	private static final long serialVersionUID = -4620739918936998431L;

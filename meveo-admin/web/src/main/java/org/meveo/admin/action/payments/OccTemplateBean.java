@@ -87,7 +87,7 @@ public class OccTemplateBean extends BaseBean<OCCTemplate> {
 
 	public List<OCCTemplate> listOCCTemplate() {
 		return (List<OCCTemplate>) occTemplateService
-				.getListOccSortedByName(getCurrentProvider().getCode());
+				.getListOccSortedByName();
 	}
 
 	/**

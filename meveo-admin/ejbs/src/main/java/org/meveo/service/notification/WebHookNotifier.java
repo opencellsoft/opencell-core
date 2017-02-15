@@ -166,7 +166,7 @@ public class WebHookNotifier {
                             paramsEvaluated.put((String) entry.getKey(), ValueExpressionWrapper.evaluateExpression((String) entry.getValue(), userMap, String.class));
                         }
                         paramsEvaluated.put("response", result);
-                        scriptInstanceService.execute(webHook.getScriptInstance().getCode(), paramsEvaluated, webHook.getScriptInstance().getAuditable().getCreator());
+                        scriptInstanceService.execute(webHook.getScriptInstance().getCode(), paramsEvaluated);
 
                     } catch (Exception ee) {
                         log.error("Failed to execute a script {}", webHook.getScriptInstance().getCode(), ee);

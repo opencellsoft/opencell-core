@@ -80,7 +80,7 @@ public class ActionPlanItemBean extends BaseBean<WFAction> {
 	public WFAction initEntity() {
 		if (dunningPlan != null && dunningPlan.getId() == null) {
 			try {
-				dunningPlanService.create(dunningPlan, getCurrentUser());
+				dunningPlanService.create(dunningPlan);
 			} catch (BusinessException e) {
 				messages.info(new BundleKey("messages",
 						"message.exception.business"));
@@ -120,7 +120,7 @@ public class ActionPlanItemBean extends BaseBean<WFAction> {
 			log.info(String.format("Deleting entity %s with id = %s", entity
 					.getClass().getName(), id));
 			//entity.getDunningPlan().getActions().remove(entity);
-			getPersistenceService().remove(id, getCurrentUser());
+			getPersistenceService().remove(id);
 			entity = null;
 			messages.info(new BundleKey("messages", "delete.successful"));
 		} catch (Throwable t) {

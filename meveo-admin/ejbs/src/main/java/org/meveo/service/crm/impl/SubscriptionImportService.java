@@ -12,7 +12,6 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.BaseEntity;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
@@ -21,10 +20,11 @@ import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.jaxb.subscription.Access;
 import org.meveo.model.jaxb.subscription.Charge;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UserAccountService;
@@ -55,19 +55,21 @@ public class SubscriptionImportService extends ImportService{
 
 	@Inject
 	private UserAccountService userAccountService;
+	
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
 
 	private ParamBean paramBean = ParamBean.getInstance();
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public int importSubscription(CheckedSubscription checkSubscription,
-			org.meveo.model.jaxb.subscription.Subscription jaxbSubscription, String fileName, User currentUser, int i)
+			org.meveo.model.jaxb.subscription.Subscription jaxbSubscription, String fileName, int i)
 			throws BusinessException, SubscriptionServiceException, ImportIgnoredException {
-
-		Provider provider = currentUser.getProvider();
 
 		OfferTemplate offerTemplate = null;
 		try {
-			offerTemplate = offerTemplateService.findByCode(jaxbSubscription.getOfferCode().toUpperCase(), provider);
+			offerTemplate = offerTemplateService.findByCode(jaxbSubscription.getOfferCode().toUpperCase());
 		} catch (Exception e) {
 			log.warn("failed to find offerTemplate ",e);
 		}
@@ -75,14 +77,14 @@ public class SubscriptionImportService extends ImportService{
 
 		UserAccount userAccount = null;
 		try {
-			userAccount = userAccountService.findByCode(jaxbSubscription.getUserAccountId(), provider);
+			userAccount = userAccountService.findByCode(jaxbSubscription.getUserAccountId());
 		} catch (Exception e) {
 			log.error("failed to find userAccount",e);
 		}
 		checkSubscription.userAccount = userAccount;
 
 		try {
-			checkSubscription.subscription = subscriptionService.findByCode(jaxbSubscription.getCode(), provider);
+			checkSubscription.subscription = subscriptionService.findByCode(jaxbSubscription.getCode());
 		} catch (Exception e) {
 			log.error("failed to find checkSubscription",e);
 		}
@@ -90,14 +92,11 @@ public class SubscriptionImportService extends ImportService{
 		Subscription subscription = checkSubscription.subscription;
 		if (subscription != null) {
 			if (!"ACTIVE".equals(jaxbSubscription.getStatus().getValue())) {
-				if (!provider.getCode().equals(subscription.getProvider().getCode())) {
-					throw new BusinessException("Conflict subscription.provider and file.provider.");
-				}
-
+				
 				SubscriptionTerminationReason subscriptionTerminationType = null;
 				try {
 					subscriptionTerminationType = subscriptionTerminationReasonService.findByCodeReason(
-							jaxbSubscription.getStatus().getReason(), provider);
+							jaxbSubscription.getStatus().getReason());
 				} catch (Exception e) {
 					log.error("failed to find subscriptionTerminationType ",e);
 				}
@@ -111,7 +110,7 @@ public class SubscriptionImportService extends ImportService{
 						subscription,
 						DateUtils.parseDateWithPattern(jaxbSubscription.getStatus().getDate(),
 								paramBean.getProperty("connectorCRM.dateFormat", "dd/MM/yyyy")),
-						subscriptionTerminationType, null, currentUser);
+						subscriptionTerminationType, null);
 				log.info("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:"
 						+ jaxbSubscription.getCode() + ", status:Terminated");
 
@@ -134,10 +133,10 @@ public class SubscriptionImportService extends ImportService{
 				paramBean.getProperty("connectorCRM.dateFormat", "dd/MM/yyyy")));
 		subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
 		subscription.setUserAccount(checkSubscription.userAccount);
-		subscriptionService.create(subscription, currentUser);
+		subscriptionService.create(subscription);
 
        if (jaxbSubscription.getCustomFields() != null) {
-            populateCustomFields(jaxbSubscription.getCustomFields().getCustomField(), subscription, currentUser);
+            populateCustomFields(jaxbSubscription.getCustomFields().getCustomField(), subscription);
         }   
        
 		log.info("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:" + jaxbSubscription.getCode()
@@ -147,7 +146,7 @@ public class SubscriptionImportService extends ImportService{
 			try {
 				ServiceTemplate serviceTemplate = null;
 				ServiceInstance serviceInstance = new ServiceInstance();
-				serviceTemplate = serviceTemplateService.findByCode(serviceInst.getCode().toUpperCase(), provider);
+				serviceTemplate = serviceTemplateService.findByCode(serviceInst.getCode().toUpperCase());
 				serviceInstance.setCode(serviceTemplate.getCode());
 				serviceInstance.setDescription(serviceTemplate.getDescription());
 				serviceInstance.setServiceTemplate(serviceTemplate);
@@ -163,8 +162,7 @@ public class SubscriptionImportService extends ImportService{
 				log.debug("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:"
 						+ jaxbSubscription.getCode() + ", quantity:" + quantity);
 				serviceInstance.setQuantity(quantity);
-				serviceInstance.setProvider(provider);
-				serviceInstanceService.serviceInstanciation(serviceInstance, currentUser);
+				serviceInstanceService.serviceInstanciation(serviceInstance);
 
 				subscription.getServiceInstances().add(serviceInstance);
 
@@ -183,7 +181,7 @@ public class SubscriptionImportService extends ImportService{
 
 				subscription.updateAudit(currentUser);
 
-				serviceInstanceService.serviceActivation(serviceInstance, null, null, currentUser);
+				serviceInstanceService.serviceActivation(serviceInstance, null, null);
 			} catch (Exception e) {
 				log.error("failed to importSubscription",e);
 				throw new SubscriptionServiceException(jaxbSubscription, serviceInst, e.getMessage());
@@ -205,10 +203,10 @@ public class SubscriptionImportService extends ImportService{
 					paramBean.getProperty("meveo.dateFormat", "dd/MM/yyyy")));
 			
 //	        if (jaxbAccessPoint.getCustomFields() != null) {
-//	            populateCustomFields(AccountLevelEnum.ACC, jaxbAccessPoint.getCustomFields().getCustomField(), subscription, "access", currentUser);
+//	            populateCustomFields(AccountLevelEnum.ACC, jaxbAccessPoint.getCustomFields().getCustomField(), subscription, "access");
 //	        }
 			
-			accessService.create(access, currentUser);
+			accessService.create(access);
 			log.info("File:" + fileName + ", typeEntity:access, index:" + i + ", AccessUserId:"
 					+ access.getAccessUserId());
 		}
@@ -249,12 +247,12 @@ public class SubscriptionImportService extends ImportService{
 	}
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void activateServices(CheckedSubscription checkSubscription,
-			org.meveo.model.jaxb.subscription.Subscription subscrip, User currentUser)
+			org.meveo.model.jaxb.subscription.Subscription subscrip)
 			throws SubscriptionServiceException {
 		if (checkSubscription.subscription != null && checkSubscription.subscription.getServiceInstances().size() > 0) {
 			for (ServiceInstance serviceInstance : checkSubscription.subscription.getServiceInstances()) {
 				try {
-					serviceInstanceService.serviceActivation(serviceInstance, null, null, currentUser);
+					serviceInstanceService.serviceActivation(serviceInstance, null, null);
 				} catch (Exception e) {
 					log.error("failed to activate service",e);
 					throw new SubscriptionServiceException(subscrip, null, e.getMessage());

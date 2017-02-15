@@ -30,7 +30,7 @@ public class InvoiceCategoryRsImpl extends BaseRs implements InvoiceCategoryRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            invoiceCategoryApi.create(postData, getCurrentUser());
+            invoiceCategoryApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -50,7 +50,7 @@ public class InvoiceCategoryRsImpl extends BaseRs implements InvoiceCategoryRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            invoiceCategoryApi.update(postData, getCurrentUser());
+            invoiceCategoryApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -70,7 +70,7 @@ public class InvoiceCategoryRsImpl extends BaseRs implements InvoiceCategoryRs {
         GetInvoiceCategoryResponse result = new GetInvoiceCategoryResponse();
 
         try {
-            result.setInvoiceCategory(invoiceCategoryApi.find(invoiceCategoryCode, getCurrentUser().getProvider()));
+            result.setInvoiceCategory(invoiceCategoryApi.find(invoiceCategoryCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -90,7 +90,7 @@ public class InvoiceCategoryRsImpl extends BaseRs implements InvoiceCategoryRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            invoiceCategoryApi.remove(invoiceCategoryCode, getCurrentUser());
+            invoiceCategoryApi.remove(invoiceCategoryCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -110,7 +110,7 @@ public class InvoiceCategoryRsImpl extends BaseRs implements InvoiceCategoryRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            invoiceCategoryApi.createOrUpdate(postData, getCurrentUser());
+            invoiceCategoryApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

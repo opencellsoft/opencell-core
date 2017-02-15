@@ -30,7 +30,7 @@ public class InvoiceSubCategoryRsImpl extends BaseRs implements InvoiceSubCatego
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            invoiceSubCategoryApi.create(postData, getCurrentUser());
+            invoiceSubCategoryApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -50,7 +50,7 @@ public class InvoiceSubCategoryRsImpl extends BaseRs implements InvoiceSubCatego
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            invoiceSubCategoryApi.update(postData, getCurrentUser());
+            invoiceSubCategoryApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -70,7 +70,7 @@ public class InvoiceSubCategoryRsImpl extends BaseRs implements InvoiceSubCatego
         GetInvoiceSubCategoryResponse result = new GetInvoiceSubCategoryResponse();
 
         try {
-            result.setInvoiceSubCategory(invoiceSubCategoryApi.find(code, getCurrentUser().getProvider()));
+            result.setInvoiceSubCategory(invoiceSubCategoryApi.find(code));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -90,7 +90,7 @@ public class InvoiceSubCategoryRsImpl extends BaseRs implements InvoiceSubCatego
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            invoiceSubCategoryApi.remove(invoiceSubCategoryCode, getCurrentUser());
+            invoiceSubCategoryApi.remove(invoiceSubCategoryCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -110,7 +110,7 @@ public class InvoiceSubCategoryRsImpl extends BaseRs implements InvoiceSubCatego
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            invoiceSubCategoryApi.createOrUpdate(postData, getCurrentUser());
+            invoiceSubCategoryApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

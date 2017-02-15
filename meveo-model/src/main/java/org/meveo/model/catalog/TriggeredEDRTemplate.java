@@ -16,8 +16,8 @@ import org.meveo.model.communication.MeveoInstance;
 
 @Entity
 @ObservableEntity
-@ExportIdentifier({ "code", "provider" })
-@Table(name = "CAT_TRIGGERED_EDR", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
+@ExportIdentifier({ "code"})
+@Table(name = "CAT_TRIGGERED_EDR", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_TRIGGERED_EDR_SEQ")
 public class TriggeredEDRTemplate extends BusinessEntity {
 	private static final long serialVersionUID = 1L;

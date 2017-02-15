@@ -42,7 +42,7 @@ public class FilteredListRsImpl extends BaseRs implements FilteredListRs {
         FilteredListResponseDto result = new FilteredListResponseDto();
 
         try {
-            String searchResults = filteredListApi.listByFilter(filter, firstRow, numberOfRows, getCurrentUser());
+            String searchResults = filteredListApi.listByFilter(filter, firstRow, numberOfRows);
             result.setSearchResults(searchResults);
             responseBuilder = Response.ok();
             responseBuilder.entity(result);
@@ -64,7 +64,7 @@ public class FilteredListRsImpl extends BaseRs implements FilteredListRs {
         Response.ResponseBuilder responseBuilder = null;
 
         try {
-            String searchResults = fullTextSearchApi.search(classnamesOrCetCodes, query, from, size, getCurrentUser());
+            String searchResults = fullTextSearchApi.search(classnamesOrCetCodes, query, from, size);
             FilteredListResponseDto result = new FilteredListResponseDto();
             result.setSearchResults(searchResults);
             responseBuilder = Response.status(Response.Status.OK).entity(result);
@@ -98,7 +98,7 @@ public class FilteredListRsImpl extends BaseRs implements FilteredListRs {
                 }
             }
 
-            String searchResults = fullTextSearchApi.search(classnamesOrCetCodes, queryValues, from, size, getCurrentUser());
+            String searchResults = fullTextSearchApi.search(classnamesOrCetCodes, queryValues, from, size);
             FilteredListResponseDto result = new FilteredListResponseDto();
             result.setSearchResults(searchResults);
             responseBuilder = Response.status(Response.Status.OK).entity(result);
@@ -123,7 +123,7 @@ public class FilteredListRsImpl extends BaseRs implements FilteredListRs {
         Response.ResponseBuilder responseBuilder = null;
 
         try {
-            fullTextSearchApi.cleanAndReindex(getCurrentUser());
+            fullTextSearchApi.cleanAndReindex();
             responseBuilder = Response.status(Response.Status.OK).entity(new ActionStatus(ActionStatusEnum.SUCCESS, ""));
 
         } catch (MeveoApiException e) {

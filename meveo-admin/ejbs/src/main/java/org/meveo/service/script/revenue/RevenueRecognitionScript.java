@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.ChargeInstance;
@@ -26,7 +25,7 @@ public abstract class RevenueRecognitionScript extends Script implements Revenue
 
     protected Logger log = LoggerFactory.getLogger(this.getClass());
     	
-	public void createRevenueSchedule(ChargeInstance chargeInstance,User currentUser) throws BusinessException{
+	public void createRevenueSchedule(ChargeInstance chargeInstance) throws BusinessException{
 		List<WalletOperation> woList = new ArrayList<WalletOperation>(chargeInstance.getWalletOperations());
 		log.debug("woList {}",woList.size());
         Collections.sort(woList, new Comparator<WalletOperation>() {
@@ -40,7 +39,7 @@ public abstract class RevenueRecognitionScript extends Script implements Revenue
 		} else {
 			Date startDate = chargeInstance.getSubscription().getSubscriptionDate();
 			Date endDate = chargeInstance.getSubscription().getEndAgreementDate();
-			List<RevenueSchedule> schedule = new ArrayList<>(scheduleRevenue(chargeInstance,woList, startDate, endDate, currentUser));
+			List<RevenueSchedule> schedule = new ArrayList<>(scheduleRevenue(chargeInstance,woList, startDate, endDate));
 			if(schedule.size()>0){
 				Collections.sort(schedule, new Comparator<RevenueSchedule>() {
 		             public int compare(RevenueSchedule c0, RevenueSchedule c1) {
@@ -86,7 +85,7 @@ public abstract class RevenueRecognitionScript extends Script implements Revenue
 		          		revenueSchedule.setAccruedRevenue((invoicedRevenue.subtract(recognizedRevenue)).multiply(negativeOne));
 		        		revenueSchedule.setDefferedRevenue(BigDecimal.ZERO);
 		        	}
-		        	revenueScheduleService.create(revenueSchedule, currentUser);
+		        	revenueScheduleService.create(revenueSchedule);
 		        }
 			} else {
 				log.debug("createRevenueSchedule no schedule created for chargeInstance {}",chargeInstance.getId());

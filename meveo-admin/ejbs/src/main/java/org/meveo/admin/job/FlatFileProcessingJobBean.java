@@ -23,8 +23,6 @@ import org.meveo.commons.utils.FileParsers;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.model.admin.User;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
@@ -58,9 +56,8 @@ public class FlatFileProcessingJobBean {
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, String inputDir, File file, String mappingConf, String scriptInstanceFlowCode, String recordVariableName, Map<String, Object> context, String originFilename, String formatTransfo) {
-        log.debug("Running for user={}, inputDir={}, scriptInstanceFlowCode={},formatTransfo={}", currentUser, inputDir, scriptInstanceFlowCode, formatTransfo);
-        Provider provider = currentUser.getProvider();
-
+        log.debug("Running for inputDir={}, scriptInstanceFlowCode={},formatTransfo={}", inputDir, scriptInstanceFlowCode, formatTransfo);
+      
         outputDir = inputDir + File.separator + "output";
         rejectDir = inputDir + File.separator + "reject";
         archiveDir = inputDir + File.separator + "archive";
@@ -103,7 +100,7 @@ public class FlatFileProcessingJobBean {
                 }
                 currentFile = FileUtils.addExtension(file, ".processing");
 
-                script = scriptInstanceService.getScriptInstance(provider, scriptInstanceFlowCode);
+                script = scriptInstanceService.getScriptInstance(scriptInstanceFlowCode);
                 
 
                 script.init(context);

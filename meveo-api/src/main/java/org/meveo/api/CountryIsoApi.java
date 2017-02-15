@@ -10,7 +10,6 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Currency;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.Country;
 import org.meveo.model.billing.Language;
 import org.meveo.model.catalog.Calendar;
@@ -34,7 +33,7 @@ public class CountryIsoApi extends BaseApi {
     @Inject
     private LanguageService languageService;
 
-    public void create(CountryIsoDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void create(CountryIsoDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCountryCode())) {
             missingParameters.add("code");
@@ -69,11 +68,11 @@ public class CountryIsoApi extends BaseApi {
         country.setLanguage(language);
         country.setCurrency(currency);
 
-        countryService.create(country, currentUser);
+        countryService.create(country);
 
     }
 
-    public void update(CountryIsoDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void update(CountryIsoDto postData) throws MeveoApiException, BusinessException {
 
     	 if (StringUtils.isBlank(postData.getCountryCode())) {
              missingParameters.add("code");
@@ -113,7 +112,7 @@ public class CountryIsoApi extends BaseApi {
         country.setLanguage(language);
         country.setCurrency(currency);
 
-        countryService.update(country, currentUser);
+        countryService.update(country);
     }
 
     public CountryIsoDto find(String countryCode) throws MeveoApiException {
@@ -135,7 +134,7 @@ public class CountryIsoApi extends BaseApi {
         return result;
     }
 
-    public void remove(String countryCode, User currentUser) throws MeveoApiException, BusinessException {
+    public void remove(String countryCode) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(countryCode)) {
             missingParameters.add("countryCode");
             handleMissingParameters();
@@ -146,16 +145,16 @@ public class CountryIsoApi extends BaseApi {
             throw new EntityDoesNotExistsException(Country.class, countryCode);
         }
 
-        countryService.remove(country, currentUser);
+        countryService.remove(country);
     }
 
-    public void createOrUpdate(CountryIsoDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void createOrUpdate(CountryIsoDto postData) throws MeveoApiException, BusinessException {
 
         Country country = countryService.findByCode(postData.getCountryCode());
         if (country == null) {
-            create(postData, currentUser);
+            create(postData);
         } else {
-            update(postData, currentUser);
+            update(postData);
         }
     }
 }

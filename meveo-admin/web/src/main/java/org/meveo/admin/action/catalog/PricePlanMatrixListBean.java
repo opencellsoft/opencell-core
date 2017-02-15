@@ -42,7 +42,7 @@ public class PricePlanMatrixListBean extends PricePlanMatrixBean {
 		PricePlanMatrix entity=(PricePlanMatrix)(((DataTable)event.getComponent()).getRowData());
 		if(entity!=null&&!entity.isTransient()){
 			try{
-				boolean result=pricePlanMatrixService.updateCellEdit(entity, getCurrentUser());
+				boolean result=pricePlanMatrixService.updateCellEdit(entity);
 				if(result){
 					messages.info(new BundleKey("messages", "update.successful"));
 				}

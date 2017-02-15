@@ -21,9 +21,12 @@ package org.meveo.admin.action.quote;
 import java.util.Map;
 
 import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.order.OrderListBean;
+import org.meveo.model.admin.User;
+import org.meveo.service.admin.impl.UserService;
 
 @Named
 @ConversationScoped
@@ -31,6 +34,9 @@ public class QuoteListBean extends QuoteBean {
 
     private static final long serialVersionUID = 1954649215739728918L;
 
+    @Inject
+    private UserService userService;
+    
     private boolean showMyQuotesOnly = true;
 
     public boolean isShowMyQuotesOnly() {
@@ -47,9 +53,10 @@ public class QuoteListBean extends QuoteBean {
     @Override
     protected Map<String, Object> supplementSearchCriteria(Map<String, Object> searchCriteria) {
 
-        boolean isAdmin = currentUser.hasPermission("administration", "administrationManagement");
+        boolean isAdmin = currentUser.hasRole("administrationManagement");
         if (isAdmin && showMyQuotesOnly) {
-            searchCriteria.put(OrderListBean.SEARCH_USER_GROUP, getCurrentUser().getUserLevel());
+            User user = userService.findByUsername(currentUser.getSubject());
+            searchCriteria.put(OrderListBean.SEARCH_USER_GROUP, user.getUserLevel());
         }
 
         return searchCriteria;

@@ -142,7 +142,7 @@
                        			<p:selectOneMenu id="invoiceSubCategories" value="#{discountPlanBean.discountPlanItem.invoiceSubCategory}" >  
         						  	<f:selectItem itemLabel="" />
                                 	<f:selectItems value="#{discountPlanItemBean.getInvoiceSubCategories(discountPlanBean.discountPlanItem.invoiceCategory)}" var="t" itemLabel="#{t.code}"/> 
-        							<s:objectConverter />
+        							<hftl:objectConverter />
                         		</p:selectOneMenu> 
                             </hftl:decorateFormField>
 							<hftl:formField

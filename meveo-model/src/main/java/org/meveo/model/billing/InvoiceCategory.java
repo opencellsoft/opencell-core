@@ -37,18 +37,16 @@ import org.meveo.model.MultilanguageEntity;
 
 @Entity
 @MultilanguageEntity(key = "menu.invoiceCategories", group="InvoiceCategory")
-@ExportIdentifier({ "code", "provider" })
-@Table(name = "BILLING_INVOICE_CAT", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
+@ExportIdentifier({ "code"})
+@Table(name = "BILLING_INVOICE_CAT", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_CAT_SEQ")
 @CustomFieldEntity(cftCodePrefix = "INV_CAT")
 @NamedQueries({			
 @NamedQuery(name = "invoiceCategory.getNbrInvoiceCatNotAssociated", 
-	           query = "select count(*) from InvoiceCategory v where v.id not in (select sub.invoiceCategory.id from InvoiceSubCategory sub where sub.invoiceCategory.id is not null)"
-	           		+ " and v.provider=:provider"),
+	           query = "select count(*) from InvoiceCategory v where v.id not in (select sub.invoiceCategory.id from InvoiceSubCategory sub where sub.invoiceCategory.id is not null)"),
 	           
 @NamedQuery(name = "invoiceCategory.getInvoiceCatNotAssociated", 
-	           query = "from InvoiceCategory v where v.id not in (select sub.invoiceCategory.id from InvoiceSubCategory sub where sub.invoiceCategory.id is not null) "
-	           		+ " and v.provider=:provider")         	                  	         
+	           query = "from InvoiceCategory v where v.id not in (select sub.invoiceCategory.id from InvoiceSubCategory sub where sub.invoiceCategory.id is not null) ")         	                  	         
 })
  
 public class InvoiceCategory extends BusinessCFEntity {

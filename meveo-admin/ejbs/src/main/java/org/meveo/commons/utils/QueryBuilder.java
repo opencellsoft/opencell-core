@@ -30,8 +30,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.model.BaseEntity;
-import org.meveo.model.crm.Provider;
 
 /**
  * Query builder class for building JPA queries.
@@ -104,19 +102,12 @@ public class QueryBuilder {
 	 * @param alias
 	 *            Alias in query.
 	 */
-	public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields, Provider provider) {
+	public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields) {
 		this(getInitQuery(clazz, alias, fetchFields));
-		if (provider != null && BaseEntity.class.isAssignableFrom(clazz)) {
-			addCriterionEntity(alias + ".provider.id", provider.getId());
-		}
 	}
 
-	public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields, List<String> joinFields,
-			Provider provider) {
+	public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields, List<String> joinFields) {
 		this(getInitJoinQuery(clazz, alias, fetchFields, joinFields));
-		if (provider != null && BaseEntity.class.isAssignableFrom(clazz)) {
-			addCriterionEntity(alias + ".provider.id", provider.getId());
-		}
 	}
 
 	private static String getInitJoinQuery(Class<?> clazz, String alias, List<String> fetchFields,

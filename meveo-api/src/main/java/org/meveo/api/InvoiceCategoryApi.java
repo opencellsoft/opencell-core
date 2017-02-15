@@ -14,11 +14,10 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.TradingLanguage;
-import org.meveo.model.crm.Provider;
+import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 
@@ -33,17 +32,20 @@ public class InvoiceCategoryApi extends BaseApi {
 
     @Inject
     private CatMessagesService catMessagesService;
+    
+    @Inject
+    private TradingLanguageService tradingLanguageService;
 
-    public void create(InvoiceCategoryDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void create(InvoiceCategoryDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
             handleMissingParameters();
         }
 
-        Provider provider = currentUser.getProvider();
+        
 
-        if (invoiceCategoryService.findByCode(postData.getCode(), provider) != null) {
+        if (invoiceCategoryService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(InvoiceCategory.class, postData.getCode());
         }
 
@@ -51,12 +53,13 @@ public class InvoiceCategoryApi extends BaseApi {
         invoiceCategory.setCode(postData.getCode());
         invoiceCategory.setDescription(postData.getDescription());
 
-        if (provider.getTradingLanguages() != null) {
+        List<TradingLanguage> tradingLanguages = tradingLanguageService.list();
+        if (!tradingLanguages.isEmpty()) {
             if (postData.getLanguageDescriptions() != null) {
                 for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
                     boolean match = false;
 
-                    for (TradingLanguage tl : provider.getTradingLanguages()) {
+                    for (TradingLanguage tl : tradingLanguages) {
                         if (tl.getLanguageCode().equals(ld.getLanguageCode())) {
                             match = true;
                             break;
@@ -70,20 +73,20 @@ public class InvoiceCategoryApi extends BaseApi {
             }
         }
 
-        invoiceCategoryService.create(invoiceCategory, currentUser);
+        invoiceCategoryService.create(invoiceCategory);
 
         // create cat messages
         if (postData.getLanguageDescriptions() != null) {
             for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
                 CatMessages catMsg = new CatMessages(InvoiceCategory.class.getSimpleName(),invoiceCategory.getCode(), ld.getLanguageCode(), ld.getDescription());
 
-                catMessagesService.create(catMsg, currentUser);
+                catMessagesService.create(catMsg);
             }
         }
         
         // populate customFields
         try {
-            populateCustomFields(postData.getCustomFields(), invoiceCategory, true, currentUser, true);
+            populateCustomFields(postData.getCustomFields(), invoiceCategory, true, true);
 
         } catch (MissingParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
@@ -94,28 +97,29 @@ public class InvoiceCategoryApi extends BaseApi {
         }
     }
 
-    public void update(InvoiceCategoryDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void update(InvoiceCategoryDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
             handleMissingParameters();
         }
 
-        Provider provider = currentUser.getProvider();
+        
 
-        InvoiceCategory invoiceCategory = invoiceCategoryService.findByCode(postData.getCode(), provider);
+        InvoiceCategory invoiceCategory = invoiceCategoryService.findByCode(postData.getCode());
         if (invoiceCategory == null) {
             throw new EntityDoesNotExistsException(InvoiceCategory.class, postData.getCode());
         }
 
         invoiceCategory.setDescription(postData.getDescription());
 
-        if (provider.getTradingLanguages() != null) {
+        List<TradingLanguage> tradingLanguages = tradingLanguageService.list();
+        if (!tradingLanguages.isEmpty()) {
             if (postData.getLanguageDescriptions() != null) {
                 for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
                     boolean match = false;
 
-                    for (TradingLanguage tl : provider.getTradingLanguages()) {
+                    for (TradingLanguage tl : tradingLanguages) {
                         if (tl.getLanguageCode().equals(ld.getLanguageCode())) {
                             match = true;
                             break;
@@ -129,24 +133,24 @@ public class InvoiceCategoryApi extends BaseApi {
 
                 // create cat messages
                 for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-                    CatMessages catMsg = catMessagesService.getCatMessages(invoiceCategory.getCode(),InvoiceCategory.class.getSimpleName(),  ld.getLanguageCode(),provider);
+                    CatMessages catMsg = catMessagesService.getCatMessages(invoiceCategory.getCode(),InvoiceCategory.class.getSimpleName(),  ld.getLanguageCode());
 
                     if (catMsg != null) {
                         catMsg.setDescription(ld.getDescription());
-                        catMessagesService.update(catMsg, currentUser);
+                        catMessagesService.update(catMsg);
                     } else {
                         CatMessages catMessages = new CatMessages(InvoiceCategory.class.getSimpleName(),invoiceCategory.getCode(), ld.getLanguageCode(), ld.getDescription());
-                        catMessagesService.create(catMessages, currentUser);
+                        catMessagesService.create(catMessages);
                     }
                 }
             }
         }
 
-        invoiceCategoryService.update(invoiceCategory, currentUser);
+        invoiceCategoryService.update(invoiceCategory);
         
         // populate customFields
         try {
-            populateCustomFields(postData.getCustomFields(), invoiceCategory, false, currentUser, true);
+            populateCustomFields(postData.getCustomFields(), invoiceCategory, false, true);
 
         } catch (MissingParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
@@ -157,7 +161,7 @@ public class InvoiceCategoryApi extends BaseApi {
         }
     }
 
-    public InvoiceCategoryDto find(String code, Provider provider) throws MeveoApiException {
+    public InvoiceCategoryDto find(String code) throws MeveoApiException {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("invoiceCategoryCode");
@@ -166,7 +170,7 @@ public class InvoiceCategoryApi extends BaseApi {
 
         InvoiceCategoryDto result = new InvoiceCategoryDto();
 
-        InvoiceCategory invoiceCategory = invoiceCategoryService.findByCode(code, provider);
+        InvoiceCategory invoiceCategory = invoiceCategoryService.findByCode(code);
         if (invoiceCategory == null) {
             throw new EntityDoesNotExistsException(InvoiceCategory.class, code);
         }
@@ -174,7 +178,7 @@ public class InvoiceCategoryApi extends BaseApi {
         result = new InvoiceCategoryDto(invoiceCategory, entityToDtoConverter.getCustomFieldsDTO(invoiceCategory));
 
         List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
-        for (CatMessages msg : catMessagesService.getCatMessagesList(InvoiceCategory.class.getSimpleName() , invoiceCategory.getCode(),provider)) {
+        for (CatMessages msg : catMessagesService.getCatMessagesList(InvoiceCategory.class.getSimpleName() , invoiceCategory.getCode())) {
             languageDescriptions.add(new LanguageDescriptionDto(msg.getLanguageCode(), msg.getDescription()));
         }
 
@@ -183,36 +187,36 @@ public class InvoiceCategoryApi extends BaseApi {
         return result;
     }
 
-    public void remove(String code, User currentUser) throws MeveoApiException, BusinessException {
+    public void remove(String code) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("invoiceCategoryCode");
             handleMissingParameters();
         }
 
-        InvoiceCategory invoiceCategory = invoiceCategoryService.findByCode(code, currentUser.getProvider());
+        InvoiceCategory invoiceCategory = invoiceCategoryService.findByCode(code);
         if (invoiceCategory == null) {
             throw new EntityDoesNotExistsException(InvoiceCategory.class, code);
         }
 
-        invoiceCategoryService.remove(invoiceCategory, currentUser);
+        invoiceCategoryService.remove(invoiceCategory);
     }
 
     /**
      * Creates or updates invoice category based on the code. If passed invoice category is not yet existing, it will be created else will be updated.
      * 
      * @param postData
-     * @param currentUser
+
      * @throws MeveoApiException
      * @throws BusinessException 
      */
-    public void createOrUpdate(InvoiceCategoryDto postData, User currentUser) throws MeveoApiException, BusinessException {
-        InvoiceCategory invoiceCategory = invoiceCategoryService.findByCode(postData.getCode(), currentUser.getProvider());
+    public void createOrUpdate(InvoiceCategoryDto postData) throws MeveoApiException, BusinessException {
+        InvoiceCategory invoiceCategory = invoiceCategoryService.findByCode(postData.getCode());
 
         if (invoiceCategory == null) {
-            create(postData, currentUser);
+            create(postData);
         } else {
-            update(postData, currentUser);
+            update(postData);
         }
     }
 }

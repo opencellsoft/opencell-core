@@ -15,7 +15,6 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
 import org.meveo.api.dto.response.catalog.GetRecurringChargeTemplateResponseDto;
 import org.meveo.api.rest.IBaseRs;
-import org.meveo.api.rest.security.RSSecured;
 
 /**
  * Web service for managing {@link org.meveo.model.catalog.RecurringChargeTemplate}.
@@ -25,7 +24,7 @@ import org.meveo.api.rest.security.RSSecured;
 @Path("/catalog/recurringChargeTemplate")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-@RSSecured
+
 public interface RecurringChargeTemplateRs extends IBaseRs {
 
     /**

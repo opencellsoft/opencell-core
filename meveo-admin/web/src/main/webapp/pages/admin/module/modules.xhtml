@@ -55,7 +55,7 @@
                         <p:selectOneMenu value="#{meveoModuleListBean.meveoInstance}" id="Meveoinstance" required="true">
                             <f:selectItem />
                             <f:selectItems value="#{meveoInstanceListBean.listAll()}" var="listVal" itemLabel="#{listVal.code}" itemValue="#{listVal}" />
-                            <s:objectConverter />
+                            <hftl:objectConverter />
                             <p:ajax event="valueChange" update="@form" listener="#{meveoModuleListBean.loadModulesFromInstance}" />
                         </p:selectOneMenu>
                     </hftl:decorateFormField>

@@ -24,14 +24,14 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import org.meveo.model.BaseProviderlessEntity;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
 @ExportIdentifier({ "hour", "minute" })
 @Table(name = "CAT_HOUR_IN_DAY", uniqueConstraints = @UniqueConstraint(columnNames = { "HOUR", "MIN" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_HOUR_IN_DAY_SEQ")
-public class HourInDay extends BaseProviderlessEntity implements Comparable<HourInDay> {
+public class HourInDay extends BaseEntity implements Comparable<HourInDay> {
 
     private static final long serialVersionUID = 1L;
 

@@ -25,7 +25,7 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.ProductOffering;
 
 @Entity
-@ExportIdentifier({ "quote.code", "itemId", "provider" })
+@ExportIdentifier({ "quote.code", "itemId"})
 @Table(name = "ORD_QUOTE_ITEM")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ORD_QUOTE_ITEM_SEQ")
 public class QuoteItem extends BaseEntity {

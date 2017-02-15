@@ -68,11 +68,10 @@ public interface ApiServiceRemote {
      * @param address Address information
      * @param extRef1 External reference 1
      * @param extRef2 External reference 1
-     * @param providerCode Provider code
      * @throws AccountAlreadyExistsException
      * @throws ElementNotFoundException
      */
-    public void createCustomer(String code, String name, String brandCode, String categoryCode, AddressDTO address, String extRef1, String extRef2, String providerCode)
+    public void createCustomer(String code, String name, String brandCode, String categoryCode, AddressDTO address, String extRef1, String extRef2)
             throws AccountAlreadyExistsException, ElementNotFoundException;
 
     /**

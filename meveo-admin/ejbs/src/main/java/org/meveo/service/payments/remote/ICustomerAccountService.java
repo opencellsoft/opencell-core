@@ -201,7 +201,7 @@ public interface ICustomerAccountService {
      * @throws BusinessException
      * @throws Exception
      */
-    public void closeCustomerAccount(Long customerAccountId, String customerAccountCode, User user) throws BusinessException, Exception;
+    public void closeCustomerAccount(Long customerAccountId, String customerAccountCode) throws BusinessException, Exception;
 
     /**
      * Close CustomerAccount and create closeAccount OCC
@@ -211,7 +211,7 @@ public interface ICustomerAccountService {
      * @throws BusinessException
      * @throws Exception
      */
-    public void closeCustomerAccount(CustomerAccount customerAccount, User user) throws BusinessException, Exception;
+    public void closeCustomerAccount(CustomerAccount customerAccount) throws BusinessException, Exception;
 
     /**
      * Find one customer account by id or code, if id set,search by id or by
@@ -277,7 +277,7 @@ public interface ICustomerAccountService {
      * @throws Exception
      */
     public void transferAccount(Long fromCustomerAccountId, String fromCustomerAccountCode, Long toCustomerAccountId, String toCustomerAccountCode,
-            BigDecimal amount, User user) throws BusinessException, Exception;
+            BigDecimal amount) throws BusinessException, Exception;
 
     /**
      * Transfer amount from fromCustomerAccountId to toCustomerAccountId
@@ -289,7 +289,7 @@ public interface ICustomerAccountService {
      * @throws BusinessException
      * @throws Exception
      */
-    public void transferAccount(CustomerAccount fromCustomerAccount, CustomerAccount toCustomerAccount, BigDecimal amount, User user) throws BusinessException,
+    public void transferAccount(CustomerAccount fromCustomerAccount, CustomerAccount toCustomerAccount, BigDecimal amount) throws BusinessException,
             Exception;
 
     /**

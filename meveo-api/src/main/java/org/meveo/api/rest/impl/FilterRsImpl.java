@@ -29,7 +29,7 @@ public class FilterRsImpl extends BaseRs implements FilterRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            filterApi.createOrUpdate(dto, this.getCurrentUser());
+            filterApi.createOrUpdate(dto);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

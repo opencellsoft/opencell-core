@@ -38,30 +38,30 @@ import org.primefaces.model.CroppedImage;
 
 public class ModuleUtil {
 
-	public static String getRootPicturePath(String provider){
-		String path = ParamBean.getInstance().getProperty("providers.rootDir", "/tmp/meveo")+File.separator+provider
+	public static String getRootPicturePath(String providerCode){
+		String path = ParamBean.getInstance().getProperty("providers.rootDir", "/tmp/meveo")+File.separator+providerCode
 			+File.separator+"media";
 		return getPath(path);
 	}
 	
-	public static String getPicturePath(String provider,String group){
-		return getPicturePath(provider, group, true);
+	public static String getPicturePath(String providerCode,String group){
+		return getPicturePath(providerCode, group, true);
 	}
 	
-	public static String getPicturePath(String provider,String group, boolean createDir){
-		String path=getRootPicturePath(provider)+File.separator+group+File.separator+"pictures";
+	public static String getPicturePath(String providerCode,String group, boolean createDir){
+		String path=getRootPicturePath(providerCode)+File.separator+group+File.separator+"pictures";
 		return getPath(path, createDir);
 	}
-	public static String getModulePicturePath(String provider){
-		return getPicturePath(provider,"module");
+	public static String getModulePicturePath(String providerCode){
+		return getPicturePath(providerCode,"module");
 	}
 	
-	public static String getTmpRootPath(String provider) throws IOException{
+	public static String getTmpRootPath(String providerCode) throws IOException{
 		String tmpFolder=System.getProperty("java.io.tmpdir");
 		if(StringUtils.isBlank(tmpFolder)){
 			tmpFolder="/tmp";
 		}
-		return getPath(tmpFolder+File.separator+provider);
+		return getPath(tmpFolder+File.separator+providerCode);
 	}
 	
 	private static String getPath(String path){
@@ -97,8 +97,8 @@ public class ModuleUtil {
 	 * @return
 	 * @throws Exception
 	 */
-	public static byte[] readModulePicture(String provider,String filename) throws IOException{
-		String picturePath=getModulePicturePath(provider);
+	public static byte[] readModulePicture(String providerCode,String filename) throws IOException{
+		String picturePath=getModulePicturePath(providerCode);
 		String file=picturePath+File.separator+filename;
 		return readPicture(file);
 		
@@ -109,8 +109,8 @@ public class ModuleUtil {
 	 * @param fileData
 	 * @throws Exception
 	 */
-	public static void writeModulePicture(String provider,String filename,byte[] fileData) throws Exception{
-		String picturePath=getModulePicturePath(provider);
+	public static void writeModulePicture(String providerCode,String filename,byte[] fileData) throws Exception{
+		String picturePath=getModulePicturePath(providerCode);
 		String file=picturePath+File.separator+filename;
 		writePicture(file,fileData);
 	}
@@ -120,8 +120,8 @@ public class ModuleUtil {
 			file.delete();
 		}
 	}
-	public static void removeModulePicture(String provider,String filename) throws Exception{
-		String picturePath=getModulePicturePath(provider);
+	public static void removeModulePicture(String providerCode,String filename) throws Exception{
+		String picturePath=getModulePicturePath(providerCode);
 		filename=picturePath+File.separator+filename;
 		removePicture(filename);
 	}

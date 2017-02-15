@@ -28,33 +28,31 @@ import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
 public class ServiceChargeTemplateSubscriptionService extends PersistenceService<ServiceChargeTemplateSubscription> {
 
-    // public void removeByPrefix(EntityManager em, String prefix, Provider provider) {
+    // public void removeByPrefix(EntityManager em, String prefix) {
     // Query query = em.createQuery("DELETE ServiceChargeTemplateSubscription t WHERE t.chargeTemplate.code LIKE '"
-    // + prefix + "%' AND t.provider=:provider");
-    // query.setParameter("provider", provider);
+    // + prefix + "%' ");
+    // query;
     // query.executeUpdate();
     // }
 
     @SuppressWarnings("unchecked")
-    public List<ServiceChargeTemplateSubscription> findBySubscriptionChargeTemplate(OneShotChargeTemplate chargeTemplate, Provider provider) {
+    public List<ServiceChargeTemplateSubscription> findBySubscriptionChargeTemplate(OneShotChargeTemplate chargeTemplate) {
 
         QueryBuilder qb = new QueryBuilder(ServiceChargeTemplateSubscription.class, "a");
         qb.addCriterionEntity("chargeTemplate", chargeTemplate);
-        qb.addCriterionEntity("provider", provider);
+        
 
         return (List<ServiceChargeTemplateSubscription>) qb.getQuery(getEntityManager()).getResultList();
     }
 
-    public void removeByServiceTemplate(ServiceTemplate serviceTemplate, Provider provider) {
-        Query query = getEntityManager().createQuery("DELETE ServiceChargeTemplateSubscription t WHERE t.serviceTemplate=:serviceTemplate AND t.provider=:provider");
+    public void removeByServiceTemplate(ServiceTemplate serviceTemplate) {
+        Query query = getEntityManager().createQuery("DELETE ServiceChargeTemplateSubscription t WHERE t.serviceTemplate=:serviceTemplate ");
         query.setParameter("serviceTemplate", serviceTemplate);
-        query.setParameter("provider", provider);
         query.executeUpdate();
     }
 

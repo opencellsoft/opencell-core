@@ -12,13 +12,12 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.payment.DDRequestLotOpDto;
 import org.meveo.api.dto.response.payment.DDRequestLotOpsResponseDto;
 import org.meveo.api.rest.IBaseRs;
-import org.meveo.api.rest.security.RSSecured;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
 
 @Path("/payment/ddrequestLotOp")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-@RSSecured
+
 public interface DDRequestLotOpRs extends IBaseRs {
 
 	/**

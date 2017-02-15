@@ -49,12 +49,11 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.meveo.model.AuditableEntity;
 import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.EnableEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.security.Role;
 import org.meveo.model.shared.Name;
@@ -65,19 +64,19 @@ import org.meveo.model.shared.Name;
 @Entity
 @ObservableEntity
 @CustomFieldEntity(cftCodePrefix = "USER")
-@ExportIdentifier({ "userName", "provider" })
+@ExportIdentifier({ "userName"})
 @Table(name = "ADM_USER")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_USER_SEQ")
 @NamedQueries({ @NamedQuery(name = "User.listByPermissionResource", query = ""
 		+ "SELECT u FROM User u"
 		+ " LEFT JOIN u.roles as role"
 		+ " LEFT JOIN role.permissions as permission"
-		+ " WHERE permission.resource IN (:permissionResources) AND u.provider=:provider"),
+		+ " WHERE permission.resource IN (:permissionResources)"),
 		@NamedQuery(name = "User.listUsersInMM", query = ""
 				+ "SELECT u FROM User u"
 				+ " LEFT JOIN u.roles as role"
-				+ " WHERE role.name IN (:roleNames) AND u.provider=:provider") })
-public class User extends AuditableEntity implements ICustomFieldEntity {
+				+ " WHERE role.name IN (:roleNames)") })
+public class User extends EnableEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -110,11 +109,6 @@ public class User extends AuditableEntity implements ICustomFieldEntity {
             @AttributeOverride(name = "entityClass", column = @Column(name = "ENTITY_CLASS", nullable = false, length = 255)) })
     private List<SecuredEntity> securedEntities = new ArrayList<>();
 
-    // @ManyToMany(fetch = FetchType.LAZY)
-    // @JoinTable(name = "ADM_USER_PROVIDER", joinColumns = @JoinColumn(name =
-    // "USER_ID"), inverseJoinColumns = @JoinColumn(name = "PROVIDER_ID"))
-    // private Set<Provider> providers = new HashSet<Provider>();
-
     @Temporal(TemporalType.DATE)
     @Column(name = "LAST_PASSWORD_MODIFICATION")
     private Date lastPasswordModification;
@@ -135,14 +129,6 @@ public class User extends AuditableEntity implements ICustomFieldEntity {
 
     public User() {
     }
-
-    // public Set<Provider> getProviders() {
-    // return providers;
-    // }
-    //
-    // public void setProviders(Set<Provider> providers) {
-    // this.providers = providers;
-    // }
 
     public Set<Role> getRoles() {
         return roles;
@@ -273,56 +259,12 @@ public class User extends AuditableEntity implements ICustomFieldEntity {
         return userName;
     }
 
-    /**
-     * Determines if user is bound to a single provider only
-     * 
-     * @return True if user is bound to a single provider
-     */
-    public boolean isOnlyOneProvider() {
-        // if (getProviders().size() == 1) {
-        // return true;
-        // } else {
-        // return false;
-        // }
-        return true;
-    }
-
     public String getEmail() {
         return email;
     }
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    /**
-     * Check if [current] provider match the provider user is attached to
-     */
-    @Override
-    public boolean doesProviderMatch(Provider providerToMatch) {
-
-        // for (Provider providerItem : providers) {
-        Provider p = getProvider();
-
-        if (p != null && p.getId().longValue() == providerToMatch.getId().longValue()) {
-            return true;
-        }
-        // }
-        return false;
-    }
-
-    /**
-     * Check if [current] provider match the provider user is attached to
-     */
-    @Override
-    public boolean doesProviderMatch(Long providerToMatch) {
-        // for (Provider providerItem : providers) {
-        Provider p = getProvider();
-        if (p != null && p.getId().equals(providerToMatch)) {
-            return true;
-        }
-        // }
-        return false;
     }
 
     public boolean hasPermission(String resource, String permission) {

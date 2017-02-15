@@ -34,7 +34,7 @@ public class InvoicingWsImpl extends BaseWs implements InvoicingWs {
         log.info("createBillingRun request={}", createBillingRunDto);
         try {
 
-            long billingRunId = invoicingApi.createBillingRun(createBillingRunDto, getCurrentUser());
+            long billingRunId = invoicingApi.createBillingRun(createBillingRunDto);
             result.setMessage(billingRunId + "");
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
@@ -56,7 +56,7 @@ public class InvoicingWsImpl extends BaseWs implements InvoicingWs {
         log.info("getBillingRunInfo request={}", billingRunId);
         try {
 
-            result.setBillingRunDto(invoicingApi.getBillingRunInfo(billingRunId, getCurrentUser()));
+            result.setBillingRunDto(invoicingApi.getBillingRunInfo(billingRunId));
 
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
@@ -78,7 +78,7 @@ public class InvoicingWsImpl extends BaseWs implements InvoicingWs {
         log.info("getBillingAccountListInRun request={}", billingRunId);
         try {
 
-            result.setBillingAccountsDto(invoicingApi.getBillingAccountListInRun(billingRunId, getCurrentUser()));
+            result.setBillingAccountsDto(invoicingApi.getBillingAccountListInRun(billingRunId));
 
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
@@ -100,7 +100,7 @@ public class InvoicingWsImpl extends BaseWs implements InvoicingWs {
         log.info("getPreInvoicingReport request={}", billingRunId);
         try {
 
-            result.setPreInvoicingReportsDTO(invoicingApi.getPreInvoicingReport(billingRunId, getCurrentUser()));
+            result.setPreInvoicingReportsDTO(invoicingApi.getPreInvoicingReport(billingRunId));
 
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
@@ -122,7 +122,7 @@ public class InvoicingWsImpl extends BaseWs implements InvoicingWs {
         log.info("getPreInvoicingReport request={}", billingRunId);
         try {
 
-            result.setPostInvoicingReportsDTO(invoicingApi.getPostInvoicingReport(billingRunId, getCurrentUser()));
+            result.setPostInvoicingReportsDTO(invoicingApi.getPostInvoicingReport(billingRunId));
 
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
@@ -144,7 +144,7 @@ public class InvoicingWsImpl extends BaseWs implements InvoicingWs {
         log.info("validateBillingRun request={}", billingRunId);
         try {
 
-            invoicingApi.validateBillingRun(billingRunId, getCurrentUser());
+            invoicingApi.validateBillingRun(billingRunId);
 
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
@@ -166,7 +166,7 @@ public class InvoicingWsImpl extends BaseWs implements InvoicingWs {
         log.info("cancelBillingRun request={}", billingRunId);
         try {
 
-            invoicingApi.cancelBillingRun(billingRunId, getCurrentUser());
+            invoicingApi.cancelBillingRun(billingRunId);
 
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());

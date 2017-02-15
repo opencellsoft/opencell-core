@@ -54,5 +54,5 @@ public interface IMatchingCodeService extends IPersistenceService<MatchingCode> 
 	 * @param user
 	 * @throws BusinessException
 	 */
-	public void unmatching(Long idMatchingCode, User user) throws BusinessException;
+	public void unmatching(Long idMatchingCode) throws BusinessException;
 }

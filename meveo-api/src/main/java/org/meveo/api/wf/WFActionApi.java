@@ -11,7 +11,6 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
 import org.meveo.model.wf.WFAction;
 import org.meveo.model.wf.WFTransition;
 import org.meveo.service.wf.WFActionService;
@@ -26,33 +25,33 @@ public class WFActionApi extends BaseApi {
 	/**
 	 * 	
 	 * @param wfActionDto
-	 * @param currentUser
+
 	 * @throws MissingParameterException
 	 * @throws EntityDoesNotExistsException
 	 * @throws EntityAlreadyExistsException
 	 * @throws BusinessException
 	 */
-	public void create(WFTransition wfTransition, WFActionDto wfActionDto, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, EntityAlreadyExistsException, BusinessException {
+	public void create(WFTransition wfTransition, WFActionDto wfActionDto) throws MissingParameterException, EntityDoesNotExistsException, EntityAlreadyExistsException, BusinessException {
 		validateDto(wfActionDto, false);
         WFAction wfAction = fromDTO(wfActionDto, null);
 		wfAction.setWfTransition(wfTransition);
-		wfActionService.create(wfAction, currentUser);
+		wfActionService.create(wfAction);
 	}
  
 	/**
 	 * 
 	 * @param wfActionDto
-	 * @param currentUser
+
 	 * @throws MissingParameterException
 	 * @throws EntityDoesNotExistsException
 	 * @throws BusinessException
      * @throws BusinessApiException
 	 */
-	public void update(WFTransition wfTransition, WFActionDto wfActionDto, User currentUser) throws MissingParameterException,
+	public void update(WFTransition wfTransition, WFActionDto wfActionDto) throws MissingParameterException,
                                          EntityDoesNotExistsException, BusinessException, BusinessApiException {
 		validateDto(wfActionDto, true);
 
-        WFAction wfAction = wfActionService.findWFActionByUUID(wfActionDto.getUuid(), currentUser.getProvider());
+        WFAction wfAction = wfActionService.findWFActionByUUID(wfActionDto.getUuid());
 		
 		if(wfAction == null){
 			throw new EntityDoesNotExistsException(WFAction.class.getName() + "with uuid=" + wfActionDto.getUuid());
@@ -63,26 +62,26 @@ public class WFActionApi extends BaseApi {
 		
 		wfAction = fromDTO(wfActionDto, wfAction);
 		wfAction.setWfTransition(wfTransition);
-		wfActionService.update(wfAction, currentUser);
+		wfActionService.update(wfAction);
 	}
 	
 	/**
 	 * 
 	 * @param wfActionDto
-	 * @param currentUser
+
 	 * @throws MissingParameterException
 	 * @throws EntityDoesNotExistsException
 	 * @throws EntityAlreadyExistsException
 	 * @throws BusinessException
      * @throws BusinessApiException
 	 */
-	public void createOrUpdate(WFTransition wfTransition, WFActionDto wfActionDto, User currentUser) throws MissingParameterException, EntityDoesNotExistsException,
+	public void createOrUpdate(WFTransition wfTransition, WFActionDto wfActionDto) throws MissingParameterException, EntityDoesNotExistsException,
             EntityAlreadyExistsException, BusinessException, BusinessApiException {
-        WFAction wfAction = wfActionService.findWFActionByUUID(wfActionDto.getUuid(), currentUser.getProvider());
+        WFAction wfAction = wfActionService.findWFActionByUUID(wfActionDto.getUuid());
         if (wfAction == null) {
-            create(wfTransition, wfActionDto, currentUser);
+            create(wfTransition, wfActionDto);
         } else {
-            update(wfTransition, wfActionDto, currentUser);
+            update(wfTransition, wfActionDto);
         }
 	}
 

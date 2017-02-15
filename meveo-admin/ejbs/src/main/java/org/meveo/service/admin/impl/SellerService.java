@@ -18,65 +18,27 @@
  */
 package org.meveo.service.admin.impl;
 
-import java.util.List;
-
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.crm.Provider;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.BusinessService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 
 @Stateless
-public class SellerService extends PersistenceService<Seller> {
+public class SellerService extends BusinessService<Seller> {
 	
 	@Inject
 	private InvoiceTypeService invoiceTypeService;
 
-	public Seller findByCode(String code, Provider provider) {
-		return findByCode(code, provider, null);
-	}
-
-	public Seller findByCode(String code, Provider provider,
-			List<String> fetchFields) {
-		QueryBuilder qb = new QueryBuilder(Seller.class, "s", fetchFields,
-				provider);
-
-		qb.addCriterion("code", "=", code, true);
-		qb.addCriterionEntity("s.provider", provider);
-
-		try {
-			return (Seller) qb.getQuery(getEntityManager()).getSingleResult();
-		} catch (NoResultException e) {
-			return null;
-		}
-	}
-
-	public Seller findByCode(EntityManager em, String code, Provider provider) {
-		Query query = em
-				.createQuery(
-						"from " + Seller.class.getSimpleName()
-								+ " where code=:code and provider=:provider")
-				.setParameter("code", code).setParameter("provider", provider);
-		if (query.getResultList().size() == 0) {
-			return null;
-		}
-
-		return (Seller) query.getResultList().get(0);
-	}
-
-	public boolean hasChildren(EntityManager em, Seller seller,
-			Provider provider) {
+	public boolean hasChildren(EntityManager em, Seller seller) {
 		QueryBuilder qb = new QueryBuilder(Seller.class, "s");
-		qb.addCriterionEntity("provider", provider);
+		
 		qb.addCriterionEntity("seller", seller);
 
 		try {
@@ -90,9 +52,9 @@ public class SellerService extends PersistenceService<Seller> {
     public void create(Seller seller) throws BusinessException{
         log.info("start of create seller");
         super.create(seller);
-        InvoiceType commType = invoiceTypeService.getDefaultCommertial(creator);
+        InvoiceType commType = invoiceTypeService.getDefaultCommertial();
         log.debug("InvoiceTypeCode for commercial bill :"+(commType==null?null:commType.getCode()));
-        InvoiceType adjType = invoiceTypeService.getDefaultAdjustement(creator);
+        InvoiceType adjType = invoiceTypeService.getDefaultAdjustement();
         log.debug("InvoiceTypeCode for adjustement bill :"+(adjType==null?null:adjType.getCode()));
     }
 }

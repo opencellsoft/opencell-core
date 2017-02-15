@@ -31,7 +31,7 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            paymentApi.createPayment(postData, getCurrentUser());
+            paymentApi.createPayment(postData);
         } catch (BusinessException e) {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
@@ -51,8 +51,8 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         try {
-            result.setCustomerPaymentDtoList(paymentApi.getPaymentList(customerAccountCode, getCurrentUser()));
-            result.setBalance(paymentApi.getBalance(customerAccountCode, getCurrentUser()));
+            result.setCustomerPaymentDtoList(paymentApi.getPaymentList(customerAccountCode));
+            result.setBalance(paymentApi.getBalance(customerAccountCode));
         } catch (Exception e) {
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
             result.getActionStatus().setMessage(e.getMessage());

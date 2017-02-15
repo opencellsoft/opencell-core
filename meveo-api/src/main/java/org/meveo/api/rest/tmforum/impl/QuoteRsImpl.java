@@ -37,7 +37,7 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
         Response.ResponseBuilder responseBuilder = null;
 
         try {
-            productQuote = quoteApi.createQuote(productQuote, getCurrentUser());
+            productQuote = quoteApi.createQuote(productQuote);
             responseBuilder = Response.status(Response.Status.CREATED).entity(productQuote);
 
         } catch (MeveoApiException e) {
@@ -61,7 +61,7 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
 
         try {
 
-            ProductQuote productQuote = quoteApi.getQuote(quoteId, getCurrentUser());
+            ProductQuote productQuote = quoteApi.getQuote(quoteId);
 
             responseBuilder = Response.ok().entity(productQuote);
 
@@ -90,13 +90,13 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
         try {
 
             Map<String, List<String>> filterCriteria = new HashMap<String, List<String>>();
-            List<ProductQuote> quotes = quoteApi.findQuotes(filterCriteria, getCurrentUser());
+            List<ProductQuote> quotes = quoteApi.findQuotes(filterCriteria);
 
             responseBuilder = Response.ok().entity(quotes);
 
-        } catch (MeveoApiException e) {
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
+//        } catch (MeveoApiException e) {
+//            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+//            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
             responseBuilder = Response.status(Response.Status.BAD_REQUEST);
             responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION
@@ -115,7 +115,7 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
 
         try {
 
-            productQuote = quoteApi.updatePartiallyQuote(quoteId, productQuote, getCurrentUser());
+            productQuote = quoteApi.updatePartiallyQuote(quoteId, productQuote);
             responseBuilder = Response.ok().entity(productQuote);
 
         } catch (EntityDoesNotExistsException e) {
@@ -142,14 +142,14 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
         Response.ResponseBuilder responseBuilder = null;
 
         try {
-            quoteApi.deleteQuote(quoteId, getCurrentUser());
+            quoteApi.deleteQuote(quoteId);
 
             responseBuilder = Response.ok();
 
         } catch (EntityDoesNotExistsException e) {
             responseBuilder = Response.status(Response.Status.NOT_FOUND);
             responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
-        } catch (ActionForbiddenException | LoginException e) {
+        } catch (ActionForbiddenException e) {
             responseBuilder = Response.status(Response.Status.FORBIDDEN);
             responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (MeveoApiException e) {
@@ -172,7 +172,7 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
         Response.ResponseBuilder responseBuilder = null;
 
         try {
-            ProductOrder productOrder = quoteApi.placeOrder(quoteId, getCurrentUser());
+            ProductOrder productOrder = quoteApi.placeOrder(quoteId);
             responseBuilder = Response.ok().entity(productOrder);
 
         } catch (EntityDoesNotExistsException e) {

@@ -29,7 +29,7 @@ public class TitleRsImpl extends BaseRs implements TitleRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            titleApi.create(postData, getCurrentUser());
+            titleApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -49,7 +49,7 @@ public class TitleRsImpl extends BaseRs implements TitleRs {
         TitleResponseDto result = new TitleResponseDto();
 
         try {
-            result.setTitleDto(titleApi.find(titleCode, getCurrentUser().getProvider()));
+            result.setTitleDto(titleApi.find(titleCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -69,7 +69,7 @@ public class TitleRsImpl extends BaseRs implements TitleRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            titleApi.update(postData, getCurrentUser());
+            titleApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -89,7 +89,7 @@ public class TitleRsImpl extends BaseRs implements TitleRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            titleApi.remove(titleCode, getCurrentUser());
+            titleApi.remove(titleCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -109,7 +109,7 @@ public class TitleRsImpl extends BaseRs implements TitleRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            titleApi.createOrUpdate(postData, getCurrentUser());
+            titleApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -129,7 +129,7 @@ public class TitleRsImpl extends BaseRs implements TitleRs {
         TitlesResponseDto result = new TitlesResponseDto();
 
         try {
-            result.setTitles(titleApi.list(getCurrentUser().getProvider()));
+            result.setTitles(titleApi.list());
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

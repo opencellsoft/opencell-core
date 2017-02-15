@@ -20,9 +20,7 @@ import org.meveo.admin.sepa.jaxb.Pain002.CstmrPmtStsRpt.OrgnlPmtInfAndSts.TxInfA
 import org.meveo.admin.util.ArConfig;
 import org.meveo.commons.utils.JAXBUtils;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.BankCoordinates;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AutomatedPayment;
 import org.meveo.model.payments.CustomerAccount;
@@ -38,13 +36,9 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
-import org.slf4j.Logger;
 
 @Stateless
 public class DDRequestItemService extends PersistenceService<DDRequestItem> {
-
-	@Inject
-	private Logger logger;
 
 	@Inject
 	private RecordedInvoiceService recordedInvoiceService;
@@ -71,9 +65,8 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
 	private MatchingAmountService matchingAmountService;
 	
 
-
-	public DDRequestLOT createDDRquestLot(Date fromDueDate, Date toDueDate, User user,DDRequestFileFormatEnum ddRequestFileFormatEnum) throws BusinessEntityException, Exception {
-		logger.info("createDDRquestLot fromDueDate:" + fromDueDate + "  toDueDate:" + toDueDate + "  user:" + (user == null ? "null" : user.getUserName()));
+	public DDRequestLOT createDDRquestLot(Date fromDueDate, Date toDueDate, DDRequestFileFormatEnum ddRequestFileFormatEnum) throws BusinessEntityException, Exception {
+		log.info("createDDRquestLot fromDueDate: {}   toDueDate: {}", fromDueDate, toDueDate);
 
 		if (fromDueDate == null) {
 			throw new BusinessEntityException("fromDuDate is empty");
@@ -84,23 +77,19 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
 		if (fromDueDate.after(toDueDate)) {
 			throw new BusinessEntityException("fromDueDate is after toDueDate");
 		}
-		if (user == null) {
-			throw new BusinessEntityException("user is null");
-		}
-		List<RecordedInvoice> recordedInvoices = recordedInvoiceService.getInvoices(fromDueDate, toDueDate, user.getProvider().getCode());
+		List<RecordedInvoice> recordedInvoices = recordedInvoiceService.getInvoices(fromDueDate, toDueDate);
 		if ((recordedInvoices == null) || (recordedInvoices.isEmpty())) {
 			throw new BusinessEntityException("no invoices!");
 		}
 
-		logger.info("number invoices : " + recordedInvoices.size());
+		log.info("number invoices: {}", recordedInvoices.size());
 
 		BigDecimal totalAmount = BigDecimal.ZERO;
 
 		DDRequestLOT ddRequestLOT = new DDRequestLOT();
 		ddRequestLOT.setFileFormat(ddRequestFileFormatEnum);
-		ddRequestLOT.setProvider(user.getProvider());
 		ddRequestLOT.setInvoicesNumber(Integer.valueOf(recordedInvoices.size()));
-		dDRequestLOTService.create(ddRequestLOT, user);
+		dDRequestLOTService.create(ddRequestLOT);
 		List<DDRequestItem> ddrequestItems = new ArrayList<DDRequestItem>();
 		int rejectedInvoice = 0;
 		String allErrors = "";
@@ -109,7 +98,7 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
 			BigDecimal amountToPay = recordedInvoice.getNetToPay();
 			if (amountToPay == null) {
 				try{
-					amountToPay = customerAccountService.customerAccountBalanceDueWithoutLitigation(recordedInvoice.getCustomerAccount().getId(), null, recordedInvoice.getDueDate(), recordedInvoice.getProvider());
+					amountToPay = customerAccountService.customerAccountBalanceDueWithoutLitigation(recordedInvoice.getCustomerAccount().getId(), null, recordedInvoice.getDueDate());
 				}catch(Exception e){
 					errorMsg = "cant compute BalanceDueWithoutLitigation ";					
 					log.error(errorMsg,e);
@@ -133,12 +122,11 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
 			ddrequestItem.setPaymentInfo3(recordedInvoice.getPaymentInfo3());
 			ddrequestItem.setPaymentInfo4(recordedInvoice.getPaymentInfo4());
 			ddrequestItem.setPaymentInfo5(recordedInvoice.getPaymentInfo5());
-			ddrequestItem.setProvider(recordedInvoice.getProvider());
 			ddrequestItem.setReference(recordedInvoice.getReference());
 			ddrequestItem.setRecordedInvoice(recordedInvoice);
-			logger.info("ddrequestItem : " + ddrequestItem.getId() + "amount=" + amountToPay);
+			log.info("ddrequestItem: {} amount {} ", ddrequestItem.getId(), amountToPay);
 						
-			create(ddrequestItem, user);			
+			create(ddrequestItem);			
 			ddrequestItems.add(ddrequestItem);
 			
 			if(errorMsg != null){
@@ -152,7 +140,7 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
 		
 		if (rejectedInvoice > 0) {			
 			ddRequestLOT.setRejectedCause(StringUtils.truncate(allErrors, 255, true));			
-			dDRequestLOTService.updateAudit(ddRequestLOT, user);
+			dDRequestLOTService.updateAudit(ddRequestLOT);
 			ddRequestLOT = dDRequestLOTService.updateNoCheck(ddRequestLOT);
 		}
 
@@ -160,11 +148,11 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
 		if (!ddrequestItems.isEmpty()) {
 			ddRequestLOT.setDdrequestItems(ddrequestItems);
 			ddRequestLOT.setInvoicesAmount(totalAmount);
-			dDRequestLOTService.updateAudit(ddRequestLOT, user);
+			dDRequestLOTService.updateAudit(ddRequestLOT);
 			ddRequestLOT = dDRequestLOTService.updateNoCheck(ddRequestLOT);
 
-			logger.info("ddRequestLOT created , totalAmount:" + ddRequestLOT.getInvoicesAmount());
-			logger.info("Successful createDDRquestLot fromDueDate:" + fromDueDate + "  toDueDate:" + toDueDate + " provider:" + user.getProvider().getCode());
+			log.info("ddRequestLOT created , totalAmount: {}", ddRequestLOT.getInvoicesAmount());
+			log.info("Successful createDDRquestLot fromDueDate: {} toDueDate: {}", fromDueDate, toDueDate );
 
 		} else {
 			throw new BusinessEntityException("No ddRequestItems!");
@@ -172,17 +160,14 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
 		return ddRequestLOT;
 	}
 
-	public void createPaymentsForDDRequestLot(DDRequestLOT ddRequestLOT, User user) throws BusinessException {
-		logger.info("createPaymentsForDDRequestLot ddRequestLotId:" + ddRequestLOT.getId() + " user :" + (user == null ? "null" : user.getUserName()));
-		if (user == null) {
-			throw new BusinessException("user is empty!");
-		}
+	public void createPaymentsForDDRequestLot(DDRequestLOT ddRequestLOT) throws BusinessException {
+		log.info("createPaymentsForDDRequestLot ddRequestLotId: {}", ddRequestLOT.getId());
 
 		if (ddRequestLOT.isPaymentCreated()) {
 			throw new BusinessException("Payment Already created.");
 		}
 		
-		OCCTemplate directDebitTemplate = oCCTemplateService.getDirectDebitOCCTemplate(user);
+		OCCTemplate directDebitTemplate = oCCTemplateService.getDirectDebitOCCTemplate();
 		if (directDebitTemplate == null) {
 			throw new BusinessException("OCC doesn't exist. codeParam=bayad.ddrequest.occCode");
 		}
@@ -191,31 +176,29 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
 			DDRequestItem ddrequestItem  = ddRequestLOT.getDdrequestItems().get(i);
 			if(!ddrequestItem.hasError()){
 				if (BigDecimal.ZERO.compareTo(ddrequestItem.getAmount()) == 0) {
-					logger.info("invoice:" + ddrequestItem.getReference() + " balanceDue:" + BigDecimal.ZERO + " no DIRECTDEBIT transaction ");
+					log.info("invoice: {}  balanceDue:{}  no DIRECTDEBIT transaction", ddrequestItem.getReference(), BigDecimal.ZERO);
 				} else {								
-					AutomatedPayment automatedPayment = createPayment(ddrequestItem.getProvider(), PaymentMethodEnum.DIRECTDEBIT, directDebitTemplate, ddrequestItem.getAmount(), 
+					AutomatedPayment automatedPayment = createPayment(PaymentMethodEnum.DIRECTDEBIT, directDebitTemplate, ddrequestItem.getAmount(), 
 							ddrequestItem.getRecordedInvoice().getCustomerAccount(), ddrequestItem.getReference(), ddRequestLOT.getFileName(), ddRequestLOT.getSendDate(), DateUtils.addDaysToDate(new Date(),
-									ArConfig.getDateValueAfter()), ddRequestLOT.getSendDate(), ddRequestLOT.getSendDate(), ddrequestItem.getRecordedInvoice(), true, MatchingTypeEnum.A_DERICT_DEBIT,user);
+									ArConfig.getDateValueAfter()), ddRequestLOT.getSendDate(), ddRequestLOT.getSendDate(), ddrequestItem.getRecordedInvoice(), true, MatchingTypeEnum.A_DERICT_DEBIT);
 					ddrequestItem.setAutomatedPayment(automatedPayment);
-					updateAudit(ddrequestItem, user);
 					updateNoCheck(ddrequestItem);
 	
 				}
 			}
 		}
 		ddRequestLOT.setPaymentCreated(true);
-		dDRequestLOTService.updateAudit(ddRequestLOT, user);
+		dDRequestLOTService.updateAudit(ddRequestLOT);
 		dDRequestLOTService.updateNoCheck(ddRequestLOT);
 
-		logger.info("Successful createPaymentsForDDRequestLot ddRequestLotId:" + ddRequestLOT.getId());
+		log.info("Successful createPaymentsForDDRequestLot ddRequestLotId: {}",ddRequestLOT.getId());
 
 	}
 
-	public AutomatedPayment createPayment(Provider provider, PaymentMethodEnum paymentMethodEnum, OCCTemplate occTemplate, BigDecimal amount, CustomerAccount customerAccount, String reference, String bankLot, Date depositDate, Date bankCollectionDate, Date dueDate, Date transactionDate, RecordedInvoice occForMatching, boolean isToMatching, MatchingTypeEnum matchingTypeEnum, User currentUser) throws BusinessException {
+	public AutomatedPayment createPayment(PaymentMethodEnum paymentMethodEnum, OCCTemplate occTemplate, BigDecimal amount, CustomerAccount customerAccount, String reference, String bankLot, Date depositDate, Date bankCollectionDate, Date dueDate, Date transactionDate, RecordedInvoice occForMatching, boolean isToMatching, MatchingTypeEnum matchingTypeEnum) throws BusinessException {
 		log.info("create payment for amount:" + amount + " paymentMethodEnum:" + paymentMethodEnum + " isToMatching:" + isToMatching + "  customerAccount:" + customerAccount.getCode() + "...");
 
 		AutomatedPayment automatedPayment = new AutomatedPayment();
-		automatedPayment.setProvider(provider);
 		automatedPayment.setPaymentMethod(paymentMethodEnum);
 		automatedPayment.setAmount(amount);
 		automatedPayment.setUnMatchingAmount(amount);
@@ -236,7 +219,7 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
 		automatedPayment.setUnMatchingAmount(BigDecimal.ZERO);
 		automatedPayment.setMatchingAmount(amount);
 
-		automatedPaymentService.create(automatedPayment, currentUser);
+		automatedPaymentService.create(automatedPayment);
 		if (isToMatching) {
 			MatchingCode matchingCode = new MatchingCode();
 			BigDecimal amountToMatch = BigDecimal.ZERO;
@@ -246,12 +229,9 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
 			accountOperation.setMatchingAmount(accountOperation.getMatchingAmount().add(amountToMatch));
 			accountOperation.setUnMatchingAmount(accountOperation.getUnMatchingAmount().subtract(amountToMatch));
 			accountOperation.setMatchingStatus(MatchingStatusEnum.L);
-			accountOperation.getAuditable().setUpdated(new Date());
-			accountOperation.getAuditable().setUpdater(currentUser);
 			accountOperationService.updateNoCheck(accountOperation);
+			
 			MatchingAmount matchingAmountSingle = new MatchingAmount();
-			matchingAmountSingle.setProvider(accountOperation.getProvider());
-			matchingAmountSingle.updateAudit(currentUser);
 			matchingAmountSingle.setAccountOperation(accountOperation);
 			matchingAmountSingle.setMatchingCode(matchingCode);
 			matchingAmountSingle.setMatchingAmount(amountToMatch);
@@ -259,7 +239,6 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
 			matchingCode.getMatchingAmounts().add(matchingAmountSingle);
 			
 			MatchingAmount matchingAmount = new MatchingAmount();
-			matchingAmount.setProvider(automatedPayment.getProvider());
 			matchingAmount.updateAudit(currentUser);
 			matchingAmount.setAccountOperation(automatedPayment);
 			matchingAmount.setMatchingCode(matchingCode);
@@ -272,8 +251,7 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
 			matchingCode.setMatchingAmountCredit(amount);
 			matchingCode.setMatchingDate(new Date());
 			matchingCode.setMatchingType(matchingTypeEnum);
-			matchingCode.setProvider(provider);
-			matchingCodeService.create(matchingCode, currentUser);
+			matchingCodeService.create(matchingCode);
 			log.info("matching created  for 1 automatedPayment ");
 		} else {
 			log.info("no matching created ");
@@ -284,21 +262,20 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
 
 	
 	
-	public void  rejectPayment( RecordedInvoice recordedInvoice, String rejectCause,User currentUser) throws BusinessException{
+	public void  rejectPayment( RecordedInvoice recordedInvoice, String rejectCause) throws BusinessException{
 		
 		AutomatedPayment automatedPayment = recordedInvoice.getPayedDDRequestItem().getAutomatedPayment();
 		log.debug("automatedPayment.getAccountCode():"+automatedPayment.getAccountCode());
-		matchingCodeService.unmatching(recordedInvoice.getMatchingAmounts().get(0).getMatchingCode().getId(), currentUser);
+		matchingCodeService.unmatching(recordedInvoice.getMatchingAmounts().get(0).getMatchingCode().getId());
 		
 		if (automatedPayment != null) {
 			automatedPayment.setMatchingStatus(MatchingStatusEnum.R);
-			automatedPayment.updateAudit(currentUser);
 			automatedPaymentService.updateNoCheck(automatedPayment);
 		}
 	}
 	
 	//TODO remove coupling between  busines rules and file format
-	public void processRejectFile(File file, String fileName, User currentUser) throws JAXBException, Exception {
+	public void processRejectFile(File file, String fileName) throws JAXBException, Exception {
 		Pain002 pain002 = (Pain002) JAXBUtils.unmarshaller(Pain002.class, file);
 
 		CstmrPmtStsRpt cstmrPmtStsRpt = pain002.getCstmrPmtStsRpt();
@@ -313,7 +290,7 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
 			throw new Exception("Unknown dDRequestLOTref:" + dDRequestLOTref);
 		}
 		String[] dDRequestLOTrefSplited = dDRequestLOTref.split("-");
-		DDRequestLOT dDRequestLOT = dDRequestLOTService.findById(Long.valueOf(dDRequestLOTrefSplited[1]), currentUser.getProvider());
+		DDRequestLOT dDRequestLOT = dDRequestLOTService.findById(Long.valueOf(dDRequestLOTrefSplited[1]));
 		if (dDRequestLOT == null) {
 			throw new Exception("DDRequestLOT doesn't exist. id=" + dDRequestLOTrefSplited[1]);
 		}
@@ -322,7 +299,7 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
 
 			for (DDRequestItem ddRequestItem : dDRequestLOT.getDdrequestItems()) {
 				if(!ddRequestItem.hasError()){
-					rejectPayment(ddRequestItem.getRecordedInvoice(), "RJCT", currentUser);
+					rejectPayment(ddRequestItem.getRecordedInvoice(), "RJCT");
 				}
 			}
 
@@ -331,32 +308,52 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
 			OrgnlPmtInfAndSts orgnlPmtInfAndSts = cstmrPmtStsRpt.getOrgnlPmtInfAndSts();			
 			for (TxInfAndSts txInfAndSts : orgnlPmtInfAndSts.getTxInfAndSts()) {
 				if ("RJCT".equals(txInfAndSts.getTxSts())) {
-					RecordedInvoice invoice = recordedInvoiceService.getRecordedInvoice(txInfAndSts.getOrgnlEndToEndId(), currentUser.getProvider());
-					rejectPayment(invoice, "RJCT", currentUser);
+					RecordedInvoice invoice = recordedInvoiceService.getRecordedInvoice(txInfAndSts.getOrgnlEndToEndId());
+					rejectPayment(invoice, "RJCT");
 				}
 			}
 		}
 		dDRequestLOT.setReturnFileName(file.getName());
-		dDRequestLOT.updateAudit(currentUser);
 		dDRequestLOTService.updateNoCheck(dDRequestLOT);
 	}
 	
 	public String getMissingField(RecordedInvoice recordedInvoice) {
-		Provider provider = recordedInvoice.getProvider();
-		BankCoordinates providerBC = provider.getBankCoordinates();
-		CustomerAccount ca = recordedInvoice.getCustomerAccount();
-		if( recordedInvoice == null || recordedInvoice.getAmount() == null ) return "invoice.amount";
-		if( StringUtils.isBlank(provider.getDescription()) ) return "provider.description";
-		if( providerBC == null ) return "provider.bankCoordinates";
-		if( providerBC.getIban() == null) return "provider.iban";
-		if( providerBC.getBic() == null ) return "provider.bic";
-		if( providerBC.getIcs() == null ) return "provider.ics";
-		if( recordedInvoice.getReference() == null ) return "recordedInvoice.reference";
-		if( ca == null) return "recordedInvoice.ca";
-		if( ca.getMandateIdentification() == null) return "ca.mandateIdentification";
-		if( ca.getMandateDate() == null) return "ca.mandateDate";
-		if( ca.getDescription() == null) return "ca.description";
-		return null;
+        BankCoordinates providerBC = appProvider.getBankCoordinates();
+        CustomerAccount ca = recordedInvoice.getCustomerAccount();
+        if (recordedInvoice == null || recordedInvoice.getAmount() == null) {
+            return "invoice.amount";
+        }
+        if (StringUtils.isBlank(appProvider.getDescription())) {
+            return "provider.description";
+        }
+        if (providerBC == null) {
+            return "provider.bankCoordinates";
+        }
+        if (providerBC.getIban() == null) {
+            return "provider.iban";
+        }
+        if (providerBC.getBic() == null) {
+            return "provider.bic";
+        }
+        if (providerBC.getIcs() == null) {
+            return "provider.ics";
+        }
+        if (recordedInvoice.getReference() == null) {
+            return "recordedInvoice.reference";
+        }
+        if (ca == null) {
+            return "recordedInvoice.ca";
+        }
+        if (ca.getMandateIdentification() == null) {
+            return "ca.mandateIdentification";
+        }
+        if (ca.getMandateDate() == null) {
+            return "ca.mandateDate";
+        }
+        if (ca.getDescription() == null) {
+            return "ca.description";
+        }
+        return null;
 	}
 
 }

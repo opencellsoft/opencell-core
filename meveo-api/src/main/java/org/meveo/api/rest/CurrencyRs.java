@@ -14,7 +14,6 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.CurrencyDto;
 import org.meveo.api.dto.response.GetCurrencyResponse;
-import org.meveo.api.rest.security.RSSecured;
 
 /**
  * Web service for managing {@link org.meveo.model.billing.Currency} and {@link org.meveo.model.billing.TradingCurrency}.
@@ -25,7 +24,7 @@ import org.meveo.api.rest.security.RSSecured;
 @Path("/currency")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-@RSSecured
+
 public interface CurrencyRs extends IBaseRs {
 
     /**

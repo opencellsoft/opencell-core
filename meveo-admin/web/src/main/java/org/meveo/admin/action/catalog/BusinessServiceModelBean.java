@@ -54,7 +54,7 @@ public class BusinessServiceModelBean extends GenericModuleBean<BusinessServiceM
             if (meveoModuleItems != null) {
                 for (MeveoModuleItem meveoModuleItem : meveoModuleItems) {
                     MeveoModule meveoModule = meveoModuleItem.getMeveoModule();
-                    result.add(businessOfferModelService.findByCode(meveoModule.getCode(), currentUser.getProvider()));
+                    result.add(businessOfferModelService.findByCode(meveoModule.getCode()));
                 }
             }
         }

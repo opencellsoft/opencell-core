@@ -36,7 +36,7 @@ public class MeasurableQuantityRsImpl extends BaseRs implements MeasurableQuanti
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			measurableQuantityApi.create(postData, getCurrentUser());
+			measurableQuantityApi.create(postData);
 		} catch (Exception e) {
 			processException(e, result);
 		}
@@ -49,7 +49,7 @@ public class MeasurableQuantityRsImpl extends BaseRs implements MeasurableQuanti
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 		try {
-			measurableQuantityApi.update(postData, getCurrentUser());
+			measurableQuantityApi.update(postData);
 		} catch (Exception e) {
 			processException(e, result);
 		}
@@ -82,7 +82,7 @@ public class MeasurableQuantityRsImpl extends BaseRs implements MeasurableQuanti
 				to = DateUtils.guessDate(toDate, "yyyy-MM-dd", "yyyy-MM-dd'T'HH:mm:ss");
 			}
 
-			result = measurableQuantityApi.findMVByDateAndPeriod(code, from, to, period, mqCode, getCurrentUser());
+			result = measurableQuantityApi.findMVByDateAndPeriod(code, from, to, period, mqCode);
 			responseBuilder = Response.ok();
 			responseBuilder.entity(result);
 		} catch (MeveoApiException e) {
@@ -104,7 +104,7 @@ public class MeasurableQuantityRsImpl extends BaseRs implements MeasurableQuanti
 	public GetMeasurableQuantityResponse find(String code) {
 		GetMeasurableQuantityResponse result = new GetMeasurableQuantityResponse();
 		try {
-			result.setMeasurableQuantityDto(measurableQuantityApi.find(code, getCurrentUser()));
+			result.setMeasurableQuantityDto(measurableQuantityApi.find(code));
 		} catch (Exception e) {
 			processException(e, result.getActionStatus());
 		}
@@ -116,7 +116,7 @@ public class MeasurableQuantityRsImpl extends BaseRs implements MeasurableQuanti
 	public ActionStatus remove(String code) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		try {
-			measurableQuantityApi.remove(code, getCurrentUser());
+			measurableQuantityApi.remove(code);
 		} catch (Exception e) {
 			processException(e, result);
 		}
@@ -128,7 +128,7 @@ public class MeasurableQuantityRsImpl extends BaseRs implements MeasurableQuanti
 	public GetListMeasurableQuantityResponse list() {
 		GetListMeasurableQuantityResponse result = new GetListMeasurableQuantityResponse();
 		try {
-			result.setListMeasurableQuantityDto(measurableQuantityApi.list(null, getCurrentUser()));
+			result.setListMeasurableQuantityDto(measurableQuantityApi.list(null));
 		} catch (Exception e) {
 			processException(e, result.getActionStatus());
 		}

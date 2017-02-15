@@ -47,8 +47,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
-import org.meveo.model.AuditableEntity;
 import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.EnableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.order.Order;
@@ -58,10 +58,10 @@ import org.meveo.model.quote.Quote;
 
 @Entity
 @ObservableEntity
-@Table(name = "BILLING_INVOICE", uniqueConstraints = @UniqueConstraint(columnNames = { "PROVIDER_ID", "INVOICE_NUMBER", "INVOICE_TYPE_ID" }))
+@Table(name = "BILLING_INVOICE", uniqueConstraints = @UniqueConstraint(columnNames = { "INVOICE_NUMBER", "INVOICE_TYPE_ID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_SEQ")
 @CustomFieldEntity(cftCodePrefix = "INVOICE")
-public class Invoice extends AuditableEntity implements ICustomFieldEntity {
+public class Invoice extends EnableEntity implements ICustomFieldEntity {
 
 	private static final long serialVersionUID = 1L;
 

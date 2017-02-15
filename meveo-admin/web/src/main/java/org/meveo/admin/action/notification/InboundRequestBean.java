@@ -226,14 +226,14 @@ public class InboundRequestBean extends UpdateMapTypeFieldBean<InboundRequest> {
         csvReader.readHeaders();
 
         String existingEntitiesCSV = paramBean.getProperty("existingEntities.csv.dir", "existingEntitiesCSV");
-        File dir = new File(providerDir + File.separator + getCurrentProvider().getCode() + File.separator + existingEntitiesCSV);
+        File dir = new File(providerDir + File.separator + appProvider.getCode() + File.separator + existingEntitiesCSV);
         dir.mkdirs();
         existingEntitiesCsvFile = dir.getAbsolutePath() + File.separator + "InboundRequests_" + new SimpleDateFormat("ddMMyyyyHHmmSS").format(new Date()) + ".csv";
         csv = new CsvBuilder();
         boolean isEntityAlreadyExist = false;
         while (csvReader.readRecord()) {
             String[] values = csvReader.getValues();
-            InboundRequest existingEntity = inboundRequestService.findByCode(values[CODE], getCurrentProvider());
+            InboundRequest existingEntity = inboundRequestService.findByCode(values[CODE]);
             if (existingEntity != null) {
                 checkSelectedStrategy(values, existingEntity, isEntityAlreadyExist);
                 isEntityAlreadyExist = true;
@@ -315,7 +315,7 @@ public class InboundRequestBean extends UpdateMapTypeFieldBean<InboundRequest> {
                         inboundRequest.setResponseHeaders(responseHeaders);
                     }
                 }
-                inboundRequestService.create(inboundRequest, getCurrentUser());
+                inboundRequestService.create(inboundRequest);
             }
         }
         if (isEntityAlreadyExist && strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)) {
@@ -400,7 +400,7 @@ public class InboundRequestBean extends UpdateMapTypeFieldBean<InboundRequest> {
                     existingEntity.setResponseHeaders(responseHeaders);
                 }
             }
-            inboundRequestService.update(existingEntity, getCurrentUser());
+            inboundRequestService.update(existingEntity);
 
         } else if (strategyImportType.equals(StrategyImportTypeEnum.REJECTE_IMPORT)) {
             throw new RejectedImportException("notification.rejectImport");

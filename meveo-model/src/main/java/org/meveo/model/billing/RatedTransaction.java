@@ -42,7 +42,6 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDR;
 
 @Entity
@@ -66,11 +65,11 @@ import org.meveo.model.rating.EDR;
 				+ " AND r.usageDate<:lastTransactionDate "
 				+ " AND r.billingAccount.billingCycle=:billingCycle"
 				+ " AND (r.billingAccount.nextInvoiceDate >= :startDate)"
-				+ " AND (r.billingAccount.nextInvoiceDate < :endDate) and r.provider=:provider"),
+				+ " AND (r.billingAccount.nextInvoiceDate < :endDate) "),
 		@NamedQuery(name = "RatedTransaction.sumbillingRunByCycleNoDate", query = "SELECT sum(r.amountWithoutTax),sum(r.amountWithTax),sum(r.amountTax) FROM RatedTransaction r"
 				+ " WHERE r.status=:status AND r.doNotTriggerInvoicing=false AND r.amountWithoutTax<>0 AND r.invoice is null"
 				+ " AND r.usageDate<:lastTransactionDate "
-				+ " AND r.billingAccount.billingCycle=:billingCycle and r.provider=:provider"),
+				+ " AND r.billingAccount.billingCycle=:billingCycle "),
 		@NamedQuery(name = "RatedTransaction.sumbillingRunByList", query = "SELECT sum(r.amountWithoutTax),sum(r.amountWithTax),sum(r.amountTax) FROM RatedTransaction r "
 				+ "WHERE r.status=:status AND r.doNotTriggerInvoicing=false AND r.amountWithoutTax<>0 AND r.invoice is null"
 				+ " AND r.usageDate<:lastTransactionDate " + " AND r.billingAccount IN :billingAccountList"),
@@ -253,12 +252,11 @@ public class RatedTransaction extends BaseEntity {
 		this.setOfferCode(ratedTransaction.getOfferCode());
 		this.setEdr(ratedTransaction.getEdr());
 		this.setOfferTemplate(ratedTransaction.getOfferTemplate());
-		this.setProvider(ratedTransaction.getProvider());
 	}
 
 	public RatedTransaction(WalletOperation walletOperation, Date usageDate, BigDecimal unitAmountWithoutTax,
 			BigDecimal unitAmountWithTax, BigDecimal unitAmountTax, BigDecimal quantity, BigDecimal amountWithoutTax,
-			BigDecimal amountWithTax, BigDecimal amountTax, RatedTransactionStatusEnum status, Provider provider,
+			BigDecimal amountWithTax, BigDecimal amountTax, RatedTransactionStatusEnum status, 
 			WalletInstance wallet, BillingAccount billingAccount, InvoiceSubCategory invoiceSubCategory,
 			String parameter1, String parameter2, String parameter3, String orderNumber,String unityDescription,
 			PricePlanMatrix priceplan, String offerCode, EDR edr) {
@@ -287,7 +285,6 @@ public class RatedTransaction extends BaseEntity {
 		this.offerCode = offerCode;
 		this.unityDescription = unityDescription;
 		this.edr = edr;
-		setProvider(provider);
 	}
 
 	public WalletInstance getWallet() {

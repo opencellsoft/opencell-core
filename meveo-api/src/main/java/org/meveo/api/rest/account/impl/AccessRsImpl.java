@@ -32,7 +32,7 @@ public class AccessRsImpl extends BaseRs implements AccessRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            accessApi.create(postData, getCurrentUser());
+            accessApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -52,7 +52,7 @@ public class AccessRsImpl extends BaseRs implements AccessRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            accessApi.update(postData, getCurrentUser());
+            accessApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -72,7 +72,7 @@ public class AccessRsImpl extends BaseRs implements AccessRs {
         GetAccessResponseDto result = new GetAccessResponseDto();
 
         try {
-            result.setAccess(accessApi.find(accessCode, subscriptionCode, getCurrentUser().getProvider()));
+            result.setAccess(accessApi.find(accessCode, subscriptionCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -92,7 +92,7 @@ public class AccessRsImpl extends BaseRs implements AccessRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            accessApi.remove(accessCode, subscriptionCode, getCurrentUser());
+            accessApi.remove(accessCode, subscriptionCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -112,7 +112,7 @@ public class AccessRsImpl extends BaseRs implements AccessRs {
         AccessesResponseDto result = new AccessesResponseDto();
 
         try {
-            result.setAccesses(accessApi.listBySubscription(subscriptionCode, getCurrentUser().getProvider()));
+            result.setAccesses(accessApi.listBySubscription(subscriptionCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -132,7 +132,7 @@ public class AccessRsImpl extends BaseRs implements AccessRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            accessApi.createOrUpdate(postData, getCurrentUser());
+            accessApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

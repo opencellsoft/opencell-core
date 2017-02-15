@@ -41,7 +41,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            subscriptionApi.create(postData, getCurrentUser());
+            subscriptionApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -61,7 +61,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            subscriptionApi.update(postData, getCurrentUser());
+            subscriptionApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -81,7 +81,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            subscriptionApi.instantiateServices(postData, getCurrentUser());
+            subscriptionApi.instantiateServices(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -101,7 +101,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            subscriptionApi.activateServices(postData, null, getCurrentUser(), false);
+            subscriptionApi.activateServices(postData, null,  false);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -121,7 +121,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            subscriptionApi.applyOneShotChargeInstance(postData, getCurrentUser());
+            subscriptionApi.applyOneShotChargeInstance(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -141,7 +141,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 	       ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
 	        try {
-	        	subscriptionApi.applyProduct(postData, getCurrentUser());
+	        	subscriptionApi.applyProduct(postData);
 	        } catch (MeveoApiException e) {
 	            result.setErrorCode(e.getErrorCode());
 	            result.setStatus(ActionStatusEnum.FAIL);
@@ -160,7 +160,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            subscriptionApi.terminateSubscription(postData, ChargeInstance.NO_ORDER_NUMBER, getCurrentUser());
+            subscriptionApi.terminateSubscription(postData, ChargeInstance.NO_ORDER_NUMBER);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -180,7 +180,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            subscriptionApi.terminateServices(postData, ChargeInstance.NO_ORDER_NUMBER, getCurrentUser());
+            subscriptionApi.terminateServices(postData, ChargeInstance.NO_ORDER_NUMBER);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -200,7 +200,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         SubscriptionsResponseDto result = new SubscriptionsResponseDto();
 
         try {
-            result.setSubscriptions(subscriptionApi.listByUserAccount(userAccountCode, getCurrentUser().getProvider()));
+            result.setSubscriptions(subscriptionApi.listByUserAccount(userAccountCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -220,7 +220,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         GetSubscriptionResponseDto result = new GetSubscriptionResponseDto();
 
         try {
-            result.setSubscription(subscriptionApi.findSubscription(subscriptionCode, getCurrentUser().getProvider()));
+            result.setSubscription(subscriptionApi.findSubscription(subscriptionCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -240,7 +240,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            subscriptionApi.createOrUpdate(postData, getCurrentUser());
+            subscriptionApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -262,7 +262,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 
         try {
 
-            SubscriptionsListDto subscriptionsDto = subscriptionApi.listAll(pageSize, pageNumber, getCurrentUser().getProvider());
+            SubscriptionsListDto subscriptionsDto = subscriptionApi.listAll(pageSize, pageNumber);
             result.setSubscriptions(subscriptionsDto);
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());

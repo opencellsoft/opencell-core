@@ -131,7 +131,6 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 	
 	public void newServiceChargeTemplateUsage() {
 		this.serviceChargeTemplateUsage = new ServiceChargeTemplateUsage();
-		this.serviceChargeTemplateUsage.setProvider(getCurrentProvider());
 		this.usageWallets = null;
 	}
 
@@ -269,12 +268,12 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
             serviceChargeTemplateSubscription.getWalletTemplates().addAll(walletTemplateService.refreshOrRetrieve(subscriptionWallets.getTarget()));
             
             if (serviceChargeTemplateSubscription.getId() != null) {
-                serviceChargeTemplateSubscriptionService.update(serviceChargeTemplateSubscription, getCurrentUser());
+                serviceChargeTemplateSubscriptionService.update(serviceChargeTemplateSubscription);
                 entity = getPersistenceService().refreshOrRetrieve(entity); // TODO this line might cause an issue when after update of charge template service template can not be saved
                 messages.info(new BundleKey("messages", "update.successful"));
             } else {
                 serviceChargeTemplateSubscription.setServiceTemplate(entity);
-                serviceChargeTemplateSubscriptionService.create(serviceChargeTemplateSubscription, getCurrentUser());
+                serviceChargeTemplateSubscriptionService.create(serviceChargeTemplateSubscription);
                 entity.getServiceSubscriptionCharges().add(serviceChargeTemplateSubscription);
                 messages.info(new BundleKey("messages", "save.successful"));
             }
@@ -289,8 +288,8 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 	public void deleteServiceSubscriptionChargeTemplate(Long id) throws BusinessException {
 		ServiceChargeTemplateSubscription subscription=serviceChargeTemplateSubscriptionService.findById(id);
 		entity.getServiceSubscriptionCharges().remove(subscription);
-		entity=getPersistenceService().update(entity,getCurrentUser());
-		serviceChargeTemplateSubscriptionService.remove(subscription, getCurrentUser());
+		entity=getPersistenceService().update(entity);
+		serviceChargeTemplateSubscriptionService.remove(subscription);
 		messages.info(new BundleKey("messages", "delete.successful"));
 	}
 
@@ -321,12 +320,12 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
             serviceChargeTemplateTermination.getWalletTemplates().addAll(walletTemplateService.refreshOrRetrieve(terminationWallets.getTarget()));
 
             if (serviceChargeTemplateTermination.getId() != null) {
-                serviceChargeTemplateTerminationService.update(serviceChargeTemplateTermination, getCurrentUser());
+                serviceChargeTemplateTerminationService.update(serviceChargeTemplateTermination);
                 entity = getPersistenceService().refreshOrRetrieve(entity); // TODO this line might cause an issue when after update of charge template service template can not be saved
                 messages.info(new BundleKey("messages", "update.successful"));
             } else {
                 serviceChargeTemplateTermination.setServiceTemplate(entity);
-                serviceChargeTemplateTerminationService.create(serviceChargeTemplateTermination, getCurrentUser());
+                serviceChargeTemplateTerminationService.create(serviceChargeTemplateTermination);
                 entity.getServiceTerminationCharges().add(serviceChargeTemplateTermination);
                 messages.info(new BundleKey("messages", "save.successful"));
             }
@@ -340,8 +339,8 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 	public void deleteServiceTerminationChargeTemplate(Long id) throws BusinessException {
 		ServiceChargeTemplateTermination termination=serviceChargeTemplateTerminationService.findById(id);
 		entity.getServiceTerminationCharges().remove(termination);
-		entity=getPersistenceService().update(entity,getCurrentUser());
-		serviceChargeTemplateTerminationService.remove(termination, getCurrentUser());
+		entity=getPersistenceService().update(entity);
+		serviceChargeTemplateTerminationService.remove(termination);
 		messages.info(new BundleKey("messages", "delete.successful"));
 	}
 
@@ -372,12 +371,12 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
             serviceChargeTemplateRecurring.getWalletTemplates().addAll(walletTemplateService.refreshOrRetrieve(recurringWallets.getTarget()));
             
             if (serviceChargeTemplateRecurring.getId() != null) {
-                serviceChargeTemplateRecurringService.update(serviceChargeTemplateRecurring, getCurrentUser());
+                serviceChargeTemplateRecurringService.update(serviceChargeTemplateRecurring);
                 entity = getPersistenceService().refreshOrRetrieve(entity); // TODO this line might cause an issue when after update of charge template service template can not be saved
                 messages.info(new BundleKey("messages", "update.successful"));
             } else {
                 serviceChargeTemplateRecurring.setServiceTemplate(entity);
-                serviceChargeTemplateRecurringService.create(serviceChargeTemplateRecurring, getCurrentUser());
+                serviceChargeTemplateRecurringService.create(serviceChargeTemplateRecurring);
                 entity.getServiceRecurringCharges().add(serviceChargeTemplateRecurring);
                 messages.info(new BundleKey("messages", "save.successful"));
             }
@@ -391,8 +390,8 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 	public void deleteServiceRecurringChargeTemplate(Long id) throws BusinessException {
 		ServiceChargeTemplateRecurring recurring=serviceChargeTemplateRecurringService.findById(id);
 		entity.getServiceRecurringCharges().remove(recurring);
-		entity=getPersistenceService().update(entity, getCurrentUser());
-		serviceChargeTemplateRecurringService.remove(recurring, getCurrentUser());
+		entity=getPersistenceService().update(entity);
+		serviceChargeTemplateRecurringService.remove(recurring);
 		messages.info(new BundleKey("messages", "delete.successful"));
 	}
 
@@ -427,12 +426,12 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
             serviceChargeTemplateUsage.getWalletTemplates().addAll(walletTemplateService.refreshOrRetrieve(usageWallets.getTarget()));
 
             if (serviceChargeTemplateUsage.getId() != null) {
-                serviceChargeTemplateUsageService.update(serviceChargeTemplateUsage, getCurrentUser());
+                serviceChargeTemplateUsageService.update(serviceChargeTemplateUsage);
                 entity = getPersistenceService().refreshOrRetrieve(entity); // TODO this line might cause an issue when after update of charge template service template can not be saved
                 messages.info(new BundleKey("messages", "update.successful"));
             } else {
                 serviceChargeTemplateUsage.setServiceTemplate(entity);
-                serviceChargeTemplateUsageService.create(serviceChargeTemplateUsage, getCurrentUser());
+                serviceChargeTemplateUsageService.create(serviceChargeTemplateUsage);
                 entity.getServiceUsageCharges().add(serviceChargeTemplateUsage);
                 messages.info(new BundleKey("messages", "save.successful"));
             }
@@ -452,8 +451,8 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 	public void deleteServiceUsageChargeTemplate(Long id) throws BusinessException {
 		ServiceChargeTemplateUsage usage=serviceChargeTemplateUsageService.findById(id);
 		entity.getServiceUsageCharges().remove(usage);
-		entity=getPersistenceService().update(entity, getCurrentUser());
-		serviceChargeTemplateUsageService.remove(usage, getCurrentUser());
+		entity=getPersistenceService().update(entity);
+		serviceChargeTemplateUsageService.remove(usage);
 		messages.info(new BundleKey("messages", "delete.successful"));
 	}
 
@@ -488,7 +487,7 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 	    
         if (entity != null && entity.getId() != null) {
            try{
-        	   serviceTemplateService.duplicate(entity, getCurrentUser());
+        	   serviceTemplateService.duplicate(entity);
                messages.info(new BundleKey("messages", "save.successful"));
             } catch (BusinessException e) {
                 log.error("Error encountered persisting service template entity: #{0}:#{1}", entity.getCode(), e);

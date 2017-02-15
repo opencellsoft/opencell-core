@@ -9,7 +9,6 @@ import javax.ws.rs.core.Application;
 import org.meveo.api.rest.filter.RESTCorsRequestFilter;
 import org.meveo.api.rest.filter.RESTCorsResponseFilter;
 import org.meveo.api.rest.impl.BaseRs;
-import org.meveo.api.rest.security.RESTSecurityInterceptor;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +33,6 @@ public class JaxRsActivator extends Application {
 
         resources.addAll(allClasses);
 
-        resources.add(RESTSecurityInterceptor.class);
         resources.add(RESTCorsRequestFilter.class);
         resources.add(RESTCorsResponseFilter.class);
         resources.add(JaxRsExceptionMapper.class);

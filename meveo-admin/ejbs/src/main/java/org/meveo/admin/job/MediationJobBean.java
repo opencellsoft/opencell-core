@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.io.Serializable;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -20,7 +19,6 @@ import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.mediation.CDRRejectionCauseEnum;
@@ -28,6 +26,7 @@ import org.meveo.model.rating.EDR;
 import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
+import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
 /**
@@ -44,6 +43,10 @@ public class MediationJobBean {
 
 	@Inject
 	private Logger log;
+	
+    @Inject
+    @ApplicationProvider
+    protected Provider appProvider;
 
 	String cdrFileName;
 	File cdrFile;
@@ -57,12 +60,11 @@ public class MediationJobBean {
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NEVER)
 	public void execute(JobExecutionResultImpl result, String parameter,File file) {
-		log.debug("Running for user={}, parameter={}", currentUser, parameter);
+		log.debug("Running with parameter={}", parameter);
 		report="";
-		Provider provider = currentUser.getProvider();
 
 		ParamBean parambean = ParamBean.getInstance();
-		String meteringDir = parambean.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + provider.getCode() + File.separator + "imports" + File.separator
+		String meteringDir = parambean.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + appProvider.getCode() + File.separator + "imports" + File.separator
 				+ "metering" + File.separator;
 
 		outputDir = meteringDir + "output";

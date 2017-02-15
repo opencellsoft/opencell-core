@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -99,16 +98,6 @@ public class JobTriggerBean extends BaseNotificationBean<JobTrigger> {
         return super.saveOrUpdate(killConversation);
     }
     
-	@Override
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
-
-	@Override
-	protected List<String> getListFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
-
 	public void exportToFile() throws Exception {
 		CsvBuilder csv = new CsvBuilder();
 		csv.appendValue("Code");
@@ -153,14 +142,14 @@ public class JobTriggerBean extends BaseNotificationBean<JobTrigger> {
         csvReader.readHeaders();
 
         String existingEntitiesCSV = paramBean.getProperty("existingEntities.csv.dir", "existingEntitiesCSV");
-        File dir = new File(providerDir + File.separator + getCurrentProvider().getCode() + File.separator + existingEntitiesCSV);
+        File dir = new File(providerDir + File.separator + appProvider.getCode() + File.separator + existingEntitiesCSV);
         dir.mkdirs();
         existingEntitiesCsvFile = dir.getAbsolutePath() + File.separator + "JobTriggers_" + new SimpleDateFormat("ddMMyyyyHHmmSS").format(new Date()) + ".csv";
         csv = new CsvBuilder();
         boolean isEntityAlreadyExist = false;
         while (csvReader.readRecord()) {
             String[] values = csvReader.getValues();
-            JobTrigger existingEntity = jobTriggerService.findByCode(values[CODE], getCurrentProvider());
+            JobTrigger existingEntity = jobTriggerService.findByCode(values[CODE]);
             if (existingEntity != null) {
                 checkSelectedStrategy(values, existingEntity, isEntityAlreadyExist);
                 isEntityAlreadyExist = true;
@@ -171,15 +160,15 @@ public class JobTriggerBean extends BaseNotificationBean<JobTrigger> {
                 notif.setElFilter(values[EL_FILTER]);
                 notif.setDisabled(Boolean.parseBoolean(values[ACTIVE]));                
                 if (!StringUtils.isBlank(values[SCRIPT_INSTANCE_CODE])) {
-                    ScriptInstance scriptInstance = scriptInstanceService.findByCode(values[SCRIPT_INSTANCE_CODE], getCurrentProvider()); 
+                    ScriptInstance scriptInstance = scriptInstanceService.findByCode(values[SCRIPT_INSTANCE_CODE]); 
                     notif.setScriptInstance(scriptInstance);
                 }  
                 notif.setEventTypeFilter(NotificationEventTypeEnum.valueOf(values[EVENT_TYPE_FILTER]));
                 if (!StringUtils.isBlank(values[JOB_INSTANCE_CODE])) {
-                    JobInstance jobInstance = jobInstanceService.findByCode(values[JOB_INSTANCE_CODE], getCurrentProvider()); 
+                    JobInstance jobInstance = jobInstanceService.findByCode(values[JOB_INSTANCE_CODE]); 
                     notif.setJobInstance(jobInstance);
                 }  
-                jobTriggerService.create(notif, getCurrentUser());
+                jobTriggerService.create(notif);
             }
         }
         if (isEntityAlreadyExist && strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)) {
@@ -193,11 +182,11 @@ public class JobTriggerBean extends BaseNotificationBean<JobTrigger> {
 			existingEntity.setElFilter(values[EL_FILTER]);
 			existingEntity.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
             if (!StringUtils.isBlank(values[SCRIPT_INSTANCE_CODE])) {
-                ScriptInstance scriptInstance = scriptInstanceService.findByCode(values[SCRIPT_INSTANCE_CODE], getCurrentProvider()); 
+                ScriptInstance scriptInstance = scriptInstanceService.findByCode(values[SCRIPT_INSTANCE_CODE]); 
                 existingEntity.setScriptInstance(scriptInstance);
             } 
 			existingEntity.setEventTypeFilter(NotificationEventTypeEnum.valueOf(values[EVENT_TYPE_FILTER]));
-			jobTriggerService.update(existingEntity, getCurrentUser());
+			jobTriggerService.update(existingEntity);
 		} else if (strategyImportType.equals(StrategyImportTypeEnum.REJECTE_IMPORT)) {
 			throw new RejectedImportException("jobTrigger.rejectImport");
 		} else if (strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)) {

@@ -22,7 +22,6 @@ import org.meveo.api.dto.billing.PrepaidReservationDto;
 import org.meveo.api.dto.response.billing.CdrReservationResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.Reservation;
 import org.meveo.model.billing.ReservationStatus;
 import org.meveo.model.rating.EDR;
@@ -57,11 +56,11 @@ public class MediationApi extends BaseApi {
 
 	Map<Long, Timer> timers = new HashMap<Long, Timer>();
 
-	public void registerCdrList(CdrListDto postData, User currentUser) throws MeveoApiException, BusinessException {
+	public void registerCdrList(CdrListDto postData) throws MeveoApiException, BusinessException {
 
 		if (postData.getCdr() != null && postData.getCdr().size() > 0) {
 			try {
-				cdrParsingService.initByApi(currentUser.getUserName(), postData.getIpAddress());
+				cdrParsingService.initByApi(currentUser.getSubject(), postData.getIpAddress());
 			} catch (BusinessException e1) {
 				log.error("failed to init by api ");
 				throw new MeveoApiException(e1.getMessage());
@@ -69,10 +68,10 @@ public class MediationApi extends BaseApi {
 
 			try {
 				for (String line : postData.getCdr()) {
-					List<EDR> edrs = cdrParsingService.getEDRList(line, currentUser.getProvider(), CDRParsingService.CDR_ORIGIN_API);
+					List<EDR> edrs = cdrParsingService.getEDRList(line, CDRParsingService.CDR_ORIGIN_API);
 					for (EDR edr : edrs) {
 						log.debug("edr={}", edr);
-						edrService.create(edr, currentUser);
+						edrService.create(edr);
 					}
 				}
 			} catch (CDRParsingException e) {
@@ -88,23 +87,23 @@ public class MediationApi extends BaseApi {
 		}
 	}
 
-	public void chargeCdr(String cdr, User user, String ip) throws MeveoApiException, BusinessException {
+	public void chargeCdr(String cdr, String ip) throws MeveoApiException, BusinessException {
 		if (!StringUtils.isBlank(cdr)) {
 			try {
-				cdrParsingService.initByApi(user.getUserName(), ip);
+				cdrParsingService.initByApi(currentUser.getSubject(), ip);
 			} catch (BusinessException e1) {
 				log.error("failed to init by api");
 				throw new MeveoApiException(e1.getMessage());
 			}
 			List<EDR> edrs;
 			try {
-				edrs = cdrParsingService.getEDRList(cdr, user.getProvider(), CDRParsingService.CDR_ORIGIN_API);
+				edrs = cdrParsingService.getEDRList(cdr, CDRParsingService.CDR_ORIGIN_API);
 				for (EDR edr : edrs) {
 					log.debug("edr={}", edr);
 					edr.setSubscription(subscriptionService.findById(edr.getSubscription().getId(), Arrays.asList("offer")));
-					edrService.create(edr, user);
+					edrService.create(edr);
 					try {
-						usageRatingService.rateUsageWithinTransaction(edr, false, user);
+						usageRatingService.rateUsageWithinTransaction(edr, false);
 						if (edr.getStatus() == EDRStatusEnum.REJECTED) {
 							log.error("edr rejected={}", edr.getRejectReason());
 							throw new MeveoApiException(edr.getRejectReason());
@@ -133,7 +132,7 @@ public class MediationApi extends BaseApi {
 	private void reservationExpired(Timer timer) {
 		Object[] objs = (Object[]) timer.getInfo();
 		try {
-			Reservation reservation = reservationService.findByIdNoCheck((Long) objs[0]);
+			Reservation reservation = reservationService.findById((Long) objs[0]);
 			reservationService.cancelPrepaidReservationInNewTransaction(reservation);
 		} catch (BusinessException e) {
 			log.error("Failed to cancel Prepaid Reservation In New Transaction",e);
@@ -142,25 +141,25 @@ public class MediationApi extends BaseApi {
 
 	// if the reservation succeed then returns -1, else returns the available
 	// quantity for this cdr
-	public CdrReservationResponseDto reserveCdr(String cdr, User user, String ip) throws MeveoApiException, BusinessException {
+	public CdrReservationResponseDto reserveCdr(String cdr, String ip) throws MeveoApiException, BusinessException {
 		CdrReservationResponseDto result = new CdrReservationResponseDto();
 		// TODO: if insufficient balance retry with lower quantity
 		result.setAvailableQuantity(-1);
 		if (!StringUtils.isBlank(cdr)) {
 			try {
-				cdrParsingService.initByApi(user.getUserName(), ip);
+				cdrParsingService.initByApi(currentUser.getSubject(), ip);
 			} catch (BusinessException e1) {
 				log.error("failed to init by api");
 				throw new MeveoApiException(e1.getMessage());
 			}
 			List<EDR> edrs;
 			try {
-				edrs = cdrParsingService.getEDRList(cdr, user.getProvider(), CDRParsingService.CDR_ORIGIN_API);
+				edrs = cdrParsingService.getEDRList(cdr, CDRParsingService.CDR_ORIGIN_API);
 				for (EDR edr : edrs) {
 					log.debug("edr={}", edr);
-					edrService.create(edr, user);
+					edrService.create(edr);
 					try {
-						Reservation reservation = usageRatingService.reserveUsageWithinTransaction(edr, user);
+						Reservation reservation = usageRatingService.reserveUsageWithinTransaction(edr);
 						if (edr.getStatus() == EDRStatusEnum.REJECTED) {
 							log.error("edr rejected={}", edr.getRejectReason());
 							throw new MeveoApiException(edr.getRejectReason());
@@ -168,9 +167,9 @@ public class MediationApi extends BaseApi {
 						result.setReservationId(reservation.getId());
 						// schedule cancellation at expiry
 						TimerConfig timerConfig = new TimerConfig();
-						Object[] objs = { reservation.getId(), user };
+						Object[] objs = { reservation.getId(), currentUser};
 						timerConfig.setInfo(objs);
-						Timer timer = timerService.createSingleActionTimer(user.getProvider()
+						Timer timer = timerService.createSingleActionTimer(appProvider
 								.getPrepaidReservationExpirationDelayinMillisec(), timerConfig);
 						timers.put(reservation.getId(), timer);
 					} catch (BusinessException e) {
@@ -194,16 +193,12 @@ public class MediationApi extends BaseApi {
 		return result;
 	}
 
-	public void confirmReservation(PrepaidReservationDto reservationDto, User user, String ip) throws MeveoApiException {
+	public void confirmReservation(PrepaidReservationDto reservationDto, String ip) throws MeveoApiException {
 		if (reservationDto.getReservationId() > 0) {
 			try {
-				Reservation reservation = reservationService.findById(reservationDto.getReservationId(),
-						user.getProvider());
+				Reservation reservation = reservationService.findById(reservationDto.getReservationId());
 				if (reservation == null) {
 					throw new BusinessException("CANNOT_FIND_RESERVATION");
-				}
-				if (reservation.getProvider().getId() != user.getProvider().getId()) {
-					throw new BusinessException("NOT_YOUR_RESERVATION");
 				}
 				if (reservation.getStatus() != ReservationStatus.OPEN) {
 					throw new BusinessException("RESERVATION_NOT_OPEN");
@@ -217,7 +212,7 @@ public class MediationApi extends BaseApi {
 					EDR edr = reservation.getOriginEdr();
 					edr.setQuantity(reservationDto.getConsumedQuantity());
 					try {
-						usageRatingService.rateUsageWithinTransaction(edr, false, user);
+						usageRatingService.rateUsageWithinTransaction(edr, false);
 						if (edr.getStatus() == EDRStatusEnum.REJECTED) {
 							log.error("edr rejected={}", edr.getRejectReason());
 							throw new MeveoApiException(edr.getRejectReason());
@@ -254,16 +249,12 @@ public class MediationApi extends BaseApi {
 		}
 	}
 
-	public void cancelReservation(PrepaidReservationDto reservationDto, User user, String ip) throws MeveoApiException {
+	public void cancelReservation(PrepaidReservationDto reservationDto, String ip) throws MeveoApiException {
 		if (reservationDto.getReservationId() > 0) {
 			try {
-				Reservation reservation = reservationService.findById(reservationDto.getReservationId(),
-						user.getProvider());
+				Reservation reservation = reservationService.findById(reservationDto.getReservationId());
 				if (reservation == null) {
 					throw new BusinessException("CANNOT_FIND_RESERVATION");
-				}
-				if (reservation.getProvider().getId() != user.getProvider().getId()) {
-					throw new BusinessException("NOT_YOUR_RESERVATION");
 				}
 				if (reservation.getStatus() != ReservationStatus.OPEN) {
 					throw new BusinessException("RESERVATION_NOT_OPEN");

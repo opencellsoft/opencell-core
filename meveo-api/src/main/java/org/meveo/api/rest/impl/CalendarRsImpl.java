@@ -32,7 +32,7 @@ public class CalendarRsImpl extends BaseRs implements CalendarRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            calendarApi.create(postData, getCurrentUser());
+            calendarApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -52,7 +52,7 @@ public class CalendarRsImpl extends BaseRs implements CalendarRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            calendarApi.update(postData, getCurrentUser());
+            calendarApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -73,7 +73,7 @@ public class CalendarRsImpl extends BaseRs implements CalendarRs {
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         try {
-            result.setCalendar(calendarApi.find(calendarCode, getCurrentUser().getProvider()));
+            result.setCalendar(calendarApi.find(calendarCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -94,7 +94,7 @@ public class CalendarRsImpl extends BaseRs implements CalendarRs {
         CalendarsDto calendarsDto = new CalendarsDto();
 
         try {
-            calendarsDto.setCalendar(calendarApi.list(getCurrentUser().getProvider()));
+            calendarsDto.setCalendar(calendarApi.list());
             result.setCalendars(calendarsDto);
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
@@ -115,7 +115,7 @@ public class CalendarRsImpl extends BaseRs implements CalendarRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            calendarApi.remove(calendarCode, getCurrentUser());
+            calendarApi.remove(calendarCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -135,7 +135,7 @@ public class CalendarRsImpl extends BaseRs implements CalendarRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            calendarApi.createOrUpdate(postData, getCurrentUser());
+            calendarApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

@@ -12,7 +12,6 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
@@ -194,7 +193,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
      */
     public static Object getCFValue(ICustomFieldEntity entity, String code) {
 
-        Object cfValue = getCustomFieldInstanceService().getCFValue(entity, code, getCustomFieldInstanceService().getCurrentUser());
+        Object cfValue = getCustomFieldInstanceService().getCFValue(entity, code);
         Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Obtained CF value {} for {}/{}", cfValue, entity, code);
 
@@ -206,7 +205,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
      */
     public static Object getCFValueForDate(ICustomFieldEntity entity, String code, Date date) {
 
-        Object cfValue = getCustomFieldInstanceService().getCFValue(entity, code, date, getCustomFieldInstanceService().getCurrentUser());
+        Object cfValue = getCustomFieldInstanceService().getCFValue(entity, code, date);
         Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Obtained CF value {} for {}/{} for {}", cfValue, entity, code, date);
 
@@ -410,7 +409,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
      */
     public static Object getInheritedCFValue(ICustomFieldEntity entity, String code) {
 
-        Object cfValue = getCustomFieldInstanceService().getInheritedCFValue(entity, code, getCustomFieldInstanceService().getCurrentUser());
+        Object cfValue = getCustomFieldInstanceService().getInheritedCFValue(entity, code);
         Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Obtained inherited CF value {} for {}/{}", cfValue, entity, code);
 
@@ -422,7 +421,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
      */
     public static Object getInheritedCFValueForDate(ICustomFieldEntity entity, String code, Date date) {
 
-        Object cfValue = getCustomFieldInstanceService().getInheritedCFValue(entity, code, date, getCustomFieldInstanceService().getCurrentUser());
+        Object cfValue = getCustomFieldInstanceService().getInheritedCFValue(entity, code, date);
         Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
         log.trace("Obtained inherited CF value {} for {}/{} for {}", cfValue, entity, code, date);
 
@@ -639,16 +638,16 @@ public class MeveoFunctionMapper extends FunctionMapper {
      * @param entity Entity to execute action on
      * @param scriptCode Script to execute, identified by a code
      * @param encodedParameters Additional parameters encoded in URL like style param=value&param=value
-     * @param currentUser Current user
+
      * @return A script execution result value
      */
-    public static Object executeScript(IEntity entity, String scriptCode, String encodedParameters, User currentUser) {
+    public static Object executeScript(IEntity entity, String scriptCode, String encodedParameters) {
 
         Map<String, Object> result = null;
 
         try {
             try {
-                result = getScriptInstanceService().execute(entity, scriptCode, encodedParameters, currentUser);
+                result = getScriptInstanceService().execute(entity, scriptCode, encodedParameters);
             } catch (ElementNotFoundException enf) {
                 result = null;
             }

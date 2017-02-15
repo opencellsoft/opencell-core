@@ -57,7 +57,7 @@ import org.meveo.model.payments.PaymentTermEnum;
 
 @Entity
 @CustomFieldEntity(cftCodePrefix = "BA")
-@ExportIdentifier({ "code", "provider" })
+@ExportIdentifier({ "code"})
 @Table(name = "BILLING_BILLING_ACCOUNT")
 @DiscriminatorValue(value = "ACCT_BA")
 @NamedQueries({ @NamedQuery(name = "BillingAccount.listByBillingRunId", query = "SELECT b FROM BillingAccount b where b.billingRun.id=:billingRunId") })

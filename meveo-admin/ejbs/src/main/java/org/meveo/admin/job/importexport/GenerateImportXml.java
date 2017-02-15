@@ -46,7 +46,6 @@ public class GenerateImportXml {
 	public static void main(String[] args) {
 		try {
 			Sellers sellers = new Sellers();
-			sellers.setProviderCode(providerCode);
 			Seller seller = new Seller();
 			seller.setCode("SELLER_FR");
 			seller.setDescription("french seller");

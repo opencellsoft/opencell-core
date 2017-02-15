@@ -42,7 +42,7 @@ public class BusinessAccountModelRsImpl extends BaseRs implements BusinessAccoun
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            moduleApi.create(postData, getCurrentUser());
+            moduleApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -62,7 +62,7 @@ public class BusinessAccountModelRsImpl extends BaseRs implements BusinessAccoun
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            moduleApi.update(postData, getCurrentUser());
+            moduleApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -82,7 +82,7 @@ public class BusinessAccountModelRsImpl extends BaseRs implements BusinessAccoun
         BusinessAccountModelResponseDto result = new BusinessAccountModelResponseDto();
 
         try {
-			result.setBusinessAccountModel((BusinessAccountModelDto) moduleApi.find(bamCode, getCurrentUser()));
+			result.setBusinessAccountModel((BusinessAccountModelDto) moduleApi.find(bamCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -102,7 +102,7 @@ public class BusinessAccountModelRsImpl extends BaseRs implements BusinessAccoun
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            moduleApi.delete(bamCode, getCurrentUser());
+            moduleApi.delete(bamCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -123,7 +123,7 @@ public class BusinessAccountModelRsImpl extends BaseRs implements BusinessAccoun
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
         result.getActionStatus().setMessage("");
         try {
-            List<MeveoModuleDto> dtos = moduleApi.list(BusinessAccountModel.class, getCurrentUser());
+            List<MeveoModuleDto> dtos = moduleApi.list(BusinessAccountModel.class);
             result.setModules(dtos);
 
         } catch (MeveoApiException e) {
@@ -145,7 +145,7 @@ public class BusinessAccountModelRsImpl extends BaseRs implements BusinessAccoun
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            moduleApi.install(moduleDto, getCurrentUser());
+            moduleApi.install(moduleDto);
 
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
@@ -166,7 +166,7 @@ public class BusinessAccountModelRsImpl extends BaseRs implements BusinessAccoun
         ParentListResponse result = new ParentListResponse();
 
         try {
-            result.setParents(accountHierarchyApi.getParentList(searchDto, getCurrentUser()));
+            result.setParents(accountHierarchyApi.getParentList(searchDto));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

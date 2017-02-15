@@ -34,8 +34,8 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.communication.MediaEnum;
 
 @Entity
-@ExportIdentifier({ "code", "provider" })
-@Table(name = "COM_CONTACT_COORDS", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
+@ExportIdentifier({ "code"})
+@Table(name = "COM_CONTACT_COORDS", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
 @DiscriminatorColumn(name = "MEDIA")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "COM_CONTACT_COORDS_SEQ")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)

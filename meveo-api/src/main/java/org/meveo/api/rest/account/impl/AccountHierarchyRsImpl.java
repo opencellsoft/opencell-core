@@ -43,7 +43,7 @@ public class AccountHierarchyRsImpl extends BaseRs implements AccountHierarchyRs
         CustomerListResponse result = new CustomerListResponse();
 
         try {
-            result.setCustomers(accountHierarchyApi.find(accountHierarchyDto, getCurrentUser()));
+            result.setCustomers(accountHierarchyApi.find(accountHierarchyDto));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -69,7 +69,7 @@ public class AccountHierarchyRsImpl extends BaseRs implements AccountHierarchyRs
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            accountHierarchyApi.create(accountHierarchyDto, getCurrentUser());
+            accountHierarchyApi.create(accountHierarchyDto);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -89,7 +89,7 @@ public class AccountHierarchyRsImpl extends BaseRs implements AccountHierarchyRs
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            accountHierarchyApi.update(postData, getCurrentUser());
+            accountHierarchyApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -109,7 +109,7 @@ public class AccountHierarchyRsImpl extends BaseRs implements AccountHierarchyRs
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            accountHierarchyApi.customerHierarchyUpdate(postData, getCurrentUser());
+            accountHierarchyApi.customerHierarchyUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -128,7 +128,7 @@ public class AccountHierarchyRsImpl extends BaseRs implements AccountHierarchyRs
     public GetAccountHierarchyResponseDto findAccountHierarchy2(FindAccountHierachyRequestDto postData) {
         GetAccountHierarchyResponseDto result = new GetAccountHierarchyResponseDto();
         try {
-            result = accountHierarchyApi.findAccountHierarchy2(postData, getCurrentUser());
+            result = accountHierarchyApi.findAccountHierarchy2(postData);
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -147,7 +147,7 @@ public class AccountHierarchyRsImpl extends BaseRs implements AccountHierarchyRs
     public ActionStatus createCRMAccountHierarchy(CRMAccountHierarchyDto postData) {
         ActionStatus result = new ActionStatus();
         try {
-            accountHierarchyApi.createCRMAccountHierarchy(postData, getCurrentUser());
+            accountHierarchyApi.createCRMAccountHierarchy(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -166,7 +166,7 @@ public class AccountHierarchyRsImpl extends BaseRs implements AccountHierarchyRs
     public ActionStatus updateCRMAccountHierarchy(CRMAccountHierarchyDto postData) {
         ActionStatus result = new ActionStatus();
         try {
-            accountHierarchyApi.updateCRMAccountHierarchy(postData, getCurrentUser());
+            accountHierarchyApi.updateCRMAccountHierarchy(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -186,7 +186,7 @@ public class AccountHierarchyRsImpl extends BaseRs implements AccountHierarchyRs
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            accountHierarchyApi.createOrUpdate(postData, getCurrentUser());
+            accountHierarchyApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -205,7 +205,7 @@ public class AccountHierarchyRsImpl extends BaseRs implements AccountHierarchyRs
     public ActionStatus createOrUpdateCRMAccountHierarchy(CRMAccountHierarchyDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            accountHierarchyApi.createOrUpdateCRMAccountHierarchy(postData, getCurrentUser());
+            accountHierarchyApi.createOrUpdateCRMAccountHierarchy(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

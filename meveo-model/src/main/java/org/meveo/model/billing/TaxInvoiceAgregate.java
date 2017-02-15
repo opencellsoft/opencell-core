@@ -47,7 +47,6 @@ public class TaxInvoiceAgregate extends InvoiceAgregate {
 		this.setBillingAccount(taxInvoiceAgregate.getBillingAccount());
 		this.setBillingRun(taxInvoiceAgregate.getBillingRun());
 		this.setUserAccount(taxInvoiceAgregate.getUserAccount());
-		this.setProvider(taxInvoiceAgregate.getProvider());
 		this.setDiscountAggregate(false);
 	}
 

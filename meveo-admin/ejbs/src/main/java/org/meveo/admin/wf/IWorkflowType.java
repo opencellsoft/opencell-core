@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.admin.User;
 
 public interface IWorkflowType<E extends BusinessEntity> {
 
@@ -17,9 +16,8 @@ public interface IWorkflowType<E extends BusinessEntity> {
      * Change status on a current entity
      * 
      * @param newStatus New status
-     * @param currentUser User performing status change
      */
-    public void changeStatus(String newStatus, User currentUser) throws BusinessException;
+    public void changeStatus(String newStatus) throws BusinessException;
 
     /**
      * Get current status of current entity

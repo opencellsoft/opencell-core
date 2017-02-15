@@ -42,7 +42,7 @@ public class ReportingWsImpl extends BaseWs implements ReportingWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            measurableQuantityApi.create(postData, getCurrentUser());
+            measurableQuantityApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -62,7 +62,7 @@ public class ReportingWsImpl extends BaseWs implements ReportingWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            measurableQuantityApi.update(postData, getCurrentUser());
+            measurableQuantityApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -82,7 +82,7 @@ public class ReportingWsImpl extends BaseWs implements ReportingWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            measurableQuantityApi.createOrUpdate(postData, getCurrentUser());
+            measurableQuantityApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -102,7 +102,7 @@ public class ReportingWsImpl extends BaseWs implements ReportingWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            chartApi.create(postData, getCurrentUser());
+            chartApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -122,7 +122,7 @@ public class ReportingWsImpl extends BaseWs implements ReportingWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            chartApi.update(postData, getCurrentUser());
+            chartApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -142,7 +142,7 @@ public class ReportingWsImpl extends BaseWs implements ReportingWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            chartApi.createOrUpdate(postData, getCurrentUser());
+            chartApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -162,7 +162,7 @@ public class ReportingWsImpl extends BaseWs implements ReportingWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            chartApi.remove(chartCode, getCurrentUser());
+            chartApi.remove(chartCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -182,7 +182,7 @@ public class ReportingWsImpl extends BaseWs implements ReportingWs {
         GetChartResponse result = new GetChartResponse();
 
         try {
-            result.setChartDto(chartApi.find(chartCode, getCurrentUser()));
+            result.setChartDto(chartApi.find(chartCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -202,7 +202,7 @@ public class ReportingWsImpl extends BaseWs implements ReportingWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            chartApi.create(postData, getCurrentUser());
+            chartApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -222,7 +222,7 @@ public class ReportingWsImpl extends BaseWs implements ReportingWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            chartApi.update(postData, getCurrentUser());
+            chartApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -242,7 +242,7 @@ public class ReportingWsImpl extends BaseWs implements ReportingWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            chartApi.createOrUpdate(postData, getCurrentUser());
+            chartApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -262,7 +262,7 @@ public class ReportingWsImpl extends BaseWs implements ReportingWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            chartApi.create(postData, getCurrentUser());
+            chartApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -282,7 +282,7 @@ public class ReportingWsImpl extends BaseWs implements ReportingWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            chartApi.update(postData, getCurrentUser());
+            chartApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -302,7 +302,7 @@ public class ReportingWsImpl extends BaseWs implements ReportingWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            chartApi.createOrUpdate(postData, getCurrentUser());
+            chartApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -322,7 +322,7 @@ public class ReportingWsImpl extends BaseWs implements ReportingWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            chartApi.create(postData, getCurrentUser());
+            chartApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -342,7 +342,7 @@ public class ReportingWsImpl extends BaseWs implements ReportingWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            chartApi.update(postData, getCurrentUser());
+            chartApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -362,7 +362,7 @@ public class ReportingWsImpl extends BaseWs implements ReportingWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            chartApi.createOrUpdate(postData, getCurrentUser());
+            chartApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -382,7 +382,7 @@ public class ReportingWsImpl extends BaseWs implements ReportingWs {
 		GetMeasuredValueResponse result = new GetMeasuredValueResponse();
 		
         try {
-        	result.setMeasuredValues(measurableQuantityApi.findMVByDateAndPeriod(code, fromDate, toDate, period, mqCode, getCurrentUser()));
+        	result.setMeasuredValues(measurableQuantityApi.findMVByDateAndPeriod(code, fromDate, toDate, period, mqCode));
         } catch (MeveoApiException e) {
         	 result.getActionStatus().setErrorCode(e.getErrorCode());
              result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

@@ -25,7 +25,6 @@ import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.wf.Workflow;
 import org.meveo.model.wf.WorkflowHistory;
 import org.meveo.service.base.PersistenceService;
@@ -34,15 +33,15 @@ import org.meveo.service.base.PersistenceService;
 public class WorkflowHistoryService extends PersistenceService<WorkflowHistory> {
 		
 	@SuppressWarnings("unchecked")
-	public List<WorkflowHistory> findByEntityCode(String entityInstanceCode, List<Workflow> workflows, Provider provider) {
+	public List<WorkflowHistory> findByEntityCode(String entityInstanceCode, List<Workflow> workflows) {
 
-		String queryStr = "from " + WorkflowHistory.class.getSimpleName() + " where entityInstanceCode=:entityInstanceCode and" + " provider=:provider";
+		String queryStr = "from " + WorkflowHistory.class.getSimpleName() + " where entityInstanceCode=:entityInstanceCode ";
 
 		if (workflows != null && !workflows.isEmpty()) {
 			queryStr += " and workflow in (:workflows)";
 		}
 
-		Query query = getEntityManager().createQuery(queryStr).setParameter("entityInstanceCode", entityInstanceCode).setParameter("provider", provider);
+		Query query = getEntityManager().createQuery(queryStr).setParameter("entityInstanceCode", entityInstanceCode);
 		if (workflows != null && !workflows.isEmpty()) {
 			query = query.setParameter("workflows", workflows);
 		}
@@ -50,10 +49,9 @@ public class WorkflowHistoryService extends PersistenceService<WorkflowHistory> 
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<WorkflowHistory> find(String entityInstanceCode, String workflowCode, String fromStatus, String toStatus, Provider provider) {
+	public List<WorkflowHistory> find(String entityInstanceCode, String workflowCode, String fromStatus, String toStatus) {
 				
 		QueryBuilder queryBuilder = new QueryBuilder(WorkflowHistory.class, "wfh");	
-		queryBuilder.addCriterionEntity("wfh.provider", provider);
 		if(!StringUtils.isBlank(entityInstanceCode)){
 			queryBuilder.addCriterion("wfh.entityInstanceCode", "=", entityInstanceCode, true);
 		}

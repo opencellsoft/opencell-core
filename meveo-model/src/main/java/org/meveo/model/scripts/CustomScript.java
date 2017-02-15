@@ -17,7 +17,7 @@ import org.meveo.model.ExportIdentifier;
 
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
-@ExportIdentifier({ "code", "provider" })
+@ExportIdentifier({ "code"})
 @MappedSuperclass
 public abstract class CustomScript extends BusinessEntity {
 

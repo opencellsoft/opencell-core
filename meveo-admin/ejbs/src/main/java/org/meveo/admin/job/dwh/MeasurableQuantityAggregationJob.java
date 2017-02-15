@@ -17,7 +17,6 @@ import javax.interceptor.Interceptors;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.model.admin.User;
 import org.meveo.model.dwh.MeasurableQuantity;
 import org.meveo.model.dwh.MeasuredValue;
 import org.meveo.model.jobs.JobCategoryEnum;
@@ -39,7 +38,7 @@ public class MeasurableQuantityAggregationJob extends Job {
     private MeasuredValueService mvService;
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    private void aggregateMeasuredValues(JobExecutionResultImpl result, StringBuilder report, MeasurableQuantity mq,User currentUser) throws BusinessException {
+    private void aggregateMeasuredValues(JobExecutionResultImpl result, StringBuilder report, MeasurableQuantity mq) throws BusinessException {
         if (report.length() == 0) {
             report.append("Generate Measured Value for : " + mq.getCode());
         } else {
@@ -55,7 +54,7 @@ public class MeasurableQuantityAggregationJob extends Job {
                 mv.setMeasurementPeriod(mq.getMeasurementPeriod());
                 mv.setDate(sdf.parse(mvObject[0] + ""));
                 mv.setValue(new BigDecimal(mvObject[1] + ""));
-                mvService.create(mv,currentUser);
+                mvService.create(mv);
             }
         } catch (IllegalArgumentException e) {
             log.error("Illegal argument exception in create measured values",e);
@@ -67,21 +66,20 @@ public class MeasurableQuantityAggregationJob extends Job {
     }
 
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    private void aggregateMeasuredValues(JobExecutionResultImpl result, StringBuilder report, List<MeasurableQuantity> mq,User currentUser) throws BusinessException {
+    private void aggregateMeasuredValues(JobExecutionResultImpl result, StringBuilder report, List<MeasurableQuantity> mq) throws BusinessException {
         for (MeasurableQuantity measurableQuantity : mq) {
-            aggregateMeasuredValues(result, report, measurableQuantity,currentUser);
+            aggregateMeasuredValues(result, report, measurableQuantity);
         }
     }
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @Override
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
-    	log.info("Running for user={}", currentUser);
-		
+    	
         StringBuilder report = new StringBuilder();
         if (jobInstance.getParametres() != null && !jobInstance.getParametres().isEmpty()) {
 
-            MeasurableQuantity mq = mqService.listByCode(jobInstance.getParametres().getProvider()).get(0);
+            MeasurableQuantity mq = mqService.listByCode(jobInstance.getParametres()).get(0);
             aggregateMeasuredValues(result, report, mq);
             result.setReport(report.toString());
 

@@ -27,17 +27,17 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.EnableEntity;
 import org.meveo.model.ExportIdentifier;
 
 /**
  * DiscountLanguage entity.
  */
 @Entity
-@ExportIdentifier({ "discount.discountCode", "tradingLanguage.language.languageCode", "provider" })
+@ExportIdentifier({ "discount.discountCode", "tradingLanguage.language.languageCode"})
 @Table(name = "BILLING_DISCOUNT_LANGUAGE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_DISCOUNT_LANGUAGE_SEQ")
-public class DiscountLanguage extends AuditableEntity {
+public class DiscountLanguage extends EnableEntity {
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne(fetch = FetchType.LAZY)

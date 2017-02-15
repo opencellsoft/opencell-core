@@ -22,13 +22,11 @@ import java.util.Date;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
@@ -36,7 +34,6 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.catalog.RecurringChargeTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.base.BusinessService;
 
 @Stateless
@@ -125,17 +122,11 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
 				.getCustomerAccount().getTradingCurrency());
         chargeInstance.setOrderNumber(serviceInst.getOrderNumber());
         
-		recurringChargeInstanceService.create(chargeInstance); // AKK was with recurringChargeTemplate.getProvider()
+		recurringChargeInstanceService.create(chargeInstance);
 		return chargeInstance;
 	}
 
-	public void recurringChargeDeactivation(long recurringChargeInstanId, Date terminationDate)
-			throws BusinessException {
-		recurringChargeDeactivation(getEntityManager(), recurringChargeInstanId, terminationDate);
-	}
-
-	public void recurringChargeDeactivation(EntityManager em, long recurringChargeInstanId, Date terminationDate,
-			User updater) throws BusinessException {
+	public void recurringChargeDeactivation(long recurringChargeInstanId, Date terminationDate) throws BusinessException {
 
 		RecurringChargeInstance recurringChargeInstance = recurringChargeInstanceService.findById(
 				recurringChargeInstanId, true);
@@ -176,11 +167,11 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
 	}
 
 	@SuppressWarnings("unchecked")
-	public P findByCodeAndSubscription(String code, Subscription subscription, Provider provider) {
+	public P findByCodeAndSubscription(String code, Subscription subscription) {
 		QueryBuilder qb = new QueryBuilder(ChargeInstance.class, "c");
 		qb.addCriterion("code", "=", code, true);
 		qb.addCriterionEntity("subscription", subscription);
-		qb.addCriterionEntity("provider", provider);
+		
 
 		try {
 			return (P) qb.getQuery(getEntityManager()).getSingleResult();

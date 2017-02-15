@@ -157,8 +157,7 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
 		}
 		try {
 			MatchingReturnObject result = matchingCodeService.matchOperations(
-					customerAccountId, null, operationIds, null,
-					getCurrentUser());
+					customerAccountId, null, operationIds, null);
 			if (result.isOk()) {
 				messages.info(new BundleKey("messages",
 						"customerAccount.matchingSuccessful"));
@@ -192,8 +191,7 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
 			MatchingReturnObject result = matchingCodeService.matchOperations(
 					partialMatchingOccSelected.getAccountOperation()
 							.getCustomerAccount().getId(), null, operationIds,
-					partialMatchingOccSelected.getAccountOperation().getId(),
-					getCurrentUser());
+					partialMatchingOccSelected.getAccountOperation().getId());
 			if (result.isOk()) {
 				messages.info(new BundleKey("messages",
 						"customerAccount.matchingSuccessful"));
@@ -228,7 +226,7 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
             for (MatchingAmount ma : matchingCode.getMatchingAmounts()) {
                 AccountOperation accountop = ma.getAccountOperation();
                 accountop.setExcludedFromDunning(exclude);
-                accountOperationService.update(accountop, getCurrentUser());
+                accountOperationService.update(accountop);
             }
         }
     }
@@ -244,7 +242,7 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
                     if (!accountOperation.getExcludedFromDunning() == exclude) {
                         if (accountOperation instanceof RecordedInvoice) {
                             accountOperation.setExcludedFromDunning(exclude);
-                            accountOperationService.update(accountOperation, getCurrentUser());
+                            accountOperationService.update(accountOperation);
                         } else {
                             throw new BusinessEntityException("excludedFromDunning.selectOperations.notInvoice");
                         }
@@ -347,12 +345,12 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
 
 	@Override
 	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider", "customerAccount");
+		return Arrays.asList("customerAccount");
 	}
 
 	@Override
 	protected List<String> getListFieldsToFetch() {
-		return Arrays.asList("provider", "customerAccount");
+		return Arrays.asList("customerAccount");
 	}
 	
 	@Override

@@ -15,7 +15,6 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.notification.EmailNotificationDto;
 import org.meveo.api.dto.response.notification.GetEmailNotificationResponseDto;
 import org.meveo.api.rest.IBaseRs;
-import org.meveo.api.rest.security.RSSecured;
 
 /**
  * @author Edward P. Legaspi
@@ -23,7 +22,7 @@ import org.meveo.api.rest.security.RSSecured;
 @Path("/notification/email")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-@RSSecured
+
 public interface EmailNotificationRs extends IBaseRs {
 
     @POST

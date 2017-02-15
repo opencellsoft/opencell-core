@@ -18,48 +18,26 @@
  */
 package org.meveo.model.datawarehouse;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Version;
 import javax.validation.constraints.Size;
 
-import org.meveo.model.IEntity;
-import org.meveo.model.IVersionedEntity;
+import org.meveo.model.BaseEntity;
 
 @Entity
 @Table(name = "DWH_ACCOUNT_OPERATION")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "DWH_ACCOUNT_OPERATION_SEQ")
-public class DWHAccountOperation implements Serializable, IEntity, IVersionedEntity {
+public class DWHAccountOperation extends BaseEntity {
 
 	private static final long serialVersionUID = 1L;
 	
-	@Id
-	@GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)
-	@Column(name = "ID")
-    @Access(AccessType.PROPERTY)
-	private Long id;
-
-	@Version
-	@Column(name = "VERSION")
-	private Integer version;
-
-	@Column(name = "PROVIDER_CODE", length = 20)
-	@Size(max = 20)
-	private String providerCode;
-
 	@Column(name = "ACCOUNT_CODE", length = 50)
 	@Size(max = 50)
 	private String accountCode;
@@ -110,34 +88,6 @@ public class DWHAccountOperation implements Serializable, IEntity, IVersionedEnt
 
 	@Column(name = "STATUS")
 	private byte status;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public Integer getVersion() {
-		return version;
-	}
-
-	public void setVersion(Integer version) {
-		this.version = version;
-	}
-
-	public String getProviderCode() {
-		return providerCode;
-	}
-
-	public void setProviderCode(String providerCode) {
-		this.providerCode = providerCode;
-	}
-
-	public boolean isTransient() {
-		return id == null;
-	}
 
 	public String getAccountCode() {
 		return accountCode;

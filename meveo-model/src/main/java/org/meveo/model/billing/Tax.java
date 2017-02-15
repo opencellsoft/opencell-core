@@ -39,14 +39,14 @@ import org.meveo.model.ObservableEntity;
 @ObservableEntity
 @CustomFieldEntity(cftCodePrefix = "TAX")
 @MultilanguageEntity(key = "menu.taxes", group = "Tax")
-@ExportIdentifier({ "code", "provider" })
-@Table(name = "BILLING_TAX", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
+@ExportIdentifier({ "code"})
+@Table(name = "BILLING_TAX", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_TAX_SEQ")
 @NamedQueries({
 		@NamedQuery(name = "tax.getNbTaxesNotAssociated", query = "select count(*) from Tax t where t.id not in (select l.tax.id from TaxLanguage l where l.tax.id is not null)"
-				+ " and t.id not in (select inv.tax.id from InvoiceSubcategoryCountry inv where inv.tax.id is not null) and t.provider=:provider"),
+				+ " and t.id not in (select inv.tax.id from InvoiceSubcategoryCountry inv where inv.tax.id is not null)"),
 		@NamedQuery(name = "tax.getTaxesNotAssociated", query = "from Tax t where t.id not in (select l.tax.id from TaxLanguage l where l.tax.id is not null ) "
-				+ " and t.id not in (select inv.tax.id from InvoiceSubcategoryCountry inv where inv.tax.id is not null) and t.provider=:provider")
+				+ " and t.id not in (select inv.tax.id from InvoiceSubcategoryCountry inv where inv.tax.id is not null)")
 
 })
 public class Tax extends BusinessCFEntity {
@@ -68,7 +68,6 @@ public class Tax extends BusinessCFEntity {
 		this.description = tax.getDescription();
 		this.setAuditable(tax.getAuditable());
 		this.setDisabled(tax.isDisabled());
-		this.setProvider(tax.getProvider());
 		this.accountingCode = tax.getAccountingCode();
 		this.percent = tax.getPercent();
 	}

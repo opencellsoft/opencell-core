@@ -13,7 +13,6 @@ import javax.inject.Inject;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.job.Job;
@@ -40,10 +39,10 @@ public class CustomizedEntityService implements Serializable {
      * @param includeNonManagedEntities If true, entities that are not managed through the Entity Customization list page will be included.
      * @param sortBy Sort by. Valid values are: "description" or null to sort by entity name
      * @param sortOrder Sort order. Valid values are "DESCENDING" or "ASCENDING". By default will sort in Ascending order.
-     * @param currentProvider Current provider
+
      * @return A list of customized/customizable entities
      */
-    public List<CustomizedEntity> getCustomizedEntities(String entityName, boolean customEntityTemplatesOnly, boolean includeNonManagedEntities, final String sortBy, final String sortOrder, Provider currentProvider) {
+    public List<CustomizedEntity> getCustomizedEntities(String entityName, boolean customEntityTemplatesOnly, boolean includeNonManagedEntities, final String sortBy, final String sortOrder) {
         List<CustomizedEntity> entities = new ArrayList<>();
 
         if (entityName != null) {
@@ -54,7 +53,7 @@ public class CustomizedEntityService implements Serializable {
             entities.addAll(searchAllCustomFieldEntities(entityName, includeNonManagedEntities));
             entities.addAll(searchJobs(entityName));
         }
-        entities.addAll(searchCustomEntityTemplates(entityName, currentProvider));
+        entities.addAll(searchCustomEntityTemplates(entityName));
         Collections.sort(entities, sortEntitiesBy(sortBy, sortOrder));
         return entities;
     }
@@ -94,16 +93,16 @@ public class CustomizedEntityService implements Serializable {
      * Searches all custom entity templates.
      *
      * @param entityName Optional filter by a name
-     * @param currentProvider Current provider
+
      * @return A list of custom entity templates.
      */
-    private List<CustomizedEntity> searchCustomEntityTemplates(String entityName, Provider currentProvider) {
+    private List<CustomizedEntity> searchCustomEntityTemplates(String entityName) {
         List<CustomizedEntity> entities = new ArrayList<>();
         List<CustomEntityTemplate> customEntityTemplates = null;
         if (entityName == null || CustomEntityTemplate.class.getSimpleName().toLowerCase().contains(entityName)) {
-            customEntityTemplates = customEntityTemplateService.list(currentProvider);
+            customEntityTemplates = customEntityTemplateService.list();
         } else if (entityName != null) {
-            customEntityTemplates = customEntityTemplateService.findByCodeLike(entityName, currentProvider);
+            customEntityTemplates = customEntityTemplateService.findByCodeLike(entityName);
         }
 
         for (CustomEntityTemplate customEntityTemplate : customEntityTemplates) {
@@ -158,10 +157,10 @@ public class CustomizedEntityService implements Serializable {
      * Get a customized/customizable entity that matched a given appliesTo value as it is used in customFieldtemplate or EntityActionScript
      * 
      * @param appliesTo appliesTo value as it is used in customFieldtemplate or EntityActionScript
-     * @param currentProvider Current provider
+
      * @return A customized/customizable entity
      */
-    public CustomizedEntity getCustomizedEntity(String appliesTo, Provider currentProvider) {
+    public CustomizedEntity getCustomizedEntity(String appliesTo) {
 
         // Find standard entities that implement ICustomFieldEntity interface except JobInstance
         Reflections reflections = new Reflections("org.meveo.model");
@@ -185,7 +184,7 @@ public class CustomizedEntityService implements Serializable {
             }
         }
 
-        for (CustomEntityTemplate cet : customEntityTemplateService.list(currentProvider)) {
+        for (CustomEntityTemplate cet : customEntityTemplateService.list()) {
             if (appliesTo.equals(cet.getAppliesTo())) {
                 return new CustomizedEntity(cet.getCode(), CustomEntityTemplate.class, cet.getId(), cet.getDescription());
             }

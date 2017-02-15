@@ -21,7 +21,6 @@ package org.meveo.service.billing.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -31,15 +30,9 @@ import javax.persistence.NoResultException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.NumberUtil;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.admin.User;
-import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.billing.ProductChargeInstance;
-import org.meveo.model.billing.UserAccount;
-import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.catalog.ProductChargeTemplate;
-import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.service.base.BusinessService;
 
 @Stateless
@@ -71,7 +64,7 @@ public class ProductChargeInstanceService extends BusinessService<ProductChargeI
 		return productChargeInstance;
 	}
 
-    public List<WalletOperation> applyProductChargeInstance(ProductChargeInstance productChargeInstance, User currentUser, boolean isVirtual) throws BusinessException {
+    public List<WalletOperation> applyProductChargeInstance(ProductChargeInstance productChargeInstance, boolean isVirtual) throws BusinessException {
 
         List<WalletOperation> walletOperations = null;
         ChargeTemplate chargeTemplate = productChargeInstance.getProductChargeTemplate();
@@ -84,9 +77,9 @@ public class ProductChargeInstanceService extends BusinessService<ProductChargeI
         BigDecimal inputQuantity = productChargeInstance.getQuantity();
         BigDecimal quantity = NumberUtil.getInChargeUnit(productChargeInstance.getQuantity(), chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(),
             chargeTemplate.getRoundingMode());
-        WalletOperation walletOperation = walletOperationService.rateProductApplication(productChargeInstance, inputQuantity, quantity, isVirtual, currentUser);
+        WalletOperation walletOperation = walletOperationService.rateProductApplication(productChargeInstance, inputQuantity, quantity, isVirtual);
         if (!isVirtual) {
-            walletOperations = walletOperationService.chargeWalletOperation(walletOperation, currentUser);
+            walletOperations = walletOperationService.chargeWalletOperation(walletOperation);
         } else {
             walletOperations = new ArrayList<>();
             walletOperations.add(walletOperation);
@@ -96,14 +89,14 @@ public class ProductChargeInstanceService extends BusinessService<ProductChargeI
 	
 	@SuppressWarnings("unchecked")
 	public List<ProductChargeInstance> findBySubscriptionId(Long subscriptionId) {
-		QueryBuilder qb = new QueryBuilder(ProductChargeInstance.class, "c", Arrays.asList("chargeTemplate"), null);
+		QueryBuilder qb = new QueryBuilder(ProductChargeInstance.class, "c", Arrays.asList("chargeTemplate"));
 		qb.addCriterion("c.subscription.id", "=", subscriptionId, true);
 		return qb.getQuery(getEntityManager()).getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<ProductChargeInstance> findByUserAccountId(Long userAccountId) {
-		QueryBuilder qb = new QueryBuilder(ProductChargeInstance.class, "c", Arrays.asList("chargeTemplate"), null);
+		QueryBuilder qb = new QueryBuilder(ProductChargeInstance.class, "c", Arrays.asList("chargeTemplate"));
 		qb.addCriterion("c.userAccount.id", "=", userAccountId, true);
 		qb.addSql("c.subscription is null");
 		return qb.getQuery(getEntityManager()).getResultList();

@@ -104,9 +104,9 @@ public class RecurringChargeTemplateBean extends CustomFieldBean<RecurringCharge
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		// check for unicity
-		if (oneShotChargeTemplateService.findByCode(entity.getCode(), entity.getProvider()) != null
-				|| usageChargeTemplateService.findByCode(entity.getCode(), entity.getProvider()) != null
-				|| productChargeTemplateService.findByCode(entity.getCode(), entity.getProvider()) != null) {
+		if (oneShotChargeTemplateService.findByCode(entity.getCode()) != null
+				|| usageChargeTemplateService.findByCode(entity.getCode()) != null
+				|| productChargeTemplateService.findByCode(entity.getCode()) != null) {
 			messages.error(new BundleKey("messages", "chargeTemplate.uniqueField.code"));
 			return null;
 		}
@@ -141,7 +141,7 @@ public class RecurringChargeTemplateBean extends CustomFieldBean<RecurringCharge
 	 * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
 	 */
 	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider", "calendar");
+		return Arrays.asList("calendar");
 	}
 
 	@Override
@@ -174,7 +174,7 @@ public class RecurringChargeTemplateBean extends CustomFieldBean<RecurringCharge
 		
         if (entity != null && entity.getId() != null) {
             try {
-            	recurringChargeTemplateService.duplicate(entity,getCurrentUser());
+            	recurringChargeTemplateService.duplicate(entity);
                 messages.info(new BundleKey("messages", "save.successful"));
             } catch (BusinessException e) {
                 log.error("Error encountered persisting recurring charge template entity: #{0}:#{1}", entity.getCode(), e);
@@ -185,7 +185,7 @@ public class RecurringChargeTemplateBean extends CustomFieldBean<RecurringCharge
 	
 	public boolean isUsedInSubscription() {
 		return (getEntity() != null && !getEntity().isTransient() && (recurringChargeTemplateService.findByCode(
-				getEntity().getCode(), getCurrentProvider()) != null)) ? true : false;
+				getEntity().getCode()) != null)) ? true : false;
 	}
 	
 }

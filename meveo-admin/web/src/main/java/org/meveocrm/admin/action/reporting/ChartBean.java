@@ -31,7 +31,6 @@ import javax.inject.Named;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.dwh.BarChart;
 import org.meveo.model.dwh.Chart;
 import org.meveo.model.dwh.LineChart;
@@ -149,9 +148,7 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
             jsModel.getDatasets().get("total").add(total);
         }
 
-        Provider provider = getCurrentProvider();
-
-        String labelsValue = (String)cfiService.getCFValue(provider, "CF_MQ_MRR_OFFER_LABELS", getCurrentUser());
+        String labelsValue = (String)cfiService.getCFValue(appProvider, "CF_MQ_MRR_OFFER_LABELS");
         if (!StringUtils.isBlank(labelsValue)) {
             for (String label : labelsValue.split(",")) {
                 jsModel.getLegendLabels().add(label);
@@ -187,12 +184,6 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
     }
 
     @Override
-    protected List<String> getFormFieldsToFetch() {
-        return Arrays.asList("provider");
-    }
-
-
-    @Override
     public LazyDataModel<Chart> getLazyDataModel() {
         getFilters();
         if (filters.containsKey("user")) {
@@ -200,12 +191,6 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
             filters.remove("user");
         }
         return super.getLazyDataModel();
-    }
-
-
-    @Override
-    protected List<String> getListFieldsToFetch() {
-        return Arrays.asList("provider");
     }
 
     private BigDecimal computeAverage(List<BigDecimal> values) {

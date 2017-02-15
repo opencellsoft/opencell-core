@@ -16,12 +16,10 @@ import org.meveo.api.dto.catalog.ProductTemplateDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.model.IEntity;
-import org.meveo.model.admin.User;
 import org.meveo.model.catalog.DigitalResource;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ProductChargeTemplate;
 import org.meveo.model.catalog.ProductTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.catalog.impl.DigitalResourceService;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 import org.meveo.service.catalog.impl.ProductChargeTemplateService;
@@ -56,12 +54,12 @@ public abstract class ProductOfferingApi<E extends IEntity, T extends BaseDto> e
 		}
 	}
 
-	protected void processOfferTemplateCategories(ProductTemplateDto postData, ProductTemplate productTemplate, Provider provider) throws EntityDoesNotExistsException {
+	protected void processOfferTemplateCategories(ProductTemplateDto postData, ProductTemplate productTemplate) throws EntityDoesNotExistsException {
 		List<OfferTemplateCategoryDto> offerTemplateCategories = postData.getOfferTemplateCategories();
 		if (offerTemplateCategories != null ) {
 			productTemplate.setOfferTemplateCategories(new ArrayList<OfferTemplateCategory>());
 			for (OfferTemplateCategoryDto offerTemplateCategoryDto : offerTemplateCategories) {
-				OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(offerTemplateCategoryDto.getCode(), provider);
+				OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(offerTemplateCategoryDto.getCode());
 				if (offerTemplateCategory == null) {
 					throw new EntityDoesNotExistsException(OfferTemplateCategory.class, offerTemplateCategoryDto.getCode());
 				}
@@ -70,7 +68,7 @@ public abstract class ProductOfferingApi<E extends IEntity, T extends BaseDto> e
 		}
 	}
 
-	protected void processDigitalResources(ProductTemplateDto postData, ProductTemplate productTemplate, User currentUser) throws BusinessException, MeveoApiException {
+	protected void processDigitalResources(ProductTemplateDto postData, ProductTemplate productTemplate) throws BusinessException, MeveoApiException {
 		List<DigitalResourcesDto> attachmentDtos = postData.getAttachments();
 		boolean hasAttachmentDtos = attachmentDtos != null && !attachmentDtos.isEmpty();
 		List<DigitalResource> existingAttachments = productTemplate.getAttachments();
@@ -79,11 +77,11 @@ public abstract class ProductOfferingApi<E extends IEntity, T extends BaseDto> e
 			DigitalResource attachment = null;
 			List<DigitalResource> newAttachments = new ArrayList<>();
 			for (DigitalResourcesDto attachmentDto : attachmentDtos) {
-				attachment = digitalResourceService.findByCode(attachmentDto.getCode(), currentUser.getProvider());
+				attachment = digitalResourceService.findByCode(attachmentDto.getCode());
 				if (attachment == null) {
 					throw new EntityDoesNotExistsException(DigitalResource.class, attachmentDto.getCode());
 				}
-				attachment = digitalResourceApi.populateDigitalResourceEntity(attachment, attachmentDto, currentUser);
+				attachment = digitalResourceApi.populateDigitalResourceEntity(attachment, attachmentDto);
 				newAttachments.add(attachment);
 			}
 			productTemplate.setAttachments(newAttachments);
@@ -92,11 +90,11 @@ public abstract class ProductOfferingApi<E extends IEntity, T extends BaseDto> e
 		}
 	}
 
-	protected void processProductChargeTemplate(ProductTemplateDto postData, ProductTemplate productTemplate, Provider provider) throws BusinessException, MeveoApiException {
+	protected void processProductChargeTemplate(ProductTemplateDto postData, ProductTemplate productTemplate) throws BusinessException, MeveoApiException {
 		List<ProductChargeTemplate> newProductChargeTemplates = new ArrayList<>();
 		ProductChargeTemplate productChargeTemplate = null;
 		for(ProductChargeTemplateDto productChargeTemplateDto : postData.getProductChargeTemplates()){
-			productChargeTemplate = productChargeTemplateService.findByCode(productChargeTemplateDto.getCode(), provider);
+			productChargeTemplate = productChargeTemplateService.findByCode(productChargeTemplateDto.getCode());
 			if (productChargeTemplate == null) {
 				throw new EntityDoesNotExistsException(ProductChargeTemplate.class, productChargeTemplateDto.getCode());
 			}

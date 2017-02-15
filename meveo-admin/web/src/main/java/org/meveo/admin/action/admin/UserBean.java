@@ -58,7 +58,6 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.DetailedSecuredEntity;
 import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.User;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.hierarchy.HierarchyLevel;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.security.Role;
@@ -67,7 +66,6 @@ import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
 import org.meveo.service.security.SecuredBusinessEntityService;
 import org.omnifaces.cdi.ViewScoped;
@@ -98,9 +96,6 @@ public class UserBean extends CustomFieldBean<User> {
 
     @Inject
     private RoleService roleService;
-
-    @Inject
-    private ProviderService providerService;
 
     @Inject
     private UserHierarchyLevelService userHierarchyLevelService;
@@ -189,11 +184,7 @@ public class UserBean extends CustomFieldBean<User> {
         if (userGroupRootNode == null) {
             userGroupRootNode = new DefaultTreeNode("Root", null);
             List<UserHierarchyLevel> roots;
-            if (entity != null && entity.getProvider() != null) {
-                roots = userHierarchyLevelService.findRoots(entity.getProvider());
-            } else {
-                roots = userHierarchyLevelService.findRoots();
-            }
+            roots = userHierarchyLevelService.findRoots();
             UserHierarchyLevel userHierarchyLevel = getEntity().getUserLevel();
             if (CollectionUtils.isNotEmpty(roots)) {
                 Collections.sort(roots);
@@ -272,14 +263,14 @@ public class UserBean extends CustomFieldBean<User> {
      * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
      */
     protected List<String> getFormFieldsToFetch() {
-        return Arrays.asList("provider", "roles", "userLevel");
+        return Arrays.asList("roles", "userLevel");
     }
 
     /**
      * @see org.meveo.admin.action.BaseBean#getListFieldsToFetch()
      */
     protected List<String> getListFieldsToFetch() {
-        return Arrays.asList("roles", "provider", "userLevel");
+        return Arrays.asList("roles", "userLevel");
     }
 
     /**
@@ -288,11 +279,7 @@ public class UserBean extends CustomFieldBean<User> {
     public DualListModel<Role> getDualListModel() {
         if (rolesDM == null) {
             List<Role> perksSource = null;
-            if (entity != null && entity.getProvider() != null) {
-                perksSource = roleService.list(entity.getProvider());
-            } else {
-                perksSource = roleService.list();
-            }
+            perksSource = roleService.list();
             List<Role> perksTarget = new ArrayList<Role>();
             if (getEntity().getRoles() != null) {
                 perksTarget.addAll(getEntity().getRoles());
@@ -305,10 +292,6 @@ public class UserBean extends CustomFieldBean<User> {
 
     public void setDualListModel(DualListModel<Role> rolesDM) {
         this.rolesDM = rolesDM;
-    }
-
-    public List<Provider> getProviders() {
-        return providerService.list();
     }
 
     public String getPassword() {
@@ -345,7 +328,7 @@ public class UserBean extends CustomFieldBean<User> {
     }
 
     public String getFilePath() {
-        return providerFilePath + File.separator + getCurrentProvider().getCode();
+        return providerFilePath + File.separator + appProvider.getCode();
     }
 
     private String getFilePath(String name) {
@@ -645,28 +628,6 @@ public class UserBean extends CustomFieldBean<User> {
         }
     }
 
-    /**
-     * Add additional criteria for searching by provider
-     */
-    @Override
-    protected Map<String, Object> supplementSearchCriteria(Map<String, Object> searchCriteria) {
-
-		// Do not user a check against user.provider as it contains only one
-		// value, while user can be linked to various providers
-		// boolean isSuperAdmin = identity.hasPermission("superAdmin",
-		// "superAdminManagement");
-        boolean isSuperAdmin = currentUser.hasPermission("superAdmin", "superAdminManagement");
-        if (isSuperAdmin) {
-            searchCriteria.put(PersistenceService.SEARCH_SKIP_PROVIDER_CONSTRAINT, true);
-        }
-        return searchCriteria;
-    }
-
-    public void onProviderChange() {
-        rolesDM = null;
-        userGroupRootNode = null;
-    }
-
     // Recursive function to create tree with node checked if selected
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private TreeNode createTree(HierarchyLevel hierarchyLevel, TreeNode rootNode, UserHierarchyLevel selectedHierarchyLevel) {
@@ -733,7 +694,7 @@ public class UserBean extends CustomFieldBean<User> {
 		if (entity != null && entity.getSecuredEntities() != null) {
 			for (SecuredEntity securedEntity : entity.getSecuredEntities()) {
 				detailedSecuredEntity = new DetailedSecuredEntity(securedEntity);
-				businessEntity = securedBusinessEntityService.getEntityByCode(securedEntity.getEntityClass(), securedEntity.getCode(), getCurrentUser());
+				businessEntity = securedBusinessEntityService.getEntityByCode(securedEntity.getEntityClass(), securedEntity.getCode());
 				detailedSecuredEntity.setDescription(businessEntity.getDescription());
 				detailedSecuredEntities.add(detailedSecuredEntity);
 			}

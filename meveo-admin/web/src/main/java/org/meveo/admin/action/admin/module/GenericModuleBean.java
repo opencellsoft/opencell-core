@@ -22,7 +22,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,12 +45,10 @@ import org.meveo.api.dto.module.MeveoModuleDto;
 import org.meveo.api.module.MeveoModuleApi;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.admin.User;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.module.MeveoModule;
 import org.meveo.model.module.MeveoModuleItem;
 import org.meveo.service.admin.impl.MeveoModuleService;
-import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.index.ElasticClient;
 import org.meveo.util.view.ServiceBasedLazyDataModel;
@@ -130,7 +127,7 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
             for (MeveoModuleItem item : module.getModuleItems()) {
 
                 // Load an entity related to a module item. If it was not been able to load (e.g. was deleted), mark it to be deleted and delete
-                meveoModuleService.loadModuleItem(item, getCurrentProvider());
+                meveoModuleService.loadModuleItem(item);
 
                 if (item.getItemEntity() == null) {
                     itemsToRemove.add(item);
@@ -238,9 +235,6 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
                     cleanFilters.put(filterEntry.getKey(), filterEntry.getValue());
                 }
 
-                // cleanFilters.put(PersistenceService.SEARCH_CURRENT_USER,
-                // getCurrentUser());
-                cleanFilters.put(PersistenceService.SEARCH_CURRENT_PROVIDER, getCurrentProvider());
                 return GenericModuleBean.this.supplementSearchCriteria(cleanFilters);
             }
 
@@ -263,11 +257,6 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
             protected ElasticClient getElasticClientImpl() {
                 return elasticClient;
             }
-
-            @Override
-            public User getCurrentUser() {
-                return GenericModuleBean.this.getCurrentUser();
-            }
         };
 
         return meveoModuleDataModel;
@@ -288,7 +277,7 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
         if (meveoInstance != null) {
             log.debug("export module {} to remote instance {}", entity.getCode(), meveoInstance.getCode());
             try {
-                meveoModuleService.publishModule2MeveoInstance(entity, meveoInstance, this.currentUser);
+                meveoModuleService.publishModule2MeveoInstance(entity, meveoInstance);
                 messages.info(new BundleKey("messages", "meveoModule.publishSuccess"), entity.getCode(), meveoInstance.getCode());
             } catch (Exception e) {
                 log.error("Error when export module {} to {}", entity.getCode(), meveoInstance, e);
@@ -305,7 +294,7 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
             String filename = String.format("%s.%s", entity.getCode(), formatname);
             filename.replaceAll(" ", "_");
             log.debug("crop module picture to {}", filename);
-            String dest = ModuleUtil.getModulePicturePath(entity.getProvider().getCode()) + File.separator + filename;
+            String dest = ModuleUtil.getModulePicturePath(appProvider.getCode()) + File.separator + filename;
             ModuleUtil.cropPicture(dest, croppedImage);
             entity.setLogoPicture(filename);
             messages.info(new BundleKey("messages", "meveoModule.cropPictureSuccess"));
@@ -331,7 +320,7 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
         this.tmpPicture = filename;
         InputStream in = null;
         try {
-            String tmpFolder = ModuleUtil.getTmpRootPath(entity.getProvider().getCode());
+            String tmpFolder = ModuleUtil.getTmpRootPath(appProvider.getCode());
             String dest = tmpFolder + File.separator + filename;
             log.debug("output original module picture file to {}", dest);
             in = event.getFile().getInputstream();
@@ -355,15 +344,10 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
     }
 
     @Override
-    protected List<String> getFormFieldsToFetch() {
-        return Arrays.asList("provider");
-    }
-
-    @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
-        MeveoModule moduleDuplicate = meveoModuleService.findByCode(entity.getCode(), getCurrentProvider());
+        MeveoModule moduleDuplicate = meveoModuleService.findByCode(entity.getCode());
         if (moduleDuplicate != null && !moduleDuplicate.getId().equals(entity.getId())) {
             messages.error(new BundleKey("messages", "commons.uniqueField.code"), entity.getCode());
             return null;
@@ -385,7 +369,7 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
             return;
         }
         try {
-            ModuleUtil.removeModulePicture(entity.getProvider().getCode(), filename);
+            ModuleUtil.removeModulePicture(appProvider.getCode(), filename);
         } catch (Exception e) {
             log.error("failed to remove module picture {}, info {}", filename, e.getMessage(), e);
         }
@@ -494,7 +478,7 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
 
             MeveoModuleDto moduleDto = MeveoModuleService.moduleSourceToDto(module);
 
-            module = moduleApi.install(moduleDto, currentUser);
+            module = moduleApi.install(moduleDto);
             messages.info(new BundleKey("messages", "meveoModule.installSuccess"), moduleDto.getCode());
 
         } catch (Exception e) {
@@ -517,7 +501,7 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
                 return;
             }
 
-            entity = (T) meveoModuleService.uninstall(entity, getCurrentUser());
+            entity = (T) meveoModuleService.uninstall(entity);
             messages.info(new BundleKey("messages", "meveoModule.uninstallSuccess"), entity.getCode());
 
         } catch (Exception e) {

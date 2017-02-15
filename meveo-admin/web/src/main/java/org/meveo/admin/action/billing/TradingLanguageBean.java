@@ -34,11 +34,9 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.billing.Language;
 import org.meveo.model.billing.TradingLanguage;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.TradingLanguageService;
-import org.meveo.service.crm.impl.ProviderService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.SelectEvent;
 
@@ -62,9 +60,6 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
 	private TradingLanguageService tradingLanguageService;
 
 	@Inject
-	private ProviderService providerService;
-
-	@Inject
 	private Messages messages;
 
 	/**
@@ -85,9 +80,7 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
 	public String saveOrUpdate(boolean killConversation) throws BusinessException{
 		String back = null;
 		try {
-			Provider currentProvider = providerService
-					.findById(getCurrentProvider().getId());
-			for (TradingLanguage tr : currentProvider.getTradingLanguages()) {
+			for (TradingLanguage tr : tradingLanguageService.list()) {
 				if (tr.getLanguage()
 						.getLanguageCode()
 						.equalsIgnoreCase(
@@ -148,7 +141,7 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
 
 	@Override
 	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("language", "provider");
+		return Arrays.asList("language");
 	}
 
 	@Override

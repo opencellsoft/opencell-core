@@ -20,13 +20,11 @@ package org.meveo.service.billing.impl;
 
 import javax.ejb.Stateless;
 import javax.inject.Named;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.model.billing.TradingCountry;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
@@ -40,47 +38,18 @@ public class TradingCountryService extends PersistenceService<TradingCountry> {
 	 * @return Trading country found or null.
 	 * @throws ElementNotFoundException
 	 */
-	public TradingCountry findByTradingCountryCode(String tradingCountryCode,
-			Provider provider) {
+	public TradingCountry findByTradingCountryCode(String tradingCountryCode) {
 		try {
-			log.info(
-					"findByTradingCountryCode tradingCountryCode={},provider={}",
-					tradingCountryCode, provider != null ? provider.getCode()
-							: null);
+            log.info("findByTradingCountryCode tradingCountryCode={}", tradingCountryCode);
 			Query query = getEntityManager()
 					.createQuery(
-							"select b from TradingCountry b where b.country.countryCode = :tradingCountryCode and b.provider=:provider");
+							"select b from TradingCountry b where b.country.countryCode = :tradingCountryCode");
 			query.setParameter("tradingCountryCode", tradingCountryCode);
-			query.setParameter("provider", provider);
 			return (TradingCountry) query.getSingleResult();
+			
 		} catch (NoResultException e) {
-			log.warn(
-					"findByTradingCountryCode billing cycle not found : tradingCountryCode={},provider={}",
-					tradingCountryCode, provider != null ? provider.getCode()
-							: null);
+            log.warn("findByTradingCountryCode billing cycle not found : tradingCountryCode={}", tradingCountryCode);
 			return null;
 		}
 	}
-
-	public TradingCountry findByTradingCountryCode(EntityManager em,
-			String tradingCountryCode, Provider provider) {
-		try {
-			log.info(
-					"findByTradingCountryCode tradingCountryCode={},provider={}",
-					tradingCountryCode, provider != null ? provider.getCode()
-							: null);
-			Query query = em
-					.createQuery("select b from TradingCountry b where b.country.countryCode = :tradingCountryCode and b.provider=:provider");
-			query.setParameter("tradingCountryCode", tradingCountryCode);
-			query.setParameter("provider", provider);
-			return (TradingCountry) query.getSingleResult();
-		} catch (NoResultException e) {
-			log.warn(
-					"findByTradingCountryCode billing cycle not found : tradingCountryCode={},provider={}",
-					tradingCountryCode, provider != null ? provider.getCode()
-							: null);
-			return null;
-		}
-	}
-
 }

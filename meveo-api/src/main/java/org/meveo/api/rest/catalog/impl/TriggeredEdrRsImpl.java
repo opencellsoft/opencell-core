@@ -31,7 +31,7 @@ public class TriggeredEdrRsImpl extends BaseRs implements TriggeredEdrRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            triggeredEdrApi.create(postData, getCurrentUser());
+            triggeredEdrApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -51,7 +51,7 @@ public class TriggeredEdrRsImpl extends BaseRs implements TriggeredEdrRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            triggeredEdrApi.update(postData, getCurrentUser());
+            triggeredEdrApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -71,7 +71,7 @@ public class TriggeredEdrRsImpl extends BaseRs implements TriggeredEdrRs {
         GetTriggeredEdrResponseDto result = new GetTriggeredEdrResponseDto();
 
         try {
-            result.setTriggeredEdrTemplate(triggeredEdrApi.find(triggeredEdrCode, getCurrentUser().getProvider()));
+            result.setTriggeredEdrTemplate(triggeredEdrApi.find(triggeredEdrCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -91,7 +91,7 @@ public class TriggeredEdrRsImpl extends BaseRs implements TriggeredEdrRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            triggeredEdrApi.remove(triggeredEdrCode, getCurrentUser());
+            triggeredEdrApi.remove(triggeredEdrCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -111,7 +111,7 @@ public class TriggeredEdrRsImpl extends BaseRs implements TriggeredEdrRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            triggeredEdrApi.createOrUpdate(postData, getCurrentUser());
+            triggeredEdrApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

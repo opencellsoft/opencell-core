@@ -28,7 +28,7 @@ public class DDRequestLotOpRsImpl extends BaseRs implements DDRequestLotOpRs {
       ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
       try {
-          ddrequestLotOpApi.create(dto, getCurrentUser());
+          ddrequestLotOpApi.create(dto);
       } catch (MeveoApiException e) {
           result.setStatus(ActionStatusEnum.FAIL);
           result.setMessage(e.getMessage());
@@ -46,11 +46,11 @@ public class DDRequestLotOpRsImpl extends BaseRs implements DDRequestLotOpRs {
       DDRequestLotOpsResponseDto result = new DDRequestLotOpsResponseDto();
 
       try {
-          result.setDdrequestLotOps(ddrequestLotOpApi.listDDRequestLotOps(DateUtils.parseDateWithPattern(fromDueDate, "yyyy-MM-dd"),DateUtils.parseDateWithPattern(toDueDate, "yyyy-MM-dd"),status, getCurrentUser().getProvider()));
-      } catch (MeveoApiException e) {
-          result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-          result.getActionStatus().setMessage(e.getMessage());
-          log.error("error occurred while getting list account operation ", e);
+          result.setDdrequestLotOps(ddrequestLotOpApi.listDDRequestLotOps(DateUtils.parseDateWithPattern(fromDueDate, "yyyy-MM-dd"),DateUtils.parseDateWithPattern(toDueDate, "yyyy-MM-dd"),status));
+//      } catch (MeveoApiException e) {
+//          result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+//          result.getActionStatus().setMessage(e.getMessage());
+//          log.error("error occurred while getting list account operation ", e);
       } catch (Exception e) {
           result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
           result.getActionStatus().setMessage(e.getMessage());

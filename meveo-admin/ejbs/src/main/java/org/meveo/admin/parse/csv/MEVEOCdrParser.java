@@ -18,8 +18,6 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
-import org.meveo.model.IProvider;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.medina.impl.CDRParsingService;
 import org.meveo.service.medina.impl.CSVCDRParser;
 import org.meveo.service.medina.impl.EDRDAO;
@@ -45,7 +43,7 @@ public class MEVEOCdrParser implements CSVCDRParser {
 		}
 	}
 
-	class CDR implements Serializable, IProvider {
+	class CDR implements Serializable {
 		private static final long serialVersionUID = -536798105625877375L;
 		public long timestamp;
 		public String access_id;
@@ -69,23 +67,12 @@ public class MEVEOCdrParser implements CSVCDRParser {
 		private BigDecimal decimalParam3; 
 		private BigDecimal decimalParam4; 
 		private BigDecimal decimalParam5;
-		public transient Provider provider;
 
 		public String toString() {
 			return (new Date(timestamp)) + ";" + quantity + ";" + access_id + ";" + param1 + ";" + param2
 					+ ";" + param3 + ";" + param4+ ";" +param5+ ";"+ param6+ ";" + param7+ ";" + param8+ ";" + param9 +";"
 					 + dateParam1+ ";" + dateParam2+ ";" + dateParam3+ ";" + dateParam4+ ";" + dateParam5+ ";" + decimalParam1
 					 +";" + decimalParam2+";" + decimalParam3+";" + decimalParam4+";" + decimalParam5;
-		}
-
-		@Override
-		public Provider getProvider() {
-			return provider;
-		}
-
-		@Override
-		public void setProvider(Provider provider) {
-			this.provider = provider;            
 		}
 	}
 

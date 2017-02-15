@@ -23,8 +23,8 @@ import org.meveo.model.ModuleItem;
 
 @Entity
 @ModuleItem
-@ExportIdentifier({ "code", "provider" })
-@Table(name = "DWH_MEASURABLE_QUANT", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
+@ExportIdentifier({ "code"})
+@Table(name = "DWH_MEASURABLE_QUANT", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "DWH_MEASURABLE_QUANT_SEQ")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MeasurableQuantity extends BusinessEntity {
@@ -60,8 +60,7 @@ public class MeasurableQuantity extends BusinessEntity {
 	private boolean additive;
 	/**
 	 * expect to return a list of (Date measureDate, Long value) that will be
-	 * used to create measuredValue. be careful that super admin MUST validate
-	 * those queries as they could break separation of data between providers
+	 * used to create measuredValue. 
 	 */
 	@Column(name = "SQL_QUERY", length = 2000)
     @Size(max = 2000)

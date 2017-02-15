@@ -15,15 +15,13 @@ import org.meveo.admin.sepa.PaynumFile;
 import org.meveo.admin.sepa.SepaFile;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.model.admin.User;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.payments.DDRequestFileFormatEnum;
 import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.DDRequestOpEnum;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
-import org.meveo.model.payments.DDRequestFileFormatEnum;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.payments.impl.DDRequestItemService;
 import org.meveo.service.payments.impl.DDRequestLOTService;
@@ -60,12 +58,11 @@ public class SepaDirectDebitJobBean {
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
-		log.debug("Running for user={}, parameter={}", currentUser, jobInstance.getParametres());
-		Provider currentProvider = currentUser.getProvider();
+		log.debug("Running for parameter={}", jobInstance.getParametres());
 		try {
 			String fileFormat = (String) customFieldInstanceService.getCFValue(jobInstance, "fileFormat");
 
-			List<DDRequestLotOp> ddrequestOps = dDRequestLotOpService.getDDRequestOps(currentProvider, DDRequestFileFormatEnum.valueOf(fileFormat));
+			List<DDRequestLotOp> ddrequestOps = dDRequestLotOpService.getDDRequestOps(DDRequestFileFormatEnum.valueOf(fileFormat));
 
 			if (ddrequestOps != null) {
 				log.info("ddrequestOps found:" + ddrequestOps.size());

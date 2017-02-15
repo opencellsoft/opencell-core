@@ -30,12 +30,12 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.EnableEntity;
 
 @Entity
 @Table(name = "AR_DUE_DATE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_DUE_DATE_SEQ")
-public class DueDate extends AuditableEntity {
+public class DueDate extends EnableEntity {
 
 	private static final long serialVersionUID = 1L;
 

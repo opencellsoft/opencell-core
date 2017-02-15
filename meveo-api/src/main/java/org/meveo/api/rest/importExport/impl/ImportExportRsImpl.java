@@ -27,14 +27,12 @@ import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.response.utilities.FieldsNotImportedStringCollectionDto;
 import org.meveo.api.dto.response.utilities.ImportExportResponseDto;
-import org.meveo.api.exception.LoginException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.importExport.ImportExportRs;
 import org.meveo.export.EntityExportImportService;
 import org.meveo.export.ExportImportStatistics;
 import org.meveo.export.RemoteAuthenticationException;
-import org.meveo.model.admin.User;
 
 /**
  * @author Andrius Karpavicius
@@ -54,8 +52,7 @@ public class ImportExportRsImpl extends BaseRs implements ImportExportRs {
 
         try {
             // Check user has utilities/remoteImport permission
-            User currentUser = getCurrentUser();
-            if (!currentUser.hasPermission("utilities", "remoteImport")) {
+            if (!currentUser.hasRole("remoteImport")) {
                 throw new RemoteAuthenticationException("User does not have utilities/remoteImport permission");
             }
 
@@ -87,13 +84,12 @@ public class ImportExportRsImpl extends BaseRs implements ImportExportRs {
             String executionId = (new Date()).getTime() + "_" + fileName;
 
             log.info("Received file {} from remote meveo instance. Saved to {} for importing. Execution id {}", fileName, tempFile.getAbsolutePath(), executionId);
-            Future<ExportImportStatistics> exportImportFuture = entityExportImportService.importEntities(tempFile, fileName.replaceAll(" ", "_"), false, false, getCurrentUser()
-                .getProvider(), getCurrentUser());
+            Future<ExportImportStatistics> exportImportFuture = entityExportImportService.importEntities(tempFile, fileName.replaceAll(" ", "_"), false, false, appProvider);
 
             executionResults.put(executionId, exportImportFuture);
             return new ImportExportResponseDto(executionId);
 
-        } catch (LoginException | RemoteAuthenticationException e) {
+        } catch (RemoteAuthenticationException e) {
             log.error("Failed to authenticate for a rest call {}", e.getMessage());
             return new ImportExportResponseDto(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.AUTHENTICATION_AUTHORIZATION_EXCEPTION, e.getMessage());
 

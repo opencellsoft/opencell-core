@@ -35,18 +35,18 @@ import org.meveo.model.MultilanguageEntity;
 @NamedQueries({ @NamedQuery(name = "UsageChargeTemplate.getWithTemplateEDR", query = "SELECT u FROM UsageChargeTemplate u join u.edrTemplates t WHERE :edrTemplate=t"
 		+ " and u.disabled=false"),		
 @NamedQuery(name = "usageChargeTemplate.getNbrUsagesChrgWithNotPricePlan", 
-query = "select count (*) from UsageChargeTemplate u where u.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) and u.provider=:provider "),
+query = "select count (*) from UsageChargeTemplate u where u.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null)  "),
 
 @NamedQuery(name = "usageChargeTemplate.getUsagesChrgWithNotPricePlan", 
-query = "from UsageChargeTemplate u where u.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) and u.provider=:provider "),
+query = "from UsageChargeTemplate u where u.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) "),
 
 @NamedQuery(name = "usageChargeTemplate.getNbrUsagesChrgNotAssociated", 
 query = "select count(*) from UsageChargeTemplate u where (u.id not in (select serv.chargeTemplate from ServiceChargeTemplateUsage serv) "
-		+ " OR u.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null)) and u.provider=:provider"),
+		+ " OR u.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null)) "),
 		
 @NamedQuery(name = "usageChargeTemplate.getUsagesChrgNotAssociated", 
 		query = "from UsageChargeTemplate u where (u.id not in (select serv.chargeTemplate from ServiceChargeTemplateUsage serv) "
-				+ " OR u.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null)) and u.provider=:provider")
+				+ " OR u.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null)) ")
 })
 
 public class UsageChargeTemplate extends ChargeTemplate {

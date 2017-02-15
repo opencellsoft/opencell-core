@@ -28,6 +28,11 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.meveo.admin.exception.NoTemplateException;
+import org.meveo.model.crm.Provider;
+import org.meveo.util.ApplicationProvider;
+import org.slf4j.Logger;
+
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -36,9 +41,6 @@ import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRCsvDataSource;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.util.JRLoader;
-
-import org.meveo.admin.exception.NoTemplateException;
-import org.slf4j.Logger;
 
 /**
  *This file producer class is used to generate PDF file
@@ -55,6 +57,10 @@ public class FileProducer {
     public JasperPrint jasperPrint;
 
     public JasperDesign jasperDesign;
+    
+    @Inject
+    @ApplicationProvider
+    protected Provider appProvider;
 
     /**
      *@param dataSourceFile

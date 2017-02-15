@@ -27,7 +27,6 @@ import javax.inject.Inject;
 import javax.persistence.DiscriminatorValue;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.admin.User;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.payments.MatchingStatusEnum;
@@ -49,8 +48,8 @@ public class OtherCreditAndChargeService extends
 	private CustomerAccountService customerAccountService;
 
 	public void addOCC(String codeOCCTemplate, String descToAppend,
-			CustomerAccount customerAccount, BigDecimal amount, Date dueDate,
-			User user) throws BusinessException {
+			CustomerAccount customerAccount, BigDecimal amount, Date dueDate
+			) throws BusinessException {
 		log.info(
 				"addOCC  codeOCCTemplate:{}  customerAccount:{} amount:{} dueDate:{}",
 				new Object[] {
@@ -71,16 +70,11 @@ public class OtherCreditAndChargeService extends
 			log.warn("addOCC dueDate is null");
 			throw new BusinessException("dueDate is null");
 		}
-
-		if (user == null) {
-			log.warn("addOCC user is null");
-			throw new BusinessException("user is null");
-		}
 		
 		customerAccount = customerAccountService.refreshOrRetrieve(customerAccount);
 		
 		OCCTemplate occTemplate = occTemplateService.findByCode(
-				codeOCCTemplate, customerAccount.getProvider().getCode());
+				codeOCCTemplate);
 		if (occTemplate == null) {
 			log.warn("addOCC cannot find OCCTemplate by code:"
 					+ codeOCCTemplate);
@@ -114,7 +108,7 @@ public class OtherCreditAndChargeService extends
 		otherCreditAndCharge.setUnMatchingAmount(amount);
 		otherCreditAndCharge.setMatchingStatus(MatchingStatusEnum.O);
 		customerAccount.getAccountOperations().add(otherCreditAndCharge);
-		create(otherCreditAndCharge, user); // AKK was with customerAccount.getProvider()
+		create(otherCreditAndCharge);
 
 		log.info(
 				"addOCC  codeOCCTemplate:{}  customerAccount:{} amount:{} dueDate:{} Successful",
@@ -134,10 +128,10 @@ public class OtherCreditAndChargeService extends
     }
 	
 	// public void addOCCk(String codeOCCTemplate, Long customerAccountId,
-	// String customerAccountCode, BigDecimal amount, Date dueDate, User user)
+	// String customerAccountCode, BigDecimal amount, Date dueDate)
 	// throws BusinessException, Exception {
 	// addOCC(codeOCCTemplate, null, customerAccountId, customerAccountCode,
-	// amount, dueDate, user);
+	// amount, dueDate);
 	// }
 	//
 	// public void addOCC(String codeOCCTemplate, String descToAppend, Long

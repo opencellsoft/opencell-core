@@ -25,8 +25,8 @@ import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
+import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
-import org.meveo.model.ProviderlessEntity;
 
 /**
  * Currency entity.
@@ -35,7 +35,7 @@ import org.meveo.model.ProviderlessEntity;
 @ExportIdentifier("currencyCode")
 @Table(name = "ADM_CURRENCY")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_CURRENCY_SEQ")
-public class Currency extends ProviderlessEntity {
+public class Currency extends AuditableEntity {
 
 	private static final long serialVersionUID = 1L;
 

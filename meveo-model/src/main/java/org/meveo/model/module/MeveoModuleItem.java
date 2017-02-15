@@ -13,15 +13,15 @@ import javax.validation.constraints.Size;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.BaseProviderlessEntity;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
-@ExportIdentifier({ "meveoModule.code", "meveoModule.provider", "appliesTo", "itemClass", "itemCode" })
+@ExportIdentifier({ "meveoModule.code",  "appliesTo", "itemClass", "itemCode" })
 @Table(name = "MEVEO_MODULE_ITEM")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEVEO_MODULE_ITEM_SEQ")
-public class MeveoModuleItem extends BaseProviderlessEntity {
+public class MeveoModuleItem extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 

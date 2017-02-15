@@ -35,7 +35,7 @@ public class ProviderContactRsImpl extends BaseRs implements ProviderContactRs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            providerContactApi.create(providerContactDto, getCurrentUser());
+            providerContactApi.create(providerContactDto);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -55,7 +55,7 @@ public class ProviderContactRsImpl extends BaseRs implements ProviderContactRs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            providerContactApi.update(providerContactDto, getCurrentUser());
+            providerContactApi.update(providerContactDto);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -75,7 +75,7 @@ public class ProviderContactRsImpl extends BaseRs implements ProviderContactRs {
 		ProviderContactResponseDto result=new ProviderContactResponseDto();
 
         try {
-            result.setProviderContact(providerContactApi.find(code, getCurrentUser().getProvider()));
+            result.setProviderContact(providerContactApi.find(code));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -95,7 +95,7 @@ public class ProviderContactRsImpl extends BaseRs implements ProviderContactRs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            providerContactApi.remove(code, getCurrentUser());
+            providerContactApi.remove(code);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -115,7 +115,7 @@ public class ProviderContactRsImpl extends BaseRs implements ProviderContactRs {
 		ProviderContactsResponseDto result = new ProviderContactsResponseDto();
 
         try {
-            result.setProviderContacts(providerContactApi.list(getCurrentUser().getProvider()));
+            result.setProviderContacts(providerContactApi.list());
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -134,7 +134,7 @@ public class ProviderContactRsImpl extends BaseRs implements ProviderContactRs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            providerContactApi.createOrUpdate(providerContactDto, getCurrentUser());
+            providerContactApi.createOrUpdate(providerContactDto);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

@@ -38,7 +38,7 @@ import org.meveo.model.admin.User;
 import org.meveo.model.crm.Customer;
 
 @Entity
-@ExportIdentifier({ "code", "provider" })
+@ExportIdentifier({ "code"})
 @Table(name = "COM_MEVEO_INSTANCE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "COM_MEVEO_INSTANCE_SEQ")
 public class MeveoInstance extends BusinessEntity {

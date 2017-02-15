@@ -34,12 +34,12 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.EnableEntity;
 
 @Entity
 @Table(name = "AR_DDREQUEST_ITEM")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_DDREQUEST_ITEM_SEQ")
-public class DDRequestItem extends AuditableEntity {
+public class DDRequestItem extends EnableEntity {
 
 	private static final long serialVersionUID = 1L;
 

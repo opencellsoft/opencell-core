@@ -13,7 +13,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.billing.impl.XMLInvoiceCreator;
@@ -35,12 +34,12 @@ public class XmlInvoiceAsync {
 
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public Future<String> launchAndForget(List<Invoice> invoices, JobExecutionResultImpl result,User currentUser) {
+	public Future<String> launchAndForget(List<Invoice> invoices, JobExecutionResultImpl result) {
 		
 		for (Invoice invoice : invoices) {
 			long startDate = System.currentTimeMillis();
 			try {
-				xmlInvoiceCreator.createXMLInvoiceInNewTransaction(invoice.getId(),currentUser);
+				xmlInvoiceCreator.createXMLInvoiceInNewTransaction(invoice.getId());
 				result.registerSucces();
 			} catch (Exception e) {		
 				result.registerError(e.getMessage());

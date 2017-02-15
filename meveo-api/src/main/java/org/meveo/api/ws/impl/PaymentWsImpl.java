@@ -19,7 +19,6 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.payment.DDRequestLotOpApi;
 import org.meveo.api.payment.PaymentApi;
 import org.meveo.api.ws.PaymentWs;
-import org.meveo.model.admin.User;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
 
 @WebService(serviceName = "PaymentWs", endpointInterface = "org.meveo.api.ws.PaymentWs")
@@ -37,8 +36,7 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            User user = getCurrentUser();
-            paymentApi.createPayment(postData, user);
+            paymentApi.createPayment(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -59,8 +57,8 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         try {
-            result.setCustomerPaymentDtoList(paymentApi.getPaymentList(customerAccountCode, getCurrentUser()));
-            result.setBalance(paymentApi.getBalance(customerAccountCode, getCurrentUser()));
+            result.setCustomerPaymentDtoList(paymentApi.getPaymentList(customerAccountCode));
+            result.setBalance(paymentApi.getBalance(customerAccountCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -80,7 +78,7 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            ddrequestLotOpApi.create(ddrequestLotOp, getCurrentUser());
+            ddrequestLotOpApi.create(ddrequestLotOp);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -100,11 +98,11 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
 		DDRequestLotOpsResponseDto result = new DDRequestLotOpsResponseDto();
 
         try {
-            result.setDdrequestLotOps(ddrequestLotOpApi.listDDRequestLotOps(fromDueDate,toDueDate,status,getCurrentUser().getProvider()));
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            result.setDdrequestLotOps(ddrequestLotOpApi.listDDRequestLotOps(fromDueDate,toDueDate,status));
+//        } catch (MeveoApiException e) {
+//            result.getActionStatus().setErrorCode(e.getErrorCode());
+//            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+//            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
             log.error("Failed to execute API", e);
             result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);

@@ -6,7 +6,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.admin.Currency;
-import org.meveo.model.billing.TradingCurrency;
 
 /**
  * @author Edward P. Legaspi

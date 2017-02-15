@@ -21,7 +21,6 @@ package org.meveo.service.crm.impl;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -30,7 +29,6 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.base.AccountService;
 
 /**
@@ -39,19 +37,18 @@ import org.meveo.service.base.AccountService;
 @Stateless
 public class CustomerService extends AccountService<Customer> {
 
-	public Customer findByCode(String code, Provider provider) {
+	public Customer findByCode(String code) {
 		Query query = getEntityManager()
-				.createQuery("from " + Customer.class.getSimpleName() + " where code=:code and provider=:provider")
-				.setParameter("code", code).setParameter("provider", provider);
+				.createQuery("from " + Customer.class.getSimpleName() + " where code=:code")
+				.setParameter("code", code);
 		if (query.getResultList().size() == 0) {
 			return null;
 		}
 		return (Customer) query.getResultList().get(0);
 	}
 
-	public Customer findByCodeAndFetch(String code, List<String> fetchFields, Provider provider) {
-		QueryBuilder qb = new QueryBuilder(Customer.class, "c", fetchFields, provider);
-		qb.addCriterionEntity("c.provider", provider);
+	public Customer findByCodeAndFetch(String code, List<String> fetchFields) {
+		QueryBuilder qb = new QueryBuilder(Customer.class, "c", fetchFields);
 		qb.addCriterion("c.code", "=", code, true);
 
 		try {
@@ -61,25 +58,12 @@ public class CustomerService extends AccountService<Customer> {
 		}
 	}
 
-	public Customer findByCode(EntityManager em, String code, Provider provider) {
-		QueryBuilder qb = new QueryBuilder(Customer.class, "c");
-
-		try {
-			qb.addCriterion("code", "=", code, true);
-			qb.addCriterionEntity("provider", provider);
-
-			return (Customer) qb.getQuery(em).getSingleResult();
-		} catch (NoResultException e) {
-			return null;
-		}
-	}	
-
 	@SuppressWarnings("unchecked")
 	public List<Customer> filter(String customerCode, CustomerCategory customerCategory, Seller seller,
-			CustomerBrand brand, Provider provider) {
+			CustomerBrand brand) {
 		QueryBuilder qb = new QueryBuilder(Customer.class, "c");
 		qb.addCriterion("code", "=", customerCode, true);
-		qb.addCriterionEntity("provider", provider);
+		
 
 		if (customerCategory != null) {
 			qb.addCriterionEntity("customerCategory", customerCategory);
@@ -101,10 +85,9 @@ public class CustomerService extends AccountService<Customer> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Customer> listBySellerCode(Provider provider, String code) {
+	public List<Customer> listBySellerCode(String code) {
 		QueryBuilder qb = new QueryBuilder(Customer.class, "c");
 		qb.addCriterion("seller.code", "=", code, true);
-		qb.addCriterionEntity("provider", provider);
 		try {
 			return (List<Customer>) qb.getQuery(getEntityManager()).getResultList();
 		} catch (NoResultException e) {
@@ -113,11 +96,11 @@ public class CustomerService extends AccountService<Customer> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Seller> listSellersWithCustomers(Provider provider) {
+	public List<Seller> listSellersWithCustomers() {
 		try {
 			return (List<Seller>) getEntityManager()
-					.createQuery("SELECT DISTINCT c.seller " + "FROM Customer c WHERE c.provider=:provider ")
-					.setParameter("provider", provider).getResultList();
+					.createQuery("SELECT DISTINCT c.seller " + "FROM Customer c ")
+					.getResultList();
 		} catch (NoResultException e) {
 			return null;
 		}

@@ -8,7 +8,6 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.NotificationCacheContainerProvider;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.admin.User;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.ScriptNotification;
 import org.meveo.service.base.BusinessService;
@@ -49,21 +48,21 @@ public class NotificationService extends BusinessService<ScriptNotification> {
     }
 
     @Override
-    public void remove(ScriptNotification scriptNotification, User currentUser) throws BusinessException {
-        super.remove(scriptNotification, currentUser);
+    public void remove(ScriptNotification scriptNotification) throws BusinessException {
+        super.remove(scriptNotification);
         notificationCacheContainerProvider.removeNotificationFromCache(scriptNotification);
     }
 
     @Override
-    public ScriptNotification disable(ScriptNotification scriptNotification, User currentUser) throws BusinessException {
-    	scriptNotification = super.disable(scriptNotification, currentUser);
+    public ScriptNotification disable(ScriptNotification scriptNotification) throws BusinessException {
+    	scriptNotification = super.disable(scriptNotification);
         notificationCacheContainerProvider.removeNotificationFromCache(scriptNotification);
         return scriptNotification;
     }
 
     @Override
-    public ScriptNotification enable(ScriptNotification scriptNotification, User currentUser) throws BusinessException {
-    	scriptNotification = super.enable(scriptNotification, currentUser);
+    public ScriptNotification enable(ScriptNotification scriptNotification) throws BusinessException {
+    	scriptNotification = super.enable(scriptNotification);
         notificationCacheContainerProvider.addNotificationToCache(scriptNotification);
         return scriptNotification;
     }

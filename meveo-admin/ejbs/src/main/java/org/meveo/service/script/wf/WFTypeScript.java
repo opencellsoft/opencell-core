@@ -8,7 +8,6 @@ import org.meveo.admin.wf.WorkflowType;
 import org.meveo.admin.wf.WorkflowTypeClass;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.admin.User;
 
 @WorkflowTypeClass
 public class WFTypeScript<E extends BusinessEntity> extends WorkflowType<E> implements WFTypeScriptInterface {
@@ -23,19 +22,19 @@ public class WFTypeScript<E extends BusinessEntity> extends WorkflowType<E> impl
 	}
 
     @Override
-    public void init(Map<String, Object> methodContext, User user) throws BusinessException {
+    public void init(Map<String, Object> methodContext) throws BusinessException {
         throw new UnsupportedOperationException();
 
     }
 
     @Override
-    public void execute(Map<String, Object> methodContext, User user) throws BusinessException {
+    public void execute(Map<String, Object> methodContext) throws BusinessException {
         throw new UnsupportedOperationException();
 
     }
 
     @Override
-    public void finalize(Map<String, Object> methodContext, User user) throws BusinessException {
+    public void finalize(Map<String, Object> methodContext) throws BusinessException {
         throw new UnsupportedOperationException();
     }
 
@@ -50,7 +49,7 @@ public class WFTypeScript<E extends BusinessEntity> extends WorkflowType<E> impl
 	}
 
 	@Override
-	public void changeStatus(String newStatus, User currentUser) throws BusinessException {
+	public void changeStatus(String newStatus) throws BusinessException {
 		// TODO Auto-generated method stub
 		
 	}

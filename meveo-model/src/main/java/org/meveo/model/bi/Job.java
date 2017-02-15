@@ -31,8 +31,8 @@ import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
+import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
-import org.meveo.model.ProviderlessEntity;
 
 /**
  * Data transformation Job
@@ -41,7 +41,7 @@ import org.meveo.model.ProviderlessEntity;
 @ExportIdentifier("name")
 @Table(name = "BI_JOB")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BI_JOB_SEQ")
-public class Job extends ProviderlessEntity {
+public class Job extends AuditableEntity {
 
 	private static final long serialVersionUID = 1L;
 

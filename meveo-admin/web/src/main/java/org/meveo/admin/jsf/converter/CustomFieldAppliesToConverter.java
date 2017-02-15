@@ -13,8 +13,6 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
 
-import org.meveo.admin.action.admin.CurrentProvider;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.custom.CustomizedEntity;
 import org.meveo.service.custom.CustomizedEntityService;
@@ -30,10 +28,6 @@ import org.meveo.util.EntityCustomizationUtils;
 public class CustomFieldAppliesToConverter implements Converter, Serializable {
 
     private static final long serialVersionUID = -7175173363564310863L;
-
-    @Inject
-    @CurrentProvider
-    private Provider currentProvider;
 
     @Inject
     private CustomizedEntityService customizedEntityService;
@@ -82,7 +76,7 @@ public class CustomFieldAppliesToConverter implements Converter, Serializable {
 
         appliesToMap = new HashMap<String, String>();
 
-        List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(null, false, true, null, null, getCurrentProvider());
+        List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(null, false, true, null, null);
 
         for (CustomizedEntity customizedEntity : entities) {
 
@@ -93,9 +87,5 @@ public class CustomFieldAppliesToConverter implements Converter, Serializable {
                     .put(EntityCustomizationUtils.getAppliesTo(CustomEntityTemplate.class, customizedEntity.getEntityCode()), customizedEntity.getClassnameToDisplayHuman());
             }
         }
-    }
-
-    protected Provider getCurrentProvider() {
-        return currentProvider;
     }
 }

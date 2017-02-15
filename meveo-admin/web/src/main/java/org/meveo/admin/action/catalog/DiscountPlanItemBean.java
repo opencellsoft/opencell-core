@@ -55,7 +55,7 @@ public class DiscountPlanItemBean extends BaseBean<DiscountPlanItem> {
 	
 	  public  List<InvoiceSubCategory> getInvoiceSubCategories(InvoiceCategory invoiceCategory){  
 	     if(invoiceCategory!=null){
-		return invoiceSubCategoryService.findByInvoiceCategory(invoiceCategory, getCurrentUser().getProvider()); 
+		return invoiceSubCategoryService.findByInvoiceCategory(invoiceCategory); 
 			}else{
 	     return null; 
 			}  

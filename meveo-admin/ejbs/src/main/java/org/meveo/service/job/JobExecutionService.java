@@ -32,7 +32,6 @@ import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -100,14 +99,13 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 		log.info("JobExecutionService persistResult End");
 	}
 
-    private QueryBuilder getFindQuery(String jobName, PaginationConfiguration configuration,Provider provider) {
+    private QueryBuilder getFindQuery(String jobName, PaginationConfiguration configuration) {
         String sql = "select distinct t from JobExecutionResultImpl t";
         QueryBuilder qb = new QueryBuilder(sql);// FIXME:.cacheable();
 
         if (!StringUtils.isEmpty(jobName)) {
             qb.addCriterion("t.jobInstance.code", "=", jobName, false);
         }
-        qb.addCriterionEntity("t.provider", provider);
         qb.addPaginationConfiguration(configuration);
 
         return qb;
@@ -117,10 +115,9 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
      * Count job execution history records which end date is older then a given date
      * 
      * @param date Date to check
-     * @param provider Provider
      * @return A number of job execution history records which is older then a given date
      */
-    public long countJobExecutionHistoryToDelete(String jobName, Date date, Provider currentProvider) {
+    public long countJobExecutionHistoryToDelete(String jobName, Date date) {
         long result = 0;
         if (date != null) {
             String sql = "select t from JobExecutionResultImpl t";
@@ -129,7 +126,6 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
                 qb.addCriterion("t.jobInstance.code", "=", jobName, false);
             }
             qb.addCriterion("t.startDate", "<", date, false);
-            qb.addCriterionEntity("t.provider", currentProvider);
             result = qb.count(getEntityManager());
         }
 
@@ -141,13 +137,12 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
      * 
      * @param jobName Job name to match
      * @param date Date to check
-     * @param provider Provider
      * @return A number of records that were removed
      */
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public int deleteJobExecutionHistory(String jobName, Date date, Provider provider) {
-        log.trace("Removing {} job execution history older then a {} date for provider {}", jobName, date, provider);
+    public int deleteJobExecutionHistory(String jobName, Date date) {
+        log.trace("Removing {} job execution history older then a {} date", jobName, date);
 
         List<JobInstance> jobInstances = null;
         if (jobName != null) {
@@ -155,7 +150,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
             qb.addCriterion("ji.code", "=", jobName, false);
             jobInstances = qb.getQuery(getEntityManager()).getResultList();
             if (jobInstances.isEmpty()){
-                log.info("Removed 0 job execution history which start date is older then a {} date for provider {}", date, provider);
+                log.info("Removed 0 job execution history which start date is older then a {} date", date);
                 return 0;
             }
         }
@@ -166,20 +161,19 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
             qb.addSqlCriterion("t.jobInstance in :jis", "jis", jobInstances);
         }
         qb.addCriterionDateRangeToTruncatedToDay("t.startDate", date);
-        qb.addCriterionEntity("t.provider", provider);
         int itemsDeleted = qb.getQuery(getEntityManager()).executeUpdate();
 
-        log.info("Removed {} job execution history which start date is older then a {} date for provider {}", itemsDeleted, date, provider);
+        log.info("Removed {} job execution history which start date is older then a {} date ", itemsDeleted, date);
         return itemsDeleted;
     }
 
     @SuppressWarnings("unchecked")
-    public List<JobExecutionResultImpl> find(String jobName, PaginationConfiguration configuration,Provider provider) {
-        return getFindQuery(jobName, configuration,provider).find(getEntityManager());
+    public List<JobExecutionResultImpl> find(String jobName, PaginationConfiguration configuration) {
+        return getFindQuery(jobName, configuration).find(getEntityManager());
     }
 
-    public long count(String jobName, PaginationConfiguration configuration,Provider provider) {
-        return getFindQuery(jobName, configuration,provider).count(getEntityManager());
+    public long count(String jobName, PaginationConfiguration configuration) {
+        return getFindQuery(jobName, configuration).count(getEntityManager());
     }
 
     public JobInstanceService getJobInstanceService() {
@@ -187,7 +181,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
     }
     
     @Override
-    public List<JobExecutionResultImpl> findByCodeLike(String code, Provider provider){
+    public List<JobExecutionResultImpl> findByCodeLike(String code){
     	throw new UnsupportedOperationException();
     }    
 }

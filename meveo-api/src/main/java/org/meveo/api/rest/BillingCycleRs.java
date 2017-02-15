@@ -14,7 +14,6 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.BillingCycleDto;
 import org.meveo.api.dto.response.GetBillingCycleResponse;
-import org.meveo.api.rest.security.RSSecured;
 
 /**
  * @author Edward P. Legaspi
@@ -22,7 +21,7 @@ import org.meveo.api.rest.security.RSSecured;
 @Path("/billingCycle")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-@RSSecured
+
 public interface BillingCycleRs extends IBaseRs {
 
     /**

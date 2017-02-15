@@ -36,7 +36,7 @@ public class UsageChargeTemplateRsImpl extends BaseRs implements UsageChargeTemp
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            usageChargeTemplateApi.create(postData, getCurrentUser());
+            usageChargeTemplateApi.create(postData);
         } catch (EJBTransactionRolledbackException e) {
             Throwable t = e.getCause();
             while ((t != null) && !(t instanceof ConstraintViolationException)) {
@@ -78,7 +78,7 @@ public class UsageChargeTemplateRsImpl extends BaseRs implements UsageChargeTemp
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            usageChargeTemplateApi.update(postData, getCurrentUser());
+            usageChargeTemplateApi.update(postData);
         } catch (EJBTransactionRolledbackException e) {
             Throwable t = e.getCause();
             while ((t != null) && !(t instanceof ConstraintViolationException)) {
@@ -120,7 +120,7 @@ public class UsageChargeTemplateRsImpl extends BaseRs implements UsageChargeTemp
         GetUsageChargeTemplateResponseDto result = new GetUsageChargeTemplateResponseDto();
 
         try {
-            result.setUsageChargeTemplate(usageChargeTemplateApi.find(usageChargeTemplateCode, getCurrentUser()));
+            result.setUsageChargeTemplate(usageChargeTemplateApi.find(usageChargeTemplateCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -140,7 +140,7 @@ public class UsageChargeTemplateRsImpl extends BaseRs implements UsageChargeTemp
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            usageChargeTemplateApi.remove(usageChargeTemplateCode, getCurrentUser());
+            usageChargeTemplateApi.remove(usageChargeTemplateCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -161,7 +161,7 @@ public class UsageChargeTemplateRsImpl extends BaseRs implements UsageChargeTemp
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            usageChargeTemplateApi.createOrUpdate(postData, getCurrentUser());
+            usageChargeTemplateApi.createOrUpdate(postData);
         } catch (EJBTransactionRolledbackException e) {
             Throwable t = e.getCause();
             while ((t != null) && !(t instanceof ConstraintViolationException)) {

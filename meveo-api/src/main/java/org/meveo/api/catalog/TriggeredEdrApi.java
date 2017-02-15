@@ -11,10 +11,8 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.communication.MeveoInstance;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 
@@ -30,9 +28,9 @@ public class TriggeredEdrApi extends BaseApi {
     @Inject 
     private MeveoInstanceService meveoInstanceService;
 
-    public void create(TriggeredEdrTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void create(TriggeredEdrTemplateDto postData) throws MeveoApiException, BusinessException {
         if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getQuantityEl())) {
-            if (triggeredEDRTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
+            if (triggeredEDRTemplateService.findByCode(postData.getCode()) != null) {
                 throw new EntityAlreadyExistsException(TriggeredEDRTemplate.class, postData.getCode());
             }
 
@@ -54,7 +52,7 @@ public class TriggeredEdrApi extends BaseApi {
             edrTemplate.setParam3El(postData.getParam3El());
             edrTemplate.setParam4El(postData.getParam4El());
 
-            triggeredEDRTemplateService.create(edrTemplate, currentUser);
+            triggeredEDRTemplateService.create(edrTemplate);
         } else {
             if (StringUtils.isBlank(postData.getCode())) {
                 missingParameters.add("code");
@@ -67,9 +65,9 @@ public class TriggeredEdrApi extends BaseApi {
         }
     }
 
-    public void update(TriggeredEdrTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void update(TriggeredEdrTemplateDto postData) throws MeveoApiException, BusinessException {
         if (!StringUtils.isBlank(postData.getCode()) && !StringUtils.isBlank(postData.getQuantityEl())) {
-            TriggeredEDRTemplate edrTemplate = triggeredEDRTemplateService.findByCode(postData.getCode(), currentUser.getProvider());
+            TriggeredEDRTemplate edrTemplate = triggeredEDRTemplateService.findByCode(postData.getCode());
             if (edrTemplate == null) {
                 throw new EntityDoesNotExistsException(TriggeredEDRTemplate.class, postData.getCode());
             }
@@ -90,7 +88,7 @@ public class TriggeredEdrApi extends BaseApi {
             edrTemplate.setParam3El(postData.getParam3El());
             edrTemplate.setParam4El(postData.getParam4El());
 
-            triggeredEDRTemplateService.update(edrTemplate, currentUser);
+            triggeredEDRTemplateService.update(edrTemplate);
         } else {
             if (StringUtils.isBlank(postData.getCode())) {
                 missingParameters.add("code");
@@ -103,14 +101,14 @@ public class TriggeredEdrApi extends BaseApi {
         }
     }
 
-    public void remove(String triggeredEdrCode, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
+    public void remove(String triggeredEdrCode) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
         if (!StringUtils.isBlank(triggeredEdrCode)) {
-            TriggeredEDRTemplate edrTemplate = triggeredEDRTemplateService.findByCode(triggeredEdrCode, currentUser.getProvider());
+            TriggeredEDRTemplate edrTemplate = triggeredEDRTemplateService.findByCode(triggeredEdrCode);
             if (edrTemplate == null) {
                 throw new EntityDoesNotExistsException(TriggeredEDRTemplate.class, triggeredEdrCode);
             }
 
-            triggeredEDRTemplateService.remove(edrTemplate, currentUser);
+            triggeredEDRTemplateService.remove(edrTemplate);
         } else {
             missingParameters.add("code");
 
@@ -118,13 +116,13 @@ public class TriggeredEdrApi extends BaseApi {
         }
     }
 
-    public TriggeredEdrTemplateDto find(String triggeredEdrCode, Provider provider) throws MeveoApiException {
+    public TriggeredEdrTemplateDto find(String triggeredEdrCode) throws MeveoApiException {
         if (StringUtils.isBlank(triggeredEdrCode)) {
             missingParameters.add("code");
         }
         handleMissingParameters();
 
-        TriggeredEDRTemplate edrTemplate = triggeredEDRTemplateService.findByCode(triggeredEdrCode, provider);
+        TriggeredEDRTemplate edrTemplate = triggeredEDRTemplateService.findByCode(triggeredEdrCode);
         if (edrTemplate == null) {
             throw new EntityDoesNotExistsException(TriggeredEDRTemplate.class, triggeredEdrCode);
         }
@@ -133,11 +131,11 @@ public class TriggeredEdrApi extends BaseApi {
         return edrTemplateDto;
     }
 
-    public void createOrUpdate(TriggeredEdrTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
-        if (triggeredEDRTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
-            create(postData, currentUser);
+    public void createOrUpdate(TriggeredEdrTemplateDto postData) throws MeveoApiException, BusinessException {
+        if (triggeredEDRTemplateService.findByCode(postData.getCode()) == null) {
+            create(postData);
         } else {
-            update(postData, currentUser);
+            update(postData);
         }
     }
 }

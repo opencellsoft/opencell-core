@@ -36,7 +36,7 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customerAccountApi.create(postData, getCurrentUser());
+            customerAccountApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -56,7 +56,7 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customerAccountApi.update(postData, getCurrentUser());
+            customerAccountApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -76,7 +76,7 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
         GetCustomerAccountResponseDto result = new GetCustomerAccountResponseDto();
 
         try {
-            result.setCustomerAccount(customerAccountApi.find(customerAccountCode, getCurrentUser()));
+            result.setCustomerAccount(customerAccountApi.find(customerAccountCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -96,7 +96,7 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customerAccountApi.remove(customerAccountCode, getCurrentUser());
+            customerAccountApi.remove(customerAccountCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -116,7 +116,7 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
         CustomerAccountsResponseDto result = new CustomerAccountsResponseDto();
 
         try {
-            result.setCustomerAccounts(customerAccountApi.listByCustomer(customerCode, getCurrentUser().getProvider()));
+            result.setCustomerAccounts(customerAccountApi.listByCustomer(customerCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -135,7 +135,7 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
     public ActionStatus dunningInclusionExclusion(DunningInclusionExclusionDto dunningDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            customerAccountApi.dunningExclusionInclusion(dunningDto, getCurrentUser());
+            customerAccountApi.dunningExclusionInclusion(dunningDto);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -155,7 +155,7 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customerAccountApi.createCreditCategory(postData, getCurrentUser());
+            customerAccountApi.createCreditCategory(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -175,7 +175,7 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customerAccountApi.removeCreditCategory(creditCategoryCode, getCurrentUser());
+            customerAccountApi.removeCreditCategory(creditCategoryCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -195,7 +195,7 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            customerAccountApi.createOrUpdate(postData, getCurrentUser());
+            customerAccountApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

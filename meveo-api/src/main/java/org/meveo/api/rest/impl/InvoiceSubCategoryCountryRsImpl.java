@@ -30,7 +30,7 @@ public class InvoiceSubCategoryCountryRsImpl extends BaseRs implements InvoiceSu
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            invoiceSubCategoryCountryApi.create(postData, getCurrentUser());
+            invoiceSubCategoryCountryApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -50,7 +50,7 @@ public class InvoiceSubCategoryCountryRsImpl extends BaseRs implements InvoiceSu
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            invoiceSubCategoryCountryApi.update(postData, getCurrentUser());
+            invoiceSubCategoryCountryApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -70,7 +70,7 @@ public class InvoiceSubCategoryCountryRsImpl extends BaseRs implements InvoiceSu
         GetInvoiceSubCategoryCountryResponse result = new GetInvoiceSubCategoryCountryResponse();
 
         try {
-            result.setInvoiceSubCategoryCountryDto(invoiceSubCategoryCountryApi.find(invoiceSubCategoryCode, country, getCurrentUser().getProvider()));
+            result.setInvoiceSubCategoryCountryDto(invoiceSubCategoryCountryApi.find(invoiceSubCategoryCode, country));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -90,7 +90,7 @@ public class InvoiceSubCategoryCountryRsImpl extends BaseRs implements InvoiceSu
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            invoiceSubCategoryCountryApi.remove(invoiceSubCategoryCode, country, getCurrentUser());
+            invoiceSubCategoryCountryApi.remove(invoiceSubCategoryCode, country);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -110,7 +110,7 @@ public class InvoiceSubCategoryCountryRsImpl extends BaseRs implements InvoiceSu
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            invoiceSubCategoryCountryApi.createOrUpdate(postData, getCurrentUser());
+            invoiceSubCategoryCountryApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

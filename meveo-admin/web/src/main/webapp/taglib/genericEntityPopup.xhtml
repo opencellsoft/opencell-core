@@ -46,7 +46,7 @@
                             <f:selectItem itemLabel="" itemValue="" />
                             <f:selectItems value="#{genericEntityPickerBean.getEntityClasses(annotation)}" var="elem" itemLabel="#{ref:getHumanClassName(elem.simpleName)}"
                                 itemValue="#{elem}" />
-                            <s:objectConverter />
+                            <hftl:objectConverter />
                             <p:ajax update="searchFields #{id}datatable" event="change" />
                         </p:selectOneMenu>
                     </hftl:decorateFormField>

@@ -1,8 +1,5 @@
 package org.meveo.admin.action.admin.custom;
 
-import java.util.Arrays;
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -38,7 +35,7 @@ public class EntityCustomActionBean extends BaseBean<EntityCustomAction> {
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
-        EntityCustomAction actionDuplicate = entityActionScriptService.findByCodeAndAppliesTo(entity.getCode(), entity.getAppliesTo(), getCurrentProvider());
+        EntityCustomAction actionDuplicate = entityActionScriptService.findByCodeAndAppliesTo(entity.getCode(), entity.getAppliesTo());
         if (actionDuplicate != null && !actionDuplicate.getId().equals(entity.getId())) {
             messages.error(new BundleKey("messages", "customizedEntities.actionAlreadyExists"));
             return null;
@@ -57,11 +54,6 @@ public class EntityCustomActionBean extends BaseBean<EntityCustomAction> {
     @Override
     protected String getDefaultSort() {
         return "code";
-    }
-
-    @Override
-    protected List<String> getFormFieldsToFetch() {
-        return Arrays.asList("provider");
     }
 
     public void refreshScript() {

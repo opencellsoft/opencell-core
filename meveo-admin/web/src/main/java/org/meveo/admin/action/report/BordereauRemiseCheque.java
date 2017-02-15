@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.meveo.admin.report;
+package org.meveo.admin.action.report;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -40,6 +40,18 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jboss.seam.international.status.Messages;
+import org.jboss.seam.international.status.builder.BundleKey;
+import org.meveo.admin.exception.BusinessEntityException;
+import org.meveo.admin.report.BordereauRemiseChequeRecord;
+import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.crm.Provider;
+import org.meveo.model.payments.AccountOperation;
+import org.meveo.model.payments.CustomerAccount;
+import org.meveo.service.payments.impl.AccountOperationService;
+import org.meveo.util.ApplicationProvider;
+import org.slf4j.Logger;
+
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -48,18 +60,6 @@ import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRCsvDataSource;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.util.JRLoader;
-
-import org.jboss.seam.international.status.Messages;
-import org.jboss.seam.international.status.builder.BundleKey;
-import org.meveo.admin.exception.BusinessEntityException;
-import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.crm.Provider;
-import org.meveo.model.payments.AccountOperation;
-import org.meveo.model.payments.CustomerAccount;
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
-import org.meveo.service.payments.impl.AccountOperationService;
-import org.slf4j.Logger;
 
 @Named
 public class BordereauRemiseCheque {
@@ -70,8 +70,8 @@ public class BordereauRemiseCheque {
 	protected Logger log;
 
     @Inject
-    @CurrentUser
-    protected MeveoUser currentUser;
+    @ApplicationProvider
+    protected Provider appProvider;
     
     @Inject
     private Messages messages;
@@ -95,7 +95,6 @@ public class BordereauRemiseCheque {
 		String fileName = "reports/bordereauRemiseCheque.jasper";
 		InputStream reportTemplate = this.getClass().getClassLoader().getResourceAsStream(fileName);
 		parameters.put("date", new Date());
-		String providerCode = currentUser.getProviderCode();
 
 		String[] occCodes = paramBean.getProperty("report.occ.templatePaymentCheckCodes","RG_CHQ,RG_CHQNI").split(",");
 		try {
@@ -107,12 +106,12 @@ public class BordereauRemiseCheque {
 						.getResponse();
 				response.setContentType("application/pdf"); // fill in
 				response.setHeader("Content-disposition", "attachment; filename="
-						+ generateFileName(providerCode));
+						+ generateFileName());
 
 				JRCsvDataSource dataSource = createDataSource(dataSourceFile);
 				jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
 				JasperExportManager.exportReportToPdfFile(jasperPrint,
-						generateFileName(providerCode));
+						generateFileName());
 				messages.info(new BundleKey("messages", "report.reportCreted"));
 				OutputStream os;
 				try {
@@ -153,7 +152,7 @@ public class BordereauRemiseCheque {
 
 		List<AccountOperation> records = new ArrayList<AccountOperation>();
 		for (String occCode : occCodes) {
-            records.addAll(accountOperationService.getAccountOperations(this.date, occCode, currentUser.getProvider()));
+            records.addAll(accountOperationService.getAccountOperations(this.date, occCode));
 		}
 		Iterator<AccountOperation> itr = records.iterator();
 		try {
@@ -185,9 +184,9 @@ public class BordereauRemiseCheque {
 		return null;
 	}
 
-	public String generateFileName(String providerCode) {
+	public String generateFileName() {
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-		StringBuilder sb = new StringBuilder(providerCode + "_");
+		StringBuilder sb = new StringBuilder(appProvider.getCode() + "_");
 		sb.append(REPORT_NAME);
 		sb.append("_");
 		sb.append(df.format(this.date));

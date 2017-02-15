@@ -19,29 +19,29 @@
 package org.meveo.service.billing.impl;
 
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.SubscriptionTerminationReason;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
-import org.slf4j.Logger;
 
 @Stateless
 public class TerminationReasonService extends PersistenceService<SubscriptionTerminationReason> {
 
-	public SubscriptionTerminationReason findByCode(String terminationReasonCode, Provider provider) {
+	public SubscriptionTerminationReason findByCode(String code) {
 		QueryBuilder qb = new QueryBuilder(SubscriptionTerminationReason.class, "s");
-		qb.addCriterion("code", "=", terminationReasonCode, true);
-		qb.addCriterionEntity("provider", provider);
+		qb.addCriterion("code", "=", code, true);
+		
 
 		try {
 			return (SubscriptionTerminationReason) qb.getQuery(getEntityManager()).getSingleResult();
-		} catch (NoResultException e) {
-			log.warn("failed to find subscription ",e);
-			return null;
-		}
+        } catch (NoResultException e) {
+            log.debug("No {} of code {} found", getEntityClass().getSimpleName(), code);
+            return null;
+        } catch (NonUniqueResultException e) {
+            log.error("More than one entity of type {} with code {} found", entityClass, code);
+            return null;
+        }
 	}
-
 }

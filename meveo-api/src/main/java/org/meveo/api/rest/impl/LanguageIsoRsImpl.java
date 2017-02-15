@@ -30,7 +30,7 @@ public class LanguageIsoRsImpl extends BaseRs implements LanguageIsoRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            languageIsoApi.create(languageIsoDto, getCurrentUser());
+            languageIsoApi.create(languageIsoDto);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -70,7 +70,7 @@ public class LanguageIsoRsImpl extends BaseRs implements LanguageIsoRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            languageIsoApi.remove(languageCode, getCurrentUser());
+            languageIsoApi.remove(languageCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -90,7 +90,7 @@ public class LanguageIsoRsImpl extends BaseRs implements LanguageIsoRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            languageIsoApi.update(languageIsoDto, getCurrentUser());
+            languageIsoApi.update(languageIsoDto);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -110,7 +110,7 @@ public class LanguageIsoRsImpl extends BaseRs implements LanguageIsoRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            languageIsoApi.createOrUpdate(languageIsoDto, getCurrentUser());
+            languageIsoApi.createOrUpdate(languageIsoDto);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

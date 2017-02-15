@@ -18,11 +18,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.IEntity;
-import org.meveo.model.IProvider;
-import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.service.base.BusinessService;
@@ -45,18 +41,11 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * Find a list of custom field templates corresponding to a given entity
      * 
      * @param entity Entity that custom field templates apply to
-     * @param provider Provider
      * @return A list of custom field templates mapped by a template key
      */
-    public Map<String, CustomFieldTemplate> findByAppliesTo(ICustomFieldEntity entity, Provider provider) {
+    public Map<String, CustomFieldTemplate> findByAppliesTo(ICustomFieldEntity entity) {
         try {
-            if (entity instanceof Provider) {
-                return findByAppliesTo(CustomFieldTemplateService.calculateAppliesToValue(entity), (Provider) entity);
-            } else if (entity instanceof IProvider && ((IProvider) entity).getProvider() != null) {
-                return findByAppliesTo(CustomFieldTemplateService.calculateAppliesToValue(entity), ((IProvider) entity).getProvider());
-            } else {
-                return findByAppliesTo(CustomFieldTemplateService.calculateAppliesToValue(entity), provider);
-            }
+            return findByAppliesTo(CustomFieldTemplateService.calculateAppliesToValue(entity));
 
         } catch (CustomFieldException e) {
             // Its ok, handles cases when value that is part of CFT.AppliesTo calculation is not set yet on entity
@@ -68,22 +57,16 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * Find a list of custom field templates corresponding to a given entity
      * 
      * @param appliesTo Entity (CFT appliesTo code) that custom field templates apply to
-     * @param provider Provider
      * @return A list of custom field templates mapped by a template key
      */
-    public Map<String, CustomFieldTemplate> findByAppliesTo(String appliesTo, Provider provider) {
-
-        // Handles cases when creating a new provider
-        if (provider.getId() == null) {
-            return new HashMap<String, CustomFieldTemplate>();
-        }
+    public Map<String, CustomFieldTemplate> findByAppliesTo(String appliesTo) {
 
         boolean useCache = Boolean.parseBoolean(paramBean.getProperty("cache.cacheCFT", "true"));
         if (useCache) {
-            return customFieldsCache.getCustomFieldTemplates(appliesTo, provider);
+            return customFieldsCache.getCustomFieldTemplates(appliesTo);
 
         } else {
-            return findByAppliesToNoCache(appliesTo, provider);
+            return findByAppliesToNoCache(appliesTo);
         }
     }
 
@@ -91,13 +74,12 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * Find a list of custom field templates corresponding to a given entity - always do a lookup in DB
      * 
      * @param appliesTo Entity (CFT appliesTo code) that custom field templates apply to
-     * @param provider Provider
      * @return A list of custom field templates mapped by a template key
      */
     @SuppressWarnings("unchecked")
-    public Map<String, CustomFieldTemplate> findByAppliesToNoCache(String appliesTo, Provider provider) {
+    public Map<String, CustomFieldTemplate> findByAppliesToNoCache(String appliesTo) {
 
-        QueryBuilder qb = new QueryBuilder(CustomFieldTemplate.class, "c", Arrays.asList("calendar"), provider);
+        QueryBuilder qb = new QueryBuilder(CustomFieldTemplate.class, "c", Arrays.asList("calendar"));
         qb.addCriterion("c.appliesTo", "=", appliesTo, true);
 
         List<CustomFieldTemplate> values = (List<CustomFieldTemplate>) qb.getQuery(getEntityManager()).getResultList();
@@ -119,7 +101,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      */
     public CustomFieldTemplate findByCodeAndAppliesTo(String code, ICustomFieldEntity entity) {
         try {
-            return findByCodeAndAppliesTo(code, CustomFieldTemplateService.calculateAppliesToValue(entity), ProviderService.getProvider((IEntity) entity));
+            return findByCodeAndAppliesTo(code, CustomFieldTemplateService.calculateAppliesToValue(entity));
         } catch (CustomFieldException e) {
             log.error("Can not determine applicable CFT type for entity of {} class.", entity.getClass().getSimpleName());
         }
@@ -131,16 +113,15 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * 
      * @param code Custom field template code
      * @param appliesTo Entity (CFT appliesTo code) that custom field templates apply to
-     * @param provider Provider
      * @return Custom field template
      */
-    public CustomFieldTemplate findByCodeAndAppliesTo(String code, String appliesTo, Provider provider) {
+    public CustomFieldTemplate findByCodeAndAppliesTo(String code, String appliesTo) {
 
         boolean useCache = Boolean.parseBoolean(paramBean.getProperty("cache.cacheCFT", "true"));
         if (useCache) {
-            return customFieldsCache.getCustomFieldTemplate(code, appliesTo, provider);
+            return customFieldsCache.getCustomFieldTemplate(code, appliesTo);
         } else {
-            return findByCodeAndAppliesToNoCache(code, appliesTo, provider);
+            return findByCodeAndAppliesToNoCache(code, appliesTo);
         }
     }
 
@@ -149,12 +130,11 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * 
      * @param code Custom field template code
      * @param appliesTo Entity (CFT appliesTo code) that custom field templates apply to
-     * @param provider Provider
      * @return Custom field template
      */
-    public CustomFieldTemplate findByCodeAndAppliesToNoCache(String code, String appliesTo, Provider provider) {
+    public CustomFieldTemplate findByCodeAndAppliesToNoCache(String code, String appliesTo) {
 
-        QueryBuilder qb = new QueryBuilder(CustomFieldTemplate.class, "c", null, provider);
+        QueryBuilder qb = new QueryBuilder(CustomFieldTemplate.class, "c", null);
         qb.addCriterion("code", "=", code, true);
         qb.addCriterion("appliesTo", "=", appliesTo, true);
         try {
@@ -167,12 +147,12 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     @Override
     public void create(CustomFieldTemplate cft) throws BusinessException {
 
-        if ("INVOICE_SEQUENCE".equals(cft.getCode())
-                && (cft.getFieldType() != CustomFieldTypeEnum.LONG || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || !cft.isVersionable() || cft.getCalendar() == null)) {
+        if ("INVOICE_SEQUENCE".equals(cft.getCode()) && (cft.getFieldType() != CustomFieldTypeEnum.LONG || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE
+                || !cft.isVersionable() || cft.getCalendar() == null)) {
             throw new BusinessException("invoice_sequence CF must be versionnable,Long,Single value and must have a Calendar");
         }
-        if ("INVOICE_ADJUSTMENT_SEQUENCE".equals(cft.getCode())
-                && (cft.getFieldType() != CustomFieldTypeEnum.LONG || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || !cft.isVersionable() || cft.getCalendar() == null)) {
+        if ("INVOICE_ADJUSTMENT_SEQUENCE".equals(cft.getCode()) && (cft.getFieldType() != CustomFieldTypeEnum.LONG || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE
+                || !cft.isVersionable() || cft.getCalendar() == null)) {
             throw new BusinessException("invoice_adjustement_sequence CF must be versionnable,Long,Single value and must have a Calendar");
         }
         super.create(cft);
@@ -183,12 +163,12 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     @Override
     public CustomFieldTemplate update(CustomFieldTemplate cft) throws BusinessException {
 
-        if ("INVOICE_SEQUENCE".equals(cft.getCode())
-                && (cft.getFieldType() != CustomFieldTypeEnum.LONG || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || !cft.isVersionable() || cft.getCalendar() == null)) {
+        if ("INVOICE_SEQUENCE".equals(cft.getCode()) && (cft.getFieldType() != CustomFieldTypeEnum.LONG || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE
+                || !cft.isVersionable() || cft.getCalendar() == null)) {
             throw new BusinessException("invoice_sequence CF must be versionnable,Long,Single value and must have a Calendar");
         }
-        if ("INVOICE_ADJUSTMENT_SEQUENCE".equals(cft.getCode())
-                && (cft.getFieldType() != CustomFieldTypeEnum.LONG || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || !cft.isVersionable() || cft.getCalendar() == null)) {
+        if ("INVOICE_ADJUSTMENT_SEQUENCE".equals(cft.getCode()) && (cft.getFieldType() != CustomFieldTypeEnum.LONG || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE
+                || !cft.isVersionable() || cft.getCalendar() == null)) {
             throw new BusinessException("invoice_adjustement_sequence CF must be versionnable,Long,Single value and must have a Calendar");
         }
         CustomFieldTemplate cftUpdated = super.update(cft);
@@ -199,21 +179,21 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     }
 
     @Override
-    public void remove(CustomFieldTemplate cft, User currentUser) throws BusinessException {
+    public void remove(CustomFieldTemplate cft) throws BusinessException {
         customFieldsCache.removeCustomFieldTemplate(cft);
-        super.remove(cft, currentUser);
+        super.remove(cft);
     }
 
     @Override
-    public CustomFieldTemplate enable(CustomFieldTemplate cft, User currentUser) throws BusinessException {
-        cft = super.enable(cft, currentUser);
+    public CustomFieldTemplate enable(CustomFieldTemplate cft) throws BusinessException {
+        cft = super.enable(cft);
         customFieldsCache.addUpdateCustomFieldTemplate(cft);
         return cft;
     }
 
     @Override
-    public CustomFieldTemplate disable(CustomFieldTemplate cft, User currentUser) throws BusinessException {
-        cft = super.disable(cft, currentUser);
+    public CustomFieldTemplate disable(CustomFieldTemplate cft) throws BusinessException {
+        cft = super.disable(cft);
         customFieldsCache.removeCustomFieldTemplate(cft);
         return cft;
     }
@@ -231,11 +211,10 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     /**
      * Get a list of custom field templates for index
      * 
-     * @param provider Provider
      * @return A list of custom field templates
      */
-    public List<CustomFieldTemplate> getCFTForIndex(Provider provider) {
-        List<CustomFieldTemplate> cfts = getEntityManager().createNamedQuery("CustomFieldTemplate.getCFTForIndex", CustomFieldTemplate.class).setParameter("provider", provider)
+    public List<CustomFieldTemplate> getCFTForIndex() {
+        List<CustomFieldTemplate> cfts = getEntityManager().createNamedQuery("CustomFieldTemplate.getCFTForIndex", CustomFieldTemplate.class)
             .getResultList();
         return cfts;
     }
@@ -273,13 +252,13 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * Check and create missing templates given a list of templates
      * 
      * @param entity Entity that custom field templates apply to
-     * @param templates A list of templates to check * @param currentUser The current User object
-     * @return A complete list of templates for a given entity and provider. Mapped by a custom field template key.
+     * @param templates A list of templates to check
+     * @return A complete list of templates for a given entity. Mapped by a custom field template key.
      * @throws BusinessException
      */
-    public Map<String, CustomFieldTemplate> createMissingTemplates(ICustomFieldEntity entity, Collection<CustomFieldTemplate> templates, User currentUser) throws BusinessException {
+    public Map<String, CustomFieldTemplate> createMissingTemplates(ICustomFieldEntity entity, Collection<CustomFieldTemplate> templates) throws BusinessException {
         try {
-            return createMissingTemplates(calculateAppliesToValue(entity), templates, currentUser, false, false);
+            return createMissingTemplates(calculateAppliesToValue(entity), templates, false, false);
 
         } catch (CustomFieldException e) {
             // Its OK, handles cases when value that is part of CFT.AppliesTo calculation is not set yet on entity
@@ -292,12 +271,11 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * 
      * @param appliesTo Entity (CFT appliesTo code) that custom field templates apply to
      * @param templates A list of templates to check
-     * @param currentUser The current User object
-     * @return A complete list of templates for a given entity and provider. Mapped by a custom field template key.
+     * @return A complete list of templates for a given entity. Mapped by a custom field template key.
      * @throws BusinessException
      */
-    public Map<String, CustomFieldTemplate> createMissingTemplates(String appliesTo, Collection<CustomFieldTemplate> templates, User currentUser) throws BusinessException {
-        return createMissingTemplates(appliesTo, templates, currentUser, false, false);
+    public Map<String, CustomFieldTemplate> createMissingTemplates(String appliesTo, Collection<CustomFieldTemplate> templates) throws BusinessException {
+        return createMissingTemplates(appliesTo, templates, false, false);
     }
 
     /**
@@ -305,15 +283,14 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * 
      * @param entity Entity that custom field templates apply to
      * @param templates A list of templates to check
-     * @param currentUser The current User object
      * @param removeOrphans When set to true, this will remove custom field templates that are not included in the templates collection.
-     * @return A complete list of templates for a given entity and provider. Mapped by a custom field template key.
+     * @return A complete list of templates for a given entity. Mapped by a custom field template key.
      * @throws BusinessException
      */
-    public Map<String, CustomFieldTemplate> createMissingTemplates(ICustomFieldEntity entity, Collection<CustomFieldTemplate> templates, User currentUser, boolean updateExisting,
+    public Map<String, CustomFieldTemplate> createMissingTemplates(ICustomFieldEntity entity, Collection<CustomFieldTemplate> templates, boolean updateExisting,
             boolean removeOrphans) throws BusinessException {
         try {
-            return createMissingTemplates(calculateAppliesToValue(entity), templates, currentUser, updateExisting, removeOrphans);
+            return createMissingTemplates(calculateAppliesToValue(entity), templates, updateExisting, removeOrphans);
         } catch (CustomFieldException e) {
             // Its OK, handles cases when value that is part of CFT.AppliesTo calculation is not set yet on entity
             return new HashMap<String, CustomFieldTemplate>();
@@ -325,23 +302,22 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * 
      * @param appliesTo Entity (CFT appliesTo code) that custom field templates apply to
      * @param templates A list of templates to check
-     * @param currentUser The current User object
      * @param removeOrphans When set to true, this will remove custom field templates that are not included in the templates collection.
-     * @return A complete list of templates for a given entity and provider. Mapped by a custom field template key.
+     * @return A complete list of templates for a given entity. Mapped by a custom field template key.
      * @throws BusinessException
      */
-    public Map<String, CustomFieldTemplate> createMissingTemplates(String appliesTo, Collection<CustomFieldTemplate> templates, User currentUser, boolean updateExisting,
-            boolean removeOrphans) throws BusinessException {
+    public Map<String, CustomFieldTemplate> createMissingTemplates(String appliesTo, Collection<CustomFieldTemplate> templates, boolean updateExisting, boolean removeOrphans)
+            throws BusinessException {
 
         // Get templates corresponding to an entity type
-        Map<String, CustomFieldTemplate> allTemplates = findByAppliesToNoCache(appliesTo, currentUser.getProvider());
+        Map<String, CustomFieldTemplate> allTemplates = findByAppliesToNoCache(appliesTo);
 
         if (templates != null) {
             CustomFieldTemplate existingCustomField = null;
             for (CustomFieldTemplate cft : templates) {
                 if (!allTemplates.containsKey(cft.getCode())) {
                     log.debug("Create a missing CFT {} for {} entity", cft.getCode(), appliesTo);
-                    create(cft, currentUser);
+                    create(cft);
                     allTemplates.put(cft.getCode(), cft);
                 } else if (updateExisting) {
                     existingCustomField = allTemplates.get(cft.getCode());
@@ -354,7 +330,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
                     existingCustomField.setListValues(cft.getListValues());
                     existingCustomField.setGuiPosition(cft.getGuiPosition());
                     log.debug("Update existing CFT {} for {} entity", cft.getCode(), appliesTo);
-                    update(existingCustomField, currentUser);
+                    update(existingCustomField);
                 }
             }
             if (removeOrphans) {
@@ -368,7 +344,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
                     }
                 }
                 for (CustomFieldTemplate fieldTemplate : forRemoval) {
-                    remove(fieldTemplate, currentUser);
+                    remove(fieldTemplate);
                 }
             }
         }

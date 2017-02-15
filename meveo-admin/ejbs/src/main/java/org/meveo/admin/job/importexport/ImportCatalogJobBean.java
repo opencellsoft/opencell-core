@@ -23,10 +23,10 @@ import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
+import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
 @Stateless
@@ -37,6 +37,10 @@ public class ImportCatalogJobBean {
 
 	@Inject
 	private Logger log;
+	
+    @Inject
+    @ApplicationProvider
+    protected Provider appProvider;
 
 	String fileName;
 	File file;
@@ -52,13 +56,12 @@ public class ImportCatalogJobBean {
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	public void execute(JobExecutionResultImpl result, String parameter) {
-		Provider provider = currentUser.getProvider();
 
 		InputStream excelInputStream = null;
 		try {
 
 			ParamBean parambean = ParamBean.getInstance();
-			String catalogDir = parambean.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + provider.getCode() + File.separator + "imports" + File.separator
+			String catalogDir = parambean.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + appProvider.getCode() + File.separator + "imports" + File.separator
 					+ "catalog" + File.separator;
 
 			inputDir = catalogDir + "input";
@@ -117,7 +120,7 @@ public class ImportCatalogJobBean {
 					for (int rowIndex = 1; rowIndex < rowsObj.length; rowIndex++) {
 						Row row = (Row) rowsObj[rowIndex];
 						try {
-							pricePlanService.importExcelLine(row, provider);
+							pricePlanService.importExcelLine(row);
 							result.registerSucces();
 						} catch (BusinessException ex) {
 							result.registerError(ex.getMessage() + ";");

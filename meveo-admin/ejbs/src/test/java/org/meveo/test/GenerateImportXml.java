@@ -4,17 +4,17 @@ import java.io.File;
 import java.util.Date;
 
 import org.meveo.commons.utils.JAXBUtils;
+import org.meveo.model.jaxb.account.Address;
 import org.meveo.model.jaxb.account.BankCoordinates;
 import org.meveo.model.jaxb.account.BillingAccount;
 import org.meveo.model.jaxb.account.BillingAccounts;
+import org.meveo.model.jaxb.account.Name;
 import org.meveo.model.jaxb.account.UserAccount;
 import org.meveo.model.jaxb.account.UserAccounts;
-import org.meveo.model.jaxb.account.Address;
 import org.meveo.model.jaxb.customer.Customer;
 import org.meveo.model.jaxb.customer.CustomerAccount;
 import org.meveo.model.jaxb.customer.CustomerAccounts;
 import org.meveo.model.jaxb.customer.Customers;
-import org.meveo.model.jaxb.account.Name;
 import org.meveo.model.jaxb.customer.Seller;
 import org.meveo.model.jaxb.customer.Sellers;
 import org.meveo.model.jaxb.subscription.Access;
@@ -58,7 +58,6 @@ public class GenerateImportXml {
 		
 		try {
 			Sellers sellers = new Sellers();
-			sellers.setProviderCode(providerCode);
 			Seller seller = new Seller();
 			seller.setCode("OBS");
 			seller.setDescription("french seller");

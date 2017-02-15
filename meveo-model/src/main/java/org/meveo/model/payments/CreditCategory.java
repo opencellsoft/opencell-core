@@ -12,8 +12,8 @@ import org.meveo.model.ExportIdentifier;
  * @author Edward P. Legaspi
  **/
 @Entity
-@ExportIdentifier({ "code", "provider" })
-@Table(name = "AR_CREDIT_CATEGORY", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
+@ExportIdentifier({ "code"})
+@Table(name = "AR_CREDIT_CATEGORY", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_CREDIT_CATEGORY_SEQ")
 public class CreditCategory extends BusinessEntity {
 

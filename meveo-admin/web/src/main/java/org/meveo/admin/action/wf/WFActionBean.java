@@ -80,7 +80,7 @@ public class WFActionBean extends BaseBean<WFAction> {
 	public WFAction initEntity() {
 		if (dunningPlan != null && dunningPlan.getId() == null) {
 			try {
-				dunningPlanService.create(dunningPlan, getCurrentUser());
+				dunningPlanService.create(dunningPlan);
 			} catch (BusinessException e) {
 				messages.info(new BundleKey("messages",
 						"message.exception.business"));

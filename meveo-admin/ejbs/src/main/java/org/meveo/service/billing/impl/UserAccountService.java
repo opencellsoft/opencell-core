@@ -24,13 +24,10 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.AccountAlreadyExistsException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
-import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingWalletDetailDTO;
@@ -51,20 +48,19 @@ public class UserAccountService extends AccountService<UserAccount> {
 	public void createUserAccount(BillingAccount billingAccount, UserAccount userAccount)
 			throws BusinessException {
 
-		log.debug("creating userAccount with details {}, provider={}", new Object[] { userAccount,
-				billingAccount.getProvider() });
+		log.debug("creating userAccount with details {}", new Object[] { userAccount});
 
-		UserAccount existingUserAccount = findByCode(userAccount.getCode(), billingAccount.getProvider());
+		UserAccount existingUserAccount = findByCode(userAccount.getCode());
 		if (existingUserAccount != null) {
 			throw new AccountAlreadyExistsException(userAccount.getCode());
 		}
 
 		userAccount.setBillingAccount(billingAccount);
-		create(userAccount); // AKK was with billingAccount.getProvider()
+		create(userAccount);
 		WalletInstance wallet = new WalletInstance();
 		wallet.setCode(WalletTemplate.PRINCIPAL);
 		wallet.setUserAccount(userAccount);
-		walletService.create(wallet); // AKK was with billingAccount.getProvider()
+		walletService.create(wallet);
 
 		userAccount.setWallet(wallet);
 	}

@@ -60,10 +60,6 @@ public class JournalEntry implements IEntity, IVersionedEntity {
 	@Column(name = "VERSION")
 	private Integer version;
 
-	@Column(name = "PROVIDER_CODE", length = 20)
-    @Size(max = 20)
-	private String providerCode;
-
 	@Column(name = "TYPE")
 	@Enumerated(EnumType.STRING)
 	private JournalEntryTypeEnum type;
@@ -121,14 +117,6 @@ public class JournalEntry implements IEntity, IVersionedEntity {
 
 	public void setVersion(Integer version) {
 		this.version = version;
-	}
-
-	public String getProviderCode() {
-		return providerCode;
-	}
-
-	public void setProviderCode(String providerCode) {
-		this.providerCode = providerCode;
 	}
 
 	public void setType(JournalEntryTypeEnum type) {

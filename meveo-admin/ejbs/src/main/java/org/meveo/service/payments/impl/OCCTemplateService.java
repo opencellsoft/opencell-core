@@ -24,17 +24,15 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.admin.User;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.OCCTemplate;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.BusinessService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 
 /**
  * OCCTemplate service implementation.
  */
 @Stateless
-public class OCCTemplateService extends PersistenceService<OCCTemplate> {
+public class OCCTemplateService extends BusinessService<OCCTemplate> {
 
 	private static final String DUNNING_OCC_CODE = "bayad.dunning.occCode";
 	private static final String DDREQUEST_OCC_CODE = "bayad.ddrequest.occCode";
@@ -42,70 +40,36 @@ public class OCCTemplateService extends PersistenceService<OCCTemplate> {
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
 
-	public OCCTemplate findByCode(String code, String providerCode) {
-		OCCTemplate occTemplate = null;
-		log.debug("start of find {} by code (code={}) ..", "OCCTemplate", code);
-		try {
-			QueryBuilder qb = new QueryBuilder(OCCTemplate.class, "c");
-			qb.addCriterion("c.code", "=", code, true);
-			qb.addCriterion("c.provider.code", "=", providerCode, true);
-			occTemplate = (OCCTemplate) qb.getQuery(getEntityManager()).getSingleResult();
-			log.debug("end of find {} by code (code={}). Result found={}.", new Object[] { "OCCTemplate", code, occTemplate != null });
-		} catch (Exception e) {
-			return null;
-		}
-
-		return occTemplate;
-	}
-
 	@SuppressWarnings("unchecked")
-	public List<OCCTemplate> getListOccSortedByName(String providerCode) {
-		log.debug("start of find list {} SortedByName for provider (code={}) ..", "OCCTemplate", providerCode);
+	public List<OCCTemplate> getListOccSortedByName() {
+		log.debug("start of find list {} SortedByName ..", "OCCTemplate");
 		QueryBuilder qb = new QueryBuilder(OCCTemplate.class, "c");
-		qb.addCriterion("c.provider.code", "=", providerCode, true);
 		qb.addOrderCriterion("description", true);
 		List<OCCTemplate> occTemplates = (List<OCCTemplate>) qb.getQuery(getEntityManager()).getResultList();
-		log.debug("start of find list {} SortedByName for provider (code={})  result {}", new Object[] { "OCCTemplate", providerCode, occTemplates == null ? "null" : occTemplates.size() });
+		log.debug("start of find list {} SortedByName   result {}", new Object[] { "OCCTemplate", occTemplates == null ? "null" : occTemplates.size() });
 		return occTemplates;
 	}
 
-	public OCCTemplate getDunningOCCTemplate(User user) throws Exception {
+	public OCCTemplate getDunningOCCTemplate() throws Exception {
 		String occCodeDefaultValue = "OD_PREL";				
-		return getOccTemplateByCFKeyOrProperty(DUNNING_OCC_CODE, occCodeDefaultValue, user);
+		return getOccTemplateByCFKeyOrProperty(DUNNING_OCC_CODE, occCodeDefaultValue);
 	}
 
-	public OCCTemplate getDirectDebitOCCTemplate(User user) {				
+	public OCCTemplate getDirectDebitOCCTemplate() {				
 		String occCodeDefaultValue = "DD_OCC";				
-		return getOccTemplateByCFKeyOrProperty(DDREQUEST_OCC_CODE, occCodeDefaultValue, user);
+		return getOccTemplateByCFKeyOrProperty(DDREQUEST_OCC_CODE, occCodeDefaultValue);
 	}
 
-    private OCCTemplate getOccTemplateByCFKeyOrProperty(String occCodeKey, String occCodeDefaultValue, User user) {
+    private OCCTemplate getOccTemplateByCFKeyOrProperty(String occCodeKey, String occCodeDefaultValue) {
 
         try {
             String occTemplateCode = null;
-            occTemplateCode = (String) customFieldInstanceService.getOrCreateCFValueFromParamValue(occCodeKey, occCodeDefaultValue, user.getProvider(), true, user);
-            return findByCode(occTemplateCode, user.getProvider());
+            occTemplateCode = (String) customFieldInstanceService.getOrCreateCFValueFromParamValue(occCodeKey, occCodeDefaultValue, appProvider, true);
+            return findByCode(occTemplateCode);
 
         } catch (Exception e) {
             log.error("error while getting occ template ", e);
             return null;
         }
     }
-
-	public OCCTemplate findByCode(String code, Provider provider) {
-		OCCTemplate occTemplate = null;
-		log.debug("start of find {} by code (code={}) ..", "OCCTemplate", code);
-		try {
-			QueryBuilder qb = new QueryBuilder(OCCTemplate.class, "c");
-			qb.addCriterion("c.code", "=", code, true);
-			qb.addCriterionEntity("c.provider", provider);
-			occTemplate = (OCCTemplate) qb.getQuery(getEntityManager()).getSingleResult();
-			log.debug("end of find {} by code (code={}). Result found={}.", new Object[] { "OCCTemplate", code,
-					occTemplate != null });
-		} catch (Exception e) {
-			return null;
-		}
-
-		return occTemplate;
-	}
 }

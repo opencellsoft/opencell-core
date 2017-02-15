@@ -14,9 +14,7 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
 import org.meveo.model.catalog.DiscountPlan;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 
 /**
@@ -34,17 +32,17 @@ public class DiscountPlanApi extends BaseApi {
      * creates a discount plan
      * 
      * @param postData
-     * @param currentUser
+
      * @throws MeveoApiException
      * @throws BusinessException 
      */
-    public void create(DiscountPlanDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void create(DiscountPlanDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
             handleMissingParameters();
         }
-        if (discountPlanService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
+        if (discountPlanService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(DiscountPlan.class, postData.getCode());
         }
 
@@ -52,31 +50,31 @@ public class DiscountPlanApi extends BaseApi {
         discountPlan.setCode(postData.getCode());
         discountPlan.setDescription(postData.getDescription());
 
-        discountPlanService.create(discountPlan, currentUser);
+        discountPlanService.create(discountPlan);
     }
 
     /**
      * updates the description of an existing discount plan
      * 
      * @param postData
-     * @param currentUser
+
      * @throws MeveoApiException
      * @throws BusinessException 
      */
-    public void update(DiscountPlanDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void update(DiscountPlanDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
             handleMissingParameters();
         }
-        DiscountPlan discountPlan = discountPlanService.findByCode(postData.getCode(), currentUser.getProvider());
+        DiscountPlan discountPlan = discountPlanService.findByCode(postData.getCode());
 
         if (discountPlan == null) {
             throw new EntityDoesNotExistsException(DiscountPlan.class, postData.getCode());
         }
         discountPlan.setDescription(postData.getDescription());
 
-        discountPlanService.update(discountPlan, currentUser);
+        discountPlanService.update(discountPlan);
     }
 
     /**
@@ -87,7 +85,7 @@ public class DiscountPlanApi extends BaseApi {
      * @return
      * @throws MeveoApiException
      */
-    public DiscountPlanDto find(String discountPlanCode, Provider provider) throws MeveoApiException {
+    public DiscountPlanDto find(String discountPlanCode) throws MeveoApiException {
 
         if (StringUtils.isBlank(discountPlanCode)) {
             missingParameters.add("code");
@@ -96,7 +94,7 @@ public class DiscountPlanApi extends BaseApi {
 
         DiscountPlanDto discountPlanDto = new DiscountPlanDto();
 
-        DiscountPlan discountPlan = discountPlanService.findByCode(discountPlanCode, provider);
+        DiscountPlan discountPlan = discountPlanService.findByCode(discountPlanCode);
         if (discountPlan == null) {
             throw new EntityDoesNotExistsException(DiscountPlan.class, discountPlanCode);
         }
@@ -115,30 +113,30 @@ public class DiscountPlanApi extends BaseApi {
      * @throws MeveoApiException
      * @throws BusinessException 
      */
-    public void remove(String discountPlanCode, User currentUser) throws MeveoApiException, BusinessException {
+    public void remove(String discountPlanCode) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(discountPlanCode)) {
             missingParameters.add("code");
             handleMissingParameters();
         }
 
-        DiscountPlan discountPlan = discountPlanService.findByCode(discountPlanCode, currentUser.getProvider());
+        DiscountPlan discountPlan = discountPlanService.findByCode(discountPlanCode);
         if (discountPlan == null) {
             throw new EntityDoesNotExistsException(DiscountPlan.class, discountPlanCode);
         }
 
-        discountPlanService.remove(discountPlan, currentUser);
+        discountPlanService.remove(discountPlan);
     }
 
     /**
      * creates if the the discount plan code is not existing, updates if exists
      * 
      * @param postData
-     * @param currentUser
+
      * @throws MeveoApiException
      * @throws BusinessException 
      */
-    public void createOrUpdate(DiscountPlanDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void createOrUpdate(DiscountPlanDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -147,10 +145,10 @@ public class DiscountPlanApi extends BaseApi {
 
         String discountPlanCode = postData.getCode();
 
-        if (discountPlanService.findByCode(discountPlanCode, currentUser.getProvider()) == null) {
-            create(postData, currentUser);
+        if (discountPlanService.findByCode(discountPlanCode) == null) {
+            create(postData);
         } else {
-            update(postData, currentUser);
+            update(postData);
         }
     }
 
@@ -161,10 +159,10 @@ public class DiscountPlanApi extends BaseApi {
      * @return
      * @throws MeveoApiException
      */
-    public DiscountPlansDto list(Provider provider) throws MeveoApiException {
+    public DiscountPlansDto list() throws MeveoApiException {
 
         DiscountPlansDto discountPlansDto = null;
-        List<DiscountPlan> discountPlans = discountPlanService.list(provider);
+        List<DiscountPlan> discountPlans = discountPlanService.list();
 
         if (discountPlans != null && !discountPlans.isEmpty()) {
             discountPlansDto = new DiscountPlansDto();

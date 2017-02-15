@@ -54,14 +54,14 @@ public class AccountingJournal extends FileProducer implements Reporting {
 
 	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
-	public void generateJournalFile(String providerCode, Date startDate, Date endDate,
+	public void generateJournalFile(Date startDate, Date endDate,
 			OutputFormatEnum outputFormat) {
 		try {
 			File file = null;
 			if (outputFormat == OutputFormatEnum.PDF) {
 				file = File.createTempFile("tempAccountingJournal", ".csv");
 			} else if (outputFormat == OutputFormatEnum.CSV) {
-				StringBuilder sb = new StringBuilder(getFilename(providerCode, startDate, endDate));
+				StringBuilder sb = new StringBuilder(getFilename(startDate, endDate));
 				sb.append(".csv");
 				file = new File(sb.toString());
 			}
@@ -69,7 +69,7 @@ public class AccountingJournal extends FileProducer implements Reporting {
 			writer.append("Date G.L.;Code operation;Libele operation;No de client;Ste;CG;CA;DA;CR;IC;GP;Debit;Credit");
 			writer.append('\n');
 			List<DWHAccountOperation> records = accountOperationService
-					.getAccountingJournalRecords(providerCode, startDate, endDate);
+					.getAccountingJournalRecords(startDate, endDate);
 			for (DWHAccountOperation operation : records) {
 				// first line
 				writer.append(sdf.format(operation.getTransactionDate()) + ";");// operation
@@ -130,8 +130,7 @@ public class AccountingJournal extends FileProducer implements Reporting {
 			if (outputFormat == OutputFormatEnum.PDF) {
 				parameters.put("startDate", startDate);
 				parameters.put("endDate", endDate);
-				parameters.put("provider", providerCode);
-				StringBuilder sb = new StringBuilder(getFilename(providerCode, startDate, endDate));
+				StringBuilder sb = new StringBuilder(getFilename(startDate, endDate));
 				sb.append(".pdf");
 				generatePDFfile(file, sb.toString(), templateFilename, parameters);
 			}
@@ -140,13 +139,13 @@ public class AccountingJournal extends FileProducer implements Reporting {
 		}
 	}
 
-	public String getFilename(String providerName, Date startDate, Date endDate) {
+	public String getFilename(Date startDate, Date endDate) {
 
 		String DATE_FORMAT = "dd-MM-yyyy";
 		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
 		StringBuilder sb = new StringBuilder();
 		sb.append(reportsFolder);
-		sb.append(providerName);
+		sb.append(appProvider.getCode());
 		sb.append("_JOURNAL_TRESO_");
 		sb.append(sdf.format(new Date()).toString());
 		sb.append("_du_");
@@ -162,7 +161,7 @@ public class AccountingJournal extends FileProducer implements Reporting {
 		separator = param.getProperty("reporting.accountingCode.separator",",");
 		String jasperTemplatesFolder = param.getProperty("reports.jasperTemplatesFolder","/opt/jboss/files/reports/JasperTemplates/");
 		templateFilename = jasperTemplatesFolder + "accountingJournal.jasper";
-		generateJournalFile(report.getProvider() == null ? null : report.getProvider().getCode(),
+		generateJournalFile(
 				report.getStartDate(), report.getEndDate(), report.getOutputFormat());
 
 	}

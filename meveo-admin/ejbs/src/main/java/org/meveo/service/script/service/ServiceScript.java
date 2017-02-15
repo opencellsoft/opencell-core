@@ -3,7 +3,6 @@ package org.meveo.service.script.service;
 import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.admin.User;
 import org.meveo.service.script.module.ModuleScript;
 
 /**
@@ -18,38 +17,38 @@ public class ServiceScript extends ModuleScript implements ServiceScriptInterfac
     public static String CONTEXT_PARAMETERS = "CONTEXT_PARAMETERS";
 
     @Override
-    public void instantiateServiceInstance(Map<String, Object> methodContext, User user) throws BusinessException {
+    public void instantiateServiceInstance(Map<String, Object> methodContext) throws BusinessException {
 
     }
 
     @Override
-    public void activateServiceInstance(Map<String, Object> methodContext, User user) throws BusinessException {
+    public void activateServiceInstance(Map<String, Object> methodContext) throws BusinessException {
 
     }
 
     @Override
-    public void suspendServiceInstance(Map<String, Object> methodContext, User user) throws BusinessException {
+    public void suspendServiceInstance(Map<String, Object> methodContext) throws BusinessException {
 
     }
 
     @Override
-    public void reactivateServiceInstance(Map<String, Object> methodContext, User user) throws BusinessException {
+    public void reactivateServiceInstance(Map<String, Object> methodContext) throws BusinessException {
 
     }
 
     @Override
-    public void terminateServiceInstance(Map<String, Object> methodContext, User user) throws BusinessException {
+    public void terminateServiceInstance(Map<String, Object> methodContext) throws BusinessException {
 
     }
 
 	@Override
-	public void beforeCreateServiceFromBSM(Map<String, Object> methodContext, User user) throws BusinessException {
+	public void beforeCreateServiceFromBSM(Map<String, Object> methodContext) throws BusinessException {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void afterCreateServiceFromBSM(Map<String, Object> methodContext, User user) throws BusinessException {
+	public void afterCreateServiceFromBSM(Map<String, Object> methodContext) throws BusinessException {
 		// TODO Auto-generated method stub
 		
 	}

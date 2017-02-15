@@ -32,6 +32,7 @@ import org.meveo.service.catalog.impl.ProductOfferingService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.util.ApplicationProvider;
 
 /**
  * Show a picture from a rest URI like /meveo/picture/provider/module/tmp/filename.suffix
@@ -75,6 +76,10 @@ public class PictureServlet extends HttpServlet {
 	
 	@Inject
 	private ProductTemplateService productTemplateService;
+	
+    @Inject
+    @ApplicationProvider
+    protected Provider appProvider;
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -93,8 +98,9 @@ public class PictureServlet extends HttpServlet {
 			return;
 		}
 		String rootPath = null;
-		String filename = null;
-		String provider = path[3];
+        String filename = null;
+        // String provider = path[3];
+        String provider = appProvider.getCode();
 		String groupname = path[4];
 		try {
 			if (path.length == 7 && path[5].equals("tmp")) {
@@ -116,14 +122,10 @@ public class PictureServlet extends HttpServlet {
 		if (filename.indexOf(".") > 0 || (!groupname.equals("offerCategory") && !groupname.equals("offer") && !groupname.equals("service") && !groupname.equals("product"))) {
 			String destfile = rootPath + File.separator + filename;
 			data = loadImage(destfile);
+		
 		} else {
-			Provider providerEntity = providerService.findByCode(provider);
-			if (providerEntity == null) {
-				log.error("Provider " + provider + " does not exist");
-				return;
-			}
 			if ("offerCategory".equals(groupname)) {
-				OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(filename, providerEntity);
+				OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(filename);
 				if (offerTemplateCategory == null) {
 					log.error("Offer category with code " + filename + " does not exist");
 					resp.setStatus(HttpStatus.SC_NOT_FOUND);
@@ -148,7 +150,7 @@ public class PictureServlet extends HttpServlet {
 					cachedDefaultImages.put(imageFile, data);
 				}
 			} else if ("offer".equals(groupname)) {
-				ProductOffering offering = productOfferingService.findByCode(filename, providerEntity);
+				ProductOffering offering = productOfferingService.findByCode(filename);
 				if (offering == null) {
 					log.error("Offer with code " + filename + " does not exist");
 					resp.setStatus(HttpStatus.SC_NOT_FOUND);
@@ -173,7 +175,7 @@ public class PictureServlet extends HttpServlet {
 				}
 				
 			} else if ("service".equals(groupname)) {
-				ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(filename, providerEntity);
+				ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(filename);
 				if (serviceTemplate == null) {
 					log.error("Service with code " + filename + " does not exist");
 					resp.setStatus(HttpStatus.SC_NOT_FOUND);
@@ -197,7 +199,7 @@ public class PictureServlet extends HttpServlet {
 					cachedDefaultImages.put(imageFile, data);
 				}
 			} else if ("product".equals(groupname)) {
-				ProductTemplate productTemplate = productTemplateService.findByCode(filename, providerEntity);
+				ProductTemplate productTemplate = productTemplateService.findByCode(filename);
 				if (productTemplate == null) {
 					log.error("Product with code " + filename + " does not exist");
 					resp.setStatus(HttpStatus.SC_NOT_FOUND);

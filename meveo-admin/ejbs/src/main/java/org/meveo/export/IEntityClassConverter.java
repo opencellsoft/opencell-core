@@ -6,7 +6,7 @@ import javax.persistence.Inheritance;
 
 import org.meveo.model.IAuditable;
 import org.meveo.model.IEntity;
-import org.meveo.model.admin.User;
+import org.meveo.security.MeveoUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,9 +29,9 @@ public class IEntityClassConverter extends ReflectionConverter {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     private boolean preserveId;
-    private User currentUser;
+    private MeveoUser currentUser;
 
-    public IEntityClassConverter(Mapper mapper, ReflectionProvider reflectionProvider, boolean preserveId, User currentUser) {
+    public IEntityClassConverter(Mapper mapper, ReflectionProvider reflectionProvider, boolean preserveId, MeveoUser currentUser) {
         super(mapper, reflectionProvider);
         this.preserveId = preserveId;
         this.currentUser = currentUser;

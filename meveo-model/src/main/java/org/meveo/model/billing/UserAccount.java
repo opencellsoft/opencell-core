@@ -48,7 +48,7 @@ import org.meveo.model.ICustomFieldEntity;
 
 @Entity
 @CustomFieldEntity(cftCodePrefix = "UA")
-@ExportIdentifier({ "code", "provider" })
+@ExportIdentifier({ "code"})
 @DiscriminatorValue(value = "ACCT_UA")
 @Table(name = "BILLING_USER_ACCOUNT")
 public class UserAccount extends AccountEntity {

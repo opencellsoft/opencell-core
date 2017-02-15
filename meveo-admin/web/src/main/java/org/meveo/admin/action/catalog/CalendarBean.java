@@ -25,14 +25,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.enterprise.inject.Instance;
 import javax.faces.component.EditableValueHolder;
 import javax.faces.event.AjaxBehaviorEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.DiscriminatorValue;
 
-import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
@@ -52,6 +50,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.DayInYearService;
 import org.meveo.service.catalog.impl.HourInDayService;
+import org.omnifaces.cdi.Param;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.DualListModel;
 
@@ -74,8 +73,8 @@ public class CalendarBean extends BaseBean<Calendar> {
     private HourInDayService hourInDayService;
 
     @Inject
-    @RequestParam()
-    private Instance<String> classType;
+    @Param
+    private String classType;
 
     @Inject
     private ResourceBundle resourceMessages;
@@ -153,11 +152,6 @@ public class CalendarBean extends BaseBean<Calendar> {
     @Override
     protected String getDefaultSort() {
         return "code";
-    }
-
-    @Override
-    protected List<String> getFormFieldsToFetch() {
-        return Arrays.asList("provider");
     }
 
     public Map<String, String> getCalendarTypes() {

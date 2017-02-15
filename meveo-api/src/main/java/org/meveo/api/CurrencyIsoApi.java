@@ -10,7 +10,6 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Currency;
-import org.meveo.model.admin.User;
 import org.meveo.service.admin.impl.CurrencyService;
 
 
@@ -23,7 +22,7 @@ public class CurrencyIsoApi extends BaseApi {
     @Inject
     private CurrencyService currencyService;
 
-    public void create(CurrencyIsoDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void create(CurrencyIsoDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -38,11 +37,11 @@ public class CurrencyIsoApi extends BaseApi {
         Currency currency = new Currency();
         currency.setCurrencyCode(postData.getCode());
         currency.setDescriptionEn(postData.getDescription());
-        currencyService.create(currency, currentUser);
+        currencyService.create(currency);
 
     }
 
-    public void update(CurrencyIsoDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void update(CurrencyIsoDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -57,7 +56,7 @@ public class CurrencyIsoApi extends BaseApi {
         }
         currency.setDescriptionEn(postData.getDescription());
 
-        currencyService.update(currency, currentUser);
+        currencyService.update(currency);
     }
 
     public CurrencyIsoDto find(String currencyCode) throws MeveoApiException {
@@ -79,7 +78,7 @@ public class CurrencyIsoApi extends BaseApi {
         return result;
     }
 
-    public void remove(String currencyCode, User currentUser) throws MeveoApiException, BusinessException {
+    public void remove(String currencyCode) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(currencyCode)) {
             missingParameters.add("currencyCode");
             handleMissingParameters();
@@ -90,16 +89,16 @@ public class CurrencyIsoApi extends BaseApi {
             throw new EntityDoesNotExistsException(Currency.class, currencyCode);
         }
 
-        currencyService.remove(currency, currentUser);
+        currencyService.remove(currency);
     }
 
-    public void createOrUpdate(CurrencyIsoDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void createOrUpdate(CurrencyIsoDto postData) throws MeveoApiException, BusinessException {
 
         Currency currency = currencyService.findByCode(postData.getCode());
         if (currency == null) {
-            create(postData, currentUser);
+            create(postData);
         } else {
-            update(postData, currentUser);
+            update(postData);
         }
     }
 }

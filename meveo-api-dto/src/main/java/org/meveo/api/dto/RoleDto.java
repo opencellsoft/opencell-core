@@ -25,9 +25,6 @@ public class RoleDto extends BaseDto {
 
     private String description;
 
-    @XmlElement()
-    private String provider;
-
     @XmlElementWrapper(name = "permissions")
     @XmlElement(name = "permission")
     private List<PermissionDto> permission = new ArrayList<PermissionDto>();
@@ -43,7 +40,6 @@ public class RoleDto extends BaseDto {
     public RoleDto(Role role) {
         this.setName(role.getName());
         this.setDescription(role.getDescription());
-        this.setProvider(role.getProvider().getCode());
 
         Set<Permission> permissions = role.getPermissions();
 
@@ -80,16 +76,8 @@ public class RoleDto extends BaseDto {
     @Override
     public String toString() {
         final int maxLen = 10;
-        return String.format("RoleDto [name=%s, description=%s, provider=%s, permission=%s, roles=%s]", name, description, provider,
+        return String.format("RoleDto [name=%s, description=%s, permission=%s, roles=%s]", name, description, 
             permission != null ? permission.subList(0, Math.min(permission.size(), maxLen)) : null, roles != null ? roles.subList(0, Math.min(roles.size(), maxLen)) : null);
-    }
-
-    public String getProvider() {
-        return provider;
-    }
-
-    public void setProvider(String provider) {
-        this.provider = provider;
     }
 
     public List<PermissionDto> getPermission() {

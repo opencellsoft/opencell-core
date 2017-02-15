@@ -62,14 +62,13 @@ public class GenericModuleService<T extends MeveoModule> extends BusinessService
 
         BusinessEntity entity = null;
         if (CustomFieldTemplate.class.getName().equals(item.getItemClass())) {
-            entity = customFieldTemplateService.findByCodeAndAppliesTo(item.getItemCode(), item.getAppliesTo(), item.getMeveoModule().getProvider());
+            entity = customFieldTemplateService.findByCodeAndAppliesTo(item.getItemCode(), item.getAppliesTo());
 
         } else {
 
-            String sql = "select mi from " + item.getItemClass() + " mi where mi.code=:code and mi.provider.id=:providerId";
+            String sql = "select mi from " + item.getItemClass() + " mi where mi.code=:code ";
             TypedQuery<BusinessEntity> query = getEntityManager().createQuery(sql, BusinessEntity.class);
             query.setParameter("code", item.getItemCode());
-            query.setParameter("providerId", currentUser.getProvider().getId);
             try {
                 entity = query.getSingleResult();
 

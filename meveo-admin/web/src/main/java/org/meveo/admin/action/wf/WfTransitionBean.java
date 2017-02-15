@@ -157,7 +157,7 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
         }
         for (WFDecisionRule wfTransitionRuleFor : wfDecisionRules) {
             if (wfTransitionRuleFor.getId() == null) {
-                wfDecisionRuleService.create(wfTransitionRuleFor, getCurrentUser());
+                wfDecisionRuleService.create(wfTransitionRuleFor);
             }
         }
 
@@ -191,19 +191,19 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
                 for (WFAction wfAction : actionList) {
                     WFAction action = wfActionService.findById(wfAction.getId());
                     action.setActionEl(actionEL);
-                    wfActionService.update(action, getCurrentUser());
+                    wfActionService.update(action);
                 }
             } else {
                 WFAction wfAction = new WFAction();
                 wfAction.setActionEl(actionEL);
                 wfAction.setPriority(1);
                 wfAction.setWfTransition(entity);
-                wfActionService.create(wfAction, getCurrentUser());
+                wfActionService.create(wfAction);
             }
         } else if (CollectionUtils.isNotEmpty(actionList)) {
             for (WFAction wfAction : actionList) {
                 WFAction action = wfActionService.findById(wfAction.getId());
-                wfActionService.remove(action, getCurrentUser());
+                wfActionService.remove(action);
             }
         }
 
@@ -212,7 +212,7 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
 
     public Workflow getWorkflowOrder() throws BusinessException {
         if (workflowOrder == null) {
-            List<Workflow> list = wfService.findByWFTypeWithoutStatus(OrderWF.class.getName(), getCurrentUser().getProvider());
+            List<Workflow> list = wfService.findByWFTypeWithoutStatus(OrderWF.class.getName());
             if (CollectionUtils.isNotEmpty(list)) {
                 workflowOrder = list.get(0);
                 if (workflowOrder.isDisabled()) {
@@ -222,14 +222,13 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
                 workflowOrder = new Workflow();
                 workflowOrder.setWfType(OrderWF.class.getName());
                 workflowOrder.setCode(WF_ORDER);
-                wfService.create(workflowOrder, getCurrentUser());
+                wfService.create(workflowOrder);
                 WFTransition catchAllDefault = createCatchAll();
                 workflowOrder.getTransitions().add(catchAllDefault);
             }
         }
         if (workflowOrder != null) {
-            operationList = wfTransitionService.listWFTransitionByStatusWorkFlow(OrderStatusEnum.ACKNOWLEDGED.toString(), OrderStatusEnum.IN_PROGRESS.toString(), workflowOrder,
-                getCurrentProvider());
+            operationList = wfTransitionService.listWFTransitionByStatusWorkFlow(OrderStatusEnum.ACKNOWLEDGED.toString(), OrderStatusEnum.IN_PROGRESS.toString(), workflowOrder);
             if (CollectionUtils.isNotEmpty(operationList)) {
                 Collections.sort(operationList);
                 int indexCatchAll = operationList.size() - 1;
@@ -252,7 +251,7 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
         catchAllDefault.setFromStatus(OrderStatusEnum.ACKNOWLEDGED.toString());
         catchAllDefault.setToStatus(OrderStatusEnum.IN_PROGRESS.toString());
         catchAllDefault.setWorkflow(workflowOrder);
-        wfTransitionService.create(catchAllDefault, getCurrentUser());
+        wfTransitionService.create(catchAllDefault);
         return catchAllDefault;
     }
 
@@ -290,7 +289,7 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
             entity = getPersistenceService().findById(id);
             log.info(String.format("Deleting entity %s with id = %s", entity.getClass().getName(), id));
             // entity.getDunningPlan().getTransitions().remove(entity);
-            getPersistenceService().remove(id, getCurrentUser());
+            getPersistenceService().remove(id);
             entity = null;
             messages.info(new BundleKey("messages", "delete.successful"));
         } catch (Throwable t) {
@@ -313,11 +312,11 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
                 action.setActionEl(wfAction.getActionEl());
                 action.setConditionEl(wfAction.getConditionEl());
                 action.setPriority(wfAction.getPriority());
-                wfActionService.update(action, getCurrentUser());
+                wfActionService.update(action);
                 messages.info(new BundleKey("messages", "update.successful"));
             } else {
                 wfAction.setWfTransition(entity);
-                wfActionService.create(wfAction, getCurrentUser());
+                wfActionService.create(wfAction);
                 entity.getWfActions().add(wfAction);
                 messages.info(new BundleKey("messages", "save.successful"));
 
@@ -342,7 +341,7 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
     public void deleteWfAction(WFAction wfAction) {
         try {
             WFAction action = wfActionService.findById(wfAction.getId());
-            wfActionService.remove(action, getCurrentUser());
+            wfActionService.remove(action);
             entity.getWfActions().remove(wfAction);
             messages.info(new BundleKey("messages", "delete.successful"));
 
@@ -378,7 +377,7 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
 
     public List<String> getWfDecisionRulesName() {
         if (wfDecisionRulesName == null) {
-            wfDecisionRulesName = wfDecisionRuleService.getDistinctNameWFTransitionRules(getCurrentProvider());
+            wfDecisionRulesName = wfDecisionRuleService.getDistinctNameWFTransitionRules();
         }
         return wfDecisionRulesName;
     }
@@ -421,7 +420,7 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
                 GroupedDecisionRule groupedTransitionRule = new GroupedDecisionRule();
                 groupedTransitionRule.setName(wfTransitionRule.getName());
                 groupedTransitionRule.setValue(wfTransitionRule);
-                List<WFDecisionRule> list = wfDecisionRuleService.getWFDecisionRules(wfTransitionRule.getName(), wfTransitionRule.getProvider());
+                List<WFDecisionRule> list = wfDecisionRuleService.getWFDecisionRules(wfTransitionRule.getName());
                 Collections.sort(list);
                 wfDecisionRulesByName.add(list);
                 selectedRules.add(groupedTransitionRule);
@@ -445,7 +444,7 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
     public String duplicateWfTransition(WFTransition wfTransition) {
         try {
             workflowOrder = wfService.refreshOrRetrieve(workflowOrder);
-            this.wfTransition = wfTransitionService.duplicate(wfTransition, workflowOrder, getCurrentUser());
+            this.wfTransition = wfTransitionService.duplicate(wfTransition, workflowOrder);
 
             // Set max priority +1
             int priority = 1;
@@ -471,7 +470,7 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
     @ActionMethod
     public void deleteWfTransition(WFTransition wfTransition) {
         try {
-            wfTransitionService.remove(wfTransition.getId(), getCurrentUser());
+            wfTransitionService.remove(wfTransition.getId());
             workflowOrder = wfService.refreshOrRetrieve(workflowOrder);
             wfDecisionRulesByName.clear();
             selectedRules.clear();
@@ -487,12 +486,7 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
     public TreeNode getUserGroupRootNode() {
         if (userGroupRootNode == null) {
             userGroupRootNode = new DefaultTreeNode("Root", null);
-            List<UserHierarchyLevel> roots;
-            if (entity != null && entity.getProvider() != null) {
-                roots = userHierarchyLevelService.findRoots(entity.getProvider());
-            } else {
-                roots = userHierarchyLevelService.findRoots();
-            }
+            List<UserHierarchyLevel> roots = userHierarchyLevelService.findRoots();
             if (CollectionUtils.isNotEmpty(roots)) {
                 Collections.sort(roots);
                 for (UserHierarchyLevel userGroupTree : roots) {
@@ -538,7 +532,7 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
     }
 
     public void changedRuleName(int indexRule) {
-        List<WFDecisionRule> list = wfDecisionRuleService.getWFDecisionRules(selectedRules.get(indexRule).getName(), entity.getProvider());
+        List<WFDecisionRule> list = wfDecisionRuleService.getWFDecisionRules(selectedRules.get(indexRule).getName());
         Collections.sort(list);
         if (wfDecisionRulesByName.size() > indexRule && wfDecisionRulesByName.get(indexRule) != null) {
             wfDecisionRulesByName.remove(indexRule);
@@ -555,11 +549,11 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
             WFTransition upWfTransition = operationList.get(index);
             WFTransition needUpdate = wfTransitionService.findById(upWfTransition.getId(), true);
             needUpdate.setPriority(index);
-            wfTransitionService.update(needUpdate, getCurrentUser());
+            wfTransitionService.update(needUpdate);
             WFTransition downWfTransition = operationList.get(index - 1);
             needUpdate = wfTransitionService.findById(downWfTransition.getId(), true);
             needUpdate.setPriority(index + 1);
-            wfTransitionService.update(needUpdate, getCurrentUser());
+            wfTransitionService.update(needUpdate);
             Collections.swap(operationList, index, index - 1);
             messages.info(new BundleKey("messages", "update.successful"));
         }
@@ -572,11 +566,11 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
             WFTransition upWfTransition = operationList.get(index);
             WFTransition needUpdate = wfTransitionService.findById(upWfTransition.getId(), true);
             needUpdate.setPriority(index + 2);
-            wfTransitionService.update(needUpdate, getCurrentUser());
+            wfTransitionService.update(needUpdate);
             WFTransition downWfTransition = operationList.get(index + 1);
             needUpdate = wfTransitionService.findById(downWfTransition.getId(), true);
             needUpdate.setPriority(index + 1);
-            wfTransitionService.update(needUpdate, getCurrentUser());
+            wfTransitionService.update(needUpdate);
             Collections.swap(operationList, index, index + 1);
             messages.info(new BundleKey("messages", "update.successful"));
         }
@@ -604,13 +598,13 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
      * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
      */
     protected List<String> getFormFieldsToFetch() {
-        return Arrays.asList("provider", "wfDecisionRules", "wfActions");
+        return Arrays.asList("wfDecisionRules", "wfActions");
     }
 
     /**
      * @see org.meveo.admin.action.BaseBean#getListFieldsToFetch()
      */
     protected List<String> getListFieldsToFetch() {
-        return Arrays.asList("provider", "wfDecisionRules", "wfActions");
+        return Arrays.asList("wfDecisionRules", "wfActions");
     }
 }

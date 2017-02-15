@@ -31,25 +31,25 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.EnableEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
 
 @Entity
 @ObservableEntity
-@ExportIdentifier({ "language.languageCode", "provider" })
+@ExportIdentifier({ "language.languageCode"})
 @Cacheable
 @Table(name = "BILLING_TRADING_LANGUAGE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_TRADING_LANGUAGE_SEQ")
 @NamedQueries({			
 @NamedQuery(name = "tradingLanguage.getNbLanguageNotAssociated", 
-	           query = "select count(*) from TradingLanguage tr where tr.id not in (select s.tradingLanguage.id from Seller s where s.tradingLanguage.id is not null) and tr.provider=:provider"),
+	           query = "select count(*) from TradingLanguage tr where tr.id not in (select s.tradingLanguage.id from Seller s where s.tradingLanguage.id is not null) "),
 	           
 @NamedQuery(name = "tradingLanguage.getLanguagesNotAssociated", 
-	           query = "from TradingLanguage tr where tr.id not in (select s.tradingLanguage.id from Seller s where s.tradingLanguage.id is not null) and tr.provider=:provider")	           	                  	         
+	           query = "from TradingLanguage tr where tr.id not in (select s.tradingLanguage.id from Seller s where s.tradingLanguage.id is not null) ")	           	                  	         
 	})
 
-public class TradingLanguage extends AuditableEntity {
+public class TradingLanguage extends EnableEntity {
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne(fetch = FetchType.LAZY)

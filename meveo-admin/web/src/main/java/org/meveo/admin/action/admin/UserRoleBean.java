@@ -20,7 +20,6 @@ package org.meveo.admin.action.admin;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -84,7 +83,7 @@ public class UserRoleBean extends BaseBean<Role> {
 
     public DualListModel<Role> getRoleListModel() {
         if (rolesDM == null) {
-            List<Role> perksSource = userRoleService.list(entity.getProvider());
+            List<Role> perksSource = userRoleService.listActive();
             perksSource.remove(getEntity());
             List<Role> perksTarget = new ArrayList<Role>();
             if (getEntity().getRoles() != null) {
@@ -98,13 +97,6 @@ public class UserRoleBean extends BaseBean<Role> {
 
     public void setRoleListModel(DualListModel<Role> perks) {
         this.rolesDM = perks;
-    }
-
-    /**
-     * On provider change reset role and permission picklists
-     */
-    public void onProviderChange() {
-        rolesDM = null;
     }
 
     @Override
@@ -128,21 +120,5 @@ public class UserRoleBean extends BaseBean<Role> {
     @Override
     protected IPersistenceService<Role> getPersistenceService() {
         return userRoleService;
-    }
-
-    /**
-     * Add additional criteria for searching by provider
-     */
-    @Override
-    protected Map<String, Object> supplementSearchCriteria(Map<String, Object> searchCriteria) {
-
-        // Do not user a check against user.provider as it contains only one value, while user can be linked to various providers
-        // boolean isSuperAdmin = identity.hasPermission("superAdmin", "superAdminManagement");
-        boolean isSuperAdmin = currentUser.hasPermission("superAdmin", "superAdminManagement");
-        if (isSuperAdmin) {
-            searchCriteria.put(PersistenceService.SEARCH_SKIP_PROVIDER_CONSTRAINT, true);
-        }
-
-        return searchCriteria;
     }
 }

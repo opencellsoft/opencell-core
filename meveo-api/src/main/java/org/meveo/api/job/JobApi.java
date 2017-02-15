@@ -10,7 +10,6 @@ import org.meveo.api.dto.job.JobInstanceInfoDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
@@ -30,18 +29,18 @@ public class JobApi extends BaseApi {
     /**
      * 
      * @param timerInfoDTO , timerInfoDTO.getTimerName() contains the code of JobInstance
-     * @param currentUser
+
      * @throws Exception
      */
 
-    public Long executeJob(JobInstanceInfoDto timerInfoDTO, User currentUser) throws MeveoApiException {
+    public Long executeJob(JobInstanceInfoDto timerInfoDTO) throws MeveoApiException {
         if (StringUtils.isBlank(timerInfoDTO.getCode()) && StringUtils.isBlank(timerInfoDTO.getTimerName())) {
             missingParameters.add("timerName or code");
         }
         handleMissingParameters();
 
         try {
-            return jobInstanceService.executeAPITimer(timerInfoDTO, currentUser);
+            return jobInstanceService.executeAPITimer(timerInfoDTO);
         } catch (BusinessException e) {
             throw new MeveoApiException(e.getMessage());
         }

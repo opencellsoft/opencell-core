@@ -16,10 +16,8 @@ import org.meveo.api.exception.InvalidImageData;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 
 @Stateless
@@ -28,14 +26,14 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 	@Inject
 	private ProductTemplateService productTemplateService;
 
-	public ProductTemplateDto find(String code, User currentUser) throws MeveoApiException {
+	public ProductTemplateDto find(String code) throws MeveoApiException {
 
 		if (StringUtils.isBlank(code)) {
 			missingParameters.add("productTemplate code");
 			handleMissingParameters();
 		}
 
-		ProductTemplate productTemplate = productTemplateService.findByCode(code, currentUser.getProvider());
+		ProductTemplate productTemplate = productTemplateService.findByCode(code);
 		if (productTemplate == null) {
 			throw new EntityDoesNotExistsException(ProductTemplate.class, code);
 		}
@@ -47,17 +45,17 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 		return productTemplateDto;
 	}
 
-	public ProductTemplate createOrUpdate(ProductTemplateDto productTemplateDto, User currentUser) throws MeveoApiException, BusinessException {
-		ProductTemplate productTemplate = productTemplateService.findByCode(productTemplateDto.getCode(), currentUser.getProvider());
+	public ProductTemplate createOrUpdate(ProductTemplateDto productTemplateDto) throws MeveoApiException, BusinessException {
+		ProductTemplate productTemplate = productTemplateService.findByCode(productTemplateDto.getCode());
 
 		if (productTemplate == null) {
-			return create(productTemplateDto, currentUser);
+			return create(productTemplateDto);
 		} else {
-			return update(productTemplateDto, currentUser);
+			return update(productTemplateDto);
 		}
 	}
 
-	public ProductTemplate create(ProductTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
+	public ProductTemplate create(ProductTemplateDto postData) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
@@ -79,9 +77,9 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 
 		handleMissingParameters();
 
-		Provider provider = currentUser.getProvider();
+		
 
-		if (productTemplateService.findByCode(postData.getCode(), provider) != null) {
+		if (productTemplateService.findByCode(postData.getCode()) != null) {
 			throw new EntityAlreadyExistsException(ProductTemplate.class, postData.getCode());
 		}
 
@@ -93,7 +91,7 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 		productTemplate.setValidTo(postData.getValidTo());
 		productTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
 		try {
-			saveImage(productTemplate, postData.getImagePath(), postData.getImageBase64(), currentUser.getProvider().getCode());
+			saveImage(productTemplate, postData.getImagePath(), postData.getImageBase64());
 		} catch (IOException e1) {
 			log.error("Invalid image data={}", e1.getMessage());
 			throw new InvalidImageData();
@@ -101,11 +99,11 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 		
 		// save product template now so that they can be referenced by the
 		// related entities below.
-		productTemplateService.create(productTemplate, currentUser);
+		productTemplateService.create(productTemplate);
 		
         // populate customFields
         try {
-            populateCustomFields(postData.getCustomFields(), productTemplate, false, currentUser);
+            populateCustomFields(postData.getCustomFields(), productTemplate, false);
         } catch (MissingParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
@@ -115,22 +113,22 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
         }
 		
 		if(postData.getProductChargeTemplates()!= null){
-			processProductChargeTemplate(postData, productTemplate, provider);
+			processProductChargeTemplate(postData, productTemplate);
 		}
 		if(postData.getAttachments() != null){
-			processDigitalResources(postData, productTemplate, currentUser);
+			processDigitalResources(postData, productTemplate);
 		}
 		if( postData.getOfferTemplateCategories() != null){
-			processOfferTemplateCategories(postData, productTemplate, provider);
+			processOfferTemplateCategories(postData, productTemplate);
 		}
 
-		productTemplateService.update(productTemplate, currentUser);
+		productTemplateService.update(productTemplate);
 		
 
 		return productTemplate;
 	}
 
-	public ProductTemplate update(ProductTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
+	public ProductTemplate update(ProductTemplateDto postData) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");			
@@ -140,9 +138,9 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 		}
 		handleMissingParameters();
 
-		Provider provider = currentUser.getProvider();
+		
 
-		ProductTemplate productTemplate = productTemplateService.findByCode(postData.getCode(), provider);
+		ProductTemplate productTemplate = productTemplateService.findByCode(postData.getCode());
 
 		if (productTemplate == null) {
 			throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getCode());
@@ -154,26 +152,26 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 		productTemplate.setValidTo(postData.getValidTo());
 		productTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
 		try {
-			saveImage(productTemplate, postData.getImagePath(), postData.getImageBase64(), currentUser.getProvider().getCode());
+			saveImage(productTemplate, postData.getImagePath(), postData.getImageBase64());
 		} catch (IOException e1) {
 			log.error("Invalid image data={}", e1.getMessage());
 			throw new InvalidImageData();
 		}
 		
 		if(postData.getProductChargeTemplates()!= null){
-			processProductChargeTemplate(postData, productTemplate, provider);	
+			processProductChargeTemplate(postData, productTemplate);	
 		}		
 		if( postData.getOfferTemplateCategories() != null){
-			processOfferTemplateCategories(postData, productTemplate, provider);
+			processOfferTemplateCategories(postData, productTemplate);
 		}
 		if(postData.getAttachments() != null){
-			processDigitalResources(postData, productTemplate, currentUser);
+			processDigitalResources(postData, productTemplate);
 		}
-		productTemplate= productTemplateService.update(productTemplate, currentUser);
+		productTemplate= productTemplateService.update(productTemplate);
 
         // populate customFields
         try {
-            populateCustomFields(postData.getCustomFields(), productTemplate, false, currentUser);
+            populateCustomFields(postData.getCustomFields(), productTemplate, false);
         } catch (MissingParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
@@ -185,23 +183,23 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 		return productTemplate;
 	}
 
-	public void remove(String code, User currentUser) throws MeveoApiException, BusinessException {
+	public void remove(String code) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(code)) {
 			missingParameters.add("productTemplate code");
 			handleMissingParameters();
 		}
 
-		ProductTemplate productTemplate = productTemplateService.findByCode(code, currentUser.getProvider());
+		ProductTemplate productTemplate = productTemplateService.findByCode(code);
 		if (productTemplate == null) {
 			throw new EntityDoesNotExistsException(ProductTemplate.class, code);
 		}
-		//deleteImage(productTemplate, currentUser.getProvider().getCode());
-		productTemplateService.remove(productTemplate, currentUser);
+		//deleteImage(productTemplate);
+		productTemplateService.remove(productTemplate);
 	}
 
-	public List<ProductTemplateDto> list(User currentUser) {
-		List<ProductTemplate> listProductTemplate = productTemplateService.list(currentUser.getProvider());
+	public List<ProductTemplateDto> list() {
+		List<ProductTemplate> listProductTemplate = productTemplateService.list();
 		List<ProductTemplateDto> dtos = new ArrayList<ProductTemplateDto>();
 		if(listProductTemplate != null){
 			for(ProductTemplate productTemplate : listProductTemplate){

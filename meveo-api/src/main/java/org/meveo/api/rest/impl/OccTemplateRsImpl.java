@@ -32,7 +32,7 @@ public class OccTemplateRsImpl extends BaseRs implements OccTemplateRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            occTemplateApi.create(postData, getCurrentUser());
+            occTemplateApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -52,7 +52,7 @@ public class OccTemplateRsImpl extends BaseRs implements OccTemplateRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            occTemplateApi.update(postData, getCurrentUser());
+            occTemplateApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -72,7 +72,7 @@ public class OccTemplateRsImpl extends BaseRs implements OccTemplateRs {
         GetOccTemplateResponseDto result = new GetOccTemplateResponseDto();
 
         try {
-            result.setOccTemplate(occTemplateApi.find(occTemplateCode, getCurrentUser().getProvider()));
+            result.setOccTemplate(occTemplateApi.find(occTemplateCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -92,7 +92,7 @@ public class OccTemplateRsImpl extends BaseRs implements OccTemplateRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            occTemplateApi.remove(occTemplateCode, getCurrentUser());
+            occTemplateApi.remove(occTemplateCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -111,7 +111,7 @@ public class OccTemplateRsImpl extends BaseRs implements OccTemplateRs {
     public ActionStatus createOrUpdate(OccTemplateDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            occTemplateApi.createOrUpdate(postData, getCurrentUser());
+            occTemplateApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -131,7 +131,7 @@ public class OccTemplateRsImpl extends BaseRs implements OccTemplateRs {
         GetOccTemplatesResponseDto result = new GetOccTemplatesResponseDto();
 
         try {
-            result.setOccTemplates(occTemplateApi.list(getCurrentUser().getProvider()));
+            result.setOccTemplates(occTemplateApi.list());
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

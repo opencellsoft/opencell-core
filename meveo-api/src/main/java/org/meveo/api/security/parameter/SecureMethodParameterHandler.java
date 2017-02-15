@@ -10,7 +10,6 @@ import javax.inject.Singleton;
 
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
-import org.meveo.model.admin.User;
 import org.slf4j.Logger;
 
 /**
@@ -48,9 +47,9 @@ public class SecureMethodParameterHandler {
 	 * @throws MeveoApiException
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> T getParameterValue(SecureMethodParameter parameter, Object[] values, Class<T> resultClass, User user) throws MeveoApiException {
+	public <T> T getParameterValue(SecureMethodParameter parameter, Object[] values, Class<T> resultClass) throws MeveoApiException {
 		SecureMethodParameterParser<?> parser = getParser(parameter);
-		Object parameterValue = parser.getParameterValue(parameter, values, user);
+		Object parameterValue = parser.getParameterValue(parameter, values);
 		return (T) parameterValue;
 	}
 

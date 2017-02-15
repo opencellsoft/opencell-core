@@ -1,11 +1,5 @@
 package org.meveo.jpa.event;
 
-import org.hibernate.HibernateException;
-//import org.hibernate.ejb.event.EJB3FlushEventListener;
-import org.hibernate.engine.spi.SessionImplementor;
-import org.meveo.commons.utils.EjbUtils;
-import org.meveo.service.index.ElasticClient;
-
 /**
  * JPA flush event listener. Flushes pending changes to Elastic Search
  * 

@@ -17,7 +17,6 @@ import org.meveo.commons.utils.JAXBUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.AccountImportHisto;
-import org.meveo.model.admin.User;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jaxb.account.Address;
 import org.meveo.model.jaxb.account.BankCoordinates;
@@ -29,8 +28,11 @@ import org.meveo.model.jaxb.account.UserAccounts;
 import org.meveo.model.jaxb.customer.CustomFields;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
 @Stateless
@@ -47,6 +49,14 @@ public class ExportAccountsJobBean {
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
 
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
+    
+    @Inject
+    @ApplicationProvider
+    protected Provider appProvider;
+        
     BillingAccounts billingAccounts;
     ParamBean param = ParamBean.getInstance();
 
@@ -58,9 +68,8 @@ public class ExportAccountsJobBean {
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, String parameter) {
-        Provider provider = currentUser.getProvider();
-
-        String exportDir = param.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + provider.getCode() + File.separator + "exports" + File.separator + "accounts"
+        
+        String exportDir = param.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + appProvider.getCode() + File.separator + "exports" + File.separator + "accounts"
                 + File.separator;
         log.info("exportDir=" + exportDir);
         File dir = new File(exportDir);
@@ -69,7 +78,7 @@ public class ExportAccountsJobBean {
         }
 
         String timestamp = sdf.format(new Date());
-        List<org.meveo.model.billing.BillingAccount> bas = billingAccountService.list(provider);
+        List<org.meveo.model.billing.BillingAccount> bas = billingAccountService.list();
         billingAccounts = billingAccountsToDto(bas, param.getProperty("connectorCRM.dateFormat", "yyyy-MM-dd"));
         try {
             JAXBUtils.marshaller(billingAccounts, new File(dir + File.separator + "ACCOUNT_" + timestamp + ".xml"));

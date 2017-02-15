@@ -56,8 +56,8 @@ import org.meveo.model.finance.RevenueRecognitionRule;
 @ModuleItem
 @ObservableEntity
 @CustomFieldEntity(cftCodePrefix = "CHARGE")
-@ExportIdentifier({ "code", "provider" })
-@Table(name = "CAT_CHARGE_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
+@ExportIdentifier({ "code"})
+@Table(name = "CAT_CHARGE_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_CHARGE_TEMPLATE_SEQ")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class ChargeTemplate extends BusinessCFEntity {

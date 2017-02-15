@@ -44,15 +44,15 @@ import javax.validation.constraints.Size;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.EnableEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
-@ExportIdentifier({ "uuid", "provider" })
-@Table(name = "WF_TRANSITION", uniqueConstraints = @UniqueConstraint(columnNames = { "PROVIDER_ID", "UUID" }))
+@ExportIdentifier({ "uuid"})
+@Table(name = "WF_TRANSITION", uniqueConstraints = @UniqueConstraint(columnNames = { "UUID" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "WF_TRANSITION_SEQ")
 @NamedQueries({ @NamedQuery(name = "WFTransition.listByFromStatus", query = "SELECT wft FROM WFTransition wft where wft.fromStatus=:fromStatusValue and workflow=:workflowValue order by priority ASC") })
-public class WFTransition extends AuditableEntity implements Comparable<WFTransition> {
+public class WFTransition extends EnableEntity implements Comparable<WFTransition> {
 
     private static final long serialVersionUID = 1L;
 

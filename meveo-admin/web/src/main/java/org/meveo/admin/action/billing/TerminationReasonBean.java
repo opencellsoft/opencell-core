@@ -18,9 +18,6 @@
  */
 package org.meveo.admin.action.billing;
 
-import java.util.Arrays;
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -29,7 +26,6 @@ import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.TerminationReasonService;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.context.RequestContext;
 
 /**
  * Standard backing bean for {@link SubscriptionTerminationReason} (extends {@link BaseBean}
@@ -65,10 +61,4 @@ public class TerminationReasonBean extends
 	public String getEditViewName() {
 		return "terminationReasonDetail";
 	}
-
-	@Override
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
-
 }

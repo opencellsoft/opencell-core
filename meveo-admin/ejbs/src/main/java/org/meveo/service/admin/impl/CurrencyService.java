@@ -19,7 +19,6 @@
 package org.meveo.service.admin.impl;
 
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;

@@ -30,7 +30,7 @@ public class CurrencyIsoRsImpl extends BaseRs implements CurrencyIsoRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            currencyIsoApi.create(currencyIsoDto, getCurrentUser());
+            currencyIsoApi.create(currencyIsoDto);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -70,7 +70,7 @@ public class CurrencyIsoRsImpl extends BaseRs implements CurrencyIsoRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            currencyIsoApi.remove(languageCode, getCurrentUser());
+            currencyIsoApi.remove(languageCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -90,7 +90,7 @@ public class CurrencyIsoRsImpl extends BaseRs implements CurrencyIsoRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            currencyIsoApi.update(currencyIsoDto, getCurrentUser());
+            currencyIsoApi.update(currencyIsoDto);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -110,7 +110,7 @@ public class CurrencyIsoRsImpl extends BaseRs implements CurrencyIsoRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            currencyIsoApi.createOrUpdate(currencyIsoDto, getCurrentUser());
+            currencyIsoApi.createOrUpdate(currencyIsoDto);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

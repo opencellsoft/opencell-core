@@ -22,7 +22,7 @@ public class BusinessOfferModelListBean extends BusinessOfferModelBean {
 	}
 
 	public List<BusinessOfferModel> listInstalled() {
-		return businessOfferModelService.listInstalled(getCurrentProvider());
+		return businessOfferModelService.listInstalled();
 	}
 
 }

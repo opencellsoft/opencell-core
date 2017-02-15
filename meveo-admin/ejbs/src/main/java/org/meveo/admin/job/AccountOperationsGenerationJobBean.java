@@ -49,10 +49,9 @@ public class AccountOperationsGenerationJobBean {
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NEVER)
 	public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
-		log.info("Running for user={}", currentUser);
 		try {
 			
-			List<Long> ids = invoiceService.getInvoiceIdsWithNoAccountOperation(null.getProvider());
+			List<Long> ids = invoiceService.getInvoiceIdsWithNoAccountOperation(null);
 			log.debug("invoices to traite:" +( ids == null ? null:ids.size()));
 			
 			Long nbRuns = new Long(1);		

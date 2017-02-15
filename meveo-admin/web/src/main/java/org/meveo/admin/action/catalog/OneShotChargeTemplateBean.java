@@ -19,7 +19,6 @@
 package org.meveo.admin.action.catalog;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -142,9 +141,9 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
     @ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		// check for unicity
-		if (recurringChargeTemplateService.findByCode(entity.getCode(), entity.getProvider()) != null
-				|| usageChargeTemplateService.findByCode(entity.getCode(), entity.getProvider()) != null
-				|| productChargeTemplateService.findByCode(entity.getCode(), entity.getProvider()) != null) {
+		if (recurringChargeTemplateService.findByCode(entity.getCode()) != null
+				|| usageChargeTemplateService.findByCode(entity.getCode()) != null
+				|| productChargeTemplateService.findByCode(entity.getCode()) != null) {
 			messages.error(new BundleKey("messages", "chargeTemplate.uniqueField.code"));
 			return null;
 		}
@@ -189,11 +188,6 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
 	public void setEdrTemplatesModel(DualListModel<TriggeredEDRTemplate> edrTemplates) {	
 		this.edrTemplates = edrTemplates;
 	}
-
-	@Override
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
 	
 	@ActionMethod
 	public void duplicate() {
@@ -201,7 +195,7 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
         if (entity != null && entity.getId() != null) {
             
             try {
-                oneShotChargeTemplateService.duplicate(entity, getCurrentUser());
+                oneShotChargeTemplateService.duplicate(entity);
                 messages.info(new BundleKey("messages", "save.successful"));
             } catch (BusinessException e) {
                 log.error("Error encountered persisting one shot charge template entity: #{0}:#{1}", entity.getCode(), e);
@@ -212,7 +206,7 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
 	
 	public boolean isUsedInSubscription() {
 		return (getEntity() != null && !getEntity().isTransient() && (oneShotChargeTemplateService.findByCode(
-				getEntity().getCode(), getCurrentProvider()) != null)) ? true : false;
+				getEntity().getCode()) != null)) ? true : false;
 	}
 
 	public LazyDataModel<OneShotChargeTemplate> getOtherTypeCharges(){

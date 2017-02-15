@@ -149,8 +149,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 	 */
 	public String transferAccount() {
 		try {
-			customerAccountService.transferAccount(entity, getCustomerAccountTransfer(), getAmountToTransfer(),
-					getCurrentUser());
+			customerAccountService.transferAccount(entity, getCustomerAccountTransfer(), getAmountToTransfer());
 			messages.info(new BundleKey("messages", "customerAccount.transfertOK"));
 			setCustomerAccountTransfer(null);
 			setAmountToTransfer(BigDecimal.ZERO);
@@ -221,7 +220,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 	public String closeCustomerAccount() {
 		log.info("closeAccount customerAccountId:" + entity.getId());
 		try {
-			customerAccountService.closeCustomerAccount(entity, getCurrentUser());
+			customerAccountService.closeCustomerAccount(entity);
 			messages.info(new BundleKey("messages", "customerAccount.closeSuccessful"));
 			
         } catch (Exception e) {
@@ -264,7 +263,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 	public void populateAccounts(Customer customer) {
 		entity.setCustomer(customer);
 		
-		if (customer != null && customer.getProvider() != null && customer.getProvider().isLevelDuplication()) {
+		if (customer != null && appProvider.isLevelDuplication()) {
 
 			entity.setCode(customer.getCode());
 			entity.setDescription(customer.getDescription());
@@ -273,7 +272,6 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 			entity.setExternalRef2(customer.getExternalRef2());
 			entity.setProviderContact(customer.getProviderContact());
 			entity.setName(customer.getName());
-			entity.setProvider(customer.getProvider());
 			entity.setPrimaryContact(customer.getPrimaryContact());
 			entity.setContactInformation(customer.getContactInformation());
 			entity.setMandateIdentification(customer.getMandateIdentification());
@@ -296,11 +294,11 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 
 	@Override
 	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider", "customer");
+		return Arrays.asList("customer");
 	}
 
 	@Override
 	protected List<String> getListFieldsToFetch() {
-		return Arrays.asList("provider", "customer");
+		return Arrays.asList("customer");
 	}
 }

@@ -38,19 +38,19 @@ public class TriggeredEDRTemplateService extends
 	@Inject
 	private RatingCacheContainerProvider ratingCacheContainerProvider;
 
-	public synchronized void duplicate(TriggeredEDRTemplate entity,User currentUser) throws BusinessException{
+	public synchronized void duplicate(TriggeredEDRTemplate entity) throws BusinessException{
 		entity = refreshOrRetrieve(entity);
-		String code=findDuplicateCode(entity,currentUser);
+		String code=findDuplicateCode(entity);
 		
 		// Detach and clear ids of entity and related entities
 		detach(entity);
 		entity.setId(null);
 		entity.setCode(code);
-		create(entity, getCurrentUser());
+		create(entity);
 	}
 	
 	public TriggeredEDRTemplate update(TriggeredEDRTemplate triggerEDRTemplate,User user) throws BusinessException{
-		TriggeredEDRTemplate result = super.update(triggerEDRTemplate, user);
+		TriggeredEDRTemplate result = super.update(triggerEDRTemplate);
 		ratingCacheContainerProvider.updateUsageChargeTemplateInCache(triggerEDRTemplate);
 		return result;	
 	}

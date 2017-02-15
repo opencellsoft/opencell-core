@@ -29,7 +29,7 @@ public class EmailNotificationRsImpl extends BaseRs implements EmailNotification
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            emailNotificationApi.create(postData, getCurrentUser());
+            emailNotificationApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -49,7 +49,7 @@ public class EmailNotificationRsImpl extends BaseRs implements EmailNotification
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            emailNotificationApi.update(postData, getCurrentUser());
+            emailNotificationApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -69,7 +69,7 @@ public class EmailNotificationRsImpl extends BaseRs implements EmailNotification
         GetEmailNotificationResponseDto result = new GetEmailNotificationResponseDto();
 
         try {
-            result.setEmailNotificationDto(emailNotificationApi.find(notificationCode, getCurrentUser()));
+            result.setEmailNotificationDto(emailNotificationApi.find(notificationCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -89,7 +89,7 @@ public class EmailNotificationRsImpl extends BaseRs implements EmailNotification
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            emailNotificationApi.remove(notificationCode, getCurrentUser());
+            emailNotificationApi.remove(notificationCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -109,7 +109,7 @@ public class EmailNotificationRsImpl extends BaseRs implements EmailNotification
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            emailNotificationApi.createOrUpdate(postData, getCurrentUser());
+            emailNotificationApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

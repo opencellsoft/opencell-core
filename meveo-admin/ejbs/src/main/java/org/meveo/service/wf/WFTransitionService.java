@@ -28,8 +28,6 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.admin.User;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.wf.WFAction;
 import org.meveo.model.wf.WFDecisionRule;
 import org.meveo.model.wf.WFTransition;
@@ -57,7 +55,7 @@ public class WFTransitionService extends PersistenceService<WFTransition> {
 		 return wfTransitions;
 	}
 
-    public WFTransition findWFTransitionByUUID(String uuid, Provider provider) {
+    public WFTransition findWFTransitionByUUID(String uuid) {
         WFTransition wfTransition = null;
         try {
             wfTransition = (WFTransition) getEntityManager()
@@ -65,9 +63,9 @@ public class WFTransitionService extends PersistenceService<WFTransition> {
                             "from "
                                     + WFTransition.class
                                     .getSimpleName()
-                                    + " where uuid=:uuid and provider=:provider")
+                                    + " where uuid=:uuid ")
                     .setParameter("uuid", uuid)
-                    .setParameter("provider", provider)
+                    
                     .getSingleResult();
         } catch (NoResultException e) {
             log.error("failed to find WFTransition", e);
@@ -76,22 +74,22 @@ public class WFTransitionService extends PersistenceService<WFTransition> {
     }
 
     @SuppressWarnings("unchecked")
-	public List<WFTransition> listWFTransitionByStatusWorkFlow(String fromStatus, String toStatus, Workflow workflow, Provider provider){
+	public List<WFTransition> listWFTransitionByStatusWorkFlow(String fromStatus, String toStatus, Workflow workflow){
         List<WFTransition> wfTransitions =  ((List<WFTransition>) getEntityManager()
                 .createQuery(
                         "from "
                                 + WFTransition.class
                                 .getSimpleName()
-                                + " where fromStatus=:fromStatus and toStatus=:toStatus and workflow=:workflow and provider=:provider order by priority ASC")
+                                + " where fromStatus=:fromStatus and toStatus=:toStatus and workflow=:workflow order by priority ASC")
                 .setParameter("fromStatus", fromStatus)
                 .setParameter("toStatus", toStatus)
                 .setParameter("workflow", workflow)
-                .setParameter("provider", provider)
+                
                 .getResultList());
         return wfTransitions;
     }
     
-	public synchronized WFTransition duplicate(WFTransition entity, Workflow workflow, User currentUser) throws BusinessException {
+	public synchronized WFTransition duplicate(WFTransition entity, Workflow workflow) throws BusinessException {
 		entity = refreshOrRetrieve(entity);
 		
 		if (workflow != null) {
@@ -112,7 +110,7 @@ public class WFTransitionService extends PersistenceService<WFTransition> {
 		Set<WFDecisionRule> wfDecisionRules = entity.getWfDecisionRules();
 		entity.setWfDecisionRules(new HashSet<WFDecisionRule>());
 
-		create(entity, currentUser);
+		create(entity);
 		
 		workflow.getTransitions().add(entity);
 		
@@ -121,7 +119,7 @@ public class WFTransitionService extends PersistenceService<WFTransition> {
 				wfActionService.detach(wfAction);
 				wfAction.setId(null);
 				wfAction.clearUuid();
-				wfActionService.create(wfAction, currentUser);
+				wfActionService.create(wfAction);
 
 				entity.getWfActions().add(wfAction);
 			}
@@ -133,7 +131,7 @@ public class WFTransitionService extends PersistenceService<WFTransition> {
 			}
 		}
 
-		update(entity, currentUser);
+		update(entity);
 
 		return entity;
 	}

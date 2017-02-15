@@ -26,8 +26,6 @@ import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.admin.User;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.MatchingAmount;
 import org.meveo.model.payments.MatchingStatusEnum;
@@ -39,13 +37,11 @@ public class MatchingAmountService extends PersistenceService<MatchingAmount> {
 	@Inject
 	private AccountOperationService accountOperationService;
 
-	public void unmatching(Long idMatchingAmount, User user) throws BusinessException {
-		log.info("start cancelMatchingAmount with id:#0,user:#1", idMatchingAmount, user);
-		if (idMatchingAmount == null)
-			throw new BusinessException("Error when idMatchingAmount is null!");
-		if (user == null || user.getId() == null) {
-			throw new BusinessException("Error when user is null!");
-		}
+	public void unmatching(Long idMatchingAmount) throws BusinessException {
+		log.info("start cancelMatchingAmount with id:#0,user:#1", idMatchingAmount);
+        if (idMatchingAmount == null) {
+            throw new BusinessException("Error when idMatchingAmount is null!");
+        }
 		MatchingAmount matchingAmount = findById(idMatchingAmount);
 		if (matchingAmount == null) {
 			log.warn("Error when found a null matchingCode!");
@@ -65,15 +61,14 @@ public class MatchingAmountService extends PersistenceService<MatchingAmount> {
 			operation.setMatchingStatus(MatchingStatusEnum.P);
 		}
 		operation.getMatchingAmounts().remove(matchingAmount);
-		operation.updateAudit(user);
 		accountOperationService.updateNoCheck(operation);
 		log.info("cancel one accountOperation!");
 
 		log.info("successfully end cancelMatching!");
 	}
 
-	public MatchingAmount findByCode(String matchingCode, Provider provider) {
-		QueryBuilder qb = new QueryBuilder(MatchingAmount.class, "m", null, provider);
+	public MatchingAmount findByCode(String matchingCode) {
+		QueryBuilder qb = new QueryBuilder(MatchingAmount.class, "m", null);
 		qb.addCriterion("matchingCode", "=", matchingCode, true);
 
 		try {

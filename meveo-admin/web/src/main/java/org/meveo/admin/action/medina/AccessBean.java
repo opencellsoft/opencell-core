@@ -18,16 +18,11 @@
  */
 package org.meveo.admin.action.medina;
 
-import java.util.Arrays;
-import java.util.List;
-
 import javax.ejb.EJB;
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
@@ -39,6 +34,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.medina.impl.CDRParsingService;
+import org.omnifaces.cdi.Param;
 import org.omnifaces.cdi.ViewScoped;
 
 /**
@@ -66,8 +62,8 @@ public class AccessBean extends CustomFieldBean<Access> {
 	private CDRParsingService cdrParsingService;
 
 	@Inject
-	@RequestParam
-	private Instance<Long> subscriptionId;
+	@Param
+	private Long subscriptionId;
 
 	private Subscription selectedSubscription;
 
@@ -84,8 +80,8 @@ public class AccessBean extends CustomFieldBean<Access> {
 		super.initEntity();
 
 		log.debug("AccesBean initEntity id={}", entity.getId());
-		if (subscriptionId.get() != null) {
-			Subscription subscription = subscriptionService.findById(subscriptionId.get());
+		if (subscriptionId != null) {
+			Subscription subscription = subscriptionService.findById(subscriptionId);
 			entity.setStartDate(subscription.getSubscriptionDate());
 			entity.setSubscription(subscription);
 		}
@@ -117,8 +113,8 @@ public class AccessBean extends CustomFieldBean<Access> {
 
     @ActionMethod
 	public String saveOrUpdate() throws BusinessException {
-		if (subscriptionId.get() != null) {
-			Subscription subscription = subscriptionService.findById(subscriptionId.get());
+		if (subscriptionId != null) {
+			Subscription subscription = subscriptionService.findById(subscriptionId);
 			entity.setSubscription(subscription);
 		}
 
@@ -154,25 +150,15 @@ public class AccessBean extends CustomFieldBean<Access> {
 	public void resetEntity() {
 		entity = new Access();
 
-		if (subscriptionId.get() != null) {
-			Subscription subscription = subscriptionService.findById(subscriptionId.get());
+		if (subscriptionId != null) {
+			Subscription subscription = subscriptionService.findById(subscriptionId);
 			entity.setStartDate(subscription.getSubscriptionDate());
 			entity.setSubscription(subscription);
 		}
 	}
-
-	@Override
-	protected List<String> getListFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
-
-	@Override
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
-
+	
 	public Long getSubscriptionId() {
-		return subscriptionId.get();
+		return subscriptionId;
 	}
 
 	public void setSubscriptionId(Long subscriptionId) {

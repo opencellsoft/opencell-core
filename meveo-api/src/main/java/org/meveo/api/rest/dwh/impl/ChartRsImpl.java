@@ -31,7 +31,7 @@ public class ChartRsImpl extends BaseRs implements ChartRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            chartApi.create(postData, getCurrentUser());
+            chartApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -51,7 +51,7 @@ public class ChartRsImpl extends BaseRs implements ChartRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            chartApi.update(postData, getCurrentUser());
+            chartApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -71,7 +71,7 @@ public class ChartRsImpl extends BaseRs implements ChartRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            chartApi.remove(chartCode, getCurrentUser());
+            chartApi.remove(chartCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -91,7 +91,7 @@ public class ChartRsImpl extends BaseRs implements ChartRs {
         GetChartResponse result = new GetChartResponse();
 
         try {
-            result.setChartDto(chartApi.find(chartCode, getCurrentUser()));
+            result.setChartDto(chartApi.find(chartCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -111,7 +111,7 @@ public class ChartRsImpl extends BaseRs implements ChartRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            chartApi.createOrUpdate(postData, getCurrentUser());
+            chartApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -131,7 +131,7 @@ public class ChartRsImpl extends BaseRs implements ChartRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            chartApi.create(postData, getCurrentUser());
+            chartApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -151,7 +151,7 @@ public class ChartRsImpl extends BaseRs implements ChartRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            chartApi.create(postData, getCurrentUser());
+            chartApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -171,7 +171,7 @@ public class ChartRsImpl extends BaseRs implements ChartRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            chartApi.create(postData, getCurrentUser());
+            chartApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -191,7 +191,7 @@ public class ChartRsImpl extends BaseRs implements ChartRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            chartApi.update(postData, getCurrentUser());
+            chartApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -211,7 +211,7 @@ public class ChartRsImpl extends BaseRs implements ChartRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            chartApi.update(postData, getCurrentUser());
+            chartApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -231,7 +231,7 @@ public class ChartRsImpl extends BaseRs implements ChartRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            chartApi.update(postData, getCurrentUser());
+            chartApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

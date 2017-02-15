@@ -17,7 +17,7 @@
             <!-- https://docs.jboss.org/hibernate/stable/core.old/reference/en/html/transactions-connection-release.html -->
             <property name="hibernate.connection.release_mode" value="auto" />
             <property name="hibernate.id.new_generator_mappings" value="false" />
-            <property name="hibernate.ejb.event.flush" value="org.meveo.jpa.event.FlushEventListener" />
+<!--             <property name="hibernate.ejb.event.flush" value="org.meveo.jpa.event.FlushEventListener" /> Needed for ES -->
             <!-- <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" /> -->
             <!-- <property name="hibernate.ejb.interceptor.session_scoped" value="org.meveo.jpa.event.HibernateInterceptor extends EmptyInterceptor" /> -->
             <!-- <property name="hibernate.cache.provider_configuration_file_resource_path" value="ehcache.xml"></property> -->

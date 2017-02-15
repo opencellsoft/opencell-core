@@ -29,9 +29,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.admin.impl.PermissionService;
 import org.meveo.service.base.BusinessService;
@@ -88,37 +86,37 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
     }
 
     @Override
-    public void remove(Long id, User currentUser) throws BusinessException {
+    public void remove(Long id) throws BusinessException {
 
         CustomEntityTemplate cet = findById(id);
 
-        Map<String, CustomFieldTemplate> fields = customFieldTemplateService.findByAppliesTo(cet.getAppliesTo(), cet.getProvider());
+        Map<String, CustomFieldTemplate> fields = customFieldTemplateService.findByAppliesTo(cet.getAppliesTo());
 
         for (CustomFieldTemplate cft : fields.values()) {
-            customFieldTemplateService.remove(cft.getId(), currentUser);
+            customFieldTemplateService.remove(cft.getId());
         }
-        super.remove(id, currentUser);
+        super.remove(id);
 
         customFieldsCache.removeCustomEntityTemplate(cet);
     }
 
     @Override
-    public List<CustomEntityTemplate> list(Provider provider, Boolean active) {
+    public List<CustomEntityTemplate> list(Boolean active) {
 
         boolean useCache = Boolean.parseBoolean(paramBean.getProperty("cache.cacheCET", "true"));
         if (useCache && (active == null || active)) {
 
             List<CustomEntityTemplate> cets = new ArrayList<CustomEntityTemplate>();
-            cets.addAll(customFieldsCache.getCustomEntityTemplates(provider));
+            cets.addAll(customFieldsCache.getCustomEntityTemplates());
             return cets;
 
         } else {
-            return super.list(provider, active);
+            return super.list(active);
         }
     }
 
-    public List<CustomEntityTemplate> listNoCache(Provider provider) {
-        return super.list(provider, null);
+    public List<CustomEntityTemplate> listNoCache() {
+        return super.list((Boolean)null);
     }
 
     @Override
@@ -129,7 +127,7 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
                 && (config.getFilters() == null || config.getFilters().isEmpty() || (config.getFilters().size() == 1 && config.getFilters().get("disabled") != null && !(boolean) config
                     .getFilters().get("disabled")))) {
             List<CustomEntityTemplate> cets = new ArrayList<CustomEntityTemplate>();
-            cets.addAll(customFieldsCache.getCustomEntityTemplates(getCurrentProvider()));
+            cets.addAll(customFieldsCache.getCustomEntityTemplates());
             return cets;
 
         } else {

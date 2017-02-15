@@ -52,8 +52,8 @@ import org.meveo.model.mediation.Access;
 @Entity
 @ObservableEntity
 @CustomFieldEntity(cftCodePrefix = "SUB")
-@ExportIdentifier({ "code", "provider" })
-@Table(name = "BILLING_SUBSCRIPTION", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
+@ExportIdentifier({ "code"})
+@Table(name = "BILLING_SUBSCRIPTION", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_SUBSCRIPTION_SEQ")
 public class Subscription extends BusinessCFEntity{
 

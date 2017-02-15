@@ -21,10 +21,10 @@ package org.meveo.model;
 import javax.persistence.Embedded;
 import javax.persistence.MappedSuperclass;
 
-import org.meveo.model.admin.User;
+import org.meveo.security.MeveoUser;
 
 @MappedSuperclass
-public abstract class AuditableEntity extends EnableEntity implements IAuditable {
+public abstract class AuditableEntity extends BaseEntity implements IAuditable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -46,7 +46,7 @@ public abstract class AuditableEntity extends EnableEntity implements IAuditable
 		this.auditable = auditable;
 	}
 
-	public void updateAudit(User u) {
+	public void updateAudit(MeveoUser u) {
 		if (auditable == null) {
 			auditable = new Auditable(u);
 		} else {

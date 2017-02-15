@@ -10,14 +10,12 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.admin.User;
 import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.DigitalResource;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.base.MultilanguageEntityService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 
@@ -27,24 +25,24 @@ public class ProductTemplateService extends MultilanguageEntityService<ProductTe
 	@Inject
 	private CustomFieldInstanceService customFieldInstanceService;
 
-	public long countProductTemplateActive(boolean status, Provider provider) {
+	public long countProductTemplateActive(boolean status) {
 		long result = 0;
 
 		Query query;
 
 		if (status) {
-			query = getEntityManager().createNamedQuery("ProductTemplate.countActive").setParameter("provider", provider);
+			query = getEntityManager().createNamedQuery("ProductTemplate.countActive");
 		} else {
-			query = getEntityManager().createNamedQuery("ProductTemplate.countDisabled").setParameter("provider", provider);
+			query = getEntityManager().createNamedQuery("ProductTemplate.countDisabled");
 		}
 
 		result = (long) query.getSingleResult();
 		return result;
 	}
 
-	public long countProductTemplateExpiring(Provider provider) {	
+	public long countProductTemplateExpiring() {	
         Long result = 0L;
-        Query query = getEntityManager().createNamedQuery("ProductTemplate.countExpiring").setParameter("provider", provider);
+        Query query = getEntityManager().createNamedQuery("ProductTemplate.countExpiring");
         Calendar c = Calendar.getInstance();
         c.add(Calendar.DATE, -1);
         query.setParameter("nowMinus1Day", c.getTime());
@@ -57,7 +55,7 @@ public class ProductTemplateService extends MultilanguageEntityService<ProductTe
         return result;		
 	}
 
-	public synchronized void duplicate(ProductTemplate entity, User currentUser) throws BusinessException {
+	public synchronized void duplicate(ProductTemplate entity) throws BusinessException {
 		entity = refreshOrRetrieve(entity);
 
 		// Lazy load related values first
@@ -67,7 +65,7 @@ public class ProductTemplateService extends MultilanguageEntityService<ProductTe
 		entity.getChannels().size();
 		entity.getOfferTemplateCategories().size();
 
-		String code = findDuplicateCode(entity, currentUser);
+		String code = findDuplicateCode(entity);
 
 		// Detach and clear ids of entity and related entities
 		detach(entity);
@@ -90,7 +88,7 @@ public class ProductTemplateService extends MultilanguageEntityService<ProductTe
 		entity.setWalletTemplates(new ArrayList<WalletTemplate>());
 
 		entity.setCode(code);
-		create(entity, getCurrentUser());
+		create(entity);
 
 		if (businessAccountModels != null) {
 			for (BusinessAccountModel bam : businessAccountModels) {
@@ -122,8 +120,8 @@ public class ProductTemplateService extends MultilanguageEntityService<ProductTe
 			}
 		}
 
-		update(entity, currentUser);
-		customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity, getCurrentUser());
+		update(entity);
+		customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity);
 	}
 
 }

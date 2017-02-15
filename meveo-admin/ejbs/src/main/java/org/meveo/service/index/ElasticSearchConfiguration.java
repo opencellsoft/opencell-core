@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.ejb.Singleton;
+import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.commons.utils.ReflectionUtils;
@@ -20,6 +21,7 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.util.ApplicationProvider;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -53,11 +55,6 @@ public class ElasticSearchConfiguration implements Serializable {
     private Map<String, Map<String, String>> fieldMap = new HashMap<>();
 
     /**
-     * Contains a mapping of provider id to provider code
-     */
-    private Map<Long, String> providerCodes = new HashMap<>();
-
-    /**
      * Contains index configuration/data model for each index. Index name does not contain provider code prefix.
      */
     private Map<String, String> dataModels = new HashMap<>();
@@ -75,6 +72,10 @@ public class ElasticSearchConfiguration implements Serializable {
     // @Inject
     // private Logger log;
 
+    @Inject
+    @ApplicationProvider
+    private Provider appProvider;
+    
     /**
      * Load configuration from elasticSearchConfiguration.json file
      * 
@@ -162,27 +163,23 @@ public class ElasticSearchConfiguration implements Serializable {
      * @return Index property name
      */
     public String getIndex(BusinessEntity entity) {
-        return getIndex(entity.getClass(), entity.getProvider());
+        return getIndex(entity.getClass());
     }
 
     /**
      * Determine index value for Elastic Search for a given entity class and provider. Index name is prefixed by provider code (removed spaces and lowercase).
      * 
      * @param clazzToConvert Entity class
-     * @param provider Provider
      * @return Index property name
      */
     @SuppressWarnings("rawtypes")
-    public String getIndex(Class<? extends BusinessEntity> clazzToConvert, Provider provider) {
+    public String getIndex(Class<? extends BusinessEntity> clazzToConvert) {
 
         Class clazz = clazzToConvert;
         while (!BusinessEntity.class.equals(clazz)) {
             if (indexMap.containsKey(clazz.getSimpleName())) {
 
-                if (!providerCodes.containsKey(provider.getId())) {
-                    providerCodes.put(provider.getId(), ElasticClient.cleanUpCode(provider.getCode()).toLowerCase());
-                }
-                return providerCodes.get(provider.getId()) + "_" + indexMap.get(clazz.getSimpleName());
+                return appProvider.getCode()+"_" + indexMap.get(clazz.getSimpleName());
             }
             clazz = clazz.getSuperclass();
         }
@@ -193,40 +190,31 @@ public class ElasticSearchConfiguration implements Serializable {
     /**
      * Get a unique list of indexes for given entity classes
      * 
-     * @param provider Provider
      * @param classesInfo A list of entity class information
      * @return A set of index property names
      */
-    public Set<String> getIndexes(Provider provider, List<ElasticSearchClassInfo> classesInfo) {
+    public Set<String> getIndexes(List<ElasticSearchClassInfo> classesInfo) {
 
         Set<String> indexes = new HashSet<>();
 
         for (ElasticSearchClassInfo classInfo : classesInfo) {
-            indexes.add(getIndex(classInfo.getClazz(), provider));
+            indexes.add(getIndex(classInfo.getClazz()));
         }
 
         return indexes;
     }
 
     /**
-     * Get a unique list of indexes for given provider
+     * Get a unique list of indexes
      * 
-     * @param provider Provider
      * @return A set of index property names
      */
-    public Set<String> getIndexes(Provider provider) {
+    public Set<String> getIndexes() {
 
         Set<String> indexNames = new HashSet<>();
 
-        String providerCode = providerCodes.get(provider.getId());
-
-        if (providerCode == null) {
-            providerCode = ElasticClient.cleanUpCode(provider.getCode()).toLowerCase();
-            providerCodes.put(provider.getId(), providerCode);
-        }
-
         for (String indexName : indexMap.values()) {
-            indexNames.add(providerCode + "_" + indexName);
+            indexNames.add(appProvider.getCode()+"_" + indexName);
         }
 
         return indexNames;

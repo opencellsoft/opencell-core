@@ -51,12 +51,12 @@
 	<p:tooltip for="orders">#{help['menu.orders']}</p:tooltip>
     <p:tooltip for="quotes">#{help['menu.quotes']}</p:tooltip>
 	<c:set var="cetIndex" value="0" />
-	<c:forEach items="#{customEntityTemplateBean.listAll}" var="cet">
-		<c:if test="#{identity.hasPermission(cet.permissionResourceName, 'read') }">
-			<p:tooltip for="cet_#{cetIndex}" value="#{cet.description}" />
-			<c:set var="cetIndex" value="#{cetIndex + 1}" />
-		</c:if>
-	</c:forEach>
+<!-- 	<c:forEach items="#{customEntityTemplateBean.listAll()}" var="cet"> -->
+<!-- 		<c:if test="#{identity.hasPermission(cet.permissionResourceName, 'read') }"> -->
+<!-- 			<p:tooltip for="cet_#{cetIndex}" value="#{cet.description}" /> -->
+<!-- 			<c:set var="cetIndex" value="#{cetIndex + 1}" /> -->
+<!-- 		</c:if> -->
+<!-- 	</c:forEach> -->
 
 	<div class="Container">
 		<div class="Container5 NoIndent">

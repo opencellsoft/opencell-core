@@ -16,7 +16,6 @@ import org.meveo.admin.ftp.event.FileDelete;
 import org.meveo.admin.ftp.event.FileDownload;
 import org.meveo.admin.ftp.event.FileRename;
 import org.meveo.admin.ftp.event.FileUpload;
-import org.meveo.model.Auditable;
 import org.meveo.model.mediation.ActionEnum;
 import org.meveo.model.mediation.MeveoFtpFile;
 import org.meveo.service.admin.impl.UserService;
@@ -91,10 +90,7 @@ public class MeveoDefaultFtplet extends DefaultFtplet {
 			User user = session.getUser();
 			file.setAction(action);
 			org.meveo.model.admin.User meveoUser = userService.findByUsername(user.getName());
-			file.setProvider(meveoUser.getProvider());
 			file.setDisabled(false);
-			file.setAuditable(new Auditable());
-			file.getAuditable().setCreator(meveoUser);
 			log.debug("trace ftp file {}", file);
 			return file;
 		}

@@ -27,7 +27,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.EnableEntity;
 
 /**
  * RejectedBillingAccount.
@@ -35,7 +35,7 @@ import org.meveo.model.AuditableEntity;
 @Entity
 @Table(name = "BILLING_REJECTED_BILLING_ACCOUNTS")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_REJECTED_BA_SEQ")
-public class RejectedBillingAccount extends AuditableEntity {
+public class RejectedBillingAccount extends EnableEntity {
 
 	private static final long serialVersionUID = 1L;
 

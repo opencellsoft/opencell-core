@@ -4,7 +4,6 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.NotificationCacheContainerProvider;
-import org.meveo.model.admin.User;
 import org.meveo.model.notification.Notification;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.billing.impl.CounterInstanceService;
@@ -43,21 +42,21 @@ public abstract class NotificationInstanceService<T extends Notification> extend
     }
 
     @Override
-    public void remove(T notification, User currentUser) throws BusinessException {
-        super.remove(notification, currentUser);
+    public void remove(T notification) throws BusinessException {
+        super.remove(notification);
         notificationCacheContainerProvider.removeNotificationFromCache(notification);
     }
 
     @Override
-    public T disable(T notification, User currentUser) throws BusinessException {
-        notification = super.disable(notification, currentUser);
+    public T disable(T notification) throws BusinessException {
+        notification = super.disable(notification);
         notificationCacheContainerProvider.removeNotificationFromCache(notification);
         return notification;
     }
 
     @Override
-    public T enable(T notification, User currentUser) throws BusinessException {
-        notification = super.enable(notification, currentUser);
+    public T enable(T notification) throws BusinessException {
+        notification = super.enable(notification);
         notificationCacheContainerProvider.addNotificationToCache(notification);
         return notification;
     }
@@ -68,17 +67,17 @@ public abstract class NotificationInstanceService<T extends Notification> extend
      * @param entity Entity being saved or updated
      * @throws BusinessException
      */
-    protected void manageCounterInstantiation(T entity, User currentUser) throws BusinessException {
+    protected void manageCounterInstantiation(T entity) throws BusinessException {
 
         // Remove counter instance if counter is no longer associated to a notification
         if (entity.getCounterTemplate() == null && entity.getCounterInstance() != null) {
-            counterInstanceService.remove(entity.getCounterInstance(), currentUser);
+            counterInstanceService.remove(entity.getCounterInstance());
 
             // Instantiate a a counter instance if new template was specified or it was changed
         } else if (entity.getCounterTemplate() != null
                 && (entity.getCounterInstance() == null || (entity.getCounterInstance() != null && !entity.getCounterTemplate().getId()
                     .equals(entity.getCounterInstance().getCounterTemplate().getId())))) {
-            counterInstanceService.counterInstanciation(entity, entity.getCounterTemplate(), currentUser);
+            counterInstanceService.counterInstanciation(entity, entity.getCounterTemplate());
         }
     }
 }

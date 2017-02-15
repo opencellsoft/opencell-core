@@ -9,7 +9,6 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.AccountEntity;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.Country;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.Name;
@@ -30,7 +29,7 @@ public class AccountApi extends BaseApi {
     @Inject
     private CountryService countryService;
 
-    public void populate(AccountDto postData, AccountEntity accountEntity, User currentUser) throws MeveoApiException {
+    public void populate(AccountDto postData, AccountEntity accountEntity) throws MeveoApiException {
         Address address = new Address();
         if (postData.getAddress() != null) {
             address.setAddress1(postData.getAddress().getAddress1());
@@ -51,7 +50,7 @@ public class AccountApi extends BaseApi {
             name.setFirstName(postData.getName().getFirstName());
             name.setLastName(postData.getName().getLastName());
             if (!StringUtils.isBlank(postData.getName().getTitle())) {
-                Title title = titleService.findByCode(postData.getName().getTitle(), currentUser.getProvider());
+                Title title = titleService.findByCode(postData.getName().getTitle());
                 if (title == null) {
                     throw new EntityDoesNotExistsException(Title.class, postData.getName().getTitle());
                 } else {
@@ -69,11 +68,11 @@ public class AccountApi extends BaseApi {
 
     }
 
-    public void updateAccount(AccountEntity accountEntity, AccountDto postData, User currentUser) throws MeveoApiException {
-        updateAccount(accountEntity, postData, currentUser, true);
+    public void updateAccount(AccountEntity accountEntity, AccountDto postData) throws MeveoApiException {
+        updateAccount(accountEntity, postData, true);
     }
 
-    public void updateAccount(AccountEntity accountEntity, AccountDto postData, User currentUser, boolean checkCustomFields) throws MeveoApiException {
+    public void updateAccount(AccountEntity accountEntity, AccountDto postData, boolean checkCustomFields) throws MeveoApiException {
         Address address = accountEntity.getAddress() == null ? new Address() : accountEntity.getAddress();
         if (postData.getAddress() != null) {
 
@@ -112,7 +111,7 @@ public class AccountApi extends BaseApi {
                 name.setLastName(postData.getName().getLastName());
             }
             if (!StringUtils.isBlank(postData.getName().getTitle())) {
-                Title title = titleService.findByCode(postData.getName().getTitle(), currentUser.getProvider());
+                Title title = titleService.findByCode(postData.getName().getTitle());
                 if (title == null) {
                     throw new EntityDoesNotExistsException(Title.class, postData.getName().getTitle());
                 } else {

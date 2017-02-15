@@ -59,6 +59,7 @@ import org.meveo.model.payments.DDRequestItem;
 import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
 @Stateless
@@ -66,6 +67,10 @@ public class SepaFileBuilder {
 
 	@Inject
 	private Logger log;
+	
+    @Inject
+    @ApplicationProvider
+    private Provider appProvider;
 
 	public void addHeader(CstmrDrctDbtInitn Message, DDRequestLOT ddRequestLOT)
 			throws Exception {
@@ -79,7 +84,7 @@ public class SepaFileBuilder {
 		groupHeader.setCtrlSum(ddRequestLOT.getInvoicesAmount().setScale(2,
 				RoundingMode.HALF_UP));
 		InitgPty initgPty = new InitgPty();
-		initgPty.setNm(ddRequestLOT.getProvider().getDescription());
+		initgPty.setNm(appProvider.getDescription());
 		groupHeader.setInitgPty(initgPty);
 
 	}
@@ -89,7 +94,6 @@ public class SepaFileBuilder {
 
 		log.info("addPaymentInformation dDRequestItem id="
 				+ dDRequestItem.getId());
-		Provider provider = dDRequestItem.getProvider();
 
 		PmtInf PaymentInformation = new PmtInf();
 		Message.getPmtInf().add(PaymentInformation);
@@ -111,9 +115,9 @@ public class SepaFileBuilder {
 
 		PaymentInformation.setReqdColltnDt(DateUtils.dateToXMLGregorianCalendar(new Date())); // à revoir
 
-		BankCoordinates providerBC = provider.getBankCoordinates();
+		BankCoordinates providerBC = appProvider.getBankCoordinates();
 		Cdtr Creditor = new Cdtr();
-		Creditor.setNm(provider.getDescription());
+		Creditor.setNm(appProvider.getDescription());
 		PaymentInformation.setCdtr(Creditor);
 
 		CdtrAcct CreditorAccount = new CdtrAcct();

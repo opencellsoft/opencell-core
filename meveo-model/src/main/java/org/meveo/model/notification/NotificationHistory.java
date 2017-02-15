@@ -13,12 +13,12 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.EnableEntity;
 
 @Entity
 @Table(name="ADM_NOTIF_HISTORY")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_NOTIF_HISTORY_SEQ")
-public class NotificationHistory extends AuditableEntity {
+public class NotificationHistory extends EnableEntity {
 	
 	private static final long serialVersionUID = -6882236977852466160L;
 

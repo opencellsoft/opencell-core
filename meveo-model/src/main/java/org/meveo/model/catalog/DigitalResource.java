@@ -17,8 +17,8 @@ import org.meveo.model.ExportIdentifier;
  * @author Edward P. Legaspi
  */
 @Entity
-@ExportIdentifier({ "code", "provider" })
-@Table(name = "CAT_DIGITAL_RESOURCE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
+@ExportIdentifier({ "code"})
+@Table(name = "CAT_DIGITAL_RESOURCE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_DIGITAL_RESOURCE_SEQ")
 public class DigitalResource extends BusinessEntity {
 

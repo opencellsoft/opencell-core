@@ -5,7 +5,6 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.admin.User;
 
 /**
  * This is the default parser for {@link SecuredBusinessEntityMethod} annotated
@@ -19,7 +18,7 @@ import org.meveo.model.admin.User;
 public class CodeParser extends SecureMethodParameterParser<BusinessEntity> {
 
 	@Override
-	public BusinessEntity getParameterValue(SecureMethodParameter parameter, Object[] values, User user) throws MeveoApiException {
+	public BusinessEntity getParameterValue(SecureMethodParameter parameter, Object[] values) throws MeveoApiException {
 		if (parameter == null) {
 			return null;
 		}

@@ -20,8 +20,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.model.admin.User;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.notification.Notification;
 import org.meveo.security.CurrentUser;
@@ -61,16 +59,13 @@ public class InternalNotificationJobBean {
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(String filterCode, String notificationCode, JobExecutionResultImpl result) {
-		log.debug("Running for user={}, filterCode={}", currentUser, filterCode);
-		Provider provider = currentUser.getProvider();
+		log.debug("Running with filterCode={}", filterCode);
 		if (StringUtils.isBlank(filterCode)) {
 			result.registerError("filterCode has no SQL query set.");
 			return;
-		} else if (filterCode.indexOf("#{provider}") < 0) {
-			result.registerError("filterCode must filter result by provider using the #{provider} variable.");
-			return;
 		}
-		Notification notification = notificationService.findByCode(em, notificationCode, provider);
+		
+		Notification notification = notificationService.findByCode(notificationCode);
 		if (notification == null) {
 			result.registerError("no notification found for " + notificationCode);
 			return;
@@ -79,7 +74,6 @@ public class InternalNotificationJobBean {
 
 			String queryStr = filterCode.replaceAll("#\\{date\\}", df.format(new Date()));
 			queryStr = queryStr.replaceAll("#\\{dateTime\\}", tf.format(new Date()));
-			queryStr = queryStr.replaceAll("#\\{provider\\}", "" + provider.getId());
 			log.debug("execute query:{}", queryStr);
 			Query query = em.createNativeQuery(queryStr);
 			@SuppressWarnings("unchecked")

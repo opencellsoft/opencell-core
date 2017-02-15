@@ -27,7 +27,6 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.TradingCountry;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
@@ -35,13 +34,13 @@ public class InvoiceSubCategoryCountryService extends
 		PersistenceService<InvoiceSubcategoryCountry> {
 
     @SuppressWarnings("unchecked")
-    public InvoiceSubcategoryCountry findInvoiceSubCategoryCountry(String invoiceSubCategoryCode, Long countryId, Provider provider) {
+    public InvoiceSubcategoryCountry findInvoiceSubCategoryCountry(String invoiceSubCategoryCode, Long countryId) {
 
         try {
             QueryBuilder qb = new QueryBuilder(InvoiceSubcategoryCountry.class, "i");
             qb.addCriterion("invoiceSubCategory.code", "=", invoiceSubCategoryCode, true);
             qb.addCriterion("tradingCountry.id", "=", countryId, true);
-            qb.addCriterionEntity("provider", provider);
+            
 
             List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries = qb.getQuery(getEntityManager()).getResultList();
             return invoiceSubcategoryCountries.size() > 0 ? invoiceSubcategoryCountries.get(0) : null;
@@ -53,13 +52,13 @@ public class InvoiceSubCategoryCountryService extends
     }
     
     @SuppressWarnings("unchecked")
-    public InvoiceSubcategoryCountry findInvoiceSubCategoryCountry(Long invoiceSubCategoryId, Long countryId, Provider provider) {
+    public InvoiceSubcategoryCountry findInvoiceSubCategoryCountry(Long invoiceSubCategoryId, Long countryId) {
 
         try {
             QueryBuilder qb = new QueryBuilder(InvoiceSubcategoryCountry.class, "i");
             qb.addCriterion("invoiceSubCategory.id", "=", invoiceSubCategoryId, true);
             qb.addCriterion("tradingCountry.id", "=", countryId, true);
-            qb.addCriterionEntity("provider", provider);
+            
 
             List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries = qb.getQuery(getEntityManager()).getResultList();
             return invoiceSubcategoryCountries.size() > 0 ? invoiceSubcategoryCountries.get(0) : null;
@@ -72,20 +71,18 @@ public class InvoiceSubCategoryCountryService extends
 
 	public InvoiceSubcategoryCountry findByInvoiceSubCategoryAndCountry(
 			InvoiceSubCategory invoiceSubCategory,
-			TradingCountry tradingCountry, Provider provider) {
+			TradingCountry tradingCountry) {
 		return findByInvoiceSubCategoryAndCountry(invoiceSubCategory,
-				tradingCountry, null, provider);
+				tradingCountry, null);
 	}
 
 	public InvoiceSubcategoryCountry findByInvoiceSubCategoryAndCountry(
 			InvoiceSubCategory invoiceSubCategory,
-			TradingCountry tradingCountry, List<String> fetchFields,
-			Provider provider) {
+			TradingCountry tradingCountry, List<String> fetchFields) {
 		QueryBuilder qb = new QueryBuilder(InvoiceSubcategoryCountry.class,
-				"ic", fetchFields, provider);
+				"ic", fetchFields);
 		qb.addCriterionEntity("ic.tradingCountry", tradingCountry);
 		qb.addCriterionEntity("ic.invoiceSubCategory", invoiceSubCategory);
-		qb.addCriterionEntity("ic.provider", provider);
 
 		try {
 			return (InvoiceSubcategoryCountry) qb.getQuery(getEntityManager())

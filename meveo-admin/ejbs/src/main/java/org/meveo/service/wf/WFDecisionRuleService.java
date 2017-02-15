@@ -23,7 +23,6 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 
-import org.meveo.model.crm.Provider;
 import org.meveo.model.wf.WFDecisionRule;
 import org.meveo.service.base.PersistenceService;
 
@@ -31,13 +30,13 @@ import org.meveo.service.base.PersistenceService;
 public class WFDecisionRuleService extends PersistenceService<WFDecisionRule> {
 
     @SuppressWarnings("unchecked")
-    public List<String> getDistinctNameWFTransitionRules(Provider provider) {
+    public List<String> getDistinctNameWFTransitionRules() {
         try {
             return (List<String>) getEntityManager()
                     .createQuery(
                             "select DISTINCT(wfr.name) from " + WFDecisionRule.class.getSimpleName()
-                                    + " wfr where wfr.provider=:provider")
-                    .setParameter("provider", provider)
+                                    + " wfr ")
+                    
                     .getResultList();
         } catch (NoResultException e) {
             log.error("failed to find ", e);
@@ -46,14 +45,14 @@ public class WFDecisionRuleService extends PersistenceService<WFDecisionRule> {
     }
 
     @SuppressWarnings("unchecked")
-    public List<WFDecisionRule> getWFDecisionRules(String name, Provider provider) {
+    public List<WFDecisionRule> getWFDecisionRules(String name) {
         try {
             return (List<WFDecisionRule>) getEntityManager()
                     .createQuery(
                             "from " + WFDecisionRule.class.getSimpleName()
-                                    + " where name=:name and provider=:provider")
+                                    + " where name=:name ")
                     .setParameter("name", name)
-                    .setParameter("provider", provider)
+                    
                     .getResultList();
         } catch (NoResultException e) {
             log.error("failed to find WFDecisionRule", e);
@@ -61,17 +60,17 @@ public class WFDecisionRuleService extends PersistenceService<WFDecisionRule> {
         return null;
     }
 
-    public WFDecisionRule getWFDecisionRuleByNameValue(String name, String value, Provider provider) {
+    public WFDecisionRule getWFDecisionRuleByNameValue(String name, String value) {
         WFDecisionRule wfDecisionRule = null;
         try {
             wfDecisionRule = (WFDecisionRule) getEntityManager()
                     .createQuery(
                             "from " + WFDecisionRule.class.getSimpleName()
-                                    + " where name=:name and value=:value and provider=:provider")
+                                    + " where name=:name and value=:value ")
 
                     .setParameter("name", name)
                     .setParameter("value", value)
-                    .setParameter("provider", provider)
+                    
                     .getSingleResult();
         } catch (NoResultException e) {
             log.error("failed to find WFDecisionRule", e);
@@ -79,17 +78,17 @@ public class WFDecisionRuleService extends PersistenceService<WFDecisionRule> {
         return wfDecisionRule;
     }
 
-    public WFDecisionRule getWFDecisionRuleByName(String name, Provider provider) {
+    public WFDecisionRule getWFDecisionRuleByName(String name) {
         WFDecisionRule wfDecisionRule = null;
         try {
             wfDecisionRule = (WFDecisionRule) getEntityManager()
                     .createQuery(
                             "from " + WFDecisionRule.class.getSimpleName()
-                                    + " where model=:model and name=:name and provider=:provider")
+                                    + " where model=:model and name=:name ")
 
                     .setParameter("model", true)
                     .setParameter("name", name)
-                    .setParameter("provider", provider)
+                    
                     .getSingleResult();
         } catch (NoResultException e) {
             log.error("failed to find WFDecisionRule", e);

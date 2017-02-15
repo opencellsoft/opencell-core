@@ -17,7 +17,6 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.LoginException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
@@ -36,7 +35,7 @@ public class OrderRsImpl extends BaseRs implements OrderRs {
         Response.ResponseBuilder responseBuilder = null;
 
         try {
-            productOrder = orderApi.createProductOrder(productOrder, getCurrentUser());
+            productOrder = orderApi.createProductOrder(productOrder);
             responseBuilder = Response.status(Response.Status.CREATED).entity(productOrder);
 
         } catch (MeveoApiException e) {
@@ -59,7 +58,7 @@ public class OrderRsImpl extends BaseRs implements OrderRs {
 
         try {
 
-            ProductOrder productOrder = orderApi.getProductOrder(orderId, getCurrentUser());
+            ProductOrder productOrder = orderApi.getProductOrder(orderId);
 
             responseBuilder = Response.ok().entity(productOrder);
 
@@ -87,13 +86,13 @@ public class OrderRsImpl extends BaseRs implements OrderRs {
         try {
 
             Map<String, List<String>> filterCriteria = new HashMap<String, List<String>>();
-            List<ProductOrder> orders = orderApi.findProductOrders(filterCriteria, getCurrentUser());
+            List<ProductOrder> orders = orderApi.findProductOrders(filterCriteria);
 
             responseBuilder = Response.ok().entity(orders);
 
-        } catch (MeveoApiException e) {
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
+//        } catch (MeveoApiException e) {
+//            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+//            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
             responseBuilder = Response.status(Response.Status.BAD_REQUEST);
             responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
@@ -111,7 +110,7 @@ public class OrderRsImpl extends BaseRs implements OrderRs {
 
         try {
 
-            productOrder = orderApi.updatePartiallyProductOrder(orderId, productOrder, getCurrentUser());
+            productOrder = orderApi.updatePartiallyProductOrder(orderId, productOrder);
             responseBuilder = Response.ok().entity(productOrder);
 
         } catch (EntityDoesNotExistsException e) {
@@ -137,14 +136,14 @@ public class OrderRsImpl extends BaseRs implements OrderRs {
         Response.ResponseBuilder responseBuilder = null;
 
         try {
-            orderApi.deleteProductOrder(orderId, getCurrentUser());
+            orderApi.deleteProductOrder(orderId);
 
             responseBuilder = Response.ok();
 
         } catch (EntityDoesNotExistsException e) {
             responseBuilder = Response.status(Response.Status.NOT_FOUND);
             responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
-        } catch (ActionForbiddenException | LoginException e) {
+        } catch (ActionForbiddenException e) {
             responseBuilder = Response.status(Response.Status.FORBIDDEN);
             responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (MeveoApiException e) {

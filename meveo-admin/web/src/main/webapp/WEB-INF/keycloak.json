@@ -1,0 +1,13 @@
+{
+  "realm": "master",
+  "realm-public-key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyH36eCSG5tO4O6d+Yq0s8ZimJjRBTRLrPPTg40jRnTyeHCigq/fvZxjqEF5VhuFAbedRAWpxdpeZxHyp+jg/obKMm6W3vf5pgqYAsDB8TVWJGjiF6VaxbkPlYCMtVzweTTr7hbBCmjTZMo/yAkWpVaF3TM+GQYZfQaVnsaZQl2/rkp+e7AkCFqRgTbVpHiPuEax6t8McvMltH5NZHXp2z4XrN/NsbRJnR56IYCm+XChtccI3KoIZ8QTJKrznqgIXi7TbahQxdhPEmO7/aQpqpcx5uAEaeLlXTILjDUwQaa4B4TmnbWTG7KFdrjckD8ARMWrIUyi4DPWaNYorsO00pwIDAQAB",
+  "auth-server-url": "http://localhost:8080/auth",
+  "ssl-required": "none",
+  "resource": "meveo",
+  "credentials": {
+    "secret": "3e6bf475-efe9-4783-af44-935550c837e7"
+  },
+  "use-resource-role-mappings": true,
+  "enable-basic-auth": true,
+  "principal-attribute": "preferred_username"
+}

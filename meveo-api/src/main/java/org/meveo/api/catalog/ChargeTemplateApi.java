@@ -9,7 +9,6 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.catalog.impl.ChargeTemplateServiceAll;
 
 /**
@@ -22,13 +21,13 @@ public class ChargeTemplateApi extends BaseApi {
     private ChargeTemplateServiceAll chargeTemplateService;
 
 
-    public ChargeTemplateDto find(String chargeTemplateCode, Provider provider) throws MeveoApiException {
+    public ChargeTemplateDto find(String chargeTemplateCode) throws MeveoApiException {
         if (StringUtils.isBlank(chargeTemplateCode)) {
             missingParameters.add("chargeTemplateCode");
         }
         handleMissingParameters();
         
-        ChargeTemplate chargeTemplate = (ChargeTemplate) chargeTemplateService.findByCode(chargeTemplateCode, provider);
+        ChargeTemplate chargeTemplate = (ChargeTemplate) chargeTemplateService.findByCode(chargeTemplateCode);
         if (chargeTemplate == null) {
             throw new EntityDoesNotExistsException(ChargeTemplate.class, chargeTemplateCode);
         }

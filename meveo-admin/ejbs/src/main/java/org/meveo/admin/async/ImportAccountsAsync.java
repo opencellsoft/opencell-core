@@ -11,7 +11,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.job.importexport.ImportAccountsJobBean;
-import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 
 /**
@@ -26,8 +25,8 @@ public class ImportAccountsAsync {
     private ImportAccountsJobBean importAccountsJobBean;
 
     @Asynchronous
-    public Future<String> launchAndForget(JobExecutionResultImpl result, User currentUser) {
-        importAccountsJobBean.execute(result, currentUser);
+    public Future<String> launchAndForget(JobExecutionResultImpl result) {
+        importAccountsJobBean.execute(result);
 
         return new AsyncResult<String>("OK");
     }

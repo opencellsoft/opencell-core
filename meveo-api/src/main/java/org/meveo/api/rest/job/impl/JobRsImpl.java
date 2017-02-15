@@ -42,7 +42,7 @@ public class JobRsImpl extends BaseRs implements JobRs {
     public ActionStatus execute(JobInstanceInfoDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            Long resultId = jobApi.executeJob(postData, getCurrentUser());
+            Long resultId = jobApi.executeJob(postData);
             result.setMessage(resultId == null ? "NOTHING_TO_DO" : String.valueOf(resultId));
         } catch (MeveoApiException e) {
             result.setStatus(ActionStatusEnum.FAIL);
@@ -61,7 +61,7 @@ public class JobRsImpl extends BaseRs implements JobRs {
     public ActionStatus create(JobInstanceDto jobInstanceDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            jobInstanceApi.create(jobInstanceDto, getCurrentUser());
+            jobInstanceApi.create(jobInstanceDto);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -80,7 +80,7 @@ public class JobRsImpl extends BaseRs implements JobRs {
     public ActionStatus createTimer(TimerEntityDto timerEntityDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            timerEntityApi.create(timerEntityDto, getCurrentUser());
+            timerEntityApi.create(timerEntityDto);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -99,7 +99,7 @@ public class JobRsImpl extends BaseRs implements JobRs {
     public ActionStatus update(JobInstanceDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            jobInstanceApi.update(postData, getCurrentUser());
+            jobInstanceApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -118,7 +118,7 @@ public class JobRsImpl extends BaseRs implements JobRs {
     public ActionStatus createOrUpdate(JobInstanceDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            jobInstanceApi.createOrUpdate(postData, getCurrentUser());
+            jobInstanceApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -138,7 +138,7 @@ public class JobRsImpl extends BaseRs implements JobRs {
         JobInstanceResponseDto result = new JobInstanceResponseDto();
 
         try {
-            result.setJobInstanceDto(jobInstanceApi.find(jobInstanceCode, getCurrentUser()));
+            result.setJobInstanceDto(jobInstanceApi.find(jobInstanceCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -158,7 +158,7 @@ public class JobRsImpl extends BaseRs implements JobRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            jobInstanceApi.remove(jobInstanceCode, getCurrentUser());
+            jobInstanceApi.remove(jobInstanceCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -178,7 +178,7 @@ public class JobRsImpl extends BaseRs implements JobRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            timerEntityApi.update(postData, getCurrentUser());
+            timerEntityApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -198,7 +198,7 @@ public class JobRsImpl extends BaseRs implements JobRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            timerEntityApi.createOrUpdate(postData, getCurrentUser());
+            timerEntityApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -218,7 +218,7 @@ public class JobRsImpl extends BaseRs implements JobRs {
         TimerEntityResponseDto result = new TimerEntityResponseDto();
 
         try {
-            result.setTimerEntity(timerEntityApi.find(timerCode, getCurrentUser()));
+            result.setTimerEntity(timerEntityApi.find(timerCode));
 
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
@@ -239,7 +239,7 @@ public class JobRsImpl extends BaseRs implements JobRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            timerEntityApi.remove(timerCode, getCurrentUser());
+            timerEntityApi.remove(timerCode);
 
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());

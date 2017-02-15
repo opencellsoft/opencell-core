@@ -29,7 +29,7 @@ public class FinanceWSImpl extends BaseWs implements FinanceWs{
 	public ActionStatus createRevenueRecognitionRule(RevenueRecognitionRuleDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-        	rrrApi.create(postData, getCurrentUser());
+        	rrrApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -48,7 +48,7 @@ public class FinanceWSImpl extends BaseWs implements FinanceWs{
 	public ActionStatus updateRevenueRecognitionRule(RevenueRecognitionRuleDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-        	rrrApi.update(postData, getCurrentUser());
+        	rrrApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -67,7 +67,7 @@ public class FinanceWSImpl extends BaseWs implements FinanceWs{
 	public ActionStatus deleteRevenueRecognitionRule(String code) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-        	rrrApi.remove(code, getCurrentUser());
+        	rrrApi.remove(code);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -88,12 +88,12 @@ public class FinanceWSImpl extends BaseWs implements FinanceWs{
 		result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
         result.getActionStatus().setMessage("");
         try {
-            List<RevenueRecognitionRuleDto> dtos = rrrApi.list(getCurrentUser());
+            List<RevenueRecognitionRuleDto> dtos = rrrApi.list();
             result.setRevenueRecognitionRules(dtos);
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+//        } catch (MeveoApiException e) {
+//            result.getActionStatus().setErrorCode(e.getErrorCode());
+//            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+//            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
             log.error("Failed to execute API", e);
             result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
@@ -110,7 +110,7 @@ public class FinanceWSImpl extends BaseWs implements FinanceWs{
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         try {
-            result.setRevenueRecognitionRuleDto(rrrApi.find(code, getCurrentUser()));
+            result.setRevenueRecognitionRuleDto(rrrApi.find(code));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -129,7 +129,7 @@ public class FinanceWSImpl extends BaseWs implements FinanceWs{
 	public ActionStatus createOrUpdateRevenueRecognitionRule(RevenueRecognitionRuleDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-        	rrrApi.createOrUpdate(postData, getCurrentUser());
+        	rrrApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

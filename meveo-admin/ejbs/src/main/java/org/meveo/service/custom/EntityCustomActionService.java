@@ -9,7 +9,6 @@ import javax.persistence.NoResultException;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.EntityCustomAction;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.crm.impl.CustomFieldException;
@@ -22,16 +21,12 @@ public class EntityCustomActionService extends BusinessService<EntityCustomActio
      * Find a list of entity actions/scripts corresponding to a given entity
      * 
      * @param entity Entity that entity actions/scripts apply to
-     * @param provider Provider
+
      * @return A map of entity actions/scripts mapped by a action code
      */
-    public Map<String, EntityCustomAction> findByAppliesTo(ICustomFieldEntity entity, Provider provider) {
+    public Map<String, EntityCustomAction> findByAppliesTo(ICustomFieldEntity entity) {
         try {
-            if (entity instanceof Provider) {
-                return findByAppliesTo(CustomFieldTemplateService.calculateAppliesToValue(entity), (Provider) entity);
-            } else {
-                return findByAppliesTo(CustomFieldTemplateService.calculateAppliesToValue(entity), provider);
-            }
+            return findByAppliesTo(CustomFieldTemplateService.calculateAppliesToValue(entity));
 
         } catch (CustomFieldException e) {
             // Its ok, handles cases when value that is part of CFT.AppliesTo calculation is not set yet on entity
@@ -43,18 +38,13 @@ public class EntityCustomActionService extends BusinessService<EntityCustomActio
      * Find a list of entity actions/scripts corresponding to a given entity
      * 
      * @param appliesTo Entity (CFT appliesTo code) that entity actions/scripts apply to
-     * @param provider Provider
+
      * @return A map of entity actions/scripts mapped by a action code
      */
     @SuppressWarnings("unchecked")
-    public Map<String, EntityCustomAction> findByAppliesTo(String appliesTo, Provider provider) {
+    public Map<String, EntityCustomAction> findByAppliesTo(String appliesTo) {
 
-        // Handles cases when creating a new provider
-        if (provider.getId() == null) {
-            return new HashMap<String, EntityCustomAction>();
-        }
-
-        QueryBuilder qb = new QueryBuilder(EntityCustomAction.class, "s", null, provider);
+        QueryBuilder qb = new QueryBuilder(EntityCustomAction.class, "s", null);
         qb.addCriterion("s.appliesTo", "=", appliesTo, true);
 
         List<EntityCustomAction> actions = (List<EntityCustomAction>) qb.getQuery(getEntityManager()).getResultList();
@@ -71,12 +61,12 @@ public class EntityCustomActionService extends BusinessService<EntityCustomActio
      * 
      * @param code Entity action/script code. MUST be in a format of <localCode>|<appliesTo>
      * @param entity Entity that entity actions/scripts apply to
-     * @param provider Provider
+
      * @return Entity action/script
      * @throws CustomFieldException An exception when AppliesTo value can not be calculated
      */
-    public EntityCustomAction findByCodeAndAppliesTo(String code, ICustomFieldEntity entity, Provider provider) throws CustomFieldException {
-        return findByCodeAndAppliesTo(code, CustomFieldTemplateService.calculateAppliesToValue(entity), provider);
+    public EntityCustomAction findByCodeAndAppliesTo(String code, ICustomFieldEntity entity) throws CustomFieldException {
+        return findByCodeAndAppliesTo(code, CustomFieldTemplateService.calculateAppliesToValue(entity));
     }
 
     /**
@@ -84,12 +74,12 @@ public class EntityCustomActionService extends BusinessService<EntityCustomActio
      * 
      * @param code Entity action/script code. MUST be in a format of <localCode>|<appliesTo>
      * @param appliesTo Entity (CFT appliesTo code) that entity actions/scripts apply to
-     * @param provider Provider
+
      * @return Entity action/script
      */
-    public EntityCustomAction findByCodeAndAppliesTo(String code, String appliesTo, Provider provider) {
+    public EntityCustomAction findByCodeAndAppliesTo(String code, String appliesTo) {
 
-        QueryBuilder qb = new QueryBuilder(EntityCustomAction.class, "s", null, provider);
+        QueryBuilder qb = new QueryBuilder(EntityCustomAction.class, "s", null);
         qb.addCriterion("s.code", "=", code, true);
         qb.addCriterion("s.appliesTo", "=", appliesTo, true);
         try {

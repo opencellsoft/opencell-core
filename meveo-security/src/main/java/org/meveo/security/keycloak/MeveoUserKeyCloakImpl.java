@@ -45,7 +45,6 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
 
             if (keycloakSecurityContext.getToken().getOtherClaims() != null) {
                 this.providerCode = (String) keycloakSecurityContext.getToken().getOtherClaims().get(CLAIM_PROVIDER);
-                this.providerEntity = null;
             }
 
             // Import roles

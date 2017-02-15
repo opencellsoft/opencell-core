@@ -4,7 +4,6 @@ import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.EjbUtils;
-import org.meveo.model.admin.User;
 
 public abstract class Script implements ScriptInterface {
 
@@ -72,17 +71,17 @@ public abstract class Script implements ScriptInterface {
 	
     
     @Override
-    public void init(Map<String, Object> methodContext, User user) throws BusinessException {
+    public void init(Map<String, Object> methodContext) throws BusinessException {
 
     }
 
     @Override
-    public void execute(Map<String, Object> methodContext, User user) throws BusinessException {
+    public void execute(Map<String, Object> methodContext) throws BusinessException {
 
     }
 
     @Override
-    public void finalize(Map<String, Object> methodContext, User user) throws BusinessException {
+    public void finalize(Map<String, Object> methodContext) throws BusinessException {
 
     }
 

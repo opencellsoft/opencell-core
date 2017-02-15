@@ -18,10 +18,10 @@
             <artifactId>meveo-model</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-        </dependency>
+<!--         <dependency> -->
+<!--             <groupId>javax.xml.bind</groupId> -->
+<!--             <artifactId>jaxb-api</artifactId> -->
+<!--         </dependency> -->
 
         <dependency>
             <groupId>javax.validation</groupId>

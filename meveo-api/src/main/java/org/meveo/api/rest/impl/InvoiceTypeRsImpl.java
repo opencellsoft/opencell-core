@@ -27,7 +27,7 @@ public class InvoiceTypeRsImpl extends BaseRs implements InvoiceTypeRs {
 	public ActionStatus create(InvoiceTypeDto invoiceTypeDto) {
 	    ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 	    try {
-			invoiceTypeApi.create(invoiceTypeDto, getCurrentUser());
+			invoiceTypeApi.create(invoiceTypeDto);
 		} catch (Exception e) {
 			super.processException(e, result);
 		}
@@ -38,7 +38,7 @@ public class InvoiceTypeRsImpl extends BaseRs implements InvoiceTypeRs {
 	public ActionStatus update(InvoiceTypeDto invoiceTypeDto) {
 	    ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 	    try {
-			invoiceTypeApi.update(invoiceTypeDto, getCurrentUser());
+			invoiceTypeApi.update(invoiceTypeDto);
 		} catch (Exception e) {
 			super.processException(e, result);
 		}
@@ -50,7 +50,7 @@ public class InvoiceTypeRsImpl extends BaseRs implements InvoiceTypeRs {
 		GetInvoiceTypeResponse result = new GetInvoiceTypeResponse();
 		result.setActionStatus(new ActionStatus(ActionStatusEnum.SUCCESS, ""));
 	    try {
-	    	result.setInvoiceTypeDto(invoiceTypeApi.find(invoiceTypeCode, getCurrentUser().getProvider()));
+	    	result.setInvoiceTypeDto(invoiceTypeApi.find(invoiceTypeCode));
 		} catch (Exception e) {
 			super.processException(e, result.getActionStatus());
 		}
@@ -61,7 +61,7 @@ public class InvoiceTypeRsImpl extends BaseRs implements InvoiceTypeRs {
 	public ActionStatus remove(String invoiceTypeCode) {
 	    ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 	    try {
-			invoiceTypeApi.remove(invoiceTypeCode, getCurrentUser());
+			invoiceTypeApi.remove(invoiceTypeCode);
 		} catch (Exception e) {
 			super.processException(e, result);
 		}
@@ -72,7 +72,7 @@ public class InvoiceTypeRsImpl extends BaseRs implements InvoiceTypeRs {
 	public ActionStatus createOrUpdate(InvoiceTypeDto invoiceTypeDto) {
 	    ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 	    try {
-			invoiceTypeApi.createOrUpdate(invoiceTypeDto, getCurrentUser());
+			invoiceTypeApi.createOrUpdate(invoiceTypeDto);
 		} catch (Exception e) {
 			super.processException(e, result);
 		}
@@ -84,7 +84,7 @@ public class InvoiceTypeRsImpl extends BaseRs implements InvoiceTypeRs {
 		GetInvoiceTypesResponse result = new GetInvoiceTypesResponse();
 		result.setActionStatus(new ActionStatus(ActionStatusEnum.SUCCESS, ""));
 	    try {
-	    	result.setInvoiceTypesDto(invoiceTypeApi.list(getCurrentUser().getProvider()));
+	    	result.setInvoiceTypesDto(invoiceTypeApi.list());
 		} catch (Exception e) {
 			super.processException(e, result.getActionStatus());
 		}

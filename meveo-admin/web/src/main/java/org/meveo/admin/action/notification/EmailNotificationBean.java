@@ -88,16 +88,6 @@ public class EmailNotificationBean extends BaseNotificationBean<EmailNotificatio
 	protected IPersistenceService<EmailNotification> getPersistenceService() {
 		return emailNotificationService;
 	}
-
-	@Override
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
-
-	@Override
-	protected List<String> getListFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
 	
     public void handleFileUpload(FileUploadEvent event) throws Exception {
         try {
@@ -118,14 +108,14 @@ public class EmailNotificationBean extends BaseNotificationBean<EmailNotificatio
         csvReader = new CsvReader(file.getInputstream(), ';', Charset.forName("ISO-8859-1"));
         csvReader.readHeaders();
         String existingEntitiesCSV = paramBean.getProperty("existingEntities.csv.dir", "existingEntitiesCSV");
-        File dir = new File(providerDir + File.separator + getCurrentProvider().getCode() + File.separator + existingEntitiesCSV);
+        File dir = new File(providerDir + File.separator + appProvider.getCode() + File.separator + existingEntitiesCSV);
         dir.mkdirs();
         existingEntitiesCsvFile = dir.getAbsolutePath() + File.separator + "EmailNotifications_" + new SimpleDateFormat("ddMMyyyyHHmmSS").format(new Date()) + ".csv";
         csv = new CsvBuilder();
         boolean isEntityAlreadyExist = false;
         while (csvReader.readRecord()) {
             String[] values = csvReader.getValues();
-            EmailNotification existingEntity = emailNotificationService.findByCode(values[CODE], getCurrentProvider());
+            EmailNotification existingEntity = emailNotificationService.findByCode(values[CODE]);
             if (existingEntity != null) {
                 checkSelectedStrategy(values, existingEntity, isEntityAlreadyExist);
                 isEntityAlreadyExist = true;
@@ -137,7 +127,7 @@ public class EmailNotificationBean extends BaseNotificationBean<EmailNotificatio
                 emailNotif.setElFilter(values[EL_FILTER]);
                 emailNotif.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
                 if (!StringUtils.isBlank(values[SCRIPT_INSTANCE_CODE])) {
-                    ScriptInstance scriptInstance = scriptInstanceService.findByCode(values[SCRIPT_INSTANCE_CODE], getCurrentProvider()); 
+                    ScriptInstance scriptInstance = scriptInstanceService.findByCode(values[SCRIPT_INSTANCE_CODE]); 
                     emailNotif.setScriptInstance(scriptInstance);
                 }  
                 emailNotif.setEmailFrom(values[SENT_FROM]);
@@ -158,11 +148,11 @@ public class EmailNotificationBean extends BaseNotificationBean<EmailNotificatio
                 emailNotif.setBody(values[TEXT_BODY]);
                 emailNotif.setHtmlBody(values[HTML_BODY]);
                 if (!StringUtils.isBlank(values[COUNTER_TEMPLATE])) {
-                    CounterTemplate counterTemplate = counterTemplateService.findByCode(values[COUNTER_TEMPLATE], getCurrentProvider());
+                    CounterTemplate counterTemplate = counterTemplateService.findByCode(values[COUNTER_TEMPLATE]);
                     emailNotif.setCounterTemplate(counterTemplate != null ? counterTemplate : null);
                 }
 
-                emailNotificationService.create(emailNotif, getCurrentUser());
+                emailNotificationService.create(emailNotif);
             }
         }
         if (isEntityAlreadyExist && strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)) {
@@ -178,7 +168,7 @@ public class EmailNotificationBean extends BaseNotificationBean<EmailNotificatio
 			existingEntity.setElFilter(values[EL_FILTER]);
 			existingEntity.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
             if (!StringUtils.isBlank(values[SCRIPT_INSTANCE_CODE])) {
-                ScriptInstance scriptInstance = scriptInstanceService.findByCode(values[SCRIPT_INSTANCE_CODE], getCurrentProvider()); 
+                ScriptInstance scriptInstance = scriptInstanceService.findByCode(values[SCRIPT_INSTANCE_CODE]); 
                 existingEntity.setScriptInstance(scriptInstance);
             }  
 			existingEntity.setEmailFrom(values[SENT_FROM]);
@@ -200,10 +190,10 @@ public class EmailNotificationBean extends BaseNotificationBean<EmailNotificatio
 			existingEntity.setBody(values[TEXT_BODY]);
 			existingEntity.setHtmlBody(values[HTML_BODY]);
 			if(!StringUtils.isBlank(values[COUNTER_TEMPLATE])){
-				CounterTemplate counterTemplate=counterTemplateService.findByCode(values[COUNTER_TEMPLATE], getCurrentProvider());
+				CounterTemplate counterTemplate=counterTemplateService.findByCode(values[COUNTER_TEMPLATE]);
 				existingEntity.setCounterTemplate(counterTemplate!=null ?counterTemplate: null);
 			}
-			emailNotificationService.update(existingEntity, getCurrentUser());
+			emailNotificationService.update(existingEntity);
 		          }
 		else if(strategyImportType.equals(StrategyImportTypeEnum.REJECTE_IMPORT)){
 			  throw new RejectedImportException("notification.rejectImport");

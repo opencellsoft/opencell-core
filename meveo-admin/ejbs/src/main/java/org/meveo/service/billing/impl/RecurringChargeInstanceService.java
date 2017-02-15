@@ -28,7 +28,6 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
@@ -37,7 +36,6 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.event.qualifier.Rejected;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
@@ -49,7 +47,6 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.WalletTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.script.revenue.RevenueRecognitionScriptService;
@@ -89,16 +86,14 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Long> findIdsByStatus(InstanceStatusEnum status, Date maxChargeDate,Provider currentProvider) {
+	public List<Long> findIdsByStatus(InstanceStatusEnum status, Date maxChargeDate) {
 		List<Long> ids = new ArrayList<Long>();
 		try {
 			log.debug("start of find RecurringChargeInstance --IDS---  by status {} and date {}", status, maxChargeDate);
-			log.debug("find by provider {}",currentProvider.getCode());
 			
 			QueryBuilder qb = new QueryBuilder("SELECT c.id FROM "+RecurringChargeInstance.class.getName()+" c");
 			qb.addCriterionEnum("c.status", status);
 			qb.addCriterionDateRangeToTruncatedToDay("c.nextChargeDate", maxChargeDate);
-			qb.addCriterionEntity("c.provider", currentProvider);
 			ids = qb.getQuery(getEntityManager()).getResultList();
 			log.debug("end of find {} by status (status={}). Result size found={}.",
 					new Object[] { "RecurringChargeInstance", status,
@@ -130,7 +125,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
 	@SuppressWarnings("unchecked")
 	public List<RecurringChargeInstance> findRecurringChargeInstanceBySubscriptionId(Long subscriptionId) {
-		QueryBuilder qb = new QueryBuilder(RecurringChargeInstance.class, "c", Arrays.asList("chargeTemplate"), null);
+		QueryBuilder qb = new QueryBuilder(RecurringChargeInstance.class, "c", Arrays.asList("chargeTemplate"));
 		qb.addCriterion("c.subscription.id", "=", subscriptionId, true);
 		return qb.getQuery(getEntityManager()).getResultList();
 	}
@@ -176,7 +171,6 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 		chargeInstance.setCurrency(serviceInst.getSubscription().getUserAccount().getBillingAccount()
 				.getCustomerAccount().getTradingCurrency());
 		chargeInstance.setOrderNumber(serviceInst.getOrderNumber());
-		chargeInstance.updateAudit(creator);
 
 		ServiceChargeTemplateRecurring recChTmplServ = serviceInst.getServiceTemplate()
 				.getServiceRecurringChargeByChargeCode(chargeCode);
@@ -195,8 +189,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 					chargeInstance.setPrepaid(true);
 				}
 				
-				WalletInstance walletInstance = walletService.getWalletInstance(serviceInst.getSubscription().getUserAccount(), walletTemplate, isVirtual,
-						creator);
+				WalletInstance walletInstance = walletService.getWalletInstance(serviceInst.getSubscription().getUserAccount(), walletTemplate, isVirtual);
 				log.debug("add the wallet instance {} to the chargeInstance {}",walletInstance.getId(),chargeInstance.getId());
 				chargeInstance.getWalletInstances().add(walletInstance);
 			}
@@ -216,11 +209,6 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
 	public void recurringChargeDeactivation(long recurringChargeInstanId, Date terminationDate)
 			throws BusinessException {
-		recurringChargeDeactivation(getEntityManager(), recurringChargeInstanId, terminationDate);
-	}
-
-	public void recurringChargeDeactivation(EntityManager em, long recurringChargeInstanId, Date terminationDate,
-			User updater) throws BusinessException {
 
 		RecurringChargeInstance recurringChargeInstance = findById(recurringChargeInstanId, true);
 
@@ -258,12 +246,12 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
 	}
 
-	public int applyRecurringCharge(Long chargeInstanceId, Date maxDate,User user) throws BusinessException {
+	public int applyRecurringCharge(Long chargeInstanceId, Date maxDate) throws BusinessException {
 		int MaxRecurringRatingHistory=Integer.parseInt(ParamBean.getInstance().getProperty("rating.recurringMaxRetry", "100"));
 		int nbRating=0;
 		
 		try {
-			RecurringChargeInstance activeRecurringChargeInstance = findById(chargeInstanceId, user.getProvider());
+			RecurringChargeInstance activeRecurringChargeInstance = findById(chargeInstanceId);
 			
 			if (!walletOperationService.isChargeMatch(activeRecurringChargeInstance, activeRecurringChargeInstance.getRecurringChargeTemplate().getFilterExpression())) {
 				log.debug("IPIEL: not rating chargeInstance with code={}, filter expression not evaluated to true", activeRecurringChargeInstance.getCode());
@@ -289,11 +277,11 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 			//}
 				
 			//If we recognize revenue we first delete all SCHEDULED wallet operations
-			if(user.getProvider().isRecognizeRevenue()){
+			if(appProvider.isRecognizeRevenue()){
 			  try {
 				log.debug("delete scheduled charges applications on chargeInstance {}", chargeInstanceId);
 				getEntityManager().createNamedQuery("WalletOperation.deleteScheduled")
-				  .setParameter("chargeInstance", activeRecurringChargeInstance).setParameter("provider", user.getProvider())
+				  .setParameter("chargeInstance", activeRecurringChargeInstance)
 							.executeUpdate();
 			  }catch (Exception e) {
 				log.error("error while trying to delete scheduled charges applications on chargeInstance {}", chargeInstanceId, e);
@@ -306,9 +294,9 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 				applicationDate = DateUtils.setTimeToZero(applicationDate);
 				if (!recurringChargeTemplate.getApplyInAdvance()) {
 					walletOperationService
-							.applyNotAppliedinAdvanceReccuringCharge(activeRecurringChargeInstance, false,recurringChargeTemplate, user);
+							.applyNotAppliedinAdvanceReccuringCharge(activeRecurringChargeInstance, false,recurringChargeTemplate);
 				} else {
-					walletOperationService.applyReccuringCharge(activeRecurringChargeInstance, false,recurringChargeTemplate,false, user);
+					walletOperationService.applyReccuringCharge(activeRecurringChargeInstance, false,recurringChargeTemplate,false);
 				}
 				log.debug("chargeDate {}, nextChargeDate {}, wo size {}",activeRecurringChargeInstance.getChargeDate()
 						,activeRecurringChargeInstance.getNextChargeDate(),activeRecurringChargeInstance.getWalletOperations().size());
@@ -319,11 +307,10 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 				//}
 			} 
 			if(nbRating>0){
-				activeRecurringChargeInstance.updateAudit(user);
 				updateNoCheck(activeRecurringChargeInstance);
 			}
 			//If we recognize revenue we create SCHEDULED wallet op until the end of the contract
-			if(user.getProvider().isRecognizeRevenue() && !activeRecurringChargeInstance.getPrepaid()){
+			if(appProvider.isRecognizeRevenue() && !activeRecurringChargeInstance.getPrepaid()){
 				Date endContractDate = activeRecurringChargeInstance.getSubscription().getEndAgreementDate();
 				log.debug("apply scheduled charges until {}",endContractDate);
 				if(endContractDate==null){
@@ -337,9 +324,9 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 						applicationDate = DateUtils.setTimeToZero(applicationDate);
 						if (!recurringChargeTemplate.getApplyInAdvance()) {
 							walletOperationService
-									.applyNotAppliedinAdvanceReccuringCharge(activeRecurringChargeInstance, false,recurringChargeTemplate, user);
+									.applyNotAppliedinAdvanceReccuringCharge(activeRecurringChargeInstance, false,recurringChargeTemplate);
 						} else {
-							walletOperationService.applyReccuringCharge(activeRecurringChargeInstance, false,recurringChargeTemplate,true, user);
+							walletOperationService.applyReccuringCharge(activeRecurringChargeInstance, false,recurringChargeTemplate,true);
 						}
 						log.debug("chargeDate {},nextChargeDate {},  wo size {}",activeRecurringChargeInstance.getChargeDate()
 								,activeRecurringChargeInstance.getNextChargeDate(),activeRecurringChargeInstance.getWalletOperations().size());
@@ -349,7 +336,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 					activeRecurringChargeInstance.setChargeDate(chargeDate);
 					activeRecurringChargeInstance.setNextChargeDate(nextChargeDate);
 				}
-				revenueRecognitionScriptService.createRevenueSchedule(activeRecurringChargeInstance.getChargeTemplate().getRevenueRecognitionRule().getScript().getCode(), activeRecurringChargeInstance, user);
+				revenueRecognitionScriptService.createRevenueSchedule(activeRecurringChargeInstance.getChargeTemplate().getRevenueRecognitionRule().getScript().getCode(), activeRecurringChargeInstance);
 			}
 			
 		} catch (Exception e) {
@@ -366,11 +353,11 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
      * @param quantity Quantity as calculated
      * @param fromDate Recurring charge application start
      * @param toDate Recurring charge application end
-     * @param currentUser Current user
+
 	 * @return Wallet operations
 	 * @throws BusinessException
 	 */
-    public List<WalletOperation> applyRecurringChargeVirtual(RecurringChargeInstance chargeInstance, Date fromDate, Date toDate, User currentUser)
+    public List<WalletOperation> applyRecurringChargeVirtual(RecurringChargeInstance chargeInstance, Date fromDate, Date toDate)
             throws BusinessException {
 
         log.debug("Apply recuring charges on Virtual operation. User account {}, offer {}, charge {}, quantity {}, date range {}-{}", chargeInstance.getUserAccount().getCode(),
@@ -386,7 +373,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
         BigDecimal quantity = NumberUtil.getInChargeUnit(inputQuantity, chargeInstance.getRecurringChargeTemplate().getUnitMultiplicator(), chargeInstance.getRecurringChargeTemplate()
             .getUnitNbDecimal(), chargeInstance.getRecurringChargeTemplate().getRoundingMode());
 
-        return walletOperationService.applyReccuringChargeVirtual(chargeInstance, inputQuantity, quantity, fromDate, toDate, currentUser);
+        return walletOperationService.applyReccuringChargeVirtual(chargeInstance, inputQuantity, quantity, fromDate, toDate);
 
     }
 }

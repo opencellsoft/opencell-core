@@ -119,7 +119,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         Response.ResponseBuilder responseBuilder = null;
 
         try {
-            OfferTemplateCategoryDto otcd = offerTemplateCategoryApi.findByCode(code, getCurrentUser(), uriInfo);
+            OfferTemplateCategoryDto otcd = offerTemplateCategoryApi.findByCode(code,  uriInfo);
 
             Category category = new Category();
             category.setId(String.valueOf(otcd.getId()));
@@ -166,12 +166,12 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         Response.ResponseBuilder responseBuilder = null;
 
         try {
-            List<ProductOffering> productOfferings = catalogApi.findProductOfferings(uriInfo, Category.createProto(uriInfo), getCurrentUser());
+            List<ProductOffering> productOfferings = catalogApi.findProductOfferings(uriInfo, Category.createProto(uriInfo));
             responseBuilder = Response.ok().entity(productOfferings);
 
-        } catch (MeveoApiException e) {
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
+//        } catch (MeveoApiException e) {
+//            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+//            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
             responseBuilder = Response.status(Response.Status.BAD_REQUEST);
             responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
@@ -189,7 +189,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         Response.ResponseBuilder responseBuilder = null;
 
         try {
-            ProductOffering productOffering = catalogApi.findProductOffering(id, getCurrentUser(), uriInfo, Category.createProto(uriInfo));
+            ProductOffering productOffering = catalogApi.findProductOffering(id,  uriInfo, Category.createProto(uriInfo));
             responseBuilder = Response.ok().entity(productOffering);
 
         } catch (EntityDoesNotExistsException e) {
@@ -215,12 +215,12 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         Response.ResponseBuilder responseBuilder = null;
 
         try {
-            List<ProductSpecification> productSpecifications = catalogApi.findProductSpecifications(getCurrentUser(), uriInfo);
+            List<ProductSpecification> productSpecifications = catalogApi.findProductSpecifications( uriInfo);
             responseBuilder = Response.ok().entity(productSpecifications);
 
-        } catch (MeveoApiException e) {
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
+//        } catch (MeveoApiException e) {
+//            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+//            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
             responseBuilder = Response.status(Response.Status.BAD_REQUEST);
             responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
@@ -237,7 +237,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
         Response.ResponseBuilder responseBuilder = null;
         try {
-            ProductSpecification productSpecification = catalogApi.findProductSpecification(id, getCurrentUser(), uriInfo);           
+            ProductSpecification productSpecification = catalogApi.findProductSpecification(id,  uriInfo);           
             responseBuilder = Response.ok().entity(productSpecification);
 
         } catch (EntityDoesNotExistsException e) {
@@ -261,7 +261,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         Response.ResponseBuilder responseBuilder = null;
 
         try {
-            businessOfferApi.createOfferFromBOM(postData, getCurrentUser());
+            businessOfferApi.createOfferFromBOM(postData);
             responseBuilder = Response.ok();
 
         } catch (ConstraintViolationException e) {
@@ -285,7 +285,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         log.debug("getProductTemplate by code {}", code);
         Response.ResponseBuilder responseBuilder = null;
         try {
-        	ProductTemplateDto productTemplateDto = productTemplateApi.find(code, getCurrentUser());
+        	ProductTemplateDto productTemplateDto = productTemplateApi.find(code);
             responseBuilder = Response.ok().entity(productTemplateDto);
 
         } catch (EntityDoesNotExistsException e) {
@@ -308,7 +308,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 	public Response createProductTemplate(ProductTemplateDto postData) {
 		Response.ResponseBuilder responseBuilder = null;
         try {
-        	productTemplateApi.create(postData, getCurrentUser());
+        	productTemplateApi.create(postData);
             responseBuilder = Response.ok();
 
         } catch (ConstraintViolationException e) {
@@ -330,7 +330,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 	public Response createOrUpdateProductTemplate(ProductTemplateDto postData) {
 		Response.ResponseBuilder responseBuilder = null;
         try {
-        	productTemplateApi.createOrUpdate(postData, getCurrentUser());
+        	productTemplateApi.createOrUpdate(postData);
             responseBuilder = Response.ok();
 
         } catch (ConstraintViolationException e) {
@@ -352,7 +352,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 	public Response updateProductTemplate(ProductTemplateDto postData) {
 		Response.ResponseBuilder responseBuilder = null;
         try {
-        	productTemplateApi.update(postData, getCurrentUser());
+        	productTemplateApi.update(postData);
             responseBuilder = Response.ok();
 
         } catch (ConstraintViolationException e) {
@@ -374,7 +374,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 	public Response removeProductTemplate(String code) {
 		Response.ResponseBuilder responseBuilder = null;
         try {
-        	 productTemplateApi.remove(code, getCurrentUser());
+        	 productTemplateApi.remove(code);
             responseBuilder = Response.ok();
 
         } catch (ConstraintViolationException e) {
@@ -396,15 +396,15 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 	public Response listProductTemplate() {
 		Response.ResponseBuilder responseBuilder = null;
         try {
-        	List<ProductTemplateDto> listProductTemplate = productTemplateApi.list(getCurrentUser());
+        	List<ProductTemplateDto> listProductTemplate = productTemplateApi.list();
             responseBuilder = Response.ok().entity(listProductTemplate);
 
         } catch (ConstraintViolationException e) {
             responseBuilder = Response.status(Response.Status.BAD_REQUEST);
             responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
-        } catch (MeveoApiException e) {
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
+//        } catch (MeveoApiException e) {
+//            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+//            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
             responseBuilder = Response.status(Response.Status.BAD_REQUEST);
             responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
@@ -419,7 +419,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         log.debug("getProductChargeTemplate by code {}", code);
         Response.ResponseBuilder responseBuilder = null;
         try {
-        	ProductChargeTemplateDto productChargeTemplateDto = productChargeTemplateApi.find(code, getCurrentUser());
+        	ProductChargeTemplateDto productChargeTemplateDto = productChargeTemplateApi.find(code);
             responseBuilder = Response.ok().entity(productChargeTemplateDto);
 
         } catch (EntityDoesNotExistsException e) {
@@ -442,7 +442,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 	public Response createProductChargeTemplate(ProductChargeTemplateDto postData) {
 		Response.ResponseBuilder responseBuilder = null;
         try {
-        	productChargeTemplateApi.create(postData, getCurrentUser());
+        	productChargeTemplateApi.create(postData);
             responseBuilder = Response.ok();
 
         } catch (ConstraintViolationException e) {
@@ -464,7 +464,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 	public Response createOrUpdateProductChargeTemplate(ProductChargeTemplateDto postData) {
 		Response.ResponseBuilder responseBuilder = null;
         try {
-        	productChargeTemplateApi.createOrUpdate(postData, getCurrentUser());
+        	productChargeTemplateApi.createOrUpdate(postData);
             responseBuilder = Response.ok();
 
         } catch (ConstraintViolationException e) {
@@ -486,7 +486,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 	public Response updateProductChargeTemplate(ProductChargeTemplateDto postData) {
 		Response.ResponseBuilder responseBuilder = null;
         try {
-        	productChargeTemplateApi.update(postData, getCurrentUser());
+        	productChargeTemplateApi.update(postData);
             responseBuilder = Response.ok();
 
         } catch (ConstraintViolationException e) {
@@ -508,7 +508,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 	public Response removeProductChargeTemplate(String code) {
 		Response.ResponseBuilder responseBuilder = null;
         try {
-        	 productChargeTemplateApi.remove(code, getCurrentUser());
+        	 productChargeTemplateApi.remove(code);
             responseBuilder = Response.ok();
 
         } catch (ConstraintViolationException e) {
@@ -530,15 +530,15 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 	public Response listProductChargeTemplate() {
 		Response.ResponseBuilder responseBuilder = null;
         try {
-        	List<ProductChargeTemplateDto> listProductChargeTemplate = productChargeTemplateApi.list(getCurrentUser());
+        	List<ProductChargeTemplateDto> listProductChargeTemplate = productChargeTemplateApi.list();
             responseBuilder = Response.ok().entity(listProductChargeTemplate);
 
         } catch (ConstraintViolationException e) {
             responseBuilder = Response.status(Response.Status.BAD_REQUEST);
             responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
-        } catch (MeveoApiException e) {
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
+//        } catch (MeveoApiException e) {
+//            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+//            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
             responseBuilder = Response.status(Response.Status.BAD_REQUEST);
             responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));

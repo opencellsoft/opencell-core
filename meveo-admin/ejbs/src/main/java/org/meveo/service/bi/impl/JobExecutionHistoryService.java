@@ -59,8 +59,7 @@ public class JobExecutionHistoryService extends
 	}
 
 	/**
-	 * Overided getQuery method, because we do not need to select data according
-	 * to current Provider
+	 * Overided getQuery method 
 	 * 
 	 * @see org.meveo.service.base.PersistenceService#getQuery(org.meveo.admin.util.pagination.PaginationConfiguration)
 	 */
@@ -69,7 +68,7 @@ public class JobExecutionHistoryService extends
 
 		final Class<? extends JobExecutionHisto> entityClass = getEntityClass();
 		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a",
-				config.getFetchFields(), null);
+				config.getFetchFields());
 		Map<String, Object> filters = config.getFilters();
 		if (filters != null) {
 			if (!filters.isEmpty()) {

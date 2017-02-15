@@ -53,8 +53,8 @@ import org.meveo.model.scripts.ScriptInstance;
 @ObservableEntity
 @MultilanguageEntity(key = "menu.pricePlanMatrixes", group = "PricePlanMatrix")
 @CustomFieldEntity(cftCodePrefix = "PRICEPLAN")
-@ExportIdentifier({ "code", "provider" })
-@Table(name = "CAT_PRICE_PLAN_MATRIX", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
+@ExportIdentifier({ "code"})
+@Table(name = "CAT_PRICE_PLAN_MATRIX", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_PRICE_PLAN_MATRIX_SEQ")
 @NamedQueries({ @NamedQuery(name = "PricePlanMatrix.getPricePlansForCache", query = "SELECT ppm from PricePlanMatrix ppm left join ppm.offerTemplate ot left join ppm.validityCalendar vc where ppm.disabled is false order by ppm.priority ASC") })
 public class PricePlanMatrix extends BusinessCFEntity implements Comparable<PricePlanMatrix> {

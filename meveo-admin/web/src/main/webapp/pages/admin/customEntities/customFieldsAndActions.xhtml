@@ -330,7 +330,7 @@
                         <hftl:decorateFormField fieldId="cheFields" required="true" label="#{messages['customFieldTemplate.childEntity.fields']}">
                             <p:pickList id="cheFields" value="#{customFieldTemplateBean.childEntityFieldListModel}" required="true" var="item" itemLabel="#{item.label}"
                                 itemValue="#{item}">
-                                <s:objectConverter />
+                                <hftl:objectConverter />
                             </p:pickList>
                         </hftl:decorateFormField>
                     </p:fieldset>

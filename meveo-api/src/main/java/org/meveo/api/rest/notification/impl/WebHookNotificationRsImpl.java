@@ -29,7 +29,7 @@ public class WebHookNotificationRsImpl extends BaseRs implements WebHookNotifica
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            webhookNotificationApi.create(postData, getCurrentUser());
+            webhookNotificationApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -49,7 +49,7 @@ public class WebHookNotificationRsImpl extends BaseRs implements WebHookNotifica
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            webhookNotificationApi.update(postData, getCurrentUser());
+            webhookNotificationApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -69,7 +69,7 @@ public class WebHookNotificationRsImpl extends BaseRs implements WebHookNotifica
         GetWebHookNotificationResponseDto result = new GetWebHookNotificationResponseDto();
 
         try {
-            result.setWebhookDto(webhookNotificationApi.find(notificationCode, getCurrentUser()));
+            result.setWebhookDto(webhookNotificationApi.find(notificationCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -89,7 +89,7 @@ public class WebHookNotificationRsImpl extends BaseRs implements WebHookNotifica
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            webhookNotificationApi.remove(notificationCode, getCurrentUser());
+            webhookNotificationApi.remove(notificationCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -109,7 +109,7 @@ public class WebHookNotificationRsImpl extends BaseRs implements WebHookNotifica
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            webhookNotificationApi.createOrUpdate(postData, getCurrentUser());
+            webhookNotificationApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

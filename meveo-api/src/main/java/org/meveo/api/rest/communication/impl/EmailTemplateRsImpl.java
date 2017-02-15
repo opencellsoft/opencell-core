@@ -10,8 +10,8 @@ import org.meveo.api.communication.EmailTemplateApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.communication.EmailTemplateDto;
-import org.meveo.api.dto.response.communication.EmailTemplatesResponseDto;
 import org.meveo.api.dto.response.communication.EmailTemplateResponseDto;
+import org.meveo.api.dto.response.communication.EmailTemplatesResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.communication.EmailTemplateRs;
@@ -29,7 +29,7 @@ public class EmailTemplateRsImpl extends BaseRs implements EmailTemplateRs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            emailTemplateApi.create(emailTemplateDto, getCurrentUser());
+            emailTemplateApi.create(emailTemplateDto);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -49,7 +49,7 @@ public class EmailTemplateRsImpl extends BaseRs implements EmailTemplateRs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            emailTemplateApi.update(emailTemplateDto, getCurrentUser());
+            emailTemplateApi.update(emailTemplateDto);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -69,7 +69,7 @@ public class EmailTemplateRsImpl extends BaseRs implements EmailTemplateRs {
 		 EmailTemplateResponseDto result = new EmailTemplateResponseDto();
 
 	        try {
-	            result.setEmailTemplate(emailTemplateApi.find(code,getCurrentUser().getProvider()));
+	            result.setEmailTemplate(emailTemplateApi.find(code));
 	        } catch (MeveoApiException e) {
 	            result.getActionStatus().setErrorCode(e.getErrorCode());
 	            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -89,7 +89,7 @@ public class EmailTemplateRsImpl extends BaseRs implements EmailTemplateRs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            emailTemplateApi.remove(code, getCurrentUser());
+            emailTemplateApi.remove(code);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -109,7 +109,7 @@ public class EmailTemplateRsImpl extends BaseRs implements EmailTemplateRs {
 		EmailTemplatesResponseDto result = new EmailTemplatesResponseDto();
 
         try {
-            result.setEmailTemplates(emailTemplateApi.list(getCurrentUser().getProvider()));
+            result.setEmailTemplates(emailTemplateApi.list());
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -129,7 +129,7 @@ public class EmailTemplateRsImpl extends BaseRs implements EmailTemplateRs {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            emailTemplateApi.createOrUpdate(emailTemplateDto, getCurrentUser());
+            emailTemplateApi.createOrUpdate(emailTemplateDto);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

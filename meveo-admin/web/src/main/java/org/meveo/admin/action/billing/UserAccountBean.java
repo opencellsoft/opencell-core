@@ -42,7 +42,6 @@ import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.admin.util.pagination.EntityListDataModelPF;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.cache.WalletCacheContainerProvider;
-import org.meveo.model.Auditable;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.OperationTypeEnum;
@@ -53,7 +52,6 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -222,9 +220,9 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 	protected UserAccount saveOrUpdate(UserAccount entity) throws BusinessException{
 
         if (entity.isTransient()) {
-            userAccountService.createUserAccount(entity.getBillingAccount(), entity, getCurrentUser());
+            userAccountService.createUserAccount(entity.getBillingAccount(), entity);
         } else {
-            entity = getPersistenceService().update(entity, getCurrentUser());
+            entity = getPersistenceService().update(entity);
         }
 
         setObjectId((Long) entity.getId());
@@ -236,7 +234,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
         log.debug("resiliateAccount userAccountId:" + entity.getId());
         try {
             entity = userAccountService.attach(entity);
-            entity = userAccountService.userAccountTermination(entity, entity.getTerminationDate(), entity.getTerminationReason(), getCurrentUser());
+            entity = userAccountService.userAccountTermination(entity, entity.getTerminationDate(), entity.getTerminationReason());
             messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
 
         } catch (Exception e) {
@@ -250,7 +248,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 		log.info("cancelAccount userAccountId:" + entity.getId());
 		try {
 		    entity = userAccountService.attach(entity);
-            entity = userAccountService.userAccountCancellation(entity, new Date(), getCurrentUser());
+            entity = userAccountService.userAccountCancellation(entity, new Date());
 			messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
 			        
         } catch (Exception e) {
@@ -264,7 +262,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 		log.info("reactivateAccount userAccountId:" + entity.getId());
 		try {
 		    entity = userAccountService.attach(entity);
-            entity = userAccountService.userAccountReactivation(entity, new Date(), getCurrentUser());
+            entity = userAccountService.userAccountReactivation(entity, new Date());
 			messages.info(new BundleKey("messages", "reactivation.reactivateSuccessful"));
 			
         } catch (Exception e) {
@@ -313,7 +311,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 	public void populateAccounts(BillingAccount billingAccount) {
 		entity.setBillingAccount(billingAccount);
 		
-		if (billingAccount.getProvider() != null && billingAccount.getProvider().isLevelDuplication()) {
+		if (appProvider.isLevelDuplication()) {
 			entity.setCode(billingAccount.getCode());
 			entity.setDescription(billingAccount.getDescription());
 			entity.setAddress(billingAccount.getAddress());
@@ -321,7 +319,6 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 			entity.setExternalRef2(billingAccount.getExternalRef2());
 			entity.setProviderContact(billingAccount.getProviderContact());
 			entity.setName(billingAccount.getName());
-			entity.setProvider(billingAccount.getProvider());
 			entity.setSubscriptionDate(billingAccount.getSubscriptionDate());
 			entity.setPrimaryContact(billingAccount.getPrimaryContact());
 		}
@@ -334,13 +331,13 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
 	@Override
 	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider", "billingAccount", "billingAccount.customerAccount",
+		return Arrays.asList("billingAccount", "billingAccount.customerAccount",
 				"billingAccount.customerAccount.customer");
 	}
 
 	@Override
 	protected List<String> getListFieldsToFetch() {
-		return Arrays.asList("provider", "billingAccount");
+		return Arrays.asList("billingAccount");
 	}
 
 	public WalletOperation getReloadOperation() {
@@ -364,14 +361,13 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 		reloadOperation.setCurrency(entity.getBillingAccount().getCustomerAccount().getTradingCurrency().getCurrency());
 		reloadOperation.setWallet(entity.getWalletInstance(selectedWalletCode));
 		reloadOperation.setDescription("reload");
-		reloadOperation.setProvider(entity.getProvider());
 		reloadOperation.setSeller(entity.getBillingAccount().getCustomerAccount().getCustomer().getSeller());
 		reloadOperation.setStatus(WalletOperationStatusEnum.TREATED);
 		reloadOperation.setType(OperationTypeEnum.CREDIT);
 	}
 
 	public void reload() throws BusinessException {
-		walletOperationService.create(reloadOperation, getCurrentUser());
+		walletOperationService.create(reloadOperation);
 		reloadOperation = null;
 	}
 
@@ -394,10 +390,10 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 		return result;
 	}
 
-	public String getOpenBalanceWithoutTax(Provider provider, String sellerCode, String userAccountCode,
+	public String getOpenBalanceWithoutTax( String sellerCode, String userAccountCode,
 			Date startDate, Date endDate) throws BusinessException {
 		String result = null;
-		BigDecimal balance = walletReservationService.getOpenBalanceWithoutTax(provider, sellerCode, userAccountCode,
+		BigDecimal balance = walletReservationService.getOpenBalanceWithoutTax(sellerCode, userAccountCode,
 				startDate, endDate);
 		if (balance != null) {
 			result = balance.setScale(2, RoundingMode.HALF_UP).toPlainString();
@@ -405,11 +401,11 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 		return result;
 	}
 
-	public String getOpenBalanceWithTax(Provider provider, String sellerCode, String userAccountCode, Date startDate,
+	public String getOpenBalanceWithTax( String sellerCode, String userAccountCode, Date startDate,
 			Date endDate) throws BusinessException {
 
 	    String result = null;
-		BigDecimal balance = walletReservationService.getOpenBalanceWithTax(provider, sellerCode, userAccountCode,
+		BigDecimal balance = walletReservationService.getOpenBalanceWithTax(sellerCode, userAccountCode,
 				startDate, endDate);
 		if (balance != null) {
 			result = balance.setScale(2, RoundingMode.HALF_UP).toPlainString();
@@ -417,10 +413,10 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 		return result;
 	}
 
-	public String getReservedBalanceWithoutTax(Provider provider, String sellerCode, String userAccountCode,
+	public String getReservedBalanceWithoutTax( String sellerCode, String userAccountCode,
 			Date startDate, Date endDate) throws BusinessException {
 		String result = null;
-		BigDecimal balance = walletReservationService.getReservedBalanceWithoutTax(provider, sellerCode,
+		BigDecimal balance = walletReservationService.getReservedBalanceWithoutTax(sellerCode,
 				userAccountCode, startDate, endDate);
 		if (balance != null) {
 			result = balance.setScale(2, RoundingMode.HALF_UP).toPlainString();
@@ -428,10 +424,10 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 		return result;
 	}
 
-	public String getReservedBalanceWithTax(Provider provider, String sellerCode, String userAccountCode,
+	public String getReservedBalanceWithTax( String sellerCode, String userAccountCode,
 			Date startDate, Date endDate) throws BusinessException {
 		String result = null;
-		BigDecimal balance = walletReservationService.getReservedBalanceWithTax(provider, sellerCode, userAccountCode,
+		BigDecimal balance = walletReservationService.getReservedBalanceWithTax(sellerCode, userAccountCode,
 				startDate, endDate);
 		if (balance != null) {
 			result = balance.setScale(2, RoundingMode.HALF_UP).toPlainString();
@@ -439,10 +435,10 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 		return result;
 	}
 
-	public String getCurrentBalanceWithoutTax(Provider provider, String sellerCode, String userAccountCode,
+	public String getCurrentBalanceWithoutTax( String sellerCode, String userAccountCode,
 			Date startDate, Date endDate) throws BusinessException {
 		String result = null;
-		BigDecimal balance = walletReservationService.getCurrentBalanceWithoutTax(provider, sellerCode,
+		BigDecimal balance = walletReservationService.getCurrentBalanceWithoutTax(sellerCode,
 				userAccountCode, startDate, endDate);
 		if (balance != null) {
 			result = balance.setScale(2, RoundingMode.HALF_UP).toPlainString();
@@ -450,10 +446,10 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 		return result;
 	}
 
-	public String getCurrentBalanceWithTax(Provider provider, String sellerCode, String userAccountCode,
+	public String getCurrentBalanceWithTax( String sellerCode, String userAccountCode,
 			Date startDate, Date endDate) throws BusinessException {
 		String result = null;
-		BigDecimal balance = walletReservationService.getCurrentBalanceWithTax(provider, sellerCode, userAccountCode,
+		BigDecimal balance = walletReservationService.getCurrentBalanceWithTax(sellerCode, userAccountCode,
 				startDate, endDate);
 		if (balance != null) {
 			result = balance.setScale(2, RoundingMode.HALF_UP).toPlainString();
@@ -521,17 +517,13 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 			if (productInstance.getApplicationDate() == null) {
 				productInstance.setApplicationDate(new Date());
 			}
-			Auditable auditable = new Auditable();
-			auditable.setCreated(new Date());
-			auditable.setCreator(currentUser);
-			productInstance.setAuditable(auditable);
 		}
 		productInstance.setUserAccount(getPersistenceService().refreshOrRetrieve(entity));
 		productInstance.setProductTemplate(productTemplateService.refreshOrRetrieve(productInstance.getProductTemplate()));
 
 		try {
-			productInstanceService.create(productInstance, currentUser);
-			List<WalletOperation> walletOps = productInstanceService.applyProductInstance(productInstance, null, null, null, currentUser, true);
+			productInstanceService.create(productInstance);
+			List<WalletOperation> walletOps = productInstanceService.applyProductInstance(productInstance, null, null, null, true);
 			
 			if (walletOps == null || walletOps.size() == 0) {
 				messages.error(new BundleKey("messages", "message.userAccount.applyProduct.noProductCharge"));

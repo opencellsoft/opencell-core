@@ -15,7 +15,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.job.UnitRecurringRatingJobBean;
-import org.meveo.model.admin.User;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.slf4j.Logger;
 
@@ -35,11 +34,11 @@ public class RecurringChargeAsync {
 
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result, User currentUser, Date maxDate) {
+    public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result, Date maxDate) {
 
         for (Long id : ids) {
         	log.debug("run recurringChargeInstace ID {}",id);
-            unitRecurringRatingJobBean.execute(result, currentUser, id, maxDate);
+            unitRecurringRatingJobBean.execute(result, id, maxDate);
         }
         log.debug("End launchAndForget!");
 

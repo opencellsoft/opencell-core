@@ -13,7 +13,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.meveo.api.rest.PATCH;
-import org.meveo.api.rest.security.RSSecured;
 import org.tmf.dsmapi.quote.ProductQuote;
 
 /**
@@ -24,7 +23,7 @@ import org.tmf.dsmapi.quote.ProductQuote;
 @Path("/quoteManagement/productQuote")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-@RSSecured
+
 public interface QuoteRs {
 
     /**

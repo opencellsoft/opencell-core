@@ -43,7 +43,7 @@ import org.meveo.model.crm.Email;
  * Report entity.
  */
 @Entity
-@ExportIdentifier({ "name", "provider" })
+@ExportIdentifier({ "name"})
 @Table(name = "BI_REPORT")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BI_REPORT_SEQ")
 public class Report extends BaseEntity {

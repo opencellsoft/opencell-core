@@ -18,9 +18,6 @@
  */
 package org.meveo.admin.action.admin;
 
-import java.util.Arrays;
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -88,11 +85,6 @@ public class SellerBean extends CustomFieldBean<Seller> {
 	}
 
 	@Override
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
-
-	@Override
 	@ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		return super.saveOrUpdate(killConversation);
@@ -114,11 +106,11 @@ public class SellerBean extends CustomFieldBean<Seller> {
     }
 
  public void saveOrUpdateSequence() throws BusinessException{ 
-		 if(getCurrentInvoiceNb().longValue()< invoiceTypeService.getMaxCurrentInvoiceNumber(getCurrentProvider(), invoiceTypeCode).longValue()) {
+		 if(getCurrentInvoiceNb().longValue()< invoiceTypeService.getMaxCurrentInvoiceNumber(invoiceTypeCode).longValue()) {
 			 messages.error(new BundleKey("messages", "invoice.downgrade.cuurrentNb.error.msg"));
 			 return;
 		 }
-		 InvoiceType invoiceType=invoiceTypeService.findByCode(invoiceTypeCode, getCurrentProvider());
+		 InvoiceType invoiceType=invoiceTypeService.findByCode(invoiceTypeCode);
 		 if(invoiceType!=null){
 			 if(!editSellerSequence){
 				 if(entity.isContainsInvoiceTypeSequence(invoiceType)){

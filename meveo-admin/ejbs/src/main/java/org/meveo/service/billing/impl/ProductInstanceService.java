@@ -28,7 +28,6 @@ import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ProductChargeInstance;
@@ -87,7 +86,7 @@ public class ProductInstanceService extends BusinessService<ProductInstance> {
         QueryBuilder qb = new QueryBuilder(ServiceInstance.class, "i");
         try {
             qb.addCriterionEntity("productTemplate", productTemplate);
-            qb.addCriterionEntity("provider", provider);
+            
             qb.addCriterionEnum("status", status);
             return (List<ProductInstance>) qb.getQuery(em).getResultList();
         } catch (NoResultException e) {
@@ -97,7 +96,7 @@ public class ProductInstanceService extends BusinessService<ProductInstance> {
     
     @SuppressWarnings("unchecked")
 	public List<ProductInstance> findBySubscription(Subscription subscription) {
-        QueryBuilder qb = new QueryBuilder(ProductInstance.class, "p", null, subscription.getProvider());
+        QueryBuilder qb = new QueryBuilder(ProductInstance.class, "p", null);
         try {
             qb.addCriterionEntity("subscription", subscription);
             return (List<ProductInstance>) qb.getQuery(getEntityManager()).getResultList();
@@ -106,34 +105,34 @@ public class ProductInstanceService extends BusinessService<ProductInstance> {
         }
     }
 
-    public List<WalletOperation> applyProductInstance(ProductInstance productInstance, String criteria1, String criteria2, String criteria3, User currentUser, boolean persist)
+    public List<WalletOperation> applyProductInstance(ProductInstance productInstance, String criteria1, String criteria2, String criteria3, boolean persist)
             throws BusinessException {
 
-        instantiateProductInstance(productInstance, criteria1, criteria2, criteria3, currentUser, !persist);
+        instantiateProductInstance(productInstance, criteria1, criteria2, criteria3, !persist);
         
         List<WalletOperation> walletOperations = new ArrayList<>();
         for (ProductChargeInstance productChargeInstance : productInstance.getProductChargeInstances()) {
-            walletOperations.addAll(productChargeInstanceService.applyProductChargeInstance(productChargeInstance, currentUser, !persist));
+            walletOperations.addAll(productChargeInstanceService.applyProductChargeInstance(productChargeInstance, !persist));
         }
         
         return walletOperations;
     }
     
-	public void instantiateProductInstance(ProductInstance productInstance, String criteria1, String criteria2, String criteria3, User user, boolean isVirtual)
+	public void instantiateProductInstance(ProductInstance productInstance, String criteria1, String criteria2, String criteria3, boolean isVirtual)
 			throws BusinessException {
 		
 		if (!isVirtual) {
-			create(productInstance, user);
+			create(productInstance);
 		}
 		
 		for (ProductChargeTemplate productChargeTemplate : productInstance.getProductTemplate().getProductChargeTemplates()) {
-			ProductChargeInstance productChargeInstance = new ProductChargeInstance(productInstance, productChargeTemplate, user);
+			ProductChargeInstance productChargeInstance = new ProductChargeInstance(productInstance, productChargeTemplate);
 			productChargeInstance.setCriteria1(criteria1);
 			productChargeInstance.setCriteria1(criteria2);
 			productChargeInstance.setCriteria1(criteria3);
 			productChargeInstance.setOrderNumber(productInstance.getOrderNumber());
 			if (!isVirtual) {
-				productChargeInstanceService.create(productChargeInstance, user);
+				productChargeInstanceService.create(productChargeInstance);
 			}
  
 			productInstance.getProductChargeInstances().add(productChargeInstance);
@@ -149,7 +148,7 @@ public class ProductInstanceService extends BusinessService<ProductInstance> {
                         productChargeInstance.setPrepaid(true);
 
                     }
-                    WalletInstance walletInstance = walletService.getWalletInstance(productChargeInstance.getUserAccount(), walletTemplate, isVirtual, user);
+                    WalletInstance walletInstance = walletService.getWalletInstance(productChargeInstance.getUserAccount(), walletTemplate, isVirtual);
                     log.debug("add the wallet instance {} to the chargeInstance {}", walletInstance.getId(), productChargeInstance.getId());
                     productChargeInstance.getWalletInstances().add(walletInstance);
                 }

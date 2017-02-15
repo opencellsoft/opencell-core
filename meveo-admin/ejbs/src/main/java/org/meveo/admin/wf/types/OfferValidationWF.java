@@ -6,7 +6,6 @@ import java.util.List;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.wf.WorkflowType;
 import org.meveo.admin.wf.WorkflowTypeClass;
-import org.meveo.model.admin.User;
 import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.ProductOffering;
 
@@ -27,7 +26,7 @@ public class OfferValidationWF extends WorkflowType<ProductOffering> {
     }
 
     @Override
-    public void changeStatus(String newStatus, User currentUser) throws BusinessException {
+    public void changeStatus(String newStatus) throws BusinessException {
         entity.setLifeCycleStatus(LifeCycleStatusEnum.valueOf(newStatus));
     }
 

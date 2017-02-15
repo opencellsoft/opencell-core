@@ -18,7 +18,6 @@ import org.meveo.api.dto.account.CustomerDto;
 import org.meveo.api.dto.response.account.CustomersResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerResponseDto;
 import org.meveo.api.rest.IBaseRs;
-import org.meveo.api.rest.security.RSSecured;
 
 /**
  * @author Edward P. Legaspi
@@ -26,7 +25,7 @@ import org.meveo.api.rest.security.RSSecured;
 @Path("/account/customer")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-@RSSecured
+
 public interface CustomerRs extends IBaseRs {
 
     @POST

@@ -229,4 +229,14 @@
 			<type>java.lang.String</type>
 		</attribute>
 	</tag>
+	<tag>
+        <description>
+            This component is a generic converter which allows for basic conversion between objects and an auto incremented id.
+            The converter is conversation scoped, so the same objects should be available throughout a full conversation.
+        </description>
+        <tag-name>objectConverter</tag-name>
+        <converter>
+            <converter-id>org.jboss.seam.faces.conversion.ObjectConverter</converter-id>
+        </converter>
+    </tag>
 </facelet-taglib>

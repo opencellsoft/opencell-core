@@ -22,8 +22,8 @@ import org.meveo.model.security.Role;
 
 @Entity
 @ModuleItem
-@ExportIdentifier({ "code", "provider" })
-@Table(name = "DWH_CHART", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "PROVIDER_ID" }))
+@ExportIdentifier({ "code"})
+@Table(name = "DWH_CHART", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
 @Inheritance(strategy = InheritanceType.JOINED)
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_BILLING_RUN_SEQ")
 public class Chart extends BusinessEntity {

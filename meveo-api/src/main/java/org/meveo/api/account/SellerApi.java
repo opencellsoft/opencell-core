@@ -26,14 +26,12 @@ import org.meveo.api.security.parameter.SecureMethodParameter;
 import org.meveo.api.security.parameter.UserParser;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.BusinessAccountModel;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
@@ -62,34 +60,33 @@ public class SellerApi extends BaseApi {
     @Inject
     private InvoiceTypeService invoiceTypeService;
 
-    public void create(SellerDto postData, User currentUser) throws MeveoApiException, BusinessException {
-        create(postData, currentUser, true);
+    public void create(SellerDto postData) throws MeveoApiException, BusinessException {
+        create(postData, true);
     }
 
-    public Seller create(SellerDto postData, User currentUser, boolean checkCustomField) throws MeveoApiException, BusinessException {
-        return create(postData, currentUser, checkCustomField, null);
+    public Seller create(SellerDto postData, boolean checkCustomField) throws MeveoApiException, BusinessException {
+        return create(postData, checkCustomField, null);
     }
 
-    public Seller create(SellerDto postData, User currentUser, boolean checkCustomField, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
+    public Seller create(SellerDto postData, boolean checkCustomField, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
             handleMissingParameters();
         }
 
-        Provider provider = currentUser.getProvider();
+        
 
-        if (sellerService.findByCode(postData.getCode(), provider) != null) {
+        if (sellerService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(Seller.class, postData.getCode());
         }
 
         Seller seller = new Seller();
         seller.setCode(postData.getCode());
         seller.setDescription(postData.getDescription());
-        seller.setProvider(provider);       
         if(postData.getInvoiceTypeSequences() != null){
         	for(Entry<String, SequenceDto> entry : postData.getInvoiceTypeSequences().entrySet() ){
-        		InvoiceType invoiceType = invoiceTypeService.findByCode(entry.getKey(), currentUser.getProvider());
+        		InvoiceType invoiceType = invoiceTypeService.findByCode(entry.getKey());
         		if(invoiceType == null){
         			 throw new EntityDoesNotExistsException(InvoiceType.class, entry.getKey());
         		}
@@ -99,7 +96,7 @@ public class SellerApi extends BaseApi {
         
         // check trading entities
         if (!StringUtils.isBlank(postData.getCurrencyCode())) {
-            TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrencyCode(), provider);
+            TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrencyCode());
             if (tradingCurrency == null) {
                 throw new EntityDoesNotExistsException(TradingCurrency.class, postData.getCurrencyCode());
             }
@@ -108,7 +105,7 @@ public class SellerApi extends BaseApi {
         }
 
         if (!StringUtils.isBlank(postData.getCountryCode())) {
-            TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountryCode(), provider);
+            TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountryCode());
             if (tradingCountry == null) {
                 throw new EntityDoesNotExistsException(TradingCountry.class, postData.getCountryCode());
             }
@@ -117,7 +114,7 @@ public class SellerApi extends BaseApi {
         }
 
         if (!StringUtils.isBlank(postData.getLanguageCode())) {
-            TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(postData.getLanguageCode(), provider);
+            TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(postData.getLanguageCode());
             if (tradingLanguage == null) {
                 throw new EntityDoesNotExistsException(TradingLanguage.class, postData.getLanguageCode());
             }
@@ -127,7 +124,7 @@ public class SellerApi extends BaseApi {
 
         // check parent seller
         if (!StringUtils.isBlank(postData.getParentSeller())) {
-            Seller parentSeller = sellerService.findByCode(postData.getParentSeller(), provider);
+            Seller parentSeller = sellerService.findByCode(postData.getParentSeller());
             if (parentSeller == null) {
                 throw new EntityDoesNotExistsException(Seller.class, postData.getParentSeller());
             }
@@ -139,11 +136,11 @@ public class SellerApi extends BaseApi {
             seller.setBusinessAccountModel(businessAccountModel);
         }
 
-        sellerService.create(seller, currentUser);
+        sellerService.create(seller);
 
         // populate customFields
         try {
-            populateCustomFields(postData.getCustomFields(), seller, true, currentUser, checkCustomField);
+            populateCustomFields(postData.getCustomFields(), seller, true, checkCustomField);
         } catch (MissingParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
@@ -155,24 +152,24 @@ public class SellerApi extends BaseApi {
         return seller;
     }
 
-    public void update(SellerDto postData, User currentUser) throws MeveoApiException, BusinessException {
-        update(postData, currentUser, true);
+    public void update(SellerDto postData) throws MeveoApiException, BusinessException {
+        update(postData, true);
     }
 
-    public Seller update(SellerDto postData, User currentUser, boolean checkCustomField) throws MeveoApiException, BusinessException {
-        return update(postData, currentUser, checkCustomField, null);
+    public Seller update(SellerDto postData, boolean checkCustomField) throws MeveoApiException, BusinessException {
+        return update(postData, checkCustomField, null);
     }
 
-    public Seller update(SellerDto postData, User currentUser, boolean checkCustomField, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
+    public Seller update(SellerDto postData, boolean checkCustomField, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
             handleMissingParameters();
         }
 
-        Provider provider = currentUser.getProvider();
+        
 
-        Seller seller = sellerService.findByCode(postData.getCode(), provider);
+        Seller seller = sellerService.findByCode(postData.getCode());
         if (seller == null) {
             throw new EntityDoesNotExistsException(Seller.class, postData.getCode());
         }
@@ -180,13 +177,13 @@ public class SellerApi extends BaseApi {
         seller.setDescription(postData.getDescription());
         if(postData.getInvoiceTypeSequences() != null){
         	for(Entry<String, SequenceDto> entry : postData.getInvoiceTypeSequences().entrySet() ){
-        		InvoiceType invoiceType = invoiceTypeService.findByCode(entry.getKey(), currentUser.getProvider());
+        		InvoiceType invoiceType = invoiceTypeService.findByCode(entry.getKey());
         		if(invoiceType == null){
         			 throw new EntityDoesNotExistsException(InvoiceType.class, entry.getKey());
         		}
         		
         		if(entry.getValue().getCurrentInvoiceNb().longValue() 
-        				< invoiceTypeService.getMaxCurrentInvoiceNumber(currentUser.getProvider(), invoiceType.getCode()).longValue()) {
+        				< invoiceTypeService.getMaxCurrentInvoiceNumber(invoiceType.getCode()).longValue()) {
                 	throw new MeveoApiException("Not able to update, check the current number");
                 }
         		if (seller.isContainsInvoiceTypeSequence(invoiceType)){
@@ -198,7 +195,7 @@ public class SellerApi extends BaseApi {
         }
         // check trading entities
         if (!StringUtils.isBlank(postData.getCurrencyCode())) {
-            TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrencyCode(), provider);
+            TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrencyCode());
             if (tradingCurrency == null) {
                 throw new EntityDoesNotExistsException(TradingCurrency.class, postData.getCurrencyCode());
             }
@@ -210,7 +207,7 @@ public class SellerApi extends BaseApi {
         }
 
         if (!StringUtils.isBlank(postData.getCountryCode())) {
-            TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountryCode(), provider);
+            TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountryCode());
             if (tradingCountry == null) {
                 throw new EntityDoesNotExistsException(TradingCountry.class, postData.getCountryCode());
             }
@@ -222,7 +219,7 @@ public class SellerApi extends BaseApi {
         }
 
         if (!StringUtils.isBlank(postData.getLanguageCode())) {
-            TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(postData.getLanguageCode(), provider);
+            TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(postData.getLanguageCode());
             if (tradingLanguage == null) {
                 throw new EntityDoesNotExistsException(TradingLanguage.class, postData.getLanguageCode());
             }
@@ -235,7 +232,7 @@ public class SellerApi extends BaseApi {
 
         // check parent seller
         if (!StringUtils.isBlank(postData.getParentSeller())) {
-            Seller parentSeller = sellerService.findByCode(postData.getParentSeller(), provider);
+            Seller parentSeller = sellerService.findByCode(postData.getParentSeller());
             if (parentSeller == null) {
                 throw new EntityDoesNotExistsException(Seller.class, postData.getParentSeller());
             }
@@ -247,11 +244,11 @@ public class SellerApi extends BaseApi {
             seller.setBusinessAccountModel(businessAccountModel);
         }
 
-        seller = sellerService.update(seller, currentUser);
+        seller = sellerService.update(seller);
 
         // populate customFields
         try {
-            populateCustomFields(postData.getCustomFields(), seller, false, currentUser, checkCustomField);
+            populateCustomFields(postData.getCustomFields(), seller, false, checkCustomField);
         } catch (MissingParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
@@ -266,9 +263,9 @@ public class SellerApi extends BaseApi {
     @SecuredBusinessEntityMethod(
 			validate = @SecureMethodParameter, 
 			user = @SecureMethodParameter(index = 1, parser = UserParser.class))
-    public SellerDto find(String sellerCode, User currentUser) throws MeveoApiException {
+    public SellerDto find(String sellerCode) throws MeveoApiException {
 
-    	Provider provider = currentUser.getProvider();
+    	
         if (StringUtils.isBlank(sellerCode)) {
             missingParameters.add("sellerCode");
             handleMissingParameters();
@@ -276,7 +273,7 @@ public class SellerApi extends BaseApi {
 
         SellerDto result = new SellerDto();
 
-        Seller seller = sellerService.findByCode(sellerCode, provider, Arrays.asList("tradingCountry", "tradingCurrency", "tradingLanguage"));
+        Seller seller = sellerService.findByCode(sellerCode, Arrays.asList("tradingCountry", "tradingCurrency", "tradingLanguage"));
         if (seller == null) {
             throw new EntityDoesNotExistsException(Seller.class, sellerCode);
         }
@@ -286,19 +283,19 @@ public class SellerApi extends BaseApi {
         return result;
     }
 
-    public void remove(String sellerCode, User currentUser) throws MeveoApiException {
+    public void remove(String sellerCode) throws MeveoApiException {
 
         if (StringUtils.isBlank(sellerCode)) {
             missingParameters.add("sellerCode");
             handleMissingParameters();
         }
 
-        Seller seller = sellerService.findByCode(sellerCode, currentUser.getProvider());
+        Seller seller = sellerService.findByCode(sellerCode);
         if (seller == null) {
             throw new EntityDoesNotExistsException(Seller.class, sellerCode);
         }
         try {
-            sellerService.remove(seller, currentUser);
+            sellerService.remove(seller);
             sellerService.commit();
         } catch (Exception e) {
             if (e.getMessage().indexOf("ConstraintViolationException") > -1) {
@@ -308,10 +305,10 @@ public class SellerApi extends BaseApi {
         }
     }
 
-    public SellersDto list(Provider provider) {
+    public SellersDto list() {
         SellersDto result = new SellersDto();
 
-        List<Seller> sellers = sellerService.list(provider);
+        List<Seller> sellers = sellerService.list();
         if (sellers != null) {
             for (Seller seller : sellers) {
                 result.getSeller().add(new SellerDto(seller, entityToDtoConverter.getCustomFieldsDTO(seller)));
@@ -321,10 +318,10 @@ public class SellerApi extends BaseApi {
         return result;
     }
 
-    public SellerCodesResponseDto listSellerCodes(Provider provider) {
+    public SellerCodesResponseDto listSellerCodes() {
         SellerCodesResponseDto result = new SellerCodesResponseDto();
 
-        List<Seller> sellers = sellerService.list(provider);
+        List<Seller> sellers = sellerService.list();
         if (sellers != null) {
             for (Seller seller : sellers) {
                 result.getSellerCodes().add(seller.getCode());
@@ -338,16 +335,16 @@ public class SellerApi extends BaseApi {
      * creates or updates seller based on the seller code. If seller is not existing based on the seller code, it will be created else, will be updated.
      * 
      * @param postData
-     * @param currentUser
+
      * @throws MeveoApiException
      * @throws BusinessException 
      */
-    public void createOrUpdate(SellerDto postData, User currentUser) throws MeveoApiException, BusinessException {
-        Seller seller = sellerService.findByCode(postData.getCode(), currentUser.getProvider());
+    public void createOrUpdate(SellerDto postData) throws MeveoApiException, BusinessException {
+        Seller seller = sellerService.findByCode(postData.getCode());
         if (seller == null) {
-            create(postData, currentUser);
+            create(postData);
         } else {
-            update(postData, currentUser);
+            update(postData);
         }
     }
 }

@@ -20,9 +20,11 @@ package org.meveo.model.communication.contact;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -35,9 +37,8 @@ import org.meveo.model.communication.CommunicationPolicy;
 import org.meveo.model.communication.Message;
 
 @Entity
-@ExportIdentifier({ "contactCode", "provider" })
-@Table(name = "COM_CONTACT", uniqueConstraints = @UniqueConstraint(columnNames = { "PROVIDER_ID",
-		"CONTACT_CODE" }))
+@ExportIdentifier({ "contactCode"})
+@Table(name = "COM_CONTACT", uniqueConstraints = @UniqueConstraint(columnNames = { "CONTACT_CODE" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "COM_CONTACT_SEQ")
 public class Contact extends BaseEntity {
 
@@ -51,7 +52,7 @@ public class Contact extends BaseEntity {
 	@Embedded
 	private CommunicationPolicy contactPolicy;
 
-	@OneToMany
+	@OneToMany(mappedBy = "contact", fetch = FetchType.LAZY)
 	private List<Message> messages;
 
 	public String getContactCode() {

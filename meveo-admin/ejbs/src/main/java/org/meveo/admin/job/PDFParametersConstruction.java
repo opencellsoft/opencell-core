@@ -31,10 +31,7 @@ import java.util.Map;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import net.sf.jasperreports.engine.JRParameter;
-
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
@@ -47,8 +44,11 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.sf.jasperreports.engine.JRParameter;
 
 @Stateless
 public class PDFParametersConstruction {
@@ -63,6 +63,10 @@ public class PDFParametersConstruction {
     
     @Inject
     protected CustomFieldInstanceService customFieldInstanceService;
+
+    @Inject
+    @ApplicationProvider
+    private Provider appProvider;
     
 	private  String TIP_PAYMENT_METHOD = "TIP";
 	private  String PDF_DIR_NAME = "pdf";
@@ -76,7 +80,6 @@ public class PDFParametersConstruction {
 	public Map<String, Object> constructParameters(Invoice invoice) {
 		
 		try {
-			Provider provider = currentUser.getProvider();
 			currencyFormat.setMinimumFractionDigits(2);
 			
 			Map<String, Object> parameters = new HashMap<String, Object>();
@@ -94,7 +97,7 @@ public class PDFParametersConstruction {
 			ParamBean paramBean = ParamBean.getInstance();
 			String meveoDir = paramBean.getProperty("providers.rootDir",
 					"/tmp/meveo");
-			String resDir = meveoDir + File.separator + provider.getCode()
+			String resDir = meveoDir + File.separator + appProvider.getCode()
 					+ File.separator + "jasper";
 			String templateDir = new StringBuilder(resDir)
 					.append(File.separator).append(billingTemplateName)
@@ -124,10 +127,10 @@ public class PDFParametersConstruction {
 						bankCoordinatesEmpty.setBankCode("     ");
 						bankCoordinatesEmpty.setBranchCode("     ");
 						bankCoordinatesEmpty.setKey("  ");
-						TIP tip = new TIP(provider.getInterBankTitle()
-								.getCodeCreancier(), provider
+						TIP tip = new TIP(appProvider.getInterBankTitle()
+								.getCodeCreancier(), appProvider
 								.getInterBankTitle()
-								.getCodeEtablissementCreancier(), provider
+								.getCodeEtablissementCreancier(), appProvider
 								.getInterBankTitle().getCodeCentre(),
 								bankCoordinatesEmpty, billingAccount
 										.getCustomerAccount().getCode(),
@@ -140,10 +143,10 @@ public class PDFParametersConstruction {
 								PdfGeneratorConstants.LOW_OPTICAL_LINE_KEY,
 								tip.getLigneOptiqueBasse());
 					} else {
-						TIP tip = new TIP(provider.getInterBankTitle()
-								.getCodeCreancier(), provider
+						TIP tip = new TIP(appProvider.getInterBankTitle()
+								.getCodeCreancier(), appProvider
 								.getInterBankTitle()
-								.getCodeEtablissementCreancier(), provider
+								.getCodeEtablissementCreancier(), appProvider
 								.getInterBankTitle().getCodeCentre(),
 								bankCoordinates, billingAccount
 										.getCustomerAccount().getCode(),
@@ -182,7 +185,7 @@ public class PDFParametersConstruction {
 	}
 	
     private Map<String, String> getBACustomFields(BillingAccount billingAccount) {
-        Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(billingAccount, billingAccount.getProvider());
+        Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(billingAccount);
 		Map<String, String>  customFields = new HashMap<String, String> ();
 		if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
 			for (String cfCode : customFieldTemplates.keySet()) {

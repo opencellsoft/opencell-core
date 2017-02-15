@@ -81,9 +81,7 @@ public class OfferTemplateCategoryBean extends CustomFieldBean<OfferTemplateCate
         if (rootOfferTemplateCategory == null) {
             rootOfferTemplateCategory = new SortedTreeNode(new OfferTemplateCategory(), null);
             List<OfferTemplateCategory> roots = null;
-            if (entity != null && entity.getProvider() != null) {
-                roots = offerTemplateCategoryService.findRoots(entity.getProvider());
-            }
+            roots = offerTemplateCategoryService.findRoots();
 
             if (CollectionUtils.isNotEmpty(roots)) {
                 for (OfferTemplateCategory tree : roots) {
@@ -156,15 +154,15 @@ public class OfferTemplateCategoryBean extends CustomFieldBean<OfferTemplateCate
         OfferTemplateCategory offerTemplateCategory = (OfferTemplateCategory) selectedOfferTemplateCategory.getData();
         if (offerTemplateCategory != null) {
             try {
-                offerTemplateCategoryService.remove(offerTemplateCategory.getId(), getCurrentUser());
+                offerTemplateCategoryService.remove(offerTemplateCategory.getId());
                 selectedOfferTemplateCategory.getParent().getChildren().remove(selectedOfferTemplateCategory);
                 selectedOfferTemplateCategory = null;
                 initEntity();
                 
                 if (isImageUpload()) {
         			try {
-        				ImageUploadEventHandler<OfferTemplateCategory> imageUploadEventHandler = new ImageUploadEventHandler<>();
-        				imageUploadEventHandler.deleteImage(offerTemplateCategory, getCurrentProvider().getCode());
+        				ImageUploadEventHandler<OfferTemplateCategory> imageUploadEventHandler = new ImageUploadEventHandler<>(currentUser);
+        				imageUploadEventHandler.deleteImage(offerTemplateCategory);
         			} catch (IOException e) {
         				log.error("Failed moving image file");
         			}
@@ -288,7 +286,7 @@ public class OfferTemplateCategoryBean extends CustomFieldBean<OfferTemplateCate
 
                 offerTemplateCategory.setOfferTemplateCategory(parent);
                 offerTemplateCategory.setOrderLevel(order + 1);
-                offerTemplateCategoryService.update(offerTemplateCategory, getCurrentUser());
+                offerTemplateCategoryService.update(offerTemplateCategory);
             }
         }
     }

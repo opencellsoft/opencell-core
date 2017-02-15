@@ -23,13 +23,10 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.meveo.model.admin.User;
+import org.meveo.security.MeveoUser;
 
 @Embeddable
 public class Auditable implements Serializable {
@@ -44,20 +41,18 @@ public class Auditable implements Serializable {
 	@Column(name = "UPDATED")
 	private Date updated;
 
-	@ManyToOne(optional = true, fetch = FetchType.LAZY)
-	@JoinColumn(name = "CREATOR_ID", updatable = false)
-	private User creator;
+	@Column(name = "CREATOR", updatable = false, length = 100)
+	private String creator;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "UPDATER_ID")
-	private User updater;
+	@Column(name = "UPDATER", length = 100)
+	private String updater;
 
 	public Auditable() {
 	}
 
-	public Auditable(User creator) {
+	public Auditable(MeveoUser creator) {
 		super();
-		this.creator = creator;
+		this.creator = creator.getSubject();
 		this.created = new Date();
 	}
 
@@ -77,19 +72,19 @@ public class Auditable implements Serializable {
 		this.updated = updated;
 	}
 
-	public User getCreator() {
+	public String getCreator() {
 		return creator;
 	}
 
-	public void setCreator(User creator) {
+	public void setCreator(String creator) {
 		this.creator = creator;
 	}
 
-	public User getUpdater() {
+	public String getUpdater() {
 		return updater;
 	}
 
-	public void setUpdater(User updater) {
+	public void setUpdater(String updater) {
 		this.updater = updater;
 	}
 
@@ -97,17 +92,17 @@ public class Auditable implements Serializable {
 		return (updated != null) ? updated : created;
 	}
 
-	public User getLastUser() {
+	public String getLastUser() {
 		return (updater != null) ? updater : creator;
 	}
 
-    public void updateWith(User currentUser) {
+    public void updateWith(MeveoUser currentUser) {
         this.updated = new Date();
-        this.updater = currentUser;
+        this.updater = currentUser.getSubject();
 
         // Make sure that creator and created fields are set in case entity was imported or entered by some other means               
         if (this.creator == null) {
-            this.creator = currentUser;
+            this.creator = currentUser.getSubject();
         }
         if (this.created == null) {
             this.created = this.updated;

@@ -9,8 +9,6 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
 import org.meveo.service.filter.FilterService;
 
@@ -24,7 +22,7 @@ public class FilterApi extends BaseCrudApi<Filter, FilterDto> {
     @Inject
     private FilterService filterService;
 
-    private Filter create(FilterDto dto, User currentUser) throws MeveoApiException, BusinessException {
+    private Filter create(FilterDto dto) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(dto.getCode())) {
             missingParameters.add("code");
@@ -37,12 +35,12 @@ public class FilterApi extends BaseCrudApi<Filter, FilterDto> {
 
         Filter filter = new Filter();
         mapDtoToFilter(dto, filter);
-        filterService.create(filter, currentUser);
+        filterService.create(filter);
 
         return filter;
     }
 
-    private Filter update(FilterDto dto, User currentUser) throws MeveoApiException, BusinessException {
+    private Filter update(FilterDto dto) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(dto.getCode())) {
             missingParameters.add("code");
@@ -53,15 +51,15 @@ public class FilterApi extends BaseCrudApi<Filter, FilterDto> {
 
         handleMissingParameters();
 
-        Provider provider = currentUser.getProvider();
-        Filter filter = filterService.findByCode(dto.getCode(), provider);
+        
+        Filter filter = filterService.findByCode(dto.getCode());
 
         if (filter == null) {
             throw new EntityDoesNotExistsException(Filter.class, dto.getCode());
         }
 
         mapDtoToFilter(dto, filter);
-        filter = filterService.update(filter, currentUser);
+        filter = filterService.update(filter);
 
         return filter;
     }
@@ -77,29 +75,29 @@ public class FilterApi extends BaseCrudApi<Filter, FilterDto> {
     }
 
     @Override
-    public Filter createOrUpdate(FilterDto dto, User currentUser) throws MeveoApiException, BusinessException {
+    public Filter createOrUpdate(FilterDto dto) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(dto.getCode())) {
             missingParameters.add("code");
             handleMissingParameters();
         }
 
-        Provider provider = currentUser.getProvider();
-        Filter existed = filterService.findByCode(dto.getCode(), provider);
+        
+        Filter existed = filterService.findByCode(dto.getCode());
         if (existed != null) {
-            return update(dto, currentUser);
+            return update(dto);
         } else {
-            return create(dto, currentUser);
+            return create(dto);
         }
     }
 
     @Override
-    public FilterDto find(String code, User currentUser) throws EntityDoesNotExistsException, MissingParameterException {
+    public FilterDto find(String code) throws EntityDoesNotExistsException, MissingParameterException {
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
             handleMissingParameters();
         }
 
-        Filter filter = filterService.findByCode(code, currentUser.getProvider());
+        Filter filter = filterService.findByCode(code);
 
         if (filter == null) {
             throw new EntityDoesNotExistsException(Filter.class, code);

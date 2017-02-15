@@ -14,10 +14,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.parse.csv.CdrParserProducer;
 import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.event.qualifier.RejectedCDR;
-import org.meveo.model.IProvider;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
@@ -68,11 +65,11 @@ public class CDRParsingService extends PersistenceService<EDR> {
      * accesses.add(access); MeveoCacheContainerProvider.getAccessCache().put(access.getAccessUserId(), accesses); } }
      */
 
-    public List<EDR> getEDRList(String line, Provider provider, String origin) throws CDRParsingException {
+    public List<EDR> getEDRList(String line, String origin) throws CDRParsingException {
         List<EDR> result = new ArrayList<EDR>();
         Serializable cdr = cdrParser.getCDR(line);
-        deduplicate(cdr, provider);
-        List<Access> accessPoints = accessPointLookup(cdr, provider);
+        deduplicate(cdr);
+        List<Access> accessPoints = accessPointLookup(cdr);
         
         EDRDAO edrDAO = cdrParser.getEDR(cdr, origin);
         
@@ -94,7 +91,7 @@ public class CDRParsingService extends PersistenceService<EDR> {
         return result;
     }
 
-    public EDR getEDRForVirtual(String line, String origin, Subscription subscription, User currentUser) throws CDRParsingException {
+    public EDR getEDRForVirtual(String line, String origin, Subscription subscription) throws CDRParsingException {
 
         Serializable cdr = cdrParser.getCDR(line);
         EDRDAO edrDAO = cdrParser.getEDR(cdr, origin);
@@ -135,23 +132,21 @@ public class CDRParsingService extends PersistenceService<EDR> {
             edr.setAccessCode(accessPoint.getAccessUserId());            
         } else if (subscription != null) {
             edr.setSubscription(subscription);
-            edr.setProvider(subscription.getProvider());
         }
 
         return edr;
     }
 
-    private void deduplicate(Serializable cdr, Provider provider) throws DuplicateException {
-        if (edrService.duplicateFound(provider, cdrParser.getOriginBatch().get(CDR_ORIGIN_JOB), cdrParser.getOriginRecord(cdr, CDR_ORIGIN_JOB))) {
+    private void deduplicate(Serializable cdr) throws DuplicateException {
+        if (edrService.duplicateFound(cdrParser.getOriginBatch().get(CDR_ORIGIN_JOB), cdrParser.getOriginRecord(cdr, CDR_ORIGIN_JOB))) {
             throw new DuplicateException(cdr);
         }
     }
 
-    private List<Access> accessPointLookup(Serializable cdr, Provider provider) throws InvalidAccessException {
+    private List<Access> accessPointLookup(Serializable cdr) throws InvalidAccessException {
         String accessUserId = cdrParser.getAccessUserId(cdr);
-        List<Access> accesses = cdrEdrProcessingCacheContainerProvider.getAccessesByAccessUserId(provider.getId(), accessUserId);
+        List<Access> accesses = cdrEdrProcessingCacheContainerProvider.getAccessesByAccessUserId(accessUserId);
         if (accesses == null || accesses.size() == 0) {
-            ((IProvider) cdr).setProvider(provider);
             rejectededCdrEventProducer.fire(cdr);
             throw new InvalidAccessException(cdr);
         }

@@ -6,8 +6,8 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.jaxb.customer.CustomField;
 import org.slf4j.Logger;
@@ -30,16 +30,15 @@ public abstract class ImportService {
      * @param customFieldDtos Custom field values
      * @param entity Entity
      * @param cfiFieldName Custom field name in an entity
-     * @param currentUser User that authenticated for API
      * @throws BusinessException 
      * @throws MissingParameterException
      */
-    protected void populateCustomFields(List<CustomField> customFieldDtos, ICustomFieldEntity entity, User currentUser) throws BusinessException {
+    protected void populateCustomFields(List<CustomField> customFieldDtos, ICustomFieldEntity entity) throws BusinessException {
         // throws MissingParameterException {
 
-        Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(entity, currentUser.getProvider());
+        Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(entity);
 
-        populateCustomFields(customFieldTemplates, customFieldDtos, entity, currentUser);
+        populateCustomFields(customFieldTemplates, customFieldDtos, entity);
     }
 
     /**
@@ -49,11 +48,10 @@ public abstract class ImportService {
      * @param customFieldDtos Custom field values
      * @param entity Entity
      * @param cfiFieldName Custom field name in an entity
-     * @param currentUser User that authenticated for API
      * @throws BusinessException 
      * @throws MissingParameterException
      */
-    private void populateCustomFields(Map<String, CustomFieldTemplate> customFieldTemplates, List<CustomField> customFieldDtos, ICustomFieldEntity entity, User currentUser) throws BusinessException {
+    private void populateCustomFields(Map<String, CustomFieldTemplate> customFieldTemplates, List<CustomField> customFieldDtos, ICustomFieldEntity entity) throws BusinessException {
         
         // check if any templates are applicable
         if (customFieldTemplates == null || customFieldTemplates.isEmpty()) {
@@ -82,15 +80,15 @@ public abstract class ImportService {
                 try {
                     if (cft.isVersionable()) {
                         if (cft.getCalendar() != null) {
-                            customFieldInstanceService.setCFValue(entity, cfDto.getCode(), cfDto.getValueConverted(), cfDto.getValueDate(), currentUser);
+                            customFieldInstanceService.setCFValue(entity, cfDto.getCode(), cfDto.getValueConverted(), cfDto.getValueDate());
 
                         } else {
                             customFieldInstanceService.setCFValue(entity, cfDto.getCode(), cfDto.getValueConverted(), cfDto.getValuePeriodStartDate(),
-                                cfDto.getValuePeriodEndDate(), cfDto.getValuePeriodPriority(), currentUser);
+                                cfDto.getValuePeriodEndDate(), cfDto.getValuePeriodPriority());
                         }
 
                     } else {
-                        customFieldInstanceService.setCFValue(entity, cfDto.getCode(), cfDto.getValueConverted(), currentUser);
+                        customFieldInstanceService.setCFValue(entity, cfDto.getCode(), cfDto.getValueConverted());
                     }
 
                 } catch (Exception e) {

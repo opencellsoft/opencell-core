@@ -16,7 +16,6 @@ import org.meveo.api.dto.catalog.DiscountPlanItemDto;
 import org.meveo.api.dto.response.catalog.DiscountPlanItemResponseDto;
 import org.meveo.api.dto.response.catalog.DiscountPlanItemsResponseDto;
 import org.meveo.api.rest.IBaseRs;
-import org.meveo.api.rest.security.RSSecured;
 
 /**
  * CRUD/list discountPlanItem via REST API
@@ -27,7 +26,7 @@ import org.meveo.api.rest.security.RSSecured;
 @Path("/catalog/discountPlanItem")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-@RSSecured
+
 public interface DiscountPlanItemRs extends IBaseRs {
 
 	/**

@@ -29,7 +29,7 @@ public class ChargeTemplateRsImpl extends BaseRs implements ChargeTemplateRs {
         GetChargeTemplateResponseDto result = new GetChargeTemplateResponseDto();
 
         try {
-            result.setChargeTemplate(chargeTemplateApi.find(chargeTemplateCode, getCurrentUser().getProvider()));
+            result.setChargeTemplate(chargeTemplateApi.find(chargeTemplateCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

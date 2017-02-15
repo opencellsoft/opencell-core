@@ -205,31 +205,6 @@ public class IEntityExportIdentifierConverter implements Converter {
                 } else if ("class".equals(attrName) || EntityExportImportService.REFERENCE_ID_ATTRIBUTE.equals(attrName)) {
                     continue;
 
-                    // Look up a provider by code or force it to a value provided
-                } else if ("provider".equals(attrName) || attrName.endsWith(".provider")) {// TODO A check by field type would be better
-                    Provider provider = forceToProvider;
-                    if (provider == null) {
-                        if (providerMap.containsKey(attrValue)) {
-                            provider = em.getReference(Provider.class, providerMap.get(attrValue));
-                        } else {
-                            try {
-                                provider = em.createQuery("select p from Provider p where p.code=:code", Provider.class).setParameter("code", attrValue).getSingleResult();
-                                providerMap.put(attrValue, provider.getId());
-                            } catch (NoResultException e) {
-                                if (ignoreNotFoundFK) {
-                                    log.debug("Entity Provider not found by code " + attrValue + " and FK for " + expectedType.getSimpleName() + "." + attrName
-                                            + " will be ignored");
-                                    return null;
-                                } else {
-                                    Map<String, Object> providerParams = new HashMap<String, Object>();
-                                    providerParams.put("code", attrValue);
-                                    throw new ImportFKNotFoundException(Provider.class, null, providerParams, e.getClass());
-                                }
-                            }
-                        }
-                    }
-                    parameters.put(attrName, provider);
-
                     // Other attributes are used as found
                 } else {
                     parameters.put(attrName, attrValue);

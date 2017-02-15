@@ -1,8 +1,5 @@
 package org.meveo.admin.action.finance;
 
-import java.util.Arrays;
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -34,10 +31,4 @@ public class RevenueRecognitionRuleBean extends BaseBean<RevenueRecognitionRule>
 	protected String getDefaultSort() {
 		return "code";
 	}
-
-	@Override
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
-
 }

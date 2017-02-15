@@ -1,6 +1,7 @@
 package org.meveo.api;
 
 import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -11,8 +12,6 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.service.payments.impl.OCCTemplateService;
 
@@ -22,7 +21,7 @@ public class OccTemplateApi extends BaseApi {
     @Inject
     private OCCTemplateService occTemplateService;
 
-    public void create(OccTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void create(OccTemplateDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
@@ -35,24 +34,23 @@ public class OccTemplateApi extends BaseApi {
 
         handleMissingParameters();
 
-        Provider provider = currentUser.getProvider();
+        
 
-        if (occTemplateService.findByCode(postData.getCode(), provider) != null) {
+        if (occTemplateService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(OCCTemplate.class, postData.getCode());
         }
 
         OCCTemplate occTemplate = new OCCTemplate();
-        occTemplate.setProvider(provider);
         occTemplate.setCode(postData.getCode());
         occTemplate.setDescription(postData.getDescription());
         occTemplate.setAccountCode(postData.getAccountCode());
         occTemplate.setAccountCodeClientSide(postData.getAccountCodeClientSide());
         occTemplate.setOccCategory(postData.getOccCategory());
 
-        occTemplateService.create(occTemplate, currentUser);
+        occTemplateService.create(occTemplate);
     }
 
-    public void update(OccTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void update(OccTemplateDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -66,9 +64,9 @@ public class OccTemplateApi extends BaseApi {
 
         handleMissingParameters();
 
-        Provider provider = currentUser.getProvider();
+        
 
-        OCCTemplate occTemplate = occTemplateService.findByCode(postData.getCode(), provider);
+        OCCTemplate occTemplate = occTemplateService.findByCode(postData.getCode());
         if (occTemplate == null) {
             throw new EntityDoesNotExistsException(OCCTemplate.class, postData.getCode());
         }
@@ -78,18 +76,18 @@ public class OccTemplateApi extends BaseApi {
         occTemplate.setAccountCodeClientSide(postData.getAccountCodeClientSide());
         occTemplate.setOccCategory(postData.getOccCategory());
 
-        occTemplateService.update(occTemplate, currentUser);
+        occTemplateService.update(occTemplate);
 
     }
 
-    public OccTemplateDto find(String code, Provider provider) throws MeveoApiException {
+    public OccTemplateDto find(String code) throws MeveoApiException {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("occTemplateCode");
             handleMissingParameters();
         }
 
-        OCCTemplate occTemplate = occTemplateService.findByCode(code, provider);
+        OCCTemplate occTemplate = occTemplateService.findByCode(code);
         if (occTemplate == null) {
             throw new EntityDoesNotExistsException(OCCTemplate.class, code);
         }
@@ -98,37 +96,37 @@ public class OccTemplateApi extends BaseApi {
 
     }
 
-    public void remove(String code, User currentUser) throws MeveoApiException, BusinessException {
+    public void remove(String code) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("occTemplateCode");
             handleMissingParameters();
         }
 
-        OCCTemplate occTemplate = occTemplateService.findByCode(code, currentUser.getProvider());
+        OCCTemplate occTemplate = occTemplateService.findByCode(code);
         if (occTemplate == null) {
             throw new EntityDoesNotExistsException(OCCTemplate.class, code);
         }
 
-        occTemplateService.remove(occTemplate, currentUser);
+        occTemplateService.remove(occTemplate);
     }
 
     /**
      * create or update occ template based on occ template code
      * 
      * @param postData
-     * @param currentUser
+
      * @throws MeveoApiException
      * @throws BusinessException 
      */
-    public void createOrUpdate(OccTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void createOrUpdate(OccTemplateDto postData) throws MeveoApiException, BusinessException {
 
-        OCCTemplate occTemplate = occTemplateService.findByCode(postData.getCode(), currentUser.getProvider());
+        OCCTemplate occTemplate = occTemplateService.findByCode(postData.getCode());
 
         if (occTemplate == null) {
-            create(postData, currentUser);
+            create(postData);
         } else {
-            update(postData, currentUser);
+            update(postData);
         }
     }
 
@@ -139,9 +137,9 @@ public class OccTemplateApi extends BaseApi {
      * @throws MeveoApiException
      * @throws BusinessException
      */
-    public OccTemplatesDto list(Provider provider) throws MeveoApiException {
+    public OccTemplatesDto list() throws MeveoApiException {
         OccTemplatesDto occTemplatesDto = new OccTemplatesDto();
-        List<OCCTemplate> occTemplates = occTemplateService.list(provider);
+        List<OCCTemplate> occTemplates = occTemplateService.list();
 
         if (occTemplates != null) {
             OccTemplateDto occTemplateDto;

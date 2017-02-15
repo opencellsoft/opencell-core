@@ -27,25 +27,16 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
-@ExportIdentifier({ "code", "provider" })
-@Table(name = "AR_OCC_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = {
-		"PROVIDER_ID", "CODE" }))
+@ExportIdentifier({ "code"})
+@Table(name = "AR_OCC_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = {"CODE" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_OCC_TEMPLATE_SEQ")
-public class OCCTemplate extends AuditableEntity {
+public class OCCTemplate extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
-
-	@Column(name = "CODE", length = 255)
-    @Size(max = 255)
-	private String code;
-
-	@Column(name = "DESCRIPTION", length = 255)
-    @Size(max = 255)
-	private String description;
 
 	@Column(name = "ACCOUNT_CODE", length = 255)
     @Size(max = 255)
@@ -58,22 +49,6 @@ public class OCCTemplate extends AuditableEntity {
 	@Column(name = "OCC_CATEGORY")
 	@Enumerated(EnumType.STRING)
 	private OperationCategoryEnum occCategory;
-
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
 
 	public String getAccountCode() {
 		return accountCode;

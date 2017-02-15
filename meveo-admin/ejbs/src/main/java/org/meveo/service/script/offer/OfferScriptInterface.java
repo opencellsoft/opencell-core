@@ -3,7 +3,6 @@ package org.meveo.service.script.offer;
 import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.admin.User;
 import org.meveo.service.script.ScriptInterface;
 
 public interface OfferScriptInterface extends ScriptInterface {
@@ -15,7 +14,7 @@ public interface OfferScriptInterface extends ScriptInterface {
      * @param user Current user
      * @throws BusinessException
      */
-	void beforeCreateOfferFromBOM(Map<String, Object> methodContext, User user) throws BusinessException;
+	void beforeCreateOfferFromBOM(Map<String, Object> methodContext) throws BusinessException;
 	
 	/**
      * Called at the end of BusinessOfferModelService.createOfferFromBOM method.
@@ -24,7 +23,7 @@ public interface OfferScriptInterface extends ScriptInterface {
      * @param user Current user
      * @throws BusinessException
      */
-	void afterCreateOfferFromBOM(Map<String, Object> methodContext, User user) throws BusinessException;
+	void afterCreateOfferFromBOM(Map<String, Object> methodContext) throws BusinessException;
 
     /**
      * Called after Subscription entity creation
@@ -33,7 +32,7 @@ public interface OfferScriptInterface extends ScriptInterface {
      * @param user Current user
      * @throws BusinessException
      */
-    public void subscribe(Map<String, Object> methodContext, User user) throws BusinessException;
+    public void subscribe(Map<String, Object> methodContext) throws BusinessException;
 
     /**
      * Called before subscription suspension
@@ -42,7 +41,7 @@ public interface OfferScriptInterface extends ScriptInterface {
      * @param user Current user
      * @throws BusinessException
      */
-    public void suspendSubscription(Map<String, Object> methodContext, User user) throws BusinessException;
+    public void suspendSubscription(Map<String, Object> methodContext) throws BusinessException;
 
     /**
      * Called after subscription reactivation
@@ -51,7 +50,7 @@ public interface OfferScriptInterface extends ScriptInterface {
      * @param user Current user
      * @throws BusinessException
      */
-    public void reactivateSubscription(Map<String, Object> methodContext, User user) throws BusinessException;
+    public void reactivateSubscription(Map<String, Object> methodContext) throws BusinessException;
 
     /**
      * Called before subscription termination
@@ -61,6 +60,6 @@ public interface OfferScriptInterface extends ScriptInterface {
      * @param user Current user
      * @throws BusinessException
      */
-    public void terminateSubscription(Map<String, Object> methodContext, User user) throws BusinessException;
+    public void terminateSubscription(Map<String, Object> methodContext) throws BusinessException;
 
 }

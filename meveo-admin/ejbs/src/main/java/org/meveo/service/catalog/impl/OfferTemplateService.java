@@ -21,7 +21,6 @@ package org.meveo.service.catalog.impl;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -33,7 +32,6 @@ import javax.persistence.Query;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.model.Auditable;
-import org.meveo.model.admin.User;
 import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.DigitalResource;
 import org.meveo.model.catalog.OfferProductTemplate;
@@ -42,7 +40,6 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.base.MultilanguageEntityService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 
@@ -59,19 +56,8 @@ public class OfferTemplateService extends MultilanguageEntityService<OfferTempla
 	@Inject
 	private CatalogHierarchyBuilderService catalogHierarchyBuilderService;
 
-	@Override
-	public void create(OfferTemplate offerTemplate, User creator) throws BusinessException {
-		super.create(offerTemplate, creator);
-	}
-
-	@Override
-	public OfferTemplate update(OfferTemplate offerTemplate, User updater) throws BusinessException {
-		offerTemplate = super.update(offerTemplate, updater);
-		return offerTemplate;
-	}
-
 	@SuppressWarnings("unchecked")
-	public List<OfferTemplate> findByServiceTemplate(EntityManager em, ServiceTemplate serviceTemplate, Provider provider) {
+	public List<OfferTemplate> findByServiceTemplate(EntityManager em, ServiceTemplate serviceTemplate) {
 		Query query = em.createQuery("FROM OfferTemplate t WHERE :serviceTemplate MEMBER OF t.serviceTemplates");
 		query.setParameter("serviceTemplate", serviceTemplate);
 
@@ -94,9 +80,9 @@ public class OfferTemplateService extends MultilanguageEntityService<OfferTempla
 		}
 	}
 
-	public long countActive(Provider provider) {
+	public long countActive() {
 		Long result = 0L;
-		Query query = getEntityManager().createNamedQuery("OfferTemplate.countActive").setParameter("provider", provider);
+		Query query = getEntityManager().createNamedQuery("OfferTemplate.countActive");
 		try {
 			result = (long) query.getSingleResult();
 		} catch (NoResultException e) {
@@ -105,9 +91,9 @@ public class OfferTemplateService extends MultilanguageEntityService<OfferTempla
 		return result;
 	}
 
-	public long countDisabled(Provider provider) {
+	public long countDisabled() {
 		Long result = 0L;
-		Query query = getEntityManager().createNamedQuery("OfferTemplate.countDisabled").setParameter("provider", provider);
+		Query query = getEntityManager().createNamedQuery("OfferTemplate.countDisabled");
 		try {
 			result = (long) query.getSingleResult();
 		} catch (NoResultException e) {
@@ -116,9 +102,9 @@ public class OfferTemplateService extends MultilanguageEntityService<OfferTempla
 		return result;
 	}
 
-	public long countExpiring(Provider provider) {
+	public long countExpiring() {
 		Long result = 0L;
-		Query query = getEntityManager().createNamedQuery("OfferTemplate.countExpiring").setParameter("provider", provider);
+		Query query = getEntityManager().createNamedQuery("OfferTemplate.countExpiring");
 		Calendar c = Calendar.getInstance();
 		c.add(Calendar.DATE, -1);
 		query.setParameter("nowMinus1Day", c.getTime());
@@ -131,14 +117,11 @@ public class OfferTemplateService extends MultilanguageEntityService<OfferTempla
 		return result;
 	}
 
-	public synchronized OfferTemplate duplicate(OfferTemplate entity, User currentUser) throws BusinessException {
-		return duplicate(entity, currentUser, false);
+	public synchronized OfferTemplate duplicate(OfferTemplate entity) throws BusinessException {
+		return duplicate(entity, false);
 	}
 
-	public synchronized OfferTemplate duplicate(OfferTemplate entity, User currentUser, boolean duplicateHierarchy) throws BusinessException {
-		Auditable auditable = new Auditable();
-		auditable.setCreated(new Date());
-		auditable.setCreator(currentUser);
+	public synchronized OfferTemplate duplicate(OfferTemplate entity, boolean duplicateHierarchy) throws BusinessException {
 
 		entity = refreshOrRetrieve(entity);
 		// Lazy load related values first
@@ -155,18 +138,18 @@ public class OfferTemplateService extends MultilanguageEntityService<OfferTempla
 			}
 		}
 
-		String code = findDuplicateCode(entity, currentUser);
+		String code = findDuplicateCode(entity);
 
 		// Detach and clear ids of entity and related entities
 		detach(entity);
 		entity.setId(null);
 		entity.setVersion(0);
-		entity.setAuditable(auditable);
+		entity.setAuditable(new Auditable());
 		String sourceAppliesToEntity = entity.clearUuid();
 		
-		ImageUploadEventHandler<OfferTemplate> offerImageUploadEventHandler = new ImageUploadEventHandler<>();
+		ImageUploadEventHandler<OfferTemplate> offerImageUploadEventHandler = new ImageUploadEventHandler<>(currentUser);
 		try {
-			String newImagePath = offerImageUploadEventHandler.duplicateImage(entity, entity.getImagePath(), code, currentUser.getProvider().getCode());
+			String newImagePath = offerImageUploadEventHandler.duplicateImage(entity, entity.getImagePath(), code);
 			entity.setImagePath(newImagePath);
 		} catch (IOException e1) {
 			log.error("IPIEL: Failed duplicating offer image: {}", e1.getMessage());
@@ -242,21 +225,21 @@ public class OfferTemplateService extends MultilanguageEntityService<OfferTempla
 			}
 		}
 
-		create(entity, currentUser);
-		customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity, getCurrentUser());
+		create(entity);
+		customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity);
 
 		if (duplicateHierarchy) {
 			String prefix = entity.getId() + "_";
 			
 			if (offerServiceTemplates != null) {			
-				catalogHierarchyBuilderService.buildOfferServiceTemplate(entity, offerServiceTemplates, prefix, auditable, currentUser);				
+				catalogHierarchyBuilderService.buildOfferServiceTemplate(entity, offerServiceTemplates, prefix);				
 			}
 			
 			if (offerProductTemplates != null) {
-				catalogHierarchyBuilderService.buildOfferProductTemplate(entity, offerProductTemplates, prefix, auditable, currentUser);
+				catalogHierarchyBuilderService.buildOfferProductTemplate(entity, offerProductTemplates, prefix);
 			}
 			
-			update(entity, currentUser);
+			update(entity);
 		}
 
 		return entity;

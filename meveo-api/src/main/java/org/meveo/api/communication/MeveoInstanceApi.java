@@ -16,7 +16,6 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.model.admin.User;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.crm.Customer;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.service.crm.impl.CustomerService;
@@ -39,7 +38,7 @@ public class MeveoInstanceApi extends BaseApi{
 	@Inject
 	private UserService userService;
 	
-	public void create(MeveoInstanceDto meveoInstanceDto, User currentUser) throws MeveoApiException, BusinessException {
+	public void create(MeveoInstanceDto meveoInstanceDto) throws MeveoApiException, BusinessException {
 		log.debug("meveo instance api create by code {}",meveoInstanceDto.getCode());
 		if (StringUtils.isBlank(meveoInstanceDto.getCode())) {
             missingParameters.add("code");
@@ -49,7 +48,7 @@ public class MeveoInstanceApi extends BaseApi{
         }
     	this.handleMissingParameters();
 		  
-		MeveoInstance meveoInstance=meveoInstanceService.findByCode(meveoInstanceDto.getCode(),currentUser.getProvider());
+		MeveoInstance meveoInstance=meveoInstanceService.findByCode(meveoInstanceDto.getCode());
       	if(meveoInstance!=null){
       		throw new EntityAlreadyExistsException(MeveoInstance.class, meveoInstanceDto.getCode());
       	}
@@ -82,7 +81,7 @@ public class MeveoInstanceApi extends BaseApi{
   		meveoInstance.setAuthUsername(meveoInstanceDto.getAuthUsername());
   		meveoInstance.setAuthPassword(meveoInstanceDto.getAuthPassword());
   		if(!StringUtils.isBlank(meveoInstanceDto.getCustomer())){
-  			Customer customer=customerService.findByCode(meveoInstanceDto.getCustomer(), currentUser.getProvider());
+  			Customer customer=customerService.findByCode(meveoInstanceDto.getCustomer());
   			if(customer==null){
   				throw new EntityDoesNotExistsException(Customer.class, meveoInstanceDto.getCustomer());
   			}
@@ -95,16 +94,16 @@ public class MeveoInstanceApi extends BaseApi{
   			}
   			meveoInstance.setUser(user);
   		}
-        meveoInstanceService.create(meveoInstance, currentUser);
+        meveoInstanceService.create(meveoInstance);
     }
 
-    public void update(MeveoInstanceDto meveoInstanceDto, User currentUser) throws MeveoApiException, BusinessException {
+    public void update(MeveoInstanceDto meveoInstanceDto) throws MeveoApiException, BusinessException {
     	if (StringUtils.isBlank(meveoInstanceDto.getCode())) {
             missingParameters.add("code");
         }
     	this.handleMissingParameters();
 		  
-		MeveoInstance meveoInstance=meveoInstanceService.findByCode(meveoInstanceDto.getCode(),currentUser.getProvider());
+		MeveoInstance meveoInstance=meveoInstanceService.findByCode(meveoInstanceDto.getCode());
       	if(meveoInstance==null){
       		throw new EntityDoesNotExistsException(MeveoInstance.class, meveoInstanceDto.getCode());
       	}
@@ -137,7 +136,7 @@ public class MeveoInstanceApi extends BaseApi{
   		meveoInstance.setAuthUsername(meveoInstanceDto.getAuthUsername());
   		meveoInstance.setAuthPassword(meveoInstanceDto.getAuthPassword());
   		if(!StringUtils.isBlank(meveoInstanceDto.getCustomer())){
-  			Customer customer=customerService.findByCode(meveoInstanceDto.getCustomer(), currentUser.getProvider());
+  			Customer customer=customerService.findByCode(meveoInstanceDto.getCustomer());
   			if(customer==null){
   				throw new EntityDoesNotExistsException(Customer.class, meveoInstanceDto.getCustomer());
   			}
@@ -150,16 +149,16 @@ public class MeveoInstanceApi extends BaseApi{
   			}
   			meveoInstance.setUser(user);
   		}
-        meveoInstanceService.update(meveoInstance, currentUser);
+        meveoInstanceService.update(meveoInstance);
     }
 
-    public MeveoInstanceDto find(String meveoInstanceCode,Provider provider) throws MeveoApiException {
+    public MeveoInstanceDto find(String meveoInstanceCode) throws MeveoApiException {
         if (StringUtils.isEmpty(meveoInstanceCode)) {
             missingParameters.add("meveoInstanceCode");
         }
         handleMissingParameters();
         
-        MeveoInstance meveoInstance=meveoInstanceService.findByCode(meveoInstanceCode,provider);
+        MeveoInstance meveoInstance=meveoInstanceService.findByCode(meveoInstanceCode);
 
         if (meveoInstance == null) {
             throw new EntityDoesNotExistsException(MeveoInstance.class, meveoInstanceCode);
@@ -168,24 +167,24 @@ public class MeveoInstanceApi extends BaseApi{
         return new MeveoInstanceDto(meveoInstance);
     }
 
-    public void remove(String meveoInstanceCode, User currentUser) throws MeveoApiException, BusinessException {
+    public void remove(String meveoInstanceCode) throws MeveoApiException, BusinessException {
     	if (StringUtils.isBlank(meveoInstanceCode)) {
             missingParameters.add("meveoInstanceCode");
         }
         handleMissingParameters();
-        MeveoInstance meveoInstance=meveoInstanceService.findByCode(meveoInstanceCode,currentUser.getProvider());
+        MeveoInstance meveoInstance=meveoInstanceService.findByCode(meveoInstanceCode);
 
         if (meveoInstance == null) {
             throw new EntityDoesNotExistsException(MeveoInstance.class, meveoInstanceCode);
         }
 
-        meveoInstanceService.remove(meveoInstance, currentUser);
+        meveoInstanceService.remove(meveoInstance);
     }
 
-    public List<MeveoInstanceDto> list(Provider provider) throws MeveoApiException {
+    public List<MeveoInstanceDto> list() throws MeveoApiException {
 
         List<MeveoInstanceDto> result = new ArrayList<MeveoInstanceDto>();
-        List<MeveoInstance> meveoInstances = meveoInstanceService.list(provider);
+        List<MeveoInstance> meveoInstances = meveoInstanceService.list();
         if (meveoInstances != null) {
             for (MeveoInstance meveoInstance : meveoInstances) {
                 result.add(new MeveoInstanceDto(meveoInstance));
@@ -195,12 +194,12 @@ public class MeveoInstanceApi extends BaseApi{
         return result;
     }
 
-    public void createOrUpdate(MeveoInstanceDto meveoInstanceDto, User currentUser) throws MeveoApiException, BusinessException {
-    	MeveoInstance meveoInstance=meveoInstanceService.findByCode(meveoInstanceDto.getCode(),currentUser.getProvider());
+    public void createOrUpdate(MeveoInstanceDto meveoInstanceDto) throws MeveoApiException, BusinessException {
+    	MeveoInstance meveoInstance=meveoInstanceService.findByCode(meveoInstanceDto.getCode());
         if (meveoInstance == null) {
-            create(meveoInstanceDto, currentUser);
+            create(meveoInstanceDto);
         } else {
-            update(meveoInstanceDto, currentUser);
+            update(meveoInstanceDto);
         }
     }
 }

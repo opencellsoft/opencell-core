@@ -12,7 +12,6 @@ import javax.persistence.EntityNotFoundException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InvalidScriptException;
-import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
@@ -58,7 +57,7 @@ public class FilteringJob extends Job {
 
         ScriptInterface scriptInterface = null;
         try {
-            scriptInterface = scriptInstanceService.getScriptInstance(currentUser.getProvider(), scriptCode);
+            scriptInterface = scriptInstanceService.getScriptInstance(scriptCode);
 
         } catch (EntityNotFoundException | InvalidScriptException e) {
             result.registerError(e.getMessage());

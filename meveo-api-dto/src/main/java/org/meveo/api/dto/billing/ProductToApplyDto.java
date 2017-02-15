@@ -13,7 +13,6 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.catalog.ProductTemplate;
-import org.meveo.model.catalog.ServiceTemplate;
 
 @XmlRootElement(name = "ProductToApply")
 @XmlAccessorType(XmlAccessType.FIELD)

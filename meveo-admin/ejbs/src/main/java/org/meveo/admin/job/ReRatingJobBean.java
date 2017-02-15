@@ -13,9 +13,7 @@ import javax.interceptor.Interceptors;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.event.qualifier.Rejected;
 import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.model.admin.User;
 import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.billing.impl.RatingService;
 import org.meveo.service.billing.impl.WalletOperationService;
@@ -45,11 +43,10 @@ public class ReRatingJobBean implements Serializable {
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public void execute(JobExecutionResultImpl result, boolean useSamePricePlan) {
-		Provider currentProvider=currentUser.getProvider();
-		log.debug("Running for user={}, useSamePricePlan={}", currentUser, useSamePricePlan);
+		log.debug("Running useSamePricePlan={}", useSamePricePlan);
 		
 		try {
-			List<Long> walletOperationIds = walletOperationService.listToRerate(currentProvider);
+			List<Long> walletOperationIds = walletOperationService.listToRerate();
 
 			log.info("rerate with useSamePricePlan={} ,#operations={}", useSamePricePlan,walletOperationIds.size());
 			result.setNbItemsToProcess(walletOperationIds.size());

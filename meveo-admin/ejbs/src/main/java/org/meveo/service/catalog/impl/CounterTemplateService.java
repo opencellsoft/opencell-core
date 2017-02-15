@@ -21,11 +21,9 @@ package org.meveo.service.catalog.impl;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.meveo.model.catalog.CounterTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.base.BusinessService;
 
 /**
@@ -35,29 +33,24 @@ import org.meveo.service.base.BusinessService;
 @Stateless
 public class CounterTemplateService extends BusinessService<CounterTemplate> {
 
-	public void removeByPrefix(EntityManager em, String prefix,
-			Provider provider) {
-		Query query = em
+	public void removeByPrefix(String prefix) {
+		Query query = getEntityManager()
 				.createQuery("DELETE CounterTemplate t WHERE t.code LIKE '"
-						+ prefix + "%' AND t.provider=:provider");
-		query.setParameter("provider", provider);
+						+ prefix + "%'");
+		
 		query.executeUpdate();
 	}
 	
- 
-	
-	public CounterTemplate findByCode(String code, Provider provider) {
-		return findByCode(getEntityManager(), code, provider);
-	}
-	
-	public  int getNbrCounterWithNotService(Provider provider) { 
-		return ((Long)getEntityManager().createNamedQuery("counterTemplate.getNbrCounterWithNotService",Long.class)
-				.setParameter("provider", provider).getSingleResult()).intValue();
-		}
 
-	public List<CounterTemplate> getCounterWithNotService(Provider provider) { 
+		
+	public  int getNbrCounterWithNotService() { 
+		return ((Long)getEntityManager().createNamedQuery("counterTemplate.getNbrCounterWithNotService",Long.class)
+				.getSingleResult()).intValue();
+	}
+
+	public List<CounterTemplate> getCounterWithNotService() { 
 		return (List<CounterTemplate>)getEntityManager().createNamedQuery("counterTemplate.getCounterWithNotService",CounterTemplate.class)
-				.setParameter("provider", provider).getResultList();
-		}
+				.getResultList();
+	}
 
 }

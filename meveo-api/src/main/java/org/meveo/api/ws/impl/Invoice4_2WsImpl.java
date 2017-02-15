@@ -36,7 +36,7 @@ public class Invoice4_2WsImpl extends BaseWs implements Invoice4_2Ws {
         InvoiceCreationResponse result = new InvoiceCreationResponse();
 
         try {
-            String invoiceNumber = invoiceApi.create(invoiceDto, getCurrentUser());
+            String invoiceNumber = invoiceApi.create(invoiceDto);
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
             result.setInvoiceNumber(invoiceNumber);
 
@@ -59,7 +59,7 @@ public class Invoice4_2WsImpl extends BaseWs implements Invoice4_2Ws {
     	CustomerInvoices4_2Response result = new CustomerInvoices4_2Response();
 
         try {
-            result.setCustomerInvoiceDtoList(invoiceApi.list(customerAccountCode, getCurrentUser().getProvider()));
+            result.setCustomerInvoiceDtoList(invoiceApi.list(customerAccountCode));
 
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
@@ -80,7 +80,7 @@ public class Invoice4_2WsImpl extends BaseWs implements Invoice4_2Ws {
         GenerateInvoiceResponseDto result = new GenerateInvoiceResponseDto();
         try {
 
-            result.setGenerateInvoiceResultDto(invoiceApi.generateInvoice(generateInvoiceRequestDto, getCurrentUser()));
+            result.setGenerateInvoiceResultDto(invoiceApi.generateInvoice(generateInvoiceRequestDto));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         } catch (MeveoApiException e) {
@@ -107,7 +107,7 @@ public class Invoice4_2WsImpl extends BaseWs implements Invoice4_2Ws {
         GetXmlInvoiceResponseDto result = new GetXmlInvoiceResponseDto();
         try {
 
-            result.setXmlContent(invoiceApi.getXMLInvoice(invoiceNumber, invoiceType, getCurrentUser()));
+            result.setXmlContent(invoiceApi.getXMLInvoice(invoiceNumber, invoiceType));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         } catch (MeveoApiException e) {
@@ -134,7 +134,7 @@ public class Invoice4_2WsImpl extends BaseWs implements Invoice4_2Ws {
         GetPdfInvoiceResponseDto result = new GetPdfInvoiceResponseDto();
         try {
 
-            result.setPdfContent(invoiceApi.getPdfInvoince(invoiceNumber, invoiceType, getCurrentUser()));
+            result.setPdfContent(invoiceApi.getPdfInvoince(invoiceNumber, invoiceType));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         } catch (MeveoApiException e) {

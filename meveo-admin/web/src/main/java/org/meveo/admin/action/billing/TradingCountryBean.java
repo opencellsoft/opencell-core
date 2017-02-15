@@ -31,11 +31,9 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.billing.Country;
 import org.meveo.model.billing.TradingCountry;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.TradingCountryService;
-import org.meveo.service.crm.impl.ProviderService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.SelectEvent;
 
@@ -57,9 +55,6 @@ public class TradingCountryBean extends BaseBean<TradingCountry> {
 	 */
 	@Inject
 	private TradingCountryService tradingCountryService;
-
-	@Inject
-	private ProviderService providerService;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this
@@ -108,9 +103,7 @@ public class TradingCountryBean extends BaseBean<TradingCountry> {
 	public String saveOrUpdate(boolean killConversation) throws BusinessException{
 		String back = null;
 		try {
-			Provider currentProvider = providerService
-					.findById(getCurrentProvider().getId());
-			for (TradingCountry tr : currentProvider.getTradingCountries()) {
+			for (TradingCountry tr : tradingCountryService.list()) {
 				if (tr.getCountry().getCountryCode()
 						.equalsIgnoreCase(entity.getCountry().getCountryCode())
 						&& !tr.getId().equals(entity.getId())) {
@@ -140,7 +133,7 @@ public class TradingCountryBean extends BaseBean<TradingCountry> {
 
 	@Override
 	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("country", "provider");
+		return Arrays.asList("country");
 	}
 
 	@Override

@@ -17,7 +17,6 @@ import org.meveo.api.dto.invoice.Invoice4_2Dto;
 import org.meveo.api.dto.response.CustomerInvoices4_2Response;
 import org.meveo.api.dto.response.InvoiceCreationResponse;
 import org.meveo.api.rest.IBaseRs;
-import org.meveo.api.rest.security.RSSecured;
 
 /**
  * Web service for managing {@link org.meveo.model.billing.Invoice}.
@@ -27,7 +26,7 @@ import org.meveo.api.rest.security.RSSecured;
 @Path("/invoice4_2")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-@RSSecured
+
 public interface Invoice4_2Rs extends IBaseRs {
 
     /**

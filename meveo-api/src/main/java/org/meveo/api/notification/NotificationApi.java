@@ -17,9 +17,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;
 import org.meveo.model.catalog.CounterTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.notification.InboundRequest;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationHistory;
@@ -52,7 +50,7 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
     @Inject
     private InboundRequestService inboundRequestService;
 
-    public Notification create(NotificationDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public Notification create(NotificationDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
@@ -65,12 +63,12 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
 
         handleMissingParameters();
 
-        if (notificationService.findByCode(postData.getCode(), currentUser.getProvider()) != null) {
+        if (notificationService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(Notification.class, postData.getCode());
         }
         ScriptInstance scriptInstance = null;
         if (!StringUtils.isBlank(postData.getScriptInstanceCode())) {
-            scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode(), currentUser.getProvider());
+            scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode());
             if (scriptInstance == null) {
                 throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getScriptInstanceCode());
             }
@@ -84,14 +82,13 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
 
         CounterTemplate counterTemplate = null;
         if (!StringUtils.isBlank(postData.getCounterTemplate())) {
-            counterTemplate = counterTemplateService.findByCode(postData.getCounterTemplate(), currentUser.getProvider());
+            counterTemplate = counterTemplateService.findByCode(postData.getCounterTemplate());
             if (counterTemplate == null) {
                 throw new EntityDoesNotExistsException(CounterTemplate.class, postData.getCounterTemplate());
             }
         }
 
         ScriptNotification notif = new ScriptNotification();
-        notif.setProvider(currentUser.getProvider());
         notif.setCode(postData.getCode());
         notif.setClassNameFilter(postData.getClassNameFilter());
         notif.setEventTypeFilter(postData.getEventTypeFilter());
@@ -100,17 +97,17 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
         notif.setElFilter(postData.getElFilter());
         notif.setCounterTemplate(counterTemplate);
 
-        notificationService.create(notif, currentUser);
+        notificationService.create(notif);
 
         return notif;
     }
 
     @Override
-    public NotificationDto find(String notificationCode, User currentUser) throws MeveoApiException {
+    public NotificationDto find(String notificationCode) throws MeveoApiException {
         NotificationDto result = new NotificationDto();
 
         if (!StringUtils.isBlank(notificationCode)) {
-            ScriptNotification notif = notificationService.findByCode(notificationCode, currentUser.getProvider());
+            ScriptNotification notif = notificationService.findByCode(notificationCode);
 
             if (notif == null) {
                 throw new EntityDoesNotExistsException(Notification.class, notificationCode);
@@ -126,7 +123,7 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
         return result;
     }
 
-    public Notification update(NotificationDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public Notification update(NotificationDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -140,13 +137,13 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
 
         handleMissingParameters();
 
-        ScriptNotification notif = notificationService.findByCode(postData.getCode(), currentUser.getProvider());
+        ScriptNotification notif = notificationService.findByCode(postData.getCode());
         if (notif == null) {
             throw new EntityDoesNotExistsException(Notification.class, postData.getCode());
         }
         ScriptInstance scriptInstance = null;
         if (!StringUtils.isBlank(postData.getScriptInstanceCode())) {
-            scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode(), currentUser.getProvider());
+            scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstanceCode());
             if (scriptInstance == null) {
                 throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getScriptInstanceCode());
             }
@@ -160,7 +157,7 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
 
         CounterTemplate counterTemplate = null;
         if (!StringUtils.isBlank(postData.getCounterTemplate())) {
-            counterTemplate = counterTemplateService.findByCode(postData.getCounterTemplate(), currentUser.getProvider());
+            counterTemplate = counterTemplateService.findByCode(postData.getCounterTemplate());
             if (counterTemplate == null) {
                 throw new EntityDoesNotExistsException(CounterTemplate.class, postData.getCounterTemplate());
             }
@@ -173,20 +170,20 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
         notif.setCounterTemplate(counterTemplate);
         notif.setParams(postData.getScriptParams());
 
-        notif = notificationService.update(notif, currentUser);
+        notif = notificationService.update(notif);
 
         return notif;
     }
 
-    public void remove(String notificationCode, User currentUser) throws MeveoApiException, BusinessException {
+    public void remove(String notificationCode) throws MeveoApiException, BusinessException {
         if (!StringUtils.isBlank(notificationCode)) {
-            ScriptNotification notif = notificationService.findByCode(notificationCode, currentUser.getProvider());
+            ScriptNotification notif = notificationService.findByCode(notificationCode);
 
             if (notif == null) {
                 throw new EntityDoesNotExistsException(Notification.class, notificationCode);
             }
 
-            notificationService.remove(notif, currentUser);
+            notificationService.remove(notif);
         } else {
             missingParameters.add("code");
 
@@ -194,10 +191,10 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
         }
     }
 
-    public NotificationHistoriesDto listNotificationHistory(Provider provider) throws MeveoApiException {
+    public NotificationHistoriesDto listNotificationHistory() throws MeveoApiException {
         NotificationHistoriesDto result = new NotificationHistoriesDto();
 
-        List<NotificationHistory> notificationHistories = notificationHistoryService.list(provider);
+        List<NotificationHistory> notificationHistories = notificationHistoryService.list();
         if (notificationHistories != null) {
             for (NotificationHistory nh : notificationHistories) {
                 result.getNotificationHistory().add(new NotificationHistoryDto(nh));
@@ -207,10 +204,10 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
         return result;
     }
 
-    public InboundRequestsDto listInboundRequest(Provider provider) throws MeveoApiException {
+    public InboundRequestsDto listInboundRequest() throws MeveoApiException {
         InboundRequestsDto result = new InboundRequestsDto();
 
-        List<InboundRequest> inboundRequests = inboundRequestService.list(provider);
+        List<InboundRequest> inboundRequests = inboundRequestService.list();
         if (inboundRequests != null) {
             for (InboundRequest ir : inboundRequests) {
                 result.getInboundRequest().add(new InboundRequestDto(ir));
@@ -221,11 +218,11 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
     }
 
     @Override
-    public Notification createOrUpdate(NotificationDto postData, User currentUser) throws MeveoApiException, BusinessException {
-        if (notificationService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
-            return create(postData, currentUser);
+    public Notification createOrUpdate(NotificationDto postData) throws MeveoApiException, BusinessException {
+        if (notificationService.findByCode(postData.getCode()) == null) {
+            return create(postData);
         } else {
-            return update(postData, currentUser);
+            return update(postData);
         }
     }
 }

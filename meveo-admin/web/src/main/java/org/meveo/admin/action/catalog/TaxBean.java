@@ -19,8 +19,6 @@
 package org.meveo.admin.action.catalog;
 
 import java.sql.BatchUpdateException;
-import java.util.Arrays;
-import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -180,17 +178,6 @@ public class TaxBean extends CustomFieldBean<Tax> {
 	@Override
 	protected String getListViewName() {
 		return "taxes";
-	}
-
-	/**
-	 * Fetch customer field so no LazyInitialize exception is thrown when we
-	 * access it from account edit view.
-	 * 
-	 * @see org.manaty.beans.base.BaseBean#getFormFieldsToFetch()
-	 */
-	@Override
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider");
 	}
 
 	@Override

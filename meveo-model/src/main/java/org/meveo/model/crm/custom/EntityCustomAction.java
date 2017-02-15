@@ -17,8 +17,8 @@ import org.meveo.model.scripts.ScriptInstance;
 
 @Entity
 @ModuleItem
-@ExportIdentifier({ "code", "appliesTo", "provider" })
-@Table(name = "CRM_CUSTOM_ACTION", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "APPLIES_TO", "PROVIDER_ID" }))
+@ExportIdentifier({ "code", "appliesTo"})
+@Table(name = "CRM_CUSTOM_ACTION", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "APPLIES_TO" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_CUSTOM_ACTION_SEQ")
 public class EntityCustomAction extends BusinessEntity {
 

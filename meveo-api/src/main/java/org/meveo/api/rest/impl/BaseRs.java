@@ -1,6 +1,5 @@
 package org.meveo.api.rest.impl;
 
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,13 +16,14 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.response.BaseResponse;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.LoginException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.rest.IBaseRs;
-import org.meveo.api.rest.security.RSUser;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.admin.User;
+import org.meveo.model.crm.Provider;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
+import org.meveo.util.ApplicationProvider;
 import org.meveo.util.MeveoParamBean;
 import org.meveo.util.Version;
 import org.slf4j.Logger;
@@ -40,16 +40,20 @@ public abstract class BaseRs implements IBaseRs {
     @MeveoParamBean
     protected ParamBean paramBean;
 
-    @Inject
-    @RSUser
-    private Instance<User> currentUserInstance;
-
     @Context
     protected HttpServletRequest httpServletRequest;
 
     // one way to get HttpServletResponse
     @Context
     protected HttpServletResponse httpServletResponse;
+    
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
+
+    @Inject
+    @ApplicationProvider
+    protected Provider appProvider;
 
     protected final String RESPONSE_DELIMITER = " - ";
 
@@ -68,24 +72,9 @@ public abstract class BaseRs implements IBaseRs {
     public ActionStatus user() {
         ActionStatus result = new ActionStatus();
 
-        try {
-            result = new ActionStatus(ActionStatusEnum.SUCCESS, "WS User is=" + getCurrentUser().toString());
-        } catch (MeveoApiException e) {
-
-        }
+        result = new ActionStatus(ActionStatusEnum.SUCCESS, "WS User is=" + currentUser.getSubject());
 
         return result;
-    }
-
-    public User getCurrentUser() throws LoginException {
-
-        if (currentUserInstance.isUnsatisfied() || currentUserInstance.get() == null) {
-            throw new LoginException("Authentication failed! User does not exists!");
-        }
-
-        User currentUser = currentUserInstance.get();
-
-        return currentUser;
     }
 
     protected Response.ResponseBuilder createResponseFromMeveoApiException(MeveoApiException e, ActionStatus result) {

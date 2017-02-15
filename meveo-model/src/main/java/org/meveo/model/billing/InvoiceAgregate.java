@@ -34,14 +34,14 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.EnableEntity;
 
 @Entity
 @Table(name = "BILLING_INVOICE_AGREGATE")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "TYPE")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_AGREGATE_SEQ")
-public abstract class InvoiceAgregate extends AuditableEntity {
+public abstract class InvoiceAgregate extends EnableEntity {
 
 	private static final long serialVersionUID = 1L;
 

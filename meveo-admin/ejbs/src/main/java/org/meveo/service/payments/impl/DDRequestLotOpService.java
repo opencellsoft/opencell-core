@@ -26,7 +26,6 @@ import javax.ejb.Stateless;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.DDRequestFileFormatEnum;
 import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
@@ -36,15 +35,14 @@ import org.meveo.service.base.PersistenceService;
 public class DDRequestLotOpService extends PersistenceService<DDRequestLotOp> {
 
 	@SuppressWarnings("unchecked")
-	public List<DDRequestLotOp> getDDRequestOps(Provider currentProvider,DDRequestFileFormatEnum fileFormat) {
+	public List<DDRequestLotOp> getDDRequestOps(DDRequestFileFormatEnum fileFormat) {
 		List<DDRequestLotOp> ddrequestOps = new ArrayList<DDRequestLotOp>();
 
 		try {
 			ddrequestOps = (List<DDRequestLotOp>) getEntityManager() 
-					.createQuery("from " + DDRequestLotOp.class.getSimpleName() + " as p  left join fetch p.ddrequestLOT t where p.status=:status and p.provider=:currentProvider and "
+					.createQuery("from " + DDRequestLotOp.class.getSimpleName() + " as p  left join fetch p.ddrequestLOT t where p.status=:status and "
 							+ "p.fileFormat=:fileFormatIN")
 					.setParameter("status", DDRequestOpStatusEnum.WAIT)
-					.setParameter("currentProvider", currentProvider)
 					.setParameter("fileFormatIN", fileFormat)
 					.getResultList();
 		} catch (Exception e) {
@@ -54,8 +52,8 @@ public class DDRequestLotOpService extends PersistenceService<DDRequestLotOp> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<DDRequestLotOp> findByDateStatus(Date fromDueDate,Date toDueDate,DDRequestOpStatusEnum status,Provider currentProvider){
-		QueryBuilder query=new QueryBuilder(DDRequestLotOp.class,"o",null,currentProvider);
+	public List<DDRequestLotOp> findByDateStatus(Date fromDueDate,Date toDueDate,DDRequestOpStatusEnum status){
+		QueryBuilder query=new QueryBuilder(DDRequestLotOp.class,"o");
 		
 		if(!StringUtils.isBlank(status)){
 			query.addCriterionEnum("o.status", status);

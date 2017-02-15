@@ -11,9 +11,11 @@ import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn;
 import org.meveo.admin.util.ArConfig;
 import org.meveo.commons.utils.JAXBUtils;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.DDRequestItem;
 import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,19 +24,20 @@ public class SepaFile {
 	Logger log = LoggerFactory.getLogger(SepaFile.class);
 	
 	@Inject
-	private SepaFileBuilder sepaFileBuilder;
-	
-	
+    private SepaFileBuilder sepaFileBuilder;
 
-	
+    @Inject
+    @ApplicationProvider
+    private Provider appProvider;
+
 	public String getDDFileName(DDRequestLOT ddRequestLot) {
 		String fileName = ArConfig.getDDRequestFileNamePrefix() + ddRequestLot.getId();
-		fileName = fileName + "_" + ddRequestLot.getProvider().getCode();
+		fileName = fileName + "_" + appProvider.getCode();
 		fileName = fileName + "_" + DateUtils.formatDateWithPattern(new Date(), "yyyyMMdd") + ArConfig.getDDRequestFileNameExtension();
 
 		String outputDir = ParamBean.getInstance().getProperty("providers.rootDir", "/tmp/meveo");
 
-		outputDir = outputDir + File.separator + ddRequestLot.getProvider().getCode() + File.separator + ArConfig.getDDRequestOutputDirectory();
+		outputDir = outputDir + File.separator + appProvider.getCode() + File.separator + ArConfig.getDDRequestOutputDirectory();
 		outputDir = outputDir.replaceAll("\\..", "");
 
 		log.info("DDRequest output directory=" + outputDir);

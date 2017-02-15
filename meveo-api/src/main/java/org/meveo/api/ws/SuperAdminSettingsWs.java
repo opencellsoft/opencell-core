@@ -13,7 +13,6 @@ import org.meveo.api.dto.response.GetCountryIsoResponse;
 import org.meveo.api.dto.response.GetCurrencyIsoResponse;
 import org.meveo.api.dto.response.GetLanguageIsoResponse;
 import org.meveo.api.dto.response.GetProviderResponse;
-import org.meveo.api.ws.IBaseWs;
 
 /**
  * @author Edward P. Legaspi

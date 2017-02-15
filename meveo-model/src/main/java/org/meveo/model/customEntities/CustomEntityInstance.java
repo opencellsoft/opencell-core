@@ -14,8 +14,8 @@ import org.meveo.model.ExportIdentifier;
 
 @Entity
 @CustomFieldEntity(cftCodePrefix = "CE", cftCodeFields = "cetCode")
-@ExportIdentifier({ "code", "cetCode", "provider" })
-@Table(name = "CUST_CEI", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "CET_CODE", "PROVIDER_ID" }))
+@ExportIdentifier({ "code", "cetCode"})
+@Table(name = "CUST_CEI", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "CET_CODE"}))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CUST_CEI_SEQ")
 public class CustomEntityInstance extends BusinessCFEntity {
 

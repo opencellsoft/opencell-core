@@ -30,7 +30,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.EnableEntity;
 
 /**
  * DiscountplanInstanciation entity.
@@ -38,7 +38,7 @@ import org.meveo.model.AuditableEntity;
 @Entity
 @Table(name = "BILLING_DISCPLAN_INST")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_DISC_INST_SEQ")
-public class DiscountplanInstanciation extends AuditableEntity {
+public class DiscountplanInstanciation extends EnableEntity {
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne(fetch = FetchType.LAZY)

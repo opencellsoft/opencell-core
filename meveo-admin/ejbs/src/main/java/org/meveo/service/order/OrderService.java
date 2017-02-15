@@ -9,7 +9,6 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.order.Order;
 import org.meveo.model.order.OrderStatusEnum;
@@ -51,26 +50,25 @@ public class OrderService extends BusinessService<Order> {
 	}
 
     public Order routeToUserGroup(Order entity, String userGroupCode) throws BusinessException {
-        UserHierarchyLevel userHierarchyLevel = userHierarchyLevelService.findByCode(userGroupCode, entity.getProvider()); // Should be a getCurrentUser().getProvider(), but currentUser is not available in non-gui execution environment
+        UserHierarchyLevel userHierarchyLevel = userHierarchyLevelService.findByCode(userGroupCode);
         if (userHierarchyLevel == null) {
             log.trace("No UserHierarchyLevel found {}/{}", entity, userGroupCode);
         }
         entity.setRoutedToUserGroup(userHierarchyLevel);
-        return this.update(entity, entity.getAuditable().getCreator());
+        return this.update(entity);
     }
     
-    public Order findByCodeOrExternalId(String code, Provider provider) {
+    public Order findByCodeOrExternalId(String codeOrExternalId) {
     	Order order = null;
-    	Query query = getEntityManager().createQuery("from " + Order.class.getName() + " a where (a.code = :code OR  a.externalId = :code) and  provider =:provider");
-    	query.setParameter("code", code);
-    	query.setParameter("provider", provider);
+    	Query query = getEntityManager().createQuery("from " + Order.class.getName() + " a where (a.code = :code OR  a.externalId = :code)");
+    	query.setParameter("code", codeOrExternalId);
     	try {
     		order = (Order) query.getSingleResult();
     	} catch (NoResultException e) {
-    		log.debug("No {} of code/externalId {} for provider {} found", Order.class.getSimpleName(), code, provider.getId());
+    		log.debug("No {} of code/externalId {} found", Order.class.getSimpleName(), codeOrExternalId);
     		return null;
     	} catch (NonUniqueResultException e) {
-    		log.error("More than one entity of type {} with code/externalId {} and provider {} found", Order.class, code, provider);
+    		log.error("More than one entity of type {} with code/externalId {} found", Order.class, codeOrExternalId);
     		return null;
     	}
     	return order;

@@ -37,7 +37,6 @@ import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.UserAccount;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.base.MultilanguageEntityService;
 import org.meveo.service.base.ValueExpressionWrapper;
 
@@ -58,27 +57,15 @@ public class InvoiceSubCategoryService extends MultilanguageEntityService<Invoic
 		return (InvoiceSubCategory) qb.getQuery(em).getSingleResult();
 	}
 
+	@Override
 	public InvoiceSubCategory findByCode(String code) {
-		QueryBuilder qb = new QueryBuilder(InvoiceSubCategory.class, "sc");
-		qb.addCriterion("code", "=", code, false);
-
-		try {
-			return (InvoiceSubCategory) qb.getQuery(getEntityManager()).getSingleResult();
-		} catch (NoResultException e) {
-			return null;
-		}
+		return findByCode(code, null);
 	}
 
 	@Override
-	public InvoiceSubCategory findByCode(String code, Provider provider) {
-		return findByCode(code, provider, null);
-	}
-
-	@Override
-	public InvoiceSubCategory findByCode(String code, Provider provider, List<String> fetchFields) {
-		QueryBuilder qb = new QueryBuilder(InvoiceSubCategory.class, "sc", fetchFields, provider);
+	public InvoiceSubCategory findByCode(String code, List<String> fetchFields) {
+		QueryBuilder qb = new QueryBuilder(InvoiceSubCategory.class, "sc", fetchFields);
 		qb.addCriterion("sc.code", "=", code, false);
-		qb.addCriterionEntity("sc.provider", provider);
 
 		try {
 			return (InvoiceSubCategory) qb.getQuery(getEntityManager()).getSingleResult();
@@ -87,23 +74,22 @@ public class InvoiceSubCategoryService extends MultilanguageEntityService<Invoic
 		}
 	}
 
-	public int getNbInvSubCatNotAssociated(Provider provider) {
+	public int getNbInvSubCatNotAssociated() {
 		return ((Long) getEntityManager()
 				.createNamedQuery("invoiceSubCategory.getNbrInvoiceSubCatNotAssociated", Long.class)
-				.setParameter("provider", provider).getSingleResult()).intValue();
+				.getSingleResult()).intValue();
 	}
 
-	public List<InvoiceSubCategory> getInvoiceSubCatNotAssociated(Provider provider) {
+	public List<InvoiceSubCategory> getInvoiceSubCatNotAssociated() {
 		return (List<InvoiceSubCategory>) getEntityManager()
 				.createNamedQuery("invoiceSubCategory.getInvoiceSubCatNotAssociated", InvoiceSubCategory.class)
-				.setParameter("provider", provider).getResultList();
+				.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<InvoiceSubCategory> findByInvoiceCategory(InvoiceCategory invoiceCategory, Provider provider) {
+	public List<InvoiceSubCategory> findByInvoiceCategory(InvoiceCategory invoiceCategory) {
 		QueryBuilder qb = new QueryBuilder(InvoiceSubCategory.class, "sc");
 		qb.addCriterionEntity("sc.invoiceCategory", invoiceCategory);
-		qb.addCriterionEntity("sc.provider", provider);
 		try {
 			return qb.getQuery(getEntityManager()).getResultList();
 
@@ -184,7 +170,7 @@ public class InvoiceSubCategoryService extends MultilanguageEntityService<Invoic
 			throw new BusinessException("Expression " + expression
 					+ " evaluates to null  ");
 		} else {
-			result = taxService.findByCode(taxCode, billingAccount.getProvider());
+			result = taxService.findByCode(taxCode);
 		}
 		
 		return result;

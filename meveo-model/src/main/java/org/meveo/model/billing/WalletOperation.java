@@ -62,17 +62,14 @@ import org.meveo.model.rating.EDR;
 @NamedQueries({
 	@NamedQuery(name = "WalletOperation.listToInvoice", 
 					query = "SELECT o FROM WalletOperation o WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) "
-							+ " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"
-							+ " AND o.provider=:provider"),
+							+ " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"),
 	@NamedQuery(name = "WalletOperation.listToInvoiceByUA", 
 					query = "SELECT o FROM WalletOperation o WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) "
 									+ " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"
-									+ " AND o.provider=:provider"
 									+ " AND o.wallet.userAccount=:userAccount"),							
 	@NamedQuery(name = "WalletOperation.listToInvoiceIds", 
 					query = "SELECT o.id FROM WalletOperation o WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) "
-							+ " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"
-							+ " AND o.provider=:provider"),							
+							+ " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"),							
 	@NamedQuery(name = "WalletOperation.getBalance", 
 			query = "SELECT sum(o.amountWithTax)*-1 FROM WalletOperation o WHERE o.wallet.id=:walletId and "
 					+ "o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"),
@@ -101,12 +98,10 @@ import org.meveo.model.rating.EDR;
 					    		  + " where (w.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN OR w.status=org.meveo.model.billing.WalletOperationStatusEnum.TREATED)"
 					        + " and w.id IN :notBilledWalletIdList"),
 	@NamedQuery(name = "WalletOperation.listByChargeInstance", 
-	query = "SELECT o FROM WalletOperation o WHERE (o.chargeInstance=:chargeInstance ) "
-					+ " AND o.provider=:provider"),							
+	query = "SELECT o FROM WalletOperation o WHERE (o.chargeInstance=:chargeInstance ) "),							
 	@NamedQuery(name = "WalletOperation.deleteScheduled", 
 		query = "DELETE WalletOperation o WHERE (o.chargeInstance=:chargeInstance ) "
-				+ " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.SCHEDULED"
-				+ " AND o.provider=:provider"),
+				+ " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.SCHEDULED"),
 })
 public class WalletOperation extends BusinessEntity {
 
@@ -512,7 +507,6 @@ public class WalletOperation extends BusinessEntity {
 		result.setParameter3(parameter3);
 		result.setOrderNumber(orderNumber);
 		result.setPriceplan(priceplan);
-		result.setProvider(getProvider());
 		result.setQuantity(quantity);
 		result.setSeller(seller);
 		result.setStartDate(startDate);

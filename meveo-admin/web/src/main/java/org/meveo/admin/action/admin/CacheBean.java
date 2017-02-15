@@ -27,15 +27,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.lang3.reflect.MethodUtils;
-import org.infinispan.api.BasicCache;
+import org.infinispan.commons.api.BasicCache;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.cache.NotificationCacheContainerProvider;
@@ -45,6 +43,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
 import org.meveo.util.view.LazyDataModelWSize;
+import org.omnifaces.cdi.Param;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
@@ -81,8 +80,8 @@ public class CacheBean implements Serializable {
      * Request parameter. Name of a cache to show details of
      */
     @Inject
-    @RequestParam()
-    private Instance<String> cacheName;
+    @Param
+    private String cacheName;
 
     /**
      * Selected cache to display details of - retrieved from cacheName request parameter
@@ -125,14 +124,14 @@ public class CacheBean implements Serializable {
     @SuppressWarnings("rawtypes")
     public void preRenderView() {
 
-        if (cacheName.get() != null) {
+        if (cacheName != null) {
             Map<String, BasicCache> caches = walletCacheContainerProvider.getCaches();
             caches.putAll(cdrEdrProcessingCacheContainerProvider.getCaches());
             caches.putAll(notificationCacheContainerProvider.getCaches());
             caches.putAll(ratingCacheContainerProvider.getCaches());
             caches.putAll(customFieldsCacheContainerProvider.getCaches());
 
-            selectedCache = caches.get(cacheName.get());
+            selectedCache = caches.get(cacheName);
         }
     }
 

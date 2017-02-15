@@ -29,12 +29,12 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.EnableEntity;
 
 @Entity
 @Table(name = "BILLING_BILLING_RUN_LIST")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_BILLING_RUN_LIST_SEQ")
-public class BillingRunList extends AuditableEntity {
+public class BillingRunList extends EnableEntity {
 
 	private static final long serialVersionUID = 1L;
 

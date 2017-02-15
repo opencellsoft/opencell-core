@@ -18,10 +18,8 @@
  */
 package org.meveo.admin.action.payments;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -97,7 +95,7 @@ public class DdRequestLOTBean extends BaseBean<DDRequestLOT> {
 			ddrequestLotOp.setStatus(DDRequestOpStatusEnum.WAIT);
 			ddrequestLotOp.setFileFormat(entity.getFileFormat());
 			ddrequestLotOp.setDdrequestLOT(entity);
-			ddrequestLotOpService.create(ddrequestLotOp, getCurrentUser());
+			ddrequestLotOpService.create(ddrequestLotOp);
 			messages.info(new BundleKey("messages",
 					"ddrequestLot.generateFileSuccessful"));
 		} catch (Exception e) {
@@ -121,7 +119,7 @@ public class DdRequestLOTBean extends BaseBean<DDRequestLOT> {
 			ddrequestLotOp.setStatus(DDRequestOpStatusEnum.WAIT);
 			ddrequestLotOp.setFileFormat(entity.getFileFormat());
 			ddrequestLotOp.setDdrequestLOT(entity);
-			ddrequestLotOpService.create(ddrequestLotOp, getCurrentUser());
+			ddrequestLotOpService.create(ddrequestLotOp);
 			messages.info(new BundleKey("messages",
 					"ddrequestLot.doPaymentsSuccessful"));
 		} catch (Exception e) {
@@ -145,7 +143,7 @@ public class DdRequestLOTBean extends BaseBean<DDRequestLOT> {
 			ddrequestLotOp.setToDueDate(getEndDueDate());
 			ddrequestLotOp.setStatus(DDRequestOpStatusEnum.WAIT);
 			ddrequestLotOp.setDdrequestOp(DDRequestOpEnum.CREATE);
-			ddrequestLotOpService.create(ddrequestLotOp, getCurrentUser());
+			ddrequestLotOpService.create(ddrequestLotOp);
 			messages.info(new BundleKey("messages",
 					"ddrequestLot.launchProcessSuccessful"));
 		} catch (Exception e) {
@@ -226,15 +224,6 @@ public class DdRequestLOTBean extends BaseBean<DDRequestLOT> {
 		return invoices;
 	}
 
-	@Override
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
-
-	@Override
-	protected List<String> getListFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
 	public boolean canGenerateFile(){		
 		if(entity != null &&  !StringUtils.isBlank(entity.getFileName())){
 			return true;

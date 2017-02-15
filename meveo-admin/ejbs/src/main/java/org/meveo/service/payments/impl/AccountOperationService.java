@@ -29,8 +29,6 @@ import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.admin.User;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.PersistenceService;
@@ -42,33 +40,31 @@ import org.meveo.service.base.PersistenceService;
 public class AccountOperationService extends PersistenceService<AccountOperation> {
 
 	@SuppressWarnings("unchecked")
-	public List<AccountOperation> getAccountOperations(Date date, String operationCode, Provider provider) {
+	public List<AccountOperation> getAccountOperations(Date date, String operationCode) {
 		Query query = getEntityManager()
-				.createQuery("from " + getEntityClass().getSimpleName() + " a where a.occCode=:operationCode and  a.transactionDate=:date and a.provider=:providerId")
-				.setParameter("date", date).setParameter("operationCode", operationCode).setParameter("providerId", provider);
+				.createQuery("from " + getEntityClass().getSimpleName() + " a where a.occCode=:operationCode and  a.transactionDate=:date")
+				.setParameter("date", date).setParameter("operationCode", operationCode);
 
 		return query.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
-	public AccountOperation getAccountOperation(BigDecimal amount, CustomerAccount customerAccount, String transactionType, Provider provider) {
+	public AccountOperation getAccountOperation(BigDecimal amount, CustomerAccount customerAccount, String transactionType) {
 
 		Query query = getEntityManager()
 				.createQuery(
 						"from " + getEntityClass().getSimpleName()
-								+ " a where a.amount=:amount and  a.customerAccount=:customerAccount and  a.type=:transactionType and a.provider=:providerId")
-				.setParameter("amount", amount).setParameter("transactionType", transactionType).setParameter("customerAccount", customerAccount)
-				.setParameter("providerId", provider);
+								+ " a where a.amount=:amount and  a.customerAccount=:customerAccount and  a.type=:transactionType")
+				.setParameter("amount", amount).setParameter("transactionType", transactionType).setParameter("customerAccount", customerAccount);
 		List<AccountOperation> accountOperations = query.getResultList();
 
 		return accountOperations.size() > 0 ? accountOperations.get(0) : null;
 	}
 
-	public AccountOperation findByReference(String reference, Provider provider) {
+	public AccountOperation findByReference(String reference) {
 		try {
 			QueryBuilder qb = new QueryBuilder(AccountOperation.class, "a");
 			qb.addCriterion("reference", "=", reference, false);
-			qb.addCriterionEntity("provider", provider);
 			return (AccountOperation) qb.getQuery(getEntityManager()).getSingleResult();
 		} catch (NoResultException ne) {
 			return null;
@@ -76,8 +72,8 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<AccountOperation> listAccountOperationByCustomerAccount(CustomerAccount ca, Provider provider) {
-		QueryBuilder qb = new QueryBuilder(AccountOperation.class, "a", null, provider);
+	public List<AccountOperation> listAccountOperationByCustomerAccount(CustomerAccount ca) {
+		QueryBuilder qb = new QueryBuilder(AccountOperation.class, "a", null);
 		qb.addCriterionEntity("customerAccount", ca);
 
 		try {

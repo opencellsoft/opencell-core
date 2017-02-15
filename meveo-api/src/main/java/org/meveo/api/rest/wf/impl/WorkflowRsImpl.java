@@ -26,7 +26,7 @@ public class WorkflowRsImpl extends BaseRs implements WorkflowRs {
 	    public ActionStatus create(WorkflowDto workflowDto) {
 	        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 	        try {
-	        	workflowApi.create(workflowDto, getCurrentUser());
+	        	workflowApi.create(workflowDto);
 	        } catch (Exception e) {
 	        	super.processException(e, result);
 	        }
@@ -37,7 +37,7 @@ public class WorkflowRsImpl extends BaseRs implements WorkflowRs {
 	    public ActionStatus update(WorkflowDto workflowDto) {
 	        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 	        try {
-	        	workflowApi.update(workflowDto, getCurrentUser());
+	        	workflowApi.update(workflowDto);
 	        } catch (Exception e) {
 	        	super.processException(e, result);
 	        }
@@ -49,7 +49,7 @@ public class WorkflowRsImpl extends BaseRs implements WorkflowRs {
 	    public ActionStatus remove(String workflowCode) {
 	        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 	        try {
-	        	workflowApi.remove(workflowCode, getCurrentUser());
+	        	workflowApi.remove(workflowCode);
 	        } catch (Exception e) {
 	        	super.processException(e, result);
 	        }
@@ -60,7 +60,7 @@ public class WorkflowRsImpl extends BaseRs implements WorkflowRs {
 		public ActionStatus createOrUpdate(WorkflowDto workflowDto) {
 			ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 			try {
-				workflowApi.createOrUpdate(workflowDto, getCurrentUser());
+				workflowApi.createOrUpdate(workflowDto);
 			} catch (Exception e) {
 	        	super.processException(e, result);
 	        }			
@@ -71,7 +71,7 @@ public class WorkflowRsImpl extends BaseRs implements WorkflowRs {
 		public WorkflowResponseDto find(String workflowCode) {
 			WorkflowResponseDto workflowResponseDto = new WorkflowResponseDto();
 			try {
-            workflowResponseDto.setWorkflow(workflowApi.find(workflowCode, getCurrentUser()));
+            workflowResponseDto.setWorkflow(workflowApi.find(workflowCode));
 			} catch (Exception e) {
 	        	super.processException(e, workflowResponseDto.getActionStatus());
 	        }				
@@ -82,7 +82,7 @@ public class WorkflowRsImpl extends BaseRs implements WorkflowRs {
 		public WorkflowsResponseDto list() {
 			WorkflowsResponseDto workflowsResponseDto = new WorkflowsResponseDto();
 			try {
-            workflowsResponseDto.setWorkflows(workflowApi.list(getCurrentUser()));
+            workflowsResponseDto.setWorkflows(workflowApi.list());
 			} catch (Exception e) {
 	        	super.processException(e, workflowsResponseDto.getActionStatus());
 	        }
@@ -94,7 +94,7 @@ public class WorkflowRsImpl extends BaseRs implements WorkflowRs {
 		public ActionStatus execute(String baseEntityName, String entityInstanceCode, String workflowCode) {
 			ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 			try {
-				workflowApi.execute( baseEntityName,  entityInstanceCode,  workflowCode,getCurrentUser() );
+				workflowApi.execute( baseEntityName,  entityInstanceCode,  workflowCode);
 			} catch (Exception e) {
 	        	super.processException(e, result);
 	        }			
@@ -105,7 +105,7 @@ public class WorkflowRsImpl extends BaseRs implements WorkflowRs {
 		public WorkflowsResponseDto findByEntity(String baseEntityName) {
 			WorkflowsResponseDto workflowsResponseDto = new WorkflowsResponseDto();
 			try {
-            workflowsResponseDto.setWorkflows(workflowApi.findByEntity(baseEntityName, getCurrentUser()));
+            workflowsResponseDto.setWorkflows(workflowApi.findByEntity(baseEntityName));
 			} catch (Exception e) {
 	        	super.processException(e, workflowsResponseDto.getActionStatus());
 	        }			
@@ -116,7 +116,7 @@ public class WorkflowRsImpl extends BaseRs implements WorkflowRs {
 		public WorkflowHistoryResponseDto findHistory( String entityInstanceCode, String workflowCode, String fromStatus, String toStatus) {
 			WorkflowHistoryResponseDto workflowHistoryResponseDto = new WorkflowHistoryResponseDto();
 			try {
-				workflowHistoryResponseDto.setWorkflowHistories(workflowApi.findHistory(entityInstanceCode,  workflowCode,  fromStatus,  toStatus,getCurrentUser()));
+				workflowHistoryResponseDto.setWorkflowHistories(workflowApi.findHistory(entityInstanceCode,  workflowCode,  fromStatus,  toStatus));
 			} catch (Exception e) {
 	        	super.processException(e, workflowHistoryResponseDto.getActionStatus());
 	        }			

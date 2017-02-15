@@ -38,7 +38,7 @@ public class FilteredList4_3RsImpl extends BaseRs implements FilteredList4_3Rs {
         FilteredListResponseDto result = new FilteredListResponseDto();
 
         try {
-            String response = filteredListApi.list(filter, firstRow, numberOfRows, getCurrentUser());
+            String response = filteredListApi.list(filter, firstRow, numberOfRows);
             result.getActionStatus().setMessage(response);
             responseBuilder = Response.ok();
             responseBuilder.entity(result);
@@ -57,7 +57,7 @@ public class FilteredList4_3RsImpl extends BaseRs implements FilteredList4_3Rs {
         FilteredListResponseDto result = new FilteredListResponseDto();
 
         try {
-            String response = filteredListApi.listByXmlInput(postData, getCurrentUser());
+            String response = filteredListApi.listByXmlInput(postData);
             result.getActionStatus().setMessage(response);
             responseBuilder = Response.ok();
             responseBuilder.entity(result);
@@ -74,7 +74,7 @@ public class FilteredList4_3RsImpl extends BaseRs implements FilteredList4_3Rs {
         Response.ResponseBuilder responseBuilder = null;
 
         try {
-            String response = filteredListApi.search(classnamesOrCetCodes, query, from, size, getCurrentUser());
+            String response = filteredListApi.search(classnamesOrCetCodes, query, from, size);
             FilteredListResponseDto result = new FilteredListResponseDto();
             result.getActionStatus().setMessage(response);
             result.setSearchResults(response);
@@ -107,7 +107,7 @@ public class FilteredList4_3RsImpl extends BaseRs implements FilteredList4_3Rs {
                 }
             }
 
-            String response = filteredListApi.search(classnamesOrCetCodes, queryValues, from, size, getCurrentUser());
+            String response = filteredListApi.search(classnamesOrCetCodes, queryValues, from, size);
             FilteredListResponseDto result = new FilteredListResponseDto();
             result.getActionStatus().setMessage(response);
             result.setSearchResults(response);

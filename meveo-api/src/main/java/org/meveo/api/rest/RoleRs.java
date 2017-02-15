@@ -14,12 +14,11 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.RoleDto;
 import org.meveo.api.dto.response.GetRoleResponse;
-import org.meveo.api.rest.security.RSSecured;
 
 @Path("/role")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-@RSSecured
+
 public interface RoleRs extends IBaseRs {
 
     /**

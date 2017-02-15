@@ -9,12 +9,10 @@ import org.meveo.admin.util.NumberUtil;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.catalog.UsageChargeTemplate;
-import org.meveo.model.crm.Provider;
 
 public class CachedUsageChargeInstance implements Comparable<CachedUsageChargeInstance> {
 
     private Long id;
-    private Provider provider;
     private Long currencyId;
     private Date lastUpdate;
     int roundingUnityNbDecimal = 2;
@@ -31,10 +29,6 @@ public class CachedUsageChargeInstance implements Comparable<CachedUsageChargeIn
 
     public Long getId() {
         return id;
-    }
-
-    public Provider getProvider() {
-        return provider;
     }
 
     public Date getLastUpdate() {
@@ -120,8 +114,6 @@ public class CachedUsageChargeInstance implements Comparable<CachedUsageChargeIn
         subscriptionDate = usageChargeInstance.getServiceInstance().getSubscriptionDate();
         chargeDate = usageChargeInstance.getChargeDate();
         id = usageChargeInstance.getId();
-        usageChargeInstance.getProvider().getCode();
-        provider = usageChargeInstance.getProvider();
         currencyId = usageChargeInstance.getCurrency().getId();
         terminationDate = usageChargeInstance.getTerminationDate();
         ratingUnitDescription = usageChargeInstance.getRatingUnitDescription();
@@ -139,8 +131,8 @@ public class CachedUsageChargeInstance implements Comparable<CachedUsageChargeIn
     public String toString() {
         return String
             .format(
-                "CachedUsageChargeInstance [id=%s, provider=%s, currencyId=%s, lastUpdate=%s, roundingUnityNbDecimal=%s, roundingEdrNbDecimal=%s, chargeDate=%s, subscriptionDate=%s, terminationDate=%s, ratingUnitDescription=%s, description=%s, amountWithoutTax=%s, amountWithTax=%s]",
-                id, provider, currencyId, lastUpdate, roundingUnityNbDecimal, roundingEdrNbDecimal, chargeDate, subscriptionDate, terminationDate, ratingUnitDescription,
+                "CachedUsageChargeInstance [id=%s, currencyId=%s, lastUpdate=%s, roundingUnityNbDecimal=%s, roundingEdrNbDecimal=%s, chargeDate=%s, subscriptionDate=%s, terminationDate=%s, ratingUnitDescription=%s, description=%s, amountWithoutTax=%s, amountWithTax=%s]",
+                id, currencyId, lastUpdate, roundingUnityNbDecimal, roundingEdrNbDecimal, chargeDate, subscriptionDate, terminationDate, ratingUnitDescription,
                 description, amountWithoutTax, amountWithTax);
     }
 }

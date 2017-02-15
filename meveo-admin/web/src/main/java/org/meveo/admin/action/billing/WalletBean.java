@@ -18,16 +18,15 @@
  */
 package org.meveo.admin.action.billing;
 
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.jboss.solder.servlet.http.RequestParam;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.WalletService;
+import org.omnifaces.cdi.Param;
 import org.omnifaces.cdi.ViewScoped;
 
 /**
@@ -55,8 +54,8 @@ public class WalletBean extends BaseBean<WalletInstance> {
 	 * will be set on newly created wallet.
 	 */
 	@Inject
-	@RequestParam
-	private Instance<Long> customerAccountId;
+	@Param
+	private Long customerAccountId;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this

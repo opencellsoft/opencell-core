@@ -31,9 +31,8 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
-@ExportIdentifier({ "code", "provider" })
-@Table(name = "BILLING_SUBSCRIP_TERMIN_REASON", uniqueConstraints = @UniqueConstraint(columnNames = {
-		"PROVIDER_ID", "CODE" }))
+@ExportIdentifier({ "code"})
+@Table(name = "BILLING_SUBSCRIP_TERMIN_REASON", uniqueConstraints = @UniqueConstraint(columnNames = {"CODE" }))
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_SUB_TERM_REASON_SEQ")
 public class SubscriptionTerminationReason extends BaseEntity {
 	private static final long serialVersionUID = 1L;

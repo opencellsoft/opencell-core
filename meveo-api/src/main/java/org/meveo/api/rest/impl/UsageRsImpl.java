@@ -29,7 +29,7 @@ public class UsageRsImpl extends BaseRs implements UsageRs {
 	        	usageRequestDto.setFromDate(fromDate);
 	        	usageRequestDto.setToDate(toDate);
 	        	usageRequestDto.setUserAccountCode(userAccountCode);
-	            result = usageApi.find(usageRequestDto, getCurrentUser());
+	            result = usageApi.find(usageRequestDto);
 	        } catch (Exception e) {
 	        	processException(e, result.getActionStatus());            
 	        }
@@ -45,7 +45,7 @@ public class UsageRsImpl extends BaseRs implements UsageRs {
         	usageRequestDto.setFromDate(fromDate);
         	usageRequestDto.setToDate(toDate);
         	usageRequestDto.setUserAccountCode(userAccountCode);
-            result = usageApi.chargeAggregate(usageRequestDto, getCurrentUser());
+            result = usageApi.chargeAggregate(usageRequestDto);
         } catch (Exception e) {
         	processException(e, result.getActionStatus());            
         }

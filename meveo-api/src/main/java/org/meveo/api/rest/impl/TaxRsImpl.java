@@ -31,7 +31,7 @@ public class TaxRsImpl extends BaseRs implements TaxRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            taxApi.create(postData, getCurrentUser());
+            taxApi.create(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -51,7 +51,7 @@ public class TaxRsImpl extends BaseRs implements TaxRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            taxApi.update(postData, getCurrentUser());
+            taxApi.update(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -71,7 +71,7 @@ public class TaxRsImpl extends BaseRs implements TaxRs {
         GetTaxResponse result = new GetTaxResponse();
 
         try {
-            result.setTax(taxApi.find(taxCode, getCurrentUser().getProvider()));
+            result.setTax(taxApi.find(taxCode));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -91,7 +91,7 @@ public class TaxRsImpl extends BaseRs implements TaxRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            taxApi.remove(taxCode, getCurrentUser());
+            taxApi.remove(taxCode);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -111,7 +111,7 @@ public class TaxRsImpl extends BaseRs implements TaxRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            taxApi.createOrUpdate(postData, getCurrentUser());
+            taxApi.createOrUpdate(postData);
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);
@@ -131,7 +131,7 @@ public class TaxRsImpl extends BaseRs implements TaxRs {
         GetTaxesResponse result = new GetTaxesResponse();
 
         try {
-            result.setTaxesDto(taxApi.list(getCurrentUser().getProvider()));
+            result.setTaxesDto(taxApi.list());
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

@@ -18,9 +18,6 @@
  */
 package org.meveo.admin.action.crm;
 
-import java.util.Arrays;
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -93,15 +90,4 @@ public class CustomerBean extends AccountBean<Customer> {
 	protected String getDefaultSort() {
 		return "code";
 	}
-
-	@Override
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
-
-	@Override
-	protected List<String> getListFieldsToFetch() {
-		return Arrays.asList("provider");
-	}
-
 }
