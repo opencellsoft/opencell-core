@@ -297,7 +297,7 @@ public class CustomerAccountApi extends AccountApi {
 		Provider provider = currentUser.getProvider();
 		CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode, provider);
 		if (customerAccount == null) {
-			throw new BusinessException("Cannot find customer account with code=" + customerAccountCode);
+			throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
 		}
 
 		CustomerAccountDto customerAccountDto = accountHierarchyApi.customerAccountToDto(customerAccount);

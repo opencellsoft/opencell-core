@@ -256,7 +256,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void createInvoiceAndAgregates(BillingAccount billingAccount, Invoice invoice, Filter ratedTransactionFilter, List<RatedTransaction> ratedTransactions,
             String orderNumber, Date lastTransactionDate, User currentUser, boolean isInvoiceAdjustment, boolean isVirtual) throws BusinessException {		
-		boolean entreprise = billingAccount.getProvider().isEntreprise();
+		
+        boolean entreprise = billingAccount.getProvider().isEntreprise();
 		int rounding = billingAccount.getProvider().getRounding()==null?2:billingAccount.getProvider().getRounding();
 		BigDecimal nonEnterprisePriceWithTax = BigDecimal.ZERO;
 		String languageCode = billingAccount.getTradingLanguage().getLanguage().getLanguageCode();
@@ -272,7 +273,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             WalletInstance wallet = userAccount.getWallet();
             List<Object[]> invoiceSubCats = new ArrayList<>();
 	
-	            if (ratedTransactionFilter != null || !StringUtils.isBlank(orderNumber) || isVirtual) {
+	        if (ratedTransactionFilter != null || !StringUtils.isBlank(orderNumber) || isVirtual) {
 
                 if (!StringUtils.isBlank(orderNumber)) {
                     List<RatedTransaction> orderRatedTransactions = null;
@@ -386,7 +387,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             }
             
             for (Object[] object : invoiceSubCats) {
-                log.info("amountWithoutTax=" + object[1] + "amountWithTax =" + object[2] + "amountTax=" + object[3]);
+                log.info("amountWithoutTax=" + object[1] + " amountWithTax =" + object[2] + " amountTax=" + object[3]);
                 Long invoiceSubCategoryId = (Long) object[0];
                 InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findById(invoiceSubCategoryId);
                 List<Tax> taxes = new ArrayList<Tax>();
