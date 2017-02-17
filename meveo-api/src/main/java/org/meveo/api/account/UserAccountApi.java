@@ -394,9 +394,18 @@ public class UserAccountApi extends AccountApi {
 			for (WalletOperation walletOperation : walletOperations) {
 				result.add(new WalletOperationDto(walletOperation));
 			}
+			
+			// Validate and populate customFields
+			try {
+				populateCustomFields(postData.getCustomFields(), productInstance, true, currentUser, false);
+	        } catch (MissingParameterException e) {
+	            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+	            throw e;
+	        }
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e.getMessage());
 		}
+		
 		return result;
 	}
 }
