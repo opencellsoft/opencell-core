@@ -40,21 +40,20 @@
 		listBean="#{calendarBean}" />
 	<hftl:formField id="offerTemplateCategories"
 		label="#{messages['productOffering.offerTemplateCategories']}"
-		field="offerTemplateCategories" listType="pickUpList"
-		valueLabelField="code"
-		dualListModel="#{mainBackingBean.offerTemplateCategoriesDM}"  newLine="true"/>
+		field="offerTemplateCategories" listType="selectCheckbox"
+		valueLabelField="code" listBean="#{offerTemplateCategoryListBean}" newLine="true" />
 	<hftl:formField id="attachments"
 		label="#{messages['productOffering.attachments']}" field="attachments"
-		listType="pickUpList" valueLabelField="code"
-		dualListModel="#{mainBackingBean.attachmentsDM}" />
+		listType="selectCheckbox" valueLabelField="code"
+		listBean="#{digitalResourceListBean}" />
 	<hftl:formField id="walletTemplates" rendered="#{mode eq 'PRODUCT'}"
 		label="#{messages['productTemplates.walletTemplates']}"
-		field="walletTemplates" listType="pickUpList" valueLabelField="code"
-		dualListModel="#{mainBackingBean.walletTemplatesDM}" />
+		field="walletTemplates" listType="selectCheckbox" valueLabelField="code"
+		listBean="#{walletTemplateListBean}" />
 	<hftl:formField id="businessAccountModels"
 		label="#{messages['businessAccountModels.title']}"
-		field="businessAccountModels" listType="pickUpList"
-		valueLabelField="code" dualListModel="#{mainBackingBean.bamDM}" />
+		field="businessAccountModels" listType="selectCheckbox"
+		valueLabelField="code" listBean="#{businessAccountModelListBean}" />
 
 	<hftl:formField label="#{messages['enableEntity.disabled']}"
 		doNotShowOnNew="true" allowEdit="false" field="disabled"

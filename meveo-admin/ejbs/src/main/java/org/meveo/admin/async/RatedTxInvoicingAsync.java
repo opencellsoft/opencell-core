@@ -34,7 +34,7 @@ public class RatedTxInvoicingAsync {
 
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public Future<String> launchAndForget(List<BillingAccount> billingAccounts,Long billingRunId,User currentUser) {
+	public Future<String> createAgregatesAndInvoiceAsync(List<BillingAccount> billingAccounts,Long billingRunId,User currentUser) {
 		
 		for (BillingAccount billingAccount : billingAccounts) {
 			try {

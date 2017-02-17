@@ -174,7 +174,7 @@ public class InvoicingApi extends BaseApi {
             missingParameters.add("billingRunId");
             handleMissingParameters();
         }
-            billingRunService.forceValidate(billingRunId, currentUser);
+        billingRunService.forceValidate(billingRunId, currentUser);
        
     }
 

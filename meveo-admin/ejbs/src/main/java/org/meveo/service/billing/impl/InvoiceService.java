@@ -423,7 +423,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		Invoice invoice =null;
 		log.debug("createAgregatesAndInvoice billingAccount={} , billingRunId={} , ratedTransactionFilter={} , orderNumber{}, lastTransactionDate={} ,invoiceDate={} ", 
 				billingAccount,billingRunId,ratedTransactionFilter,orderNumber,lastTransactionDate,invoiceDate);
-		log.debug("createAgregatesAndInvoice tx status={}", txReg.getTransactionStatus());
+//		log.debug("createAgregatesAndInvoice tx status={}", txReg.getTransactionStatus());
 
 		EntityManager em = getEntityManager();
 		BillingRun billingRun=null;
@@ -497,15 +497,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			invoice.setPaymentMethod(paymentMethod);
 			invoice.setProvider(currentUser.getProvider());
 
-			em.persist(invoice);
+			create(invoice, currentUser);
 
 			// create(invoice, currentUser, currentUser.getProvider());
-			log.debug("created invoice entity with id={},  tx status={}, em open={}", invoice.getId(),
-					txReg.getTransactionStatus(), em.isOpen());
+			log.debug("created invoice entity with id={}", invoice.getId());
 			ratedTransactionService.createInvoiceAndAgregates(billingAccount, invoice,
 					ratedTransactionFilter,orderNumber,billingRun==null?lastTransactionDate:billingRun.getLastTransactionDate(), currentUser);
-			log.debug("created aggregates tx status={}, em open={}", txReg.getTransactionStatus(), em.isOpen());
-			em.joinTransaction();
+//			log.debug("created aggregates tx status={}, em open={}", txReg.getTransactionStatus(), em.isOpen());
+//			em.joinTransaction();
 
 			// Note that rated transactions get updated in
 			// ratedTransactionservice in case of Filter or orderNumber not empty

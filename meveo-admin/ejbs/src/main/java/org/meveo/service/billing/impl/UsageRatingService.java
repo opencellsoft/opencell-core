@@ -289,7 +289,7 @@ public class UsageRatingService {
                         // set the cache element to dirty so it is saved to DB when
                         // shutdown the server
                         // periodCache.setDbDirty(true);
-                        counterInstanceService.updatePeriodValue(cachedCounterPeriod.getCounterPeriodId(), cachedCounterPeriod.getValue(), currentUser);
+                        counterInstanceService.updateOrCreatePeriodValue(cachedCounterPeriod.getCounterPeriodId(), cachedCounterPeriod.getValue(), cachedCounterInstance.getCounterInstanceId(), edr.getEventDate(), cachedCharge.getSubscriptionDate(), cachedCharge.getId(), currentUser);
                     }
                 }
 
