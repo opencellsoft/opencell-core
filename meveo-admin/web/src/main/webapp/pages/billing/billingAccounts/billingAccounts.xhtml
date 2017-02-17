@@ -36,7 +36,7 @@ xmlns:h="http://java.sun.com/jsf/html"
             <hftl:column label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" isDate="true" /> 
             <hftl:column label="#{messages['billingAccount.status']}" field="status.label" isMessage="true" />
 
-            <hftl:actionsColumn useCustomIdParam="true" permission="#{identity.hasPermission('billing','billingManagement')}" />
+            <hftl:actionsColumn useCustomIdParam="true" permission="#{currentUser.hasRole('billingManagement')}" />
         </hftl:dataList>
 
     </ui:define>

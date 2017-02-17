@@ -7,10 +7,7 @@
 
 	<p:submenu id="admin" label="#{messages['menu.configuration']}" rendered="#{currentUser.hasRole('administrationVisualization') or currentUser.hasRole('catalogVisualization')}">
 		<p:menuitem id="providers" outcome="providers" value="#{messages['menu.providers']}" rendered="#{currentUser.hasRole('superAdminManagement')}" />
-		<p:menuitem id="provider" outcome="providerSelfDetail" value="#{messages['menu.provider']}" rendered="#{currentUser.hasRole('administrationManagement')}">
-			<f:param name="objectId" value="#{providerBean.getCurrentProvider().id}" />
-			<f:param name="edit" value="true" />
-		</p:menuitem>
+		<p:menuitem id="provider" outcome="providerSelfDetail" value="#{messages['menu.provider']}" rendered="#{currentUser.hasRole('administrationManagement')}" />
 		<p:menuitem id="providerContacts" outcome="providerContacts" value="#{messages['menu.providerContacts']}" />
 		<p:menuitem id="users" value="#{messages['menu.users']}" outcome="users" rendered="#{currentUser.hasRole('administrationVisualization')}" />
 		<p:menuitem id="userRoles" value="#{messages['menu.userRoles']}" outcome="roles" rendered="#{currentUser.hasRole('administrationVisualization')}" />

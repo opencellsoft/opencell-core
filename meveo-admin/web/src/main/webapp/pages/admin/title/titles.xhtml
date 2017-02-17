@@ -38,7 +38,7 @@
 				isMessage="true" />
 
 			<hftl:actionsColumn
-				permission="#{identity.hasPermission('administration','administrationManagement')}" />
+				permission="#{currentUser.hasRole('administrationManagement')}" />
 		</hftl:dataList>
 
 	</ui:define>

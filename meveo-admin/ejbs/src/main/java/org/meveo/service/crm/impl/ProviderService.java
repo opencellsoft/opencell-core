@@ -40,7 +40,7 @@ public class ProviderService extends PersistenceService<Provider> {
      */
     @Produces
     @ApplicationScoped
-    @Named()
+    @Named("appProvider")
     @ApplicationProvider
     public Provider getProvider() {
         return list().get(0);

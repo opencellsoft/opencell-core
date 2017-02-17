@@ -28,7 +28,7 @@
 			<hftl:column label="#{messages['country.nameFr']}"	field="descriptionFr" />
 			<hftl:column label="#{messages['currency.currencyCode']}" field="currency.currencyCode" />
 			<hftl:column label="#{messages['language.languageCode']}" field="language.languageCode" />
-			<hftl:actionsColumn	permission="#{identity.hasPermission('superAdmin','superAdminManagement')}" />
+			<hftl:actionsColumn	permission="#{currentUser.hasRole('superAdminManagement')}" />
 		</hftl:dataList>
 
 	</ui:define>

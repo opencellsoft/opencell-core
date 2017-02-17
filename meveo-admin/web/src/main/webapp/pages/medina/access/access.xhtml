@@ -61,7 +61,7 @@
 				field="active" isMessage="true" />
 
 			<hftl:actionsColumn renderEnableLink="true"
-				permission="#{identity.hasPermission('billing','billingManagement')}" />
+				permission="#{currentUser.hasRole('billingManagement')}" />
 		</hftl:dataList>
 	</ui:define>
 </ui:composition>

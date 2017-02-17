@@ -63,7 +63,7 @@
 				field="percent" converterParam="4digits"/>
 
 			<hftl:actionsColumn
-				permission="#{identity.hasPermission('catalog','catalogManagement')}" />
+				permission="#{currentUser.hasRole('catalogManagement')}" />
 		</hftl:dataList>
 
 	</ui:define>

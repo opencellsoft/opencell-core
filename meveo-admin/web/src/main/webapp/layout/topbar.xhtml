@@ -24,10 +24,10 @@
 						<ul style="display: none; z-index: 1">
 							<li><h:commandLink action="#{identity.logout}"
 									value="#{messages['menutop.logout']}"
-									rendered="#{identity.loggedIn}" immediate="true" /></li>
+									rendered="#{currentUser.authenticated}" immediate="true" /></li>
 							<li><h:link outcome="/changePassword.xhtml"
 									value="#{messages['menutop.changePassword']}"
-									rendered="#{identity.loggedIn}" styleClass="headerLink"
+									rendered="#{currentUser.authenticated}" styleClass="headerLink"
 									immediate="true" /></li>
 						</ul></li>
 					<li><a href="#" id="menu2"><i class="fa fa-2x fa-question"></i></a>
@@ -63,11 +63,11 @@
 			<div class="FRight">
 				<ul id="user-info" class="ListNoStyle Padding10"
 					style="margin: 0 40px 0 0;">
-					<li class="Fs14 FontBold">#{identity.user.user.nameOrUsername}</li>
-					<li class="Fs12 FontBold">#{identity.user.currentProvider.code}</li>
+					<li class="Fs14 FontBold">#{currentUser.fullNameOrUserName}</li>
+					<li class="Fs12 FontBold">#{appProvider.code}</li>
 				</ul>
 			</div>
-			<c:if test="#{identity.hasPermission('marketing','marketingCatalogVisualization')  or identity.hasPermission('marketing','marketingCatalogManager') }">
+			<c:if test="#{currentUser.hasRole('marketingCatalogVisualization')  or currentUser.hasRole('marketingCatalogManager') }">
 			<div class="search-wrapper">		
 				<p:inputText id="globalFullTextSearch"
 					value="#{fullTextSearchBean.filters['fullText']}"

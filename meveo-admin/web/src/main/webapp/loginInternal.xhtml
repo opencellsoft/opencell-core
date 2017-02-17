@@ -22,7 +22,7 @@
 	
 						<h:messages id="messages" globalOnly="false" styleClass="message"
 							errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg"
-							rendered="#{!identity.loggedIn}" />
+							rendered="#{!currentUser.authenticated}" />
 	
 						<div class="dialog">
 							<h2>Login</h2>

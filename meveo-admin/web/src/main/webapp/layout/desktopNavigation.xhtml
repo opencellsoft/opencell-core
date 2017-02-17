@@ -4,7 +4,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui">
 
-	<p:menubar styleClass="DispInlBlock" rendered="#{identity.loggedIn}">
+	<p:menubar styleClass="DispInlBlock" rendered="#{currentUser.authenticated}">
 		<ui:include src="navigationItems.xhtml">
 			<ui:param name="menuId" value="desktop_menu"></ui:param>
 		</ui:include>

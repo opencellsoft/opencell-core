@@ -61,6 +61,14 @@ public abstract class MeveoUser implements Serializable {
 		return fullName;
 	}
 
+    public String getFullNameOrUserName() {
+        if (fullName == null || fullName.length() == 0) {
+            return userName;
+        } else {
+            return fullName;
+        }
+    }
+
 	public boolean isAuthenticated() {
         return authenticated;
     }

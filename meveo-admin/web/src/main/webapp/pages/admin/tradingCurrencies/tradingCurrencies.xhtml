@@ -40,7 +40,7 @@
 				field="prCurrencyToThis" converterParam="4digits" />
 
 			<hftl:actionsColumn renderEnableLink="true"
-				permission="#{identity.hasPermission('administration','administrationManagement')}" />
+				permission="#{currentUser.hasRole('administrationManagement')}" />
 		</hftl:dataList>
 
 	</ui:define>

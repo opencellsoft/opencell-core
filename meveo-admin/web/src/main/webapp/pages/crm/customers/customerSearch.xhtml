@@ -43,7 +43,7 @@
             <!-- 			<hftl:actionsColumn renderDeleteLink="false" -->
             <!-- 				objectIdParamName="#{customerSearchBean.getIdParameterName(entity['accountType'])}" -->
             <!-- 				editView="#{customerSearchBean.getView(entity['accountType'])}" -->
-            <!-- 				permission="#{identity.hasPermission('account','accountManagement')}" /> -->
+            <!-- 				permission="#{currentUser.hasRole('accountManagement')}" /> -->
         </hftl:dataList>
 
     </ui:define>

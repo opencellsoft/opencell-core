@@ -143,36 +143,30 @@
 			<web-resource-name>AdminPages</web-resource-name>
 			<url-pattern>/pages/*</url-pattern>
 		</web-resource-collection>
-		<auth-constraint>
-			<role-name>adminas</role-name>
-		</auth-constraint>
-	</security-constraint>
-	<security-constraint>
 		<web-resource-collection>
-			<web-resource-name>Users</web-resource-name>
-			<url-pattern>/users/*</url-pattern>
+			<web-resource-name>home</web-resource-name>
+			<url-pattern>/home.jsf</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
-			<role-name>user</role-name>
+			<role-name>guiAccess</role-name>
 		</auth-constraint>
 	</security-constraint>
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>RS</web-resource-name>
-			<url-pattern>/rs/hello/*</url-pattern>
+			<url-pattern>/api/rest/*</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
-			<role-name>user</role-name>
-			<role-name>adminas</role-name>
+			<role-name>apiAccess</role-name>
 		</auth-constraint>
 	</security-constraint>
 	<security-constraint>
 		<web-resource-collection>
-			<web-resource-name>WS</web-resource-name>
-			<url-pattern>/ws/*</url-pattern>
+			<web-resource-name>AccountWS</web-resource-name>
+			<url-pattern>/AccountWs</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
-			<role-name>user</role-name>
+			<role-name>apiAccess</role-name>
 		</auth-constraint>
 	</security-constraint>
 	<login-config>
@@ -180,10 +174,10 @@
 		<realm-name>master</realm-name>
 	</login-config>
 	<security-role>
-		<role-name>adminas</role-name>
+		<role-name>apiAccess</role-name>
 	</security-role>
 	<security-role>
-		<role-name>user</role-name>
+		<role-name>guiAccess</role-name>
 	</security-role>
 
 

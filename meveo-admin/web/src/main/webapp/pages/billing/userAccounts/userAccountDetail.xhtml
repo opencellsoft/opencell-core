@@ -273,12 +273,12 @@
                                     <hftl:decorateFormField label="#{messages['pricePlanMatrix.amountWithTax']}" displayOneLine="true" componentWidth="100" labelWidth="70"
                                         rendered="#{ userAccountBean.entity != null and ! userAccountBean.entity.provider.entreprise}">
                                         <h:outputText
-                                            value="#{userAccountBean.getOpenBalanceWithTax(userAccountBean.getCurrentProvider(),userAccountBean.entity.billingAccount.customerAccount.customer.seller.code,userAccountBean.entity.code,null,null)}" />
+                                            value="#{userAccountBean.getOpenBalanceWithTax(userAccountBean.entity.billingAccount.customerAccount.customer.seller.code,userAccountBean.entity.code,null,null)}" />
                                     </hftl:decorateFormField>
                                     <hftl:decorateFormField label="#{messages['pricePlanMatrix.amountWithoutTax']}" displayOneLine="true" componentWidth="100" labelWidth="70"
                                         newLine="true">
                                         <h:outputText
-                                            value="#{userAccountBean.getOpenBalanceWithoutTax(userAccountBean.getCurrentProvider(),userAccountBean.entity.billingAccount.customerAccount.customer.seller.code
+                                            value="#{userAccountBean.getOpenBalanceWithoutTax(userAccountBean.entity.billingAccount.customerAccount.customer.seller.code
     													,userAccountBean.entity.code,null,null)}" />
                                     </hftl:decorateFormField>
                                 </p:fieldset>
@@ -286,13 +286,13 @@
                                     <hftl:decorateFormField label="#{messages['pricePlanMatrix.amountWithTax']}" displayOneLine="true" componentWidth="100" labelWidth="70"
                                         rendered="#{ userAccountBean.entity != null and ! userAccountBean.entity.provider.entreprise}">
                                         <h:outputText
-                                            value="#{userAccountBean.getReservedBalanceWithTax(userAccountBean.getCurrentProvider(),userAccountBean.entity.billingAccount.customerAccount.customer.seller.code
+                                            value="#{userAccountBean.getReservedBalanceWithTax(userAccountBean.entity.billingAccount.customerAccount.customer.seller.code
     													,userAccountBean.entity.code,null,null)}" />
                                     </hftl:decorateFormField>
                                     <hftl:decorateFormField label="#{messages['pricePlanMatrix.amountWithoutTax']}" displayOneLine="true" componentWidth="100" labelWidth="70"
                                         newLine="true">
                                         <h:outputText
-                                            value="#{userAccountBean.getReservedBalanceWithoutTax(userAccountBean.getCurrentProvider(),userAccountBean.entity.billingAccount.customerAccount.customer.seller.code
+                                            value="#{userAccountBean.getReservedBalanceWithoutTax(userAccountBean.entity.billingAccount.customerAccount.customer.seller.code
     													,userAccountBean.entity.code,null,null)}" />
                                     </hftl:decorateFormField>
                                 </p:fieldset>
@@ -300,13 +300,13 @@
                                     <hftl:decorateFormField label="#{messages['pricePlanMatrix.amountWithTax']}" displayOneLine="true" componentWidth="100" labelWidth="70"
                                         rendered="#{ userAccountBean.entity != null and ! userAccountBean.entity.provider.entreprise}">
                                         <h:outputText
-                                            value="#{userAccountBean.getCurrentBalanceWithTax(userAccountBean.getCurrentProvider(),userAccountBean.entity.billingAccount.customerAccount.customer.seller.code
+                                            value="#{userAccountBean.getCurrentBalanceWithTax(userAccountBean.entity.billingAccount.customerAccount.customer.seller.code
     													,userAccountBean.entity.code,null,null)}" />
                                     </hftl:decorateFormField>
                                     <hftl:decorateFormField label="#{messages['pricePlanMatrix.amountWithoutTax']}" displayOneLine="true" componentWidth="100" labelWidth="70"
                                         newLine="true">
                                         <h:outputText
-                                            value="#{userAccountBean.getCurrentBalanceWithoutTax(userAccountBean.getCurrentProvider(),userAccountBean.entity.billingAccount.customerAccount.customer.seller.code
+                                            value="#{userAccountBean.getCurrentBalanceWithoutTax(userAccountBean.entity.billingAccount.customerAccount.customer.seller.code
     													,userAccountBean.entity.code,null,null)}" />
                                     </hftl:decorateFormField>
                                 </p:fieldset>

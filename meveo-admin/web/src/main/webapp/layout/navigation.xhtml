@@ -52,7 +52,7 @@
     <p:tooltip for="quotes">#{help['menu.quotes']}</p:tooltip>
 	<c:set var="cetIndex" value="0" />
 <!-- 	<c:forEach items="#{customEntityTemplateBean.listAll()}" var="cet"> -->
-<!-- 		<c:if test="#{identity.hasPermission(cet.permissionResourceName, 'read') }"> -->
+<!-- 		<c:if test="#{currentUser.hasRole(cet.permissionResourceName.concat('read')) }"> -->
 <!-- 			<p:tooltip for="cet_#{cetIndex}" value="#{cet.description}" /> -->
 <!-- 			<c:set var="cetIndex" value="#{cetIndex + 1}" /> -->
 <!-- 		</c:if> -->

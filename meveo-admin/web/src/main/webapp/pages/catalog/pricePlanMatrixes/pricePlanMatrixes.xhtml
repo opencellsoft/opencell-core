@@ -499,7 +499,7 @@
 			</p:column>
 
 			<hftl:actionsColumn renderEditLink="true" renderDuplicateLink="true"
-				permission="#{identity.hasPermission('catalog','catalogManagement')}" />
+				permission="#{currentUser.hasRole('catalogManagement')}" />
 		</hftl:dataList>
 	</ui:define>
 </ui:composition>

@@ -29,7 +29,7 @@
 				field="chargeDate" />
 				
 			<hftl:actionsColumn
-				permission="#{identity.hasPermission('billing','billingManagement')}" />
+				permission="#{currentUser.hasRole('billingManagement')}" />
 		</hftl:dataList>
 
 	</ui:define>

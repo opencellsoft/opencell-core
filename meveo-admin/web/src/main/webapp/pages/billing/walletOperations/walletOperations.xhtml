@@ -189,7 +189,7 @@
 			<h:outputText value="Actions" />
 		</f:facet>
 			<hftl:actionsColumn renderEditLink="false" renderDeleteLink="false"
-				permission="#{identity.hasPermission('billing','billingManagement')}" />
+				permission="#{currentUser.hasRole('billingManagement')}" />
 			  <p:tooltip for="updateWallet" value="#{messages['action.rerate']}"
 			  		rendered="#{walletOperationBean.canUserUpdateEntity()}"
 					showEffect="slide" hideEffect="slide" />

@@ -117,7 +117,7 @@
 			<hftl:column label="#{messages['ratedTransaction.usageDate']}" field="usageDate" isDate="true" />
 			<hftl:column label="#{messages['invoice.invoiceNumber']}" field="invoice.invoiceNumber"  /> 
 			<hftl:actionsColumn renderEditLink="true" renderDeleteLink="false" width="60"
-				permission="#{identity.hasPermission('billing','billingVisualization')}"/>
+				permission="#{currentUser.hasRole('billingVisualization')}"/>
 				</hftl:dataList>  
 
 	</ui:define>

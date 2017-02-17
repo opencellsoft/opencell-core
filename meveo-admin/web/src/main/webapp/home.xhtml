@@ -30,7 +30,7 @@
 					<h:panelGrid columns="2"
 						columnClasses="panelGrid-column50,panelGrid-column50"
 						styleClass="panelGrid-column100"
-						rendered="#{identity.hasPermission('administration','administrationVisualization')}">
+						rendered="#{currentUser.hasRole('administrationVisualization')}">
 						<h:panelGrid styleClass="panelGrid-column100">
 							<p:accordionPanel activeIndex="null" dynamic="true" cache="false"
 								id="chargeTemplate">
@@ -41,13 +41,13 @@
 										<h:outputText
 											value="#{messages['configIssuesReporting.chargesWithNotPricePlan']} : " />
 										<h:outputText
-											value="#{configIssuesReportingBean.getNbrChargesWithNotPricePlan}"
+											value="#{configIssuesReportingBean.nbrChargesWithNotPricePlan}"
 											style="color:#3FCA21"
-											rendered="#{configIssuesReportingBean.getNbrChargesWithNotPricePlan==0}" />
+											rendered="#{configIssuesReportingBean.nbrChargesWithNotPricePlan==0}" />
 										<h:outputText
-											value="#{configIssuesReportingBean.getNbrChargesWithNotPricePlan}"
+											value="#{configIssuesReportingBean.nbrChargesWithNotPricePlan}"
 											style="color:red"
-											rendered="#{configIssuesReportingBean.getNbrChargesWithNotPricePlan!=0}" />
+											rendered="#{configIssuesReportingBean.nbrChargesWithNotPricePlan!=0}" />
 									</f:facet>
 
 									<h:panelGrid columns="1"

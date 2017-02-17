@@ -31,10 +31,10 @@
             <hftl:column label="#{messages['user.userGroupLevel']}" field="userLevel.descriptionOrCode"/>
 			<hftl:column label="#{messages['user.roles']}" field="roles"
 				valueLabelField="name" isList="true" sort="false" />
-            <hftl:column label="#{messages['commons.provider']}" field="provider.code" rendered="#{identity.hasPermission('superAdmin','superAdminManagement')}" />             
+            <hftl:column label="#{messages['commons.provider']}" field="provider.code" rendered="#{currentUser.hasRole('superAdminManagement')}" />             
 
 			<hftl:actionsColumn
-				permission="#{identity.hasPermission('administration','administrationManagement')}" />
+				permission="#{currentUser.hasRole('administrationManagement')}" />
 		</hftl:dataList>
 
     </ui:define>

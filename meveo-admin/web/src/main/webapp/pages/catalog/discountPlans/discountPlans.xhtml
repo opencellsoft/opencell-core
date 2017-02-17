@@ -46,7 +46,7 @@
                 isMessage="true" />
 
 			<hftl:actionsColumn renderEnableLink="true"
-				permission="#{identity.hasPermission('catalog','catalogManagement')}" />
+				permission="#{currentUser.hasRole('catalogManagement')}" />
 		</hftl:dataList>
 
 	</ui:define>

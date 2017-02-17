@@ -65,7 +65,7 @@
             </p:outputPanel>
 
             <hftl:formField label="#{messages['commons.provider']}" field="provider" listBean="#{providerBean}" valueLabelField="code" required="true" allowEdit="false"
-                rendered="#{identity.hasPermission('superAdmin', 'superAdminManagement')}" newLine="true" listenerUpdate="userGroupLevel userRoles" actionListenerBean="#{userBean}"
+                rendered="#{currentUser.hasRole( 'superAdminManagement')}" newLine="true" listenerUpdate="userGroupLevel userRoles" actionListenerBean="#{userBean}"
                 actionListenerMethod="onProviderChange" />
 
             <hftl:decorateFormField fieldId=":userFormId:tabView:userGroupLevel" label="#{messages['user.userGroupLevel']}" newLine="true">

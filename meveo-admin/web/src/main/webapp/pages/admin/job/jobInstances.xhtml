@@ -42,7 +42,7 @@
                 <p:column headerText="#{messages['timer.isRunning']}">
                     <h:outputText styleClass="ui-icon ui-icon-circle-check" rendered="#{jobInstanceListBean.isTimerRunning(entity)}" />
                 </p:column>
-                <hftl:actionsColumn permission="#{identity.hasPermission('administration','administrationManagement')}" renderEnableLink="true" />
+                <hftl:actionsColumn permission="#{currentUser.hasRole('administrationManagement')}" renderEnableLink="true" />
             </hftl:dataList>
         </h:panelGroup>
         <h:form>

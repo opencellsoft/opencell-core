@@ -18,7 +18,6 @@ import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
-import org.meveo.model.admin.User;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.script.Script;
@@ -107,7 +106,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
             addFunction("mv", "getInheritedCFValueByMatrixForDate5Keys", MeveoFunctionMapper.class.getMethod("getInheritedCFValueByMatrixForDate5Keys", ICustomFieldEntity.class,
                 String.class, Date.class, Object.class, Object.class, Object.class, Object.class, Object.class));
 
-            addFunction("mv", "executeScript", MeveoFunctionMapper.class.getMethod("executeScript", IEntity.class, String.class, String.class, User.class));
+            addFunction("mv", "executeScript", MeveoFunctionMapper.class.getMethod("executeScript", IEntity.class, String.class, String.class));
 
             addFunction("mv", "now", MeveoFunctionMapper.class.getMethod("getNowTimestamp"));
 

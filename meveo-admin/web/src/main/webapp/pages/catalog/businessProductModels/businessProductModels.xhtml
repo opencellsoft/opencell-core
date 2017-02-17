@@ -46,7 +46,7 @@
 			</p:column>
 
 			<hftl:actionsColumn useCustomIdParam="true"
-				permission="#{identity.hasPermission('catalog','catalogManagement')}" />
+				permission="#{currentUser.hasRole('catalogManagement')}" />
 		</hftl:dataList>
 
 	</ui:define>

@@ -43,7 +43,7 @@
 				popupFields="accountingCode" />
 
 			<hftl:actionsColumn
-				permission="#{identity.hasPermission('catalog','catalogManagement')}" />
+				permission="#{currentUser.hasRole('catalogManagement')}" />
 		</hftl:dataList>
 
 	</ui:define>

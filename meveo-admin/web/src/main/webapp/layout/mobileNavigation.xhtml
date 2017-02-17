@@ -5,7 +5,7 @@
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:hftl="http://hftl.org" xmlns:p="http://primefaces.org/ui">
 
-	<hftl:menu rendered="#{identity.loggedIn}">
+	<hftl:menu rendered="#{currentUser.authenticated}">
 		<ui:include src="navigationItems.xhtml">
 			<ui:param name="menuId" value="mobile_menu"></ui:param>
 		</ui:include>
@@ -13,9 +13,9 @@
 		<p:menuitem value="#{messages['menu.documentation']}"
 			url="https://app.assembla.com/spaces/meveo/wiki"></p:menuitem>
 		<p:menuitem value="#{messages['menutop.changePassword']}"
-			rendered="#{identity.loggedIn}" outcome="/changePassword.xhtml"></p:menuitem>
+			rendered="#{currentUser.authenticated}" outcome="/changePassword.xhtml"></p:menuitem>
 		<p:menuitem value="#{messages['menutop.logout']}"
-			rendered="#{identity.loggedIn}" actionListener="#{identity.logout}"
+			rendered="#{currentUser.authenticated}" actionListener="#{identity.logout}"
 			ajax="false"></p:menuitem>
 	</hftl:menu>
 

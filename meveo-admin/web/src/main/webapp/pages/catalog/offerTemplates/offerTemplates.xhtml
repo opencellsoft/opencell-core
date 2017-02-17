@@ -59,7 +59,7 @@
 			<hftl:column label="#{messages['enableEntity.active']}"
 				field="active" isMessage="true" />
 			<hftl:actionsColumn
-				permission="#{identity.hasPermission('catalog','catalogManagement')}"
+				permission="#{currentUser.hasRole('catalogManagement')}"
 				renderEnableLink="#{offerTemplateListBean.canUserUpdateEntity()}" 
 				renderDuplicateLink="true" />
 		</hftl:dataList>

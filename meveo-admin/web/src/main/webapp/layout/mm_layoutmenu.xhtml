@@ -3,7 +3,7 @@
 
     <h:form>
 
-        <hftl:menu styleClass="marketingManagerNavigation" rendered="#{identity.hasPermission('marketing','marketingCatalogManager')}">
+        <hftl:menu styleClass="marketingManagerNavigation" rendered="#{currentUser.hasRole('marketingCatalogManager')}">
             <p:submenu label="#{messages['menu.offers']}">
                 <p:menuitem id="mmOffers" outcome="mm_offers" value="#{messages['menu.marketingManager.catalogList']}" />
             </p:submenu>
@@ -26,7 +26,7 @@
                 <p:menuitem id="mmOfferCategories" outcome="mm_offerTemplateCategories" value="#{messages['menu.marketingManager.manageCategories']}" />
             </p:submenu>
 
-            <p:menuitem action="#{identity.logout}" value="#{messages['menutop.logout']}" rendered="#{identity.loggedIn}" immediate="true"></p:menuitem>
+            <p:menuitem action="#{identity.logout}" value="#{messages['menutop.logout']}" rendered="#{currentUser.authenticated}" immediate="true"></p:menuitem>
         </hftl:menu>
     </h:form>
 

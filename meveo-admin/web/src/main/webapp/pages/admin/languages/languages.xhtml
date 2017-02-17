@@ -30,7 +30,7 @@
             <hftl:column label="#{messages['language.name']}"
                 field="descriptionEn" />
             <hftl:actionsColumn
-                permission="#{identity.hasPermission('administration','administrationManagement')}" />
+                permission="#{currentUser.hasRole('administrationManagement')}" />
         </hftl:dataList>
 
     </ui:define>

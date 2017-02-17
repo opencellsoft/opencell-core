@@ -46,7 +46,7 @@
 			<hftl:column label="#{messages['ddrequestLot.rejectedInvoices']}"
 				field="rejectedInvoices" />				
 			<hftl:actionsColumn renderDeleteLink="false" renderViewLink="true"
-				permission="#{identity.hasPermission('billing','billingManagement')}" />
+				permission="#{currentUser.hasRole('billingManagement')}" />
 		</hftl:dataList>
 
 	</ui:define>

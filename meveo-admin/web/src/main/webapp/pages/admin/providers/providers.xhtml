@@ -27,7 +27,7 @@
 				field="description" />
 			<hftl:column label="#{messages['provider.enterprise']}" field="entreprise"/>
 			<hftl:actionsColumn
-				permission="#{identity.hasPermission('superAdmin','superAdminManagement')}" />
+				permission="#{currentUser.hasRole('superAdminManagement')}" />
 		</hftl:dataList>
 	</ui:define>
 
