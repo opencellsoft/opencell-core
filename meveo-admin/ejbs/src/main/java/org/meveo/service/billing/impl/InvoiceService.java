@@ -417,20 +417,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public Invoice createAgregatesAndInvoice(BillingAccount billingAccount, Long billingRunId,Filter ratedTransactionFilter,String orderNumber,
+	public Invoice createAgregatesAndInvoice(BillingAccount billingAccount, BillingRun billingRun, Filter ratedTransactionFilter,String orderNumber,
 			Date invoiceDate,Date lastTransactionDate, User currentUser)
 			throws BusinessException {
 		Invoice invoice =null;
 		log.debug("createAgregatesAndInvoice billingAccount={} , billingRunId={} , ratedTransactionFilter={} , orderNumber{}, lastTransactionDate={} ,invoiceDate={} ", 
-				billingAccount,billingRunId,ratedTransactionFilter,orderNumber,lastTransactionDate,invoiceDate);
+				billingAccount,billingRun!=null?billingRun.getId():null,ratedTransactionFilter,orderNumber,lastTransactionDate,invoiceDate);
 //		log.debug("createAgregatesAndInvoice tx status={}", txReg.getTransactionStatus());
 
 		EntityManager em = getEntityManager();
-		BillingRun billingRun=null;
-		if(billingRunId!=null){
-			billingRun = em.find(BillingRun.class, billingRunId);
-			em.refresh(billingRun);
-		} else {
+		if (billingRun == null){
 			if(invoiceDate==null){
 				throw new BusinessException("invoiceDate must be set if billingRun is null");	
 			}
@@ -439,10 +435,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
 					ratedTransactionFilter == null){
 				throw new BusinessException("lastTransactionDate or orderNumber or ratedTransactionFilter must be set if billingRun is null");
 			}
+		} else {
+		    lastTransactionDate = billingRun.getLastTransactionDate();
+		    if(invoiceDate!=null){
+		        invoiceDate = billingRun.getInvoiceDate();
+		    }
 		}
 		
 		if(billingAccount.getInvoicingThreshold() != null){
-			BigDecimal invoiceAmount  = billingAccountService.computeBaInvoiceAmount(billingAccount, billingRun==null?lastTransactionDate:billingRun.getLastTransactionDate());
+			BigDecimal invoiceAmount  = billingAccountService.computeBaInvoiceAmount(billingAccount, lastTransactionDate);
 			if(invoiceAmount == null){
 				throw new BusinessException("Cant compute invoice amount");
 			}			
@@ -452,14 +453,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		}
 		
 		try {
-			billingAccount = em.find(billingAccount.getClass(), billingAccount.getId());
-			em.refresh(billingAccount);
+		    billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
 			currentUser = em.find(User.class, currentUser.getId());
 			em.refresh(currentUser);
 
-			Long startDate = System.currentTimeMillis();
-			BillingCycle billingCycle = billingRun==null?billingAccount.getBillingCycle():billingRun.getBillingCycle();
-			if (billingCycle == null) {
+            Long startDate = System.currentTimeMillis();
+            BillingCycle billingCycle = billingRun == null ? billingAccount.getBillingCycle() : billingRun.getBillingCycle();
+            if (billingCycle == null) {
 				billingCycle = billingAccount.getBillingCycle();
 			}
 			if(billingCycle == null){
@@ -473,15 +473,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			invoice = new Invoice();
 			invoice.setInvoiceType(invoiceType);
 			invoice.setBillingAccount(billingAccount);
-			invoice.setBillingRun(billingRun);
-			invoice.setAuditable(billingRun==null?billingAccount.getAuditable():billingRun.getAuditable());
+            if (billingRun != null) {
+                invoice.setBillingRun(em.getReference(BillingRun.class, billingRun.getId()));
+            }
 			invoice.setProvider(currentUser.getProvider());
+			invoice.setInvoiceDate(invoiceDate);
 			
-			if(invoiceDate!=null){
-				invoice.setInvoiceDate(invoiceDate);
-			}else {
-				invoice.setInvoiceDate(billingRun.getInvoiceDate());
-			}
 
 			Integer delay = billingCycle.getDueDateDelay();
 			Date dueDate = invoiceDate;
@@ -495,14 +492,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				paymentMethod = billingAccount.getCustomerAccount().getPaymentMethod();
 			}
 			invoice.setPaymentMethod(paymentMethod);
-			invoice.setProvider(currentUser.getProvider());
 
 			create(invoice, currentUser);
 
 			// create(invoice, currentUser, currentUser.getProvider());
 			log.debug("created invoice entity with id={}", invoice.getId());
 			ratedTransactionService.createInvoiceAndAgregates(billingAccount, invoice,
-					ratedTransactionFilter,orderNumber,billingRun==null?lastTransactionDate:billingRun.getLastTransactionDate(), currentUser);
+					ratedTransactionFilter,orderNumber,lastTransactionDate, currentUser);
 //			log.debug("created aggregates tx status={}, em open={}", txReg.getTransactionStatus(), em.isOpen());
 //			em.joinTransaction();
 
@@ -510,7 +506,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			// ratedTransactionservice in case of Filter or orderNumber not empty
             if (ratedTransactionFilter == null && StringUtils.isBlank(orderNumber)) {
                 Query query = em.createNamedQuery("RatedTransaction.updateInvoiced" + (billingRun == null ? "NoBR" : "")).setParameter("billingAccount", billingAccount)
-                    .setParameter("lastTransactionDate", billingRun == null ? lastTransactionDate : billingRun.getLastTransactionDate()).setParameter("invoice", invoice);
+                    .setParameter("lastTransactionDate", lastTransactionDate).setParameter("invoice", invoice);
                 if (billingRun != null) {
                     query = query.setParameter("billingRun", billingRun);
                 }
@@ -554,7 +550,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		} catch (BusinessException e) {
 			log.error("Error for BA=" + billingAccount.getCode() + " : ", e);
 			if(billingRun != null){
-				RejectedBillingAccount rejectedBA = new RejectedBillingAccount(billingAccount, billingRun, e.getMessage());
+				RejectedBillingAccount rejectedBA = new RejectedBillingAccount(billingAccount, em.getReference(BillingRun.class, billingRun.getId()), e.getMessage());
 				rejectedBillingAccountService.create(rejectedBA, currentUser);
 			}
 			throw e;

@@ -394,10 +394,6 @@ public class Invoice4_2Api extends BaseApi {
         billingRunService.forceValidate(billingRun.getId(), user);
     }
 
-    public void createAgregatesAndInvoice(Long billingRunId, Date lastTransactionDate, User currentUser) throws BusinessException, Exception {
-        billingRunService.createAgregatesAndInvoice(billingRunId, lastTransactionDate, currentUser, 1, 0);
-    }
-
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public GenerateInvoiceResultDto generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto, User currentUser) throws MissingParameterException,
             EntityDoesNotExistsException, BusinessException, BusinessApiException, Exception {
@@ -449,7 +445,7 @@ public class Invoice4_2Api extends BaseApi {
         billingRun = updateBR(billingRun, BillingRunStatusEnum.PREVALIDATED, 1, 1, currentUser);
         log.info("update billingRun ON_GOING");
 
-        createAgregatesAndInvoice(billingRun.getId(), billingRun.getLastTransactionDate(), currentUser);
+        billingRunService.createAgregatesAndInvoice(billingRun, currentUser, 1, 0);
         log.info("createAgregatesAndInvoice ok");
 
         billingRun = updateBR(billingRun, BillingRunStatusEnum.POSTINVOICED, null, null, currentUser);
