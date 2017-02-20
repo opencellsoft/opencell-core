@@ -54,7 +54,7 @@
                 <hftl:decorateFormField label="#{messages['export.exportToRemote']}" rendered="#{currentUser.hasRole('remoteImport')}">
                     <p:selectOneMenu value="#{entityExportImportBean.exportParameters['remoteInstance']}">
                         <f:selectItem />
-                        <f:selectItems value="#{meveoInstanceBean.listAll}" var="listVal" itemLabel="#{listVal.code}" itemValue="#{listVal}" />
+                        <f:selectItems value="#{meveoInstanceBean.listAll()}" var="listVal" itemLabel="#{listVal.code}" itemValue="#{listVal}" />
                         <hftl:objectConverter />
                     </p:selectOneMenu>
                 </hftl:decorateFormField>

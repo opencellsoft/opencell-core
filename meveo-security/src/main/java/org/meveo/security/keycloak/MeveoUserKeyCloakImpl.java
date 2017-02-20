@@ -1,6 +1,5 @@
 package org.meveo.security.keycloak;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.ejb.SessionContext;
@@ -16,9 +15,7 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
     private static final long serialVersionUID = 1864122036421892837L;
 
     private static String CLAIM_PROVIDER = "provider";
-    private static String RESOURCE_PROVIDER = "meveo";
-
-    private Set<String> roles = new HashSet<>();
+    private static String RESOURCE_PROVIDER = "opencell";
 
     private SessionContext securityContext;
 
@@ -33,7 +30,8 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
         if (securityContext.getCallerPrincipal() instanceof KeycloakPrincipal) {
             KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) securityContext.getCallerPrincipal();
             KeycloakSecurityContext keycloakSecurityContext = keycloakPrincipal.getKeycloakSecurityContext();
-            log.error("AKK produces keycloak from principal is {}, {}, {}, {}, {}", keycloakSecurityContext.getToken().getSubject(), keycloakSecurityContext.getToken().getName(),
+            log.error("Produced user from keycloak from principal is {}, {}, {}, {}, {}", keycloakSecurityContext.getToken().getSubject(),
+                keycloakSecurityContext.getToken().getName(),
                 keycloakSecurityContext.getToken().getRealmAccess() != null ? keycloakSecurityContext.getToken().getRealmAccess().getRoles() : null,
                 keycloakSecurityContext.getToken().getResourceAccess(RESOURCE_PROVIDER) != null ? keycloakSecurityContext.getToken().getResourceAccess(RESOURCE_PROVIDER).getRoles()
                         : null,
@@ -51,6 +49,7 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
             if (keycloakSecurityContext.getToken().getRealmAccess() != null) {
                 this.roles.addAll(keycloakSecurityContext.getToken().getRealmAccess().getRoles());
             }
+            // TODO should add all roles from all resource providers?? as name should not be hardcoded
             if (keycloakSecurityContext.getToken().getResourceAccess(RESOURCE_PROVIDER) != null) {
                 this.roles.addAll(keycloakSecurityContext.getToken().getResourceAccess(RESOURCE_PROVIDER).getRoles());
             }
@@ -59,7 +58,7 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
         } else {
             this.securityContext = securityContext;
 
-            log.error("AKK User is authenticated by jaas principal is {}, forcedUsername is {}, has user {}, has adminas {}", securityContext.getCallerPrincipal().getName(),
+            log.error("User is authenticated by jaas principal is {}, forcedUsername is {}, has user {}, has adminas {}", securityContext.getCallerPrincipal().getName(),
                 forcedSubject, securityContext.isCallerInRole("user"), securityContext.isCallerInRole("adminas"));
 
             if (forcedSubject != null) {
@@ -78,6 +77,7 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
         }
     }
 
+    @Override
     public boolean hasRole(String role) {
 
         // if (!authenticated) {
@@ -87,9 +87,8 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
         if (securityContext != null) {
             return securityContext.isCallerInRole(role);
 
-        } else if (roles != null) {
-            return roles.contains(role);
         }
-        return false;
+
+        return super.hasRole(role);
     }
 }

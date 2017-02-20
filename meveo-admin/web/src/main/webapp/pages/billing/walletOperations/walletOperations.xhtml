@@ -138,7 +138,7 @@
             <hftl:decorateFormField fieldId="currency" label="#{messages['currency.codeCurrency']}" style="width:105px">
             <p:selectOneMenu id="currency" value="#{walletOperationBean.filters['currency.currencyCode']}">
                 <f:selectItem itemValue="" itemLabel="" />
-                <f:selectItems value="#{walletOperationBean.getListCurrency}" />
+                <f:selectItems value="#{walletOperationBean.listCurrency}" />
             </p:selectOneMenu>
             </hftl:decorateFormField>
 

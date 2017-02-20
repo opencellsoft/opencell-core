@@ -23,7 +23,7 @@
 					disabled="true"
 					rendered="#{customEntityTemplateBean.entity.code==null and customEntityTemplateBean.customEntityTemplate}" />
 
-				<p:menuitem value="#{customEntityTemplateBean.entity.getCode}"
+				<p:menuitem value="#{customEntityTemplateBean.entity.code}"
 					disabled="true"
 					rendered="#{customEntityTemplateBean.entity.code!=null}" />
 
@@ -40,13 +40,13 @@
 
         <h:panelGroup rendered="#{customEntityTemplateBean.customEntityTemplate}">
             <hftl:formPanel formId="cetForm"
-                label="#{messages['customizedEntities.detail'].concat(customEntityTemplateBean.entity.code!=null?(' - '.concat(customEntityTemplateBean.entity.getCode)):'')}"
+                label="#{messages['customizedEntities.detail'].concat(customEntityTemplateBean.entity.code!=null?(' - '.concat(customEntityTemplateBean.entity.code)):'')}"
                 backingBean="#{customEntityTemplateBean}">
                 <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" showOnlyOnNew="true" required="true" />
                 <hftl:formField label="#{messages['customizedEntities.name']}" field="name" required="true" />
                 <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" />
                 <hftl:decorateFormField label="#{messages['meveoModule.partOfModules']}" rendered="#{!customEntityTemplateBean.entity.transient}">
-                    <h:outputText value="#{customEntityTemplateBean.getPartOfModules()}" />
+                    <h:outputText value="#{customEntityTemplateBean.partOfModules}" />
                 </hftl:decorateFormField>
             </hftl:formPanel>
         </h:panelGroup>

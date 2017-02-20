@@ -51,7 +51,7 @@
 									</f:facet>
 
 									<h:panelGrid columns="1"
-										rendered="#{configIssuesReportingBean.getNbrUsagesWithNotPricePlan()!=0}">
+										rendered="#{configIssuesReportingBean.nbrUsagesWithNotPricePlan!=0}">
 										<h:outputLabel
 											value="#{messages['menu.usageChargeTemplates']}" />
 										<hftl:dataList
@@ -107,7 +107,7 @@
 									</h:panelGrid>
 
 									<h:panelGrid columns="1"
-										rendered="#{configIssuesReportingBean.getNbrRecurringWithNotPricePlan()!=0}">
+										rendered="#{configIssuesReportingBean.nbrRecurringWithNotPricePlan!=0}">
 										<h:outputLabel
 											value="#{messages['recurringChargeTemplate.title']}" />
 										<hftl:dataList resultsId="recurring_panel" checkMany="true"
@@ -161,7 +161,7 @@
 									</h:panelGrid>
 
 									<h:panelGrid columns="1"
-										rendered="#{configIssuesReportingBean.getNbrOneShotWithNotPricePlan!=0}">
+										rendered="#{configIssuesReportingBean.nbrOneShotWithNotPricePlan!=0}">
 										<h:outputLabel
 											value="#{messages['oneShotChargeTemplate.title']}" />
 										<hftl:dataList
@@ -226,16 +226,16 @@
 										<h:outputText
 											value="#{messages['configIssuesReporting.taxesNotAssociated']} : " />
 										<h:outputText
-											value="#{configIssuesReportingBean.getNbTaxesNotAssociated}"
+											value="#{configIssuesReportingBean.nbTaxesNotAssociated}"
 											style="color:#3FCA21"
-											rendered="#{configIssuesReportingBean.getNbTaxesNotAssociated==0}" />
+											rendered="#{configIssuesReportingBean.nbTaxesNotAssociated==0}" />
 										<h:outputText
-											value="#{configIssuesReportingBean.getNbTaxesNotAssociated}"
+											value="#{configIssuesReportingBean.nbTaxesNotAssociated}"
 											style="color:red"
-											rendered="#{configIssuesReportingBean.getNbTaxesNotAssociated!=0}" />
+											rendered="#{configIssuesReportingBean.nbTaxesNotAssociated!=0}" />
 									</f:facet>
 									<h:panelGrid columns="1"
-										rendered="#{configIssuesReportingBean.getNbTaxesNotAssociated!=0}">
+										rendered="#{configIssuesReportingBean.nbTaxesNotAssociated!=0}">
 										<hftl:dataList label="#{messages['tax.title']}"
 											resultsId="taxes_panel" exportToXml="false"
 											backingBean="#{taxBean}" sortBy="code" checkMany="true"
@@ -280,16 +280,16 @@
 										<h:outputText
 											value="#{messages['configIssuesReporting.languagesNotAssociated']} : " />
 										<h:outputText
-											value="#{configIssuesReportingBean.getNbLanguageNotAssociated}"
+											value="#{configIssuesReportingBean.nbLanguageNotAssociated}"
 											style="color:#3FCA21"
-											rendered="#{configIssuesReportingBean.getNbLanguageNotAssociated==0}" />
+											rendered="#{configIssuesReportingBean.nbLanguageNotAssociated==0}" />
 										<h:outputText
-											value="#{configIssuesReportingBean.getNbLanguageNotAssociated}"
+											value="#{configIssuesReportingBean.nbLanguageNotAssociated}"
 											style="color:red"
-											rendered="#{configIssuesReportingBean.getNbLanguageNotAssociated!=0}" />
+											rendered="#{configIssuesReportingBean.nbLanguageNotAssociated!=0}" />
 									</f:facet>
 									<h:panelGrid columns="1"
-										rendered="#{configIssuesReportingBean.getNbLanguageNotAssociated!=0}">
+										rendered="#{configIssuesReportingBean.nbLanguageNotAssociated!=0}">
 										<hftl:dataList label="#{messages['comLanguage.title']}"
 											resultsId="languages_panel" checkMany="true"
 											exportToXml="false" backingBean="#{tradingLanguageBean}"
@@ -333,16 +333,16 @@
 										<h:outputText
 											value="#{messages['configIssuesReporting.invoiceCategoryNotAssociated']} : " />
 										<h:outputText
-											value="#{configIssuesReportingBean.getNbInvCatNotAssociated}"
+											value="#{configIssuesReportingBean.nbInvCatNotAssociated}"
 											style="color:#3FCA21"
-											rendered="#{configIssuesReportingBean.getNbInvCatNotAssociated==0}" />
+											rendered="#{configIssuesReportingBean.nbInvCatNotAssociated==0}" />
 										<h:outputText
-											value="#{configIssuesReportingBean.getNbInvCatNotAssociated}"
+											value="#{configIssuesReportingBean.nbInvCatNotAssociated}"
 											style="color:red"
-											rendered="#{configIssuesReportingBean.getNbInvCatNotAssociated!=0}" />
+											rendered="#{configIssuesReportingBean.nbInvCatNotAssociated!=0}" />
 									</f:facet>
 									<h:panelGrid columns="1"
-										rendered="#{configIssuesReportingBean.getNbInvCatNotAssociated!=0}">
+										rendered="#{configIssuesReportingBean.nbInvCatNotAssociated!=0}">
 										<hftl:dataList label="#{messages['invoiceCategory.title']}"
 											resultsId="invoiceCat_panel"
 											dataModel="#{configIssuesReportingBean.invoiceCatNotAssociatedList}"
@@ -384,16 +384,16 @@
 										<h:outputText
 											value="#{messages['configIssuesReporting.invoiceSubCategoryNotAssociated']} : " />
 										<h:outputText
-											value="#{configIssuesReportingBean.getNbInvSubCatNotAssociated}"
+											value="#{configIssuesReportingBean.nbInvSubCatNotAssociated}"
 											style="color:#3FCA21"
-											rendered="#{configIssuesReportingBean.getNbInvSubCatNotAssociated==0}" />
+											rendered="#{configIssuesReportingBean.nbInvSubCatNotAssociated==0}" />
 										<h:outputText
-											value="#{configIssuesReportingBean.getNbInvSubCatNotAssociated}"
+											value="#{configIssuesReportingBean.nbInvSubCatNotAssociated}"
 											style="color:red"
-											rendered="#{configIssuesReportingBean.getNbInvSubCatNotAssociated!=0}" />
+											rendered="#{configIssuesReportingBean.nbInvSubCatNotAssociated!=0}" />
 									</f:facet>
 									<h:panelGrid columns="1"
-										rendered="#{configIssuesReportingBean.getNbInvSubCatNotAssociated!=0}">
+										rendered="#{configIssuesReportingBean.nbInvSubCatNotAssociated!=0}">
 										<hftl:dataList label="#{messages['invoiceSubCategory.title']}"
 											checkMany="true" resultsId="invoiceSubCat_panel"
 											dataModel="#{configIssuesReportingBean.invoiceSubCatNotAssociatedList}"
@@ -441,16 +441,16 @@
 										<h:outputText
 											value="#{messages['configIssuesReporting.servicesWithNotOffer']} : " />
 										<h:outputText
-											value="#{configIssuesReportingBean.getNbServiceWithNotOffer}"
+											value="#{configIssuesReportingBean.nbServiceWithNotOffer}"
 											style="color:#3FCA21"
-											rendered="#{configIssuesReportingBean.getNbServiceWithNotOffer==0}" />
+											rendered="#{configIssuesReportingBean.nbServiceWithNotOffer==0}" />
 										<h:outputText
-											value="#{configIssuesReportingBean.getNbServiceWithNotOffer}"
+											value="#{configIssuesReportingBean.nbServiceWithNotOffer}"
 											style="color:red"
-											rendered="#{configIssuesReportingBean.getNbServiceWithNotOffer!=0}" />
+											rendered="#{configIssuesReportingBean.nbServiceWithNotOffer!=0}" />
 									</f:facet>
 									<h:panelGrid columns="1"
-										rendered="#{configIssuesReportingBean.getNbServiceWithNotOffer!=0}">
+										rendered="#{configIssuesReportingBean.nbServiceWithNotOffer!=0}">
 										<hftl:dataList label="#{messages['serviceTemplate.title']}"
 											checkMany="true" noClose="false" sortBy="code"
 											exportToXml="false" backingBean="#{serviceTemplateBean}"
@@ -520,16 +520,16 @@
 										<h:outputText
 											value="#{messages['configIssuesReporting.usagesChrgWithNotAssociated']} : " />
 										<h:outputText
-											value="#{configIssuesReportingBean.getNbrUsagesChrgNotAssociated}"
+											value="#{configIssuesReportingBean.nbrUsagesChrgNotAssociated}"
 											style="color:#3FCA21"
-											rendered="#{configIssuesReportingBean.getNbrUsagesChrgNotAssociated==0}" />
+											rendered="#{configIssuesReportingBean.nbrUsagesChrgNotAssociated==0}" />
 										<h:outputText
-											value="#{configIssuesReportingBean.getNbrUsagesChrgNotAssociated}"
+											value="#{configIssuesReportingBean.nbrUsagesChrgNotAssociated}"
 											style="color:red"
-											rendered="#{configIssuesReportingBean.getNbrUsagesChrgNotAssociated!=0}" />
+											rendered="#{configIssuesReportingBean.nbrUsagesChrgNotAssociated!=0}" />
 									</f:facet>
 									<h:panelGrid columns="1"
-										rendered="#{configIssuesReportingBean.getNbrUsagesChrgNotAssociated!=0}">
+										rendered="#{configIssuesReportingBean.nbrUsagesChrgNotAssociated!=0}">
 										<hftl:dataList
 											label="#{messages['usageChargeTemplate.title']}"
 											resultsId="usageCharges_panel" sortBy="code"
@@ -588,7 +588,7 @@
 
 							<p:accordionPanel activeIndex="null" dynamic="true" cache="false">
 								<p:ajax event="tabChange"
-									listener="#{configIssuesReportingBean.getJasperFilesNotFound}" />
+									listener="#{configIssuesReportingBean.jasperFilesNotFound}" />
 								<p:tab>
 									<f:facet name="title">
 										<h:outputText
@@ -637,16 +637,16 @@
 										<h:outputText
 											value="#{messages['configIssuesReporting.countersWithNotServices']} : " />
 										<h:outputText
-											value="#{configIssuesReportingBean.getNbrCounterWithNotService}"
+											value="#{configIssuesReportingBean.nbrCounterWithNotService}"
 											style="color:#3FCA21"
-											rendered="#{configIssuesReportingBean.getNbrCounterWithNotService==0}" />
+											rendered="#{configIssuesReportingBean.nbrCounterWithNotService==0}" />
 										<h:outputText
-											value="#{configIssuesReportingBean.getNbrCounterWithNotService}"
+											value="#{configIssuesReportingBean.nbrCounterWithNotService}"
 											style="color:red"
-											rendered="#{configIssuesReportingBean.getNbrCounterWithNotService!=0}" />
+											rendered="#{configIssuesReportingBean.nbrCounterWithNotService!=0}" />
 									</f:facet>
 									<h:panelGrid columns="1"
-										rendered="#{configIssuesReportingBean.getNbrCounterWithNotService!=0}">
+										rendered="#{configIssuesReportingBean.nbrCounterWithNotService!=0}">
 										<hftl:dataList label="#{messages['counterTemplate.title']}"
 											resultsId="counters_panel" sortBy="code"
 											dataModel="#{configIssuesReportingBean.counterWithNotServicList}"
@@ -701,16 +701,16 @@
 										<h:outputText
 											value="#{messages['configIssuesReporting.recurringWithNotAssociated']} : " />
 										<h:outputText
-											value="#{configIssuesReportingBean.getNbrRecurringChrgNotAssociated}"
+											value="#{configIssuesReportingBean.nbrRecurringChrgNotAssociated}"
 											style="color:#3FCA21"
-											rendered="#{configIssuesReportingBean.getNbrRecurringChrgNotAssociated==0}" />
+											rendered="#{configIssuesReportingBean.nbrRecurringChrgNotAssociated==0}" />
 										<h:outputText
-											value="#{configIssuesReportingBean.getNbrRecurringChrgNotAssociated}"
+											value="#{configIssuesReportingBean.nbrRecurringChrgNotAssociated}"
 											style="color:red"
-											rendered="#{configIssuesReportingBean.getNbrRecurringChrgNotAssociated!=0}" />
+											rendered="#{configIssuesReportingBean.nbrRecurringChrgNotAssociated!=0}" />
 									</f:facet>
 									<h:panelGrid columns="1"
-										rendered="#{configIssuesReportingBean.getNbrRecurringChrgNotAssociated!=0}">
+										rendered="#{configIssuesReportingBean.nbrRecurringChrgNotAssociated!=0}">
 										<hftl:dataList resultsId="recCh_panel" exportToXml="false"
 											checkMany="true"
 											backingBean="#{recurringChargeTemplateListBean}"
@@ -769,16 +769,16 @@
 										<h:outputText
 											value="#{messages['configIssuesReporting.termChrgNotAssociated']} : " />
 										<h:outputText
-											value="#{configIssuesReportingBean.getNbrTerminationChrgNotAssociated}"
+											value="#{configIssuesReportingBean.nbrTerminationChrgNotAssociated}"
 											style="color:#3FCA21"
-											rendered="#{configIssuesReportingBean.getNbrTerminationChrgNotAssociated==0}" />
+											rendered="#{configIssuesReportingBean.nbrTerminationChrgNotAssociated==0}" />
 										<h:outputText
-											value="#{configIssuesReportingBean.getNbrTerminationChrgNotAssociated}"
+											value="#{configIssuesReportingBean.nbrTerminationChrgNotAssociated}"
 											style="color:red"
-											rendered="#{configIssuesReportingBean.getNbrTerminationChrgNotAssociated!=0}" />
+											rendered="#{configIssuesReportingBean.nbrTerminationChrgNotAssociated!=0}" />
 									</f:facet>
 									<h:panelGrid columns="1"
-										rendered="#{configIssuesReportingBean.getNbrTerminationChrgNotAssociated!=0}">
+										rendered="#{configIssuesReportingBean.nbrTerminationChrgNotAssociated!=0}">
 										<hftl:dataList
 											label="#{messages['oneShotChargeTemplate.title']}"
 											resultsId="termination_panel" checkMany="true"
@@ -835,16 +835,16 @@
 										<h:outputText
 											value="#{messages['configIssuesReporting.subChrgNotAssociated']} : " />
 										<h:outputText
-											value="#{configIssuesReportingBean.getNbrSubscriptionChrgNotAssociated}"
+											value="#{configIssuesReportingBean.nbrSubscriptionChrgNotAssociated}"
 											style="color:#3FCA21"
-											rendered="#{configIssuesReportingBean.getNbrSubscriptionChrgNotAssociated==0}" />
+											rendered="#{configIssuesReportingBean.nbrSubscriptionChrgNotAssociated==0}" />
 										<h:outputText
-											value="#{configIssuesReportingBean.getNbrSubscriptionChrgNotAssociated}"
+											value="#{configIssuesReportingBean.nbrSubscriptionChrgNotAssociated}"
 											style="color:red"
-											rendered="#{configIssuesReportingBean.getNbrSubscriptionChrgNotAssociated!=0}" />
+											rendered="#{configIssuesReportingBean.nbrSubscriptionChrgNotAssociated!=0}" />
 									</f:facet>
 									<h:panelGrid columns="1"
-										rendered="#{configIssuesReportingBean.getNbrSubscriptionChrgNotAssociated!=0}">
+										rendered="#{configIssuesReportingBean.nbrSubscriptionChrgNotAssociated!=0}">
 										<hftl:dataList
 											label="#{messages['oneShotChargeTemplate.title']}"
 											resultsId="subscription_panel" checkMany="true"
@@ -953,16 +953,16 @@
 										<h:outputText
 											value="#{messages['configIssuesReporting.scriptInstanceWithError']} : " />
 										<h:outputText
-											value="#{configIssuesReportingBean.getNbrScriptInstanceWithError}"
+											value="#{configIssuesReportingBean.nbrScriptInstanceWithError}"
 											style="color:#3FCA21"
-											rendered="#{configIssuesReportingBean.getNbrScriptInstanceWithError==0}" />
+											rendered="#{configIssuesReportingBean.nbrScriptInstanceWithError==0}" />
 										<h:outputText
-											value="#{configIssuesReportingBean.getNbrScriptInstanceWithError}"
+											value="#{configIssuesReportingBean.nbrScriptInstanceWithError}"
 											style="color:red"
-											rendered="#{configIssuesReportingBean.getNbrScriptInstanceWithError!=0}" />
+											rendered="#{configIssuesReportingBean.nbrScriptInstanceWithError!=0}" />
 									</f:facet>
 									<h:panelGrid columns="1"
-										rendered="#{configIssuesReportingBean.getNbrScriptInstanceWithError!=0}">
+										rendered="#{configIssuesReportingBean.nbrScriptInstanceWithError!=0}">
 										<hftl:dataList label="#{messages['scriptInstance.title']}"
 											resultsId="scriptInstances_panel" checkMany="true"
 											backingBean="#{scriptInstanceListBean}" sortBy="code"

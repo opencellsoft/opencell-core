@@ -35,25 +35,25 @@
 
 						<hftl:formField label="#{messages['BusinessEntity.code']}"
 							field="code" required="true" validateUnique="true"
-							disabled="#{!filterBean.entity.transient and filterBean.entity.auditable.creator.id != filterBean.getCurrentUser().id}" />
+							disabled="#{!filterBean.entity.transient and filterBean.entity.auditable.creator != currentUser.subject}" />
 						<hftl:formField label="#{messages['BusinessEntity.description']}"
 							field="description" useConverter="false"
 							size="50" maxlength="50"
-							disabled="#{!filterBean.entity.transient and filterBean.entity.auditable.creator.id != filterBean.getCurrentUser().id}" />
+							disabled="#{!filterBean.entity.transient and filterBean.entity.auditable.creator != currentUser.subject}" />
 
 						<hftl:formField
 							showOnlyOnNew="true"
-							rendered="#{filterBean.entity != null and filterBean.entity.auditable.creator.id == filterBean.getCurrentUser().id}"
+							rendered="#{filterBean.entity != null and filterBean.entity.auditable.creator == currentUser.subject}"
 							field="shared" label="#{messages['filter.shared']}"/>
 						<hftl:decorateFormField label="#{messages['meveoModule.partOfModules']}" rendered="#{!filterBean.entity.transient}">
-                			<h:outputText value="#{filterBean.getPartOfModules()}" />
+                			<h:outputText value="#{filterBean.partOfModules}" />
                			</hftl:decorateFormField>
 
 						<hftl:decorateFormField fieldId="inputXml"
 							label="#{messages['filter.inputXml']}" newLine="true" required="true">
 							<pe:codeMirror id="inputXml" mode="javascript" theme="eclipse"
 								value="#{filterBean.entity.inputXml}" lineNumbers="true" required="true"
-								readonly="#{!filterBean.entity.transient and filterBean.entity.auditable.creator.id != filterBean.getCurrentUser().id}" />
+								readonly="#{!filterBean.entity.transient and filterBean.entity.auditable.creator != currentUser.subject}" />
 						</hftl:decorateFormField>
 
 						<p:dataTable id="filterParameters"

@@ -53,7 +53,7 @@
                 <f:facet name="input">
                     <h:selectOneMenu value="#{entity.eventCode}" style="width:75%"
                                      required="true">
-                        <f:selectItems value="#{chargeTemplateBean.listAll}" var="item"
+                        <f:selectItems value="#{chargeTemplateBean.listAll()}" var="item"
                                        itemLabel="#{item.code}" itemValue="#{item.code}"/>
                         <hftl:objectConverter/>
                     </h:selectOneMenu>
@@ -87,7 +87,7 @@
                 <f:facet name="input">
                     <h:selectOneMenu value="#{entity.offerTemplate}" style="width:75%">
                         <f:selectItem itemLabel="" itemValue=""/>
-                        <f:selectItems value="#{offerTemplateBean.listAll}" var="item"
+                        <f:selectItems value="#{offerTemplateBean.listAll()}" var="item"
                                        itemLabel="#{item.code}" itemValue="#{item}"/>
                         <hftl:objectConverter/>
                     </h:selectOneMenu>
@@ -107,7 +107,7 @@
                 <f:facet name="input">
                     <h:selectOneMenu value="#{entity.seller}" style="width:75%">
                         <f:selectItem itemLabel="" itemValue=""/>
-                        <f:selectItems value="#{sellerBean.listAll}" var="item"
+                        <f:selectItems value="#{sellerBean.listAll()}" var="item"
                                        itemLabel="#{item.code}" itemValue="#{item}"/>
                         <hftl:objectConverter/>
                     </h:selectOneMenu>
@@ -237,7 +237,7 @@
                 <f:facet name="input">
                     <h:selectOneMenu value="#{entity.tradingCountry}" style="width:75%">
                         <f:selectItem itemLabel="" itemValue=""/>
-                        <f:selectItems value="#{tradingCountryBean.listAll}" var="item"
+                        <f:selectItems value="#{tradingCountryBean.listAll()}" var="item"
                                        itemLabel="#{item.countryCode}" itemValue="#{item}"/>
                         <hftl:objectConverter/>
                     </h:selectOneMenu>
@@ -257,7 +257,7 @@
                 <f:facet name="input">
                     <h:selectOneMenu value="#{entity.tradingCurrency}" style="width:75%">
                         <f:selectItem itemLabel="" itemValue=""/>
-                        <f:selectItems value="#{tradingCurrencyBean.listAll}" var="item"
+                        <f:selectItems value="#{tradingCurrencyBean.listAll()}" var="item"
                                        itemLabel="#{item.currencyCode}" itemValue="#{item}"/>
                         <hftl:objectConverter/>
                     </h:selectOneMenu>
@@ -402,7 +402,7 @@
                 <f:facet name="input">
                     <h:selectOneMenu value="#{entity.validityCalendar}" style="width:75%">
                         <f:selectItem itemLabel="" itemValue=""/>
-                        <f:selectItems value="#{calendarBean.listAll}" var="item"
+                        <f:selectItems value="#{calendarBean.listAll()}" var="item"
                                        itemLabel="#{item.code}" itemValue="#{item}"/>
                         <hftl:objectConverter/>
                     </h:selectOneMenu>

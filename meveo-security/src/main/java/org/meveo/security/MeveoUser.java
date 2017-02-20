@@ -1,6 +1,8 @@
 package org.meveo.security;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Represents a current application user
@@ -10,57 +12,67 @@ import java.io.Serializable;
  */
 public abstract class MeveoUser implements Serializable {
 
-	private static final long serialVersionUID = 5535661206200553250L;
+    private static final long serialVersionUID = 5535661206200553250L;
 
-	/*
-	 * User identifier - could or could not match the userName value
-	 */
-	protected String subject;
+    /*
+     * User identifier - could or could not match the userName value
+     */
+    protected String subject;
 
-	/**
-	 * User login name
-	 */
-	protected String userName;
+    /**
+     * User login name
+     */
+    protected String userName;
 
-	/**
-	 * Full name of a user
-	 */
-	protected String fullName;
+    /**
+     * Full name of a user
+     */
+    protected String fullName;
 
-	/**
-	 * Provider code
-	 */
-	protected String providerCode;
+    /**
+     * Provider code
+     */
+    protected String providerCode;
 
-	/**
-	 * Is user authenticated
-	 */
-	protected boolean authenticated;
+    /**
+     * Is user authenticated
+     */
+    protected boolean authenticated;
 
-	/**
-	 * Was authentication forced (applies to jobs only)
-	 */
-	protected boolean forcedAuthentication;
+    /**
+     * Was authentication forced (applies to jobs only)
+     */
+    protected boolean forcedAuthentication;
 
-	public MeveoUser() {
-	}
+    /**
+     * Roles held by a user
+     */
+    protected Set<String> roles = new HashSet<>();
 
-	public String getSubject() {
-		return subject;
-	}
+    public MeveoUser() {
+    }
 
-	public String getUserName() {
-		return userName;
-	}
+    public String getSubject() {
+        return subject;
+    }
 
-	public String getProviderCode() {
-		return providerCode;
-	}
+    public String getUserName() {
+        return userName;
+    }
 
-	public String getFullName() {
-		return fullName;
-	}
+    public String getProviderCode() {
+        return providerCode;
+    }
 
+    public String getFullName() {
+        return fullName;
+    }
+
+    /**
+     * Provide a fullname or username if name was not set
+     * 
+     * @return User's full name or username
+     */
     public String getFullNameOrUserName() {
         if (fullName == null || fullName.length() == 0) {
             return userName;
@@ -69,17 +81,37 @@ public abstract class MeveoUser implements Serializable {
         }
     }
 
-	public boolean isAuthenticated() {
+    /**
+     * Was user authenticated
+     * 
+     * @return True if user was authenticated
+     */
+    public boolean isAuthenticated() {
         return authenticated;
     }
-	
-	public abstract boolean hasRole(String role);
 
-	@Override
-	public String toString() {
-		return "MeveoUser [" + hasRole("user") + " " + hasRole("adminas") + " auth=" + authenticated + ", forced="
-				+ forcedAuthentication + ", sub=" + subject + ", userName=" + userName + ", fullName=" + fullName
-				+ ", provider=" + providerCode + "]";
-	}
+    /**
+     * Does user have a given role
+     * 
+     * @param role Role name to check
+     * @return True if user has a role
+     */
+    public boolean hasRole(String role) {
+
+        // if (!authenticated) {
+        // return false;
+        // }
+
+        if (roles != null) {
+            return roles.contains(role);
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return "MeveoUser [" + " auth=" + authenticated + ", forced=" + forcedAuthentication + ", sub=" + subject + ", userName=" + userName + ", fullName=" + fullName
+                + ", provider=" + providerCode + "]";
+    }
 
 }

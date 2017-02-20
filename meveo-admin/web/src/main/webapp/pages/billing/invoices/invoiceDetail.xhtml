@@ -128,10 +128,10 @@
 
 						<p:fieldset legend="#{messages['invoice.discounts']}"
 							style="width:60%"
-							rendered="#{invoiceBean.getDiscountAggregates.size()>0}">
+							rendered="#{invoiceBean.discountAggregates.size()>0}">
 
 							<p:dataTable id="invoiceAgregats" var="agregate"
-								value="#{invoiceBean.getDiscountAggregates}"
+								value="#{invoiceBean.discountAggregates}"
 								resizableColumns="true">
 								<p:column headerText="#{messages['discountPlan.title']}">
 									<h:outputText value="#{agregate.discountPlanCode}" />

@@ -46,7 +46,7 @@
 				<h:panelGrid columns="2">
 					<h:commandButton id="buttonSearch"
 						value="#{messages['commons.search']}"
-						action="#{crmConnectorRejectedFileBean.list}" />
+						action="#{crmConnectorRejectedFileBean.list()}" />
 					<h:commandButton id="buttonClear" action="#{crmConnectorRejectedFileBean.clean}"
 						reRender="documentSearchForm" value="#{messages['commons.clean']}" />
 				</h:panelGrid>

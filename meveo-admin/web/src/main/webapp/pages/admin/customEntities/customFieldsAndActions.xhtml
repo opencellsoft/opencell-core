@@ -440,7 +440,7 @@
                 </h:panelGroup>
                 <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" newLine="true" />
                 <hftl:decorateFormField label="#{messages['meveoModule.partOfModules']}" rendered="#{!customFieldTemplateBean.entity.transient}">
-                    <h:outputText value="#{customFieldTemplateBean.getPartOfModules()}" />
+                    <h:outputText value="#{customFieldTemplateBean.partOfModules}" />
                 </hftl:decorateFormField>
                 <ui:param name="buttons" value="true" />
                 <ui:define name="buttons">
