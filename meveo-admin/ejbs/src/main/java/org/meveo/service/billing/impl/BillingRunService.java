@@ -71,9 +71,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
 	@Inject
 	private BillingAccountService billingAccountService;
-
-	@EJB
-	private InvoiceService invoiceService;
 	
 	@Inject
 	private RatedTxInvoicingAsync ratedTxInvoicingAsync;
@@ -89,6 +86,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	
 	@EJB
 	private BillingRunService billingRunService;
+
+	@Inject
+	private BillingRunExtensionService billingRunExtensionService;
 
 	public PreInvoicingReportsDTO generatePreInvoicingReports(BillingRun billingRun) throws BusinessException {
 		log.debug("start generatePreInvoicingReports.......");
@@ -682,26 +682,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		return billingRun;
 	}
 	
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	private void incrementInvoiceDatesAndValidate(BillingRun billingRun,User currentUser) throws BusinessException{
-		log.debug("incrementInvoiceDatesAndValidate");
-		for (Invoice invoice : billingRun.getInvoices()) {			
-			invoice.setInvoiceNumber(invoiceService.getInvoiceNumber(invoice, currentUser));
-			invoice.setPdf(null);
-			BillingAccount billingAccount = invoice.getBillingAccount();
-			Date initCalendarDate = billingAccount.getSubscriptionDate();
-			if(initCalendarDate==null){
-				initCalendarDate=billingAccount.getAuditable().getCreated();
-			}
-			Date nextCalendarDate = billingAccount.getBillingCycle().getNextCalendarDate(initCalendarDate);
-			billingAccount.setNextInvoiceDate(nextCalendarDate);
-			billingAccount.updateAudit(currentUser);			
-			invoiceService.update(invoice, currentUser);
-		}
-		billingRun.setStatus(BillingRunStatusEnum.VALIDATED);
-		update(billingRun,currentUser);
-	}
-	
 	@SuppressWarnings("unchecked")
 	public void validate(Long billingRunId,User currentUser,long nbRuns,long waitingMillis) throws Exception{
 		BillingRun billingRun = findById(billingRunId);
@@ -747,9 +727,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 			}
 		} else if (BillingRunStatusEnum.PREVALIDATED.equals(billingRun.getStatus())) {
 			createAgregatesAndInvoice(billingRun.getId(),billingRun.getLastTransactionDate(), currentUser,nbRuns,waitingMillis);								
-			billingRunService.updateBillingRun(billingRun.getId(),currentUser,null,null,BillingRunStatusEnum.POSTINVOICED,null);
+			billingRun = billingRunService.updateBillingRun(billingRun.getId(),currentUser,null,null,BillingRunStatusEnum.POSTINVOICED,null);
 		} else if (BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus())) {
-		    billingRunService.incrementInvoiceDatesAndValidate(billingRun, currentUser);
+		    billingRun = billingRunExtensionService.incrementInvoiceDatesAndValidate(billingRun, currentUser);
 		}
 	}
 	
@@ -762,12 +742,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		switch(billingRun.getStatus()){
 		case POSTINVOICED:
 		case POSTVALIDATED:
-			incrementInvoiceDatesAndValidate(billingRun, currentUser);
+		    billingRun = billingRunExtensionService.incrementInvoiceDatesAndValidate(billingRun, currentUser);
 			break;
 		case PREINVOICED:
 		case PREVALIDATED:
 			createAgregatesAndInvoice(billingRun.getId(),billingRun.getLastTransactionDate(), currentUser,1,0);								
-			updateBillingRun(billingRun.getId(),currentUser,1,0,BillingRunStatusEnum.POSTINVOICED,null);
+			billingRun = billingRunService.updateBillingRun(billingRun.getId(),currentUser,1,0,BillingRunStatusEnum.POSTINVOICED,null);
 			break;
 		case VALIDATED:
 		case CANCELED:

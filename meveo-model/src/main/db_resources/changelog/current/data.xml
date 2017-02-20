@@ -461,4 +461,9 @@
             delete from adm_messages where entity_class='Title' and entity_code not in (select code from adm_title); 
         </sql>    
     </changeSet>
+    <changeSet id="#fixMigration_20170216" author="anasseh">
+        <sql>
+            update billing_charge_instance set user_account_id = (select sub.user_account_id from billing_subscription sub where sub.id = billing_charge_instance.subscription_id);
+        </sql>    
+    </changeSet>    
 </databaseChangeLog>
