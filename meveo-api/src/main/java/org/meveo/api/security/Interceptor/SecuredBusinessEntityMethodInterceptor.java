@@ -60,7 +60,7 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 	public Object checkForSecuredEntities(InvocationContext context) throws Exception {
 
 		// check if secured entities should be saved.
-		String secureSetting = paramBean.getProperty("secured.entities.enabled", "false");
+		String secureSetting = paramBean.getProperty("secured.entities.enabled", "true");
 		boolean secureEntitesEnabled = Boolean.parseBoolean(secureSetting);
 
 		// if not, immediately return.
