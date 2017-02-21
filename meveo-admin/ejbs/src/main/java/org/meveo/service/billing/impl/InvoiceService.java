@@ -436,10 +436,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				throw new BusinessException("lastTransactionDate or orderNumber or ratedTransactionFilter must be set if billingRun is null");
 			}
 		} else {
-		    lastTransactionDate = billingRun.getLastTransactionDate();
-		    if(invoiceDate!=null){
-		        invoiceDate = billingRun.getInvoiceDate();
-		    }
+		    lastTransactionDate = billingRun.getLastTransactionDate();		 
+		    invoiceDate = billingRun.getInvoiceDate();
 		}
 		
 		if(billingAccount.getInvoicingThreshold() != null){
