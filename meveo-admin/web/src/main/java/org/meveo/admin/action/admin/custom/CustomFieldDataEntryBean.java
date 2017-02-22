@@ -11,8 +11,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ViewScoped;
+import javax.faces.view.ViewScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
@@ -140,12 +142,17 @@ public class CustomFieldDataEntryBean implements Serializable {
      * @return Custom field information
      */
     public GroupedCustomField getGroupedFieldTemplates(ICustomFieldEntity entity) {
+        
+        log.error("AKK init getGroupedFieldTemplates uuid {} contains {}", entity.getUuid(), groupedFieldTemplates);
         if (entity == null) {
             return null;
         }
         if (!groupedFieldTemplates.containsKey(entity.getUuid())) {
+            log.error("AKK init getGroupedFieldTemplates fields for {}", entity.getUuid());
             initFields(entity);
         }
+        
+        log.error("AKK init getGroupedFieldTemplates populated {}", groupedFieldTemplates);
         return groupedFieldTemplates.get(entity.getUuid());
     }
 
@@ -515,6 +522,7 @@ public class CustomFieldDataEntryBean implements Serializable {
         boolean isNewEntity = ((IEntity) entity).isTransient();
 
         FacesContext fc = FacesContext.getCurrentInstance();
+        log.error("AKK entity is null {} UUID is {} contains {}", entity==null, entity.getUuid(), groupedFieldTemplates);
         for (CustomFieldTemplate cft : groupedFieldTemplates.get(entity.getUuid()).getFields()) {
 
             // Ignore the validation on a field when creating entity and CFT.hideOnNew=true or editing entity and CFT.allowEdit=false or when CFT.applicableOnEL expression
@@ -1320,4 +1328,20 @@ public class CustomFieldDataEntryBean implements Serializable {
 
         return sb.deleteCharAt(sb.length() - 1).toString();
     }
+
+public int getSize(){
+    return groupedFieldTemplates.size();
+}
+
+@PostConstruct
+   public void postConstruct(){
+    log.error("Postconstruct CustomFieldDataEntryBean");
+}
+
+@PreDestroy
+public void preDestroy(){
+ log.error("PreDestroy CustomFieldDataEntryBean");
+}
+
+
 }

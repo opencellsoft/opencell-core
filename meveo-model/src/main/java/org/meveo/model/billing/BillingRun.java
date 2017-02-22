@@ -64,7 +64,7 @@ public class BillingRun extends EnableEntity {
 	@Column(name = "STATUS_DATE")
 	private Date statusDate;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "BILLING_CYCLE_ID")
 	private BillingCycle billingCycle;
 

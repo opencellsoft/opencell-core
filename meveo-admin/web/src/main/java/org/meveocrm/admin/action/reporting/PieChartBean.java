@@ -1,6 +1,6 @@
 package org.meveocrm.admin.action.reporting;
 
-import javax.faces.bean.ViewScoped;
+import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
 import org.meveo.model.dwh.PieChart;

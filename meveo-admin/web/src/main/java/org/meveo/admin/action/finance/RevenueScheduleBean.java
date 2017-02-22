@@ -1,6 +1,6 @@
 package org.meveo.admin.action.finance;
 
-import javax.faces.bean.ViewScoped;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 

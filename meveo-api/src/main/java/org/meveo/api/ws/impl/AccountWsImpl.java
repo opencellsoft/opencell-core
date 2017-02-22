@@ -1183,13 +1183,13 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
             result.getActionStatus().setMessage(e.getMessage());
-            log.error("error occurred while getting notification ", e);
         } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
             result.getActionStatus().setMessage(e.getMessage());
-            log.error("error generated while getting notification ", e);
         }
-
+        
         return result;
     }
 

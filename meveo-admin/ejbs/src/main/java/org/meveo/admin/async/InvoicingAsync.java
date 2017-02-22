@@ -34,7 +34,7 @@ public class InvoicingAsync {
 
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public Future<Integer> launchAndForget(List<BillingAccount> billingAccounts,BillingRun billingRun) {
+	public Future<Integer> updateBillingAccountTotalAmountsAsync(List<BillingAccount> billingAccounts,BillingRun billingRun) {
 		int count=0;
 		for (BillingAccount billingAccount : billingAccounts) {
 			if (billingAccountService.updateBillingAccountTotalAmounts(billingAccount,billingRun)) {

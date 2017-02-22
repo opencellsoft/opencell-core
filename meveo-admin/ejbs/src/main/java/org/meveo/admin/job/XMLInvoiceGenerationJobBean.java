@@ -52,7 +52,7 @@ public class XMLInvoiceGenerationJobBean {
 
 		if (parameter != null && parameter.trim().length() > 0) {
 			try {
-				billingRuns.add(billingRunService.getBillingRunById(Long.parseLong(parameter)));
+				billingRuns.add(billingRunService.findById(Long.parseLong(parameter)));
 			} catch (Exception e) {
 				log.error("error while getting billing run",e);
 				result.registerError(e.getMessage());

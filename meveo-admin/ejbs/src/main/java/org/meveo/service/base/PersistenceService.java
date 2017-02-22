@@ -93,9 +93,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     @Inject
     private Conversation conversation;
-
-    @Resource
-    protected TransactionSynchronizationRegistry txReg;
+//
+//    @Resource
+//    protected TransactionSynchronizationRegistry txReg;
 
     @Inject
     @Created

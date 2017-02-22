@@ -53,9 +53,9 @@ import org.meveo.model.annotation.ImageType;
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_SERVICE_TEMPLATE_SEQ")
 @NamedQueries({			
 @NamedQuery(name = "serviceTemplate.getNbServiceWithNotOffer", 
-	           query = "select count(*) from ServiceTemplate s where s.id not in (select serv.serviceTemplate from OfferTemplate o join o.offerServiceTemplates serv) "),
+	           query = "select count(*) from ServiceTemplate s where s.id not in (select serv.serviceTemplate.id from OfferTemplate o join o.offerServiceTemplates serv)"),
 @NamedQuery(name = "serviceTemplate.getServicesWithNotOffer", 
-	           query = "from ServiceTemplate s where s.id not in (select serv from OfferTemplate o join o.offerServiceTemplates serv) "),
+	           query = "from ServiceTemplate s where s.id not in (select serv.serviceTemplate.id from OfferTemplate o join o.offerServiceTemplates serv)"),
 @NamedQuery(name = "serviceTemplate.getServicesWithRecurringsByChargeTemplate",
 	           query = "from ServiceTemplate s left join s.serviceRecurringCharges c where c.chargeTemplate=:chargeTemplate")
 //@NamedQuery(name = "serviceTemplate.getServicesWithSubscriptionsByChargeTemplate", 

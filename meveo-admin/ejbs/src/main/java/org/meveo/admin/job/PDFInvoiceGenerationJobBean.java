@@ -53,7 +53,7 @@ public class PDFInvoiceGenerationJobBean {
 			if (parameter != null && parameter.trim().length() > 0) {			
 				try {
 					invoices = invoiceService.getInvoices(billingRunService
-							.getBillingRunById(Long.parseLong(parameter)));
+							.findById(Long.parseLong(parameter)));
 				} catch (Exception e) {
 					log.error("error while getting invoices ",e);
 					result.registerError(e.getMessage());

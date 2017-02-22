@@ -14,6 +14,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingRun;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.slf4j.Logger;
 
@@ -33,11 +34,11 @@ public class RatedTxInvoicingAsync {
 
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public Future<String> launchAndForget(List<BillingAccount> billingAccounts,Long billingRunId) {
+	public Future<String> createAgregatesAndInvoiceAsync(List<BillingAccount> billingAccounts,BillingRun billingRun) {
 		
 		for (BillingAccount billingAccount : billingAccounts) {
 			try {
-				invoiceService.createAgregatesAndInvoice(billingAccount, billingRunId,null,null,null,null);
+				invoiceService.createAgregatesAndInvoice(billingAccount, billingRun,null,null,null,null);
 			} catch (Exception e) {
 				log.error("Error for BA=" + billingAccount.getCode() + " : " + e);
 			}
