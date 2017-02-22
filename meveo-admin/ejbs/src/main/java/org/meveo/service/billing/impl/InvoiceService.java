@@ -466,8 +466,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			InvoiceType invoiceType = billingCycle.getInvoiceType();
 			if(invoiceType == null){
 				invoiceType = invoiceTypeService.getDefaultCommertial(currentUser);
-			}
-			log.debug("invoiceType {}",invoiceType.getCode());
+			}			
 			invoice = new Invoice();
 			invoice.setInvoiceType(invoiceType);
 			invoice.setBillingAccount(billingAccount);
