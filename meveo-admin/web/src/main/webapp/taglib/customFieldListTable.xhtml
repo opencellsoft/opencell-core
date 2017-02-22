@@ -149,7 +149,7 @@
                         <f:facet name="input">
                             <h:inputText value="#{mapValues[column.code]}" size="20" maxlength="50" rendered="#{column.keyType eq CustomFieldMapKeyEnum.STRING}" />
                             <p:inputText value="#{mapValues[column.code]}" size="20" maxlength="30" rendered="#{column.keyType eq CustomFieldMapKeyEnum.RON}">
-                                <pe:keyFilter regEx="/[0-9.&lt;]/" />
+<!--                                 <pe:keyFilter regEx="/[0-9.&lt;]/" /> -->
                                 <o:validator validatorId="javax.faces.RegularExpression" pattern="(([0-9]+)(\.[0-9]+)?)?&lt;(([0-9]+)(\.[0-9]+)?)?"
                                     message="#{messages['customFieldTemplate.ronInvalid']}" />
                             </p:inputText>
