@@ -150,7 +150,7 @@
 		<p:menuitem id="charts" value="#{messages['menu.charts']}" outcome="charts" />
 	</p:submenu>
 	
-	<p:submenu id="customEntites" label="#{messages['menu.customEntities']}" rendered="#{!empty(customEntityTemplateBean.listAll())}">
+	<p:submenu id="customEntites" label="#{messages['menu.customEntities']}" rendered="#{!empty(customEntityTemplateBean.listAll()) and identity.hasPermission('administration','administrationVisualization')}">
 		<c:set var="cetIndex" value="0" />
 		<c:forEach items="#{customEntityTemplateBean.listAll}" var="cet">
 			<c:if
