@@ -33,6 +33,7 @@ import java.util.ResourceBundle;
 import java.util.TreeMap;
 
 import javax.faces.context.FacesContext;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -54,7 +55,6 @@ import org.meveo.model.dwh.MeasurementPeriodEnum;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveocrm.services.dwh.MeasurableQuantityService;
 import org.meveocrm.services.dwh.MeasuredValueService;
-import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Messages;
 import org.primefaces.event.CellEditEvent;
 

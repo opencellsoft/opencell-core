@@ -18,6 +18,7 @@
  */
 package org.meveo.admin.action.wf;
 
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -27,7 +28,6 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.wf.WFDecisionRuleService;
 import org.meveo.service.wf.WFTransitionService;
 import org.meveo.service.wf.WorkflowService;
-import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link org.meveo.model.wf.Workflow} (extends {@link org.meveo.admin.action.BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,

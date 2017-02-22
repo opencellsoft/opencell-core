@@ -1,5 +1,6 @@
 package org.meveo.admin.action.admin.custom;
 
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -12,7 +13,6 @@ import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.crm.custom.EntityCustomAction;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.custom.EntityCustomActionService;
-import org.omnifaces.cdi.ViewScoped;
 
 @Named
 @ViewScoped

@@ -21,6 +21,7 @@ package org.meveo.admin.action.admin;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -33,7 +34,6 @@ import org.meveo.service.admin.impl.PermissionService;
 import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.DualListModel;
 
 /**

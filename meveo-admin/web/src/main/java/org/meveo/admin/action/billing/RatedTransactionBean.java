@@ -19,6 +19,7 @@
 package org.meveo.admin.action.billing;
 
 import javax.enterprise.inject.Produces;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -30,7 +31,6 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.WalletOperationService;
-import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link RatedTransaction} (extends {@link BaseBean}

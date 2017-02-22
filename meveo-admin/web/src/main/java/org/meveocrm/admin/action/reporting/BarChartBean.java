@@ -1,9 +1,9 @@
 package org.meveocrm.admin.action.reporting;
 
+import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
 import org.meveo.model.dwh.BarChart;
-import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.chart.BarChartModel;
 
 

@@ -1,8 +1,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:s="http://jboss.org/seam/faces" xmlns:hftl="http://hftl.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:s="http://jboss.org/seam/faces" xmlns:hftl="http://hftl.org"  xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions" >
 
 
 <!--
@@ -29,7 +29,7 @@
 <ui:composition>
 
     <c:if test="${empty(id)}">
-        <c:set var="id" value="#{fields.replace(',','_').concat('_minmaxRange')}" />
+        <c:set var="id" value="#{fn:replace(fields, ',', '_').concat('_minmaxRange')}" />
     </c:if>
 
     <c:if test="${empty(disabled)}">
@@ -52,7 +52,7 @@
         style="#{style}" labelStyle="#{labelStyle}" labelStyleClass="#{labelStyleClass}" inputStyle="#{inputStyle}" inputStyleClass="#{inputStyleClass}" labelWidth="#{labelWidth}"
         inputWidth="#{inputWidth}">
 
-        <p:inputText id="${id}" size="#{size}" maxlength="#{maxlength}" value="#{backingBean.filters[fields.replace(',','_')]}" disabled="#{disabled}" />
+        <p:inputText id="${id}" size="#{size}" maxlength="#{maxlength}" value="#{backingBean.filters[fn:replace(fields, ',', '_')]}" disabled="#{disabled}" />
     </hftl:decorateFormField>
 </ui:composition>
 

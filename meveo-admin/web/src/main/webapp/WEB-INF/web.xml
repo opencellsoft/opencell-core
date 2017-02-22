@@ -1,225 +1,132 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
-	version="3.1">
-
-	<module-name>meveo</module-name>
-
-	<display-name>MEVEO Admin</display-name>
-
-	<context-param>
-		<param-name>pageAccessFile</param-name>
-		<param-value>/WEB-INF/page-access.xml</param-value>
-	</context-param>
-
-	<context-param>
-		<param-name>javax.faces.FACELETS_BUFFER_SIZE</param-name>
-		<param-value>65535</param-value> <!-- 64KB. -->
-	</context-param>
-
-	<context-param>
-		<param-name>javax.faces.FACELETS_REFRESH_PERIOD</param-name>
-		<param-value>-1</param-value> <!-- Should be -1 for production. -->
-	</context-param>
-
-	<context-param>
-		<param-name>javax.faces.FACELETS_LIBRARIES</param-name>
-		<param-value>/taglib/happyfaces.taglib.xml;/taglib/primefacesextension.taglib.xml</param-value>
-	</context-param>
-
-	<!-- Standard JSF date converters use system time zone - not default -->
-	<context-param>
-		<param-name>javax.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE</param-name>
-		<param-value>true</param-value>
-	</context-param>
-
-	<!-- Skip comment in jsf pages -->
-	<context-param>
-		<param-name>javax.faces.FACELETS_SKIP_COMMENTS</param-name>
-		<param-value>true</param-value>
-	</context-param>
-
-	<!-- Bean validation -->
-	<context-param>
-		<param-name>javax.faces.INTERPRET_EMPTY_STRING_SUBMITTED_VALUES_AS_NULL</param-name>
-		<param-value>true</param-value>
-	</context-param>
-
-	<!-- Primefaces Theme -->
-	<!-- <context-param> -->
-	<!-- <param-name>primefaces.THEME</param-name> -->
-	<!-- <param-value>modena</param-value> -->
-	<!-- </context-param> -->
-
-	<!-- Primefaces FontAwesome -->
-	<context-param>
-		<param-name>primefaces.FONT_AWESOME</param-name>
-		<param-value>true</param-value>
-	</context-param>
-
-	<welcome-file-list>
-		<welcome-file>index.html</welcome-file>
-	</welcome-file-list>
-
-	<session-config>
-		<session-timeout>30</session-timeout>
-	</session-config>
-
-	<servlet>
-		<servlet-name>Faces Servlet</servlet-name>
-		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
-
-	<servlet-mapping>
-		<servlet-name>Faces Servlet</servlet-name>
-		<url-pattern>*.xhtml</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>Faces Servlet</servlet-name>
-		<url-pattern>*.jsf</url-pattern>
-	</servlet-mapping>
-
-	<filter>
-		<filter-name>PrimeFaces FileUpload Filter</filter-name>
-		<filter-class>org.primefaces.webapp.filter.FileUploadFilter</filter-class>
-	</filter>
-
-	<filter-mapping>
-		<filter-name>PrimeFaces FileUpload Filter</filter-name>
-		<servlet-name>Faces Servlet</servlet-name>
-	</filter-mapping>
-
-	<filter>
-		<filter-name>facesExceptionFilter</filter-name>
-		<filter-class>org.omnifaces.filter.FacesExceptionFilter</filter-class>
-	</filter>
-
-	<filter-mapping>
-		<filter-name>facesExceptionFilter</filter-name>
-		<servlet-name>Faces Servlet</servlet-name>
-	</filter-mapping>
-
-	<filter>
-		<filter-name>noCache</filter-name>
-		<filter-class>org.omnifaces.filter.CacheControlFilter</filter-class>
-	</filter>
-
-	<filter-mapping>
-		<filter-name>noCache</filter-name>
-		<servlet-name>Faces Servlet</servlet-name>
-	</filter-mapping>
-
-	<!-- MIME types for fonts -->
-
-	<mime-mapping>
-		<extension>eot</extension>
-		<mime-type>application/vnd.ms-fontobject</mime-type>
-	</mime-mapping>
-	<mime-mapping>
-		<extension>otf</extension>
-		<mime-type>font/opentype</mime-type>
-	</mime-mapping>
-	<mime-mapping>
-		<extension>ttf</extension>
-		<mime-type>application/x-font-ttf</mime-type>
-	</mime-mapping>
-	<mime-mapping>
-		<extension>woff</extension>
-		<mime-type>application/x-font-woff</mime-type>
-	</mime-mapping>
-	<mime-mapping>
-		<extension>woff2</extension>
-		<mime-type>application/x-font-woff2</mime-type>
-	</mime-mapping>
-	<mime-mapping>
-		<extension>svg</extension>
-		<mime-type>image/svg+xml</mime-type>
-	</mime-mapping>
-
-
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>AdminPages</web-resource-name>
-			<url-pattern>/pages/*</url-pattern>
-		</web-resource-collection>
-		<web-resource-collection>
-			<web-resource-name>home</web-resource-name>
-			<url-pattern>/home.jsf</url-pattern>
-		</web-resource-collection>
-		<auth-constraint>
-			<role-name>guiAccess</role-name>
-		</auth-constraint>
-	</security-constraint>
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>RS</web-resource-name>
-			<url-pattern>/api/rest/*</url-pattern>
-		</web-resource-collection>
-		<auth-constraint>
-			<role-name>apiAccess</role-name>
-		</auth-constraint>
-	</security-constraint>
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>AccountWS</web-resource-name>
-			<url-pattern>/AccountWs</url-pattern>
-		</web-resource-collection>
-		<auth-constraint>
-			<role-name>apiAccess</role-name>
-		</auth-constraint>
-	</security-constraint>
-	<login-config>
-		<auth-method>KEYCLOAK</auth-method>
-		<realm-name>master</realm-name>
-	</login-config>
-	<security-role>
-		<role-name>apiAccess</role-name>
-	</security-role>
-	<security-role>
-		<role-name>guiAccess</role-name>
-	</security-role>
-
-
-
-	<!-- <filter> -->
-	<!-- <filter-name>UTF8CharacterEncodingFilter</filter-name> -->
-	<!-- <filter-class>org.meveo.admin.filter.UTF8CharacterEncodingFilter</filter-class> -->
-	<!-- </filter> -->
-
-	<!-- <filter-mapping> -->
-	<!-- <filter-name>UTF8CharacterEncodingFilter</filter-name> -->
-	<!-- <url-pattern>*.jsf</url-pattern> -->
-	<!-- </filter-mapping> -->
-
-	<!-- Error page -->
-	<!-- <error-page> -->
-	<!-- <exception-type>javax.faces.application.ViewExpiredException</exception-type> -->
-	<!-- <location>/errors/expired.xhtml</location> -->
-	<!-- </error-page> -->
-	<!-- <error-page> -->
-	<!-- <exception-type>java.sql.SQLException</exception-type> -->
-	<!-- <location>/errors/database.xhtml</location> -->
-	<!-- </error-page> -->
-	<!-- <error-page> -->
-	<!-- <exception-type>java.lang.RuntimeException</exception-type> -->
-	<!-- <location>/errors/bug.xhtml</location> -->
-	<!-- </error-page> -->
-	<!-- <error-page> -->
-	<!-- <exception-type>org.jboss.weld.context.NonexistentConversationException</exception-type> -->
-	<!-- <location>/errors/bug.xhtml</location> -->
-	<!-- </error-page> -->
-	<!-- <error-page> -->
-	<!-- <error-code>500</error-code> -->
-	<!-- <location>/errors/500.xhtml</location> -->
-	<!-- </error-page> -->
-	<!-- <error-page> -->
-	<!-- <error-code>404</error-code> -->
-	<!-- <location>/errors/404.xhtml</location> -->
-	<!-- </error-page> -->
-	<!-- <error-page> -->
-	<!-- <error-code>400</error-code> -->
-	<!-- <location>/errors/400.xhtml</location> -->
-	<!-- </error-page> -->
-
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" version="3.1">
+  <module-name>meveo</module-name>
+  <display-name>MEVEO Admin</display-name>
+  <context-param>
+    <param-name>pageAccessFile</param-name>
+    <param-value>/WEB-INF/page-access.xml</param-value>
+  </context-param>
+  <context-param>
+    <param-name>javax.faces.FACELETS_BUFFER_SIZE</param-name>
+    <param-value>65535</param-value>
+  </context-param>
+  <context-param>
+    <param-name>javax.faces.FACELETS_REFRESH_PERIOD</param-name>
+    <param-value>-1</param-value>
+  </context-param>
+  <context-param>
+    <param-name>javax.faces.FACELETS_LIBRARIES</param-name>
+    <param-value>/taglib/happyfaces.taglib.xml;/taglib/primefacesextension.taglib.xml</param-value>
+  </context-param>
+  <context-param>
+    <param-name>javax.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE</param-name>
+    <param-value>true</param-value>
+  </context-param>
+  <context-param>
+    <param-name>javax.faces.FACELETS_SKIP_COMMENTS</param-name>
+    <param-value>true</param-value>
+  </context-param>
+  <context-param>
+    <param-name>javax.faces.INTERPRET_EMPTY_STRING_SUBMITTED_VALUES_AS_NULL</param-name>
+    <param-value>true</param-value>
+  </context-param>
+  <context-param>
+    <param-name>primefaces.FONT_AWESOME</param-name>
+    <param-value>true</param-value>
+  </context-param>
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+  </welcome-file-list>
+  <session-config>
+    <session-timeout>30</session-timeout>
+  </session-config>
+  <filter>
+    <filter-name>PrimeFaces FileUpload Filter</filter-name>
+    <filter-class>org.primefaces.webapp.filter.FileUploadFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>PrimeFaces FileUpload Filter</filter-name>
+    <servlet-name>Faces Servlet</servlet-name>
+  </filter-mapping>
+  <filter>
+    <filter-name>facesExceptionFilter</filter-name>
+    <filter-class>org.omnifaces.filter.FacesExceptionFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>facesExceptionFilter</filter-name>
+    <servlet-name>Faces Servlet</servlet-name>
+  </filter-mapping>
+  <filter>
+    <filter-name>noCache</filter-name>
+    <filter-class>org.omnifaces.filter.CacheControlFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>noCache</filter-name>
+    <servlet-name>Faces Servlet</servlet-name>
+  </filter-mapping>
+  <mime-mapping>
+    <extension>eot</extension>
+    <mime-type>application/vnd.ms-fontobject</mime-type>
+  </mime-mapping>
+  <mime-mapping>
+    <extension>otf</extension>
+    <mime-type>font/opentype</mime-type>
+  </mime-mapping>
+  <mime-mapping>
+    <extension>ttf</extension>
+    <mime-type>application/x-font-ttf</mime-type>
+  </mime-mapping>
+  <mime-mapping>
+    <extension>woff</extension>
+    <mime-type>application/x-font-woff</mime-type>
+  </mime-mapping>
+  <mime-mapping>
+    <extension>woff2</extension>
+    <mime-type>application/x-font-woff2</mime-type>
+  </mime-mapping>
+  <mime-mapping>
+    <extension>svg</extension>
+    <mime-type>image/svg+xml</mime-type>
+  </mime-mapping>
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>AdminPages</web-resource-name>
+      <url-pattern>/pages/*</url-pattern>
+    </web-resource-collection>
+    <web-resource-collection>
+      <web-resource-name>home</web-resource-name>
+      <url-pattern>/home.jsf</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>guiAccess</role-name>
+    </auth-constraint>
+  </security-constraint>
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>RS</web-resource-name>
+      <url-pattern>/api/rest/*</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>apiAccess</role-name>
+    </auth-constraint>
+  </security-constraint>
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>AccountWS</web-resource-name>
+      <url-pattern>/AccountWs</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>apiAccess</role-name>
+    </auth-constraint>
+  </security-constraint>
+  <login-config>
+    <auth-method>KEYCLOAK</auth-method>
+    <realm-name>master</realm-name>
+  </login-config>
+  <security-role>
+    <role-name>apiAccess</role-name>
+  </security-role>
+  <security-role>
+    <role-name>guiAccess</role-name>
+  </security-role>
 </web-app>

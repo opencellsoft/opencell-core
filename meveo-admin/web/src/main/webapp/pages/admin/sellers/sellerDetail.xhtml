@@ -1,6 +1,6 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"  xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags"
-    xmlns:of="http://omnifaces.org/functions" xmlns:c="http://java.sun.com/jstl/core" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+    xmlns:of="http://omnifaces.org/functions" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
     <ui:define name="metadata">
         <f:metadata>
@@ -72,7 +72,7 @@
 					
 					 <h:panelGrid columns="4" cellpadding="8" > 
 					<p:outputLabel  value="#{messages['invoiceType.panel']}" />
-					<p:selectOneMenu label="#{messages['invoiceType.name']}" value="#{sellerBean.invoiceTypeCode}" disabled="#{sellerBean.isEditSellerSequence}"> 
+					<p:selectOneMenu label="#{messages['invoiceType.name']}" value="#{sellerBean.invoiceTypeCode}" disabled="#{sellerBean.editSellerSequence}"> 
 					<f:selectItem itemLabel="#{messages['commons.select']}" />
 					<f:selectItems value="#{invoiceTypeBean.listAll()}" var="item" itemLabel="#{item.code}" itemValue="#{item.code}"/>
 					</p:selectOneMenu> 

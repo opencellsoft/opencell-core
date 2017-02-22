@@ -18,6 +18,9 @@
  */
 package org.meveo.admin.action.crm;
 
+import javax.faces.view.ViewScoped;
+//import java.math.BigDecimal;
+//import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -27,9 +30,6 @@ import org.meveo.model.billing.BillingAccount;
 //import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
-import org.omnifaces.cdi.ViewScoped;
-//import java.math.BigDecimal;
-//import java.util.List;
 
 @Named
 @ViewScoped

@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.inject.Produces;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -35,7 +36,6 @@ import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.ChargeTemplateServiceAll;
-import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.LazyDataModel;
 
 /**

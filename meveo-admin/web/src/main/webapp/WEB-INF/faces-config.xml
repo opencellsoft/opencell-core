@@ -42,9 +42,10 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 	</renderer>
 </render-kit>
 
-<!-- <lifecycle> -->
-<!-- <phase-listener>org.meveo.admin.web.listener.PageAccessListener</phase-listener> -->
-<!-- </lifecycle> -->
+<lifecycle>
+<!-- 	<phase-listener>org.meveo.admin.web.listener.PageAccessListener</phase-listener> -->
+	<phase-listener>org.meveo.admin.web.listener.LifecyclePhaseListener</phase-listener>
+</lifecycle>
 
 <navigation-rule>
 	<navigation-case>

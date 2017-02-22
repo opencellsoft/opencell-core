@@ -1,6 +1,6 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.org/seam/faces" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:o="http://omnifaces.org/ui" xmlns:of="http://omnifaces.org/functions"
-    xmlns:hftl="http://hftl.org" xmlns:hf="http://java.sun.com/jsf/composite/tags" template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.org/seam/faces" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:o="http://omnifaces.org/ui" xmlns:of="http://omnifaces.org/functions"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui">
 
     <ui:define name="metadata">
         <f:metadata>
@@ -132,10 +132,10 @@
 
                                         <h:panelGroup id="userNamePanel" layout="block">
                                             <hftl:formField
-                                                label="#{messages[(userAccountBean.entity.name.title != null and userAccountBean.entity.name.title.isCompany)?'name.company':'name.lastName']}"
+                                                label="#{messages[(userAccountBean.entity.name.title != null and userAccountBean.entity.name.title.company)?'name.company':'name.lastName']}"
                                                 field="name" childField="lastName" maxlength="50" required="#{userAccountBean.entity.name.title != null}" />
                                             <hftl:formField label="#{messages['name.firstName']}" field="name" childField="firstName" maxlength="50"
-                                                rendered="#{userAccountBean.entity.name.title == null or !userAccountBean.entity.name.title.isCompany}" />
+                                                rendered="#{userAccountBean.entity.name.title == null or !userAccountBean.entity.name.title.company}" />
                                         </h:panelGroup>
                                     </p:fieldset>
                                     <p:fieldset legend="#{messages['commons.status']}" styleClass="clearLeft">

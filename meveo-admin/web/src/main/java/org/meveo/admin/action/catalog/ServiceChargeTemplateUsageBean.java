@@ -18,6 +18,7 @@
  */
 package org.meveo.admin.action.catalog;
 
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -25,7 +26,6 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.ServiceChargeTemplateUsageService;
-import org.omnifaces.cdi.ViewScoped;
 
 
 @Named

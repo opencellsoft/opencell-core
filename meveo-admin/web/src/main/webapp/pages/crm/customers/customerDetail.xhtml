@@ -1,10 +1,10 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	
 	xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
 	xmlns:p="http://primefaces.org/ui"
 	template="/layout/template.xhtml">
 
@@ -66,12 +66,12 @@
                                         listBean="#{titleBean}" listenerUpdate=":formCustomer:tabView:userNamePanel" styleClass="clearLeft"/>
 
 									<h:panelGroup id="userNamePanel" layout="block">
-											<hftl:formField label="#{messages[(customerBean.entity.name.title != null and customerBean.entity.name.title.isCompany)?'name.company':'name.lastName']}"
+											<hftl:formField label="#{messages[(customerBean.entity.name.title != null and customerBean.entity.name.title.company)?'name.company':'name.lastName']}"
 												field="name" childField="lastName" 
 												maxlength="50" required="#{customerBean.entity.name.title != null}"/>
                                             <hftl:formField label="#{messages['name.firstName']}"
                                                 field="name" childField="firstName" 
-                                                maxlength="50" rendered="#{customerBean.entity.name.title == null or !customerBean.entity.name.title.isCompany}"/>
+                                                maxlength="50" rendered="#{customerBean.entity.name.title == null or !customerBean.entity.name.title.company}"/>
 									</h:panelGroup>
 	
 									<hftl:formField

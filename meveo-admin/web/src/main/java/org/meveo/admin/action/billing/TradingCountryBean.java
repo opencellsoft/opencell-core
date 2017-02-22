@@ -21,6 +21,7 @@ package org.meveo.admin.action.billing;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -34,7 +35,6 @@ import org.meveo.model.billing.TradingCountry;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.TradingCountryService;
-import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.SelectEvent;
 
 /**

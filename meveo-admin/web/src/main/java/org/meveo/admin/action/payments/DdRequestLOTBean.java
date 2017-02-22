@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -39,7 +40,6 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.DDRequestLOTService;
 import org.meveo.service.payments.impl.DDRequestLotOpService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
-import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link DDRequestLOT} (extends {@link BaseBean} that

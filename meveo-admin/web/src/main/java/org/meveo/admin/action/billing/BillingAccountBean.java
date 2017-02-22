@@ -28,6 +28,7 @@ import java.util.List;
 import javax.enterprise.inject.Produces;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletResponse;
@@ -57,7 +58,6 @@ import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
-import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link BillingAccount} (extends {@link BaseBean}

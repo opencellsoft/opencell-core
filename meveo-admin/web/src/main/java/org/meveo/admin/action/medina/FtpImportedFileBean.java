@@ -18,6 +18,7 @@
  */
 package org.meveo.admin.action.medina;
 
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -26,7 +27,6 @@ import org.meveo.model.jobs.FtpImportedFile;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.job.FtpImportedFileService;
-import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link FtpImportedFile} (extends {@link BaseBean} that

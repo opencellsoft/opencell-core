@@ -21,6 +21,7 @@ package org.meveo.admin.action.bi;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -31,7 +32,6 @@ import org.meveo.model.bi.Report;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.bi.impl.ReportService;
-import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link Report} (extends {@link BaseBean} that

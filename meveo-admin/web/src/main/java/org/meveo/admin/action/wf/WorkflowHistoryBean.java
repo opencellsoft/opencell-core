@@ -21,6 +21,7 @@ package org.meveo.admin.action.wf;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -32,7 +33,6 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.wf.WorkflowHistoryService;
 import org.meveo.service.wf.WorkflowService;
-import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link WorkflowHistory} (extends {@link BaseBean} that provides

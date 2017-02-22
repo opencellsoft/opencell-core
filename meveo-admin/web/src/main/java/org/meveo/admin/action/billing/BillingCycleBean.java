@@ -18,6 +18,7 @@
  */
 package org.meveo.admin.action.billing;
 
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -27,7 +28,6 @@ import org.meveo.model.billing.BillingCycle;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingCycleService;
-import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link BillingCycle} (extends {@link BaseBean} that

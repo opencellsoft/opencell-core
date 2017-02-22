@@ -18,6 +18,7 @@
  */
 package org.meveo.admin.action.payments;
 
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -31,7 +32,6 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.PaymentService;
-import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link AutomatedPayment} (extends {@link BaseBean}

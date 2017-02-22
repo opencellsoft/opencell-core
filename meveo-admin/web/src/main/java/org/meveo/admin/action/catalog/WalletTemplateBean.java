@@ -20,6 +20,7 @@ package org.meveo.admin.action.catalog;
 
 import java.sql.BatchUpdateException;
 
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -29,7 +30,6 @@ import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.WalletTemplateService;
-import org.omnifaces.cdi.ViewScoped;
 
 @Named
 @ViewScoped

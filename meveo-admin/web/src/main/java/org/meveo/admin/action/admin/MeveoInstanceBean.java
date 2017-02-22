@@ -20,6 +20,7 @@ package org.meveo.admin.action.admin;
 
 import java.sql.BatchUpdateException;
 
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -27,7 +28,6 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
-import org.omnifaces.cdi.ViewScoped;
 
 @Named
 @ViewScoped

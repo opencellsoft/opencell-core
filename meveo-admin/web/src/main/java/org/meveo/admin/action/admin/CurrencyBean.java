@@ -18,6 +18,7 @@
  */
 package org.meveo.admin.action.admin;
 
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -25,7 +26,6 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.model.admin.Currency;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link Currency} (extends {@link BaseBean} that

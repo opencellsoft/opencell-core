@@ -2,6 +2,7 @@ package org.meveo.admin.action.admin.custom;
 
 import java.util.Map;
 
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -15,7 +16,6 @@ import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.custom.CustomEntityInstanceService;
 import org.meveo.service.custom.CustomEntityTemplateService;
-import org.omnifaces.cdi.ViewScoped;
 
 @Named
 @ViewScoped

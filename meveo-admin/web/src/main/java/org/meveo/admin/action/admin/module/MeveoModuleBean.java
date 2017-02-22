@@ -18,12 +18,12 @@
  */
 package org.meveo.admin.action.admin.module;
 
+import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.model.module.MeveoModule;
 import org.meveo.service.base.local.IPersistenceService;
-import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Meveo module bean

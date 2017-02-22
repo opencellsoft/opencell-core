@@ -18,6 +18,7 @@
  */
 package org.meveo.admin.action.admin;
 
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -31,7 +32,6 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.InterBankTitle;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
-import org.omnifaces.cdi.ViewScoped;
 
 @Named
 @ViewScoped

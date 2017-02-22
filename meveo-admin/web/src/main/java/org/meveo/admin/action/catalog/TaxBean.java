@@ -20,6 +20,7 @@ package org.meveo.admin.action.catalog;
 
 import java.sql.BatchUpdateException;
 
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -30,7 +31,6 @@ import org.meveo.model.billing.Tax;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.TaxService;
-import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link Tax} (extends {@link BaseBean} that provides

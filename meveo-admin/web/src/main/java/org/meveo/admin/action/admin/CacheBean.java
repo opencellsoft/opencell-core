@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -44,7 +45,6 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
 import org.meveo.util.view.LazyDataModelWSize;
 import org.omnifaces.cdi.Param;
-import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 

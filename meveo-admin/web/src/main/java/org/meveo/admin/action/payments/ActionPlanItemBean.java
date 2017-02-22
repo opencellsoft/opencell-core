@@ -18,6 +18,7 @@
  */
 package org.meveo.admin.action.payments;
 
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityExistsException;
@@ -32,7 +33,6 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.wf.WFActionService;
 import org.meveo.service.wf.WorkflowService;
-import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link WFAction} (extends {@link BaseBean}

@@ -2,14 +2,14 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:hf="http://java.sun.com/jsf/composite/tags"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
 	
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
 	xmlns:p="http://primefaces.org/ui"
-	xmlns:cc="http://java.sun.com/jsf/composite">
+	xmlns:cc="http://xmlns.jcp.org/jsf/composite">
 
 <cc:interface>
 	<cc:attribute name="treeBean" required="true" />
@@ -60,7 +60,7 @@
 	    	if(!toggleButton){
 	    		$("#{cc.attrs.menuPanel} .ui-panel-titlebar").append('<a href="#" id="toggle-button" class="ui-panel-titlebar-icon ui-corner-all ui-state-default" style="display: block;"><span class="ui-icon ui-icon-plusthick"></span></a>');
 	    		toggleButton = $("#{cc.attrs.menuPanel} .ui-panel-titlebar #toggle-button")[0];
-	    		$(toggleButton).data("visible", #{cc.attrs.treeBean.isVisible});
+	    		$(toggleButton).data("visible", #{cc.attrs.treeBean.visible});
 	    		showMenuPanel($(toggleButton).children().first(), $(toggleButton).data("visible"));
 	    	}
 	        $(toggleButton).on("click", function (e) {

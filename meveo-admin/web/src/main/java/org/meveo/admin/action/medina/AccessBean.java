@@ -19,6 +19,7 @@
 package org.meveo.admin.action.medina;
 
 import javax.ejb.EJB;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -35,7 +36,6 @@ import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.medina.impl.CDRParsingService;
 import org.omnifaces.cdi.Param;
-import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link Access} (extends {@link BaseBean} that

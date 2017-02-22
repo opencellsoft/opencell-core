@@ -21,6 +21,7 @@ package org.meveo.admin.action.catalog;
 import java.math.BigDecimal;
 
 import javax.faces.context.FacesContext;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -32,7 +33,6 @@ import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.CounterTypeEnum;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
-import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.LazyDataModel;
 
 @Named

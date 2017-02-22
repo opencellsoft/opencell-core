@@ -1,5 +1,6 @@
 package org.meveo.admin.action.finance;
 
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -7,7 +8,6 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.model.finance.RevenueRecognitionRule;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.finance.RevenueRecognitionRuleService;
-import org.omnifaces.cdi.ViewScoped;
 
 @Named
 @ViewScoped

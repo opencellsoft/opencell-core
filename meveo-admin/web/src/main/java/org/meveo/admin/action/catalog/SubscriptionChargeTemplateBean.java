@@ -20,6 +20,7 @@ package org.meveo.admin.action.catalog;
 
 import java.util.List;
 
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -28,7 +29,6 @@ import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
-import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.component.datatable.DataTable;
 
 @Named

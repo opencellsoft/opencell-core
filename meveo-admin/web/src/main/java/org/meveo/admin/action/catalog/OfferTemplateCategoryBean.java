@@ -3,6 +3,7 @@ package org.meveo.admin.action.catalog;
 import java.io.IOException;
 import java.util.List;
 
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -16,7 +17,6 @@ import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
-import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.TreeDragDropEvent;
 import org.primefaces.model.DefaultTreeNode;

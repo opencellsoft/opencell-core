@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -40,7 +41,6 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.script.CustomScriptService;
 import org.meveo.service.script.GenericScriptService;
 import org.meveo.service.script.ScriptInstanceService;
-import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.DualListModel;
 
 /**

@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -37,7 +38,6 @@ import org.meveo.model.billing.TradingLanguage;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.TradingLanguageService;
-import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.SelectEvent;
 
 /**

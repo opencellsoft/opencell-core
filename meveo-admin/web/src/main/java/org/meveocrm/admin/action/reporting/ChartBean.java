@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -37,7 +38,6 @@ import org.meveo.model.dwh.LineChart;
 import org.meveo.model.dwh.MeasuredValue;
 import org.meveo.model.dwh.PieChart;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
-import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.chart.ChartModel;
 

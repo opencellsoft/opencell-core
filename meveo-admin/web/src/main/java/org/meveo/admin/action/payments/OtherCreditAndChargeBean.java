@@ -21,6 +21,7 @@ package org.meveo.admin.action.payments;
 import java.util.Date;
 
 import javax.annotation.PostConstruct;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -40,7 +41,6 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.OtherCreditAndChargeService;
 import org.omnifaces.cdi.Param;
-import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link OtherCreditAndCharge} (extends

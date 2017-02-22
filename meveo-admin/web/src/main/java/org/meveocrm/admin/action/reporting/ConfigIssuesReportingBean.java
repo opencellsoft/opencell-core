@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.annotation.PostConstruct;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -39,7 +40,6 @@ import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.meveo.service.script.ScriptInstanceService;
-import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.event.TabChangeEvent;
 
 @Named

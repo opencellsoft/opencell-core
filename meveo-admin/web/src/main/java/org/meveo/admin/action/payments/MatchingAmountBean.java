@@ -18,6 +18,7 @@
  */
 package org.meveo.admin.action.payments;
 
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -26,7 +27,6 @@ import org.meveo.model.payments.MatchingAmount;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.MatchingAmountService;
-import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link MatchingAmount} (extends {@link BaseBean} that

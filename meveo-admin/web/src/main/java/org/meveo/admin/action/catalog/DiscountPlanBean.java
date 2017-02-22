@@ -2,6 +2,7 @@ package org.meveo.admin.action.catalog;
 
 import java.util.ArrayList;
 
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -14,7 +15,6 @@ import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.DiscountPlanItemService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
-import org.omnifaces.cdi.ViewScoped;
 
 /**
  * @author Edward P. Legaspi

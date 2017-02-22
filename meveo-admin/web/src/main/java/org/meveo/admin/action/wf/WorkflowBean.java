@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import javax.faces.context.FacesContext;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -54,7 +55,6 @@ import org.meveo.service.wf.WFDecisionRuleService;
 import org.meveo.service.wf.WFTransitionService;
 import org.meveo.service.wf.WorkflowService;
 import org.omnifaces.cdi.Param;
-import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link Workflow} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,

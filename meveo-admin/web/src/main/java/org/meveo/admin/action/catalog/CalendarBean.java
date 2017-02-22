@@ -27,6 +27,7 @@ import java.util.Map;
 
 import javax.faces.component.EditableValueHolder;
 import javax.faces.event.AjaxBehaviorEvent;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.DiscriminatorValue;
@@ -51,7 +52,6 @@ import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.DayInYearService;
 import org.meveo.service.catalog.impl.HourInDayService;
 import org.omnifaces.cdi.Param;
-import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.DualListModel;
 
 @Named

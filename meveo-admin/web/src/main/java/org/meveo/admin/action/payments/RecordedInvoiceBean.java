@@ -19,6 +19,7 @@
 package org.meveo.admin.action.payments;
 
 import javax.enterprise.inject.Produces;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -31,7 +32,6 @@ import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
-import org.omnifaces.cdi.ViewScoped;
 
 /**
  * Standard backing bean for {@link RecordedInvoice} (extends {@link BaseBean}

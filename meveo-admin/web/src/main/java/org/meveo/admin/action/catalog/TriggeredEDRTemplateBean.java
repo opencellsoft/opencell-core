@@ -18,6 +18,7 @@
  */
 package org.meveo.admin.action.catalog;
 
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -31,7 +32,6 @@ import org.meveo.model.communication.MeveoInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
-import org.omnifaces.cdi.ViewScoped;
 
 @Named
 @ViewScoped

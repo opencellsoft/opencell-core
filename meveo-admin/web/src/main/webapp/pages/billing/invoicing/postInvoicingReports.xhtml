@@ -1,7 +1,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:hftl="http://hftl.org"
 	template="/layout/template.xhtml"
 	xmlns:e="http://jboss.com/products/seam/excel"
@@ -191,7 +191,7 @@
 		 <p:panel styleClass="action-buttons" >
 			<p:tooltip for="excludeBa"
 				showEffect="slide" hideEffect="slide" />
-			<p:commandButton id="excludeBa" style="left:10px; top:-26px" disabled="#{!invoiceBean.isSelectedInvoices}"
+			<p:commandButton id="excludeBa" style="left:10px; top:-26px" disabled="#{!invoiceBean.selectedInvoices}"
 				value="#{messages['postInvoicingReport.excludeBillingAccounts']}"
 				update=":results_form :messages" action="#{invoiceBean.excludeBillingAccounts(billingRunBean.entity)}" 
 				rendered="#{billingRunBean.entity.status.toString() != 'VALIDATED' and billingRunBean.entity.getInvoices().size()>0}">
