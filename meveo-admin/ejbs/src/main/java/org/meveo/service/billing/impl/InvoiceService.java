@@ -474,10 +474,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoice.setBillingRun(em.getReference(BillingRun.class, billingRun.getId()));
             }
 			invoice.setProvider(currentUser.getProvider());
-			invoice.setInvoiceDate(invoiceDate);
-			
+			invoice.setInvoiceDate(invoiceDate);			
 
 			Integer delay = billingCycle.getDueDateDelay();
+			if (!StringUtils.isBlank(billingCycle.getDueDateDelayEL())) {
+				delay = evaluateIntegerExpression(billingCycle.getDueDateDelayEL(), billingAccount, invoice);
+			}
 			Date dueDate = invoiceDate;
 			if (delay != null) {
 				dueDate = DateUtils.addDaysToDate(invoiceDate, delay);
@@ -1232,5 +1234,27 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		queryInvoices.setParameter("id", invoice.getId());
 		queryInvoices.executeUpdate();
 		log.debug("cancel invoice:{} done",invoice.getTemporaryInvoiceNumber());
+	}
+	
+	private Integer evaluateIntegerExpression(String expression, BillingAccount billingAccount, Invoice invoice) throws BusinessException {
+		Integer result = null;
+		if (StringUtils.isBlank(expression)) {
+			return result;
+		}
+		Map<Object, Object> userMap = new HashMap<Object, Object>();
+		if (expression.indexOf("ba") >= 0) {
+			userMap.put("ba", billingAccount);
+		}
+		if (expression.indexOf("invoice") >= 0) {
+			userMap.put("invoice", invoice);
+		}
+
+		Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Integer.class);
+		try {
+			result = (Integer) res;
+		} catch (Exception e) {
+			throw new BusinessException("Expression " + expression + " do not evaluate to Integer but " + res);
+		}
+		return result;
 	}
 }

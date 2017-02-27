@@ -32,6 +32,9 @@ public class BillingCycleDto extends BaseDto {
 
 	@XmlElement(required = true)
 	private Integer dueDateDelay;
+	
+	@XmlElement(required = false)
+	private String dueDateDelayEL;
 
 	@XmlElement(required = false)
 	private Integer invoiceDateProductionDelay;
@@ -60,6 +63,7 @@ public class BillingCycleDto extends BaseDto {
 			billingTemplateName = billingCycleEntity.getBillingTemplateName();
 			invoiceDateDelay = billingCycleEntity.getInvoiceDateDelay();
 			dueDateDelay = billingCycleEntity.getDueDateDelay();
+			dueDateDelayEL = billingCycleEntity.getDueDateDelayEL();
 			invoiceDateProductionDelay = billingCycleEntity.getInvoiceDateProductionDelay();
 			transactionDateDelay = billingCycleEntity.getTransactionDateDelay();
 			invoicingThreshold  = billingCycleEntity.getInvoicingThreshold(); 
@@ -180,9 +184,18 @@ public class BillingCycleDto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "BillingCycleDto [code=" + code + ", description=" + description + ", billingTemplateName=" + billingTemplateName + ","
-				+ " invoiceDateDelay=" + invoiceDateDelay + ", dueDateDelay=" + dueDateDelay + ", invoiceDateProductionDelay=" + invoiceDateProductionDelay + ","
-				+ " transactionDateDelay=" + transactionDateDelay + ", calendar=" + calendar + ", invoicingThreshold=" + invoicingThreshold + ", invoiceTypeCode=" + ", customFields=" + customFields + "]";
+		return "BillingCycleDto [code=" + code + ", description=" + description + ", billingTemplateName=" + billingTemplateName + ", invoiceDateDelay=" + invoiceDateDelay
+				+ ", dueDateDelay=" + dueDateDelay + ", dueDateDelayEL=" + dueDateDelayEL + ", invoiceDateProductionDelay=" + invoiceDateProductionDelay
+				+ ", transactionDateDelay=" + transactionDateDelay + ", calendar=" + calendar + ", invoicingThreshold=" + invoicingThreshold + ", invoiceTypeCode="
+				+ invoiceTypeCode + ", customFields=" + customFields + "]";
+	}
+
+	public String getDueDateDelayEL() {
+		return dueDateDelayEL;
+	}
+
+	public void setDueDateDelayEL(String dueDateDelayEL) {
+		this.dueDateDelayEL = dueDateDelayEL;
 	}
 
 

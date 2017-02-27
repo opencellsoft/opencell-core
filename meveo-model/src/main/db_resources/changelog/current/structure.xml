@@ -3094,4 +3094,10 @@
     <changeSet id="#2296_20161225-5" author="AndriusKarpavicius">
         <addUniqueConstraint columnNames="seller_id, invoicetype_id" constraintName="uk_bill_seq_it_sell" deferrable="false" disabled="false" initiallyDeferred="false" tableName="BILLING_SEQ_INVTYP_SELL"/>
     </changeSet>
+    
+     <changeSet id="#2405_20170222-Make payment delay into EL" author="EdwardLegaspi">
+        <addColumn tableName="BILLING_CYCLE">
+        	<column name="due_date_delay_el" type="VARCHAR(2000)" />
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
