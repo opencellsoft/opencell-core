@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BusinessDto;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.CounterTemplateLevel;
 import org.meveo.model.catalog.CounterTypeEnum;
@@ -18,7 +18,7 @@ import org.meveo.model.catalog.CounterTypeEnum;
  **/
 @XmlRootElement(name = "CounterTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CounterTemplateDto extends BaseDto implements Serializable {
+public class CounterTemplateDto extends BusinessDto implements Serializable {
 
     private static final long serialVersionUID = 2587489734648000805L;
 

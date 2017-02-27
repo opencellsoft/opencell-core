@@ -110,13 +110,13 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
         handleMissingParameters();
 
         Provider provider = currentUser.getProvider();
-
-        OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(postData.getCode(), provider);
+        String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
+        OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(currentCode, provider);
 
         if (offerTemplateCategory == null) {
-            throw new EntityAlreadyExistsException(OfferTemplateCategory.class, postData.getCode());
+            throw new EntityAlreadyExistsException(OfferTemplateCategory.class, currentCode);
         }
-
+        offerTemplateCategory.setCode(postData.getCode());
         offerTemplateCategory.setDescription(postData.getDescription());
         offerTemplateCategory.setName(postData.getName());
 
@@ -237,15 +237,12 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
      * @throws BusinessException
      */
     public OfferTemplateCategory createOrUpdate(OfferTemplateCategoryDto postData, User currentUser) throws MeveoApiException, BusinessException {
-
-        String code = postData.getCode();
-
-        if (StringUtils.isBlank(code)) {
+       if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
             handleMissingParameters();
         }
-
-        if (offerTemplateCategoryService.findByCode(code, currentUser.getProvider()) == null) {
+        String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
+        if (offerTemplateCategoryService.findByCode(currentCode, currentUser.getProvider()) == null) {
             return create(postData, currentUser);
         } else {
             return update(postData, currentUser);
@@ -253,7 +250,6 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
     }
 
     /**
-     * 
      * 
      * @return
      * @throws MeveoApiException

@@ -1,17 +1,16 @@
 package org.meveo.api.dto.catalog;
 
-import java.io.Serializable;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.BusinessDto;
 import org.meveo.model.catalog.DigitalResource;
 
 @XmlRootElement(name = "DigitalResource")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DigitalResourcesDto implements Serializable {
+public class DigitalResourcesDto extends BusinessDto {
 
 	private static final long serialVersionUID = 5517448250177253851L;
 

@@ -101,14 +101,14 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 		handleMissingParameters();
 		
 		Provider provider = currentUser.getProvider();
-
-		OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getCode(), provider);
+		String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
+		OfferTemplate offerTemplate = offerTemplateService.findByCode(currentCode, provider);
 		if (offerTemplate == null) {
-			throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getCode());
+			throw new EntityDoesNotExistsException(OfferTemplate.class, currentCode);
 		}
 		
 		populateFromDto(offerTemplate, postData, currentUser);
-
+		offerTemplate.setCode(postData.getCode());
 		offerTemplate = offerTemplateService.update(offerTemplate, currentUser);
 
 		// populate customFields
@@ -368,7 +368,8 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 	 * @throws BusinessException
 	 */
 	public OfferTemplate createOrUpdate(OfferTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
-		OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getCode(), currentUser.getProvider());
+		String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
+		OfferTemplate offerTemplate = offerTemplateService.findByCode(currentCode, currentUser.getProvider());
 
 		if (offerTemplate == null) {
 			return create(postData, currentUser);

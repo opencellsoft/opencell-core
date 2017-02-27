@@ -195,9 +195,10 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
 
         Provider provider = currentUser.getProvider();
         // check if code already exists
-        RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService.findByCode(postData.getCode(), provider);
+        String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
+        RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService.findByCode(currentCode, provider);
         if (chargeTemplate == null) {
-            throw new EntityDoesNotExistsException(RecurringChargeTemplate.class, postData.getCode());
+            throw new EntityDoesNotExistsException(RecurringChargeTemplate.class, currentCode);
         }
 
         InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategory(), provider);
@@ -209,7 +210,7 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         if (calendar == null) {
             throw new EntityDoesNotExistsException(Calendar.class, postData.getCalendar());
         }
-
+        chargeTemplate.setCode(postData.getCode());
         chargeTemplate.setDescription(postData.getDescription());
         chargeTemplate.setDisabled(postData.isDisabled());
         chargeTemplate.setAmountEditable(postData.getAmountEditable());
@@ -343,8 +344,8 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
     }
 
     public RecurringChargeTemplate createOrUpdate(RecurringChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
-
-        if (recurringChargeTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
+    	 String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
+        if (recurringChargeTemplateService.findByCode(currentCode, currentUser.getProvider()) == null) {
             return create(postData, currentUser);
         } else {
             return update(postData, currentUser);
