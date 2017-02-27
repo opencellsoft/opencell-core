@@ -5,10 +5,11 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 
 /**
@@ -17,7 +18,7 @@ import org.meveo.model.BaseEntity;
 @Entity
 @Table(name = "MEVEO_NATIVE_FILTER_CONDITION")
 @DiscriminatorValue(value = "NATIVE")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEVEO_NATIVE_FILTER_CONDITION_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "MEVEO_NATIVE_FILTER_CONDITION_SEQ"), })
 public class NativeFilterCondition extends FilterCondition {
 
 	private static final long serialVersionUID = 8649912992576398066L;

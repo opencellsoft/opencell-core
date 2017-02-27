@@ -6,10 +6,11 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.scripts.RevenueRecognitionDelayUnitEnum;
 import org.meveo.model.scripts.RevenueRecognitionEventEnum;
@@ -17,7 +18,7 @@ import org.meveo.model.scripts.ScriptInstance;
 
 @Entity
 @Table(name = "AR_REVENUE_RECOG_RULE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_REVENUE_RECOG_RULE_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "AR_REVENUE_RECOG_RULE_SEQ"), })
 public class RevenueRecognitionRule extends BusinessEntity {
 
 	private static final long serialVersionUID = 7793758853731725829L;

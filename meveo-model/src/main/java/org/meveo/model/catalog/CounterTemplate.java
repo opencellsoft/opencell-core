@@ -29,13 +29,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
@@ -46,7 +47,7 @@ import org.meveo.model.ObservableEntity;
 @ObservableEntity
 @ExportIdentifier({ "code"})
 @Table(name = "CAT_COUNTER_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_COUNTER_TEMPLATE_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CAT_COUNTER_TEMPLATE_SEQ"), })
 @NamedQueries({
 @NamedQuery(name = "counterTemplate.getNbrCounterWithNotService", 
 	           query = "select count(*) from CounterTemplate c where c.id not in (select serv.counterTemplate from ServiceChargeTemplateUsage serv)"),

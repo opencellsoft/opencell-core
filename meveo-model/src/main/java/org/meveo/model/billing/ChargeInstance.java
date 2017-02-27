@@ -43,13 +43,14 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ObservableEntity;
@@ -62,7 +63,8 @@ import org.slf4j.LoggerFactory;
 @Entity
 @ObservableEntity
 @Table(name = "BILLING_CHARGE_INSTANCE")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_CHARGE_INSTANCE_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "BILLING_CHARGE_INSTANCE_SEQ"), })
 @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "code", unique = false)) })
 @Inheritance(strategy = InheritanceType.JOINED)
 public class ChargeInstance extends BusinessEntity {

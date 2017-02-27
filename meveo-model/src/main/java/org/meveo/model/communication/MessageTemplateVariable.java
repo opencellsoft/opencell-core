@@ -22,10 +22,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
@@ -33,7 +34,7 @@ import org.meveo.model.ExportIdentifier;
 @Entity
 @ExportIdentifier({ "code"})
 @Table(name = "COM_MSG_TMPL_VARIABLE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "COM_MSG_TMPL_VAR_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "COM_MSG_TMPL_VAR_SEQ"), })
 public class MessageTemplateVariable extends BusinessEntity {
 
 	private static final long serialVersionUID = -8541728044647573746L;

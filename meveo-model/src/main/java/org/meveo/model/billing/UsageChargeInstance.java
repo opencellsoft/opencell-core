@@ -27,15 +27,17 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
 @Entity
 @Table(name = "BILLING_USAGE_CHARGE_INST")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_USAGE_CHARGE_INST_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_USAGE_CHARGE_INST_SEQ"), })
 @NamedQueries({
         @NamedQuery(name = "UsageChargeInstance.listPrepaidActive", query = "SELECT c FROM UsageChargeInstance c where c.prepaid=true and "
                 + "c.status=org.meveo.model.billing.InstanceStatusEnum.ACTIVE"),

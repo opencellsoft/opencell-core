@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.faces.event.ActionEvent;
@@ -164,18 +163,12 @@ public class UserBean extends CustomFieldBean<User> {
 
     @PostConstruct
     public void init() {
-        log.error("Postconstruct UserBean");
         if (conversation.isTransient()) {
             conversation.begin();
             createMissingDirectories();
             setSelectedFolder(null);
         }
 		initSelectionOptions();
-    }
-    
-    @PreDestroy
-    public void preDestroy(){
-     log.error("PreDestroy UserBean");
     }
     
     @Override

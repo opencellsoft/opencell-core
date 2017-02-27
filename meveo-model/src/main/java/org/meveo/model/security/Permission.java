@@ -11,11 +11,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
@@ -41,7 +42,7 @@ import org.meveo.model.IEntity;
 @Entity
 @ExportIdentifier("name")
 @Table(name = "ADM_PERMISSION")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_PERMISSION_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ADM_PERMISSION_SEQ"), })
 @NamedQueries({ @NamedQuery(name = "Permission.getPermission", query = "select p from Permission p where p.resource=:resource and p.permission=:permission") })
 public class Permission implements IEntity, Serializable {
     private static final long serialVersionUID = 2884657784984355718L;

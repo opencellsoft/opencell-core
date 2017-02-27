@@ -29,11 +29,12 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
@@ -46,7 +47,8 @@ import org.meveo.model.catalog.Calendar;
 @ExportIdentifier({ "code"})
 @CustomFieldEntity(cftCodePrefix = "BILLING_CYCLE")
 @Table(name = "BILLING_CYCLE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_CYCLE_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "BILLING_CYCLE_SEQ"), })
 public class BillingCycle extends BusinessCFEntity {
 
 	private static final long serialVersionUID = 1L;

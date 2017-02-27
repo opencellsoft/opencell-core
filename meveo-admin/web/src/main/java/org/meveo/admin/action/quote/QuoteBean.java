@@ -781,7 +781,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
 
         if (editable && entity.getRoutedToUserGroup() != null) {
             UserHierarchyLevel userGroup = userHierarchyLevelService.refreshOrRetrieve(entity.getRoutedToUserGroup());
-            User user = userService.findByUsername(currentUser.getSubject());
+            User user = userService.findByUsername(currentUser.getUserName());
             editable = userGroup.isUserBelongsHereOrHigher(user);
         }
 

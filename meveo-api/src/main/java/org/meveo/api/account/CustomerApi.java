@@ -251,8 +251,7 @@ public class CustomerApi extends AccountApi {
 	}
 
 	@SecuredBusinessEntityMethod(
-			validate = @SecureMethodParameter(entity = Customer.class), 
-			user = @SecureMethodParameter(index = 1, parser = UserParser.class))
+			validate = @SecureMethodParameter(entity = Customer.class))
 	public CustomerDto find(String customerCode) throws MeveoApiException {
 		if (StringUtils.isBlank(customerCode)) {
 			missingParameters.add("customerCode");
@@ -289,8 +288,7 @@ public class CustomerApi extends AccountApi {
 
 	@SecuredBusinessEntityMethod(
 			resultFilter = AccountDtoListFilter.class, 
-			validate = @SecureMethodParameter(parser = NullParser.class),
-			user = @SecureMethodParameter(index = 1, parser = UserParser.class))
+			validate = @SecureMethodParameter(parser = NullParser.class))
 	public CustomersDto filterCustomer(CustomerDto postData) throws MeveoApiException {
 		
 		CustomerCategory customerCategory = null;

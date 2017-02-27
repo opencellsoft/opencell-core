@@ -28,7 +28,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -36,6 +35,8 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableEntity;
 import org.meveo.model.ExportIdentifier;
@@ -51,7 +52,7 @@ import org.meveo.model.billing.Subscription;
 @CustomFieldEntity(cftCodePrefix = "ACC")
 @ExportIdentifier({ "accessUserId", "subscription.code"})
 @Table(name = "MEDINA_ACCESS", uniqueConstraints = { @UniqueConstraint(columnNames = { "ACCES_USER_ID", "SUBSCRIPTION_ID" }) })
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEDINA_ACCESS_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "MEDINA_ACCESS_SEQ"), })
 @NamedQueries({ @NamedQuery(name = "Access.getAccessesForCache", query = "SELECT a from Access a left join fetch a.subscription where a.disabled=false order by a.accessUserId") })
 public class Access extends EnableEntity implements ICustomFieldEntity {
 

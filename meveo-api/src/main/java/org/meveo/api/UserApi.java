@@ -231,7 +231,7 @@ public class UserApi extends BaseApi {
 
 		handleMissingParameters();
 
-        User user = userService.findByUsernameWithFetch(username, Arrays.asList("provider", "roles", "userLevel"));
+        User user = userService.findByUsernameWithFetch(username, Arrays.asList("roles", "userLevel"));
 
 		if (user == null) {
 			throw new EntityDoesNotExistsException(User.class, username, "username");

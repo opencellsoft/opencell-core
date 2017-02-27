@@ -4,16 +4,17 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name = "DWH_CHART_BAR")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "DWH_CHART_BAR_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "DWH_CHART_BAR_SEQ"), })
 public class BarChart extends Chart {
 
 	private static final long serialVersionUID = -3247705449113663454L;

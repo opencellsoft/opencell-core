@@ -4,15 +4,16 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name = "DWH_CHART_PIE")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "DWH_CHART_PIE_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "DWH_CHART_PIE_SEQ"), })
 public class PieChart extends Chart {
 
     private static final long serialVersionUID = -3549868233998052477L;

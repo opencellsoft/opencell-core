@@ -9,13 +9,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
@@ -34,7 +35,7 @@ import org.meveo.model.annotation.ImageType;
 @CustomFieldEntity(cftCodePrefix = "OFFER_CATEGORY")
 @ExportIdentifier({ "code"})
 @Table(name = "CAT_OFFER_TEMPLATE_CATEGORY", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_OFFER_TEMPLATE_CATEGORY_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CAT_OFFER_TEMPLATE_CATEGORY_SEQ"), })
 public class OfferTemplateCategory extends BusinessCFEntity implements Comparable<OfferTemplateCategory>, IImageUpload {
 
     private static final long serialVersionUID = -5088201294684394309L;

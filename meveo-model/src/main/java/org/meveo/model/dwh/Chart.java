@@ -7,12 +7,13 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
@@ -25,7 +26,7 @@ import org.meveo.model.security.Role;
 @ExportIdentifier({ "code"})
 @Table(name = "DWH_CHART", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
 @Inheritance(strategy = InheritanceType.JOINED)
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_BILLING_RUN_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_BILLING_RUN_SEQ"), })
 public class Chart extends BusinessEntity {
 
     private static final long serialVersionUID = 7127515648757614672L;

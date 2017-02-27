@@ -42,7 +42,7 @@ public class FilteredList4_3Api extends BaseApi {
 
         // check if user owned the filter
         if (filter.getShared() == null || !filter.getShared()) {
-            if (filter.getAuditable().getCreator() != currentUser.getSubject()) {
+            if (filter.getAuditable().getCreator() != currentUser.getUserName()) {
                 throw new MeveoApiException("INVALID_FILTER_OWNER");
             }
         }
@@ -65,7 +65,7 @@ public class FilteredList4_3Api extends BaseApi {
             // check if user owned the filter
             if (filter.getShared() == null || !filter.getShared()) {
                 if (filter.getAuditable() != null) {
-                    if (filter.getAuditable().getCreator() != currentUser.getSubject()) {
+                    if (filter.getAuditable().getCreator() != currentUser.getUserName()) {
                         throw new MeveoApiException("INVALID_FILTER_OWNER");
                     }
                 }
@@ -91,7 +91,7 @@ public class FilteredList4_3Api extends BaseApi {
         	}
         	 // check if user own the filter
             if (result.getShared() == null || !result.getShared()) {
-                if (result.getAuditable().getCreator() != currentUser.getSubject()) {
+                if (result.getAuditable().getCreator() != currentUser.getUserName()) {
                     throw new MeveoApiException("INVALID_FILTER_OWNER");
                 }
             }

@@ -36,13 +36,14 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.EnableEntity;
 import org.meveo.model.ExportIdentifier;
@@ -50,7 +51,7 @@ import org.meveo.model.ExportIdentifier;
 @Entity
 @ExportIdentifier({ "uuid"})
 @Table(name = "WF_TRANSITION", uniqueConstraints = @UniqueConstraint(columnNames = { "UUID" }))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "WF_TRANSITION_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "WF_TRANSITION_SEQ"), })
 @NamedQueries({ @NamedQuery(name = "WFTransition.listByFromStatus", query = "SELECT wft FROM WFTransition wft where wft.fromStatus=:fromStatusValue and workflow=:workflowValue order by priority ASC") })
 public class WFTransition extends EnableEntity implements Comparable<WFTransition> {
 

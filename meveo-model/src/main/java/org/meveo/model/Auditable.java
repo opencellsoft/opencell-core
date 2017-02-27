@@ -52,7 +52,7 @@ public class Auditable implements Serializable {
 
 	public Auditable(MeveoUser creator) {
 		super();
-		this.creator = creator.getSubject();
+		this.creator = creator.getUserName();
 		this.created = new Date();
 	}
 
@@ -98,11 +98,11 @@ public class Auditable implements Serializable {
 
     public void updateWith(MeveoUser currentUser) {
         this.updated = new Date();
-        this.updater = currentUser.getSubject();
+        this.updater = currentUser.getUserName();
 
         // Make sure that creator and created fields are set in case entity was imported or entered by some other means               
         if (this.creator == null) {
-            this.creator = currentUser.getSubject();
+            this.creator = currentUser.getUserName();
         }
         if (this.created == null) {
             this.created = this.updated;

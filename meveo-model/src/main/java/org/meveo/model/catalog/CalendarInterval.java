@@ -51,7 +51,7 @@ public class CalendarInterval extends Calendar {
     @Enumerated(EnumType.STRING)
     private CalendarIntervalTypeEnum intervalType = CalendarIntervalTypeEnum.DAY;
 
-    @OneToMany(mappedBy = "calendar", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "calendar", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("intervalBegin")
     private List<CalendarDateInterval> intervals;
 

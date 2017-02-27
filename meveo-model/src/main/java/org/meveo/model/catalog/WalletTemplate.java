@@ -24,10 +24,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
@@ -38,7 +39,7 @@ import org.meveo.model.billing.BillingWalletTypeEnum;
 @ObservableEntity
 @ExportIdentifier({ "code"})
 @Table(name = "CAT_WALLET_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_WALLET_TEMPLATE_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CAT_WALLET_TEMPLATE_SEQ"), })
 public class WalletTemplate extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;

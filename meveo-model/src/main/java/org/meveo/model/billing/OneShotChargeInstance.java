@@ -25,14 +25,15 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 
 @Entity
 @Table(name = "BILLING_ONE_SHOT_CHARGE_INST")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_ONE_SHOT_CHRG_INST_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_ONE_SHOT_CHRG_INST_SEQ"), })
 public class OneShotChargeInstance extends ChargeInstance {
 
 	private static final long serialVersionUID = 1L;

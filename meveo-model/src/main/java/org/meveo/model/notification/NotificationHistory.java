@@ -7,17 +7,18 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.EnableEntity;
 
 @Entity
 @Table(name="ADM_NOTIF_HISTORY")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_NOTIF_HISTORY_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ADM_NOTIF_HISTORY_SEQ"), })
 public class NotificationHistory extends EnableEntity {
 	
 	private static final long serialVersionUID = -6882236977852466160L;

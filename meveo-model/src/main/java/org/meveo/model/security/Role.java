@@ -10,19 +10,20 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
 @ExportIdentifier({ "name"})
 @Table(name = "ADM_ROLE")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_ROLE_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ADM_ROLE_SEQ"), })
 public class Role extends BaseEntity {
 
     private static final long serialVersionUID = -2309961042891712685L;

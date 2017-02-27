@@ -24,11 +24,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
@@ -41,7 +42,7 @@ import org.meveo.model.ObservableEntity;
 @MultilanguageEntity(key = "menu.taxes", group = "Tax")
 @ExportIdentifier({ "code"})
 @Table(name = "BILLING_TAX", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_TAX_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_TAX_SEQ"), })
 @NamedQueries({
 		@NamedQuery(name = "tax.getNbTaxesNotAssociated", query = "select count(*) from Tax t where t.id not in (select l.tax.id from TaxLanguage l where l.tax.id is not null)"
 				+ " and t.id not in (select inv.tax.id from InvoiceSubcategoryCountry inv where inv.tax.id is not null)"),

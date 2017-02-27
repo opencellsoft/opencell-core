@@ -20,10 +20,11 @@ package org.meveo.model.billing;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
 
@@ -33,7 +34,7 @@ import org.meveo.model.ExportIdentifier;
 @Entity
 @ExportIdentifier("languageCode")
 @Table(name = "ADM_LANGUAGE")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_LANGUAGE_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ADM_LANGUAGE_SEQ"), })
 public class Language extends AuditableEntity {
 	private static final long serialVersionUID = 1L;
 

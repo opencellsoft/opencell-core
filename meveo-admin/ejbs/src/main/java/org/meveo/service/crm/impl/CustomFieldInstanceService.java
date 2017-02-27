@@ -277,7 +277,8 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         } else {
             TypedQuery<CustomFieldValue> query = getEntityManager().createNamedQuery("CustomFieldInstance.getCfiValueByCode", CustomFieldValue.class);
             query.setParameter("appliesToEntity", entity.getUuid());
-
+            query.setParameter("code", code);
+            
             List<CustomFieldValue> cfvs = query.getResultList();
             if (!cfvs.isEmpty()) {
                 CustomFieldValue cfv = cfvs.get(0);

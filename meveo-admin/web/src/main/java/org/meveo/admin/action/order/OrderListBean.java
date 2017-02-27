@@ -55,7 +55,7 @@ public class OrderListBean extends OrderBean {
 
         boolean isAdmin = currentUser.hasRole("administrationManagement");
         if (isAdmin && showMyOrdersOnly) {
-            User user = userService.findByUsername(currentUser.getSubject());
+            User user = userService.findByUsername(currentUser.getUserName());
             searchCriteria.put(SEARCH_USER_GROUP, user.getUserLevel());
         }
 

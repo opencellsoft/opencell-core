@@ -25,10 +25,11 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.communication.MediaEnum;
@@ -37,7 +38,7 @@ import org.meveo.model.communication.MediaEnum;
 @ExportIdentifier({ "code"})
 @Table(name = "COM_CONTACT_COORDS", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
 @DiscriminatorColumn(name = "MEDIA")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "COM_CONTACT_COORDS_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "COM_CONTACT_COORDS_SEQ"), })
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class ContactCoordinates extends BusinessEntity {
 	private static final long serialVersionUID = 5212396734631312511L;

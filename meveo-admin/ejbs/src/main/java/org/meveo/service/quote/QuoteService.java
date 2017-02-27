@@ -132,7 +132,7 @@ public class QuoteService extends BusinessService<Quote> {
                     // Process CDRS
                     if (quoteInvoiceInfo.getCdrs() != null && !quoteInvoiceInfo.getCdrs().isEmpty() && quoteInvoiceInfo.getSubscription() != null) {
 
-                        cdrParsingService.initByApi(currentUser.getSubject(), "quote");
+                        cdrParsingService.initByApi(currentUser.getUserName(), "quote");
 
                         List<EDR> edrs = new ArrayList<>();
 

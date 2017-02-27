@@ -20,17 +20,18 @@ package org.meveo.model.catalog;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
 @ExportIdentifier({ "hour", "minute" })
 @Table(name = "CAT_HOUR_IN_DAY", uniqueConstraints = @UniqueConstraint(columnNames = { "HOUR", "MIN" }))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_HOUR_IN_DAY_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CAT_HOUR_IN_DAY_SEQ"), })
 public class HourInDay extends BaseEntity implements Comparable<HourInDay> {
 
     private static final long serialVersionUID = 1L;

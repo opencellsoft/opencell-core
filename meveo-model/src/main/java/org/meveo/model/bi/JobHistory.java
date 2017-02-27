@@ -25,17 +25,19 @@ import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 
 @Entity
 @Table(name = "BI_JOB_HISTORY")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "HISTORY_TYPE")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BI_JOB_HISTORY_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "BI_JOB_HISTORY_SEQ"), })
 public class JobHistory extends BaseEntity {
 
 	private static final long serialVersionUID = 1L;

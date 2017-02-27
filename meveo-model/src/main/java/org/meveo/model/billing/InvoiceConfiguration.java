@@ -6,10 +6,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
@@ -22,7 +23,7 @@ import org.meveo.model.crm.Provider;
 @Entity
 @ExportIdentifier({ "provider" })
 @Table(name = "BILLING_INVOICE_CONFIGURATION", uniqueConstraints = @UniqueConstraint(columnNames = { "PROVIDER_ID" }))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_CONFIGURATION_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_INVOICE_CONFIGURATION_SEQ"), })
 public class InvoiceConfiguration extends BaseEntity implements Serializable, IEntity {
 
     private static final long serialVersionUID = -735961368678724497L;

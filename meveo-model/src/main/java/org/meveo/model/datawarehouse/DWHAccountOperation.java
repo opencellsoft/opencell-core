@@ -23,17 +23,18 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 
 @Entity
 @Table(name = "DWH_ACCOUNT_OPERATION")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "DWH_ACCOUNT_OPERATION_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "DWH_ACCOUNT_OPERATION_SEQ"), })
 public class DWHAccountOperation extends BaseEntity {
 
 	private static final long serialVersionUID = 1L;

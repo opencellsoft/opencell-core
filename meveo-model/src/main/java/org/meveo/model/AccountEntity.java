@@ -28,11 +28,12 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.ProviderContact;
@@ -43,7 +44,7 @@ import org.meveo.model.shared.Name;
 @Entity
 @ObservableEntity
 @Table(name = "ACCOUNT_ENTITY", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "ACCOUNT_TYPE"}))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ACCOUNT_ENTITY_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ACCOUNT_ENTITY_SEQ"), })
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "ACCOUNT_TYPE") // Hibernate does not support of discriminator column with Joined strategy, so need to set it manually
 @EntityListeners({ AccountCodeGenerationListener.class })

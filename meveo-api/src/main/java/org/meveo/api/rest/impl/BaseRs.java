@@ -72,7 +72,7 @@ public abstract class BaseRs implements IBaseRs {
     public ActionStatus user() {
         ActionStatus result = new ActionStatus();
 
-        result = new ActionStatus(ActionStatusEnum.SUCCESS, "WS User is=" + currentUser.getSubject());
+        result = new ActionStatus(ActionStatusEnum.SUCCESS, "WS User is=" + currentUser.getUserName());
 
         return result;
     }

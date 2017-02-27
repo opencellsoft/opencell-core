@@ -17,12 +17,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
@@ -30,7 +31,7 @@ import org.meveo.model.IEntity;
 @Entity
 @ExportIdentifier({ "offerTemplate.code", "serviceTemplate.code" })
 @Table(name = "CAT_OFFER_SERV_TEMPLATES")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_OFFER_SERV_TEMPLT_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CAT_OFFER_SERV_TEMPLT_SEQ"), })
 public class OfferServiceTemplate implements IEntity {
     
     @Id

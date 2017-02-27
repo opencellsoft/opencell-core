@@ -14,6 +14,9 @@ import org.meveo.api.security.parameter.SecureMethodParameterHandler;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.User;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
+import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.security.SecuredBusinessEntityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +43,13 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 
 	@Inject
 	private SecureMethodParameterHandler parameterHandler;
+	
+	@Inject
+	@CurrentUser
+	private MeveoUser currentUser;
+	
+	@Inject
+	private UserService userService;
 
 	private ParamBean paramBean = ParamBean.getInstance();
 
@@ -59,6 +69,8 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 	@AroundInvoke
 	public Object checkForSecuredEntities(InvocationContext context) throws Exception {
 
+	    log.error("AKK checking secured entities currentUser is {}", currentUser);
+	    
 		// check if secured entities should be saved.
 		String secureSetting = paramBean.getProperty("secured.entities.enabled", "true");
 		boolean secureEntitesEnabled = Boolean.parseBoolean(secureSetting);
@@ -78,9 +90,7 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 			return context.proceed();
 		}
 
-		SecureMethodParameter userParameter = annotation.user();
-		Object[] values = context.getParameters();
-		User user = parameterHandler.getParameterValue(userParameter, values, User.class);
+		User user = userService.findByUsername(currentUser.getUserName());
 
 		boolean hasRestrictions = user != null && user.getSecuredEntities() != null && !user.getSecuredEntities().isEmpty();
 
@@ -88,8 +98,11 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 			log.debug("User does not have any restrictions.");
 			return context.proceed();
 		}
-
+		
 		log.debug("Checking method {}.{} for secured BusinessEntities", objectName, methodName);
+		
+		Object[] values = context.getParameters();
+        
 		SecureMethodParameter[] parametersForValidation = annotation.validate();
 		for (SecureMethodParameter parameter : parametersForValidation) {
 			BusinessEntity entity = parameterHandler.getParameterValue(parameter, values, BusinessEntity.class);

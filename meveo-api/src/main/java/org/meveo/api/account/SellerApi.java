@@ -261,8 +261,7 @@ public class SellerApi extends BaseApi {
     }
 
     @SecuredBusinessEntityMethod(
-			validate = @SecureMethodParameter, 
-			user = @SecureMethodParameter(index = 1, parser = UserParser.class))
+			validate = @SecureMethodParameter)
     public SellerDto find(String sellerCode) throws MeveoApiException {
 
     	

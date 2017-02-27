@@ -26,12 +26,13 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.admin.User;
@@ -40,7 +41,7 @@ import org.meveo.model.crm.Customer;
 @Entity
 @ExportIdentifier({ "code"})
 @Table(name = "COM_MEVEO_INSTANCE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE" }))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "COM_MEVEO_INSTANCE_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "COM_MEVEO_INSTANCE_SEQ"), })
 public class MeveoInstance extends BusinessEntity {
 
     private static final long serialVersionUID = 1733186433208397850L;

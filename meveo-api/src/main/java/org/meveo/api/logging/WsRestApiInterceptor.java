@@ -4,6 +4,7 @@ import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
 import javax.persistence.EntityManager;
+import javax.persistence.TransactionRequiredException;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
@@ -58,6 +59,10 @@ public class WsRestApiInterceptor {
                 emfForJobs.flush();
             }
 
+
+        } catch (TransactionRequiredException e) {
+            log.error("Transaction must have been rollbacked already (probably by exception thown in service and caught in backing bean): {}", e.getMessage());
+            
         } catch (ConstraintViolationException e) {
             log.error("Failed to execute {}.{} method due to DTO validation errors ", invocationContext.getMethod().getDeclaringClass().getName(), invocationContext.getMethod()
                 .getName(), e);

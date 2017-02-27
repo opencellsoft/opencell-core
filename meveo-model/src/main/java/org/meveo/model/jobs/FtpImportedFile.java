@@ -4,18 +4,19 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 
 @Entity
 @Table(name = "FTP_IMPORTED_FILE")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "FTP_IMPORTED_FILE_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "FTP_IMPORTED_FILE_SEQ"), })
 public class FtpImportedFile extends BusinessEntity {
     private static final long serialVersionUID = 430457580612075457L;
 

@@ -27,18 +27,19 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.EnableEntity;
 
 @Entity
 @Table(name = "AR_DDREQUEST_ITEM")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_DDREQUEST_ITEM_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "AR_DDREQUEST_ITEM_SEQ"), })
 public class DDRequestItem extends EnableEntity {
 
 	private static final long serialVersionUID = 1L;

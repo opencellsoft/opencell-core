@@ -20,14 +20,15 @@ package org.meveo.model.communication;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 
 @Entity
 @Table(name = "COM_PROVIDER_POLICY")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "COM_PROV_POL_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "COM_PROV_POL_SEQ"), })
 public class ProviderPolicy extends BaseEntity {
 
 	private static final long serialVersionUID = -1L;

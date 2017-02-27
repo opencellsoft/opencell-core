@@ -20,11 +20,12 @@ package org.meveo.model.crm;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
@@ -32,7 +33,7 @@ import org.meveo.model.ExportIdentifier;
 @Entity
 @ExportIdentifier({ "code"})
 @Table(name = "CRM_CUSTOMER_CATEGORY", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_CUSTOMER_CATEGORY_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CRM_CUSTOMER_CATEGORY_SEQ"), })
 public class CustomerCategory extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;

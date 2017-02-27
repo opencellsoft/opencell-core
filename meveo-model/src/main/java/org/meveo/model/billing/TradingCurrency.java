@@ -26,11 +26,12 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.EnableEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
@@ -41,7 +42,7 @@ import org.meveo.model.admin.Currency;
 @ExportIdentifier({ "currency.currencyCode"})
 @Cacheable
 @Table(name = "BILLING_TRADING_CURRENCY")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_TRADING_CURRENCY_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_TRADING_CURRENCY_SEQ"), })
 public class TradingCurrency extends EnableEntity {
 	private static final long serialVersionUID = 1L;
 

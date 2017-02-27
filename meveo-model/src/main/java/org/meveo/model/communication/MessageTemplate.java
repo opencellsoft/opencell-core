@@ -27,13 +27,14 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
@@ -44,7 +45,7 @@ import org.meveo.model.ObservableEntity;
 @Table(name = "COM_MESSAGE_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
 @DiscriminatorColumn(name = "MEDIA")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "COM_MSG_TMPL_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "COM_MSG_TMPL_SEQ"), })
 public abstract class MessageTemplate extends BusinessEntity {
 
 	private static final long serialVersionUID = 5835960109145222442L;

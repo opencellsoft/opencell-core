@@ -9,9 +9,10 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
 
@@ -20,7 +21,7 @@ import org.meveo.model.BaseEntity;
  **/
 @Entity
 @Table(name = "MEVEO_FILTER_ORDER_CONDITION")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEVEO_FILTER_ORDER_CONDITION_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "MEVEO_FILTER_ORDER_CONDITION_SEQ"), })
 public class OrderCondition extends BaseEntity {
 
 	private static final long serialVersionUID = 1523437333405252113L;

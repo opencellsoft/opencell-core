@@ -27,12 +27,13 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
@@ -42,7 +43,7 @@ import org.meveo.model.ModuleItem;
 @ModuleItem
 @ExportIdentifier({ "code"})
 @Table(name = "WF_WORKFLOW", uniqueConstraints = @UniqueConstraint(columnNames = {"CODE" }))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "WF_WORKFLOW_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "WF_WORKFLOW_SEQ"), })
 public class Workflow extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;

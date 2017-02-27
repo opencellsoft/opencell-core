@@ -5,11 +5,12 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 
@@ -22,7 +23,7 @@ import org.meveo.model.ExportIdentifier;
 @Entity
 @ExportIdentifier({  "calendar.code", "intervalBegin", "intervalEnd" })
 @Table(name = "CAT_CALENDAR_INTERVAL")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_CALENDAR_INTERVAL_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CAT_CALENDAR_INTERVAL_SEQ"), })
 public class CalendarDateInterval extends BaseEntity implements Comparable<CalendarDateInterval> {
 
     private static final long serialVersionUID = -8419267880869260329L;

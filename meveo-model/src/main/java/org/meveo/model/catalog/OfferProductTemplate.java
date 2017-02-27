@@ -11,9 +11,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
@@ -24,7 +25,7 @@ import org.meveo.model.IEntity;
 @Entity
 @ExportIdentifier({ "offerTemplate.code", "productTemplate.code"})
 @Table(name = "CAT_OFFER_PRODUCT_TEMPLATE")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_OFFER_PRODUCT_TEMPLATE_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CAT_OFFER_PRODUCT_TEMPLATE_SEQ"), })
 public class OfferProductTemplate implements IEntity {
 
 	@Id

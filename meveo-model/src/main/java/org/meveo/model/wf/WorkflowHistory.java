@@ -29,17 +29,18 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.EnableEntity;
 
 @Entity
 @Table(name = "WF_HISTORY")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "WF_HISTORY_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "WF_HISTORY_SEQ"), })
 public class WorkflowHistory extends EnableEntity {
 
 	private static final long serialVersionUID = 1L;

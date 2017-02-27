@@ -259,7 +259,7 @@ public class FilterService extends BusinessService<Filter> {
         qb.addCriterion("primarySelector.targetEntity", "=", className, true);
         qb.startOrClause();
         qb.addBooleanCriterion("shared", true);
-        qb.addCriterionEntity("f.auditable.creator", currentUser.getSubject());
+        qb.addCriterionEntity("f.auditable.creator", currentUser.getUserName());
         qb.endOrClause();
 
         try {

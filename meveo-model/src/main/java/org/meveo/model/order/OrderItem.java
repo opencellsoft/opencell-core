@@ -16,11 +16,12 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
@@ -33,7 +34,7 @@ import org.meveo.model.shared.Address;
 @Entity
 @ExportIdentifier({ "order.code", "itemId"})
 @Table(name = "ORD_ORDER_ITEM")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ORD_ORDER_ITEM_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ORD_ORDER_ITEM_SEQ"), })
 public class OrderItem extends BaseEntity {
 
     private static final long serialVersionUID = -6831399734977276174L;

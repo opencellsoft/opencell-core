@@ -21,12 +21,13 @@ package org.meveo.model.billing;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
@@ -36,7 +37,8 @@ import org.meveo.model.MultilanguageEntity;
 @Entity
 @Cacheable
 @Table(name = "ADM_MESSAGES", uniqueConstraints = @UniqueConstraint(columnNames = { "ENTITY_CODE", "ENTITY_CLASS","LANGUAGE_CODE" }))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_MESSAGES_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "ADM_MESSAGES_SEQ"), })
 public class CatMessages extends BaseEntity {
 
 	private static final long serialVersionUID = -2933410380534805846L;

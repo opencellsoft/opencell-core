@@ -26,10 +26,11 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.bi.Report;
 
@@ -38,7 +39,7 @@ import org.meveo.model.bi.Report;
  */
 @Entity
 @Table(name = "CRM_EMAIL")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_EMAIL_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CRM_EMAIL_SEQ"), })
 public class Email extends BaseEntity {
 
 	private static final long serialVersionUID = 1L;

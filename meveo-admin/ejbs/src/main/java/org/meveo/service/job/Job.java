@@ -96,7 +96,7 @@ public abstract class Job {
             try {            	            	
             	JobInstanceService.runningJobs.add(jobInstance.getId());
                 
-                log.debug("Executing job {} with currentUser {} and provider {} ", jobInstance.getCode(),currentUser.getSubject(), appProvider.getCode());
+                log.debug("Executing job {} with currentUser {} and provider {} ", jobInstance.getCode(),currentUser.getUserName(), appProvider.getCode());
                 
                 execute(result, jobInstance);
                 result.close();
@@ -113,7 +113,7 @@ public abstract class Job {
             }
         } else {
             log.trace("Job {} of type {} execution will be skipped. Reason: isRunning={}, isActive={}, currentUser={} and provider {}", jobInstance.getCode(), jobInstance.getJobTemplate(),
-            		jobInstanceService.isJobRunning(jobInstance.getId()), jobInstance.isActive(), currentUser.getSubject(), appProvider.getCode());
+            		jobInstanceService.isJobRunning(jobInstance.getId()), jobInstance.isActive(), currentUser.getUserName(), appProvider.getCode());
         }
     }
 

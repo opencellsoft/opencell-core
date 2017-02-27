@@ -10,9 +10,10 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
@@ -27,7 +28,7 @@ import org.meveo.model.ModuleItem;
 @ExportIdentifier({ "code"})
 @CustomFieldEntity(cftCodePrefix = "FILTER", cftCodeFields = "code", isManuallyManaged = false)
 @Table(name = "MEVEO_FILTER")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEVEO_FILTER_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "MEVEO_FILTER_SEQ"), })
 public class Filter extends BusinessCFEntity {
 
 	private static final long serialVersionUID = -6150352877726034654L;

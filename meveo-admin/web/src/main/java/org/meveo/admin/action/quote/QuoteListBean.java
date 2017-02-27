@@ -55,7 +55,7 @@ public class QuoteListBean extends QuoteBean {
 
         boolean isAdmin = currentUser.hasRole("administrationManagement");
         if (isAdmin && showMyQuotesOnly) {
-            User user = userService.findByUsername(currentUser.getSubject());
+            User user = userService.findByUsername(currentUser.getUserName());
             searchCriteria.put(OrderListBean.SEARCH_USER_GROUP, user.getUserLevel());
         }
 

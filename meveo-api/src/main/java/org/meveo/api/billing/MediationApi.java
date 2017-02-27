@@ -60,7 +60,7 @@ public class MediationApi extends BaseApi {
 
 		if (postData.getCdr() != null && postData.getCdr().size() > 0) {
 			try {
-				cdrParsingService.initByApi(currentUser.getSubject(), postData.getIpAddress());
+				cdrParsingService.initByApi(currentUser.getUserName(), postData.getIpAddress());
 			} catch (BusinessException e1) {
 				log.error("failed to init by api ");
 				throw new MeveoApiException(e1.getMessage());
@@ -90,7 +90,7 @@ public class MediationApi extends BaseApi {
 	public void chargeCdr(String cdr, String ip) throws MeveoApiException, BusinessException {
 		if (!StringUtils.isBlank(cdr)) {
 			try {
-				cdrParsingService.initByApi(currentUser.getSubject(), ip);
+				cdrParsingService.initByApi(currentUser.getUserName(), ip);
 			} catch (BusinessException e1) {
 				log.error("failed to init by api");
 				throw new MeveoApiException(e1.getMessage());
@@ -147,7 +147,7 @@ public class MediationApi extends BaseApi {
 		result.setAvailableQuantity(-1);
 		if (!StringUtils.isBlank(cdr)) {
 			try {
-				cdrParsingService.initByApi(currentUser.getSubject(), ip);
+				cdrParsingService.initByApi(currentUser.getUserName(), ip);
 			} catch (BusinessException e1) {
 				log.error("failed to init by api");
 				throw new MeveoApiException(e1.getMessage());

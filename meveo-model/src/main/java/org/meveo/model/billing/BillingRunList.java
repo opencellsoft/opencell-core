@@ -25,15 +25,17 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.EnableEntity;
 
 @Entity
 @Table(name = "BILLING_BILLING_RUN_LIST")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_BILLING_RUN_LIST_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "BILLING_BILLING_RUN_LIST_SEQ"), })
 public class BillingRunList extends EnableEntity {
 
 	private static final long serialVersionUID = 1L;

@@ -27,12 +27,13 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 
 /**
@@ -49,7 +50,8 @@ import org.meveo.model.BaseEntity;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "INPUT_TYPE", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("NOT_SPECIFIED")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_INPUT_HISTORY_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "ADM_INPUT_HISTORY_SEQ"), })
 public class InputHistory extends BaseEntity {
 
 	private static final long serialVersionUID = 1L;

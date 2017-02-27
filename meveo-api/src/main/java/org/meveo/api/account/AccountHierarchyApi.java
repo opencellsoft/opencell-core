@@ -870,8 +870,7 @@ public class AccountHierarchyApi extends BaseApi {
 	 * @throws BusinessException
 	 */
 	@SecuredBusinessEntityMethod(
-			validate = @SecureMethodParameter(parser = CRMAccountHierarchyDtoParser.class), 
-			user = @SecureMethodParameter(index = 1, parser = UserParser.class))
+			validate = @SecureMethodParameter(parser = CRMAccountHierarchyDtoParser.class))
 	public void createCRMAccountHierarchy(CRMAccountHierarchyDto postData) throws MeveoApiException, BusinessException {
 
 		if (postData.getCrmAccountType() == null) {
@@ -1149,8 +1148,7 @@ public class AccountHierarchyApi extends BaseApi {
 	 * @throws BusinessException
 	 */
 	@SecuredBusinessEntityMethod(
-			validate = @SecureMethodParameter(parser = CRMAccountHierarchyDtoParser.class), 
-			user = @SecureMethodParameter(index = 1, parser = UserParser.class))
+			validate = @SecureMethodParameter(parser = CRMAccountHierarchyDtoParser.class))
 	public void updateCRMAccountHierarchy(CRMAccountHierarchyDto postData) throws MeveoApiException, BusinessException {
 
 		if (postData.getCrmAccountType() == null) {
@@ -1454,8 +1452,7 @@ public class AccountHierarchyApi extends BaseApi {
 	 * @throws BusinessException
 	 */
 	@SecuredBusinessEntityMethod(
-			validate = @SecureMethodParameter(parser = CRMAccountHierarchyDtoParser.class), 
-			user = @SecureMethodParameter(index = 1, parser = UserParser.class))
+			validate = @SecureMethodParameter(parser = CRMAccountHierarchyDtoParser.class))
 	public void createOrUpdateCRMAccountHierarchy(CRMAccountHierarchyDto postData) throws MeveoApiException, BusinessException {
 
 		if (postData.getCrmAccountType() == null) {

@@ -17,8 +17,8 @@ import org.meveo.model.BusinessEntity;
  **/
 // @Entity
 // @Table(name = "MEVEO_PROJECTOR")
-// @SequenceGenerator(name = "ID_GENERATOR", sequenceName =
-// "MEVEO_PROJECTOR_SEQ")
+// @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value =
+// "MEVEO_PROJECTOR_SEQ"), })
 public class Projector extends BusinessEntity {
 
 	private static final long serialVersionUID = -6179228494065206254L;

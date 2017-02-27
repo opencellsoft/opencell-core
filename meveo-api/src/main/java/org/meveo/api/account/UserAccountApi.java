@@ -190,8 +190,7 @@ public class UserAccountApi extends AccountApi {
 	}
 
 	@SecuredBusinessEntityMethod(
-			validate = @SecureMethodParameter(entity = UserAccount.class), 
-			user = @SecureMethodParameter(index = 1, parser = UserParser.class))
+			validate = @SecureMethodParameter(entity = UserAccount.class))
 	public UserAccountDto find(String userAccountCode) throws MeveoApiException {
 
 		if (StringUtils.isBlank(userAccountCode)) {

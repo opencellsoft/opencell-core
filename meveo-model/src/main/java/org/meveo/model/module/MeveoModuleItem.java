@@ -4,13 +4,14 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
@@ -20,7 +21,7 @@ import org.meveo.model.ExportIdentifier;
 @Entity
 @ExportIdentifier({ "meveoModule.code",  "appliesTo", "itemClass", "itemCode" })
 @Table(name = "MEVEO_MODULE_ITEM")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEVEO_MODULE_ITEM_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "MEVEO_MODULE_ITEM_SEQ"), })
 public class MeveoModuleItem extends BaseEntity {
 
     private static final long serialVersionUID = 1L;

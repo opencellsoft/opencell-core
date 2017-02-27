@@ -33,7 +33,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
@@ -41,6 +40,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.CustomFieldEntity;
@@ -63,7 +64,7 @@ import org.meveo.model.shared.InterBankTitle;
 @CustomFieldEntity(cftCodePrefix = "PROVIDER")
 @ExportIdentifier("code")
 @Table(name = "CRM_PROVIDER", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE" }))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_PROVIDER_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CRM_PROVIDER_SEQ"), })
 public class Provider extends AuditableEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;

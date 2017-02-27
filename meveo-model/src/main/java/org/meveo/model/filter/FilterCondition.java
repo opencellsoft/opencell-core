@@ -8,11 +8,12 @@ import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 
 /**
@@ -20,7 +21,7 @@ import org.meveo.model.BaseEntity;
  **/
 @Entity
 @Table(name = "MEVEO_FILTER_CONDITION")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "MEVEO_FILTER_CONDITION_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "MEVEO_FILTER_CONDITION_SEQ"), })
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "FILTER_CONDITION_TYPE")
 public class FilterCondition extends BaseEntity {

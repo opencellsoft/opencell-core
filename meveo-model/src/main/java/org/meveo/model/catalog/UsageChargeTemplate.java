@@ -22,16 +22,17 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.MultilanguageEntity;
 
 @Entity
 @MultilanguageEntity(key = "menu.charges", group = "ChargeTemplate")
 @Table(name = "CAT_USAGE_CHARGE_TEMPLATE")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_USAGE_CHARGE_TEMPLATE_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CAT_USAGE_CHARGE_TEMPLATE_SEQ"), })
 @NamedQueries({ @NamedQuery(name = "UsageChargeTemplate.getWithTemplateEDR", query = "SELECT u FROM UsageChargeTemplate u join u.edrTemplates t WHERE :edrTemplate=t"
 		+ " and u.disabled=false"),		
 @NamedQuery(name = "usageChargeTemplate.getNbrUsagesChrgWithNotPricePlan", 

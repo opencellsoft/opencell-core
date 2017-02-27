@@ -16,7 +16,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -25,6 +24,8 @@ import javax.validation.constraints.Digits;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.commons.utils.JsonUtils;
 import org.meveo.commons.utils.ListUtils;
 import org.meveo.model.BusinessEntity;
@@ -34,7 +35,7 @@ import org.meveo.model.catalog.CounterTypeEnum;
 @Entity
 @ObservableEntity
 @Table(name = "BILLING_COUNTER_PERIOD", uniqueConstraints = @UniqueConstraint(columnNames = { "COUNTER_INSTANCE_ID", "PERIOD_START_DATE" }))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_COUNTER_PERIOD_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_COUNTER_PERIOD_SEQ"), })
 @NamedQueries({ @NamedQuery(name = "CounterPeriod.findByPeriodDate", query = "SELECT cp FROM CounterPeriod cp WHERE cp.counterInstance=:counterInstance AND cp.periodStartDate<=:date AND cp.periodEndDate>:date"), })
 public class CounterPeriod extends BusinessEntity {
     private static final long serialVersionUID = -4924601467998738157L;

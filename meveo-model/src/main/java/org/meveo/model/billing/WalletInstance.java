@@ -33,12 +33,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
@@ -48,7 +49,7 @@ import org.meveo.model.catalog.WalletTemplate;
 @ObservableEntity
 @ExportIdentifier({ "code", "userAccount.code"})
 @Table(name = "BILLING_WALLET", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "USER_ACCOUNT_ID" }))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_WALLET_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_WALLET_SEQ"), })
 @NamedQueries({
 	@NamedQuery(name = "WalletInstance.listPrepaidActiveWalletIds", 
 			query = "SELECT c.id FROM WalletInstance c where c.walletTemplate.walletType=org.meveo.model.billing.BillingWalletTypeEnum.PREPAID and "

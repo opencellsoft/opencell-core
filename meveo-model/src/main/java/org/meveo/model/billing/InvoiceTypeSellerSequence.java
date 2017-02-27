@@ -13,10 +13,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.Seller;
@@ -25,7 +26,7 @@ import org.meveo.model.catalog.OfferServiceTemplate;
 @Entity
 @ExportIdentifier({ "invoiceType.code", "seller.code" })
 @Table(name = "BILLING_SEQ_INVTYP_SELL")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILL_SEQ_IT_SELL_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILL_SEQ_IT_SELL_SEQ"), })
 public class InvoiceTypeSellerSequence implements IEntity {
 
     @Id

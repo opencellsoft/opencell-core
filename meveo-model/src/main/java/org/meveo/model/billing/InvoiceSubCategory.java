@@ -30,11 +30,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
@@ -45,7 +46,7 @@ import org.meveo.model.MultilanguageEntity;
 @MultilanguageEntity(key = "menu.invoiceSubCategories", group = "InvoiceSubCategory")
 @ExportIdentifier({ "code"})
 @Table(name = "BILLING_INVOICE_SUB_CAT", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_SUB_CAT_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_INVOICE_SUB_CAT_SEQ"), })
 @CustomFieldEntity(cftCodePrefix = "INV_SUB_CAT")
 @NamedQueries({
 		@NamedQuery(name = "invoiceSubCategory.getNbrInvoiceSubCatNotAssociated", query = "select count(*) from InvoiceSubCategory v where v.id not in (select c.invoiceSubCategory.id from ChargeTemplate c where c.invoiceSubCategory.id is not null)"

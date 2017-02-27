@@ -35,13 +35,14 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableEntity;
@@ -56,7 +57,7 @@ import org.meveo.model.ObservableEntity;
 @Table(name = "AR_ACCOUNT_OPERATION")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "TRANSACTION_TYPE")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "AR_ACCOUNT_OPERATION_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "AR_ACCOUNT_OPERATION_SEQ"), })
 @CustomFieldEntity(cftCodePrefix = "ACC_OP")
 public class AccountOperation extends EnableEntity implements ICustomFieldEntity{
 

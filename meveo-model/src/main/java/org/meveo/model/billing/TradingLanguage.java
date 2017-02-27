@@ -26,11 +26,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.EnableEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
@@ -40,7 +41,7 @@ import org.meveo.model.ObservableEntity;
 @ExportIdentifier({ "language.languageCode"})
 @Cacheable
 @Table(name = "BILLING_TRADING_LANGUAGE")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_TRADING_LANGUAGE_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_TRADING_LANGUAGE_SEQ"), })
 @NamedQueries({			
 @NamedQuery(name = "tradingLanguage.getNbLanguageNotAssociated", 
 	           query = "select count(*) from TradingLanguage tr where tr.id not in (select s.tradingLanguage.id from Seller s where s.tradingLanguage.id is not null) "),

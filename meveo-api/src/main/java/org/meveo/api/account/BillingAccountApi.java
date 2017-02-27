@@ -382,8 +382,7 @@ public class BillingAccountApi extends AccountApi {
 	}
 
 	@SecuredBusinessEntityMethod(
-			validate = @SecureMethodParameter(entity = BillingAccount.class), 
-			user = @SecureMethodParameter(index = 1, parser = UserParser.class))
+			validate = @SecureMethodParameter(entity = BillingAccount.class))
 	public BillingAccountDto find(String billingAccountCode) throws MeveoApiException {
 		if (StringUtils.isBlank(billingAccountCode)) {
 			missingParameters.add("billingAccountCode");

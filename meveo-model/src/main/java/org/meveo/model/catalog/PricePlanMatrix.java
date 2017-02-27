@@ -28,7 +28,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -37,6 +36,8 @@ import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
@@ -55,7 +56,7 @@ import org.meveo.model.scripts.ScriptInstance;
 @CustomFieldEntity(cftCodePrefix = "PRICEPLAN")
 @ExportIdentifier({ "code"})
 @Table(name = "CAT_PRICE_PLAN_MATRIX", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_PRICE_PLAN_MATRIX_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CAT_PRICE_PLAN_MATRIX_SEQ"), })
 @NamedQueries({ @NamedQuery(name = "PricePlanMatrix.getPricePlansForCache", query = "SELECT ppm from PricePlanMatrix ppm left join ppm.offerTemplate ot left join ppm.validityCalendar vc where ppm.disabled is false order by ppm.priority ASC") })
 public class PricePlanMatrix extends BusinessCFEntity implements Comparable<PricePlanMatrix> {
     private static final long serialVersionUID = 1L;

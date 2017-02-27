@@ -4,15 +4,16 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name = "DWH_CHART_LINE")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "DWH_CHART_LINE_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "DWH_CHART_LINE_SEQ"), })
 public class LineChart extends Chart {
 
 	private static final long serialVersionUID = 1563273820297215070L;

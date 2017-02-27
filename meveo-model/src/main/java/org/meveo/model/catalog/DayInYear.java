@@ -22,17 +22,18 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
 @ExportIdentifier({ "day", "month" })
 @Table(name = "CAT_DAY_IN_YEAR", uniqueConstraints = @UniqueConstraint(columnNames = { "DAY", "MONTH" }))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_DAY_IN_YEAR_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CAT_DAY_IN_YEAR_SEQ"), })
 public class DayInYear extends AuditableEntity {
 
 	private static final long serialVersionUID = 1L;

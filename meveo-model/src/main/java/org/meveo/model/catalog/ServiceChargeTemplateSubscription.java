@@ -26,15 +26,16 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OrderColumn;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
 @ExportIdentifier({ "chargeTemplate.code", "serviceTemplate.code"})
 @Table(name = "CAT_SERV_SUB_CHARGE_TEMPLATE")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_SERV_SUBCHRG_TEMPLT_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CAT_SERV_SUBCHRG_TEMPLT_SEQ"), })
 public class ServiceChargeTemplateSubscription extends ServiceChargeTemplate<OneShotChargeTemplate> {
 
 	private static final long serialVersionUID = 7811269692204342428L;

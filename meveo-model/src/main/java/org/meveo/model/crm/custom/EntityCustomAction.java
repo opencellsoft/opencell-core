@@ -4,12 +4,13 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
@@ -19,7 +20,7 @@ import org.meveo.model.scripts.ScriptInstance;
 @ModuleItem
 @ExportIdentifier({ "code", "appliesTo"})
 @Table(name = "CRM_CUSTOM_ACTION", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "APPLIES_TO" }))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_CUSTOM_ACTION_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CRM_CUSTOM_ACTION_SEQ"), })
 public class EntityCustomAction extends BusinessEntity {
 
     private static final long serialVersionUID = -1640429569087958881L;

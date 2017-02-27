@@ -15,18 +15,19 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.EnableEntity;
 import org.meveo.model.rating.EDR;
 
 @Entity
 @Table(name = "BILLING_RESERVATION")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_RESERVATION_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_RESERVATION_SEQ"), })
 public class Reservation extends EnableEntity {
 
 	private static final long serialVersionUID = 4110616902439820101L;

@@ -21,11 +21,12 @@ package org.meveo.model.shared;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
@@ -36,7 +37,7 @@ import org.meveo.model.MultilanguageEntity;
 @MultilanguageEntity(key = "menu.titles", group = "Title")
 @ExportIdentifier({ "code"})
 @Table(name = "ADM_TITLE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE" }))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_TITLE_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ADM_TITLE_SEQ"), })
 public class Title extends BusinessEntity {
 
 	private static final long serialVersionUID = -6827515878506806536L;

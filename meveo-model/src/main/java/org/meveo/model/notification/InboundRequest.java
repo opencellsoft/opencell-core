@@ -13,13 +13,14 @@ import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.codec.binary.Base64;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ObservableEntity;
@@ -28,7 +29,7 @@ import org.meveo.model.ObservableEntity;
 @ObservableEntity
 @ExportIdentifier({ "code"})
 @Table(name = "ADM_INBOUND_REQUEST", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "ADM_INBOUND_REQUEST_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ADM_INBOUND_REQUEST_SEQ"), })
 @Inheritance(strategy = InheritanceType.JOINED)
 public class InboundRequest extends BusinessEntity {
 

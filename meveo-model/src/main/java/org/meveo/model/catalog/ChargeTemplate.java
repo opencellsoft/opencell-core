@@ -34,12 +34,13 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessCFEntity;
@@ -58,7 +59,7 @@ import org.meveo.model.finance.RevenueRecognitionRule;
 @CustomFieldEntity(cftCodePrefix = "CHARGE")
 @ExportIdentifier({ "code"})
 @Table(name = "CAT_CHARGE_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CAT_CHARGE_TEMPLATE_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CAT_CHARGE_TEMPLATE_SEQ"), })
 @Inheritance(strategy = InheritanceType.JOINED)
 public class ChargeTemplate extends BusinessCFEntity {
 

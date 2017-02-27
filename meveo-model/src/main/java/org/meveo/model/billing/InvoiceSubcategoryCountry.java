@@ -23,10 +23,11 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.EnableEntity;
 import org.meveo.model.ExportIdentifier;
 
@@ -36,7 +37,7 @@ import org.meveo.model.ExportIdentifier;
 @Entity
 @ExportIdentifier({ "invoiceSubCategory.code", "tradingCountry.country.countryCode", "tax.code"})
 @Table(name = "BILLING_INV_SUB_CAT_COUNTRY")
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INV_SUB_CAT_COUNTRY_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_INV_SUB_CAT_COUNTRY_SEQ"), })
 public class InvoiceSubcategoryCountry extends EnableEntity {
 	private static final long serialVersionUID = 1L;
 

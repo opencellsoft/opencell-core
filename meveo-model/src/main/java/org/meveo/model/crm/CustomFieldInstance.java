@@ -11,7 +11,6 @@ import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.PostLoad;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -19,6 +18,8 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.EnableEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
@@ -32,7 +33,7 @@ import org.w3c.dom.Text;
 @Entity
 @ExportIdentifier({ "appliesToEntity", "code", "periodStartDate", "periodEndDate"})
 @Table(name = "CRM_CUSTOM_FIELD_INST", uniqueConstraints = @UniqueConstraint(columnNames = { "APPLIES_TO_UUID", "CODE", "PERIOD_START_DATE", "PERIOD_END_DATE" }))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "CRM_CUSTOM_FIELD_INST_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CRM_CUSTOM_FIELD_INST_SEQ"), })
 @NamedQueries({
         @NamedQuery(name = "CustomFieldInstance.getCfiForCache", query = "select cfi from CustomFieldInstance cfi where cfi.disabled=false"),
         @NamedQuery(name = "CustomFieldInstance.getCfiByCode", query = "select cfi from CustomFieldInstance cfi where cfi.appliesToEntity=:appliesToEntity and cfi.code=:code "),

@@ -283,8 +283,7 @@ public class CustomerAccountApi extends AccountApi {
 	}
 
 	@SecuredBusinessEntityMethod(
-			validate = @SecureMethodParameter(entity = CustomerAccount.class), 
-			user = @SecureMethodParameter(index = 1, parser = UserParser.class))
+			validate = @SecureMethodParameter(entity = CustomerAccount.class))
 	public CustomerAccountDto find(String customerAccountCode) throws Exception {
 
 		if (StringUtils.isBlank(customerAccountCode)) {

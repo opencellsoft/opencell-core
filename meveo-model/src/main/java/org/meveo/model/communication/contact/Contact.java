@@ -20,17 +20,17 @@ package org.meveo.model.communication.contact;
 
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.communication.CommunicationPolicy;
@@ -39,7 +39,7 @@ import org.meveo.model.communication.Message;
 @Entity
 @ExportIdentifier({ "contactCode"})
 @Table(name = "COM_CONTACT", uniqueConstraints = @UniqueConstraint(columnNames = { "CONTACT_CODE" }))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "COM_CONTACT_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "COM_CONTACT_SEQ"), })
 public class Contact extends BaseEntity {
 
 	private static final long serialVersionUID = 3772773449495155646L;

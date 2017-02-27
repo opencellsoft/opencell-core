@@ -39,13 +39,14 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableEntity;
@@ -59,7 +60,7 @@ import org.meveo.model.quote.Quote;
 @Entity
 @ObservableEntity
 @Table(name = "BILLING_INVOICE", uniqueConstraints = @UniqueConstraint(columnNames = { "INVOICE_NUMBER", "INVOICE_TYPE_ID" }))
-@SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_INVOICE_SEQ")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_INVOICE_SEQ"), })
 @CustomFieldEntity(cftCodePrefix = "INVOICE")
 public class Invoice extends EnableEntity implements ICustomFieldEntity {
 

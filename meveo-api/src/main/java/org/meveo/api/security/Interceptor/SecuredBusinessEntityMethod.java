@@ -8,7 +8,6 @@ import java.lang.annotation.Target;
 import org.meveo.api.security.filter.NullFilter;
 import org.meveo.api.security.filter.SecureMethodResultFilter;
 import org.meveo.api.security.parameter.SecureMethodParameter;
-import org.meveo.model.admin.User;
 
 /**
  * Identifies API methods that require proper user permissions to access.
@@ -26,14 +25,6 @@ public @interface SecuredBusinessEntityMethod {
 	 * @return
 	 */
 	SecureMethodParameter[] validate();
-
-	/**
-	 * This is a {@link SecureMethodParameter} instance that describes where to
-	 * extract the {@link User} instance from the method parameters.
-	 * 
-	 * @return
-	 */
-	SecureMethodParameter user();
 
 	/**
 	 * The result filter class that will be used to filter the results for
