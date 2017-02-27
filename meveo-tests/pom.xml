@@ -4,7 +4,7 @@
   <groupId>info.meveo.tests</groupId>
   <artifactId>meveotests</artifactId>
   <name>meveotests</name>
-  <version>4.4.1</version>
+  <version>4.5-SNAPSHOT</version>
 
 <pluginRepositories>
     <pluginRepository>

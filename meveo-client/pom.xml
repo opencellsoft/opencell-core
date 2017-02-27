@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.meveo</groupId>
 		<artifactId>meveo</artifactId>
-		<version>5.0-SNAPSHOT</version>
+		<version>4.5-SNAPSHOT</version>
 	</parent>
 	<artifactId>meveo-client</artifactId>
 	<name>MEVEO Client</name>
