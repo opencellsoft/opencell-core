@@ -124,6 +124,10 @@ public class CustomerAccount extends AccountEntity {
 	@Column(name = "MANDATE_DATE")
 	@Temporal(TemporalType.DATE)
 	private Date mandateDate;
+	
+	@Column(name = "DUE_DATE_DELAY_EL", length = 2000)
+	@Size(max = 2000)
+	private String dueDateDelayEL;
 
 	public CustomerAccount() {
 		accountType = ACCOUNT_TYPE;
@@ -280,5 +284,13 @@ public class CustomerAccount extends AccountEntity {
 	@Override
 	public Class<? extends BusinessEntity> getParentEntityType() {
 		return Customer.class;
+	}
+
+	public String getDueDateDelayEL() {
+		return dueDateDelayEL;
+	}
+
+	public void setDueDateDelayEL(String dueDateDelayEL) {
+		this.dueDateDelayEL = dueDateDelayEL;
 	}
 }

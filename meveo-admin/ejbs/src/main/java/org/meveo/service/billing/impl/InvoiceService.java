@@ -474,23 +474,26 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoice.setBillingRun(em.getReference(BillingRun.class, billingRun.getId()));
             }
 			invoice.setProvider(currentUser.getProvider());
-			invoice.setInvoiceDate(invoiceDate);			
-
-			Integer delay = billingCycle.getDueDateDelay();
-			if (!StringUtils.isBlank(billingCycle.getDueDateDelayEL())) {
-				delay = evaluateIntegerExpression(billingCycle.getDueDateDelayEL(), billingAccount, invoice);
-			}
-			Date dueDate = invoiceDate;
-			if (delay != null) {
-				dueDate = DateUtils.addDaysToDate(invoiceDate, delay);
-			}
-			invoice.setDueDate(dueDate);
+			invoice.setInvoiceDate(invoiceDate);
 
 			PaymentMethodEnum paymentMethod = billingAccount.getPaymentMethod();
 			if (paymentMethod == null) {
 				paymentMethod = billingAccount.getCustomerAccount().getPaymentMethod();
 			}
 			invoice.setPaymentMethod(paymentMethod);
+			
+			Integer delay = billingCycle.getDueDateDelay();			
+			if (!StringUtils.isBlank(billingAccount.getCustomerAccount().getDueDateDelayEL())) {
+				delay = evaluateIntegerExpression(billingAccount.getCustomerAccount().getDueDateDelayEL(), billingAccount, invoice);
+			} else if (!StringUtils.isBlank(billingCycle.getDueDateDelayEL())) {
+				delay = evaluateIntegerExpression(billingCycle.getDueDateDelayEL(), billingAccount, invoice);
+			}
+			
+			Date dueDate = invoiceDate;
+			if (delay != null) {
+				dueDate = DateUtils.addDaysToDate(invoiceDate, delay);
+			}
+			invoice.setDueDate(dueDate);
 
 			create(invoice, currentUser);
 

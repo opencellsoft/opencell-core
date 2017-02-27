@@ -3100,4 +3100,10 @@
         	<column name="due_date_delay_el" type="VARCHAR(2000)" />
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#2407_20170227-Add due date delay EL in CA" author="EdwardLegaspi">
+        <addColumn tableName="AR_CUSTOMER_ACCOUNT">
+        	<column name="due_date_delay_el" type="VARCHAR(2000)" />
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

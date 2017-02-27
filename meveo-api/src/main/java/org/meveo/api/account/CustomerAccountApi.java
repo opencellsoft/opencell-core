@@ -137,6 +137,7 @@ public class CustomerAccountApi extends AccountApi {
 		customerAccount.setMandateIdentification(postData.getMandateIdentification());
 		customerAccount.setExternalRef1(postData.getExternalRef1());
 		customerAccount.setExternalRef2(postData.getExternalRef2());
+		customerAccount.setDueDateDelayEL(postData.getDueDateDelayEL());
 
 		if (postData.getContactInformation() != null) {
 			customerAccount.getContactInformation().setEmail(postData.getContactInformation().getEmail());
@@ -258,6 +259,9 @@ public class CustomerAccountApi extends AccountApi {
 		}
 		if (!StringUtils.isBlank(postData.getExternalRef2())) {
 			customerAccount.setExternalRef2(postData.getExternalRef2());
+		}
+		if (!StringUtils.isBlank(postData.getDueDateDelayEL())) {
+			customerAccount.setDueDateDelayEL(postData.getDueDateDelayEL());
 		}
 
 		if(businessAccountModel != null) {
