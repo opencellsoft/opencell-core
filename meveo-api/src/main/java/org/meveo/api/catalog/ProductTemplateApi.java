@@ -48,7 +48,8 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 	}
 
 	public ProductTemplate createOrUpdate(ProductTemplateDto productTemplateDto, User currentUser) throws MeveoApiException, BusinessException {
-		ProductTemplate productTemplate = productTemplateService.findByCode(productTemplateDto.getCode(), currentUser.getProvider());
+		String currentCode = StringUtils.isBlank(productTemplateDto.getCurrentCode())?productTemplateDto.getCode():productTemplateDto.getCurrentCode();
+		ProductTemplate productTemplate = productTemplateService.findByCode(currentCode, currentUser.getProvider());
 
 		if (productTemplate == null) {
 			return create(productTemplateDto, currentUser);
@@ -141,13 +142,13 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 		handleMissingParameters();
 
 		Provider provider = currentUser.getProvider();
-
-		ProductTemplate productTemplate = productTemplateService.findByCode(postData.getCode(), provider);
+		String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
+		ProductTemplate productTemplate = productTemplateService.findByCode(currentCode, provider);
 
 		if (productTemplate == null) {
-			throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getCode());
+			throw new EntityDoesNotExistsException(OfferTemplate.class, currentCode);
 		}
-
+		productTemplate.setCode(postData.getCode());
 		productTemplate.setDescription(postData.getDescription());
 		productTemplate.setName(postData.getName());
 		productTemplate.setValidFrom(postData.getValidFrom());

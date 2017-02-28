@@ -4,7 +4,7 @@
     <groupId>org.meveo</groupId>
     <artifactId>meveo</artifactId>
     <packaging>pom</packaging>
-    <version>4.4.1</version>
+    <version>4.5-SNAPSHOT</version>
     <name>MEVEO Parent Project</name>
     <url>http://libsmeveocore.manaty.net/sites/${project.artifactId}</url>
 
@@ -535,13 +535,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.jboss.logmanager</groupId>
-            <artifactId>jboss-logmanager</artifactId>
-            <version>1.4.0.Final</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.jboss.shrinkwrap.resolver</groupId>
             <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
             <scope>test</scope>
@@ -609,15 +602,26 @@
         </extensions>
     </build>
 
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10.1</version>
-            </plugin>
-        </plugins>
-    </reporting>
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.1</version>
+			</plugin>
+			<plugin>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.5.1</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>analyze-report</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+		</plugins>
+	</reporting>
 
     <profiles>
         <profile>

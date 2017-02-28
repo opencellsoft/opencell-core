@@ -207,9 +207,10 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
         Provider provider = currentUser.getProvider();
 
         // check if code already exists
-        OneShotChargeTemplate chargeTemplate = oneShotChargeTemplateService.findByCode(postData.getCode(), provider);
+        String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
+        OneShotChargeTemplate chargeTemplate = oneShotChargeTemplateService.findByCode(currentCode, provider);
         if (chargeTemplate == null) {
-            throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, postData.getCode());
+            throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, currentCode);
         }
 
         InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategory(), provider);
@@ -249,7 +250,7 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
                 }
             }
         }
-
+        chargeTemplate.setCode(postData.getCode());
         chargeTemplate.setDescription(postData.getDescription());
         chargeTemplate.setDisabled(postData.isDisabled());
         chargeTemplate.setAmountEditable(postData.getAmountEditable());
@@ -390,7 +391,8 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
     }
 
     public OneShotChargeTemplate createOrUpdate(OneShotChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
-        if (oneShotChargeTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
+    	String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
+    	if (oneShotChargeTemplateService.findByCode(currentCode, currentUser.getProvider()) == null) {
             return create(postData, currentUser);
         } else {
             return update(postData, currentUser);

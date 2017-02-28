@@ -69,12 +69,14 @@ public class DiscountPlanApi extends BaseApi {
             missingParameters.add("code");
             handleMissingParameters();
         }
-        DiscountPlan discountPlan = discountPlanService.findByCode(postData.getCode(), currentUser.getProvider());
+        String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
+        DiscountPlan discountPlan = discountPlanService.findByCode(currentCode, currentUser.getProvider());
 
         if (discountPlan == null) {
-            throw new EntityDoesNotExistsException(DiscountPlan.class, postData.getCode());
+            throw new EntityDoesNotExistsException(DiscountPlan.class, currentCode);
         }
         discountPlan.setDescription(postData.getDescription());
+        discountPlan.setCode(postData.getCode());
 
         discountPlanService.update(discountPlan, currentUser);
     }
@@ -145,9 +147,9 @@ public class DiscountPlanApi extends BaseApi {
             handleMissingParameters();
         }
 
-        String discountPlanCode = postData.getCode();
+        String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
 
-        if (discountPlanService.findByCode(discountPlanCode, currentUser.getProvider()) == null) {
+        if (discountPlanService.findByCode(currentCode, currentUser.getProvider()) == null) {
             create(postData, currentUser);
         } else {
             update(postData, currentUser);

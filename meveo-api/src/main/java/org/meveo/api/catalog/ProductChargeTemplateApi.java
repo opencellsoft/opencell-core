@@ -12,7 +12,6 @@ import org.meveo.api.BaseCrudApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.catalog.ProductChargeTemplateDto;
-import org.meveo.api.dto.catalog.ProductTemplateDto;
 import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -25,7 +24,6 @@ import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.catalog.ProductChargeTemplate;
-import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.crm.Provider;
@@ -179,9 +177,10 @@ public class ProductChargeTemplateApi extends BaseCrudApi<ProductChargeTemplate,
 		Provider provider = currentUser.getProvider();
 
 		// check if code already exists
-		ProductChargeTemplate chargeTemplate = productChargeTemplateService.findByCode(postData.getCode(), provider);
+		String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
+		ProductChargeTemplate chargeTemplate = productChargeTemplateService.findByCode(currentCode, provider);
 		if (chargeTemplate == null) {
-			throw new EntityDoesNotExistsException(ProductChargeTemplate.class, postData.getCode());
+			throw new EntityDoesNotExistsException(ProductChargeTemplate.class, currentCode);
 		}
 
 		InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategory(), provider);
@@ -207,7 +206,7 @@ public class ProductChargeTemplateApi extends BaseCrudApi<ProductChargeTemplate,
 				}
 			}
 		}
-
+		chargeTemplate.setCode(postData.getCode());
 		chargeTemplate.setDescription(postData.getDescription());
 		chargeTemplate.setDisabled(postData.isDisabled());
 		chargeTemplate.setAmountEditable(postData.getAmountEditable());
@@ -337,8 +336,8 @@ public class ProductChargeTemplateApi extends BaseCrudApi<ProductChargeTemplate,
 	}
 
 	public ProductChargeTemplate createOrUpdate(ProductChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
-
-		if (productChargeTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
+		String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
+		if (productChargeTemplateService.findByCode(currentCode, currentUser.getProvider()) == null) {
 			return create(postData, currentUser);
 		} else {
 			return update(postData, currentUser);

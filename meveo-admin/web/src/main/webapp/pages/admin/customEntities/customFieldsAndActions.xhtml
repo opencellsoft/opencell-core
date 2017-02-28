@@ -18,23 +18,26 @@
                 <p:column headerText="#{messages['customFieldTemplate.fieldLabel']}">
                     <h:outputText value="#{entity.description}" rendered="#{node.type == 'field'}" />
                 </p:column>
-                <p:column headerText="#{messages['customFieldTemplate.fieldType']}">
+                <p:column headerText="#{messages['customFieldTemplate.fieldType']}" style="width: 8%">
                     <h:outputText value="#{messages[entity.fieldType.label]}" rendered="#{node.type == 'field'}" />
                 </p:column>
-                <p:column headerText="#{messages['customFieldTemplate.storageType']}">
+                <p:column headerText="#{messages['customFieldTemplate.storageType']}" style="width: 7%">
                     <h:outputText value="#{messages[entity.storageType.label]}" rendered="#{node.type == 'field'}" />
                 </p:column>
-                <p:column headerText="#{messages['customFieldTemplate.fieldRequired']}" style="width: 10%">
+                <p:column headerText="#{messages['customFieldTemplate.fieldRequired']}" style="width: 8%">
                     <h:outputText value="#{messages['commons.yes']}"
                         rendered="#{node.type == 'field' and entity.valueRequired != null and entity.valueRequired.toString() == 'true'}" />
                     <h:outputText value="#{messages['commons.no']}"
                         rendered="#{node.type == 'field' and entity.valueRequired != null and entity.valueRequired.toString() == 'false'}" />
                 </p:column>
-                <p:column headerText="#{messages['customFieldTemplate.versionable']}" style="width: 10%">
+                <p:column headerText="#{messages['customFieldTemplate.applicableOnEl.short']}" width="20%">
+                    <h:outputText value="#{entity.applicableOnEl}" rendered="#{node.type == 'field'}" />
+                </p:column>
+                <p:column headerText="#{messages['customFieldTemplate.versionable']}" style="width: 6%">
                     <h:outputText value="#{messages['commons.yes']}" rendered="#{node.type == 'field' and entity.versionable != null and entity.versionable.toString() == 'true'}" />
                     <h:outputText value="#{messages['commons.no']}" rendered="#{node.type == 'field' and entity.versionable != null and entity.versionable.toString() == 'false'}" />
                 </p:column>
-                <p:column headerText="#{messages['enableEntity.active']}" style="width: 10%">
+                <p:column headerText="#{messages['enableEntity.active']}" style="width: 5%">
                     <h:outputText value="#{messages['commons.yes']}" rendered="#{node.type == 'field' and entity.active != null and entity.active.toString() == 'true'}" />
                     <h:outputText value="#{messages['commons.no']}" rendered="#{node.type == 'field' and entity.active != null and entity.active.toString() == 'false'}" />
                 </p:column>

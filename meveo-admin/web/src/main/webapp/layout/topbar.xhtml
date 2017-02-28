@@ -85,9 +85,7 @@
 	
 	<div id="#{facesContext.viewRoot.renderKitId eq 'PRIMEFACES_MOBILE' ? 'layout-menu-cover' : 'top-menu-cover'}" class="FLeft">		
 		 <c:if test="#{!hideNavigation}">
-		 	<h:form>
-  				<ui:include src="/layout/navigation.xhtml" />
- 			</h:form>
+			<ui:include src="/layout/navigation.xhtml" />
  		</c:if>
 	</div>
 

@@ -71,13 +71,13 @@ public class ChannelApi extends BaseApi {
         
 
         Provider provider = currentUser.getProvider();
-
-        Channel channel = channelService.findByCode(postData.getCode(), provider);
+        String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
+        Channel channel = channelService.findByCode(currentCode, provider);
 
         if (channel == null) {
-            throw new EntityAlreadyExistsException(Channel.class, postData.getCode());
+            throw new EntityAlreadyExistsException(Channel.class,currentCode);
         } else {
-
+        	channel.setCode(postData.getCode());
             channel.setDescription(postData.getDescription());
             channelService.update(channel, currentUser);
 
@@ -151,8 +151,8 @@ public class ChannelApi extends BaseApi {
             missingParameters.add("code");
             handleMissingParameters();
         }
-
-        if (channelService.findByCode(code, currentUser.getProvider()) == null) {
+        String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
+        if (channelService.findByCode(currentCode, currentUser.getProvider()) == null) {
             create(postData, currentUser);
         } else {
             update(postData, currentUser);
