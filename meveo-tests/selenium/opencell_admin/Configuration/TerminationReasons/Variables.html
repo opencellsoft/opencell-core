@@ -13,7 +13,7 @@
 </thead><tbody>
 <tr>
 	<td>store</td>
-	<td>id=menu:terminationReasons</td>
+	<td>//*[contains(@id, 'terminationReasons')]</td>
 	<td>TerminationReasons</td>
 </tr>
 <tr>
@@ -23,17 +23,22 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[3]/div/div/div/div[2]/span</td>
+	<td>//*[contains(@id, 'applyAgreement_bool')]</td>
 	<td>ApplyChargesUpToAgreementDate</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[4]/div/div/div/div[2]/span</td>
+	<td>//*[contains(@id, 'applyReimbursment_bool')]</td>
 	<td>RefundRecurringChargesAppliedInAdvance</td>
 </tr>
 <tr>
+	<td>assertText</td>
+	<td>//div[@id='formId:applyTerminationCharges_bool']/div[2]/span</td>
+	<td></td>
+</tr>
+<tr>
 	<td>store</td>
-	<td>xpath=/html/body/div[1]/form/div/div[2]/div/div[2]/span[5]/div/div/div/div[2]/span</td>
+	<td>//*[contains(@id, 'applyTerminationCharges_bool')]</td>
 	<td>ApplyCharge</td>
 </tr>
 <tr>
