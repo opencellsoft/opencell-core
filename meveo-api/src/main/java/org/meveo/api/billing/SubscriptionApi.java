@@ -641,7 +641,7 @@ public class SubscriptionApi extends BaseApi {
 			}
 
 			walletOperations = productInstanceService.applyProductInstance(productInstance, postData.getCriteria1(), postData.getCriteria2(), postData.getCriteria3(), currentUser,
-					true);
+					true, false);
 			for (WalletOperation walletOperation : walletOperations) {
 				result.add(new WalletOperationDto(walletOperation));
 			}

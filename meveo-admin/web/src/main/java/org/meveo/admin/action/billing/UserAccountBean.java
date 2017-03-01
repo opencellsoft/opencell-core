@@ -535,12 +535,11 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
 		try {
 			productInstanceService.create(productInstance, currentUser);
+			customFieldDataEntryBean.saveCustomFieldsToEntity(productInstance, true);
 			List<WalletOperation> walletOps = productInstanceService.applyProductInstance(productInstance, null, null, null, currentUser, true);
 			
 			if (walletOps == null || walletOps.size() == 0) {
 				messages.error(new BundleKey("messages", "message.userAccount.applyProduct.noProductCharge"));
-			} else {
-				customFieldDataEntryBean.saveCustomFieldsToEntity(productInstance, true);
 			}
 			
 		} catch (BusinessException e) {

@@ -585,8 +585,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
 		try {
 			productInstanceService.create(productInstance, currentUser);
-			productInstanceService.applyProductInstance(productInstance, null, null, null, currentUser, true);
+			// save custom field before product application so we can use in el
 			customFieldDataEntryBean.saveCustomFieldsToEntity(productInstance, true);
+			productInstanceService.applyProductInstance(productInstance, null, null, null, currentUser, true);
 		} catch (BusinessException e) {
 			messages.error(new BundleKey("messages", "message.product.application.fail"), e.getMessage());
 		} catch (Exception e) {
