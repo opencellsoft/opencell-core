@@ -21,7 +21,6 @@ package org.meveo.service.billing.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -32,14 +31,9 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.NumberUtil;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
-import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.billing.ProductChargeInstance;
-import org.meveo.model.billing.UserAccount;
-import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.catalog.ProductChargeTemplate;
-import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.service.base.BusinessService;
 
 @Stateless
