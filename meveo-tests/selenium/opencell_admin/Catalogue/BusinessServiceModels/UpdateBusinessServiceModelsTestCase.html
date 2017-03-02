@@ -12,11 +12,6 @@
 <tr><td rowspan="1" colspan="3">UpdateOfferTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>if</td>
-	<td>${VarBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertText</td>
 	<td>//a[contains(text(),'${Code}')]</td>
 	<td>${Code}</td>
@@ -47,11 +42,6 @@
 	<td>${Code}</td>
 </tr>
 <tr>
-	<td>if</td>
-	<td>${DescriptionBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${descriptionBSM}</td>
 	<td></td>
@@ -62,16 +52,6 @@
 	<td>${DescriptionValue}</td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${ServiceTemplateBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${ChooseServiceTemplate}</td>
 	<td></td>
@@ -79,11 +59,6 @@
 <tr>
 	<td>click</td>
 	<td>${ChooseServiceTemplate}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
 	<td></td>
 </tr>
 <tr>
@@ -105,11 +80,6 @@
 	<td>assertText</td>
 	<td>//a[contains(text(),'${Code}')]</td>
 	<td>${Code}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
 </tr>
 </tbody></table>
 </body>

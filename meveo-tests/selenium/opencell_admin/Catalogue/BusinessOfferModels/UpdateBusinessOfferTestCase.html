@@ -12,11 +12,6 @@
 <tr><td rowspan="1" colspan="3">UpdateOfferTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>if</td>
-	<td>${VarBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertText</td>
 	<td>//a[contains(text(),'${Code}')]</td>
 	<td>${Code}</td>
@@ -57,11 +52,6 @@
 	<td>${Description}</td>
 </tr>
 <tr>
-	<td>if</td>
-	<td>${OfferCodeBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${OfferCode}</td>
 	<td></td>
@@ -69,11 +59,6 @@
 <tr>
 	<td>click</td>
 	<td>${OfferCode}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
 	<td></td>
 </tr>
 <tr>
@@ -95,11 +80,6 @@
 	<td>assertText</td>
 	<td>//a[contains(text(),'${Code}')]</td>
 	<td>${Code}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
 </tr>
 </tbody></table>
 </body>
