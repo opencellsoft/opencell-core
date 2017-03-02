@@ -15,6 +15,8 @@ import org.meveo.api.dto.billing.ActivateServicesRequestDto;
 import org.meveo.api.dto.billing.InstantiateServicesRequestDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.SubscriptionsListDto;
+import org.meveo.api.dto.billing.OperationServicesRequestDto;
+import org.meveo.api.dto.billing.SuspendSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
@@ -277,4 +279,54 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 
         return result;
     }
+
+	@Override
+	public ActionStatus suspendSubscription(SuspendSubscriptionRequestDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            subscriptionApi.suspendSubscription(postData.getSubscriptionCode(), postData.getSuspensionDate(), getCurrentUser());
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+	}
+
+	@Override
+	public ActionStatus resumeSubscription(SuspendSubscriptionRequestDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            subscriptionApi.resumeSubscription(postData.getSubscriptionCode(), postData.getSuspensionDate(), getCurrentUser());
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+	}
+
+	@Override
+	public ActionStatus suspendServices(OperationServicesRequestDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            subscriptionApi.suspendServices(postData, getCurrentUser());
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+	}
+
+	@Override
+	public ActionStatus resumeServices(OperationServicesRequestDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            subscriptionApi.resumeServices(postData, getCurrentUser());
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+	}
 }
