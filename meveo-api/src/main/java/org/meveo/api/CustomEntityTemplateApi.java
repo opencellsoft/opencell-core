@@ -15,6 +15,7 @@ import org.meveo.api.dto.EntityCustomActionDto;
 import org.meveo.api.dto.EntityCustomizationDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -119,8 +120,11 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.meveo.api.ApiService#find(java.lang.String)
+     */
     @Override
-    public CustomEntityTemplateDto find(String code) throws EntityDoesNotExistsException, MissingParameterException {
+    public CustomEntityTemplateDto find(String code) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException {
         if (StringUtils.isBlank(code)) {
             missingParameters.add("customEntityTemplateCode");
         }
@@ -139,6 +143,18 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
         return CustomEntityTemplateDto.toDTO(cet, cetFields.values(), cetActions.values());
     }
 
+    /* (non-Javadoc)
+     * @see org.meveo.api.ApiService#findIgnoreNotFound(java.lang.String)
+     */
+    @Override
+    public CustomEntityTemplateDto findIgnoreNotFound(String code) throws MissingParameterException, InvalidParameterException, MeveoApiException {
+        try {
+            return find(code);
+        } catch (EntityDoesNotExistsException e) {
+            return null;
+        }
+    }
+    
     @Override
     public CustomEntityTemplate createOrUpdate(CustomEntityTemplateDto postData) throws MeveoApiException, BusinessException {
         CustomEntityTemplate cet = customEntityTemplateService.findByCode(postData.getCode());

@@ -16,6 +16,7 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.dwh.BarChart;
 import org.meveo.model.dwh.Chart;
@@ -121,7 +122,11 @@ public class ChartApi extends BaseCrudApi<Chart, ChartDto> {
         }
     }
 
-    public ChartDto find(String chartCode) throws MeveoApiException {
+    /* (non-Javadoc)
+     * @see org.meveo.api.ApiService#find(java.lang.String)
+     */
+    @Override
+    public ChartDto find(String chartCode) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException {
 
         if (StringUtils.isBlank(chartCode)) {
             missingParameters.add("chartCode");
@@ -146,6 +151,18 @@ public class ChartApi extends BaseCrudApi<Chart, ChartDto> {
 
         return result;
     }
+    
+    /* (non-Javadoc)
+     * @see org.meveo.api.ApiService#findIgnoreNotFound(java.lang.String)
+     */
+    @Override
+    public ChartDto findIgnoreNotFound(String code) throws MissingParameterException, InvalidParameterException, MeveoApiException {
+        try {
+            return find(code);
+        } catch (EntityDoesNotExistsException e) {
+            return null;
+        }
+    }  
 
     public void remove(String chartCode) throws MeveoApiException, BusinessException {
 

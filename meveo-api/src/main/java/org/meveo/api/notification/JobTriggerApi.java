@@ -10,6 +10,7 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.jobs.JobInstance;
@@ -99,8 +100,11 @@ public class JobTriggerApi extends BaseCrudApi<JobTrigger, JobTriggerDto> {
         return notif;
     }
 
+    /* (non-Javadoc)
+     * @see org.meveo.api.ApiService#find(java.lang.String)
+     */
     @Override
-    public JobTriggerDto find(String notificationCode) throws MeveoApiException {
+    public JobTriggerDto find(String notificationCode) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException {
         JobTriggerDto result = new JobTriggerDto();
 
         if (!StringUtils.isBlank(notificationCode)) {
@@ -119,7 +123,19 @@ public class JobTriggerApi extends BaseCrudApi<JobTrigger, JobTriggerDto> {
 
         return result;
     }
-
+    
+    /* (non-Javadoc)
+     * @see org.meveo.api.ApiService#findIgnoreNotFound(java.lang.String)
+     */
+    @Override
+    public JobTriggerDto findIgnoreNotFound(String code) throws MissingParameterException, InvalidParameterException, MeveoApiException {
+        try {
+            return find(code);
+        } catch (EntityDoesNotExistsException e) {
+            return null;
+        }
+    }
+    
     public JobTrigger update(JobTriggerDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {

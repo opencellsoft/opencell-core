@@ -8,7 +8,9 @@ import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.job.TimerEntityDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.jobs.TimerEntity;
 import org.meveo.service.job.TimerEntityService;
@@ -94,7 +96,11 @@ public class TimerEntityApi extends BaseCrudApi<TimerEntity, TimerEntityDto> {
         }
     }
 
-    public TimerEntityDto find(String timerEntityCode) throws MeveoApiException {
+    /* (non-Javadoc)
+     * @see org.meveo.api.ApiService#find(java.lang.String)
+     */
+    @Override
+    public TimerEntityDto find(String timerEntityCode) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException {
         TimerEntityDto result = new TimerEntityDto();
         if (StringUtils.isBlank(timerEntityCode)) {
             missingParameters.add("code");
@@ -107,6 +113,18 @@ public class TimerEntityApi extends BaseCrudApi<TimerEntity, TimerEntityDto> {
         result = new TimerEntityDto(timerEntity);
 
         return result;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.meveo.api.ApiService#findIgnoreNotFound(java.lang.String)
+     */
+    @Override
+    public TimerEntityDto findIgnoreNotFound(String code) throws MissingParameterException, InvalidParameterException, MeveoApiException {
+        try {
+            return find(code);
+        } catch (EntityDoesNotExistsException e) {
+            return null;
+        }
     }
 
     public void remove(String timerEntityCode) throws MeveoApiException, BusinessException {

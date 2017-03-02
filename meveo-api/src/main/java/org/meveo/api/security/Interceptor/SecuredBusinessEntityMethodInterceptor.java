@@ -115,8 +115,8 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 		Object result = context.proceed();
 
 		SecureMethodResultFilter filter = filterFactory.getFilter(annotation.resultFilter());
-		log.debug("Results will be filtered using {} filter.", filter);
-		result = filter.filterResult(result);
+		log.debug("Method {}.{} results will be filtered using {} filter.", objectName, methodName, filter);
+		result = filter.filterResult(result, currentUser, user);
 		return result;
 
 	}

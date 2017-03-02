@@ -14,6 +14,7 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
@@ -174,7 +175,17 @@ public class CustomFieldTemplateApi extends BaseApi {
         }
     }
 
-    public CustomFieldTemplateDto find(String code, String appliesTo) throws MeveoApiException {
+    /**
+     * Find Custom Field Template by its code and appliesTo attributes
+     * 
+     * @param actionCode Custom Field Template code
+     * @param appliesTo Applies to
+     * @return DTO
+     * @throws EntityDoesNotExistsException Custom Field Template was not found
+     * @throws InvalidParameterException AppliesTo value is incorrect
+     * @throws MissingParameterException A parameter, necessary to find an Custom Field Template, was not provided
+     */
+    public CustomFieldTemplateDto find(String code, String appliesTo) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException {
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
         }
@@ -182,9 +193,7 @@ public class CustomFieldTemplateApi extends BaseApi {
             missingParameters.add("appliesTo");
         }
 
-        handleMissingParameters();
-
-        
+        handleMissingParameters();       
         
         if (!getCustomizedEntitiesAppliesTo().contains(appliesTo)) {
             throw new InvalidParameterException("appliesTo", appliesTo);
@@ -196,6 +205,23 @@ public class CustomFieldTemplateApi extends BaseApi {
             throw new EntityDoesNotExistsException(CustomFieldTemplate.class, code + "/" + appliesTo);
         }
         return new CustomFieldTemplateDto(cft);
+    }
+
+    /**
+     * Same as find method, only ignore EntityDoesNotExistException exception and return Null instead
+     * 
+     * @param actionCode Custom Field Template code
+     * @param appliesTo Applies to
+     * @return DTO or Null if not found
+     * @throws InvalidParameterException AppliesTo value is incorrect
+     * @throws MissingParameterException A parameter, necessary to find an Custom Field Template, was not provided
+     */
+    public CustomFieldTemplateDto findIgnoreNotFound(String code, String appliesTo) throws MissingParameterException, InvalidParameterException {
+        try{
+            return find(code, appliesTo);
+        } catch (EntityDoesNotExistsException e){
+            return null;
+        }
     }
 
     public void createOrUpdate(CustomFieldTemplateDto postData, String appliesTo) throws MeveoApiException, BusinessException {

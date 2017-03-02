@@ -21,7 +21,6 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.OfferTemplateCategory;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 
 @Stateless
@@ -151,14 +150,11 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
         return offerTemplateCategory;
     }
 
-    /**
-     * 
-     * @param code
-     * @param provider
-     * @return
-     * @throws MeveoApiException
+    /* (non-Javadoc)
+     * @see org.meveo.api.ApiService#find(java.lang.String)
      */
-    public OfferTemplateCategoryDto find(String code) throws MeveoApiException {
+    @Override
+    public OfferTemplateCategoryDto find(String code) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
@@ -179,6 +175,18 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
 
     }
 
+    /* (non-Javadoc)
+     * @see org.meveo.api.ApiService#findIgnoreNotFound(java.lang.String)
+     */
+    @Override
+    public OfferTemplateCategoryDto findIgnoreNotFound(String code) throws MissingParameterException, InvalidParameterException, MeveoApiException {
+        try {
+            return find(code);
+        } catch (EntityDoesNotExistsException e) {
+            return null;
+        }
+    }
+    
     /**
      * 
      * @param code
@@ -186,7 +194,7 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
      * @return
      * @throws MeveoApiException
      */
-    public OfferTemplateCategoryDto find(String code, Provider provider, UriInfo uriInfo) throws MeveoApiException {
+    public OfferTemplateCategoryDto find(String code, UriInfo uriInfo) throws MeveoApiException {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");

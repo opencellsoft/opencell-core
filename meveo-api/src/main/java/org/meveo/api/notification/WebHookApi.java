@@ -10,6 +10,7 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.notification.WebHook;
@@ -109,8 +110,11 @@ public class WebHookApi extends BaseCrudApi<WebHook, WebHookDto> {
         return webHook;
     }
 
+    /* (non-Javadoc)
+     * @see org.meveo.api.ApiService#find(java.lang.String)
+     */
     @Override
-    public WebHookDto find(String notificationCode) throws MeveoApiException {
+    public WebHookDto find(String notificationCode) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException {
         WebHookDto result = new WebHookDto();
 
         if (!StringUtils.isBlank(notificationCode)) {
@@ -129,7 +133,19 @@ public class WebHookApi extends BaseCrudApi<WebHook, WebHookDto> {
 
         return result;
     }
-
+    
+    /* (non-Javadoc)
+     * @see org.meveo.api.ApiService#findIgnoreNotFound(java.lang.String)
+     */
+    @Override
+    public WebHookDto findIgnoreNotFound(String code) throws MissingParameterException, InvalidParameterException, MeveoApiException {
+        try {
+            return find(code);
+        } catch (EntityDoesNotExistsException e) {
+            return null;
+        }
+    }
+    
     public WebHook update(WebHookDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {

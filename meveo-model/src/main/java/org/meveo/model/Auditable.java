@@ -108,4 +108,14 @@ public class Auditable implements Serializable {
             this.created = this.updated;
         }
     }
+
+    /**
+     * Is current user a creator of this entity
+     * 
+     * @param currentUser Current user
+     * @return True if current user is a creator of this entity
+     */
+    public boolean isCreator(MeveoUser currentUser) {
+        return currentUser.getUserName().equals(this.creator);
+    }
 }

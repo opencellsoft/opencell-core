@@ -4,6 +4,8 @@ import javax.inject.Inject;
 
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.model.admin.SecuredEntity;
+import org.meveo.model.admin.User;
+import org.meveo.security.MeveoUser;
 import org.slf4j.Logger;
 
 /**
@@ -34,10 +36,11 @@ public abstract class SecureMethodResultFilter {
 	 * @param result
 	 *            The result object that will be filtered for inaccessible
 	 *            entities.
+	 * @param currentUser Current application user
 	 * @param user
-	 *            The user account that will be used to verify authorization.
+	 *            The user matchng current user that will be used to verify authorization.
 	 * @return The filtered result object.
 	 */
-	public abstract Object filterResult(Object result) throws MeveoApiException;
+	public abstract Object filterResult(Object result, MeveoUser currentUser, User user) throws MeveoApiException;
 
 }

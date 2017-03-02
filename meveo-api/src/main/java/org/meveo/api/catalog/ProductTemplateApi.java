@@ -13,6 +13,7 @@ import org.meveo.api.dto.catalog.ProductTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidImageData;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
@@ -26,7 +27,11 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 	@Inject
 	private ProductTemplateService productTemplateService;
 
-	public ProductTemplateDto find(String code) throws MeveoApiException {
+    /* (non-Javadoc)
+     * @see org.meveo.api.ApiService#find(java.lang.String)
+     */
+    @Override
+	public ProductTemplateDto find(String code) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException {
 
 		if (StringUtils.isBlank(code)) {
 			missingParameters.add("productTemplate code");
@@ -45,6 +50,18 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 		return productTemplateDto;
 	}
 
+    /* (non-Javadoc)
+     * @see org.meveo.api.ApiService#findIgnoreNotFound(java.lang.String)
+     */
+    @Override
+    public ProductTemplateDto findIgnoreNotFound(String code) throws MissingParameterException, InvalidParameterException, MeveoApiException {
+        try {
+            return find(code);
+        } catch (EntityDoesNotExistsException e) {
+            return null;
+        }
+    }
+    
 	public ProductTemplate createOrUpdate(ProductTemplateDto productTemplateDto) throws MeveoApiException, BusinessException {
 		ProductTemplate productTemplate = productTemplateService.findByCode(productTemplateDto.getCode());
 

@@ -11,6 +11,7 @@ import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.catalog.PricePlanMatrixDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
@@ -280,7 +281,11 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         return pricePlanMatrix;
     }
 
-    public PricePlanMatrixDto find(String pricePlanCode) throws MeveoApiException {
+    /* (non-Javadoc)
+     * @see org.meveo.api.ApiService#find(java.lang.String)
+     */
+    @Override
+    public PricePlanMatrixDto find(String pricePlanCode) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException {
         if (StringUtils.isBlank(pricePlanCode)) {
             missingParameters.add("pricePlanCode");
             handleMissingParameters();
@@ -292,6 +297,18 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         }
 
         return new PricePlanMatrixDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsDTO(pricePlanMatrix));
+    }
+
+    /* (non-Javadoc)
+     * @see org.meveo.api.ApiService#findIgnoreNotFound(java.lang.String)
+     */
+    @Override
+    public PricePlanMatrixDto findIgnoreNotFound(String code) throws MissingParameterException, InvalidParameterException, MeveoApiException {
+        try {
+            return find(code);
+        } catch (EntityDoesNotExistsException e) {
+            return null;
+        }
     }
 
     public void remove(String pricePlanCode) throws MeveoApiException, BusinessException {

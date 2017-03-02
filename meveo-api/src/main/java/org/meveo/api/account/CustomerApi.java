@@ -23,7 +23,6 @@ import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor
 import org.meveo.api.security.filter.AccountDtoListFilter;
 import org.meveo.api.security.parameter.NullParser;
 import org.meveo.api.security.parameter.SecureMethodParameter;
-import org.meveo.api.security.parameter.UserParser;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.crm.BusinessAccountModel;

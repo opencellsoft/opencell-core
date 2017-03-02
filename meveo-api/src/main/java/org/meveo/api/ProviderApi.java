@@ -132,30 +132,32 @@ public class ProviderApi extends BaseApi {
     private TitleService titleService;
 
     public void create(ProviderDto postData) throws MeveoApiException, BusinessException {
-        if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-        }
-
-        handleMissingParameters();
-        if (!currentUser.hasRole("superAdminManagement")) {
-            throw new LoginException("User has no permission to create new providers");
-        }
-
-        Provider provider = providerService.findById(appProvider.getId());
-
-        provider=fromDto(postData,provider);
-        providerService.create(provider);
-
-        // populate customFields
-        try {
-            populateCustomFields(postData.getCustomFields(), provider, true);
-        } catch (MissingParameterException e) {
-            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
-            throw e;
-        } catch (Exception e) {
-            log.error("Failed to associate custom field instance to an entity", e);
-            throw e;
-        }
+        
+        throw new BusinessException("There should already be a provider setup");
+//        if (StringUtils.isBlank(postData.getCode())) {
+//            missingParameters.add("code");
+//        }
+//
+//        handleMissingParameters();
+//        if (!currentUser.hasRole("superAdminManagement")) {
+//            throw new LoginException("User has no permission to create new providers");
+//        }
+//
+//        Provider provider = providerService.findById(appProvider.getId());
+//
+//        provider=fromDto(postData,provider);
+//        providerService.create(provider);
+//
+//        // populate customFields
+//        try {
+//            populateCustomFields(postData.getCustomFields(), provider, true);
+//        } catch (MissingParameterException e) {
+//            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+//            throw e;
+//        } catch (Exception e) {
+//            log.error("Failed to associate custom field instance to an entity", e);
+//            throw e;
+//        }
 
     }
 
@@ -171,18 +173,10 @@ public class ProviderApi extends BaseApi {
 
     public void update(ProviderDto postData) throws MeveoApiException, BusinessException {
 
-        if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-        }
-
-        handleMissingParameters();
 
         // search for provider
         Provider provider = providerService.findById(appProvider.getId(), Arrays.asList("currency", "country", "language"));
-        if (provider == null) {
-            throw new EntityDoesNotExistsException(Provider.class, postData.getCode());
-        }
-
+       
         if (!(currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationManagement")))) {
             throw new LoginException("User has no permission to manage provider " + provider.getCode());
         }
@@ -313,10 +307,6 @@ public class ProviderApi extends BaseApi {
     public GetCustomerConfigurationResponseDto getCustomerConfiguration() throws MeveoApiException {
 
 
-        if (!currentUser.hasRole("superAdminManagement")) {
-            throw new LoginException("User has no permission to access provider");
-        }
-
         GetCustomerConfigurationResponseDto result = new GetCustomerConfigurationResponseDto();
 
         // customerBrands
@@ -348,10 +338,6 @@ public class ProviderApi extends BaseApi {
 
     public GetCustomerAccountConfigurationResponseDto getCustomerAccountConfiguration() throws MeveoApiException {
 
-        if (!currentUser.hasRole("superAdminManagement")) {
-            throw new LoginException("User has no permission to access provider");
-        }
-
         GetCustomerAccountConfigurationResponseDto result = new GetCustomerAccountConfigurationResponseDto();
 
         List<CreditCategory> creditCategories = creditCategoryService.list();
@@ -364,8 +350,6 @@ public class ProviderApi extends BaseApi {
 
 
     public void updateProviderCF(ProviderDto postData) throws MeveoApiException {
-
-        handleMissingParameters();
 
         if (!(currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationManagement")))) {
             throw new LoginException("User has no permission to manage provider ");
@@ -397,12 +381,15 @@ public class ProviderApi extends BaseApi {
     public Provider fromDto(ProviderDto postData,Provider entity)throws MeveoApiException{
 
     	Provider provider=null;
-    	if(entity==null){
-    		provider=new Provider();
-    		provider.setCode(postData.getCode().toUpperCase());
-    	}else{
-    		provider=entity;
+        if (entity == null) {
+            provider = new Provider();
+        } else {
+            provider = entity;
+        }
+    	if (!StringUtils.isBlank(postData.getCode())){
+            provider.setCode(postData.getCode().toUpperCase());
     	}
+    	
     	if(!StringUtils.isBlank(postData.getDescription())){
     		provider.setDescription(postData.getDescription());
     	}

@@ -13,6 +13,7 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.notification.EmailNotification;
@@ -30,7 +31,6 @@ public class EmailNotificationApi extends BaseCrudApi<EmailNotification, EmailNo
     @Inject
     private EmailNotificationService emailNotificationService;
 
-    @SuppressWarnings("rawtypes")
     @Inject
     private CounterTemplateService counterTemplateService;
 
@@ -108,8 +108,11 @@ public class EmailNotificationApi extends BaseCrudApi<EmailNotification, EmailNo
         return notif;
     }
 
+    /* (non-Javadoc)
+     * @see org.meveo.api.ApiService#find(java.lang.String)
+     */
     @Override
-    public EmailNotificationDto find(String notificationCode) throws MeveoApiException {
+    public EmailNotificationDto find(String notificationCode) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException {
         EmailNotificationDto result = new EmailNotificationDto();
 
         if (!StringUtils.isBlank(notificationCode)) {
@@ -129,6 +132,18 @@ public class EmailNotificationApi extends BaseCrudApi<EmailNotification, EmailNo
         return result;
     }
 
+    /* (non-Javadoc)
+     * @see org.meveo.api.ApiService#findIgnoreNotFound(java.lang.String)
+     */
+    @Override
+    public EmailNotificationDto findIgnoreNotFound(String code) throws MissingParameterException, InvalidParameterException, MeveoApiException {
+        try {
+            return find(code);
+        } catch (EntityDoesNotExistsException e) {
+            return null;
+        }
+    }
+    
     public EmailNotification update(EmailNotificationDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {

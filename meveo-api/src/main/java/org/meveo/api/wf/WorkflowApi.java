@@ -16,6 +16,7 @@ import org.meveo.api.dto.payment.WorkflowHistoryDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
@@ -140,16 +141,11 @@ public class WorkflowApi extends BaseCrudApi<Workflow, WorkflowDto> {
         return workflow;
 	}
 
-	/**
-	 * 
-	 * @param workflowCode
-
-	 * @return
-	 * @throws MissingParameterException
-	 * @throws EntityDoesNotExistsException
-	 */
+    /* (non-Javadoc)
+     * @see org.meveo.api.ApiService#find(java.lang.String)
+     */
     @Override
-    public WorkflowDto find(String workflowCode) throws MeveoApiException {
+    public WorkflowDto find(String workflowCode) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException {
 		
         if (StringUtils.isBlank(workflowCode)) {
             missingParameters.add("workflowCode");
@@ -162,6 +158,18 @@ public class WorkflowApi extends BaseCrudApi<Workflow, WorkflowDto> {
 
         return new WorkflowDto(workflow);
 	}
+    
+    /* (non-Javadoc)
+     * @see org.meveo.api.ApiService#findIgnoreNotFound(java.lang.String)
+     */
+    @Override
+    public WorkflowDto findIgnoreNotFound(String code) throws MissingParameterException, InvalidParameterException, MeveoApiException {
+        try {
+            return find(code);
+        } catch (EntityDoesNotExistsException e) {
+            return null;
+        }
+    }
 
 	/**
 	 * 

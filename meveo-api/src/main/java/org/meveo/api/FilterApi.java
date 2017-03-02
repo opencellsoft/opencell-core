@@ -6,6 +6,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.FilterDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
@@ -90,8 +91,11 @@ public class FilterApi extends BaseCrudApi<Filter, FilterDto> {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.meveo.api.ApiService#find(java.lang.String)
+     */
     @Override
-    public FilterDto find(String code) throws EntityDoesNotExistsException, MissingParameterException {
+    public FilterDto find(String code) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException {
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
             handleMissingParameters();
@@ -104,5 +108,17 @@ public class FilterApi extends BaseCrudApi<Filter, FilterDto> {
         }
 
         return FilterDto.toDto(filter);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.meveo.api.ApiService#findIgnoreNotFound(java.lang.String)
+     */
+    @Override
+    public FilterDto findIgnoreNotFound(String code) throws MissingParameterException, InvalidParameterException, MeveoApiException {
+        try {
+            return find(code);
+        } catch (EntityDoesNotExistsException e) {
+            return null;
+        }
     }
 }

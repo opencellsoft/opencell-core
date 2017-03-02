@@ -38,7 +38,9 @@ import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.ModuleItem;
@@ -260,7 +262,11 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
         return result;
     }
 
-    public MeveoModuleDto find(String code) throws MeveoApiException {
+    /* (non-Javadoc)
+     * @see org.meveo.api.ApiService#find(java.lang.String)
+     */
+    @Override
+    public MeveoModuleDto find(String code) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code [BOM: businessOfferModelCode, BSM: businessServiceModelCode, BAM: businessAccountModelCode]");
@@ -276,6 +282,18 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
         MeveoModuleDto moduleDto = moduleToDto(meveoModule);
         return moduleDto;
     }
+    
+    /* (non-Javadoc)
+     * @see org.meveo.api.ApiService#findIgnoreNotFound(java.lang.String)
+     */
+    @Override
+    public MeveoModuleDto findIgnoreNotFound(String code) throws MissingParameterException, InvalidParameterException, MeveoApiException {
+        try {
+            return find(code);
+        } catch (EntityDoesNotExistsException e) {
+            return null;
+        }
+    }    
 
     public MeveoModule createOrUpdate(MeveoModuleDto postData) throws MeveoApiException, BusinessException {
         MeveoModule meveoModule = meveoModuleService.findByCode(postData.getCode());
@@ -651,18 +669,22 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
                     BaseDto itemDto = null;
 
                     if (item.getItemClass().equals(CustomFieldTemplate.class.getName())) {
-                        itemDto = customFieldTemplateApi.find(item.getItemCode(), item.getAppliesTo());
+                        itemDto = customFieldTemplateApi.findIgnoreNotFound(item.getItemCode(), item.getAppliesTo());
 
                     } else if (item.getItemClass().equals(EntityCustomAction.class.getName())) {
-                        itemDto = entityCustomActionApi.find(item.getItemCode(), item.getAppliesTo());
+                        itemDto = entityCustomActionApi.findIgnoreNotFound(item.getItemCode(), item.getAppliesTo());
 
                     } else {
 
                         ApiService apiService = getApiService(item.getItemClass(), true);
-                        itemDto = apiService.find(item.getItemCode());
+                        itemDto = apiService.findIgnoreNotFound(item.getItemCode());
 
                     }
-                    moduleDto.addModuleItem(itemDto);
+                    if (itemDto != null) {
+                        moduleDto.addModuleItem(itemDto);
+                    } else {
+                        log.warn("Failed to find a module item {}", item);
+                    }
 
                 } catch (ClassNotFoundException e) {
                     log.error("Failed to find a class", e);

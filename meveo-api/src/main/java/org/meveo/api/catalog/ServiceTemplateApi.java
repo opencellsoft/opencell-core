@@ -17,6 +17,7 @@ import org.meveo.api.dto.catalog.ServiceUsageChargeTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidImageData;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
@@ -367,8 +368,12 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         
         return serviceTemplate;
     }
-
-    public ServiceTemplateDto find(String serviceTemplateCode) throws MeveoApiException {
+    
+    /* (non-Javadoc)
+     * @see org.meveo.api.ApiService#find(java.lang.String)
+     */
+    @Override
+    public ServiceTemplateDto find(String serviceTemplateCode) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException {
 
         if (StringUtils.isBlank(serviceTemplateCode)) {
             missingParameters.add("serviceTemplateCode");
@@ -381,6 +386,18 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         }
         ServiceTemplateDto result = new ServiceTemplateDto(serviceTemplate, entityToDtoConverter.getCustomFieldsDTO(serviceTemplate));
         return result;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.meveo.api.ApiService#findIgnoreNotFound(java.lang.String)
+     */
+    @Override
+    public ServiceTemplateDto findIgnoreNotFound(String code) throws MissingParameterException, InvalidParameterException, MeveoApiException {
+        try {
+            return find(code);
+        } catch (EntityDoesNotExistsException e) {
+            return null;
+        }
     }
 
     private void setAllWalletTemplatesToNull(ServiceTemplate serviceTemplate) {

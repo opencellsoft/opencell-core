@@ -35,6 +35,7 @@ import org.meveo.model.IEntity;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
 import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
@@ -766,7 +767,12 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
                 if (parentCfEntity == null) {
                     continue;
                 }
-                parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one.
+                if (parentCfEntity instanceof Provider) {
+                    parentCfEntity = appProvider;
+                } else {
+                    parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                }
                 hasValue = hasInheritedCFValue(parentCfEntity, code);
                 if (hasValue) {
                     return true;
@@ -933,7 +939,12 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
                 if (parentCfEntity == null) {
                     continue;
                 }
-                parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one. 
+                if (parentCfEntity instanceof Provider){
+                    parentCfEntity = appProvider;
+                } else {
+                    parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                }
                 Object cfeValue = getInheritedCFValue(parentCfEntity, code);
                 if (cfeValue != null) {
                     return cfeValue;

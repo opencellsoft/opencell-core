@@ -19,6 +19,7 @@
 package org.meveo.service.script;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
@@ -28,6 +29,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
@@ -35,15 +38,12 @@ import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaFileObject;
 
-import org.jboss.vfs.VFS;
-import org.jboss.vfs.VirtualFile;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.InvalidPermissionException;
 import org.meveo.admin.exception.InvalidScriptException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.FileUtils;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.IEntity;
@@ -167,72 +167,50 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     }
 
     /**
+     * Construct classpath for script compilation
+     * 
+     * @throws IOException
+     */
+    private void constructClassPath() throws IOException {
+
+        if (classpath.length() == 0) {
+            String jbossHome = System.getProperty("jboss.home.dir");
+            File deploymentLibDirs = new File(jbossHome + "/standalone/tmp/vfs/deployment");
+            if (!deploymentLibDirs.exists()) {
+                log.error("cannot find " + jbossHome + "/standalone/tmp/vfs/deployment .. are you deploying on jboss ?");
+                return;
+            } else {
+                File deploymentDir = null;
+                for (File deployment : deploymentLibDirs.listFiles()) {
+                    if (deploymentDir == null) {
+                        deploymentDir = deployment;
+                    } else {
+                        if (deployment.lastModified() > deploymentDir.lastModified()) {
+                            deploymentDir = deployment;
+                        }
+                    }
+                }
+                for (File physicalLibDir : deploymentDir.listFiles()) {
+                    if (physicalLibDir.isDirectory()) {
+                        for (File f : FileUtils.getFilesToProcess(physicalLibDir, "*", "jar")) {
+                            classpath += f.getCanonicalPath() + File.pathSeparator;
+                        }
+                    }
+                }
+            }
+        }
+        log.info("compileAll classpath={}", classpath);
+
+    }
+    
+    /**
      * Build the classpath and compile all scripts
      */
     protected void compile(List<T> scripts) {
         try {
-
-            VirtualFile virtualLibDir = VFS.getChild("/content/" + ParamBean.getInstance().getProperty("meveo.moduleName", "meveo") + ".war/WEB-INF/lib");
-            if (!virtualLibDir.exists()) {
-                log.info("cannot find /content in VFS ");
-                VirtualFile virtualDeploymentDirs = VFS.getChild("deployment");
-                if (!virtualDeploymentDirs.exists() || virtualDeploymentDirs.getChildren().size() == 0) {
-                    log.info("cannot find /deployment in VFS");
-                } else {
-                    // get the last deployment dir
-                    VirtualFile virtualDeploymentDir = null;
-                    for (VirtualFile virtualDeployment : virtualDeploymentDirs.getChildren()) {
-                        if (virtualDeploymentDir == null) {
-                            virtualDeploymentDir = virtualDeployment;
-                        } else {
-                            if (virtualDeployment.getLastModified() > virtualDeploymentDir.getLastModified()) {
-                                virtualDeploymentDir = virtualDeployment;
-                            }
-                        }
-                    }
-                    File physicalLibDirs = virtualDeploymentDir.getPhysicalFile();
-                    for (File physicalLibDir : physicalLibDirs.listFiles()) {
-                        if (physicalLibDir.isDirectory()) {
-                            for (File f : FileUtils.getFilesToProcess(physicalLibDir, "*", "jar")) {
-                                classpath += f.getCanonicalPath() + File.pathSeparator;
-                            }
-                        }
-                    }
-                }
-            } else {
-                File physicalLibDir = virtualLibDir.getPhysicalFile();
-                for (File f : FileUtils.getFilesToProcess(physicalLibDir, "*", "jar")) {
-                    classpath += f.getCanonicalPath() + File.pathSeparator;
-                }
-            }
-            if (classpath.length() == 0) {
-                String jbossHome = System.getProperty("jboss.home.dir");
-                File deploymentLibDirs = new File(jbossHome + "/standalone/tmp/vfs/deployment");
-                if (!deploymentLibDirs.exists()) {
-                    log.error("cannot find " + jbossHome + "/standalone/tmp/vfs/deployment .. are you deploying on jboss 7 ?");
-                    return;
-                } else {
-                    File deploymentDir = null;
-                    for (File deployment : deploymentLibDirs.listFiles()) {
-                        if (deploymentDir == null) {
-                            deploymentDir = deployment;
-                        } else {
-                            if (deployment.lastModified() > deploymentDir.lastModified()) {
-                                deploymentDir = deployment;
-                            }
-                        }
-                    }
-                    for (File physicalLibDir : deploymentDir.listFiles()) {
-                        if (physicalLibDir.isDirectory()) {
-                            for (File f : FileUtils.getFilesToProcess(physicalLibDir, "*", "jar")) {
-                                classpath += f.getCanonicalPath() + File.pathSeparator;
-                            }
-                        }
-                    }
-                }
-            }
-            log.info("compileAll classpath={}", classpath);
-
+            
+            constructClassPath();
+            
             for (T script : scripts) {
                 compileScript(script, false);
             }
@@ -297,10 +275,51 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @throws CharSequenceCompilerException
      */
     protected Class<SI> compileJavaSource(String javaSrc, String fullClassName) throws CharSequenceCompilerException {
+        
+        supplementClassPathWithMissingImports(javaSrc);
+        
         compiler = new CharSequenceCompiler<SI>(this.getClass().getClassLoader(), Arrays.asList(new String[] { "-cp", classpath }));
         final DiagnosticCollector<JavaFileObject> errs = new DiagnosticCollector<JavaFileObject>();
         Class<SI> compiledScript = compiler.compile(fullClassName, javaSrc, errs, new Class<?>[] { scriptInterfaceClass });
         return compiledScript;
+    }
+
+    /**
+     * Supplement classpath with classes needed for the particular script compilation. Solves issue when classes server as jboss modules are referenced in script. E.g. prg.slf4j.Logger
+     * @param javaSrc Java source to compile
+     */
+    @SuppressWarnings("rawtypes")
+    private void supplementClassPathWithMissingImports(String javaSrc) {
+        
+        String regex = "import (.*?);";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(javaSrc);
+        while (matcher.find()) {
+            String className = matcher.group(1);
+            try {
+                if (!className.startsWith("java") && !className.startsWith("org.meveo")) {
+                    Class clazz = Class.forName(className);
+                    try {
+                        String location = clazz.getProtectionDomain().getCodeSource().getLocation().getFile();
+
+                        if (!classpath.contains(location)) {
+                            if (location.startsWith("file:/")) {
+                                location = location.substring(6);
+                            }
+                            if (location.endsWith("!/")) {
+                                location = location.substring(0, location.length() - 2);
+                            }
+                            classpath = classpath + ";" + location;
+                        }
+                    } catch (Exception e) {
+                        log.warn("Failed to find location for class {}", className);
+                    }
+                }
+            } catch (Exception e) {
+                log.warn("Failed to find location for class {}", className);
+            }
+        }
+                
     }
 
     /**

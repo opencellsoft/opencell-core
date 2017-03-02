@@ -15,6 +15,7 @@ import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
@@ -315,7 +316,11 @@ public class UsageChargeTemplateApi extends BaseCrudApi<UsageChargeTemplate, Usa
         return chargeTemplate;
     }
 
-    public UsageChargeTemplateDto find(String code) throws MeveoApiException {
+    /* (non-Javadoc)
+     * @see org.meveo.api.ApiService#find(java.lang.String)
+     */
+    @Override
+    public UsageChargeTemplateDto find(String code) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("usageChargeTemplateCode");
@@ -340,6 +345,18 @@ public class UsageChargeTemplateApi extends BaseCrudApi<UsageChargeTemplate, Usa
         result.setLanguageDescriptions(languageDescriptions);
 
         return result;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.meveo.api.ApiService#findIgnoreNotFound(java.lang.String)
+     */
+    @Override
+    public UsageChargeTemplateDto findIgnoreNotFound(String code) throws MissingParameterException, InvalidParameterException, MeveoApiException {
+        try {
+            return find(code);
+        } catch (EntityDoesNotExistsException e) {
+            return null;
+        }
     }
 
     public void remove(String code) throws MeveoApiException, BusinessException {

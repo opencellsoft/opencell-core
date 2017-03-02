@@ -142,10 +142,13 @@ public class CharSequenceCompiler<T> {
          final DiagnosticCollector<JavaFileObject> diagnosticsList,
          final Class<?>... types) throws CharSequenceCompilerException,
          ClassCastException {
-      if (diagnosticsList != null)
+       
+      if (diagnosticsList != null) {
          diagnostics = diagnosticsList;
-      else
+      } else {
          diagnostics = new DiagnosticCollector<JavaFileObject>();
+      }
+      
       Map<String, CharSequence> classes = new HashMap<String, CharSequence>(1);
       classes.put(qualifiedClassName, javaSource);
       Map<String, Class<T>> compiled = compile(classes, diagnosticsList);

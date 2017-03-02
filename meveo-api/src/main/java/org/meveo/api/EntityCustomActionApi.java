@@ -95,6 +95,15 @@ public class EntityCustomActionApi extends BaseApi {
         return result;
     }
 
+    /**
+     * Find entity custom action by its code and appliesTo attributes
+     * 
+     * @param actionCode Entity custom action code
+     * @param appliesTo Applies to
+     * @return DTO
+     * @throws EntityDoesNotExistsException Entity custom action was not found
+     * @throws MissingParameterException A parameter, necessary to find an entity custom action, was not provided
+     */
     public EntityCustomActionDto find(String actionCode, String appliesTo) throws EntityDoesNotExistsException, MissingParameterException {
 
         if (StringUtils.isBlank(actionCode)) {
@@ -114,6 +123,22 @@ public class EntityCustomActionApi extends BaseApi {
         return actionDto;
     }
 
+    /**
+     * Same as find method, only ignore EntityDoesNotExistException exception and return Null instead
+     * 
+     * @param actionCode Entity custom action code
+     * @param appliesTo Applies to
+     * @return DTO or Null if not found
+     * @throws MissingParameterException A parameter, necessary to find an entity custom action, was not provided
+     */
+    public EntityCustomActionDto findIgnoreNotFound(String actionCode, String appliesTo) throws MissingParameterException {
+        try{
+            return find(actionCode, appliesTo);
+        } catch (EntityDoesNotExistsException e){
+            return null;
+        }
+    }
+    
     public void remove(String actionCode, String appliesTo) throws EntityDoesNotExistsException, MissingParameterException, BusinessException  {
 
         if (StringUtils.isBlank(actionCode)) {

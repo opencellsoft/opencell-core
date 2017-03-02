@@ -14,7 +14,9 @@ import org.meveo.api.dto.catalog.ProductTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidImageData;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.BundleProductTemplate;
 import org.meveo.model.catalog.BundleTemplate;
@@ -32,7 +34,11 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
 	@Inject
 	private ProductTemplateService productTemplateService;
 
-	public BundleTemplateDto find(String code) throws MeveoApiException {
+    /* (non-Javadoc)
+     * @see org.meveo.api.ApiService#find(java.lang.String)
+     */
+    @Override
+	public BundleTemplateDto find(String code) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException {
 
 		if (StringUtils.isBlank(code)) {
 			missingParameters.add("bundleTemplate code");
@@ -72,6 +78,18 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
 		return bundleTemplateDto;
 	}
 
+    /* (non-Javadoc)
+     * @see org.meveo.api.ApiService#findIgnoreNotFound(java.lang.String)
+     */
+    @Override
+    public BundleTemplateDto findIgnoreNotFound(String code) throws MissingParameterException, InvalidParameterException, MeveoApiException {
+        try {
+            return find(code);
+        } catch (EntityDoesNotExistsException e) {
+            return null;
+        }
+    }
+    
 	public BundleTemplate createOrUpdate(BundleTemplateDto bundleTemplateDto) throws MeveoApiException, BusinessException {
 		BundleTemplate bundleTemplate = bundleTemplateService.findByCode(bundleTemplateDto.getCode());
 

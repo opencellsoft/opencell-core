@@ -8,7 +8,9 @@ import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.CounterTemplate;
@@ -110,8 +112,11 @@ public class CounterTemplateApi extends BaseCrudApi<CounterTemplate, CounterTemp
         return counterTemplate;
     }
 
+    /* (non-Javadoc)
+     * @see org.meveo.api.ApiService#find(java.lang.String)
+     */
     @Override
-    public CounterTemplateDto find(String code) throws MeveoApiException {
+    public CounterTemplateDto find(String code) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException {
         if (StringUtils.isBlank(code)) {
             missingParameters.add("counterTemplateCode");
             handleMissingParameters();
@@ -122,6 +127,18 @@ public class CounterTemplateApi extends BaseCrudApi<CounterTemplate, CounterTemp
         }
 
         return new CounterTemplateDto(counterTemplate);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.meveo.api.ApiService#findIgnoreNotFound(java.lang.String)
+     */
+    @Override
+    public CounterTemplateDto findIgnoreNotFound(String code) throws MissingParameterException, InvalidParameterException, MeveoApiException {
+        try {
+            return find(code);
+        } catch (EntityDoesNotExistsException e) {
+            return null;
+        }
     }
 
     public void remove(String code) throws MeveoApiException, BusinessException {
