@@ -1,6 +1,7 @@
 package org.meveo.service.notification;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -22,57 +23,47 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.NotificationHistoryStatusEnum;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.communication.impl.EmailSender;
 import org.slf4j.Logger;
 
 //TODO : transform that into MDB to correctly handle retries
 @Stateless
 public class EmailNotifier {
 
-    @Resource(lookup = "java:/MeveoMail")
-    private Session mailSession;
-
     @Inject
     NotificationHistoryService notificationHistoryService;
 
     @Inject
     private Logger log;
+    
+    @Inject
+    private EmailSender emailSender;
 
     @Asynchronous
-    public void sendEmail(EmailNotification notification, Object entityOrEvent, Map<String, Object> context) {
-        MimeMessage msg = new MimeMessage(mailSession);
+    public void sendEmail(EmailNotification notification, Object entityOrEvent, Map<String, Object> context) {       
         try {
-            msg.setFrom(new InternetAddress(notification.getEmailFrom()));
-            msg.setSentDate(new Date());
+        	       	
             HashMap<Object, Object> userMap = new HashMap<Object, Object>();
             userMap.put("event", entityOrEvent);
             userMap.put("context", context);
             log.debug("event[{}], context[{}]", entityOrEvent, context);
-            msg.setSubject((String) ValueExpressionWrapper.evaluateExpression(notification.getSubject(), userMap, String.class));
+            String subject = (String) ValueExpressionWrapper.evaluateExpression(notification.getSubject(), userMap, String.class);
+            String htmlBody = null,body = null;
             if (!StringUtils.isBlank(notification.getHtmlBody())) {
-                String htmlBody = (String) ValueExpressionWrapper.evaluateExpression(notification.getHtmlBody(), userMap, String.class);
-                msg.setContent(htmlBody, "text/html");
+                 htmlBody = (String) ValueExpressionWrapper.evaluateExpression(notification.getHtmlBody(), userMap, String.class);                
             } else {
-                String body = (String) ValueExpressionWrapper.evaluateExpression(notification.getBody(), userMap, String.class);
-                msg.setContent(body, "text/plain");
+                 body = (String) ValueExpressionWrapper.evaluateExpression(notification.getBody(), userMap, String.class);               
             }
-            List<InternetAddress> addressTo = new ArrayList<InternetAddress>();
+          List<String> to = new ArrayList<String>();
 
             if (!StringUtils.isBlank(notification.getEmailToEl())) {
-                addressTo.add(new InternetAddress((String) ValueExpressionWrapper.evaluateExpression(notification.getEmailToEl(), userMap, String.class)));
+               to.add((String) ValueExpressionWrapper.evaluateExpression(notification.getEmailToEl(), userMap, String.class));
             }
             if (notification.getEmails() != null) {
-                for (String address : notification.getEmails()) {
-                    addressTo.add(new InternetAddress(address));
-                }
-            }
-            msg.setRecipients(RecipientType.TO, addressTo.toArray(new InternetAddress[addressTo.size()]));
-
-            InternetAddress[] replytoAddress = { new InternetAddress(notification.getEmailFrom()) };
-            msg.setReplyTo(replytoAddress);
-
-            Transport.send(msg);
+            	to.addAll(notification.getEmails());
+            }            
+            emailSender.sent(notification.getEmailFrom(), Arrays.asList(notification.getEmailFrom()), to, subject, body, htmlBody);             
             notificationHistoryService.create(notification, entityOrEvent, "", NotificationHistoryStatusEnum.SENT);
-
         } catch (Exception e) {
             try {
             	log.error("Error occured when sending email",e);
