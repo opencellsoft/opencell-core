@@ -55,8 +55,9 @@
 		
 		<hftl:entityPopup id="productTemplatePopup" header="#{messages['productTemplate.title']}" backingBean="#{productTemplateBean}" dataModel="#{subscriptionBean.offerProductTemplates}"
             searchField1Label="#{messages['BusinessEntity.code']}" searchField1="code" column1Label="#{messages['BusinessEntity.code']}" column1="code"
-            selection="#{subscriptionBean.productInstance.productTemplate}" 
-            updateField=":subscriptionTab:applyProductForm:productTemplateSelectedId :subscriptionTab:applyProductForm:productTemplateSelectedId_text">
+            selection="#{subscriptionBean.productInstance.productTemplate}"
+            selectionListenerBean="#{subscriptionBean}" selectionListenerMethod="updateProductInstanceCode" 
+            updateField=":subscriptionTab:applyProductForm:productTemplateSelectedId :subscriptionTab:applyProductForm:productTemplateSelectedId_text :#{p:component('productCF')}">
         </hftl:entityPopup>
 
 		<hftl:entityPopup id="userAccountPopup"

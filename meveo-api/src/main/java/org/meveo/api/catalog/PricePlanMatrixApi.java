@@ -188,14 +188,15 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         
 
         // search for eventCode
+        String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
         if (chargeTemplateServiceAll.findByCode(postData.getEventCode()) == null) {
             throw new EntityDoesNotExistsException(ChargeTemplate.class, postData.getEventCode());
         }
 
         // search for price plan
-        PricePlanMatrix pricePlanMatrix = pricePlanMatrixService.findByCode(postData.getCode());
+        PricePlanMatrix pricePlanMatrix = pricePlanMatrixService.findByCode(currentCode);
         if (pricePlanMatrix == null) {
-            throw new EntityDoesNotExistsException(PricePlanMatrix.class, postData.getCode());
+            throw new EntityDoesNotExistsException(PricePlanMatrix.class, currentCode);
         }
         pricePlanMatrix.setEventCode(postData.getEventCode());
 
@@ -248,7 +249,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         	}
         	pricePlanMatrix.setScriptInstance(scriptInstance);
         }
-
+        pricePlanMatrix.setCode(postData.getCode());
         pricePlanMatrix.setMinQuantity(postData.getMinQuantity());
         pricePlanMatrix.setMaxQuantity(postData.getMaxQuantity());
         pricePlanMatrix.setStartSubscriptionDate(postData.getStartSubscriptionDate());
@@ -346,7 +347,8 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
     }
 
     public PricePlanMatrix createOrUpdate(PricePlanMatrixDto postData) throws MeveoApiException, BusinessException {
-        if (pricePlanMatrixService.findByCode(postData.getCode()) == null) {
+    	String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
+        if (pricePlanMatrixService.findByCode(currentCode) == null) {
             return create(postData);
         } else {
             return update(postData);

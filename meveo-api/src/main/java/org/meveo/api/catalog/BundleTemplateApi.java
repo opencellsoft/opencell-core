@@ -91,7 +91,9 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
     }
     
 	public BundleTemplate createOrUpdate(BundleTemplateDto bundleTemplateDto) throws MeveoApiException, BusinessException {
-		BundleTemplate bundleTemplate = bundleTemplateService.findByCode(bundleTemplateDto.getCode());
+		String currentCode = StringUtils.isBlank(bundleTemplateDto.getCurrentCode())?bundleTemplateDto.getCode():bundleTemplateDto.getCurrentCode();
+		BundleTemplate bundleTemplate = bundleTemplateService.findByCode(currentCode);
+
 
 		if (bundleTemplate == null) {
 			return create(bundleTemplateDto);
@@ -165,13 +167,13 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
 		handleMissingParameters();
 
 		
-
-		BundleTemplate bundleTemplate = bundleTemplateService.findByCode(postData.getCode());
+		String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
+		BundleTemplate bundleTemplate = bundleTemplateService.findByCode(currentCode);
 
 		if (bundleTemplate == null) {
-			throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getCode());
+			throw new EntityDoesNotExistsException(OfferTemplate.class, currentCode);
 		}
-
+		bundleTemplate.setCode(postData.getCode());
 		bundleTemplate.setDescription(postData.getDescription());
 		bundleTemplate.setName(postData.getName());
 		bundleTemplate.setValidFrom(postData.getValidFrom());

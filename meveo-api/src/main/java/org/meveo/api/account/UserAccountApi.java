@@ -382,16 +382,27 @@ public class UserAccountApi extends AccountApi {
 		List<WalletOperation> walletOperations = null;
 
 		try {
-			ProductInstance productInstance = new ProductInstance(userAccount, null, productTemplate, postData.getQuantity(), postData.getOperationDate(),
-					postData.getProduct(), postData.getDescription(),null);
-			walletOperations = productInstanceService.applyProductInstance(productInstance, postData.getCriteria1(),
-					postData.getCriteria2(), postData.getCriteria3(), true);
+			ProductInstance productInstance = new ProductInstance(userAccount, null, productTemplate, postData.getQuantity(), postData.getOperationDate(), postData.getProduct(),
+					postData.getDescription(), null);
+			productInstanceService.instantiateProductInstance(productInstance, postData.getCriteria1(), postData.getCriteria2(), postData.getCriteria3(), false);
+
+			// Validate and populate customFields
+			try {
+				populateCustomFields(postData.getCustomFields(), productInstance, true, false);
+			} catch (MissingParameterException e) {
+				log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+				throw e;
+			}
+
+			walletOperations = productInstanceService.applyProductInstance(productInstance, postData.getCriteria1(), postData.getCriteria2(), postData.getCriteria3(), 
+					true, false);
 			for (WalletOperation walletOperation : walletOperations) {
 				result.add(new WalletOperationDto(walletOperation));
 			}
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e.getMessage());
 		}
+		
 		return result;
 	}
 }

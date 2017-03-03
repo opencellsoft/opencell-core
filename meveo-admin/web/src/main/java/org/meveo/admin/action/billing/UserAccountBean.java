@@ -509,6 +509,10 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 		productInstance = new ProductInstance();
 		productChargeInstance = new ProductChargeInstance();
 	}
+	
+	public void updateProductInstanceCode() {
+		productInstance.setCode(productInstance.getProductTemplate().getCode());
+	}
 
 	public void applyProduct() {
 		if (productInstance != null) {
@@ -523,6 +527,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
 		try {
 			productInstanceService.create(productInstance);
+			customFieldDataEntryBean.saveCustomFieldsToEntity(productInstance, true);
 			List<WalletOperation> walletOps = productInstanceService.applyProductInstance(productInstance, null, null, null, true);
 			
 			if (walletOps == null || walletOps.size() == 0) {

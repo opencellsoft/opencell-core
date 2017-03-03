@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.StringUtils;
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BusinessDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
@@ -21,7 +21,7 @@ import org.meveo.model.catalog.WalletTemplate;
  **/
 @XmlRootElement(name = "ServiceTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ServiceTemplateDto extends BaseDto {
+public class ServiceTemplateDto extends BusinessDto {
 
     private static final long serialVersionUID = -6794700715161690227L;
 

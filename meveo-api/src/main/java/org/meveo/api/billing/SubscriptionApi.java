@@ -623,15 +623,26 @@ public class SubscriptionApi extends BaseApi {
 
 		try {
 			ProductInstance productInstance = new ProductInstance(null, subscription, productTemplate, postData.getQuantity(), postData.getOperationDate(), postData.getProduct(),
-					StringUtils.isBlank(postData.getDescription()) ? productTemplate.getDescriptionOrCode() : postData.getDescription(),null);
-			walletOperations = productInstanceService.applyProductInstance(productInstance, postData.getCriteria1(),
-					postData.getCriteria2(), postData.getCriteria3(), true);
+					StringUtils.isBlank(postData.getDescription()) ? productTemplate.getDescriptionOrCode() : postData.getDescription(), null);
+			productInstanceService.instantiateProductInstance(productInstance, postData.getCriteria1(), postData.getCriteria2(), postData.getCriteria3(), false);
+
+			// populate customFields
+			try {
+				populateCustomFields(postData.getCustomFields(), productInstance, true);
+			} catch (MissingParameterException e) {
+				log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+				throw e;
+			}
+
+			walletOperations = productInstanceService.applyProductInstance(productInstance, postData.getCriteria1(), postData.getCriteria2(), postData.getCriteria3(),
+					true, false);
 			for (WalletOperation walletOperation : walletOperations) {
 				result.add(new WalletOperationDto(walletOperation));
 			}
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e.getMessage());
 		}
+		
 		return result;
 	}
 

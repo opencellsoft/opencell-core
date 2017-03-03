@@ -33,9 +33,10 @@ public class DigitalResourceApi extends BaseApi {
 		return new DigitalResourcesDto(digitalResource);
 	}
 
+	
 	public void createOrUpdate(DigitalResourcesDto digitalResourcesDto) throws MeveoApiException, BusinessException {
-
-		DigitalResource digitalResource = digitalResourceService.findByCode(digitalResourcesDto.getCode());
+		String currentCode = StringUtils.isBlank(digitalResourcesDto.getCurrentCode())?digitalResourcesDto.getCode():digitalResourcesDto.getCurrentCode();
+		DigitalResource digitalResource = digitalResourceService.findByCode(currentCode);
 
 		if (digitalResource == null) {
 			create(digitalResourcesDto);
@@ -70,14 +71,14 @@ public class DigitalResourceApi extends BaseApi {
 		}
 
 		
-
-		DigitalResource digitalResource = digitalResourceService.findByCode(postData.getCode());
+		String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
+		DigitalResource digitalResource = digitalResourceService.findByCode(currentCode);
 		if ( digitalResource == null) {
-			throw new EntityDoesNotExistsException(DigitalResource.class, postData.getCode());
+			throw new EntityDoesNotExistsException(DigitalResource.class, currentCode);
 		}
 
 		digitalResource = populateDigitalResourceEntity(digitalResource, postData);
-
+		digitalResource.setCode(postData.getCode());
 		digitalResourceService.update(digitalResource);
 	}
 

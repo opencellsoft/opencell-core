@@ -577,6 +577,8 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
 		try {
 			productInstanceService.create(productInstance);
+			// save custom field before product application so we can use in el
+			customFieldDataEntryBean.saveCustomFieldsToEntity(productInstance, true);
 			productInstanceService.applyProductInstance(productInstance, null, null, null, true);
 		} catch (BusinessException e) {
 			messages.error(new BundleKey("messages", "message.product.application.fail"), e.getMessage());
@@ -955,5 +957,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 		}
 
 		return quantity.multiply(this.getOneShotWalletOperations().get(0).getAmountWithoutTax());
+	}
+	
+	public void updateProductInstanceCode() {
+		productInstance.setCode(productInstance.getProductTemplate().getCode());
 	}
 }

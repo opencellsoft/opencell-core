@@ -9,14 +9,14 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BusinessDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.catalog.PricePlanMatrix;
 
 
 @XmlRootElement(name = "PricePlan")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PricePlanMatrixDto extends BaseDto {
+public class PricePlanMatrixDto extends BusinessDto {
 
     private static final long serialVersionUID = -9089693491690592072L;
 

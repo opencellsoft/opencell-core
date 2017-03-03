@@ -193,9 +193,10 @@ public class UsageChargeTemplateApi extends BaseCrudApi<UsageChargeTemplate, Usa
         
 
         // check if code already exists
-        UsageChargeTemplate chargeTemplate = usageChargeTemplateService.findByCode(postData.getCode());
+        String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
+        UsageChargeTemplate chargeTemplate = usageChargeTemplateService.findByCode(currentCode);
         if (chargeTemplate == null) {
-            throw new EntityDoesNotExistsException(UsageChargeTemplate.class, postData.getCode());
+            throw new EntityDoesNotExistsException(UsageChargeTemplate.class,currentCode);
         }
 
         InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategory());
@@ -222,7 +223,7 @@ public class UsageChargeTemplateApi extends BaseCrudApi<UsageChargeTemplate, Usa
                 }
             }
         }
-
+        chargeTemplate.setCode(postData.getCode());
         chargeTemplate.setDescription(postData.getDescription());
         chargeTemplate.setDisabled(postData.isDisabled());
         chargeTemplate.setAmountEditable(postData.getAmountEditable());
@@ -376,8 +377,8 @@ public class UsageChargeTemplateApi extends BaseCrudApi<UsageChargeTemplate, Usa
     }
 
     public UsageChargeTemplate createOrUpdate(UsageChargeTemplateDto postData) throws MeveoApiException, BusinessException {
-
-        if (usageChargeTemplateService.findByCode(postData.getCode()) == null) {
+    	 String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
+        if (usageChargeTemplateService.findByCode(currentCode) == null) {
             return create(postData);
         } else {
             return update(postData);

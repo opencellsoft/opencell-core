@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.billing.ProductDto;
 
 @XmlRootElement(name = "ApplyProductRequest")
@@ -37,6 +38,8 @@ public class ApplyProductRequestDto extends BaseDto {
 	private String criteria1;
 	private String criteria2;
 	private String criteria3;
+	
+	private CustomFieldsDto customFields = new CustomFieldsDto();
 	
 	public ApplyProductRequestDto(){
 		
@@ -150,6 +153,14 @@ public class ApplyProductRequestDto extends BaseDto {
 				 + ", operationDate=" + operationDate + ", description=" + description
 				+ ", amountWithoutTax=" + amountWithoutTax + ", amountWithTax=" + amountWithTax + ", criteria1="
 				+ criteria1 + ", criteria2=" + criteria2 + ", criteria3=" + criteria3 + "]";
+	}
+
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
 	}
 
 

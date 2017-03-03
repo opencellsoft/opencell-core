@@ -199,9 +199,10 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
 
         
         // check if code already exists
-        RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService.findByCode(postData.getCode());
+        String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
+        RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService.findByCode(currentCode);
         if (chargeTemplate == null) {
-            throw new EntityDoesNotExistsException(RecurringChargeTemplate.class, postData.getCode());
+            throw new EntityDoesNotExistsException(RecurringChargeTemplate.class, currentCode);
         }
 
         InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategory());
@@ -213,7 +214,7 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         if (calendar == null) {
             throw new EntityDoesNotExistsException(Calendar.class, postData.getCalendar());
         }
-
+        chargeTemplate.setCode(postData.getCode());
         chargeTemplate.setDescription(postData.getDescription());
         chargeTemplate.setDisabled(postData.isDisabled());
         chargeTemplate.setAmountEditable(postData.getAmountEditable());
@@ -364,8 +365,8 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
     }
 
     public RecurringChargeTemplate createOrUpdate(RecurringChargeTemplateDto postData) throws MeveoApiException, BusinessException {
-
-        if (recurringChargeTemplateService.findByCode(postData.getCode()) == null) {
+    	 String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
+        if (recurringChargeTemplateService.findByCode(currentCode) == null) {
             return create(postData);
         } else {
             return update(postData);
