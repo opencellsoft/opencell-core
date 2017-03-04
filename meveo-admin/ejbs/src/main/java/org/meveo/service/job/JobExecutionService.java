@@ -19,85 +19,199 @@
 package org.meveo.service.job;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.annotation.security.RunAs;
+import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 import org.apache.commons.lang.StringUtils;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
+@RunAs("jobRunner")
 public class JobExecutionService extends PersistenceService<JobExecutionResultImpl> {
 
     @Inject
     private JobInstanceService jobInstanceService;
 
-    @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void executeJob(String jobName, JobInstance jobInstance, JobCategoryEnum jobCategory) {
+    @Inject
+    private CurrentUserProvider currentUserProvider;
+    
+    /**
+     * Initiate job in a JAAS secured fashion - see @RunAs annotation. To be run from a job schedule expiration.
+     * 
+     * @param jobInstance Job instance to run
+     * @param job Job implementation class
+     * @throws BusinessException
+     */
+    public void executeInJaas(JobInstance jobInstance, Job job) throws BusinessException {
+        // Force authentication to a current job's user
+        currentUserProvider.forceAuthentication(jobInstance.getAuditable().getCreator());
+        
+        log.error("AKK running {} as user {}", job.getClass(), currentUser);
+        job.execute(jobInstance, null);
+    }
+
+    /**
+     * Persist job execution results
+     * 
+     * @param job Job implementation
+     * @param result Execution result
+     * @param jobInstance Job instance
+     * @return True if job is completely done. False if any data are left to process.
+     */
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public Boolean persistResult(Job job, JobExecutionResult result, JobInstance jobInstance) {
         try {
-            HashMap<String, String> jobs = JobInstanceService.jobEntries.get(jobCategory);
-            InitialContext ic = new InitialContext();
-            Job job = (Job) ic.lookup(jobs.get(jobName));
-            job.execute(jobInstance);
+            JobExecutionResultImpl resultToPersist = JobExecutionResultImpl.createFromInterface(jobInstance, result);
+            boolean isPersistResult = false;
+
+            if ((resultToPersist.getNbItemsCorrectlyProcessed() + resultToPersist.getNbItemsProcessedWithError() + resultToPersist.getNbItemsProcessedWithWarning()) > 0) {
+                log.info(job.getClass().getName() + resultToPersist.toString());
+                isPersistResult = true;
+            } else {
+                log.info(job.getClass().getName() + ": nothing to do");
+                isPersistResult = "true".equals(ParamBean.getInstance().getProperty("meveo.job.persistResult", "true"));
+            }
+            if (isPersistResult) {
+                if (resultToPersist.isTransient()) {
+                    create(resultToPersist);
+                    result.setId(resultToPersist.getId());
+                } else {
+                    // search for job execution result
+                    JobExecutionResultImpl updateEntity = findById(result.getId());
+                    if (updateEntity != null) {
+                        JobExecutionResultImpl.updateFromInterface(result, updateEntity);
+                        update(updateEntity);
+                    }
+                }
+            }
+            return resultToPersist.isDone();
+
+        } catch (Exception e) {// FIXME:BusinessException e) {
+            log.error("Failed to persist job execution results", e);
+        }
+
+        return null;
+    }
+
+    /**
+     * Execute next job or continue executing same job if more data is left to process (execution in batches). Executed asynchronously. Current user should be already available
+     * from earlier context.
+     * 
+     * @param job Job implementation
+     * @param jobInstance Job instance
+     * @param continueSameJob Continue executing same job
+     */
+    @Asynchronous
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public void executeNextJob(Job job, JobInstance jobInstance, boolean continueSameJob) {
+        try {
+
+            if (continueSameJob) {
+                log.debug("Continue executing job {}", jobInstance);
+                executeJobWithParameters(jobInstance, null);
+
+            } else if (jobInstance.getFollowingJob() != null) {
+                JobInstance nextJob = jobInstanceService.refreshOrRetrieve(jobInstance.getFollowingJob());
+                log.debug("Executing next job {}", jobInstance.getFollowingJob().getCode());
+                executeJobWithParameters(nextJob, null);
+            }
+
+        } catch (Exception e) {// FIXME:BusinessException e) {
+            log.error("Failed to execute next job or continue same job", e);
+        }
+        log.info("JobExecutionService executeNextJob End");
+    }
+
+    /**
+     * Execute a given job instance
+     * 
+     * @param jobInstance Job instance to execute
+     * @param params Parameters to pass to job execution
+     * @throws BusinessException
+     * @throws NamingException Thrown when Job definition was not found
+     */
+    private void executeJobWithParameters(JobInstance jobInstance, Map<Object, Object> params) throws BusinessException {
+
+        Job job = jobInstanceService.getJobByName(jobInstance.getJobTemplate());
+        job.execute(jobInstance, null);
+    }
+
+    /**
+     * Execute job from GUI. Execution is done asynchronously. Current user is already set by GUI.
+     * 
+     * @param jobInstance Job instance to execute
+     * @throws BusinessException Any exception
+     */
+    @Asynchronous
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public void manualExecute(JobInstance jobInstance) throws BusinessException {
+        log.info("Manual execute a job {} of type {}", jobInstance.getCode(), jobInstance.getJobTemplate());
+        try {
+            executeJobWithParameters(jobInstance, null);
+
         } catch (Exception e) {
-            log.error("failed to execute timer job", e);
+            log.error("Failed to manually execute a job {} of type {}", jobInstance.getCode(), jobInstance.getJobTemplate(), e);
+            throw e;
         }
     }
 
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void persistResult(Job job, JobExecutionResult result, JobInstance jobInstance, JobCategoryEnum jobCategory) {
-		try {
-			log.info("JobExecutionService persistResult...");
-			JobExecutionResultImpl entity = JobExecutionResultImpl.createFromInterface(jobInstance, result);
-			boolean persistResult = false;
+    /**
+     * Execute job and return job execution result ID to be able to query execution results later. Job execution result is persisted right away, while job is executed
+     * asynchronously.
+     * 
+     * @param jobInstance Job instance to execute.
+     * @param params Parameters (currently not used)
+     * @return Job execution result ID
+     * @throws BusinessException Any exception
+     */
+    public Long executeJobWithResultId(JobInstance jobInstance, Map<String, String> params) throws BusinessException {
+        log.info("Execute a job {}  of type {} with parameters {} ", jobInstance, jobInstance.getJobTemplate(), params);
 
-			if ((entity.getNbItemsCorrectlyProcessed() + entity.getNbItemsProcessedWithError() + entity.getNbItemsProcessedWithWarning()) > 0) {
-				log.info(job.getClass().getName() +entity.toString());
-				persistResult = true;
-			} else {
-				log.info(job.getClass().getName() + ": nothing to do");
-				persistResult = "true".equals(ParamBean.getInstance().getProperty("meveo.job.persistResult", "true"));
-			}
-			if (persistResult) {
-				if (entity.isTransient()) {
-					create(entity);
-				} else {
-					// search for job execution result
-					JobExecutionResultImpl updateEntity = findById(result.getId());
-					if(updateEntity != null){
-						JobExecutionResultImpl.updateFromInterface(result, updateEntity);
-					}
-				}
-				result.setId(entity.getId());
-			}
-			log.info("PersistResult entity.isDone()=" + entity.isDone());
-			if (!entity.isDone()) {
-				executeJob(job.getClass().getSimpleName(), jobInstance, jobCategory);
-			} else if (jobInstance.getFollowingJob() != null) {
-				try {
-					JobInstance jobFlow  = jobInstanceService.attach(jobInstance.getFollowingJob());
-					executeJob(jobFlow.getJobTemplate(), jobFlow, jobFlow.getJobCategoryEnum());
-				} catch (Exception e) {
-					log.warn("PersistResult cannot excute the following jobs.");
-				}
-			}
-		} catch (Exception e) {// FIXME:BusinessException e) {
-			log.error("error on persistResult", e);
-		}
-		log.info("JobExecutionService persistResult End");
-	}
+        try {
+            JobExecutionResultImpl jobExecutionResult = new JobExecutionResultImpl();
+            jobExecutionResult.setJobInstance(jobInstance);
+            create(jobExecutionResult);
+
+            Job job = jobInstanceService.getJobByName(jobInstance.getJobTemplate());
+            job.executeInNewTrans(jobInstance, jobExecutionResult);
+
+            log.debug("Job execution result ID for job {} of type {} is {}", jobInstance, jobInstance.getJobTemplate(), jobExecutionResult.getId());
+            return jobExecutionResult.getId();
+
+        } catch (Exception e) {
+            log.error("Failed to execute a job {} of type {}", jobInstance.getCode(), jobInstance.getJobTemplate(), e);
+            throw new BusinessException(e);
+        }
+    }
+
+    /**
+     * Execute job and return job execution result ID to be able to query execution results later. Job is executed asynchronously.
+     * 
+     * @param jobInstance Job instance to execute.
+     * @param params Parameters (currently not used)
+     * @throws BusinessException Any exception
+     */
+    public void executeJob(JobInstance jobInstance, Map<Object, Object> params) throws BusinessException {
+        log.info("Execute a job {}  of type {} with parameters {} ", jobInstance, jobInstance.getJobTemplate(), params);
+
+        executeJobWithParameters(jobInstance, params);
+    }
 
     private QueryBuilder getFindQuery(String jobName, PaginationConfiguration configuration) {
         String sql = "select distinct t from JobExecutionResultImpl t";
@@ -149,7 +263,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
             QueryBuilder qb = new QueryBuilder("select ji from JobInstance ji");
             qb.addCriterion("ji.code", "=", jobName, false);
             jobInstances = qb.getQuery(getEntityManager()).getResultList();
-            if (jobInstances.isEmpty()){
+            if (jobInstances.isEmpty()) {
                 log.info("Removed 0 job execution history which start date is older then a {} date", date);
                 return 0;
             }
@@ -179,9 +293,9 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
     public JobInstanceService getJobInstanceService() {
         return jobInstanceService;
     }
-    
+
     @Override
-    public List<JobExecutionResultImpl> findByCodeLike(String code){
-    	throw new UnsupportedOperationException();
-    }    
+    public List<JobExecutionResultImpl> findByCodeLike(String code) {
+        throw new UnsupportedOperationException();
+    }
 }

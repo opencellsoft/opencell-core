@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.ejb.Asynchronous;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
@@ -14,7 +13,6 @@ import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
-import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -31,19 +29,10 @@ import org.meveo.service.job.Job;
 public class FtpAdapterJob extends Job {
 
 	@Inject
-	FtpAdapterJobBean ftpAdapterJobBean;
-
-	@Inject
-	private ResourceBundle resourceMessages;
+	private FtpAdapterJobBean ftpAdapterJobBean;
     
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
-
-	@Override
-	@Asynchronous
-	public void execute(JobInstance jobInstance) {
-		super.execute(jobInstance);
-	}
 
 	@Override
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })

@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.ejb.Asynchronous;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
@@ -15,7 +14,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -25,8 +23,6 @@ import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.job.Job;
 
@@ -37,24 +33,10 @@ public class FlatFileProcessingJob extends Job {
 
 	@Inject
 	private FlatFileProcessingJobBean flatFileProcessingJobBean;
-
-	@Inject
-	private ResourceBundle resourceMessages;
     
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
-
-    @Inject
-    @CurrentUser
-    private MeveoUser currentUser;
     
-    @Override
-    @Asynchronous
-    @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void execute(JobInstance jobInstance) {
-        super.execute(jobInstance);
-    }
-
 	@SuppressWarnings("unchecked")
 	@Override
 	@TransactionAttribute(TransactionAttributeType.NEVER)

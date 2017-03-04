@@ -173,7 +173,7 @@ public class JobInstance extends BusinessCFEntity {
 
     @Override
     public String toString() {
-        return String.format("JobInstance [%s, jobTemplate=%s, parametres=%s, jobCategoryEnum=%s, timerEntity=%s,  followingJob=%s]", super.toString(), jobTemplate,
-            parametres, jobCategoryEnum, timerEntity, followingJob);
+        return String.format("JobInstance [%s, jobTemplate=%s, parametres=%s, jobCategoryEnum=%s, timerEntity=%s,  followingJob=%s]", super.toString(), jobTemplate, parametres,
+            jobCategoryEnum, timerEntity, followingJob != null ? followingJob.getCode() : null);
     }
 }

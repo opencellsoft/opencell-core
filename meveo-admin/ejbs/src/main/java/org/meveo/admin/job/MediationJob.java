@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import javax.ejb.Asynchronous;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
@@ -21,7 +20,6 @@ import javax.inject.Inject;
 import org.meveo.admin.async.MediationAsync;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -39,19 +37,9 @@ public class MediationJob extends Job {
 
 	@Inject
 	private MediationAsync mediationAsync;
-
-	@Inject
-	private ResourceBundle resourceMessages;
     
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
-
-	@Override
-	@Asynchronous
-	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public void execute(JobInstance jobInstance) {
-		super.execute(jobInstance);
-	}
 
 	@SuppressWarnings("unchecked")
 	@Override

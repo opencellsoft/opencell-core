@@ -3,7 +3,6 @@ package org.meveo.admin.job;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.ejb.Asynchronous;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
@@ -34,14 +33,6 @@ public class ScriptingJob extends Job {
 
 	@Inject
 	ScriptingJobBean scriptingJobBean;
-
-	@Override
-	@Asynchronous
-	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public void execute(JobInstance jobInstance) {
-		super.execute(jobInstance);
-	}
-
 
 	@SuppressWarnings("unchecked")
 	@Override

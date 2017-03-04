@@ -21,7 +21,6 @@ package org.meveo.admin.job;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.ejb.Asynchronous;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
@@ -31,7 +30,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.util.ResourceBundle;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
@@ -46,22 +44,11 @@ public class InvoicingJob extends Job {
 
 	@Inject
 	private InvoicingJobBean invoicingJobBean;
-
-	@Inject
-	private ResourceBundle resourceMessages;
 	
-	@Override
-	@Asynchronous
-	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public void execute(JobInstance jobInstance) {
-		super.execute(jobInstance);
-	}
-
 	@Override
 	@TransactionAttribute(TransactionAttributeType.NEVER)
 	protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
 		invoicingJobBean.execute(result,jobInstance);
-
 	}
 
 	@Override

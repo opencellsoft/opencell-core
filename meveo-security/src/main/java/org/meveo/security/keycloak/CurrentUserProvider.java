@@ -56,7 +56,7 @@ public class CurrentUserProvider {
 
         // User was forced authenticated, so need to lookup the rest of user information
         if (!(ctx.getCallerPrincipal() instanceof KeycloakPrincipal) && forcedUserSubject != null) {
-            user = new MeveoUserKeyCloakImpl(ctx, forcedUserSubject, "forced.userName", "forced.provider", null);
+            user = new MeveoUserKeyCloakImpl(ctx, forcedUserSubject, forcedUserSubject, null, null);
 
         } else {
             user = new MeveoUserKeyCloakImpl(ctx, null, null, null, null);

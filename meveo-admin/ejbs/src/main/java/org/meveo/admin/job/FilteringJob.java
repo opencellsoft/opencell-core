@@ -22,8 +22,6 @@ import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.scripts.ScriptInstance;
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.job.Job;
 import org.meveo.service.script.ScriptInstanceService;
@@ -42,10 +40,6 @@ public class FilteringJob extends Job {
 	
 	@Inject
 	private CustomFieldInstanceService customFieldInstanceService;
-
-    @Inject
-    @CurrentUser
-    private MeveoUser currentUser;
     
 	@SuppressWarnings("unchecked")
     @Override

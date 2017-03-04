@@ -3,10 +3,8 @@ package org.meveo.services.job;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -23,6 +21,7 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.job.Job;
+import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
 
 @Named
@@ -32,7 +31,10 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
     private static final long serialVersionUID = 1L;
 
     @Inject
-    JobInstanceService jobInstanceService;
+    private JobInstanceService jobInstanceService;
+    
+    @Inject
+    private JobExecutionService jobExecutionService;
 
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
@@ -66,18 +68,13 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
         return jobInstanceService.find(null);
     }
 
-    public Set<String> getJobNames() {
-        HashMap<String, String> jobs = new HashMap<String, String>();
-        if (entity.getJobCategoryEnum() != null) {
-            jobs = JobInstanceService.jobEntries.get(entity.getJobCategoryEnum());
-            return jobs.keySet();
-        }
-        return null;
+    public List<String> getJobNames() {
+        return jobInstanceService.getJobNames();
     }
 
     public String execute() {
         try {
-            jobInstanceService.manualExecute(entity);
+            jobExecutionService.manualExecute(entity);
             messages.info(new BundleKey("messages", "info.entity.executed"), entity.getJobTemplate());
         } catch (Exception e) {
             messages.error(new BundleKey("messages", "error.execution"));
@@ -113,10 +110,7 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
     }
 
     /**
-     * Get a list of templates matching job template name. Create new ones if job template defines new ones in code.
-     * 
-     * @return A map of custom field templates with template code as a key
-     * @throws BusinessException 
+     * Synchronize definition of custom field templates specified in Job class to those found in DB. Register in DB if was missing.
      */
     private void createMissingCustomFieldTemplates() {
 

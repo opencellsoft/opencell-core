@@ -3,7 +3,6 @@ package org.meveo.admin.job;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.ejb.Asynchronous;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
@@ -27,22 +26,12 @@ public class SepaDirectDebitJob extends Job {
 
     @Inject
     private SepaDirectDebitJobBean sepaDirectDebitJobBean;
-   
-    @Override
-    @Asynchronous
-    @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void execute(JobInstance jobInstance) {
-        super.execute(jobInstance);
-    }
-    
-    
+
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
         sepaDirectDebitJobBean.execute(result,jobInstance);
     }
-
-  
 
     @Override
     public JobCategoryEnum getJobCategory() {

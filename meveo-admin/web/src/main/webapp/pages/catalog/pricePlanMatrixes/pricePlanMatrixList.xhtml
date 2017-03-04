@@ -15,7 +15,7 @@
     </script>
     <p:dataTable id="datatable_pp_results_omitFromSubmit" var="entity" value="#{pricePlanMatrixBean.getPricePlanMatrixList(chargeTemplateBean.entity)}"
                  paginator="true" rows="10" editable="true" editMode="cell" widgetVar="cellEntity_pp" label="#{messages['pricePlanMatrix.title']}"
-                 scrollable="#{pricePlanMatrixListBean.lazyDataModel.size==0?'true':'false'}"
+                 scrollable="#{pricePlanMatrixListBean.lazyDataModel.size()==0?'true':'false'}"
                  paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                  rowsPerPageTemplate="5,10" lazy="true" resizableColumns="true" binding="#{pricePlanMatrixListBean.dataTable}" styleClass="custom-grid"
                  rowKey="#{entity.id}"
@@ -25,7 +25,7 @@
                 listener="#{pricePlanMatrixListBean.onCellEdit}"/>
 
         <f:facet name="header">
-            <p:commandButton id="toggler1" type="button" style="float:right" disabled="#{pricePlanMatrixListBean.lazyDataModel.size==0?'true':'false'}"
+            <p:commandButton id="toggler1" type="button" style="float:right" disabled="#{pricePlanMatrixListBean.lazyDataModel.size()==0?'true':'false'}"
                              icon="ui-icon-calculator"/>
             <p:columnToggler datasource="datatable_pp_results_omitFromSubmit" trigger="toggler1">
                 <!-- 					<p:ajax event="toggle" listener="#{pricePlanMatrixColumnSelectorBean.onToggle}" /> -->

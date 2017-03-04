@@ -58,8 +58,7 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
         } else {
             this.securityContext = securityContext;
 
-            log.error("User is authenticated by jaas principal is {}, forcedUsername is {}, has user {}, has adminas {}", securityContext.getCallerPrincipal().getName(),
-                forcedSubject, securityContext.isCallerInRole("user"), securityContext.isCallerInRole("adminas"));
+            log.error("User is authenticated by jaas principal is {}, forcedUsername is {}", securityContext.getCallerPrincipal().getName(), forcedSubject);
 
             if (forcedSubject != null) {
                 this.subject = forcedSubject;
@@ -72,7 +71,7 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
             }
         }
 
-        if (this.authenticated && this.providerCode == null) {
+        if (this.authenticated && !this.forcedAuthentication && this.providerCode == null) {
             throw new RuntimeException("User has no provider assigned");
         }
     }

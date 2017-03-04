@@ -1,12 +1,9 @@
 package org.meveo.admin.job.importexport;
 
-import javax.ejb.Asynchronous;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
@@ -27,14 +24,7 @@ public class ExportAccountsJob extends Job {
     private ExportAccountsJobBean exportAccountsJobBean;
 
     @Override
-    @Asynchronous
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-    public void execute(JobInstance jobIntstance) {
-        super.execute(jobIntstance);
-    }
-
-    @Override
     protected void execute(JobExecutionResultImpl result,JobInstance jobIntstance) throws BusinessException {
         exportAccountsJobBean.execute(result, jobIntstance.getParametres());
     }
