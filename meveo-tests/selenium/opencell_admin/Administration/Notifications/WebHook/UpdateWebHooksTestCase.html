@@ -12,11 +12,6 @@
 <tr><td rowspan="1" colspan="3">UpdateWebHooksTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>if</td>
-	<td>${WebHooksBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertText</td>
 	<td>//a[contains(text(),'${CodeValue}')]</td>
 	<td>${CodeValue}</td>
@@ -47,18 +42,8 @@
 	<td>${CodeValue}</td>
 </tr>
 <tr>
-	<td>if</td>
-	<td>${ClassnameFilterBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${ClassnameFilter}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
 	<td></td>
 </tr>
 <tr>
@@ -77,11 +62,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>if</td>
-	<td>${EventELFilterBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${EventELFilter}</td>
 	<td></td>
@@ -90,16 +70,6 @@
 	<td>type</td>
 	<td>${EventELFilter}</td>
 	<td>${EventELFilterValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${ScriptInstanceBool}==false</td>
-	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -252,11 +222,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>if</td>
-	<td>${UsernameBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${Username}</td>
 	<td></td>
@@ -267,16 +232,6 @@
 	<td>${UsernameValue}</td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${PasswordBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${Password}</td>
 	<td></td>
@@ -285,16 +240,6 @@
 	<td>type</td>
 	<td>${Password}</td>
 	<td>${PasswordValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${CounterBool}==true</td>
-	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -329,11 +274,6 @@
 <tr>
 	<td>verifyElementPresent</td>
 	<td>css=span.ui-messages-info-summary</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
 	<td></td>
 </tr>
 </tbody></table>

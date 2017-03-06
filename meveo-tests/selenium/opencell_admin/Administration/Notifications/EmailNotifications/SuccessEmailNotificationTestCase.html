@@ -22,11 +22,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>if</td>
-	<td>${EmailNotificationBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>clickAndWait</td>
 	<td>${buttonNew}</td>
 	<td></td>
@@ -47,11 +42,6 @@
 	<td>${CodeValue}</td>
 </tr>
 <tr>
-	<td>if</td>
-	<td>${ClassnameFilterBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${ClassnameFilter}</td>
 	<td></td>
@@ -69,11 +59,6 @@
 <tr>
 	<td>click</td>
 	<td>css=li:contains(&quot;${ClassnameFilterValue}&quot;)</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
 	<td></td>
 </tr>
 <tr>
@@ -107,11 +92,6 @@
 	<td>${EventTypeFilterValue}</td>
 </tr>
 <tr>
-	<td>if</td>
-	<td>${EventELFilterBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${EventELFilter}</td>
 	<td></td>
@@ -120,16 +100,6 @@
 	<td>type</td>
 	<td>${EventELFilter}</td>
 	<td>${EventELFilterValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${ScriptInstanceBool}==true</td>
-	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -227,11 +197,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${SentFrom}</td>
 	<td></td>
@@ -242,11 +207,6 @@
 	<td>${SentFromValue}</td>
 </tr>
 <tr>
-	<td>if</td>
-	<td>${SentToELBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${SentToEL}</td>
 	<td></td>
@@ -255,16 +215,6 @@
 	<td>type</td>
 	<td>${SentToEL}</td>
 	<td>${SentToELValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${MailingListBool}==true</td>
-	<td></td>
 </tr>
 <tr>
 	<td>assertText</td>
@@ -317,11 +267,6 @@
 	<td>${EmailValue2}</td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${Subject}</td>
 	<td></td>
@@ -330,11 +275,6 @@
 	<td>type</td>
 	<td>${Subject}</td>
 	<td>${SubjectValue}</td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${TextBodyBool}==true</td>
-	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -347,16 +287,6 @@
 	<td>${TextBodyValue}</td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${HtmlBodyBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${HtmlBody}</td>
 	<td></td>
@@ -367,16 +297,6 @@
 	<td>${HtmlBodyValue}</td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${CounterBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${SelectCounter}</td>
 	<td></td>
@@ -384,11 +304,6 @@
 <tr>
 	<td>click</td>
 	<td>${SelectCounter}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
 	<td></td>
 </tr>
 <tr>
@@ -415,11 +330,6 @@
 	<td>assertText</td>
 	<td>//a[contains(text(),'${CodeValue}')]</td>
 	<td>${CodeValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
 </tr>
 </tbody></table>
 </body>

@@ -22,11 +22,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>if</td>
-	<td>${VarBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>clickAndWait</td>
 	<td>${buttonNew}</td>
 	<td></td>
@@ -57,11 +52,6 @@
 	<td>${DescriptionValue}</td>
 </tr>
 <tr>
-	<td>if</td>
-	<td>${SharedBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${Shared}</td>
 	<td></td>
@@ -69,16 +59,6 @@
 <tr>
 	<td>click</td>
 	<td>${Shared}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${InputXMLBool}==true</td>
 	<td></td>
 </tr>
 <tr>
@@ -90,16 +70,6 @@
 	<td>type</td>
 	<td>${InputXML}</td>
 	<td>${InputXMLValue}</td>
-</tr>
-<tr>
-	<td>pause</td>
-	<td>1000</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
@@ -125,11 +95,6 @@
 	<td>assertText</td>
 	<td>//a[contains(text(),'${CodeFilter}')]</td>
 	<td>${CodeFilter}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
 </tr>
 </tbody></table>
 </body>
