@@ -181,10 +181,11 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
 
         if (jobInstance.isActive() && jobInstance.getTimerEntity() != null) {
             Job job = getJobByName(jobInstance.getJobTemplate());
-            log.info("Scheduling job {} of type {}", jobInstance.getCode(), jobInstance.getJobTemplate());
-
+            
             ScheduleExpression scheduleExpression = getScheduleExpression(jobInstance.getTimerEntity());
-            detach(jobInstance);
+            log.info("Scheduling job {} of type {} for {}", jobInstance.getCode(), jobInstance.getJobTemplate(), scheduleExpression);
+
+//            detach(jobInstance);
             jobTimers.put(jobInstance.getId(), job.createTimer(scheduleExpression, jobInstance));
 
         } else {

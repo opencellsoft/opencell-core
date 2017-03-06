@@ -29,7 +29,6 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
-import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.util.ApplicationProvider;
@@ -79,9 +78,6 @@ public abstract class Job {
     @ApplicationProvider
     protected Provider appProvider;
 
-    @Inject
-    private CurrentUserProvider currentUserProvider;
-
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
     @PostConstruct
@@ -103,7 +99,7 @@ public abstract class Job {
         }
 
         boolean isRunning = jobInstanceService.isJobRunning(jobInstance.getId());
-        if (!isRunning && jobInstance.isActive()) {
+        if (!isRunning) {
             log.debug("Starting Job {} of type {} with currentUser {} ", jobInstance.getCode(), jobInstance.getJobTemplate(), currentUser.getUserName());
 
             try {
@@ -129,8 +125,7 @@ public abstract class Job {
             }
 
         } else {
-            log.trace("Job {} of type {} execution will be skipped. Reason: isRunning={}, isActive={}, currentUser={}", jobInstance.getCode(), jobInstance.getJobTemplate(),
-                isRunning, jobInstance.isActive());
+            log.trace("Job {} of type {} execution will be skipped. Reason: isRunning={}", jobInstance.getCode(), jobInstance.getJobTemplate(), isRunning);
         }
 
     }
@@ -188,9 +183,6 @@ public abstract class Job {
     public void trigger(Timer timer) {
 
         JobInstance jobInstance = (JobInstance) timer.getInfo();
-
-        // Force authentication to a current job's user
-//        currentUserProvider.forceAuthentication(jobInstance.getAuditable().getCreator());
 
         try {
             jobExecutionService.executeInJaas((JobInstance) timer.getInfo(), this);

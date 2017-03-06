@@ -228,8 +228,9 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 
 	public String cancelInvoicing() {
 		try {
+		    entity = billingRunService.refreshOrRetrieve(entity);
 			entity.setStatus(BillingRunStatusEnum.CANCELED);
-			billingRunService.update(entity);
+			entity = billingRunService.update(entity);
 			return "billingRuns";
 		} catch (Exception e) {
 		    log.error("Failed to cancel invoicing", e);
@@ -243,7 +244,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 			entity=billingRunService.refreshOrRetrieve(entity);
 			entity.setStatus(BillingRunStatusEnum.CANCELED);
 			billingRunService.cleanBillingRun(entity);
-			billingRunService.update(entity);
+			entity = billingRunService.update(entity);
 			return "billingRuns";
 
 		} catch (Exception e) {
