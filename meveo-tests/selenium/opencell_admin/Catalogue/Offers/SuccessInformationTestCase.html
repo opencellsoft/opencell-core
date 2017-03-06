@@ -127,29 +127,14 @@
 	<td></td>
 </tr>
 <tr>
-	<td>assertText</td>
-	<td>id=tabView:offerTemplateCode</td>
-	<td>${Code}</td>
-</tr>
-<tr>
-	<td>verifyText</td>
-	<td>id=tabView:offerTemplateCode</td>
-	<td>${Code}</td>
-</tr>
-<tr>
 	<td>click</td>
 	<td>${ChooseServiceTemplate}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForVisible</td>
-	<td>id=searchServiceTemplatePopup</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForText</td>
-	<td>id=searchServiceTemplatePopup_title</td>
-	<td>Service Template</td>
+	<td>click</td>
+	<td>id=offerForm:tabView:serviceTemplateCode_selectLink</td>
+	<td>ui-button</td>
 </tr>
 <tr>
 	<td>assertText</td>
@@ -207,26 +192,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>click</td>
-	<td>${ChooseServiceTemplate}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForElementPresent</td>
-	<td>//tbody[@id='searchServiceTemplatePopuppopupForm:searchServiceTemplatePopupdatatable_data']/tr/td[1]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>//tbody[@id='searchServiceTemplatePopuppopupForm:searchServiceTemplatePopupdatatable_data']/tr/td[1]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForValue</td>
-	<td>id=tabView:serviceForm:serviceTemplateCode</td>
-	<td>${ServiceValue}</td>
-</tr>
-<tr>
 	<td>assertText</td>
 	<td>${ServiceLocatorIN}</td>
 	<td>${ServiceValue}</td>
@@ -247,8 +212,8 @@
 	<td>${ServiceValue}</td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>1000</td>
+	<td>doubleClick</td>
+	<td>${ServiceLocatorOUT}</td>
 	<td></td>
 </tr>
 <tr>
@@ -288,12 +253,12 @@
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${backButton}</td>
+	<td>${saveButtonWhenCreateAjax}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>${backButton}</td>
+	<td>${saveButtonWhenCreateAjax}</td>
 	<td></td>
 </tr>
 <tr>
@@ -303,7 +268,7 @@
 </tr>
 <tr>
 	<td>assertText</td>
-	<td>//tbody[@id='datatable_results_data']/tr/td[4]/a</td>
+	<td>id=datatable_results:0:j_idt181:0:j_idt191:offerServiceTemplates_offerServiceTemplates_serviceTemplate_id_message_link</td>
 	<td>${ServiceValue}</td>
 </tr>
 </tbody></table>
