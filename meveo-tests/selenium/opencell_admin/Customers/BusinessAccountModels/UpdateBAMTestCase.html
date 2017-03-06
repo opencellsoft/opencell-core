@@ -22,11 +22,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>if</td>
-	<td>${VarBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertText</td>
 	<td>//a[contains(text(),'${Code}')]</td>
 	<td>${Code}</td>
@@ -57,11 +52,6 @@
 	<td>${Code}</td>
 </tr>
 <tr>
-	<td>if</td>
-	<td>${DescriptionBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${descriptionBAM}</td>
 	<td></td>
@@ -70,16 +60,6 @@
 	<td>type</td>
 	<td>${descriptionBAM}</td>
 	<td>${Description}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${TypeBool}==true</td>
-	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -97,16 +77,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${ScriptBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${ScriptCode}</td>
 	<td></td>
@@ -114,11 +84,6 @@
 <tr>
 	<td>click</td>
 	<td>${ScriptCode}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
 	<td></td>
 </tr>
 <tr>
@@ -140,11 +105,6 @@
 	<td>assertText</td>
 	<td>//a[contains(text(),'${Code}')]</td>
 	<td>${Code}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
 </tr>
 </tbody></table>
 </body>
