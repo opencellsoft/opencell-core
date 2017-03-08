@@ -84,7 +84,7 @@
                     <h:outputText value="#{cacheItem.key}" />
                 </p:column>
                 <p:column headerText="#{messages['cache.map.count.'.concat(cacheBean.cacheName)]}" width="10%">
-                    <h:outputText value="#{cacheItem.value.size}" />
+                    <h:outputText value="#{cacheItem.value.size()}" />
                 </p:column>
                 <p:column headerText="#{messages['cache.map.value.'.concat(cacheBean.cacheName)]}">
                     <h:outputText value="#{cacheBean.getShortRepresentationOfCachedValue(cacheItem.value, true)}" />

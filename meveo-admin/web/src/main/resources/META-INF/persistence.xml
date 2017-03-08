@@ -14,6 +14,7 @@
             <property name="hibernate.show_sql" value="false" />
             <property name="hibernate.cache.use_second_level_cache" value="true" />
             <property name="hibernate.cache.use_minimal_puts" value="true" />
+            <property name="hibernate.connection.autocommit" value="false"/>
             <!-- https://docs.jboss.org/hibernate/stable/core.old/reference/en/html/transactions-connection-release.html -->
             <property name="hibernate.connection.release_mode" value="auto" />
             <property name="hibernate.discriminator.ignore_explicit_for_joined" value="true" />

@@ -24,7 +24,7 @@
 <!-- 			column2Label="#{messages['offerTemplate.description']}" -->
 <!-- 			column2="description" -->
 <!-- 			selection="#{pricePlanMatrixListBean.filters['offerTemplate']}" -->
-<!-- 			lazy="false" dataModel="#{offerTemplateBean.listActive}" -->
+<!-- 			lazy="false" dataModel="#{offerTemplateBean.listActive()}" -->
 <!-- 			updateField=":searchForm:offer"> -->
 <!-- 		</hftl:entityPopup> -->
 		<hftl:entityPopup id="searchSellerPopup"
@@ -84,7 +84,7 @@
 				field="eventCode" />
 			<hftl:searchField id="offer"
 				label="#{messages['pricePlanMatrix.offerCode']}"
-				field="offerTemplate" valueLabelField="code" listElements="#{offerTemplateBean.listActive}"/>
+				field="offerTemplate" valueLabelField="code" listElements="#{offerTemplateBean.listActive()}"/>
 <!--                 popup="true" popupId="offerPopup" clearButton="true" /> -->
 			<hftl:searchField id="seller" label="#{messages['seller.title']}"
 				field="seller" valueLabelField="descriptionOrCode" popup="true"
@@ -118,12 +118,12 @@
 		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['pricePlanMatrix.title']}" rowsPerPage="5,10"
-			editable="true" editMode="cell" scrollable="#{pricePlanMatrixListBean.lazyDataModel.size==0?'true':'false'}"
+			editable="true" editMode="cell" scrollable="#{pricePlanMatrixListBean.lazyDataModel.size()==0?'true':'false'}"
 			exportButton="false" exportXlsxButton="true"
 			backingBean="#{pricePlanMatrixListBean}">
 
 			<f:facet name="header">
-				<p:commandButton id="toggler" type="button" style="float:right" disabled="#{backingBean.lazyDataModel.size==0?'true':'false'}"
+				<p:commandButton id="toggler" type="button" style="float:right" disabled="#{backingBean.lazyDataModel.size()==0?'true':'false'}"
 					icon="ui-icon-calculator"/>
 				<p:columnToggler datasource="datatable_results" trigger="toggler" >
 <!-- 					<p:ajax event="toggle" listener="#{pricePlanMatrixColumnSelectorBean.onToggle}" /> -->
@@ -217,9 +217,9 @@
 					</f:facet>
 				</p:cellEditor>
 			</p:column>
-			<p:column exportable="true" toggleable="#{pricePlanMatrixBean.entity.provider.entreprise}"
+			<p:column exportable="true" toggleable="#{appProvider.entreprise}"
 				visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[6]}"
-				rendered="#{!pricePlanMatrixBean.entity.provider.entreprise}">
+				rendered="#{!appProvider.entreprise}">
 				<f:facet name="header">
 					<h:outputText value="#{messages['pricePlanMatrix.amountWithTax']}" />
 				</f:facet>
@@ -234,7 +234,7 @@
 					</f:facet>
 				</p:cellEditor>
 			</p:column>
-			<p:column exportable="true" toggleable="#{!pricePlanMatrixBean.entity.provider.entreprise}">
+			<p:column exportable="true" toggleable="#{!appProvider.entreprise}">
 				<f:facet name="header">
 					<h:outputText
 						value="#{messages['pricePlanMatrix.amountWithoutTax']}" />

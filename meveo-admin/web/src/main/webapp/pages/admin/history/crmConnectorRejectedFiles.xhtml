@@ -57,12 +57,12 @@
 		<p:panel id="documentsPanel" width="100%">
 			<p:spacer />
 			<h:outputText value="#{messages['commons.noItems']}"
-				rendered="#{crmConnectorRejectedFiles.size==0}" />
-			<h:form id="documentsForm" rendered="#{crmConnectorRejectedFiles.size&gt;0}">
+				rendered="#{crmConnectorRejectedFiles.size()==0}" />
+			<h:form id="documentsForm" rendered="#{crmConnectorRejectedFiles.size()&gt;0}">
 				<h:panelGrid width="100%" columns="1" border="0"
 					style="padding:0px; margin:0px;text-align: right;">
 					<h:outputText
-						value="#{crmConnectorRejectedFiles.size} #{messages['commons.itemsFound']}" />
+						value="#{crmConnectorRejectedFiles.size()} #{messages['commons.itemsFound']}" />
 				</h:panelGrid>
 				<p:dataTable id="documentsDatatable" value="#{crmConnectorRejectedFiles}"
 					var="_document" resizableColumns="true"
@@ -77,7 +77,7 @@
 						<f:facet name="header">
 							<h:outputText value="#{messages['document.size']}" />
 						</f:facet>
-						<h:outputText value="#{_document.size}" />
+						<h:outputText value="#{_document.size()}" />
 					</p:column>
 					<p:column width="20%">
 						<f:facet name="header">

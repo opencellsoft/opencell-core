@@ -66,6 +66,7 @@ public class ProviderBean extends CustomFieldBean<Provider> {
 
     @Override
     public Provider initEntity() {
+        setObjectId(appProvider.getId());
         super.initEntity();
         if (entity.getId() != null && entity.getInvoiceConfiguration() == null) {
             InvoiceConfiguration invoiceConfiguration = new InvoiceConfiguration();

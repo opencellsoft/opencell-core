@@ -19,7 +19,7 @@
         <hftl:entityPopup id="offerPopup" header="#{messages['offer.popup.header']}" backingBean="#{offerTemplateBean}" 
             searchField1Label="#{messages['offerTemplate.code']}" searchField1="code" searchField2Label="#{messages['offerTemplate.description']}" searchField2="description"
             column1Label="#{messages['offerTemplate.code']}" column1="code" column2Label="#{messages['offerTemplate.description']}" column2="description"
-            selection="#{discountPlanMatrixBean.entity.offerTemplate}" lazy="false" dataModel="#{offerTemplateBean.listActive}" updateField="hftl::formDiscountPlan:offerSelectId">
+            selection="#{discountPlanMatrixBean.entity.offerTemplate}" lazy="false" dataModel="#{offerTemplateBean.listActive()}" updateField="hftl::formDiscountPlan:offerSelectId">
         </hftl:entityPopup>
 
         <hftl:entityPopup id="sellerParentPopup" header="#{messages['seller.title']}" backingBean="#{sellerBean}" searchField1Label="#{messages['BusinessEntity.code']}"

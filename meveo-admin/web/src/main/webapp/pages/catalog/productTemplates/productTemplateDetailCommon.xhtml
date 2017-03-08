@@ -9,8 +9,7 @@
 	xmlns:s="http://jboss.org/seam/faces"
 	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
 	xmlns:o="http://omnifaces.org/ui"
-	xmlns:of="http://omnifaces.org/functions" xmlns:hftl="http://hftl.org"
-	xmlns:pe="http://primefaces.org/ui/extensions">
+	xmlns:of="http://omnifaces.org/functions" xmlns:hftl="http://hftl.org">
 
 <ui:composition>
 
@@ -73,7 +72,7 @@
 						<p:graphicImage value="#{defaultImageStreamer.image}"
 							cache="false" width="100" height="100">
 							<f:param name="providerCode"
-								value="#{mainBackingBean.currentProvider.code}"></f:param>
+								value="#{appProvider.code}"></f:param>
 							<f:param name="fileName" value="#{prod.productTemplate.imagePath}"></f:param>
 							<f:param name="pictureGroupName" value="product"></f:param>
 						</p:graphicImage>

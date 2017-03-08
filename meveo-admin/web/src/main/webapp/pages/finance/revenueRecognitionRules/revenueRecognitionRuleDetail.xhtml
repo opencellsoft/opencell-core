@@ -37,7 +37,7 @@
 				<hftl:formField id="rrScriptId"
 					label="#{messages['revenueRecognitionRule.script']}" field="script"
 					valueLabelField="code" required="true"
-					listElements="#{scriptInstanceBean.listActive}" />
+					listElements="#{scriptInstanceBean.listActive()}" />
 			</p:fieldset>
 			<p:fieldset
 				legend="#{messages['revenueRecognitionRule.label.recognitionTerm']}">

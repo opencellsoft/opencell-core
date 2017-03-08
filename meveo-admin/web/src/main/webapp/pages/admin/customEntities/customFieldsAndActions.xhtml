@@ -70,11 +70,11 @@
 
                         <p:tooltip for="moveUpTabBtn" value="#{messages['action.moveUp']}" showEffect="slide" hideEffect="slide" />
                         <p:commandButton id="moveUpTabBtn" icon="ui-icon-arrowthick-1-n" action="#{customEntityTemplateBean.moveUp(node)}" update=":fieldsForm:fields"
-                            rendered="#{node.canMoveUp}" />
+                            rendered="#{node.canMoveUp()}" />
 
                         <p:tooltip for="moveDownTabBtn" value="#{messages['action.moveDown']}" showEffect="slide" hideEffect="slide" />
                         <p:commandButton id="moveDownTabBtn" icon="ui-icon-arrowthick-1-s" action="#{customEntityTemplateBean.moveDown(node)}" update=":fieldsForm:fields"
-                            rendered="#{node.canMoveDown}" />
+                            rendered="#{node.canMoveDown()}" />
                     </h:panelGroup>
 
                     <h:panelGroup rendered="#{node.type == 'fieldGroup'}">
@@ -99,11 +99,11 @@
 
                         <p:tooltip for="moveUpFgBtn" value="#{messages['action.moveUp']}" showEffect="slide" hideEffect="slide" />
                         <p:commandButton id="moveUpFgBtn" icon="ui-icon-arrowthick-1-n" action="#{customEntityTemplateBean.moveUp(node)}" update=":fieldsForm:fields"
-                            rendered="#{node.canMoveUp}" />
+                            rendered="#{node.canMoveUp()}" />
 
                         <p:tooltip for="moveDownFgBtn" value="#{messages['action.moveDown']}" showEffect="slide" hideEffect="slide" />
                         <p:commandButton id="moveDownFgBtn" icon="ui-icon-arrowthick-1-s" action="#{customEntityTemplateBean.moveDown(node)}" update=":fieldsForm:fields"
-                            rendered="#{node.canMoveDown}" />
+                            rendered="#{node.canMoveDown()}" />
                     </h:panelGroup>
 
                     <h:panelGroup rendered="#{node.type == 'field'}">
@@ -143,11 +143,11 @@
 
                         <p:tooltip for="moveUpFBtn" value="#{messages['action.moveUp']}" showEffect="slide" hideEffect="slide" />
                         <p:commandButton id="moveUpFBtn" icon="ui-icon-arrowthick-1-n" action="#{customEntityTemplateBean.moveUp(node)}" update=":fieldsForm:fields"
-                            rendered="#{node.canMoveUp}" />
+                            rendered="#{node.canMoveUp()}" />
 
                         <p:tooltip for="moveDownFBtn" value="#{messages['action.moveDown']}" showEffect="slide" hideEffect="slide" />
                         <p:commandButton id="moveDownFBtn" icon="ui-icon-arrowthick-1-s" action="#{customEntityTemplateBean.moveDown(node)}" update=":fieldsForm:fields"
-                            rendered="#{node.canMoveDown}" />
+                            rendered="#{node.canMoveDown()}" />
 
                     </h:panelGroup>
                 </p:column>

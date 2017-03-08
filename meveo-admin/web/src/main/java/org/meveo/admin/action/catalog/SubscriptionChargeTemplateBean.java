@@ -29,7 +29,6 @@ import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
-import org.primefaces.component.datatable.DataTable;
 
 @Named
 @ViewScoped
@@ -44,7 +43,7 @@ public class SubscriptionChargeTemplateBean extends BaseBean<OneShotChargeTempla
 	}
 	
 	@Override
-	public DataTable search() {
+	public void search() {
 		log.debug("search");
 		getFilters();
 		if (!filters.containsKey("disabled")) {
@@ -54,7 +53,7 @@ public class SubscriptionChargeTemplateBean extends BaseBean<OneShotChargeTempla
 			log.debug("put oneShotChargeTemplateType");
 			filters.put("oneShotChargeTemplateType", OneShotChargeTemplateTypeEnum.SUBSCRIPTION);
 		}
-		return super.search();
+		super.search();
 	}
 
 	@Override

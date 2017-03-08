@@ -38,7 +38,7 @@
     <welcome-file>index.html</welcome-file>
   </welcome-file-list>
   <session-config>
-    <session-timeout>30</session-timeout>
+    <session-timeout>60</session-timeout>
   </session-config>
   <filter>
     <filter-name>PrimeFaces FileUpload Filter</filter-name>

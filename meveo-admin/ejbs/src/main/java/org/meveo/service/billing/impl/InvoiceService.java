@@ -255,7 +255,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			cfName = "INVOICE_SEQUENCE";
 		}
 		Customer cust = customerService.refreshOrRetrieve(invoice.getBillingAccount().getCustomerAccount().getCustomer());
-		Seller seller = chooseSeller(cust.getSeller(), cfName, invoice.getInvoiceDate(), invoice.getInvoiceType());
+		
+		InvoiceType invoiceType = invoiceTypeService.refreshOrRetrieve(invoice.getInvoiceType());
+		Seller seller = chooseSeller(cust.getSeller(), cfName, invoice.getInvoiceDate(), invoiceType);
 
         Sequence sequence = getSequence(invoice, seller,cfName,1,true);
 		String prefix = sequence.getPrefixEL();

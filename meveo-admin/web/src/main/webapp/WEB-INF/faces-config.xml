@@ -44,7 +44,7 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 
 <!-- <lifecycle> -->
 <!-- 	<phase-listener>org.meveo.admin.web.listener.PageAccessListener</phase-listener> -->
-<!-- 	<phase-listener>org.meveo.admin.web.listener.LifecyclePhaseListener</phase-listener> -->
+<!-- 	<phase-listener>org.meveo.util.view.LifeCycleListener</phase-listener> -->
 <!-- </lifecycle> -->
 
 <navigation-rule>

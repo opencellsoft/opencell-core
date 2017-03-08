@@ -712,7 +712,12 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
                 if (parentCfEntity == null) {
                     continue;
                 }
-                parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one. 
+                if (parentCfEntity instanceof Provider){
+                    parentCfEntity = appProvider;
+                } else {
+                    parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                }                
                 Object value = getInheritedCFValue(parentCfEntity, code);
                 if (value != null) {
                     return value;
@@ -736,7 +741,12 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
                 if (parentCfEntity == null) {
                     continue;
                 }
-                parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one. 
+                if (parentCfEntity instanceof Provider){
+                    parentCfEntity = appProvider;
+                } else {
+                    parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                }
                 boolean hasValue = hasInheritedCFValue(parentCfEntity, code);
                 if (hasValue) {
                     return true;
@@ -831,7 +841,12 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
             if (parentCfEntity == null) {
                 continue;
             }
-            parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+            // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one. 
+            if (parentCfEntity instanceof Provider){
+                parentCfEntity = appProvider;
+            } else {
+                parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+            }
             result.add(parentCfEntity);
             ICustomFieldEntity[] recurseCfes = getHierarchyParentCFEntities(parentCfEntity);
             if (recurseCfes != null && recurseCfes.length > 0) {
@@ -908,7 +923,12 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
                 if (parentCfEntity == null) {
                     continue;
                 }
-                parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one. 
+                if (parentCfEntity instanceof Provider){
+                    parentCfEntity = appProvider;
+                } else {
+                    parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                }                
                 Object value = getInheritedCFValue(parentCfEntity, code, date);
                 if (value != null) {
                     return value;
@@ -979,7 +999,12 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
                 if (parentCfEntity == null) {
                     continue;
                 }
-                parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one. 
+                if (parentCfEntity instanceof Provider){
+                    parentCfEntity = appProvider;
+                } else {
+                    parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                }
                 Object cfeValue = getInheritedCFValue(parentCfEntity, code, date);
                 if (cfeValue != null) {
                     return cfeValue;
@@ -1014,7 +1039,12 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
                 if (parentCfEntity == null) {
                     continue;
                 }
-                parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one. 
+                if (parentCfEntity instanceof Provider){
+                    parentCfEntity = appProvider;
+                } else {
+                    parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                }
                 Object cfeValue = getInheritedCFValueByClosestMatch(parentCfEntity, code, keyToMatch);
                 if (cfeValue != null) {
                     return cfeValue;
@@ -1048,7 +1078,12 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
                 if (parentCfEntity == null) {
                     continue;
                 }
-                parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one. 
+                if (parentCfEntity instanceof Provider){
+                    parentCfEntity = appProvider;
+                } else {
+                    parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                }
                 Object cfeValue = getInheritedCFValueByClosestMatch(parentCfEntity, code, date, keyToMatch);
                 if (cfeValue != null) {
                     return cfeValue;
@@ -1082,7 +1117,12 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
                 if (parentCfEntity == null) {
                     continue;
                 }
-                parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one. 
+                if (parentCfEntity instanceof Provider){
+                    parentCfEntity = appProvider;
+                } else {
+                    parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                }
                 Object cfeValue = getInheritedCFValueByMatrix(parentCfEntity, code, keys);
                 if (cfeValue != null) {
                     return cfeValue;
@@ -1117,7 +1157,12 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
                 if (parentCfEntity == null) {
                     continue;
                 }
-                parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one. 
+                if (parentCfEntity instanceof Provider){
+                    parentCfEntity = appProvider;
+                } else {
+                    parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                }
                 Object cfeValue = getInheritedCFValueByMatrix(parentCfEntity, code, date, keys);
                 if (cfeValue != null) {
                     return cfeValue;
@@ -1149,7 +1194,12 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
                 if (parentCfEntity == null) {
                     continue;
                 }
-                parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one. 
+                if (parentCfEntity instanceof Provider){
+                    parentCfEntity = appProvider;
+                } else {
+                    parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                }
                 Object cfeValue = getInheritedCFValueByRangeOfNumbers(parentCfEntity, code, numberToMatch);
                 if (cfeValue != null) {
                     return cfeValue;
@@ -1182,7 +1232,12 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
                 if (parentCfEntity == null) {
                     continue;
                 }
-                parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one. 
+                if (parentCfEntity instanceof Provider){
+                    parentCfEntity = appProvider;
+                } else {
+                    parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                }
                 Object cfeValue = getInheritedCFValueByRangeOfNumbers(parentCfEntity, code, date, numberToMatch);
                 if (cfeValue != null) {
                     return cfeValue;

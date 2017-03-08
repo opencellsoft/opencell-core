@@ -102,18 +102,18 @@
 
         </hftl:searchPanel>
         <hftl:dataList backingBean="#{ratedTransactionListBean}" deleteManyButton="false" exportButton="true" exportXlsxButton="false">
-		<hftl:column  label="#{messages['BusinessEntity.code']}" field="code"  width="70"/> 
-			 <hftl:column label="#{messages['walletOperation.status']}" field="status.label" isMessage="true" width="70"/>
+			<hftl:column  label="#{messages['BusinessEntity.code']}" field="code" /> 
+			<hftl:column label="#{messages['walletOperation.status']}" field="status.label" isMessage="true"/>
 			 <p:column width="100">
 				<f:facet name="header">
 					<h:outputText value="#{messages['ratedTransaction.walletOperation']}" />
 				</f:facet> 
 					<h:outputText 
-						value="#{ratedTransactionListBean.getWalletOperationCode(entity.getWalletOperationId)}" />  
+						value="#{ratedTransactionListBean.getWalletOperationCode(entity.walletOperationId)}" />  
 			</p:column>
 			<hftl:column label="#{messages['ratedTransaction.quantity']}" field="quantity"  converterParam="4digits" wrapHeader="true" />
 			<hftl:column label="#{messages['ratedTransaction.amount1WithoutTax']}" field="amountWithoutTax"  converterParam="4digits" wrapHeader="true" />
-			<hftl:column label="#{messages['ratedTransaction.amount1WithTax']}" field="amountWithTax"  converterParam="4digits" wrapHeader="true" rendered="#{ ! invoiceBean.entity.provider.entreprise}" />
+			<hftl:column label="#{messages['ratedTransaction.amount1WithTax']}" field="amountWithTax"  converterParam="4digits" wrapHeader="true" rendered="#{ ! appProvider.entreprise}" />
 			<hftl:column label="#{messages['ratedTransaction.usageDate']}" field="usageDate" isDate="true" />
 			<hftl:column label="#{messages['invoice.invoiceNumber']}" field="invoice.invoiceNumber"  /> 
 			<hftl:actionsColumn renderEditLink="true" renderDeleteLink="false" width="60"

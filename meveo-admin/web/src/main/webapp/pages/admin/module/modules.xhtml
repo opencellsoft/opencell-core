@@ -28,7 +28,7 @@
             <hftl:column label="#{messages['BusinessEntity.description']}" field="description" />
             <p:column headerText="#{messages['meveoModule.logo']}">
                 <c:set var="pictureDestUrl"
-                    value="http://${request.serverName}:${request.serverPort}${request.contextPath}/picture/${entity.provider.code}/module/${entity.logoPicture}" />
+                    value="http://${request.serverName}:${request.serverPort}${request.contextPath}/picture/${appProvider.code}/module/${entity.logoPicture}" />
                 <h:graphicImage url="${pictureDestUrl}" rendered="#{not empty entity.logoPicture}">
                     <f:attribute name="height" value="30"></f:attribute>
                     <f:attribute name="width" value="30"></f:attribute>

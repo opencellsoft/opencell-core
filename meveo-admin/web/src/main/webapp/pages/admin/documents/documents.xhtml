@@ -13,12 +13,12 @@
 		<a:outputPanel id="documentsPanel" width="100%">
 			
 			<h:outputText value="#{messages['commons.noItems']}"
-				rendered="#{documents.size==0}" />
-			<h:form id="documentsForm" rendered="#{documents.size&gt;0}">
+				rendered="#{documents.size()==0}" />
+			<h:form id="documentsForm" rendered="#{documents.size()&gt;0}">
 				<h:panelGrid width="100%" columns="1" border="0"
 					style="padding:0px; margin:0px;text-align: right;">
 					<h:outputText
-						value="#{documents.size} #{messages['commons.itemsFound']}" />
+						value="#{documents.size()} #{messages['commons.itemsFound']}" />
 				</h:panelGrid>
 				
 			<e:sortableDataTable id="documentsDatatable" var="entity" value="#{documents}" paginator="true" rows="10"  
@@ -34,7 +34,7 @@
 						<f:facet name="header">
 							<h:outputText value="#{messages['document.size']}" />
 						</f:facet>
-						<h:outputText value="#{_document.size}" />
+						<h:outputText value="#{_document.size()}" />
 					</p:column>
 					<p:column style="width:20%">
 						<f:facet name="header">

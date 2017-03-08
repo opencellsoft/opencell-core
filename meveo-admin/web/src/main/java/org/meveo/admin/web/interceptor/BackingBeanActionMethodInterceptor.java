@@ -42,14 +42,19 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
     @AroundInvoke
     public Object aroundInvoke(InvocationContext invocationContext) throws Exception {
 
+        Object result = null;
         try {
             // Call a backing bean method and flush persistence
-            Object result = invocationContext.proceed();
+            result = invocationContext.proceed();
+            log.error("AKK isJointedToTransaction {}", em.isJoinedToTransaction());
             em.flush();
             return result;
 
         } catch (TransactionRequiredException e) {
             log.error("Transaction must have been rollbacked already (probably by exception thown in service and caught in backing bean): {}", e.getMessage());
+            if (result!=null){
+                return result;
+            }
 
         } catch (ConstraintViolationException e) {
             log.error("Failed to execute {}.{} method due to validation errors ", invocationContext.getMethod().getDeclaringClass().getName(), invocationContext.getMethod()

@@ -170,7 +170,8 @@ public class OtherCreditAndChargeBean extends CustomFieldBean<OtherCreditAndChar
 		entity.setUnMatchingAmount(entity.getAmount());
 //		entity.getCustomerAccount().getAccountOperations().add(entity);
 
-		return super.saveOrUpdate(killConversation);
+		String outcome = super.saveOrUpdate(killConversation);
+		return outcome;
 	}
 
 	/**
@@ -186,7 +187,7 @@ public class OtherCreditAndChargeBean extends CustomFieldBean<OtherCreditAndChar
 	 */
 	@Override
 	public String back() {
-		return "customerAccountDetail";
+	    return "customerAccountDetail";
 	}
 
 	/**

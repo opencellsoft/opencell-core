@@ -174,11 +174,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     protected LazyDataModel<T> dataModel;
 
     /**
-     * Bind datatable for search results.
-     */
-    private DataTable dataTable;
-
-    /**
      * Selected Entities in multiselect datatable.
      */
     private List<T> selectedEntities;
@@ -924,18 +919,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         return searchCriteria;
     }
 
-    public DataTable search() {
+    public void search() {
         filterCustomFieldSearchBean.buildFilterParameters(filters);
-        dataTable.reset();
-        return dataTable;
-    }
-
-    public DataTable getDataTable() {
-        return dataTable;
-    }
-
-    public void setDataTable(DataTable dataTable) {
-        this.dataTable = dataTable;
     }
 
     public List<T> getSelectedEntities() {

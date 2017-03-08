@@ -32,12 +32,14 @@ public class WsRestApiInterceptor {
 
     @AroundInvoke
     public Object aroundInvoke(InvocationContext invocationContext) throws Exception {
-        log.debug("\r\n\r\n===========================================================");
-        log.debug("Entering method {}.{}", invocationContext.getMethod().getDeclaringClass().getName(), invocationContext.getMethod().getName());
+        if (log.isDebugEnabled()) {
+            log.debug("\r\n\r\n===========================================================");
+            log.debug("Entering method {}.{}", invocationContext.getMethod().getDeclaringClass().getName(), invocationContext.getMethod().getName());
 
-        if (invocationContext.getParameters() != null) {
-            for (Object obj : invocationContext.getParameters()) {
-                log.debug("Parameter {}", obj == null ? null : obj.toString());
+            if (invocationContext.getParameters() != null) {
+                for (Object obj : invocationContext.getParameters()) {
+                    log.debug("Parameter {}", obj == null ? null : obj.toString());
+                }
             }
         }
 
@@ -59,13 +61,12 @@ public class WsRestApiInterceptor {
                 emfForJobs.flush();
             }
 
-
         } catch (TransactionRequiredException e) {
             log.error("Transaction must have been rollbacked already (probably by exception thown in service and caught in backing bean): {}", e.getMessage());
-            
+
         } catch (ConstraintViolationException e) {
-            log.error("Failed to execute {}.{} method due to DTO validation errors ", invocationContext.getMethod().getDeclaringClass().getName(), invocationContext.getMethod()
-                .getName(), e);
+            log.error("Failed to execute {}.{} method due to DTO validation errors ", invocationContext.getMethod().getDeclaringClass().getName(),
+                invocationContext.getMethod().getName(), e);
 
             // Need to create a result, if it is the invocationContext.proceed() method that caused the error
             if (actionStatus == null) {
@@ -89,8 +90,8 @@ public class WsRestApiInterceptor {
             actionStatus.setMessage(builder.toString());
 
         } catch (BusinessException e) {
-            log.error("Failed to execute {}.{} method due to DB level errors ", invocationContext.getMethod().getDeclaringClass().getName(), invocationContext.getMethod()
-                .getName(), e);
+            log.error("Failed to execute {}.{} method due to DB level errors ", invocationContext.getMethod().getDeclaringClass().getName(),
+                invocationContext.getMethod().getName(), e);
 
             // Need to create a result, if it is the invocationContext.proceed() method that caused the error
             if (actionStatus == null) {
@@ -106,8 +107,8 @@ public class WsRestApiInterceptor {
             actionStatus.setMessage(e.getMessage());
 
         } catch (Exception e) {
-            log.error("Failed to execute {}.{} method due to DB level errors ", invocationContext.getMethod().getDeclaringClass().getName(), invocationContext.getMethod()
-                .getName(), e);
+            log.error("Failed to execute {}.{} method due to DB level errors ", invocationContext.getMethod().getDeclaringClass().getName(),
+                invocationContext.getMethod().getName(), e);
 
             // Need to create a result, if it is the invocationContext.proceed() method that caused the error
             if (actionStatus == null) {

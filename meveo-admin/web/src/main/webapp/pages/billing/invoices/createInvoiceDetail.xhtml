@@ -3,8 +3,7 @@
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
-	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml"
-	xmlns:pe="http://primefaces.org/ui/extensions">
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
 	<ui:define name="navigation">
 		<ui:include src="/layout/navigation.xhtml" />
@@ -54,7 +53,6 @@
 			</hftl:entityPopup>
 		</c:if>
 
-		<p:panel>
 			  <hftl:formPanel ajaxSubmit="true"
 				backingBean="#{creationInvoiceBean}"
 				submitPartialProcess=":formId:tabView" ignoreEnterKey="true">
@@ -214,7 +212,7 @@
 											<p:column>
 												<p:inputText value="#{rated.unitAmountWithoutTax}"
 													label="#{messages['ratedTransaction.unitAmountWithoutTax']}">
-													<pe:keyFilter mask="num" />
+													<p:keyFilter mask="num" />
 													<f:converter converterId="bigDecimal4DigitsConverter" />
 													<p:ajax event="change"
 														listener="#{creationInvoiceBean.reComputeAmountWithoutTax(rated)}"
@@ -224,7 +222,7 @@
 											<p:column>
 												<p:inputText value="#{rated.quantity}"
 													label="#{messages['ratedTransaction.quantity']}">
-													<pe:keyFilter mask="num" />
+													<p:keyFilter mask="num" />
 													<f:converter converterId="bigDecimal4DigitsConverter" />
 													<p:ajax event="change"
 														listener="#{creationInvoiceBean.reComputeAmountWithoutTax(rated)}"
@@ -308,7 +306,7 @@
 											<p:column>
 
 												<p:inputText value="#{subCat.amountWithoutTax}">
-													<pe:keyFilter mask="num" />
+													<p:keyFilter mask="num" />
 													<f:converter converterId="bigDecimal4DigitsConverter" />
 													<p:ajax event="change"
 														listener="#{creationInvoiceBean.reComputeAmountWithoutTax(subCat)}"
@@ -360,7 +358,7 @@
 												converter="omnifaces.SelectItemsConverter">
 												<f:selectItem itemLabel="" noSelectionOption="true" />
 												<f:selectItems
-													value="#{creationInvoiceBean.getCharges}"  var="elem" itemLabel="#{elem.description}" itemValue="#{elem}" />
+													value="#{creationInvoiceBean.charges}"  var="elem" itemLabel="#{elem.description}" itemValue="#{elem}" />
 													<p:ajax update="description" event="valueChange" listener="#{creationInvoiceBean.handleSelectedCharge}" />
 											</p:selectOneMenu>
 										</hftl:decorateFormField> 										 
@@ -380,14 +378,14 @@
 											label="#{messages['ratedTransaction.unitAmountWithoutTax']} *">
 											<p:inputText id="unitAmountWithoutTax"
 												value="#{creationInvoiceBean.unitAmountWithoutTax}">
-												<pe:keyFilter mask="num" />
+												<p:keyFilter mask="num" />
 											</p:inputText>
 										</hftl:decorateFormField> 
 										<hftl:decorateFormField fieldId="quantity"
 											label="#{messages['ratedTransaction.quantity']} *">
 											<p:inputText id="quantity"
 												value="#{creationInvoiceBean.quantity}" size="10">
-												<pe:keyFilter mask="num" />
+												<p:keyFilter mask="num" />
 											</p:inputText>
 										</hftl:decorateFormField> 
  
@@ -472,7 +470,7 @@
 									</p:row>
 								</p:panelGrid>
 								<div style="clear: both"></div>
-								<p:outputPanel style="float: left;" rendered="#{!creationInvoiceBean.entity.provider.isEntreprise()}">
+								<p:outputPanel style="float: left;" rendered="#{!appProvider.isEntreprise()}">
 									<h:panelGrid columns="2">
 										<h:outputText
 											value="#{messages['invoice.includeAccountBalance']}" />
@@ -489,9 +487,8 @@
 				  <hftl:customFields backingBean="#{creationInvoiceBean}"
 							messagesId=":formId:messages" />
 			   </p:tabView>
-					</hftl:formPanel>
+		</hftl:formPanel>
 				
-		</p:panel>
 	</ui:define>
 
 </ui:composition>

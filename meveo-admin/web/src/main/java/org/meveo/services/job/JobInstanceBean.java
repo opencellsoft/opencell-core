@@ -69,7 +69,10 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
     }
 
     public List<String> getJobNames() {
-        return jobInstanceService.getJobNames();
+        if (entity.getJobCategoryEnum() == null) {
+            return null;
+        }
+        return jobInstanceService.getJobNames(entity.getJobCategoryEnum());
     }
 
     public String execute() {

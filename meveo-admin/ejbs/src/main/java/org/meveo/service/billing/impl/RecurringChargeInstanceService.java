@@ -201,7 +201,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
 
         if (!isVirtual) {
-            create(chargeInstance); // AKK was with recurringChargeTemplate.getProvider()
+            create(chargeInstance);
         }
         
 		return chargeInstance;

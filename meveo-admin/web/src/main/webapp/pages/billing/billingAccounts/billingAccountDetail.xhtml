@@ -210,12 +210,12 @@
                                         listBean="#{titleBean}" listenerUpdate=":parentTab:formId:childTab:userNamePanel" styleClass="clearLeft"/>
 
                                     <h:panelGroup id="userNamePanel" layout="block">
-                                            <hftl:formField label="#{messages[(billingAccountBean.entity.name.title != null and billingAccountBean.entity.name.title.company)?'name.company':'name.lastName']}"
+                                            <hftl:formField label="#{messages[(billingAccountBean.entity.name.title != null and billingAccountBean.entity.name.title.isCompany)?'name.company':'name.lastName']}"
                                                 field="name" childField="lastName" 
                                                 maxlength="50" required="#{billingAccountBean.entity.name.title != null}" />
                                             <hftl:formField label="#{messages['name.firstName']}"
                                                 field="name" childField="firstName" 
-                                                maxlength="50" rendered="#{billingAccountBean.entity.name.title == null or !billingAccountBean.entity.name.title.company}"/>
+                                                maxlength="50" rendered="#{billingAccountBean.entity.name.title == null or !billingAccountBean.entity.name.title.isCompany}"/>
                                     </h:panelGroup>                                                
                                                 
 							     </p:fieldset>		

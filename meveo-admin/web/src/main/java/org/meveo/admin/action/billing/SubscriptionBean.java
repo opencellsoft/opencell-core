@@ -719,7 +719,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 		}
 	}
 
-	private Long getUserAccountId() {
+	public Long getUserAccountId() {
 		return userAccountId;
 	}
 

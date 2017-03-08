@@ -95,7 +95,7 @@
 							lazy="false" styleClass="custom-grid"
 							rowsPerPageTemplate="10, 20, 50" reflow="true">
 							<p:column headerText="#{messages['BusinessEntity.type']}">
-								<h:outputText value="#{securedEntity.readableEntityClass}"
+								<h:outputText value="#{securedEntity.readableEntityClass()}"
 									styleClass="field-value" />
 							</p:column>
 							<p:column headerText="#{messages['BusinessEntity.code']}">

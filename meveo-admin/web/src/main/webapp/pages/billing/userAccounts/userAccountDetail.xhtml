@@ -89,7 +89,7 @@
                         <p:inputText id="amountWithoutTax" value="#{userAccountBean.reloadOperation.amountWithoutTax}"></p:inputText>
                     </hftl:decorateFormField>
                     <hftl:decorateFormField fieldId="amountWithTax" label="#{messages['walletOperation.amountWithTax']}"
-                        rendered="#{ userAccountBean.entity != null and ! userAccountBean.entity.provider.entreprise}">
+                        rendered="#{ userAccountBean.entity != null and ! appProvider.entreprise}">
                         <p:inputText id="amountWithTax" value="#{userAccountBean.reloadOperation.amountWithTax}"></p:inputText>
                     </hftl:decorateFormField>
 
@@ -133,10 +133,10 @@
 
                                         <h:panelGroup id="userNamePanel" layout="block">
                                             <hftl:formField
-                                                label="#{messages[(userAccountBean.entity.name.title != null and userAccountBean.entity.name.title.company)?'name.company':'name.lastName']}"
+                                                label="#{messages[(userAccountBean.entity.name.title != null and userAccountBean.entity.name.title.isCompany)?'name.company':'name.lastName']}"
                                                 field="name" childField="lastName" maxlength="50" required="#{userAccountBean.entity.name.title != null}" />
                                             <hftl:formField label="#{messages['name.firstName']}" field="name" childField="firstName" maxlength="50"
-                                                rendered="#{userAccountBean.entity.name.title == null or !userAccountBean.entity.name.title.company}" />
+                                                rendered="#{userAccountBean.entity.name.title == null or !userAccountBean.entity.name.title.isCompany}" />
                                         </h:panelGroup>
                                     </p:fieldset>
                                     <p:fieldset legend="#{messages['commons.status']}" styleClass="clearLeft">
@@ -280,7 +280,7 @@
                                 <p:fieldset legend="#{messages['walletOperationStatus.open']}" rendered="#{wallet.key!='PREPAID'}" styleClass="clearLeft"
                                     style="width: 25%; float:left;">
                                     <hftl:decorateFormField label="#{messages['pricePlanMatrix.amountWithTax']}" displayOneLine="true" componentWidth="100" labelWidth="70"
-                                        rendered="#{ userAccountBean.entity != null and ! userAccountBean.entity.provider.entreprise}">
+                                        rendered="#{ userAccountBean.entity != null and ! appProvider.entreprise}">
                                         <h:outputText
                                             value="#{userAccountBean.getOpenBalanceWithTax(userAccountBean.entity.billingAccount.customerAccount.customer.seller.code,userAccountBean.entity.code,null,null)}" />
                                     </hftl:decorateFormField>
@@ -293,7 +293,7 @@
                                 </p:fieldset>
                                 <p:fieldset legend="#{messages['walletOperationStatus.reserved']}" rendered="#{wallet.key!='PREPAID'}" style="width: 25%; float:left;">
                                     <hftl:decorateFormField label="#{messages['pricePlanMatrix.amountWithTax']}" displayOneLine="true" componentWidth="100" labelWidth="70"
-                                        rendered="#{ userAccountBean.entity != null and ! userAccountBean.entity.provider.entreprise}">
+                                        rendered="#{ userAccountBean.entity != null and ! appProvider.entreprise}">
                                         <h:outputText
                                             value="#{userAccountBean.getReservedBalanceWithTax(userAccountBean.entity.billingAccount.customerAccount.customer.seller.code
     													,userAccountBean.entity.code,null,null)}" />
@@ -307,7 +307,7 @@
                                 </p:fieldset>
                                 <p:fieldset legend="#{messages['walletOperationStatus.current']}" rendered="#{wallet.key!='PREPAID'}" style="width: 25%; float:left;">
                                     <hftl:decorateFormField label="#{messages['pricePlanMatrix.amountWithTax']}" displayOneLine="true" componentWidth="100" labelWidth="70"
-                                        rendered="#{ userAccountBean.entity != null and ! userAccountBean.entity.provider.entreprise}">
+                                        rendered="#{ userAccountBean.entity != null and ! appProvider.entreprise}">
                                         <h:outputText
                                             value="#{userAccountBean.getCurrentBalanceWithTax(userAccountBean.entity.billingAccount.customerAccount.customer.seller.code
     													,userAccountBean.entity.code,null,null)}" />
@@ -366,7 +366,7 @@
                                         <h:outputText value="#{e.amountWithoutTax}" converter="bigDecimal12DigitsConverter" />
                                     </p:column>
 
-                                    <p:column rendered="#{ userAccountBean.entity != null and ! userAccountBean.entity.provider.entreprise}">
+                                    <p:column rendered="#{ userAccountBean.entity != null and ! appProvider.entreprise}">
                                         <f:facet name="header">
                                             <h:outputText value="#{messages['walletOperation.amountWithTax']}" />
                                         </f:facet>
@@ -388,7 +388,7 @@
                         </p:tab>
                     </c:forEach>
 
-                    <p:tab title="#{messages['counterPeriod.title']}" id="tab#{3+userAccountBean.entity.prepaidWallets.size}" rendered="#{userAccountBean.entity.id!=null}">
+                    <p:tab title="#{messages['counterPeriod.title']}" id="tab#{3+userAccountBean.entity.prepaidWallets.size()}" rendered="#{userAccountBean.entity.id!=null}">
                         <hftl:formPanel formId="counterAccountInfo" backingBean="#{userAccountBean}" showFormButtons="false" edit="false" showMessages="false">
                             <hftl:formField label="#{messages['businessEntity.code']}" field="code" />
                             <hftl:formField label="#{messages['billingAccount.status']}" field="status" />

@@ -23,7 +23,7 @@
 			column2Label="#{messages['offerTemplate.description']}"
 			column2="description"
 			selection="#{discountPlanMatrixBean.filters['offerTemplate']}"
-			lazy="false" dataModel="#{offerTemplateBean.listActive}"
+			lazy="false" dataModel="#{offerTemplateBean.listActive()}"
 			updateField=":searchForm:offer">
 		</hftl:entityPopup>
 		<hftl:entityPopup id="searchSellerPopup"

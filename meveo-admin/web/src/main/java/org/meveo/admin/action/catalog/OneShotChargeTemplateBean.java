@@ -42,7 +42,6 @@ import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
-import org.primefaces.component.datatable.DataTable;
 import org.primefaces.model.DualListModel;
 import org.primefaces.model.LazyDataModel;
 
@@ -90,12 +89,12 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
 	}
 
 	@Override
-	public DataTable search() {
+	public void search() {
 		getFilters();
 		if (!filters.containsKey("disabled")) {
 			filters.put("disabled", false);
 		}
-		return super.search();
+		super.search();
 	}
 
 	// /**

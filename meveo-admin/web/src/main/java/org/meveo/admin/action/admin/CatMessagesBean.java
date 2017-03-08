@@ -125,7 +125,7 @@ public class CatMessagesBean extends BaseBean<CatMessages> {
         }
     }
 
-    protected Map<String, String> getObjectTypes() {
+    public Map<String, String> getObjectTypes() {
         return this.objectTypeMap;
     }
 

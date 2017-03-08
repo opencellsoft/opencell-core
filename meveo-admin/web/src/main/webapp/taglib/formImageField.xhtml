@@ -24,7 +24,7 @@
 				value="${defaultImageStreamer.image}" cache="false"
 				width="#{imageWidth}" height="#{imageHeight}">
 				<f:param name="providerCode"
-					value="#{backingBean.currentProvider.code}"></f:param>
+					value="#{appProvider.code}"></f:param>
 				<f:param name="fileName" value="#{fieldItem}"></f:param>
 				<f:param name="pictureGroupName" value="#{pictureGroupName}"></f:param>
 			</p:graphicImage>
@@ -43,7 +43,7 @@
 				value="${defaultImageStreamer.image}" cache="false"
 				width="#{imageWidth}" height="#{imageHeight}">
 				<f:param name="providerCode"
-					value="#{backingBean.currentProvider.code}"></f:param>
+					value="#{appProvider.code}"></f:param>
 				<f:param name="fileName" value="#{fieldItem}"></f:param>
 				<f:param name="pictureGroupName" value="#{pictureGroupName}"></f:param>
 			</p:graphicImage>

@@ -1,5 +1,5 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
-    xmlns:hftl="http://hftl.org" xmlns:p="http://primefaces.org/ui" xmlns:pe="http://primefaces.org/ui/extensions" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+    xmlns:hftl="http://hftl.org" xmlns:p="http://primefaces.org/ui" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
     xmlns:s="http://jboss.org/seam/faces" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" template="/layout/template.xhtml">
 
     <ui:define name="metadata">
@@ -10,8 +10,8 @@
     </ui:define>
 
     <ui:define name="body">
-        <pe:importEnum type="org.meveo.model.quote.QuoteStatusEnum" var="QuoteStatusEnum" />
-        <pe:importEnum type="org.meveo.api.order.OrderProductCharacteristicEnum" var="CharacteristicsEnum" />
+        <p:importEnum type="org.meveo.model.quote.QuoteStatusEnum" var="QuoteStatusEnum" />
+        <p:importEnum type="org.meveo.api.order.OrderProductCharacteristicEnum" var="CharacteristicsEnum" />
 
         <h:form id="crumbmenuForm">
             <p:breadCrumb homeDisplay="text" id="crumbmenu">
@@ -40,7 +40,7 @@
         </hftl:entityPopup>
         <hftl:entityPopup id="offerPopup" header="#{messages['offer.popup.header']}" backingBean="#{productOfferingBean}" searchField1Label="#{messages['businessEntity.code']}"
             searchField1="code" searchField2Label="#{messages['businessEntity.description']}" searchField2="description" column1Label="#{messages['businessEntity.code']}"
-            column1="code" column2Label="#{messages['businessEntity.description']}" column2="description" lazy="false" dataModel="#{productOfferingBean.listActive}"
+            column1="code" column2Label="#{messages['businessEntity.description']}" column2="description" lazy="false" dataModel="#{productOfferingBean.listActive()}"
             updateField=":quoteForm:tabView:offer  :quoteForm:tabView:offer_text :quoteForm:tabView:offerTree  :quoteForm:tabView:offerConfigurations"
             selectionListenerBean="#{quoteBean}" selectionListenerMethod="onMainProductOfferingSet">
         </hftl:entityPopup>

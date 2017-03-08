@@ -3,7 +3,6 @@
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
 	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
-	xmlns:pe="http://primefaces.org/ui/extensions"
 	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:of="http://omnifaces.org/functions"
@@ -151,7 +150,7 @@
 											<p:graphicImage value="#{defaultImageStreamer.image}"
 												cache="false" width="100" height="100" rendered="#{prod ne null}">
 												<f:param name="providerCode"
-													value="#{productTemplateListBean.currentProvider.code}"></f:param>
+													value="#{appProvider.code}"></f:param>
 												<f:param name="fileName" value="#{prod.imagePath}"></f:param>
 												<f:param name="pictureGroupName" value="product"></f:param>
 											</p:graphicImage>
@@ -267,13 +266,13 @@
 									<f:facet name="header">
 										<h:outputText
 											value="#{messages['productTemplate.productCharges']}"
-											rendered="#{prod.productChargeTemplates!=null and prod.productChargeTemplates.size>0}" />
+											rendered="#{prod.productChargeTemplates!=null and prod.productChargeTemplates.size()>0}" />
 									</f:facet>
 									<p:dataList styleClass="dataList" paginatorPosition="bottom"
 										paginatorAlwaysVisible="false"
 										value="#{prod.productChargeTemplates}"
 										var="ct" type="ordered"
-										rendered="#{prod.productChargeTemplates!=null and prod.productChargeTemplates.size>0}">
+										rendered="#{prod.productChargeTemplates!=null and prod.productChargeTemplates.size()>0}">
 										<h:outputText value="#{ct.descriptionOrCode}" />
 									</p:dataList>
 								</p:panel>

@@ -19,7 +19,7 @@
 				<p:menuitem value="#{messages['commons.new']} #{messages['invoice']}"
 					disabled="true" rendered="#{invoiceBean.entity.transient}" />
 				<p:menuitem
-					value="#{messages['invoice']} - #{invoiceBean.entity.invoiceNumber}"
+					value="#{messages['invoice']} - #{invoiceBean.entity.invoiceNumberOrTemporaryNumber}"
 					disabled="true" rendered="#{!invoiceBean.entity.transient}" />
 			</p:breadCrumb>
 		</h:form>

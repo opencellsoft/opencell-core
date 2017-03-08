@@ -23,7 +23,7 @@
 		<!-- 			column2Label="#{messages['offerTemplate.description']}" -->
 		<!-- 			column2="description"  -->
 		<!-- 			selection="#{pricePlanMatrixBean.entity.offerTemplate}" -->
-		<!-- 			lazy="false" dataModel="#{offerTemplateBean.listActive}" -->
+		<!-- 			lazy="false" dataModel="#{offerTemplateBean.listActive()}" -->
 		<!-- 			updateField=":formPricePlan:offerSelectId"> -->
 		<!-- 		</hftl:entityPopup> -->
 
@@ -140,7 +140,7 @@
 						<hftl:formField id="offerSelectId"
 							label="#{messages['pricePlanMatrix.offerCode']}"
 							field="offerTemplate" valueLabelField="code"
-							listElements="#{offerTemplateBean.listActive}" />
+							listElements="#{offerTemplateBean.listActive()}" />
 						<!--                     popup="true" popupId="offerPopup"/>                     -->
 						<hftl:formField id="customerCurrencySelectId"
 							label="#{messages['currency.codeCurrency']}"
@@ -205,12 +205,12 @@
 							label="#{messages['pricePlanMatrix.amountWithTax']}"
 							newLine="true" field="amountWithTax"
 							converter="bigDecimal4DigitsConverter"
-							rendered="#{!pricePlanMatrixBean.entity.provider.entreprise}"
+							rendered="#{!appProvider.entreprise}"
 							required="true" />
 						<hftl:formField
 							label="#{messages['pricePlanMatrix.amountWithTax']} EL"
 							field="amountWithTaxEL" textArea="true" rows="1" maxlength="2000"
-							rendered="#{!pricePlanMatrixBean.entity.provider.entreprise}" />
+							rendered="#{!appProvider.entreprise}" />
 					
 						<hftl:formField id="scriptSelectId"
     							label="#{messages['pricePlanMatrix.scriptCode']}"

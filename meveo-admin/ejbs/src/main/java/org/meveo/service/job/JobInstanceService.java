@@ -35,6 +35,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.TimerEntity;
 import org.meveo.service.base.PersistenceService;
@@ -42,7 +43,7 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class JobInstanceService extends PersistenceService<JobInstance> {
 
-    private static List<Class<? extends Job>> jobClasses = new ArrayList<>();
+    private static Map<JobCategoryEnum, List<Class<? extends Job>>> jobClasses = new HashMap<>();
     private static Map<Long, Timer> jobTimers = new HashMap<Long, Timer>();
     protected static List<Long> runningJobs = new ArrayList<Long>();
 
@@ -57,7 +58,10 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
      * @param JNDIName used to instanciate the implementation to execute the job (instantiacion class must be a session EJB)
      */
     public void registerJob(Job job) {
-        jobClasses.add(job.getClass());
+        if (!jobClasses.containsKey(job.getJobCategory())){
+            jobClasses.put(job.getJobCategory(), new ArrayList<>());
+        }
+        jobClasses.get(job.getJobCategory()).add(job.getClass());
         startTimers(job);
     }
 
@@ -95,9 +99,11 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
     public List<Job> getJobs() {
         List<Job> jobs = new ArrayList<>();
 
-        for (Class<? extends Job> jobClass : jobClasses) {
-            Job job = getJobByName(jobClass.getSimpleName());
-            jobs.add(job);
+        for (List<Class<? extends Job>> jobList : jobClasses.values()) {
+            for (Class<? extends Job> jobClass : jobList) {
+                Job job = getJobByName(jobClass.getSimpleName());
+                jobs.add(job);
+            }
         }
         return jobs;
     }
@@ -105,8 +111,21 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
     public List<String> getJobNames() {
         List<String> jobs = new ArrayList<String>();
 
-        for (Class<? extends Job> jobClass : jobClasses) {
-            jobs.add(jobClass.getSimpleName());
+        for (List<Class<? extends Job>> jobList : jobClasses.values()) {
+            for (Class<? extends Job> jobClass : jobList) {
+                jobs.add(jobClass.getSimpleName());
+            }
+        }
+        return jobs;
+    }
+    
+    public List<String> getJobNames(JobCategoryEnum jobCategory) {
+        List<String> jobs = new ArrayList<String>();
+
+        if (jobClasses.containsKey(jobCategory)) {
+            for (Class<? extends Job> jobClass : jobClasses.get(jobCategory)) {
+                jobs.add(jobClass.getSimpleName());
+            }
         }
         return jobs;
     }

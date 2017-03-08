@@ -154,7 +154,7 @@ public class TradingLanguageBean extends BaseBean<TradingLanguage> {
 		return "language.languageCode";
 	}
 	
-	protected Map<String,String> getLanguageCodes(){
+	public Map<String,String> getLanguageCodes(){
 		Map<String,String> result=new HashMap<String,String>();
 		List<TradingLanguage> langs=tradingLanguageService.list();
 		for(TradingLanguage lang:langs){

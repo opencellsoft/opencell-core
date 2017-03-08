@@ -131,7 +131,7 @@
             <p:dataTable id="datatable_#{resultsId}" var="entity" scrollable="#{scrollable}" value="#{dataModel}" paginator="true" rows="10" editable="#{editable}"
                 editMode="#{editMode}" widgetVar="cellEntity_#{resultsId}" selection="#{backingBean.selectedEntities}" sortBy="#{'sortBy'}" sortField="#{sortBy}"
                 sortOrder="#{sortOrder}" paginatorTemplate="${prePaginatorControls} {RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                rowsPerPageTemplate="#{rowsPerPage}" lazy="true" resizableColumns="true" binding="#{backingBean.dataTable}" styleClass="custom-grid #{styleClass}" rowKey="#{entity.id}"
+                rowsPerPageTemplate="#{rowsPerPage}" lazy="true" resizableColumns="true"  styleClass="custom-grid #{styleClass}" rowKey="#{entity.id}"
                 first="#{backingBean.dataTableFirstAttribute}" reflow="true" paginatorPosition="#{paginatorPosition}">
                 <p:ajax event="page" listener="#{backingBean.onPageChange}" />
                 <p:ajax event="toggleSelect" update="@this" process="@this" />
@@ -150,7 +150,7 @@
                         </p:outputPanel>
                     </f:facet>
                 </c:if>
-                <p:column selectionMode="multiple" width="4%" rendered="#{checkMany}" exportable="false" toggleable="false" />
+                <p:column id="multiSelect" selectionMode="multiple" width="4%" rendered="#{checkMany}" exportable="false" toggleable="false" />
                 <ui:insert />
             </p:dataTable>
 

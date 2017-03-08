@@ -110,9 +110,8 @@ public class AccessBean extends CustomFieldBean<Access> {
 		this.selectedSubscription = selectedSubscription;
 	}
 
-
     @ActionMethod
-	public String saveOrUpdate() throws BusinessException {
+	public String saveOrUpdateInSubscription() throws BusinessException {
 		if (subscriptionId != null) {
 			Subscription subscription = subscriptionService.findById(subscriptionId);
 			entity.setSubscription(subscription);
