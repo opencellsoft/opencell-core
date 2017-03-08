@@ -12,11 +12,6 @@
 <tr><td rowspan="1" colspan="3">SuccessJobInstancesTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>if</td>
-	<td>${ChartBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>clickAndWait</td>
 	<td>${Charts}</td>
 	<td></td>
@@ -47,11 +42,6 @@
 	<td>${CodeBarChart}</td>
 </tr>
 <tr>
-	<td>if</td>
-	<td>${DescriptionBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${descriptionText}</td>
 	<td></td>
@@ -60,11 +50,6 @@
 	<td>type</td>
 	<td>${descriptionText}</td>
 	<td>${DescriptionValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -147,61 +132,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>click</td>
-	<td>${SelectMeasurableQuantity}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForElementPresent</td>
-	<td>//tbody[@id='searchMeasurableQuantitypopupForm:searchMeasurableQuantitydatatable_data']/tr/td[1]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>//tbody[@id='searchMeasurableQuantitypopupForm:searchMeasurableQuantitydatatable_data']/tr/td[1]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${RoleBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${SelectRole}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${SelectRole}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>//*[contains(@id, 'name_text')]</td>
-	<td>${RoleValue}</td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>id=searchRolepopupForm:buttonSearch</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>//tbody[@id='searchRolepopupForm:searchRoledatatable_data']/tr/td</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${WidthBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${Width}</td>
 	<td></td>
@@ -210,16 +140,6 @@
 	<td>type</td>
 	<td>${Width}</td>
 	<td>${WidthValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${HeightBool}==true</td>
-	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -232,16 +152,6 @@
 	<td>${HeightValue}</td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${CSSstyleBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${CSSstyle}</td>
 	<td></td>
@@ -250,16 +160,6 @@
 	<td>type</td>
 	<td>${CSSstyle}</td>
 	<td>${CSSstyleValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${CSSClassBool}==true</td>
-	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -272,16 +172,6 @@
 	<td>${CSSClassValue}</td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${ExtenderJSBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${ExtenderJS}</td>
 	<td></td>
@@ -292,16 +182,6 @@
 	<td>${ExtenderJSValue}</td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${VisibleBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${Visible}</td>
 	<td></td>
@@ -312,16 +192,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${StackedBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${Stacked}</td>
 	<td></td>
@@ -329,16 +199,6 @@
 <tr>
 	<td>click</td>
 	<td>${Stacked}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${BarPaddingBool}==true</td>
 	<td></td>
 </tr>
 <tr>
@@ -352,16 +212,6 @@
 	<td>${BarPaddingValue}</td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${BarMarginBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${BarMargin}</td>
 	<td></td>
@@ -370,16 +220,6 @@
 	<td>type</td>
 	<td>${BarMargin}</td>
 	<td>${BarMarginValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${MinimumBool}==true</td>
-	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -392,16 +232,6 @@
 	<td>${MinimumValue}</td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${MaximumBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${Maximum}</td>
 	<td></td>
@@ -412,16 +242,6 @@
 	<td>${MaximumValue}</td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${BreakOnNullBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${BreakOnNull}</td>
 	<td></td>
@@ -429,16 +249,6 @@
 <tr>
 	<td>click</td>
 	<td>${BreakOnNull}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${XAxisLabelBool}==true</td>
 	<td></td>
 </tr>
 <tr>
@@ -452,16 +262,6 @@
 	<td>${XAxisLabelValue}</td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${YAxisLabelBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${YAxisLabel}</td>
 	<td></td>
@@ -470,16 +270,6 @@
 	<td>type</td>
 	<td>${YAxisLabel}</td>
 	<td>${YAxisLabelValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${XAxisAngleBool}==true</td>
-	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -492,16 +282,6 @@
 	<td>${XAxisAngleValue}</td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${YAxisAngleBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${YAxisAngle}</td>
 	<td></td>
@@ -510,16 +290,6 @@
 	<td>type</td>
 	<td>${YAxisAngle}</td>
 	<td>${YAxisAngleValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${LegendColumnsBool}==true</td>
-	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -532,16 +302,6 @@
 	<td>${LegendColumnsValue}</td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${LegendRowsBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${LegendRows}</td>
 	<td></td>
@@ -552,16 +312,6 @@
 	<td>${LegendRowsValue}</td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${EnableZoomBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${EnableZoom}</td>
 	<td></td>
@@ -569,16 +319,6 @@
 <tr>
 	<td>click</td>
 	<td>${EnableZoom}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${EnableAnimateBool}==true</td>
 	<td></td>
 </tr>
 <tr>
@@ -592,16 +332,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${ShowDataTipBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${ShowDataTip}</td>
 	<td></td>
@@ -609,16 +339,6 @@
 <tr>
 	<td>click</td>
 	<td>${ShowDataTip}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${DataTipFormatBool}==true</td>
 	<td></td>
 </tr>
 <tr>
@@ -630,11 +350,6 @@
 	<td>type</td>
 	<td>${DataTipFormat}</td>
 	<td>${DataTipFormatValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
 </tr>
 <tr>
 	<td>click</td>
@@ -660,11 +375,6 @@
 	<td>assertText</td>
 	<td>//a[contains(text(),'${CodeBarChart}')]</td>
 	<td>${CodeBarChart}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
 </tr>
 </tbody></table>
 </body>
