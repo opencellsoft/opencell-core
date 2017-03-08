@@ -32,7 +32,7 @@
 			<p:fieldset legend="#{messages['commons.contact']}">
 				<hftl:formField label="#{messages['businessEntity.code']}"
 					field="code" useConverter="false" size="50" maxlength="50"
-					required="true" />
+					required="true" validateUnique="true" />
 				<hftl:formField label="#{messages['name.firstName']}"
 					field="firstName" />
 				<hftl:formField label="#{messages['name.lastName']}" field="lastName" />

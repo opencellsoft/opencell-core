@@ -17,8 +17,6 @@ import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.slf4j.Logger;
@@ -40,10 +38,6 @@ public class AccountOperationsGenerationJobBean {
     
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
-
-    @Inject
-    @CurrentUser
-    private MeveoUser currentUser;
     
 	@SuppressWarnings("unchecked")
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })

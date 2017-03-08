@@ -10,6 +10,8 @@ import org.meveo.api.dto.account.ApplyProductRequestDto;
 import org.meveo.api.dto.billing.ActivateServicesRequestDto;
 import org.meveo.api.dto.billing.InstantiateServicesRequestDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
+import org.meveo.api.dto.billing.OperationServicesRequestDto;
+import org.meveo.api.dto.billing.SuspendSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
@@ -50,5 +52,17 @@ public interface SubscriptionWs extends IBaseWs {
 	
 	@WebMethod
 	ActionStatus createOrUpdateSubscription(@WebParam(name = "subscription") SubscriptionDto postData);
+	
+	@WebMethod
+	ActionStatus suspendSubscription(@WebParam(name = "suspendSubscriptionRequestDto") SuspendSubscriptionRequestDto postData);
+	
+	@WebMethod
+	ActionStatus resumeSubscription(@WebParam(name = "suspendSubscriptionRequestDto") SuspendSubscriptionRequestDto postData);
+	
+	@WebMethod
+	ActionStatus suspendServices(@WebParam(name = "operationServicesRequestDto") OperationServicesRequestDto postData);
+	
+	@WebMethod
+	ActionStatus resumeServices(@WebParam(name = "operationServicesRequestDto") OperationServicesRequestDto postData);
 
 }

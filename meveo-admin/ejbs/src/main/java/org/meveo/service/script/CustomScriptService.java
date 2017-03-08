@@ -50,19 +50,13 @@ import org.meveo.model.IEntity;
 import org.meveo.model.scripts.CustomScript;
 import org.meveo.model.scripts.ScriptInstanceError;
 import org.meveo.model.scripts.ScriptSourceTypeEnum;
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
 import org.meveo.service.base.BusinessService;
 
 public abstract class CustomScriptService<T extends CustomScript, SI extends ScriptInterface> extends BusinessService<T> {
 
     @Inject
     private ResourceBundle resourceMessages;
-    
-    @Inject
-    @CurrentUser
-    protected MeveoUser currentUser;
-    
+        
     protected final Class<SI> scriptInterfaceClass;
 
     private Map<String, List<String>> allLogs = new HashMap<String, List<String>>();

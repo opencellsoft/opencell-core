@@ -388,7 +388,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         
 		if (isImageUpload()) {
 			try {
-				ImageUploadEventHandler<T> imageUploadEventHandler = new ImageUploadEventHandler<>(currentUser);
+				ImageUploadEventHandler<T> imageUploadEventHandler = new ImageUploadEventHandler<>(appProvider);
 				imageUploadEventHandler.saveImageUpload(entity);
 			} catch (IOException e) {
 				log.error("Failed moving image file");
@@ -597,7 +597,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
             
             if (isImageUpload()) {
     			try {
-    				ImageUploadEventHandler<T> imageUploadEventHandler = new ImageUploadEventHandler<>(currentUser);
+    				ImageUploadEventHandler<T> imageUploadEventHandler = new ImageUploadEventHandler<>(appProvider);
     				imageUploadEventHandler.deleteImage(entity);
     			} catch (IOException e) {
     				log.error("Failed deleting image file");
@@ -627,7 +627,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
             
             if (isImageUpload()) {
     			try {
-    				ImageUploadEventHandler<T> imageUploadEventHandler = new ImageUploadEventHandler<>(currentUser);
+    				ImageUploadEventHandler<T> imageUploadEventHandler = new ImageUploadEventHandler<>(appProvider);
     				imageUploadEventHandler.deleteImage(entity);
     			} catch (IOException e) {
     				log.error("Failed deleting image file");
@@ -1288,7 +1288,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 		String code = ((BusinessEntity) entity).getCode();
 
 		try {
-			ImageUploadEventHandler<T> uploadHandler = new ImageUploadEventHandler<T>(currentUser);
+			ImageUploadEventHandler<T> uploadHandler = new ImageUploadEventHandler<T>(appProvider);
 			uploadHandler.handleImageUpload(entity, code, uploadedFile);
 			messages.info(new BundleKey("messages", "message.upload.succesful"));
 		} catch (Exception e) {

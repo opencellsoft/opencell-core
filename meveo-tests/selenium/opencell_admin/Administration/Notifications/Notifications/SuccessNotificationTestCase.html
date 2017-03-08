@@ -22,11 +22,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>if</td>
-	<td>${NotificationBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>clickAndWait</td>
 	<td>${buttonNew}</td>
 	<td></td>
@@ -45,11 +40,6 @@
 	<td>type</td>
 	<td>${codeText}</td>
 	<td>${CodeNotif}</td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${ClassnameFilterBool}==true</td>
-	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -72,11 +62,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${EventTypeFilter}</td>
 	<td></td>
@@ -92,11 +77,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>1000</td>
-	<td></td>
-</tr>
-<tr>
 	<td>click</td>
 	<td>css=li:contains(&quot;${EventTypeFilterValue}&quot;)</td>
 	<td></td>
@@ -107,11 +87,6 @@
 	<td>${EventTypeFilterValue}</td>
 </tr>
 <tr>
-	<td>if</td>
-	<td>${EventELFilterBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${EventELFilter}</td>
 	<td></td>
@@ -120,11 +95,6 @@
 	<td>type</td>
 	<td>${EventELFilter}</td>
 	<td>${EventELFilterValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -240,11 +210,6 @@
 	<td>assertText</td>
 	<td>//a[contains(text(),'${CodeNotif}')]</td>
 	<td>${CodeNotif}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
 </tr>
 </tbody></table>
 </body>

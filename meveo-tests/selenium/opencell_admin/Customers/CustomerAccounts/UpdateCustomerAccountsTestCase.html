@@ -67,11 +67,6 @@
 	<td>${Code}</td>
 </tr>
 <tr>
-	<td>if</td>
-	<td>${PrimaryContactBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${SelectPrimaryContact}</td>
 	<td></td>
@@ -87,11 +82,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${CustAcDescription}</td>
 	<td></td>
@@ -100,11 +90,6 @@
 	<td>type</td>
 	<td>${CustAcDescription}</td>
 	<td>${Description}</td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${RefExt1Bool}==true</td>
-	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -117,16 +102,6 @@
 	<td>${RefExt1Value}</td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${RefExt2Bool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${RefExt2}</td>
 	<td></td>
@@ -135,11 +110,6 @@
 	<td>type</td>
 	<td>${RefExt2}</td>
 	<td>${RefExt2Value}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -172,11 +142,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>if</td>
-	<td>${TitleBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${SelectTitle}</td>
 	<td></td>
@@ -192,11 +157,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${LastName}</td>
 	<td></td>
@@ -207,11 +167,6 @@
 	<td>${LastnameValue}</td>
 </tr>
 <tr>
-	<td>if</td>
-	<td>${FirstnameBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${FirstName}</td>
 	<td></td>
@@ -220,16 +175,6 @@
 	<td>type</td>
 	<td>${FirstName}</td>
 	<td>${FirstnameValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${PaymentMethodBool}==true</td>
-	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -244,16 +189,6 @@
 <tr>
 	<td>click</td>
 	<td>css=li:contains(&quot;${PaymentMethodValue}&quot;)</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${CreditCategoryBool}==true</td>
 	<td></td>
 </tr>
 <tr>
@@ -272,31 +207,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${DefaultBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${Default}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${Default}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertText</td>
 	<td>${Information}</td>
 	<td>Information</td>
@@ -312,11 +222,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>if</td>
-	<td>${EmailBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${Email}</td>
 	<td></td>
@@ -325,16 +230,6 @@
 	<td>type</td>
 	<td>${Email}</td>
 	<td>${EmailValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${PhoneBool}==true</td>
-	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -347,16 +242,6 @@
 	<td>${PhoneValue}</td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${MobileBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${Mobile}</td>
 	<td></td>
@@ -365,16 +250,6 @@
 	<td>type</td>
 	<td>${Mobile}</td>
 	<td>${MobileValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${Address1Bool}==true</td>
-	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -387,16 +262,6 @@
 	<td>${Address1Value}</td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${Address2Bool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${InfAddress2}</td>
 	<td></td>
@@ -405,16 +270,6 @@
 	<td>type</td>
 	<td>${InfAddress2}</td>
 	<td>${Address2Value}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${Address3Bool}==true</td>
-	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -427,16 +282,6 @@
 	<td>${Address3Value}</td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${ZipCodeBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${InfZipCode}</td>
 	<td></td>
@@ -447,16 +292,6 @@
 	<td>${ZipCodeValue}</td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${CityBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${InfCity}</td>
 	<td></td>
@@ -465,16 +300,6 @@
 	<td>type</td>
 	<td>${InfCity}</td>
 	<td>${CityValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${CountryBool}==true</td>
-	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -492,16 +317,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${MandateIdentificationBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${MandateIdentification}</td>
 	<td></td>
@@ -512,16 +327,6 @@
 	<td>${MandateIdentificationValue}</td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${SignatureDateBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${SignatureDate}</td>
 	<td></td>
@@ -530,11 +335,6 @@
 	<td>type</td>
 	<td>${SignatureDate}</td>
 	<td>${SignatureDateValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
 </tr>
 <tr>
 	<td>click</td>

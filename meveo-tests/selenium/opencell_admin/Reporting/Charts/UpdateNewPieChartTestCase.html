@@ -12,11 +12,6 @@
 <tr><td rowspan="1" colspan="3">UpdateNewBarChartTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>if</td>
-	<td>${ChartBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertText</td>
 	<td>//a[contains(text(),'${CodePieChart}')]</td>
 	<td>${CodePieChart}</td>
@@ -47,11 +42,6 @@
 	<td>${CodePieChart}</td>
 </tr>
 <tr>
-	<td>if</td>
-	<td>${DescriptionBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${descriptionText}</td>
 	<td></td>
@@ -60,11 +50,6 @@
 	<td>type</td>
 	<td>${descriptionText}</td>
 	<td>${DescriptionValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -147,61 +132,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>click</td>
-	<td>${SelectMeasurableQuantity}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForElementPresent</td>
-	<td>//tbody[@id='searchMeasurableQuantitypopupForm:searchMeasurableQuantitydatatable_data']/tr/td[1]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>//tbody[@id='searchMeasurableQuantitypopupForm:searchMeasurableQuantitydatatable_data']/tr/td[1]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${RoleBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${SelectRole}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${SelectRole}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>//*[contains(@id, 'name_text')]</td>
-	<td>${RoleValue}</td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>id=searchRolepopupForm:buttonSearch</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>//tbody[@id='searchRolepopupForm:searchRoledatatable_data']/tr/td</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${WidthBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${Width}</td>
 	<td></td>
@@ -210,16 +140,6 @@
 	<td>type</td>
 	<td>${Width}</td>
 	<td>${WidthValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${HeightBool}==true</td>
-	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -232,16 +152,6 @@
 	<td>${HeightValue}</td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${CSSstyleBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${CSSstyle}</td>
 	<td></td>
@@ -250,16 +160,6 @@
 	<td>type</td>
 	<td>${CSSstyle}</td>
 	<td>${CSSstyleValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${CSSClassBool}==true</td>
-	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -272,16 +172,6 @@
 	<td>${CSSClassValue}</td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${ExtenderJSBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${ExtenderJS}</td>
 	<td></td>
@@ -292,16 +182,6 @@
 	<td>${ExtenderJSValue}</td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${VisibleBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${Visible}</td>
 	<td></td>
@@ -312,16 +192,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${FilledBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${Filled}</td>
 	<td></td>
@@ -329,16 +199,6 @@
 <tr>
 	<td>click</td>
 	<td>${Filled}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${LegendPositionBool}==true</td>
 	<td></td>
 </tr>
 <tr>
@@ -357,16 +217,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${SliceMarginBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${SliceMargin}</td>
 	<td></td>
@@ -375,16 +225,6 @@
 	<td>type</td>
 	<td>${SliceMargin}</td>
 	<td>${SliceMarginValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${DiameterBool}==true</td>
-	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -397,16 +237,6 @@
 	<td>${DiameterValue}</td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${ShadowBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${Shadow}</td>
 	<td></td>
@@ -417,16 +247,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${ShowSataLabelBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${ShowSataLabels}</td>
 	<td></td>
@@ -434,16 +254,6 @@
 <tr>
 	<td>click</td>
 	<td>${ShowSataLabels}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${LegendColumnsBool}==true</td>
 	<td></td>
 </tr>
 <tr>
@@ -457,16 +267,6 @@
 	<td>${LegendColumnsValue}</td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${LegendRowsBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${LegendRows}</td>
 	<td></td>
@@ -475,11 +275,6 @@
 	<td>type</td>
 	<td>${LegendRows}</td>
 	<td>${LegendRowsValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
@@ -499,11 +294,6 @@
 <tr>
 	<td>verifyElementPresent</td>
 	<td>css=span.ui-messages-info-summary</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
 	<td></td>
 </tr>
 </tbody></table>

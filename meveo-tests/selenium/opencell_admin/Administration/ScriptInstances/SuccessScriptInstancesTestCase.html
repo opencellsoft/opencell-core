@@ -37,11 +37,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>if</td>
-	<td>${ScriptInstanceBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${ScriptInstanceTextArea}</td>
 	<td></td>
@@ -52,16 +47,6 @@
 	<td>${ScriptInstanceValue}</td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${DescriptionBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${descriptionText}</td>
 	<td></td>
@@ -70,16 +55,6 @@
 	<td>type</td>
 	<td>${descriptionText}</td>
 	<td>${DescriptionSIValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${TypeBool}==true</td>
-	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -97,16 +72,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${ExecutionRoleBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertText</td>
 	<td>${ExecutionRolesIN}</td>
 	<td>${ExecutionRolesValue}</td>
@@ -127,21 +92,6 @@
 	<td>${ExecutionRolesValue}</td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>1000</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${SourcingRoleBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertText</td>
 	<td>${SourcingRolesIN}</td>
 	<td>${SourcingRolesValue}</td>
@@ -160,16 +110,6 @@
 	<td>assertText</td>
 	<td>${SourcingRolesOUT}</td>
 	<td>${SourcingRolesValue}</td>
-</tr>
-<tr>
-	<td>pause</td>
-	<td>1000</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>

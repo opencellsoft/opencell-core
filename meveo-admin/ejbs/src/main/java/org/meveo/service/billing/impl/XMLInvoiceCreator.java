@@ -906,7 +906,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 		paymentTerm.setAttribute("type", billingAccount.getPaymentTerm() != null ? billingAccount.getPaymentTerm()
 				.toString() : "");
 
-		if (billingAccount.getBankCoordinates() != null && billingAccount.getBankCoordinates().getBankCode() != null) {
+		if (billingAccount.getBankCoordinates() != null) {
 			Text bankCodeTxt = doc
 					.createTextNode(billingAccount.getBankCoordinates().getBankCode() != null ? billingAccount
 							.getBankCoordinates().getBankCode() : "");
@@ -930,12 +930,12 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			Text keyTxt = doc.createTextNode(billingAccount.getBankCoordinates().getKey() != null ? billingAccount
 					.getBankCoordinates().getKey() : "");
 			key.appendChild(keyTxt);
-			if (billingAccount.getBankCoordinates().getIban() != null) {
-				Text ibanTxt = doc
-						.createTextNode(billingAccount.getBankCoordinates().getIban() != null ? billingAccount
-								.getBankCoordinates().getIban() : "");
-				iban.appendChild(ibanTxt);
-			}
+			
+			Text ibanTxt = doc
+					.createTextNode(billingAccount.getBankCoordinates().getIban() != null ? billingAccount
+							.getBankCoordinates().getIban() : "");
+			iban.appendChild(ibanTxt);
+			
 
 		}
 	}

@@ -49,9 +49,6 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-15">
         <createSequence sequenceName="ar_action_dunning_seq" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-16">
-        <createSequence sequenceName="ar_action_plan_item_seq" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-17">
         <createSequence sequenceName="ar_bank_operation_seq" />
     </changeSet>
@@ -69,12 +66,6 @@
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-22">
         <createSequence sequenceName="ar_dunning_lot_seq" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-23">
-        <createSequence sequenceName="ar_dunning_plan_seq" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-24">
-        <createSequence sequenceName="ar_dunning_plan_transition_seq" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-25">
         <createSequence sequenceName="ar_matching_amount_seq" />
@@ -380,7 +371,68 @@
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-139">
         <createSequence sequenceName="billing_invoice_type_seq" startValue="3" />
+    </changeSet>    
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-140">
+		<createSequence sequenceName="ord_order_item_seq" />
     </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-141">
+		<createSequence sequenceName="billing_product_charge_inst_seq" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-142">
+		<createSequence sequenceName="billing_product_instance_seq" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-143">
+		<createSequence sequenceName="cat_bundle_product_template_seq" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-144">
+		<createSequence sequenceName="cat_digital_resource_seq" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-145">
+		<createSequence sequenceName="wf_action_seq" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-146">
+		<createSequence sequenceName="wf_transition_seq" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-147">
+		<createSequence sequenceName="wf_workflow_seq" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-148">
+		<createSequence sequenceName="cat_channel_seq" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-149">
+		<createSequence sequenceName="cat_offer_product_template_seq" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-150">
+		<createSequence sequenceName="ord_order_seq" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-151">
+		<createSequence sequenceName="hierarchy_entity_seq" />    
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-152">
+		<createSequence sequenceName="ord_quote_seq" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-153">
+		<createSequence sequenceName="ord_quote_item_seq" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-154">
+		<createSequence sequenceName="wf_decision_rule_seq" startValue="10" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-155">
+		<createSequence sequenceName="WF_HISTORY_SEQ" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-156">
+		<createSequence sequenceName="WF_HISTORY_ACTION_SEQ" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-157">
+		<createSequence sequenceName="ord_item_offerings_seq" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-158">
+		<createSequence sequenceName="ord_quot_item_offerings_seq" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-159">
+		<createSequence sequenceName="bill_seq_it_sell_seq" />
+    </changeSet>
+    
 
     <!-- end sequence -->
 
@@ -427,6 +479,7 @@
             <column name="UUID" type="VARCHAR(60)">
                 <constraints nullable="false" />
             </column>
+			<column name="bam_id" type="BIGINT" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-115">
@@ -596,19 +649,12 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="adm_messages_pkey" />
             </column>
             <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
-                <constraints nullable="false" />
-            </column>
-            <column name="created" type="DATETIME">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="DATETIME" />
             <column name="description" type="VARCHAR(100)" />
             <column name="language_code" type="VARCHAR(3)" />
             <column name="code" type="VARCHAR(50)" />
             <column name="provider_id" type="BIGINT" />
-            <column name="creator_id" type="BIGINT" />
-            <column name="updater_id" type="BIGINT" />
+			<column name="ENTITY_CLASS" type="varchar(60)" />
+			<column name="ENTITY_CODE" type="varchar(60)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-126">
@@ -874,6 +920,10 @@
             <column name="creator_id" type="BIGINT" />
             <column name="updater_id" type="BIGINT" />
             <column name="title_id" type="BIGINT" />
+			<column name="hierarchy_level_id" type="BIGINT" />
+			<column name="UUID" type="VARCHAR(60)">
+                <constraints nullable="false" />
+            </column>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-144">
@@ -947,6 +997,10 @@
             <column name="UUID" type="VARCHAR(60)">
                 <constraints nullable="false" />
             </column>
+			<column name="order_num" type="VARCHAR(500)" />
+			<column name="PAYMENT_ORDER" type="VARCHAR(70)" />
+			<column name="PAYMENT_FEES" type="numeric(23, 12)" />
+			<column name="COMMENT" type="${type.longText}" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-146">
@@ -976,32 +1030,6 @@
             <column name="customer_account_id" type="BIGINT" />
             <column name="dunning_lot_id" type="BIGINT" />
             <column name="recorded_invoice_id" type="BIGINT" />
-        </createTable>
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-147">
-        <createTable tableName="ar_action_plan_item">
-            <column name="id" type="BIGINT" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_action_plan_item_pkey" />
-            </column>
-            <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
-                <constraints nullable="false" />
-            </column>
-            <column name="created" type="DATETIME">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="DATETIME" />
-            <column name="action_type" type="VARCHAR(255)" />
-            <column name="charge_amount" type="numeric(19, 2)" />
-            <column name="dunning_level" type="VARCHAR(255)" />
-            <column name="item_order" type="INT4" />
-            <column name="letter_template" type="VARCHAR(255)" />
-            <column name="threshold_amount" type="numeric(23, 12)" />
-            <column name="provider_id" type="BIGINT" />
-            <column name="creator_id" type="BIGINT" />
-            <column name="updater_id" type="BIGINT" />
-            <column name="dunning_plan_id" type="BIGINT" />
-            <column name="CONDITION_EL" type="VARCHAR(2000)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-148">
@@ -1191,57 +1219,6 @@
             <column name="creator_id" type="BIGINT" />
             <column name="updater_id" type="BIGINT" />
             <column name="dunning_history_id" type="BIGINT" />
-        </createTable>
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-155">
-        <createTable tableName="ar_dunning_plan">
-            <column name="id" type="BIGINT" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_dunning_plan_pkey" />
-            </column>
-            <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
-                <constraints nullable="false" />
-            </column>
-            <column name="created" type="DATETIME">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="DATETIME" />
-            <column name="code" type="VARCHAR(60)">
-                <constraints nullable="false" />
-            </column>
-            <column name="description" type="VARCHAR(100)" />
-            <column name="credit_category" type="VARCHAR(255)" />
-            <column name="payment_method" type="VARCHAR(255)" />
-            <column name="status" type="VARCHAR(255)" />
-            <column name="provider_id" type="BIGINT" />
-            <column name="creator_id" type="BIGINT" />
-            <column name="updater_id" type="BIGINT" />
-            <column name="credit_category_id" type="BIGINT" />
-        </createTable>
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-156">
-        <createTable tableName="ar_dunning_plan_transition">
-            <column name="id" type="BIGINT" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_dunning_plan_transition_pkey" />
-            </column>
-            <column name="version" type="INT4" />
-            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
-                <constraints nullable="false" />
-            </column>
-            <column name="created" type="DATETIME">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="DATETIME" />
-            <column name="delay_before_process" type="INT4" />
-            <column name="dunning_level_from" type="VARCHAR(255)" />
-            <column name="dunning_level_to" type="VARCHAR(255)" />
-            <column name="threshold_amount" type="numeric(23, 12)" />
-            <column name="wait_duration" type="INT4" />
-            <column name="provider_id" type="BIGINT" />
-            <column name="creator_id" type="BIGINT" />
-            <column name="updater_id" type="BIGINT" />
-            <column name="dunning_plan_id" type="BIGINT" />
-            <column name="CONDITION_EL" type="VARCHAR(2000)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-157">
@@ -1459,6 +1436,7 @@
             <column name="termin_reason_id" type="BIGINT" />
             <column name="trading_country_id" type="BIGINT" />
             <column name="trading_language_id" type="BIGINT" />
+			<column name="INVOICING_THRESHOLD" type="numeric(23, 12)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-165">
@@ -1566,6 +1544,8 @@
             <column name="seller_id" type="BIGINT" />
             <column name="subscription_id" type="BIGINT" />
             <column name="INVOICING_CALENDAR_ID" type="BIGINT" />
+			<column name="user_account_id" type="BIGINT"/>
+			<column name="ORDER_NUMBER" type="VARCHAR(100)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-168">
@@ -1632,6 +1612,7 @@
             <column name="creator_id" type="BIGINT" />
             <column name="updater_id" type="BIGINT" />
             <column name="counter_instance_id" type="BIGINT" />
+			<column name="NOTIFICATION_LEVELS" type="VARCHAR(100)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-171">
@@ -1662,6 +1643,9 @@
             <column name="INVOICE_DATE_PRODUCTION_DELAY" type="INT4" />
             <column name="INVOICING_THRESHOLD" type="numeric(23, 12)" />
             <column name="invoice_type_id" type="BIGINT" />
+            <column name="UUID" type="VARCHAR(60)">
+                <constraints nullable="false" />
+            </column>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-172">
@@ -1751,6 +1735,8 @@
             <column name="tax_id" type="BIGINT" />
             <column name="trading_country_id" type="BIGINT" />
             <column name="FILTER_EL" type="VARCHAR(2000)" />
+			<column name="SELLING_COUNTRY_ID" type="BIGINT" />
+			<column name="TAX_CODE_EL" type="VARCHAR(2000)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-176">
@@ -1781,7 +1767,7 @@
             <column name="payment_method" type="VARCHAR(255)" />
             <column name="pdf" type="${type.blob}" />
             <column name="product_date" type="DATETIME" />
-            <column name="temporary_invoice_number" type="VARCHAR(20)" />
+            <column name="temporary_invoice_number" type="VARCHAR(60)" />
             <column name="provider_id" type="BIGINT" />
             <column name="creator_id" type="BIGINT" />
             <column name="updater_id" type="BIGINT" />
@@ -1799,6 +1785,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="invoice_type_id" type="BIGINT" />
+			<column name="quote_id" type="BIGINT" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-177">
@@ -2036,6 +2023,7 @@
                 <constraints nullable="true" />
             </column>
             <column name="adjusted_rated_tx" type="BIGINT" />
+			<column name="ORDER_NUMBER" type="VARCHAR(100)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-186">
@@ -2087,7 +2075,7 @@
             <column name="amount_without_tax" type="numeric(23, 12)" />
             <column name="expiry_date" type="date" />
             <column name="input_message" type="VARCHAR(255)" />
-            <column name="origin_edr" type="BIGINT" />
+			<column name="ORIGIN_EDR_ID" type="BIGINT" />
             <column name="quantity" type="numeric(23, 12)" />
             <column name="reservation_date" type="date" />
             <column name="status" type="VARCHAR(255)" />
@@ -2144,6 +2132,7 @@
             <column name="UUID" type="VARCHAR(60)">
                 <constraints nullable="false" />
             </column>
+			<column name="ORDER_NUMBER" type="VARCHAR(100)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-192">
@@ -2224,6 +2213,9 @@
             <column name="provider_id" type="BIGINT" />
             <column name="creator_id" type="BIGINT" />
             <column name="updater_id" type="BIGINT" />
+            <column name="UUID" type="VARCHAR(60)">
+                <constraints nullable="false" />
+            </column>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-195">
@@ -2419,6 +2411,7 @@
             <column name="EDR_ID" type="BIGINT">
                 <constraints nullable="true" />
             </column>
+			<column name="ORDER_NUMBER" type="VARCHAR(100)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-203">
@@ -2567,6 +2560,7 @@
             <column name="updater_id" type="BIGINT" />
             <column name="calendar_id" type="BIGINT" />
             <column name="CEILING_EXPRESSION_EL" type="VARCHAR(2000)" />
+			<column name="NOTIFICATION_LEVELS" type="VARCHAR(70)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-210">
@@ -2659,11 +2653,11 @@
             <column name="id" type="BIGINT" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cat_offer_serv_templates" />
             </column>
-            <column name="version" type="INT4" />
-            <column name="provider_id" type="BIGINT" />
             <column name="mandatory" type="${type.boolean}" defaultValueNumeric="0" >
                 <constraints nullable="false" />
             </column>
+			<column name="valid_from" type="DATETIME"/>
+			<column name="valid_to" type="DATETIME"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-215">
@@ -2694,10 +2688,19 @@
             <column name="subscription_script_instance_id" type="BIGINT" />
             <column name="name" type="VARCHAR(100)" />
             <column name="entity_version" type="INT4" />
-            <column name="image" type="${type.blob}" />
-            <column name="cat_offer_template_cat_id" type="BIGINT" />
             <column name="status" type="VARCHAR(50)" />
             <column name="business_offer_model_id" type="BIGINT" />
+			<column name="valid_from" type="DATETIME"/>
+			<column name="valid_to" type="DATETIME"/>
+			<column name="long_description" type="TEXT"/>
+			<column name="life_cycle_status" type="VARCHAR(60)" />
+			<column name="type" type="VARCHAR(20)" defaultValue="OFFER">
+				<constraints nullable="false" />
+			</column>
+			<column name="product_charge_tmpl_id" type="BIGINT"/>
+			<column name="business_product_model_id" type="BIGINT"/>
+			<column name="invoicing_calendar_id" type="BIGINT" />
+			<column name="image_path" type="VARCHAR(100)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-216">
@@ -2762,6 +2765,7 @@
             <column name="UUID" type="VARCHAR(60)">
                 <constraints nullable="false" />
             </column>
+			<column name="script_instance_id" type="BIGINT" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-218">
@@ -2776,6 +2780,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_recurring_charge_templ_pkey" />
             </column>
             <column name="calendar_id" type="BIGINT" />
+			<column name="filter_expression" type="VARCHAR(2000)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-219">
@@ -2902,6 +2907,8 @@
             <column name="termination_script_instance_id" type="BIGINT" />
             <column name="activation_script_instance_id" type="BIGINT" />
             <column name="business_service_model_id" type="BIGINT" />
+			<column name="long_description" type="TEXT"/>
+			<column name="image_path" type="VARCHAR(100)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-228">
@@ -3292,7 +3299,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="calendar_id" type="BIGINT" />
-            <column name="DEFAULT_VALUE" type="VARCHAR(50)" />
+            <column name="DEFAULT_VALUE" type="VARCHAR(250)" />
             <column name="ENTITY_CLAZZ" type="varchar(255)" />
             <column name="STORAGE_TYPE" type="varchar(255)">
                 <constraints nullable="false" />
@@ -3320,6 +3327,7 @@
             <column name="MAPKEY_TYPE" type="varchar(20)" />
             <column name="APPLICABLE_ON_EL" type="varchar(2000)" />
             <column name="CHE_FIELDS" type="VARCHAR(500)" />
+			<column name="INDEX_TYPE" type="varchar(10)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-243">
@@ -3571,6 +3579,7 @@
             <column name="UUID" type="VARCHAR(60)">
                 <constraints nullable="false" />
             </column>
+			<column name="bam_id" type="BIGINT" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-252">
@@ -3999,6 +4008,8 @@
             <column name="DISPLAY_PRICEPLANS" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="DISPLAY_CF_AS_XML" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="DISPLAY_CHARGES_PERIODS" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="DISPLAY_BILLING_CYCLE" type="${type.boolean}" defaultValueNumeric="0"/>
+			<column name="display_orders" type="${type.boolean}" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
 
@@ -4507,14 +4518,15 @@
                 <constraints nullable="false" />
             </column>
             <column name="description" type="VARCHAR(100)" />
-            <column name="UUID" type="VARCHAR(50)" />
+            <column name="UUID" type="VARCHAR(60)">
+                <constraints nullable="false" />
+            </column>
             <column name="name" type="VARCHAR(100)">
                 <constraints nullable="false" />
             </column>
-            <column name="image" type="${type.blob}" />
             <column name="OFFER_TEMPLATE_CATEGORY_ID" type="BIGINT" />
             <column name="level" type="INT" />
-            <column name="image_content_type" type="VARCHAR(50)" />
+			<column name="image_path" type="VARCHAR(100)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-309">
@@ -4705,18 +4717,609 @@
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-320">
-        <createTable tableName="billing_seq_invtyp_sell">
-            <column name="invoicetype_id" type="BIGINT">
-                <constraints nullable="false" />
+		<createTable tableName="billing_seq_invtyp_sell">
+			<column name="id" type="BIGINT" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="bill_seq_it_sell_pkey" />
+			</column>
+			<column name="invoicetype_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="seller_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="prefix_el" type="VARCHAR(2000)" />
+			<column name="sequence_size" type="INT4" />
+			<column name="current_invoice_nb" type="BIGINT" />
+		</createTable>
+    </changeSet>
+    
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-321">
+        <createTable tableName="ADM_SECURED_ENTITY">
+   			<column name="user_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="code" type="VARCHAR(60)">
+				<constraints nullable="false" />
+			</column>
+			<column name="entity_class" type="VARCHAR(255)" >
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-322">
+        <createTable tableName="wf_action">
+            <column name="id" type="BIGINT" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="wf_action_pkey" />
             </column>
-            <column name="currentinvoicenb" type="BIGINT" />
-            <column name="prefixel" type="VARCHAR(255)" />
-            <column name="sequencesize" type="INT4" />
-            <column name="seller_id" type="BIGINT">
-                <constraints nullable="false" />
+            <column name="version" type="INT4"/>
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false"/>
             </column>
+            <column name="created" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="DATETIME"/>
+            <column name="action_el" type="VARCHAR(2000)"/>
+            <column name="condition_el" type="VARCHAR(2000)"/>
+            <column name="priority" type="INT4"/>
+            <column name="provider_id" type="BIGINT"/>
+            <column name="creator_id" type="BIGINT"/>
+            <column name="updater_id" type="BIGINT"/>
+            <column name="wf_transition_id" type="BIGINT"/>
+			<column name="UUID" type="VARCHAR(60)">
+				<constraints nullable="false" />
+			</column>
         </createTable>
     </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-323">
+        <createTable tableName="wf_transition">
+            <column name="id" type="BIGINT" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="wf_transition_pkey" />
+            </column>
+            <column name="version" type="INT4"/>
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="DATETIME"/>
+            <column name="condition_el" type="VARCHAR(2000)"/>
+            <column name="from_status" type="VARCHAR(255)"/>
+            <column name="to_status" type="VARCHAR(255)"/>
+            <column name="provider_id" type="BIGINT"/>
+            <column name="creator_id" type="BIGINT"/>
+            <column name="updater_id" type="BIGINT"/>
+            <column name="workflow_id" type="BIGINT"/>
+            <column name="priority" type="INT4" />
+            <column name="description" type="VARCHAR(100)"/>   
+			<column name="UUID" type="VARCHAR(60)">
+				<constraints nullable="false" />
+			</column>   
+        </createTable>
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-324">
+        <createTable tableName="wf_workflow">
+            <column name="id" type="BIGINT" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="wf_workflow_pkey" />
+            </column>
+            <column name="version" type="INT4"/>
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="DATETIME"/>
+            <column name="code" type="VARCHAR(60)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(100)"/>
+            <column name="enable_hostory" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="wf_type" type="VARCHAR(255)"/>
+            <column name="provider_id" type="BIGINT"/>
+            <column name="creator_id" type="BIGINT"/>
+            <column name="updater_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-325">
+		<createTable tableName="cat_channel">
+			<column name="id" type="BIGINT" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="cat_channel_pkey" />
+			</column>
+			<column name="provider_id" type="BIGINT" />
+			<column name="version" type="INT4" />
+			<column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="created" type="DATETIME">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="DATETIME" />
+			<column name="code" type="VARCHAR(60)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="VARCHAR(100)" />
+			<column name="creator_id" type="BIGINT" />
+			<column name="updater_id" type="BIGINT" />
+		</createTable>
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-326">
+		<createTable tableName="cat_business_product_model">
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_cat_business_product_model" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-327">
+		<createTable tableName="cat_product_offer_tmpl_cat">
+			<column name="product_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="offer_template_cat_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="indx" type="INT4">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-328">
+		<createTable tableName="cat_product_offer_bam">
+			<column name="product_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="bam_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="indx" type="INT4">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-329">
+		<createTable tableName="cat_product_offer_channels">
+			<column name="product_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="channel_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="indx" type="INT4">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-330">
+		<createTable tableName="cat_digital_resource">
+			<column name="id" type="BIGINT" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="cat_digital_resource_pkey" />
+			</column>
+			<column name="provider_id" type="BIGINT" />
+			<column name="version" type="INT4" />
+			<column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="created" type="DATETIME">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="DATETIME" />
+			<column name="code" type="VARCHAR(60)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="VARCHAR(100)" />
+			<column name="creator_id" type="BIGINT" />
+			<column name="updater_id" type="BIGINT" />
+			<column name="uri" type="VARCHAR(255)" />
+			<column name="mime_type" type="VARCHAR(50)" />
+		</createTable>
+	</changeSet>    
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-331">
+		<createTable tableName="cat_product_offer_digital_res">
+			<column name="product_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="digital_resource_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="indx" type="INT4">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>  
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-332">
+		<createTable tableName="cat_product_charge_templ">
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="cat_prod_charge_templ_pkey" />
+			</column>
+		</createTable>
+	</changeSet>  	
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-333">
+		<createTable tableName="cat_product_wallet_template">
+			<column name="product_template_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="wallet_template_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="indx" type="INT4">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-334">
+		<createTable tableName="cat_offer_product_template">
+			<column name="id" type="BIGINT" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="cat_offer_product_template_pkey" />
+			</column>
+			<column name="offer_template_id" type="BIGINT" />
+			<column name="product_template_id" type="BIGINT" />
+			<column name="mandatory" type="${type.boolean}" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-335">
+		<createTable tableName="cat_bundle_product_template">
+			<column name="id" type="BIGINT" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="cat_bundle_prod_tpl_pkey" />
+			</column>
+			<column name="product_template_id" type="BIGINT" />
+			<column name="bundle_template_id" type="BIGINT" />
+			<column name="quantity" type="INT4" />
+		</createTable>
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-336">
+		<createTable tableName="billing_product_instance">
+			<column name="id" type="BIGINT" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="billing_product_instance_pkey" />
+			</column>
+			<column name="version" type="INT4" />
+			<column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="created" type="DATETIME">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="DATETIME" />
+			<column name="provider_id" type="BIGINT" />
+			<column name="creator_id" type="BIGINT" />
+			<column name="updater_id" type="BIGINT" />
+			<column name="UUID" type="VARCHAR(60)">
+				<constraints nullable="false" />
+			</column>
+			<column name="code" type="VARCHAR(60)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="VARCHAR(100)" />
+			<column name="product_template_id" type="BIGINT" />
+			<column name="quantity" type="numeric(23, 12)" />
+			<column name="user_account_id" type="BIGINT"></column>
+			<column name="application_date" type="DATETIME" />
+			<column name="subscription_id" type="BIGINT" />
+			<column name="ORDER_NUMBER" type="VARCHAR(100)" />
+		</createTable>	
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-337">
+		<createTable tableName="billing_product_charge_inst">
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="billing_prod_chg_inst_pkey" />
+			</column>
+			<column name="product_instance_id" type="BIGINT" />
+			<column name="product_chrg_tmpl_id" type="BIGINT" />
+			<column name="quantity" type="numeric(23, 12)" />
+		</createTable>	  
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-338">
+		<createTable tableName="ord_order">
+			<column name="id" type="BIGINT" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="ord_order_pkey" />
+			</column>
+			<column name="version" type="INT4" />
+			<column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="created" type="DATETIME">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="DATETIME" />
+			<column name="provider_id" type="BIGINT" />
+			<column name="creator_id" type="BIGINT" />
+			<column name="updater_id" type="BIGINT" />
+			<column name="code" type="VARCHAR(60)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="VARCHAR(100)" />
+			<column name="external_id" type="VARCHAR(100)" />
+			<column name="delivery_instructions" type="TEXT" />
+			<column name="order_date" type="DATETIME">
+				<constraints nullable="false" />
+			</column>
+			<column name="REQ_START_DATE" type="DATETIME" />
+			<column name="REQ_COMPLETION_DATE" type="DATETIME" />
+			<column name="EXP_COMPLETION_DATE" type="DATETIME" />
+			<column name="COMPLETION_DATE" type="DATETIME" />
+			<column name="priority" type="int" defaultValueNumeric="2" />
+			<column name="category" type="VARCHAR(200)" />
+			<column name="status" type="VARCHAR(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="STATUS_MESSAGE" type="VARCHAR(2000)" />
+			<column name="ROUTED_TO_USER_GROUP_ID" type="BIGINT" />
+			<column name="RECEIVED_FROM" type="VARCHAR(50)" />
+			<column name="start_date" type="DATETIME" />
+			<column name="UUID" type="VARCHAR(60)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>		    
+    </changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-339">
+		<createTable tableName="ord_order_item">
+			<column name="id" type="BIGINT" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="ord_order_item_pkey" />
+			</column>
+			<column name="version" type="INT4" />
+			<column name="provider_id" type="BIGINT" />
+			<column name="order_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="item_id" type="VARCHAR(10)">
+				<constraints nullable="false" />
+			</column>
+			<column name="action" type="VARCHAR(10)">
+				<constraints nullable="false" />
+			</column>
+			<column name="user_account_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="source" type="TEXT">
+				<constraints nullable="false" />
+			</column>
+			<column name="status" type="VARCHAR(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="subscription_id" type="BIGINT" />
+			<column name="description" type="VARCHAR(100)" />
+			<column name="address_1" type="VARCHAR(50)" />
+			<column name="address_2" type="VARCHAR(50)" />
+			<column name="address_3" type="VARCHAR(50)" />
+			<column name="address_city" type="VARCHAR(50)" />
+			<column name="address_country" type="VARCHAR(50)" />
+			<column name="address_state" type="VARCHAR(50)" />
+			<column name="address_zipcode" type="VARCHAR(10)" />
+		</createTable>    
+    </changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-340">
+		<createTable tableName="hierarchy_entity">
+			<column name="id" type="BIGINT" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="hierarchy_entity_pkey" />
+			</column>
+			<column name="version" type="INT4" />
+			<column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="created" type="DATETIME">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="DATETIME" />
+			<column name="code" type="VARCHAR(60)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="VARCHAR(100)" />
+			<column name="hierarchy_type" type="VARCHAR(10)" />
+			<column name="parent_id" type="BIGINT" />
+			<column name="order_level" type="BIGINT" />
+			<column name="provider_id" type="BIGINT" />
+			<column name="creator_id" type="BIGINT" />
+			<column name="updater_id" type="BIGINT" />
+		</createTable>
+    </changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-341">
+		<createTable tableName="ORD_ITEM_OFFERINGS">
+			<column name="ORDER_ITEM_ID" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="PRD_OFFERING_ID" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="id" type="BIGINT" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="ord_item_offer_pkey" />
+			</column>
+			<column name="ITEM_ORDER" type="int">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+    </changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-342">
+		<createTable tableName="ORD_ITEM_PRD_INSTANCE">
+			<column name="ORDER_ITEM_ID" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="PRD_INSTANCE_ID" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+		</createTable>    
+    </changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-343">
+		<createTable tableName="wf_decision_rule">
+			<column name="id" type="BIGINT" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="wf_wf_decision_rule_pkey" />
+			</column>
+			<column name="version" type="INT4" />
+			<column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="created" type="DATETIME">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="DATETIME" />
+			<column name="condition_el" type="VARCHAR(2000)" />
+			<column name="name" type="VARCHAR(255)" />
+			<column name="value" type="VARCHAR(255)" />
+			<column name="provider_id" type="BIGINT" />
+			<column name="creator_id" type="BIGINT" />
+			<column name="updater_id" type="BIGINT" />
+			<column name="type" type="VARCHAR(255)" />
+			<column name="model" type="${type.boolean}" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+    </changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-344">
+        <createTable tableName="wf_transition_decision_rule">
+			<column name="transition_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="decision_rule_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+    </changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-345">
+		<createTable tableName="ord_quote">
+			<column name="id" type="BIGINT" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="ord_quote_pkey" />
+			</column>
+			<column name="version" type="INT4" />
+			<column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="created" type="DATETIME">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="DATETIME" />
+			<column name="provider_id" type="BIGINT" />
+			<column name="creator_id" type="BIGINT" />
+			<column name="updater_id" type="BIGINT" />
+			<column name="code" type="VARCHAR(60)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="VARCHAR(100)" />
+			<column name="external_id" type="VARCHAR(100)" />
+			<column name="quote_version" type="VARCHAR(10)" />
+			<column name="contact" type="VARCHAR(100)" />
+			<column name="quote_date" type="DATETIME">
+				<constraints nullable="false" />
+			</column>
+			<column name="valid_from" type="DATETIME" />
+			<column name="valid_to" type="DATETIME" />
+			<column name="REQ_COMPLETION_DATE" type="DATETIME" />
+			<column name="ORDER_START_DATE" type="DATETIME" />
+			<column name="COMPLETION_DATE" type="DATETIME" />
+			<column name="category" type="VARCHAR(200)" />
+			<column name="status" type="VARCHAR(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="STATUS_MESSAGE" type="VARCHAR(2000)" />
+			<column name="ROUTED_TO_USER_GROUP_ID" type="BIGINT" />
+			<column name="RECEIVED_FROM" type="VARCHAR(50)" />
+			<column name="UUID" type="VARCHAR(60)">
+				<constraints nullable="false" />
+			</column>
+			<column name="user_account_id" type="BIGINT" />
+		</createTable>
+    </changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-346">
+		<createTable tableName="ord_quote_item">
+			<column name="id" type="BIGINT" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="ord_quote_item_pkey" />
+			</column>
+			<column name="version" type="INT4" />
+			<column name="provider_id" type="BIGINT" />
+			<column name="quote_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="item_id" type="VARCHAR(10)">
+				<constraints nullable="false" />
+			</column>
+			<column name="source" type="TEXT">
+				<constraints nullable="false" />
+			</column>
+			<column name="status" type="VARCHAR(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="user_account_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+    </changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-347">
+		<createTable tableName="ORD_QUOT_ITEM_OFFERINGS">
+			<column name="QUOTE_ITEM_ID" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="PRD_OFFERING_ID" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="id" type="BIGINT" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="ord_quot_item_offer_pkey" />
+			</column>
+			<column name="ITEM_ORDER" type="int">
+				<constraints nullable="false" />
+			</column>
+		</createTable>	
+    </changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-348">
+		<createTable tableName="billing_invoices_orders">
+			<column name="invoice_id" type="BIGINT" />
+			<column name="order_id" type="BIGINT" />
+		</createTable>				
+    </changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-349">
+		<createTable tableName="cat_product_templ_charge_templ">
+			<column name="PRODUCT_CHARGE_TEMPLATE_ID" type="BIGINT" />
+			<column name="PRODUCT_TEMPLATE_ID" type="BIGINT" />
+		</createTable>
+    </changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-350">
+		<createTable tableName="WF_HISTORY">
+			<column name="id" type="BIGINT" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="WF_HISTORY_pkey" />
+			</column>
+			<column name="version" type="INT4" />
+			<column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="created" type="DATETIME">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="DATETIME" />
+			<column name="provider_id" type="BIGINT" />
+			<column name="creator_id" type="BIGINT" />
+			<column name="updater_id" type="BIGINT" />
+			<column name="ENTITY_INSTANCE_CODE" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FROM_STATUS" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TO_STATUS" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TRANSITION_NAME" type="varchar(255)" />
+			<column name="ACTION_DATE" type="DATETIME" />
+			<column name="WORKFLOW_ID" type="BIGINT" />
+		</createTable>
+    </changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-351">
+		<createTable tableName="WF_HISTORY_ACTION">
+			<column name="id" type="BIGINT" autoIncrement="${id.auto}">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="WF_HISTORY_ACTION_pkey" />
+			</column>
+			<column name="version" type="INT4" />
+			<column name="provider_id" type="BIGINT" />
+			<column name="ACTION" type="varchar(2000)" />
+			<column name="RESULT" type="varchar(255)" />
+			<column name="WF_HISTORY_ID" type="BIGINT" />
+		</createTable>		
+	</changeSet>    
+    
+    
+    
+    
     <!-- end tables -->
     <!-- start PK -->
 
@@ -4768,23 +5371,32 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-393">
         <addPrimaryKey columnNames="customfieldtemplate_id, listvalues_key" constraintName="crm_custom_field_tmpl_val_pkey" tableName="crm_custom_field_tmpl_val" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-428">
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-394">
         <addPrimaryKey columnNames="jobtrigger_id, jobparams_key" constraintName="PK_ADM_NOTIF_JOB_PARAMS" tableName="ADM_NOTIF_JOB_PARAMS" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-429">
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-395">
         <addPrimaryKey columnNames="notification_id, params_key" constraintName="PK_ADM_NOTIFICATION_PARAMS" tableName="ADM_NOTIFICATION_PARAMS" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-445">
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-396">
         <addPrimaryKey columnNames="script_instance_id, role_id" constraintName="adm_script_exec_role_pkey" tableName="adm_script_exec_role" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-446">
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-397">
         <addPrimaryKey columnNames="script_instance_id, role_id" constraintName="adm_script_sourc_role_pkey" tableName="adm_script_sourc_role" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-450">
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-398">
         <addPrimaryKey columnNames="offer_service_template_id, service_template_id" constraintName="pk_cat_offer_serv_incomp" tableName="cat_offer_serv_incomp" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-456">
-        <addPrimaryKey columnNames="invoicetype_id, seller_id" constraintName="billing_seq_invtyp_sell_pkey" tableName="billing_seq_invtyp_sell" />
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-400">
+		<addPrimaryKey columnNames="product_id, channel_id" constraintName="cat_prod_off_channels_pkey" tableName="cat_product_offer_channels" />		
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-401">
+		<addPrimaryKey columnNames="product_id, bam_id" constraintName="cat_product_offer_bam_pkey" tableName="cat_product_offer_bam" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-402">
+		<addPrimaryKey columnNames="product_id, offer_template_cat_id" constraintName="cat_product_offer_tmpl_cat_pkey" tableName="cat_product_offer_tmpl_cat" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-403">
+		<addPrimaryKey columnNames="product_id, digital_resource_id" constraintName="cat_product_offer_digital_res_pkey" tableName="cat_product_offer_digital_res" />
     </changeSet>
 
     <!-- end PK -->
@@ -4872,10 +5484,6 @@
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-443">
         <addUniqueConstraint constraintName="UK_CRM_PROVIDER" columnNames="CODE" tableName="CRM_PROVIDER" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-444">
-        <addUniqueConstraint columnNames="dunning_level_from, dunning_level_to, dunning_plan_id" constraintName="uk_ewwxy8ieo179rif5ud8hduqkt" deferrable="false"
-            disabled="false" initiallyDeferred="false" tableName="ar_dunning_plan_transition" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-445">
         <addUniqueConstraint columnNames="code, provider_id" constraintName="uk_fg8lvusnsfih36f76coxmh8qi" deferrable="false" disabled="false"
@@ -4980,10 +5588,6 @@
         <addUniqueConstraint columnNames="code, provider_id" constraintName="uk_qck1376ll09l9itat2bcomhpl" deferrable="false" disabled="false"
             initiallyDeferred="false" tableName="billing_invoice_cat" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-472">
-        <addUniqueConstraint columnNames="credit_category_id, payment_method, provider_id, code" constraintName="uk_qn6vfgeg5g2y4pb9y6qb8ogjo" deferrable="false"
-            disabled="false" initiallyDeferred="false" tableName="ar_dunning_plan" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-473">
         <addUniqueConstraint columnNames="code, provider_id" constraintName="uk_r0shu06cdbx57w86f2h57t66p" deferrable="false" disabled="false"
             initiallyDeferred="false" tableName="com_message_template" />
@@ -5048,7 +5652,7 @@
             initiallyDeferred="false" tableName="cat_offer_template_category" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-494">
-        <addUniqueConstraint columnNames="provider_id, offer_template_id, service_template_id" tableName="cat_offer_serv_templates" constraintName="uk_cat_offer_serv_templates" />
+        <addUniqueConstraint columnNames="offer_template_id, service_template_id" tableName="cat_offer_serv_templates" constraintName="uk_cat_offer_serv_templates" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-495">
         <addUniqueConstraint columnNames="provider_id" constraintName="uk_billing_invoice_configuration" deferrable="false" disabled="false" initiallyDeferred="false"
@@ -5061,6 +5665,46 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-497">
         <addUniqueConstraint constraintName="uk_billing_invoice" columnNames="provider_id, invoice_number, invoice_type_id" tableName="billing_invoice" />
     </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-498">
+		<addUniqueConstraint columnNames="provider_id, code" constraintName="uk_j8v4x5olh5um1g7y5vnsayrka" deferrable="false" disabled="false" initiallyDeferred="false" tableName="wf_workflow" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-499">
+		<addUniqueConstraint columnNames="code, provider_id" constraintName="uk_cat_channel" deferrable="false" disabled="false" initiallyDeferred="false" tableName="cat_channel" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-501">
+		<addUniqueConstraint columnNames="code,provider_id" constraintName="uk_ord_order" deferrable="false" disabled="false" initiallyDeferred="false" tableName="ord_order" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-502">
+		<addUniqueConstraint columnNames="code, hierarchy_type, provider_id" constraintName="uk_code_hierarchy_provider" deferrable="false" disabled="false" initiallyDeferred="false"
+			tableName="hierarchy_entity" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-503">
+		<addUniqueConstraint columnNames="code, provider_id" constraintName="uk_digital_resource" deferrable="false" disabled="false" initiallyDeferred="false" tableName="cat_digital_resource" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-504">
+		<addUniqueConstraint columnNames="product_template_id, bundle_template_id" constraintName="uk_cat_bundle_prod_tpl" deferrable="false" disabled="false" initiallyDeferred="false"
+			tableName="cat_bundle_product_template" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-505">
+		<addUniqueConstraint columnNames="entity_code,entity_class,language_code,provider_id" tableName="ADM_MESSAGES" constraintName="uk_6clw4f7dfrs63yijhrwc87vnq" deferrable="false"
+			disabled="false" initiallyDeferred="false" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-506">
+		<addUniqueConstraint columnNames="name, value, provider_id" constraintName="uk_decision_rule_name_value_provider_id" deferrable="false" disabled="false" initiallyDeferred="false"
+			tableName="wf_decision_rule" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-507">
+		<addUniqueConstraint columnNames="uuid, provider_id" constraintName="uk_wf_transition_uuid_provider_id" deferrable="false" disabled="false" initiallyDeferred="false" tableName="wf_transition" />
+     </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-508">
+		<addUniqueConstraint columnNames="uuid, provider_id" constraintName="uk_wf_action_uuid_provider_id" deferrable="false" disabled="false" initiallyDeferred="false" tableName="wf_action" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-510">
+        <addUniqueConstraint columnNames="code,provider_id" constraintName="uk_ord_quote" deferrable="false" disabled="false" initiallyDeferred="false" tableName="ord_quote" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-511">
+        <addUniqueConstraint columnNames="seller_id, invoicetype_id" constraintName="uk_bill_seq_it_sell" deferrable="false" disabled="false" initiallyDeferred="false" tableName="BILLING_SEQ_INVTYP_SELL" />
+    </changeSet>   
 
     <!-- end UK -->
     <!-- start FK -->
@@ -5109,17 +5753,9 @@
         <addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="billing_service_instance" constraintName="fk_1qgajuxdl349d99knvfs8r9i1"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-488">
-        <addForeignKeyConstraint baseColumnNames="updater_id" baseTableName="adm_messages" constraintName="fk_1t16h6ap26fd0qv8rajmtnh7s" deferrable="false"
-            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-489">
         <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="billing_wallet" constraintName="fk_1vdcto7usl11bexyjehfqw004" deferrable="false"
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-490">
-        <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="ar_dunning_plan" constraintName="fk_24c5wf8u9a35yf8uutjf5qwwf" deferrable="false"
-            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-491">
         <addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="billing_invoice_sub_cat" constraintName="fk_26jbtardpgdciysvhbx7gf8f3"
@@ -5224,10 +5860,6 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-518">
         <addForeignKeyConstraint baseColumnNames="charge_tmpl_id" baseTableName="cat_chrg_edr" constraintName="fk_3mqb6u4hyx9wnus0nqdoyoypx" deferrable="false"
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_charge_template" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-519">
-        <addForeignKeyConstraint baseColumnNames="updater_id" baseTableName="ar_dunning_plan" constraintName="fk_3nhld7nla1pv1t8eejdl4dn6p" deferrable="false"
-            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-520">
         <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="crm_custom_field_tmpl" constraintName="fk_3ogrf4ow8w23f8ecfxv79qixt"
@@ -5449,10 +6081,6 @@
         <addForeignKeyConstraint baseColumnNames="updater_id" baseTableName="ar_ddrequest_item" constraintName="fk_6ot1ahghjm9lbnosfsueof151" deferrable="false"
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-579">
-        <addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="adm_messages" constraintName="fk_6uvqkaxibmlp4c12y6pb330jm" deferrable="false"
-            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-580">
         <addForeignKeyConstraint baseColumnNames="recorded_invoice_id" baseTableName="ar_action_dunning" constraintName="fk_6v2pj23pubnpy19ug8ifqr5bi"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_account_operation" />
@@ -5468,10 +6096,6 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-584">
         <addForeignKeyConstraint baseColumnNames="charge_instance_id" baseTableName="billing_wallet_operation" constraintName="fk_75hyldnus6ti0y40vwcl49ued"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_charge_instance" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-585">
-        <addForeignKeyConstraint baseColumnNames="dunning_plan_id" baseTableName="ar_action_plan_item" constraintName="fk_78p10vstesm3xr605s46qn3gq"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_dunning_plan" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-586">
         <addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="billing_tax_language" constraintName="fk_79sly7kp2jbtsh4pfrw617jbu" deferrable="false"
@@ -5564,10 +6188,6 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-609">
         <addForeignKeyConstraint baseColumnNames="inbound_request_id" baseTableName="adm_notif_history" constraintName="fk_8k2sxhjmrswxnecfo74bdmnsa"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_inbound_request" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-610">
-        <addForeignKeyConstraint baseColumnNames="updater_id" baseTableName="ar_action_plan_item" constraintName="fk_8q1jrqq9e8xru7m27nbwrxp3k" deferrable="false"
-            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-611">
         <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="billing_priceplan_inst" constraintName="fk_8t2g4qxjmfwjd8agv0cjcmbh7"
@@ -5941,10 +6561,6 @@
         <addForeignKeyConstraint baseColumnNames="trading_language_id" baseTableName="billing_invoice" constraintName="fk_e6lpg28vestq5376ftwurc3dq"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_language" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-709">
-        <addForeignKeyConstraint baseColumnNames="updater_id" baseTableName="ar_dunning_plan_transition" constraintName="fk_ecur7dwit9crb6cbhlubxs3jn"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-710">
         <addForeignKeyConstraint baseColumnNames="subs_serv_inst_id" baseTableName="billing_one_shot_charge_inst" constraintName="fk_eht7f5na7vthrcu8pdbhwn4hi"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />
@@ -5964,10 +6580,6 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-714">
         <addForeignKeyConstraint baseColumnNames="chrg_instance_id" baseTableName="billing_chrginst_wallet" constraintName="fk_espkcwuorhst9youte9r59vfq"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_charge_instance" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-715">
-        <addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="ar_dunning_plan_transition" constraintName="fk_eu7ekseo196cq1qgyg7xm7vs5"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-716">
         <addForeignKeyConstraint baseColumnNames="priceplan_id" baseTableName="billing_rated_transaction" constraintName="fk_eucl7of9ovyut1c4r2jkf01u6"
@@ -6109,10 +6721,6 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-751">
         <addForeignKeyConstraint baseColumnNames="dunning_lot_id" baseTableName="ar_action_dunning" constraintName="fk_gbkp9rahk5rqst7xvptmohhhl"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_dunning_lot" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-752">
-        <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="ar_dunning_plan_transition" constraintName="fk_gc1m3d2m0dsqcaek8rxrk0u87"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-753">
         <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="ar_ddrequest_item" constraintName="fk_gc8ffeebmrhovshkb6opk0gh7" deferrable="false"
@@ -6274,10 +6882,6 @@
         <addForeignKeyConstraint baseColumnNames="billing_run" baseTableName="billing_rejected_billing_accounts" constraintName="fk_iyfs5u3t9m0hc9rkeadr6atq9"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_run" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-798">
-        <addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="ar_dunning_plan" constraintName="fk_j0vlitgsqwnnkry67xwuead15" deferrable="false"
-            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-799">
         <addForeignKeyConstraint baseColumnNames="id" baseTableName="billing_usage_charge_inst" constraintName="fk_j1o935sww9tme69o1t5yqgce6" deferrable="false"
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_charge_instance" />
@@ -6342,10 +6946,6 @@
         <addForeignKeyConstraint baseColumnNames="category_invoice_agregate" baseTableName="billing_invoice_agregate" constraintName="fk_jol1l9b38nefwe19h55gjhi"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_agregate" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-815">
-        <addForeignKeyConstraint baseColumnNames="dunning_plan_id" baseTableName="ar_dunning_plan_transition" constraintName="fk_jpipfg980fcv7pq4s9tnb35ik"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_dunning_plan" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-816">
         <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="adm_role" constraintName="fk_jrwpmf1a3dtx1ng160f36rih8" deferrable="false"
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
@@ -6393,10 +6993,6 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-827">
         <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="billing_trading_country" constraintName="fk_k6pm2f8ubjlmmrq5qs06jon14"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-828">
-        <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="ar_action_plan_item" constraintName="fk_k9j7i31wmyhrw11lyxkdnpymr" deferrable="false"
-            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-829">
         <addForeignKeyConstraint baseColumnNames="country_id" baseTableName="billing_trading_country" constraintName="fk_k9rx9xam7tpfhxdd9ebir310v"
@@ -6553,10 +7149,6 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-873">
         <addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="ar_matching_amount" constraintName="fk_n4b9plulyqjl17hwwvnhqprvf" deferrable="false"
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-874">
-        <addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="ar_action_plan_item" constraintName="fk_n5ax6w0qt9pum3oc3n2b3hgxw" deferrable="false"
-            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-875">
         <addForeignKeyConstraint baseColumnNames="counter_id" baseTableName="billing_usage_charge_inst" constraintName="fk_n5h6xvrtm2a2av5jik9vr0cp5"
@@ -6797,10 +7389,6 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-940">
         <addForeignKeyConstraint baseColumnNames="measurable_quantity" baseTableName="dwh_measured_value" constraintName="fk_r84wig2o1808ybsy4jm0158aj"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dwh_measurable_quant" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-941">
-        <addForeignKeyConstraint baseColumnNames="action_plan_item_id" baseTableName="ar_action_dunning" constraintName="fk_r8q3phft4xgm8lbfu6i7lo3kx"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_action_plan_item" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-942">
         <addForeignKeyConstraint baseColumnNames="calendar" baseTableName="billing_cycle" constraintName="fk_r9kcmcn6nyrdvg5t81oowjf3q" deferrable="false"
@@ -7083,10 +7671,6 @@
         <addForeignKeyConstraint constraintName="fk_ar_credit_category_ar_customer_account" referencedTableName="ar_credit_category" baseColumnNames="credit_category_id"
             baseTableName="ar_customer_account" referencedColumnNames="id" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1010">
-        <addForeignKeyConstraint constraintName="fk_ar_credit_category_ar_dunning_plan" referencedTableName="ar_credit_category" baseColumnNames="credit_category_id"
-            baseTableName="ar_dunning_plan" referencedColumnNames="id" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1011">
         <addForeignKeyConstraint baseColumnNames="customer_id" baseTableName="com_meveo_instance" constraintName="fk_398jtw7cvvcjmyalvke9iwoqw" deferrable="false"
             initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_customer" />
@@ -7253,10 +7837,6 @@
         <addForeignKeyConstraint baseColumnNames="updater_id" baseTableName="cat_offer_template_category" constraintName="fk_cot_category_adm_user_updater"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1056">
-        <addForeignKeyConstraint baseColumnNames="cat_offer_template_cat_id" baseTableName="cat_offer_template" constraintName="fk_cat_offer_template_offer_template_category"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template_category" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1057">
         <addForeignKeyConstraint baseColumnNames="OFFER_TEMPLATE_CATEGORY_ID" baseTableName="cat_offer_template_category" constraintName="fk_offer_cat_template_offer_cat_template"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template_category" />
@@ -7377,14 +7957,6 @@
         <addForeignKeyConstraint constraintName="fk_invoice_type_id_billing_invoice" referencedTableName="billing_invoice_type" baseColumnNames="invoice_type_id"
             baseTableName="billing_invoice" referencedColumnNames="id" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1090">
-        <addForeignKeyConstraint baseColumnNames="invoicetype_id" baseTableName="billing_seq_invtyp_sell" constraintName="fk_2rjk30cy77bs2jxqwsbrhk6qb"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_type" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1091">
-        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="billing_seq_invtyp_sell" constraintName="fk_ivmab13iml7v0n29giw9w8kor"
-            deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1092">
         <addForeignKeyConstraint constraintName="fk_invoice_type_id_billing_cycle" referencedTableName="billing_invoice_type" baseColumnNames="invoice_type_id"
             baseTableName="billing_cycle" referencedColumnNames="id" />
@@ -7397,6 +7969,276 @@
         <addForeignKeyConstraint baseColumnNames="meveo_instance_id" baseTableName="cat_triggered_edr" constraintName="fk_meveo_instance_id_com_meveo_instance"
             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="com_meveo_instance" />
     </changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1095">
+		<addForeignKeyConstraint baseColumnNames="product_instance_id" baseTableName="billing_product_charge_inst" constraintName="fk_productci_prodins" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_product_instance" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1096">
+		<addForeignKeyConstraint baseColumnNames="product_chrg_tmpl_id" baseTableName="billing_product_charge_inst" constraintName="fk_productci_prodchrgtempl" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_product_charge_templ" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1097">
+		<addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="ord_order" constraintName="fk_ord_order_crm_provider" deferrable="false" initiallyDeferred="false"
+			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1098">
+		<addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="ord_order" constraintName="fk_creator_ord_order_adm_user" deferrable="false" initiallyDeferred="false"
+			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1099">
+		<addForeignKeyConstraint baseColumnNames="updater_id" baseTableName="ord_order" constraintName="fk_updater_ord_order_adm_user" deferrable="false" initiallyDeferred="false"
+			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1100">
+		<addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="ord_order_item" constraintName="fk_ord_order_item_crm_provider" deferrable="false" initiallyDeferred="false"
+			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1101">
+		<addForeignKeyConstraint baseColumnNames="order_id" baseTableName="ord_order_item" constraintName="fk_ord_order_item_ord_order" deferrable="false" initiallyDeferred="false"
+			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ord_order" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1102">
+		<addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="ord_order_item" constraintName="fk_ord_order_item_user_account" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="BILLING_USER_ACCOUNT" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1103">
+		<addForeignKeyConstraint baseColumnNames="subscription_id" baseTableName="ord_order_item" constraintName="fk_ord_order_item_subscription" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="BILLING_SUBSCRIPTION" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1104">
+		<addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="cat_digital_resource" constraintName="fk_cat_dig_res_crm_provider" deferrable="false" initiallyDeferred="false"
+			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1105">
+		<addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="cat_digital_resource" constraintName="fk_cat_dig_res_adm_user_c" deferrable="false" initiallyDeferred="false"
+			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1106">
+		<addForeignKeyConstraint baseColumnNames="updater_id" baseTableName="cat_digital_resource" constraintName="fk_cat_dig_res_adm_user_u" deferrable="false" initiallyDeferred="false"
+			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1107">
+		<addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cat_product_offer_digital_res" constraintName="fk_cat_product_offer_digital_res_l" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1108">
+		<addForeignKeyConstraint baseColumnNames="digital_resource_id" baseTableName="cat_product_offer_digital_res" constraintName="fk_cat_product_offer_digital_res_r" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_digital_resource" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1109">
+		<addForeignKeyConstraint baseColumnNames="product_charge_tmpl_id" baseTableName="cat_offer_template" constraintName="fk_cat_off_tpl_prod_chrg_tpl" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_product_charge_templ" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1110">
+		<addForeignKeyConstraint baseColumnNames="business_product_model_id" baseTableName="cat_offer_template" constraintName="fk_cat_off_tpl_buss_prod_mod" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_business_product_model" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1111">
+		<addForeignKeyConstraint baseColumnNames="invoicing_calendar_id" baseTableName="cat_offer_template" constraintName="fk_off_tpl_prodcal" deferrable="false" initiallyDeferred="false"
+			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1112">
+		<addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="cat_offer_product_template" constraintName="fk_cat_off_pro_tpl_offer_template" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1113">
+		<addForeignKeyConstraint baseColumnNames="product_template_id" baseTableName="cat_offer_product_template" constraintName="fk_cat_off_prod_tpl_off_tpl" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1114">
+		<addForeignKeyConstraint baseColumnNames="product_template_id" baseTableName="cat_bundle_product_template" constraintName="fk_cat_bun_pro_tpl_prod_off_tpl" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1115">
+		<addForeignKeyConstraint baseColumnNames="bundle_template_id" baseTableName="cat_bundle_product_template" constraintName="fk_cat_bun_prod_tpl_prod_off_tpl" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1116">
+		<addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="billing_charge_instance" constraintName="fk_chrg_instance_ua" deferrable="false" initiallyDeferred="false"
+			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1118">
+		<addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="billing_product_instance" constraintName="fk_prod_inst_crm_provider" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1119">
+		<addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="billing_product_instance" constraintName="fk_prod_inst_adm_user_c" deferrable="false" initiallyDeferred="false"
+			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1120">
+		<addForeignKeyConstraint baseColumnNames="updater_id" baseTableName="billing_product_instance" constraintName="fk_prod_inst_adm_user_u" deferrable="false" initiallyDeferred="false"
+			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1121">
+		<addForeignKeyConstraint baseColumnNames="product_template_id" baseTableName="billing_product_instance" constraintName="fk_productci_off_tpl" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1122">
+		<addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="billing_product_instance" constraintName="fk_prod_instance_ua" deferrable="false" initiallyDeferred="false"
+			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_user_account" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1123">
+		<addForeignKeyConstraint baseColumnNames="ORDER_ITEM_ID" baseTableName="ORD_ITEM_PRD_INSTANCE" constraintName="fk_ord_item_prd_instance_order" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ord_order_item" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1124">
+		<addForeignKeyConstraint baseColumnNames="PRD_INSTANCE_ID" baseTableName="ORD_ITEM_PRD_INSTANCE" constraintName="fk_ord_item_prd_instance_prd_instance" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="BILLING_PRODUCT_INSTANCE" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1125">
+		<addForeignKeyConstraint baseColumnNames="ORDER_ITEM_ID" baseTableName="ORD_ITEM_OFFERINGS" constraintName="fk_ord_item_offerings_order" deferrable="false" initiallyDeferred="false"
+			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ord_order_item" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1126">
+		<addForeignKeyConstraint baseColumnNames="PRD_OFFERING_ID" baseTableName="ORD_ITEM_OFFERINGS" constraintName="fk_ord_item_offerings_prd_offering" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="CAT_OFFER_TEMPLATE" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1127">
+		<addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="hierarchy_entity" constraintName="fk_hierarchy_entity_crm_provider" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1128">
+		<addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="hierarchy_entity" constraintName="fk_creator_hierarchy_entity_adm_user" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1129">
+		<addForeignKeyConstraint baseColumnNames="updater_id" baseTableName="hierarchy_entity" constraintName="fk_updater_hierarchy_entity_adm_user" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1130">
+		<addForeignKeyConstraint baseColumnNames="parent_id" baseTableName="hierarchy_entity" constraintName="fk_hierarchy_entity_hierarchy_entity" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="hierarchy_entity" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1131">
+		<addForeignKeyConstraint baseColumnNames="hierarchy_level_id" baseTableName="adm_user" constraintName="fk_hierarchy_level_adm_user_hierarchy_entity" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="hierarchy_entity" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1132">
+		<addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="wf_decision_rule" constraintName="fk_provider_wf_decision_rule_crm_provider" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1133">
+		<addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="wf_decision_rule" constraintName="fk_creator_wf_decision_rule_adm_user" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1134">
+		<addForeignKeyConstraint baseColumnNames="updater_id" baseTableName="wf_decision_rule" constraintName="fk_updater_wf_decision_rule_adm_user" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1135">
+		<addForeignKeyConstraint baseColumnNames="transition_id" baseTableName="wf_transition_decision_rule" constraintName="fk_transition_id_wf_transition" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_transition" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1136">
+		<addForeignKeyConstraint baseColumnNames="decision_rule_id" baseTableName="wf_transition_decision_rule" constraintName="fk_decision_rule_id_decision_rule" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_decision_rule" />	
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1137">
+		<addForeignKeyConstraint constraintName="fk_account_entity_crm_business_account_model" baseTableName="account_entity" baseColumnNames="bam_id" referencedTableName="crm_business_account_model"
+			referencedColumnNames="id" deferrable="false" initiallyDeferred="false" onUpdate="NO ACTION" onDelete="NO ACTION" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1138">
+		<addForeignKeyConstraint constraintName="fk_crm_seller_crm_business_account_model" baseTableName="crm_seller" baseColumnNames="bam_id" referencedTableName="crm_business_account_model"
+			referencedColumnNames="id" deferrable="false" initiallyDeferred="false" onUpdate="NO ACTION" onDelete="NO ACTION" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1139">
+		<addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="WF_HISTORY" constraintName="fk_provider_WF_HISTORY_crm_provider" deferrable="false" initiallyDeferred="false"
+			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1140">
+		<addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="WF_HISTORY_ACTION" constraintName="fk_provider_WF_HISTORY_ACTION_crm_provider" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1141">
+		<addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="WF_HISTORY" constraintName="fk_creator_WF_HISTORY_adm_user" deferrable="false" initiallyDeferred="false"
+			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1142">
+		<addForeignKeyConstraint baseColumnNames="updater_id" baseTableName="WF_HISTORY" constraintName="fk_updater_WF_HISTORY_adm_user" deferrable="false" initiallyDeferred="false"
+			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1143">
+		<addForeignKeyConstraint baseColumnNames="WORKFLOW_ID" baseTableName="WF_HISTORY" constraintName="fk_workflow_WF_HISTORY_wf_workflow" deferrable="false" initiallyDeferred="false"
+			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="WF_WORKFLOW" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1144">
+		<addForeignKeyConstraint baseColumnNames="WF_HISTORY_ID" baseTableName="WF_HISTORY_ACTION" constraintName="fk_workflow_history_WF_HISTORY_ACTION_wf_history" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="WF_HISTORY" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1145">
+		<addForeignKeyConstraint baseColumnNames="ORIGIN_EDR_ID" baseTableName="BILLING_RESERVATION" constraintName="fk_reservation_edr" deferrable="false" initiallyDeferred="false"
+			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="RATING_EDR" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1146">
+		<addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="ord_quote" constraintName="fk_ord_quote_crm_provider" deferrable="false" initiallyDeferred="false"
+			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1147">
+		<addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="ord_quote" constraintName="fk_creator_ord_quote_adm_user" deferrable="false" initiallyDeferred="false"
+			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1148">
+		<addForeignKeyConstraint baseColumnNames="updater_id" baseTableName="ord_quote" constraintName="fk_updater_ord_quote_adm_user" deferrable="false" initiallyDeferred="false"
+			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_user" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1149">
+		<addForeignKeyConstraint baseColumnNames="ROUTED_TO_USER_GROUP_ID" baseTableName="ord_quote" constraintName="fk_ord_quote_rt_usergrp" deferrable="false" initiallyDeferred="false"
+			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="HIERARCHY_ENTITY" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1150">
+		<addForeignKeyConstraint baseColumnNames="provider_id" baseTableName="ord_quote_item" constraintName="fk_ord_quote_item_crm_provider" deferrable="false" initiallyDeferred="false"
+			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_provider" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1151">
+		<addForeignKeyConstraint baseColumnNames="quote_id" baseTableName="ord_quote_item" constraintName="fk_ord_quote_item_ord_order" deferrable="false" initiallyDeferred="false"
+			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ord_quote" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1152">
+		<addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="ord_quote_item" constraintName="fk_ord_quote_item_user_account" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="BILLING_USER_ACCOUNT" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1153">
+		<addForeignKeyConstraint baseColumnNames="QUOTE_ITEM_ID" baseTableName="ORD_QUOT_ITEM_OFFERINGS" constraintName="fk_ord_quote_item_offerings_order" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ord_quote_item" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1154">
+		<addForeignKeyConstraint baseColumnNames="PRD_OFFERING_ID" baseTableName="ORD_QUOT_ITEM_OFFERINGS" constraintName="fk_ord_quote_item_offerings_prd_offering" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="CAT_OFFER_TEMPLATE" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1155">
+		<addForeignKeyConstraint baseColumnNames="invoice_id" baseTableName="billing_invoices_orders" constraintName="fk_invoice_id_bill_invoices-orders" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1156">
+		<addForeignKeyConstraint baseColumnNames="order_id" baseTableName="billing_invoices_orders" constraintName="fk_order_id_bill_invoices-orders" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ord_order" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1157">
+		<addForeignKeyConstraint baseColumnNames="PRODUCT_CHARGE_TEMPLATE_ID" baseTableName="cat_product_templ_charge_templ" constraintName="fk_prd_templ_ct_pct_id" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="CAT_PRODUCT_CHARGE_TEMPL" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1158">
+		<addForeignKeyConstraint baseColumnNames="PRODUCT_TEMPLATE_ID" baseTableName="cat_product_templ_charge_templ" constraintName="fk_prd_templ_ct_pt_id" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="CAT_OFFER_TEMPLATE" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1159">
+		<addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="ord_quote" constraintName="fk_ord_quote_user_account" deferrable="false" initiallyDeferred="false"
+			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="BILLING_USER_ACCOUNT" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1160">
+		<addForeignKeyConstraint baseColumnNames="quote_id" baseTableName="billing_invoice" constraintName="fk_bill_invoice_quote" deferrable="false" initiallyDeferred="false"
+			onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ord_quote" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1161">
+		<addForeignKeyConstraint baseColumnNames="invoicetype_id" baseTableName="billing_seq_invtyp_sell" constraintName="fk_2rjk30cy77bs2jxqwsbrhk6qb" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_type" />
+	</changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1162">
+		<addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="billing_seq_invtyp_sell" constraintName="fk_ivmab13iml7v0n29giw9w8kor" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
+	</changeSet>	
+    
+    
     <!-- end FK -->
 
 

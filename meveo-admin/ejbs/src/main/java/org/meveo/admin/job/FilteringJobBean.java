@@ -16,8 +16,6 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.IEntity;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.script.ScriptInterface;
 import org.slf4j.Logger;
@@ -30,10 +28,6 @@ public class FilteringJobBean {
 
     @Inject
     private FilterService filterService;
-
-    @Inject
-    @CurrentUser
-    private MeveoUser currentUser;
     
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)

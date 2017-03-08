@@ -28,8 +28,6 @@ import org.meveo.model.jaxb.account.UserAccounts;
 import org.meveo.model.jaxb.customer.CustomFields;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.util.ApplicationProvider;
@@ -48,10 +46,6 @@ public class ExportAccountsJobBean {
 
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
-
-    @Inject
-    @CurrentUser
-    protected MeveoUser currentUser;
     
     @Inject
     @ApplicationProvider

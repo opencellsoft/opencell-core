@@ -12,8 +12,8 @@
 <tr><td rowspan="1" colspan="3">UpdateJobInstancesTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>if</td>
-	<td>${JobCategoryBool}==true</td>
+	<td>clickAndWait</td>
+	<td>${JobInstances}</td>
 	<td></td>
 </tr>
 <tr>
@@ -29,11 +29,6 @@
 <tr>
 	<td>click</td>
 	<td>//*[contains(@id, 'jobCategory_panel')]/div/ul/li[2]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
 	<td></td>
 </tr>
 <tr>
@@ -72,19 +67,9 @@
 	<td></td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>1000</td>
-	<td></td>
-</tr>
-<tr>
 	<td>type</td>
 	<td>${codeText}</td>
 	<td>${CodeValue}</td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${DescriptionBool}==true</td>
-	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -97,16 +82,6 @@
 	<td>${DescriptionValue}</td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${TimerBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>click</td>
 	<td>${ChooseTimer}</td>
 	<td></td>
@@ -117,44 +92,9 @@
 	<td></td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${ActiveBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${ClickActive}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${ParametresBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>type</td>
 	<td>${Parametres}</td>
 	<td>${ParametresValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${NextJobBool}==true</td>
-	<td></td>
 </tr>
 <tr>
 	<td>click</td>
@@ -164,11 +104,6 @@
 <tr>
 	<td>click</td>
 	<td>css=li:contains(&quot;${NextJobValue}&quot;)</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
 	<td></td>
 </tr>
 <tr>

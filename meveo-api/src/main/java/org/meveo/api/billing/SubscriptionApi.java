@@ -11,6 +11,8 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.IncorrectServiceInstanceException;
+import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.account.AccessApi;
@@ -20,10 +22,12 @@ import org.meveo.api.dto.account.ApplyProductRequestDto;
 import org.meveo.api.dto.billing.ActivateServicesRequestDto;
 import org.meveo.api.dto.billing.ChargeInstanceOverrideDto;
 import org.meveo.api.dto.billing.InstantiateServicesRequestDto;
+import org.meveo.api.dto.billing.OperationServicesRequestDto;
 import org.meveo.api.dto.billing.ProductDto;
 import org.meveo.api.dto.billing.ServiceInstanceDto;
 import org.meveo.api.dto.billing.ServiceToActivateDto;
 import org.meveo.api.dto.billing.ServiceToInstantiateDto;
+import org.meveo.api.dto.billing.ServiceToUpdateDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.SubscriptionsDto;
 import org.meveo.api.dto.billing.SubscriptionsListDto;
@@ -106,7 +110,7 @@ public class SubscriptionApi extends BaseApi {
 	
     @Inject
 	private ProductInstanceService productInstanceService;
-	
+    
 
     public void create(SubscriptionDto postData) throws MeveoApiException, BusinessException {
 
@@ -970,4 +974,87 @@ public class SubscriptionApi extends BaseApi {
         }
 
     }
+
+	public void suspendSubscription(String subscriptionCode, Date suspensionDate) throws MissingParameterException, EntityDoesNotExistsException, IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+		if (StringUtils.isBlank(subscriptionCode)) {
+			missingParameters.add("subscriptionCode");
+			handleMissingParameters();
+		}
+		Subscription subscription = subscriptionService.findByCode(subscriptionCode);
+		if (subscription == null) {
+			throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
+		}
+		subscriptionService.subscriptionSuspension(subscription, suspensionDate);
+	}
+
+	/**
+	 * 
+	 * @param subscriptionCode
+	 * @param suspensionDate
+	 * @throws MissingParameterException
+	 * @throws EntityDoesNotExistsException
+	 * @throws IncorrectSusbcriptionException
+	 * @throws IncorrectServiceInstanceException
+	 * @throws BusinessException
+	 */
+	public void resumeSubscription(String subscriptionCode, Date suspensionDate) throws MissingParameterException, EntityDoesNotExistsException, IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+		if (StringUtils.isBlank(subscriptionCode)) {
+			missingParameters.add("subscriptionCode");
+			handleMissingParameters();
+		}
+		Subscription subscription = subscriptionService.findByCode(subscriptionCode);
+		if (subscription == null) {
+			throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
+		}
+		subscriptionService.subscriptionReactivation(subscription, suspensionDate);
+	}
+	
+    /**
+     * 
+     * @param suspendServicesRequestDto
+     * @throws MissingParameterException
+     * @throws EntityDoesNotExistsException
+     * @throws IncorrectSusbcriptionException
+     * @throws IncorrectServiceInstanceException
+     * @throws BusinessException
+     */
+	public void suspendServices(OperationServicesRequestDto provisionningServicesRequestDto) throws MissingParameterException, EntityDoesNotExistsException, IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+		suspendOrResumeServices(provisionningServicesRequestDto, true);     
+	}	
+	
+	public void resumeServices(OperationServicesRequestDto provisionningServicesRequestDto) throws MissingParameterException, EntityDoesNotExistsException, IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+		suspendOrResumeServices(provisionningServicesRequestDto, false);
+	}	
+	
+	private void suspendOrResumeServices(OperationServicesRequestDto provisionningServicesRequestDto,boolean isToSuspend) throws MissingParameterException, EntityDoesNotExistsException, IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+		if (provisionningServicesRequestDto == null  ) {
+			missingParameters.add("provisionningServicesRequestDto");	
+			handleMissingParameters();
+		}
+		
+		if (StringUtils.isBlank(provisionningServicesRequestDto.getSubscriptionCode())) {
+			missingParameters.add("subscriptionCode");			
+		}	
+		for(ServiceToUpdateDto serviceToSuspendDto: provisionningServicesRequestDto.getServicesToUpdate()){
+			if (StringUtils.isBlank(serviceToSuspendDto.getCode())) {
+				missingParameters.add("serviceToSuspend.code");			
+			}
+		}
+		handleMissingParameters();
+		Subscription subscription = subscriptionService.findByCode(provisionningServicesRequestDto.getSubscriptionCode());
+		if (subscription == null) {
+			throw new EntityDoesNotExistsException(Subscription.class, provisionningServicesRequestDto.getSubscriptionCode());
+		}				
+		for(ServiceToUpdateDto serviceToSuspendDto: provisionningServicesRequestDto.getServicesToUpdate()){           
+        	ServiceInstance serviceInstanceToSuspend = serviceInstanceService.findByCodeAndSubscription(serviceToSuspendDto.getCode(), subscription); 
+        	if(serviceInstanceToSuspend == null){
+        		throw new EntityDoesNotExistsException(ServiceInstance.class, serviceToSuspendDto.getCode());
+        	}
+        	if(isToSuspend){
+        		serviceInstanceService.serviceSuspension(serviceInstanceToSuspend, serviceToSuspendDto.getActionDate());
+        	}else{
+        		serviceInstanceService.serviceReactivation(serviceInstanceToSuspend, serviceToSuspendDto.getActionDate());
+        	}
+        }	        
+	}	
 }

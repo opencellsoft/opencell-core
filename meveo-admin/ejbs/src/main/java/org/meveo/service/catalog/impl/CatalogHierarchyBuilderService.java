@@ -35,9 +35,9 @@ import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
+import org.meveo.model.crm.Provider;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,8 +83,8 @@ public class CatalogHierarchyBuilderService {
 	private CustomFieldInstanceService customFieldInstanceService;
 	
     @Inject
-    @CurrentUser
-    protected MeveoUser currentUser;
+    @ApplicationProvider
+    protected Provider appProvider;
 
 	@Inject
 	private ProductTemplateService productTemplateService;
@@ -132,7 +132,6 @@ public class CatalogHierarchyBuilderService {
 	 * Duplicate product, product charge template and prices.
 	 * 
 	 * @param offerProductTemplate
-	 * @param currentUser
 	 * @param chargeTemplateInMemory
 	 * @param pricePlansInMemory
 	 * @param prefix
@@ -173,7 +172,7 @@ public class CatalogHierarchyBuilderService {
 			}
 
 			try {
-				ImageUploadEventHandler<ProductTemplate> serviceImageUploadEventHandler = new ImageUploadEventHandler<>(currentUser);
+				ImageUploadEventHandler<ProductTemplate> serviceImageUploadEventHandler = new ImageUploadEventHandler<>(appProvider);
 				String newImagePath = serviceImageUploadEventHandler.duplicateImage(newProductTemplate, productTemplate.getImagePath(), prefix + productTemplate.getCode());
 				newProductTemplate.setImagePath(newImagePath);
 			} catch (IOException e1) {
@@ -335,7 +334,7 @@ public class CatalogHierarchyBuilderService {
 			newServiceTemplate.setServiceSubscriptionCharges(new ArrayList<ServiceChargeTemplateSubscription>());
 			newServiceTemplate.setServiceUsageCharges(new ArrayList<ServiceChargeTemplateUsage>());
 			try {
-				ImageUploadEventHandler<ServiceTemplate> serviceImageUploadEventHandler = new ImageUploadEventHandler<>(currentUser);
+				ImageUploadEventHandler<ServiceTemplate> serviceImageUploadEventHandler = new ImageUploadEventHandler<>(appProvider);
 				String newImagePath = serviceImageUploadEventHandler.duplicateImage(newServiceTemplate, serviceTemplate.getImagePath(), prefix + serviceTemplate.getCode());
 				newServiceTemplate.setImagePath(newImagePath);
 			} catch (IOException e1) {

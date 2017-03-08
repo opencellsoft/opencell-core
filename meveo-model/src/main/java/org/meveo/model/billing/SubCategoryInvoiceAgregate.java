@@ -47,7 +47,7 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 	@JoinColumn(name = "invoiceSubCategory")
 	private InvoiceSubCategory invoiceSubCategory;
 
-	@ManyToMany(fetch = FetchType.LAZY,cascade=CascadeType.REMOVE)
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "BILLING_INVOICE_AGREGATE_TAXES", joinColumns = @JoinColumn(name = "SUB_CAT_INVOICE_AGGREGAT_ID"), inverseJoinColumns = @JoinColumn(name = "TAX_ID"))
 	private Set<Tax> subCategoryTaxes = new HashSet<Tax>();
 

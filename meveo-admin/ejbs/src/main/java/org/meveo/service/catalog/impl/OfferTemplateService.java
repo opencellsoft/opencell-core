@@ -147,7 +147,7 @@ public class OfferTemplateService extends MultilanguageEntityService<OfferTempla
 		entity.setAuditable(new Auditable());
 		String sourceAppliesToEntity = entity.clearUuid();
 		
-		ImageUploadEventHandler<OfferTemplate> offerImageUploadEventHandler = new ImageUploadEventHandler<>(currentUser);
+		ImageUploadEventHandler<OfferTemplate> offerImageUploadEventHandler = new ImageUploadEventHandler<>(appProvider);
 		try {
 			String newImagePath = offerImageUploadEventHandler.duplicateImage(entity, entity.getImagePath(), code);
 			entity.setImagePath(newImagePath);

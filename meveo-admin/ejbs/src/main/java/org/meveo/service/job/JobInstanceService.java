@@ -100,6 +100,7 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
         List<Job> jobs = new ArrayList<>();
 
         for (List<Class<? extends Job>> jobList : jobClasses.values()) {
+            log.error("AKK job list is {}", jobList);
             for (Class<? extends Job> jobClass : jobList) {
                 Job job = getJobByName(jobClass.getSimpleName());
                 jobs.add(job);

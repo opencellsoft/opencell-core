@@ -19,13 +19,9 @@ import org.meveo.model.security.Permission;
 import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.PermissionService;
 import org.meveo.service.admin.impl.RoleService;
-import org.meveo.service.crm.impl.ProviderService;
 
 @Stateless
 public class RoleApi extends BaseApi {
-
-    @Inject
-    private ProviderService providerService;
 
     @Inject
     private RoleService roleService;

@@ -834,7 +834,7 @@ public abstract class BaseApi {
         }
 
         try {
-            ImageUploadEventHandler<IEntity> imageUploadEventHandler = new ImageUploadEventHandler<>(currentUser);
+            ImageUploadEventHandler<IEntity> imageUploadEventHandler = new ImageUploadEventHandler<>(appProvider);
             imageUploadEventHandler.saveImageUpload(entity, imagePath, Base64.decodeBase64(imageData));
         } catch (AccessDeniedException e1) {
             throw new InvalidImageData("Failed saving image. Access is denied: " + e1.getMessage());
@@ -845,7 +845,7 @@ public abstract class BaseApi {
 
     protected void deleteImage(IEntity entity) throws InvalidImageData {
         try {
-            ImageUploadEventHandler<IEntity> imageUploadEventHandler = new ImageUploadEventHandler<>(currentUser);
+            ImageUploadEventHandler<IEntity> imageUploadEventHandler = new ImageUploadEventHandler<>(appProvider);
             imageUploadEventHandler.deleteImage(entity);
         } catch (AccessDeniedException e1) {
             throw new InvalidImageData("Failed deleting image. Access is denied: " + e1.getMessage());

@@ -22,8 +22,6 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.notification.Notification;
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.notification.NotificationService;
 import org.meveo.service.script.ScriptInstanceService;
@@ -50,10 +48,6 @@ public class InternalNotificationJobBean {
 
 	@Inject
 	ScriptInstanceService scriptInstanceService;
-
-    @Inject
-    @CurrentUser
-    private MeveoUser currentUser;
 
 	@SuppressWarnings("rawtypes")
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })

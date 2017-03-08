@@ -119,6 +119,9 @@ public class SubscriptionService extends BusinessService<Subscription> {
         subscription.setTerminationDate(suspensionDate);
         subscription.setStatus(SubscriptionStatusEnum.SUSPENDED);
         update(subscription);
+        for(Access access : subscription.getAccessPoints()){
+        	accessService.disable(access);
+        }
     }
 
     public void subscriptionReactivation(Subscription subscription, Date reactivationDate) throws IncorrectSusbcriptionException,
@@ -145,6 +148,10 @@ public class SubscriptionService extends BusinessService<Subscription> {
         }
 
         update(subscription);
+        
+        for(Access access : subscription.getAccessPoints()){
+        	accessService.enable(access);
+        }
 
         if (subscription.getOffer().getBusinessOfferModel() != null && subscription.getOffer().getBusinessOfferModel().getScript() != null) {
             try {

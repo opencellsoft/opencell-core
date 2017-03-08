@@ -35,8 +35,6 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.jobs.FtpImportedFile;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
 import org.meveo.service.job.FtpImportedFileService;
 import org.slf4j.Logger;
 
@@ -48,10 +46,6 @@ public class FtpAdapterJobBean {
 
 	@Inject
 	private FtpImportedFileService ftpImportedFileService;
-
-    @Inject
-    @CurrentUser
-    private MeveoUser currentUser;
     
 	private File localDirFile;
 	private Pattern filePattern;
@@ -257,7 +251,6 @@ public class FtpAdapterJobBean {
 	 * @param remoteServer
 	 * @param remotePort
 	 * @param ftpInputDirectory
-	 * @param currentUser
 	 * @throws UnsupportedEncodingException
 	 * @throws NoSuchAlgorithmException
 	 * @throws BusinessException 

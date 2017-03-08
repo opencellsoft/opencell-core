@@ -25,8 +25,6 @@ import org.meveo.model.dwh.MeasurableQuantity;
 import org.meveo.model.dwh.MeasuredValue;
 import org.meveo.model.dwh.MeasurementPeriodEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
 import org.meveocrm.services.dwh.MeasurableQuantityService;
 import org.meveocrm.services.dwh.MeasuredValueService;
 import org.slf4j.Logger;
@@ -42,10 +40,6 @@ public class DWHQueryBean {
 
     @PersistenceContext(unitName = "MeveoAdmin")
     private EntityManager em;
-
-    @Inject
-    @CurrentUser
-    protected MeveoUser currentUser;
     
     @Inject
     private Logger log;

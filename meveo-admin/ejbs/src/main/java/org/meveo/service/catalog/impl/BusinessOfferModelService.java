@@ -111,7 +111,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 
 		newOfferTemplate.setCode(code);
 
-		ImageUploadEventHandler<OfferTemplate> offerImageUploadEventHandler = new ImageUploadEventHandler<>(currentUser);
+		ImageUploadEventHandler<OfferTemplate> offerImageUploadEventHandler = new ImageUploadEventHandler<>(appProvider);
 		try {
 			if (StringUtils.isBlank(imagePath)) {
 				imagePath = bomOffer.getImagePath();

@@ -52,101 +52,6 @@
 	<td>${URLValue}</td>
 </tr>
 <tr>
-	<td>if</td>
-	<td>${DescriptionBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${descriptionText}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${descriptionText}</td>
-	<td>${DescriptionValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${UserBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${SelectUser}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${SelectUser}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>//*[contains(@id, 'userName_text')]</td>
-	<td>meveo.admin</td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>id=searchUserPopuppopupForm:buttonSearch</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>css=td</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${CustomerBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${SelectCustomer}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${SelectCustomer}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>//*[contains(@id, 'code_text')]</td>
-	<td>CUST</td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>id=searchCustomerPopuppopupForm:buttonSearch</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>//tbody[@id='searchCustomerPopuppopupForm:searchCustomerPopupdatatable_data']/tr/td</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${UsernameBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${UsernameForWSRestAccess}</td>
 	<td></td>
@@ -157,16 +62,6 @@
 	<td>${UsernameValue}</td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${PasswordBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${PasswordForWSRestAccess}</td>
 	<td></td>
@@ -175,11 +70,6 @@
 	<td>type</td>
 	<td>${PasswordForWSRestAccess}</td>
 	<td>${PasswordValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>

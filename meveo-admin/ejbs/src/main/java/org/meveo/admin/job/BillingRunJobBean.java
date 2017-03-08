@@ -23,8 +23,6 @@ import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.slf4j.Logger;
@@ -40,10 +38,6 @@ public class BillingRunJobBean {
 
 	@Inject
 	private BillingCycleService billingCycleService;
-
-    @Inject
-    @CurrentUser
-    private MeveoUser currentUser;
 
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)

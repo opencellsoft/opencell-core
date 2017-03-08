@@ -22,11 +22,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>if</td>
-	<td>${JobNotificationBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>clickAndWait</td>
 	<td>${buttonNew}</td>
 	<td></td>
@@ -47,11 +42,6 @@
 	<td>${CodeValue}</td>
 </tr>
 <tr>
-	<td>if</td>
-	<td>${ClassnameFilterBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${ClassnameFilter}</td>
 	<td></td>
@@ -69,11 +59,6 @@
 <tr>
 	<td>click</td>
 	<td>css=li:contains(&quot;${ClassnameFilterValue}&quot;)</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
 	<td></td>
 </tr>
 <tr>
@@ -107,11 +92,6 @@
 	<td>${EventTypeFilterValue}</td>
 </tr>
 <tr>
-	<td>if</td>
-	<td>${EventELFilterBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${EventELFilter}</td>
 	<td></td>
@@ -120,16 +100,6 @@
 	<td>type</td>
 	<td>${EventELFilter}</td>
 	<td>${EventELFilterValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${ScriptInstanceBool}==true</td>
-	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -144,26 +114,26 @@
 <tr>
 	<td>waitForText</td>
 	<td>id=scriptInstancePopup_title</td>
-	<td>Script instances</td>
+	<td>Scripts</td>
 </tr>
 <tr>
 	<td>assertText</td>
 	<td>id=scriptInstancePopup_title</td>
-	<td>Script instances</td>
+	<td>Scripts</td>
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>//*[contains(@id, 'txt:code_text')]</td>
+	<td>//*[contains(@id, 'searchField1')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>//*[contains(@id, 'txt:code_text')]</td>
+	<td>//*[contains(@id, 'searchField1')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>//*[contains(@id, 'txt:code_text')]</td>
+	<td>//*[contains(@id, 'searchField1')]</td>
 	<td>${ScriptInstanceValue}</td>
 </tr>
 <tr>
@@ -224,11 +194,6 @@
 <tr>
 	<td>click</td>
 	<td>//tbody[@id='scriptInstancePopuppopupForm:scriptInstancePopupdatatable_data']/tr/td[1]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
 	<td></td>
 </tr>
 <tr>
@@ -355,11 +320,6 @@
 	<td>assertText</td>
 	<td>//a[contains(text(),'${CodeValue}')]</td>
 	<td>${CodeValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
 </tr>
 </tbody></table>
 </body>

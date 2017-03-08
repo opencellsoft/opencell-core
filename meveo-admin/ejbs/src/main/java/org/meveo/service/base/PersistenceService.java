@@ -72,7 +72,6 @@ import org.meveo.util.MeveoJpaForJobs;
 public abstract class PersistenceService<E extends IEntity> extends BaseService implements IPersistenceService<E> {
     protected Class<E> entityClass;
 
-    public static String SEARCH_CURRENT_USER = "currentUser";
     public static String SEARCH_ATTR_TYPE_CLASS = "type_class";
     public static String SEARCH_IS_NULL = "IS_NULL";
     public static String SEARCH_IS_NOT_NULL = "IS_NOT_NULL";

@@ -12,8 +12,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.InvalidScriptException;
 import org.meveo.model.module.MeveoModule;
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 
@@ -22,11 +20,6 @@ import org.meveo.service.script.ScriptInstanceService;
 public class ModuleScriptService implements Serializable {
 
     private static final long serialVersionUID = -9085236365753820714L;
-
-
-    @Inject
-    @CurrentUser
-    private MeveoUser currentUser;
     
     @Inject
     private ScriptInstanceService scriptInstanceService;

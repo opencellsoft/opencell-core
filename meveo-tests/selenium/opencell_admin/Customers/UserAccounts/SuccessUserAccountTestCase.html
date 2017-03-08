@@ -22,38 +22,18 @@
 	<td></td>
 </tr>
 <tr>
-	<td>if</td>
-	<td>${TitleBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${SelectTitle}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>storeText</td>
-	<td>id=parentTab:userAccountFormId:userAccountTab:name_title_entity_17</td>
-	<td>TitleValue</td>
-</tr>
-<tr>
 	<td>click</td>
 	<td>${SelectTitle}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>id=parentTab:userAccountFormId:userAccountTab:name_title_entity_17</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForText</td>
-	<td>id=parentTab:userAccountFormId:userAccountTab:name_title_entity_label</td>
-	<td>${TitleValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
+	<td>css=li:contains(&quot;${TitleValue}&quot;)</td>
 	<td></td>
 </tr>
 <tr>
@@ -102,23 +82,18 @@
 	<td>${Code}</td>
 </tr>
 <tr>
-	<td>if</td>
-	<td>${PrimaryContactBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${SelectPrimaryContact}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>select</td>
+	<td>click</td>
 	<td>${SelectPrimaryContact}</td>
-	<td>${PrimaryContactValue}</td>
+	<td></td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
+	<td>click</td>
+	<td>css=li:contains(&quot;${PrimaryContactValue}&quot;)</td>
 	<td></td>
 </tr>
 <tr>
@@ -132,11 +107,6 @@
 	<td>${Description}</td>
 </tr>
 <tr>
-	<td>if</td>
-	<td>${RefExt1Bool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${RefExt1}</td>
 	<td></td>
@@ -145,16 +115,6 @@
 	<td>sendKeys</td>
 	<td>${RefExt1}</td>
 	<td>${RefExt1Value}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${RefExt2Bool}==true</td>
-	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -167,11 +127,6 @@
 	<td>${RefExt2Value}</td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${LastName}</td>
 	<td></td>
@@ -182,11 +137,6 @@
 	<td>${LastnameValue}</td>
 </tr>
 <tr>
-	<td>if</td>
-	<td>${FirstnameBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${FirstName}</td>
 	<td></td>
@@ -195,31 +145,6 @@
 	<td>sendKeys</td>
 	<td>${FirstName}</td>
 	<td>${FirstnameValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${DefaultBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${Default}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${Default}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
 </tr>
 <tr>
 	<td>assertText</td>
@@ -237,11 +162,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>if</td>
-	<td>${CountryBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${InfCountry}</td>
 	<td></td>
@@ -250,16 +170,6 @@
 	<td>type</td>
 	<td>${InfCountry}</td>
 	<td>${CountryValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${Address1Bool}==true</td>
-	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -272,16 +182,6 @@
 	<td>${Address1Value}</td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${Address2Bool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${InfAddress2}</td>
 	<td></td>
@@ -290,16 +190,6 @@
 	<td>sendKeys</td>
 	<td>${InfAddress2}</td>
 	<td>${Address2Value}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${Address3Bool}==true</td>
-	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -312,16 +202,6 @@
 	<td>${Address3Value}</td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${CityBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${InfCity}</td>
 	<td></td>
@@ -332,16 +212,6 @@
 	<td>${CityValue}</td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${ZipCodeBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${InfZipCode}</td>
 	<td></td>
@@ -350,11 +220,6 @@
 	<td>sendKeys</td>
 	<td>${InfZipCode}</td>
 	<td>${ZipCodeValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
