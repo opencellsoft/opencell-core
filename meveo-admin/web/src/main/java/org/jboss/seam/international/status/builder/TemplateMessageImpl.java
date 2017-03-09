@@ -18,7 +18,8 @@ package org.jboss.seam.international.status.builder;
 
 import java.util.Arrays;
 
-import org.jboss.seam.international.status.Level;
+import javax.faces.application.FacesMessage.Severity;
+
 import org.jboss.seam.international.status.Message;
 import org.jboss.seam.international.status.MessageBuilder;
 import org.jboss.seam.international.status.MessageImpl;
@@ -37,12 +38,12 @@ public class TemplateMessageImpl implements MessageBuilder, TemplateMessage {
     private Object[] detailParams;
 
     private String targets;
-    private Level level;
+    private Severity severity;
 
     public Message build() {
         MutableMessage message = new MessageImpl();
 
-        message.setLevel(level);
+        message.setSeverity(severity);
         message.setText(interpolator.populate(summary, summaryParams));
         if (detail != null && !detail.equals("")) {
             message.setDetail(interpolator.populate(detail, detailParams));
@@ -77,8 +78,8 @@ public class TemplateMessageImpl implements MessageBuilder, TemplateMessage {
         return this;
     }
 
-    public TemplateMessage level(final Level level) {
-        this.level = level;
+    public TemplateMessage severity(final Severity severity) {
+        this.severity = severity;
         return this;
     }
 
@@ -86,7 +87,7 @@ public class TemplateMessageImpl implements MessageBuilder, TemplateMessage {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((level == null) ? 0 : level.hashCode());
+        result = prime * result + ((severity == null) ? 0 : severity.hashCode());
         result = prime * result + ((summary == null) ? 0 : summary.hashCode());
         result = prime * result + ((detail == null) ? 0 : detail.hashCode());
         result = prime * result + Arrays.hashCode(summaryParams);
@@ -107,11 +108,11 @@ public class TemplateMessageImpl implements MessageBuilder, TemplateMessage {
             return false;
         }
         TemplateMessageImpl other = (TemplateMessageImpl) obj;
-        if (level == null) {
-            if (other.level != null) {
+        if (severity == null) {
+            if (other.severity != null) {
                 return false;
             }
-        } else if (!level.equals(other.level)) {
+        } else if (!severity.equals(other.severity)) {
             return false;
         }
         if (summary == null) {

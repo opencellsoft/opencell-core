@@ -18,6 +18,8 @@ package org.jboss.seam.international.status;
 
 import java.io.Serializable;
 
+import javax.faces.application.FacesMessage.Severity;
+
 /**
  * An object representing a message that needs to be displayed to the User.
  *
@@ -26,9 +28,9 @@ import java.io.Serializable;
  */
 public interface Message extends Serializable {
     /**
-     * Get the {@link Level} representing the severity of this message.
+     * Get the {@link Severity} representing the severity of this message.
      */
-    Level getLevel();
+    Severity getSeverity();
 
     /**
      * Get the message text.

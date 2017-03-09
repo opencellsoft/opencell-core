@@ -69,7 +69,7 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 	@AroundInvoke
 	public Object checkForSecuredEntities(InvocationContext context) throws Exception {
 
-	    log.error("AKK checking secured entities currentUser is {}", currentUser);
+//	    log.error("AKK checking secured entities currentUser is {}", currentUser);
 	    
 		// check if secured entities should be saved.
 		String secureSetting = paramBean.getProperty("secured.entities.enabled", "true");

@@ -18,11 +18,11 @@ package org.jboss.seam.international.status.builder;
 
 import java.util.Locale;
 
+import javax.faces.application.FacesMessage.Severity;
 import javax.inject.Inject;
 
 import org.jboss.seam.international.status.ApplicationBundles;
 import org.jboss.seam.international.status.Client;
-import org.jboss.seam.international.status.Level;
 import org.jboss.seam.international.status.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,8 +106,8 @@ public class BundleTemplateMessageImpl implements BundleTemplateMessage {
         return this;
     }
 
-    public BundleTemplateMessage level(final Level level) {
-        this.template.level(level);
+    public BundleTemplateMessage severity(final Severity severity) {
+        this.template.severity(severity);
         return this;
     }
 

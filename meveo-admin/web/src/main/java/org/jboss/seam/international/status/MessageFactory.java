@@ -21,6 +21,7 @@ import java.io.Serializable;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
+import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 
 import org.jboss.seam.international.status.builder.BundleKey;
@@ -43,70 +44,70 @@ public class MessageFactory implements Serializable {
      * Bundle Factory Methods
      */
     public BundleTemplateMessage info(final BundleKey message) {
-        return getContextualInstance(BundleTemplateMessage.class).key(message).level(Level.INFO);
+        return getContextualInstance(BundleTemplateMessage.class).key(message).severity(FacesMessage.SEVERITY_INFO);
     }
 
     public BundleTemplateMessage info(final BundleKey message, final Object... params) {
-        return getContextualInstance(BundleTemplateMessage.class).key(message).level(Level.INFO).params(params);
+        return getContextualInstance(BundleTemplateMessage.class).key(message).severity(FacesMessage.SEVERITY_INFO).params(params);
     }
 
     public BundleTemplateMessage warn(final BundleKey message) {
-        return getContextualInstance(BundleTemplateMessage.class).key(message).level(Level.WARN);
+        return getContextualInstance(BundleTemplateMessage.class).key(message).severity(FacesMessage.SEVERITY_WARN);
     }
 
     public BundleTemplateMessage warn(final BundleKey message, final Object... params) {
-        return getContextualInstance(BundleTemplateMessage.class).key(message).level(Level.WARN).params(params);
+        return getContextualInstance(BundleTemplateMessage.class).key(message).severity(FacesMessage.SEVERITY_WARN).params(params);
     }
 
     public BundleTemplateMessage error(final BundleKey message) {
-        return getContextualInstance(BundleTemplateMessage.class).key(message).level(Level.ERROR);
+        return getContextualInstance(BundleTemplateMessage.class).key(message).severity(FacesMessage.SEVERITY_ERROR);
     }
 
     public BundleTemplateMessage error(final BundleKey message, final Object... params) {
-        return getContextualInstance(BundleTemplateMessage.class).key(message).level(Level.ERROR).params(params);
+        return getContextualInstance(BundleTemplateMessage.class).key(message).severity(FacesMessage.SEVERITY_ERROR).params(params);
     }
 
     public BundleTemplateMessage fatal(final BundleKey message) {
-        return getContextualInstance(BundleTemplateMessage.class).key(message).level(Level.FATAL);
+        return getContextualInstance(BundleTemplateMessage.class).key(message).severity(FacesMessage.SEVERITY_FATAL);
     }
 
     public BundleTemplateMessage fatal(final BundleKey message, final Object... params) {
-        return getContextualInstance(BundleTemplateMessage.class).key(message).level(Level.FATAL).params(params);
+        return getContextualInstance(BundleTemplateMessage.class).key(message).severity(FacesMessage.SEVERITY_FATAL).params(params);
     }
 
     /*
      * Template Factory Methods
      */
     public TemplateMessage info(final String message) {
-        return getContextualInstance(TemplateMessage.class).text(message).level(Level.INFO);
+        return getContextualInstance(TemplateMessage.class).text(message).severity(FacesMessage.SEVERITY_INFO);
     }
 
     public TemplateMessage info(final String message, final Object... params) {
-        return getContextualInstance(TemplateMessage.class).text(message).level(Level.INFO).textParams(params);
+        return getContextualInstance(TemplateMessage.class).text(message).severity(FacesMessage.SEVERITY_INFO).textParams(params);
     }
 
     public TemplateMessage warn(final String message) {
-        return getContextualInstance(TemplateMessage.class).text(message).level(Level.WARN);
+        return getContextualInstance(TemplateMessage.class).text(message).severity(FacesMessage.SEVERITY_WARN);
     }
 
     public TemplateMessage warn(final String message, final Object... params) {
-        return getContextualInstance(TemplateMessage.class).text(message).level(Level.WARN).textParams(params);
+        return getContextualInstance(TemplateMessage.class).text(message).severity(FacesMessage.SEVERITY_WARN).textParams(params);
     }
 
     public TemplateMessage error(final String message) {
-        return getContextualInstance(TemplateMessage.class).text(message).level(Level.ERROR);
+        return getContextualInstance(TemplateMessage.class).text(message).severity(FacesMessage.SEVERITY_ERROR);
     }
 
     public TemplateMessage error(final String message, final Object... params) {
-        return getContextualInstance(TemplateMessage.class).text(message).level(Level.ERROR).textParams(params);
+        return getContextualInstance(TemplateMessage.class).text(message).severity(FacesMessage.SEVERITY_ERROR).textParams(params);
     }
 
     public TemplateMessage fatal(final String message) {
-        return getContextualInstance(TemplateMessage.class).text(message).level(Level.FATAL);
+        return getContextualInstance(TemplateMessage.class).text(message).severity(FacesMessage.SEVERITY_FATAL);
     }
 
     public TemplateMessage fatal(final String message, final Object... params) {
-        return getContextualInstance(TemplateMessage.class).text(message).level(Level.FATAL).textParams(params);
+        return getContextualInstance(TemplateMessage.class).text(message).severity(FacesMessage.SEVERITY_FATAL).textParams(params);
     }
 
     /**

@@ -46,7 +46,7 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
         try {
             // Call a backing bean method and flush persistence
             result = invocationContext.proceed();
-            log.error("AKK isJointedToTransaction {}", em.isJoinedToTransaction());
+//            log.error("AKK isJointedToTransaction {}", em.isJoinedToTransaction());
             em.flush();
             return result;
 
@@ -67,13 +67,11 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
                         violation.getInvalidValue(), violation.getMessage()));
             }
 
-            messages.getAll();
             messages.clear();
             messages.error(new BundleKey("messages", "error.action.failed"), builder.toString());
             FacesContext.getCurrentInstance().validationFailed();
 
         } catch (PersistenceException e) {
-            messages.getAll();
             messages.clear();
             if (e.getCause() instanceof org.hibernate.exception.ConstraintViolationException) {
                 log.error("Delete was unsuccessful because entity is already in use.", e.getCause());
@@ -83,10 +81,10 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
                 messages.error(new BundleKey("messages", "error.action.failed"), e.getMessage());
             }
             FacesContext.getCurrentInstance().validationFailed();
+            
         } catch (Exception e) {
             log.error("Failed to execute {}.{} method due to errors ", invocationContext.getMethod().getDeclaringClass().getName(), invocationContext.getMethod().getName(), e);
 
-            messages.getAll();
             messages.clear();
             messages.error(new BundleKey("messages", "error.action.failed"), e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage());
             FacesContext.getCurrentInstance().validationFailed();

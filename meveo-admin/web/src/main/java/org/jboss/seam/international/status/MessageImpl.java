@@ -16,6 +16,8 @@
  */
 package org.jboss.seam.international.status;
 
+import javax.faces.application.FacesMessage.Severity;
+
 /**
  * A basic implementation of {@link MutableMessage}.
  *
@@ -28,13 +30,13 @@ public class MessageImpl implements Message, MutableMessage {
     private String summary;
     private String detail;
     private String targets;
-    private Level level;
+    private Severity severity;
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((level == null) ? 0 : level.hashCode());
+        result = prime * result + ((severity == null) ? 0 : severity.hashCode());
         result = prime * result + ((summary == null) ? 0 : summary.hashCode());
         result = prime * result + ((detail == null) ? 0 : detail.hashCode());
         result = prime * result + ((targets == null) ? 0 : targets.hashCode());
@@ -53,11 +55,11 @@ public class MessageImpl implements Message, MutableMessage {
             return false;
         }
         MessageImpl other = (MessageImpl) obj;
-        if (level == null) {
-            if (other.level != null) {
+        if (severity == null) {
+            if (other.severity != null) {
                 return false;
             }
-        } else if (!level.equals(other.level)) {
+        } else if (!severity.equals(other.severity)) {
             return false;
         }
         if (summary == null) {
@@ -99,8 +101,8 @@ public class MessageImpl implements Message, MutableMessage {
         return targets;
     }
 
-    public Level getLevel() {
-        return level;
+    public Severity getSeverity() {
+        return severity;
     }
 
     public void setText(final String summary) {
@@ -115,8 +117,7 @@ public class MessageImpl implements Message, MutableMessage {
         this.targets = targets;
     }
 
-    public void setLevel(final Level level) {
-        this.level = level;
+    public void setSeverity(final Severity severity) {
+        this.severity = severity;
     }
-
 }

@@ -16,9 +16,11 @@
  */
 package org.jboss.seam.international.status.builder;
 
-import org.jboss.seam.international.status.Level;
+import javax.faces.application.FacesMessage.Severity;
+
 import org.jboss.seam.international.status.Message;
 import org.jboss.seam.international.status.MessageBuilder;
+import org.jboss.seam.international.status.MessageFactory;
 
 /**
  * This {@link MessageBuilder} implementation creates {@link Message} objects by loading resource bundle keys as templates with
@@ -107,6 +109,6 @@ public interface BundleTemplateMessage extends MessageBuilder {
     /**
      * Set the severity, level of importance of this message.
      */
-    public BundleTemplateMessage level(final Level level);
+    public BundleTemplateMessage severity(final Severity severity);
 
 }

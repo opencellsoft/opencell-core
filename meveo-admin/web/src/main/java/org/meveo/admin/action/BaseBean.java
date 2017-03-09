@@ -921,6 +921,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     public void search() {
         filterCustomFieldSearchBean.buildFilterParameters(filters);
+        messages.info(new BundleKey("messages", "save.successful"));
     }
 
     public List<T> getSelectedEntities() {
@@ -1070,7 +1071,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
         } catch (Throwable t) {
         	okFlag = false;
-            messages.getAll();
             messages.clear();
             if (t.getCause() instanceof EntityExistsException) {
                 log.info("delete was unsuccessful because entity is used in the system {}", t);

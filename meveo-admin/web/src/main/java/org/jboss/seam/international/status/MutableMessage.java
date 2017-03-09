@@ -16,6 +16,8 @@
  */
 package org.jboss.seam.international.status;
 
+import javax.faces.application.FacesMessage.Severity;
+
 /**
  * A stateful {@link Message} object.
  *
@@ -24,9 +26,9 @@ package org.jboss.seam.international.status;
  */
 public interface MutableMessage extends Message {
     /**
-     * Set the {@link Level} representing the severity of this message.
+     * Set the {@link Severity} representing the severity of this message.
      */
-    void setLevel(Level level);
+    void setSeverity(Severity severity);
 
     /**
      * Set the message text.

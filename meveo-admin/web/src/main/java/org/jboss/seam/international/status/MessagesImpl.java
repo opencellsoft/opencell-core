@@ -17,16 +17,16 @@
 
 package org.jboss.seam.international.status;
 
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.Iterator;
 
 import javax.enterprise.context.RequestScoped;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.jboss.seam.international.status.builder.BundleTemplateMessage;
-import org.jboss.seam.international.status.builder.TemplateMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An implementation of the {@link Messages} interface.
@@ -37,117 +37,98 @@ import org.jboss.seam.international.status.builder.TemplateMessage;
 public class MessagesImpl implements Messages {
     private static final long serialVersionUID = -2908193057765795662L;
 
-    private final Set<Message> messages = Collections.synchronizedSet(new LinkedHashSet<Message>());
-    private final Set<MessageBuilder> builders = Collections.synchronizedSet(new LinkedHashSet<MessageBuilder>());
-
     @Inject
     private MessageFactory factory;
 
+    /** Logger. */
+    private Logger log = LoggerFactory.getLogger(this.getClass());
+
     public void clear() {
-        messages.clear();
+        Iterator<FacesMessage> it = FacesContext.getCurrentInstance().getMessages();
+        while (it.hasNext()) {
+            it.next();
+            it.remove();
+        }
     }
 
     public boolean isEmpty() {
-        return messages.isEmpty() && builders.isEmpty();
+        return FacesContext.getCurrentInstance().getMessages().hasNext();
     }
 
-    public Set<Message> getAll() {
-        Set<Message> result = new LinkedHashSet<Message>();
-
-        synchronized (builders) {
-            for (MessageBuilder builder : builders) {
-                messages.add(builder.build());
-            }
-            builders.clear();
-        }
-
-        synchronized (messages) {
-            result.addAll(messages);
-        }
-        return result;
-    }
-
-    public void add(final Message message) {
-        messages.add(message);
-    }
-
-    public void add(final MessageBuilder builder) {
-        builders.add(builder);
-    }
-
-    private <T extends MessageBuilder> T enqueueBuilder(final T builder) {
-        add(builder);
-        return builder;
+    private void enqueueBuilder(final MessageBuilder builder) {
+        Message message = builder.build();
+        FacesContext.getCurrentInstance().addMessage(message.getTargets(), new FacesMessage(message.getSeverity(), message.getText(), message.getDetail()));
+        FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
     }
 
     /*
      * Bundle Factory Methods
      */
-    public BundleTemplateMessage info(final BundleKey message) {
-        return enqueueBuilder(factory.info(message));
+    public void info(final BundleKey message) {
+        enqueueBuilder(factory.info(message));
     }
 
-    public BundleTemplateMessage info(final BundleKey message, final Object... params) {
-        return enqueueBuilder(factory.info(message, params));
+    public void info(final BundleKey message, final Object... params) {
+        enqueueBuilder(factory.info(message, params));
     }
 
-    public BundleTemplateMessage warn(final BundleKey message) {
-        return enqueueBuilder(factory.warn(message));
+    public void warn(final BundleKey message) {
+        enqueueBuilder(factory.warn(message));
     }
 
-    public BundleTemplateMessage warn(final BundleKey message, final Object... params) {
-        return enqueueBuilder(factory.warn(message, params));
+    public void warn(final BundleKey message, final Object... params) {
+        enqueueBuilder(factory.warn(message, params));
     }
 
-    public BundleTemplateMessage error(final BundleKey message) {
-        return enqueueBuilder(factory.error(message));
+    public void error(final BundleKey message) {
+        enqueueBuilder(factory.error(message));
     }
 
-    public BundleTemplateMessage error(final BundleKey message, final Object... params) {
-        return enqueueBuilder(factory.error(message, params));
+    public void error(final BundleKey message, final Object... params) {
+        enqueueBuilder(factory.error(message, params));
     }
 
-    public BundleTemplateMessage fatal(final BundleKey message) {
-        return enqueueBuilder(factory.fatal(message));
+    public void fatal(final BundleKey message) {
+        enqueueBuilder(factory.fatal(message));
     }
 
-    public BundleTemplateMessage fatal(final BundleKey message, final Object... params) {
-        return enqueueBuilder(factory.fatal(message, params));
+    public void fatal(final BundleKey message, final Object... params) {
+        enqueueBuilder(factory.fatal(message, params));
     }
 
     /*
      * Template Factory Methods
      */
-    public TemplateMessage info(final String message) {
-        return enqueueBuilder(factory.info(message));
+    public void info(final String message) {
+        enqueueBuilder(factory.info(message));
     }
 
-    public TemplateMessage info(final String message, final Object... params) {
-        return enqueueBuilder(factory.info(message, params));
+    public void info(final String message, final Object... params) {
+        enqueueBuilder(factory.info(message, params));
     }
 
-    public TemplateMessage warn(final String message) {
-        return enqueueBuilder(factory.warn(message));
+    public void warn(final String message) {
+        enqueueBuilder(factory.warn(message));
     }
 
-    public TemplateMessage warn(final String message, final Object... params) {
-        return enqueueBuilder(factory.warn(message, params));
+    public void warn(final String message, final Object... params) {
+        enqueueBuilder(factory.warn(message, params));
     }
 
-    public TemplateMessage error(final String message) {
-        return enqueueBuilder(factory.error(message));
+    public void error(final String message) {
+        enqueueBuilder(factory.error(message));
     }
 
-    public TemplateMessage error(final String message, final Object... params) {
-        return enqueueBuilder(factory.error(message, params));
+    public void error(final String message, final Object... params) {
+        enqueueBuilder(factory.error(message, params));
     }
 
-    public TemplateMessage fatal(final String message) {
-        return enqueueBuilder(factory.fatal(message));
+    public void fatal(final String message) {
+        enqueueBuilder(factory.fatal(message));
     }
 
-    public TemplateMessage fatal(final String message, final Object... params) {
-        return enqueueBuilder(factory.fatal(message, params));
+    public void fatal(final String message, final Object... params) {
+        enqueueBuilder(factory.fatal(message, params));
     }
 
 }
