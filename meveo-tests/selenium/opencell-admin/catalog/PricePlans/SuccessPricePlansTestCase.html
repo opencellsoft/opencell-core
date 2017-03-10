@@ -137,11 +137,6 @@
 	<td>${ChargeCodeREC}</td>
 </tr>
 <tr>
-	<td>if</td>
-	<td>${DescriptionBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${descriptionText}</td>
 	<td></td>
@@ -150,16 +145,6 @@
 	<td>type</td>
 	<td>${descriptionText}</td>
 	<td>${RecDescription}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${SellersBool}==true</td>
-	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -177,16 +162,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${CountryBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${SelectCountry}</td>
 	<td></td>
@@ -194,21 +169,6 @@
 <tr>
 	<td>click</td>
 	<td>${SelectCountry}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>css=li:contains(&quot;${CountryValue}&quot;)</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${OfferCodeBool}==true</td>
 	<td></td>
 </tr>
 <tr>
@@ -227,16 +187,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${CurrencyBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${SelectCurrency}</td>
 	<td></td>
@@ -249,16 +199,6 @@
 <tr>
 	<td>click</td>
 	<td>css=li:contains(&quot;${CurrencyValue}&quot;)</td>
-	<td></td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${ValidityCalendarBool}==true</td>
 	<td></td>
 </tr>
 <tr>
@@ -277,16 +217,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${PriorityBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${Priority}</td>
 	<td></td>
@@ -295,16 +225,6 @@
 	<td>type</td>
 	<td>${Priority}</td>
 	<td>${PriorityValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${MinQuantityBool}==true</td>
-	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -317,16 +237,6 @@
 	<td>${MinQuantityValue}</td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${MaxQuantityBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${MaxQuantity}</td>
 	<td></td>
@@ -335,16 +245,6 @@
 	<td>type</td>
 	<td>${MaxQuantity}</td>
 	<td>${MaxQuantityValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${StartDateSubscriptionBool}==true</td>
-	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -357,16 +257,6 @@
 	<td>${StartDateSubscriptionValue}</td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${EndDateSubscriptionBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${EndSubscriptionDate}</td>
 	<td></td>
@@ -375,16 +265,6 @@
 	<td>type</td>
 	<td>${EndSubscriptionDate}</td>
 	<td>${EndDateSubscriptionValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${StartDateEventBool}==true</td>
-	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -397,16 +277,6 @@
 	<td>${StartDateEventValue}</td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${EndDateEventBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${EndDateEvent}</td>
 	<td></td>
@@ -415,16 +285,6 @@
 	<td>type</td>
 	<td>${EndDateEvent}</td>
 	<td>${EndDateEventValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${Criteria1Bool}==true</td>
-	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -437,16 +297,6 @@
 	<td>${Criteria1Value}</td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${Criteria2Bool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${Criteria2}</td>
 	<td></td>
@@ -455,16 +305,6 @@
 	<td>type</td>
 	<td>${Criteria2}</td>
 	<td>${Criteria2Value}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${Criteria3Bool}==true</td>
-	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -477,16 +317,6 @@
 	<td>${Criteria3Value}</td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${ELExpressionBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${ELExpression}</td>
 	<td></td>
@@ -495,16 +325,6 @@
 	<td>type</td>
 	<td>${ELExpression}</td>
 	<td>${ELExpressionValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${AmountWithoutTaxBool}==true</td>
-	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -517,16 +337,6 @@
 	<td>${AmountWithoutTaxValue}</td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${AmountWithoutTaxELBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${AmountWithoutTaxEL}</td>
 	<td></td>
@@ -535,56 +345,6 @@
 	<td>type</td>
 	<td>${AmountWithoutTaxEL}</td>
 	<td>${AmountWithoutTaxELValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${AmountWithTaxBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${AmountWithTax}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${AmountWithTax}</td>
-	<td>${AmountWithTaxValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${AmountWithTaxELBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${AmountWithTaxEL}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${AmountWithTaxEL}</td>
-	<td>${AmountWithTaxELValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${MinSubscrAgeBool}==true</td>
-	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
@@ -597,16 +357,6 @@
 	<td>${MinSubscrAgeValue}</td>
 </tr>
 <tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${MaxSubscrAgeBool}==true</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementPresent</td>
 	<td>${MaxSubscrAge}</td>
 	<td></td>
@@ -615,11 +365,6 @@
 	<td>type</td>
 	<td>${MaxSubscrAge}</td>
 	<td>${MaxSubscrAgeValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
