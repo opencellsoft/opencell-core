@@ -309,12 +309,11 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 
         Provider provider = currentUser.getProvider();
         // check if code already exists
-        String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
-        ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(currentCode, provider);
+        ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(postData.getCode(), provider);
         if (serviceTemplate == null) {
-            throw new EntityDoesNotExistsException(ServiceTemplateService.class, currentCode);
+            throw new EntityDoesNotExistsException(ServiceTemplateService.class, postData.getCode());
         }
-        serviceTemplate.setCode(postData.getCode());
+        serviceTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode())?postData.getCode():postData.getUpdatedCode());
         serviceTemplate.setDescription(postData.getDescription());
         serviceTemplate.setLongDescription(postData.getLongDescription());
 
@@ -442,9 +441,8 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 
     }
 
-    public ServiceTemplate createOrUpdate(ServiceTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
-    	String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
-        if (serviceTemplateService.findByCode(currentCode, currentUser.getProvider()) == null) {
+    public ServiceTemplate createOrUpdate(ServiceTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {    	
+        if (serviceTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
             return create(postData, currentUser);
         } else {
             return update(postData, currentUser);

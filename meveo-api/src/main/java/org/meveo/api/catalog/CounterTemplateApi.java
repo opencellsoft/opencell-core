@@ -84,16 +84,15 @@ public class CounterTemplateApi extends BaseCrudApi<CounterTemplate, CounterTemp
         handleMissingParameters();
 
         Provider provider = currentUser.getProvider();
-        String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
-        CounterTemplate counterTemplate = counterTemplateService.findByCode(currentCode, provider);
+        CounterTemplate counterTemplate = counterTemplateService.findByCode(postData.getCode(), provider);
         if (counterTemplate == null) {
-            throw new EntityDoesNotExistsException(CounterTemplate.class, currentCode);
+            throw new EntityDoesNotExistsException(CounterTemplate.class, postData.getCode());
         }
         Calendar calendar = calendarService.findByCode(postData.getCalendar(), provider);
         if (calendar == null) {
             throw new EntityDoesNotExistsException(Calendar.class, postData.getCalendar());
         }
-        counterTemplate.setCode(postData.getCode());
+        counterTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode())?postData.getCode():postData.getUpdatedCode());
         counterTemplate.setDescription(postData.getDescription());
         counterTemplate.setUnityDescription(postData.getUnity());
         if (postData.getType() != null) {
@@ -141,9 +140,8 @@ public class CounterTemplateApi extends BaseCrudApi<CounterTemplate, CounterTemp
     }
 
     @Override
-    public CounterTemplate createOrUpdate(CounterTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
-    	 String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
-        if (counterTemplateService.findByCode(currentCode, currentUser.getProvider()) == null) {
+    public CounterTemplate createOrUpdate(CounterTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {    	 
+        if (counterTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
             return create(postData, currentUser);
         } else {
             return update(postData, currentUser);
