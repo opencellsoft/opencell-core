@@ -13,7 +13,7 @@ import org.meveo.api.dto.billing.ActivateServicesRequestDto;
 import org.meveo.api.dto.billing.InstantiateServicesRequestDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.OperationServicesRequestDto;
-import org.meveo.api.dto.billing.SuspendSubscriptionRequestDto;
+import org.meveo.api.dto.billing.OperationSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
@@ -166,7 +166,7 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
     }
 
 	@Override
-	public ActionStatus suspendSubscription(SuspendSubscriptionRequestDto postData) {
+	public ActionStatus suspendSubscription(OperationSubscriptionRequestDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
@@ -179,7 +179,7 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
 	}
 
 	@Override
-	public ActionStatus resumeSubscription(SuspendSubscriptionRequestDto postData) {
+	public ActionStatus resumeSubscription(OperationSubscriptionRequestDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {

@@ -12,9 +12,9 @@ import org.meveo.api.dto.BaseDto;
 /**
  * @author Edward P. Legaspi
  **/
-@XmlRootElement(name = "SuspendSubscriptionRequest")
+@XmlRootElement(name = "OperationSubscriptionRequest")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SuspendSubscriptionRequestDto extends BaseDto {
+public class OperationSubscriptionRequestDto extends BaseDto {
 
 	private static final long serialVersionUID = -4477259461644796968L;
 
@@ -41,7 +41,7 @@ public class SuspendSubscriptionRequestDto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "SuspendSubscriptionRequestDto [subscriptionCode=" + subscriptionCode + ", suspensionDate=" + suspensionDate + "]";
+		return "OperationSubscriptionRequestDto  [subscriptionCode=" + subscriptionCode + ", suspensionDate=" + suspensionDate + "]";
 	}
 	
 
