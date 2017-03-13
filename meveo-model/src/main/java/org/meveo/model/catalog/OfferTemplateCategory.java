@@ -9,6 +9,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PostLoad;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -177,4 +178,12 @@ public class OfferTemplateCategory extends BusinessCFEntity implements Comparabl
 			this.setDescription(iCat.getDescription());
 		}
 	}
+	
+	@PostLoad
+	public void initParentCategoryCode() {
+		if (getOfferTemplateCategory() != null) {
+			setParentCategoryCode(getOfferTemplateCategory().getCode());
+		}
+	}
+	
 }
