@@ -207,10 +207,9 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
         Provider provider = currentUser.getProvider();
 
         // check if code already exists
-        String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
-        OneShotChargeTemplate chargeTemplate = oneShotChargeTemplateService.findByCode(currentCode, provider);
+        OneShotChargeTemplate chargeTemplate = oneShotChargeTemplateService.findByCode(postData.getCode(), provider);
         if (chargeTemplate == null) {
-            throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, currentCode);
+            throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, postData.getCode());
         }
 
         InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategory(), provider);
@@ -250,7 +249,7 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
                 }
             }
         }
-        chargeTemplate.setCode(postData.getCode());
+        chargeTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode())?postData.getCode():postData.getUpdatedCode());
         chargeTemplate.setDescription(postData.getDescription());
         chargeTemplate.setDisabled(postData.isDisabled());
         chargeTemplate.setAmountEditable(postData.getAmountEditable());
@@ -390,9 +389,8 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
         return oneShotChargeTemplatesWPrice;
     }
 
-    public OneShotChargeTemplate createOrUpdate(OneShotChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
-    	String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
-    	if (oneShotChargeTemplateService.findByCode(currentCode, currentUser.getProvider()) == null) {
+    public OneShotChargeTemplate createOrUpdate(OneShotChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {    	
+    	if (oneShotChargeTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
             return create(postData, currentUser);
         } else {
             return update(postData, currentUser);

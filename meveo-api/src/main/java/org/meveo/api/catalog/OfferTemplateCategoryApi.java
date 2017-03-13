@@ -110,13 +110,12 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
         handleMissingParameters();
 
         Provider provider = currentUser.getProvider();
-        String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
-        OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(currentCode, provider);
+        OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(postData.getCode(), provider);
 
         if (offerTemplateCategory == null) {
-            throw new EntityAlreadyExistsException(OfferTemplateCategory.class, currentCode);
+            throw new EntityAlreadyExistsException(OfferTemplateCategory.class, postData.getCode());
         }
-        offerTemplateCategory.setCode(postData.getCode());
+        offerTemplateCategory.setCode(StringUtils.isBlank(postData.getUpdatedCode())?postData.getCode():postData.getUpdatedCode());
         offerTemplateCategory.setDescription(postData.getDescription());
         offerTemplateCategory.setName(postData.getName());
 
@@ -240,9 +239,8 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
        if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
             handleMissingParameters();
-        }
-        String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
-        if (offerTemplateCategoryService.findByCode(currentCode, currentUser.getProvider()) == null) {
+        }        
+        if (offerTemplateCategoryService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
             return create(postData, currentUser);
         } else {
             return update(postData, currentUser);

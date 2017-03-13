@@ -313,7 +313,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 			  }
 			}
 
-			while (nbRating<MaxRecurringRatingHistory && (applicationDate.getTime() <= maxDate.getTime())) {
+			while (applicationDate != null && nbRating<MaxRecurringRatingHistory && (applicationDate.getTime() <= maxDate.getTime())) {
 				nbRating++;
 				log.info("applicationDate={}", applicationDate);
 				applicationDate = DateUtils.setTimeToZero(applicationDate);
@@ -345,7 +345,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 				} else {
 					Date chargeDate = activeRecurringChargeInstance.getChargeDate();
 					Date nextChargeDate  = activeRecurringChargeInstance.getNextChargeDate();
-					while (applicationDate.getTime() <= endContractDate.getTime()) {
+					while (applicationDate != null && applicationDate.getTime() <= endContractDate.getTime()) {
 						log.info("Schedule applicationDate={}", applicationDate);
 						applicationDate = DateUtils.setTimeToZero(applicationDate);
 						if (!recurringChargeTemplate.getApplyInAdvance()) {
@@ -365,7 +365,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 				revenueRecognitionScriptService.createRevenueSchedule(activeRecurringChargeInstance.getChargeTemplate().getRevenueRecognitionRule().getScript().getCode(), activeRecurringChargeInstance, user);
 			}
 			
-		} catch (Exception e) {
+		} catch (Exception e) {	
             rejectededChargeProducer.fire("RecurringCharge " + chargeInstanceId);
             throw new BusinessException(e);
         }

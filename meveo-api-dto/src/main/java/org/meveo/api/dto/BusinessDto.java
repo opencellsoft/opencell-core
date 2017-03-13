@@ -9,14 +9,14 @@ public abstract class BusinessDto extends BaseDto {
 
 	private static final long serialVersionUID = 4451119256601996946L;
 
-	private String currentCode;
+	private String updatedCode;
 
-	public String getCurrentCode() {
-		return currentCode;
+	public String getUpdatedCode() {
+		return updatedCode;
 	}
 
-	public void setCurrentCode(String currentCode) {
-		this.currentCode = currentCode;
+	public void setUpdatedCode(String updatedCode) {
+		this.updatedCode = updatedCode;
 	}
 	
 	

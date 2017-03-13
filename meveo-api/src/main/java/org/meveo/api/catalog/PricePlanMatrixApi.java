@@ -190,15 +190,14 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         Provider provider = currentUser.getProvider();
 
         // search for eventCode
-        String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
         if (chargeTemplateServiceAll.findByCode(postData.getEventCode(), provider) == null) {
             throw new EntityDoesNotExistsException(ChargeTemplate.class, postData.getEventCode());
         }
 
         // search for price plan
-        PricePlanMatrix pricePlanMatrix = pricePlanMatrixService.findByCode(currentCode, provider);
+        PricePlanMatrix pricePlanMatrix = pricePlanMatrixService.findByCode(postData.getCode(), provider);
         if (pricePlanMatrix == null) {
-            throw new EntityDoesNotExistsException(PricePlanMatrix.class, currentCode);
+            throw new EntityDoesNotExistsException(PricePlanMatrix.class, postData.getCode());
         }
         pricePlanMatrix.setEventCode(postData.getEventCode());
 
@@ -251,7 +250,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         	}
         	pricePlanMatrix.setScriptInstance(scriptInstance);
         }
-        pricePlanMatrix.setCode(postData.getCode());
+        pricePlanMatrix.setCode(StringUtils.isBlank(postData.getUpdatedCode())?postData.getCode():postData.getUpdatedCode());
         pricePlanMatrix.setMinQuantity(postData.getMinQuantity());
         pricePlanMatrix.setMaxQuantity(postData.getMaxQuantity());
         pricePlanMatrix.setStartSubscriptionDate(postData.getStartSubscriptionDate());
@@ -332,9 +331,8 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         return pricePlanDtos;
     }
 
-    public PricePlanMatrix createOrUpdate(PricePlanMatrixDto postData, User currentUser) throws MeveoApiException, BusinessException {
-    	String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
-        if (pricePlanMatrixService.findByCode(currentCode, currentUser.getProvider()) == null) {
+    public PricePlanMatrix createOrUpdate(PricePlanMatrixDto postData, User currentUser) throws MeveoApiException, BusinessException {    	
+        if (pricePlanMatrixService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
             return create(postData, currentUser);
         } else {
             return update(postData, currentUser);

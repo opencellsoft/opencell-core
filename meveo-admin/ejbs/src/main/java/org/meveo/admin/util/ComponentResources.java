@@ -6,6 +6,7 @@ import java.util.Locale;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.commons.utils.ParamBean;
@@ -16,24 +17,25 @@ public class ComponentResources implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private Locale locale = Locale.ENGLISH;
+	
+	@Inject
+	private LocaleSelector localeSelector;
 
 	@Produces
 	public ResourceBundle getResourceBundle() {
 		String bundleName = "messages";
 		if (FacesContext.getCurrentInstance() != null) {
 			try {
-				locale = FacesContext.getCurrentInstance().getViewRoot()
-						.getLocale();
+				locale = localeSelector.getCurrentLocale();
 			} catch (Exception e) {
 			}
 			try {
-				bundleName = FacesContext.getCurrentInstance().getApplication()
-						.getMessageBundle();
+				bundleName = FacesContext.getCurrentInstance().getApplication().getMessageBundle();
 			} catch (Exception e) {
 			}
 		}
-		return new ResourceBundle(java.util.ResourceBundle.getBundle(
-				bundleName, locale));
+
+		return new ResourceBundle(java.util.ResourceBundle.getBundle(bundleName, locale));
 	}
 
 	@Produces
