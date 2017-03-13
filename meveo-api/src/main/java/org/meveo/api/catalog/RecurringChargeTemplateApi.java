@@ -198,11 +198,10 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         
 
         
-        // check if code already exists
-        String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
-        RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService.findByCode(currentCode);
+        // check if code already exists       
+        RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService.findByCode(postData.getCode());
         if (chargeTemplate == null) {
-            throw new EntityDoesNotExistsException(RecurringChargeTemplate.class, currentCode);
+            throw new EntityDoesNotExistsException(RecurringChargeTemplate.class, postData.getCode());
         }
 
         InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategory());
@@ -214,7 +213,7 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         if (calendar == null) {
             throw new EntityDoesNotExistsException(Calendar.class, postData.getCalendar());
         }
-        chargeTemplate.setCode(postData.getCode());
+        chargeTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode())?postData.getCode():postData.getUpdatedCode());
         chargeTemplate.setDescription(postData.getDescription());
         chargeTemplate.setDisabled(postData.isDisabled());
         chargeTemplate.setAmountEditable(postData.getAmountEditable());
@@ -364,9 +363,8 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         recurringChargeTemplateService.remove(chargeTemplate);
     }
 
-    public RecurringChargeTemplate createOrUpdate(RecurringChargeTemplateDto postData) throws MeveoApiException, BusinessException {
-    	 String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
-        if (recurringChargeTemplateService.findByCode(currentCode) == null) {
+    public RecurringChargeTemplate createOrUpdate(RecurringChargeTemplateDto postData) throws MeveoApiException, BusinessException {    	
+        if (recurringChargeTemplateService.findByCode(postData.getCode()) == null) {
             return create(postData);
         } else {
             return update(postData);

@@ -303,12 +303,11 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 
         
         // check if code already exists
-        String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
-        ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(currentCode);
+        ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(postData.getCode());
         if (serviceTemplate == null) {
-            throw new EntityDoesNotExistsException(ServiceTemplateService.class, currentCode);
+            throw new EntityDoesNotExistsException(ServiceTemplateService.class, postData.getCode());
         }
-        serviceTemplate.setCode(postData.getCode());
+        serviceTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode())?postData.getCode():postData.getUpdatedCode());
         serviceTemplate.setDescription(postData.getDescription());
         serviceTemplate.setLongDescription(postData.getLongDescription());
 
@@ -452,9 +451,8 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 
     }
 
-    public ServiceTemplate createOrUpdate(ServiceTemplateDto postData) throws MeveoApiException, BusinessException {
-    	String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
-        if (serviceTemplateService.findByCode(currentCode) == null) {
+    public ServiceTemplate createOrUpdate(ServiceTemplateDto postData) throws MeveoApiException, BusinessException {    	
+        if (serviceTemplateService.findByCode(postData.getCode()) == null) {
             return create(postData);
         } else {
             return update(postData);

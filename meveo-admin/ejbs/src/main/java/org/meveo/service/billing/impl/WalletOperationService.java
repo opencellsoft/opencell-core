@@ -874,7 +874,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		
 		List<WalletOperation> walletOperations = new ArrayList<>();
 		
-		while (applicationDate.getTime() < nextApplicationDate.getTime()) {
+		while (nextApplicationDate != null && applicationDate.getTime() < nextApplicationDate.getTime()) {
 			Date nextapplicationDate = cal.nextCalendarDate(applicationDate);
 			log.debug("next step for {}, applicationDate={}, nextApplicationDate={}, nextApplicationDate={}", chargeInstance.getId(), applicationDate, nextapplicationDate,
 					nextApplicationDate);

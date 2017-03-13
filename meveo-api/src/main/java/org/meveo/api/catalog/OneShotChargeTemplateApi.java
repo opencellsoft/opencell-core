@@ -211,10 +211,9 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
         
 
         // check if code already exists
-        String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
-        OneShotChargeTemplate chargeTemplate = oneShotChargeTemplateService.findByCode(currentCode);
+        OneShotChargeTemplate chargeTemplate = oneShotChargeTemplateService.findByCode(postData.getCode());
         if (chargeTemplate == null) {
-            throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, currentCode);
+            throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, postData.getCode());
         }
 
         InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategory());
@@ -255,7 +254,7 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
                 }
             }
         }
-        chargeTemplate.setCode(postData.getCode());
+        chargeTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode())?postData.getCode():postData.getUpdatedCode());
         chargeTemplate.setDescription(postData.getDescription());
         chargeTemplate.setDisabled(postData.isDisabled());
         chargeTemplate.setAmountEditable(postData.getAmountEditable());
@@ -410,9 +409,8 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
         return oneShotChargeTemplatesWPrice;
     }
 
-    public OneShotChargeTemplate createOrUpdate(OneShotChargeTemplateDto postData) throws MeveoApiException, BusinessException {
-    	String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
-    	if (oneShotChargeTemplateService.findByCode(currentCode) == null) {
+    public OneShotChargeTemplate createOrUpdate(OneShotChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {    	
+    	if (oneShotChargeTemplateService.findByCode(postData.getCode()) == null) {
             return create(postData);
         } else {
             return update(postData);

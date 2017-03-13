@@ -16,7 +16,7 @@ import org.meveo.api.dto.billing.ActivateServicesRequestDto;
 import org.meveo.api.dto.billing.InstantiateServicesRequestDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.OperationServicesRequestDto;
-import org.meveo.api.dto.billing.SuspendSubscriptionRequestDto;
+import org.meveo.api.dto.billing.OperationSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
@@ -139,11 +139,11 @@ public interface SubscriptionRs extends IBaseRs {
     
     @PUT
     @Path("suspend")
-	ActionStatus suspendSubscription(SuspendSubscriptionRequestDto postData);
+	ActionStatus suspendSubscription(OperationSubscriptionRequestDto postData);
 	
     @PUT
     @Path("resume")
-	ActionStatus resumeSubscription(SuspendSubscriptionRequestDto postData);
+	ActionStatus resumeSubscription(OperationSubscriptionRequestDto postData);
 	
     @PUT
     @Path("suspendServices")

@@ -188,15 +188,14 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         
 
         // search for eventCode
-        String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
         if (chargeTemplateServiceAll.findByCode(postData.getEventCode()) == null) {
             throw new EntityDoesNotExistsException(ChargeTemplate.class, postData.getEventCode());
         }
 
         // search for price plan
-        PricePlanMatrix pricePlanMatrix = pricePlanMatrixService.findByCode(currentCode);
+        PricePlanMatrix pricePlanMatrix = pricePlanMatrixService.findByCode(postData.getCode());
         if (pricePlanMatrix == null) {
-            throw new EntityDoesNotExistsException(PricePlanMatrix.class, currentCode);
+            throw new EntityDoesNotExistsException(PricePlanMatrix.class, postData.getCode());
         }
         pricePlanMatrix.setEventCode(postData.getEventCode());
 
@@ -249,7 +248,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         	}
         	pricePlanMatrix.setScriptInstance(scriptInstance);
         }
-        pricePlanMatrix.setCode(postData.getCode());
+        pricePlanMatrix.setCode(StringUtils.isBlank(postData.getUpdatedCode())?postData.getCode():postData.getUpdatedCode());
         pricePlanMatrix.setMinQuantity(postData.getMinQuantity());
         pricePlanMatrix.setMaxQuantity(postData.getMaxQuantity());
         pricePlanMatrix.setStartSubscriptionDate(postData.getStartSubscriptionDate());
@@ -346,9 +345,8 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         return pricePlanDtos;
     }
 
-    public PricePlanMatrix createOrUpdate(PricePlanMatrixDto postData) throws MeveoApiException, BusinessException {
-    	String currentCode = StringUtils.isBlank(postData.getCurrentCode())?postData.getCode():postData.getCurrentCode();
-        if (pricePlanMatrixService.findByCode(currentCode) == null) {
+    public PricePlanMatrix createOrUpdate(PricePlanMatrixDto postData) throws MeveoApiException, BusinessException {    	
+        if (pricePlanMatrixService.findByCode(postData.getCode()) == null) {
             return create(postData);
         } else {
             return update(postData);

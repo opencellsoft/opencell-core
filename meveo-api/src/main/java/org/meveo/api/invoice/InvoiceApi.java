@@ -520,8 +520,8 @@ public class InvoiceApi extends BaseApi {
 				generateInvoiceRequestDto.setGenerateAO(Boolean.FALSE);
 			}
 		}
-		if((generateInvoiceRequestDto.getGenerateXML() != null && generateInvoiceRequestDto.getGenerateXML())||(generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF())){
-        	 invoiceService.getXMLInvoice(invoice,invoice.getInvoiceNumber(), false);
+		if((generateInvoiceRequestDto.getGenerateXML() != null && generateInvoiceRequestDto.getGenerateXML())||(generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF())){			
+			invoiceService.getXMLInvoice(invoice,invoice.getInvoiceNumber(), isDraft);
         }
         if((generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF())){
         	invoice.setPdf(invoiceService.generatePdfInvoice(invoice,invoice.getInvoiceNumber()));
