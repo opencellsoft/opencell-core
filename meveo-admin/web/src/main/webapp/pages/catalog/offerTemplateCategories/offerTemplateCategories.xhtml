@@ -128,24 +128,19 @@
 											messagesId=":messages" />
 									</p:tabView>
 								</hftl:formPanel>
-								<h:form enctype="multipart/form-data">
-									<p:panelGrid columns="3" styleClass="ui-panelgrid-blank">
-										<p:commandButton value="#{messages['action.export']}" ajax="false"
+								<h:form>
+									<h:panelGroup layout="block" styleClass="form-panel-actions">
+										<p:commandButton value="#{messages['action.export']}"
+											ajax="false"
 											onclick="PrimeFaces.monitorDownload(startExport, stopExport);"
-											icon="ui-icon-arrowthick-1-s" immediate="true">
+											icon="fa fa-arrow-down" immediate="true">
 											<p:fileDownload value="#{offerTemplateCategoryBean.download}" />
 										</p:commandButton>
-
-										<p:panel style="padding-top: 4px;">
-											<p:fileUpload id="fileUpload"
-												value="#{offerTemplateCategoryBean.importFile}"
-												mode="simple" skinSimple="true" label="#{messages['action.selectFile']}"
-												immediate="true" />
-										</p:panel>
 										<p:commandButton value="#{messages['action.import']}"
-											actionListener="#{offerTemplateCategoryBean.uploadForImport}"
-											ajax="false" action="offerTemplateCategories"></p:commandButton>
-									</p:panelGrid>
+											onclick="PF('importDialog').show()"
+											icon="fa fa-arrow-up" type="button">											
+										</p:commandButton>
+									</h:panelGroup>
 								</h:form>
 							</h:panelGroup>
 						</h:panelGrid>
@@ -154,7 +149,22 @@
 			</h:panelGroup>
 		</p:panel>
 
-		<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+		<h:form enctype="multipart/form-data">
+			<p:dialog modal="true" widgetVar="importDialog" header="#{messages['offerTemplateCategory.importCategory']}"
+				draggable="false" closable="true" resizable="false" width="250px">
+				<p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
+					<p:fileUpload id="fileUpload"
+						value="#{offerTemplateCategoryBean.importFile}" mode="simple"
+						skinSimple="true" label="#{messages['action.selectFile']}" allowTypes="/(\.|\/)(csv)$/"
+						immediate="true" />
+					<p:commandButton value="#{messages['action.import']}"
+						actionListener="#{offerTemplateCategoryBean.uploadForImport}"
+						ajax="false" action="offerTemplateCategories"></p:commandButton>
+				</p:panelGrid>
+			</p:dialog>
+		</h:form>
+
+		<p:dialog modal="true" widgetVar="statusDialog" header="#{messages['commons.status']}" appendTo="@(body)"
 			draggable="false" closable="false" resizable="false">
 			<p:graphicImage library="img" name="ajax-loader1.gif" />
 		</p:dialog>
