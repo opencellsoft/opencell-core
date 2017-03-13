@@ -1,0 +1,40 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+    template="/layout/template.xhtml">
+        
+    <ui:define name="body">
+    	
+    	<custom:listPanel label="#{messages['matrixDefinition.title']}" backingBean="#{matrixBean}">
+    	
+    		<custom:searchPanel label="#{messages['matrixDefinition.search']}" newButtonView="/pages/rating/matrixes/matrixDetail.xhtml">
+				<custom:searchField label="#{messages['enableEntity.disabled']}" field="disabled"  />
+				<custom:searchField label="#{messages['matrixDefinition.activated']}" field="activated" />
+				<custom:searchField label="#{messages['matrixDefinition.name']}" field="name" size="20" />
+				<custom:searchField label="#{messages['matrixDefinition.startDate']}" field="startDate" />
+				<custom:searchField label="#{messages['matrixDefinition.endDate']}" field="endDate" />
+				<custom:searchField label="#{messages['matrixDefinition.entryType']}" field="entryType" />
+				<custom:searchField label="#{messages['matrixDefinition.dimension']}" field="dimension" />
+			</custom:searchPanel>
+    		
+	    	<custom:dataList dataModel="#{matrixes}">
+	    		<custom:column label="#{messages['enableEntity.active']}" field="active"  isMessage="true"/>
+	    		<custom:column label="#{messages['matrixDefinition.activated']}" field="activated" isMessage="true" />
+	    		<custom:column label="#{messages['matrixDefinition.name']}" field="name" />
+	    		<custom:column label="#{messages['matrixDefinition.usageType']}" field="usageType" childField="code" />
+	    		<custom:column label="#{messages['matrixDefinition.dimension']}" field="dimension" />
+	    		<custom:column label="#{messages['matrixDefinition.startDate']}" field="startDate" />
+	    		<custom:column label="#{messages['matrixDefinition.endDate']}" field="endDate" />
+	    		<custom:column label="#{messages['matrixDefinition.entryType']}" field="entryType" childField="label" isMessage="true" />
+				<custom:column label="#{messages['matrixDefinition.entry']}" field="matrixEntries" isList="true" childField="coordinates" childFieldId="id" view="/rating/matrixEntries/matrixEntryDetail.xhtml" backView="matrixes" />
+				<custom:actionsColumn editView="/pages/rating/matrixes/matrixDetail.xhtml" />    	
+		    </custom:dataList>
+		    
+		</custom:listPanel>
+		
+    </ui:define>
+    
+</ui:composition>

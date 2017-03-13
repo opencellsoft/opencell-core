@@ -1,0 +1,56 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+	xmlns:pt="http://primefaces.org/titan">
+
+	<p:outputPanel id="productInstancePanel">
+		<hftl:formPanel formId="subscriptionProductInstanceForm"
+			backingBean="#{backingBean}" showFormButtons="false" edit="false">
+			<hftl:formField label="#{messages['businessEntity.code']}"
+				field="code" />
+			<hftl:formField label="#{messages['serviceInstance.status']}"
+				field="status" />
+			<hftl:formField label="#{messages['serviceInstance.statusDate']}"
+				field="statusDate" />
+			<hftl:formField id="offerSelectId"
+				label="#{messages['subscription.offer']}" field="offer"
+				valueLabelField="code" />
+			<hftl:formField
+				label="#{messages['billingAccount.subscriptionDate']}"
+				field="subscriptionDate" />
+			<hftl:formField
+				label="#{messages[subscriptionBean.entity.status=='SUSPENDED'?'billingAccount.suspensionDate': 'billingAccount.terminationDate']}"
+				field="terminationDate" />
+		</hftl:formPanel>
+
+		<p:outputPanel id="productInstanceDataPanel">
+			<h:form id="productInstanceResultsForm" prependId="false">
+				<p:dataTable resizableColumns="true"
+					value="#{subscriptionBean.productChargeInstances}" var="entity">
+					<hftl:column label="#{messages['chargeInstance.code']}"
+						field="code" />
+					<hftl:column label="#{messages['chargeInstance.description']}"
+						field="description" />
+					<hftl:column label="#{messages['chargeApplication.status']}"
+						field="status" />
+					<hftl:column
+						label="#{messages['oneShotChargeInstance.chargeDate']}"
+						field="chargeDate" />
+					<hftl:column
+						label="#{messages['pricePlanMatrix.amountWithoutTax']}"
+						field="amountWithoutTax" isMessage="false" />
+					<p:column headerText="#{messages['pricePlanMatrix.amountWithTax']}"
+						rendered="#{!appProvider.entreprise}">
+						<h:outputText value="#{entity.amountWithTax}"
+							converter="#{getConverter.forType(entity.amountWithTax,'4digits')}" />
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:outputPanel>
+
+	</p:outputPanel>
+
+</ui:composition>

@@ -1,0 +1,38 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+    template="/layout/template.xhtml">
+        
+    <ui:define name="body">
+    	
+    	<custom:listPanel label="#{messages['report.title']}" backingBean="#{reportListBean}">
+    	
+    		<custom:searchPanel label="#{messages['report.search']}" newButtonView="/pages/reporting/reports/reportDetail.xhtml">
+    		    	<custom:searchField label="#{messages['report.name']}" field="name" />
+    		    	<custom:searchField label="#{messages['report.nextExecution']}" field="schedule"/>
+    		    	<custom:searchField label="#{messages['report.frequency']}" field="frequency" childField="label"/>
+    		</custom:searchPanel>
+    		
+    		<custom:dataList dataModel="#{reports}">
+    				<custom:column label="#{messages['report.name']}" field="name" />
+    				<custom:column label="#{messages['report.description']}" field="description" />
+    		    	<custom:column label="#{messages['report.frequency']}" field="frequency" childField="label" isMessage="true" />
+    				<custom:column label="#{messages['report.nextExecution']}" field="schedule" isDate="true"/>
+    				<custom:column label="#{messages['report.startDate']}" field="startDate" isDate="true"/>
+    				<custom:column label="#{messages['report.endDate']}" field="endDate" isDate="true"/>
+    				
+    		    	<custom:column label="#{messages['report.emails']}" field="emails" isList="true" childField="address" />
+    		    	
+		       	    <custom:actionsColumn editView="/pages/reporting/reports/reportDetail.xhtml"  permission="#{persistentPermissionResolver.hasPermission('reporting','reportingManagement')}"/>
+		   
+		    </custom:dataList>
+		    
+		    
+    	</custom:listPanel>	
+		
+    </ui:define>
+    
+</ui:composition>

@@ -1,0 +1,45 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:hftl="http://hftl.org" template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{discountPlanMatrixBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="body">
+
+        <hftl:entityPopup id="discountPlanMatChargePopup" header="#{messages['charge.popup.header']}" backingBean="#{chargeTemplateBean}"
+            searchField1Label="#{messages['charge.code']}" searchField1="code" column1Label="#{messages['charge.description']}" column1="code"
+            column2Label="#{messages['businessEntity.description']}" column2="description"
+            updateField="hftl::formDiscountPlan:chargeSelectId">
+            <!-- 			selection="#{chargeTemplateBean.entity}" -->
+        </hftl:entityPopup>
+
+        <hftl:entityPopup id="offerPopup" header="#{messages['offer.popup.header']}" backingBean="#{offerTemplateBean}" 
+            searchField1Label="#{messages['offerTemplate.code']}" searchField1="code" searchField2Label="#{messages['offerTemplate.description']}" searchField2="description"
+            column1Label="#{messages['offerTemplate.code']}" column1="code" column2Label="#{messages['offerTemplate.description']}" column2="description"
+            selection="#{discountPlanMatrixBean.entity.offerTemplate}" lazy="false" dataModel="#{offerTemplateBean.listActive()}" updateField="hftl::formDiscountPlan:offerSelectId">
+        </hftl:entityPopup>
+
+        <hftl:entityPopup id="sellerParentPopup" header="#{messages['seller.title']}" backingBean="#{sellerBean}" searchField1Label="#{messages['BusinessEntity.code']}"
+            searchField1="code" column1Label="#{messages['BusinessEntity.code']}" column1="code" selection="#{discountPlanMatrixBean.entity.seller}"
+            column2Label="#{messages['BusinessEntity.description']}" column2="description" updateField="hftl::formDiscountPlan:parentSelectId">
+        </hftl:entityPopup>
+
+        <hftl:formPanel edit="#{edit}" formId="formDiscountPlan" label="#{messages['discountPlanMatrix.panel']}" backingBean="#{discountPlanMatrixBean}">
+            <hftl:formField id="chargeSelectId" required="true" label="#{messages['discountPlanMatrix.eventCode']}" field="eventCode" popup="true"
+                popupId="discountPlanMatChargePopup" disabled="true" />
+            <hftl:formField id="offerSelectId" label="#{messages['pricePlanMatrix.offerCode']}" field="offerTemplate" valueLabelField="code" popup="true" popupId="offerPopup" />
+            <hftl:formField label="#{messages['discountPlanMatrix.startSubscriptionDate']}" field="startSubscriptionDate" />
+            <hftl:formField id="parentSelectId" label="#{messages['seller.title']}" field="seller" valueLabelField="descriptionOrCode" popup="true" popupId="sellerParentPopup" />
+            <hftl:formField label="#{messages['discountPlanMatrix.endSubscriptionDate']}" field="endSubscriptionDate" />
+            <hftl:formField label="#{messages['discountPlanMatrix.nbPeriod']}" field="nbPeriod" />
+            <hftl:formField label="#{messages['discountPlanMatrix.criteriaEL']}" field="criteriaEL" isTextArea="true" rows="1"/>
+            <hftl:formField label="#{messages['discountPlanMatrix.percent']}" field="percent" required="true" />
+
+        </hftl:formPanel>
+
+    </ui:define>
+
+</ui:composition>

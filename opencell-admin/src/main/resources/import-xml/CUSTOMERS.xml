@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<sellers>
+<providerCode>ASG</providerCode>
+<seller code="SELLER_DE" description="SELLER_DE" tradingCurrencyCode="EUR" tradingCountryCode="DE" tradingLanguageCode="DEU">
+<customers>
+  <customer code="CUST_DE" customerCategory="Business" customerBrand="ASG">
+    <desCustomer>German Customer</desCustomer>
+    <customerAccounts>
+      <customerAccount creditCategory="VIP">
+	<code>CUST_DE_ACC</code>
+        <externalRef1>ORCC2500000101</externalRef1>
+	<tradingCurrencyCode>EUR</tradingCurrencyCode>
+        <name>
+          <title>SA</title>
+          <name>NAME_CUST_DE</name>
+          <firstname></firstname>
+        </name>
+        <address>
+          <address1>Porte Gauche</address1>
+          <address2>4  Rue de la Defense de la tour</address2>
+          <zipCode>92806</zipCode>
+          <city>La Defense</city>
+          <country>France</country>
+        </address>
+        <paymentMethod>CHECK</paymentMethod>
+        <email></email>
+        <tel1>01 02 03 04 05</tel1>
+      </customerAccount>
+    </customerAccounts>
+  </customer>
+</customers>
+</seller>
+</sellers>

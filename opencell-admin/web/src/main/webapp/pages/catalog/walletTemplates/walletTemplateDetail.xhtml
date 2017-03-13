@@ -1,0 +1,49 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:hftl="http://hftl.org"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{walletTemplateBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+
+	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+				<p:menuitem outcome="walletTemplates"
+					value="#{messages['menu.wallets']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['walletTemplate']}"
+					disabled="true" rendered="#{walletTemplateBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['walletTemplate']} #{messages['commons.configuration']} - #{walletTemplateBean.entity.code}"
+					disabled="true" rendered="#{!walletTemplateBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
+
+		<hftl:formPanel id="formPanel" formId="walletTemplatId"
+			label="#{messages['menu.wallets']}"
+			backingBean="#{walletTemplateBean}">
+
+			<hftl:formField label="#{messages['businessEntity.code']}" field="code"
+				required="true" validateUnique="true" />
+			<hftl:formField label="#{messages['businessEntity.description']}"
+				field="description" id="description" />
+			<hftl:formField
+				label="#{messages['walletTemplate.lowBalanceLevel']}"
+				field="lowBalanceLevel"/>
+			<!--  <hftl:formField
+				label="#{messages['walletTemplate.consumptionAlertSet']}"
+				field="consumptionAlertSet" required="true"  />-->
+			<!-- 			<hftl:formField label="#{messages['wallet.walletType']}" -->
+			<!-- 				field="walletType" childField="label" isMessage="true" required="true"  /> -->
+			<!-- <hftl:formField label="#{messages['walletTemplate.fastRatingLevel']}"
+				field="fastRatingLevel" required="true" />  -->
+		    </hftl:formPanel>
+
+	</ui:define>
+</ui:composition>

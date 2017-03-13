@@ -1,0 +1,53 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+	template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{subscriptionImportHistoBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="body">
+
+		<hftl:searchPanel columns="1"
+			label="#{messages['subscriptionImportHisto.search']}"
+			backingBean="#{subscriptionImportHistoBean}" renderNewButton="false">
+			<hftl:searchField
+				label="#{messages['subscriptionImportHisto.executionDate']}"
+				field="executionDate" />
+		</hftl:searchPanel>
+
+		<hftl:dataList backingBean="#{subscriptionImportHistoBean}">		
+			<hftl:column
+				label="#{messages['subscriptionImportHisto.executionDate']}"
+				field="executionDate" />
+			<hftl:column
+				label="#{messages['subscriptionImportHisto.fileName']}"
+				field="fileName" />
+			<hftl:column
+				label="#{messages['subscriptionImportHisto.nbSubscriptions']}"
+				field="linesRead" />
+			<hftl:column
+				label="#{messages['subscriptionImportHisto.nbSubscriptionsError']}"
+				field="linesRejected" />
+			<hftl:column
+				label="#{messages['subscriptionImportHisto.nbSubscriptionsIgnored']}"
+				field="nbSubscriptionsIgnored" />
+			<hftl:column
+				label="#{messages['subscriptionImportHisto.nbSubscriptionsCreated']}"
+				field="linesInserted" />
+			<hftl:column
+				label="#{messages['subscriptionImportHisto.nbSubscriptionsTerminated']}"
+				field="nbSubscriptionsTerminated" />
+		</hftl:dataList>
+
+	</ui:define>
+
+</ui:composition>

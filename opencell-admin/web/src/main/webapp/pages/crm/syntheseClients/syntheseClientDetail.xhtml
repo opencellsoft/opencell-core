@@ -1,0 +1,141 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+	xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+	template="/layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:panel>
+			<div style="font-size: 12px; font-weight: bold;">Bonjour
+			#{synCustomerAccount.name.title.code}
+			#{synCustomerAccount.name.lastName}</div>
+			<div>Bienvenue à votre Espace client personnel. Vous pouvez à
+			tout moment vérifier vos informations et consulter vos dernières
+			factures de télé-services. Simplifiez-vous la vie!</div>
+				<p:tabPanel switchType="client">
+					<p:tab label="#{messages['syntheseClient.tab.compte']}">
+						<p:fieldset legend="#{messages['Mon compte']}">
+							<h:panelGrid columns="1">
+								<h:panelGrid columns="2">
+									<strong> <h:outputLabel
+										value="#{messages['Votre référence client :']}" /></strong>
+									<h:outputText value="#{synCustomerAccount.code}" />
+								</h:panelGrid>
+								<p:spacer height="10px" />
+								<h:panelGrid columns="1">
+									<strong> <h:outputLabel
+										value="#{messages['Votre adresse :']}" /></strong>
+									<h:outputText
+										value="#{stringUtil.merge(synCustomerAccount.name.title.code,' ',synCustomerAccount.name.lastName,' ',synCustomerAccount.name.firstName)}" />
+									<h:outputText
+										value="#{stringUtil.merge(synCustomerAccount.address.address1,' ',synCustomerAccount.address.address2,' ',synCustomerAccount.address.address3)}" />
+									<h:outputText
+										value="#{stringUtil.merge(synCustomerAccount.address.zipCode,' ',synCustomerAccount.address.city,' ',synCustomerAccount.address.country)}" />
+								</h:panelGrid>
+								<p:spacer height="10px" />
+								<strong><h:outputLabel
+									value="#{messages['Votre référence bancaire :']}" /></strong>
+
+								<hftl:decorateFormField label="#{messages['Nom de la banque :']}" >
+									<h:outputText
+										value="#{synBillingAccount.bankCoordinates.bankName}" />
+								</hftl:decorateFormField>
+
+								<hftl:decorateFormField label="#{messages['Nom du titulaire :']}" >
+									<h:outputText
+										value="#{synBillingAccount.bankCoordinates.accountOwner}" />
+								</hftl:decorateFormField>
+
+								<hftl:decorateFormField label="#{messages['Code de la banque :']}" >
+									<h:outputText
+										value="#{synBillingAccount.bankCoordinates.bankCode}" />
+								</hftl:decorateFormField>
+								
+								<hftl:decorateFormField label="#{messages['Code guichet :']}" >
+									<h:outputText
+										value="#{synBillingAccount.bankCoordinates.branchCode}" />
+								</hftl:decorateFormField>
+
+								<hftl:decorateFormField label="#{messages['Numéro du compte :']}" >
+									<h:outputText
+										value="#{synBillingAccount.bankCoordinates.accountNumber}" />
+								</hftl:decorateFormField>
+
+								<p:spacer height="10px" />
+
+								<strong><h:outputLabel
+									value="#{messages['Votre solde :']}" /></strong>
+								<div>Le solde est de : <h:outputText value="#{customerAccountBalance}" style="font-weight:bold;padding-left:5px;"  converter="bigDecimalConverter" /> €
+								</div>
+							</h:panelGrid>
+						</p:fieldset>
+					</p:tab>
+					<p:tab label="#{messages['Mes Factures']}">
+						<p:fieldset legend="#{messages['Mes Factures']}">
+							<hftl:dataList backingBean="#{syntheseClientBean}"
+								dataModel="#{synInvoices}" edit="false">
+								<hftl:column label="#{messages['Votre facture du']}"
+									field="invoiceDate" />
+								<p:column styleClass="textOnRight">
+									<f:facet name="header">
+										<h:panelGrid columns="2">
+											<h:column>
+												<h:outputText value="#{messages['Montant']}" />
+											</h:column>
+											<h:column>
+												<h:commandLink render="datatable">
+													<h:graphicImage value="/img/arrow-asc.png" style="border:0" />
+													<h:actionparam name="sortField" value="#{invoiceNumber}" />
+													<h:actionparam name="sortOrder" value="asc" />
+												</h:commandLink>
+												<h:commandLink render="datatable">
+													<h:graphicImage value="/img/arrow-desc.png"
+														style="border:0" />
+													<h:actionparam name="sortField" value="#{invoiceNumber}" />
+													<h:actionparam name="sortOrder" value="desc" />
+												</h:commandLink>
+											</h:column>	
+										</h:panelGrid>
+									</f:facet>
+									<h:outputText value="#{entity.amountWithTax}" converter="bigDecimalConverter"/>  €
+									
+									
+								</p:column>									
+									
+								<p:column>
+									<f:facet name="header">
+										<h:panelGrid columns="2">
+											<h:column>
+												<h:outputText value="#{messages['Télécharger']}" />
+											</h:column>
+											<h:column>
+												<h:commandLink render="datatable">
+													<h:graphicImage value="/img/arrow-asc.png" style="border:0" />
+													<h:actionparam name="sortField" value="#{invoiceNumber}" />
+													<h:actionparam name="sortOrder" value="asc" />
+												</h:commandLink>
+												<h:commandLink render="datatable">
+													<h:graphicImage value="/img/arrow-desc.png"
+														style="border:0" />
+													<h:actionparam name="sortField" value="#{invoiceNumber}" />
+													<h:actionparam name="sortOrder" value="desc" />
+												</h:commandLink>
+											</h:column>
+										</h:panelGrid>
+									</f:facet>
+									
+                                 <!-- <h:commandLink action="#{syntheseClientBean.downloadPdf(entity.invoiceNumber)}" value="#{entity.invoiceNumber}" /> -->
+								</p:column>
+							</hftl:dataList>
+						</p:fieldset>
+					</p:tab>
+				</p:tabPanel>
+		</h:panel>
+
+	</ui:define>
+
+</ui:composition>

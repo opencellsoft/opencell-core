@@ -1,0 +1,66 @@
+<meveoExport version="4.3.0-20160602">
+    <exportTemplate xsId="1" name="EntityCustomAction" entityToExport="org.meveo.model.crm.custom.EntityCustomAction" canDeleteAfterExport="false">
+        <exportAllClassesAsFull>false</exportAllClassesAsFull>
+        <classesToExportAsFull xsId="2">
+            <java-class>org.meveo.model.scripts.ScriptInstance</java-class>
+        </classesToExportAsFull>
+    </exportTemplate>
+    <data>
+        <org.meveo.model.crm.custom.EntityCustomAction xsId="7">
+            <id>19</id>
+            <version>1</version>
+            <provider xsId="8" id="1" code="DEMO" />
+            <disabled>false</disabled>
+            <auditable xsId="10">
+                <created class="sql-timestamp" xsId="11">2016-06-02 19:28:26.887</created>
+            </auditable>
+            <code>AK action|ACC</code>
+            <description>ak action </description>
+            <appliesTo>ACC</appliesTo>
+            <applicableOnEl>true</applicableOnEl>
+            <label>AK Action</label>
+            <script xsId="20007">
+                <provider reference="8" />
+                <disabled>false</disabled>
+                <auditable xsId="10">
+                <created class="sql-timestamp" xsId="11">2016-06-02 19:28:26.887</created>
+            </auditable>
+                <code>AK action|ACC</code>
+                <description>ak action </description>
+                <script>public class Ak extends Script {&#13;
+                &#13;
+                }
+            </script>
+                <sourceTypeEnum>JAVA</sourceTypeEnum>
+                <error>true</error>
+            </script>
+        </org.meveo.model.crm.custom.EntityCustomAction>
+        <org.meveo.model.crm.custom.EntityCustomAction xsId="12">
+            <id>20</id>
+            <version>1</version>
+            <provider reference="8" />
+            <disabled>false</disabled>
+            <auditable xsId="13">
+                <created class="sql-timestamp" xsId="14">2016-06-02 19:38:27.344</created>
+            </auditable>
+            <code>process|CE_Order</code>
+            <appliesTo>CE_Order</appliesTo>
+            <applicableOnEl>true</applicableOnEl>
+            <label>Process Order</label>
+            <script xsId="200012">
+                <provider reference="8" />
+                <disabled>false</disabled>
+                <auditable xsId="13">
+                <created class="sql-timestamp" xsId="14">2016-06-02 19:38:27.344</created>
+            </auditable>
+                <code>process|CE_Order</code>
+                <script>public class ProcessOrder extends Script{&#13;
+                &#13;
+                }
+            </script>
+                <sourceTypeEnum>JAVA</sourceTypeEnum>
+                <error>true</error>
+            </script>
+        </org.meveo.model.crm.custom.EntityCustomAction>
+    </data>
+</meveoExport>

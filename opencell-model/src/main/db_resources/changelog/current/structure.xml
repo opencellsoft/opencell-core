@@ -1,0 +1,956 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+
+	<changeSet id="#2334_20170213" author="AndriusKarpavicius">
+
+		<addColumn tableName="BILLING_SERVICE_INSTANCE">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update BILLING_SERVICE_INSTANCE set creator = (select username from adm_user where BILLING_SERVICE_INSTANCE.creator_id = adm_user.id and BILLING_SERVICE_INSTANCE.creator_id is not null)</sql>
+		<sql>update BILLING_SERVICE_INSTANCE set updater = (select username from adm_user where BILLING_SERVICE_INSTANCE.updater_id = adm_user.id and BILLING_SERVICE_INSTANCE.updater_id is not null)</sql>
+		<dropColumn tableName="BILLING_SERVICE_INSTANCE" columnName="creator_id" />
+		<dropColumn tableName="BILLING_SERVICE_INSTANCE" columnName="updater_id" />
+		<addColumn tableName="MEVEO_FILTER">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update MEVEO_FILTER set creator = (select username from adm_user where MEVEO_FILTER.creator_id = adm_user.id and MEVEO_FILTER.creator_id is not null)</sql>
+		<sql>update MEVEO_FILTER set updater = (select username from adm_user where MEVEO_FILTER.updater_id = adm_user.id and MEVEO_FILTER.updater_id is not null)</sql>
+		<dropColumn tableName="MEVEO_FILTER" columnName="creator_id" />
+		<dropColumn tableName="MEVEO_FILTER" columnName="updater_id" />
+		<addColumn tableName="AR_CREDIT_CATEGORY">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update AR_CREDIT_CATEGORY set creator = (select username from adm_user where AR_CREDIT_CATEGORY.creator_id = adm_user.id and AR_CREDIT_CATEGORY.creator_id is not null)</sql>
+		<sql>update AR_CREDIT_CATEGORY set updater = (select username from adm_user where AR_CREDIT_CATEGORY.updater_id = adm_user.id and AR_CREDIT_CATEGORY.updater_id is not null)</sql>
+		<dropColumn tableName="AR_CREDIT_CATEGORY" columnName="creator_id" />
+		<dropColumn tableName="AR_CREDIT_CATEGORY" columnName="updater_id" />
+		<addColumn tableName="ORD_ORDER">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update ORD_ORDER set creator = (select username from adm_user where ORD_ORDER.creator_id = adm_user.id and ORD_ORDER.creator_id is not null)</sql>
+		<sql>update ORD_ORDER set updater = (select username from adm_user where ORD_ORDER.updater_id = adm_user.id and ORD_ORDER.updater_id is not null)</sql>
+		<dropColumn tableName="ORD_ORDER" columnName="creator_id" />
+		<dropColumn tableName="ORD_ORDER" columnName="updater_id" />
+		<addColumn tableName="BILLING_DISCPLAN_INST">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update BILLING_DISCPLAN_INST set creator = (select username from adm_user where BILLING_DISCPLAN_INST.creator_id = adm_user.id and BILLING_DISCPLAN_INST.creator_id is not null)</sql>
+		<sql>update BILLING_DISCPLAN_INST set updater = (select username from adm_user where BILLING_DISCPLAN_INST.updater_id = adm_user.id and BILLING_DISCPLAN_INST.updater_id is not null)</sql>
+		<dropColumn tableName="BILLING_DISCPLAN_INST" columnName="creator_id" />
+		<dropColumn tableName="BILLING_DISCPLAN_INST" columnName="updater_id" />
+		<addColumn tableName="AR_REVENUE_RECOG_RULE">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update AR_REVENUE_RECOG_RULE set creator = (select username from adm_user where AR_REVENUE_RECOG_RULE.creator_id = adm_user.id and AR_REVENUE_RECOG_RULE.creator_id is not null)</sql>
+		<sql>update AR_REVENUE_RECOG_RULE set updater = (select username from adm_user where AR_REVENUE_RECOG_RULE.updater_id = adm_user.id and AR_REVENUE_RECOG_RULE.updater_id is not null)</sql>
+		<dropColumn tableName="AR_REVENUE_RECOG_RULE" columnName="creator_id" />
+		<dropColumn tableName="AR_REVENUE_RECOG_RULE" columnName="updater_id" />
+		<addColumn tableName="CAT_CHANNEL">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update CAT_CHANNEL set creator = (select username from adm_user where CAT_CHANNEL.creator_id = adm_user.id and CAT_CHANNEL.creator_id is not null)</sql>
+		<sql>update CAT_CHANNEL set updater = (select username from adm_user where CAT_CHANNEL.updater_id = adm_user.id and CAT_CHANNEL.updater_id is not null)</sql>
+		<dropColumn tableName="CAT_CHANNEL" columnName="creator_id" />
+		<dropColumn tableName="CAT_CHANNEL" columnName="updater_id" />
+		<addColumn tableName="BILLING_TRADING_CURRENCY">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update BILLING_TRADING_CURRENCY set creator = (select username from adm_user where BILLING_TRADING_CURRENCY.creator_id = adm_user.id and BILLING_TRADING_CURRENCY.creator_id is not null)</sql>
+		<sql>update BILLING_TRADING_CURRENCY set updater = (select username from adm_user where BILLING_TRADING_CURRENCY.updater_id = adm_user.id and BILLING_TRADING_CURRENCY.updater_id is not null)</sql>
+		<dropColumn tableName="BILLING_TRADING_CURRENCY" columnName="creator_id" />
+		<dropColumn tableName="BILLING_TRADING_CURRENCY" columnName="updater_id" />
+		<addColumn tableName="BILLING_CYCLE">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update BILLING_CYCLE set creator = (select username from adm_user where BILLING_CYCLE.creator_id = adm_user.id and BILLING_CYCLE.creator_id is not null)</sql>
+		<sql>update BILLING_CYCLE set updater = (select username from adm_user where BILLING_CYCLE.updater_id = adm_user.id and BILLING_CYCLE.updater_id is not null)</sql>
+		<dropColumn tableName="BILLING_CYCLE" columnName="creator_id" />
+		<dropColumn tableName="BILLING_CYCLE" columnName="updater_id" />
+		<addColumn tableName="CAT_TRIGGERED_EDR">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update CAT_TRIGGERED_EDR set creator = (select username from adm_user where CAT_TRIGGERED_EDR.creator_id = adm_user.id and CAT_TRIGGERED_EDR.creator_id is not null)</sql>
+		<sql>update CAT_TRIGGERED_EDR set updater = (select username from adm_user where CAT_TRIGGERED_EDR.updater_id = adm_user.id and CAT_TRIGGERED_EDR.updater_id is not null)</sql>
+		<dropColumn tableName="CAT_TRIGGERED_EDR" columnName="creator_id" />
+		<dropColumn tableName="CAT_TRIGGERED_EDR" columnName="updater_id" />
+		<addColumn tableName="CAT_DISCOUNT_PLAN_ITEM">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update CAT_DISCOUNT_PLAN_ITEM set creator = (select username from adm_user where CAT_DISCOUNT_PLAN_ITEM.creator_id = adm_user.id and CAT_DISCOUNT_PLAN_ITEM.creator_id is not null)</sql>
+		<sql>update CAT_DISCOUNT_PLAN_ITEM set updater = (select username from adm_user where CAT_DISCOUNT_PLAN_ITEM.updater_id = adm_user.id and CAT_DISCOUNT_PLAN_ITEM.updater_id is not null)</sql>
+		<dropColumn tableName="CAT_DISCOUNT_PLAN_ITEM" columnName="creator_id" />
+		<dropColumn tableName="CAT_DISCOUNT_PLAN_ITEM" columnName="updater_id" />
+		<addColumn tableName="BILLING_INVOICE_CAT_LANG">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update BILLING_INVOICE_CAT_LANG set creator = (select username from adm_user where BILLING_INVOICE_CAT_LANG.creator_id = adm_user.id and BILLING_INVOICE_CAT_LANG.creator_id is not null)</sql>
+		<sql>update BILLING_INVOICE_CAT_LANG set updater = (select username from adm_user where BILLING_INVOICE_CAT_LANG.updater_id = adm_user.id and BILLING_INVOICE_CAT_LANG.updater_id is not null)</sql>
+		<dropColumn tableName="BILLING_INVOICE_CAT_LANG" columnName="creator_id" />
+		<dropColumn tableName="BILLING_INVOICE_CAT_LANG" columnName="updater_id" />
+		<addColumn tableName="MEVEO_TIMER">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update MEVEO_TIMER set creator = (select username from adm_user where MEVEO_TIMER.creator_id = adm_user.id and MEVEO_TIMER.creator_id is not null)</sql>
+		<sql>update MEVEO_TIMER set updater = (select username from adm_user where MEVEO_TIMER.updater_id = adm_user.id and MEVEO_TIMER.updater_id is not null)</sql>
+		<dropColumn tableName="MEVEO_TIMER" columnName="creator_id" />
+		<dropColumn tableName="MEVEO_TIMER" columnName="updater_id" />
+		<addColumn tableName="BILLING_TRADING_COUNTRY">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update BILLING_TRADING_COUNTRY set creator = (select username from adm_user where BILLING_TRADING_COUNTRY.creator_id = adm_user.id and BILLING_TRADING_COUNTRY.creator_id is not null)</sql>
+		<sql>update BILLING_TRADING_COUNTRY set updater = (select username from adm_user where BILLING_TRADING_COUNTRY.updater_id = adm_user.id and BILLING_TRADING_COUNTRY.updater_id is not null)</sql>
+		<dropColumn tableName="BILLING_TRADING_COUNTRY" columnName="creator_id" />
+		<dropColumn tableName="BILLING_TRADING_COUNTRY" columnName="updater_id" />
+		<addColumn tableName="BILLING_DISCOUNT_LANGUAGE">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update BILLING_DISCOUNT_LANGUAGE set creator = (select username from adm_user where BILLING_DISCOUNT_LANGUAGE.creator_id = adm_user.id and BILLING_DISCOUNT_LANGUAGE.creator_id is not null)</sql>
+		<sql>update BILLING_DISCOUNT_LANGUAGE set updater = (select username from adm_user where BILLING_DISCOUNT_LANGUAGE.updater_id = adm_user.id and BILLING_DISCOUNT_LANGUAGE.updater_id is not null)</sql>
+		<dropColumn tableName="BILLING_DISCOUNT_LANGUAGE" columnName="creator_id" />
+		<dropColumn tableName="BILLING_DISCOUNT_LANGUAGE" columnName="updater_id" />
+		<addColumn tableName="AR_DDREQUEST_LOT_OP">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update AR_DDREQUEST_LOT_OP set creator = (select username from adm_user where AR_DDREQUEST_LOT_OP.creator_id = adm_user.id and AR_DDREQUEST_LOT_OP.creator_id is not null)</sql>
+		<sql>update AR_DDREQUEST_LOT_OP set updater = (select username from adm_user where AR_DDREQUEST_LOT_OP.updater_id = adm_user.id and AR_DDREQUEST_LOT_OP.updater_id is not null)</sql>
+		<dropColumn tableName="AR_DDREQUEST_LOT_OP" columnName="creator_id" />
+		<dropColumn tableName="AR_DDREQUEST_LOT_OP" columnName="updater_id" />
+		<addColumn tableName="HIERARCHY_ENTITY">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update HIERARCHY_ENTITY set creator = (select username from adm_user where HIERARCHY_ENTITY.creator_id = adm_user.id and HIERARCHY_ENTITY.creator_id is not null)</sql>
+		<sql>update HIERARCHY_ENTITY set updater = (select username from adm_user where HIERARCHY_ENTITY.updater_id = adm_user.id and HIERARCHY_ENTITY.updater_id is not null)</sql>
+		<dropColumn tableName="HIERARCHY_ENTITY" columnName="creator_id" />
+		<dropColumn tableName="HIERARCHY_ENTITY" columnName="updater_id" />
+		<addColumn tableName="ADM_INBOUND_REQUEST">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update ADM_INBOUND_REQUEST set creator = (select username from adm_user where ADM_INBOUND_REQUEST.creator_id = adm_user.id and ADM_INBOUND_REQUEST.creator_id is not null)</sql>
+		<sql>update ADM_INBOUND_REQUEST set updater = (select username from adm_user where ADM_INBOUND_REQUEST.updater_id = adm_user.id and ADM_INBOUND_REQUEST.updater_id is not null)</sql>
+		<dropColumn tableName="ADM_INBOUND_REQUEST" columnName="creator_id" />
+		<dropColumn tableName="ADM_INBOUND_REQUEST" columnName="updater_id" />
+		<addColumn tableName="BILLING_INVOICE_CAT">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update BILLING_INVOICE_CAT set creator = (select username from adm_user where BILLING_INVOICE_CAT.creator_id = adm_user.id and BILLING_INVOICE_CAT.creator_id is not null)</sql>
+		<sql>update BILLING_INVOICE_CAT set updater = (select username from adm_user where BILLING_INVOICE_CAT.updater_id = adm_user.id and BILLING_INVOICE_CAT.updater_id is not null)</sql>
+		<dropColumn tableName="BILLING_INVOICE_CAT" columnName="creator_id" />
+		<dropColumn tableName="BILLING_INVOICE_CAT" columnName="updater_id" />
+		<addColumn tableName="CAT_WALLET_TEMPLATE">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update CAT_WALLET_TEMPLATE set creator = (select username from adm_user where CAT_WALLET_TEMPLATE.creator_id = adm_user.id and CAT_WALLET_TEMPLATE.creator_id is not null)</sql>
+		<sql>update CAT_WALLET_TEMPLATE set updater = (select username from adm_user where CAT_WALLET_TEMPLATE.updater_id = adm_user.id and CAT_WALLET_TEMPLATE.updater_id is not null)</sql>
+		<dropColumn tableName="CAT_WALLET_TEMPLATE" columnName="creator_id" />
+		<dropColumn tableName="CAT_WALLET_TEMPLATE" columnName="updater_id" />
+		<addColumn tableName="COM_CAMPAIGN">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update COM_CAMPAIGN set creator = (select username from adm_user where COM_CAMPAIGN.creator_id = adm_user.id and COM_CAMPAIGN.creator_id is not null)</sql>
+		<sql>update COM_CAMPAIGN set updater = (select username from adm_user where COM_CAMPAIGN.updater_id = adm_user.id and COM_CAMPAIGN.updater_id is not null)</sql>
+		<dropColumn tableName="COM_CAMPAIGN" columnName="creator_id" />
+		<dropColumn tableName="COM_CAMPAIGN" columnName="updater_id" />
+		<addColumn tableName="CRM_CUSTOM_ACTION">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update CRM_CUSTOM_ACTION set creator = (select username from adm_user where CRM_CUSTOM_ACTION.creator_id = adm_user.id and CRM_CUSTOM_ACTION.creator_id is not null)</sql>
+		<sql>update CRM_CUSTOM_ACTION set updater = (select username from adm_user where CRM_CUSTOM_ACTION.updater_id = adm_user.id and CRM_CUSTOM_ACTION.updater_id is not null)</sql>
+		<dropColumn tableName="CRM_CUSTOM_ACTION" columnName="creator_id" />
+		<dropColumn tableName="CRM_CUSTOM_ACTION" columnName="updater_id" />
+		<addColumn tableName="ADM_COUNTRY">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update ADM_COUNTRY set creator = (select username from adm_user where ADM_COUNTRY.creator_id = adm_user.id and ADM_COUNTRY.creator_id is not null)</sql>
+		<sql>update ADM_COUNTRY set updater = (select username from adm_user where ADM_COUNTRY.updater_id = adm_user.id and ADM_COUNTRY.updater_id is not null)</sql>
+		<dropColumn tableName="ADM_COUNTRY" columnName="creator_id" />
+		<dropColumn tableName="ADM_COUNTRY" columnName="updater_id" />
+		<addColumn tableName="BILLING_TAX">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update BILLING_TAX set creator = (select username from adm_user where BILLING_TAX.creator_id = adm_user.id and BILLING_TAX.creator_id is not null)</sql>
+		<sql>update BILLING_TAX set updater = (select username from adm_user where BILLING_TAX.updater_id = adm_user.id and BILLING_TAX.updater_id is not null)</sql>
+		<dropColumn tableName="BILLING_TAX" columnName="creator_id" />
+		<dropColumn tableName="BILLING_TAX" columnName="updater_id" />
+		<addColumn tableName="ADM_LANGUAGE">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update ADM_LANGUAGE set creator = (select username from adm_user where ADM_LANGUAGE.creator_id = adm_user.id and ADM_LANGUAGE.creator_id is not null)</sql>
+		<sql>update ADM_LANGUAGE set updater = (select username from adm_user where ADM_LANGUAGE.updater_id = adm_user.id and ADM_LANGUAGE.updater_id is not null)</sql>
+		<dropColumn tableName="ADM_LANGUAGE" columnName="creator_id" />
+		<dropColumn tableName="ADM_LANGUAGE" columnName="updater_id" />
+		<addColumn tableName="CAT_DISCOUNT_PLAN">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update CAT_DISCOUNT_PLAN set creator = (select username from adm_user where CAT_DISCOUNT_PLAN.creator_id = adm_user.id and CAT_DISCOUNT_PLAN.creator_id is not null)</sql>
+		<sql>update CAT_DISCOUNT_PLAN set updater = (select username from adm_user where CAT_DISCOUNT_PLAN.updater_id = adm_user.id and CAT_DISCOUNT_PLAN.updater_id is not null)</sql>
+		<dropColumn tableName="CAT_DISCOUNT_PLAN" columnName="creator_id" />
+		<dropColumn tableName="CAT_DISCOUNT_PLAN" columnName="updater_id" />
+		<addColumn tableName="BILLING_INVOICE">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update BILLING_INVOICE set creator = (select username from adm_user where BILLING_INVOICE.creator_id = adm_user.id and BILLING_INVOICE.creator_id is not null)</sql>
+		<sql>update BILLING_INVOICE set updater = (select username from adm_user where BILLING_INVOICE.updater_id = adm_user.id and BILLING_INVOICE.updater_id is not null)</sql>
+		<dropColumn tableName="BILLING_INVOICE" columnName="creator_id" />
+		<dropColumn tableName="BILLING_INVOICE" columnName="updater_id" />
+		<addColumn tableName="BILLING_COUNTER">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update BILLING_COUNTER set creator = (select username from adm_user where BILLING_COUNTER.creator_id = adm_user.id and BILLING_COUNTER.creator_id is not null)</sql>
+		<sql>update BILLING_COUNTER set updater = (select username from adm_user where BILLING_COUNTER.updater_id = adm_user.id and BILLING_COUNTER.updater_id is not null)</sql>
+		<dropColumn tableName="BILLING_COUNTER" columnName="creator_id" />
+		<dropColumn tableName="BILLING_COUNTER" columnName="updater_id" />
+		<addColumn tableName="MEVEO_MODULE">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update MEVEO_MODULE set creator = (select username from adm_user where MEVEO_MODULE.creator_id = adm_user.id and MEVEO_MODULE.creator_id is not null)</sql>
+		<sql>update MEVEO_MODULE set updater = (select username from adm_user where MEVEO_MODULE.updater_id = adm_user.id and MEVEO_MODULE.updater_id is not null)</sql>
+		<dropColumn tableName="MEVEO_MODULE" columnName="creator_id" />
+		<dropColumn tableName="MEVEO_MODULE" columnName="updater_id" />
+		<addColumn tableName="CRM_PROVIDER_CONTACT">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update CRM_PROVIDER_CONTACT set creator = (select username from adm_user where CRM_PROVIDER_CONTACT.creator_id = adm_user.id and CRM_PROVIDER_CONTACT.creator_id is not null)</sql>
+		<sql>update CRM_PROVIDER_CONTACT set updater = (select username from adm_user where CRM_PROVIDER_CONTACT.updater_id = adm_user.id and CRM_PROVIDER_CONTACT.updater_id is not null)</sql>
+		<dropColumn tableName="CRM_PROVIDER_CONTACT" columnName="creator_id" />
+		<dropColumn tableName="CRM_PROVIDER_CONTACT" columnName="updater_id" />
+		<addColumn tableName="BI_JOB">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update BI_JOB set creator = (select username from adm_user where BI_JOB.creator_id = adm_user.id and BI_JOB.creator_id is not null)</sql>
+		<sql>update BI_JOB set updater = (select username from adm_user where BI_JOB.updater_id = adm_user.id and BI_JOB.updater_id is not null)</sql>
+		<dropColumn tableName="BI_JOB" columnName="creator_id" />
+		<dropColumn tableName="BI_JOB" columnName="updater_id" />
+		<addColumn tableName="CAT_CHARGE_TEMPLATE">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update CAT_CHARGE_TEMPLATE set creator = (select username from adm_user where CAT_CHARGE_TEMPLATE.creator_id = adm_user.id and CAT_CHARGE_TEMPLATE.creator_id is not null)</sql>
+		<sql>update CAT_CHARGE_TEMPLATE set updater = (select username from adm_user where CAT_CHARGE_TEMPLATE.updater_id = adm_user.id and CAT_CHARGE_TEMPLATE.updater_id is not null)</sql>
+		<dropColumn tableName="CAT_CHARGE_TEMPLATE" columnName="creator_id" />
+		<dropColumn tableName="CAT_CHARGE_TEMPLATE" columnName="updater_id" />
+		<addColumn tableName="FTP_IMPORTED_FILE">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update FTP_IMPORTED_FILE set creator = (select username from adm_user where FTP_IMPORTED_FILE.creator_id = adm_user.id and FTP_IMPORTED_FILE.creator_id is not null)</sql>
+		<sql>update FTP_IMPORTED_FILE set updater = (select username from adm_user where FTP_IMPORTED_FILE.updater_id = adm_user.id and FTP_IMPORTED_FILE.updater_id is not null)</sql>
+		<dropColumn tableName="FTP_IMPORTED_FILE" columnName="creator_id" />
+		<dropColumn tableName="FTP_IMPORTED_FILE" columnName="updater_id" />
+		<addColumn tableName="CAT_COUNTER_TEMPLATE">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update CAT_COUNTER_TEMPLATE set creator = (select username from adm_user where CAT_COUNTER_TEMPLATE.creator_id = adm_user.id and CAT_COUNTER_TEMPLATE.creator_id is not null)</sql>
+		<sql>update CAT_COUNTER_TEMPLATE set updater = (select username from adm_user where CAT_COUNTER_TEMPLATE.updater_id = adm_user.id and CAT_COUNTER_TEMPLATE.updater_id is not null)</sql>
+		<dropColumn tableName="CAT_COUNTER_TEMPLATE" columnName="creator_id" />
+		<dropColumn tableName="CAT_COUNTER_TEMPLATE" columnName="updater_id" />
+		<addColumn tableName="CAT_OFFER_TEMPLATE_CATEGORY">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update CAT_OFFER_TEMPLATE_CATEGORY set creator = (select username from adm_user where CAT_OFFER_TEMPLATE_CATEGORY.creator_id = adm_user.id and CAT_OFFER_TEMPLATE_CATEGORY.creator_id is not
+			null)
+		</sql>
+		<sql>update CAT_OFFER_TEMPLATE_CATEGORY set updater = (select username from adm_user where CAT_OFFER_TEMPLATE_CATEGORY.updater_id = adm_user.id and CAT_OFFER_TEMPLATE_CATEGORY.updater_id is not
+			null)
+		</sql>
+		<dropColumn tableName="CAT_OFFER_TEMPLATE_CATEGORY" columnName="creator_id" />
+		<dropColumn tableName="CAT_OFFER_TEMPLATE_CATEGORY" columnName="updater_id" />
+		<addColumn tableName="CRM_CUSTOMER_BRAND">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update CRM_CUSTOMER_BRAND set creator = (select username from adm_user where CRM_CUSTOMER_BRAND.creator_id = adm_user.id and CRM_CUSTOMER_BRAND.creator_id is not null)</sql>
+		<sql>update CRM_CUSTOMER_BRAND set updater = (select username from adm_user where CRM_CUSTOMER_BRAND.updater_id = adm_user.id and CRM_CUSTOMER_BRAND.updater_id is not null)</sql>
+		<dropColumn tableName="CRM_CUSTOMER_BRAND" columnName="creator_id" />
+		<dropColumn tableName="CRM_CUSTOMER_BRAND" columnName="updater_id" />
+		<addColumn tableName="CAT_DAY_IN_YEAR">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update CAT_DAY_IN_YEAR set creator = (select username from adm_user where CAT_DAY_IN_YEAR.creator_id = adm_user.id and CAT_DAY_IN_YEAR.creator_id is not null)</sql>
+		<sql>update CAT_DAY_IN_YEAR set updater = (select username from adm_user where CAT_DAY_IN_YEAR.updater_id = adm_user.id and CAT_DAY_IN_YEAR.updater_id is not null)</sql>
+		<dropColumn tableName="CAT_DAY_IN_YEAR" columnName="creator_id" />
+		<dropColumn tableName="CAT_DAY_IN_YEAR" columnName="updater_id" />
+		<addColumn tableName="AR_DDREQUEST_ITEM">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update AR_DDREQUEST_ITEM set creator = (select username from adm_user where AR_DDREQUEST_ITEM.creator_id = adm_user.id and AR_DDREQUEST_ITEM.creator_id is not null)</sql>
+		<sql>update AR_DDREQUEST_ITEM set updater = (select username from adm_user where AR_DDREQUEST_ITEM.updater_id = adm_user.id and AR_DDREQUEST_ITEM.updater_id is not null)</sql>
+		<dropColumn tableName="AR_DDREQUEST_ITEM" columnName="creator_id" />
+		<dropColumn tableName="AR_DDREQUEST_ITEM" columnName="updater_id" />
+		<addColumn tableName="AR_MATCHING_CODE">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update AR_MATCHING_CODE set creator = (select username from adm_user where AR_MATCHING_CODE.creator_id = adm_user.id and AR_MATCHING_CODE.creator_id is not null)</sql>
+		<sql>update AR_MATCHING_CODE set updater = (select username from adm_user where AR_MATCHING_CODE.updater_id = adm_user.id and AR_MATCHING_CODE.updater_id is not null)</sql>
+		<dropColumn tableName="AR_MATCHING_CODE" columnName="creator_id" />
+		<dropColumn tableName="AR_MATCHING_CODE" columnName="updater_id" />
+		<addColumn tableName="WF_DECISION_RULE">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update WF_DECISION_RULE set creator = (select username from adm_user where WF_DECISION_RULE.creator_id = adm_user.id and WF_DECISION_RULE.creator_id is not null)</sql>
+		<sql>update WF_DECISION_RULE set updater = (select username from adm_user where WF_DECISION_RULE.updater_id = adm_user.id and WF_DECISION_RULE.updater_id is not null)</sql>
+		<dropColumn tableName="WF_DECISION_RULE" columnName="creator_id" />
+		<dropColumn tableName="WF_DECISION_RULE" columnName="updater_id" />
+		<addColumn tableName="COM_MESSAGE_TEMPLATE">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update COM_MESSAGE_TEMPLATE set creator = (select username from adm_user where COM_MESSAGE_TEMPLATE.creator_id = adm_user.id and COM_MESSAGE_TEMPLATE.creator_id is not null)</sql>
+		<sql>update COM_MESSAGE_TEMPLATE set updater = (select username from adm_user where COM_MESSAGE_TEMPLATE.updater_id = adm_user.id and COM_MESSAGE_TEMPLATE.updater_id is not null)</sql>
+		<dropColumn tableName="COM_MESSAGE_TEMPLATE" columnName="creator_id" />
+		<dropColumn tableName="COM_MESSAGE_TEMPLATE" columnName="updater_id" />
+		<addColumn tableName="CUST_CEI">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update CUST_CEI set creator = (select username from adm_user where CUST_CEI.creator_id = adm_user.id and CUST_CEI.creator_id is not null)</sql>
+		<sql>update CUST_CEI set updater = (select username from adm_user where CUST_CEI.updater_id = adm_user.id and CUST_CEI.updater_id is not null)</sql>
+		<dropColumn tableName="CUST_CEI" columnName="creator_id" />
+		<dropColumn tableName="CUST_CEI" columnName="updater_id" />
+		<addColumn tableName="BILLING_WALLET">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update BILLING_WALLET set creator = (select username from adm_user where BILLING_WALLET.creator_id = adm_user.id and BILLING_WALLET.creator_id is not null)</sql>
+		<sql>update BILLING_WALLET set updater = (select username from adm_user where BILLING_WALLET.updater_id = adm_user.id and BILLING_WALLET.updater_id is not null)</sql>
+		<dropColumn tableName="BILLING_WALLET" columnName="creator_id" />
+		<dropColumn tableName="BILLING_WALLET" columnName="updater_id" />
+		<addColumn tableName="AR_DDREQUEST_LOT">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update AR_DDREQUEST_LOT set creator = (select username from adm_user where AR_DDREQUEST_LOT.creator_id = adm_user.id and AR_DDREQUEST_LOT.creator_id is not null)</sql>
+		<sql>update AR_DDREQUEST_LOT set updater = (select username from adm_user where AR_DDREQUEST_LOT.updater_id = adm_user.id and AR_DDREQUEST_LOT.updater_id is not null)</sql>
+		<dropColumn tableName="AR_DDREQUEST_LOT" columnName="creator_id" />
+		<dropColumn tableName="AR_DDREQUEST_LOT" columnName="updater_id" />
+		<addColumn tableName="CRM_CUSTOMER_CATEGORY">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update CRM_CUSTOMER_CATEGORY set creator = (select username from adm_user where CRM_CUSTOMER_CATEGORY.creator_id = adm_user.id and CRM_CUSTOMER_CATEGORY.creator_id is not null)</sql>
+		<sql>update CRM_CUSTOMER_CATEGORY set updater = (select username from adm_user where CRM_CUSTOMER_CATEGORY.updater_id = adm_user.id and CRM_CUSTOMER_CATEGORY.updater_id is not null)</sql>
+		<dropColumn tableName="CRM_CUSTOMER_CATEGORY" columnName="creator_id" />
+		<dropColumn tableName="CRM_CUSTOMER_CATEGORY" columnName="updater_id" />
+		<addColumn tableName="ADM_CURRENCY">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update ADM_CURRENCY set creator = (select username from adm_user where ADM_CURRENCY.creator_id = adm_user.id and ADM_CURRENCY.creator_id is not null)</sql>
+		<sql>update ADM_CURRENCY set updater = (select username from adm_user where ADM_CURRENCY.updater_id = adm_user.id and ADM_CURRENCY.updater_id is not null)</sql>
+		<dropColumn tableName="ADM_CURRENCY" columnName="creator_id" />
+		<dropColumn tableName="ADM_CURRENCY" columnName="updater_id" />
+		<addColumn tableName="BILLING_REJECTED_BILLING_ACCOUNTS">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update BILLING_REJECTED_BILLING_ACCOUNTS set creator = (select username from adm_user where BILLING_REJECTED_BILLING_ACCOUNTS.creator_id = adm_user.id and
+			BILLING_REJECTED_BILLING_ACCOUNTS.creator_id is not null)</sql>
+		<sql>update BILLING_REJECTED_BILLING_ACCOUNTS set updater = (select username from adm_user where BILLING_REJECTED_BILLING_ACCOUNTS.updater_id = adm_user.id and
+			BILLING_REJECTED_BILLING_ACCOUNTS.updater_id is not null)</sql>
+		<dropColumn tableName="BILLING_REJECTED_BILLING_ACCOUNTS" columnName="creator_id" />
+		<dropColumn tableName="BILLING_REJECTED_BILLING_ACCOUNTS" columnName="updater_id" />
+		<addColumn tableName="AR_DUNNING_LOT">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update AR_DUNNING_LOT set creator = (select username from adm_user where AR_DUNNING_LOT.creator_id = adm_user.id and AR_DUNNING_LOT.creator_id is not null)</sql>
+		<sql>update AR_DUNNING_LOT set updater = (select username from adm_user where AR_DUNNING_LOT.updater_id = adm_user.id and AR_DUNNING_LOT.updater_id is not null)</sql>
+		<dropColumn tableName="AR_DUNNING_LOT" columnName="creator_id" />
+		<dropColumn tableName="AR_DUNNING_LOT" columnName="updater_id" />
+		<addColumn tableName="MEVEO_SCRIPT_INSTANCE">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update MEVEO_SCRIPT_INSTANCE set creator = (select username from adm_user where MEVEO_SCRIPT_INSTANCE.creator_id = adm_user.id and MEVEO_SCRIPT_INSTANCE.creator_id is not null)</sql>
+		<sql>update MEVEO_SCRIPT_INSTANCE set updater = (select username from adm_user where MEVEO_SCRIPT_INSTANCE.updater_id = adm_user.id and MEVEO_SCRIPT_INSTANCE.updater_id is not null)</sql>
+		<dropColumn tableName="MEVEO_SCRIPT_INSTANCE" columnName="creator_id" />
+		<dropColumn tableName="MEVEO_SCRIPT_INSTANCE" columnName="updater_id" />
+		<addColumn tableName="ACCOUNT_ENTITY">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update ACCOUNT_ENTITY set creator = (select username from adm_user where ACCOUNT_ENTITY.creator_id = adm_user.id and ACCOUNT_ENTITY.creator_id is not null)</sql>
+		<sql>update ACCOUNT_ENTITY set updater = (select username from adm_user where ACCOUNT_ENTITY.updater_id = adm_user.id and ACCOUNT_ENTITY.updater_id is not null)</sql>
+		<dropColumn tableName="ACCOUNT_ENTITY" columnName="creator_id" />
+		<dropColumn tableName="ACCOUNT_ENTITY" columnName="updater_id" />
+		<addColumn tableName="CRM_PROVIDER">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update CRM_PROVIDER set creator = (select username from adm_user where CRM_PROVIDER.creator_id = adm_user.id and CRM_PROVIDER.creator_id is not null)</sql>
+		<sql>update CRM_PROVIDER set updater = (select username from adm_user where CRM_PROVIDER.updater_id = adm_user.id and CRM_PROVIDER.updater_id is not null)</sql>
+		<dropColumn tableName="CRM_PROVIDER" columnName="creator_id" />
+		<dropColumn tableName="CRM_PROVIDER" columnName="updater_id" />
+		<addColumn tableName="BILLING_COUNTER_PERIOD">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update BILLING_COUNTER_PERIOD set creator = (select username from adm_user where BILLING_COUNTER_PERIOD.creator_id = adm_user.id and BILLING_COUNTER_PERIOD.creator_id is not null)</sql>
+		<sql>update BILLING_COUNTER_PERIOD set updater = (select username from adm_user where BILLING_COUNTER_PERIOD.updater_id = adm_user.id and BILLING_COUNTER_PERIOD.updater_id is not null)</sql>
+		<dropColumn tableName="BILLING_COUNTER_PERIOD" columnName="creator_id" />
+		<dropColumn tableName="BILLING_COUNTER_PERIOD" columnName="updater_id" />
+		<addColumn tableName="ADM_NOTIFICATION">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update ADM_NOTIFICATION set creator = (select username from adm_user where ADM_NOTIFICATION.creator_id = adm_user.id and ADM_NOTIFICATION.creator_id is not null)</sql>
+		<sql>update ADM_NOTIFICATION set updater = (select username from adm_user where ADM_NOTIFICATION.updater_id = adm_user.id and ADM_NOTIFICATION.updater_id is not null)</sql>
+		<dropColumn tableName="ADM_NOTIFICATION" columnName="creator_id" />
+		<dropColumn tableName="ADM_NOTIFICATION" columnName="updater_id" />
+		<addColumn tableName="WF_TRANSITION">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update WF_TRANSITION set creator = (select username from adm_user where WF_TRANSITION.creator_id = adm_user.id and WF_TRANSITION.creator_id is not null)</sql>
+		<sql>update WF_TRANSITION set updater = (select username from adm_user where WF_TRANSITION.updater_id = adm_user.id and WF_TRANSITION.updater_id is not null)</sql>
+		<dropColumn tableName="WF_TRANSITION" columnName="creator_id" />
+		<dropColumn tableName="WF_TRANSITION" columnName="updater_id" />
+		<addColumn tableName="BILLING_INVOICE_AGREGATE">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update BILLING_INVOICE_AGREGATE set creator = (select username from adm_user where BILLING_INVOICE_AGREGATE.creator_id = adm_user.id and BILLING_INVOICE_AGREGATE.creator_id is not null)</sql>
+		<sql>update BILLING_INVOICE_AGREGATE set updater = (select username from adm_user where BILLING_INVOICE_AGREGATE.updater_id = adm_user.id and BILLING_INVOICE_AGREGATE.updater_id is not null)</sql>
+		<dropColumn tableName="BILLING_INVOICE_AGREGATE" columnName="creator_id" />
+		<dropColumn tableName="BILLING_INVOICE_AGREGATE" columnName="updater_id" />
+		<addColumn tableName="CAT_CALENDAR">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update CAT_CALENDAR set creator = (select username from adm_user where CAT_CALENDAR.creator_id = adm_user.id and CAT_CALENDAR.creator_id is not null)</sql>
+		<sql>update CAT_CALENDAR set updater = (select username from adm_user where CAT_CALENDAR.updater_id = adm_user.id and CAT_CALENDAR.updater_id is not null)</sql>
+		<dropColumn tableName="CAT_CALENDAR" columnName="creator_id" />
+		<dropColumn tableName="CAT_CALENDAR" columnName="updater_id" />
+		<addColumn tableName="BILLING_INV_SUB_CAT_COUNTRY">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update BILLING_INV_SUB_CAT_COUNTRY set creator = (select username from adm_user where BILLING_INV_SUB_CAT_COUNTRY.creator_id = adm_user.id and BILLING_INV_SUB_CAT_COUNTRY.creator_id is not
+			null)
+		</sql>
+		<sql>update BILLING_INV_SUB_CAT_COUNTRY set updater = (select username from adm_user where BILLING_INV_SUB_CAT_COUNTRY.updater_id = adm_user.id and BILLING_INV_SUB_CAT_COUNTRY.updater_id is not
+			null)
+		</sql>
+		<dropColumn tableName="BILLING_INV_SUB_CAT_COUNTRY" columnName="creator_id" />
+		<dropColumn tableName="BILLING_INV_SUB_CAT_COUNTRY" columnName="updater_id" />
+		<addColumn tableName="WF_HISTORY">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update WF_HISTORY set creator = (select username from adm_user where WF_HISTORY.creator_id = adm_user.id and WF_HISTORY.creator_id is not null)</sql>
+		<sql>update WF_HISTORY set updater = (select username from adm_user where WF_HISTORY.updater_id = adm_user.id and WF_HISTORY.updater_id is not null)</sql>
+		<dropColumn tableName="WF_HISTORY" columnName="creator_id" />
+		<dropColumn tableName="WF_HISTORY" columnName="updater_id" />
+		<addColumn tableName="CRM_CUSTOM_FIELD_INST">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update CRM_CUSTOM_FIELD_INST set creator = (select username from adm_user where CRM_CUSTOM_FIELD_INST.creator_id = adm_user.id and CRM_CUSTOM_FIELD_INST.creator_id is not null)</sql>
+		<sql>update CRM_CUSTOM_FIELD_INST set updater = (select username from adm_user where CRM_CUSTOM_FIELD_INST.updater_id = adm_user.id and CRM_CUSTOM_FIELD_INST.updater_id is not null)</sql>
+		<dropColumn tableName="CRM_CUSTOM_FIELD_INST" columnName="creator_id" />
+		<dropColumn tableName="CRM_CUSTOM_FIELD_INST" columnName="updater_id" />
+		<addColumn tableName="CAT_DIGITAL_RESOURCE">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update CAT_DIGITAL_RESOURCE set creator = (select username from adm_user where CAT_DIGITAL_RESOURCE.creator_id = adm_user.id and CAT_DIGITAL_RESOURCE.creator_id is not null)</sql>
+		<sql>update CAT_DIGITAL_RESOURCE set updater = (select username from adm_user where CAT_DIGITAL_RESOURCE.updater_id = adm_user.id and CAT_DIGITAL_RESOURCE.updater_id is not null)</sql>
+		<dropColumn tableName="CAT_DIGITAL_RESOURCE" columnName="creator_id" />
+		<dropColumn tableName="CAT_DIGITAL_RESOURCE" columnName="updater_id" />
+		<addColumn tableName="DWH_CHART">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update DWH_CHART set creator = (select username from adm_user where DWH_CHART.creator_id = adm_user.id and DWH_CHART.creator_id is not null)</sql>
+		<sql>update DWH_CHART set updater = (select username from adm_user where DWH_CHART.updater_id = adm_user.id and DWH_CHART.updater_id is not null)</sql>
+		<dropColumn tableName="DWH_CHART" columnName="creator_id" />
+		<dropColumn tableName="DWH_CHART" columnName="updater_id" />
+		<addColumn tableName="AR_ACTION_DUNNING">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update AR_ACTION_DUNNING set creator = (select username from adm_user where AR_ACTION_DUNNING.creator_id = adm_user.id and AR_ACTION_DUNNING.creator_id is not null)</sql>
+		<sql>update AR_ACTION_DUNNING set updater = (select username from adm_user where AR_ACTION_DUNNING.updater_id = adm_user.id and AR_ACTION_DUNNING.updater_id is not null)</sql>
+		<dropColumn tableName="AR_ACTION_DUNNING" columnName="creator_id" />
+		<dropColumn tableName="AR_ACTION_DUNNING" columnName="updater_id" />
+		<addColumn tableName="CAT_PRICE_PLAN_MATRIX">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update CAT_PRICE_PLAN_MATRIX set creator = (select username from adm_user where CAT_PRICE_PLAN_MATRIX.creator_id = adm_user.id and CAT_PRICE_PLAN_MATRIX.creator_id is not null)</sql>
+		<sql>update CAT_PRICE_PLAN_MATRIX set updater = (select username from adm_user where CAT_PRICE_PLAN_MATRIX.updater_id = adm_user.id and CAT_PRICE_PLAN_MATRIX.updater_id is not null)</sql>
+		<dropColumn tableName="CAT_PRICE_PLAN_MATRIX" columnName="creator_id" />
+		<dropColumn tableName="CAT_PRICE_PLAN_MATRIX" columnName="updater_id" />
+		<addColumn tableName="BILLING_RESERVATION">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update BILLING_RESERVATION set creator = (select username from adm_user where BILLING_RESERVATION.creator_id = adm_user.id and BILLING_RESERVATION.creator_id is not null)</sql>
+		<sql>update BILLING_RESERVATION set updater = (select username from adm_user where BILLING_RESERVATION.updater_id = adm_user.id and BILLING_RESERVATION.updater_id is not null)</sql>
+		<dropColumn tableName="BILLING_RESERVATION" columnName="creator_id" />
+		<dropColumn tableName="BILLING_RESERVATION" columnName="updater_id" />
+		<addColumn tableName="BILLING_BILLING_RUN_LIST">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update BILLING_BILLING_RUN_LIST set creator = (select username from adm_user where BILLING_BILLING_RUN_LIST.creator_id = adm_user.id and BILLING_BILLING_RUN_LIST.creator_id is not null)</sql>
+		<sql>update BILLING_BILLING_RUN_LIST set updater = (select username from adm_user where BILLING_BILLING_RUN_LIST.updater_id = adm_user.id and BILLING_BILLING_RUN_LIST.updater_id is not null)</sql>
+		<dropColumn tableName="BILLING_BILLING_RUN_LIST" columnName="creator_id" />
+		<dropColumn tableName="BILLING_BILLING_RUN_LIST" columnName="updater_id" />
+		<addColumn tableName="COM_MSG_TMPL_VARIABLE">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update COM_MSG_TMPL_VARIABLE set creator = (select username from adm_user where COM_MSG_TMPL_VARIABLE.creator_id = adm_user.id and COM_MSG_TMPL_VARIABLE.creator_id is not null)</sql>
+		<sql>update COM_MSG_TMPL_VARIABLE set updater = (select username from adm_user where COM_MSG_TMPL_VARIABLE.updater_id = adm_user.id and COM_MSG_TMPL_VARIABLE.updater_id is not null)</sql>
+		<dropColumn tableName="COM_MSG_TMPL_VARIABLE" columnName="creator_id" />
+		<dropColumn tableName="COM_MSG_TMPL_VARIABLE" columnName="updater_id" />
+		<addColumn tableName="BILLING_WALLET_OPERATION">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update BILLING_WALLET_OPERATION set creator = (select username from adm_user where BILLING_WALLET_OPERATION.creator_id = adm_user.id and BILLING_WALLET_OPERATION.creator_id is not null)</sql>
+		<sql>update BILLING_WALLET_OPERATION set updater = (select username from adm_user where BILLING_WALLET_OPERATION.updater_id = adm_user.id and BILLING_WALLET_OPERATION.updater_id is not null)</sql>
+		<dropColumn tableName="BILLING_WALLET_OPERATION" columnName="creator_id" />
+		<dropColumn tableName="BILLING_WALLET_OPERATION" columnName="updater_id" />
+		<addColumn tableName="WF_WORKFLOW">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update WF_WORKFLOW set creator = (select username from adm_user where WF_WORKFLOW.creator_id = adm_user.id and WF_WORKFLOW.creator_id is not null)</sql>
+		<sql>update WF_WORKFLOW set updater = (select username from adm_user where WF_WORKFLOW.updater_id = adm_user.id and WF_WORKFLOW.updater_id is not null)</sql>
+		<dropColumn tableName="WF_WORKFLOW" columnName="creator_id" />
+		<dropColumn tableName="WF_WORKFLOW" columnName="updater_id" />
+		<addColumn tableName="BILLING_TAX_LANGUAGE">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update BILLING_TAX_LANGUAGE set creator = (select username from adm_user where BILLING_TAX_LANGUAGE.creator_id = adm_user.id and BILLING_TAX_LANGUAGE.creator_id is not null)</sql>
+		<sql>update BILLING_TAX_LANGUAGE set updater = (select username from adm_user where BILLING_TAX_LANGUAGE.updater_id = adm_user.id and BILLING_TAX_LANGUAGE.updater_id is not null)</sql>
+		<dropColumn tableName="BILLING_TAX_LANGUAGE" columnName="creator_id" />
+		<dropColumn tableName="BILLING_TAX_LANGUAGE" columnName="updater_id" />
+		<addColumn tableName="AR_MATCHING_AMOUNT">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update AR_MATCHING_AMOUNT set creator = (select username from adm_user where AR_MATCHING_AMOUNT.creator_id = adm_user.id and AR_MATCHING_AMOUNT.creator_id is not null)</sql>
+		<sql>update AR_MATCHING_AMOUNT set updater = (select username from adm_user where AR_MATCHING_AMOUNT.updater_id = adm_user.id and AR_MATCHING_AMOUNT.updater_id is not null)</sql>
+		<dropColumn tableName="AR_MATCHING_AMOUNT" columnName="creator_id" />
+		<dropColumn tableName="AR_MATCHING_AMOUNT" columnName="updater_id" />
+		<addColumn tableName="COM_MSG_VAR_VALUE">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update COM_MSG_VAR_VALUE set creator = (select username from adm_user where COM_MSG_VAR_VALUE.creator_id = adm_user.id and COM_MSG_VAR_VALUE.creator_id is not null)</sql>
+		<sql>update COM_MSG_VAR_VALUE set updater = (select username from adm_user where COM_MSG_VAR_VALUE.updater_id = adm_user.id and COM_MSG_VAR_VALUE.updater_id is not null)</sql>
+		<dropColumn tableName="COM_MSG_VAR_VALUE" columnName="creator_id" />
+		<dropColumn tableName="COM_MSG_VAR_VALUE" columnName="updater_id" />
+		<addColumn tableName="AR_OCC_TEMPLATE">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update AR_OCC_TEMPLATE set creator = (select username from adm_user where AR_OCC_TEMPLATE.creator_id = adm_user.id and AR_OCC_TEMPLATE.creator_id is not null)</sql>
+		<sql>update AR_OCC_TEMPLATE set updater = (select username from adm_user where AR_OCC_TEMPLATE.updater_id = adm_user.id and AR_OCC_TEMPLATE.updater_id is not null)</sql>
+		<dropColumn tableName="AR_OCC_TEMPLATE" columnName="creator_id" />
+		<dropColumn tableName="AR_OCC_TEMPLATE" columnName="updater_id" />
+		<addColumn tableName="BILLING_CHARGE_INSTANCE">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update BILLING_CHARGE_INSTANCE set creator = (select username from adm_user where BILLING_CHARGE_INSTANCE.creator_id = adm_user.id and BILLING_CHARGE_INSTANCE.creator_id is not null)</sql>
+		<sql>update BILLING_CHARGE_INSTANCE set updater = (select username from adm_user where BILLING_CHARGE_INSTANCE.updater_id = adm_user.id and BILLING_CHARGE_INSTANCE.updater_id is not null)</sql>
+		<dropColumn tableName="BILLING_CHARGE_INSTANCE" columnName="creator_id" />
+		<dropColumn tableName="BILLING_CHARGE_INSTANCE" columnName="updater_id" />
+		<addColumn tableName="WF_ACTION">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update WF_ACTION set creator = (select username from adm_user where WF_ACTION.creator_id = adm_user.id and WF_ACTION.creator_id is not null)</sql>
+		<sql>update WF_ACTION set updater = (select username from adm_user where WF_ACTION.updater_id = adm_user.id and WF_ACTION.updater_id is not null)</sql>
+		<dropColumn tableName="WF_ACTION" columnName="creator_id" />
+		<dropColumn tableName="WF_ACTION" columnName="updater_id" />
+		<addColumn tableName="ADM_NOTIF_HISTORY">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update ADM_NOTIF_HISTORY set creator = (select username from adm_user where ADM_NOTIF_HISTORY.creator_id = adm_user.id and ADM_NOTIF_HISTORY.creator_id is not null)</sql>
+		<sql>update ADM_NOTIF_HISTORY set updater = (select username from adm_user where ADM_NOTIF_HISTORY.updater_id = adm_user.id and ADM_NOTIF_HISTORY.updater_id is not null)</sql>
+		<dropColumn tableName="ADM_NOTIF_HISTORY" columnName="creator_id" />
+		<dropColumn tableName="ADM_NOTIF_HISTORY" columnName="updater_id" />
+		<addColumn tableName="CRM_CUSTOM_FIELD_TMPL">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update CRM_CUSTOM_FIELD_TMPL set creator = (select username from adm_user where CRM_CUSTOM_FIELD_TMPL.creator_id = adm_user.id and CRM_CUSTOM_FIELD_TMPL.creator_id is not null)</sql>
+		<sql>update CRM_CUSTOM_FIELD_TMPL set updater = (select username from adm_user where CRM_CUSTOM_FIELD_TMPL.updater_id = adm_user.id and CRM_CUSTOM_FIELD_TMPL.updater_id is not null)</sql>
+		<dropColumn tableName="CRM_CUSTOM_FIELD_TMPL" columnName="creator_id" />
+		<dropColumn tableName="CRM_CUSTOM_FIELD_TMPL" columnName="updater_id" />
+		<addColumn tableName="CUST_CET">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update CUST_CET set creator = (select username from adm_user where CUST_CET.creator_id = adm_user.id and CUST_CET.creator_id is not null)</sql>
+		<sql>update CUST_CET set updater = (select username from adm_user where CUST_CET.updater_id = adm_user.id and CUST_CET.updater_id is not null)</sql>
+		<dropColumn tableName="CUST_CET" columnName="creator_id" />
+		<dropColumn tableName="CUST_CET" columnName="updater_id" />
+		<addColumn tableName="COM_SENDER_CONFIG">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update COM_SENDER_CONFIG set creator = (select username from adm_user where COM_SENDER_CONFIG.creator_id = adm_user.id and COM_SENDER_CONFIG.creator_id is not null)</sql>
+		<sql>update COM_SENDER_CONFIG set updater = (select username from adm_user where COM_SENDER_CONFIG.updater_id = adm_user.id and COM_SENDER_CONFIG.updater_id is not null)</sql>
+		<dropColumn tableName="COM_SENDER_CONFIG" columnName="creator_id" />
+		<dropColumn tableName="COM_SENDER_CONFIG" columnName="updater_id" />
+		<addColumn tableName="CAT_SERVICE_TEMPLATE">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update CAT_SERVICE_TEMPLATE set creator = (select username from adm_user where CAT_SERVICE_TEMPLATE.creator_id = adm_user.id and CAT_SERVICE_TEMPLATE.creator_id is not null)</sql>
+		<sql>update CAT_SERVICE_TEMPLATE set updater = (select username from adm_user where CAT_SERVICE_TEMPLATE.updater_id = adm_user.id and CAT_SERVICE_TEMPLATE.updater_id is not null)</sql>
+		<dropColumn tableName="CAT_SERVICE_TEMPLATE" columnName="creator_id" />
+		<dropColumn tableName="CAT_SERVICE_TEMPLATE" columnName="updater_id" />
+		<addColumn tableName="BILLING_INVOICE_SUB_CAT">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update BILLING_INVOICE_SUB_CAT set creator = (select username from adm_user where BILLING_INVOICE_SUB_CAT.creator_id = adm_user.id and BILLING_INVOICE_SUB_CAT.creator_id is not null)</sql>
+		<sql>update BILLING_INVOICE_SUB_CAT set updater = (select username from adm_user where BILLING_INVOICE_SUB_CAT.updater_id = adm_user.id and BILLING_INVOICE_SUB_CAT.updater_id is not null)</sql>
+		<dropColumn tableName="BILLING_INVOICE_SUB_CAT" columnName="creator_id" />
+		<dropColumn tableName="BILLING_INVOICE_SUB_CAT" columnName="updater_id" />
+		<addColumn tableName="BILLING_SUBSCRIPTION">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update BILLING_SUBSCRIPTION set creator = (select username from adm_user where BILLING_SUBSCRIPTION.creator_id = adm_user.id and BILLING_SUBSCRIPTION.creator_id is not null)</sql>
+		<sql>update BILLING_SUBSCRIPTION set updater = (select username from adm_user where BILLING_SUBSCRIPTION.updater_id = adm_user.id and BILLING_SUBSCRIPTION.updater_id is not null)</sql>
+		<dropColumn tableName="BILLING_SUBSCRIPTION" columnName="creator_id" />
+		<dropColumn tableName="BILLING_SUBSCRIPTION" columnName="updater_id" />
+		<addColumn tableName="BILLING_TRADING_LANGUAGE">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update BILLING_TRADING_LANGUAGE set creator = (select username from adm_user where BILLING_TRADING_LANGUAGE.creator_id = adm_user.id and BILLING_TRADING_LANGUAGE.creator_id is not null)</sql>
+		<sql>update BILLING_TRADING_LANGUAGE set updater = (select username from adm_user where BILLING_TRADING_LANGUAGE.updater_id = adm_user.id and BILLING_TRADING_LANGUAGE.updater_id is not null)</sql>
+		<dropColumn tableName="BILLING_TRADING_LANGUAGE" columnName="creator_id" />
+		<dropColumn tableName="BILLING_TRADING_LANGUAGE" columnName="updater_id" />
+		<addColumn tableName="BILLING_INVOICE_TYPE">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update BILLING_INVOICE_TYPE set creator = (select username from adm_user where BILLING_INVOICE_TYPE.creator_id = adm_user.id and BILLING_INVOICE_TYPE.creator_id is not null)</sql>
+		<sql>update BILLING_INVOICE_TYPE set updater = (select username from adm_user where BILLING_INVOICE_TYPE.updater_id = adm_user.id and BILLING_INVOICE_TYPE.updater_id is not null)</sql>
+		<dropColumn tableName="BILLING_INVOICE_TYPE" columnName="creator_id" />
+		<dropColumn tableName="BILLING_INVOICE_TYPE" columnName="updater_id" />
+		<addColumn tableName="ADM_TITLE">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update ADM_TITLE set creator = (select username from adm_user where ADM_TITLE.creator_id = adm_user.id and ADM_TITLE.creator_id is not null)</sql>
+		<sql>update ADM_TITLE set updater = (select username from adm_user where ADM_TITLE.updater_id = adm_user.id and ADM_TITLE.updater_id is not null)</sql>
+		<dropColumn tableName="ADM_TITLE" columnName="creator_id" />
+		<dropColumn tableName="ADM_TITLE" columnName="updater_id" />
+		<addColumn tableName="AR_ACCOUNT_OPERATION">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update AR_ACCOUNT_OPERATION set creator = (select username from adm_user where AR_ACCOUNT_OPERATION.creator_id = adm_user.id and AR_ACCOUNT_OPERATION.creator_id is not null)</sql>
+		<sql>update AR_ACCOUNT_OPERATION set updater = (select username from adm_user where AR_ACCOUNT_OPERATION.updater_id = adm_user.id and AR_ACCOUNT_OPERATION.updater_id is not null)</sql>
+		<dropColumn tableName="AR_ACCOUNT_OPERATION" columnName="creator_id" />
+		<dropColumn tableName="AR_ACCOUNT_OPERATION" columnName="updater_id" />
+		<addColumn tableName="COM_CONTACT_COORDS">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update COM_CONTACT_COORDS set creator = (select username from adm_user where COM_CONTACT_COORDS.creator_id = adm_user.id and COM_CONTACT_COORDS.creator_id is not null)</sql>
+		<sql>update COM_CONTACT_COORDS set updater = (select username from adm_user where COM_CONTACT_COORDS.updater_id = adm_user.id and COM_CONTACT_COORDS.updater_id is not null)</sql>
+		<dropColumn tableName="COM_CONTACT_COORDS" columnName="creator_id" />
+		<dropColumn tableName="COM_CONTACT_COORDS" columnName="updater_id" />
+		<addColumn tableName="DWH_MEASURABLE_QUANT">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update DWH_MEASURABLE_QUANT set creator = (select username from adm_user where DWH_MEASURABLE_QUANT.creator_id = adm_user.id and DWH_MEASURABLE_QUANT.creator_id is not null)</sql>
+		<sql>update DWH_MEASURABLE_QUANT set updater = (select username from adm_user where DWH_MEASURABLE_QUANT.updater_id = adm_user.id and DWH_MEASURABLE_QUANT.updater_id is not null)</sql>
+		<dropColumn tableName="DWH_MEASURABLE_QUANT" columnName="creator_id" />
+		<dropColumn tableName="DWH_MEASURABLE_QUANT" columnName="updater_id" />
+		<addColumn tableName="MEVEO_JOB_INSTANCE">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update MEVEO_JOB_INSTANCE set creator = (select username from adm_user where MEVEO_JOB_INSTANCE.creator_id = adm_user.id and MEVEO_JOB_INSTANCE.creator_id is not null)</sql>
+		<sql>update MEVEO_JOB_INSTANCE set updater = (select username from adm_user where MEVEO_JOB_INSTANCE.updater_id = adm_user.id and MEVEO_JOB_INSTANCE.updater_id is not null)</sql>
+		<dropColumn tableName="MEVEO_JOB_INSTANCE" columnName="creator_id" />
+		<dropColumn tableName="MEVEO_JOB_INSTANCE" columnName="updater_id" />
+		<addColumn tableName="ORD_QUOTE">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update ORD_QUOTE set creator = (select username from adm_user where ORD_QUOTE.creator_id = adm_user.id and ORD_QUOTE.creator_id is not null)</sql>
+		<sql>update ORD_QUOTE set updater = (select username from adm_user where ORD_QUOTE.updater_id = adm_user.id and ORD_QUOTE.updater_id is not null)</sql>
+		<dropColumn tableName="ORD_QUOTE" columnName="creator_id" />
+		<dropColumn tableName="ORD_QUOTE" columnName="updater_id" />
+		<addColumn tableName="ADM_USER">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update ADM_USER set creator = (select username from adm_user where ADM_USER.creator_id = adm_user.id and ADM_USER.creator_id is not null)</sql>
+		<sql>update ADM_USER set updater = (select username from adm_user where ADM_USER.updater_id = adm_user.id and ADM_USER.updater_id is not null)</sql>
+		<dropColumn tableName="ADM_USER" columnName="creator_id" />
+		<dropColumn tableName="ADM_USER" columnName="updater_id" />
+		<addColumn tableName="BILLING_DISCOUNT">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update BILLING_DISCOUNT set creator = (select username from adm_user where BILLING_DISCOUNT.creator_id = adm_user.id and BILLING_DISCOUNT.creator_id is not null)</sql>
+		<sql>update BILLING_DISCOUNT set updater = (select username from adm_user where BILLING_DISCOUNT.updater_id = adm_user.id and BILLING_DISCOUNT.updater_id is not null)</sql>
+		<dropColumn tableName="BILLING_DISCOUNT" columnName="creator_id" />
+		<dropColumn tableName="BILLING_DISCOUNT" columnName="updater_id" />
+		<addColumn tableName="COM_MEVEO_INSTANCE">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update COM_MEVEO_INSTANCE set creator = (select username from adm_user where COM_MEVEO_INSTANCE.creator_id = adm_user.id and COM_MEVEO_INSTANCE.creator_id is not null)</sql>
+		<sql>update COM_MEVEO_INSTANCE set updater = (select username from adm_user where COM_MEVEO_INSTANCE.updater_id = adm_user.id and COM_MEVEO_INSTANCE.updater_id is not null)</sql>
+		<dropColumn tableName="COM_MEVEO_INSTANCE" columnName="creator_id" />
+		<dropColumn tableName="COM_MEVEO_INSTANCE" columnName="updater_id" />
+		<addColumn tableName="RM_SERVICE_PARAM_TEMPLATE">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update RM_SERVICE_PARAM_TEMPLATE set creator = (select username from adm_user where RM_SERVICE_PARAM_TEMPLATE.creator_id = adm_user.id and RM_SERVICE_PARAM_TEMPLATE.creator_id is not null)</sql>
+		<sql>update RM_SERVICE_PARAM_TEMPLATE set updater = (select username from adm_user where RM_SERVICE_PARAM_TEMPLATE.updater_id = adm_user.id and RM_SERVICE_PARAM_TEMPLATE.updater_id is not null)</sql>
+		<dropColumn tableName="RM_SERVICE_PARAM_TEMPLATE" columnName="creator_id" />
+		<dropColumn tableName="RM_SERVICE_PARAM_TEMPLATE" columnName="updater_id" />
+		<addColumn tableName="BILLING_PRODUCT_INSTANCE">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update BILLING_PRODUCT_INSTANCE set creator = (select username from adm_user where BILLING_PRODUCT_INSTANCE.creator_id = adm_user.id and BILLING_PRODUCT_INSTANCE.creator_id is not null)</sql>
+		<sql>update BILLING_PRODUCT_INSTANCE set updater = (select username from adm_user where BILLING_PRODUCT_INSTANCE.updater_id = adm_user.id and BILLING_PRODUCT_INSTANCE.updater_id is not null)</sql>
+		<dropColumn tableName="BILLING_PRODUCT_INSTANCE" columnName="creator_id" />
+		<dropColumn tableName="BILLING_PRODUCT_INSTANCE" columnName="updater_id" />
+		<addColumn tableName="CAT_OFFER_TEMPLATE">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update CAT_OFFER_TEMPLATE set creator = (select username from adm_user where CAT_OFFER_TEMPLATE.creator_id = adm_user.id and CAT_OFFER_TEMPLATE.creator_id is not null)</sql>
+		<sql>update CAT_OFFER_TEMPLATE set updater = (select username from adm_user where CAT_OFFER_TEMPLATE.updater_id = adm_user.id and CAT_OFFER_TEMPLATE.updater_id is not null)</sql>
+		<dropColumn tableName="CAT_OFFER_TEMPLATE" columnName="creator_id" />
+		<dropColumn tableName="CAT_OFFER_TEMPLATE" columnName="updater_id" />
+		<addColumn tableName="CRM_SELLER">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update CRM_SELLER set creator = (select username from adm_user where CRM_SELLER.creator_id = adm_user.id and CRM_SELLER.creator_id is not null)</sql>
+		<sql>update CRM_SELLER set updater = (select username from adm_user where CRM_SELLER.updater_id = adm_user.id and CRM_SELLER.updater_id is not null)</sql>
+		<dropColumn tableName="CRM_SELLER" columnName="creator_id" />
+		<dropColumn tableName="CRM_SELLER" columnName="updater_id" />
+		<addColumn tableName="BILLING_BILLING_RUN">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update BILLING_BILLING_RUN set creator = (select username from adm_user where BILLING_BILLING_RUN.creator_id = adm_user.id and BILLING_BILLING_RUN.creator_id is not null)</sql>
+		<sql>update BILLING_BILLING_RUN set updater = (select username from adm_user where BILLING_BILLING_RUN.updater_id = adm_user.id and BILLING_BILLING_RUN.updater_id is not null)</sql>
+		<dropColumn tableName="BILLING_BILLING_RUN" columnName="creator_id" />
+		<dropColumn tableName="BILLING_BILLING_RUN" columnName="updater_id" />
+		<addColumn tableName="AR_DUE_DATE">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update AR_DUE_DATE set creator = (select username from adm_user where AR_DUE_DATE.creator_id = adm_user.id and AR_DUE_DATE.creator_id is not null)</sql>
+		<sql>update AR_DUE_DATE set updater = (select username from adm_user where AR_DUE_DATE.updater_id = adm_user.id and AR_DUE_DATE.updater_id is not null)</sql>
+		<dropColumn tableName="AR_DUE_DATE" columnName="creator_id" />
+		<dropColumn tableName="AR_DUE_DATE" columnName="updater_id" />
+		<addColumn tableName="AR_BANK_OPERATION">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+		</addColumn>
+		<sql>update AR_BANK_OPERATION set creator = (select username from adm_user where AR_BANK_OPERATION.creator_id = adm_user.id and AR_BANK_OPERATION.creator_id is not null)</sql>
+		<sql>update AR_BANK_OPERATION set updater = (select username from adm_user where AR_BANK_OPERATION.updater_id = adm_user.id and AR_BANK_OPERATION.updater_id is not null)</sql>
+		<dropColumn tableName="AR_BANK_OPERATION" columnName="creator_id" />
+		<dropColumn tableName="AR_BANK_OPERATION" columnName="updater_id" />
+
+
+
+		<dropColumn tableName="BI_JOB_HISTORY" columnName="provider_id" />
+		<dropColumn tableName="BILLING_SERVICE_INSTANCE" columnName="provider_id" />
+		<dropColumn tableName="MEVEO_OR_COMPOSITE_FILTER_CONDITION" columnName="provider_id" />
+		<dropColumn tableName="ORD_ORDER" columnName="provider_id" />
+		<dropColumn tableName="ORD_ORDER_ITEM" columnName="provider_id" />
+		<dropColumn tableName="BILLING_DISCPLAN_INST" columnName="provider_id" />
+		<dropColumn tableName="AR_REVENUE_RECOG_RULE" columnName="provider_id" />
+		<dropColumn tableName="BILLING_TRADING_CURRENCY" columnName="provider_id" />
+		<dropColumn tableName="CAT_TRIGGERED_EDR" columnName="provider_id" />
+		<dropColumn tableName="BILLING_INVOICE_CAT_LANG" columnName="provider_id" />
+		<dropColumn tableName="MEVEO_TIMER" columnName="provider_id" />
+		<dropColumn tableName="BILLING_TRADING_COUNTRY" columnName="provider_id" />
+		<dropColumn tableName="AR_DDREQUEST_LOT_OP" columnName="provider_id" />
+		<dropColumn tableName="HIERARCHY_ENTITY" columnName="provider_id" />
+		<dropColumn tableName="ADM_INBOUND_REQUEST" columnName="provider_id" />
+		<dropColumn tableName="BILLING_INVOICE_CAT" columnName="provider_id" />
+		<dropColumn tableName="CRM_CUSTOM_ACTION" columnName="provider_id" />
+		<dropColumn tableName="BI_REPORT" columnName="provider_id" />
+		<dropColumn tableName="BILLING_TAX" columnName="provider_id" />
+		<dropColumn tableName="BILLING_INVOICE" columnName="provider_id" />
+		<dropColumn tableName="BILLING_COUNTER" columnName="provider_id" />
+		<dropColumn tableName="CRM_PROVIDER_CONTACT" columnName="provider_id" />
+		<dropColumn tableName="CAT_CHARGE_TEMPLATE" columnName="provider_id" />
+		<dropColumn tableName="FTP_IMPORTED_FILE" columnName="provider_id" />
+		<dropColumn tableName="BILLING_RATED_TRANSACTION" columnName="provider_id" />
+		<dropColumn tableName="CAT_COUNTER_TEMPLATE" columnName="provider_id" />
+		<dropColumn tableName="CAT_OFFER_TEMPLATE_CATEGORY" columnName="provider_id" />
+		<dropColumn tableName="CRM_CUSTOMER_BRAND" columnName="provider_id" />
+		<dropColumn tableName="AR_DDREQUEST_ITEM" columnName="provider_id" />
+		<dropColumn tableName="AR_MATCHING_CODE" columnName="provider_id" />
+		<dropColumn tableName="CAT_SERV_REC_CHARGE_TEMPLATE" columnName="provider_id" />
+		<dropColumn tableName="COM_MESSAGE_TEMPLATE" columnName="provider_id" />
+		<dropColumn tableName="BILLING_WALLET" columnName="provider_id" />
+		<dropColumn tableName="DWH_MEASURED_VALUE" columnName="provider_id" />
+		<dropColumn tableName="CRM_CUSTOMER_CATEGORY" columnName="provider_id" />
+		<dropColumn tableName="RATING_EDR" columnName="provider_id" />
+		<dropColumn tableName="MEVEO_SCRIPT_INSTANCE" columnName="provider_id" />
+		<dropColumn tableName="BILLING_COUNTER_PERIOD" columnName="provider_id" />
+		<dropColumn tableName="BILLING_INVOICE_AGREGATE" columnName="provider_id" />
+		<dropColumn tableName="CAT_CALENDAR" columnName="provider_id" />
+		<dropColumn tableName="CRM_EMAIL" columnName="provider_id" />
+		<dropColumn tableName="BILLING_INV_SUB_CAT_COUNTRY" columnName="provider_id" />
+		<dropColumn tableName="CRM_CUSTOM_FIELD_INST" columnName="provider_id" />
+		<dropColumn tableName="DWH_CHART" columnName="provider_id" />
+		<dropColumn tableName="ADM_INPUT_HISTORY" columnName="provider_id" />
+		<dropColumn tableName="AR_ACTION_DUNNING" columnName="provider_id" />
+		<dropColumn tableName="BILLING_SUBSCRIP_TERMIN_REASON" columnName="provider_id" />
+		<dropColumn tableName="CAT_PRICE_PLAN_MATRIX" columnName="provider_id" />
+		<dropColumn tableName="BILLING_RESERVATION" columnName="provider_id" />
+		<dropColumn tableName="COM_MSG_TMPL_VARIABLE" columnName="provider_id" />
+		<dropColumn tableName="AR_OCC_TEMPLATE" columnName="provider_id" />
+		<dropColumn tableName="COM_MSG_VAR_VALUE" columnName="provider_id" />
+		<dropColumn tableName="CRM_CUSTOM_FIELD_TMPL" columnName="provider_id" />
+		<dropColumn tableName="COM_SENDER_CONFIG" columnName="provider_id" />
+		<dropColumn tableName="BILLING_SUBSCRIPTION" columnName="provider_id" />
+		<dropColumn tableName="DWH_MEASURABLE_QUANT" columnName="provider_id" />
+		<dropColumn tableName="MEVEO_JOB_INSTANCE" columnName="provider_id" />
+		<dropColumn tableName="ORD_QUOTE" columnName="provider_id" />
+		<dropColumn tableName="CAT_SERV_USAGE_CHARGE_TEMPLATE" columnName="provider_id" />
+		<dropColumn tableName="BILLING_DISCOUNT" columnName="provider_id" />
+		<dropColumn tableName="ORD_QUOTE_ITEM" columnName="provider_id" />
+		<dropColumn tableName="MEVEO_AND_COMPOSITE_FILTER_CONDITION" columnName="provider_id" />
+		<dropColumn tableName="BILLING_PRODUCT_INSTANCE" columnName="provider_id" />
+		<dropColumn tableName="MEDINA_ACCESS" columnName="provider_id" />
+		<dropColumn tableName="BILLING_BILLING_RUN" columnName="provider_id" />
+		<dropColumn tableName="WF_HISTORY_ACTION" columnName="provider_id" />
+		<dropColumn tableName="MEVEO_FILTER" columnName="provider_id" />
+		<dropColumn tableName="AR_CREDIT_CATEGORY" columnName="provider_id" />
+		<dropColumn tableName="CAT_CHANNEL" columnName="provider_id" />
+		<dropColumn tableName="MEVEO_PRIMITIVE_FILTER_CONDITION" columnName="provider_id" />
+		<dropColumn tableName="COM_CONTACT" columnName="provider_id" />
+		<dropColumn tableName="BILLING_CYCLE" columnName="provider_id" />
+		<dropColumn tableName="CAT_SERV_SUB_CHARGE_TEMPLATE" columnName="provider_id" />
+		<dropColumn tableName="CAT_DISCOUNT_PLAN_ITEM" columnName="provider_id" />
+		<dropColumn tableName="BILLING_DISCOUNT_LANGUAGE" columnName="provider_id" />
+		<dropColumn tableName="COM_MESSAGE" columnName="provider_id" />
+		<dropColumn tableName="COM_CAMPAIGN" columnName="provider_id" />
+		<dropColumn tableName="CAT_WALLET_TEMPLATE" columnName="provider_id" />
+		<dropColumn tableName="MEVEO_NATIVE_FILTER_CONDITION" columnName="provider_id" />
+		<dropColumn tableName="CAT_DISCOUNT_PLAN" columnName="provider_id" />
+		<dropColumn tableName="BILLING_INVOICE_TEMPLATE" columnName="provider_id" />
+		<dropColumn tableName="MEVEO_MODULE" columnName="provider_id" />
+		<dropColumn tableName="WF_DECISION_RULE" columnName="provider_id" />
+		<dropColumn tableName="AR_REVENUE_SCHEDULE" columnName="provider_id" />
+		<dropColumn tableName="CUST_CEI" columnName="provider_id" />
+		<dropColumn tableName="AR_DDREQUEST_LOT" columnName="provider_id" />
+		<dropColumn tableName="BILLING_REJECTED_BILLING_ACCOUNTS" columnName="provider_id" />
+		<dropColumn tableName="AR_DUNNING_LOT" columnName="provider_id" />
+		<dropColumn tableName="MEVEO_FILTER_ORDER_CONDITION" columnName="provider_id" />
+		<dropColumn tableName="ACCOUNT_ENTITY" columnName="provider_id" />
+		<dropColumn tableName="MEVEO_FILTER_CONDITION" columnName="provider_id" />
+		<dropColumn tableName="ADM_NOTIFICATION" columnName="provider_id" />
+		<dropColumn tableName="WF_TRANSITION" columnName="provider_id" />
+		<dropColumn tableName="WF_HISTORY" columnName="provider_id" />
+		<dropColumn tableName="CAT_DIGITAL_RESOURCE" columnName="provider_id" />
+		<dropColumn tableName="BILLING_BILLING_RUN_LIST" columnName="provider_id" />
+		<dropColumn tableName="BILLING_WALLET_OPERATION" columnName="provider_id" />
+		<dropColumn tableName="WF_WORKFLOW" columnName="provider_id" />
+		<dropColumn tableName="BILLING_TAX_LANGUAGE" columnName="provider_id" />
+		<dropColumn tableName="AR_MATCHING_AMOUNT" columnName="provider_id" />
+		<dropColumn tableName="BILLING_CHARGE_INSTANCE" columnName="provider_id" />
+		<dropColumn tableName="WF_ACTION" columnName="provider_id" />
+		<dropColumn tableName="CUST_CET" columnName="provider_id" />
+		<dropColumn tableName="CAT_SERVICE_TEMPLATE" columnName="provider_id" />
+		<dropColumn tableName="BILLING_INVOICE_SUB_CAT" columnName="provider_id" />
+		<dropColumn tableName="COM_PROVIDER_POLICY" columnName="provider_id" />
+		<dropColumn tableName="BILLING_TRADING_LANGUAGE" columnName="provider_id" />
+		<dropColumn tableName="BILLING_INVOICE_TYPE" columnName="provider_id" />
+		<dropColumn tableName="ADM_TITLE" columnName="provider_id" />
+		<dropColumn tableName="AR_ACCOUNT_OPERATION" columnName="provider_id" />
+		<dropColumn tableName="CAT_SERV_TRM_CHARGE_TEMPLATE" columnName="provider_id" />
+		<dropColumn tableName="COM_CONTACT_COORDS" columnName="provider_id" />
+		<dropColumn tableName="MEVEO_FILTER_SELECTOR" columnName="provider_id" />
+		<dropColumn tableName="JOB_EXECUTION" columnName="provider_id" />
+		<dropColumn tableName="ADM_USER" columnName="provider_id" />
+		<dropColumn tableName="COM_MEVEO_INSTANCE" columnName="provider_id" />
+		<dropColumn tableName="RM_SERVICE_PARAM_TEMPLATE" columnName="provider_id" />
+		<dropColumn tableName="ADM_MESSAGES" columnName="provider_id" />
+		<dropColumn tableName="ADM_ROLE" columnName="provider_id" />
+		<dropColumn tableName="CAT_OFFER_TEMPLATE" columnName="provider_id" />
+		<dropColumn tableName="CRM_SELLER" columnName="provider_id" />
+		<dropColumn tableName="AR_DUE_DATE" columnName="provider_id" />
+		<dropColumn tableName="AR_BANK_OPERATION" columnName="provider_id" />
+
+		<addColumn tableName="MEDINA_ACCESS">
+			<column name="creator" type="VARCHAR(100)" />
+			<column name="updater" type="VARCHAR(100)" />
+			<column name="created" type="DATETIME">
+				<!-- <constraints nullable="false" /> -->
+			</column>
+			<column name="updated" type="DATETIME" />
+		</addColumn>
+
+		<sql>update MEDINA_ACCESS set created=now()</sql>
+		<addNotNullConstraint tableName="MEDINA_ACCESS" columnName="created" columnDataType="DATETIME" />
+	</changeSet>
+	
+	<changeSet id="#2334_20170310" author="AndriusKarpavicius">
+		<sql>update ADM_PERMISSION set PERMISSION = RESSOURCE ||'-' || PERMISSION where RESSOURCE like 'CE_%'</sql>
+		<dropColumn tableName="ADM_PERMISSION" columnName="RESSOURCE"/>
+		<sql>update adm_role set role_name='marketingManager' where role_name='MARKETING_MANAGER'</sql>
+	</changeSet>
+	
+</databaseChangeLog>

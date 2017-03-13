@@ -1,0 +1,48 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:hftl="http://hftl.org" template="/layout/template.xhtml" xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{webHookListBean.preRenderView}" />
+        </f:metadata>
+    </ui:define>
+    <ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+				<p:menuitem outcome="webHooks" value="#{messages['menu.webHooks']}" />
+			</p:breadCrumb>
+		</h:form>  
+        <!-- ===================================== SEARCH CRITERIA ZONE ================================= -->
+
+        <hftl:searchPanel label="#{messages['menu.webHooks']}" columns="3" backingBean="#{webHookListBean}">
+            <hftl:searchField label="#{messages['entity.code']}" field="code" />
+            <hftl:searchField label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" size="50" autocompleteBean="#{webHookBean}"
+                autocompleteMethod="autocompleteClassNames" isAutocomplete="true" />
+            <hftl:searchField label="#{messages['entity.notification.eventTypeFilter']}" field="eventTypeFilter" />
+            <hftl:searchField label="#{messages['entity.webHook.host']}" field="host" componentWidth="30" size="50"/>
+        </hftl:searchPanel>
+
+        <!-- ===================================== SEARCH USERS RESULTS ================================= -->
+
+        <hftl:dataList backingBean="#{webHookListBean}" exportButton="false" exportToCsv="true" importCsv="true" fileName="WebHooks" importStrategy="true" sortBy="code">
+            <hftl:actionsColumn editView="/pages/notification/webHookDetail.xhtml" permission="#{persistentPermissionResolver.hasPermission('reporting','reportingManagement')}" renderEnableLink="true" />
+            <hftl:column label="#{messages['entity.code']}" field="code" />
+            <hftl:column label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" />
+            <hftl:column label="#{messages['entity.notification.eventTypeFilter']}" field="eventTypeFilter" />
+            <!--             <hftl:column style="display:none" label="#{messages['entity.notification.elFilter']}" field="elFilter" /> -->
+            <!--             <hftl:column style="display:none" label="#{messages['entity.notification.scriptInstance']}" field="scriptInstance" /> -->
+            <hftl:column label="#{messages['entity.webHook.host']}" field="host" />
+            <!--             <hftl:column style="display:none" label="#{messages['entity.webHook.port']}" field="port" /> -->
+            <hftl:column label="#{messages['entity.webHook.page']}" field="page" />
+            <hftl:column label="#{messages['entity.webHook.httpMethod']}" field="httpMethod" />
+            <!--             <hftl:column style="display:none" label="#{messages['entity.webHook.username']}" field="username" /> -->
+            <!--             <hftl:column style="display:none" label="#{messages['entity.webHook.password']}" field="password" /> -->
+            <!--             <hftl:column style="display:none" exportable="true" label="#{messages['entity.webHook.headers']}" field="encodedHeaders" /> -->
+            <!--             <hftl:column style="display:none" exportable="true" label="#{messages['entity.webHook.params']}" field="encodedParams" /> -->
+            <!--             <hftl:column style="display:none" label="#{messages['counterTemplate.title']}" field="counterTemplate.code" /> -->
+
+            <hftl:column label="#{messages['enableEntity.active']}" field="active" isMessage="true" />
+        </hftl:dataList>
+    </ui:define>
+</ui:composition>

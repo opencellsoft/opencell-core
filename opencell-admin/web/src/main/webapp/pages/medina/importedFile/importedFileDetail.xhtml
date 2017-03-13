@@ -1,0 +1,42 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+	template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{ftpImportedFileBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+
+	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.mediation']}" disabled="true" />
+				<p:menuitem outcome="importedFiles" value="#{messages['menu.importedFiles']}" />
+				<p:menuitem
+					value="#{messages['menu.importedFiles']} - #{ftpImportedFileBean.entity.code}"
+					disabled="true"  />
+			</p:breadCrumb>
+		</h:form>
+		<hftl:formPanel id="formPanel" formId="importedFilesFormId"
+			label="#{messages['menu.importedFiles']}" edit="false" showEditButton="false"
+			backingBean="#{ftpImportedFileBean}">
+			<hftl:formField label="#{messages['importedFile.dateImport']}"
+				field="importDate" isDate="true" edit="false"/>
+			<hftl:formField label="#{messages['importedFile.code']}" field="code" edit="false" />
+			<hftl:formField label="#{messages['importedFile.description']}" field="description" edit="false" />
+			<hftl:formField label="#{messages['importedFile.uri']}" field="uri"
+				required="true" textArea="true" maxlength="2000" cols="120" edit="false"/>
+			<hftl:formField label="#{messages['importedFile.size']}" field="size"
+				newLine="true" edit="false"/>
+			<hftl:formField label="#{messages['importedFile.lastModified']}"
+				field="lastModification" isDate="true" edit="false"/>
+		</hftl:formPanel>
+	</ui:define>
+
+</ui:composition>

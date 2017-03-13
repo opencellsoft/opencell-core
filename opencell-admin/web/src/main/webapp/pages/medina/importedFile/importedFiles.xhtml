@@ -1,0 +1,46 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:hftl="http://hftl.org"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{ftpImportedFileListBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.mediation']}" disabled="true" />
+				<p:menuitem outcome="importedFiles" value="#{messages['menu.importedFiles']}" />
+			</p:breadCrumb>
+		</h:form> 
+		<hftl:searchPanel columns="2"
+			label="#{messages['importedFile.search']}"
+			backingBean="#{ftpImportedFileListBean}" renderNewButton="false">
+			<hftl:searchField label="#{messages['importedFile.importDate']}" field="importDate" />
+			<hftl:searchField label="#{messages['importedFile.uri']}" field="uri" />
+			<hftl:searchField label="#{messages['importedFile.description']}" field="description" />
+			<hftl:searchField label="#{messages['importedFile.lastModified']}"
+				field="lastModification" />
+		</hftl:searchPanel>
+
+		<hftl:dataList label="#{messages['importedFile.title']}"
+			backingBean="#{ftpImportedFileListBean}" sortBy="importDate" sortOrder="DESCENDING">
+			<hftl:column label="#{messages['importedFile.importDate']}" field="importDate"/>
+			<hftl:column label="#{messages['importedFile.code']}" field="code"/>
+			<hftl:column label="#{messages['importedFile.description']}" field="description"/>
+			<hftl:column label="#{messages['importedFile.uri']}" field="uri"/>
+			<hftl:column label="#{messages['importedFile.size']}" field="size" />
+			<hftl:column label="#{messages['importedFile.lastModified']}"
+				field="lastModification" isDate="true" />
+			<hftl:actionsColumn
+				permission="#{currentUser.hasRole('billingManagement')}" />
+		</hftl:dataList>
+	</ui:define>
+</ui:composition>

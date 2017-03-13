@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+<ui:composition>
+	<!-- Default page Width -->
+	<c:if test="${empty rendered}">
+		<c:set var="rendered" value="true" />
+	</c:if>
+	<c:if test="${empty columns}">
+		<c:set var="columns" value="1" />
+	</c:if>
+	<c:if test="${columns==1}">
+		<c:set var="columnsStyle" value="oneColGrid" />
+	</c:if>
+	<c:if test="${columns==2}">
+		<c:set var="columnsStyle" value="twoColGrid" />
+	</c:if>
+	<c:if test="${columns==3}">
+		<c:set var="columnsStyle" value="threeColGrid" />
+	</c:if>
+	<c:if test="${columns==4}">
+		<c:set var="columnsStyle" value="fourColGrid" />
+	</c:if>
+	<p:panelGrid styleClass="form-panel-group" columns="#{columns}"
+		width="100%" columnClasses="#{columnsStyle}" rendered="#{rendered}">
+		<ui:insert />
+	</p:panelGrid>
+</ui:composition>
+
+</html>

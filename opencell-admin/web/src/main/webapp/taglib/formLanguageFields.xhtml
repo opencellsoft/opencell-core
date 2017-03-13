@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:hftl="http://hftl.org" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" >
+
+<ui:composition>
+
+    <c:if test="${empty(displayOneLine)}">
+        <c:set var="displayOneLine" value="false" />
+    </c:if>
+    <c:if test="${empty(multiLang)}">
+        <c:set var="multiLang" value="false" />
+    </c:if>
+    <c:if test="${empty(newLine)}">
+        <c:set var="newLine" value="true" />
+    </c:if>
+    <c:if test="${empty(formLevelEdit)}">
+        <c:set var="formLevelEdit" value="${backingBean.edit}" />
+    </c:if>
+    <c:if test="${empty(edit)}">
+        <c:set var="edit" value="#{formLevelEdit}" />
+    </c:if>
+
+<!--     <hftl:formField field="description" label="#{messages['businessEntity.description']}" componentWidth="50" newLine="#{newLine}" displayOneLine="#{displayOneLine}"/> -->
+
+    <hftl:decorateFormField fieldId="descriptionI" label="#{messages['businessEntity.languageDescriptions']}" componentWidth="50" 
+        displayOneLine="#{displayOneLine}" rendered="#{multiLang}">
+
+        <p:inputText id="description" value="#{entity.description}" size="80" maxlength="100" style="margin-left:36px;"
+                    rendered="#{edit}" />
+        <h:outputText value="#{entity.description}" style="margin-left:36px;" rendered="#{! edit}" />
+
+        <h:dataTable id="descriptionI" value="#{backingBean.getProviderLanguages()}" var="languageCom">
+            <h:column>
+                <h:graphicImage value="/img/img#{languageCom.language.languageCode}.png" style="height:17px; width:33px;" />
+            </h:column>
+            <h:column>
+                <p:inputText rendered="#{edit and !empty(languageCom.language)}"
+                    value="#{backingBean.languageMessagesMap[languageCom.language.languageCode]}" size="80" maxlength="100" />
+                <h:outputText rendered="#{!edit and !empty(languageCom.language)}"
+                    value="#{backingBean.languageMessagesMap[languageCom.language.languageCode]}" style="font-weight:bold;" />
+            </h:column>
+        </h:dataTable>
+    </hftl:decorateFormField>
+</ui:composition>
+</html>

@@ -1,0 +1,288 @@
+<meveoExport version="4.2.0-20151021">
+    <exportTemplate xsId="1" name="CustomFieldTemplate" entityToExport="org.meveo.model.crm.CustomFieldTemplate" canDeleteAfterExport="false">
+        <parameters xsId="2">
+            <entry>
+                <string>provider</string>
+                <string>provider</string>
+            </entry>
+        </parameters>
+        <classesToExportAsFull xsId="3" />
+        <classesToExportAsId xsId="4" />
+        <classesToIgnoreFKNotFound xsId="5" />
+        <groupedTemplates xsId="6" />
+    </exportTemplate>
+    <data>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="7">
+            <id>57</id>
+            <version>2</version>
+            <provider xsId="8" id="1" code="DEMO"/>
+            <disabled>false</disabled>
+            <auditable xsId="10">
+                <created class="sql-timestamp" xsId="11">2015-10-12 15:05:23.222</created>
+                <updated class="sql-timestamp" xsId="12">2015-10-15 14:25:42.42</updated>
+            </auditable>
+            
+            <description>sub mandatory cf</description>
+            <fieldType>LONG</fieldType>
+            
+            <valueRequired>false</valueRequired>
+            <listValues xsId="13"/>
+            <versionable>false</versionable>
+            <storageType>MAP</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+        <allowEdit>true</allowEdit>
+            <appliesTo>SUB</appliesTo>
+            <code>sub mandatory cf</code>
+            <mapKeyType>STRING</mapKeyType>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="7">
+            <id>24</id>
+            <version>1</version>
+            <provider xsId="8" id="1" code="DEMO"/>
+            <disabled>false</disabled>
+            <auditable xsId="10">
+                <created class="sql-timestamp" xsId="11">2015-09-23 12:40:37.305</created>
+                <updated class="sql-timestamp" xsId="12">2015-08-06 09:31:44.104</updated>
+            </auditable>
+            
+            <description>Number of parallel execution</description>
+            <fieldType>LONG</fieldType>
+            
+            <valueRequired>false</valueRequired>
+            <listValues xsId="13"/>
+            <versionable>false</versionable>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+        <allowEdit>true</allowEdit>
+            <appliesTo>JOB_XMLInvoiceGenerationJob</appliesTo>
+            <code>nbRuns</code>
+            <storageType>SINGLE</storageType>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="14">
+            <id>23</id>
+            <version>1</version>
+            <provider reference="8"/>
+            <disabled>false</disabled>
+            <auditable xsId="15">
+                <created class="sql-timestamp" xsId="16">2015-09-23 12:40:37.288</created>
+                <updated class="sql-timestamp" xsId="17">2015-08-06 09:31:44.105</updated>
+            </auditable>
+            
+            <description>Waiting before next launch (ms)</description>
+            <fieldType>LONG</fieldType>
+            
+            <valueRequired>false</valueRequired>
+            <listValues xsId="18"/>
+            <versionable>false</versionable>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+        <allowEdit>true</allowEdit>
+            <appliesTo>JOB_XMLInvoiceGenerationJob</appliesTo>
+            <code>waitingMillis</code>
+            <storageType>SINGLE</storageType>
+        </org.meveo.model.crm.CustomFieldTemplate>
+        <org.meveo.model.crm.CustomFieldTemplate xsId="218">
+            <id>86</id>
+            <version>0</version>
+            <provider reference="8"/>
+            <disabled>false</disabled>
+            <auditable xsId="219">
+                <created class="sql-timestamp" xsId="220">2015-10-22 03:41:28.572</created>
+            </auditable>
+            
+            <description>Purge counter periods: period end date older then (in days)</description>
+            <fieldType>LONG</fieldType>
+            
+            <valueRequired>false</valueRequired>
+            <listValues xsId="221"/>
+            <versionable>false</versionable>
+            <storageType>SINGLE</storageType>
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+        <allowEdit>true</allowEdit>
+            <appliesTo>JOB_PurgeJob</appliesTo>
+            <code>PurgeJob_counterPeriod_nbDays</code>
+        </org.meveo.model.crm.CustomFieldTemplate>
+    </data>
+    <exportTemplate xsId="1" name="OfferTemplate" entityToExport="org.meveo.model.catalog.OfferTemplate" canDeleteAfterExport="false">
+        <parameters xsId="2">
+            <entry>
+                <string>provider</string>
+                <string>provider</string>
+            </entry>
+        </parameters>
+        <classesToExportAsFull xsId="3">
+            <java-class>org.meveo.model.crm.CustomFieldInstance</java-class>
+            
+        </classesToExportAsFull>
+        <classesToExportAsId xsId="4" />
+        <classesToIgnoreFKNotFound xsId="5" />
+        <groupedTemplates xsId="6" />
+    </exportTemplate>
+    <data>
+        <org.meveo.model.catalog.OfferTemplate xsId="7">
+            <id>10</id>
+            <version>0</version>
+            <provider xsId="8" id="1" code="DEMO" />
+            <disabled>false</disabled>
+            <auditable xsId="10">
+                <created class="sql-timestamp" xsId="11">2015-10-21 22:09:16.007</created>
+            </auditable>
+            <code>0001</code>
+            <description>0001 Offer</description>
+            <serviceTemplates xsId="12" />
+            
+        <uuid>org.meveo.model.catalog.OfferTemplate_10</uuid>
+        </org.meveo.model.catalog.OfferTemplate>
+        <org.meveo.model.crm.CustomFieldInstance xsId="14">
+            <id>564</id>
+            <version>0</version>
+            <auditable xsId="15">
+                            <created class="sql-timestamp" xsId="16">2015-10-21 22:09:16.007</created>
+                        </auditable>
+            <code>CF2</code>
+            <cfValue xsId="17">
+                            <stringValue>two</stringValue>
+                            <mapValuesForGUI xsId="18"/>
+                        </cfValue>
+            <disabled>false</disabled>
+            <provider reference="8"/>
+            <appliesToEntity>org.meveo.model.catalog.OfferTemplate_10</appliesToEntity>
+        </org.meveo.model.crm.CustomFieldInstance>
+        <org.meveo.model.crm.CustomFieldInstance xsId="20">
+            <id>565</id>
+            <version>0</version>
+            <auditable xsId="21">
+                            <created class="sql-timestamp" xsId="22">2015-10-21 22:09:16.007</created>
+                        </auditable>
+            <code>CF1</code>
+            <cfValue xsId="23">
+                            <stringValue>one</stringValue>
+                            <mapValuesForGUI xsId="24"/>
+                        </cfValue>
+            <disabled>false</disabled>
+            <provider reference="8"/>
+            <appliesToEntity>org.meveo.model.catalog.OfferTemplate_10</appliesToEntity>
+        </org.meveo.model.crm.CustomFieldInstance>
+
+    </data>
+    <exportTemplate xsId="1" name="Customer" entityToExport="org.meveo.model.crm.Customer" canDeleteAfterExport="false">
+        <parameters xsId="2">
+            <entry>
+                <string>provider</string>
+                <string>provider</string>
+            </entry>
+        </parameters>
+        <classesToExportAsFull xsId="3">
+            <java-class>org.meveo.model.crm.CustomFieldInstance</java-class>
+            
+        </classesToExportAsFull>
+        <classesToExportAsId xsId="4" />
+        <classesToIgnoreFKNotFound xsId="5" />
+        <groupedTemplates xsId="6" />
+    </exportTemplate>
+    <data>
+        <org.meveo.model.crm.Customer xsId="7" class="org.meveo.model.crm.Customer">
+            <id>13</id>
+            <version>3</version>
+            <provider reference="8" />
+            <disabled>false</disabled>
+            <auditable xsId="10">
+                <created class="sql-timestamp" xsId="11">2015-12-03 19:12:53.717</created>
+                <updated class="sql-timestamp" xsId="12">2015-12-07 15:44:28.719</updated>
+            </auditable>
+            <code>AAF</code>
+            <description>Andy's Ant Farm</description>
+            <name xsId="13">
+                <firstName>Andy</firstName>
+                <lastName>Balholm</lastName>
+            </name>
+            <address xsId="14">
+                <address1>4489 Williams Valley Rd</address1>
+                <zipCode>99110</zipCode>
+                <city>Clayton</city>
+                <country>US</country>
+            </address>
+            <defaultLevel>true</defaultLevel>
+            
+            <accountType>ACCT_CUST</accountType>
+            <customerCategory xsId="47" id="2" code="CLIENT" provider="DEMO"/>
+            <customerBrand xsId="48" id="1" code="DEFAULT" provider="DEMO"/>
+            <contactInformation xsId="49">
+                <email>andy@balholm.com</email>
+            </contactInformation>
+            <seller xsId="50" id="2" code="SELLER_US" provider="DEMO"/>
+        <uuid>org.meveo.model.crm.Customer_13</uuid>
+        </org.meveo.model.crm.Customer>
+        <org.meveo.model.crm.CustomFieldInstance xsId="23">
+            <auditable xsId="17">
+                            <created class="sql-timestamp" xsId="18">2015-12-07 15:44:11.604</created>
+                            <updated class="sql-timestamp" xsId="19">2015-12-07 15:44:28.718</updated>
+                        </auditable>
+            <code>cf2</code>
+            <id>1</id>
+            <version>0</version>
+            <periodStartDate class="sql-timestamp" xsId="24">2015-11-30 23:00:00.0</periodStartDate>
+            <periodEndDate class="sql-timestamp" xsId="25">2015-12-31 23:00:00.0</periodEndDate>
+            <priority>0</priority>
+            <cfValue xsId="26">
+                                    <stringValue>two</stringValue>
+                                    <mapValuesForGUI xsId="27"/>
+                                </cfValue>
+            <disabled>false</disabled>
+            <provider reference="8"/>
+            <appliesToEntity>org.meveo.model.crm.Customer_13</appliesToEntity>
+        </org.meveo.model.crm.CustomFieldInstance>
+        <org.meveo.model.crm.CustomFieldInstance xsId="28">
+            <auditable xsId="17">
+                            <created class="sql-timestamp" xsId="18">2015-12-07 15:44:11.604</created>
+                            <updated class="sql-timestamp" xsId="19">2015-12-07 15:44:28.718</updated>
+                        </auditable>
+            <code>cf2</code>
+            <id>2</id>
+            <version>0</version>
+            <periodStartDate class="sql-timestamp" xsId="29">2015-12-31 23:00:00.0</periodStartDate>
+            <periodEndDate class="sql-timestamp" xsId="30">2016-01-31 23:00:00.0</periodEndDate>
+            <priority>0</priority>
+            <cfValue xsId="31">
+                                    <stringValue>three</stringValue>
+                                    <mapValuesForGUI xsId="32"/>
+                                </cfValue>
+            <disabled>false</disabled>
+            <provider reference="8"/>
+            <appliesToEntity>org.meveo.model.crm.Customer_13</appliesToEntity>
+        </org.meveo.model.crm.CustomFieldInstance>
+        <org.meveo.model.crm.CustomFieldInstance xsId="33">
+            <id>20</id>
+            <version>2</version>
+            <auditable xsId="34">
+                            <created class="sql-timestamp" xsId="35">2015-12-07 15:43:44.236</created>
+                            <updated class="sql-timestamp" xsId="36">2015-12-07 15:44:28.718</updated>
+                        </auditable>
+            <code>cf1</code>
+            <cfValue xsId="37">
+                            <stringValue>one</stringValue>
+                            <mapValuesForGUI xsId="38"/>
+                        </cfValue>
+            <disabled>false</disabled>
+            <provider reference="8"/>
+            <appliesToEntity>org.meveo.model.crm.Customer_13</appliesToEntity>
+        </org.meveo.model.crm.CustomFieldInstance>
+        <org.meveo.model.crm.CustomFieldInstance xsId="40">
+            <id>22</id>
+            <version>0</version>
+            <auditable xsId="41">
+                            <created class="sql-timestamp" xsId="42">2015-12-07 15:44:28.718</created>
+                        </auditable>
+            <code>cf3</code>
+            <cfValue xsId="43">
+                            <serializedValue>list_String|["four","five"]</serializedValue>
+                            <listValue xsId="44">
+                                <string>four</string>
+                                <string>five</string>
+                            </listValue>
+                            <mapValuesForGUI xsId="45"/>
+                        </cfValue>
+            <disabled>false</disabled>
+            <provider reference="8"/>
+            <appliesToEntity>org.meveo.model.crm.Customer_13</appliesToEntity>
+        </org.meveo.model.crm.CustomFieldInstance>
+    </data>
+</meveoExport>

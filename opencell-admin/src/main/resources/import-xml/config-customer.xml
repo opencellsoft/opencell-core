@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings>
+    <schemaSystemId>file:/Users/babyfooter/Documents/svn/Meveo/meveo-admin/config/src/main/resources/import-xml/CUSTOMERS.xsd</schemaSystemId>
+    <documentRoot>sellers</documentRoot>
+    <outputFolder>/Users/babyfooter/Documents/svn/Meveo/meveo-admin/config/src/main/resources/import-xml</outputFolder>
+    <filenamePrefix>customer</filenamePrefix>
+    <filenameExtension>xml</filenameExtension>
+    <noOfInstances>4</noOfInstances>
+    <openFirstInstance>false</openFirstInstance>
+    <defaultNamespace>&lt;NO_NAMESPACE></defaultNamespace>
+    <valuesMaxLength>30</valuesMaxLength>
+    <isUseIncrementalNamesForValues>true</isUseIncrementalNamesForValues>
+    <discardOptionalElementsAfterNestedLevel>6</discardOptionalElementsAfterNestedLevel>
+    <element namespace="&lt;ANY>" name="&lt;ANY>">
+        <generateOptionalElements>false</generateOptionalElements>
+        <generateOptionalAttributes>false</generateOptionalAttributes>
+        <valuesForContentType>RANDOM</valuesForContentType>
+        <preferredNumberOfRepetitions>2</preferredNumberOfRepetitions>
+        <maximumRecursivityLevel>1</maximumRecursivityLevel>
+        <alternativeStrategy>FIRST</alternativeStrategy>
+        <choicesAndSubstitutions strategy="RANDOM" generateOthersAsComments="false"/>
+        <attribute namespace="&lt;ANY>" name="&lt;ANY>">
+        </attribute>
+    </element>
+    <element namespace="&lt;ANY>" name="seller">
+        <generateOptionalElements>false</generateOptionalElements>
+        <generateOptionalAttributes>false</generateOptionalAttributes>
+        <valuesForContentType>DEFAULT</valuesForContentType>
+        <preferredNumberOfRepetitions>2</preferredNumberOfRepetitions>
+        <maximumRecursivityLevel>1</maximumRecursivityLevel>
+        <alternativeStrategy>FIRST</alternativeStrategy>
+        <choicesAndSubstitutions strategy="RANDOM" generateOthersAsComments="false"/>
+        <attribute namespace="&lt;ANY>" name="&lt;ANY>">
+        </attribute>
+        <attribute namespace="&lt;NO_NAMESPACE>" name="tradingCurrencyCode">
+            <attributeValue>EUR</attributeValue>
+        </attribute>
+        <attribute namespace="&lt;NO_NAMESPACE>" name="code">
+            <attributeValue>SELLER_FR</attributeValue>
+        </attribute>
+        <attribute namespace="&lt;NO_NAMESPACE>" name="description">
+            <attributeValue>french seller</attributeValue>
+        </attribute>
+        <attribute namespace="&lt;NO_NAMESPACE>" name="tradingCountryCode">
+            <attributeValue>FR</attributeValue>
+        </attribute>
+        <attribute namespace="&lt;NO_NAMESPACE>" name="tradingLanguageCode">
+            <attributeValue>FRA</attributeValue>
+        </attribute>
+    </element>
+    <element namespace="&lt;ANY>" name="customer">
+        <generateOptionalElements>false</generateOptionalElements>
+        <generateOptionalAttributes>false</generateOptionalAttributes>
+        <valuesForContentType>DEFAULT</valuesForContentType>
+        <preferredNumberOfRepetitions>2</preferredNumberOfRepetitions>
+        <maximumRecursivityLevel>1</maximumRecursivityLevel>
+        <alternativeStrategy>FIRST</alternativeStrategy>
+        <choicesAndSubstitutions strategy="RANDOM" generateOthersAsComments="false"/>
+        <attribute namespace="&lt;ANY>" name="&lt;ANY>">
+        </attribute>
+        <attribute namespace="&lt;NO_NAMESPACE>" name="code">
+            <attributeValue>CUST</attributeValue>
+        </attribute>
+        <attribute namespace="&lt;NO_NAMESPACE>" name="customerBrand">
+            <attributeValue>DEMO</attributeValue>
+        </attribute>
+        <attribute namespace="&lt;NO_NAMESPACE>" name="customerCategory">
+            <attributeValue>Business</attributeValue>
+        </attribute>
+    </element>
+    <element namespace="&lt;ANY>" name="customerAccount">
+        <generateOptionalElements>false</generateOptionalElements>
+        <generateOptionalAttributes>false</generateOptionalAttributes>
+        <valuesForContentType>DEFAULT</valuesForContentType>
+        <preferredNumberOfRepetitions>2</preferredNumberOfRepetitions>
+        <maximumRecursivityLevel>1</maximumRecursivityLevel>
+        <alternativeStrategy>FIRST</alternativeStrategy>
+        <choicesAndSubstitutions strategy="RANDOM" generateOthersAsComments="false"/>
+        <attribute namespace="&lt;ANY>" name="&lt;ANY>">
+        </attribute>
+        <attribute namespace="&lt;NO_NAMESPACE>" name="creditCategory">
+            <attributeValue>Pro</attributeValue>
+        </attribute>
+    </element>
+    <element namespace="&lt;ANY>" name="tradingCurrencyCode">
+        <generateOptionalElements>false</generateOptionalElements>
+        <generateOptionalAttributes>false</generateOptionalAttributes>
+        <valuesForContentType>DEFAULT</valuesForContentType>
+        <preferredNumberOfRepetitions>2</preferredNumberOfRepetitions>
+        <maximumRecursivityLevel>1</maximumRecursivityLevel>
+        <alternativeStrategy>FIRST</alternativeStrategy>
+        <choicesAndSubstitutions strategy="RANDOM" generateOthersAsComments="false"/>
+        <elementValue>EUR</elementValue>
+        <attribute namespace="&lt;ANY>" name="&lt;ANY>">
+        </attribute>
+    </element>
+    <element namespace="&lt;ANY>" name="paymentMethod">
+        <generateOptionalElements>false</generateOptionalElements>
+        <generateOptionalAttributes>false</generateOptionalAttributes>
+        <valuesForContentType>DEFAULT</valuesForContentType>
+        <preferredNumberOfRepetitions>2</preferredNumberOfRepetitions>
+        <maximumRecursivityLevel>1</maximumRecursivityLevel>
+        <alternativeStrategy>FIRST</alternativeStrategy>
+        <choicesAndSubstitutions strategy="RANDOM" generateOthersAsComments="false"/>
+        <elementValue>CHECK</elementValue>
+        <attribute namespace="&lt;ANY>" name="&lt;ANY>">
+        </attribute>
+    </element>
+    <element namespace="&lt;ANY>" name="providerCode">
+        <generateOptionalElements>false</generateOptionalElements>
+        <generateOptionalAttributes>false</generateOptionalAttributes>
+        <valuesForContentType>DEFAULT</valuesForContentType>
+        <preferredNumberOfRepetitions>2</preferredNumberOfRepetitions>
+        <maximumRecursivityLevel>1</maximumRecursivityLevel>
+        <alternativeStrategy>FIRST</alternativeStrategy>
+        <choicesAndSubstitutions strategy="RANDOM" generateOthersAsComments="false"/>
+        <elementValue>DEMO</elementValue>
+        <attribute namespace="&lt;ANY>" name="&lt;ANY>">
+        </attribute>
+    </element>
+    <element namespace="&lt;ANY>" name="desCustomer">
+        <generateOptionalElements>false</generateOptionalElements>
+        <generateOptionalAttributes>false</generateOptionalAttributes>
+        <valuesForContentType>DEFAULT</valuesForContentType>
+        <preferredNumberOfRepetitions>2</preferredNumberOfRepetitions>
+        <maximumRecursivityLevel>1</maximumRecursivityLevel>
+        <alternativeStrategy>FIRST</alternativeStrategy>
+        <choicesAndSubstitutions strategy="RANDOM" generateOthersAsComments="false"/>
+        <elementValue>customer</elementValue>
+        <attribute namespace="&lt;ANY>" name="&lt;ANY>">
+        </attribute>
+    </element>
+    <element namespace="&lt;ANY>" name="address1">
+        <generateOptionalElements>false</generateOptionalElements>
+        <generateOptionalAttributes>false</generateOptionalAttributes>
+        <valuesForContentType>DEFAULT</valuesForContentType>
+        <preferredNumberOfRepetitions>2</preferredNumberOfRepetitions>
+        <maximumRecursivityLevel>1</maximumRecursivityLevel>
+        <alternativeStrategy>FIRST</alternativeStrategy>
+        <choicesAndSubstitutions strategy="RANDOM" generateOthersAsComments="false"/>
+        <elementValue>adress1</elementValue>
+        <attribute namespace="&lt;ANY>" name="&lt;ANY>">
+        </attribute>
+    </element>
+    <element namespace="&lt;ANY>" name="address2">
+        <generateOptionalElements>false</generateOptionalElements>
+        <generateOptionalAttributes>false</generateOptionalAttributes>
+        <valuesForContentType>DEFAULT</valuesForContentType>
+        <preferredNumberOfRepetitions>2</preferredNumberOfRepetitions>
+        <maximumRecursivityLevel>1</maximumRecursivityLevel>
+        <alternativeStrategy>FIRST</alternativeStrategy>
+        <choicesAndSubstitutions strategy="RANDOM" generateOthersAsComments="false"/>
+        <elementValue>adress2</elementValue>
+        <attribute namespace="&lt;ANY>" name="&lt;ANY>">
+        </attribute>
+    </element>
+    <element namespace="&lt;ANY>" name="city">
+        <generateOptionalElements>false</generateOptionalElements>
+        <generateOptionalAttributes>false</generateOptionalAttributes>
+        <valuesForContentType>DEFAULT</valuesForContentType>
+        <preferredNumberOfRepetitions>2</preferredNumberOfRepetitions>
+        <maximumRecursivityLevel>1</maximumRecursivityLevel>
+        <alternativeStrategy>FIRST</alternativeStrategy>
+        <choicesAndSubstitutions strategy="RANDOM" generateOthersAsComments="false"/>
+        <elementValue>city</elementValue>
+        <attribute namespace="&lt;ANY>" name="&lt;ANY>">
+        </attribute>
+    </element>
+    <element namespace="&lt;ANY>" name="zipCode">
+        <generateOptionalElements>false</generateOptionalElements>
+        <generateOptionalAttributes>false</generateOptionalAttributes>
+        <valuesForContentType>DEFAULT</valuesForContentType>
+        <preferredNumberOfRepetitions>2</preferredNumberOfRepetitions>
+        <maximumRecursivityLevel>1</maximumRecursivityLevel>
+        <alternativeStrategy>FIRST</alternativeStrategy>
+        <choicesAndSubstitutions strategy="RANDOM" generateOthersAsComments="false"/>
+        <elementValue>00000</elementValue>
+        <attribute namespace="&lt;ANY>" name="&lt;ANY>">
+        </attribute>
+    </element>
+    <element namespace="&lt;ANY>" name="tel1">
+        <generateOptionalElements>false</generateOptionalElements>
+        <generateOptionalAttributes>false</generateOptionalAttributes>
+        <valuesForContentType>DEFAULT</valuesForContentType>
+        <preferredNumberOfRepetitions>2</preferredNumberOfRepetitions>
+        <maximumRecursivityLevel>1</maximumRecursivityLevel>
+        <alternativeStrategy>FIRST</alternativeStrategy>
+        <choicesAndSubstitutions strategy="RANDOM" generateOthersAsComments="false"/>
+        <elementValue>0000000000</elementValue>
+        <attribute namespace="&lt;ANY>" name="&lt;ANY>">
+        </attribute>
+    </element>
+    <element namespace="&lt;ANY>" name="country">
+        <generateOptionalElements>false</generateOptionalElements>
+        <generateOptionalAttributes>false</generateOptionalAttributes>
+        <valuesForContentType>DEFAULT</valuesForContentType>
+        <preferredNumberOfRepetitions>2</preferredNumberOfRepetitions>
+        <maximumRecursivityLevel>1</maximumRecursivityLevel>
+        <alternativeStrategy>FIRST</alternativeStrategy>
+        <choicesAndSubstitutions strategy="RANDOM" generateOthersAsComments="false"/>
+        <elementValue>FRANCE</elementValue>
+        <attribute namespace="&lt;ANY>" name="&lt;ANY>">
+        </attribute>
+    </element>
+</settings>
