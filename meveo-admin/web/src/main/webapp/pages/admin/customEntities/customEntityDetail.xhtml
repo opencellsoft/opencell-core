@@ -20,8 +20,8 @@
         </p:panel>
 
         <hftl:formPanel ajaxSubmit="true" submitPartialProcess=":formId:tabView" label="#{customEntityInstanceBean.customEntityTemplate.name}"
-            backingBean="#{customEntityInstanceBean}" showEditButton="#{currentUser.hasRole(customEntityInstanceBean.customEntityTemplate.permissionResourceName.concat('modify'))}"
-            showEnableDisableButton="#{currentUser.hasRole(customEntityInstanceBean.customEntityTemplate.permissionResourceName.concat('modify'))}">
+            backingBean="#{customEntityInstanceBean}" showEditButton="#{currentUser.hasRole(customEntityInstanceBean.customEntityTemplate.modifyPermission)}"
+            showEnableDisableButton="#{currentUser.hasRole(customEntityInstanceBean.customEntityTemplate.modifyPermission)}">
 
             <p:tabView id="tabView" activeIndex="#{customEntityInstanceBean.activeTab}">
                 <p:tab title="#{messages['customer.tab.information']}">

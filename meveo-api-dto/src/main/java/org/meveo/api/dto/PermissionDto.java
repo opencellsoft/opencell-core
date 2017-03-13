@@ -18,9 +18,6 @@ public class PermissionDto extends BaseDto {
 	
 	@XmlAttribute(required = true)
 	private String name;
-
-    @XmlAttribute(required = true)
-	private String resource;
 	
 	public PermissionDto() {
 		
@@ -30,7 +27,6 @@ public class PermissionDto extends BaseDto {
 		if (p != null) {
 			this.name = p.getName();
 			this.permission = p.getPermission();
-			this.resource = p.getResource();
 		}
 	}
 	
@@ -51,17 +47,8 @@ public class PermissionDto extends BaseDto {
 		this.name = name;
 	}
 
-	public String getResource() {
-		return resource;
-	}
-
-	public void setResource(String resource) {
-		this.resource = resource;
-	}
-
 	@Override
 	public String toString() {
-		return "PermissionDto [permission=" + permission + ", name=" + name
-				+ ", resource=" + resource + "]";
-	}
+        return "PermissionDto [permission=" + permission + ", name=" + name + "]";
+    }
 }

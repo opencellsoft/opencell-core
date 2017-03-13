@@ -49,8 +49,12 @@ public class CustomEntityTemplate extends BusinessEntity implements Comparable<C
         return CFT_PREFIX + "_" + code;
     }
 
-    public String getPermissionResourceName() {
-        return CustomEntityTemplate.getPermissionResourceName(code);
+    public String getReadPermission() {
+        return CustomEntityTemplate.getReadPermission(code);
+    }
+
+    public String getModifyPermission() {
+        return CustomEntityTemplate.getModifyPermission(code);
     }
 
     @Override
@@ -58,7 +62,11 @@ public class CustomEntityTemplate extends BusinessEntity implements Comparable<C
         return StringUtils.compare(name, cet1.getName());
     }
 
-    public static String getPermissionResourceName(String code) {
-        return "CE_" + code;
+    public static String getReadPermission(String code) {
+        return "CE_" + code + "-read";
     }
+
+    public static String getModifyPermission(String code) {
+        return "CE_" + code + "-modify";
+    } 
 }

@@ -946,4 +946,11 @@
 		<sql>update MEDINA_ACCESS set created=now()</sql>
 		<addNotNullConstraint tableName="MEDINA_ACCESS" columnName="created" columnDataType="DATETIME" />
 	</changeSet>
+	
+	<changeSet id="#2334_20170310" author="AndriusKarpavicius">
+		<sql>update ADM_PERMISSION set PERMISSION = RESSOURCE ||'-' || PERMISSION where RESSOURCE like 'CE_%'</sql>
+		<dropColumn tableName="ADM_PERMISSION" columnName="RESSOURCE"/>
+		<sql>update adm_role set rol_name='marketingManager' where rol_name='MARKETING_MANAGER'</sql>
+	</changeSet>
+	
 </databaseChangeLog>

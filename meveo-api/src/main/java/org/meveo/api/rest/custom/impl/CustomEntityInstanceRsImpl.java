@@ -35,8 +35,8 @@ public class CustomEntityInstanceRsImpl extends BaseRs implements CustomEntityIn
 
         try {
             // Check user has <cetCode>/modify permission
-            if (!currentUser.hasRole(CustomEntityTemplate.getPermissionResourceName(customEntityTemplateCode) + "_modify")) {
-                throw new LoginException("User does not have permission 'modify' on resource '" + CustomEntityTemplate.getPermissionResourceName(customEntityTemplateCode) + "'");
+            if (!currentUser.hasRole(CustomEntityTemplate.getModifyPermission(customEntityTemplateCode))) {
+                throw new LoginException("User does not have permission '" + CustomEntityTemplate.getModifyPermission(customEntityTemplateCode) + "'");
             }
 
             dto.setCetCode(customEntityTemplateCode);
@@ -62,8 +62,8 @@ public class CustomEntityInstanceRsImpl extends BaseRs implements CustomEntityIn
 
         try {
             // Check user has <cetCode>/modify permission
-            if (!currentUser.hasRole(CustomEntityTemplate.getPermissionResourceName(customEntityTemplateCode)+"_modify")) {
-                throw new LoginException("User does not have permission 'modify' on resource '" + CustomEntityTemplate.getPermissionResourceName(customEntityTemplateCode) + "'");
+            if (!currentUser.hasRole(CustomEntityTemplate.getModifyPermission(customEntityTemplateCode))) {
+                throw new LoginException("User does not have permission '" + CustomEntityTemplate.getModifyPermission(customEntityTemplateCode) + "'");
             }
 
             dto.setCetCode(customEntityTemplateCode);
@@ -89,8 +89,8 @@ public class CustomEntityInstanceRsImpl extends BaseRs implements CustomEntityIn
 
         try {
             // Check user has <cetCode>/modify permission
-            if (!currentUser.hasRole(CustomEntityTemplate.getPermissionResourceName(customEntityTemplateCode) + "_modify")) {
-                throw new LoginException("User does not have permission 'modify' on resource '" + CustomEntityTemplate.getPermissionResourceName(customEntityTemplateCode) + "'");
+            if (!currentUser.hasRole(CustomEntityTemplate.getModifyPermission(customEntityTemplateCode))) {
+                throw new LoginException("User does not have permission '" + CustomEntityTemplate.getModifyPermission(customEntityTemplateCode) + "'");
             }
 
             customEntityInstanceApi.remove(customEntityTemplateCode, code);
@@ -115,8 +115,8 @@ public class CustomEntityInstanceRsImpl extends BaseRs implements CustomEntityIn
 
         try {
             // Check user has <cetCode>/modify permission
-            if (!currentUser.hasRole(CustomEntityTemplate.getPermissionResourceName(customEntityTemplateCode) + "_read")) {
-                throw new LoginException("User does not have permission 'read' on resource '" + CustomEntityTemplate.getPermissionResourceName(customEntityTemplateCode) + "'");
+            if (!currentUser.hasRole(CustomEntityTemplate.getReadPermission(customEntityTemplateCode))) {
+                throw new LoginException("User does not have permission '" + CustomEntityTemplate.getReadPermission(customEntityTemplateCode) + "'");
             }
 
             result.setCustomEntityInstance(customEntityInstanceApi.find(customEntityTemplateCode, code));
@@ -141,8 +141,8 @@ public class CustomEntityInstanceRsImpl extends BaseRs implements CustomEntityIn
 
         try {
             // Check user has <cetCode>/modify permission
-            if (!currentUser.hasRole(CustomEntityTemplate.getPermissionResourceName(customEntityTemplateCode) + "_read")) {
-                throw new LoginException("User does not have permission 'read' on resource '" + CustomEntityTemplate.getPermissionResourceName(customEntityTemplateCode) + "'");
+            if (!currentUser.hasRole(CustomEntityTemplate.getReadPermission(customEntityTemplateCode))) {
+                throw new LoginException("User does not have permission '" + CustomEntityTemplate.getReadPermission(customEntityTemplateCode) + "'");
             }
 
             result.setCustomEntityInstances(customEntityInstanceApi.list(customEntityTemplateCode));
@@ -167,8 +167,8 @@ public class CustomEntityInstanceRsImpl extends BaseRs implements CustomEntityIn
 
         try {
             // Check user has <cetCode>/modify permission
-            if (!currentUser.hasRole(CustomEntityTemplate.getPermissionResourceName(customEntityTemplateCode) + "_modify")) {
-                throw new LoginException("User does not have permission 'modify' on resource '" + CustomEntityTemplate.getPermissionResourceName(customEntityTemplateCode) + "'");
+            if (!currentUser.hasRole(CustomEntityTemplate.getModifyPermission(customEntityTemplateCode))) {
+                throw new LoginException("User does not have permission '" + CustomEntityTemplate.getModifyPermission(customEntityTemplateCode) + "'");
             }
 
             dto.setCetCode(customEntityTemplateCode);

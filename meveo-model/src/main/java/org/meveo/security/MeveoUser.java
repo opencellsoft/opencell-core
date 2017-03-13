@@ -45,7 +45,7 @@ public abstract class MeveoUser implements Serializable {
     protected boolean forcedAuthentication;
 
     /**
-     * Roles held by a user
+     * Roles/permissions held by a user. Contains both role, composite role child role and permission names
      */
     protected Set<String> roles = new HashSet<>();
 

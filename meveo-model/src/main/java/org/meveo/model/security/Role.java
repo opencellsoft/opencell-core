@@ -10,6 +10,8 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -24,6 +26,7 @@ import org.meveo.model.ExportIdentifier;
 @ExportIdentifier({ "name"})
 @Table(name = "ADM_ROLE")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ADM_ROLE_SEQ"), })
+@NamedQueries({ @NamedQuery(name = "Role.getAllRoles", query = "select r from org.meveo.model.security.Role r LEFT JOIN r.permissions p")})
 public class Role extends BaseEntity {
 
     private static final long serialVersionUID = -2309961042891712685L;
@@ -88,14 +91,14 @@ public class Role extends BaseEntity {
      * @param permission Permission/action to match
      * @return
      */
-    public boolean hasPermission(String resource, String permission) {
+    public boolean hasPermission(String permission) {
         for (Permission permissionObj : getPermissions()) {
-            if (permissionObj.getResource().equals(resource) && permissionObj.getPermission().equals(permission)) {
+            if (permissionObj.getPermission().equals(permission)) {
                 return true;
             }
         }
         for (Role role : roles) {
-            if (role.hasPermission(resource, permission)){
+            if (role.hasPermission(permission)){
                 return true;
             }
         }
@@ -141,4 +144,19 @@ public class Role extends BaseEntity {
         return String.format("Role [name=%s]", name);
     }
 
+    /**
+     * Get all permission - the direct ones and the ones inherited via child roles
+     * 
+     * @return A set of permissions
+     */
+    public Set<Permission> getAllPermissions() {
+        Set<Permission> allPermissions = new HashSet<>();
+        allPermissions.addAll(getPermissions());
+
+        for (Role childRole : getRoles()) {
+            allPermissions.addAll(childRole.getAllPermissions());
+        }
+
+        return allPermissions;
+    }
 }

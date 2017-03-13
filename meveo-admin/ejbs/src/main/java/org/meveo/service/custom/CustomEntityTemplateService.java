@@ -61,8 +61,8 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
         elasticClient.createCETMapping(cet);
 
         try {
-            permissionService.createIfAbsent("modify", cet.getPermissionResourceName(), paramBean.getProperty("role.modifyAllCE", "ModifyAllCE"));
-            permissionService.createIfAbsent("read", cet.getPermissionResourceName(), paramBean.getProperty("role.readAllCE", "ReadAllCE"));
+            permissionService.createIfAbsent(cet.getModifyPermission(), paramBean.getProperty("role.modifyAllCE", "ModifyAllCE"));
+            permissionService.createIfAbsent(cet.getReadPermission(), paramBean.getProperty("role.readAllCE", "ReadAllCE"));
 
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -75,8 +75,8 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
         customFieldsCache.addUpdateCustomEntityTemplate(cet);
 
         try {
-            permissionService.createIfAbsent("modify", cet.getPermissionResourceName(), paramBean.getProperty("role.modifyAllCE", "ModifyAllCE"));
-            permissionService.createIfAbsent("read", cet.getPermissionResourceName(), paramBean.getProperty("role.readAllCE", "ReadAllCE"));
+            permissionService.createIfAbsent(cet.getModifyPermission(), paramBean.getProperty("role.modifyAllCE", "ModifyAllCE"));
+            permissionService.createIfAbsent(cet.getReadPermission(), paramBean.getProperty("role.readAllCE", "ReadAllCE"));
 
         } catch (Exception e) {
             throw new RuntimeException(e);

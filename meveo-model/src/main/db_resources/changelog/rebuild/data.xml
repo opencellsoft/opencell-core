@@ -6772,8 +6772,8 @@
 		<insert tableName="adm_role">
 			<column name="id" value="-5"/>
 			<column name="version" value="0"/>
-			<column name="role_description" value="Marketing "/>
-			<column name="role_name" value="MARKETING_MANAGER"/>
+			<column name="role_description" value="Marketing"/>
+			<column name="role_name" value="marketingManager"/>
 			<column name="provider_id" value="1"/>
 		</insert>
         <insert tableName="adm_role_role">

@@ -17,6 +17,15 @@
 <!--           <module name="org.jboss.resteasy.resteasy-jackson2-provider" services="import" /> -->
           <module name="org.infinispan" services="export" />
           <module name="org.infinispan.commons" services="export" />
+          <module name="com.fasterxml.jackson.core.jackson-core"/>
+          <module name="com.fasterxml.jackson.core.jackson-databind"/>
+          <module name="com.fasterxml.jackson.core.jackson-annotations"/>         
+          <module name="org.apache.commons.io"/>
+          <module name="org.apache.commons.collections"/>
+          <module name="org.apache.commons.codec"/>
+          <module name="org.apache.commons.beanutils"/>
+          <module name="javax.validation.api"/>
+          <module name="org.jboss.ejb3"/>
         </dependencies>          
 	</deployment>
 </jboss-deployment-structure>

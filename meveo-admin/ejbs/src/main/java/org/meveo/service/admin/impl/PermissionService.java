@@ -18,7 +18,6 @@
  */
 package org.meveo.service.admin.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -28,7 +27,6 @@ import javax.persistence.NonUniqueResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.commons.utils.QueryBuilder.QueryLikeStyleEnum;
 import org.meveo.model.security.Permission;
 import org.meveo.model.security.Role;
 import org.meveo.service.base.PersistenceService;
@@ -49,35 +47,33 @@ public class PermissionService extends PersistenceService<Permission> {
         QueryBuilder qb = new QueryBuilder("from Permission p");
         boolean superAdmin = currentUser.hasRole("superAdminManagement");
         if (!superAdmin) {
-            qb.addSqlCriterion("p.resource != :resource", "resource", "superAdmin");
-            qb.addSqlCriterion("p.resource != :permission", "permission", "superAdminManagement");
+            qb.addSqlCriterion("p.permission != :permission", "permission", "superAdminManagement");
         }
         return qb.getQuery(getEntityManager()).getResultList();
     }
 
-    public Permission findByPermissionAndResource(String resource, String permission) {
+    public Permission findByPermission(String permission) {
 
         try {
             Permission permissionEntity = getEntityManager().createNamedQuery("Permission.getPermission", Permission.class).setParameter("permission", permission)
-                .setParameter("resource", resource).getSingleResult();
+                .getSingleResult();
             return permissionEntity;
 
         } catch (NoResultException | NonUniqueResultException e) {
-            log.trace("No permission {},{} was found. Reason {}", resource, permission, e.getClass().getSimpleName());
+            log.trace("No permission {} was found. Reason {}", permission, e.getClass().getSimpleName());
             return null;
         }
 
     }
 
-    public Permission createIfAbsent(String permission, String resource, String... rolesToAddTo) throws BusinessException {
-
+    public Permission createIfAbsent(String permission, String... rolesToAddTo) throws BusinessException {
+        
         // Create permission if does not exist yet
-        Permission permissionEntity = findByPermissionAndResource(resource, permission);
+        Permission permissionEntity = findByPermission(permission);
         if (permissionEntity == null) {
             permissionEntity = new Permission();
-            permissionEntity.setName(resource + "-" + permission);
+            permissionEntity.setName(permission);
             permissionEntity.setPermission(permission);
-            permissionEntity.setResource(resource);
             this.create(permissionEntity);
         }
 
@@ -100,20 +96,4 @@ public class PermissionService extends PersistenceService<Permission> {
         return permissionEntity;
     }
 
-    // TODO rethink all permission strategy
-    @SuppressWarnings("unchecked")
-    public String getResourceByPath(String path) {
-        List<Permission> listPermissions = new ArrayList<Permission>();
-        try {
-            QueryBuilder qb = new QueryBuilder("from Permission p ");
-            qb.like("resource", path, QueryLikeStyleEnum.MATCH_ANYWHERE, false);
-            listPermissions = qb.getQuery(getEntityManager()).getResultList();
-        } catch (Exception e) {
-            log.trace("No permission was found. Reason {}", e.getMessage());
-        }
-        if (!listPermissions.isEmpty()) {
-            return listPermissions.get(0).getResource();
-        }
-        return null;
-    }
 }

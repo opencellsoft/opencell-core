@@ -1,5 +1,7 @@
 package org.meveo.security.keycloak;
 
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.SessionContext;
@@ -10,22 +12,41 @@ import org.meveo.security.MeveoUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Current Meveo user implementation when integrated with Keycloak authentication server
+ * 
+ * @author Andrius Karpavicius
+ */
 public class MeveoUserKeyCloakImpl extends MeveoUser {
 
     private static final long serialVersionUID = 1864122036421892837L;
 
+    /**
+     * Field in token containing provider code
+     */
     private static String CLAIM_PROVIDER = "provider";
     private static String RESOURCE_PROVIDER = "opencell";
 
+    /**
+     * JAAS security context
+     */
     private SessionContext securityContext;
+
+    Logger log = LoggerFactory.getLogger(getClass());
 
     public MeveoUserKeyCloakImpl() {
     }
 
-    Logger log = LoggerFactory.getLogger(getClass());
-
+    /**
+     * Current user constructor
+     * 
+     * @param securityContext Current JAAS security context
+     * @param forcedUserName Forced authentication username (when authenticated with @RunAs in job)
+     * @param additionalRoles Additional roles to assign
+     * @param roleToPermissionMapping Role to permission mapping
+     */
     @SuppressWarnings("rawtypes")
-    public MeveoUserKeyCloakImpl(SessionContext securityContext, String forcedSubject, String forcedUserName, String forcedProvider, Set<String> roles) {
+    public MeveoUserKeyCloakImpl(SessionContext securityContext, String forcedUserName, Set<String> additionalRoles, Map<String, Set<String>> roleToPermissionMapping) {
 
         if (securityContext.getCallerPrincipal() instanceof KeycloakPrincipal) {
             KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) securityContext.getCallerPrincipal();
@@ -58,19 +79,32 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
         } else {
             this.securityContext = securityContext;
 
-            log.error("User is authenticated by jaas principal is {}, forcedUsername is {}", securityContext.getCallerPrincipal().getName(), forcedSubject);
+            log.error("User is authenticated by jaas principal is {}, forcedUsername is {}", securityContext.getCallerPrincipal().getName(), forcedUserName);
 
-            if (forcedSubject != null) {
-                this.subject = forcedSubject;
+            this.subject = securityContext.getCallerPrincipal().getName();
+            if (forcedUserName != null) {
                 this.userName = forcedUserName;
-                this.providerCode = forcedProvider;
-                this.roles = roles;
 
                 forcedAuthentication = true;
                 authenticated = true;
             }
         }
 
+        // Resolve roles to permissions. At the end this.roles will contain both role and permission names.
+        Set<String> rolesToResolve = new HashSet<>(this.roles);
+        if (additionalRoles != null) {
+            rolesToResolve.addAll(additionalRoles);
+            this.roles.addAll(additionalRoles);
+        }
+
+        for (String roleName : rolesToResolve) {
+            if (roleToPermissionMapping.containsKey(roleName)) {
+                this.roles.addAll(roleToPermissionMapping.get(roleName));
+            }
+        }
+
+        log.trace("Current user {} resolved roles/permissions {}", this.userName, this.roles);
+        
         if (this.authenticated && !this.forcedAuthentication && this.providerCode == null) {
             throw new RuntimeException("User has no provider assigned");
         }
@@ -84,10 +118,24 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
         // }
 
         if (securityContext != null) {
-            return securityContext.isCallerInRole(role);
-
+            if (securityContext.isCallerInRole(role)) {
+                return true;
+            }
         }
 
         return super.hasRole(role);
+    }
+
+    @SuppressWarnings("rawtypes")
+    protected static String extractUsername(SessionContext securityContext, String forcedUserName) {
+
+        if (securityContext.getCallerPrincipal() instanceof KeycloakPrincipal) {
+            KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) securityContext.getCallerPrincipal();
+            KeycloakSecurityContext keycloakSecurityContext = keycloakPrincipal.getKeycloakSecurityContext();
+            return keycloakSecurityContext.getToken().getPreferredUsername();
+
+        } else {
+            return forcedUserName;
+        }
     }
 }

@@ -43,7 +43,7 @@ import org.meveo.model.IEntity;
 @ExportIdentifier("name")
 @Table(name = "ADM_PERMISSION")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ADM_PERMISSION_SEQ"), })
-@NamedQueries({ @NamedQuery(name = "Permission.getPermission", query = "select p from Permission p where p.resource=:resource and p.permission=:permission") })
+@NamedQueries({ @NamedQuery(name = "Permission.getPermission", query = "select p from Permission p where p.permission=:permission") })
 public class Permission implements IEntity, Serializable {
     private static final long serialVersionUID = 2884657784984355718L;
 
@@ -52,11 +52,6 @@ public class Permission implements IEntity, Serializable {
     @Column(name = "ID")
     @Access(AccessType.PROPERTY)
     private Long id;
-
-    @Column(name = "RESSOURCE", nullable = false, length = 255)
-    @Size(max = 255)
-    @NotNull
-    private String resource;
 
     @Column(name = "PERMISSION", nullable = false, length = 255)
     @Size(max = 255)
@@ -74,14 +69,6 @@ public class Permission implements IEntity, Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getResource() {
-        return resource;
-    }
-
-    public void setResource(String resource) {
-        this.resource = resource;
     }
 
     public String getPermission() {
@@ -102,7 +89,7 @@ public class Permission implements IEntity, Serializable {
 
     @Override
     public String toString() {
-        return "Permission [name=" + name + ", resource=" + resource + ", permission=" + permission + "]";
+        return "Permission [name=" + name + ", permission=" + permission + "]";
     }
 
     @Override
@@ -127,6 +114,6 @@ public class Permission implements IEntity, Serializable {
             // return true;
         }
 
-        return StringUtils.compare(this.getPermission(), other.getPermission()) == 0 && StringUtils.compare(this.getResource(), other.getResource()) == 0;
+        return StringUtils.compare(this.getPermission(), other.getPermission()) == 0;
     }
 }

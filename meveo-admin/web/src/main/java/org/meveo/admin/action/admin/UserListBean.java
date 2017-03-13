@@ -39,7 +39,7 @@ public class UserListBean extends UserBean {
 	private LazyDataModel<User> filteredUsers = null;	
 
 	public LazyDataModel<User> getFilteredLazyDataModel() {
-		if (currentUser.hasRole("MARKETING_MANAGER")) {
+		if (currentUser.hasRole("marketingManager")) {
 			if (filteredUsers != null) {
 				return filteredUsers;
 			}
@@ -51,7 +51,7 @@ public class UserListBean extends UserBean {
 				public List<User> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> loadingFilters) {
 
 					List<User> entities = null;
-					entities = userService.listUsersInMM(Arrays.asList("MARKETING_MANAGER", "CUSTOMER_CARE_USER"));
+					entities = userService.listUsersInMM(Arrays.asList("marketingManager", "CUSTOMER_CARE_USER"));
 					setRowCount(entities.size());
 
 					return entities.subList(first, (first + pageSize) > entities.size() ? entities.size() : (first + pageSize));

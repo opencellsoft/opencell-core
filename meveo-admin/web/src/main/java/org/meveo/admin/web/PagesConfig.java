@@ -27,7 +27,7 @@ public interface PagesConfig {
 //        @ViewPattern("/marketingManager/*")
 //        @LoggedIn()
 //        // @Admin(restrictAtPhase=RESTORE_VIEW)
-//        MARKETING_MANAGER
+//        marketingManager
 //    }
 
 }

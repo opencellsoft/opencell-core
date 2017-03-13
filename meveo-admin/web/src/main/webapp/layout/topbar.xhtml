@@ -23,7 +23,7 @@
 					<li><c:if test="#{currentUser.authenticated}">
 							<a href="#" id="menu1"><i class="fa fa-2x fa-cog"></i></a>
 							<ul style="display: none; z-index: 1">
-								<li><h:commandLink action="logout"
+								<li><h:commandLink action="#{authenticationProvider.logout}"
 										value="#{messages['menutop.logout']}" immediate="true" /></li>
 								<li><h:link outcome="/changePassword.xhtml"
 										value="#{messages['menutop.changePassword']}" rendered=""

@@ -21,12 +21,15 @@ package org.meveo.service.admin.impl;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.security.Role;
+import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -34,6 +37,9 @@ import org.meveo.service.base.PersistenceService;
  */
 @Stateless
 public class RoleService extends PersistenceService<Role> {
+
+    @Inject
+    private CurrentUserProvider currentUserProvider;
 
     @SuppressWarnings("unchecked")
     public List<Role> getAllRoles() {
@@ -52,5 +58,18 @@ public class RoleService extends PersistenceService<Role> {
             log.trace("No role {} was found. Reason {}", role, e.getClass().getSimpleName());
             return null;
         }
+    }
+
+    @Override
+    public void create(Role e) throws BusinessException {
+        super.create(e);
+        currentUserProvider.invalidateRoleToPermissionMapping();
+    }
+
+    @Override
+    public Role update(Role e) throws BusinessException {
+        e = super.update(e);
+        currentUserProvider.invalidateRoleToPermissionMapping();
+        return e;
     }
 }

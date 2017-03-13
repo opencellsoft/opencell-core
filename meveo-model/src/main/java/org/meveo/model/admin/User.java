@@ -69,15 +69,8 @@ import org.meveo.model.shared.Name;
 @Table(name = "ADM_USER")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ADM_USER_SEQ"), })
-@NamedQueries({ @NamedQuery(name = "User.listByPermissionResource", query = ""
-		+ "SELECT u FROM User u"
-		+ " LEFT JOIN u.roles as role"
-		+ " LEFT JOIN role.permissions as permission"
-		+ " WHERE permission.resource IN (:permissionResources)"),
-		@NamedQuery(name = "User.listUsersInMM", query = ""
-				+ "SELECT u FROM User u"
-				+ " LEFT JOIN u.roles as role"
-				+ " WHERE role.name IN (:roleNames)") })
+@NamedQueries({ @NamedQuery(name = "User.listUsersInMM", query = "SELECT u FROM User u LEFT JOIN u.roles as role WHERE role.name IN (:roleNames)"),
+        @NamedQuery(name = "User.getByUsername", query = "SELECT u FROM User u LEFT JOIN u.roles WHERE lower(u.userName)=:username") })
 public class User extends EnableEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;
@@ -267,21 +260,6 @@ public class User extends EnableEntity implements ICustomFieldEntity {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public boolean hasPermission(String resource, String permission) {
-        boolean isAllowed = false;
-
-        if (getRoles() != null && getRoles().size() > 0) {
-            for (Role role : getRoles()) {
-                if (role.hasPermission(resource, permission)) {
-                    isAllowed = true;
-                    break;
-                }
-            }
-        }
-
-        return isAllowed;
     }
 
     public List<SecuredEntity> getSecuredEntities() {
