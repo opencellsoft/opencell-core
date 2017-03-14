@@ -176,7 +176,7 @@ public class SellerApi extends BaseApi {
         if (seller == null) {
             throw new EntityDoesNotExistsException(Seller.class, postData.getCode());
         }
-
+        seller.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode() );
         seller.setDescription(postData.getDescription());
         if(postData.getInvoiceTypeSequences() != null){
         	for(Entry<String, SequenceDto> entry : postData.getInvoiceTypeSequences().entrySet() ){

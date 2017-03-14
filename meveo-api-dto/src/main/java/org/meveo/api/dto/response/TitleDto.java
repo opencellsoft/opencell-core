@@ -1,12 +1,11 @@
 package org.meveo.api.dto.response;
 
-import java.io.Serializable;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.BusinessDto;
 import org.meveo.model.shared.Title;
 
 /**
@@ -14,7 +13,7 @@ import org.meveo.model.shared.Title;
  **/
 @XmlRootElement(name = "Title")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TitleDto implements Serializable {
+public class TitleDto extends BusinessDto {
 
 	private static final long serialVersionUID = -1332916104721562522L;
 	

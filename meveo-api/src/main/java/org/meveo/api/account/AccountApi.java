@@ -59,8 +59,7 @@ public class AccountApi extends BaseApi {
                 }
             }
         }
-
-        accountEntity.setCode(postData.getCode());
+        accountEntity.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());      
         accountEntity.setDescription(postData.getDescription());
         accountEntity.setExternalRef1(postData.getExternalRef1());
         accountEntity.setExternalRef2(postData.getExternalRef2());
@@ -122,6 +121,8 @@ public class AccountApi extends BaseApi {
 
             accountEntity.setName(name);
         }
+        
+        accountEntity.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
 
         if (!StringUtils.isBlank(postData.getDescription())) {
             accountEntity.setDescription(postData.getDescription());
