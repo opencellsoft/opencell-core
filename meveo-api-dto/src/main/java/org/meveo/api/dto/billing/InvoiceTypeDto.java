@@ -12,13 +12,14 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BusinessDto;
 import org.meveo.api.dto.SequenceDto;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
 
 @XmlRootElement(name = "InvoiceType")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class InvoiceTypeDto  extends BaseDto{
+public class InvoiceTypeDto  extends BusinessDto{
 	
 		private static final long serialVersionUID = 1L;
 		

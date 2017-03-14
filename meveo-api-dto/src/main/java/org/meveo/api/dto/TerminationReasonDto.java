@@ -1,7 +1,5 @@
 package org.meveo.api.dto;
 
-import java.io.Serializable;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -14,7 +12,7 @@ import org.meveo.model.billing.SubscriptionTerminationReason;
  **/
 @XmlRootElement(name = "TerminationReasonDto")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TerminationReasonDto implements Serializable {
+public class TerminationReasonDto extends BusinessDto {
 
     private static final long serialVersionUID = 6013621511892042364L;
 

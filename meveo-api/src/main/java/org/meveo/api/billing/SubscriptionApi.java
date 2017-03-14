@@ -225,7 +225,7 @@ public class SubscriptionApi extends BaseApi {
             throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getOfferTemplate());
         }
 
-        
+        subscription.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         subscription.setOffer(offerTemplate);
         subscription.setDescription(postData.getDescription());
         subscription.setSubscriptionDate(postData.getSubscriptionDate());

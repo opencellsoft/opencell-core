@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BusinessDto;
 import org.meveo.model.communication.MediaEnum;
 import org.meveo.model.communication.MessageTemplate;
 import org.meveo.model.communication.MessageTemplateTypeEnum;
@@ -18,7 +18,7 @@ import org.meveo.model.communication.MessageTemplateTypeEnum;
  **/
 @XmlRootElement(name="MessageTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class MessageTemplateDto extends BaseDto {
+public class MessageTemplateDto extends BusinessDto {
 
 	/**
 	 * 

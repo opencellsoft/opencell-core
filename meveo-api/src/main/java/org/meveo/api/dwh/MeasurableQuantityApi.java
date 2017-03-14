@@ -138,7 +138,7 @@ public class MeasurableQuantityApi extends BaseCrudApi<MeasurableQuantity, Measu
             mq = mqToUpdate;
         }
 
-        mq.setCode(dto.getCode());
+        mq.setCode(StringUtils.isBlank(dto.getUpdatedCode()) ? dto.getCode() : dto.getUpdatedCode());
         mq.setDescription(dto.getDescription());
         mq.setTheme(dto.getTheme());
         mq.setDimension1(dto.getDimension1());
