@@ -140,7 +140,7 @@ public class BillingCycleApi extends BaseApi {
 				 throw new EntityDoesNotExistsException(InvoiceType.class, postData.getInvoiceTypeCode());
 			}
         }
-        
+        billingCycle.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         billingCycle.setDescription(postData.getDescription());
         billingCycle.setBillingTemplateName(postData.getBillingTemplateName());
         billingCycle.setInvoiceDateDelay(postData.getInvoiceDateDelay());

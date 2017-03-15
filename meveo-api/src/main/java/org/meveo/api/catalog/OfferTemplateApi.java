@@ -101,14 +101,13 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 		handleMissingParameters();
 		
 		Provider provider = currentUser.getProvider();
-
 		OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getCode(), provider);
 		if (offerTemplate == null) {
 			throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getCode());
 		}
 		
 		populateFromDto(offerTemplate, postData, currentUser);
-
+		offerTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode())?postData.getCode():postData.getUpdatedCode());
 		offerTemplate = offerTemplateService.update(offerTemplate, currentUser);
 
 		// populate customFields
@@ -193,19 +192,28 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 				newOfferServiceTemplates.add(offerServiceTemplate);
 			}
 
-			if (hasExistingServiceTemplates) {
-				List<OfferServiceTemplate> offerServiceTemplatesForRemoval = new ArrayList<>(existingServiceTemplates);
-				offerServiceTemplatesForRemoval.removeAll(newOfferServiceTemplates);
-				List<OfferServiceTemplate> retainOfferServiceTemplates = new ArrayList<>(newOfferServiceTemplates);
-				retainOfferServiceTemplates.retainAll(existingServiceTemplates);
-				offerServiceTemplatesForRemoval.addAll(retainOfferServiceTemplates);
-				newOfferServiceTemplates.removeAll(new ArrayList<>(existingServiceTemplates));
-				offerTemplate.getOfferServiceTemplates().removeAll(new ArrayList<>(offerServiceTemplatesForRemoval));
-				offerTemplate.getOfferServiceTemplates().addAll(retainOfferServiceTemplates);
+            if (!hasExistingServiceTemplates) {
+                offerTemplate.getOfferServiceTemplates().addAll(newOfferServiceTemplates);
+
+            } else {
+
+                // Keep only services that repeat
+                existingServiceTemplates.retainAll(newOfferServiceTemplates);
+
+                // Update existing services or add new ones
+                for (OfferServiceTemplate ostNew : newOfferServiceTemplates) {
+
+                    int index = existingServiceTemplates.indexOf(ostNew);
+                    if (index >= 0) {
+                        OfferServiceTemplate ostOld = existingServiceTemplates.get(index);
+                        ostOld.update(ostNew);
+
+                    } else {
+                        existingServiceTemplates.add(ostNew);
+                    }
+                }
 			}
-
-			offerTemplate.getOfferServiceTemplates().addAll(newOfferServiceTemplates);
-
+			
 		} else if (hasExistingServiceTemplates) {
 			offerTemplate.getOfferServiceTemplates().removeAll(existingServiceTemplates);
 		}
@@ -358,7 +366,7 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 	 * @throws MeveoApiException
 	 * @throws BusinessException
 	 */
-	public OfferTemplate createOrUpdate(OfferTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
+	public OfferTemplate createOrUpdate(OfferTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {		
 		OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getCode(), currentUser.getProvider());
 
 		if (offerTemplate == null) {

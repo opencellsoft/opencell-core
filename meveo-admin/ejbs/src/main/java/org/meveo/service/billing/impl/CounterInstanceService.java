@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -65,6 +66,9 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 
     @Inject
     private CounterPeriodService counterPeriodService;
+
+    @EJB
+    private UsageChargeInstanceService usageChargeInstanceService;
 
     public CounterInstance counterInstanciation(UserAccount userAccount, CounterTemplate counterTemplate, boolean isVirtual, User creator) throws BusinessException {
         CounterInstance result = null;
@@ -166,8 +170,8 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         return counterInstance;
     }
 
-    //we must make sure the counter period is persisted in db before storing it in cache
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    // we must make sure the counter period is persisted in db before storing it in cache
+    // @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW) - problem with MariaDB. See #2393 - Issue with counter period creation in MariaDB
     public CounterPeriod createPeriod(CounterInstance counterInstance, Date chargeDate, Date initDate, UsageChargeInstance usageChargeInstance, User currentUser)
             throws BusinessException {
         refresh(counterInstance);
@@ -234,18 +238,29 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     }
 
     /**
-     * Update counter period value
+     * Update counter period value. If for some reason counter period is not found, it will be created.
      * 
      * @param counterPeriodId Counter period identifier
      * @param value Value to set to
+     * @param counterInstanceId Counter instance identifier (used to create counter period if one was not found)
+     * @param valueDate Date to calculate period (used to create counter period if one was not found)
+     * @param initDate initialization date to calculate period by calendar(used to create counter period if one was not found)
+     * @param usageChargeInstanceId Usage charge instance identifier for initial value calculation (used to create counter period if one was not found)
      * @param currentUser User performing an action
-     * @throws BusinessException
+     * @throws BusinessException If counter period was not found and required values for counter period creation were not passed
      */
-    public void updatePeriodValue(Long counterPeriodId, BigDecimal value, User currentUser) throws BusinessException {
+    public void updateOrCreatePeriodValue(Long counterPeriodId, BigDecimal value, Long counterInstanceId, Date valueDate, Date initDate, Long usageChargeInstanceId, User currentUser) throws BusinessException {
         CounterPeriod counterPeriod = counterPeriodService.findById(counterPeriodId);
 
         if (counterPeriod == null) {
-            throw new BusinessException("CounterPeriod with id=" + counterPeriodId + " does not exists.");
+
+            if (counterInstanceId != null) { // Fix for #2393 - Issue with counter period creation in MariaDB
+                CounterInstance counterInstance = findById(counterInstanceId);
+                UsageChargeInstance usageChargeInstance = usageChargeInstanceService.findById(usageChargeInstanceId);
+                counterPeriod = createPeriod(counterInstance, valueDate, initDate, usageChargeInstance, currentUser);
+            } else {
+                throw new BusinessException("CounterPeriod with id=" + counterPeriodId + " does not exists.");
+            }
         }
 
         counterPeriod.setValue(value);

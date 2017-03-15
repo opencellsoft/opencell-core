@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BusinessDto;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 
@@ -18,7 +18,7 @@ import org.meveo.model.notification.NotificationEventTypeEnum;
  **/
 @XmlRootElement(name = "Notification")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class NotificationDto extends BaseDto {
+public class NotificationDto extends BusinessDto {
 
 	private static final long serialVersionUID = 3931479706274647165L;
 

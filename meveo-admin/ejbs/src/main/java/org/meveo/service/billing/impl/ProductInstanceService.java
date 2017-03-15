@@ -105,11 +105,18 @@ public class ProductInstanceService extends BusinessService<ProductInstance> {
             return null;
         }
     }
-
+    
     public List<WalletOperation> applyProductInstance(ProductInstance productInstance, String criteria1, String criteria2, String criteria3, User currentUser, boolean persist)
             throws BusinessException {
+    	return applyProductInstance(productInstance, criteria1, criteria2, criteria3, currentUser, persist, true);
+    }
 
-        instantiateProductInstance(productInstance, criteria1, criteria2, criteria3, currentUser, !persist);
+    public List<WalletOperation> applyProductInstance(ProductInstance productInstance, String criteria1, String criteria2, String criteria3, User currentUser, boolean persist, boolean instantiate)
+            throws BusinessException {
+
+    	if(instantiate) {
+    		instantiateProductInstance(productInstance, criteria1, criteria2, criteria3, currentUser, !persist);
+    	}
         
         List<WalletOperation> walletOperations = new ArrayList<>();
         for (ProductChargeInstance productChargeInstance : productInstance.getProductChargeInstances()) {

@@ -13,7 +13,7 @@ import org.meveo.model.filter.Filter;
 **/
 @XmlRootElement(name="Filter")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class FilterDto extends BaseDto {
+public class FilterDto extends BusinessDto {
 
 	/**
 	 * 

@@ -110,13 +110,12 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
         handleMissingParameters();
 
         Provider provider = currentUser.getProvider();
-
         OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(postData.getCode(), provider);
 
         if (offerTemplateCategory == null) {
             throw new EntityAlreadyExistsException(OfferTemplateCategory.class, postData.getCode());
         }
-
+        offerTemplateCategory.setCode(StringUtils.isBlank(postData.getUpdatedCode())?postData.getCode():postData.getUpdatedCode());
         offerTemplateCategory.setDescription(postData.getDescription());
         offerTemplateCategory.setName(postData.getName());
 
@@ -237,15 +236,11 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
      * @throws BusinessException
      */
     public OfferTemplateCategory createOrUpdate(OfferTemplateCategoryDto postData, User currentUser) throws MeveoApiException, BusinessException {
-
-        String code = postData.getCode();
-
-        if (StringUtils.isBlank(code)) {
+       if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
             handleMissingParameters();
-        }
-
-        if (offerTemplateCategoryService.findByCode(code, currentUser.getProvider()) == null) {
+        }        
+        if (offerTemplateCategoryService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
             return create(postData, currentUser);
         } else {
             return update(postData, currentUser);
@@ -253,7 +248,6 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
     }
 
     /**
-     * 
      * 
      * @return
      * @throws MeveoApiException

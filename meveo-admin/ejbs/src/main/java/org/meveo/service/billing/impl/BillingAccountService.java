@@ -223,9 +223,6 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		log.debug("updateBillingAccountTotalAmounts  billingAccount:" + billingAccount.getCode());
 		billingAccount = findById(billingAccount.getId(), true);
 
-		// FIXE ME : api caller
-		billingRun = billingRunService.findById(billingRun.getId(), true);
-
 		BigDecimal invoiceAmount = computeBaInvoiceAmount(billingAccount, billingRun.getLastTransactionDate());
 		if (invoiceAmount != null) {
 
@@ -249,10 +246,9 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 			log.debug("updateBillingAccountTotalAmounts invoiceAmount is null");
 		}
 
-		billingAccount.setBillingRun(billingRun);
+		billingAccount.setBillingRun(getEntityManager().getReference(BillingRun.class, billingRun.getId()));
 		billingAccount.updateAudit(currentUser);
 		updateNoCheck(billingAccount);
-		getEntityManager().flush();
 
 		return true;
 	}

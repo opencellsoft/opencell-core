@@ -250,7 +250,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         	}
         	pricePlanMatrix.setScriptInstance(scriptInstance);
         }
-
+        pricePlanMatrix.setCode(StringUtils.isBlank(postData.getUpdatedCode())?postData.getCode():postData.getUpdatedCode());
         pricePlanMatrix.setMinQuantity(postData.getMinQuantity());
         pricePlanMatrix.setMaxQuantity(postData.getMaxQuantity());
         pricePlanMatrix.setStartSubscriptionDate(postData.getStartSubscriptionDate());
@@ -331,7 +331,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         return pricePlanDtos;
     }
 
-    public PricePlanMatrix createOrUpdate(PricePlanMatrixDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public PricePlanMatrix createOrUpdate(PricePlanMatrixDto postData, User currentUser) throws MeveoApiException, BusinessException {    	
         if (pricePlanMatrixService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
             return create(postData, currentUser);
         } else {

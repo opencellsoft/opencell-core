@@ -235,6 +235,19 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 		update(recurringChargeInstance, updater);
 
 	}
+	
+	public void recurringChargeSuspension(long recurringChargeInstanId, Date terminationDate,
+			User updater) throws BusinessException {
+
+		RecurringChargeInstance recurringChargeInstance = findById(recurringChargeInstanId, true);
+
+		log.debug("recurringChargeSuspension : recurringChargeInstanceId={},ChargeApplications size={}",
+				recurringChargeInstance.getId(), recurringChargeInstance.getWalletOperations().size());
+
+		recurringChargeInstance.setStatus(InstanceStatusEnum.SUSPENDED);
+		update(recurringChargeInstance, updater);
+
+	}
 
 	public void recurringChargeReactivation(ServiceInstance serviceInst, Subscription subscription,
 			Date subscriptionDate, User updater) throws BusinessException {
@@ -247,12 +260,12 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 				|| serviceInst.getStatus() == InstanceStatusEnum.SUSPENDED) {
 			throw new BusinessException("service instance is " + subscription.getStatus() + ". service Code="
 					+ serviceInst.getCode() + ",subscription Code" + subscription.getCode());
-		}
+		}		
 		for (RecurringChargeInstance recurringChargeInstance : serviceInst.getRecurringChargeInstances()) {
 			recurringChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
 			// recurringChargeInstance.setSubscriptionDate(subscriptionDate);
 			recurringChargeInstance.setTerminationDate(null);
-			recurringChargeInstance.setChargeDate(subscriptionDate);
+			recurringChargeInstance.setChargeDate(subscriptionDate);			
 			update(recurringChargeInstance, updater);
 		}
 
@@ -300,7 +313,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 			  }
 			}
 
-			while (nbRating<MaxRecurringRatingHistory && (applicationDate.getTime() <= maxDate.getTime())) {
+			while (applicationDate != null && nbRating<MaxRecurringRatingHistory && (applicationDate.getTime() <= maxDate.getTime())) {
 				nbRating++;
 				log.info("applicationDate={}", applicationDate);
 				applicationDate = DateUtils.setTimeToZero(applicationDate);
@@ -332,7 +345,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 				} else {
 					Date chargeDate = activeRecurringChargeInstance.getChargeDate();
 					Date nextChargeDate  = activeRecurringChargeInstance.getNextChargeDate();
-					while (applicationDate.getTime() <= endContractDate.getTime()) {
+					while (applicationDate != null && applicationDate.getTime() <= endContractDate.getTime()) {
 						log.info("Schedule applicationDate={}", applicationDate);
 						applicationDate = DateUtils.setTimeToZero(applicationDate);
 						if (!recurringChargeTemplate.getApplyInAdvance()) {
@@ -352,7 +365,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 				revenueRecognitionScriptService.createRevenueSchedule(activeRecurringChargeInstance.getChargeTemplate().getRevenueRecognitionRule().getScript().getCode(), activeRecurringChargeInstance, user);
 			}
 			
-		} catch (Exception e) {
+		} catch (Exception e) {	
             rejectededChargeProducer.fire("RecurringCharge " + chargeInstanceId);
             throw new BusinessException(e);
         }

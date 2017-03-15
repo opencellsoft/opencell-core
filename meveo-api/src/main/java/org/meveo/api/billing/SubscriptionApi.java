@@ -11,6 +11,8 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.IncorrectServiceInstanceException;
+import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.account.AccessApi;
@@ -24,9 +26,11 @@ import org.meveo.api.dto.billing.ProductDto;
 import org.meveo.api.dto.billing.ServiceInstanceDto;
 import org.meveo.api.dto.billing.ServiceToActivateDto;
 import org.meveo.api.dto.billing.ServiceToInstantiateDto;
+import org.meveo.api.dto.billing.ServiceToUpdateDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.SubscriptionsDto;
 import org.meveo.api.dto.billing.SubscriptionsListDto;
+import org.meveo.api.dto.billing.OperationServicesRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
@@ -110,7 +114,7 @@ public class SubscriptionApi extends BaseApi {
 	
     @Inject
 	private ProductInstanceService productInstanceService;
-	
+    
 
     public void create(SubscriptionDto postData, User currentUser) throws MeveoApiException, BusinessException {
 
@@ -221,7 +225,7 @@ public class SubscriptionApi extends BaseApi {
             throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getOfferTemplate());
         }
 
-        
+        subscription.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         subscription.setOffer(offerTemplate);
         subscription.setDescription(postData.getDescription());
         subscription.setSubscriptionDate(postData.getSubscriptionDate());
@@ -629,15 +633,26 @@ public class SubscriptionApi extends BaseApi {
 
 		try {
 			ProductInstance productInstance = new ProductInstance(null, subscription, productTemplate, postData.getQuantity(), postData.getOperationDate(), postData.getProduct(),
-					StringUtils.isBlank(postData.getDescription()) ? productTemplate.getDescriptionOrCode() : postData.getDescription(),null, currentUser);
-			walletOperations = productInstanceService.applyProductInstance(productInstance, postData.getCriteria1(),
-					postData.getCriteria2(), postData.getCriteria3(), currentUser, true);
+					StringUtils.isBlank(postData.getDescription()) ? productTemplate.getDescriptionOrCode() : postData.getDescription(), null, currentUser);
+			productInstanceService.instantiateProductInstance(productInstance, postData.getCriteria1(), postData.getCriteria2(), postData.getCriteria3(), currentUser, false);
+
+			// populate customFields
+			try {
+				populateCustomFields(postData.getCustomFields(), productInstance, true, currentUser);
+			} catch (MissingParameterException e) {
+				log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+				throw e;
+			}
+
+			walletOperations = productInstanceService.applyProductInstance(productInstance, postData.getCriteria1(), postData.getCriteria2(), postData.getCriteria3(), currentUser,
+					true, false);
 			for (WalletOperation walletOperation : walletOperations) {
 				result.add(new WalletOperationDto(walletOperation));
 			}
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e.getMessage());
 		}
+		
 		return result;
 	}
 
@@ -966,4 +981,89 @@ public class SubscriptionApi extends BaseApi {
         }
 
     }
+
+	public void suspendSubscription(String subscriptionCode, Date suspensionDate, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+		if (StringUtils.isBlank(subscriptionCode)) {
+			missingParameters.add("subscriptionCode");
+			handleMissingParameters();
+		}
+		Subscription subscription = subscriptionService.findByCode(subscriptionCode, currentUser.getProvider());
+		if (subscription == null) {
+			throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
+		}
+		subscriptionService.subscriptionSuspension(subscription, suspensionDate, currentUser);
+	}
+
+	/**
+	 * 
+	 * @param subscriptionCode
+	 * @param suspensionDate
+	 * @param currentUser
+	 * @throws MissingParameterException
+	 * @throws EntityDoesNotExistsException
+	 * @throws IncorrectSusbcriptionException
+	 * @throws IncorrectServiceInstanceException
+	 * @throws BusinessException
+	 */
+	public void resumeSubscription(String subscriptionCode, Date suspensionDate, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+		if (StringUtils.isBlank(subscriptionCode)) {
+			missingParameters.add("subscriptionCode");
+			handleMissingParameters();
+		}
+		Subscription subscription = subscriptionService.findByCode(subscriptionCode, currentUser.getProvider());
+		if (subscription == null) {
+			throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
+		}
+		subscriptionService.subscriptionReactivation(subscription, suspensionDate, currentUser);
+	}
+	
+    /**
+     * 
+     * @param suspendServicesRequestDto
+     * @param currentUser
+     * @throws MissingParameterException
+     * @throws EntityDoesNotExistsException
+     * @throws IncorrectSusbcriptionException
+     * @throws IncorrectServiceInstanceException
+     * @throws BusinessException
+     */
+	public void suspendServices(OperationServicesRequestDto provisionningServicesRequestDto, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+		suspendOrResumeServices(provisionningServicesRequestDto, currentUser, true);     
+	}	
+	
+	public void resumeServices(OperationServicesRequestDto provisionningServicesRequestDto, User currentUser) throws MissingParameterException, EntityDoesNotExistsException, IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+		suspendOrResumeServices(provisionningServicesRequestDto, currentUser, false);
+	}	
+	
+	private void suspendOrResumeServices(OperationServicesRequestDto provisionningServicesRequestDto, User currentUser,boolean isToSuspend) throws MissingParameterException, EntityDoesNotExistsException, IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+		if (provisionningServicesRequestDto == null  ) {
+			missingParameters.add("provisionningServicesRequestDto");	
+			handleMissingParameters();
+		}
+		
+		if (StringUtils.isBlank(provisionningServicesRequestDto.getSubscriptionCode())) {
+			missingParameters.add("subscriptionCode");			
+		}	
+		for(ServiceToUpdateDto serviceToSuspendDto: provisionningServicesRequestDto.getServicesToUpdate()){
+			if (StringUtils.isBlank(serviceToSuspendDto.getCode())) {
+				missingParameters.add("serviceToSuspend.code");			
+			}
+		}
+		handleMissingParameters();
+		Subscription subscription = subscriptionService.findByCode(provisionningServicesRequestDto.getSubscriptionCode(), currentUser.getProvider());
+		if (subscription == null) {
+			throw new EntityDoesNotExistsException(Subscription.class, provisionningServicesRequestDto.getSubscriptionCode());
+		}				
+		for(ServiceToUpdateDto serviceToSuspendDto: provisionningServicesRequestDto.getServicesToUpdate()){           
+        	ServiceInstance serviceInstanceToSuspend = serviceInstanceService.findByCodeAndSubscription(serviceToSuspendDto.getCode(), subscription); 
+        	if(serviceInstanceToSuspend == null){
+        		throw new EntityDoesNotExistsException(ServiceInstance.class, serviceToSuspendDto.getCode());
+        	}
+        	if(isToSuspend){
+        		serviceInstanceService.serviceSuspension(serviceInstanceToSuspend, serviceToSuspendDto.getActionDate(), currentUser);
+        	}else{
+        		serviceInstanceService.serviceReactivation(serviceInstanceToSuspend, serviceToSuspendDto.getActionDate(), currentUser);
+        	}
+        }	        
+	}	
 }

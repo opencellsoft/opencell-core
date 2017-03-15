@@ -83,6 +83,7 @@ public class TriggeredEdrApi extends BaseApi {
                 }
             	edrTemplate.setMeveoInstance(meveoInstance);
             }
+            edrTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode())?postData.getCode():postData.getUpdatedCode());
             edrTemplate.setConditionEl(postData.getConditionEl());
             edrTemplate.setQuantityEl(postData.getQuantityEl());
             edrTemplate.setParam1El(postData.getParam1El());
@@ -133,7 +134,7 @@ public class TriggeredEdrApi extends BaseApi {
         return edrTemplateDto;
     }
 
-    public void createOrUpdate(TriggeredEdrTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public void createOrUpdate(TriggeredEdrTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {    	
         if (triggeredEDRTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
             create(postData, currentUser);
         } else {

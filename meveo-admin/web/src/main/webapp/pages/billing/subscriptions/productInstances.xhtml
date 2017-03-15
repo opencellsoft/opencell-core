@@ -15,7 +15,7 @@
 <ui:composition>
 
 	<p:tab id="productInstancesTab"
-		title="#{messages['userAccount.tab.productInstances']}">
+		title="#{messages['userAccount.tab.productInstances']}" rendered="#{not empty subscriptionBean.entity.id}">
 		<p:messages id="applyProductMessages" />
 		<p:outputPanel id="productInstancePanel">
 			<h:form id="productInstanceResultsForm" prependId="false">
@@ -56,6 +56,12 @@
 						label="#{messages['productTemplate.title']}"
 						field="productTemplate" popup="true" required="true"
 						popupId="productTemplatePopup" valueLabelField="code" />
+
+					<p:outputPanel id="productCF">
+						<hftl:customFields backingBean="#{productInstanceBean}"
+							entity="#{subscriptionBean.productInstance}"
+							messagesId=":applyProductForm:messages" prefix="pi" />
+					</p:outputPanel>
 
 					<h:panelGroup layout="block" styleClass="form-panel-actions">
 						<p:commandButton value="#{messages['action.save']}"

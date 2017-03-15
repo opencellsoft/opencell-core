@@ -36,8 +36,9 @@
         </hftl:entityPopup>
         <hftl:entityPopup id="productTemplatePopup" header="#{messages['productTemplate.title']}" backingBean="#{productTemplateBean}"
             searchField1Label="#{messages['BusinessEntity.code']}" searchField1="code" column1Label="#{messages['BusinessEntity.code']}" column1="code"
-            selection="#{userAccountBean.productInstance.productTemplate}" 
-            updateField=":parentTab:applyProductForm:productTemplateSelectedId :parentTab:applyProductForm:productTemplateSelectedId_text">
+            selection="#{userAccountBean.productInstance.productTemplate}"
+            selectionListenerBean="#{userAccountBean}" selectionListenerMethod="updateProductInstanceCode" 
+            updateField=":parentTab:applyProductForm:productTemplateSelectedId :parentTab:applyProductForm:productTemplateSelectedId_text :#{p:component('productCF')}">
         </hftl:entityPopup>
 
         <!-- 		<hftl:entityPopup id="walletOperationPopup" -->
@@ -241,12 +242,20 @@
 										entity="#{userAccountBean.productChargeInstance}"
 										valueLabelField="code" />
 
+									<p:outputPanel id="productCF">
+										<hftl:customFields backingBean="#{productInstanceBean}"
+											entity="#{userAccountBean.productInstance}"
+											messagesId=":parentTab:productInstancesTab:applyProductMessages"
+											prefix="pi" />
+									</p:outputPanel>
+
 									<h:panelGroup layout="block" styleClass="form-panel-actions">
 										<p:commandButton value="#{messages['action.save']}"
 											action="#{userAccountBean.applyProduct()}"
 											oncomplete="PF('applyProductPanel').toggle()"
 											update=":parentTab:productInstanceResultsForm :parentTab:applyProductMessages"></p:commandButton>
 									</h:panelGroup>
+																		
 								</hftl:formPanel>
 							</p:panel>
 

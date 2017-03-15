@@ -283,7 +283,7 @@ public class ChartApi extends BaseCrudApi<Chart, ChartDto> {
 
     private void populateChartFromDto(ChartDto dto, User currentUser, Chart chartToUpdate) throws MeveoApiException, BusinessException {
 
-        chartToUpdate.setCode(dto.getCode());
+        chartToUpdate.setCode(StringUtils.isBlank(dto.getUpdatedCode()) ? dto.getCode() : dto.getUpdatedCode());
         chartToUpdate.setDescription(dto.getDescription());
         // Should create it or update measurableQuantity only it has full information only
         if (!dto.getMeasurableQuantity().isCodeOnly()) {

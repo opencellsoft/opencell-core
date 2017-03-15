@@ -358,25 +358,27 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 		messages.info(new BundleKey("messages", "delete.successful"));
 	}
 	
-	public void saveProductChargeTemplate(){
+	public void saveProductChargeTemplate() {
 		log.info("saveProductChargeTemplate getObjectId=" + getObjectId());
 
 		try {
-			if(productChargeTemplate==null){
+			if (productChargeTemplate == null) {
 				return;
 			}
-			entity = productTemplateService.refreshOrRetrieve(entity); // TODO this line might cause an issue when after update of charge template service template can not be saved
-            productChargeTemplate = productChargeTemplateService.refreshOrRetrieve(productChargeTemplate);
-        	if(!productChargeTemplate.getProductTemplates().contains(entity)){
-        		productChargeTemplate.getProductTemplates().add(entity);
-        	}
-			entity.getProductChargeTemplates().add(productChargeTemplate);
-			productChargeTemplateService.update(productChargeTemplate, getCurrentUser());
-            messages.info(new BundleKey("messages", "save.successful"));
-            newProductChargeTemplate();
-		} catch (Exception e){
-			log.error("error when saving productCharge",e);
-            messages.error("error when creating product charge:"+e.getMessage());
+			// TODO this line might cause an issue when after update of charge
+			// template service template can not be saved
+			entity = productTemplateService.refreshOrRetrieve(entity);
+			productChargeTemplate = productChargeTemplateService.refreshOrRetrieve(productChargeTemplate);
+			if (!productChargeTemplate.getProductTemplates().contains(entity)) {
+				productChargeTemplate.getProductTemplates().add(entity);
+				entity.getProductChargeTemplates().add(productChargeTemplate);
+				productChargeTemplateService.update(productChargeTemplate, getCurrentUser());
+			}			
+			messages.info(new BundleKey("messages", "save.successful"));
+			newProductChargeTemplate();
+		} catch (Exception e) {
+			log.error("error when saving productCharge", e);
+			messages.error("error when creating product charge:" + e.getMessage());
 		}
 	}
 

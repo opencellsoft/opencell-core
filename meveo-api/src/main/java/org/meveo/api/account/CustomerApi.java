@@ -176,6 +176,7 @@ public class CustomerApi extends AccountApi {
 		if (customer == null) {
 			throw new EntityDoesNotExistsException(Customer.class, postData.getCode());
 		}
+		customer.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode() );
 
 		if (!StringUtils.isBlank(postData.getCustomerCategory())) {
 			CustomerCategory customerCategory = customerCategoryService.findByCode(postData.getCustomerCategory(), currentUser.getProvider());
@@ -360,9 +361,8 @@ public class CustomerApi extends AccountApi {
 		if (customerBrand == null) {
 			throw new EntityDoesNotExistsException(CustomerBrand.class, postData.getCode());
 		}
-
-		// TODO Please check if this is to be commented out
-		// customerBrand.setCode(postData.getCode());
+		
+		customerBrand.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
 		customerBrand.setDescription(postData.getDescription());
 
 		customerBrandService.update(customerBrand, currentUser);
@@ -399,7 +399,7 @@ public class CustomerApi extends AccountApi {
 		if (customerCategory == null) {
 			throw new EntityDoesNotExistsException(CustomerCategory.class, postData.getCode());
 		}
-
+		customerCategory.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
 		customerCategory.setDescription(postData.getDescription());
 		customerCategory.setExoneratedFromTaxes(postData.isExoneratedFromTaxes());
 		customerCategory.setExonerationTaxEl(postData.getExonerationTaxEl());

@@ -194,7 +194,7 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         
 
         Provider provider = currentUser.getProvider();
-        // check if code already exists
+        // check if code already exists       
         RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService.findByCode(postData.getCode(), provider);
         if (chargeTemplate == null) {
             throw new EntityDoesNotExistsException(RecurringChargeTemplate.class, postData.getCode());
@@ -209,7 +209,7 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         if (calendar == null) {
             throw new EntityDoesNotExistsException(Calendar.class, postData.getCalendar());
         }
-
+        chargeTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode())?postData.getCode():postData.getUpdatedCode());
         chargeTemplate.setDescription(postData.getDescription());
         chargeTemplate.setDisabled(postData.isDisabled());
         chargeTemplate.setAmountEditable(postData.getAmountEditable());
@@ -342,8 +342,7 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         recurringChargeTemplateService.remove(chargeTemplate, currentUser);
     }
 
-    public RecurringChargeTemplate createOrUpdate(RecurringChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
-
+    public RecurringChargeTemplate createOrUpdate(RecurringChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {    	
         if (recurringChargeTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
             return create(postData, currentUser);
         } else {

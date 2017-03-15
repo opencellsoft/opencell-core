@@ -770,16 +770,16 @@ public class RatingService extends BusinessService<WalletOperation>{
 				userMap.put("serviceInstance", service);
 			}
 		}
-		if(expression.indexOf("productInstance") >= 0){
+		if (expression.indexOf("productInstance") >= 0) {
 			ProductInstance productInstance = null;
-			if(bareOperation.getChargeInstance() instanceof ProductChargeInstance){
-				productInstance=((ProductChargeInstance)bareOperation.getChargeInstance()).getProductInstance();
-			
+			if (bareOperation.getChargeInstance() instanceof ProductChargeInstance) {
+				productInstance = ((ProductChargeInstance) bareOperation.getChargeInstance()).getProductInstance();
+
 			}
-			if(productInstance !=null){
+			if (productInstance != null) {
 				userMap.put("productInstance", productInstance);
 			}
-		}		
+		}	
 		if(expression.indexOf("offer") >= 0){
 			OfferTemplate offer=bareOperation.getChargeInstance().getSubscription().getOffer();
 			userMap.put("offer",offer);

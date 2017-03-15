@@ -84,7 +84,6 @@ public class CounterTemplateApi extends BaseCrudApi<CounterTemplate, CounterTemp
         handleMissingParameters();
 
         Provider provider = currentUser.getProvider();
-
         CounterTemplate counterTemplate = counterTemplateService.findByCode(postData.getCode(), provider);
         if (counterTemplate == null) {
             throw new EntityDoesNotExistsException(CounterTemplate.class, postData.getCode());
@@ -93,7 +92,7 @@ public class CounterTemplateApi extends BaseCrudApi<CounterTemplate, CounterTemp
         if (calendar == null) {
             throw new EntityDoesNotExistsException(Calendar.class, postData.getCalendar());
         }
-
+        counterTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode())?postData.getCode():postData.getUpdatedCode());
         counterTemplate.setDescription(postData.getDescription());
         counterTemplate.setUnityDescription(postData.getUnity());
         if (postData.getType() != null) {
@@ -141,7 +140,7 @@ public class CounterTemplateApi extends BaseCrudApi<CounterTemplate, CounterTemp
     }
 
     @Override
-    public CounterTemplate createOrUpdate(CounterTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public CounterTemplate createOrUpdate(CounterTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {    	 
         if (counterTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
             return create(postData, currentUser);
         } else {

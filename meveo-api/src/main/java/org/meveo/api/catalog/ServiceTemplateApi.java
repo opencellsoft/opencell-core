@@ -313,6 +313,7 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         if (serviceTemplate == null) {
             throw new EntityDoesNotExistsException(ServiceTemplateService.class, postData.getCode());
         }
+        serviceTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode())?postData.getCode():postData.getUpdatedCode());
         serviceTemplate.setDescription(postData.getDescription());
         serviceTemplate.setLongDescription(postData.getLongDescription());
 
@@ -440,7 +441,7 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 
     }
 
-    public ServiceTemplate createOrUpdate(ServiceTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
+    public ServiceTemplate createOrUpdate(ServiceTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {    	
         if (serviceTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
             return create(postData, currentUser);
         } else {

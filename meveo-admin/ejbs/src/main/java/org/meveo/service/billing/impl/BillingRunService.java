@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -69,11 +68,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	@Inject
 	private WalletOperationService walletOperationService;
 
-	@Inject
-	private BillingAccountService billingAccountService;
-
-	@EJB
-	private InvoiceService invoiceService;
+    @Inject
+    private BillingAccountService billingAccountService;
 	
 	@Inject
 	private RatedTxInvoicingAsync ratedTxInvoicingAsync;
@@ -86,6 +82,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
 	@Inject
 	private InvoicingAsync invoicingAsync;
+	
+	@Inject
+	private BillingRunExtensionService billingRunExtensionService;
 
 	public PreInvoicingReportsDTO generatePreInvoicingReports(BillingRun billingRun) throws BusinessException {
 		log.debug("start generatePreInvoicingReports.......");
@@ -448,9 +447,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
 		List<BillingRun> billingRuns = qb.getQuery(getEntityManager()).getResultList();
 
-		for (BillingRun br : billingRuns) {
-			getEntityManager().refresh(br);
-		}
+//		for (BillingRun br : billingRuns) {
+//			getEntityManager().refresh(br);
+//		}
 
 		return billingRuns;
 	}
@@ -496,7 +495,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
 		log.debug("getBillingAccounts for billingRun {}", billingRun.getId());
 
-		Object[] ratedTransactionsAmounts = null;
 		if (billingCycle != null) {
 			Date startDate = billingRun.getStartDate();
 			Date endDate = billingRun.getEndDate();
@@ -505,26 +503,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 				endDate = new Date();
 			}
 
-			if (startDate != null) {
-				ratedTransactionsAmounts = (Object[]) getEntityManager()
-						.createNamedQuery("RatedTransaction.sumbillingRunByCycle")
-						.setParameter("status", RatedTransactionStatusEnum.OPEN)
-						.setParameter("billingCycle", billingCycle).setParameter("startDate", startDate)
-						.setParameter("endDate", endDate)
-						.setParameter("lastTransactionDate", billingRun.getLastTransactionDate())
-						.setParameter("provider", billingRun.getProvider())
-						.getSingleResult();
-			} else {
-				ratedTransactionsAmounts = (Object[]) getEntityManager()
-						.createNamedQuery("RatedTransaction.sumbillingRunByCycleNoDate")
-						.setParameter("status", RatedTransactionStatusEnum.OPEN)
-						.setParameter("billingCycle", billingCycle)
-                        .setParameter("lastTransactionDate", billingRun.getLastTransactionDate())
-                        .setParameter("provider", billingRun.getProvider())
-                        .getSingleResult();
-			}
+			result = billingAccountService.findBillingAccounts(billingCycle, startDate, endDate, billingRun.getProvider());
 
-			result = billingAccountService.findBillingAccounts(billingCycle, startDate, endDate,billingRun.getProvider());
 		} else {
 			result = new ArrayList<BillingAccount>();
 			String[] baIds = billingRun.getSelectedBillingAccounts().split(",");
@@ -533,46 +513,31 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 				Long baId = Long.valueOf(id);
 				result.add(billingAccountService.findById(baId));
 			}
-
-			ratedTransactionsAmounts = (Object[]) getEntityManager()
-					.createNamedQuery("RatedTransaction.sumbillingRunByList")
-					.setParameter("status", RatedTransactionStatusEnum.OPEN)
-					.setParameter("billingAccountList", result)
-					.setParameter("lastTransactionDate", billingRun.getLastTransactionDate())
-					.getSingleResult();
 		}
-
-		if (ratedTransactionsAmounts != null) {
-			billingRun.setPrAmountWithoutTax((BigDecimal) ratedTransactionsAmounts[0]);
-			billingRun.setPrAmountWithTax((BigDecimal) ratedTransactionsAmounts[1]);
-			billingRun.setPrAmountTax((BigDecimal) ratedTransactionsAmounts[2]);
-		} else {
-            billingRun.setPrAmountWithoutTax(BigDecimal.ZERO);
-            billingRun.setPrAmountWithTax(BigDecimal.ZERO);
-            billingRun.setPrAmountTax(BigDecimal.ZERO);
-		}
-
-		updateNoCheck(billingRun);
 
 		return result;
 	}
+	
 
 	@SuppressWarnings("unchecked")
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public void createAgregatesAndInvoice(Long billingRunId,Date lastTransactionDate, User currentUser,long nbRuns,long waitingMillis) throws BusinessException {
-		List<BillingAccount> billingAccounts = getEntityManager()
+	public void createAgregatesAndInvoice(BillingRun billingRun, User currentUser,long nbRuns,long waitingMillis) throws BusinessException {
+		
+	    List<BillingAccount> billingAccounts = getEntityManager()
 				.createNamedQuery("BillingAccount.listByBillingRunId", BillingAccount.class)
-				.setParameter("billingRunId", billingRunId)
+				.setParameter("billingRunId", billingRun.getId())
                 .getResultList();
-    	SubListCreator subListCreator;
-		try {
+	    
+    	SubListCreator subListCreator = null;
+    	
+    	try {
 			subListCreator = new SubListCreator(billingAccounts,(int) nbRuns);
 		} catch (Exception e1) {
 			throw new BusinessException("cannot create  agregates and invoice with nbRuns="+nbRuns);
 		}
     	List<Future<String>> asyncReturns =  new ArrayList<Future<String>>();
 		while (subListCreator.isHasNext()) {
-			asyncReturns.add(ratedTxInvoicingAsync.launchAndForget((List<BillingAccount>) subListCreator.getNextWorkSet(), billingRunId, currentUser));
+			asyncReturns.add(ratedTxInvoicingAsync.createAgregatesAndInvoiceAsync((List<BillingAccount>) subListCreator.getNextWorkSet(), billingRun, currentUser));
 			try {
 				Thread.sleep(waitingMillis);
 			} catch (InterruptedException e) {
@@ -645,45 +610,23 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		return billingRun;
 	}
 	
-	private void incrementInvoiceDatesAndValidate(BillingRun billingRun,User currentUser) throws BusinessException{
-		log.debug("incrementInvoiceDatesAndValidate");
-		for (Invoice invoice : billingRun.getInvoices()) {			
-			invoice.setInvoiceNumber(invoiceService.getInvoiceNumber(invoice, currentUser));
-			invoice.setPdf(null);
-			BillingAccount billingAccount = invoice.getBillingAccount();
-			Date initCalendarDate = billingAccount.getSubscriptionDate();
-			if(initCalendarDate==null){
-				initCalendarDate=billingAccount.getAuditable().getCreated();
-			}
-			Date nextCalendarDate = billingAccount.getBillingCycle().getNextCalendarDate(initCalendarDate);
-			billingAccount.setNextInvoiceDate(nextCalendarDate);
-			billingAccount.updateAudit(currentUser);			
-			invoiceService.update(invoice, currentUser);
-		}
-		billingRun.setStatus(BillingRunStatusEnum.VALIDATED);
-		billingRun.updateAudit(currentUser);
-		update(billingRun,currentUser);
-	}
-	
 	@SuppressWarnings("unchecked")
-	public void validate(Long billingRunId,User currentUser,long nbRuns,long waitingMillis) throws Exception{
-		BillingRun billingRun = findById(billingRunId);
-		if(billingRun == null){
-			throw  new BusinessException("Cant find BillingRun with id:"+billingRunId);
-		}
+	public void validate(BillingRun billingRun,User currentUser,long nbRuns,long waitingMillis) throws Exception{
+
 		log.debug("validate, billingRun status={}",billingRun.getStatus());
 		if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())) {
-			refreshOrRetrieve(billingRun);
 			List<BillingAccount> billingAccounts = getBillingAccounts(billingRun);
 			log.info("Nb billingAccounts to process={}",
 					(billingAccounts != null ? billingAccounts.size() : 0));
 
+			billingRunExtensionService.updateBRAmounts(billingRun);
+			
 			if (billingAccounts != null && billingAccounts.size() > 0) {
 				int billableBA = 0;
 				SubListCreator subListCreator = new SubListCreator(billingAccounts,(int)nbRuns);
 				List<Future<Integer>> asyncReturns = new ArrayList<Future<Integer>>();
 				while (subListCreator.isHasNext()) {
-					Future<Integer> count = invoicingAsync.launchAndForget((List<BillingAccount>) subListCreator.getNextWorkSet(), billingRun, currentUser);
+					Future<Integer> count = invoicingAsync.updateBillingAccountTotalAmountsAsync((List<BillingAccount>) subListCreator.getNextWorkSet(), billingRun, currentUser);
 					asyncReturns.add(count);
 					try {
 						Thread.sleep(waitingMillis);
@@ -698,19 +641,20 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
 				log.info("Total billableBA:"+billableBA);
 
-				updateBillingRun(billingRun.getId(),currentUser,billingAccounts.size(),billableBA,BillingRunStatusEnum.PREINVOICED,new Date());
+				billingRunExtensionService.updateBillingRun(billingRun,currentUser,billingAccounts.size(),billableBA,BillingRunStatusEnum.PREINVOICED,new Date());
 
 				if (billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC
 						|| billingRun.getProvider().isAutomaticInvoicing()) {
-					createAgregatesAndInvoice(billingRun.getId(),billingRun.getLastTransactionDate(), currentUser,nbRuns,waitingMillis);										
-					updateBillingRun(billingRun.getId(),currentUser,null,null,BillingRunStatusEnum.POSTINVOICED,null);
+					
+				    createAgregatesAndInvoice(billingRun, currentUser,nbRuns,waitingMillis);										
+				    billingRunExtensionService.updateBillingRun(billingRun,currentUser,null,null,BillingRunStatusEnum.POSTINVOICED,null);
 				}
 			}
 		} else if (BillingRunStatusEnum.PREVALIDATED.equals(billingRun.getStatus())) {
-			createAgregatesAndInvoice(billingRun.getId(),billingRun.getLastTransactionDate(), currentUser,nbRuns,waitingMillis);								
-			updateBillingRun(billingRun.getId(),currentUser,null,null,BillingRunStatusEnum.POSTINVOICED,null);
+			createAgregatesAndInvoice(billingRun, currentUser,nbRuns,waitingMillis);								
+			billingRunExtensionService.updateBillingRun(billingRun,currentUser,null,null,BillingRunStatusEnum.POSTINVOICED,null);
 		} else if (BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus())) {
-			incrementInvoiceDatesAndValidate(billingRun, currentUser);
+		    billingRunExtensionService.incrementInvoiceDatesAndValidate(billingRun, currentUser);
 		}
 	}
 	
@@ -719,16 +663,17 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		if(billingRun == null){
 			throw  new BusinessException("Cant find BillingRun with id:"+billingRunId);
 		}
+		detach(billingRun);
 		log.debug("forceValidate, billingRun status={}",billingRun.getStatus());
 		switch(billingRun.getStatus()){
 		case POSTINVOICED:
 		case POSTVALIDATED:
-			incrementInvoiceDatesAndValidate(billingRun, currentUser);
+		    billingRunExtensionService.incrementInvoiceDatesAndValidate(billingRun, currentUser);
 			break;
 		case PREINVOICED:
 		case PREVALIDATED:
-			createAgregatesAndInvoice(billingRun.getId(),billingRun.getLastTransactionDate(), currentUser,1,0);								
-			updateBillingRun(billingRun.getId(),currentUser,1,0,BillingRunStatusEnum.POSTINVOICED,null);
+			createAgregatesAndInvoice(billingRun, currentUser,1,0);								
+			billingRunExtensionService.updateBillingRun(billingRun,currentUser,1,0,BillingRunStatusEnum.POSTINVOICED,null);
 			break;
 		case VALIDATED:
 		case CANCELED:
@@ -738,25 +683,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		}
 	}
 	
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void updateBillingRun(Long billingRunId ,User currentUser,Integer sizeBA,Integer billableBA,BillingRunStatusEnum status,Date dateStatus) throws BusinessException {
-		BillingRun billingRun = findById(billingRunId, currentUser.getProvider());
-		if(billingRun == null){
-			throw  new BusinessException("Cant find BillingRun with id:"+billingRunId);
-		}
-		if(sizeBA != null){
-			billingRun.setBillingAccountNumber(sizeBA);
-		}
-		if(billableBA != null){
-			billingRun.setBillableBillingAcountNumber(billableBA);
-		}
-		if(dateStatus != null){
-			billingRun.setProcessDate(dateStatus);
-		}
-		billingRun.setStatus(status);
-		billingRun.updateAudit(currentUser);
-		updateNoCheck(billingRun);
-	}
+
 
 	public boolean launchInvoicingRejectedBA(BillingRun br, User currentUser) throws BusinessException {
 		boolean result = false;

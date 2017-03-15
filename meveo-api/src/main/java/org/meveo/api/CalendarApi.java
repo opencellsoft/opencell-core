@@ -195,7 +195,7 @@ public class CalendarApi extends BaseApi {
         if (calendar == null) {
             throw new EntityDoesNotExistsException(Calendar.class, postData.getCode());
         }
-
+        calendar.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         calendar.setDescription(postData.getDescription());
 
         if (calendar instanceof CalendarYearly) {

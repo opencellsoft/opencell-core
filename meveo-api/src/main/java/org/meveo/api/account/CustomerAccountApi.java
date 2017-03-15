@@ -196,7 +196,8 @@ public class CustomerAccountApi extends AccountApi {
 		if (customerAccount == null) {
 			throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCode());
 		}
-
+		customerAccount.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
+		
 		if (!StringUtils.isBlank(postData.getCustomer())) {
 			Customer customer = customerService.findByCode(postData.getCustomer(), provider);
 			if (customer == null) {
@@ -301,7 +302,7 @@ public class CustomerAccountApi extends AccountApi {
 		Provider provider = currentUser.getProvider();
 		CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode, provider);
 		if (customerAccount == null) {
-			throw new BusinessException("Cannot find customer account with code=" + customerAccountCode);
+			throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
 		}
 
 		CustomerAccountDto customerAccountDto = accountHierarchyApi.customerAccountToDto(customerAccount);
@@ -436,7 +437,7 @@ public class CustomerAccountApi extends AccountApi {
 			throw new EntityDoesNotExistsException(CreditCategory.class, postData.getCode());
 		}
 
-		creditCategory.setCode(postData.getCode());
+		creditCategory.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
 		creditCategory.setDescription(postData.getDescription());
 
 		creditCategoryService.update(creditCategory, currentUser);

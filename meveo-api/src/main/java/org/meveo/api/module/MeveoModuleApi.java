@@ -409,7 +409,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
     }
 
     public void parseModuleInfoOnlyFromDto(MeveoModule meveoModule, MeveoModuleDto moduleDto, User currentUser) throws MeveoApiException, BusinessException {
-        meveoModule.setCode(moduleDto.getCode());
+        meveoModule.setCode(StringUtils.isBlank(moduleDto.getUpdatedCode()) ? moduleDto.getCode() : moduleDto.getUpdatedCode());
         meveoModule.setDescription(moduleDto.getDescription());
         meveoModule.setLicense(moduleDto.getLicense());
         meveoModule.setLogoPicture(moduleDto.getLogoPicture());

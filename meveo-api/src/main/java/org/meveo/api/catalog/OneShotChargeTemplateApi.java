@@ -249,7 +249,7 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
                 }
             }
         }
-
+        chargeTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode())?postData.getCode():postData.getUpdatedCode());
         chargeTemplate.setDescription(postData.getDescription());
         chargeTemplate.setDisabled(postData.isDisabled());
         chargeTemplate.setAmountEditable(postData.getAmountEditable());
@@ -389,8 +389,8 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
         return oneShotChargeTemplatesWPrice;
     }
 
-    public OneShotChargeTemplate createOrUpdate(OneShotChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {
-        if (oneShotChargeTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
+    public OneShotChargeTemplate createOrUpdate(OneShotChargeTemplateDto postData, User currentUser) throws MeveoApiException, BusinessException {    	
+    	if (oneShotChargeTemplateService.findByCode(postData.getCode(), currentUser.getProvider()) == null) {
             return create(postData, currentUser);
         } else {
             return update(postData, currentUser);

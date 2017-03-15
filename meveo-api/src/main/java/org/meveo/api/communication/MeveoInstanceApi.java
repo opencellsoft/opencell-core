@@ -108,7 +108,7 @@ public class MeveoInstanceApi extends BaseApi{
       	if(meveoInstance==null){
       		throw new EntityDoesNotExistsException(MeveoInstance.class, meveoInstanceDto.getCode());
       	}
-      	
+      	meveoInstance.setCode(StringUtils.isBlank(meveoInstanceDto.getUpdatedCode()) ? meveoInstanceDto.getCode() : meveoInstanceDto.getUpdatedCode());
   		meveoInstance.setDescription(meveoInstanceDto.getDescription());
   		meveoInstance.setProductName(meveoInstanceDto.getProductName());
   		meveoInstance.setProductVersion(meveoInstanceDto.getProductVersion());

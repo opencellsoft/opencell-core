@@ -47,7 +47,7 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 		return productTemplateDto;
 	}
 
-	public ProductTemplate createOrUpdate(ProductTemplateDto productTemplateDto, User currentUser) throws MeveoApiException, BusinessException {
+	public ProductTemplate createOrUpdate(ProductTemplateDto productTemplateDto, User currentUser) throws MeveoApiException, BusinessException {		
 		ProductTemplate productTemplate = productTemplateService.findByCode(productTemplateDto.getCode(), currentUser.getProvider());
 
 		if (productTemplate == null) {
@@ -141,13 +141,12 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 		handleMissingParameters();
 
 		Provider provider = currentUser.getProvider();
-
 		ProductTemplate productTemplate = productTemplateService.findByCode(postData.getCode(), provider);
 
 		if (productTemplate == null) {
 			throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getCode());
 		}
-
+		productTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode())?postData.getCode():postData.getUpdatedCode());
 		productTemplate.setDescription(postData.getDescription());
 		productTemplate.setName(postData.getName());
 		productTemplate.setValidFrom(postData.getValidFrom());

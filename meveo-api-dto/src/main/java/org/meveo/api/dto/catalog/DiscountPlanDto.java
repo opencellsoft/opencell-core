@@ -1,14 +1,14 @@
 package org.meveo.api.dto.catalog;
 
-import java.io.Serializable;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.BusinessDto;
+
 @XmlRootElement(name = "DiscountPlan")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DiscountPlanDto implements Serializable {
+public class DiscountPlanDto extends BusinessDto {
 
 	private static final long serialVersionUID = 1L;
 	
