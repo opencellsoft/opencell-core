@@ -71,6 +71,7 @@ public class FilterApi extends BaseCrudApi<Filter, FilterDto> {
             filter.setCode(dto.getCode());
             filter.clearUuid();
         }
+        filter.setCode(StringUtils.isBlank(dto.getUpdatedCode()) ? dto.getCode() : dto.getUpdatedCode());
         filter.setDescription(dto.getDescription());
         filter.setInputXml(dto.getInputXml());
         filter.setShared(dto.getShared());
