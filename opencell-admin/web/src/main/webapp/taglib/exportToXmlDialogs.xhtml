@@ -21,19 +21,6 @@
             <ui:define name="fields">
                 <h:panelGroup rendered="#{entityExportImportBean.dataModelToExport==null}">
                     <ui:repeat var="parameter" value="#{entityExportImportBean.selectedExportTemplate.parameters.entrySet().toArray()}">
-<!--                         <hftl:decorateFormField label="#{messages['export.exportCriteria.'.concat(parameter.key)]}" rendered="#{parameter.value eq 'provider'}"> -->
-<!--                             <p:selectOneMenu value="#{entityExportImportBean.exportParameters[parameter.key]}" -->
-<!--                                 rendered="#{!currentUser.hasRole('superAdminManagement')}"> -->
-<!--                                 <f:selectItem itemValue="#{identity.user.currentProvider}" itemLabel="#{identity.user.currentProvider.code}" /> -->
-<!--                                 <hftl:objectConverter /> -->
-<!--                             </p:selectOneMenu> -->
-<!--                             <p:selectOneMenu value="#{entityExportImportBean.exportParameters[parameter.key]}" -->
-<!--                                 rendered="#{currentUser.hasRole('superAdminManagement')}"> -->
-<!--                                 <f:selectItem /> -->
-<!--                                 <f:selectItems value="#{providerBean.listAll}" var="listVal" itemLabel="#{listVal.code}" itemValue="#{listVal}" /> -->
-<!--                                 <hftl:objectConverter /> -->
-<!--                             </p:selectOneMenu> -->
-<!--                         </hftl:decorateFormField> -->
                         <hftl:decorateFormField label="#{messages['export.exportCriteria.'.concat(parameter.key)]}" rendered="#{parameter.value eq 'dateRange'}">
                             <h:panelGrid columns="4">
                                 <h:outputText value="#{messages['commons.dateFrom']}" style="padding-right:5px" />

@@ -5,8 +5,7 @@ import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
-import org.keycloak.common.util.KeycloakUriBuilder;
-import org.keycloak.constants.ServiceUrlConstants;
+import org.slf4j.Logger;
 
 @Named
 public class AuthenticationProvider {
@@ -14,10 +13,15 @@ public class AuthenticationProvider {
     @Inject
     private HttpServletRequest httpRequest;
 
-    public String logout() throws ServletException {
+    @Inject
+    private Logger log;
 
-        return KeycloakUriBuilder.fromUri("/auth").path(ServiceUrlConstants.TOKEN_SERVICE_LOGOUT_PATH)
-            .queryParam("redirect_uri", httpRequest.getRequestURL().substring(0, httpRequest.getRequestURL().indexOf(httpRequest.getContextPath())) + httpRequest.getContextPath())
-            .build("master").toString();
+    public String logout() {
+        try {
+            httpRequest.logout();
+        } catch (ServletException e) {
+            log.error("Failed to logout", e);
+        }
+        return "indexPage";
     }
 }

@@ -1,13 +1,13 @@
 {
-  "realm": "opencell",
-  "realm-public-key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAhqTKhVPSvy0dHu9bydHMnwpLRxtrj2bCpxXsOv55lM9odtFkUXveTSvU01hIkAGqbXAw0MB/3R/Lx6/WQcv+DXpleMWe9fVfO+7mqSgAQ/N/eqjM+9hknLaw1Za8goGopwTYeeMUbAn06ZovE/ViJG0O5kzdt0E9KM416IjaqFrUoKyiWqNLt9U+pKN/I/xDXskrwqEfhSiZTLkO1y3VjLtujArwODnRk+CgxocwUf7oQta5/gu57S2zMryHKc46mKgQINqsMZeY4pyBrFiyNrjTf1BNOXn0jxSMW6BJRVQLGPf8sIxMxU7sqhLf5ajHXSUX93zWTHglKnQRZH9BEQIDAQAB",
-  "auth-server-url": "http://localhost:8080/auth",
-  "ssl-required": "none",
-  "resource": "opencell-web",
-  "credentials": {
-    "secret": "1fe4fa5e-0a39-4a2f-b0ad-c23537af4436"
-  },
-  "use-resource-role-mappings": true,
-  "enable-basic-auth": true,
-  "principal-attribute": "preferred_username"
+	"realm": "${opencell.keycloak.realm}",
+	"auth-server-url": "${opencell.keycloak.url}",
+	"ssl-required": "external",
+	"resource": "${opencell.keycloak.client}",
+	"credentials": {
+		"secret": "${opencell.keycloak.secret}"
+	},
+	"use-resource-role-mappings": true,
+	"enable-basic-auth": true,
+	"principal-attribute": "preferred_username",
+	"autodetect-bearer-only": true
 }

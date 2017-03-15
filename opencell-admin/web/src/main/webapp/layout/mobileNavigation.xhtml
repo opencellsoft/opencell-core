@@ -14,9 +14,7 @@
 			url="https://app.assembla.com/spaces/meveo/wiki"></p:menuitem>
 		<p:menuitem value="#{messages['menutop.changePassword']}"
 			rendered="#{currentUser.authenticated}" outcome="/changePassword.xhtml"></p:menuitem>
-		<p:menuitem value="#{messages['menutop.logout']}" 
-			rendered="#{currentUser.authenticated}" action="#{authenticationProvider.logout}"
-			ajax="false" immediate="true"/>
+		<p:menuitem value="#{messages['menutop.logout']}" action="#{authenticationProvider.logout}" rendered="#{currentUser.authenticated}" ajax="false" immediate="true" />
 	</hftl:menu>
 
 </ui:composition>

@@ -106,7 +106,7 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
         log.trace("Current user {} resolved roles/permissions {}", this.userName, this.roles);
         
         if (this.authenticated && !this.forcedAuthentication && this.providerCode == null) {
-            throw new RuntimeException("User has no provider assigned");
+//            throw new RuntimeException("User has no provider assigned");
         }
     }
 

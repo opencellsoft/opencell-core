@@ -97,6 +97,14 @@
       <web-resource-name>home</web-resource-name>
       <url-pattern>/home.jsf</url-pattern>
     </web-resource-collection>
+    <web-resource-collection>
+      <web-resource-name>mm_index</web-resource-name>
+      <url-pattern>/mm_index.jsf</url-pattern>
+    </web-resource-collection>
+    <web-resource-collection>
+      <web-resource-name>indexPage</web-resource-name>
+      <url-pattern>/index.jsf</url-pattern>
+    </web-resource-collection>
     <auth-constraint>
       <role-name>guiAccess</role-name>
     </auth-constraint>
@@ -217,7 +225,7 @@
   </security-constraint>
   <login-config>
     <auth-method>KEYCLOAK</auth-method>
-    <realm-name>master</realm-name>
+    <realm-name>opencell</realm-name>
   </login-config>
   <security-role>
     <role-name>apiAccess</role-name>

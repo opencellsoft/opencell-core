@@ -1,0 +1,15 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+	<c:choose>
+		<c:when test="#{currentUser.hasRole('marketingCatalogManager') || currentUser.hasRole('marketingCatalogVisualization')}">
+			<ui:include src="mm_index.xhtml" />
+		</c:when>
+		<c:otherwise>
+			<ui:include src="home.xhtml" />
+		</c:otherwise>
+	</c:choose>
+</ui:composition>
