@@ -110,6 +110,7 @@ public class CurrentUserProvider {
                         user.getName().setFirstName(currentUser.getFullName());
                     }
                 }
+                user.updateAudit(currentUser);
                 em.persist(user);
                 log.info("A new application user was registered with username {} and name {}", user.getUserName(), user.getName().getFullName());
             }
