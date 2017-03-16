@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+	<changeSet id="#2405_20170222-Make payment delay into EL"
+		author="EdwardLegaspi">
+		<addColumn tableName="BILLING_CYCLE">
+			<column name="due_date_delay_el" type="VARCHAR(2000)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="#2407_20170227-Add due date delay EL in CA"
+		author="EdwardLegaspi">
+		<addColumn tableName="AR_CUSTOMER_ACCOUNT">
+			<column name="due_date_delay_el" type="VARCHAR(2000)" />
+		</addColumn>
+	</changeSet>
 
 </databaseChangeLog>

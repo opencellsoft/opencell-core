@@ -118,8 +118,7 @@
                                                <hftl:formField id="trLanguageSelectId"
 														label="#{messages['tradingLanguage.tradingLanguage']}"
 														field="tradingLanguage" valueLabelField="languageCode"
-														required="true" listBean="#{tradingLanguageBean}" componentWidth="10"/> 
-<!--                                                         popup="true" popupId="tradingLanguagePopup" />	                                                -->
+														required="true" listBean="#{tradingLanguageBean}" componentWidth="10"/>
 
 
 												<h:panelGroup rendered="#{not empty customerAccountBean.entity.id}">
@@ -170,7 +169,8 @@
 													label="#{messages['customerAccount.creditCategory']}"
 													field="creditCategory" valueLabelField="code"
 													listBean="#{creditCategoryBean}" />
-
+												<hftl:formField label="#{messages['billingCycle.dueDateDelayEL']}"
+													field="dueDateDelayEL" required="false" /> 
 												<hftl:formField label="#{messages['customerAccount.status']}"
 													field="status" disabled="true" />                                                    
                                             </p:fieldset>
