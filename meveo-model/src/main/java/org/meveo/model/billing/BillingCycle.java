@@ -82,6 +82,10 @@ public class BillingCycle extends BusinessCFEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "INVOICE_TYPE_ID")
 	private InvoiceType invoiceType;
+	
+	@Column(name = "DUE_DATE_DELAY_EL", length = 2000)
+	@Size(max = 2000)
+	private String dueDateDelayEL;
 
 	public String getBillingTemplateName() {
 		return billingTemplateName;
@@ -178,5 +182,13 @@ public class BillingCycle extends BusinessCFEntity {
 	 */
 	public void setInvoiceType(InvoiceType invoiceType) {
 		this.invoiceType = invoiceType;
+	}
+
+	public String getDueDateDelayEL() {
+		return dueDateDelayEL;
+	}
+
+	public void setDueDateDelayEL(String dueDateDelayEL) {
+		this.dueDateDelayEL = dueDateDelayEL;
 	}
 }
