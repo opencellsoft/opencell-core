@@ -42,7 +42,7 @@
 				    	<p:commandButton icon="fa fa-level-up" value="Up"
 				    		rendered="#{userBean.hasSelectedFolder()}" 
 				    		action="#{userBean.setSelectedFolder('..')}" 
-				    		update=":#{p:component('fileExplorer')}" />
+				    		update=":fileExplorer" />
 			    		<p:spacer width="8" />
 				    	<h:outputText value="#{messages['fileExplorer.currentDirectory']}: #{userBean.selectedFolder}" 
 				    		rendered="#{userBean.hasSelectedFolder()}"/>
@@ -50,14 +50,14 @@
 				    <p:column headerText="#{messages['fileExplorer.fileName']}" sortBy="#{file.name}">
 						<p:commandLink action="#{userBean.setSelectedFolder(file.name)}"
 							rendered="#{file.isDirectory()}"
-							update=":#{p:component('fileExplorer')}">
+							update=":fileExplorer">
 							<i class="fa fa-folder-o fa-2x"></i>
 							<p:spacer width="8" />
 							<h:outputText value='#{file.name}' />
 						</p:commandLink>
 						<p:commandLink action="#{userBean.setSelectedFileName(file.name)}"
 							rendered="#{!file.isDirectory()}"
-							update=":#{p:component('fileExplorer')}">
+							update=":fileExplorer">
 							<i class="fa fa-file-#{userBean.getFileType(file.name)}-o fa-2x"></i>
 							<p:spacer width="8" />
 							<h:outputText value='#{file.name}' />
@@ -80,7 +80,7 @@
 					</p:commandButton>
 					<p:commandButton value="#{messages['fileExplorer.delete']}"
 						icon="ui-icon-trash" action="#{userBean.deleteSelectedFile()}"
-						update=":#{p:component('fileExplorer')}"
+						update=":fileExplorer"
 						rendered="#{userBean.canUserUpdateEntity()}">
 						<p:confirm header="#{messages['commons.confirmationHeader']}"
 							message="#{messages['fileExplorer.deleteConfirm']}"
@@ -102,7 +102,7 @@
                  <p:inputText id="newFilename" value="#{userBean.newFilename}"/>
                  <p:commandButton value="#{messages['fileExplorer.renameFile']}"
                          action="#{userBean.renameFile()}"
-                         update=":#{p:component('fileExplorer')}">
+                         update=":fileExplorer">
                          <f:param name="cid"
                              value="#{javax.enterprise.context.conversation.id}" />
                      </p:commandButton>
@@ -112,7 +112,7 @@
                  <p:inputText id="dirName" value="#{userBean.directoryName}"/>
                  <p:commandButton value="#{messages['fileExplorer.createDirectory']}"
                          action="#{userBean.createDirectory()}"
-                         update=":#{p:component('fileExplorer')}">
+                         update=":fileExplorer">
                          <f:param name="cid"
                              value="#{javax.enterprise.context.conversation.id}" />
                      </p:commandButton>
@@ -121,7 +121,7 @@
              <h:form rendered="#{userBean.currentDirEmpty and userBean.canUserUpdateEntity()}">
                  <p:commandButton value="#{messages['fileExplorer.deleteDirectory']}"
                          action="#{userBean.deleteDirectory()}"
-                         update=":#{p:component('fileExplorer')}">
+                         update=":fileExplorer">
                          <p:confirm header="Confirmation"
                              message="#{messages['fileExplorer.deleteDirectoryConfirm']}"
                              icon="ui-icon-alert" />

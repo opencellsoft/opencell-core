@@ -8,6 +8,5 @@
 	},
 	"use-resource-role-mappings": true,
 	"enable-basic-auth": true,
-	"principal-attribute": "preferred_username",
-	"autodetect-bearer-only": true
+	"principal-attribute": "preferred_username"
 }
