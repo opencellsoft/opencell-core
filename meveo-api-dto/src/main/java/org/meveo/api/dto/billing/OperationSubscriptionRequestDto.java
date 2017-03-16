@@ -21,7 +21,7 @@ public class OperationSubscriptionRequestDto extends BaseDto {
 	@XmlElement(required = true)
 	private String subscriptionCode;	
 	
-	private Date suspensionDate;
+	private Date actionDate;
 
 	public String getSubscriptionCode() {
 		return subscriptionCode;
@@ -31,17 +31,17 @@ public class OperationSubscriptionRequestDto extends BaseDto {
 		this.subscriptionCode = subscriptionCode;
 	}
 
-	public Date getSuspensionDate() {
-		return suspensionDate;
+	public Date getActionDate() {
+		return actionDate;
 	}
 
-	public void setSuspensionDate(Date suspensionDate) {
-		this.suspensionDate = suspensionDate;
+	public void setActionDate(Date suspensionDate) {
+		this.actionDate = suspensionDate;
 	}
 
 	@Override
 	public String toString() {
-		return "OperationSubscriptionRequestDto  [subscriptionCode=" + subscriptionCode + ", suspensionDate=" + suspensionDate + "]";
+		return "OperationSubscriptionRequestDto  [subscriptionCode=" + subscriptionCode + ", actionDate=" + actionDate + "]";
 	}
 	
 
