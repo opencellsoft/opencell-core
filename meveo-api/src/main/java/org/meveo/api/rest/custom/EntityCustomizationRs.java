@@ -16,6 +16,7 @@ import org.meveo.api.dto.CustomEntityTemplateDto;
 import org.meveo.api.dto.CustomFieldTemplateDto;
 import org.meveo.api.dto.EntityCustomActionDto;
 import org.meveo.api.dto.EntityCustomizationDto;
+import org.meveo.api.dto.response.BusinessEntityResponseDto;
 import org.meveo.api.dto.response.CustomEntityTemplateResponseDto;
 import org.meveo.api.dto.response.CustomEntityTemplatesResponseDto;
 import org.meveo.api.dto.response.EntityCustomActionResponseDto;
@@ -212,5 +213,9 @@ public interface EntityCustomizationRs extends IBaseRs {
     @POST
     @Path("/action/createOrUpdate")
     public ActionStatus createOrUpdateAction(EntityCustomActionDto dto);
+
+    @GET
+    @Path("/listBusinessEntityForCFVByCode/")
+	BusinessEntityResponseDto listBusinessEntityForCFVByCode(@QueryParam("code") String code, @QueryParam("wildcode") String wildcode);
 
 }
