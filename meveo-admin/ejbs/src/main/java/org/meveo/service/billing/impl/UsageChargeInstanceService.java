@@ -164,7 +164,7 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
      * @return A list of prepaid and active usage charge instances
      */
     public List<UsageChargeInstance> getPrepaidUsageChargeInstancesForCache() {
-        return getEntityManager().createNamedQuery("UsageChargeInstance.listPrepaidActive", UsageChargeInstance.class).getResultList();
+        return getEntityManager().createNamedQuery("UsageChargeInstance.listPrepaid", UsageChargeInstance.class).getResultList();
     }
     
     /**
@@ -173,6 +173,6 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
      * @return A list of prepaid and active usage charge instances
      */
     public List<UsageChargeInstance> getAllUsageChargeInstancesForCache() {
-        return getEntityManager().createNamedQuery("UsageChargeInstance.listActive", UsageChargeInstance.class).getResultList();
+        return getEntityManager().createNamedQuery("UsageChargeInstance.list", UsageChargeInstance.class).getResultList();
     }
 }
