@@ -306,26 +306,12 @@ public class RatingCacheContainerProvider {
             charges = usageChargeInstanceCache.get(subscriptionId);
             for (CachedUsageChargeInstance charge : charges) {
                 if (charge.getId() == usageChargeInstance.getId()) {
-                    if (usageChargeInstance.getStatus() != InstanceStatusEnum.ACTIVE) {
-                        log.debug("The cache contains the UsageChargeInstance {} but its status in db is not active so we remove it", usageChargeInstance.getId());
-                        charges.remove(charge);
-                        if (charges.size() == 0) {
-                            usageChargeInstanceCache.remove(subscriptionId);
-                        }
-                        return;
-                    } else {
-                        cachedCharge = charge;
-                        cacheContainsCharge = true;
-
-                    }
+                    cachedCharge = charge;
+                    cacheContainsCharge = true;  
                 }
             }
         } else {
             charges = new ArrayList<CachedUsageChargeInstance>();
-        }
-        if (usageChargeInstance.getStatus() != InstanceStatusEnum.ACTIVE) {
-            log.debug("UsageChargeInstance {} is not active, we dont add it to cache", usageChargeInstance.getId());
-            return;
         }
         CachedUsageChargeTemplate templateCache = updateUsageChargeTemplateInCache(usageChargeTemplate);
         templateCache.getSubscriptionIds().add(subscriptionId);

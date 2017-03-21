@@ -1,11 +1,10 @@
 package org.meveo.api.dto.account;
 
-import java.io.Serializable;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.BusinessDto;
 import org.meveo.model.payments.CreditCategory;
 
 /**
@@ -13,7 +12,7 @@ import org.meveo.model.payments.CreditCategory;
  **/
 @XmlRootElement(name = "CreditCategory")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CreditCategoryDto implements Serializable {
+public class CreditCategoryDto extends BusinessDto {
 
 	private static final long serialVersionUID = 9096295121437014513L;
 

@@ -178,7 +178,7 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
                 throw new EntityDoesNotExistsException(CounterTemplate.class, postData.getCounterTemplate());
             }
         }
-
+        notif.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         notif.setClassNameFilter(postData.getClassNameFilter());
         notif.setEventTypeFilter(postData.getEventTypeFilter());
         notif.setScriptInstance(scriptInstance);

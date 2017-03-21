@@ -285,7 +285,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            subscriptionApi.suspendSubscription(postData.getSubscriptionCode(), postData.getSuspensionDate());
+            subscriptionApi.suspendSubscription(postData.getSubscriptionCode(), postData.getActionDate());
         } catch (Exception e) {
             processException(e, result);
         }
@@ -298,7 +298,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            subscriptionApi.resumeSubscription(postData.getSubscriptionCode(), postData.getSuspensionDate());
+            subscriptionApi.resumeSubscription(postData.getSubscriptionCode(), postData.getActionDate());
         } catch (Exception e) {
             processException(e, result);
         }

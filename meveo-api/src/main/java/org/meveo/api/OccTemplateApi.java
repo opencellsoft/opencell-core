@@ -70,7 +70,7 @@ public class OccTemplateApi extends BaseApi {
         if (occTemplate == null) {
             throw new EntityDoesNotExistsException(OCCTemplate.class, postData.getCode());
         }
-
+        occTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         occTemplate.setDescription(postData.getDescription());
         occTemplate.setAccountCode(postData.getAccountCode());
         occTemplate.setAccountCodeClientSide(postData.getAccountCodeClientSide());

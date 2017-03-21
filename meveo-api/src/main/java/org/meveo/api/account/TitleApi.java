@@ -91,6 +91,7 @@ public class TitleApi extends BaseApi {
 
         Title title = titleService.findByCode(titleCode);
         if (title != null) {
+        	title.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
             title.setDescription(postData.getDescription());
             title.setIsCompany(postData.getIsCompany());
             titleService.update(title);

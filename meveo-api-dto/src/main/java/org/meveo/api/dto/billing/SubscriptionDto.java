@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BusinessDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.account.AccessesDto;
 import org.meveo.model.billing.SubscriptionStatusEnum;
@@ -17,7 +17,7 @@ import org.meveo.model.billing.SubscriptionStatusEnum;
 @XmlRootElement(name = "Subscription")
 @XmlType(name = "Subscription")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SubscriptionDto extends BaseDto {
+public class SubscriptionDto extends BusinessDto {
 
     private static final long serialVersionUID = -6021918810749866648L;
 

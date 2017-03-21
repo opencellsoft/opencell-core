@@ -28,7 +28,6 @@ public class WebHookApi extends BaseCrudApi<WebHook, WebHookDto> {
     @Inject
     private WebHookService webHookService;
 
-    @SuppressWarnings("rawtypes")
     @Inject
     private CounterTemplateService counterTemplateService;
 
@@ -197,6 +196,7 @@ public class WebHookApi extends BaseCrudApi<WebHook, WebHookDto> {
             }
         }
 
+        webHook.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         webHook.setClassNameFilter(postData.getClassNameFilter());
         webHook.setEventTypeFilter(postData.getEventTypeFilter());
         webHook.setScriptInstance(scriptInstance);

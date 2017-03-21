@@ -141,7 +141,7 @@ public class InvoiceSubCategoryApi extends BaseApi {
         if (invoiceCategory == null) {
             throw new EntityDoesNotExistsException(InvoiceCategory.class, postData.getInvoiceCategory());
         }
-
+        invoiceSubCategory.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         invoiceSubCategory.setInvoiceCategory(invoiceCategory);
         invoiceSubCategory.setDescription(postData.getDescription());
         invoiceSubCategory.setAccountingCode(postData.getAccountingCode());

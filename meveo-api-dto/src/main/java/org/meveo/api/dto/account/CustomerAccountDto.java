@@ -45,6 +45,7 @@ public class CustomerAccountDto extends AccountDto {
 	private BigDecimal balance = BigDecimal.ZERO;
 	// currently not use
 	private Date terminationDate;
+	private String dueDateDelayEL;
 
 	/**
 	 * Use for GET / LIST only.
@@ -184,6 +185,14 @@ public class CustomerAccountDto extends AccountDto {
 
 	public void setContactInformation(ContactInformationDto contactInformation) {
 		this.contactInformation = contactInformation;
+	}
+
+	public String getDueDateDelayEL() {
+		return dueDateDelayEL;
+	}
+
+	public void setDueDateDelayEL(String dueDateDelayEL) {
+		this.dueDateDelayEL = dueDateDelayEL;
 	}
 
 }

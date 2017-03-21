@@ -13,7 +13,7 @@ import org.meveo.model.payments.OperationCategoryEnum;
 
 @XmlRootElement(name = "OCCTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OccTemplateDto implements Serializable {
+public class OccTemplateDto extends BusinessDto {
 
     private static final long serialVersionUID = 2587489734648000805L;
 

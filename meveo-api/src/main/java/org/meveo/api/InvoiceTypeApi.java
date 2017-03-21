@@ -125,6 +125,7 @@ public class InvoiceTypeApi extends BaseApi {
         if (invoiceType == null) {
             throw new EntityDoesNotExistsException(InvoiceType.class, invoiceTypeDto.getCode());
         } 
+        invoiceType.setCode(StringUtils.isBlank(invoiceTypeDto.getUpdatedCode()) ? invoiceTypeDto.getCode() : invoiceTypeDto.getUpdatedCode());
         if(invoiceTypeDto.getSequenceDto() != null && invoiceTypeDto.getSequenceDto().getCurrentInvoiceNb() != null){
 	        if(invoiceTypeDto.getSequenceDto().getCurrentInvoiceNb().longValue() 
 	        		< invoiceTypeService.getMaxCurrentInvoiceNumber(invoiceTypeDto.getCode()).longValue()) {

@@ -134,7 +134,7 @@ public class TaxApi extends BaseApi {
         if (tax == null) {
             throw new EntityDoesNotExistsException(Tax.class, postData.getCode());
         }
-
+        tax.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         tax.setDescription(postData.getDescription());
         tax.setPercent(postData.getPercent());
         tax.setAccountingCode(postData.getAccountingCode());

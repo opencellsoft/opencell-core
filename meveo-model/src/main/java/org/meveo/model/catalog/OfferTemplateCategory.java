@@ -9,7 +9,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PostLoad;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -62,6 +64,9 @@ public class OfferTemplateCategory extends BusinessCFEntity implements Comparabl
 	@Column(name = "IMAGE_PATH", length = 100)
 	@Size(max = 100)
     private String imagePath;
+    
+    @Transient
+    private String parentCategoryCode;
 
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
@@ -134,11 +139,13 @@ public class OfferTemplateCategory extends BusinessCFEntity implements Comparabl
             return true;
         }
 
-        for (OfferTemplateCategory childCategory : getChildren()) {
-            if (childCategory.isAssignedToProductOffering()) {
-                return true;
-            }
-        }
+		if (getChildren() != null) {
+			for (OfferTemplateCategory childCategory : getChildren()) {
+				if (childCategory.isAssignedToProductOffering()) {
+					return true;
+				}
+			}
+		}
         return false;
     }
 
@@ -149,4 +156,35 @@ public class OfferTemplateCategory extends BusinessCFEntity implements Comparabl
 	public void setImagePath(String imagePath) {
 		this.imagePath = imagePath;
 	}
+
+	public String getParentCategoryCode() {
+		return parentCategoryCode;
+	}
+
+	public void setParentCategoryCode(String parentCategoryCode) {
+		this.parentCategoryCode = parentCategoryCode;
+	}
+
+	@Override
+	public String toString() {
+		return "OfferTemplateCategory [name=" + name + ", offerTemplateCategory=" + offerTemplateCategory + ", parentCategoryCode=" + parentCategoryCode + ", code=" + code
+				+ ", description=" + description + "]";
+	}
+
+	public void updateFromImport(OfferTemplateCategory iCat) {
+		if (!StringUtils.isBlank(iCat.getName())) {
+			this.setName(iCat.getName());
+		}
+		if (!StringUtils.isBlank(iCat.getDescription())) {
+			this.setDescription(iCat.getDescription());
+		}
+	}
+	
+	@PostLoad
+	public void initParentCategoryCode() {
+		if (getOfferTemplateCategory() != null) {
+			setParentCategoryCode(getOfferTemplateCategory().getCode());
+		}
+	}
+	
 }

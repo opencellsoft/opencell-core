@@ -140,6 +140,7 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
         jobInstance.setActive(postData.isActive());
         jobInstance.setJobCategoryEnum(jobCategory);
         jobInstance.setDescription(postData.getDescription());
+        jobInstance.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
 
         if (!StringUtils.isBlank(postData.getTimerCode())) {
             TimerEntity timerEntity = timerEntityService.findByCode(postData.getTimerCode());

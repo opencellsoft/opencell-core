@@ -135,6 +135,7 @@ public class CustomerAccountApi extends AccountApi {
 		customerAccount.setMandateIdentification(postData.getMandateIdentification());
 		customerAccount.setExternalRef1(postData.getExternalRef1());
 		customerAccount.setExternalRef2(postData.getExternalRef2());
+		customerAccount.setDueDateDelayEL(postData.getDueDateDelayEL());
 
 		if (postData.getContactInformation() != null) {
 			customerAccount.getContactInformation().setEmail(postData.getContactInformation().getEmail());
@@ -194,7 +195,8 @@ public class CustomerAccountApi extends AccountApi {
 		if (customerAccount == null) {
 			throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCode());
 		}
-
+		customerAccount.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
+		
 		if (!StringUtils.isBlank(postData.getCustomer())) {
 			Customer customer = customerService.findByCode(postData.getCustomer());
 			if (customer == null) {
@@ -256,6 +258,9 @@ public class CustomerAccountApi extends AccountApi {
 		}
 		if (!StringUtils.isBlank(postData.getExternalRef2())) {
 			customerAccount.setExternalRef2(postData.getExternalRef2());
+		}
+		if (!StringUtils.isBlank(postData.getDueDateDelayEL())) {
+			customerAccount.setDueDateDelayEL(postData.getDueDateDelayEL());
 		}
 
 		if(businessAccountModel != null) {
@@ -422,7 +427,7 @@ public class CustomerAccountApi extends AccountApi {
 			throw new EntityDoesNotExistsException(CreditCategory.class, postData.getCode());
 		}
 
-		creditCategory.setCode(postData.getCode());
+		creditCategory.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
 		creditCategory.setDescription(postData.getDescription());
 
 		creditCategoryService.update(creditCategory);

@@ -69,6 +69,7 @@ public class EmailTemplateApi extends BaseApi {
 		if(emailTemplate==null){
 			throw new EntityDoesNotExistsException(EmailTemplate.class, emailTemplateDto.getCode());
 		}
+		emailTemplate.setCode(StringUtils.isBlank(emailTemplateDto.getUpdatedCode()) ? emailTemplateDto.getCode() : emailTemplateDto.getUpdatedCode());
 		emailTemplate.setDescription(emailTemplateDto.getDescription());
 		if(!StringUtils.isBlank(emailTemplateDto.getMedia())){
 			emailTemplate.setMedia(emailTemplateDto.getMedia());

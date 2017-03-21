@@ -1,9 +1,9 @@
 package org.meveo.api.dto.module;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BusinessDto;
 import org.meveo.model.IEntity;
 
-abstract class BaseDataModelDto extends BaseDto implements IEntity {
+abstract class BaseDataModelDto extends BusinessDto implements IEntity {
 
 	/**
 	 * 

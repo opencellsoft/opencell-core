@@ -110,7 +110,7 @@ public class InvoiceCategoryApi extends BaseApi {
         if (invoiceCategory == null) {
             throw new EntityDoesNotExistsException(InvoiceCategory.class, postData.getCode());
         }
-
+        invoiceCategory.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         invoiceCategory.setDescription(postData.getDescription());
 
         List<TradingLanguage> tradingLanguages = tradingLanguageService.list();

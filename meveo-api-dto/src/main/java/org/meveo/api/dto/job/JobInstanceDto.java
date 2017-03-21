@@ -6,13 +6,13 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BusinessDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.jobs.JobCategoryEnum;
 
 @XmlRootElement(name = "JobInstance")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JobInstanceDto extends BaseDto {
+public class JobInstanceDto extends BusinessDto {
 
     private static final long serialVersionUID = 5166093858617578774L;
 
