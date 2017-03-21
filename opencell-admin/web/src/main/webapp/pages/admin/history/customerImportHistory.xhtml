@@ -1,0 +1,63 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+	template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{customerImportHistoBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="body">
+
+		<hftl:searchPanel columns="1"
+			label="#{messages['customerImportHisto.search']}"
+			backingBean="#{customerImportHistoBean}" renderNewButton="false">
+			<hftl:searchField
+				label="#{messages['customerImportHisto.executionDate']}"
+				field="executionDate" />
+		</hftl:searchPanel>
+
+		<hftl:dataList backingBean="#{customerImportHistoBean}">
+			<hftl:column label="#{messages['customerImportHisto.executionDate']}"
+				field="executionDate" />
+			<hftl:column label="#{messages['customerImportHisto.fileName']}"
+				field="fileName" />
+			<hftl:column label="#{messages['customerImportHisto.nbCustomers']}"
+				field="nbCustomers" />
+			<hftl:column
+				label="#{messages['customerImportHisto.nbCustomersError']}"
+				field="nbCustomersError" />
+			<hftl:column
+				label="#{messages['customerImportHisto.nbCustomersWarning']}"
+				field="nbCustomersWarning" />
+			<hftl:column
+				label="#{messages['customerImportHisto.nbCustomersIgnored']}"
+				field="nbCustomersIgnored" />
+			<hftl:column
+				label="#{messages['customerImportHisto.nbCustomersCreated']}"
+				field="nbCustomersCreated" />
+			<hftl:column
+				label="#{messages['customerImportHisto.nbCustomerAccounts']}"
+				field="nbCustomerAccounts" />
+			<hftl:column
+				label="#{messages['customerImportHisto.nbCustomerAccountsError']}"
+				field="nbCustomerAccountsError" />
+			<hftl:column
+				label="#{messages['customerImportHisto.nbCustomerAccountsWarning']}"
+				field="nbCustomerAccountsWarning" />
+			<hftl:column
+				label="#{messages['customerImportHisto.nbCustomerAccountsIgnored']}"
+				field="nbCustomerAccountsIgnored" />
+			<hftl:column
+				label="#{messages['customerImportHisto.nbCustomerAccountsCreated']}"
+				field="nbCustomerAccountsCreated" />
+		</hftl:dataList>
+	</ui:define>
+
+</ui:composition>

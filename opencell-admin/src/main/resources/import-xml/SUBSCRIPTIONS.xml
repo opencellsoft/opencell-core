@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<subscriptions>
+  <subscription code="DE_USER1_MO20131_1" userAccountId="CUST_DE_USER1" offerCode="MO20131">
+    <subscriptionDate>2013-05-26</subscriptionDate>
+    <status date="2013-06-06">ACTIVE</status>
+    <services>
+      <serviceInstance code="M020131">
+        <subscriptionDate>2013-05-26</subscriptionDate>
+        <status date="2013-06-06">ACTIVE</status>
+        <quantity>1</quantity>
+      </serviceInstance>
+    </services>
+  </subscription>
+</subscriptions>

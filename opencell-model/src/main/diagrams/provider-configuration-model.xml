@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><entities>
+	<entity>
+		<entity-name>org.meveo.model.billing.TradingCurrency</entity-name>
+		<entity-width>151</entity-width>
+		<entity-height>148</entity-height>
+		<entity-X-Coordinate>749</entity-X-Coordinate>
+		<entity-Y-Coordinate>221</entity-Y-Coordinate>
+		<primary-collapsed>false</primary-collapsed>
+		<relation-collapsed>false</relation-collapsed>
+		<basic-collapsed>false</basic-collapsed>
+	</entity>
+
+	<entity>
+		<entity-name>org.meveo.model.crm.Provider</entity-name>
+		<entity-width>279</entity-width>
+		<entity-height>748</entity-height>
+		<entity-X-Coordinate>40</entity-X-Coordinate>
+		<entity-Y-Coordinate>50</entity-Y-Coordinate>
+		<primary-collapsed>false</primary-collapsed>
+		<relation-collapsed>false</relation-collapsed>
+		<basic-collapsed>false</basic-collapsed>
+	</entity>
+
+	<entity>
+		<entity-name>org.meveo.model.billing.InvoiceSubcategoryCountry</entity-name>
+		<entity-width>221</entity-width>
+		<entity-height>188</entity-height>
+		<entity-X-Coordinate>483</entity-X-Coordinate>
+		<entity-Y-Coordinate>755</entity-Y-Coordinate>
+		<primary-collapsed>false</primary-collapsed>
+		<relation-collapsed>false</relation-collapsed>
+		<basic-collapsed>false</basic-collapsed>
+	</entity>
+
+	<entity>
+		<entity-name>org.meveo.model.billing.InvoiceSubCategory</entity-name>
+		<entity-width>191</entity-width>
+		<entity-height>148</entity-height>
+		<entity-X-Coordinate>605</entity-X-Coordinate>
+		<entity-Y-Coordinate>490</entity-Y-Coordinate>
+		<primary-collapsed>false</primary-collapsed>
+		<relation-collapsed>false</relation-collapsed>
+		<basic-collapsed>false</basic-collapsed>
+	</entity>
+
+	<entity>
+		<entity-name>org.meveo.model.billing.TradingCountry</entity-name>
+		<entity-width>211</entity-width>
+		<entity-height>148</entity-height>
+		<entity-X-Coordinate>879</entity-X-Coordinate>
+		<entity-Y-Coordinate>416</entity-Y-Coordinate>
+		<primary-collapsed>false</primary-collapsed>
+		<relation-collapsed>false</relation-collapsed>
+		<basic-collapsed>false</basic-collapsed>
+	</entity>
+
+	<entity>
+		<entity-name>org.meveo.model.billing.Tax</entity-name>
+		<entity-width>120</entity-width>
+		<entity-height>90</entity-height>
+		<entity-X-Coordinate>347</entity-X-Coordinate>
+		<entity-Y-Coordinate>563</entity-Y-Coordinate>
+		<primary-collapsed>false</primary-collapsed>
+		<relation-collapsed>false</relation-collapsed>
+		<basic-collapsed>false</basic-collapsed>
+	</entity>
+
+	<entity>
+		<entity-name>org.meveo.model.BaseEntity</entity-name>
+		<entity-width>120</entity-width>
+		<entity-height>121</entity-height>
+		<entity-X-Coordinate>430</entity-X-Coordinate>
+		<entity-Y-Coordinate>397</entity-Y-Coordinate>
+		<primary-collapsed>false</primary-collapsed>
+		<relation-collapsed>false</relation-collapsed>
+		<basic-collapsed>true</basic-collapsed>
+	</entity>
+
+	<entity>
+		<entity-name>org.meveo.model.billing.InvoiceConfiguration</entity-name>
+		<entity-width>177</entity-width>
+		<entity-height>366</entity-height>
+		<entity-X-Coordinate>401</entity-X-Coordinate>
+		<entity-Y-Coordinate>3</entity-Y-Coordinate>
+		<primary-collapsed>false</primary-collapsed>
+		<relation-collapsed>false</relation-collapsed>
+		<basic-collapsed>false</basic-collapsed>
+	</entity>
+
+	<entity>
+		<entity-name>org.meveo.model.billing.TradingLanguage</entity-name>
+		<entity-width>131</entity-width>
+		<entity-height>128</entity-height>
+		<entity-X-Coordinate>599</entity-X-Coordinate>
+		<entity-Y-Coordinate>144</entity-Y-Coordinate>
+		<primary-collapsed>false</primary-collapsed>
+		<relation-collapsed>false</relation-collapsed>
+		<basic-collapsed>false</basic-collapsed>
+	</entity>
+</entities>

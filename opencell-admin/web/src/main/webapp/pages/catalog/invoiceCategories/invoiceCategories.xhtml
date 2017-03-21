@@ -1,0 +1,51 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+	template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{invoiceCategoryListBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.configuration']}" disabled="true" />
+				<p:menuitem outcome="invoiceCategories"
+					value="#{messages['menu.invoiceCategories']}" />
+			</p:breadCrumb>
+		</h:form>
+
+		<hftl:searchPanel label="#{messages['invoiceCategory.search']}"
+			backingBean="#{invoiceCategoryListBean}">
+			<hftl:searchField label="#{messages['invoiceCategory.code']}"
+				field="code" />
+			<hftl:searchField label="#{messages['invoiceCategory.description']}"
+				field="description" id="description" />
+			<!-- 	<hftl:searchField label="#{messages['invoiceCategory.discount']}" field="discount" /> -->
+		</hftl:searchPanel>
+
+		<hftl:dataList label="#{messages['invoiceCategory.title']}"
+			backingBean="#{invoiceCategoryListBean}" sortBy="code">
+			<hftl:column label="#{messages['invoiceCategory.code']}" field="code" />
+			<hftl:column label="#{messages['invoiceCategory.description']}"
+				field="description" />
+			<!-- <hftl:column label="#{messages['invoiceCategory.discount']}" field="discount" /> -->
+			<hftl:column label="#{messages['invoiceCategory.subcategories']}"
+				field="invoiceSubCategories" valueLabelField="code" isList="true"
+				valueIdField="id" entityView="invoiceSubCategoryDetail"
+				backView="invoiceCategories" showPopup="true"
+				popupFields="accountingCode" />
+
+			<hftl:actionsColumn
+				permission="#{currentUser.hasRole('catalogManagement')}" />
+		</hftl:dataList>
+
+	</ui:define>
+
+</ui:composition>

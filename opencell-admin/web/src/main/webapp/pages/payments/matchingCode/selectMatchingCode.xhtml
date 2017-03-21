@@ -1,0 +1,35 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:s="http://jboss.org/seam/faces"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+	template="/layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<p:panel>
+			<f:facet name="header">
+				<h:outputText value="#{messages['matchingCode.selectMatching']}" />
+			</f:facet>
+			<h:outputText value="#{messages['matchingCode.opInManyMatchings']}" />
+		<hftl:dataList backingBean="#{matchingAmountBean}" dataModel="#{accountOperationBean.entity.matchingAmounts}" edit="false">    																												
+			<hftl:column label="#{messages['matchingCode.code']}" field="matchingCode"	childField="id" />									
+			<hftl:column label="#{messages['matchingCode.matchingAmount']}" field="matchingAmount"	 />								    	
+			<p:column styleClass="actions-column">
+            	<f:facet name="header">
+                	<h:outputText value="#{messages['commons.actions']}" />
+             	</f:facet>
+             	<h:link id="viewlink" outcome="/pages/payments/matchingCode/matchingCodeDetail.xhtml" >
+	                <h:graphicImage value="/img/search.gif" style="border:0"/>
+	             	<f:param name="objectId" value="#{entity.matchingCode.id}"/>
+	             	<f:param name="edit" value="false"/>
+               </h:link>                	             	          	            
+            	<p:tooltip for="viewlink" value="#{messages['matching.viewMatchingCode']}"/>
+             </p:column>							
+		</hftl:dataList>	  
+	  	</p:panel>				
+	</ui:define>
+</ui:composition>

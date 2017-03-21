@@ -1,0 +1,67 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.org/seam/faces" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:p="http://primefaces.org/ui"
+    xmlns:of="http://omnifaces.org/functions" template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{entityExportImportBean.preRenderView}" />
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="body">
+            <h:form id="crumbmenuForm">
+                <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                    <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+                    <p:menuitem outcome="export" value="#{messages['menu.export']}" />
+                </p:breadCrumb>
+            </h:form>    
+        <h:form id="searchForm">
+            <p:panel header="#{messages['export.exportTemplates']}">
+                <h:panelGroup id="searchPanel" layout="block" styleClass="search-panel">
+                    <p:messages id="messages" autoUpdate="false" />
+
+                    <hftl:decorateFormField fieldId="search_templateName" label="#{messages['export.templateName']}">
+                        <p:inputText id="search_templateName" value="#{entityExportImportBean.filters['templateName']}" size="40" />
+                    </hftl:decorateFormField>
+                    <hftl:decorateFormField fieldId="search_complex" label="#{messages['export.complex']}">
+                        <p:selectBooleanCheckbox id="search_complex" value="#{entityExportImportBean.filters['complex']}" />
+                    </hftl:decorateFormField>
+                    <h:panelGroup layout="block" styleClass="search-panel-actions">
+                        <p:commandButton value="#{messages['commons.search']}" action="#{entityExportImportBean.searchExportTemplates}" update=":form:datatable" />
+                        <p:commandButton value="#{messages['commons.clean']}" action="#{entityExportImportBean.cleanExportTemplates}"
+                            update=":searchForm:searchPanel, :form:datatable" />
+                    </h:panelGroup>
+                </h:panelGroup>
+            </p:panel>
+        </h:form>
+
+
+        <p:panel width="100">
+            <h:form id="form">
+                <p:dataTable id="datatable" var="templateInfo" value="#{entityExportImportBean.exportTemplates}" paginator="true" rows="20"
+                    paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="20,30,50"
+                    lazy="true" styleClass="custom-grid" rowIndexVar="rowIndex" resizableColumns="true">
+                    <p:column headerText="#{messages['export.templateName']}" sortBy="#{templateInfo.key}">
+                        <h:outputText value="#{templateInfo.value.name}" />
+                    </p:column>
+<!--                     <p:column headerText="#{messages['export.entityToExport']}"> -->
+<!--                         <h:outputText value="#{templateInfo.value.entityToExport.simpleName}" /> -->
+<!--                     </p:column> -->
+                    <p:column headerText="#{messages['export.entitiesToInclude']}">
+                        <h:outputText value="#{templateInfo.value.classesToExportAsFullTxt}" />
+                    </p:column>
+                    <p:column style="width: 100px;" headerText="#{messages['commons.actions']}">
+                        <p:tooltip for="exportLinkDialog" value="#{messages['export.export']}" showEffect="slide" hideEffect="slide" rendered="#{ templateInfo.value.hasParameters}" />
+                        <p:commandButton id="exportLinkDialog" icon="ui-icon-play" update=":exportParametersDialog" oncomplete="PF('exportParametersDialog').show()">
+                            <f:setPropertyActionListener target="#{entityExportImportBean.selectedExportTemplate}" value="#{templateInfo.value}" />
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+
+            </h:form>
+        </p:panel>
+
+        <hftl:exportToXmlDialogs messagesId=":searchForm:messages"/>
+    </ui:define>
+
+</ui:composition>

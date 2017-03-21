@@ -1,0 +1,41 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:hftl="http://hftl.org"
+	xmlns:f="http://xmlns.jcp.org/jsf/core" template="/layout/template.xhtml"
+			xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView" listener="#{revenueScheduleListBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.finance']}" disabled="true" />
+				<p:menuitem outcome="revenueSchedules" value="#{messages['menu.revenueSchedules']}" />
+			</p:breadCrumb>
+		</h:form>	
+
+		<hftl:searchPanel label="#{messages['revenueSchedule.search']}" backingBean="#{revenueScheduleListBean}" renderNewButton="false">
+			<hftl:searchEntityField label="#{messages['revenueSchedule.billingAccount']}" id="billingAccount" field="chargeInstance.subscription.userAccount.billingAccount" valueLabelField="descriptionOrCode"
+                listBean="#{billingAccountListBean}"/>
+			<hftl:searchEntityField label="#{messages['revenueSchedule.subscription']}" id="subscription" field="chargeInstance.subscription" valueLabelField="descriptionOrCode"
+                listBean="#{subscriptionListBean}"/>
+			<hftl:searchEntityField label="#{messages['revenueSchedule.chargeInstance']}" id="chargeInstance" field="chargeInstance" valueLabelField="descriptionOrCode"
+                listBean="#{chargeInstanceListBean}"/>
+			<hftl:searchField label="#{messages['revenueSchedule.revenueDate']}" id="revenueDate" field="revenueDate" />
+		</hftl:searchPanel>
+
+		<hftl:dataList backingBean="#{revenueScheduleListBean}" label="#{messages['revenueSchedule.title']}" sortBy="chargeInstance.code">
+			<hftl:column label="#{messages['revenueSchedule.revenueDate']}" field="revenueDate" />
+			<hftl:column label="#{messages['revenueSchedule.chargeInstance']}" field="chargeInstance.code" />
+			<hftl:column label="#{messages['revenueSchedule.recognizedRevenue']}" field="recognizedRevenue" />
+			<hftl:column label="#{messages['revenueSchedule.invoicedRevenue']}" field="invoicedRevenue" />
+			<hftl:column label="#{messages['revenueSchedule.accruedRevenue']}" field="accruedRevenue" />
+			<hftl:column label="#{messages['revenueSchedule.defferedRevenue']}" field="defferedRevenue" />
+		</hftl:dataList>
+
+	</ui:define>
+
+</ui:composition>

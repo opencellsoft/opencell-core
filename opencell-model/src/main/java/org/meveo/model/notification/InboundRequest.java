@@ -1,0 +1,370 @@
+package org.meveo.model.notification;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Size;
+
+import org.apache.commons.codec.binary.Base64;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.meveo.model.BusinessEntity;
+import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ObservableEntity;
+
+@Entity
+@ObservableEntity
+@ExportIdentifier({ "code"})
+@Table(name = "ADM_INBOUND_REQUEST", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ADM_INBOUND_REQUEST_SEQ"), })
+@Inheritance(strategy = InheritanceType.JOINED)
+public class InboundRequest extends BusinessEntity {
+
+	private static final long serialVersionUID = 2634877161620665288L;
+
+	@Column(name="CONTENT_LENGTH")
+	private int contentLength;
+
+	@Column(name="CONTENT_TYPE",length=255)
+	@Size(max = 255)
+	private String contentType;
+
+	@ElementCollection(fetch=FetchType.LAZY)
+	@CollectionTable(name="ADM_INBOUND_REQ_PARAMS")
+	private Map<String,String> parameters = new HashMap<String, String>();
+
+	@Column(name="PROTOCOL",length=20)
+	@Size(max = 20)
+	private String protocol;
+	
+	@Column(name="SCHEME",length=20)
+    @Size(max = 20)
+	private String scheme;
+	
+	@Column(name="REMOTE_ADRR",length=255)
+    @Size(max = 255)
+	private String remoteAddr;
+
+	@Column(name="REMOTE_PORT")
+	private int remotePort;
+		
+	@Column(name = "BODY", columnDefinition = "TEXT")
+	private String body;
+	
+	@Column(name="METHOD",length=10)
+    @Size(max = 10)
+	private String method;
+
+	@Column(name="AUTH_TYPE",length=11)
+    @Size(max = 11)
+	private String authType;
+
+	@ElementCollection(fetch=FetchType.LAZY)
+	@CollectionTable(name="ADM_INBOUND_REQ_COOKIES")
+	private Map<String,String> coockies = new HashMap<String, String>();
+	
+	@ElementCollection(fetch=FetchType.LAZY)
+	@CollectionTable(name="ADM_INBOUND_REQ_HEADERS")
+	private Map<String,String> headers = new HashMap<String, String>();
+
+	@Column(name="PATH_INFO",length=255)
+    @Size(max = 255)
+	private String pathInfo;
+	
+	@Column(name="REQUEST_URI",length=255)
+    @Size(max = 255)
+	private String requestURI;
+	
+	//TODO: add parts of a multipart/form-data POST request
+	
+	//response
+
+	@OneToMany(mappedBy="inboundRequest")
+	private List<NotificationHistory> notificationHistories = new ArrayList<NotificationHistory>();
+
+	@Column(name="RESP_CONTENT_TYPE",length=255)
+    @Size(max = 255)
+	private String responseContentType;
+
+	@Column(name="RESP_ENCODING",length=50)
+    @Size(max = 50)
+	private String responseEncoding;
+
+	transient private String responseBody;
+	
+	@ElementCollection(fetch=FetchType.LAZY)
+	@CollectionTable(name="ADM_INBOUND_RESP_COOKIES")
+	private Map<String,String> responseCoockies = new HashMap<String, String>();
+	
+	@ElementCollection(fetch=FetchType.LAZY)
+	@CollectionTable(name="ADM_INBOUND_RESP_HEADERS")
+	private Map<String,String> responseHeaders = new HashMap<String, String>();
+
+	
+	@Transient
+    private StringBuffer encodedParams = new StringBuffer();
+	
+	@Transient
+    private StringBuffer encodedCookies = new StringBuffer();
+   
+	@Transient
+    private StringBuffer encodedHeaders = new StringBuffer();
+	
+	@Transient
+    private StringBuffer encodedRespCookies = new StringBuffer();
+	
+	@Transient
+    private StringBuffer encodedRespHeaders = new StringBuffer();
+	
+	
+	public int getContentLength() {
+		return contentLength;
+	}
+
+	public void setContentLength(int contentLength) {
+		this.contentLength = contentLength;
+	}
+
+	public String getContentType() {
+		return contentType;
+	}
+
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
+	}
+
+	public Map<String,String> getParameters() {
+		return parameters;
+	}
+
+	public void setParameters(Map<String,String> parameters) {
+		this.parameters = parameters;
+	}
+
+	public String getProtocol() {
+		return protocol;
+	}
+
+	public void setProtocol(String protocol) {
+		this.protocol = protocol;
+	}
+
+	public String getScheme() {
+		return scheme;
+	}
+
+	public void setScheme(String scheme) {
+		this.scheme = scheme;
+	}
+
+	public String getRemoteAddr() {
+		return remoteAddr;
+	}
+
+	public void setRemoteAddr(String remoteAddr) {
+		this.remoteAddr = remoteAddr;
+	}
+
+	public int getRemotePort() {
+		return remotePort;
+	}
+
+	public void setRemotePort(int i) {
+		this.remotePort = i;
+	}
+
+	public String getMethod() {
+		return method;
+	}
+
+	public void setMethod(String method) {
+		this.method = method;
+	}
+
+	public String getAuthType() {
+		return authType;
+	}
+
+	public void setAuthType(String authType) {
+		this.authType = authType;
+	}
+
+	public Map<String,String> getCoockies() {
+		return coockies;
+	}
+
+	public void setCoockies(Map<String,String> coockies) {
+		this.coockies = coockies;
+	}
+
+	public Map<String,String> getHeaders() {
+		return headers;
+	}
+
+	public void setHeaders(Map<String,String> headers) {
+		this.headers = headers;
+	}
+
+	public String getPathInfo() {
+		return pathInfo;
+	}
+
+	public void setPathInfo(String pathInfo) {
+		this.pathInfo = pathInfo;
+	}
+
+	public String getRequestURI() {
+		return requestURI;
+	}
+
+	public void setRequestURI(String requestURI) {
+		this.requestURI = requestURI;
+	}
+
+	public String getBody() {
+		return body;
+	}
+
+	public void setBody(String body) {
+		this.body = body;
+	}
+
+	public List<NotificationHistory> getNotificationHistories() {
+		return notificationHistories;
+	}
+
+	public void setNotificationHistories(
+			List<NotificationHistory> notificationHistories) {
+		this.notificationHistories = notificationHistories;
+	}
+
+	public String getResponseContentType() {
+		return responseContentType;
+	}
+
+	public void setResponseContentType(String responseContentType) {
+		this.responseContentType = responseContentType;
+	}
+
+	public String getResponseBody() {
+		return responseBody;
+	}
+
+	public void setResponseBody(String responseBody) {
+		this.responseBody = responseBody;
+	}
+
+	public Map<String, String> getResponseCoockies() {
+		return responseCoockies;
+	}
+
+	public void setResponseCoockies(Map<String, String> responseCoockies) {
+		this.responseCoockies = responseCoockies;
+	}
+
+	public Map<String, String> getResponseHeaders() {
+		return responseHeaders;
+	}
+
+	public void setResponseHeaders(Map<String, String> responseHeaders) {
+		this.responseHeaders = responseHeaders;
+	}
+	
+	public void add(NotificationHistory notificationHistory){
+		this.notificationHistories.add(notificationHistory);
+		if(notificationHistory.getInboundRequest() != this){
+			notificationHistory.setInboundRequest(this);
+		}
+	}
+
+	public String getResponseEncoding() {
+		return responseEncoding;
+	}
+
+	public void setResponseEncoding(String responseEncoding) {
+        this.responseEncoding = responseEncoding;
+    }
+	public StringBuffer getEncodedParams() {
+		StringBuffer params=new StringBuffer();
+		if(getHeaders()!=null){
+			String sep="";
+		for(String key:getParameters().keySet()){
+			String valueParams=getParameters().get(key);
+			params.append(sep).append(key).append(":").append(Base64.encodeBase64String(valueParams.getBytes()));
+			sep="|";
+			}	
+			}
+		return params;
+	}
+	
+	public StringBuffer getEncodedCookies() {
+		StringBuffer cookies=new StringBuffer();
+		if(getHeaders()!=null){
+			String sep="";
+		for(String key:getCoockies().keySet()){
+			String valueCookies=getCoockies().get(key);
+			cookies.append(sep).append(key).append(":").append(Base64.encodeBase64String(valueCookies.getBytes()));
+			sep="|";
+			}	
+			}
+		return cookies;
+	}
+	
+	public StringBuffer getEncodedHeaders() {
+		StringBuffer headers=new StringBuffer();
+		if(getHeaders()!=null){
+			String sep="";
+		for(String key:getHeaders().keySet()){
+			String valueHeaders=getHeaders().get(key);
+			headers.append(sep).append(key).append(":").append(Base64.encodeBase64String(valueHeaders.getBytes()));
+			sep="|";
+			}
+		}
+		return headers;
+	}
+	
+	public StringBuffer getEncodedRespCookies() {
+		 StringBuffer responseCoockies=new StringBuffer();
+		if(getResponseCoockies()!=null){
+	        String sep="";
+		for(String key:getResponseCoockies().keySet()){
+			String valueRespCookies=getResponseCoockies().get(key);
+			responseCoockies.append(sep).append(key).append(":").append(Base64.encodeBase64String(valueRespCookies.getBytes()));
+			sep="|";
+			}
+	      }
+		return responseCoockies;
+	}
+	
+	public StringBuffer getEncodedRespHeaders() {
+	 StringBuffer responseHeaders=new StringBuffer(); 
+	  if(getResponseHeaders()!=null){
+	    String sep="";
+		for(String key:getResponseHeaders().keySet()){
+			String valueRespHeaders=getResponseHeaders().get(key);
+			responseHeaders.append(sep).append(key).append(":").append(Base64.encodeBase64String(valueRespHeaders.getBytes()));
+			sep="|";
+			}
+		   }
+		return responseHeaders;
+	}
+	
+	
+	
+	
+	
+}
+

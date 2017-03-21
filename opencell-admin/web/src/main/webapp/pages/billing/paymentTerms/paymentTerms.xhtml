@@ -1,0 +1,29 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:hftl="http://hftl.org"
+	template="/layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<hftl:searchPanel label="#{messages['paymentTerm.search']}"
+			backingBean="#{paymentTermBean}">
+			<hftl:searchField label="#{messages['paymentTerm.name']}" field="name" />
+		</hftl:searchPanel>
+
+		<hftl:dataList label="#{messages['paymentTerm.title']}"
+			backingBean="#{paymentTermBean}">
+			<hftl:column label="#{messages['paymentTerm.name']}" field="name" />
+			<hftl:column label="#{messages['paymentTerm.lines']}"
+				field="paymentTermLines" isList="true" valueLabelField="percentage"
+				valueIdField="id"
+				entityView="/pages/oudaya/paymentTerm/paymentTermLineDetail.xhtml" />
+
+			<hftl:actionsColumn
+				permission="#{currentUser.hasRole('billingManagement')}" />
+		</hftl:dataList>
+
+	</ui:define>
+
+</ui:composition>

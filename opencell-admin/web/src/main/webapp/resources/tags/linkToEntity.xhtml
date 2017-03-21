@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+
+<!--
+    Makes part of "happy faces" component group.
+    A custom component to display a link to an entity
+    
+ 
+    Attributes
+        linkId - link id
+        value - link text
+        view - link outcome view
+        backView -  link to outcome back view
+        entity - if provided a tooltip will be shown with entity's fields.
+        popupFields - a comma separated list of fields to display in a popup 
+        edit - should link be opened in edit or view mode
+-->      
+
+
+<cc:interface>
+	<cc:attribute name="linkId" required="true" />
+	<cc:attribute name="value" required="true" />
+	<cc:attribute name="view" required="true" />
+	<cc:attribute name="backView" required="false" />
+	<cc:attribute name="entityId" required="true" />
+	<cc:attribute name="entity" required="true" />
+	<cc:attribute name="popupFields" />
+	<cc:attribute name="edit" default="true"/>
+	<cc:attribute name="propagateConversation" default="true"/>
+	<cc:attribute name="objectIdParamName" default="objectId"/>
+</cc:interface>
+
+
+<cc:implementation>
+	<h:link id="#{cc.attrs.linkId}" value="#{cc.attrs.value}"
+		outcome="#{cc.attrs.view}" onclick="if(this.disabled!=true){this.disabled=true;return true;} return false;">
+		<f:param name="#{cc.attrs.objectIdParamName}" value="#{cc.attrs.entityId}" />
+		<f:param name="edit" value="#{cc.attrs.edit}" />
+		<c:if test="${cc.attrs.propagateConversation}">
+			<f:param name="cid"
+					value="#{javax.enterprise.context.conversation.id}" />
+		</c:if>
+		<c:if test="${not empty cc.attrs.backView}">
+			<f:param name="backView" value="#{cc.attrs.backView}"/>
+		</c:if>
+	</h:link>
+	<cc:insertChildren />
+
+	<p:tooltip rendered="#{not empty cc.attrs.popupFields}"
+		for="#{cc.attrs.linkId}" showEffect="slide" hideEffect="slide">
+		<ui:repeat value="#{cc.attrs.popupFields.split(',')}"
+			var="entityFields">
+			<h:outputText style="white-space:nowrap"
+				value="#{cc.attrs.entity[entityFields]}" />
+			<br />
+		</ui:repeat>
+	</p:tooltip>
+</cc:implementation>
+
+</html>
