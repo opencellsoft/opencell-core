@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 
@@ -32,16 +33,16 @@ public class OfferServiceTemplateDto implements Serializable{
 
 	}
 
-	public OfferServiceTemplateDto(OfferServiceTemplate e) {
+	public OfferServiceTemplateDto(OfferServiceTemplate e,CustomFieldsDto customFields) {
 		if (e.getServiceTemplate() != null) {
-			serviceTemplate = new ServiceTemplateDto(e.getServiceTemplate(), null);
+			serviceTemplate = new ServiceTemplateDto(e.getServiceTemplate(), customFields);
 		}
 		mandatory = e.isMandatory();
 		if (e.getIncompatibleServices() != null) {
 			for (ServiceTemplate st : e.getIncompatibleServices()) {
 				incompatibleServices.add(new ServiceTemplateDto(st.getCode()));
 			}
-		}
+		}		
 	}
 
 	public void setMandatory(Boolean mandatory) {
@@ -71,6 +72,5 @@ public class OfferServiceTemplateDto implements Serializable{
 
 	public Boolean getMandatory() {
 		return mandatory;
-	}
-
+	}	
 }
