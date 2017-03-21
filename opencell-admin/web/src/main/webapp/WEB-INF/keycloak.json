@@ -1,7 +1,7 @@
 {
 	"realm": "${opencell.keycloak.realm}",
 	"auth-server-url": "${opencell.keycloak.url}",
-	"ssl-required": "external",
+	"ssl-required": "none",
 	"resource": "${opencell.keycloak.client}",
 	"credentials": {
 		"secret": "${opencell.keycloak.secret}"
