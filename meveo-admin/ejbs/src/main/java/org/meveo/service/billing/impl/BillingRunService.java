@@ -614,6 +614,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	public void validate(BillingRun billingRun,User currentUser,long nbRuns,long waitingMillis) throws Exception{
 
 		log.debug("validate, billingRun status={}",billingRun.getStatus());
+		
 		if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())) {
 			List<BillingAccount> billingAccounts = getBillingAccounts(billingRun);
 			log.info("Nb billingAccounts to process={}",
@@ -644,7 +645,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 				billingRunExtensionService.updateBillingRun(billingRun,currentUser,billingAccounts.size(),billableBA,BillingRunStatusEnum.PREINVOICED,new Date());
 
 				if (billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC
-						|| billingRun.getProvider().isAutomaticInvoicing()) {
+						|| currentUser.getProvider().isAutomaticInvoicing()) {
 					
 				    createAgregatesAndInvoice(billingRun, currentUser,nbRuns,waitingMillis);										
 				    billingRunExtensionService.updateBillingRun(billingRun,currentUser,null,null,BillingRunStatusEnum.POSTINVOICED,null);
