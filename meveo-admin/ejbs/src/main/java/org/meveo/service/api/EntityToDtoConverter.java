@@ -37,11 +37,30 @@ public class EntityToDtoConverter {
 
     @Inject
     protected CustomFieldInstanceService customFieldInstanceService;
+    
+    public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity,boolean includeInheritedCF) {    	 
+		CustomFieldsDto customFieldsDto = getCustomFieldsDTO(entity);
+		if(includeInheritedCF && ( customFieldsDto == null || customFieldsDto.getCustomField().isEmpty() ) ){
+			if(customFieldsDto == null){
+				customFieldsDto = new CustomFieldsDto();
+			}
+			ICustomFieldEntity[] parentEntities = entity.getParentCFEntities();
+			if(parentEntities != null){
+				for(ICustomFieldEntity iCustomFieldEntity : parentEntities){
+					CustomFieldsDto inheritedCustomFieldsDto = getCustomFieldsDTO(iCustomFieldEntity);
+					if(inheritedCustomFieldsDto != null){
+					customFieldsDto.getCustomField().addAll(inheritedCustomFieldsDto.getCustomField());
+					}
+				}
+			}
+		}
+		return customFieldsDto;
+
+    }
 
 	public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity) {
 		Map<String, List<CustomFieldInstance>> customFields = customFieldInstanceService.getCustomFieldInstances(entity);
-
-		return getCustomFieldsDTO(entity, customFields);
+		return getCustomFieldsDTO(entity, customFields);		
 	}
 
     public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity, Map<String, List<CustomFieldInstance>> customFields) {       

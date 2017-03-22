@@ -339,6 +339,14 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 			}
 			offerTemplateDto.setOfferProductTemplates(offerProductTemplates);
 		}
+		
+        if (offerTemplate.getOfferServiceTemplates() != null && offerTemplate.getOfferServiceTemplates().size() > 0) {
+        	offerTemplateDto.setOfferServiceTemplates( new ArrayList<OfferServiceTemplateDto>());
+            for (OfferServiceTemplate st : offerTemplate.getOfferServiceTemplates()) {
+            	offerTemplateDto.getOfferServiceTemplates().add(new OfferServiceTemplateDto(st,entityToDtoConverter.getCustomFieldsDTO(st.getServiceTemplate())));
+            }
+        }
+        
 
 		return offerTemplateDto;
 
