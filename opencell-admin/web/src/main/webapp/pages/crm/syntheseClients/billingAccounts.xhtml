@@ -1,0 +1,44 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:e="http://jboss.com/products/seam/excel"
+	xmlns:p="http://primefaces.org/ui"
+    xmlns:hftl="http://hftl.org"
+    template="/layout/template.xhtml">
+    
+	<ui:define name="body">
+
+
+		<hftl:searchPanel label="#{messages['billingAccount.search']}" renderNewButton="false" backingBean="#{billingAccountBean}">
+	    	<hftl:searchField label="#{messages['businessEntity.code']}" field="code" />
+			<hftl:searchField label="#{messages['billingAccount.status']}" field="status" />
+			<hftl:searchField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" />
+			<hftl:searchField label="#{messages['billingAccount.nextInvoiceDate']}" field="nextInvoiceDate" />
+			<hftl:searchField label="#{messages['billingAccount.terminationDate']}" field="terminationDate" />
+			<hftl:searchField label="#{messages['billingAccount.electronicBilling']}" field="electronicBilling" />
+		</hftl:searchPanel>
+
+		<hftl:dataList backingBean="#{billingAccountBean}" label="#{messages['billingAccount.title']}">
+			<hftl:column label="#{messages['businessEntity.code']}" field="code" />
+			<hftl:column label="#{messages['billingAccount.status']}" field="status.label" isMessage="true" />
+			<hftl:column label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" />
+			<hftl:column label="#{messages['billingAccount.nextInvoiceDate']}" field="nextInvoiceDate" />
+			<p:column width="100">
+				<f:facet name="header">
+					<h:outputText value="#{messages['name.title']}" />
+				</f:facet>
+				<e:cell>
+					<h:outputText rendered="#{entity.name.title != null}" value="#{entity.name.title.description}" />
+				</e:cell>
+			</p:column>
+			<hftl:column label="#{messages['billingAccount.name']}" field="name" />
+			<hftl:column label="#{messages['address.address1']}" field="address".address1" />
+			<hftl:actionsColumn editView="/pages/crm/syntheseClients/syntheseClientDetail.xhtml"
+				permission="#{currentUser.hasRole('accountManagement') or currentUser.hasRole('customerSummaryVisualization')}" />
+		</hftl:dataList>
+
+
+	</ui:define>
+
+</ui:composition>

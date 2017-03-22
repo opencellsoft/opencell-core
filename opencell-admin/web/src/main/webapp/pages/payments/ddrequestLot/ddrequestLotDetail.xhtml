@@ -1,0 +1,66 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:hftl="http://hftl.org"
+	template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{ddRequestLOTBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.Paiements']}" disabled="true" />
+				<p:menuitem outcome="ddrequestLots" value="#{messages['menu.ddrequestLot']}" />				
+				<p:menuitem
+					value="#{messages['ddrequestLot.panel']} - #{ddRequestLOTBean.entity.fileName}"
+					disabled="true" rendered="#{!ddRequestLOTBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
+	
+		<hftl:formPanel showFormButtons="#{false}" label="#{messages['ddrequestLot.panel']}" backingBean="#{ddRequestLOTBean}" edit="false">
+		    <p:panel>
+			<hftl:formField label="#{messages['ddrequestLot.fileName']}" field="fileName" />
+			<hftl:formField label="#{messages['ddrequestLot.sendDate']}" field="sendDate" />
+			<hftl:formField label="#{messages['ddrequestLot.invoicesNumber']}" field="invoicesNumber" />
+			<hftl:formField label="#{messages['ddrequestLot.invoicesAmount']}" field="invoicesAmount"  />
+			<hftl:formField label="#{messages['ddrequestLot.paymentCreated']}" field="paymentCreated" isMessage="true"/>
+			<hftl:formField label="#{messages['ddrequestLot.rejectedCause']}" field="rejectedCause" />
+		   </p:panel>	
+		<h:panelGrid columns="3">
+			<p:commandButton disabled="#{!ddRequestLOTBean.canGenerateFile()}" action="#{ddRequestLOTBean.generateFile()}" value="#{messages['ddrequestLot.buttonGenerateFile']}" />										
+     		<p:commandButton value="#{messages['action.back']}" action="#{ddRequestLOTBean.back}" immediate="true" />
+   		</h:panelGrid>	
+		</hftl:formPanel>					 
+			<hftl:dataList backingBean="#{recordedInvoiceBean}" dataModel="#{ddRequestLOTBean.entity.getDdrequestItems()}" edit="#{false}" checkMany="#{false}" deleteManyButton="false">
+						<hftl:column showSortLinks="false"
+							label="#{messages['accountOperation.operationDate']}"
+							field="recordedInvoice.auditable.created" isDate="true"/>
+						<hftl:column label="#{messages['accountOperation.reference']}"
+							field="recordedInvoice.reference" />	
+						<hftl:column label="#{messages['accountOperation.occCode']}"
+							field="recordedInvoice.occCode" />					
+						<hftl:column
+							label="#{messages['accountOperation.occDescription']}"
+							field="recordedInvoice.occDescription" />
+						<hftl:column label="#{messages['accountOperation.transactionDate']}"
+							field="recordedInvoice.transactionDate" />						
+						<hftl:column label="#{messages['accountOperation.dueDate']}"
+							field="recordedInvoice.dueDate" />
+					<hftl:column label="#{messages['recordedInvoice.amount']}"
+							field="recordedInvoice.amount" />							
+						<hftl:column label="#{messages['accountOperation.netToPay']}"
+							field="recordedInvoice.netToPay" />
+						<hftl:column label="#{messages['ddRequestItem.errorMsg']}"
+							field="errorMsg" />							
+												- 					
+					</hftl:dataList>
+				 
+				 
+	</ui:define>
+
+</ui:composition>

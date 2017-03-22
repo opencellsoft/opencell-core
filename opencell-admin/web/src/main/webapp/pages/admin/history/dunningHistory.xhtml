@@ -1,0 +1,40 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:hftl="http://hftl.org" 
+	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+	template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:viewParam name="objectId" value="#{dunningHistoryBean.objectId}" />
+		</f:metadata>
+	</ui:define>
+    
+	<ui:define name="body">	
+	<p:panel>				
+				<hftl:formPanel  showFormButtons ="#{false}" edit="#{false}" label="#{messages['dunningHistory.panel']}" backingBean="#{dunningHistoryBean}">
+						<hftl:formField label="#{messages['jobHistory.executionDate']}" field="executionDate"  />	  
+						<hftl:formField label="#{messages['dunningHistory.loadedCustomerAccounts']}" field="linesRead"  />
+						<hftl:formField label="#{messages['dunningHistory.updatedCustomerAccounts']}" field="linesInserted"  />
+						<hftl:formField label="#{messages['dunningHistory.errorCustomerAccounts']}" field="linesRejected"  />																		                  																									
+					<h:commandButton value="#{messages['action.back']}"	 onclick="javascript:history.back()"/>											
+				</hftl:formPanel>
+				<custom:listPanel label="#{messages['dunningHistory.dunningLot']}">
+					<custom:dataList backingBean="#{dunningHistoryBean}"
+						dataModel="#{dunningHistory.getDunningLots()}"
+						edit="#{false}" checkMany="#{false}">
+						<custom:column
+							label="#{messages['dunningLOT.fileName']}"
+							field="fileName"  />
+						<custom:column label="#{messages['dunningLOT.actionType']}"
+							field="actionType" />					
+						<custom:actionsColumn editView="/pages/admin/workflow/dunningLOTDetail.xhtml" noEdit="true" noDelete="true"/> 					
+					</custom:dataList>
+				</custom:listPanel>
+			</p:panel>		
+		</ui:define>
+</ui:composition>

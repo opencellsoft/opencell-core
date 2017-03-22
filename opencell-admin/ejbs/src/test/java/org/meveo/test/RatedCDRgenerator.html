@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <script type="text/javascript">
+    //<![CDATA[ 
+window.onload=function(){
+
+do {
+    var nb_lignes = parseInt(window.prompt("Nombre de lignes à generer entre 1 et 1000000000 ?", ""), 10);
+} while(isNaN(nb_lignes) || nb_lignes > 1000000000 || nb_lignes < 1);
+
+var idtype=window.prompt("Merci de donner l'id type", "SMS");
+
+var tab=new Array();
+
+var start=new Date(2014, 0, 1);
+var end=new Date();
+
+for(var i=0; i<nb_lignes; ++i){ 
+	var quantity=Math.floor(Math.random() * (50 - 1) + 1);
+	var timestamp=new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+    tab.push([quantity, 'MSISDN1', 'EXCH20101', idtype, 'KBYTE', timestamp.toJSON().toString()]);
+}
+
+var csvRows = [];
+ 
+for(var i=0, l=tab.length; i<l; ++i){
+    csvRows.push(tab[i].join('\t'));
+}
+
+var csvString = csvRows.join("\r\n");
+var a         = document.createElement('a');
+a.href        = 'data:attachment/csv;charset=utf-8,' + encodeURIComponent(csvString);
+a.target      = '_blank';
+a.download    = 'RatedCDR.csv';
+
+document.body.appendChild(a);
+a.click();
+}//]]>  
+</script>
+</head>
+<body></body>
+</html>

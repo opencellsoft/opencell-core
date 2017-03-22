@@ -1,0 +1,45 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:hftl="http://hftl.org"
+	template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{walletBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+
+	<ui:define name="body">
+
+		<!-- Entity select popup. -->
+		<custom:entityPopup id="userAccountPopup"
+				header="#{messages['userAccount.popup.header']}"
+				backingBean="#{userAccountBean}" dataModel="#{userAccounts}"
+				searchField1Label="#{messages['userAccount.code']}"
+				searchField1="code"
+				searchField2Label="#{messages['userAccount.name']}"
+				searchField2="name"
+				column1Label="#{messages['userAccount.code']}" column1="code"
+				column2Label="#{messages['userAccount.name']}" column2="name" 
+				filtersMap="#{userAccountBean.filters}"	>
+			<!-- select link -->
+			<a:commandLink value="#{messages['commons.select']}"
+					reRender="formId" 
+					action="#{wallet.setUserAccount(entity)}"
+					oncomplete="Richfaces.hideModalPanel('userAccountPopup')">
+			</a:commandLink>
+		</custom:entityPopup>
+
+		<hftl:formPanel label="#{messages['wallet.walletPanel']}" backingBean="#{walletBean}" pdf="true">
+			<hftl:formField id="userAccount" label="#{messages['wallet.userAccount']}" field="userAccount" valueLabelField="name" required="true" popup="true" popupId="userAccountPopup" />
+			<hftl:formField label="#{messages['wallet.name']}" field="name" />
+			<hftl:formField label="#{messages['wallet.walletType']}" field="walletType" childField="label" isMessage="true" />
+			<hftl:formField label="#{messages['walletTemplate.lowBalanceLevel']}" field="lowBalanceLevel" />
+			<hftl:formField label="#{messages['wallet.ratedTransactions']}" field="ratedTransactions" edit="false" showFields="ratedTransaction.usageCode,usageCode;ratedTransaction.usageAmount,usageAmount;ratedTransaction.amount1,amount1" />
+		</hftl:formPanel>
+
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,48 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{tradingCurrencyListBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.configuration']}" disabled="true" />
+				<p:menuitem outcome="tradingCurrencies"
+					value="#{messages['menu.tradingCurrencies']}" />
+			</p:breadCrumb>
+		</h:form>
+
+		<hftl:searchPanel label="#{messages['tradingCurrency.search']}"
+			backingBean="#{tradingCurrencyListBean}">
+			<hftl:searchField
+				label="#{messages['tradingCurrency.trCurrencyCode']}"
+				field="currency.currencyCode" />
+		</hftl:searchPanel>
+
+		<hftl:dataList label="#{messages['tradingCurrency.title']}"
+			backingBean="#{tradingCurrencyListBean}">
+			<hftl:column label="#{messages['tradingCurrency.trCurrencyCode']}"
+				field="currency.currencyCode" width="10%"
+				entityView="tradingCurrencyDetail" valueIdField="id" />
+			<hftl:column label="#{messages['tradingCurrency.prDescription']}"
+				field="prDescription" />
+			<hftl:column label="#{messages['enableEntity.active']}"
+				field="active" isMessage="true" />
+			<hftl:column label="#{messages['tradingCurrency.prCurrencyToThis']}"
+				field="prCurrencyToThis" converterParam="4digits" />
+
+			<hftl:actionsColumn renderEnableLink="true"
+				permission="#{currentUser.hasRole('administrationManagement')}" />
+		</hftl:dataList>
+
+	</ui:define>
+
+</ui:composition>

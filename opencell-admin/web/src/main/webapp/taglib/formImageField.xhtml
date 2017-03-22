@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:o="http://omnifaces.org/ui" xmlns:hftl="http://hftl.org">
+
+<ui:composition>
+
+	<hftl:decorateFormField fieldId="#{id}" label="#{label}"
+		componentWidth="#{componentWidth}" newLine="#{newLine}"
+		displayOneLine="#{displayOneLine}" styleClass="#{styleClass}"
+		style="#{style}" labelStyle="#{labelStyle}"
+		labelStyleClass="#{labelStyleClass}" inputStyle="#{inputStyle}"
+		inputStyleClass="#{inputStyleClass}" labelWidth="#{labelWidth}"
+		inputWidth="#{inputWidth}">
+
+		<c:if test="#{edit}">
+			<p:graphicImage id="#{id}_display"
+				value="${defaultImageStreamer.image}" cache="false"
+				width="#{imageWidth}" height="#{imageHeight}">
+				<f:param name="providerCode"
+					value="#{appProvider.code}"></f:param>
+				<f:param name="fileName" value="#{fieldItem}"></f:param>
+				<f:param name="pictureGroupName" value="#{pictureGroupName}"></f:param>
+			</p:graphicImage>
+			
+			<p:fileUpload id="#{id}" disabled="#{disabled}"
+				required="#{required}"
+				fileUploadListener="#{backingBean.hfHandleFileUpload}"
+				mode="advanced" update="#{id}_display :#{p:component('messages')}" auto="true"
+				fileLimit="10" sizeLimit="1000000"
+				allowTypes="/(\.|\/)(jpe?g|png)$/" />
+			<p:message for="#{id}" id="#{id}_message" />
+		</c:if>
+		
+		<c:if test="#{!edit}">
+			<p:graphicImage id="#{id}"
+				value="${defaultImageStreamer.image}" cache="false"
+				width="#{imageWidth}" height="#{imageHeight}">
+				<f:param name="providerCode"
+					value="#{appProvider.code}"></f:param>
+				<f:param name="fileName" value="#{fieldItem}"></f:param>
+				<f:param name="pictureGroupName" value="#{pictureGroupName}"></f:param>
+			</p:graphicImage>
+		</c:if>
+
+	</hftl:decorateFormField>
+
+</ui:composition>
+</html>
