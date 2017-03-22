@@ -86,13 +86,6 @@ public class OfferTemplateDto extends BusinessDto {
             }
         }
 
-        if (offerTemplate.getOfferServiceTemplates() != null && offerTemplate.getOfferServiceTemplates().size() > 0) {
-            offerServiceTemplates = new ArrayList<>();
-            for (OfferServiceTemplate st : offerTemplate.getOfferServiceTemplates()) {
-                offerServiceTemplates.add(new OfferServiceTemplateDto(st));
-            }
-        }
-        
         customFields = customFieldInstances;
     }
 

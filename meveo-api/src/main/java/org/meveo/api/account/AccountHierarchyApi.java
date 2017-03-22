@@ -1737,6 +1737,7 @@ public class AccountHierarchyApi extends BaseApi {
 
 		dto.setMandateIdentification(ca.getMandateIdentification());
 		dto.setMandateDate(ca.getMandateDate());
+		dto.setDueDateDelayEL(ca.getDueDateDelayEL());
 
 		if (!dto.isLoaded() && ca.getBillingAccounts() != null) {
 			dto.setBillingAccounts(new BillingAccountsDto());

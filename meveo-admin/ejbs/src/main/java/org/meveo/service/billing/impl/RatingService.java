@@ -494,9 +494,8 @@ public class RatingService extends BusinessService<WalletOperation>{
 					|| pricePlan.getTradingCountry().getId().equals(countryId);
 			if (!countryAreEqual) {
 				log.debug(
-						"The countryId={} of the billing account is not the same as pricePlan with countryId={} and code={}",
-						countryId, pricePlan.getTradingCountry().getId(),
-								pricePlan.getTradingCountry().getCountry().getCountryCode() );
+						"The countryId={} of the billing account is not the same as pricePlan with countryId={}",
+						countryId, pricePlan.getTradingCountry().getId());
 				continue;
 			}
 			boolean currencyAreEqual = pricePlan.getTradingCurrency() == null
@@ -504,8 +503,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 			if (!currencyAreEqual) {
 				log.debug("The currency of the customer account "
 						+ (tcurrency != null ? tcurrency.getCurrencyCode() : "null")
-						+ " is not the same as pricePlan currency" + pricePlan.getTradingCurrency().getId() + " ("
-						+ pricePlan.getTradingCurrency().getCurrencyCode() + ")");
+						+ " is not the same as pricePlan currency" + pricePlan.getTradingCurrency().getId() );
 				continue;
 			}
 			boolean subscriptionDateInPricePlanPeriod = bareOperation.getSubscriptionDate() == null

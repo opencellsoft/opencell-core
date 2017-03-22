@@ -37,9 +37,8 @@ import javax.validation.constraints.Size;
 @Table(name = "BILLING_USAGE_CHARGE_INST")
 @SequenceGenerator(name = "ID_GENERATOR", sequenceName = "BILLING_USAGE_CHARGE_INST_SEQ")
 @NamedQueries({
-        @NamedQuery(name = "UsageChargeInstance.listPrepaidActive", query = "SELECT c FROM UsageChargeInstance c where c.prepaid=true and "
-                + "c.status=org.meveo.model.billing.InstanceStatusEnum.ACTIVE"),
-        @NamedQuery(name = "UsageChargeInstance.listActive", query = "SELECT c FROM UsageChargeInstance c where c.status=org.meveo.model.billing.InstanceStatusEnum.ACTIVE") })
+        @NamedQuery(name = "UsageChargeInstance.listPrepaid", query = "SELECT c FROM UsageChargeInstance c where c.prepaid=true"),
+        @NamedQuery(name = "UsageChargeInstance.list", query = "SELECT c FROM UsageChargeInstance c") })
 public class UsageChargeInstance extends ChargeInstance {
 
 	private static final long serialVersionUID = 1L;
