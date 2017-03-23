@@ -289,14 +289,17 @@ public class CustomerAccountApi extends AccountApi {
 
 	@SecuredBusinessEntityMethod(
 			validate = @SecureMethodParameter(entity = CustomerAccount.class))
-	public CustomerAccountDto find(String customerAccountCode) throws Exception {
+	public CustomerAccountDto find(String customerAccountCode, Boolean calculateBalances) throws Exception {
 
 		if (StringUtils.isBlank(customerAccountCode)) {
 			missingParameters.add("customerAccountCode");
 			handleMissingParameters();
 		}
 
-		
+		if(calculateBalances == null){
+			calculateBalances = Boolean.TRUE;
+		}
+
 		CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
 		if (customerAccount == null) {
 			throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
@@ -304,13 +307,20 @@ public class CustomerAccountApi extends AccountApi {
 
 		CustomerAccountDto customerAccountDto = accountHierarchyApi.customerAccountToDto(customerAccount);
 
-		BigDecimal balance = customerAccountService.customerAccountBalanceDue(null, customerAccount.getCode(), new Date());
+		if (calculateBalances) {
+			BigDecimal balanceDue = customerAccountService.customerAccountBalanceDue(customerAccount, new Date());
+			BigDecimal totalInvoiceBalance = customerAccountService.customerAccountBalanceExigibleWithoutLitigation(customerAccount, new Date());
 
-		if (balance == null) {
-			throw new BusinessException("account balance calculation failed");
+			if (balanceDue == null) {
+				throw new BusinessException("Balance due calculation failed.");
+			}
+
+			if (totalInvoiceBalance == null) {
+				throw new BusinessException("Total invoice balance calculation failed.");
+			}
+			customerAccountDto.setBalance(balanceDue);
+			customerAccountDto.setTotalInvoiceBalance(totalInvoiceBalance);
 		}
-
-		customerAccountDto.setBalance(balance);
 
 		return customerAccountDto;
 	}
@@ -497,7 +507,7 @@ public class CustomerAccountApi extends AccountApi {
 	public void createOrUpdatePartial(CustomerAccountDto customerAccountDto) throws MeveoApiException, BusinessException {
 		CustomerAccountDto existedCustomerAccountDto = null;
 		try {
-			existedCustomerAccountDto = find(customerAccountDto.getCode());
+			existedCustomerAccountDto = find(customerAccountDto.getCode(), false);
 		} catch (Exception e) {
 			existedCustomerAccountDto = null;
 		}

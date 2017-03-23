@@ -1094,20 +1094,20 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     }
 
     /**
-     * Match for a given entity's or its parent's custom field (non-versionable values) map's key as the matrix value and return a map value.
+     * Match for a given entity's or its parent's custom field (non-versionable values) map's key (map or matrix) and return a map value.
      * 
-     * Map key is assumed to be the following format. Note that MATRIX_STRING and MATRIX_RON keys can be mixed
+     * For matrix, map key is assumed to be the following format. Note that MATRIX_STRING and MATRIX_RON keys can be mixed
      * 
      * <matrix first key>|<matrix second key>|<matrix xx key>|<range of numbers for the third key></li>
      * 
      * @param entity Entity to match
      * @param code Custom field code
-     * @param keys Keys to match. The order must correspond to the order of the keys during data entry
-     * @return Map value that matches the matrix format map key
+     * @param keys Keys to match. For matrix, the order must correspond to the order of the keys during data entry
+     * @return Map value that matches the map key (map key or matrix formated map key)
      */
-    public Object getInheritedCFValueByMatrix(ICustomFieldEntity entity, String code, Object... keys) {
+    public Object getInheritedCFValueByKey(ICustomFieldEntity entity, String code, Object... keys) {
 
-        Object value = getCFValueByMatrix(entity, code, keys);
+        Object value = getCFValueByKey(entity, code, keys);
         if (value != null) {
             return value;
         }
@@ -1123,7 +1123,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
                 } else {
                     parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
                 }
-                Object cfeValue = getInheritedCFValueByMatrix(parentCfEntity, code, keys);
+                Object cfeValue = getInheritedCFValueByKey(parentCfEntity, code, keys);
                 if (cfeValue != null) {
                     return cfeValue;
                 }
@@ -1133,21 +1133,21 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     }
 
     /**
-     * Match for a given date (versionable values) for a given entity's or its parent's custom field (versionable values) map's key as the matrix value and return a map value.
+     * Match for a given date (versionable values) for a given entity's or its parent's custom field (versionable values) map's key (map or matrix) and return a map value.
      * 
-     * Map key is assumed to be the following format. Note that MATRIX_STRING and MATRIX_RON keys can be mixed
+     * For matrix, map key is assumed to be the following format. Note that MATRIX_STRING and MATRIX_RON keys can be mixed
      * 
      * <matrix first key>|<matrix second key>|<matrix xx key>|<range of numbers for the third key></li>
      * 
      * @param entity Entity to match
      * @param code Custom field code
      * @param date Date to match
-     * @param keys Keys to match. The order must correspond to the order of the keys during data entry
-     * @return Map value that matches the matrix format map key
+     * @param keys Keys to match. For matrix, the order must correspond to the order of the keys during data entry
+     * @return Map value that matches the map key (map key or matrix formated map key)
      */
-    public Object getInheritedCFValueByMatrix(ICustomFieldEntity entity, String code, Date date, Object... keys) {
+    public Object getInheritedCFValueByKey(ICustomFieldEntity entity, String code, Date date, Object... keys) {
 
-        Object value = getCFValueByMatrix(entity, code, date, keys);
+        Object value = getCFValueByKey(entity, code, date, keys);
         if (value != null) {
             return value;
         }
@@ -1163,7 +1163,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
                 } else {
                     parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
                 }
-                Object cfeValue = getInheritedCFValueByMatrix(parentCfEntity, code, date, keys);
+                Object cfeValue = getInheritedCFValueByKey(parentCfEntity, code, date, keys);
                 if (cfeValue != null) {
                     return cfeValue;
                 }
@@ -1376,19 +1376,19 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     }
 
     /**
-     * Match for a given entity's custom field (non-versionable values) map's key as the matrix value and return a map value.
+     * Match for a given entity's custom field (non-versionable values) map's key (map or matrix) and return a map value.
      * 
-     * Map key is assumed to be the following format. Note that MATRIX_STRING and MATRIX_RON keys can be mixed
+     * For matrix, map key is assumed to be the following format. Note that MATRIX_STRING and MATRIX_RON keys can be mixed
      * 
      * <matrix first key>|<matrix second key>|<matrix xx key>|<range of numbers for the third key></li>
      * 
      * @param entity Entity to match
      * @param code Custom field code
-     * @param keys Keys to match. The order must correspond to the order of the keys during data entry
-     * @return Map value that matches the matrix format map key
+     * @param keys Keys to match. For matrix, the order must correspond to the order of the keys during data entry
+     * @return Map value that matches the map key (map key or matrix formated map key)
      */
     @SuppressWarnings("unchecked")
-    public Object getCFValueByMatrix(ICustomFieldEntity entity, String code, Object... keys) {
+    public Object getCFValueByKey(ICustomFieldEntity entity, String code, Object... keys) {
 
         CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(code, entity);
         if (cft == null) {
@@ -1396,33 +1396,62 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
             return null;
         }
 
-        if (cft.getStorageType() != CustomFieldStorageTypeEnum.MATRIX) {
-            log.trace("getCFValueByMatrix does not apply to storage type {}", cft.getStorageType());
+        if (cft.getStorageType() != CustomFieldStorageTypeEnum.MAP && cft.getStorageType() != CustomFieldStorageTypeEnum.MATRIX) {
+            log.trace("getCFValueByKey does not apply to storage type {}", cft.getStorageType());
+            return null;
+        }
+        if (keys.length == 0) {
+            log.trace("getCFValueByKey needs at least one key passed");
             return null;
         }
 
         Map<String, Object> value = (Map<String, Object>) getCFValue(entity, code, false);
-        Object valueMatched = CustomFieldInstanceService.matchMatrixValue(cft, value, keys);
+        if (value == null) {
+            return null;
+        }
+        Object valueMatched = null;
+        if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX) {
+            valueMatched = CustomFieldInstanceService.matchMatrixValue(cft, value, keys);
 
-        log.trace("Found matrix value match {} for keyToMatch={}", valueMatched, keys);
+        } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.MAP) {
+            if (keys[0] == null) {
+                return null;
+            }
+            if (cft.getMapKeyType() == CustomFieldMapKeyEnum.STRING) {
+                valueMatched = value.get(keys[0].toString());
+
+            } else if (cft.getMapKeyType() == CustomFieldMapKeyEnum.RON) {
+                if (keys[0] instanceof String) {
+                    try {
+                        keys[0] = Double.parseDouble((String) keys[0]);
+                    } catch (NumberFormatException e) {
+                        // Don't care about error nothing will be found later
+                    }
+                }
+                valueMatched = CustomFieldInstanceService.matchRangeOfNumbersValue(value, keys[0]);
+            }
+        }
+
+        log.trace("Found value match {} by keyToMatch={}", valueMatched, keys);
         return valueMatched;
 
     }
 
     /**
-     * Match for a given date (versionable values) for a given entity's custom field (versionable values) map's key as the matrix value and return a map value.
+     * Match for a given date (versionable values) for a given entity's custom field (versionable values) map's key (map or matrix) and return a map value.
      * 
-     * Map key is assumed to be the following format. Note that MATRIX_STRING and MATRIX_RON keys can be mixed
+     * For matrix, map key is assumed to be the following format. Note that MATRIX_STRING and MATRIX_RON keys can be mixed
      * 
      * <matrix first key>|<matrix second key>|<matrix xx key>|<range of numbers for the third key></li>
      * 
      * @param entity Entity to match
      * @param code Custom field code
      * @param date Date to match
-     * @param keys Keys to match. The order must correspond to the order of the keys during data entry
-     * @return Map value that matches the matrix format map key
+     * @param keys Keys to match. For matrix, the order must correspond to the order of the keys during data entry
+     * @return Map value that matches the map key (map key or matrix formated map key)
      */
-    public Object getCFValueByMatrix(ICustomFieldEntity entity, String code, Date date, Object... keys) {
+    @SuppressWarnings("unchecked")
+    public Object getCFValueByKey(ICustomFieldEntity entity, String code, Date date, Object... keys) {
 
         CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(code, entity);
         if (cft == null) {
@@ -1430,13 +1459,41 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
             return null;
         }
 
-        if (cft.getStorageType() != CustomFieldStorageTypeEnum.MATRIX) {
-            log.trace("getCFValueByMatrix does not apply to storage type {}", cft.getStorageType());
+        if (cft.getStorageType() != CustomFieldStorageTypeEnum.MAP && cft.getStorageType() != CustomFieldStorageTypeEnum.MATRIX) {
+            log.trace("getCFValueByKey does not apply to storage type {}", cft.getStorageType());
+            return null;
+        }
+        if (keys.length == 0) {
+            log.trace("getCFValueByKey needs at least one key passed");
             return null;
         }
 
-        Object value = getCFValue(entity, code, date, false);
-        Object valueMatched = CustomFieldInstanceService.matchMatrixValue(cft, value, keys);
+        Map<String, Object> value = (Map<String, Object>) getCFValue(entity, code, date, false);
+        if (value == null) {
+            return null;
+        }
+        Object valueMatched = null;
+        if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX) {
+            valueMatched = CustomFieldInstanceService.matchMatrixValue(cft, value, keys);
+
+        } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.MAP) {
+            if (keys[0] == null) {
+                return null;
+            }
+            if (cft.getMapKeyType() == CustomFieldMapKeyEnum.STRING) {
+                valueMatched = value.get(keys[0].toString());
+
+            } else if (cft.getMapKeyType() == CustomFieldMapKeyEnum.RON) {
+                if (keys[0] instanceof String) {
+                    try {
+                        keys[0] = Double.parseDouble((String) keys[0]);
+                    } catch (NumberFormatException e) {
+                        // Don't care about error nothing will be found later
+                    }
+                }
+                valueMatched = CustomFieldInstanceService.matchRangeOfNumbersValue(value, keys[0]);
+            }
+        }
 
         log.trace("Found matrix value match {} for period {} and keyToMatch={}", valueMatched, date, keys);
         return valueMatched;
@@ -1583,6 +1640,48 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     }
 
     /**
+     * Check if a match for a given value map's key as the matrix value is present.
+     * 
+     * Map key is assumed to be the following format. Note that MATRIX_STRING and MATRIX_RON keys can be mixed
+     * 
+     * <matrix first key>|<matrix second key>|<range of numbers for the third key></li>
+     * 
+     * @param cft Custom field template
+     * @param value Value to inspect
+     * @param keys Keys to match. The order must correspond to the order of the keys during data entry
+     * @return True if a value was matched
+     */
+    @SuppressWarnings("unchecked")
+    public static boolean isMatchMatrixValue(CustomFieldTemplate cft, Object value, Object... keys) {
+        if (value == null || !(value instanceof Map) || keys == null || keys.length == 0) {
+            return false;
+        }
+
+        for (Entry<String, Object> valueInfo : ((Map<String, Object>) value).entrySet()) {
+            String[] keysParsed = valueInfo.getKey().split("\\" + CustomFieldValue.MATRIX_KEY_SEPARATOR);
+            if (keysParsed.length != keys.length) {
+                continue;
+            }
+
+            boolean allMatched = true;
+            for (int i = 0; i < keysParsed.length; i++) {
+                CustomFieldMatrixColumn matrixColumn = cft.getMatrixColumnByIndex(i);
+                if (matrixColumn == null || (matrixColumn.getKeyType() == CustomFieldMapKeyEnum.STRING && !keysParsed[i].equals(keys[i]))
+                        || (matrixColumn.getKeyType() == CustomFieldMapKeyEnum.RON && !isNumberRangeMatch(keysParsed[i], keys[i]))) {
+                    allMatched = false;
+                    break;
+                }
+            }
+
+            if (allMatched) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Match map's key as a range of numbers value and return a matched value.
      * 
      * Number ranges is assumed to be the following format: <number from>&lt;<number to>
@@ -1605,6 +1704,31 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         }
 
         return null;
+    }
+
+    /**
+     * Check if a match map's key as a range of numbers value is present
+     * 
+     * Number ranges is assumed to be the following format: <number from>&lt;<number to>
+     * 
+     * @param value Value to inspect
+     * @param numberToMatch Number to match
+     * @return True if map value matches map key
+     */
+    @SuppressWarnings("unchecked")
+    public static boolean isMatchRangeOfNumbersValue(Object value, Object numberToMatch) {
+        if (value == null || !(value instanceof Map) || numberToMatch == null
+                || !(numberToMatch instanceof Long || numberToMatch instanceof Integer || numberToMatch instanceof Double || numberToMatch instanceof BigDecimal)) {
+            return false;
+        }
+
+        for (Entry<String, Object> valueInfo : ((Map<String, Object>) value).entrySet()) {
+            if (isNumberRangeMatch(valueInfo.getKey(), numberToMatch)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -1753,5 +1877,182 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         }
 
         return value;
+    }
+
+    /**
+     * Check if a given entity has a CF value of type Map or Matrix with a given key
+     * 
+     * @param entity Entity
+     * @param code Custom field code
+     * @param keys Key or keys (in case of matrix) to match
+     * @return True if CF value has a given key
+     */
+    @SuppressWarnings("unchecked")
+    public boolean isCFValueHasKey(ICustomFieldEntity entity, String code, Object... keys) {
+
+        CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(code, entity);
+        if (cft == null) {
+            log.trace("No CFT found {}/{}", entity, code);
+            return false;
+        }
+
+        if (cft.getStorageType() != CustomFieldStorageTypeEnum.MAP && cft.getStorageType() != CustomFieldStorageTypeEnum.MATRIX) {
+            log.trace("isCFValueHasKey does not apply to storage type {}", cft.getStorageType());
+            return false;
+        }
+        if (keys.length == 0) {
+            log.trace("isCFValueHasKey needs at least one key passed");
+            return false;
+        }
+
+        Map<String, Object> value = (Map<String, Object>) getCFValue(entity, code, null);
+        if (value == null) {
+            return false;
+        }
+        boolean hasKey = false;
+        if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX) {
+            hasKey = CustomFieldInstanceService.isMatchMatrixValue(cft, value, keys);
+
+        } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.MAP) {
+            if (keys[0] == null) {
+                return false;
+            }
+            if (cft.getMapKeyType() == CustomFieldMapKeyEnum.STRING) {
+                hasKey = value.containsKey(keys[0].toString());
+
+            } else if (cft.getMapKeyType() == CustomFieldMapKeyEnum.RON) {
+                if (keys[0] instanceof String) {
+                    try {
+                        keys[0] = Double.parseDouble((String) keys[0]);
+                    } catch (NumberFormatException e) {
+                        // Don't care about error nothing will be found later
+                    }
+                }
+                hasKey = CustomFieldInstanceService.isMatchRangeOfNumbersValue(value, keys[0]);
+            }
+        }
+        log.trace("Value match {} for keyToMatch={}", hasKey, keys);
+        return hasKey;
+    }
+
+    /**
+     * Check if a given entity at a given period date has a CF value of type Map or Matrix with a given key
+     * 
+     * @param entity Entity
+     * @param code Custom field code
+     * @param date Date
+     * @param keys Key or keys (in case of matrix) to match
+     * @return True if CF value has a given key at a given period date
+     */
+    @SuppressWarnings("unchecked")
+    public boolean isCFValueHasKey(ICustomFieldEntity entity, String code, Date date, Object... keys) {
+
+        CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(code, entity);
+        if (cft == null) {
+            log.trace("No CFT found {}/{}", entity, code);
+            return false;
+        }
+
+        if (cft.getStorageType() != CustomFieldStorageTypeEnum.MAP && cft.getStorageType() != CustomFieldStorageTypeEnum.MATRIX) {
+            log.trace("isCFValueHasKey does not apply to storage type {}", cft.getStorageType());
+            return false;
+        }
+        if (keys.length == 0) {
+            log.trace("isCFValueHasKey needs at least one key passed");
+            return false;
+        }
+
+        Map<String, Object> value = (Map<String, Object>) getCFValue(entity, code, date, null);
+        if (value == null) {
+            return false;
+        }
+        boolean hasKey = false;
+        if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX) {
+            hasKey = CustomFieldInstanceService.isMatchMatrixValue(cft, value, keys);
+
+        } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.MAP) {
+            if (keys[0] == null) {
+                return false;
+            }
+            if (cft.getMapKeyType() == CustomFieldMapKeyEnum.STRING) {
+                hasKey = value.containsKey(keys[0].toString());
+
+            } else if (cft.getMapKeyType() == CustomFieldMapKeyEnum.RON) {
+                if (keys[0] instanceof String) {
+                    try {
+                        keys[0] = Double.parseDouble((String) keys[0]);
+                    } catch (NumberFormatException e) {
+                        // Don't care about error nothing will be found later
+                    }
+                }
+                hasKey = CustomFieldInstanceService.isMatchRangeOfNumbersValue(value, keys[0]);
+            }
+
+        }
+        log.trace("Value match {} for date for keyToMatch={}", hasKey, date, keys);
+        return hasKey;
+    }
+
+    /**
+     * Check if a given entity or its parents have a CF value of type Map or Matrix with a given key
+     * 
+     * @param entity Entity
+     * @param code Custom field code
+     * @param keys Key or keys (in case of matrix) to match
+     * @return True if CF value has a given key
+     */
+    public boolean isInheritedCFValueHasKey(ICustomFieldEntity entity, String code, Object... keys) {
+
+        boolean hasKey = isCFValueHasKey(entity, code, keys);
+        if (hasKey) {
+            return true;
+        }
+
+        ICustomFieldEntity[] parentCfEntities = entity.getParentCFEntities();
+        if (parentCfEntities != null) {
+            for (ICustomFieldEntity parentCfEntity : parentCfEntities) {
+                if (parentCfEntity == null) {
+                    continue;
+                }
+                parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                hasKey = isInheritedCFValueHasKey(parentCfEntity, code, keys);
+                if (hasKey) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if a given entity or its parents at a given perio date have a CF value of type Map or Matrix with a given key
+     * 
+     * @param entity Entity
+     * @param code Custom field code
+     * @param data Date
+     * @param keys Key or keys (in case of matrix) to match
+     * @return True if CF value has a given key at a given perio date
+     */
+    public boolean isInheritedCFValueHasKey(ICustomFieldEntity entity, String code, Date date, Object... keys) {
+
+        boolean hasKey = isCFValueHasKey(entity, code, date, keys);
+        if (hasKey) {
+            return true;
+        }
+
+        ICustomFieldEntity[] parentCfEntities = entity.getParentCFEntities();
+        if (parentCfEntities != null) {
+            for (ICustomFieldEntity parentCfEntity : parentCfEntities) {
+                if (parentCfEntity == null) {
+                    continue;
+                }
+                parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                hasKey = isInheritedCFValueHasKey(parentCfEntity, code, date, keys);
+                if (hasKey) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

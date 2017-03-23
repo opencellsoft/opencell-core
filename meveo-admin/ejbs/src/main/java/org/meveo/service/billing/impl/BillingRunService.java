@@ -580,6 +580,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	public void validate(BillingRun billingRun,long nbRuns,long waitingMillis) throws Exception{
 
 		log.debug("validate, billingRun status={}",billingRun.getStatus());
+		
 		if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())) {
 			List<BillingAccount> billingAccounts = getBillingAccounts(billingRun);
 			log.info("Nb billingAccounts to process={}",

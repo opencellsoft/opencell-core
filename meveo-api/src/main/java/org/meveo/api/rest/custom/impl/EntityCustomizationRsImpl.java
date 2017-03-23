@@ -15,6 +15,7 @@ import org.meveo.api.dto.CustomEntityTemplateDto;
 import org.meveo.api.dto.CustomFieldTemplateDto;
 import org.meveo.api.dto.EntityCustomActionDto;
 import org.meveo.api.dto.EntityCustomizationDto;
+import org.meveo.api.dto.response.BusinessEntityResponseDto;
 import org.meveo.api.dto.response.CustomEntityTemplateResponseDto;
 import org.meveo.api.dto.response.CustomEntityTemplatesResponseDto;
 import org.meveo.api.dto.response.EntityCustomActionResponseDto;
@@ -416,4 +417,27 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
 
         return result;
     }
+    
+    @Override
+	public BusinessEntityResponseDto listBusinessEntityForCFVByCode(String code, String wildcode) {
+		BusinessEntityResponseDto result = new BusinessEntityResponseDto();
+
+		try {
+			result.setBusinessEntities(customEntityTemplateApi.listBusinessEntityForCFVByCode(code, wildcode,
+					getCurrentUser().getProvider()));
+
+		} catch (MeveoApiException e) {
+			result.getActionStatus().setErrorCode(e.getErrorCode());
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		} catch (Exception e) {
+			log.error("Failed to execute API", e);
+			result.getActionStatus().setErrorCode(e instanceof BusinessException
+					? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		}
+
+		return result;
+	}
 }

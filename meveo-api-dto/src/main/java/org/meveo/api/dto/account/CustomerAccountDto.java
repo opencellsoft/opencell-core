@@ -43,6 +43,7 @@ public class CustomerAccountDto extends AccountDto {
 	private String mandateIdentification = "";
 	private Date mandateDate;
 	private BigDecimal balance = BigDecimal.ZERO;
+	private BigDecimal totalInvoiceBalance = BigDecimal.ZERO;
 	// currently not use
 	private Date terminationDate;
 	private String dueDateDelayEL;
@@ -134,6 +135,14 @@ public class CustomerAccountDto extends AccountDto {
 
 	public void setBalance(BigDecimal balance) {
 		this.balance = balance;
+	}
+
+	public BigDecimal getTotalInvoiceBalance() {
+		return totalInvoiceBalance;
+	}
+
+	public void setTotalInvoiceBalance(BigDecimal totalInvoiceBalance) {
+		this.totalInvoiceBalance = totalInvoiceBalance;
 	}
 
 	public String getCurrency() {

@@ -117,7 +117,7 @@ public interface AccountWs extends IBaseWs {
     ActionStatus updateCustomerAccount(@WebParam(name = "customerAccount") CustomerAccountDto postData);
 
     @WebMethod
-    GetCustomerAccountResponseDto findCustomerAccount(@WebParam(name = "customerAccountCode") String customerAccountCode);
+    GetCustomerAccountResponseDto findCustomerAccount(@WebParam(name = "customerAccountCode") String customerAccountCode, @WebParam( name = "calculateBalances") Boolean calculateBalances);
 
     @WebMethod
     ActionStatus removeCustomerAccount(@WebParam(name = "customerAccountCode") String customerAccountCode);

@@ -31,7 +31,6 @@ import org.meveo.api.dto.EntityCustomActionDto;
 import org.meveo.api.dto.account.BusinessAccountModelDto;
 import org.meveo.api.dto.catalog.BusinessOfferModelDto;
 import org.meveo.api.dto.catalog.BusinessServiceModelDto;
-import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.module.MeveoModuleDto;
 import org.meveo.api.exception.ActionForbiddenException;
@@ -721,9 +720,8 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
     private void businessOfferModelToDto(BusinessOfferModel bom, BusinessOfferModelDto dto) {
 
         if (bom.getOfferTemplate() != null) {
-            dto.setOfferTemplate(new OfferTemplateDto(bom.getOfferTemplate(), entityToDtoConverter.getCustomFieldsDTO(bom.getOfferTemplate())));
+            dto.setOfferTemplate(offerTemplateApi.convertOfferTemplateToDto(bom.getOfferTemplate()));
         }
-
     }
 
     /**
