@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><entities>
+	<entity>
+		<entity-name>org.meveo.model.billing.Subscription</entity-name>
+		<entity-width>204</entity-width>
+		<entity-height>308</entity-height>
+		<entity-X-Coordinate>855</entity-X-Coordinate>
+		<entity-Y-Coordinate>413</entity-Y-Coordinate>
+		<primary-collapsed>false</primary-collapsed>
+		<relation-collapsed>false</relation-collapsed>
+		<basic-collapsed>false</basic-collapsed>
+	</entity>
+
+	<entity>
+		<entity-name>org.meveo.model.crm.Customer</entity-name>
+		<entity-width>151</entity-width>
+		<entity-height>208</entity-height>
+		<entity-X-Coordinate>40</entity-X-Coordinate>
+		<entity-Y-Coordinate>30</entity-Y-Coordinate>
+		<primary-collapsed>false</primary-collapsed>
+		<relation-collapsed>false</relation-collapsed>
+		<basic-collapsed>false</basic-collapsed>
+	</entity>
+
+	<entity>
+		<entity-name>org.meveo.model.admin.Seller</entity-name>
+		<entity-width>161</entity-width>
+		<entity-height>208</entity-height>
+		<entity-X-Coordinate>-160</entity-X-Coordinate>
+		<entity-Y-Coordinate>193</entity-Y-Coordinate>
+		<primary-collapsed>false</primary-collapsed>
+		<relation-collapsed>false</relation-collapsed>
+		<basic-collapsed>false</basic-collapsed>
+	</entity>
+
+	<entity>
+		<entity-name>org.meveo.model.crm.BusinessAccountModel</entity-name>
+		<entity-width>163</entity-width>
+		<entity-height>70</entity-height>
+		<entity-X-Coordinate>518</entity-X-Coordinate>
+		<entity-Y-Coordinate>20</entity-Y-Coordinate>
+		<primary-collapsed>false</primary-collapsed>
+		<relation-collapsed>false</relation-collapsed>
+		<basic-collapsed>false</basic-collapsed>
+	</entity>
+
+	<entity>
+		<entity-name>org.meveo.model.billing.BillingAccount</entity-name>
+		<entity-width>151</entity-width>
+		<entity-height>628</entity-height>
+		<entity-X-Coordinate>310</entity-X-Coordinate>
+		<entity-Y-Coordinate>306</entity-Y-Coordinate>
+		<primary-collapsed>false</primary-collapsed>
+		<relation-collapsed>false</relation-collapsed>
+		<basic-collapsed>false</basic-collapsed>
+	</entity>
+
+	<entity>
+		<entity-name>org.meveo.model.BusinessEntity</entity-name>
+		<entity-width>161</entity-width>
+		<entity-height>110</entity-height>
+		<entity-X-Coordinate>640</entity-X-Coordinate>
+		<entity-Y-Coordinate>122</entity-Y-Coordinate>
+		<primary-collapsed>false</primary-collapsed>
+		<relation-collapsed>false</relation-collapsed>
+		<basic-collapsed>false</basic-collapsed>
+	</entity>
+
+	<entity>
+		<entity-name>org.meveo.model.AccountEntity</entity-name>
+		<entity-width>132</entity-width>
+		<entity-height>248</entity-height>
+		<entity-X-Coordinate>319</entity-X-Coordinate>
+		<entity-Y-Coordinate>20</entity-Y-Coordinate>
+		<primary-collapsed>false</primary-collapsed>
+		<relation-collapsed>false</relation-collapsed>
+		<basic-collapsed>false</basic-collapsed>
+	</entity>
+
+	<entity>
+		<entity-name>org.meveo.model.mediation.Access</entity-name>
+		<entity-width>120</entity-width>
+		<entity-height>168</entity-height>
+		<entity-X-Coordinate>930</entity-X-Coordinate>
+		<entity-Y-Coordinate>162</entity-Y-Coordinate>
+		<primary-collapsed>false</primary-collapsed>
+		<relation-collapsed>false</relation-collapsed>
+		<basic-collapsed>false</basic-collapsed>
+	</entity>
+
+	<entity>
+		<entity-name>org.meveo.model.payments.CustomerAccount</entity-name>
+		<entity-width>151</entity-width>
+		<entity-height>388</entity-height>
+		<entity-X-Coordinate>40</entity-X-Coordinate>
+		<entity-Y-Coordinate>330</entity-Y-Coordinate>
+		<primary-collapsed>false</primary-collapsed>
+		<relation-collapsed>false</relation-collapsed>
+		<basic-collapsed>false</basic-collapsed>
+	</entity>
+
+	<entity>
+		<entity-name>org.meveo.model.BaseEntity</entity-name>
+		<entity-width>120</entity-width>
+		<entity-height>96</entity-height>
+		<entity-X-Coordinate>829</entity-X-Coordinate>
+		<entity-Y-Coordinate>27</entity-Y-Coordinate>
+		<primary-collapsed>true</primary-collapsed>
+		<relation-collapsed>false</relation-collapsed>
+		<basic-collapsed>true</basic-collapsed>
+	</entity>
+
+	<entity>
+		<entity-name>org.meveo.model.billing.UserAccount</entity-name>
+		<entity-width>141</entity-width>
+		<entity-height>288</entity-height>
+		<entity-X-Coordinate>591</entity-X-Coordinate>
+		<entity-Y-Coordinate>276</entity-Y-Coordinate>
+		<primary-collapsed>false</primary-collapsed>
+		<relation-collapsed>false</relation-collapsed>
+		<basic-collapsed>false</basic-collapsed>
+	</entity>
+</entities>

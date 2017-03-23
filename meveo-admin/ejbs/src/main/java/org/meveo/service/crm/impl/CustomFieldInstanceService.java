@@ -1962,7 +1962,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
             return false;
         }
 
-        Map<String, Object> value = (Map<String, Object>) getCFValue(entity, code, date, null);
+        Map<String, Object> value = (Map<String, Object>) getCFValue(entity, code, date, false);
         if (value == null) {
             return false;
         }

@@ -651,8 +651,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 				messages.error(new BundleKey("messages", "error.termination.inactiveService"));
 				return;
 			}
-			// serviceInstanceService.cancelService(selectedServiceInstance,
-			// getCurrentUser());
+			// serviceInstanceService.cancelService(selectedServiceInstance);
 
 			selectedServiceInstance = null;
 			messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
