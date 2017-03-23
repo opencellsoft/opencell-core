@@ -1,6 +1,5 @@
 package org.meveo.api.dto.catalog;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -13,9 +12,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.dto.BusinessDto;
 import org.meveo.api.dto.CustomFieldsDto;
-import org.meveo.model.catalog.OfferServiceTemplate;
-import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.OfferTemplateCategory;
 
 /**
  * @author Edward P. Legaspi
@@ -65,28 +61,6 @@ public class OfferTemplateDto extends BusinessDto {
 
     public OfferTemplateDto() {
 
-    }
-
-    public OfferTemplateDto(OfferTemplate offerTemplate, CustomFieldsDto customFieldInstances) {
-        code = offerTemplate.getCode();
-        description = offerTemplate.getDescription();
-        name = offerTemplate.getName();
-        longDescription = offerTemplate.getLongDescription();
-        disabled = offerTemplate.isDisabled();
-        imagePath = offerTemplate.getImagePath();
-        
-        if (offerTemplate.getBusinessOfferModel() != null) {
-            bomCode = offerTemplate.getBusinessOfferModel().getCode();
-        }
-
-        if (offerTemplate.getOfferTemplateCategories() != null) {
-            for (OfferTemplateCategory oc : offerTemplate.getOfferTemplateCategories()) {
-                offerTemplateCategories = new ArrayList<>();
-                offerTemplateCategories.add(oc.getCode());
-            }
-        }
-
-        customFields = customFieldInstances;
     }
 
     public String getCode() {
