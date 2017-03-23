@@ -139,7 +139,7 @@
 						<hftl:formField
 							label="#{messages['serviceInstance.terminationDate']}"
 							field="terminationDate" required="true" edit="true" componentWidth="25"/>
-						<hftl:formField label="Motifs "
+						<hftl:formField label="#{messages['menu.terminationReason']}"
 							field="subscriptionTerminationReason" valueLabelField="descriptionOrCode"
 							required="true"  edit="true"
 							listElements="#{subscriptionTerminationReasonService.listReasons()}" />
@@ -175,7 +175,7 @@
 							label="#{messages['serviceInstance.terminationDate']}"
 							field="terminationDate" required="true" edit="true"  pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}"/>
 							
-						<hftl:formField label="Motifs "
+						<hftl:formField label="#{messages['menu.terminationReason']}"
 							field="subscriptionTerminationReason" valueLabelField="descriptionOrCode"
 							required="true"  edit="true"
 							listElements="#{subscriptionTerminationReasonService.listReasons()}" />
