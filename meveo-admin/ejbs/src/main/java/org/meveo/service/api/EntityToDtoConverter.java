@@ -47,9 +47,9 @@ public class EntityToDtoConverter {
 			ICustomFieldEntity[] parentEntities = entity.getParentCFEntities();
 			if(parentEntities != null){
 				for(ICustomFieldEntity iCustomFieldEntity : parentEntities){
-					CustomFieldsDto inheritedCustomFieldsDto = getCustomFieldsDTO(iCustomFieldEntity);
+					CustomFieldsDto inheritedCustomFieldsDto = getCustomFieldsDTO(iCustomFieldEntity,includeInheritedCF);
 					if(inheritedCustomFieldsDto != null){
-					customFieldsDto.getCustomField().addAll(inheritedCustomFieldsDto.getCustomField());
+						customFieldsDto.getCustomField().addAll(inheritedCustomFieldsDto.getCustomField());
 					}
 				}
 			}
