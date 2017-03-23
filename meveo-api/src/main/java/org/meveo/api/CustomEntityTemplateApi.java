@@ -9,6 +9,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.CustomEntityTemplateDto;
 import org.meveo.api.dto.CustomFieldTemplateDto;
 import org.meveo.api.dto.EntityCustomActionDto;
@@ -17,8 +18,10 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.EntityCustomAction;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
@@ -286,5 +289,38 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
 
         return EntityCustomizationDto.toDTO(clazz, cetFields.values(), cetActions.values());
     }
+    
+	public List<BusinessEntityDto> listBusinessEntityForCFVByCode(String code, String wildcode, Provider provider)
+			throws MeveoApiException {
+		List<BusinessEntityDto> result = new ArrayList<>();
+
+		if (StringUtils.isBlank(code)) {
+			missingParameters.add("code");
+		}
+		
+		if(StringUtils.isBlank(wildcode)) {
+			wildcode = "";
+		}
+
+		handleMissingParameters();
+
+		CustomFieldTemplate cft = customFieldTemplateService.findByCode(code, provider);
+		if (cft == null) {
+			throw new EntityDoesNotExistsException(CustomFieldTemplate.class, code);
+		}
+
+		String entityClazz = cft.getEntityClazz();
+		if (!StringUtils.isBlank(entityClazz)) {
+			List<BusinessEntity> businessEntities = customFieldInstanceService
+					.findBusinessEntityForCFVByCode(entityClazz, wildcode, provider);
+			if (businessEntities != null) {
+				for (BusinessEntity be : businessEntities) {
+					result.add(new BusinessEntityDto(be));
+				}
+			}
+		}
+
+		return result;
+	}
 
 }
