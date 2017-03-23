@@ -239,6 +239,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
             ProductQuoteItem quoteItemDto = new ProductQuoteItem();
             quoteItemDto.setProductOffering(new org.tmf.dsmapi.catalog.resource.product.ProductOffering());
             quoteItemDto.setProduct(new Product());
+            quoteItemDto.setId(selectedQuoteItem.getItemId());
 
             // Save products and services when main offer is an offer
             if (selectedQuoteItem.getMainOffering() instanceof OfferTemplate) {
