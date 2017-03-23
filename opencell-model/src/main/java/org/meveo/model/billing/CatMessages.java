@@ -24,6 +24,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -43,15 +44,18 @@ public class CatMessages extends BaseEntity {
 
 	private static final long serialVersionUID = -2933410380534805846L;
 
-	@Column(name="ENTITY_CODE",length=60,nullable=false)
+	@Column(name="ENTITY_CODE",length=255,nullable=false)
+    @Size(max = 255, min = 1)
+    @NotNull
 	private String entityCode;
 
 	@Column(name = "LANGUAGE_CODE", length = 3,nullable=false)
 	@Size(max = 3)
+    @NotNull
 	private String languageCode;
 
-	@Column(name = "DESCRIPTION", length = 100)
-	@Size(max = 100)
+	@Column(name = "DESCRIPTION", length = 255)
+	@Size(max = 255)
 	private String description;
 	
 	@Transient

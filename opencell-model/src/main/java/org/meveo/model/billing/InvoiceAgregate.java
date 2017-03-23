@@ -69,7 +69,8 @@ public abstract class InvoiceAgregate extends EnableEntity {
 	@Size(max = 255)
 	private String accountingCode;
 
-	@Column(name = "DESCRIPTION")
+	@Column(name = "DESCRIPTION", length = 255)
+    @Size(max = 255)
 	private String description;
 
 	@Column(name = "TAX_PERCENT", precision = NB_PRECISION, scale = NB_DECIMALS)
@@ -105,8 +106,8 @@ public abstract class InvoiceAgregate extends EnableEntity {
 	@JoinColumn(name = "TRADING_LANGUAGE_ID")
 	private TradingLanguage tradingLanguage;
 
-	@Column(name = "PR_DESCRIPTION", length = 50)
-	@Size(max = 50)
+	@Column(name = "PR_DESCRIPTION", length = 255)
+	@Size(max = 255)
 	private String prDescription;
 
 	@Type(type="numeric_boolean")

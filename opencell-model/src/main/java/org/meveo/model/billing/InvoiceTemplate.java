@@ -44,8 +44,8 @@ public class InvoiceTemplate extends BaseEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "CODE", nullable = false, length = 20)
-	@Size(max = 20)
+	@Column(name = "CODE", nullable = false, length = 255)
+	@Size(max = 255)
 	@NotNull
 	private String code;
 

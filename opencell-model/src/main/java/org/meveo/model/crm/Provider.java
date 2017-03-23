@@ -70,13 +70,12 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     private static final long serialVersionUID = 1L;
 
     @Column(name = "CODE", nullable = false, length = 60)
-    // TODO : Create sql script to ad index. @Index(name = "CODE_IDX")
     @Size(max = 60, min = 1)
     @NotNull
     protected String code;
 
-    @Column(name = "DESCRIPTION", length = 100)
-    @Size(max = 100)
+    @Column(name = "DESCRIPTION", length = 255)
+    @Size(max = 255)
     protected String description;
 
     @Type(type="numeric_boolean")

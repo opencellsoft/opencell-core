@@ -31,8 +31,8 @@ public class SecuredEntity implements Serializable {
 		this.setEntityClass(securedEntity.getEntityClass());
 	}
 
-	@Column(name = "CODE", nullable = false, length = 60)
-	@Size(max = 60, min = 1)
+	@Column(name = "CODE", nullable = false, length = 255)
+	@Size(max = 255, min = 1)
 	@NotNull
 	private String code;
 

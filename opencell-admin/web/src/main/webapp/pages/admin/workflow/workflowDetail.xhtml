@@ -23,9 +23,9 @@
                 <p:tab title="#{messages['workflow.panel']}">
                     <hftl:formPanel formId="workflowForm" backingBean="#{workflowBean}" showEnableDisableButton="true">
                         <hftl:formField label="#{messages['businessEntity.code']}" field="code" allowEdit="false" required="true" validateUnique="true" />
-                        <hftl:formField label="#{messages['businessEntity.description']}" field="description" useConverter="false" size="50" maxlength="50" />
+                        <hftl:formField label="#{messages['businessEntity.description']}" field="description" useConverter="false" size="50" />
 
-                        <hftl:formField label="#{messages['workflow.type']}" field="wfType" allowEdit="false" required="true" size="60" maxlength="255"
+                        <hftl:formField label="#{messages['workflow.type']}" field="wfType" allowEdit="false" required="true" size="60"
                             autocompleteBean="#{workflowBean}" autocompleteMethod="autocompleteClassNames" isAutocomplete="true" />
 
                         <hftl:formField label="#{messages['workflow.exportLot']}" field="exportLot" />

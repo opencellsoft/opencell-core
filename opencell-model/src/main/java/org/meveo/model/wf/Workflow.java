@@ -48,7 +48,7 @@ public class Workflow extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "WF_TYPE")
+	@Column(name = "WF_TYPE", length = 255)
 	@NotNull
     @Size(max = 255)
 	String wfType = null;

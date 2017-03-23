@@ -71,8 +71,8 @@ public class WFTransition extends EnableEntity implements Comparable<WFTransitio
     @Column(name = "PRIORITY")
     private int priority;
 
-    @Column(name = "DESCRIPTION", nullable = true, length = 100)
-    @Size(max = 100)
+    @Column(name = "DESCRIPTION", nullable = true, length = 255)
+    @Size(max = 255)
     @NotNull
     private String description;
 

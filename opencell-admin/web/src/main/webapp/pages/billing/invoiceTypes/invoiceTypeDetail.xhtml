@@ -48,8 +48,8 @@
 		</h:form>
 
 		<hftl:formPanel formId="formInvoiceType" edit="#{invoiceTypeBean.edit}" label="#{messages['invoiceType.panel']}" backingBean="#{invoiceTypeBean}">
-			<hftl:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true"  size="60" maxlength="60" />
-			<hftl:formField label="#{messages['businessEntity.description']}" id="description" field="description" useConverter="false" size="100" maxlength="100" />
+			<hftl:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true" size="60" />
+			<hftl:formField label="#{messages['businessEntity.description']}" id="description" field="description" useConverter="false" size="100" />
 			<hftl:formField label="#{messages['invoiceType.occTemplate']}" id="occTemplateSelectedId" field="occTemplate"  valueLabelField="code"  
 							popup="true" popupId="searchOccTemplatePopup" clearButton="true" required="true"/>
 			<hftl:formField label="#{messages['invoiceType.occTemplateNegative']}" id="occTemplateNegativeSelectedId" field="occTemplateNegative"  valueLabelField="code"  

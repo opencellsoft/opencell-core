@@ -25,8 +25,8 @@
 		<hftl:formPanel formId="sellerFormId" ajaxSubmit="true" submitPartialProcess=":sellerFormId:tabView" label="#{messages['seller.title']}" backingBean="#{sellerBean}">
             <p:tabView id="tabView">
                 <p:tab title="#{messages['customer.tab.information']}">                 
-                    <hftl:formField label="#{messages['businessEntity.code']}" field="code" maxlength="35" required="true" />
-                    <hftl:formField label="#{messages['businessEntity.description']}" field="description" id="description" maxlength="100" />
+                    <hftl:formField label="#{messages['businessEntity.code']}" field="code" required="true" />
+                    <hftl:formField label="#{messages['businessEntity.description']}" field="description" id="description" />
                     <hftl:formField id="trCurrencySelectId" label="#{messages['currency.codeCurrency']}" field="tradingCurrency" valueLabelField="currencyCode" listBean="#{tradingCurrencyBean}" />               
                     <hftl:formField id="trCountrySelectId" label="#{messages['tradingCountry.tradingCountry']}" field="tradingCountry" valueLabelField="countryCode" listBean="#{tradingCountryBean}" />                 
                     <hftl:formField id="trLanguageSelectId" label="#{messages['tradingLanguage.tradingLanguage']}" field="tradingLanguage" valueLabelField="languageCode" listBean="#{tradingLanguageBean}" />                   

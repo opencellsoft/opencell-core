@@ -35,7 +35,7 @@
         <hftl:formPanel formId="moduleForm" label="#{messages['businessServiceModel.title']}" backingBean="#{businessServiceModelBean}" showFormButtons="false"
             edit="#{!businessServiceModelBean.entity.downloaded}">
             <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" validateUnique="true" />
-            <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" useConverter="false" id="description" maxlength="50" />
+            <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" useConverter="false" id="description"/>
             <hftl:formField label="#{messages['meveoModule.license']}" required="true" field="license" id="license" isMessage="true" newLine="true" />
             <hftl:formField id="serviceSelectId" required="true" label="#{messages['businessServiceModel.serviceTemplate']}" field="serviceTemplate" valueLabelField="code"
                 popup="true" popupId="serviceTemplatePopup" rendered="#{!businessServiceModelBean.entity.downloaded}" />

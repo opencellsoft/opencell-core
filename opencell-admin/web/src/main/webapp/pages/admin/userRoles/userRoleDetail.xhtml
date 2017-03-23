@@ -23,7 +23,7 @@
 
 		<hftl:formPanel label="#{messages['role.userRolePanel']}" backingBean="#{userRoleBean}">
             <hftl:formField label="#{messages['role.name']}" field="name" required="true" />
-            <hftl:formField label="#{messages['role.description']}" field="description" size="50" maxlength="50" />
+            <hftl:formField label="#{messages['role.description']}" field="description" size="50" />
             <hftl:formField label="#{messages['role.roles']}" field="roles" listType="pickUpList" dualListModel="#{userRoleBean.roleListModel}" valueLabelField="name"
                 styleClass="clearLeft" />
             <hftl:formField label="#{messages['role.permission']}" field="permissions" listType="pickUpList" dualListModel="#{userRoleBean.permissionListModel}"

@@ -29,9 +29,9 @@
         <hftl:formPanel formId="providerFormId" ajaxSubmit="true" submitPartialProcess=":providerFormId:tabView" label="#{messages['provider.title']}" backingBean="#{providerBean}">
             <p:tabView id="tabView" activeIndex="#{providerBean.activeTab}">
                 <p:tab title="#{messages['customer.tab.information']}">
-                    <hftl:formField label="#{messages['businessEntity.code']}" field="code" maxlength="35" required="true" />
+                    <hftl:formField label="#{messages['businessEntity.code']}" field="code" required="true" />
 
-                    <hftl:formField label="#{messages['businessEntity.description']}" field="description" id="description" maxlength="100" componentWidth="50" />
+                    <hftl:formField label="#{messages['businessEntity.description']}" field="description" id="description" componentWidth="50" />
 
                     <!-- <hftl:formField id="languageSelectedId" label="#{messages['tradingLanguage.languageCode']}" field="language" valueLabelField="languageCode"
 								popup="true" popupId="languagePopup" clearButton="true" required="true" /> -->
@@ -71,11 +71,11 @@
 					-->
 
                     <p:fieldset legend="#{messages['provider.bankCoordinates.title']}" styleClass="clearLeft">
-                        <hftl:formField label="#{messages['bankCoordinates.bic']}" field="bankCoordinates" childField="bic" size="15" maxlength="11" />
+                        <hftl:formField label="#{messages['bankCoordinates.bic']}" field="bankCoordinates" childField="bic" size="15" />
 
-                        <hftl:formField label="#{messages['bankCoordinates.iban']}" field="bankCoordinates" childField="iban" size="45" maxlength="34" />
+                        <hftl:formField label="#{messages['bankCoordinates.iban']}" field="bankCoordinates" childField="iban" size="45" />
 
-                        <hftl:formField label="#{messages['bankCoordinates.ics']}" field="bankCoordinates" childField="ics" size="45" maxlength="35" />
+                        <hftl:formField label="#{messages['bankCoordinates.ics']}" field="bankCoordinates" childField="ics" size="45" />
                     </p:fieldset>
                     
                     <p:fieldset legend="#{messages['provider.invoiceConfiguration.title']}">

@@ -100,7 +100,7 @@ public class User extends EnableEntity implements ICustomFieldEntity {
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "ADM_SECURED_ENTITY", joinColumns = { @JoinColumn(name = "USER_ID") })
-    @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "CODE", nullable = false, length = 60)),
+    @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "CODE", nullable = false, length = 255)),
             @AttributeOverride(name = "entityClass", column = @Column(name = "ENTITY_CLASS", nullable = false, length = 255)) })
     private List<SecuredEntity> securedEntities = new ArrayList<>();
 

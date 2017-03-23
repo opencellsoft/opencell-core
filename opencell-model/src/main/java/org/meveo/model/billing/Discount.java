@@ -44,8 +44,8 @@ public class Discount extends EnableEntity {
 	@Size(max = 20)
 	private String discountCode;
 
-	@Column(name = "PR_DESCRIPTION", length = 100)
-	@Size(max = 100)
+	@Column(name = "PR_DESCRIPTION", length = 255)
+	@Size(max = 255)
 	private String prDescription;
 
 	@Column(name = "POURCENT")

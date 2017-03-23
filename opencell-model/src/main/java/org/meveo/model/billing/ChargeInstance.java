@@ -134,8 +134,8 @@ public class ChargeInstance extends BusinessEntity {
 	@JoinColumn(name = "SUBSCRIPTION_ID")
 	protected Subscription subscription;
 
-	@Column(name = "PR_DESCRIPTION", length = 100)
-	@Size(max = 100)
+	@Column(name = "PR_DESCRIPTION", length = 255)
+	@Size(max = 255)
 	protected String prDescription;
 
 	@ManyToOne(fetch = FetchType.LAZY)
