@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="be765fc2-377f-4484-9193-ff119e423633" activeEnvironment="Default" name="Mediation" resourceRoot="" soapui-version="5.2.1" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project id="be765fc2-377f-4484-9193-ff119e423633" activeEnvironment="Default" name="Mediation - wildfly" resourceRoot="" soapui-version="5.2.1" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
   <con:settings/>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/AccountWs?wsdl" id="ea4ccfc5-0bef-4d4a-8963-dd86a6dcf499" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
@@ -1046,7 +1046,7 @@ public class Mediation_${#Project#baseEntityPrefix}_CreateEdr extends org.meveo.
 	private static final Logger log = LoggerFactory.getLogger(Mediation_${#Project#baseEntityPrefix}_CreateEdr.class);
 
 	@Override
-	public void execute(Map<String, Object> initContext, User currentUser) throws BusinessException {
+	public void execute(Map<String, Object> initContext) throws BusinessException {
 		log.debug("Execute...");
 		CDR cdr = (CDR) initContext.get("cdr");
 		String originBatch = (String) initContext.get("originBatch");
@@ -1084,11 +1084,10 @@ public class Mediation_${#Project#baseEntityPrefix}_CreateEdr extends org.meveo.
 				edr.setDecimalParam4(cdr.getDecimalParam4() != null ? cdr.getDecimalParam4().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
 				edr.setDecimalParam5(cdr.getDecimalParam5() != null ? cdr.getDecimalParam5().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
 				edr.setAccessCode(accessPoint.getAccessUserId());
-				edr.setProvider(accessPoint.getProvider());
 				edr.setQuantity(cdr.getQuantity());
 				edr.setStatus(EDRStatusEnum.OPEN);
 				edr.setSubscription(accessPoint.getSubscription());
-				edrService.create(edr, currentUser);
+				edrService.create(edr);
 			}
 			log.info("Execute update entity OK");
 		}
@@ -1171,12 +1170,12 @@ public class Mediation_${#Project#baseEntityPrefix}_DuplicatedCheck extends Scri
 	EdrService edrService = (EdrService) getServiceInterface("EdrService");
 	
 	@Override
-	public void execute(Map&lt;String, Object&gt; initContext, User currentUser) throws BusinessException {
+	public void execute(Map&lt;String, Object&gt; initContext) throws BusinessException {
 		log.info("Execute...");
 		String originBatch = (String) initContext.get("originBatch");
 		String originRecord = getOriginRecord(initContext.get("record"));
 		initContext.put("originRecord", originRecord);
-		boolean result = edrService.duplicateFound(currentUser.getProvider(), originBatch, originRecord);
+		boolean result = edrService.duplicateFound(originBatch, originRecord);
 		initContext.put("duplicateFound", Boolean.valueOf(result));
 		log.info("Execute result:"+result);
 	}
@@ -1266,10 +1265,10 @@ public class Mediation_${#Project#baseEntityPrefix}_RoutingSub extends Script {
     CdrEdrProcessingCacheContainerProvider cdrEdrProcessingCacheContainerProvider = (CdrEdrProcessingCacheContainerProvider) getServiceInterface("CdrEdrProcessingCacheContainerProvider");
 
 	@Override
-	public void execute(Map<String, Object> initContext, User currentUser) throws BusinessException {
+	public void execute(Map<String, Object> initContext) throws BusinessException {
         log.debug("Execute...");
         String accessUserId = (String) initContext.get("accessUserId");
-        List<Access> accesses = cdrEdrProcessingCacheContainerProvider.getAccessesByAccessUserId(currentUser.getProvider().getId(), accessUserId);
+        List<Access> accesses = cdrEdrProcessingCacheContainerProvider.getAccessesByAccessUserId(accessUserId);
         initContext.put("accesses", accesses);
         log.info("Execute accesses size:"+((accesses == null)?"null":accesses.size()));
     }
@@ -1346,20 +1345,20 @@ public class Mediation_${#Project#baseEntityPrefix}_Flow extends org.meveo.servi
 	Class<ScriptInterface> mediation_CreateEdr;
 
 	@Override
-	public void init(Map<String,Object> methodContext,User currentUser) throws BusinessException {
-		mediation_DuplicatedCheck = scriptInstanceService.getScriptInterface(currentUser.getProvider(), "org.meveo.service.script.Mediation_${#Project#baseEntityPrefix}_DuplicatedCheck");
-		mediation_RoutingSub = scriptInstanceService.getScriptInterface(currentUser.getProvider(), "org.meveo.service.script.Mediation_${#Project#baseEntityPrefix}_RoutingSub");
-		mediation_CreateEdr = scriptInstanceService.getScriptInterface(currentUser.getProvider(), "org.meveo.service.script.Mediation_${#Project#baseEntityPrefix}_CreateEdr");
+	public void init(Map<String,Object> methodContext) throws BusinessException {
+		mediation_DuplicatedCheck = scriptInstanceService.getScriptInterface("org.meveo.service.script.Mediation_${#Project#baseEntityPrefix}_DuplicatedCheck");
+		mediation_RoutingSub = scriptInstanceService.getScriptInterface("org.meveo.service.script.Mediation_${#Project#baseEntityPrefix}_RoutingSub");
+		mediation_CreateEdr = scriptInstanceService.getScriptInterface("org.meveo.service.script.Mediation_${#Project#baseEntityPrefix}_CreateEdr");
 	}
 		
 	@Override
-	public void execute(Map<String, Object> initContext, User currentUser) throws BusinessException {
+	public void execute(Map<String, Object> initContext) throws BusinessException {
 		log.info("Execute...");
 	
 		CDR cdr = (CDR) initContext.get("record");
 
 		try {
-			mediation_DuplicatedCheck.newInstance().execute(initContext, currentUser);
+			mediation_DuplicatedCheck.newInstance().execute(initContext);
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new BusinessException("ErrTech");
 		}
@@ -1371,7 +1370,7 @@ public class Mediation_${#Project#baseEntityPrefix}_Flow extends org.meveo.servi
 		}
 		initContext.put("accessUserId", cdr.getAccess_id());
 		try {
-			mediation_RoutingSub.newInstance().execute(initContext, currentUser);
+			mediation_RoutingSub.newInstance().execute(initContext);
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new BusinessException("ErrTech");
 		}
@@ -1381,7 +1380,7 @@ public class Mediation_${#Project#baseEntityPrefix}_Flow extends org.meveo.servi
 			throw new BusinessException("InvalidAccess");
 		}
 		try {
-			mediation_CreateEdr.newInstance().execute(initContext, currentUser);
+			mediation_CreateEdr.newInstance().execute(initContext);
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new BusinessException("ErrTech");
 		}
@@ -1480,7 +1479,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
      CustomFieldInstanceService cfService = (CustomFieldInstanceService) getServiceInterface("CustomFieldInstanceService");
 
 	@Override
-	public void execute(Map<String, Object> initContext, User currentUser) throws BusinessException {
+	public void execute(Map<String, Object> initContext) throws BusinessException {
 		log.debug("Execute...");
 		CDR cdr = (CDR) initContext.get("record");
 		String originBatch = (String) initContext.get("originBatch");
@@ -1516,13 +1515,12 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
 				edr.setDecimalParam4(cdr.getDecimalParam4() != null ? cdr.getDecimalParam4().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
 				edr.setDecimalParam5(cdr.getDecimalParam5() != null ? cdr.getDecimalParam5().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
 				edr.setAccessCode(accessPoint.getAccessUserId());
-				edr.setProvider(accessPoint.getProvider());
 				edr.setQuantity(cdr.getQuantity());
 				edr.setStatus(EDRStatusEnum.OPEN);
 				edr.setSubscription(accessPoint.getSubscription());
 				if("VOICE".equals(cdr.getParam1())){
 				     Subscription sub = subService.findById(accessPoint.getSubscription().getId());
-					List<Object> topTenNumbers = (List)cfService.getCFValue(sub, TOPTEN_CF, cdr.getTimestamp(), currentUser);
+					List<Object> topTenNumbers = (List)cfService.getCFValue(sub, TOPTEN_CF, cdr.getTimestamp());
 					if(topTenNumbers==null){
 						topTenNumbers = new ArrayList<Object>();	
 					}
@@ -1530,11 +1528,11 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
 						edr.setParameter3("TOPTEN");
 						if(topTenNumbers.size()<10  && !topTenNumbers.contains(cdr.getParam2())){
 							topTenNumbers.add(cdr.getParam2());
-							cfService.setCFValue(sub, TOPTEN_CF, cdr.getTimestamp(), currentUser);
+							cfService.setCFValue(sub, TOPTEN_CF, cdr.getTimestamp());
 						}
 					}
 				}
-				edrService.create(edr, currentUser);
+				edrService.create(edr);
 			}
 			log.info("Created EDR OK");
 		}
@@ -1617,20 +1615,19 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
 	@Override
-	public void init(Map<String, Object> initContext, User currentUser) throws BusinessException {
-		mediation_DuplicatedCheck = javaCompilerManager.getScriptInterface(currentUser.getProvider(), "org.meveo.service.script.Mediation_${#Project#baseEntityPrefix}_DuplicatedCheck");
-		mediation_RoutingSub = javaCompilerManager.getScriptInterface(currentUser.getProvider(), "org.meveo.service.script.Mediation_${#Project#baseEntityPrefix}_RoutingSub");
-		mediation_CreateEdr = javaCompilerManager.getScriptInterface(currentUser.getProvider(), "org.meveo.service.script.Mediation_${#TestSuite#entityPrefix}_EDR");
+	public void init(Map<String, Object> initContext) throws BusinessException {
+		mediation_DuplicatedCheck = javaCompilerManager.getScriptInterface("org.meveo.service.script.Mediation_${#Project#baseEntityPrefix}_DuplicatedCheck");
+		mediation_RoutingSub = javaCompilerManager.getScriptInterface("org.meveo.service.script.Mediation_${#Project#baseEntityPrefix}_RoutingSub");
+		mediation_CreateEdr = javaCompilerManager.getScriptInterface("org.meveo.service.script.Mediation_${#TestSuite#entityPrefix}_EDR");
 	}
 
 	@Override
-	public void execute(Map<String, Object> initContext, User currentUser) throws BusinessException {
+	public void execute(Map<String, Object> initContext) throws BusinessException {
 		log.info("Execute...");
 		CDR cdr = new CDR();
 		cdr.setAccess_id((String)initContext.get("accessId"));
 		cdr.setParam1((String)initContext.get("param1"));
 		cdr.setParam2((String)initContext.get("param2"));
-		cdr.setProvider(currentUser.getProvider());
 		cdr.setQuantity(new BigDecimal((String)initContext.get("quantity")));
 		try{
 		cdr.setTimestamp(sdf.parse((String)initContext.get("time")));
@@ -1639,7 +1636,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
 		}
 		initContext.put("record", cdr);
 		try {
-               mediation_DuplicatedCheck.newInstance().execute(initContext, currentUser);
+               mediation_DuplicatedCheck.newInstance().execute(initContext);
 			Boolean duplicateFound = (Boolean)initContext.get("duplicateFound");
 			log.info("duplicateFound:"+duplicateFound);
 			
@@ -1647,7 +1644,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
 				throw new BusinessException("DuplicateFound");
 			}
 			initContext.put("accessUserId",cdr.getAccess_id());
-			mediation_RoutingSub.newInstance().execute(initContext, currentUser);
+			mediation_RoutingSub.newInstance().execute(initContext);
 			
 			@SuppressWarnings("unchecked")
 			List<Access> accesses = (List<Access>) initContext.get("accesses");
@@ -1655,7 +1652,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
 				throw new BusinessException("InvalidAccess");
 			}
 
-			mediation_CreateEdr.newInstance().execute(initContext, currentUser);
+			mediation_CreateEdr.newInstance().execute(initContext);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -2642,7 +2639,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>7</con:value>
+        <con:value>9</con:value>
       </con:property>
     </con:properties>
   </con:testSuite>
@@ -2678,6 +2675,7 @@ import java.util.Map;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.crm.Provider;
+import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.model.admin.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -2688,7 +2686,7 @@ public class ${#TestSuite#entityPrefix}_CreateFile extends Script {
 	private static final Logger log = LoggerFactory.getLogger(${#TestSuite#entityPrefix}_CreateFile.class);
 
 	@Override
-	public void execute(Map&lt;String, Object> methodContext, User currentUser) throws BusinessException {
+	public void execute(Map&lt;String, Object> methodContext) throws BusinessException {
 		String directory = (String) methodContext.get("directory");
 		if(directory==null){
 			directory="";
@@ -2705,7 +2703,8 @@ public class ${#TestSuite#entityPrefix}_CreateFile extends Script {
 			charsetName="UTF-8";
 		}
 		ParamBean parambean = ParamBean.getInstance();
-		String rootDir = parambean.getProperty("providers.rootDir", "/tmp/opencell/") + File.separator + currentUser.getProvider().getCode() + File.separator;
+		Provider appProvider = ((ProviderService)getServiceInterface("ProviderService")).getProvider();
+		String rootDir = parambean.getProperty("providers.rootDir", "/tmp/opencell/") + File.separator + appProvider.getCode() + File.separator;
 		String outputDir = rootDir+directory;
 		File f = new File(outputDir);
 		if (!f.exists()) {
@@ -4017,7 +4016,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>5</con:value>
+        <con:value>7</con:value>
       </con:property>
     </con:properties>
   </con:testSuite>
@@ -4077,7 +4076,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
      CustomFieldInstanceService cfService = (CustomFieldInstanceService) getServiceInterface("CustomFieldInstanceService");
     
 	@Override
-	public void execute(Map<String, Object> initContext,User currentUser)throws BusinessException {
+	public void execute(Map<String, Object> initContext)throws BusinessException {
 		log.debug("Execute...");
 		CDR cdr = (CDR) initContext.get("record");
 		String originBatch = (String) initContext.get("originBatch");
@@ -4113,7 +4112,6 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
 				edr.setDecimalParam4(cdr.getDecimalParam4() != null ? cdr.getDecimalParam4().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
 				edr.setDecimalParam5(cdr.getDecimalParam5() != null ? cdr.getDecimalParam5().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
 				edr.setAccessCode(accessPoint.getAccessUserId());
-				edr.setProvider(accessPoint.getProvider());
 				edr.setQuantity(cdr.getQuantity());
 				edr.setStatus(EDRStatusEnum.OPEN);
 				edr.setSubscription(accessPoint.getSubscription());
@@ -4131,7 +4129,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
 					}
 					edr.setParameter3(zoningCode);
 				}
-				edrService.create(edr, currentUser);
+				edrService.create(edr);
 			}
 			log.info("Created EDR OK");
 		}
@@ -4213,20 +4211,19 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
 	@Override
-	public void init(Map<String,Object> initContext,User currentUser)throws BusinessException {
-		mediation_DuplicatedCheck = javaCompilerManager.getScriptInterface(currentUser.getProvider(), "org.meveo.service.script.Mediation_${#Project#baseEntityPrefix}_DuplicatedCheck");
-		mediation_RoutingSub = javaCompilerManager.getScriptInterface(currentUser.getProvider(), "org.meveo.service.script.Mediation_${#Project#baseEntityPrefix}_RoutingSub");
-		mediation_CreateEdr = javaCompilerManager.getScriptInterface(currentUser.getProvider(), "org.meveo.service.script.Mediation_${#TestSuite#entityPrefix}_EDR");
+	public void init(Map<String,Object> initContext)throws BusinessException {
+		mediation_DuplicatedCheck = javaCompilerManager.getScriptInterface("org.meveo.service.script.Mediation_${#Project#baseEntityPrefix}_DuplicatedCheck");
+		mediation_RoutingSub = javaCompilerManager.getScriptInterface("org.meveo.service.script.Mediation_${#Project#baseEntityPrefix}_RoutingSub");
+		mediation_CreateEdr = javaCompilerManager.getScriptInterface("org.meveo.service.script.Mediation_${#TestSuite#entityPrefix}_EDR");
 	}
 
 	@Override
-	public void execute(Map<String, Object> initContext,User currentUser)throws BusinessException {
+	public void execute(Map<String, Object> initContext)throws BusinessException {
 		log.info("Execute...");
 		CDR cdr = new CDR();
 		cdr.setAccess_id((String)initContext.get("accessId"));
 		cdr.setParam1((String)initContext.get("param1"));
 		cdr.setParam2((String)initContext.get("param2"));
-		cdr.setProvider(currentUser.getProvider());
 		cdr.setQuantity(new BigDecimal((String)initContext.get("quantity")));
 		try{
 		cdr.setTimestamp(sdf.parse((String)initContext.get("time")));
@@ -4235,7 +4232,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
 		}
 		initContext.put("record", cdr);
 		try {
-               mediation_DuplicatedCheck.newInstance().execute(initContext, currentUser);
+               mediation_DuplicatedCheck.newInstance().execute(initContext);
 			Boolean duplicateFound = (Boolean)initContext.get("duplicateFound");
 			log.info("duplicateFound:"+duplicateFound);
 			
@@ -4243,7 +4240,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
 				throw new BusinessException("DuplicateFound");
 			}
 			initContext.put("accessUserId",cdr.getAccess_id());
-			mediation_RoutingSub.newInstance().execute(initContext, currentUser);
+			mediation_RoutingSub.newInstance().execute(initContext);
 			
 			@SuppressWarnings("unchecked")
 			List<Access> accesses = (List<Access>) initContext.get("accesses");
@@ -4251,7 +4248,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
 				throw new BusinessException("InvalidAccess");
 			}
 
-			mediation_CreateEdr.newInstance().execute(initContext, currentUser);
+			mediation_CreateEdr.newInstance().execute(initContext);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -5306,7 +5303,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>4</con:value>
+        <con:value>7</con:value>
       </con:property>
     </con:properties>
   </con:testSuite>
@@ -5367,7 +5364,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
      CustomFieldsCacheContainerProvider cfccProvider = (CustomFieldsCacheContainerProvider) getServiceInterface("CustomFieldsCacheContainerProvider");
 
 	@Override
-	public void execute(Map<String, Object> initContext, User currentUser) throws BusinessException {
+	public void execute(Map<String, Object> initContext) throws BusinessException {
 		log.debug("Execute...");
 		CDR cdr = (CDR) initContext.get("record");
 		String originBatch = (String) initContext.get("originBatch");
@@ -5403,7 +5400,6 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
 				edr.setDecimalParam4(cdr.getDecimalParam4() != null ? cdr.getDecimalParam4().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
 				edr.setDecimalParam5(cdr.getDecimalParam5() != null ? cdr.getDecimalParam5().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
 				edr.setAccessCode(accessPoint.getAccessUserId());
-				edr.setProvider(accessPoint.getProvider());
 				edr.setQuantity(cdr.getQuantity());
 				edr.setStatus(EDRStatusEnum.OPEN);
 				edr.setSubscription(accessPoint.getSubscription());
@@ -5413,7 +5409,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
 				    //increment CF value
 				    edr.setStatus(EDRStatusEnum.MEDIATING);
 				}
-				edrService.create(edr, currentUser);
+				edrService.create(edr);
 			}
 			log.info("Created EDR OK");
 		}
@@ -5495,20 +5491,19 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
 	@Override
-	public void init(Map<String,Object> methodContext,User currentUser)throws BusinessException{
-		mediation_DuplicatedCheck = javaCompilerManager.getScriptInterface(currentUser.getProvider(), "org.meveo.service.script.Mediation_${#Project#baseEntityPrefix}_DuplicatedCheck");
-		mediation_RoutingSub = javaCompilerManager.getScriptInterface(currentUser.getProvider(), "org.meveo.service.script.Mediation_${#Project#baseEntityPrefix}_RoutingSub");
-		mediation_CreateEdr = javaCompilerManager.getScriptInterface(currentUser.getProvider(), "org.meveo.service.script.Mediation_${#TestSuite#entityPrefix}_EDR");
+	public void init(Map<String,Object> methodContext)throws BusinessException{
+		mediation_DuplicatedCheck = javaCompilerManager.getScriptInterface("org.meveo.service.script.Mediation_${#Project#baseEntityPrefix}_DuplicatedCheck");
+		mediation_RoutingSub = javaCompilerManager.getScriptInterface("org.meveo.service.script.Mediation_${#Project#baseEntityPrefix}_RoutingSub");
+		mediation_CreateEdr = javaCompilerManager.getScriptInterface("org.meveo.service.script.Mediation_${#TestSuite#entityPrefix}_EDR");
 	}
 
 	@Override
-	public void execute(Map<String, Object> initContext,User currentUser)throws BusinessException {
+	public void execute(Map<String, Object> initContext)throws BusinessException {
 		log.info("Execute...");
 		CDR cdr = new CDR();
 		cdr.setAccess_id((String)initContext.get("accessId"));
 		cdr.setParam1((String)initContext.get("param1"));
 		cdr.setParam2((String)initContext.get("param2"));
-		cdr.setProvider(currentUser.getProvider());
 		cdr.setQuantity(new BigDecimal((String)initContext.get("quantity")));
 		try{
 		cdr.setTimestamp(sdf.parse((String)initContext.get("time")));
@@ -5517,7 +5512,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
 		}
 		initContext.put("record", cdr);
 		try {
-               mediation_DuplicatedCheck.newInstance().execute(initContext, currentUser);
+               mediation_DuplicatedCheck.newInstance().execute(initContext);
 			Boolean duplicateFound = (Boolean)initContext.get("duplicateFound");
 			log.info("duplicateFound:"+duplicateFound);
 			
@@ -5525,7 +5520,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
 				throw new BusinessException("DuplicateFound");
 			}
 			initContext.put("accessUserId",cdr.getAccess_id());
-			mediation_RoutingSub.newInstance().execute(initContext, currentUser);
+			mediation_RoutingSub.newInstance().execute(initContext);
 			
 			@SuppressWarnings("unchecked")
 			List<Access> accesses = (List<Access>) initContext.get("accesses");
@@ -5533,7 +5528,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
 				throw new BusinessException("InvalidAccess");
 			}
 
-			mediation_CreateEdr.newInstance().execute(initContext, currentUser);
+			mediation_CreateEdr.newInstance().execute(initContext);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -6589,7 +6584,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>6</con:value>
+        <con:value>9</con:value>
       </con:property>
     </con:properties>
   </con:testSuite>
@@ -6599,7 +6594,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
   <con:properties>
     <con:property>
       <con:name>meveoUrl</con:name>
-      <con:value>http://localhost:8080/opencell</con:value>
+      <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
     </con:property>
     <con:property>
       <con:name>meveoUserName</con:name>

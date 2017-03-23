@@ -1,6 +1,5 @@
 package org.meveo.service.notification;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -16,9 +15,7 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class NotificationHistoryService extends PersistenceService<NotificationHistory> {
 
-    @EJB
-    private NotificationHistoryService self;
-
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public NotificationHistory create(Notification notification, Object entityOrEvent, String result, NotificationHistoryStatusEnum status) throws BusinessException {
         IEntity entity = null;
         if (entityOrEvent instanceof IEntity) {
@@ -34,14 +31,9 @@ public class NotificationHistoryService extends PersistenceService<NotificationH
         history.setResult(result);
         history.setStatus(status);
         
-        self.createHistory(history);
+        create(history);
 
         return history;
 
-    }
-
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void createHistory(NotificationHistory history) throws BusinessException {
-        super.create(history);
     }
 }
