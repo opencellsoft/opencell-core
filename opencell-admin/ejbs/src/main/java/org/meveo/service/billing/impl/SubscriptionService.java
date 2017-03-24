@@ -188,6 +188,10 @@ public class SubscriptionService extends BusinessService<Subscription> {
         subscription.setStatus(SubscriptionStatusEnum.RESILIATED);
         update(subscription);
         
+        for (Access access : subscription.getAccessPoints()) {
+            access.setEndDate(terminationDate);
+            accessService.update(access);
+        }
         // execute termination script
         if (subscription.getOffer().getBusinessOfferModel() != null && subscription.getOffer().getBusinessOfferModel().getScript() != null) {
             offerModelScriptService.terminateSubscription(subscription, subscription.getOffer().getBusinessOfferModel().getScript().getCode(), terminationDate, terminationReason);
