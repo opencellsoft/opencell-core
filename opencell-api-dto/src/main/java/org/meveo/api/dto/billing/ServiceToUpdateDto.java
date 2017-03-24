@@ -8,10 +8,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.CustomFieldsDto;
+
 /**
  * @author Edward P. Legaspi
  **/
-@XmlRootElement(name = "ServiceToSuspend")
+@XmlRootElement(name = "ServiceToUpdate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ServiceToUpdateDto implements Serializable {
 
@@ -19,8 +21,9 @@ public class ServiceToUpdateDto implements Serializable {
 
     @XmlAttribute(required = true)
     private String code;
-
-    private Date actionDate;
+    private Date actionDate;    
+    private Date endAgreementDate;
+    private CustomFieldsDto customFields = new CustomFieldsDto();
 
 	public String getCode() {
 		return code;
@@ -41,6 +44,22 @@ public class ServiceToUpdateDto implements Serializable {
 	@Override
 	public String toString() {
 		return "ServiceToSuspendDto [code=" + code + ", actionDate=" + actionDate + "]";
+	}
+
+	public Date getEndAgreementDate() {
+		return endAgreementDate;
+	}
+
+	public void setEndAgreementDate(Date endAgreementDate) {
+		this.endAgreementDate = endAgreementDate;
+	}
+
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
 	}
     
     }

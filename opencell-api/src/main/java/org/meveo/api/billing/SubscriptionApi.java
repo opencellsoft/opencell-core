@@ -33,6 +33,7 @@ import org.meveo.api.dto.billing.SubscriptionsDto;
 import org.meveo.api.dto.billing.SubscriptionsListDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
+import org.meveo.api.dto.billing.UpdateServicesRequestDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -1056,5 +1057,42 @@ public class SubscriptionApi extends BaseApi {
         		serviceInstanceService.serviceReactivation(serviceInstanceToSuspend, serviceToSuspendDto.getActionDate());
         	}
         }	        
-	}	
+	}
+	
+	public void updateServiceInstance(UpdateServicesRequestDto postData) throws MeveoApiException, BusinessException {
+		if (postData.getServicesToUpdate() == null) {
+			missingParameters.add("servicesToUpdate");
+		}
+		if (StringUtils.isBlank(postData.getSubscriptionCode())) {
+			missingParameters.add("subscriptionCode");
+		}
+
+		handleMissingParameters();
+
+		Subscription subscription = subscriptionService.findByCode(postData.getSubscriptionCode());
+		if (subscription == null) {
+			throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscriptionCode());
+		}
+
+		for (ServiceToUpdateDto serviceToUpdateDto : postData.getServicesToUpdate()) {
+			ServiceInstance serviceToUpdate = serviceInstanceService.findByCodeAndSubscription(serviceToUpdateDto.getCode(), subscription);
+			if (serviceToUpdateDto.getEndAgreementDate() != null) {
+				serviceToUpdate.setEndAgreementDate(serviceToUpdateDto.getEndAgreementDate());
+			}
+
+			serviceInstanceService.update(serviceToUpdate);
+
+			// populate customFields
+			try {
+				populateCustomFields(serviceToUpdateDto.getCustomFields(), serviceToUpdate, false);
+			} catch (MissingParameterException e) {
+				log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+				throw e;
+			} catch (Exception e) {
+				log.error("Failed to associate custom field instance to an entity", e);
+				throw e;
+			}
+		}
+	}
+	
 }

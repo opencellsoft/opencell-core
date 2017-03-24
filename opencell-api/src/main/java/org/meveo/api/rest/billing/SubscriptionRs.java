@@ -14,11 +14,12 @@ import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
 import org.meveo.api.dto.account.ApplyProductRequestDto;
 import org.meveo.api.dto.billing.ActivateServicesRequestDto;
 import org.meveo.api.dto.billing.InstantiateServicesRequestDto;
-import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.OperationServicesRequestDto;
 import org.meveo.api.dto.billing.OperationSubscriptionRequestDto;
+import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
+import org.meveo.api.dto.billing.UpdateServicesRequestDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsResponseDto;
@@ -152,4 +153,8 @@ public interface SubscriptionRs extends IBaseRs {
     @PUT
     @Path("resumeServices")
 	ActionStatus resumeServices(OperationServicesRequestDto postData);
+    
+    @PUT
+	@Path("updateServices")
+	ActionStatus updateServices(UpdateServicesRequestDto postData);
 }
