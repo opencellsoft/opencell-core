@@ -967,4 +967,9 @@
 		<sql>update adm_role set role_name='marketingManager' where role_name='MARKETING_MANAGER'</sql>
 	</changeSet>
 	
+	<changeSet id="#2458_20170322" author="AndriusKarpavicius">
+        <addUniqueConstraint columnNames="code" constraintName="uk_cust_cet" deferrable="false" disabled="false"
+            initiallyDeferred="false" tableName="cust_cet" />
+    </changeSet>
+	
 </databaseChangeLog>
