@@ -26,148 +26,152 @@ import org.slf4j.Logger;
 @WebServlet("/inbound/*")
 public class InboundServlet extends HttpServlet {
 
-	private static final long serialVersionUID = 1551787937225264581L;
+    private static final long serialVersionUID = 1551787937225264581L;
 
-	@Inject
-	InboundRequestService inboundRequestService;
+    @Inject
+    InboundRequestService inboundRequestService;
 
-	@Inject
-	Logger log;
+    @Inject
+    Logger log;
 
-	@Inject
-	@InboundRequestReceived
-	protected Event<InboundRequest> eventProducer;
-		
-	private void doService(HttpServletRequest req, HttpServletResponse res) {
-		log.debug("doService.....");
+    @Inject
+    @InboundRequestReceived
+    protected Event<InboundRequest> eventProducer;
+
+    private void doService(HttpServletRequest req, HttpServletResponse res) {
         
-        String path = req.getPathInfo();
-        log.debug("received request for method {} , path={}", req.getMethod(),path);
+        try {
 
-		InboundRequest inReq = new InboundRequest();
-		inReq.setCode(req.getRemoteAddr() + ":" + req.getRemotePort() + "_" + req.getMethod() + "_" + System.nanoTime());
+            String path = req.getPathInfo();
+            log.debug("received request for method {} , path={}", req.getMethod(), path);
 
-		inReq.setContentLength(req.getContentLength());
-		inReq.setContentType(req.getContentType());
+            InboundRequest inReq = new InboundRequest();
+            inReq.setCode(req.getRemoteAddr() + ":" + req.getRemotePort() + "_" + req.getMethod() + "_" + System.nanoTime());
 
-		if (req.getParameterNames() != null) {
-			Enumeration<String> parameterNames = req.getParameterNames();
-			while (parameterNames.hasMoreElements()) {
-				String parameterName = parameterNames.nextElement();
-				String[] paramValues = req.getParameterValues(parameterName);
-				String parameterValue = null;
-				String sep = "";
-				for (String paramValue : paramValues) {
-					parameterValue = sep + paramValue;
-					sep = "|";
-				}
-				inReq.getParameters().put(parameterName, parameterValue);
-			}
-		}
-		inReq.setProtocol(req.getProtocol());
-		inReq.setScheme(req.getScheme());
-		inReq.setRemoteAddr(req.getRemoteAddr());
-		inReq.setRemotePort(req.getRemotePort());
-		StringBuilder buffer = new StringBuilder();
-		BufferedReader reader;
-		try {
-			reader = req.getReader();
-			String line;
-			while ((line = reader.readLine()) != null) {
-				buffer.append(line);
-			}
-		} catch (IOException e2) {
-			e2.printStackTrace();
-		}
-		String body = buffer.toString();
-		inReq.setBody(body);
+            inReq.setContentLength(req.getContentLength());
+            inReq.setContentType(req.getContentType());
 
-		inReq.setMethod(req.getMethod());
-		inReq.setAuthType(req.getAuthType());
-		if (req.getCookies() != null) {
-			for (Cookie cookie : req.getCookies()) {
-				inReq.getCoockies().put(cookie.getName(), cookie.getValue());
-			}
-		}
-		if (req.getHeaderNames() != null) {
-			Enumeration<String> headerNames = req.getHeaderNames();
+            if (req.getParameterNames() != null) {
+                Enumeration<String> parameterNames = req.getParameterNames();
+                while (parameterNames.hasMoreElements()) {
+                    String parameterName = parameterNames.nextElement();
+                    String[] paramValues = req.getParameterValues(parameterName);
+                    String parameterValue = null;
+                    String sep = "";
+                    for (String paramValue : paramValues) {
+                        parameterValue = sep + paramValue;
+                        sep = "|";
+                    }
+                    inReq.getParameters().put(parameterName, parameterValue);
+                }
+            }
+            inReq.setProtocol(req.getProtocol());
+            inReq.setScheme(req.getScheme());
+            inReq.setRemoteAddr(req.getRemoteAddr());
+            inReq.setRemotePort(req.getRemotePort());
+            StringBuilder buffer = new StringBuilder();
+            BufferedReader reader;
+            try {
+                reader = req.getReader();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    buffer.append(line);
+                }
+            } catch (IOException e2) {
+                e2.printStackTrace();
+            }
+            String body = buffer.toString();
+            inReq.setBody(body);
 
-			while (headerNames.hasMoreElements()) {
-				String headerName = headerNames.nextElement();
-				inReq.getHeaders().put(headerName, req.getHeader(headerName));
-			}
-		}
-		inReq.setPathInfo(path);
-		inReq.setRequestURI(req.getRequestURI());
+            inReq.setMethod(req.getMethod());
+            inReq.setAuthType(req.getAuthType());
+            if (req.getCookies() != null) {
+                for (Cookie cookie : req.getCookies()) {
+                    inReq.getCoockies().put(cookie.getName(), cookie.getValue());
+                }
+            }
+            if (req.getHeaderNames() != null) {
+                Enumeration<String> headerNames = req.getHeaderNames();
 
-		// process the notifications
-		eventProducer.fire(inReq);
+                while (headerNames.hasMoreElements()) {
+                    String headerName = headerNames.nextElement();
+                    inReq.getHeaders().put(headerName, req.getHeader(headerName));
+                }
+            }
+            inReq.setPathInfo(path);
+            inReq.setRequestURI(req.getRequestURI());
+            inboundRequestService.create(inReq);
 
-		log.debug("triggered {} notification, resp body= {}", inReq.getNotificationHistories().size(), inReq.getResponseBody());
-		// ONLY ScriptNotifications will produce notification history in
-		// synchronous mode. Other type notifications will produce notification
-		// history in asynchronous mode and thus
-		// will not be related to inbound request.
-		if ((!inReq.getHeaders().containsKey("fired"))||inReq.getHeaders().get("fired").equals("false")) {
-			res.setStatus(404);
-		} else {
-			// produce the response
-			res.setCharacterEncoding(inReq.getResponseEncoding() == null ? req.getCharacterEncoding() : inReq.getResponseEncoding());
-			res.setContentType(inReq.getContentType());
-			for (String cookieName : inReq.getResponseCoockies().keySet()) {
-				res.addCookie(new Cookie(cookieName, inReq.getResponseCoockies().get(cookieName)));
-			}
+            // process the notifications
+            eventProducer.fire(inReq);
 
-			for (String headerName : inReq.getResponseHeaders().keySet()) {
-				res.addHeader(headerName, inReq.getResponseHeaders().get(headerName));
-			}
+            log.debug("triggered {} notification, resp body= {}", inReq.getNotificationHistories().size(), inReq.getResponseBody());
+            // ONLY ScriptNotifications will produce notification history in
+            // synchronous mode. Other type notifications will produce notification
+            // history in asynchronous mode and thus
+            // will not be related to inbound request.
+            if ((!inReq.getHeaders().containsKey("fired")) || inReq.getHeaders().get("fired").equals("false")) {
+                res.setStatus(404);
+            } else {
+                // produce the response
+                res.setCharacterEncoding(inReq.getResponseEncoding() == null ? req.getCharacterEncoding() : inReq.getResponseEncoding());
+                res.setContentType(inReq.getContentType());
+                for (String cookieName : inReq.getResponseCoockies().keySet()) {
+                    res.addCookie(new Cookie(cookieName, inReq.getResponseCoockies().get(cookieName)));
+                }
 
-			if (inReq.getResponseBody() != null) {
-				try (PrintWriter out = res.getWriter()) {
-					out.print(inReq.getResponseBody());
-				} catch (IOException e) {
-					log.error("Failed to produce the response", e);
-					res.setStatus(500);
-				}
-			}
-			res.setStatus(200);
-		}
+                for (String headerName : inReq.getResponseHeaders().keySet()) {
+                    res.addHeader(headerName, inReq.getResponseHeaders().get(headerName));
+                }
 
-		try {
-			inboundRequestService.create(inReq);
-		} catch (BusinessException e1) {
-			log.error("Failed to create InboundRequest ", e1);
-		}
+                if (inReq.getResponseBody() != null) {
+                    try (PrintWriter out = res.getWriter()) {
+                        out.print(inReq.getResponseBody());
+                    } catch (IOException e) {
+                        log.error("Failed to produce the response", e);
+                        res.setStatus(500);
+                    }
+                }
+                res.setStatus(200);
+            }
 
-		log.debug("exit with status {}", res.getStatus());
-	}
+            inReq = inboundRequestService.update(inReq);
+            
 
-	public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
-		doService(req, res);
-	}
+            log.debug("Inbound request finished with status {}", res.getStatus());
 
-	public void doDelete(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
-		doService(req, res);
-	}
+        } catch (BusinessException e) {
+            log.error("Failed to process Inbound request ", e);
+        }
 
-	public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
-		doService(req, res);
-	}
+    }
 
-	public void doHead(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
-		doService(req, res);
-	}
+    public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+        doService(req, res);
+    }
 
-	public void doOption(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
-		doService(req, res);
-	}
+    public void doDelete(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+        doService(req, res);
+    }
 
-	public void doPut(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
-		doService(req, res);
-	}
+    public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+        doService(req, res);
+    }
 
-	public void doTrace(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
-		doService(req, res);
-	}
+    public void doHead(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+        doService(req, res);
+    }
+
+    public void doOption(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+        doService(req, res);
+    }
+
+    public void doPut(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+        doService(req, res);
+    }
+
+    public void doTrace(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+        doService(req, res);
+    }
 
 }
