@@ -28,8 +28,8 @@
 
         <hftl:formPanel formId="moduleForm" label="#{messages['meveoModule.title']}" showFormButtons="false" backingBean="#{meveoModuleBean}"
             edit="#{!meveoModuleBean.entity.downloaded}">
-            <hftl:formField label="#{messages['businessEntity.code']}" field="code" maxlength="35" required="true" validateUnique="true" />
-            <hftl:formField label="#{messages['businessEntity.description']}" field="description" required="true" id="description" maxlength="100" />
+            <hftl:formField label="#{messages['businessEntity.code']}" field="code" required="true" validateUnique="true" />
+            <hftl:formField label="#{messages['businessEntity.description']}" field="description" required="true" id="description" />
             <hftl:formField label="#{messages['meveoModule.license']}" required="true" field="license" id="license" isMessage="true" newLine="true" />
             <hftl:decorateFormField label="#{messages['meveoModule.logo']}" rendered="#{!meveoModuleBean.entity.transient}">
                 <h:panelGrid columns="2" id="logo">

@@ -50,8 +50,8 @@ public class CustomFieldInstance extends EnableEntity {
     public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     public static SimpleDateFormat xmlsdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
-    @Column(name = "CODE", nullable = false, length = 60)
-    @Size(max = 60, min = 1)
+    @Column(name = "CODE", nullable = false, length = 255)
+    @Size(max = 255, min = 1)
     @NotNull
     private String code;
 

@@ -50,8 +50,8 @@ public class TradingCurrency extends EnableEntity {
 	@JoinColumn(name = "CURRENCY_ID")
 	private Currency currency;
 
-	@Column(name = "PR_DESCRIPTION", length = 100)
-	@Size(max = 100)
+	@Column(name = "PR_DESCRIPTION", length = 255)
+	@Size(max = 255)
 	private String prDescription;
 
 	@Column(name = "PR_CURRENCY_TO_THIS", precision = NB_PRECISION, scale = NB_DECIMALS)

@@ -123,7 +123,7 @@
 													<hftl:formField
 														label="#{messages['businessEntity.description']}"
 														id="description" field="description" useConverter="false"
-														size="70" maxlength="100" />
+														size="70" />
 												
 													<hftl:formField id="cycleSelectId"
 														label="#{messages['billingAccount.billingCycle']}"
@@ -178,7 +178,7 @@
 													</h:panelGroup>
 													<hftl:formField
 														label="#{messages['billingAccount.externalRef1']}"
-														field="externalRef1" maxlength="50" useConverter="false" newLine="true"/>
+														field="externalRef1" useConverter="false" newLine="true"/>
 													
                                                     <hftl:decorateFormField fieldId="externalRef2" label="#{messages['billingAccount.externalRef2']}" >
 														<p:inputText id="externalRef2"
@@ -212,10 +212,10 @@
                                     <h:panelGroup id="userNamePanel" layout="block">
                                             <hftl:formField label="#{messages[(billingAccountBean.entity.name.title != null and billingAccountBean.entity.name.title.isCompany)?'name.company':'name.lastName']}"
                                                 field="name" childField="lastName" 
-                                                maxlength="50" required="#{billingAccountBean.entity.name.title != null}" />
+                                                required="#{billingAccountBean.entity.name.title != null}" />
                                             <hftl:formField label="#{messages['name.firstName']}"
                                                 field="name" childField="firstName" 
-                                                maxlength="50" rendered="#{billingAccountBean.entity.name.title == null or !billingAccountBean.entity.name.title.isCompany}"/>
+                                                rendered="#{billingAccountBean.entity.name.title == null or !billingAccountBean.entity.name.title.isCompany}"/>
                                     </h:panelGroup>                                                
                                                 
 							     </p:fieldset>		
@@ -242,20 +242,20 @@
                                     <p:fieldset legend="#{messages['commons.contacts']}">
 													<hftl:formField label="#{messages['address.address1']}"
 														field="address" childField="address1" 
-														size="80" maxlength="80" />
+														size="50" />
 													<hftl:formField label="#{messages['address.address2']}"
 														field="address" childField="address2" 
-														size="80" maxlength="80" />
+														size="50" />
 													<hftl:formField label="#{messages['address.address3']}"
 														field="address" childField="address3" 
-														size="80" maxlength="80" />
+														size="50" />
 													<hftl:formField label="#{messages['address.zipCode']}"
 														field="address" childField="zipCode" 
-														size="10" maxlength="10" length="10" newLine="true"/>
+														size="10" newLine="true" />
 													<hftl:formField label="#{messages['address.city']}"
 														field="address" childField="city" 
-														maxlength="50" />
-													<hftl:formField label="#{messages['address.country']}" field="address" childField="country" maxlength="50" />
+														/>
+													<hftl:formField label="#{messages['address.country']}" field="address" childField="country" />
 <!-- 													<hftl:formField id="countryPanel" -->
 <!-- 														label="#{messages['address.country']}" fkToEntity="true" -->
 <!-- 														field="address" childField="country" -->
@@ -305,32 +305,32 @@
 															<hftl:formField
 																label="#{messages['bankCoordinates.branchCode']}"
 																field="bankCoordinates" childField="branchCode" size="5"
-																maxlength="5" />
+																/>
 															<hftl:formField
 																label="#{messages['bankCoordinates.accountNumber']}"
 																field="bankCoordinates" childField="accountNumber"
-																size="11" maxlength="11"/>
+																size="11" />
 															<hftl:formField
 																label="#{messages['bankCoordinates.key']}"
 																field="bankCoordinates" childField="key" size="2"
-																maxlength="2" />														
+																 />														
 															<hftl:formField
 																label="#{messages['bankCoordinates.bic']}"
 																field="bankCoordinates" childField="bic" size="15"
-																maxlength="11" />
+																 />
 															<hftl:formField
 																label="#{messages['bankCoordinates.iban']}"
 																field="bankCoordinates" childField="iban" size="45"
-																maxlength="34" />
+																 />
 															<hftl:formField
 																label="#{messages['bankCoordinates.accountOwner']}"
 																field="bankCoordinates" childField="accountOwner"
-																size="55" maxlength="50"
+																size="55" 
 																required="#{entity.paymentMethod.toString() == 'DIRECTDEBIT'}" />
 															<hftl:formField
 																label="#{messages['bankCoordinates.bankName']}"
 																field="bankCoordinates" childField="bankName" size="55"
-																maxlength="50" />
+																 />
                                                         </h:panelGroup>
 													</h:panelGroup>
 												</p:fieldset>

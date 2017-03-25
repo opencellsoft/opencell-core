@@ -61,8 +61,8 @@ import org.meveo.model.scripts.ScriptInstance;
 public class PricePlanMatrix extends BusinessCFEntity implements Comparable<PricePlanMatrix> {
     private static final long serialVersionUID = 1L;
 
-	@Column(name = "EVENT_CODE", length = 100, nullable = false)
-	@Size(min = 1, max = 100)
+	@Column(name = "EVENT_CODE", length = 255, nullable = false)
+	@Size(min = 1, max = 255)
 	@NotNull
 	private String eventCode;
 

@@ -49,8 +49,8 @@ public class DiscountLanguage extends EnableEntity {
 	@JoinColumn(name = "TRADING_LANGUAGE_ID")
 	private TradingLanguage tradingLanguage;
 
-	@Column(name = "DESCRIPTION", length = 50)
-	@Size(max = 50)
+	@Column(name = "DESCRIPTION", length = 255)
+	@Size(max = 255)
 	private String description;
 
 	public Discount getDiscount() {

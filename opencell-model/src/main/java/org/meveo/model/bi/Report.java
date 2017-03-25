@@ -55,8 +55,8 @@ public class Report extends BaseEntity {
     @Size(max = 50)
 	private String name;
 
-	@Column(name = "DESCRIPTION", nullable = true, length = 50)
-	@Size(max = 50)
+	@Column(name = "DESCRIPTION", nullable = true, length = 255)
+	@Size(max = 255)
 	protected String description;
 
 	@ManyToMany(fetch = FetchType.LAZY)

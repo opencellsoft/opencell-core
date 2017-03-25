@@ -57,8 +57,8 @@ public class TradingLanguage extends EnableEntity {
 	@JoinColumn(name = "LANGUAGE_ID")
 	private Language language;
 
-	@Column(name = "PR_DESCRIPTION", length = 100)
-    @Size(max = 100)
+	@Column(name = "PR_DESCRIPTION", length = 255)
+    @Size(max = 255)
 	private String prDescription;
 
 	@Transient

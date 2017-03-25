@@ -32,8 +32,8 @@ public class DiscountPlanItem extends EnableEntity {
 
 	private static final long serialVersionUID = 4543503736567841084L;
 
-	@Column(name = "CODE", length = 60, nullable = false)
-	@Size(max = 60, min = 1)
+	@Column(name = "CODE", length = 255, nullable = false)
+	@Size(max = 255, min = 1)
 	@NotNull
 	private String code;
 
