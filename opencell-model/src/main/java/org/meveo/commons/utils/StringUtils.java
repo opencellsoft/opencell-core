@@ -200,7 +200,7 @@ public class StringUtils {
     }
     
     /**
-     * Compares two strings. Handles null values witout exception
+     * Compares two strings. Handles null values without exception
      * 
      * @param one First string
      * @param two Second string

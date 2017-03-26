@@ -3,6 +3,7 @@ package org.meveo.admin.action.crm;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -62,7 +63,10 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
-        updateMapTypeFieldInEntity(entity.getListValues(), "listValues");
+        if (entity.getFieldType() == CustomFieldTypeEnum.LIST) {
+            entity.setListValues(new TreeMap<String, String>());
+            updateMapTypeFieldInEntity(entity.getListValues(), "listValues");
+        }
 
         CustomFieldTemplate cfDuplicate = customFieldTemplateService.findByCodeAndAppliesTo(entity.getCode(), entity.getAppliesTo());
         if (cfDuplicate != null && !cfDuplicate.getId().equals(entity.getId())) {

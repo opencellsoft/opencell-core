@@ -149,5 +149,24 @@ public class CatMessages extends BaseEntity {
 	public void setEntityClass(String entityClass) {
 		this.entityClass = entityClass;
 	}
-    
+
+    @Override
+    public boolean equals(Object obj) {
+
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof CatMessages)) { // Fails with proxed objects: getClass() != obj.getClass()){
+            return false;
+        }
+
+        CatMessages other = (CatMessages) obj;
+
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
+            return true;
+        }
+        return (StringUtils.compare(entityClass, other.getEntityClass()) == 0 && StringUtils.compare(entityCode, other.getEntityCode()) == 0
+                && StringUtils.compare(languageCode, other.getLanguageCode()) == 0);
+    }
 }

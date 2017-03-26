@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -78,7 +77,7 @@ public class CustomFieldTemplate extends BusinessEntity {
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "CRM_CUSTOM_FIELD_TMPL_VAL")
-    private Map<String, String> listValues = new HashMap<String, String>();
+    private Map<String, String> listValues;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "CRM_CUSTOM_FIELD_TMPL_MCOLS", joinColumns = { @JoinColumn(name = "CFT_ID") })
@@ -194,7 +193,6 @@ public class CustomFieldTemplate extends BusinessEntity {
     }
 
 	public Map<String, String> getListValues() {
-		listValues = new TreeMap<String, String>(listValues);
 
 		return listValues;
 	}
