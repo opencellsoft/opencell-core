@@ -13,6 +13,7 @@ import org.meveo.api.dto.EntityCustomizationDto;
 import org.meveo.api.dto.response.BusinessEntityResponseDto;
 import org.meveo.api.dto.response.CustomEntityInstanceResponseDto;
 import org.meveo.api.dto.response.CustomEntityTemplateResponseDto;
+import org.meveo.api.dto.response.CustomEntityTemplatesResponseDto;
 import org.meveo.api.dto.response.EntityCustomActionResponseDto;
 import org.meveo.api.dto.response.EntityCustomizationResponseDto;
 import org.meveo.api.dto.response.GetCustomFieldTemplateReponseDto;
@@ -99,5 +100,11 @@ public interface EntityCustomizationWs extends IBaseWs {
 
     @WebMethod
 	BusinessEntityResponseDto listBusinessEntityForCFVByCode(@WebParam(name = "code") String code, @WebParam(name = "wildcode") String wildcode);
+    
+	@WebMethod
+	CustomEntityTemplatesResponseDto listEntityTemplates(@WebParam(name = "customEntityTemplateCode") String customEntityTemplateCode);
+	
+	@WebMethod
+	EntityCustomizationResponseDto listELFiltered(@WebParam(name = "appliesTo") String appliesTo, @WebParam(name = "entityCode") String entityCode);
 
 }

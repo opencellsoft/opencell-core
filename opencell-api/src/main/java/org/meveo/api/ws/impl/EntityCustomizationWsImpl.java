@@ -20,6 +20,7 @@ import org.meveo.api.dto.EntityCustomizationDto;
 import org.meveo.api.dto.response.BusinessEntityResponseDto;
 import org.meveo.api.dto.response.CustomEntityInstanceResponseDto;
 import org.meveo.api.dto.response.CustomEntityTemplateResponseDto;
+import org.meveo.api.dto.response.CustomEntityTemplatesResponseDto;
 import org.meveo.api.dto.response.EntityCustomActionResponseDto;
 import org.meveo.api.dto.response.EntityCustomizationResponseDto;
 import org.meveo.api.dto.response.GetCustomFieldTemplateReponseDto;
@@ -497,6 +498,43 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
 			result.getActionStatus().setErrorCode(e.getErrorCode());
 			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 			result.getActionStatus().setMessage(e.getMessage());
+		} catch (Exception e) {
+			log.error("Failed to execute API", e);
+			result.getActionStatus().setErrorCode(e instanceof BusinessException
+					? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		}
+
+		return result;
+	}
+
+	@Override
+	public CustomEntityTemplatesResponseDto listEntityTemplates(String customEntityTemplateCode) {
+		CustomEntityTemplatesResponseDto result = new CustomEntityTemplatesResponseDto();
+
+		try {
+			result.setCustomEntityTemplates(
+					customEntityTemplateApi.listCustomEntityTemplates(customEntityTemplateCode));
+
+		} catch (Exception e) {
+			log.error("Failed to execute API", e);
+			result.getActionStatus().setErrorCode(e instanceof BusinessException
+					? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+			result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
+			result.getActionStatus().setMessage(e.getMessage());
+		}
+
+		return result;
+	}
+
+	@Override
+	public EntityCustomizationResponseDto listELFiltered(String appliesTo, String entityCode) {
+		EntityCustomizationResponseDto result = new EntityCustomizationResponseDto();
+
+		try {
+			result.setEntityCustomization(customEntityTemplateApi.listELFiltered(appliesTo, entityCode));
+
 		} catch (Exception e) {
 			log.error("Failed to execute API", e);
 			result.getActionStatus().setErrorCode(e instanceof BusinessException

@@ -29,6 +29,8 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.admin.impl.PermissionService;
@@ -143,4 +145,18 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
     public List<CustomEntityTemplate> getCETForCache() {
         return getEntityManager().createNamedQuery("CustomEntityTemplate.getCETForCache", CustomEntityTemplate.class).getResultList();
     }
+    
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public ICustomFieldEntity findByClassAndCode(Class entityClass, String entityCode) {
+		ICustomFieldEntity result = null;
+		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
+		queryBuilder.addCriterion("code", "=", entityCode, true);
+		List<ICustomFieldEntity> entities = (List<ICustomFieldEntity>) queryBuilder.getQuery(getEntityManager())
+				.getResultList();
+		if (entities != null && !entities.isEmpty()) {
+			result = entities.get(0);
+		}
+
+		return result;
+	}
 }
