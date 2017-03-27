@@ -1005,12 +1005,12 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:runType>SEQUENTIAL</con:runType>
     <con:testCase id="13a2d7e8-7f01-4b17-8459-2c63d20b3a0b" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create scripts" searchProperties="true">
       <con:settings/>
-      <con:testStep type="request" name="create Mediation_CreateEdr" id="607fe1ee-fd45-49d9-a40f-05dcc9a75121">
+      <con:testStep type="request" name="Create Mediation_CreateEdr script" id="607fe1ee-fd45-49d9-a40f-05dcc9a75121">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>ScriptInstanceWsSoapBinding</con:interface>
           <con:operation>createOrUpdate</con:operation>
-          <con:request name="create Mediation_CreateEdr" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
+          <con:request name="Create Mediation_CreateEdr script" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -1124,12 +1124,12 @@ public class Mediation_${#Project#baseEntityPrefix}_CreateEdr extends org.meveo.
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="create Mediation_DuplicatedCheck" id="fcc81f55-ee67-4229-82bf-6cb0ae4b3b2e">
+      <con:testStep type="request" name="Create Mediation_DuplicatedCheck script" id="fcc81f55-ee67-4229-82bf-6cb0ae4b3b2e">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>ScriptInstanceWsSoapBinding</con:interface>
           <con:operation>createOrUpdate</con:operation>
-          <con:request name="create Mediation_DuplicatedCheck" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
+          <con:request name="Create Mediation_DuplicatedCheck script" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -1227,12 +1227,12 @@ public class Mediation_${#Project#baseEntityPrefix}_DuplicatedCheck extends Scri
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="create Mediation_RoutingSub" id="a032bcf3-6c1b-46ed-a003-d72290dbc64e">
+      <con:testStep type="request" name="Create Mediation_RoutingSub script" id="a032bcf3-6c1b-46ed-a003-d72290dbc64e">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>ScriptInstanceWsSoapBinding</con:interface>
           <con:operation>createOrUpdate</con:operation>
-          <con:request name="create Mediation_RoutingSub" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
+          <con:request name="Create Mediation_RoutingSub script" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -1303,12 +1303,12 @@ public class Mediation_${#Project#baseEntityPrefix}_RoutingSub extends Script {
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="create Mediation_Flow" id="0a5f54ae-df88-4a9b-accd-c53e3ffea3a6">
+      <con:testStep type="request" name="Create Mediation_Flow script" id="0a5f54ae-df88-4a9b-accd-c53e3ffea3a6">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>ScriptInstanceWsSoapBinding</con:interface>
           <con:operation>createOrUpdate</con:operation>
-          <con:request name="create Mediation_Flow" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
+          <con:request name="Create Mediation_Flow script" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -1411,6 +1411,174 @@ public class Mediation_${#Project#baseEntityPrefix}_Flow extends org.meveo.servi
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create CreateFileFromContent script" id="9eeb5a8a-5f11-4f04-8357-9c7c77a95b3a">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>ScriptInstanceWsSoapBinding</con:interface>
+          <con:operation>create</con:operation>
+          <con:request name="Create CreateFileFromContent script" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdate>\r
+         <createOrUpdateScriptInstanceRequest code="org.meveo.service.script.${#TestSuite#baseEntityPrefix}_CreateFile" description="Create File from context String">\r
+            <type>JAVA</type>\r
+            <script>package org.meveo.service.script;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.util.Map;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.crm.Provider;
+import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.model.admin.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
+public class ${#TestSuite#baseEntityPrefix}_CreateFile extends Script {
+
+	private static final Logger log = LoggerFactory.getLogger(${#TestSuite#baseEntityPrefix}_CreateFile.class);
+
+	@Override
+	public void execute(Map&lt;String, Object> methodContext) throws BusinessException {
+		String directory = (String) methodContext.get("directory");
+		if(directory==null){
+			directory="";
+		} else {
+			directory=directory.replaceAll("..", "").replaceAll("~","");
+		}
+		String fileName = (String) methodContext.get("fileName");
+		if(fileName==null){
+			throw new BusinessException("fileName is missing");
+		} 
+		String content = (String) methodContext.get("content");
+		String charsetName = (String) methodContext.get("charsetName");
+		if(charsetName==null){
+			charsetName="UTF-8";
+		}
+		ParamBean parambean = ParamBean.getInstance();
+		Provider appProvider = ((ProviderService)getServiceInterface("ProviderService")).getProvider();
+		String rootDir = parambean.getProperty("providers.rootDir", "/tmp/opencell/") + File.separator + appProvider.getCode() + File.separator;
+		String outputDir = rootDir+directory;
+		File f = new File(outputDir);
+		if (!f.exists()) {
+			log.debug("create directory "+outputDir);
+			f.mkdirs();
+		}
+		File outputFile = new File(outputDir+File.separator+fileName);
+		try(OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(outputFile), charsetName)){
+			out.write(content);
+			log.debug("wrote {} characters in the file {}",content.length(),fileName);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new BusinessException("error while writing file content",e);
+		}
+	}
+}</script>\r
+         </createOrUpdateScriptInstanceRequest>\r
+      </ws:createOrUpdate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="c88346ea-5930-4202-a5af-0edf881e5275"/>
+            <con:assertion type="Simple Contains" id="509aa736-5486-4c01-bc73-2b19fca6be7f" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple NotContains" id="8aca7f14-e974-4617-8582-243cc2d24731" name="Not Contains">
+              <con:configuration>
+                <token>compilationErrors</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create Inbound request handler /createFile" id="53545b40-59ad-430e-899f-6be96d2cad76">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>NotificationWsSoapBinding</con:interface>
+          <con:operation>createNotification</con:operation>
+          <con:request name="Create Inbound request handler /createFile" id="4e4f4357-e9d2-486e-8c51-80a87a1a3746">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/NotificationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateNotification>
+         <notification code="${#TestSuite#baseEntityPrefix}_Inbound_Request_CreateFile">
+            <classNameFilter>org.meveo.model.notification.InboundRequest</classNameFilter>
+            <eventTypeFilter>INBOUND_REQ</eventTypeFilter>
+            <elFilter>#{event.pathInfo.contains("/createFile")}</elFilter>
+            <scriptInstanceCode>org.meveo.service.script.${#TestSuite#baseEntityPrefix}_CreateFile</scriptInstanceCode>
+            <scriptParams>
+               <entry>
+                  <key>directory</key>
+                  <value>#{event.getParameters().get("directory")}</value>
+               </entry>
+               <entry>
+                  <key>fileName</key>
+                  <value>#{event.getParameters().get("fileName")}</value>
+               </entry>
+               <entry>
+                  <key>charsetName</key>
+                  <value>#{event.getParameters().get("charsetName")}</value>
+               </entry>
+               <entry>
+                  <key>content</key>
+                  <value>#{event.getBody()}</value>
+               </entry>
+            </scriptParams>
+         </notification>
+      </ws:createOrUpdateNotification>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="2f4698f6-b2e5-4280-bb9f-13cf37202da1"/>
+            <con:assertion type="Simple Contains" id="276ff999-0b67-480d-8315-71ead5717375" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.admin</con:username>
+              <con:password>meveo.admin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
@@ -1692,12 +1860,12 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="Create Inbound request handler" id="8e1423f4-1ad7-40be-bfc6-b3c580d57f24">
+      <con:testStep type="request" name="Create Inbound request handler /mediation" id="8e1423f4-1ad7-40be-bfc6-b3c580d57f24">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>NotificationWsSoapBinding</con:interface>
           <con:operation>createNotification</con:operation>
-          <con:request name="Create Inbound request handler" id="4e4f4357-e9d2-486e-8c51-80a87a1a3746">
+          <con:request name="Create Inbound request handler /mediation" id="4e4f4357-e9d2-486e-8c51-80a87a1a3746">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -1707,7 +1875,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateNotification>
-         <notification code="${#TestSuite#entityPrefix}_Inbound_Request">
+         <notification code="${#TestSuite#entityPrefix}_Inbound_Request_Mediation">
             <classNameFilter>org.meveo.model.notification.InboundRequest</classNameFilter>
             <eventTypeFilter>INBOUND_REQ</eventTypeFilter>
             <elFilter>#{event.pathInfo.contains("/mediation")}</elFilter>
@@ -1776,15 +1944,14 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateField>\r
-         
          <customField code="${#TestSuite#entityPrefix}" description="${#TestSuite#entityPrefix}_NUMBERS">\r
             <fieldType>STRING</fieldType>\r
-            <accountLevel>SUB</accountLevel>\r
+            <appliesTo>SUB</appliesTo>\r
             <storageType>LIST</storageType>\r
             <valueRequired>false</valueRequired>\r
             <versionable>true</versionable>\r
             <triggerEndPeriodEvent>true</triggerEndPeriodEvent>\r
-            <calendar>MONTHLY</calendar>
+            <calendar>MONTHLY</calendar>\r
          </customField>\r
       </ws:createOrUpdateField>\r
    </soapenv:Body>\r
@@ -2441,7 +2608,6 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createAccess>
-         <!--Optional:-->
          <access code="${#TestSuite#entityPrefix}_${#TestSuite#index}_access">
             <subscription>${#TestSuite#entityPrefix}_${#TestSuite#index}_SUB1</subscription> 
          </access>
@@ -2632,193 +2798,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
         </con:property>
       </con:properties>
     </con:testCase>
-    <con:properties>
-      <con:property>
-        <con:name>entityPrefix</con:name>
-        <con:value>TOPTEN</con:value>
-      </con:property>
-      <con:property>
-        <con:name>index</con:name>
-        <con:value>9</con:value>
-      </con:property>
-    </con:properties>
-  </con:testSuite>
-  <con:testSuite id="736f9d2a-5162-4ee6-9c2b-426816d07422" name="CreateFileFromHTTPrequest">
-    <con:settings/>
-    <con:runType>SEQUENTIAL</con:runType>
-    <con:testCase id="6a48355b-ee95-4781-addf-c21b3d3e3f9e" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create Script and Notification" searchProperties="true">
-      <con:settings/>
-      <con:testStep type="request" name="Create CreateFileFromContent script" id="9eeb5a8a-5f11-4f04-8357-9c7c77a95b3a">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>ScriptInstanceWsSoapBinding</con:interface>
-          <con:operation>create</con:operation>
-          <con:request name="Create CreateFileFromContent script" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:createOrUpdate>\r
-         <createOrUpdateScriptInstanceRequest code="org.meveo.service.script.${#TestSuite#entityPrefix}_CreateFile" description="Create File from context String">\r
-            <type>JAVA</type>\r
-            <script>package org.meveo.service.script;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.util.Map;
-
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.crm.Provider;
-import org.meveo.service.crm.impl.ProviderService;
-import org.meveo.model.admin.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-
-public class ${#TestSuite#entityPrefix}_CreateFile extends Script {
-
-	private static final Logger log = LoggerFactory.getLogger(${#TestSuite#entityPrefix}_CreateFile.class);
-
-	@Override
-	public void execute(Map&lt;String, Object> methodContext) throws BusinessException {
-		String directory = (String) methodContext.get("directory");
-		if(directory==null){
-			directory="";
-		} else {
-			directory=directory.replaceAll("..", "").replaceAll("~","");
-		}
-		String fileName = (String) methodContext.get("fileName");
-		if(fileName==null){
-			throw new BusinessException("fileName is missing");
-		} 
-		String content = (String) methodContext.get("content");
-		String charsetName = (String) methodContext.get("charsetName");
-		if(charsetName==null){
-			charsetName="UTF-8";
-		}
-		ParamBean parambean = ParamBean.getInstance();
-		Provider appProvider = ((ProviderService)getServiceInterface("ProviderService")).getProvider();
-		String rootDir = parambean.getProperty("providers.rootDir", "/tmp/opencell/") + File.separator + appProvider.getCode() + File.separator;
-		String outputDir = rootDir+directory;
-		File f = new File(outputDir);
-		if (!f.exists()) {
-			log.debug("create directory "+outputDir);
-			f.mkdirs();
-		}
-		File outputFile = new File(outputDir+File.separator+fileName);
-		try(OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(outputFile), charsetName)){
-			out.write(content);
-			log.debug("wrote {} characters in the file {}",content.length(),fileName);
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new BusinessException("error while writing file content",e);
-		}
-	}
-}</script>\r
-         </createOrUpdateScriptInstanceRequest>\r
-      </ws:createOrUpdate>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="SOAP Response" id="c88346ea-5930-4202-a5af-0edf881e5275"/>
-            <con:assertion type="Simple Contains" id="509aa736-5486-4c01-bc73-2b19fca6be7f" name="Contains">
-              <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:assertion type="Simple NotContains" id="8aca7f14-e974-4617-8582-243cc2d24731" name="Not Contains">
-              <con:configuration>
-                <token>compilationErrors</token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:credentials>
-              <con:preemptive>true</con:preemptive>
-              <con:authType>No Authorization</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
-        </con:config>
-      </con:testStep>
-      <con:testStep type="request" name="Create Inbound request handler" id="53545b40-59ad-430e-899f-6be96d2cad76">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>NotificationWsSoapBinding</con:interface>
-          <con:operation>createNotification</con:operation>
-          <con:request name="Create Inbound request handler" id="4e4f4357-e9d2-486e-8c51-80a87a1a3746">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/NotificationWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdateNotification>
-         <notification code="${#TestSuite#entityPrefix}_Inbound_Request">
-            <classNameFilter>org.meveo.model.notification.InboundRequest</classNameFilter>
-            <eventTypeFilter>INBOUND_REQ</eventTypeFilter>
-            <elFilter>#{event.pathInfo.contains("/createFile")}</elFilter>
-            <scriptInstanceCode>org.meveo.service.script.${#TestSuite#entityPrefix}_CreateFile</scriptInstanceCode>
-            <scriptParams>
-               <entry>
-                  <key>directory</key>
-                  <value>#{event.getParameters().get("directory")}</value>
-               </entry>
-               <entry>
-                  <key>fileName</key>
-                  <value>#{event.getParameters().get("fileName")}</value>
-               </entry>
-               <entry>
-                  <key>charsetName</key>
-                  <value>#{event.getParameters().get("charsetName")}</value>
-               </entry>
-               <entry>
-                  <key>content</key>
-                  <value>#{event.getBody()}</value>
-               </entry>
-            </scriptParams>
-         </notification>
-      </ws:createOrUpdateNotification>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="SOAP Response" id="2f4698f6-b2e5-4280-bb9f-13cf37202da1"/>
-            <con:assertion type="Simple Contains" id="276ff999-0b67-480d-8315-71ead5717375" name="Contains">
-              <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:credentials>
-              <con:username>meveo.admin</con:username>
-              <con:password>meveo.admin</con:password>
-              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
-              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
-              <con:preemptive>true</con:preemptive>
-              <con:authType>Preemptive</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
-        </con:config>
-      </con:testStep>
-      <con:properties/>
-    </con:testCase>
-    <con:testCase id="983ddbfd-30bd-44ca-b209-3ddc596e7d2c" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Test it" searchProperties="true">
+    <con:testCase id="983ddbfd-30bd-44ca-b209-3ddc596e7d2c" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create file from HTTP request" searchProperties="true">
       <con:settings/>
       <con:testStep type="httprequest" name="Test file sent by HTTP" id="a0e0c396-d489-422b-93a7-8841290f6cf4">
         <con:settings/>
@@ -2860,12 +2840,192 @@ public class ${#TestSuite#entityPrefix}_CreateFile extends Script {
       </con:testStep>
       <con:properties/>
     </con:testCase>
+    <con:testCase id="a004cc7e-ad98-4290-bc0b-750aefdc7246" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Remove data" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="request" name="Remove Inbound request handler /mediation" id="f46c5295-e166-44c7-b938-bc397df42c41">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>NotificationWsSoapBinding</con:interface>
+          <con:operation>createNotification</con:operation>
+          <con:request name="Remove Inbound request handler /mediation" id="4e4f4357-e9d2-486e-8c51-80a87a1a3746">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/NotificationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:removeNotification>
+         <notificationCode>${#TestSuite#entityPrefix}_Inbound_Request_mediation</notificationCode>
+      </ws:removeNotification>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="2f4698f6-b2e5-4280-bb9f-13cf37202da1"/>
+            <con:assertion type="Simple Contains" id="1bfefd0b-b71b-4c26-924f-a8c5e1c6c313" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.admin</con:username>
+              <con:password>meveo.admin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Remove Mediation_TopTen_EDR script" id="09885dae-4e9d-48e1-bb47-6f427f66d064">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>ScriptInstanceWsSoapBinding</con:interface>
+          <con:operation>createOrUpdate</con:operation>
+          <con:request name="Remove Mediation_TopTen_EDR script" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:remove>\r
+         <removeScriptInstanceRequest>org.meveo.service.script.Mediation_${#TestSuite#entityPrefix}_EDR</removeScriptInstanceRequest>\r
+      </ws:remove>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="c88346ea-5930-4202-a5af-0edf881e5275"/>
+            <con:assertion type="Simple Contains" id="52958a10-4746-456f-b8b9-c6bd9515d1b7" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple NotContains" id="3c34f1cb-2663-473a-9dd8-01a3740198fc" name="Not Contains">
+              <con:configuration>
+                <token>compilationErrors</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Remove Mediation_TopTen_Flow script" id="618b4ded-5635-488b-8ee7-c8c1526c7df8">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>ScriptInstanceWsSoapBinding</con:interface>
+          <con:operation>createOrUpdate</con:operation>
+          <con:request name="Remove Mediation_TopTen_Flow script" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:remove>\r
+         <removeScriptInstanceRequest>org.meveo.service.script.Mediation_${#TestSuite#entityPrefix}_Flow</removeScriptInstanceRequest>\r
+      </ws:remove>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="c88346ea-5930-4202-a5af-0edf881e5275"/>
+            <con:assertion type="Simple Contains" id="52958a10-4746-456f-b8b9-c6bd9515d1b7" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple NotContains" id="3c34f1cb-2663-473a-9dd8-01a3740198fc" name="Not Contains">
+              <con:configuration>
+                <token>compilationErrors</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Remove TOPTEN CF" id="1863e246-4702-47a2-bb6d-a609d55cda64">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createOrUpdateField</con:operation>
+          <con:request name="Remove TOPTEN CF" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeField>\r
+         <customFieldTemplateCode>${#TestSuite#entityPrefix}</customFieldTemplateCode>\r
+         <appliesTo>SUB</appliesTo>
+      </ws:removeField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
+            <con:assertion type="Simple Contains" id="577b511c-105c-4070-8ad3-89697835ceb6" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
     <con:properties>
       <con:property>
         <con:name>entityPrefix</con:name>
-        <con:value>FILE_FROM_REQUEST</con:value>
+        <con:value>TOPTEN</con:value>
+      </con:property>
+      <con:property>
+        <con:name>index</con:name>
+        <con:value>22</con:value>
       </con:property>
     </con:properties>
+    <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
   </con:testSuite>
   <con:testSuite id="34ccd42f-753a-4ced-a7f0-0018cd3730e9" name="Top ten numbers from a file">
     <con:settings/>
@@ -3102,7 +3262,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
          
          <customField code="${#TestSuite#entityPrefix}" description="TOPTEN_NUMBERS from file">\r
             <fieldType>STRING</fieldType>\r
-            <accountLevel>SUB</accountLevel>\r
+            <appliesTo>SUB</appliesTo>\r
             <storageType>LIST</storageType>\r
             <valueRequired>false</valueRequired>\r
             <versionable>true</versionable>\r
@@ -3764,7 +3924,6 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createAccess>
-         <!--Optional:-->
          <access code="${#TestSuite#entityPrefix}_${#TestSuite#index}_access">
             <subscription>${#TestSuite#entityPrefix}_${#TestSuite#index}_SUB1</subscription> 
          </access>
@@ -4009,6 +4168,136 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
         </con:property>
       </con:properties>
     </con:testCase>
+    <con:testCase id="0be015d3-da1f-4cb5-8833-8c7a946b1207" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Remove data" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="request" name="Remove Mediation_TopTen_File_Flow script" id="e5e27aaa-ce8f-4d0f-af47-966ae2b67efe">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>ScriptInstanceWsSoapBinding</con:interface>
+          <con:operation>createOrUpdate</con:operation>
+          <con:request name="Remove Mediation_TopTen_File_Flow script" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:remove>\r
+         <removeScriptInstanceRequest>org.meveo.service.script.Mediation_${#TestSuite#entityPrefix}_Flow</removeScriptInstanceRequest>\r
+      </ws:remove>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="c88346ea-5930-4202-a5af-0edf881e5275"/>
+            <con:assertion type="Simple Contains" id="52958a10-4746-456f-b8b9-c6bd9515d1b7" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple NotContains" id="3c34f1cb-2663-473a-9dd8-01a3740198fc" name="Not Contains">
+              <con:configuration>
+                <token>compilationErrors</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Remove parsing job" id="eceeef64-3fe7-49e2-8913-4b5004d07142">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>JobWsSoapBinding</con:interface>
+          <con:operation>create</con:operation>
+          <con:request name="Remove parsing job" id="0fffd33c-3f17-4027-9074-17dbbd4bc0d1">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/JobWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeJobInstance>\r
+         <jobInstanceCode>${#TestSuite#entityPrefix}_Mediation_job</jobInstanceCode>\r
+      </ws:removeJobInstance>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="88ce625c-3f54-42dc-91b6-4c5d61d17bf8"/>
+            <con:assertion type="Simple Contains" id="ea4343a0-fc86-404c-917a-8b58b8dcb5d4" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.admin</con:username>
+              <con:password>meveo.admin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Remove TOPTEN CF" id="0e0e7846-a455-4fbc-9780-107355459b3d">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createOrUpdateField</con:operation>
+          <con:request name="Remove TOPTEN CF" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeField>\r
+         <customFieldTemplateCode>${#TestSuite#entityPrefix}</customFieldTemplateCode>\r
+         <appliesTo>SUB</appliesTo>
+      </ws:removeField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
+            <con:assertion type="Simple Contains" id="577b511c-105c-4070-8ad3-89697835ceb6" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
     <con:properties>
       <con:property>
         <con:name>entityPrefix</con:name>
@@ -4016,21 +4305,22 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>7</con:value>
+        <con:value>20</con:value>
       </con:property>
     </con:properties>
+    <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
   </con:testSuite>
   <con:testSuite id="a642c711-f6fd-41e1-b9c6-94969512c663" name="Zoning plan">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
     <con:testCase id="5650f331-f803-4643-b9b4-e0d6c5224072" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create scripts, Notifications, CFs" searchProperties="true">
       <con:settings/>
-      <con:testStep type="request" name="create Mediation_Zoning_EDR" id="96a3e523-21f6-41fb-901d-36a76d51b432">
+      <con:testStep type="request" name="create Mediation_Zoning_EDR script" id="96a3e523-21f6-41fb-901d-36a76d51b432">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>ScriptInstanceWsSoapBinding</con:interface>
           <con:operation>create</con:operation>
-          <con:request name="create Mediation_Zoning_EDR" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
+          <con:request name="create Mediation_Zoning_EDR script" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -4165,12 +4455,12 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="create Mediation_Zoning_Flow" id="f23cd6ae-c657-4a67-ab3e-3264d36dbc62">
+      <con:testStep type="request" name="create Mediation_Zoning_Flow script" id="f23cd6ae-c657-4a67-ab3e-3264d36dbc62">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>ScriptInstanceWsSoapBinding</con:interface>
           <con:operation>create</con:operation>
-          <con:request name="create Mediation_Zoning_Flow" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
+          <con:request name="create Mediation_Zoning_Flow script" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -4288,12 +4578,12 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="Create Inbound request handler" id="4fa6fab1-e38f-4e59-b418-6a14b7c46166">
+      <con:testStep type="request" name="Create Inbound request handler /zoning" id="4fa6fab1-e38f-4e59-b418-6a14b7c46166">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>NotificationWsSoapBinding</con:interface>
           <con:operation>createNotification</con:operation>
-          <con:request name="Create Inbound request handler" id="4e4f4357-e9d2-486e-8c51-80a87a1a3746">
+          <con:request name="Create Inbound request handler /zoning" id="4e4f4357-e9d2-486e-8c51-80a87a1a3746">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -4966,7 +5256,6 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createAccess>
-         <!--Optional:-->
          <access code="+3312${#TestSuite#entityPrefix}_${#TestSuite#index}">
             <subscription>${#TestSuite#entityPrefix}_${#TestSuite#index}_SUB1</subscription> 
          </access>
@@ -5296,6 +5585,181 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
         </con:property>
       </con:properties>
     </con:testCase>
+    <con:testCase id="f80dfcc2-5b33-43bf-a2de-2551cb027347" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Remove data" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="request" name="Remove Inbound request handler /zoning" id="d7ff5f69-4880-40fa-a007-c579fb3605bf">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>NotificationWsSoapBinding</con:interface>
+          <con:operation>createNotification</con:operation>
+          <con:request name="Remove Inbound request handler /zoning" id="4e4f4357-e9d2-486e-8c51-80a87a1a3746">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/NotificationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:removeNotification>
+         <notificationCode>${#TestSuite#entityPrefix}_Inbound_Request</notificationCode>
+      </ws:removeNotification>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="2f4698f6-b2e5-4280-bb9f-13cf37202da1"/>
+            <con:assertion type="Simple Contains" id="1bfefd0b-b71b-4c26-924f-a8c5e1c6c313" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.admin</con:username>
+              <con:password>meveo.admin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Remove Mediation_Zoning_EDR script" id="d2c15b6e-9cbb-46d7-9b08-5f0cef2d5a9b">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>ScriptInstanceWsSoapBinding</con:interface>
+          <con:operation>createOrUpdate</con:operation>
+          <con:request name="Remove Mediation_Zoning_EDR script" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:remove>\r
+         <removeScriptInstanceRequest>org.meveo.service.script.Mediation_${#TestSuite#entityPrefix}_EDR</removeScriptInstanceRequest>\r
+      </ws:remove>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="c88346ea-5930-4202-a5af-0edf881e5275"/>
+            <con:assertion type="Simple Contains" id="52958a10-4746-456f-b8b9-c6bd9515d1b7" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple NotContains" id="3c34f1cb-2663-473a-9dd8-01a3740198fc" name="Not Contains">
+              <con:configuration>
+                <token>compilationErrors</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Remove Mediation_Zoning_Flow script" id="81b7ed6d-cda4-44f7-8c27-f12ac1c808a4">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>ScriptInstanceWsSoapBinding</con:interface>
+          <con:operation>createOrUpdate</con:operation>
+          <con:request name="Remove Mediation_Zoning_Flow script" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:remove>\r
+         <removeScriptInstanceRequest>org.meveo.service.script.Mediation_${#TestSuite#entityPrefix}_Flow</removeScriptInstanceRequest>\r
+      </ws:remove>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="c88346ea-5930-4202-a5af-0edf881e5275"/>
+            <con:assertion type="Simple Contains" id="52958a10-4746-456f-b8b9-c6bd9515d1b7" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple NotContains" id="3c34f1cb-2663-473a-9dd8-01a3740198fc" name="Not Contains">
+              <con:configuration>
+                <token>compilationErrors</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Remove ZONING Map CF" id="de81d329-f8ef-4904-9234-0f4aba59a382">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createOrUpdateField</con:operation>
+          <con:request name="Remove ZONING Map CF" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeField>\r
+         <customFieldTemplateCode>${#TestSuite#entityPrefix}</customFieldTemplateCode>\r
+         <appliesTo>CUST</appliesTo>
+      </ws:removeField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
+            <con:assertion type="Simple Contains" id="577b511c-105c-4070-8ad3-89697835ceb6" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
     <con:properties>
       <con:property>
         <con:name>entityPrefix</con:name>
@@ -5303,9 +5767,10 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>7</con:value>
+        <con:value>20</con:value>
       </con:property>
     </con:properties>
+    <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
   </con:testSuite>
   <con:testSuite id="e7a782a2-8b20-4331-86d9-d080c456edad" name="CDR Aggregation">
     <con:settings/>
@@ -5583,10 +6048,10 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateNotification>
-         <notification code="${#Project#baseEntityPrefix}_Inbound_Request">
+         <notification code="${#TestSuite#entityPrefix}_Inbound_Request">
             <classNameFilter>org.meveo.model.notification.InboundRequest</classNameFilter>
             <eventTypeFilter>INBOUND_REQ</eventTypeFilter>
-            <elFilter>#{event.pathInfo.startsWith("/zoning")}</elFilter>
+            <elFilter>#{event.pathInfo.contains("/zoning")}</elFilter>
             <scriptInstanceCode>org.meveo.service.script.Mediation_${#TestSuite#entityPrefix}_Flow</scriptInstanceCode>
             <scriptParams>
                <entry>
@@ -6577,6 +7042,181 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
         </con:property>
       </con:properties>
     </con:testCase>
+    <con:testCase id="35f9914d-00ab-4ee6-9f5f-8466df448545" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Remove data" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="request" name="Remove Inbound request handler /zoning" id="18465c68-2a71-4a93-9bc6-2b4473d2299f">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>NotificationWsSoapBinding</con:interface>
+          <con:operation>createNotification</con:operation>
+          <con:request name="Remove Inbound request handler /zoning" id="4e4f4357-e9d2-486e-8c51-80a87a1a3746">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/NotificationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:removeNotification>
+         <notificationCode>${#TestSuite#entityPrefix}_Inbound_Request</notificationCode>
+      </ws:removeNotification>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="2f4698f6-b2e5-4280-bb9f-13cf37202da1"/>
+            <con:assertion type="Simple Contains" id="1bfefd0b-b71b-4c26-924f-a8c5e1c6c313" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.admin</con:username>
+              <con:password>meveo.admin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Remove Mediation_Zoning_EDR script" id="52014c3d-510f-43cd-a49f-0b1d6c8a3720">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>ScriptInstanceWsSoapBinding</con:interface>
+          <con:operation>createOrUpdate</con:operation>
+          <con:request name="Remove Mediation_Zoning_EDR script" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:remove>\r
+         <removeScriptInstanceRequest>org.meveo.service.script.Mediation_${#TestSuite#entityPrefix}_EDR</removeScriptInstanceRequest>\r
+      </ws:remove>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="c88346ea-5930-4202-a5af-0edf881e5275"/>
+            <con:assertion type="Simple Contains" id="52958a10-4746-456f-b8b9-c6bd9515d1b7" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple NotContains" id="3c34f1cb-2663-473a-9dd8-01a3740198fc" name="Not Contains">
+              <con:configuration>
+                <token>compilationErrors</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Remove Mediation_Zoning_Flow script" id="066c9fd2-ba60-4297-9bd4-b3e9d8791fe8">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>ScriptInstanceWsSoapBinding</con:interface>
+          <con:operation>createOrUpdate</con:operation>
+          <con:request name="Remove Mediation_Zoning_Flow script" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:remove>\r
+         <removeScriptInstanceRequest>org.meveo.service.script.Mediation_${#TestSuite#entityPrefix}_Flow</removeScriptInstanceRequest>\r
+      </ws:remove>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="c88346ea-5930-4202-a5af-0edf881e5275"/>
+            <con:assertion type="Simple Contains" id="52958a10-4746-456f-b8b9-c6bd9515d1b7" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple NotContains" id="3c34f1cb-2663-473a-9dd8-01a3740198fc" name="Not Contains">
+              <con:configuration>
+                <token>compilationErrors</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Remove ZONING Map CF" id="9a364e9d-87d9-4ca4-a2ba-34f25392e1c6">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createOrUpdateField</con:operation>
+          <con:request name="Remove ZONING Map CF" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeField>\r
+         <customFieldTemplateCode>${#TestSuite#entityPrefix}</customFieldTemplateCode>\r
+         <appliesTo>CUST</appliesTo>
+      </ws:removeField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
+            <con:assertion type="Simple Contains" id="577b511c-105c-4070-8ad3-89697835ceb6" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
     <con:properties>
       <con:property>
         <con:name>entityPrefix</con:name>
@@ -6584,9 +7224,286 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>9</con:value>
+        <con:value>24</con:value>
       </con:property>
     </con:properties>
+    <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
+  </con:testSuite>
+  <con:testSuite id="d2c90c61-492c-454e-8074-a61c4fe54ea4" name="Remove base data">
+    <con:settings/>
+    <con:runType>SEQUENTIAL</con:runType>
+    <con:testCase id="e893dd9f-bd1f-4756-b3c5-810b3babc178" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Remove data" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="request" name="Remove Inbound request handler /createFile" id="8d9cffa9-0283-4f02-aed5-dea92cc8d0e5">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>NotificationWsSoapBinding</con:interface>
+          <con:operation>createNotification</con:operation>
+          <con:request name="Remove Inbound request handler /createFile" id="4e4f4357-e9d2-486e-8c51-80a87a1a3746">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/NotificationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:removeNotification>
+         <notificationCode>${#TestSuite#baseEntityPrefix}_Inbound_Request_createFile</notificationCode>
+      </ws:removeNotification>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="2f4698f6-b2e5-4280-bb9f-13cf37202da1"/>
+            <con:assertion type="Simple Contains" id="1bfefd0b-b71b-4c26-924f-a8c5e1c6c313" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.admin</con:username>
+              <con:password>meveo.admin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Remove CreateFileFromContent script" id="0d70629f-fb94-4ef4-b874-eb099821f0cc">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>ScriptInstanceWsSoapBinding</con:interface>
+          <con:operation>createOrUpdate</con:operation>
+          <con:request name="Remove CreateFileFromContent script" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:remove>\r
+         <removeScriptInstanceRequest>org.meveo.service.script.${#TestSuite#baseEntityPrefix}_CreateFile</removeScriptInstanceRequest>\r
+      </ws:remove>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="c88346ea-5930-4202-a5af-0edf881e5275"/>
+            <con:assertion type="Simple Contains" id="52958a10-4746-456f-b8b9-c6bd9515d1b7" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple NotContains" id="3c34f1cb-2663-473a-9dd8-01a3740198fc" name="Not Contains">
+              <con:configuration>
+                <token>compilationErrors</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Remove Mediation_CreateEdr script" id="349f8dde-659a-42ee-997d-8c1fa6b170a1">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>ScriptInstanceWsSoapBinding</con:interface>
+          <con:operation>createOrUpdate</con:operation>
+          <con:request name="Remove Mediation_CreateEdr script" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:remove>\r
+         <removeScriptInstanceRequest>org.meveo.service.script.Mediation_${#Project#baseEntityPrefix}_CreateEdr</removeScriptInstanceRequest>\r
+      </ws:remove>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="c88346ea-5930-4202-a5af-0edf881e5275"/>
+            <con:assertion type="Simple Contains" id="52958a10-4746-456f-b8b9-c6bd9515d1b7" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple NotContains" id="3c34f1cb-2663-473a-9dd8-01a3740198fc" name="Not Contains">
+              <con:configuration>
+                <token>compilationErrors</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Remove Mediation_DuplicatedCheck script" id="28f87190-dc38-4c83-81f3-2be2bd1aac0c">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>ScriptInstanceWsSoapBinding</con:interface>
+          <con:operation>createOrUpdate</con:operation>
+          <con:request name="Remove Mediation_DuplicatedCheck script" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:remove>\r
+         <removeScriptInstanceRequest>org.meveo.service.script.Mediation_${#Project#baseEntityPrefix}_DuplicatedCheck</removeScriptInstanceRequest>\r
+      </ws:remove>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="c88346ea-5930-4202-a5af-0edf881e5275"/>
+            <con:assertion type="Simple Contains" id="52958a10-4746-456f-b8b9-c6bd9515d1b7" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple NotContains" id="3c34f1cb-2663-473a-9dd8-01a3740198fc" name="Not Contains">
+              <con:configuration>
+                <token>compilationErrors</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Remove Mediation_RoutingSub script" id="a24ddbba-dd0b-45c9-811c-3956bb58a405">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>ScriptInstanceWsSoapBinding</con:interface>
+          <con:operation>createOrUpdate</con:operation>
+          <con:request name="Remove Mediation_RoutingSub script" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:remove>\r
+         <removeScriptInstanceRequest>org.meveo.service.script.Mediation_${#Project#baseEntityPrefix}_RoutingSub</removeScriptInstanceRequest>\r
+      </ws:remove>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="c88346ea-5930-4202-a5af-0edf881e5275"/>
+            <con:assertion type="Simple Contains" id="52958a10-4746-456f-b8b9-c6bd9515d1b7" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple NotContains" id="3c34f1cb-2663-473a-9dd8-01a3740198fc" name="Not Contains">
+              <con:configuration>
+                <token>compilationErrors</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Remove Mediation_Flow script" id="2d294f72-eb6e-4ada-9a3a-f4f63b1686a2">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>ScriptInstanceWsSoapBinding</con:interface>
+          <con:operation>createOrUpdate</con:operation>
+          <con:request name="Remove Mediation_Flow script" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:remove>\r
+         <removeScriptInstanceRequest>org.meveo.service.script.Mediation_${#Project#baseEntityPrefix}_Flow</removeScriptInstanceRequest>\r
+      </ws:remove>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="c88346ea-5930-4202-a5af-0edf881e5275"/>
+            <con:assertion type="Simple Contains" id="52958a10-4746-456f-b8b9-c6bd9515d1b7" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple NotContains" id="3c34f1cb-2663-473a-9dd8-01a3740198fc" name="Not Contains">
+              <con:configuration>
+                <token>compilationErrors</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:properties/>
   </con:testSuite>
   <con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">http://localhost:8080/opencell/CatalogWs</con:endpoint>
