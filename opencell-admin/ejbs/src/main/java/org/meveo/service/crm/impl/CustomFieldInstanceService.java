@@ -2055,4 +2055,36 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         }
         return false;
     }
+
+    /**
+     * Deprecated. See getCFValueByKey function
+     */
+    @Deprecated
+    public Object getCFValueByMatrix(ICustomFieldEntity entity, String code, Object... keys) {
+        return getCFValueByKey(entity, code, keys);
+    }
+
+    /**
+     * Deprecated. See getCFValueByKey function
+     */
+    @Deprecated
+    public Object getCFValueByMatrix(ICustomFieldEntity entity, String code, Date date, Object... keys) {
+        return getCFValueByKey(entity, code, date, keys);
+    }
+
+    /**
+     * Deprecated. See getInheritedCFValueByKey function
+     */
+    @Deprecated
+    public Object getInheritedCFValueByMetrix(ICustomFieldEntity entity, String code, Object... keys) {
+        return getInheritedCFValueByKey(entity, code, keys);
+    }
+
+    /**
+     * Deprecated. See getInheritedCFValueByKey function
+     */
+    @Deprecated
+    public Object getInheritedCFValueByMatrix(ICustomFieldEntity entity, String code, Date date, Object... keys) {
+        return getInheritedCFValueByKey(entity, code, date, keys);
+    }
 }
