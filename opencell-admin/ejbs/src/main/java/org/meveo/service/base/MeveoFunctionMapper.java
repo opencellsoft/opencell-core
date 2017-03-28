@@ -824,7 +824,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
      * Get date fro epoch
      * 
      * @param epoch standard java date and time patterns
-     * @return A formated date
+     * @return a date
      */
     public static Date getDate(Long epoch) {
         if (epoch == null) {
