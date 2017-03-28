@@ -248,7 +248,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
                         Map<String, List<CustomFieldInstance>> stCustomFieldInstances = customFieldDataEntryBean.getFieldValueHolderByUUID(serviceTemplate.getUuid()).getValues();
                         if (stCustomFieldInstances != null) {
                             // populate offer cf
-                            customFieldDataEntryBean.saveCustomFieldsToEntity(serviceTemplate, serviceTemplate.getUuid(), true, false);
+                            customFieldDataEntryBean.saveCustomFieldsToEntity(serviceTemplate, serviceTemplate.getUuid(), false, false);
                         }
                     }
                 }
