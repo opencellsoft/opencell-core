@@ -51,7 +51,7 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
         if (securityContext.getCallerPrincipal() instanceof KeycloakPrincipal) {
             KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) securityContext.getCallerPrincipal();
             KeycloakSecurityContext keycloakSecurityContext = keycloakPrincipal.getKeycloakSecurityContext();
-            log.error("Produced user from keycloak from principal is {}, {}, {}, {}, {}", keycloakSecurityContext.getToken().getSubject(),
+            log.trace("Produced user from keycloak from principal is {}, {}, {}, {}, {}", keycloakSecurityContext.getToken().getSubject(),
                 keycloakSecurityContext.getToken().getName(),
                 keycloakSecurityContext.getToken().getRealmAccess() != null ? keycloakSecurityContext.getToken().getRealmAccess().getRoles() : null,
                 keycloakSecurityContext.getToken().getResourceAccess(RESOURCE_PROVIDER) != null ? keycloakSecurityContext.getToken().getResourceAccess(RESOURCE_PROVIDER).getRoles()
@@ -79,9 +79,10 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
         } else {
             this.securityContext = securityContext;
 
-            log.error("User is authenticated by jaas principal is {}, forcedUsername is {}", securityContext.getCallerPrincipal().getName(), forcedUserName);
+            log.trace("User is authenticated by jaas principal is {}, forcedUsername is {}", securityContext.getCallerPrincipal().getName(), forcedUserName);
 
             this.subject = securityContext.getCallerPrincipal().getName();
+            
             if (forcedUserName != null) {
                 this.userName = forcedUserName;
 

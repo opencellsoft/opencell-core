@@ -296,11 +296,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
-        boolean isNew = entity.isTransient();
         super.saveOrUpdate(killConversation);
-        if (isNew) {
-//            currentProviderBean.refreshCurrentUser();
-        }
 
         return getEditViewName();
     }

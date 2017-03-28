@@ -10,16 +10,16 @@
     </ui:define>
 
     <ui:define name="body">
-        <p:panel>
-            <h:form id="crumbmenuForm">
-                <p:breadCrumb homeDisplay="text" id="crumbmenu">
-                    <p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
-                    <p:menuitem outcome="customEntities" value="#{customEntityInstanceBean.customEntityTemplate.name}" />
-                </p:breadCrumb>
-            </h:form>
-        </p:panel>
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+				<p:menuitem outcome="customEntities" value="#{customEntityInstanceBean.customEntityTemplate.name}" />
+				<p:menuitem value="#{messages['customEntity.new']}" disabled="true" rendered="#{customEntityInstanceBean.entity.transient}" />
+				<p:menuitem value="#{messages['customEntity.editView']} - #{customEntityInstanceBean.entity.descriptionOrCode}" disabled="true" rendered="#{!customEntityInstanceBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
 
-        <hftl:formPanel ajaxSubmit="true" submitPartialProcess=":formId:tabView" label="#{customEntityInstanceBean.customEntityTemplate.name}"
+		<hftl:formPanel ajaxSubmit="true" submitPartialProcess=":formId:tabView" label="#{customEntityInstanceBean.customEntityTemplate.name}"
             backingBean="#{customEntityInstanceBean}" showEditButton="#{currentUser.hasRole(customEntityInstanceBean.customEntityTemplate.modifyPermission)}"
             showEnableDisableButton="#{currentUser.hasRole(customEntityInstanceBean.customEntityTemplate.modifyPermission)}">
 

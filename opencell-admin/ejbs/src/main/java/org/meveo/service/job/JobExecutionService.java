@@ -58,6 +58,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
      * @param job Job implementation class
      * @throws BusinessException
      */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void executeInJaas(JobInstance jobInstance, Job job) throws BusinessException {
         // Force authentication to a current job's user
         currentUserProvider.forceAuthentication(jobInstance.getAuditable().getCreator());

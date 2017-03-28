@@ -124,8 +124,12 @@ public class ImportSubscriptionsJobBean {
 		result.setNbItemsToProcess(nbSubscriptions);
 		result.setNbItemsCorrectlyProcessed(nbSubscriptionsCreated + nbSubscriptionsTerminated + nbSubscriptionsIgnored);
 		result.setNbItemsProcessedWithError(nbSubscriptionsError);
-		result.setNbItemsProcessedWithWarning((subscriptionsWarning.getErrors() != null  
-				&& subscriptionsWarning.getErrors().getErrorSubscription() != null) ? subscriptionsWarning.getErrors().getErrorSubscription().size() : 0);
+		if (subscriptionsWarning!=null){
+		    result.setNbItemsProcessedWithWarning((subscriptionsWarning.getErrors() != null  
+		            && subscriptionsWarning.getErrors().getErrorSubscription() != null) ? subscriptionsWarning.getErrors().getErrorSubscription().size() : 0);
+		} else {
+		    result.setNbItemsProcessedWithWarning(0);
+		}
 	}
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
