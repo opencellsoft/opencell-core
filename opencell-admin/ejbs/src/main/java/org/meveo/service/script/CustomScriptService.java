@@ -271,7 +271,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     protected Class<SI> compileJavaSource(String javaSrc, String fullClassName) throws CharSequenceCompilerException {
         
         supplementClassPathWithMissingImports(javaSrc);
-        log.debug("Compile script {} with classpath {}", fullClassName, classpath);
+        log.error("Compile script {} with classpath {}", fullClassName, classpath);
         
         compiler = new CharSequenceCompiler<SI>(this.getClass().getClassLoader(), Arrays.asList(new String[] { "-cp", classpath }));
         final DiagnosticCollector<JavaFileObject> errs = new DiagnosticCollector<JavaFileObject>();
