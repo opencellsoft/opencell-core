@@ -296,8 +296,8 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
                     try {
                         String location = clazz.getProtectionDomain().getCodeSource().getLocation().getFile();
                         log.error("AKK location for class {} is {}", className, location);
-                        if (location.startsWith("file:/")) {
-                            location = location.substring(6);
+                        if (location.startsWith("file:")) {
+                            location = location.substring(5);
                         }
                         if (location.endsWith("!/")) {
                             location = location.substring(0, location.length() - 2);
