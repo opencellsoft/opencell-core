@@ -92,6 +92,7 @@ public abstract class Job {
      * @param result Job execution results
      * @throws BusinessException
      */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void execute(JobInstance jobInstance, JobExecutionResultImpl result) throws BusinessException {
 
         if (result == null) {

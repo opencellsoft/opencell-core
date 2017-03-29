@@ -145,11 +145,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return entityClass;
     }
 
-    public E updateNoCheck(E e) {
-        log.debug("start of update {} entity (id={}) ..", e.getClass().getSimpleName(), e.getId());
+    public E updateNoCheck(E entity) {
+        log.debug("start of update {} entity (id={}) ..", entity.getClass().getSimpleName(), entity.getId());
 
-        updateAudit(e);
-        E mergedEntity = getEntityManager().merge(e);
+        updateAudit(entity);
+        E mergedEntity = getEntityManager().merge(entity);
 
         return mergedEntity;
     }
@@ -232,20 +232,20 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     @Override
-    public E disable(E e) throws BusinessException {
-        if (e instanceof EnableEntity && ((EnableEntity) e).isActive()) {
-            log.debug("start of disable {} entity (id={}) ..", getEntityClass().getSimpleName(), e.getId());
-            ((EnableEntity) e).setDisabled(true);
-            if (e instanceof IAuditable) {
-                ((IAuditable) e).updateAudit(currentUser);
+    public E disable(E entity) throws BusinessException {
+        if (entity instanceof EnableEntity && ((EnableEntity) entity).isActive()) {
+            log.debug("start of disable {} entity (id={}) ..", getEntityClass().getSimpleName(), entity.getId());
+            ((EnableEntity) entity).setDisabled(true);
+            if (entity instanceof IAuditable) {
+                ((IAuditable) entity).updateAudit(currentUser);
             }
-            e = getEntityManager().merge(e);
-            if (e instanceof BaseEntity && e.getClass().isAnnotationPresent(ObservableEntity.class)) {
-                entityDisabledEventProducer.fire((BaseEntity)e);
+            entity = getEntityManager().merge(entity);
+            if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(ObservableEntity.class)) {
+                entityDisabledEventProducer.fire((BaseEntity)entity);
             }
-            log.trace("end of disable {} entity (id={}).", e.getClass().getSimpleName(), e.getId());
+            log.trace("end of disable {} entity (id={}).", entity.getClass().getSimpleName(), entity.getId());
         }
-        return e;
+        return entity;
     }
 
     /**
@@ -260,47 +260,47 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     @Override
-    public E enable(E e) throws BusinessException {
-        if (e instanceof EnableEntity && ((EnableEntity) e).isDisabled()) {
-            log.debug("start of enable {} entity (id={}) ..", getEntityClass().getSimpleName(), e.getId());
-            ((EnableEntity) e).setDisabled(false);
-            if (e instanceof IAuditable) {
-                ((IAuditable) e).updateAudit(currentUser);
+    public E enable(E entity) throws BusinessException {
+        if (entity instanceof EnableEntity && ((EnableEntity) entity).isDisabled()) {
+            log.debug("start of enable {} entity (id={}) ..", getEntityClass().getSimpleName(), entity.getId());
+            ((EnableEntity) entity).setDisabled(false);
+            if (entity instanceof IAuditable) {
+                ((IAuditable) entity).updateAudit(currentUser);
             }
-            e = getEntityManager().merge(e);
-            if (e instanceof BaseEntity && e.getClass().isAnnotationPresent(ObservableEntity.class)) {
-                entityEnabledEventProducer.fire((BaseEntity)e);
+            entity = getEntityManager().merge(entity);
+            if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(ObservableEntity.class)) {
+                entityEnabledEventProducer.fire((BaseEntity)entity);
             }
-            log.trace("end of enable {} entity (id={}).", e.getClass().getSimpleName(), e.getId());
+            log.trace("end of enable {} entity (id={}).", entity.getClass().getSimpleName(), entity.getId());
         }
-        return e;
+        return entity;
     }
 
     @Override
-    public void remove(E e) throws BusinessException {
-        log.debug("start of remove {} entity (id={}) ..", getEntityClass().getSimpleName(), e.getId());
-        getEntityManager().remove(e);
-        if (e instanceof BaseEntity && e.getClass().isAnnotationPresent(ObservableEntity.class)) {
-            entityRemovedEventProducer.fire((BaseEntity)e);
+    public void remove(E entity) throws BusinessException {
+        log.debug("start of remove {} entity (id={}) ..", getEntityClass().getSimpleName(), entity.getId());
+        getEntityManager().remove(entity);
+        if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(ObservableEntity.class)) {
+            entityRemovedEventProducer.fire((BaseEntity)entity);
         }
         // getEntityManager().flush();
 
         // Remove entity from Elastic Search
-        if (BusinessEntity.class.isAssignableFrom(e.getClass())) {
-            elasticClient.remove((BusinessEntity) e);
+        if (BusinessEntity.class.isAssignableFrom(entity.getClass())) {
+            elasticClient.remove((BusinessEntity) entity);
         }
 
         // Remove custom field values from cache if applicable
-        if (e instanceof ICustomFieldEntity) {
-            customFieldInstanceService.removeCFValues((ICustomFieldEntity) e);
+        if (entity instanceof ICustomFieldEntity) {
+            customFieldInstanceService.removeCFValues((ICustomFieldEntity) entity);
         }
 
         // Remove description translations
-        if (e instanceof BusinessEntity && e.getClass().isAnnotationPresent(MultilanguageEntity.class)) {
-            catMessagesService.batchRemove((BusinessEntity) e);
+        if (entity instanceof BusinessEntity && entity.getClass().isAnnotationPresent(MultilanguageEntity.class)) {
+            catMessagesService.batchRemove((BusinessEntity) entity);
         }
 
-        log.trace("end of remove {} entity (id={}).", getEntityClass().getSimpleName(), e.getId());
+        log.trace("end of remove {} entity (id={}).", getEntityClass().getSimpleName(), entity.getId());
     }
 
     /**
@@ -328,58 +328,58 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * @see org.meveo.service.base.local.IPersistenceService#update(org.manaty.model.BaseEntity)
      */
     @Override
-    public E update(E e) throws BusinessException {
-        log.debug("start of update {} entity (id={}) ..", e.getClass().getSimpleName(), e.getId());
+    public E update(E entity) throws BusinessException {
+        log.debug("start of update {} entity (id={}) ..", entity.getClass().getSimpleName(), entity.getId());
 
-        if (e instanceof IAuditable) {
-            ((IAuditable) e).updateAudit(currentUser);
+        if (entity instanceof IAuditable) {
+            ((IAuditable) entity).updateAudit(currentUser);
         }
 
-        e = getEntityManager().merge(e);
+        entity = getEntityManager().merge(entity);
 
-        log.trace("updated class {}, is BusinessEntity {}", e.getClass(), BusinessEntity.class.isAssignableFrom(e.getClass()));
+        log.trace("updated class {}, is BusinessEntity {}", entity.getClass(), BusinessEntity.class.isAssignableFrom(entity.getClass()));
 
         // Update entity in Elastic Search. ICustomFieldEntity is updated
         // partially, as entity itself does not have Custom field values
-        if (e instanceof BusinessCFEntity) {
-            elasticClient.partialUpdate((BusinessEntity) e);
+        if (entity instanceof BusinessCFEntity) {
+            elasticClient.partialUpdate((BusinessEntity) entity);
 
-        } else if (e instanceof BusinessEntity) {
-            elasticClient.createOrFullUpdate((BusinessEntity) e);
+        } else if (entity instanceof BusinessEntity) {
+            elasticClient.createOrFullUpdate((BusinessEntity) entity);
         }
 
-        if (e instanceof BaseEntity && e.getClass().isAnnotationPresent(ObservableEntity.class)) {
-            entityUpdatedEventProducer.fire((BaseEntity)e);
+        if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(ObservableEntity.class)) {
+            entityUpdatedEventProducer.fire((BaseEntity)entity);
         }
 
-        log.trace("end of update {} entity (id={}).", e.getClass().getSimpleName(), e.getId());
+        log.trace("end of update {} entity (id={}).", entity.getClass().getSimpleName(), entity.getId());
 
-        return e;
+        return entity;
     }
 
     /**
      * @see org.meveo.service.base.local.IPersistenceService#create(org.manaty.model.BaseEntity)
      */
     @Override
-    public void create(E e) throws BusinessException {
-        log.debug("start of create {} entity={}", e.getClass().getSimpleName(), e);
+    public void create(E entity) throws BusinessException {
+        log.debug("start of create {} entity={}", entity.getClass().getSimpleName(), entity);
 
-        if (e instanceof IAuditable) {
-            ((IAuditable) e).updateAudit(currentUser);
+        if (entity instanceof IAuditable) {
+            ((IAuditable) entity).updateAudit(currentUser);
         }
 
-        getEntityManager().persist(e);
+        getEntityManager().persist(entity);
 
         // Add entity to Elastic Search
-        if (BusinessEntity.class.isAssignableFrom(e.getClass())) {
-            elasticClient.createOrFullUpdate((BusinessEntity) e);
+        if (BusinessEntity.class.isAssignableFrom(entity.getClass())) {
+            elasticClient.createOrFullUpdate((BusinessEntity) entity);
         }
 
-        if (e instanceof BaseEntity && e.getClass().isAnnotationPresent(ObservableEntity.class)) {
-            entityCreatedEventProducer.fire((BaseEntity)e);
+        if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(ObservableEntity.class)) {
+            entityCreatedEventProducer.fire((BaseEntity)entity);
         }
 
-        log.trace("end of create {}. entity id={}.", e.getClass().getSimpleName(), e.getId());
+        log.trace("end of create {}. entity id={}.", entity.getClass().getSimpleName(), entity.getId());
 
     }
 
@@ -750,8 +750,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return queryBuilder;
     }
 
-    public E attach(E e) {
-        return (E) getEntityManager().merge(e);
+    public E attach(E entity) {
+        return (E) getEntityManager().merge(entity);
     }
 
     protected boolean isConversationScoped() {
@@ -773,7 +773,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                 conversation.isTransient();
                 result = em;
             } catch (Exception e) {
-            }
+    }
         }
 
         // log.debug("em.txKey={}, em.hashCode={}", txReg.getTransactionKey(),

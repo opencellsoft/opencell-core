@@ -4,8 +4,7 @@
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/AccountWs?wsdl" id="ea4ccfc5-0bef-4d4a-8963-dd86a6dcf499" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
     <con:endpoints>
-      <con:endpoint>http://i.meveo.info/opencell/AccountWs</con:endpoint>
-      <con:endpoint>http://localhost:8080/opencell/AccountWs</con:endpoint>
+      <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
     </con:endpoints>
     <con:operation isOneWay="false" action="" name="createAccess" bindingOperationName="createAccess" type="Request-Response" outputName="createAccessResponse" inputName="createAccess" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="49f6e7a0-8e5f-42db-8ab3-f765d8d28829">
       <con:settings/>
@@ -155,8 +154,7 @@
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/CatalogWs?wsdl" id="9eec342d-acf7-43af-af2e-c3e253644f5f" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
     <con:endpoints>
-      <con:endpoint>http://i.meveo.info/opencell/CatalogWs</con:endpoint>
-      <con:endpoint>http://localhost:8080/opencell/CatalogWs</con:endpoint>
+      <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
     </con:endpoints>
     <con:operation isOneWay="false" action="" name="createCounterTemplate" bindingOperationName="createCounterTemplate" type="Request-Response" outputName="createCounterTemplateResponse" inputName="createCounterTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="82435ae6-a800-436a-8170-22e5542f3e8b">
       <con:settings/>
@@ -291,10 +289,10 @@
       <con:settings/>
     </con:operation>
   </con:interface>
-  <con:interface xsi:type="con:WsdlInterface" id="b7c9429b-1d05-4ac6-a0de-37a098d0ac40" wsaVersion="NONE" name="InvoiceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}InvoiceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/opencell/InvoiceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <con:interface xsi:type="con:WsdlInterface" id="b7c9429b-1d05-4ac6-a0de-37a098d0ac40" wsaVersion="NONE" name="InvoiceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}InvoiceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/InvoiceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
     <con:endpoints>
-      <con:endpoint>http://localhost:8080/opencell/InvoiceWs</con:endpoint>
+      <con:endpoint>${#Project#meveoUrl}/InvoiceWs</con:endpoint>
     </con:endpoints>
     <con:operation id="cb26d107-1bf6-46fb-9cd0-4e4ad1b64cf2" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
       <con:settings/>
@@ -318,7 +316,7 @@
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="MediationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}MediationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/MediationWs?wsdl" id="88ed7ad1-2063-493b-9c71-2ca85d5b9302" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
     <con:endpoints>
-      <con:endpoint>http://localhost:8080/opencell/MediationWs</con:endpoint>
+      <con:endpoint>${#Project#meveoUrl}/MediationWs</con:endpoint>
     </con:endpoints>
     <con:operation isOneWay="false" action="" name="cancelReservation" bindingOperationName="cancelReservation" type="Request-Response" outputName="cancelReservationResponse" inputName="cancelReservation" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="1f5fbd64-5362-4b5b-b7c2-90a2156c4d13">
       <con:settings/>
@@ -342,7 +340,7 @@
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SettingsWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SettingsWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/SettingsWs?wsdl" id="3ae96632-2c43-4f00-af1f-fd5d718000ae" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
     <con:endpoints>
-      <con:endpoint>http://localhost:8080/opencell/SettingsWs</con:endpoint>
+      <con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint>
     </con:endpoints>
     <con:operation isOneWay="false" action="" name="createBillingCycle" bindingOperationName="createBillingCycle" type="Request-Response" outputName="createBillingCycleResponse" inputName="createBillingCycle" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="53dee0c5-502c-4da1-b276-034949fa50e6">
       <con:settings/>
@@ -732,7 +730,7 @@
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="NotificationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}NotificationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/NotificationWs?wsdl" id="c410cec5-50e9-4396-bc23-009c5c34afaf" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
     <con:endpoints>
-      <con:endpoint>http://localhost:8080/opencell/NotificationWs</con:endpoint>
+      <con:endpoint>${#Project#meveoUrl}/NotificationWs</con:endpoint>
     </con:endpoints>
     <con:operation isOneWay="false" action="" name="createEmailNotification" bindingOperationName="createEmailNotification" type="Request-Response" outputName="createEmailNotificationResponse" inputName="createEmailNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="7b07ab98-b0c5-491e-a715-e3a36ef39fbe">
       <con:settings/>
@@ -780,7 +778,7 @@
       <con:settings/>
     </con:operation>
   </con:interface>
-  <con:interface xsi:type="con:WsdlInterface" id="2032decc-1d69-4f76-8069-23b228e976c0" wsaVersion="NONE" name="FilteredListWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}FilteredListWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/opencell/FilteredListWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <con:interface xsi:type="con:WsdlInterface" id="2032decc-1d69-4f76-8069-23b228e976c0" wsaVersion="NONE" name="FilteredListWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}FilteredListWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/FilteredListWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
     <con:endpoints>
       <con:endpoint>${#Project#meveoUrl}/FilteredListWs</con:endpoint>
@@ -801,10 +799,10 @@
       <con:settings/>
     </con:operation>
   </con:interface>
-  <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="JobWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}JobWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/opencell/JobWs?wsdl" id="1357434a-a05f-403c-bd4a-7c42726e9529" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="JobWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}JobWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/JobWs?wsdl" id="1357434a-a05f-403c-bd4a-7c42726e9529" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
     <con:endpoints>
-      <con:endpoint>http://localhost:8080/opencell/JobWs</con:endpoint>
+      <con:endpoint>${#Project#meveoUrl}/JobWs</con:endpoint>
     </con:endpoints>
     <con:operation isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="d15eac2f-9765-4bd2-b0ff-9b23d15f8884">
       <con:settings/>
@@ -834,8 +832,7 @@
   <con:interface xsi:type="con:WsdlInterface" id="16b43bcb-f0a2-4f58-ab72-a69229098c2e" wsaVersion="NONE" name="ScriptInstanceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}ScriptInstanceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/ScriptInstanceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
     <con:endpoints>
-      <con:endpoint>http://192.168.10.14:8080/opencell/ScriptInstanceWs</con:endpoint>
-      <con:endpoint>http://localhost:8080/opencell/ScriptInstanceWs</con:endpoint>
+      <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
     </con:endpoints>
     <con:operation id="9fe72545-27cc-492c-8043-17ef3994e8da" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
       <con:settings/>
@@ -859,7 +856,7 @@
   <con:interface xsi:type="con:WsdlInterface" id="3896cf0b-c25f-49e6-8605-c6cfe9bddf5a" wsaVersion="NONE" name="EntityCustomizationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}EntityCustomizationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/EntityCustomizationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
     <con:endpoints>
-      <con:endpoint>http://localhost:8080/opencell/EntityCustomizationWs</con:endpoint>
+      <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
     </con:endpoints>
     <con:operation id="12cf9d20-e961-4dd3-8f05-b6dd649ae3c4" isOneWay="false" action="" name="createAction" bindingOperationName="createAction" type="Request-Response" outputName="createActionResponse" inputName="createAction" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
       <con:settings/>
@@ -934,8 +931,7 @@
   <con:interface xsi:type="con:WsdlInterface" id="1207fd11-81fc-410d-a1a1-65aca01175d5" wsaVersion="NONE" name="FilterWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}FilterWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/FilterWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
     <con:endpoints>
-      <con:endpoint>http://192.168.10.14:8080/opencell/FilterWs</con:endpoint>
-      <con:endpoint>http://localhost:8080/opencell/FilterWs</con:endpoint>
+      <con:endpoint>${#Project#meveoUrl}/FilterWs</con:endpoint>
     </con:endpoints>
     <con:operation id="50b03546-a8d2-4411-b58c-28c30ac8301d" isOneWay="false" action="" name="createOrUpdateFilter" bindingOperationName="createOrUpdateFilter" type="Request-Response" outputName="createOrUpdateFilterResponse" inputName="createOrUpdateFilter" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
       <con:settings/>
@@ -943,6 +939,117 @@
     <con:operation id="c0bf45f7-da8c-44f5-b39c-9497025d4a81" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
       <con:settings/>
     </con:operation>
+  </con:interface>
+  <con:interface xsi:type="con:RestService" id="1e8e2033-b970-4a76-aebf-6e76888a12b0" wadlVersion="http://wadl.dev.java.net/2009/02" name="http://integration.i.opencellsoft.com" type="rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <con:settings/>
+    <con:endpoints>
+      <con:endpoint>${#Project#meveoUrl}</con:endpoint>
+    </con:endpoints>
+    <con:resource name="Mediation" path="/inbound/demo/mediation" id="167c13a6-0c9d-4b02-806e-6a2873fbcf9d">
+      <con:settings/>
+      <con:parameters/>
+      <con:method name="Mediation" id="3728315c-bca9-4006-b984-9e515da782c9" method="GET">
+        <con:settings/>
+        <con:parameters>
+          <con:parameter>
+            <con:name>accessId</con:name>
+            <con:value/>
+            <con:style>QUERY</con:style>
+            <con:default/>
+          </con:parameter>
+          <con:parameter>
+            <con:name>quantity</con:name>
+            <con:value/>
+            <con:style>QUERY</con:style>
+            <con:default/>
+          </con:parameter>
+          <con:parameter>
+            <con:name>time</con:name>
+            <con:value/>
+            <con:style>QUERY</con:style>
+            <con:default/>
+          </con:parameter>
+          <con:parameter>
+            <con:name>param1</con:name>
+            <con:value/>
+            <con:style>QUERY</con:style>
+            <con:default/>
+          </con:parameter>
+          <con:parameter>
+            <con:name>param2</con:name>
+            <con:value/>
+            <con:style>QUERY</con:style>
+            <con:default/>
+          </con:parameter>
+        </con:parameters>
+        <con:representation type="FAULT">
+          <con:mediaType>text/html;charset=UTF-8</con:mediaType>
+          <con:status>404</con:status>
+          <con:params/>
+          <con:element>html</con:element>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>200</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>200</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>200</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>200</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>200</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>200</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>200</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>200</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>200</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>200</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+      </con:method>
+    </con:resource>
   </con:interface>
   <con:testSuite id="e20ddf92-d1bc-4805-a1fd-dae274dfc4b0" name="Setup Authorization">
     <con:settings/>
@@ -2637,157 +2744,106 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="httprequest" name="CDR HTTP Request" id="1100fa44-ac2d-4828-a2be-2c9b490ae701">
+      <con:testStep type="restrequest" name="CDR HTTP Request" id="215defe0-e8a6-40a2-af80-62add49372b2">
         <con:settings/>
-        <con:config method="GET" xsi:type="con:HttpRequest" id="8463ef33-208c-4e99-98c5-a09b60ea66ac" name="CDR HTTP Request" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:settings>
-            <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-          </con:settings>
-          <con:endpoint>http://localhost:8080/opencell/inbound/DEMO/mediation</con:endpoint>
-          <con:request/>
-          <con:assertion type="Invalid HTTP Status Codes" id="3cce94d8-e1eb-4988-80e7-381e03f79971" name="Invalid HTTP Status Codes">
-            <con:configuration>
-              <codes>404,500</codes>
-            </con:configuration>
-          </con:assertion>
-          <con:credentials>
-            <con:preemptive>true</con:preemptive>
-            <con:authType>No Authorization</con:authType>
-          </con:credentials>
-          <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-          <con:jmsPropertyConfig/>
-          <con:parameters>
-            <con:parameter>
-              <con:name>accessId</con:name>
-              <con:value>${#TestSuite#entityPrefix}_${#TestSuite#index}_access</con:value>
-              <con:style>QUERY</con:style>
-              <con:default>toto</con:default>
-              <con:path xsi:nil="true"/>
-              <con:description xsi:nil="true"/>
-            </con:parameter>
-            <con:parameter>
-              <con:name>quantity</con:name>
-              <con:value>10</con:value>
-              <con:style>QUERY</con:style>
-            </con:parameter>
-            <con:parameter>
-              <con:name>time</con:name>
-              <con:value>2015-06-16T00:00:22</con:value>
-              <con:style>QUERY</con:style>
-            </con:parameter>
-            <con:parameter>
-              <con:name>param1</con:name>
-              <con:value>VOICE</con:value>
-              <con:style>QUERY</con:style>
-            </con:parameter>
-            <con:parameter>
-              <con:name>param2</con:name>
-              <con:value>0102030405</con:value>
-              <con:style>QUERY</con:style>
-            </con:parameter>
-          </con:parameters>
+        <con:config service="http://integration.i.opencellsoft.com" methodName="Mediation" resourcePath="/inbound/demo/mediation" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="C" id="0d1df372-1186-484c-858b-4f1184c534b1" mediaType="application/json">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
+            <con:request/>
+            <con:originalUri>http://integration.i.opencellsoft.com/opencell/opencell/inbound/demo/mediation</con:originalUri>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters>
+              <con:entry key="accessId" value="${#TestSuite#entityPrefix}_${#TestSuite#index}_access"/>
+              <con:entry key="quantity" value="10"/>
+              <con:entry key="time" value="2015-06-16T00:00:22"/>
+              <con:entry key="param1" value="VOICE"/>
+              <con:entry key="param2" value="0102030405"/>
+            </con:parameters>
+            <con:parameterOrder>
+              <con:entry>accessId</con:entry>
+              <con:entry>quantity</con:entry>
+              <con:entry>time</con:entry>
+              <con:entry>param1</con:entry>
+              <con:entry>param2</con:entry>
+            </con:parameterOrder>
+          </con:restRequest>
         </con:config>
       </con:testStep>
-      <con:testStep type="httprequest" name="CDR HTTP Request 1" id="3c37b052-e255-461e-a4ea-fb323defcc53">
+      <con:testStep type="restrequest" name="CDR HTTP Request 1" id="9ac479f6-2b5a-428b-9603-f4108fe51081">
         <con:settings/>
-        <con:config method="GET" xsi:type="con:HttpRequest" id="8463ef33-208c-4e99-98c5-a09b60ea66ac" name="CDR HTTP Request 1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:settings>
-            <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-          </con:settings>
-          <con:endpoint>http://localhost:8080/opencell/inbound/DEMO/mediation</con:endpoint>
-          <con:request/>
-          <con:assertion type="Invalid HTTP Status Codes" id="ed489300-b61c-4fdc-bfa0-05a16a6e475f" name="Invalid HTTP Status Codes">
-            <con:configuration>
-              <codes>404,500</codes>
-            </con:configuration>
-          </con:assertion>
-          <con:credentials>
-            <con:preemptive>true</con:preemptive>
-            <con:authType>No Authorization</con:authType>
-          </con:credentials>
-          <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-          <con:jmsPropertyConfig/>
-          <con:parameters>
-            <con:parameter>
-              <con:name>accessId</con:name>
-              <con:value>${#TestSuite#entityPrefix}_${#TestSuite#index}_access</con:value>
-              <con:style>QUERY</con:style>
-              <con:default>toto</con:default>
-              <con:path xsi:nil="true"/>
-              <con:description xsi:nil="true"/>
-            </con:parameter>
-            <con:parameter>
-              <con:name>quantity</con:name>
-              <con:value>10</con:value>
-              <con:style>QUERY</con:style>
-            </con:parameter>
-            <con:parameter>
-              <con:name>time</con:name>
-              <con:value>2015-06-17T00:00:22</con:value>
-              <con:style>QUERY</con:style>
-            </con:parameter>
-            <con:parameter>
-              <con:name>param1</con:name>
-              <con:value>VOICE</con:value>
-              <con:style>QUERY</con:style>
-            </con:parameter>
-            <con:parameter>
-              <con:name>param2</con:name>
-              <con:value>0101010101</con:value>
-              <con:style>QUERY</con:style>
-            </con:parameter>
-          </con:parameters>
+        <con:config service="http://integration.i.opencellsoft.com" methodName="Mediation" resourcePath="/inbound/demo/mediation" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Copy of CDR HTTP Request" id="0d1df372-1186-484c-858b-4f1184c534b1" mediaType="application/json">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
+            <con:request/>
+            <con:originalUri>http://integration.i.opencellsoft.com/opencell/opencell/inbound/demo/mediation</con:originalUri>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters>
+              <con:entry key="accessId" value="${#TestSuite#entityPrefix}_${#TestSuite#index}_access"/>
+              <con:entry key="quantity" value="10"/>
+              <con:entry key="time" value="2015-06-17T00:00:22"/>
+              <con:entry key="param1" value="VOICE"/>
+              <con:entry key="param2" value="0101010101"/>
+            </con:parameters>
+            <con:parameterOrder>
+              <con:entry>accessId</con:entry>
+              <con:entry>quantity</con:entry>
+              <con:entry>time</con:entry>
+              <con:entry>param1</con:entry>
+              <con:entry>param2</con:entry>
+            </con:parameterOrder>
+          </con:restRequest>
         </con:config>
       </con:testStep>
-      <con:testStep type="httprequest" name="CDR HTTP Request 2" id="1492e78e-c65a-4194-8957-a3f5092a756e">
+      <con:testStep type="restrequest" name="CDR HTTP Request 2" id="7e3d6eb0-bff2-4a7c-9abb-665ebc54fee7">
         <con:settings/>
-        <con:config method="GET" xsi:type="con:HttpRequest" id="8463ef33-208c-4e99-98c5-a09b60ea66ac" name="CDR HTTP Request 2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:settings>
-            <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-          </con:settings>
-          <con:endpoint>http://localhost:8080/opencell/inbound/DEMO/mediation</con:endpoint>
-          <con:request/>
-          <con:assertion type="Invalid HTTP Status Codes" id="5a711dc3-824a-442f-ad5a-986b5c61304e" name="Invalid HTTP Status Codes">
-            <con:configuration>
-              <codes>404,500</codes>
-            </con:configuration>
-          </con:assertion>
-          <con:credentials>
-            <con:preemptive>true</con:preemptive>
-            <con:authType>No Authorization</con:authType>
-          </con:credentials>
-          <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-          <con:jmsPropertyConfig/>
-          <con:parameters>
-            <con:parameter>
-              <con:name>accessId</con:name>
-              <con:value>${#TestSuite#entityPrefix}_${#TestSuite#index}_access</con:value>
-              <con:style>QUERY</con:style>
-              <con:default>toto</con:default>
-              <con:path xsi:nil="true"/>
-              <con:description xsi:nil="true"/>
-            </con:parameter>
-            <con:parameter>
-              <con:name>quantity</con:name>
-              <con:value>10</con:value>
-              <con:style>QUERY</con:style>
-            </con:parameter>
-            <con:parameter>
-              <con:name>time</con:name>
-              <con:value>2015-06-18T00:00:22</con:value>
-              <con:style>QUERY</con:style>
-            </con:parameter>
-            <con:parameter>
-              <con:name>param1</con:name>
-              <con:value>VOICE</con:value>
-              <con:style>QUERY</con:style>
-            </con:parameter>
-            <con:parameter>
-              <con:name>param2</con:name>
-              <con:value>0202020202</con:value>
-              <con:style>QUERY</con:style>
-            </con:parameter>
-          </con:parameters>
+        <con:config service="http://integration.i.opencellsoft.com" methodName="Mediation" resourcePath="/inbound/demo/mediation" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Copy of Copy of CDR HTTP Request" id="0d1df372-1186-484c-858b-4f1184c534b1" mediaType="application/json">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
+            <con:request/>
+            <con:originalUri>http://integration.i.opencellsoft.com/opencell/opencell/inbound/demo/mediation</con:originalUri>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters>
+              <con:entry key="accessId" value="${#TestSuite#entityPrefix}_${#TestSuite#index}_access"/>
+              <con:entry key="quantity" value="10"/>
+              <con:entry key="time" value="2015-06-18T00:00:22"/>
+              <con:entry key="param1" value="VOICE"/>
+              <con:entry key="param2" value="0202020202"/>
+            </con:parameters>
+            <con:parameterOrder>
+              <con:entry>accessId</con:entry>
+              <con:entry>quantity</con:entry>
+              <con:entry>time</con:entry>
+              <con:entry>param1</con:entry>
+              <con:entry>param2</con:entry>
+            </con:parameterOrder>
+          </con:restRequest>
         </con:config>
       </con:testStep>
       <con:setupScript>testCase.getTestSuite().setPropertyValue('index',(testCase.getTestSuite().getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -3022,7 +3078,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>22</con:value>
+        <con:value>29</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -4305,7 +4361,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>20</con:value>
+        <con:value>26</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -5767,7 +5823,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>20</con:value>
+        <con:value>26</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -7224,7 +7280,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>24</con:value>
+        <con:value>30</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -7506,7 +7562,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
     <con:properties/>
   </con:testSuite>
   <con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">http://localhost:8080/opencell/CatalogWs</con:endpoint>
+    <con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">${#Project#meveoUrl}/CatalogWs</con:endpoint>
   </con:endpointStrategy>
   <con:properties>
     <con:property>

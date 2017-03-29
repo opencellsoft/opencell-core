@@ -120,9 +120,9 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     // "CustomFieldInstanceService.remove(CustomFieldInstance cfi) method not supported. Should use CustomFieldInstanceService.remove(CustomFieldInstance cfi, ICustomFieldEntity entity) method instead");
     // }
 
-    public void remove(CustomFieldInstance cfi, ICustomFieldEntity entity) throws BusinessException {
-        customFieldsCacheContainerProvider.removeCustomFieldFromCache(entity, cfi);
-        super.remove(cfi.getId());
+    public void remove(CustomFieldInstance cfi) throws BusinessException {
+        customFieldsCacheContainerProvider.removeCustomFieldFromCache(cfi);
+        super.remove(cfi);
     }
 
     /**
@@ -453,7 +453,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
             // Existing CFI found, but new value is null, so remove CFI
         } else {
             cfi = cfis.get(0);
-            remove(cfi, entity);
+            remove(cfi);
             return null;
         }
         return cfi;
@@ -499,7 +499,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
             // Existing CFI found, but new value is null, so remove CFI
         } else {
             cfi = cfis.get(0);
-            remove(cfi, entity);
+            remove(cfi);
             return null;
         }
 
@@ -549,7 +549,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
             // Existing CFI found, but new value is null, so remove CFI
         } else {
             cfi = cfis.get(0);
-            remove(cfi, entity);
+            remove(cfi);
             return null;
         }
 

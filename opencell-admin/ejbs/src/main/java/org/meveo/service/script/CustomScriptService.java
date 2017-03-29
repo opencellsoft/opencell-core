@@ -69,7 +69,6 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
 
     private String classpath = "";
 
-
     /**
      * Constructor.
      */
@@ -271,6 +270,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     protected Class<SI> compileJavaSource(String javaSrc, String fullClassName) throws CharSequenceCompilerException {
         
         supplementClassPathWithMissingImports(javaSrc);
+        log.debug("Compile script {} with classpath {}", fullClassName, classpath);
         
         compiler = new CharSequenceCompiler<SI>(this.getClass().getClassLoader(), Arrays.asList(new String[] { "-cp", classpath }));
         final DiagnosticCollector<JavaFileObject> errs = new DiagnosticCollector<JavaFileObject>();
@@ -284,7 +284,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      */
     @SuppressWarnings("rawtypes")
     private void supplementClassPathWithMissingImports(String javaSrc) {
-        
+                
         String regex = "import (.*?);";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(javaSrc);
@@ -295,16 +295,18 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
                     Class clazz = Class.forName(className);
                     try {
                         String location = clazz.getProtectionDomain().getCodeSource().getLocation().getFile();
-
-                        if (!classpath.contains(location)) {
-                            if (location.startsWith("file:/")) {
-                                location = location.substring(6);
-                            }
-                            if (location.endsWith("!/")) {
-                                location = location.substring(0, location.length() - 2);
-                            }
-                            classpath = classpath + ";" + location;
+                        log.error("AKK location for class {} is {}", className, location);
+                        if (location.startsWith("file:")) {
+                            location = location.substring(5);
                         }
+                        if (location.endsWith("!/")) {
+                            location = location.substring(0, location.length() - 2);
+                        }
+                        
+                        if (!classpath.contains(location)) {
+                            classpath += File.pathSeparator + location;
+                        }
+
                     } catch (Exception e) {
                         log.warn("Failed to find location for class {}", className);
                     }

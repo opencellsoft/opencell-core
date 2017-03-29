@@ -72,7 +72,7 @@ public class JobInstanceService extends PersistenceService<JobInstance> {
     public void startTimers(Job job) {
         // job.cleanAllTimers();
         @SuppressWarnings("unchecked")
-        List<JobInstance> jobInstances = getEntityManager().createQuery("from JobInstance ji JOIN FETCH ji.followingJob where ji.jobTemplate=:jobName")
+        List<JobInstance> jobInstances = getEntityManager().createQuery("from JobInstance ji LEFT JOIN FETCH ji.followingJob where ji.jobTemplate=:jobName")
             .setParameter("jobName", job.getClass().getSimpleName()).getResultList();
 
         if (jobInstances != null) {

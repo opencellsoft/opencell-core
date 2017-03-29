@@ -196,6 +196,8 @@ public class MeveoFunctionMapper extends FunctionMapper {
 
             addFunction("mv", "parseDate", MeveoFunctionMapper.class.getMethod("parseDate", String.class, String.class));
 
+            addFunction("mv", "getDate", MeveoFunctionMapper.class.getMethod("getDate", Long.class));
+
             addFunction("mv", "getBean", EjbUtils.class.getMethod("getServiceInterface", String.class));
 
             // addFunction("mv", "call", MeveoFunctionMapper.class.getMethod("call", String.class, String.class,String.class, Object[].class));
@@ -816,6 +818,19 @@ public class MeveoFunctionMapper extends FunctionMapper {
             dateFormatPattern = ParamBean.getInstance().getProperty("meveo.dateFormat", "dd/MM/yyyy");
         }
         return DateUtils.parseDateWithPattern(dateString, dateFormatPattern);
+    }
+
+    /**
+     * Get date fro epoch
+     * 
+     * @param epoch standard java date and time patterns
+     * @return a date
+     */
+    public static Date getDate(Long epoch) {
+        if (epoch == null) {
+            return new Date();
+        }
+        return new Date(epoch.longValue());
     }
 
     /*
