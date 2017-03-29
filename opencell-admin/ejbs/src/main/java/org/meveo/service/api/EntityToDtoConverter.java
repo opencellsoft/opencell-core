@@ -2,11 +2,9 @@ package org.meveo.service.api;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -63,29 +61,25 @@ public class EntityToDtoConverter {
 		return getCustomFieldsDTO(entity, customFields);		
 	}
 
-    public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity, Map<String, List<CustomFieldInstance>> customFields) {       
+    public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity, Map<String, List<CustomFieldInstance>> customFields) {
 
-        Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(entity);
-
-        Set<String> childEntityTypeFields = new HashSet<>();
-        for (CustomFieldTemplate cft : cfts.values()) {
-            if (cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY) {
-                childEntityTypeFields.add(cft.getCode());
-            }
-        }
-        
-        return customFieldsToDTO(customFields, childEntityTypeFields);
-    }
-
-    private CustomFieldsDto customFieldsToDTO(Map<String, List<CustomFieldInstance>> customFields, Set<String> childEntityTypeFields) {
         if (customFields == null || customFields.isEmpty()) {
             return null;
         }
+
+        Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(entity);
+
         CustomFieldsDto dto = new CustomFieldsDto();
         for (List<CustomFieldInstance> cfis : customFields.values()) {
             for (CustomFieldInstance cfi : cfis) {
-                dto.getCustomField().add(customFieldToDTO(cfi, childEntityTypeFields));
+                // Return only those values that have cft
+                if (cfts.containsKey(cfi.getCode())) {
+                    dto.getCustomField().add(customFieldToDTO(cfi, cfts.get(cfi.getCode()).getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY));
+                }
             }
+        }
+        if (dto.isEmpty()) {
+            return null;
         }
         return dto;
     }
@@ -114,7 +108,7 @@ public class EntityToDtoConverter {
         return dto;
     }
 
-    private CustomFieldDto customFieldToDTO(CustomFieldInstance cfi, Set<String> childEntityTypeFields) {
+    private CustomFieldDto customFieldToDTO(CustomFieldInstance cfi, boolean isChildEntityTypeField) {
 
         CustomFieldDto dto = new CustomFieldDto();
         dto.setCode(cfi.getCode());
@@ -127,7 +121,7 @@ public class EntityToDtoConverter {
         dto.setDateValue(cfi.getCfValue().getDateValue());
         dto.setLongValue(cfi.getCfValue().getLongValue());
         dto.setDoubleValue(cfi.getCfValue().getDoubleValue());
-        dto.setListValue(customFieldValueToDTO(cfi.getCfValue().getListValue(), childEntityTypeFields.contains(cfi.getCode())));
+        dto.setListValue(customFieldValueToDTO(cfi.getCfValue().getListValue(), isChildEntityTypeField));
         dto.setMapValue(customFieldValueToDTO(cfi.getCfValue().getMapValue()));
         if (cfi.getCfValue().getEntityReferenceValue() != null) {
             dto.setEntityReferenceValue(new EntityReferenceDto(cfi.getCfValue().getEntityReferenceValue()));

@@ -261,13 +261,12 @@ public class CustomFieldsCacheContainerProvider {
     }
 
     /**
-     * Remove a particular custom field instance from cache for a given entity
+     * Remove a particular custom field instance from cache
      * 
-     * @param entity Entity with custom fields
      * @param cfi Custom field instance
      */
-    public void removeCustomFieldFromCache(ICustomFieldEntity entity, CustomFieldInstance cfi) {
-        String cacheKey = getCacheKey(entity);
+    public void removeCustomFieldFromCache(CustomFieldInstance cfi) {
+        String cacheKey = cfi.getAppliesToEntity();
         if (customFieldValueCache.containsKey(cacheKey) && customFieldValueCache.get(cacheKey).containsKey(cfi.getCode())) {
             CachedCFPeriodValue cfvValue = convertFromCFI(cfi, null);
             customFieldValueCache.get(cacheKey).get(cfi.getCode()).remove(cfvValue);
