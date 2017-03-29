@@ -2,6 +2,7 @@ package org.meveo.service.base;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -199,6 +200,8 @@ public class MeveoFunctionMapper extends FunctionMapper {
             addFunction("mv", "getDate", MeveoFunctionMapper.class.getMethod("getDate", Long.class));
 
             addFunction("mv", "getBean", EjbUtils.class.getMethod("getServiceInterface", String.class));
+           
+            addFunction("mv", "addToDate", MeveoFunctionMapper.class.getMethod("addToDate", Date.class, Long.class, Long.class));
 
             // addFunction("mv", "call", MeveoFunctionMapper.class.getMethod("call", String.class, String.class,String.class, Object[].class));
         } catch (NoSuchMethodException | SecurityException e) {
@@ -1151,5 +1154,24 @@ public class MeveoFunctionMapper extends FunctionMapper {
         log.trace("Inherited CF value has {} key for keys {}/{}/{}/{}/{} for {}/{} for {}", hasKey, keyOne, keyTwo, keyThree, keyFour, keyFive, entity, code, date);
 
         return hasKey;
+    }
+    
+    /**
+     * Adds or subtracts duration to the given date.
+     * 
+     * @param date
+     * @param durationType The same value as java.util.Calendar constants :  5 for day, 2 for month,...
+     * @param durationValue 
+     * @return
+     */
+    public static Date addToDate(Date date,Long durationType,Long durationValue) {
+        Date result = null;
+        if (date != null && durationType != null && durationValue == null) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            calendar.add(durationType.intValue(), durationValue.intValue());
+            result = calendar.getTime();
+        }
+        return result;
     }
 }
