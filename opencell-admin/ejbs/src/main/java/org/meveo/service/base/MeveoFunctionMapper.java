@@ -1166,7 +1166,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
      */
     public static Date addToDate(Date date,Long durationType,Long durationValue) {
         Date result = null;
-        if (date != null && durationType != null && durationValue == null) {
+        if (date != null && durationType != null && durationValue != null) {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(date);
             calendar.add(durationType.intValue(), durationValue.intValue());
