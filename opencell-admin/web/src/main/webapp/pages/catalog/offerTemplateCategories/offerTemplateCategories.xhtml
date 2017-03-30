@@ -130,7 +130,7 @@
 											ajax="false"
 											onclick="PrimeFaces.monitorDownload(startExport, stopExport);"
 											icon="fa fa-arrow-down" immediate="true">
-											<p:fileDownload value="#{offerTemplateCategoryBean.download}" />
+											<p:fileDownload value="#{offerTemplateCategoryBean.download()}" />
 										</p:commandButton>
 										<p:commandButton value="#{messages['action.import']}"
 											onclick="PF('importDialog').show()"
