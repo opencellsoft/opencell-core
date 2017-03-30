@@ -94,16 +94,22 @@
 			<url-pattern>/pages/*</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
-			<web-resource-name>home</web-resource-name>
 			<url-pattern>/home.jsf</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
-			<web-resource-name>mm_index</web-resource-name>
+			<url-pattern>/home.xhtml</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
 			<url-pattern>/mm_index.jsf</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
-			<web-resource-name>indexPage</web-resource-name>
+			<url-pattern>/mm_index.xhtml</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
 			<url-pattern>/index.jsf</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
+			<url-pattern>/index.xhtml</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>guiAccess</role-name>
@@ -258,4 +264,20 @@
 	<security-role>
 		<role-name>guiAccess</role-name>
 	</security-role>
+	<error-page>
+		<error-code>403</error-code>
+		<location>/errors/403.xhtml</location>
+	</error-page>
+	<error-page>
+		<error-code>401</error-code>
+		<location>/errors/403.xhtml</location>
+	</error-page>
+	<error-page>
+		<error-code>404</error-code>
+		<location>/errors/404.xhtml</location>
+	</error-page>
+	<error-page>
+		<error-code>500</error-code>
+		<location>/errors/500.xhtml</location>
+	</error-page>
 </web-app>

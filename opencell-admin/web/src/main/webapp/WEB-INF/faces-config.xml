@@ -2153,39 +2153,6 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 
 
 <!-- Exception handling -->
-<!-- <exception class="org.jboss.seam.security.NotLoggedInException"> -->
-<!-- <redirect view-id="/login.xhtml"> -->
-<!-- <message>#{messages['org.jboss.seam.security.NotLoggedInException']}</message> -->
-<!-- </redirect> -->
-<!-- </exception> -->
-
-<!-- <exception class="org.jboss.seam.security.AuthorizationException"> -->
-<!-- <end-conversation/> -->
-<!-- <redirect view-id="/error.xhtml"> -->
-<!-- <message>#{messages['org.jboss.seam.security.AuthorizationException']}</message> -->
-<!-- </redirect> -->
-<!-- </exception> -->
-
-<!-- <exception class="org.meveo.admin.exception.ProviderNotAllowedException"> -->
-<!-- <end-conversation/> -->
-<!-- <redirect view-id="/error.xhtml"> -->
-<!-- <message>#{messages['org.meveo.admin.exception.ProviderNotAllowedException']}</message> -->
-<!-- </redirect> -->
-<!-- </exception> -->
-
-<!-- <exception class="org.meveo.admin.exception.PasswordExpiredException"> -->
-<!-- <end-conversation/> -->
-<!-- <redirect view-id="/login.xhtml"> -->
-<!-- <message>#{messages['user.password.expired']}</message> -->
-<!-- </redirect> -->
-<!-- </exception> -->
-
-
-<!-- <exception class="org.jboss.seam.framework.EntityNotFoundException"> -->
-<!-- <redirect view-id="/error.xhtml"> -->
-<!-- <message severity="warn">#{messages['org.jboss.seam.framework.EntityNotFoundException']}</message> -->
-<!-- </redirect> -->
-<!-- </exception> -->
 
 <!-- <exception class="javax.persistence.EntityNotFoundException"> -->
 <!-- <redirect view-id="/error.xhtml"> -->
@@ -2206,11 +2173,11 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 <!-- </redirect> -->
 <!-- </exception> -->
 
-<!-- <exception class="javax.faces.application.ViewExpiredException"> -->
-<!-- <redirect view-id="/login.xhtml"> -->
-<!-- <message severity="warn">#{messages['javax.faces.application.ViewExpiredException']}</message> -->
-<!-- </redirect> -->
-<!-- </exception> -->
+	<exception class="javax.faces.application.ViewExpiredException">
+		<redirect view-id="/errors/expired.xhtml">
+			<message severity="warn">#{messages['javax.faces.application.ViewExpiredException']}</message>
+		</redirect>
+	</exception>
 
 <!-- <exception class="org.jboss.seam.ConcurrentRequestTimeoutException" log-level="trace"> -->
 <!-- <http-error error-code="503"/> -->
@@ -2244,15 +2211,10 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 <!-- <message>#{messages['exception.NoTemplateException']}</message> -->
 <!-- </redirect> -->
 <!-- </exception> -->
-<!-- <exception class="org.meveo.admin.exception.UsernameAlreadyExistsException"> -->
-<!-- <redirect view-id="/error.xhtml"> -->
-<!-- <message>#{messages['exception.UsernameAlreadyExistsException']}</message> -->
-<!-- </redirect> -->
-<!-- </exception> -->
-<exception>
-	<redirect view-id="/error.xhtml">
-		<message severity="WARN">#{messages['error.unexpected']} #{handledException.message}</message>
-	</redirect>
-</exception>
+	<exception>
+		<redirect view-id="/errors/error.xhtml">
+			<message severity="WARN">#{messages['error.unexpected']} #{handledException.message}</message>
+		</redirect>
+	</exception>
 
 </faces-config>
