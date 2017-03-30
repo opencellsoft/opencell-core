@@ -2,6 +2,7 @@ package org.meveo.service.catalog.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -68,7 +69,8 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 	 */
 	public OfferTemplate createOfferFromBOM(BusinessOfferModel businessOfferModel, List<CustomFieldDto> customFields, String code, String name, String offerDescription,
 			List<ServiceConfigurationDto> serviceCodes) throws BusinessException {
-		return createOfferFromBOM(businessOfferModel, customFields, code, name, offerDescription, serviceCodes, null, null, null, LifeCycleStatusEnum.IN_DESIGN, null);
+		return createOfferFromBOM(businessOfferModel, customFields, code, name, offerDescription, serviceCodes, null,
+				null, null, LifeCycleStatusEnum.IN_DESIGN, null, null, null);
 	}
 
 	/**
@@ -89,7 +91,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 	 */
 	public OfferTemplate createOfferFromBOM(BusinessOfferModel businessOfferModel, List<CustomFieldDto> customFields, String code, String name, String offerDescription,
 			List<ServiceConfigurationDto> serviceCodes, List<Channel> channels, List<BusinessAccountModel> bams, List<OfferTemplateCategory> offerTemplateCategories,
-			LifeCycleStatusEnum lifeCycleStatusEnum, String imagePath) throws BusinessException {
+			LifeCycleStatusEnum lifeCycleStatusEnum, String imagePath, Date validFrom, Date validTo) throws BusinessException {
 		OfferTemplate bomOffer = businessOfferModel.getOfferTemplate();
 		bomOffer = offerTemplateService.refreshOrRetrieve(bomOffer);
 
@@ -128,8 +130,16 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 		} else {
 			newOfferTemplate.setName(name);
 		}
-		newOfferTemplate.setValidFrom(bomOffer.getValidFrom());
-		newOfferTemplate.setValidTo(bomOffer.getValidTo());
+		if (validFrom == null) {
+			newOfferTemplate.setValidFrom(bomOffer.getValidFrom());
+		} else {
+			newOfferTemplate.setValidFrom(validFrom);
+		}
+		if (validTo == null) {
+			newOfferTemplate.setValidTo(bomOffer.getValidTo());
+		} else {
+			newOfferTemplate.setValidTo(validTo);
+		}
 		newOfferTemplate.setBusinessOfferModel(businessOfferModel);
 		if (bomOffer.getAttachments() != null) {
 			newOfferTemplate.getAttachments().addAll(bomOffer.getAttachments());
