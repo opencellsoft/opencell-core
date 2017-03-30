@@ -12470,15 +12470,6 @@ public class Action1 extends Script {
                 <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="Simple Contains" id="53814666-2f76-4b6e-87ff-a18cdcbd6d65" name="Contains 4">
-              <con:configuration>
-                <token>&lt;customField code="${#Project#entityPrefix}_${#TestSuite#index}_CET_CFT1">
-                     &lt;stringValue>value one&lt;/stringValue>
-                  &lt;/customField></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>

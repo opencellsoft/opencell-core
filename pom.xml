@@ -596,7 +596,7 @@
 			<properties>
 				<!-- Properties for liquibase plugin -->
 				<db.driver>org.postgresql.Driver </db.driver>
-				<db.url>jdbc:postgresql://localhost/meveo50</db.url>
+				<db.url>jdbc:postgresql://localhost/meveo</db.url>
 				<db.username>meveo</db.username>
 				<db.password>meveo</db.password>
 			</properties>
@@ -628,7 +628,7 @@
 			<properties>
 				<!-- Properties for liquibase plugin -->
 				<db.driver>org.mariadb.jdbc.Driver</db.driver>
-				<db.url>jdbc:mariadb://localhost:3306/meveo50</db.url>
+				<db.url>jdbc:mariadb://localhost:3306/meveo</db.url>
 				<db.username>root</db.username>
 				<db.password></db.password>
 			</properties>

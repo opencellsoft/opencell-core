@@ -62,7 +62,7 @@ public class CurrentUserProvider {
     public MeveoUser getCurrentUser() {
 
         String username = MeveoUserKeyCloakImpl.extractUsername(ctx, forcedUserUsername);
-        
+
         MeveoUser user = null;
 
         // User was forced authenticated, so need to lookup the rest of user information
@@ -113,6 +113,10 @@ public class CurrentUserProvider {
                 user.updateAudit(currentUser);
                 em.persist(user);
                 log.info("A new application user was registered with username {} and name {}", user.getUserName(), user.getName().getFullName());
+            }
+
+            if (user != null) {
+                em.detach(user);
             }
 
         } catch (Exception e) {

@@ -23,6 +23,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Named;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.util.ApplicationProvider;
@@ -43,7 +44,35 @@ public class ProviderService extends PersistenceService<Provider> {
     @Named("appProvider")
     @ApplicationProvider
     public Provider getProvider() {
-        return list().get(0);
+        Provider provider = list().get(0);
+        if (provider.getCurrency() != null) {
+            provider.getCurrency().getCurrencyCode();
+        }
+        if (provider.getCountry() != null) {
+            provider.getCountry().getCountryCode();
+        }
+        if (provider.getLanguage() != null) {
+            provider.getLanguage().getLanguageCode();
+        }
+        if (provider.getInvoiceConfiguration() != null) {
+            provider.getInvoiceConfiguration().getDisplayBillingCycle();
+        }
+
+        detach(provider);
+        return provider;
     }
 
+    @Override
+    public Provider update(Provider entity) throws BusinessException {
+        entity = super.update(entity);
+
+        // Refresh appProvider application scope variable
+        Provider detachedProvider = getProvider();
+        appProvider.setCurrency(detachedProvider.getCurrency() != null ? detachedProvider.getCurrency() : null);
+        appProvider.setCountry(detachedProvider.getCountry() != null ? detachedProvider.getCountry() : null);
+        appProvider.setLanguage(detachedProvider.getLanguage() != null ? detachedProvider.getLanguage() : null);
+        appProvider.setInvoiceConfiguration(detachedProvider.getInvoiceConfiguration() != null ? detachedProvider.getInvoiceConfiguration() : null);
+
+        return entity;
+    }
 }
