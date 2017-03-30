@@ -3,6 +3,7 @@ package org.meveo.api;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -19,10 +20,14 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.EntityCustomAction;
 import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.custom.EntityCustomActionService;
@@ -333,6 +338,48 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
 				}
 			}
 		}
+
+		return result;
+	}
+
+	public EntityCustomizationDto listELFiltered(String appliesTo, String entityCode)
+			throws MissingParameterException, BusinessException {
+		EntityCustomizationDto result = new EntityCustomizationDto();
+		log.debug("IPIEL: listELFiltered");
+		
+		if (StringUtils.isBlank(appliesTo)) {
+			missingParameters.add("appliesTo");
+		}
+		if (StringUtils.isBlank(entityCode)) {
+			missingParameters.add("entityCode");
+		}
+
+		handleMissingParameters();
+
+		@SuppressWarnings("rawtypes")
+		Class entityClass = null;
+		// get all the class annotated with customFieldEntity
+		Set<Class<?>> cfClasses = ReflectionUtils.getClassesAnnotatedWith(CustomFieldEntity.class);
+		for (Class<?> clazz : cfClasses) {
+			// check if appliesTo match, eg OFFER
+			if (appliesTo.equals(clazz.getAnnotation(CustomFieldEntity.class).cftCodePrefix())) {
+				entityClass = clazz;
+				break;
+			}
+		}
+
+		ICustomFieldEntity entityInstance = customEntityTemplateService.findByClassAndCode(entityClass, entityCode);
+
+		Map<String, CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesTo(appliesTo);
+		result = EntityCustomizationDto.toDTO(entityClass, cetFields.values(), null);
+
+		List<CustomFieldTemplateDto> evaluatedCFTDto = new ArrayList<>();
+		for (CustomFieldTemplateDto cft : result.getFields()) {
+			if (ValueExpressionWrapper.evaluateToBoolean(cft.getApplicableOnEl(), "entity", entityInstance)) {
+				evaluatedCFTDto.add(cft);
+			}
+		}
+		result.setFields(evaluatedCFTDto);
 
 		return result;
 	}

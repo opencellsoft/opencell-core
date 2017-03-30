@@ -794,7 +794,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 									.getCustomFieldInstances(entity, cfi.getCode());
 							if (cfisToBeRemove != null) {
 								for (CustomFieldInstance cfiToBeRemove : cfisToBeRemove) {
-									customFieldInstanceService.remove(cfiToBeRemove, entity);
+									customFieldInstanceService.remove(cfiToBeRemove);
 								}
 							}
 						}

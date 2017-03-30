@@ -216,5 +216,9 @@ public interface EntityCustomizationRs extends IBaseRs {
     @GET
     @Path("/listBusinessEntityForCFVByCode/")
 	BusinessEntityResponseDto listBusinessEntityForCFVByCode(@QueryParam("code") String code, @QueryParam("wildcode") String wildcode);
+    
+    @GET
+    @Path("/entity/listELFiltered")
+    public EntityCustomizationResponseDto listELFiltered(@QueryParam("appliesTo") String appliesTo, @QueryParam("entityCode") String entityCode);
 
 }
