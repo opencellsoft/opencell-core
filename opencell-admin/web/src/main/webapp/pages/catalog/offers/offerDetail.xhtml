@@ -253,5 +253,11 @@
             </h:form>
         </p:dialog>
 
-    </ui:define>
+		<h:outputScript target="head">
+			$(document).on("keypress", "form", function(event) { 
+    			return event.keyCode != 13;
+			});
+		</h:outputScript>
+
+	</ui:define>
 </ui:composition>
