@@ -109,23 +109,19 @@
         </classesToExportAsFull>
         <relatedEntities>
             <relatedEntity pathToEntityRelatedTo="moduleItems" condition="#{entity.itemClass ne 'org.meveo.model.crm.CustomFieldTemplate'}">
-                <selection>select mie from #{entity.itemClassSimpleName} mie where mie.code=:itemCode and mie.provider=:provider
+                <selection>select mie from #{entity.itemClassSimpleName} mie where mie.code=:itemCode
                 </selection>
                 <parameters>
                     <entry>
                         <string>itemCode</string>
                         <string>#{entity.itemCode}</string>
                     </entry>
-                    <entry>
-                        <string>provider</string>
-                        <string>#{mainEntity.provider}</string>
-                    </entry>
                 </parameters>
             </relatedEntity>
             <relatedEntity pathToEntityRelatedTo="moduleItems" condition="#{entity.itemClass eq 'org.meveo.model.crm.CustomFieldTemplate'}">
                 <entityClass>org.meveo.model.crm.CustomFieldTemplate</entityClass>
                 <selection>
-                    select mie from CustomFieldTemplate mie where mie.code=:itemCode and mie.appliesTo=:appliesTo and mie.provider=:provider
+                    select mie from CustomFieldTemplate mie where mie.code=:itemCode and mie.appliesTo=:appliesTo
                 </selection>
                 <parameters>
                     <entry>
@@ -135,10 +131,6 @@
                     <entry>
                         <string>appliesTo</string>
                         <string>#{entity.appliesTo}</string>
-                    </entry>
-                    <entry>
-                        <string>provider</string>
-                        <string>#{mainEntity.provider}</string>
                     </entry>
                 </parameters>
             </relatedEntity>
