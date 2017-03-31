@@ -11,9 +11,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.PermissionDto;
 import org.meveo.api.dto.RoleDto;
+import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.LoginException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.model.security.Permission;
 import org.meveo.model.security.Role;
@@ -55,7 +55,7 @@ public class RoleApi extends BaseApi {
         }
 
         if (!(currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationManagement")))) {
-            throw new LoginException("User has no permission to manage roles for provider");
+            throw new ActionForbiddenException("User has no permission to manage roles for provider");
         }
 
         Role role = new Role();
@@ -124,7 +124,7 @@ public class RoleApi extends BaseApi {
         handleMissingParameters();
 
         if (!(currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationManagement")))) {
-            throw new LoginException("User has no permission to manage roles for provider");
+            throw new ActionForbiddenException("User has no permission to manage roles for provider");
         }
 
         Role role = roleService.findByName(name);
@@ -181,7 +181,7 @@ public class RoleApi extends BaseApi {
         handleMissingParameters();
 
         if (!(currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationVisualization")))) {
-            throw new LoginException("User has no permission to access roles for provider");
+            throw new ActionForbiddenException("User has no permission to access roles for provider");
         }
 
         RoleDto roleDto = null;
@@ -202,7 +202,7 @@ public class RoleApi extends BaseApi {
         handleMissingParameters();
 
         if (!(currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationManagement")))) {
-            throw new LoginException("User has no permission to manage roles for provider");
+            throw new ActionForbiddenException("User has no permission to manage roles for provider");
         }
 
         Role role = roleService.findByName(name);
@@ -223,7 +223,7 @@ public class RoleApi extends BaseApi {
         handleMissingParameters();
 
         if (!(currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationManagement")))) {
-            throw new LoginException("User has no permission to manage roles for provider");
+            throw new ActionForbiddenException("User has no permission to manage roles for provider");
         }
 
         Role role = roleService.findByName(name);

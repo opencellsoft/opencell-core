@@ -236,7 +236,6 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		}
 
 		billingAccount.setBillingRun(getEntityManager().getReference(BillingRun.class, billingRun.getId()));
-		billingAccount.updateAudit(currentUser);
 		updateNoCheck(billingAccount);
 
 		return true;

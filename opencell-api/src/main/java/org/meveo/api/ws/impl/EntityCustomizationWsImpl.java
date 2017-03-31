@@ -226,7 +226,6 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
         CustomEntityInstanceResponseDto result = new CustomEntityInstanceResponseDto();
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
-        // TODO check  getCurrentUser(CustomEntityTemplate.getPermissionResourceName(cetCode), "read")
         try {
             result.setCustomEntityInstance(customEntityInstanceApi.find(cetCode, code));
 
@@ -242,7 +241,6 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
 
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-        // TODO check getCurrentUser(CustomEntityTemplate.getPermissionResourceName(cetCode), "modify")
         try {
             customEntityInstanceApi.remove(cetCode, code);
 
@@ -257,7 +255,6 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
     public ActionStatus createCustomEntityInstance(CustomEntityInstanceDto dto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-        // TODO check getCurrentUser(CustomEntityTemplate.getPermissionResourceName(dto.getCetCode()), "modify")
         try {
             customEntityInstanceApi.create(dto);
 
@@ -272,7 +269,6 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
     public ActionStatus updateCustomEntityInstance(CustomEntityInstanceDto dto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-        // TODO check getCurrentUser(CustomEntityTemplate.getPermissionResourceName(dto.getCetCode()), "modify")
         try {
             customEntityInstanceApi.update(dto);
 
@@ -287,7 +283,6 @@ public class EntityCustomizationWsImpl extends BaseWs implements EntityCustomiza
     public ActionStatus createOrUpdateCustomEntityInstance(CustomEntityInstanceDto dto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-        // TODO check getCurrentUser(CustomEntityTemplate.getPermissionResourceName(dto.getCetCode()), "modify")
         try {
             customEntityInstanceApi.createOrUpdate(dto);
 

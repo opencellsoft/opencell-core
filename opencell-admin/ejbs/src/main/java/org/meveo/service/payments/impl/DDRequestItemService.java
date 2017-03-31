@@ -139,8 +139,7 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
 		ddRequestLOT.setRejectedInvoices(rejectedInvoice);
 		
 		if (rejectedInvoice > 0) {			
-			ddRequestLOT.setRejectedCause(StringUtils.truncate(allErrors, 255, true));			
-			dDRequestLOTService.updateAudit(ddRequestLOT);
+			ddRequestLOT.setRejectedCause(StringUtils.truncate(allErrors, 255, true));	
 			ddRequestLOT = dDRequestLOTService.updateNoCheck(ddRequestLOT);
 		}
 
@@ -148,7 +147,6 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
 		if (!ddrequestItems.isEmpty()) {
 			ddRequestLOT.setDdrequestItems(ddrequestItems);
 			ddRequestLOT.setInvoicesAmount(totalAmount);
-			dDRequestLOTService.updateAudit(ddRequestLOT);
 			ddRequestLOT = dDRequestLOTService.updateNoCheck(ddRequestLOT);
 
 			log.info("ddRequestLOT created , totalAmount: {}", ddRequestLOT.getInvoicesAmount());
@@ -188,7 +186,6 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
 			}
 		}
 		ddRequestLOT.setPaymentCreated(true);
-		dDRequestLOTService.updateAudit(ddRequestLOT);
 		dDRequestLOTService.updateNoCheck(ddRequestLOT);
 
 		log.info("Successful createPaymentsForDDRequestLot ddRequestLotId: {}",ddRequestLOT.getId());

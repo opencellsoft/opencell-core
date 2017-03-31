@@ -700,7 +700,6 @@ public class RatingService extends BusinessService<WalletOperation>{
 									.getTradingCurrency());
 			}
 			create(operation);
-			operationToRerate.updateAudit(currentUser);
 			updateNoCheck(operationToRerate);
 			log.debug("updated wallet operation");
 		} catch (UnrolledbackBusinessException e) { 

@@ -111,7 +111,7 @@ public abstract class MeveoUser implements Serializable {
     @Override
     public String toString() {
         return "MeveoUser [" + " auth=" + authenticated + ", forced=" + forcedAuthentication + ", sub=" + subject + ", userName=" + userName + ", fullName=" + fullName
-                + ", provider=" + providerCode + "]";
+                + ", provider=" + providerCode + " roles " + roles + "]";
     }
 
 }

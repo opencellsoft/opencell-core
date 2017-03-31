@@ -70,7 +70,6 @@ public class FilteredListWsImpl extends BaseWs implements FilteredListWs {
     public ActionStatus reindex() {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-        // TODO check getCurrentUser("superAdmin", "superAdminManagement")
         try {
             fullTextSearchApi.cleanAndReindex();
         } catch (Exception e) {

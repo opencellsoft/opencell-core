@@ -80,7 +80,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 			}
 			accountOperationService.update(accountOperation);
 			
-			((AuditableEntity) matchingAmount).updateAudit(currentUser);
+			matchingAmount.updateAudit(currentUser);
 			matchingAmount.setAccountOperation(accountOperation);
 			matchingAmount.setMatchingCode(matchingCode);
 			

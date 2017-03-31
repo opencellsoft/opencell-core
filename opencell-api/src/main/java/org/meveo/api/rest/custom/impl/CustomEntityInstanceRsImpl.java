@@ -12,12 +12,10 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.CustomEntityInstanceDto;
 import org.meveo.api.dto.response.CustomEntityInstanceResponseDto;
 import org.meveo.api.dto.response.CustomEntityInstancesResponseDto;
-import org.meveo.api.exception.LoginException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.custom.CustomEntityInstanceRs;
 import org.meveo.api.rest.impl.BaseRs;
-import org.meveo.model.customEntities.CustomEntityTemplate;
 
 /**
  * @author Andrius Karpavicius
@@ -34,10 +32,6 @@ public class CustomEntityInstanceRsImpl extends BaseRs implements CustomEntityIn
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            // Check user has <cetCode>/modify permission
-            if (!currentUser.hasRole(CustomEntityTemplate.getModifyPermission(customEntityTemplateCode))) {
-                throw new LoginException("User does not have permission '" + CustomEntityTemplate.getModifyPermission(customEntityTemplateCode) + "'");
-            }
 
             dto.setCetCode(customEntityTemplateCode);
             customEntityInstanceApi.create(dto);
@@ -61,10 +55,6 @@ public class CustomEntityInstanceRsImpl extends BaseRs implements CustomEntityIn
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            // Check user has <cetCode>/modify permission
-            if (!currentUser.hasRole(CustomEntityTemplate.getModifyPermission(customEntityTemplateCode))) {
-                throw new LoginException("User does not have permission '" + CustomEntityTemplate.getModifyPermission(customEntityTemplateCode) + "'");
-            }
 
             dto.setCetCode(customEntityTemplateCode);
             customEntityInstanceApi.update(dto);
@@ -88,10 +78,6 @@ public class CustomEntityInstanceRsImpl extends BaseRs implements CustomEntityIn
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            // Check user has <cetCode>/modify permission
-            if (!currentUser.hasRole(CustomEntityTemplate.getModifyPermission(customEntityTemplateCode))) {
-                throw new LoginException("User does not have permission '" + CustomEntityTemplate.getModifyPermission(customEntityTemplateCode) + "'");
-            }
 
             customEntityInstanceApi.remove(customEntityTemplateCode, code);
 
@@ -114,10 +100,6 @@ public class CustomEntityInstanceRsImpl extends BaseRs implements CustomEntityIn
         CustomEntityInstanceResponseDto result = new CustomEntityInstanceResponseDto();
 
         try {
-            // Check user has <cetCode>/modify permission
-            if (!currentUser.hasRole(CustomEntityTemplate.getReadPermission(customEntityTemplateCode))) {
-                throw new LoginException("User does not have permission '" + CustomEntityTemplate.getReadPermission(customEntityTemplateCode) + "'");
-            }
 
             result.setCustomEntityInstance(customEntityInstanceApi.find(customEntityTemplateCode, code));
 
@@ -140,10 +122,6 @@ public class CustomEntityInstanceRsImpl extends BaseRs implements CustomEntityIn
         CustomEntityInstancesResponseDto result = new CustomEntityInstancesResponseDto();
 
         try {
-            // Check user has <cetCode>/modify permission
-            if (!currentUser.hasRole(CustomEntityTemplate.getReadPermission(customEntityTemplateCode))) {
-                throw new LoginException("User does not have permission '" + CustomEntityTemplate.getReadPermission(customEntityTemplateCode) + "'");
-            }
 
             result.setCustomEntityInstances(customEntityInstanceApi.list(customEntityTemplateCode));
 
@@ -166,10 +144,6 @@ public class CustomEntityInstanceRsImpl extends BaseRs implements CustomEntityIn
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            // Check user has <cetCode>/modify permission
-            if (!currentUser.hasRole(CustomEntityTemplate.getModifyPermission(customEntityTemplateCode))) {
-                throw new LoginException("User does not have permission '" + CustomEntityTemplate.getModifyPermission(customEntityTemplateCode) + "'");
-            }
 
             dto.setCetCode(customEntityTemplateCode);
             customEntityInstanceApi.createOrUpdate(dto);

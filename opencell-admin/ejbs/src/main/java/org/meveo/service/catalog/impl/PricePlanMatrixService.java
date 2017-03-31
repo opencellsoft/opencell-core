@@ -117,7 +117,8 @@ public class PricePlanMatrixService extends MultilanguageEntityService<PricePlan
 //		}
 //	}
 
-	private String getCellAsString(Cell cell) {
+	@SuppressWarnings("deprecation")
+    private String getCellAsString(Cell cell) {
 		switch (cell.getCellType()) {
 		case Cell.CELL_TYPE_BOOLEAN:
 			return cell.getBooleanCellValue() + "";
@@ -132,7 +133,8 @@ public class PricePlanMatrixService extends MultilanguageEntityService<PricePlan
 		}
 	}
 
-	private Date getCellAsDate(Cell cell) {
+	@SuppressWarnings("deprecation")
+    private Date getCellAsDate(Cell cell) {
 		switch (cell.getCellType()) {
 		case Cell.CELL_TYPE_ERROR:
 		case Cell.CELL_TYPE_BLANK:
@@ -496,7 +498,6 @@ public class PricePlanMatrixService extends MultilanguageEntityService<PricePlan
 		if (pricePlan.getId() == null) {
 			create(pricePlan);
 		} else {
-			updateAudit(pricePlan);
 			updateNoCheck(pricePlan);
 		}
 	}

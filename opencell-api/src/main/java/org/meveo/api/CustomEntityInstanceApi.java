@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.CustomEntityInstanceDto;
+import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
@@ -50,6 +51,10 @@ public class CustomEntityInstanceApi extends BaseApi {
 
         handleMissingParameters();
 
+        if (!currentUser.hasRole(CustomEntityTemplate.getModifyPermission(dto.getCode()))) {
+            throw new ActionForbiddenException("User does not have permission '" + CustomEntityTemplate.getModifyPermission(dto.getCode()) + "'");
+        }
+        
         CustomEntityTemplate cet = customEntityTemplateService.findByCode(dto.getCetCode());
         if (cet == null) {
             throw new EntityDoesNotExistsException(CustomEntityTemplate.class, dto.getCetCode());
@@ -86,6 +91,10 @@ public class CustomEntityInstanceApi extends BaseApi {
 
         handleMissingParameters();
 
+        if (!currentUser.hasRole(CustomEntityTemplate.getModifyPermission(dto.getCode()))) {
+            throw new ActionForbiddenException("User does not have permission '" + CustomEntityTemplate.getModifyPermission(dto.getCode()) + "'");
+        }
+        
         CustomEntityTemplate cet = customEntityTemplateService.findByCode(dto.getCetCode());
         if (cet == null) {
             throw new EntityDoesNotExistsException(CustomEntityTemplate.class, dto.getCetCode());
@@ -112,7 +121,7 @@ public class CustomEntityInstanceApi extends BaseApi {
         }
     }
 
-    public void remove(String cetCode, String code) throws EntityDoesNotExistsException, MissingParameterException, BusinessException {
+    public void remove(String cetCode, String code) throws EntityDoesNotExistsException, MissingParameterException, MeveoApiException, BusinessException {
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
         }
@@ -122,6 +131,10 @@ public class CustomEntityInstanceApi extends BaseApi {
 
         handleMissingParameters();
 
+        if (!currentUser.hasRole(CustomEntityTemplate.getModifyPermission(cetCode))) {
+            throw new ActionForbiddenException("User does not have permission '" + CustomEntityTemplate.getModifyPermission(cetCode) + "'");
+        }
+        
         CustomEntityInstance cei = customEntityInstanceService.findByCodeByCet(cetCode, code);
         if (cei != null) {
             customEntityInstanceService.remove(cei);
@@ -139,6 +152,10 @@ public class CustomEntityInstanceApi extends BaseApi {
         }
 
         handleMissingParameters();
+        
+        if (!currentUser.hasRole(CustomEntityTemplate.getReadPermission(cetCode))) {
+            throw new ActionForbiddenException("User does not have permission '" + CustomEntityTemplate.getReadPermission(cetCode) + "'");
+        }
 
         CustomEntityInstance cei = customEntityInstanceService.findByCodeByCet(cetCode, code);
 
@@ -155,6 +172,10 @@ public class CustomEntityInstanceApi extends BaseApi {
 
         handleMissingParameters();
 
+        if (!currentUser.hasRole(CustomEntityTemplate.getReadPermission(cetCode))) {
+            throw new ActionForbiddenException("User does not have permission '" + CustomEntityTemplate.getReadPermission(cetCode) + "'");
+        }
+        
         Map<String, Object> filter = new HashMap<>();
         filter.put("cetCode", cetCode);
         PaginationConfiguration config = new PaginationConfiguration(filter);

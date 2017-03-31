@@ -26,8 +26,8 @@ import org.meveo.api.dto.response.GetCustomerConfigurationResponseDto;
 import org.meveo.api.dto.response.GetInvoicingConfigurationResponseDto;
 import org.meveo.api.dto.response.GetTradingConfigurationResponseDto;
 import org.meveo.api.dto.response.TitleDto;
+import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.LoginException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
@@ -140,7 +140,7 @@ public class ProviderApi extends BaseApi {
 //
 //        handleMissingParameters();
 //        if (!currentUser.hasRole("superAdminManagement")) {
-//            throw new LoginException("User has no permission to create new providers");
+//            throw new ActionForbiddenException("User has no permission to create new providers");
 //        }
 //
 //        Provider provider = providerService.findById(appProvider.getId());
@@ -167,7 +167,7 @@ public class ProviderApi extends BaseApi {
         if (currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationVisualization"))) {
             return new ProviderDto(provider, entityToDtoConverter.getCustomFieldsDTO(provider));
         } else {
-            throw new LoginException("User has no permission to access provider");
+            throw new ActionForbiddenException("User has no permission to access provider");
         }
     }
 
@@ -178,7 +178,7 @@ public class ProviderApi extends BaseApi {
         Provider provider = providerService.findById(appProvider.getId(), Arrays.asList("currency", "country", "language"));
        
         if (!(currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationManagement")))) {
-            throw new LoginException("User has no permission to manage provider " + provider.getCode());
+            throw new ActionForbiddenException("User has no permission to manage provider " + provider.getCode());
         }
 
         provider=fromDto(postData, provider);
@@ -206,7 +206,7 @@ public class ProviderApi extends BaseApi {
     public GetTradingConfigurationResponseDto getTradingConfiguration() throws MeveoApiException {
        
         if (!(currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationVisualization")))) {
-            throw new LoginException("User has no permission to access provider");
+            throw new ActionForbiddenException("User has no permission to access provider");
         }
 
         GetTradingConfigurationResponseDto result = new GetTradingConfigurationResponseDto();
@@ -247,7 +247,7 @@ public class ProviderApi extends BaseApi {
 
         if (!(currentUser.hasRole("superAdminManagement") || ((currentUser.hasRole("administrationVisualization")
                 || currentUser.hasRole("billingVisualization") || currentUser.hasRole("catalogVisualization"))))) {
-            throw new LoginException("User has no permission to access provider");
+            throw new ActionForbiddenException("User has no permission to access provider");
         }
 
         GetInvoicingConfigurationResponseDto result = new GetInvoicingConfigurationResponseDto();
@@ -352,7 +352,7 @@ public class ProviderApi extends BaseApi {
     public void updateProviderCF(ProviderDto postData) throws MeveoApiException {
 
         if (!(currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationManagement")))) {
-            throw new LoginException("User has no permission to manage provider ");
+            throw new ActionForbiddenException("User has no permission to manage provider ");
         }
 
         // populate customFields
@@ -374,7 +374,7 @@ public class ProviderApi extends BaseApi {
                 || (currentUser.hasRole("administrationVisualization"))) {
             return new ProviderDto(provider, entityToDtoConverter.getCustomFieldsDTO(provider), false);
         } else {
-            throw new LoginException("User has no permission to access provider");
+            throw new ActionForbiddenException("User has no permission to access provider");
         }
     }
     

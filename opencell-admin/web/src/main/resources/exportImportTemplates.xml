@@ -1,9 +1,6 @@
 <list>
     <template name="Provider" entityToExport="org.meveo.model.crm.Provider">
         <classesToExportAsFull>
-            <java-class>org.meveo.model.billing.TradingLanguage</java-class>
-            <java-class>org.meveo.model.billing.TradingCurrency</java-class>
-            <java-class>org.meveo.model.billing.TradingCountry</java-class>
             <java-class>org.meveo.model.billing.InvoiceConfiguration</java-class>
         </classesToExportAsFull>
         <classesToIgnoreFKNotFound>

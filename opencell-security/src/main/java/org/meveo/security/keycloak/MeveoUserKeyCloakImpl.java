@@ -51,12 +51,12 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
         if (securityContext.getCallerPrincipal() instanceof KeycloakPrincipal) {
             KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) securityContext.getCallerPrincipal();
             KeycloakSecurityContext keycloakSecurityContext = keycloakPrincipal.getKeycloakSecurityContext();
-            log.trace("Produced user from keycloak from principal is {}, {}, {}, {}, {}", keycloakSecurityContext.getToken().getSubject(),
-                keycloakSecurityContext.getToken().getName(),
-                keycloakSecurityContext.getToken().getRealmAccess() != null ? keycloakSecurityContext.getToken().getRealmAccess().getRoles() : null,
-                keycloakSecurityContext.getToken().getResourceAccess(RESOURCE_PROVIDER) != null ? keycloakSecurityContext.getToken().getResourceAccess(RESOURCE_PROVIDER).getRoles()
-                        : null,
-                keycloakSecurityContext.getToken().getOtherClaims());
+//            log.trace("Produced user from keycloak from principal is {}, {}, {}, {}, {}", keycloakSecurityContext.getToken().getSubject(),
+//                keycloakSecurityContext.getToken().getName(),
+//                keycloakSecurityContext.getToken().getRealmAccess() != null ? keycloakSecurityContext.getToken().getRealmAccess().getRoles() : null,
+//                keycloakSecurityContext.getToken().getResourceAccess(RESOURCE_PROVIDER) != null ? keycloakSecurityContext.getToken().getResourceAccess(RESOURCE_PROVIDER).getRoles()
+//                        : null,
+//                keycloakSecurityContext.getToken().getOtherClaims());
 
             this.subject = keycloakSecurityContext.getToken().getSubject();
             this.userName = keycloakSecurityContext.getToken().getPreferredUsername();
@@ -104,7 +104,7 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
             }
         }
 
-        log.trace("Current user {} resolved roles/permissions {}", this.userName, this.roles);
+//        log.trace("Current user {} resolved roles/permissions {}", this.userName, this.roles);
         
         if (this.authenticated && !this.forcedAuthentication && this.providerCode == null) {
 //            throw new RuntimeException("User has no provider assigned");

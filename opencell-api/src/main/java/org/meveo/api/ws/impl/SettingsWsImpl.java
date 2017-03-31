@@ -686,7 +686,6 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     public ActionStatus createProvider(ProviderDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-        // TODO check getCurrentUser("superAdmin", "superAdminManagement")
         try {
             providerApi.create(postData);
         } catch (MeveoApiException e) {
@@ -1652,7 +1651,6 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     public ActionStatus createOrUpdateProvider(ProviderDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-        // TODO check getCurrentUser("superAdmin", "superAdminManagement")
         try {
             providerApi.update(postData);
         } catch (MeveoApiException e) {

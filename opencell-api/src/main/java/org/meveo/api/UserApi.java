@@ -13,9 +13,9 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.SecuredEntityDto;
 import org.meveo.api.dto.UserDto;
+import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.LoginException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
@@ -26,7 +26,6 @@ import org.meveo.model.security.Role;
 import org.meveo.model.shared.Name;
 import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.admin.impl.UserService;
-import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
 import org.meveo.service.security.SecuredBusinessEntityService;
 
@@ -35,9 +34,6 @@ import org.meveo.service.security.SecuredBusinessEntityService;
  **/
 @Stateless
 public class UserApi extends BaseApi {
-
-	@Inject
-	private ProviderService providerService;
 
 	@Inject
 	private RoleService roleService;
@@ -74,7 +70,7 @@ public class UserApi extends BaseApi {
 		}
 
 		if (!(currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationManagement")))) {
-			throw new LoginException("User has no permission to manage users for provider");
+			throw new ActionForbiddenException("User has no permission to manage users for provider");
 		}
 
 		// check if the user already exists
@@ -134,7 +130,7 @@ public class UserApi extends BaseApi {
 		}
 
         if (!(currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationVisualization")))) {
-			throw new LoginException("User has no permission to manage users for provider");
+			throw new ActionForbiddenException("User has no permission to manage users for provider");
 		}
 
 		// find roles
@@ -217,7 +213,7 @@ public class UserApi extends BaseApi {
 		}
 
         if (!(currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationVisualization")))) {
-			throw new LoginException("User has no permission to manage users for provider");
+			throw new ActionForbiddenException("User has no permission to manage users for provider");
 		}
 
 		userService.remove(user);
@@ -238,7 +234,7 @@ public class UserApi extends BaseApi {
 		}
 
         if (!(currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationVisualization")))) {
-			throw new LoginException("User has no permission to access users for provider");
+			throw new ActionForbiddenException("User has no permission to access users for provider");
 		}
 
 		UserDto result = new UserDto(user);
