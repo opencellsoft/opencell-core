@@ -18,6 +18,9 @@ import javax.el.VariableMapper;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.EjbUtils;
+import org.meveo.model.crm.Provider;
+import org.meveo.service.crm.impl.ProviderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -192,7 +195,11 @@ public class ValueExpressionWrapper {
     }
 
     private ValueExpressionWrapper(String expression, Map<Object, Object> userMap, @SuppressWarnings("rawtypes") Class resultClass) {
-        simpleELResolver = new SimpleELResolver(userMap);
+        if(userMap != null){
+        	Provider appProvider = ((ProviderService) EjbUtils.getServiceInterface("ProviderService")).getProvider();
+        	userMap.put("appProvider", appProvider);
+        }
+    	simpleELResolver = new SimpleELResolver(userMap);
         final VariableMapper variableMapper = new SimpleVariableMapper();
         final MeveoFunctionMapper functionMapper = new MeveoFunctionMapper();
         final CompositeELResolver compositeELResolver = new CompositeELResolver();
