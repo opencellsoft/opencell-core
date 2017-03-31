@@ -350,9 +350,5 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
         }
         return allTemplates;
     }
-
-	public List<CustomFieldTemplate> listELFiltered(String appliesTo, String entityCode) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    
 }

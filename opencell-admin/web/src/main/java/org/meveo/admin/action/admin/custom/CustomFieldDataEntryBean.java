@@ -774,13 +774,22 @@ public class CustomFieldDataEntryBean implements Serializable {
     	saveCustomFieldsToEntity(entity, uuid, duplicateCFI, isNewEntity, false);
     }
 
-    /**
-     * Save custom fields for a given entity
-     * 
-     * @param entity Entity, the fields relate to
-     * @param isNewEntity Is it a new entity
-     * @throws BusinessException
-     */
+	/**
+	 * Save custom fields for a given entity
+	 * 
+	 * @param entity
+	 *            Entity, the fields relate to
+	 * @param isNewEntity
+	 *            Is it a new entity
+	 * @param removedOriginalCFI
+	 *            - When duplicating a CFI, this boolean is true when we want to
+	 *            remove the original CFI. Use specially in offer instantiation
+	 *            where we assigned CFT values on entity a but then save it on
+	 *            entity b. Entity a is then reverted. This flag is needed
+	 *            because on some part CFI is duplicated first, but is not
+	 *            updated, instead we duplicate again.
+	 * @throws BusinessException
+	 */
     public void saveCustomFieldsToEntity(ICustomFieldEntity entity, String uuid, boolean duplicateCFI, boolean isNewEntity, boolean removedOriginalCFI) throws BusinessException {
 
         CustomFieldValueHolder entityFieldsValues = getFieldValueHolderByUUID(uuid);

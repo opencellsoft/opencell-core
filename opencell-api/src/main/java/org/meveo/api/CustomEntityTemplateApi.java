@@ -346,7 +346,7 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
 			throws MissingParameterException, BusinessException {
 		EntityCustomizationDto result = new EntityCustomizationDto();
 		log.debug("IPIEL: listELFiltered");
-		
+
 		if (StringUtils.isBlank(appliesTo)) {
 			missingParameters.add("appliesTo");
 		}
@@ -368,11 +368,14 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
 			}
 		}
 
+		// search for custom field entity filtered by type and code
 		ICustomFieldEntity entityInstance = customEntityTemplateService.findByClassAndCode(entityClass, entityCode);
 
+		// custom fields that applies to an entity type, eg. OFFER
 		Map<String, CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesTo(appliesTo);
 		result = EntityCustomizationDto.toDTO(entityClass, cetFields.values(), null);
 
+		// evaluate the CFT againsts the entity
 		List<CustomFieldTemplateDto> evaluatedCFTDto = new ArrayList<>();
 		for (CustomFieldTemplateDto cft : result.getFields()) {
 			if (ValueExpressionWrapper.evaluateToBoolean(cft.getApplicableOnEl(), "entity", entityInstance)) {

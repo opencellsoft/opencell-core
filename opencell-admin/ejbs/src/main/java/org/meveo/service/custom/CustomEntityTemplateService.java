@@ -146,6 +146,16 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
         return getEntityManager().createNamedQuery("CustomEntityTemplate.getCETForCache", CustomEntityTemplate.class).getResultList();
     }
     
+	/**
+	 * A generic method that returns a filtered list of ICustomFieldEntity given
+	 * an entity class and code.
+	 * 
+	 * @param entityClass
+	 *            - class of an entity. eg. org.meveo.catalog.OfferTemplate
+	 * @param entityCode
+	 *            - code of entity
+	 * @return
+	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public ICustomFieldEntity findByClassAndCode(Class entityClass, String entityCode) {
 		ICustomFieldEntity result = null;
