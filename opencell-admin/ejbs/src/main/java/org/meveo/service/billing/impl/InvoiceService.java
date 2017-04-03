@@ -557,7 +557,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
    public void produceInvoicePdf(Invoice invoice) throws BusinessException  {
         
         String meveoDir = paramBean.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator;
-        String invoiceXmlFileName = getFullXmlFilePath(invoice);
+        String invoiceXmlFileName = getFullXmlFilePath(invoice, false);
         Map<String, Object> parameters = pDFParametersConstruction.constructParameters(invoice);
 
         log.info("PDFInvoiceGenerationJob is invoice key exists=" + ((parameters != null) ? parameters.containsKey(PdfGeneratorConstants.INVOICE) + "" : "parameters is null"));
@@ -578,7 +578,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         String billingTemplate = (billingCycle != null && billingCycle.getBillingTemplateName() != null) ? billingCycle.getBillingTemplateName() : "default";
         String resDir = meveoDir + "jasper";
 
-        String pdfFileName = getFullPdfFilePath(invoice);
+        String pdfFileName = getFullPdfFilePath(invoice, true);
 
         try {
             File destDir = new File(resDir + File.separator + billingTemplate + File.separator + "pdf");
@@ -668,7 +668,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     */
    public boolean deleteInvoicePdf(Invoice invoice) {
 
-       String pdfFilename = getFullPdfFilePath(invoice);
+       String pdfFilename = getFullPdfFilePath(invoice, false);
 
        File file = new File(pdfFilename);
        if (file.exists()) {
@@ -963,19 +963,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		return result;
 	}
 	
-	public String getBillingRunPath(BillingRun billingRun,Date invoiceCreation){
+	private String getBillingRunPath(Invoice invoice){
+	    BillingRun billingRun = invoice.getBillingRun();
 		ParamBean paramBean = ParamBean.getInstance();
 		String providerDir = paramBean.getProperty("providers.rootDir", "./opencelldata");
 		String sep = File.separator;
 		String brPath = providerDir + sep + appProvider.getCode() + sep + "invoices" + sep + "xml" + sep + 
-				(billingRun == null ? DateUtils.formatDateWithPattern(invoiceCreation, paramBean.getProperty("meveo.dateTimeFormat.string", "ddMMyyyy_HHmmss")) : billingRun.getId());
+				(billingRun == null ? DateUtils.formatDateWithPattern(invoice.getInvoiceDate(), paramBean.getProperty("meveo.dateTimeFormat.string", "ddMMyyyy_HHmmss")) : billingRun.getId());
 		return brPath;
 	}
-	
-	public String getBillingRunPath(Invoice invoice){
-	    return getBillingRunPath(invoice.getBillingRun(), invoice.getInvoiceDate());
-	}
-	
+		
     public String getInvoiceXMLFilename(Invoice invoice) {
 
         boolean isInvoiceAdjustment = invoice.getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode());
@@ -996,10 +993,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * Get a full path to an invoice's XML file
      * 
      * @param invoice Invoice
+     * @param createDirs Should missing directories be created
      * @return Absolute path to an XML file
      */
-    public String getFullXmlFilePath(Invoice invoice) {
-        return getBillingRunPath(invoice) + File.separator + getInvoiceXMLFilename(invoice);
+    public String getFullXmlFilePath(Invoice invoice, boolean createDirs) {
+        
+        String path = getBillingRunPath(invoice);
+        if (createDirs){
+            (new File(path)).mkdirs();
+        }
+        return path + File.separator + getInvoiceXMLFilename(invoice);
     }
     
     /**
@@ -1016,15 +1019,18 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * Get a full path to an invoice's PDF file
      * 
      * @param invoice Invoice
+     * @param createDirs Should missing directories be created
      * @return Absolute path to a PDF file
      */
-    public String getFullPdfFilePath(Invoice invoice) {
+    public String getFullPdfFilePath(Invoice invoice, boolean createDirs) {
 
         String meveoDir = paramBean.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator;
 
         String pdfDirectory = meveoDir + "invoices" + File.separator + "pdf" + File.separator;
-        (new File(pdfDirectory)).mkdirs();
-
+        if (createDirs) {
+            (new File(pdfDirectory)).mkdirs();
+        }
+        
         String pdfFileName = getNameWoutSequence(pdfDirectory, invoice.getInvoiceDate(),
             (!StringUtils.isBlank(invoice.getInvoiceNumber()) ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber())) + ".pdf";
         boolean isInvoiceAdjustment = invoice.getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode());
@@ -1090,7 +1096,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public boolean deleteInvoiceXml(Invoice invoice) {
 
-        String xmlFilename = getFullXmlFilePath(invoice);
+        String xmlFilename = getFullXmlFilePath(invoice, false);
 
         File file = new File(xmlFilename);
         if (file.exists()) {
@@ -1108,7 +1114,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public boolean isInvoiceXmlExist(Invoice invoice) {
 
-        String xmlFileName = getFullXmlFilePath(invoice);
+        String xmlFileName = getFullXmlFilePath(invoice, false);
         File xmlFile = new File(xmlFileName);
         return xmlFile.exists();
     }
@@ -1135,7 +1141,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public String getInvoiceXml(Invoice invoice) throws BusinessException {
 
-        String xmlFileName = getFullXmlFilePath(invoice);
+        String xmlFileName = getFullXmlFilePath(invoice, false);
         File xmlFile = new File(xmlFileName);
         if (!xmlFile.exists()) {
             produceInvoiceXml(invoice);
@@ -1171,7 +1177,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public boolean isInvoicePdfExist(Invoice invoice) {
 
-        String pdfFileName = getFullPdfFilePath(invoice);
+        String pdfFileName = getFullPdfFilePath(invoice, false);
         File pdfFile = new File(pdfFileName);
         return pdfFile.exists();
     }
@@ -1186,7 +1192,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public byte[] getInvoicePdf(Invoice invoice) throws BusinessException {
 
-        String pdfFileName = getFullPdfFilePath(invoice);
+        String pdfFileName = getFullPdfFilePath(invoice, false);
         File pdfFile = new File(pdfFileName);
         if (!pdfFile.exists()) {
             produceInvoicePdf(invoice);

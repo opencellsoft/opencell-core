@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <con:soapui-project id="99e5aa84-c6f0-481f-ac30-865327111e19" activeEnvironment="Default" name="Meveo TMForum - API - wildfly" resourceRoot="" soapui-version="5.2.1" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
   <con:settings/>
-  <con:interface xsi:type="con:WsdlInterface" id="862741d9-1cba-4f44-8645-23cbf90521aa" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndpoint}/CatalogWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <con:interface xsi:type="con:WsdlInterface" id="862741d9-1cba-4f44-8645-23cbf90521aa" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/CatalogWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
     <con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/CatalogWs</con:endpoint>
@@ -265,7 +265,7 @@
   <con:interface xsi:type="con:RestService" id="b93ebf67-a568-4bed-9036-80561b1b1cce" wadlVersion="http://wadl.dev.java.net/2009/02" name="MEVEO JAX-WS API Documentation" type="rest" basePath="/api/rest" definitionUrl="C:\andrius\projektai\seb\meveo\meveo-api\target\docs\application.wadl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
     <con:endpoints>
-      <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
+      <con:endpoint>${#Project#meveoUrl}</con:endpoint>
     </con:endpoints>
     <con:resource name="/notification/jobTrigger" path="/notification/jobTrigger" id="76d053cc-cd47-4775-ac93-d2a021485b19">
       <con:settings/>
@@ -4800,7 +4800,7 @@
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
             </con:settings>
-            <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
             <con:request/>
             <con:credentials>
               <con:authType>No Authorization</con:authType>
@@ -13990,7 +13990,7 @@
           <con:settings>
             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
           </con:settings>
-          <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
+          <con:endpoint>${#Project#meveoUrl}</con:endpoint>
           <con:request/>
           <con:credentials>
             <con:authType>No Authorization</con:authType>
@@ -14009,7 +14009,7 @@
         <con:parameters/>
         <con:request name="Request 1" id="0785fc34-f2a4-41d1-946b-d8b04828a834" mediaType="application/json">
           <con:settings/>
-          <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
+          <con:endpoint>${#Project#meveoUrl}</con:endpoint>
           <con:request/>
           <con:credentials>
             <con:authType>No Authorization</con:authType>
@@ -14025,7 +14025,7 @@
       </con:method>
     </con:resource>
   </con:interface>
-  <con:interface xsi:type="con:WsdlInterface" id="aa208489-a0b2-404c-8a77-c1350b4c83b3" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndpoint}/AccountWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <con:interface xsi:type="con:WsdlInterface" id="aa208489-a0b2-404c-8a77-c1350b4c83b3" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/AccountWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
     <con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/AccountWs</con:endpoint>
@@ -14226,7 +14226,7 @@
       <con:settings/>
     </con:operation>
   </con:interface>
-  <con:interface xsi:type="con:WsdlInterface" id="6ccc8a8a-997f-4960-82f3-20becb05f389" wsaVersion="NONE" name="EntityCustomizationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}EntityCustomizationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndpoint}/EntityCustomizationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <con:interface xsi:type="con:WsdlInterface" id="6ccc8a8a-997f-4960-82f3-20becb05f389" wsaVersion="NONE" name="EntityCustomizationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}EntityCustomizationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/EntityCustomizationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
     <con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/EntityCustomizationWs</con:endpoint>
@@ -14301,7 +14301,7 @@
       <con:settings/>
     </con:operation>
   </con:interface>
-  <con:interface xsi:type="con:WsdlInterface" id="3eeb0138-8c90-4a2b-acda-3f4f301cbb22" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndpoint}/SubscriptionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <con:interface xsi:type="con:WsdlInterface" id="3eeb0138-8c90-4a2b-acda-3f4f301cbb22" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/SubscriptionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
     <con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/SubscriptionWs</con:endpoint>
@@ -14344,7 +14344,7 @@
     <con:settings/>
     <con:endpoints/>
   </con:interface>
-  <con:interface xsi:type="con:WsdlInterface" id="bd759564-3e2e-45ca-bab9-b79fbda5ea37" wsaVersion="NONE" name="InvoiceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}InvoiceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoEndpoint}/InvoiceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <con:interface xsi:type="con:WsdlInterface" id="bd759564-3e2e-45ca-bab9-b79fbda5ea37" wsaVersion="NONE" name="InvoiceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}InvoiceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/InvoiceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
     <con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/InvoiceWs</con:endpoint>
@@ -14448,6 +14448,790 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
   <con:testSuite id="6fac4799-58c4-41c8-8ee3-69702bda23ae" name="Set up data">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
+    <con:testCase id="3195efc4-c88a-4535-929f-d4a2ad9aed56" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Cleanup data - clear customizations" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="request" name="Clear Seller customizations" id="db9f2115-5253-434f-9e1d-5a70b4b598e2">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>customizeEntity</con:operation>
+          <con:request name="Clear Seller customizations" id="6842687e-27ab-4237-a8ba-27f9b1233c87">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:customizeEntity>\r
+         <entityCustomization classname="org.meveo.model.admin.Seller">\r
+         </entityCustomization>\r
+      </ws:customizeEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="bd83b478-e30a-4024-b531-d5c7e12945b7"/>
+            <con:assertion type="Simple Contains" id="1ad5fe0b-f837-4a65-ab29-f8d2929dc6e8" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Clear Customer customizations" id="bf6841ef-4068-4953-80bc-ecb75ddbefb1">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>customizeEntity</con:operation>
+          <con:request name="Clear Customer customizations" id="6842687e-27ab-4237-a8ba-27f9b1233c87">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:customizeEntity>\r
+         <entityCustomization classname="org.meveo.model.crm.Customer">\r
+         </entityCustomization>\r
+      </ws:customizeEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="bd83b478-e30a-4024-b531-d5c7e12945b7"/>
+            <con:assertion type="Simple Contains" id="1ad5fe0b-f837-4a65-ab29-f8d2929dc6e8" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Clear Customer account customizations" id="f8298baf-8637-493c-9ec1-e2c58b101087">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>customizeEntity</con:operation>
+          <con:request name="Clear Customer account customizations" id="6842687e-27ab-4237-a8ba-27f9b1233c87">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:customizeEntity>\r
+         <entityCustomization classname="org.meveo.model.payments.CustomerAccount">\r
+         </entityCustomization>\r
+      </ws:customizeEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="bd83b478-e30a-4024-b531-d5c7e12945b7"/>
+            <con:assertion type="Simple Contains" id="1ad5fe0b-f837-4a65-ab29-f8d2929dc6e8" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Clear Billing account customizations" id="b9bc61c6-4c75-4144-b2cf-6e00ab22ee5c">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>customizeEntity</con:operation>
+          <con:request name="Clear Billing account customizations" id="6842687e-27ab-4237-a8ba-27f9b1233c87">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:customizeEntity>\r
+         <entityCustomization classname="org.meveo.model.billing.BillingAccount">\r
+         </entityCustomization>\r
+      </ws:customizeEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="bd83b478-e30a-4024-b531-d5c7e12945b7"/>
+            <con:assertion type="Simple Contains" id="1ad5fe0b-f837-4a65-ab29-f8d2929dc6e8" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Clear User account customizations" id="6e9e4391-1e3e-4aa2-a1ad-416086ed4705">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>customizeEntity</con:operation>
+          <con:request name="Clear User account customizations" id="6842687e-27ab-4237-a8ba-27f9b1233c87">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:customizeEntity>\r
+         <entityCustomization classname="org.meveo.model.billing.UserAccount">\r
+         </entityCustomization>\r
+      </ws:customizeEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="bd83b478-e30a-4024-b531-d5c7e12945b7"/>
+            <con:assertion type="Simple Contains" id="1ad5fe0b-f837-4a65-ab29-f8d2929dc6e8" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Clear Subscription customizations" id="eaff66b4-f2d1-4123-8cfa-015df9f49507">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>customizeEntity</con:operation>
+          <con:request name="Clear Subscription customizations" id="6842687e-27ab-4237-a8ba-27f9b1233c87">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:customizeEntity>\r
+         <entityCustomization classname="org.meveo.model.billing.Subscription">\r
+         </entityCustomization>\r
+      </ws:customizeEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="bd83b478-e30a-4024-b531-d5c7e12945b7"/>
+            <con:assertion type="Simple Contains" id="1ad5fe0b-f837-4a65-ab29-f8d2929dc6e8" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Clear Access customizations" id="5d1f5c16-5034-4aba-866a-3653242e0802">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>customizeEntity</con:operation>
+          <con:request name="Clear Access customizations" id="6842687e-27ab-4237-a8ba-27f9b1233c87">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:customizeEntity>\r
+         <entityCustomization classname="org.meveo.model.mediation.Access">\r
+         </entityCustomization>\r
+      </ws:customizeEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="bd83b478-e30a-4024-b531-d5c7e12945b7"/>
+            <con:assertion type="Simple Contains" id="1ad5fe0b-f837-4a65-ab29-f8d2929dc6e8" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Clear Provider customizations" id="a47b432e-acc2-40d3-88dd-8ee385e75049">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>customizeEntity</con:operation>
+          <con:request name="Clear Provider customizations" id="6842687e-27ab-4237-a8ba-27f9b1233c87">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:customizeEntity>\r
+         <entityCustomization classname="org.meveo.model.crm.Provider">\r
+         </entityCustomization>\r
+      </ws:customizeEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="bd83b478-e30a-4024-b531-d5c7e12945b7"/>
+            <con:assertion type="Simple Contains" id="1ad5fe0b-f837-4a65-ab29-f8d2929dc6e8" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Clear ProductTemplate customizations" id="e6bb1e28-0b0d-45a5-893e-e2864ff3ba8e">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>customizeEntity</con:operation>
+          <con:request name="Clear ProductTemplate customizations" id="6842687e-27ab-4237-a8ba-27f9b1233c87">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:customizeEntity>\r
+         <entityCustomization classname="org.meveo.model.catalog.ProductTemplate">\r
+         </entityCustomization>\r
+      </ws:customizeEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="bd83b478-e30a-4024-b531-d5c7e12945b7"/>
+            <con:assertion type="Simple Contains" id="1ad5fe0b-f837-4a65-ab29-f8d2929dc6e8" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Clear ServiceTemplate customizations" id="cf49cc80-3ba8-455f-a7c6-b9bbd8f69476">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>customizeEntity</con:operation>
+          <con:request name="Clear ServiceTemplate customizations" id="6842687e-27ab-4237-a8ba-27f9b1233c87">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:customizeEntity>\r
+         <entityCustomization classname="org.meveo.model.catalog.ServiceTemplate">\r
+         </entityCustomization>\r
+      </ws:customizeEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="bd83b478-e30a-4024-b531-d5c7e12945b7"/>
+            <con:assertion type="Simple Contains" id="1ad5fe0b-f837-4a65-ab29-f8d2929dc6e8" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Clear OfferTemplate customizations" id="13afc13a-6a31-47c8-b94f-91101d14b9d2">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>customizeEntity</con:operation>
+          <con:request name="Clear OfferTemplate customizations" id="6842687e-27ab-4237-a8ba-27f9b1233c87">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:customizeEntity>\r
+         <entityCustomization classname="org.meveo.model.catalog.OfferTemplate">\r
+         </entityCustomization>\r
+      </ws:customizeEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="bd83b478-e30a-4024-b531-d5c7e12945b7"/>
+            <con:assertion type="Simple Contains" id="1ad5fe0b-f837-4a65-ab29-f8d2929dc6e8" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Clear ChargeTemplate customizations" id="1f153b5d-1fb6-4f99-89c4-9e53b44d1b89">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>customizeEntity</con:operation>
+          <con:request name="Clear ChargeTemplate customizations" id="6842687e-27ab-4237-a8ba-27f9b1233c87">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:customizeEntity>\r
+         <entityCustomization classname="org.meveo.model.catalog.ChargeTemplate">\r
+         </entityCustomization>\r
+      </ws:customizeEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="bd83b478-e30a-4024-b531-d5c7e12945b7"/>
+            <con:assertion type="Simple Contains" id="1ad5fe0b-f837-4a65-ab29-f8d2929dc6e8" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Clear Priceplan customizations" id="47440a42-084c-4a88-9e25-cb5efc50b6c8">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>customizeEntity</con:operation>
+          <con:request name="Clear Priceplan customizations" id="6842687e-27ab-4237-a8ba-27f9b1233c87">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:customizeEntity>\r
+         <entityCustomization classname="org.meveo.model.catalog.PricePlanMatrix">\r
+         </entityCustomization>\r
+      </ws:customizeEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="bd83b478-e30a-4024-b531-d5c7e12945b7"/>
+            <con:assertion type="Simple Contains" id="1ad5fe0b-f837-4a65-ab29-f8d2929dc6e8" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Clear Invoice category customizations" id="a888f3b2-3a41-4648-9511-fc1738c5b86b">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>customizeEntity</con:operation>
+          <con:request name="Clear Invoice category customizations" id="6842687e-27ab-4237-a8ba-27f9b1233c87">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:customizeEntity>\r
+         <entityCustomization classname="org.meveo.model.billing.InvoiceCategory">\r
+         </entityCustomization>\r
+      </ws:customizeEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="bd83b478-e30a-4024-b531-d5c7e12945b7"/>
+            <con:assertion type="Simple Contains" id="1ad5fe0b-f837-4a65-ab29-f8d2929dc6e8" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Clear Invoice sub category customizations" id="895267d2-6b9f-4ea1-bbc8-2e89df3d3e9a">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>customizeEntity</con:operation>
+          <con:request name="Clear Invoice sub category customizations" id="6842687e-27ab-4237-a8ba-27f9b1233c87">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:customizeEntity>\r
+         <entityCustomization classname="org.meveo.model.billing.InvoiceSubCategory">\r
+         </entityCustomization>\r
+      </ws:customizeEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="bd83b478-e30a-4024-b531-d5c7e12945b7"/>
+            <con:assertion type="Simple Contains" id="1ad5fe0b-f837-4a65-ab29-f8d2929dc6e8" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Clear account operations customizations" id="428e972e-87b6-468a-944e-e7d7dc740e1d">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>customizeEntity</con:operation>
+          <con:request name="Clear account operations customizations" id="6842687e-27ab-4237-a8ba-27f9b1233c87">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:customizeEntity>\r
+         <entityCustomization classname="org.meveo.model.payments.AccountOperation">\r
+         </entityCustomization>\r
+      </ws:customizeEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="bd83b478-e30a-4024-b531-d5c7e12945b7"/>
+            <con:assertion type="Simple Contains" id="1ad5fe0b-f837-4a65-ab29-f8d2929dc6e8" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Clear invoice customizations" id="d2cfba61-cb13-4345-8f44-9c11e606cebe">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>customizeEntity</con:operation>
+          <con:request name="Clear invoice customizations" id="6842687e-27ab-4237-a8ba-27f9b1233c87">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:customizeEntity>\r
+         <entityCustomization classname="org.meveo.model.billing.Invoice">\r
+         </entityCustomization>\r
+      </ws:customizeEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="bd83b478-e30a-4024-b531-d5c7e12945b7"/>
+            <con:assertion type="Simple Contains" id="1ad5fe0b-f837-4a65-ab29-f8d2929dc6e8" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Clear tax customizations" id="ba0da007-791f-4c6b-98e2-845649adec4a">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>customizeEntity</con:operation>
+          <con:request name="Clear tax customizations" id="6842687e-27ab-4237-a8ba-27f9b1233c87">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:customizeEntity>\r
+         <entityCustomization classname="org.meveo.model.billing.Tax">\r
+         </entityCustomization>\r
+      </ws:customizeEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="bd83b478-e30a-4024-b531-d5c7e12945b7"/>
+            <con:assertion type="Simple Contains" id="1ad5fe0b-f837-4a65-ab29-f8d2929dc6e8" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Clear billing cycle customizations" id="7c95f4bf-46c2-4b51-bfc9-29819c2de4fd">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>customizeEntity</con:operation>
+          <con:request name="Clear billing cycle customizations" id="6842687e-27ab-4237-a8ba-27f9b1233c87">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:customizeEntity>\r
+         <entityCustomization classname="org.meveo.model.billing.BillingCycle">\r
+         </entityCustomization>\r
+      </ws:customizeEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="bd83b478-e30a-4024-b531-d5c7e12945b7"/>
+            <con:assertion type="Simple Contains" id="1ad5fe0b-f837-4a65-ab29-f8d2929dc6e8" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Clear PurgeJob customizations" id="a23ed448-b404-4cd8-b3ad-5eca1886873b">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>customizeEntity</con:operation>
+          <con:request name="Clear PurgeJob customizations" id="6842687e-27ab-4237-a8ba-27f9b1233c87">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:customizeEntity>\r
+         <entityCustomization classname="org.meveo.admin.job.PurgeJob">\r
+         </entityCustomization>\r
+      </ws:customizeEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="bd83b478-e30a-4024-b531-d5c7e12945b7"/>
+            <con:assertion type="Simple Contains" id="1ad5fe0b-f837-4a65-ab29-f8d2929dc6e8" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
     <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Data Setup - Product catalog creation" searchProperties="true" id="e049522e-e736-4f8e-8cfa-8417c12532c6">
       <con:settings/>
       <con:testStep type="request" name="Create Recurring charge template" id="b168aae9-0236-4280-9df2-a7f7f62c5cd4">
@@ -14460,7 +15244,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -14519,7 +15303,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -14576,7 +15360,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -14633,7 +15417,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -14690,7 +15474,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -14751,7 +15535,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -14806,7 +15590,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -14861,7 +15645,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -14926,7 +15710,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -14991,7 +15775,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -15048,7 +15832,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -15105,7 +15889,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -15155,7 +15939,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -15205,7 +15989,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -15255,7 +16039,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -15316,7 +16100,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -15361,7 +16145,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -15406,7 +16190,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -15451,7 +16235,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -15496,7 +16280,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -15541,7 +16325,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -15586,7 +16370,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -15631,7 +16415,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/EntityCustomizationWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -15669,7 +16453,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/EntityCustomizationWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -15708,7 +16492,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/EntityCustomizationWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -15746,7 +16530,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/EntityCustomizationWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -15788,7 +16572,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/EntityCustomizationWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -15826,7 +16610,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/EntityCustomizationWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -15869,7 +16653,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -15929,7 +16713,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -15987,7 +16771,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -16051,7 +16835,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -16115,7 +16899,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -16170,7 +16954,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/AccountWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -16232,7 +17016,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
             <con:request/>
             <con:originalUri>http://localhost/opencell/api/rest/catalogManagement/productSpecification</con:originalUri>
             <con:credentials>
@@ -16257,7 +17041,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
             <con:request/>
             <con:originalUri>http://localhost/opencell/api/rest/catalogManagement/productSpecification/TM_2_OFFER1</con:originalUri>
             <con:credentials>
@@ -16280,7 +17064,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
             <con:request/>
             <con:originalUri>http://localhost/opencell/api/rest/catalogManagement/productOffering</con:originalUri>
             <con:credentials>
@@ -16301,7 +17085,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
             <con:request/>
             <con:originalUri>http://localhost/opencell/api/rest/catalogManagement/productOffering/TM_2_OFFER1</con:originalUri>
             <con:credentials>
@@ -16327,7 +17111,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
-            <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
             <con:request>{
    "description":"${#Project#entityPrefix}_${#TestSuite#index}_Product_Order",
    "orderDate":"2015-10-25T15:50:48+08",
@@ -16559,7 +17343,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
-            <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
             <con:request>{
    "description":"${#Project#entityPrefix}_${#TestSuite#index}_Product_Order",
    "orderDate":"2015-10-25T15:50:48+08",
@@ -16814,7 +17598,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/SubscriptionWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/SubscriptionWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -16985,7 +17769,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/SubscriptionWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/SubscriptionWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -17056,7 +17840,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
-            <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
             <con:request>{
    "description":"${#Project#entityPrefix}_${#TestSuite#index} subscription modification",
    "orderDate":"2016-07-20T15:50:48+08",
@@ -17148,7 +17932,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/SubscriptionWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/SubscriptionWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -17396,7 +18180,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
-            <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
             <con:request>{
    "description":"${#Project#entityPrefix}_${#TestSuite#index} subscription modification - service termination",
    "orderDate":"2016-07-21T15:50:48+08",
@@ -17469,7 +18253,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/SubscriptionWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/SubscriptionWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -17735,7 +18519,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
-            <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
             <con:request>{
    "description":"${#Project#entityPrefix}_${#TestSuite#index} product instance modification",
    "orderDate":"2016-07-20T15:50:48+08",
@@ -17784,7 +18568,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
-            <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
             <con:request>{
    "description":"${#Project#entityPrefix}_${#TestSuite#index} subscription deletion - subscription termination",
    "orderDate":"2016-07-21T15:50:48+08",
@@ -17846,7 +18630,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/SubscriptionWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/SubscriptionWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -18115,7 +18899,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
             <con:request/>
             <con:originalUri>http://localhost/opencell/api/rest/orderManagement/productOrder</con:originalUri>
             <con:credentials>
@@ -18139,7 +18923,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
-            <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
             <con:request>{
    "description":"${#Project#entityPrefix}_${#TestSuite#index}_Product_Quote",
    "quoteDate":"2015-10-25T15:50:48+08",
@@ -18213,7 +18997,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
-            <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
             <con:request>{
    "description":"${#Project#entityPrefix}_${#TestSuite#index}_Product_Quote multi item",
    "quoteDate":"2015-10-25T15:50:48+08",
@@ -18485,7 +19269,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
             <con:request/>
             <con:originalUri>http://localhost/opencell/api/rest/quoteManagement/productQuote/placeOrder/cddba703-f378-4989-86f0-aaf0171dea05</con:originalUri>
             <con:credentials>
@@ -18751,7 +19535,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
-            <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
             <con:request>{
    "description":"${#Project#entityPrefix}_${#TestSuite#index}_Product_Quote multi item",
    "quoteDate":"2015-10-25T15:50:48+08",
@@ -19021,7 +19805,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
-            <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
             <con:request>{
    "description":"${#Project#entityPrefix}_${#TestSuite#index}_Product_Quote",
    "quoteDate":"2015-10-25T15:50:48+08",
@@ -19105,7 +19889,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
-            <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
             <con:request>{
    "description":"${#Project#entityPrefix}_${#TestSuite#index}_Product_Quote multi item",
    "quoteDate":"2015-10-25T15:50:48+08",
@@ -19377,7 +20161,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
-            <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
             <con:request>{
    "description":"${#Project#entityPrefix}_${#TestSuite#index}_Product_Order",
    "orderDate":"2015-10-25T15:50:48+08",
@@ -19653,7 +20437,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/InvoiceWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/InvoiceWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -19724,7 +20508,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/InvoiceWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/InvoiceWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -19777,7 +20561,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/SubscriptionWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/SubscriptionWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -19823,7 +20607,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/InvoiceWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/InvoiceWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -19876,7 +20660,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/SubscriptionWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/SubscriptionWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -19919,7 +20703,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/InvoiceWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/InvoiceWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -19972,7 +20756,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/SubscriptionWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/SubscriptionWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -20014,7 +20798,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/InvoiceWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/InvoiceWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -20085,7 +20869,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/InvoiceWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/InvoiceWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -20139,7 +20923,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
-            <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
             <con:request>{
    "description":"${#Project#entityPrefix}_${#TestSuite#index} subscription modification",
    "orderDate":"2016-07-20T15:50:48+08",
@@ -20248,7 +21032,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/InvoiceWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/InvoiceWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -20319,7 +21103,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/InvoiceWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/InvoiceWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -20373,7 +21157,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
-            <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
             <con:request>{
    "description":"${#Project#entityPrefix}_${#TestSuite#index} subscription modification - service termination",
    "orderDate":"2016-07-21T15:50:48+08",
@@ -20463,7 +21247,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/InvoiceWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/InvoiceWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -20534,7 +21318,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/InvoiceWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/InvoiceWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -20588,7 +21372,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
-            <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
             <con:request>{
    "description":"${#Project#entityPrefix}_${#TestSuite#index} subscription deletion - subscription termination",
    "orderDate":"2016-07-21T15:50:48+08",
@@ -20667,7 +21451,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/InvoiceWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/InvoiceWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -20738,7 +21522,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoEndpoint}/InvoiceWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/InvoiceWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -20840,7 +21624,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
   </con:testSuite>
   <con:properties>
     <con:property>
-      <con:name>meveoEndpoint</con:name>
+      <con:name>meveoUrl</con:name>
       <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
     </con:property>
     <con:property>
