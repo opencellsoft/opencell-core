@@ -44,6 +44,7 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
             responseBuilder = Response.status(Response.Status.BAD_REQUEST);
             responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
+            log.error("Failed to execute API", e);
             responseBuilder = Response.status(Response.Status.BAD_REQUEST);
             responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION
                     : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
@@ -72,6 +73,7 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
             responseBuilder = Response.status(Response.Status.BAD_REQUEST);
             responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
+            log.error("Failed to execute API", e);
             responseBuilder = Response.status(Response.Status.BAD_REQUEST);
             responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION
                     : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
@@ -98,6 +100,7 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
 //            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
 //            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
+            log.error("Failed to execute API", e);
             responseBuilder = Response.status(Response.Status.BAD_REQUEST);
             responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION
                     : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
@@ -125,6 +128,7 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
             responseBuilder = Response.status(Response.Status.BAD_REQUEST);
             responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
+            log.error("Failed to execute API", e);
             responseBuilder = Response.status(Response.Status.BAD_REQUEST);
             responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION
                     : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
@@ -156,6 +160,7 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
             responseBuilder = Response.status(Response.Status.BAD_REQUEST);
             responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
+            log.error("Failed to execute API", e);
             responseBuilder = Response.status(Response.Status.BAD_REQUEST);
             responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION
                     : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
@@ -185,6 +190,7 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
             responseBuilder = Response.status(Response.Status.BAD_REQUEST);
             responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
+            log.error("Failed to execute API", e);
             responseBuilder = Response.status(Response.Status.BAD_REQUEST);
             responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION
                     : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
