@@ -1122,7 +1122,8 @@
    		 <addColumn tableName="BILLING_INVOICE">
 			<column name="pdf_generated" type="${type.boolean}" defaultValueNumeric="0"  />
       	</addColumn> 
-      	<sql>update BILLING_INVOICE set pdf_generated = (pdf is not null) </sql>
+      	<sql>update BILLING_INVOICE set pdf_generated = 0 where pdf is not null </sql>
+      	<sql>update BILLING_INVOICE set pdf_generated = 1 where pdf is not null </sql>
     </changeSet>
         
 	<changeSet id="#2486_20170402" author="AndriusKarpavicius">
