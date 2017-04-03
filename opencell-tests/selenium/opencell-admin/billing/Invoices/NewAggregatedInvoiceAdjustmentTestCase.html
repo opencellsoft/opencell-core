@@ -13,7 +13,7 @@
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
-	<td>${Invoices}</td>
+	<td>${AggregateInvoices}</td>
 	<td></td>
 </tr>
 <tr>
@@ -22,183 +22,63 @@
 	<td></td>
 </tr>
 <tr>
-	<td>assertText</td>
-	<td>//a[contains(text(),'${InvoiceNumberValue}')]</td>
-	<td>${InvoiceNumberValue}</td>
-</tr>
-<tr>
-	<td>verifyText</td>
-	<td>//a[contains(text(),'${InvoiceNumberValue}')]</td>
-	<td>${InvoiceNumberValue}</td>
+	<td>click</td>
+	<td>//div[@id='formId:tabView:invoiceType_entity']/div[3]/span</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//a[contains(text(),'${InvoiceNumberValue}')]</td>
+	<td>id=formId:tabView:invoiceType_entity_4</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForText</td>
-	<td>css=span.ui-panel-title</td>
-	<td>Invoice</td>
+	<td>click</td>
+	<td>id=formId:tabView:billingAccountSelectedId_selectLink</td>
+	<td></td>
 </tr>
 <tr>
-	<td>assertText</td>
-	<td>css=span.ui-panel-title</td>
-	<td>Invoice</td>
+	<td>click</td>
+	<td>//tbody[@id='billingAccountPopuppopupForm:billingAccountPopupdatatable_data']/tr/td</td>
+	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
-	<td>css=span.ui-panel-title</td>
-	<td>Invoice</td>
+	<td>click</td>
+	<td>id=formId:tabView:j_idt216</td>
+	<td></td>
 </tr>
 <tr>
-	<td>assertText</td>
-	<td>//a[contains(text(),'${BillingAccountCode}')]</td>
-	<td>${BillingAccountCode}</td>
+	<td>click</td>
+	<td>id=invoicePopuppopupForm:buttonSearch</td>
+	<td></td>
 </tr>
 <tr>
-	<td>verifyText</td>
-	<td>//a[contains(text(),'${BillingAccountCode}')]</td>
-	<td>${BillingAccountCode}</td>
+	<td>click</td>
+	<td>//div[@id='invoicePopup']/div/a/span</td>
+	<td></td>
 </tr>
 <tr>
-	<td>assertElementPresent</td>
-	<td>${NewAggregatedInvoiceAdjustment}</td>
+	<td>click</td>
+	<td>//div[@id='formId:tabView:selectedInvoiceCatOrSubCat_a']/div[3]/span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=formId:tabView:selectedInvoiceCatOrSubCat_a_2</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=formId:tabView:amountWithoutTax</td>
+	<td>10</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=formId:tabView:j_idt340</td>
 	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>${NewAggregatedInvoiceAdjustment}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForText</td>
-	<td>css=span.ui-panel-title</td>
-	<td>Invoice Adjustment</td>
-</tr>
-<tr>
-	<td>assertText</td>
-	<td>css=span.ui-panel-title</td>
-	<td>Invoice Adjustment</td>
-</tr>
-<tr>
-	<td>verifyText</td>
-	<td>css=span.ui-panel-title</td>
-	<td>Invoice Adjustment</td>
-</tr>
-<tr>
-	<td>assertText</td>
-	<td>//a[contains(text(),'${InvoiceNumberValue}')]</td>
-	<td>${InvoiceNumberValue}</td>
-</tr>
-<tr>
-	<td>verifyText</td>
-	<td>//a[contains(text(),'${InvoiceNumberValue}')]</td>
-	<td>${InvoiceNumberValue}</td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${InvoiceDateBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${InvoiceDate}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${InvoiceDate}</td>
-	<td>${InvoiceDateValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${DueDateBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${DueDate}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${DueDate}</td>
-	<td>${DueDateValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertText</td>
-	<td>//div[@id='formId:invoiceAdjustmentLinePanel_header']/span</td>
-	<td>Invoice Adjustment Line</td>
-</tr>
-<tr>
-	<td>verifyText</td>
-	<td>//div[@id='formId:invoiceAdjustmentLinePanel_header']/span</td>
-	<td>Invoice Adjustment Line</td>
-</tr>
-<tr>
-	<td>assertText</td>
-	<td>css=tr.ui-widget-content.ui-datatable-even &gt; td</td>
-	<td>${SubcategoryValue}</td>
-</tr>
-<tr>
-	<td>verifyText</td>
-	<td>css=tr.ui-widget-content.ui-datatable-even &gt; td</td>
-	<td>${SubcategoryValue}</td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${AmountWithoutTaxesBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${AmountWithoutTaxes}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${AmountWithoutTaxes}</td>
-	<td>${AmountWithoutTaxesValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>if</td>
-	<td>${AmountWithTaxesBool}==true</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${AmountWithTaxes}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${AmountWithTaxes}</td>
-	<td>${AmountWithTaxesValue}</td>
-</tr>
-<tr>
-	<td>endIf</td>
-	<td></td>
-	<td></td>
-</tr>
-<tr>
-	<td>clickAndWait</td>
-	<td>${SaveInvoiceAdjustment}</td>
+	<td>id=formId:j_idt368:saveButtonAjax</td>
 	<td></td>
 </tr>
 <tr>
