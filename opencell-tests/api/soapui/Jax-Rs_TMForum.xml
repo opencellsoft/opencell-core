@@ -20789,6 +20789,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
         <con:value>9</con:value>
       </con:property>
     </con:properties>
+    <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
   </con:testSuite>
   <con:testSuite id="6809dbe0-41aa-461c-99a7-cd21e1c5ef56" name="Cleanup">
     <con:settings/>
