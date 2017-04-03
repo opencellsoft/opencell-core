@@ -22,7 +22,7 @@ public class PerformanceInterceptor {
 			return obj;
 		} finally {
 			long time = System.nanoTime() - beforeTime;
-			log.info("{}.{} total runTime={}", new Object[] { ctx.getClass(), ctx.getMethod(), time });
+			log.debug("{}.{} total runTime={}", new Object[] { ctx.getClass(), ctx.getMethod(), time });
 		}
 	}
 
