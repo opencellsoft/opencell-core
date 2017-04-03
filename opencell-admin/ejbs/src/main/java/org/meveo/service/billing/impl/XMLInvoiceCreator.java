@@ -199,9 +199,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			// create string from xml tree
 			DOMSource source = new DOMSource(doc);
 
-			File billingRundir = new File(invoiceService.getBillingRunPath(invoice));
-			billingRundir.mkdirs();
-			File xmlFile = new File(billingRundir.getPath() + File.separator + invoiceService.getInvoiceXMLFilename(invoice));
+			File xmlFile = new File(invoiceService.getFullXmlFilePath(invoice, true));
 
 			StreamResult result = new StreamResult(xmlFile);
 

@@ -377,10 +377,6 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 		return invoiceAgregateService.findDiscountAggregates(entity);
 	}
 
-	public File getXmlInvoiceDir() {	
-		return new File(invoiceService.getBillingRunPath(getEntity().getBillingRun(), getEntity().getInvoiceDate()));
-	}
-
 	public void generateXMLInvoice() throws BusinessException {
 		try {
 		    entity=invoiceService.refreshOrRetrieve(entity);          
@@ -394,27 +390,22 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 	}
 
 	public String downloadXMLInvoice() {
-		String thePrefix =""; 
-		if(getEntity().getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode())){
-			thePrefix =paramBean.getProperty("invoicing.invoiceAdjustment.prefix", "_IA_"); 
-		}
-		String fileName = thePrefix+(entity.getInvoiceNumber() != null ? entity.getInvoiceNumber() : entity
-				.getTemporaryInvoiceNumber()) + ".xml";
+		String fileName = invoiceService.getFullXmlFilePath(entity, false);
 
 		return downloadXMLInvoice(fileName);
 	}
 
 	public String downloadXMLInvoiceAdjustment() {
-		String fileName = paramBean.getProperty("invoicing.invoiceAdjustment.prefix", "_IA_")
-				+ entity.getInvoiceNumber() + ".xml";
+		String fileName = invoiceService.getFullAdjustmentXmlFilePath(entity);
 
 		return downloadXMLInvoice(fileName);
 	}
 
 	public String downloadXMLInvoice(String fileName) {
 		log.info("start to download...");
-
-		File file = new File(getXmlInvoiceDir().getAbsolutePath() + File.separator + fileName);
+	
+		File file = new File(fileName);
+		
 		OutputStream out = null;
 		InputStream fin = null;
 		try {
@@ -422,7 +413,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 			HttpServletResponse res = (HttpServletResponse) context.getExternalContext().getResponse();
 			res.setContentType("application/force-download");
 			res.setContentLength((int) file.length());
-			res.addHeader("Content-disposition", "attachment;filename=\"" + fileName + "\"");
+			res.addHeader("Content-disposition", "attachment;filename=\"" + file.getName() + "\"");
 
 			 out = res.getOutputStream();
 			 fin = new FileInputStream(file);
