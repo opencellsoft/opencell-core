@@ -45,7 +45,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InvoiceJasperNotFoundException;
 import org.meveo.admin.exception.InvoiceXmlNotFoundException;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.Auditable;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
@@ -85,8 +84,6 @@ import org.primefaces.model.LazyDataModel;
 public class InvoiceBean extends CustomFieldBean<Invoice> {
 
 	private static final long serialVersionUID = 1L;
-
-	private ParamBean paramBean = ParamBean.getInstance();
 
 	/**
 	 * Injected
@@ -350,18 +347,20 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
 	public void deleteInvoicePdf() {
 		try {
-			invoiceService.deleteInvoicePdf(entity);
-			messages.info(new BundleKey("messages", "delete.successful"));
+		    entity = invoiceService.refreshOrRetrieve(entity);
+			entity = invoiceService.deleteInvoicePdf(entity);
+			messages.info(new BundleKey("messages", "invoice.pdfDelete.successful"));
 		} catch (Exception e) {
-			log.error("failed to generate PDF ", e);
+			log.error("failed to delete PDF ", e);
+            messages.error(new BundleKey("messages", "invoice.pdfDelete.failed"));
 		}
 	}
 
 	public void generatePdf() {
 		try {
 
-            entity=invoiceService.refreshOrRetrieve(entity);			
-            invoiceService.produceInvoicePdf(entity);			
+            entity = invoiceService.refreshOrRetrieve(entity);
+            entity = invoiceService.produceInvoicePdf(entity);			
 			messages.info(new BundleKey("messages", "invoice.pdfGeneration"));
 			
 		} catch (InvoiceXmlNotFoundException e) {
@@ -455,9 +454,9 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
         boolean fileDeleted = invoiceService.deleteInvoiceXml(getEntity());
         if (fileDeleted) {
-            messages.info(new BundleKey("messages", "delete.successful"));
+            messages.info(new BundleKey("messages", "invoice.xmlDelete.successful"));
         } else {
-            messages.info(new BundleKey("messages", "error.delete.unexpected"));
+            messages.info(new BundleKey("messages", "invoice.xmlDelete.failed"));
         }
     }
 
@@ -683,11 +682,9 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 		invoiceService.update(entity.getAdjustedInvoice());
 
 		invoiceService.commit();
-		// create xml invoice adjustment
-		invoiceService.produceInvoiceXml(entity);
-		
-		// create pdf
-		invoiceService.produceInvoicePdf(entity);
+
+		// create xml and pdf for invoice adjustment
+		entity = invoiceService.generateXmlAndPdfInvoice(entity);
 
 		return "/pages/billing/invoices/invoiceDetail.jsf?objectId=" + entity.getAdjustedInvoice().getId() + "&cid="
 				+ conversation.getId() + "&faces-redirect=true&includeViewParams=true";

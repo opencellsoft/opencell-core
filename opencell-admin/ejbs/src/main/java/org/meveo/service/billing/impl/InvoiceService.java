@@ -68,6 +68,8 @@ import org.jboss.vfs.VFS;
 import org.jboss.vfs.VFSUtils;
 import org.jboss.vfs.VirtualFile;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ImportInvoiceException;
+import org.meveo.admin.exception.InvoiceExistException;
 import org.meveo.admin.exception.InvoiceJasperNotFoundException;
 import org.meveo.admin.exception.InvoiceXmlNotFoundException;
 import org.meveo.admin.job.PDFParametersConstruction;
@@ -106,6 +108,7 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.order.OrderService;
 import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -163,7 +166,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @Inject
     private OrderService orderService;
 	
-
+    @Inject
+    private RecordedInvoiceService recordedInvoiceService;
 
 	private String PDF_DIR_NAME = "pdf";
 	private String ADJUSTEMENT_DIR_NAME = "invoiceAdjustmentPdf";
@@ -553,9 +557,28 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	    Invoice invoice = findById(invoiceId);
 	    produceInvoicePdf(invoice);
 	}
-   
-   public void produceInvoicePdf(Invoice invoice) throws BusinessException  {
-        
+
+    /**
+     * Produce invoice's XML file and update invoice record in DB
+     * 
+     * @param invoice Invoice
+     * @return XML File
+     * @throws BusinessException
+     */
+    public Invoice produceInvoicePdf(Invoice invoice) throws BusinessException {
+
+        produceInvoicePdfNoUpdate(invoice);
+        invoice = updateNoCheck(invoice);
+        return invoice;
+    }
+
+    /**
+     * Produce invoice 
+     * @param invoice
+     * @throws BusinessException
+     */
+    public void produceInvoicePdfNoUpdate(Invoice invoice) throws BusinessException {
+
         String meveoDir = paramBean.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator;
         String invoiceXmlFileName = getFullXmlFilePath(invoice, false);
         Map<String, Object> parameters = pDFParametersConstruction.constructParameters(invoice);
@@ -653,31 +676,33 @@ public class InvoiceService extends PersistenceService<Invoice> {
             if(invoice.getInvoiceNumber() == null){            	
             	 PdfWaterMark.add(pdfFileName, paramBean.getProperty("invoice.pdf.waterMark", "PROFORMA"), null);
             }            
-            invoice.setPdfGenerated(true);
-            update(invoice);     
+            invoice.setPdfGenerated(true);            
+            
         } catch (IOException |JRException | XPathExpressionException | TransformerException | ParserConfigurationException | SAXException e) {
             throw new BusinessException("Failed to generate a PDF file " + pdfFileName, e);
         }		
 	}
-   
 
-   /**
-    * Delete invoice's PDF file
-    * 
-    * @param invoice Invoice
-    * @return True if file was deleted
-    */
-   public boolean deleteInvoicePdf(Invoice invoice) {
+    /**
+     * Delete invoice's PDF file
+     * 
+     * @param invoice Invoice
+     * @return True if file was deleted
+     * @throws BusinessException
+     */
+    public Invoice deleteInvoicePdf(Invoice invoice) throws BusinessException {
 
-       String pdfFilename = getFullPdfFilePath(invoice, false);
+        invoice.setPdfGenerated(false);
+        invoice = update(invoice);
 
-       File file = new File(pdfFilename);
-       if (file.exists()) {
-           return file.delete();
-       } else {
-           return true;
-       }
-   }
+        String pdfFilename = getFullPdfFilePath(invoice, false);
+
+        File file = new File(pdfFilename);
+        if (file.exists()) {
+            file.delete();
+        }
+        return invoice;
+    }
 
 	private File getJasperTemplateFile(String resDir, String billingTemplate, PaymentMethodEnum paymentMethod,boolean isInvoiceAdjustment) {
 		String pdfDirName = new StringBuilder(resDir).append(File.separator).append(billingTemplate)
@@ -1079,7 +1104,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * Produce invoice's XML file
      * 
      * @param invoice Invoice
-     * @param refreshInvoice Should invoice be refreshed
      * @return XML File
      * @throws BusinessException
      */
@@ -1145,7 +1169,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         String xmlFileName = getFullXmlFilePath(invoice, false);
         File xmlFile = new File(xmlFileName);
         if (!xmlFile.exists()) {
-            produceInvoiceXml(invoice);
+            throw new BusinessException("Invoice XML was not produced yet for invoice " + invoice.getInvoiceNumberOrTemporaryNumber());
         }
 
         Scanner scanner = null;
@@ -1189,14 +1213,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param invoice Invoice
      * @return Invoice's PDF file contents as a byte array
      * @throws BusinessException
-     * @throws FileNotFoundException
      */
     public byte[] getInvoicePdf(Invoice invoice) throws BusinessException {
 
         String pdfFileName = getFullPdfFilePath(invoice, false);
         File pdfFile = new File(pdfFileName);
         if (!pdfFile.exists()) {
-            produceInvoicePdf(invoice);
+            throw new BusinessException("Invoice PDF was not produced yet for invoice " + invoice.getInvoiceNumberOrTemporaryNumber());
         }
 
         FileInputStream fileInputStream = null;
@@ -1231,10 +1254,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param invoice Invoice
      * @throws BusinessException
      */
-	public void generateXmlAndPdfInvoice(Invoice invoice) throws BusinessException {
+	public Invoice generateXmlAndPdfInvoice(Invoice invoice) throws BusinessException {
 		
 	    produceInvoiceXml(invoice);		
-		produceInvoicePdf(invoice);		
+		invoice = produceInvoicePdf(invoice);		
+		return invoice;
 	}
 	
 	public Invoice getLinkedInvoice(Invoice invoice){
@@ -1267,10 +1291,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	 * @param lastTransactionDate
 	 * @param ratedTxFilter
 	 * @param orderNumber Order number associated to subscription
+	 * @param isDraft Is it a draft
+	 * @param produceXml Produce invoice XML file
+	 * @param producePdf Produce invoice PDF file
+	 * @param generateAO Generate AOs
 	 * @return
 	 * @throws BusinessException
+	 * @throws ImportInvoiceException 
+	 * @throws InvoiceExistException 
 	 */
-	public Invoice generateInvoice(BillingAccount billingAccount,Date invoiceDate, Date lastTransactionDate,Filter ratedTxFilter,String orderNumber,boolean isDraft) throws BusinessException {
+	public Invoice generateInvoice(BillingAccount billingAccount,Date invoiceDate, Date lastTransactionDate,Filter ratedTxFilter,String orderNumber,boolean isDraft, boolean produceXml, boolean producePdf, boolean generateAO) throws BusinessException, InvoiceExistException, ImportInvoiceException {
 
 		if (StringUtils.isBlank(billingAccount)) {
 			throw new BusinessException("billingAccount is null");
@@ -1307,6 +1337,19 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		if(!isDraft){
 			invoice.setInvoiceNumber(getInvoiceNumber(invoice));
 		}						
+		
+		if (produceXml){
+		    produceInvoiceXml(invoice);
+		}
+		
+		if (producePdf){
+		    produceInvoicePdfNoUpdate(invoice);
+		}
+		
+		if (generateAO){
+		    recordedInvoiceService.generateRecordedInvoice(invoice);
+		}
+		
 		update(invoice);						
 		
 		return invoice;

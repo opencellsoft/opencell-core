@@ -24,7 +24,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ImportInvoiceException;
@@ -40,17 +39,13 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.billing.impl.InvoiceService;
 
 /**
  * RecordedInvoice service implementation.
  */
 @Stateless
 public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> {
-	
-	@Inject
-	private InvoiceService invoiceService;
-	
+		
 	public void addLitigation(Long recordedInvoiceId)
 			throws BusinessException {
 		if (recordedInvoiceId == null) {
@@ -263,6 +258,5 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 		recordedInvoice.setMatchingStatus(MatchingStatusEnum.O);
 		create(recordedInvoice);
 		invoice.setRecordedInvoice(recordedInvoice);
-		invoiceService.updateNoCheck(invoice);
 	}
 }

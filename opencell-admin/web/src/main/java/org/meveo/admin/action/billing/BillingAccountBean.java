@@ -56,7 +56,6 @@ import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.payments.impl.CustomerAccountService;
-import org.meveo.service.payments.impl.RecordedInvoiceService;
 
 /**
  * Standard backing bean for {@link BillingAccount} (extends {@link BaseBean}
@@ -96,11 +95,6 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
 	@Inject
 	private CustomerAccountService customerAccountService;
-
-	@Inject
-	private RecordedInvoiceService recordedInvoiceService;
-
-
 
 	/** Selected billing account in exceptionelInvoicing page. */
 	private ListItemsSelector<BillingAccount> itemSelector;
@@ -252,9 +246,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 	public String generateInvoice() {
 		log.info("generateInvoice billingAccountId:" + entity.getId());
 		try {
-			Invoice invoice = invoiceService.generateInvoice(entity, new Date(), new Date(), null, null,false);
-       	    invoiceService.generateXmlAndPdfInvoice(invoice);
-        	recordedInvoiceService.generateRecordedInvoice(invoice);
+			Invoice invoice = invoiceService.generateInvoice(entity, new Date(), new Date(), null, null,false, true, true, true);
 
 			messages.info(new BundleKey("messages", "generateInvoice.successful"),invoice.getInvoiceNumber());
 			
@@ -276,6 +268,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
     public void generatePDF(long invoiceId) throws BusinessException {
 
         Invoice invoice = invoiceService.findById(invoiceId);
+        invoice = invoiceService.produceInvoicePdf(invoice);
         byte[] invoicePdf = invoiceService.getInvoicePdf(invoice);
 
         FacesContext context = FacesContext.getCurrentInstance();

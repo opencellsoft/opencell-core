@@ -37,7 +37,10 @@ public class UnitAccountOperationsGenerationJobBean {
 		try {
 			Invoice invoice = invoiceService.findById(id);
 			recordedInvoiceService.generateRecordedInvoice(invoice);
+			invoiceService.update(invoice);
+			
 			result.registerSucces();
+			
 		} catch (Exception e) {
 			log.error("Failed to generate acount operations", e);
 			result.registerError(e.getMessage());

@@ -179,7 +179,7 @@ public class QuoteService extends BusinessService<Quote> {
             Invoice invoice = invoiceService.createAgregatesAndInvoiceVirtual(ratedTransactions, billingAccount, invoiceTypeService.getDefaultQuote());
 
             File xmlInvoiceFile = xmlInvoiceCreator.createXMLInvoice(invoice, true);
-            invoiceService.produceInvoicePdf(invoice);
+            invoiceService.produceInvoicePdfNoUpdate(invoice);
 
             // Clean up data (left only the methods that remove FK data that would fail to persist in case of virtual operations)
             // invoice.setBillingAccount(null);

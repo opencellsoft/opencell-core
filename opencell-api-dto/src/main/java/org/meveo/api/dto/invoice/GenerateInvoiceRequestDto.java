@@ -29,9 +29,9 @@ public class GenerateInvoiceRequestDto {
 	@XmlElement()
 	private String orderNumber;
 	
-	private Boolean generateXML;
-	private Boolean generatePDF;
-	private Boolean generateAO;	
+	private Boolean generateXML = true;
+	private Boolean generatePDF = true;
+	private Boolean generateAO = true;	
 	
 	public GenerateInvoiceRequestDto(){
 		

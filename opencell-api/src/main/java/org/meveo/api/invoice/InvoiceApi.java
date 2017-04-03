@@ -65,7 +65,6 @@ import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
-import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.meveo.util.MeveoParamBean;
 
 @Stateless
@@ -100,10 +99,7 @@ public class InvoiceApi extends BaseApi {
 
 	@Inject
 	private FilteredListApi filteredListApi;
-	
-	@Inject
-	private RecordedInvoiceService recordedInvoiceService;
-	
+		
 	@Inject
 	@MeveoParamBean
 	private ParamBean paramBean;
@@ -510,33 +506,26 @@ public class InvoiceApi extends BaseApi {
 			if(ratedTransactionFilter == null){
 				throw new EntityDoesNotExistsException(Filter.class, generateInvoiceRequestDto.getFilter().getCode());
 			}
-		}		
-		Invoice invoice = invoiceService.generateInvoice(billingAccount, generateInvoiceRequestDto.getInvoicingDate() , generateInvoiceRequestDto.getLastTransactionDate(), 
-				ratedTransactionFilter, generateInvoiceRequestDto.getOrderNumber(), isDraft);				
+        }
+
+        if (isDraft) {
+            if (generateInvoiceRequestDto.getGeneratePDF() == null) {
+                generateInvoiceRequestDto.setGeneratePDF(Boolean.TRUE);
+            }
+            if (generateInvoiceRequestDto.getGenerateAO() != null) {
+                generateInvoiceRequestDto.setGenerateAO(Boolean.FALSE);
+            }
+        }
+        
+        boolean produceXml =  (generateInvoiceRequestDto.getGenerateXML() != null && generateInvoiceRequestDto.getGenerateXML())
+                || (generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF());
+        boolean producePdf = (generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF());
+        boolean generateAO = generateInvoiceRequestDto.getGenerateAO() != null && generateInvoiceRequestDto.getGenerateAO();
+		
+        Invoice invoice = invoiceService.generateInvoice(billingAccount, generateInvoiceRequestDto.getInvoicingDate() , generateInvoiceRequestDto.getLastTransactionDate(), 
+				ratedTransactionFilter, generateInvoiceRequestDto.getOrderNumber(), isDraft, produceXml, producePdf, generateAO);				
 		invoiceService.commit();
-		
-		if(isDraft){
-			if(generateInvoiceRequestDto.getGeneratePDF() == null){
-				generateInvoiceRequestDto.setGeneratePDF(Boolean.TRUE);
-			}
-			if(generateInvoiceRequestDto.getGenerateAO() != null){
-				generateInvoiceRequestDto.setGenerateAO(Boolean.FALSE);
-			}
-        }
-		
-        if ((generateInvoiceRequestDto.getGenerateXML() != null && generateInvoiceRequestDto.getGenerateXML())
-                || (generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF())) {
-            invoiceService.produceInvoiceXml(invoice);
-        }
-        
-        if ((generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF())) {
-            invoiceService.produceInvoicePdf(invoice);
-        }
-        
-        if (generateInvoiceRequestDto.getGenerateAO() != null && generateInvoiceRequestDto.getGenerateAO()) {
-            recordedInvoiceService.generateRecordedInvoice(invoice);
-        }
-        
+		        
         GenerateInvoiceResultDto generateInvoiceResultDto = createGenerateInvoiceResultDto(invoice, true);
         if(isDraft){        	
         	invoiceService.cancelInvoice(invoice);
