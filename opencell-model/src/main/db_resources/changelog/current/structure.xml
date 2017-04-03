@@ -1117,6 +1117,13 @@
         <addUniqueConstraint columnNames="code" constraintName="uk_cust_cet" deferrable="false" disabled="false"
             initiallyDeferred="false" tableName="cust_cet" />
     </changeSet>
+    
+    <changeSet id="#2496_20170402" author="anasseh">
+   		 <addColumn tableName="BILLING_INVOICE">
+			<column name="pdf_generated" type="${type.boolean}" defaultValueNumeric="0"  />
+      	</addColumn> 
+      	<sql>update BILLING_INVOICE set pdf_generated = (pdf is not null) </sql>
+    </changeSet>
         
 	<changeSet id="#2486_20170402" author="AndriusKarpavicius">
         <dropColumn tableName="BILLING_INVOICE" columnName="PDF"/>

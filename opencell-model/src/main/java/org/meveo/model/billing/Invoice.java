@@ -173,6 +173,11 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
     @ManyToOne
     @JoinColumn(name = "QUOTE_ID")
     private Quote quote;
+    
+	@Type(type="numeric_boolean")
+    @Column(name = "PDF_GENERATED")
+	private boolean isPdfGenerated = false;
+    
 
 	@Transient
 	private Long invoiceAdjustmentCurrentSellerNb;
@@ -559,6 +564,14 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
 	 */
 	public void setQuote(Quote quote) {
 		this.quote = quote;
+	}
+
+	public boolean isPdfGenerated() {
+		return isPdfGenerated;
+	}
+
+	public void setPdfGenerated(boolean isPdfGenerated) {
+		this.isPdfGenerated = isPdfGenerated;
 	}
     
 }
