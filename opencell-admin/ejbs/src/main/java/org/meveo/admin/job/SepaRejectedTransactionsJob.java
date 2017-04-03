@@ -40,7 +40,7 @@ public class SepaRejectedTransactionsJob extends Job {
 
     ParamBean param = ParamBean.getInstance();
 
-    String importDir =  param.getProperty("providers.rootDir", "/tmp/meveo");
+    String importDir =  param.getProperty("providers.rootDir", "./opencelldata");
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @Override

@@ -67,7 +67,7 @@ public class NotificationBean extends BaseNotificationBean<ScriptNotification> {
 	private StrategyImportTypeEnum strategyImportType;
 	
 	CsvBuilder csv = null;
-	private String providerDir = paramBean.getProperty("providers.rootDir", "/tmp/meveo_integr");
+	private String providerDir = paramBean.getProperty("providers.rootDir", "./opencelldata");
 	private String existingEntitiesCsvFile = null;
 
 	public NotificationBean() {

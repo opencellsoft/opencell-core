@@ -118,7 +118,7 @@ public class ImportCustomersJobBean {
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	public void execute(JobExecutionResultImpl result) {
 
-		String importDir = param.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + appProvider.getCode() + File.separator + "imports" + File.separator + "customers"
+		String importDir = param.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator + "imports" + File.separator + "customers"
 				+ File.separator;
 		String dirIN = importDir + "input";
 		log.info("dirIN=" + dirIN);
@@ -427,7 +427,7 @@ public class ImportCustomersJobBean {
 	}
 
 	private void generateReport(String fileName) throws Exception {
-		String importDir = param.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + appProvider.getCode() + File.separator + "imports" + File.separator + "customers"
+		String importDir = param.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator + "imports" + File.separator + "customers"
 				+ File.separator;
 
 		if (sellersWarning.getWarnings() != null) {

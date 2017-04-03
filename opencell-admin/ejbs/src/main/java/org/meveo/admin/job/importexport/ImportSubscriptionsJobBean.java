@@ -82,7 +82,7 @@ public class ImportSubscriptionsJobBean {
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public void execute(JobExecutionResultImpl result) {
 
-		String importDir = paramBean.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator
+		String importDir = paramBean.getProperty("providers.rootDir", "./opencelldata/") + File.separator
 				+ appProvider.getCode() + File.separator + "imports" + File.separator + "subscriptions" + File.separator;
 
 		String dirIN = importDir + "input";
@@ -213,7 +213,7 @@ public class ImportSubscriptionsJobBean {
 	}
 
 	private void generateReport(String fileName) throws Exception {
-		String importDir = paramBean.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator
+		String importDir = paramBean.getProperty("providers.rootDir", "./opencelldata/") + File.separator
 				+ appProvider.getCode() + File.separator + "imports" + File.separator + "subscriptions" + File.separator;
 
 		if (subscriptionsWarning.getWarnings() != null) {

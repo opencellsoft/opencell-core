@@ -61,7 +61,7 @@ public class MeasurableQuantityBean extends BaseBean<MeasurableQuantity> {
 	CsvBuilder csv = null;
     private UploadedFile file; 
 	ParamBean paramBean=ParamBean.getInstance();
-    private String providerDir=paramBean.getProperty("providers.rootDir","/tmp/meveo_integr");
+    private String providerDir=paramBean.getProperty("providers.rootDir","./opencelldata");
     private String existingEntitiesCsvFile=null;
  
     private StrategyImportTypeEnum strategyImportType;

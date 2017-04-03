@@ -1064,7 +1064,7 @@ StringToStringMap headersForSuper = new StringToStringMap();
 
 String supeUserPass = testCase.testSuite.project.getPropertyValue("meveoSuperUsername")+":"+testCase.testSuite.project.getPropertyValue("meveoSuperPassword");
  log.info("userPass="+supeUserPass);
- 
+
 String userPass = testCase.testSuite.project.getPropertyValue("meveoUsername")+":"+testCase.testSuite.project.getPropertyValue("meveoPassword");
  log.info("userPass="+userPass);
 headers.put("Authorization","Basic "+userPass.getBytes().encodeBase64());
@@ -1073,24 +1073,24 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 	for( testCaseItem in testSuiteItem.getTestCaseList() ) {
 	    log.info("Setting basic auth for all WSDL test requests in test case ["+testCaseItem.getName()+"]")
 	    for( testStep in testCaseItem.getTestStepList() ) {
-	    	
+
 	          if (!(testStep instanceof WsdlTestRequestStep || testStep instanceof RestTestRequestStep || testStep instanceof HttpTestRequestStep )){
 	          	continue;
 	          }
-	          
+
 	    		testStep.getTestRequest().setPreemptive(true);
-	    	
+
 
 			if(testStep.getName().contains("AUTHORIZATION_MANUAL")) {
 				testStep.getTestRequest().setRequestHeaders(new StringToStringMap());
-				
+
 		    	} else if (testStep.getName().contains("AUTHORIZATION_ADMIN")) {
 		    		testStep.getTestRequest().setRequestHeaders(headers);
-		    		
-		    	} else if(testCaseItem.getName().contains("AUTHORIZATION_SUPERADMIN") 
+
+		    	} else if(testCaseItem.getName().contains("AUTHORIZATION_SUPERADMIN")
 		    	    || testStep.getName().contains("AUTHORIZATION_SUPERADMIN")){
 		    		testStep.getTestRequest().setRequestHeaders(headersForSuper);
-		    	
+
 		    	} else if(!testStep.getName().contains("AUTHORIZATION_MANUAL")) {
 				testStep.getTestRequest().setRequestHeaders(headers);
 		    	}
@@ -1271,11 +1271,11 @@ public class Mediation_${#Project#baseEntityPrefix}_DuplicatedCheck extends Scri
 		try {
 			messageDigest = MessageDigest.getInstance("MD5");
 		} catch (NoSuchAlgorithmException e) {
-			
+
 		}
 	}
 	EdrService edrService = (EdrService) getServiceInterface("EdrService");
-	
+
 	@Override
 	public void execute(Map&lt;String, Object&gt; initContext) throws BusinessException {
 		log.info("Execute...");
@@ -1286,7 +1286,7 @@ public class Mediation_${#Project#baseEntityPrefix}_DuplicatedCheck extends Scri
 		initContext.put("duplicateFound", Boolean.valueOf(result));
 		log.info("Execute result:"+result);
 	}
-	
+
 	public String getOriginRecord(Object object) {
 		String result = object.toString();
         if (messageDigest != null) {
@@ -1443,7 +1443,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Mediation_${#Project#baseEntityPrefix}_Flow extends org.meveo.service.script.Script {
-	
+
 	private static final Logger log = LoggerFactory.getLogger(Mediation_${#Project#baseEntityPrefix}_Flow.class);
 	ScriptInstanceService scriptInstanceService = (ScriptInstanceService) getServiceInterface("ScriptInstanceService");
 
@@ -1457,11 +1457,11 @@ public class Mediation_${#Project#baseEntityPrefix}_Flow extends org.meveo.servi
 		mediation_RoutingSub = scriptInstanceService.getScriptInterface("org.meveo.service.script.Mediation_${#Project#baseEntityPrefix}_RoutingSub");
 		mediation_CreateEdr = scriptInstanceService.getScriptInterface("org.meveo.service.script.Mediation_${#Project#baseEntityPrefix}_CreateEdr");
 	}
-		
+
 	@Override
 	public void execute(Map<String, Object> initContext) throws BusinessException {
 		log.info("Execute...");
-	
+
 		CDR cdr = (CDR) initContext.get("record");
 
 		try {
@@ -1574,7 +1574,7 @@ public class ${#TestSuite#baseEntityPrefix}_CreateFile extends Script {
 		String fileName = (String) methodContext.get("fileName");
 		if(fileName==null){
 			throw new BusinessException("fileName is missing");
-		} 
+		}
 		String content = (String) methodContext.get("content");
 		String charsetName = (String) methodContext.get("charsetName");
 		if(charsetName==null){
@@ -1582,7 +1582,7 @@ public class ${#TestSuite#baseEntityPrefix}_CreateFile extends Script {
 		}
 		ParamBean parambean = ParamBean.getInstance();
 		Provider appProvider = ((ProviderService)getServiceInterface("ProviderService")).getProvider();
-		String rootDir = parambean.getProperty("providers.rootDir", "/tmp/opencell/") + File.separator + appProvider.getCode() + File.separator;
+		String rootDir = parambean.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator;
 		String outputDir = rootDir+directory;
 		File f = new File(outputDir);
 		if (!f.exists()) {
@@ -1797,7 +1797,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
 				     Subscription sub = subService.findById(accessPoint.getSubscription().getId());
 					List<Object> topTenNumbers = (List)cfService.getCFValue(sub, TOPTEN_CF, cdr.getTimestamp());
 					if(topTenNumbers==null){
-						topTenNumbers = new ArrayList<Object>();	
+						topTenNumbers = new ArrayList<Object>();
 					}
 					if(topTenNumbers.size()<10 || topTenNumbers.contains(cdr.getParam2())){
 						edr.setParameter3("TOPTEN");
@@ -1914,13 +1914,13 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
                mediation_DuplicatedCheck.newInstance().execute(initContext);
 			Boolean duplicateFound = (Boolean)initContext.get("duplicateFound");
 			log.info("duplicateFound:"+duplicateFound);
-			
+
 			if(duplicateFound != null && duplicateFound.booleanValue()){
 				throw new BusinessException("DuplicateFound");
 			}
 			initContext.put("accessUserId",cdr.getAccess_id());
 			mediation_RoutingSub.newInstance().execute(initContext);
-			
+
 			@SuppressWarnings("unchecked")
 			List<Access> accesses = (List<Access>) initContext.get("accesses");
 			if(accesses == null || accesses.isEmpty()){
@@ -1928,7 +1928,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
 			}
 
 			mediation_CreateEdr.newInstance().execute(initContext);
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new BusinessException("ErrTech",e);
@@ -2657,7 +2657,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
                                                             </value>
                                                             <value>
             							                         <stringValue>0304050609</stringValue>
-                                                            </value>			             
+                                                            </value>
                                                             </listValue>
             							             </customField>
     							                 </customFields>
@@ -2716,7 +2716,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
    <soapenv:Body>
       <ws:createAccess>
          <access code="${#TestSuite#entityPrefix}_${#TestSuite#index}_access">
-            <subscription>${#TestSuite#entityPrefix}_${#TestSuite#index}_SUB1</subscription> 
+            <subscription>${#TestSuite#entityPrefix}_${#TestSuite#index}_SUB1</subscription>
          </access>
       </ws:createAccess>
    </soapenv:Body>
@@ -3165,13 +3165,13 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
                mediation_DuplicatedCheck.newInstance().execute(initContext, currentUser);
 			Boolean duplicateFound = (Boolean)initContext.get("duplicateFound");
 			log.info("duplicateFound:"+duplicateFound);
-			
+
 			if(duplicateFound != null && duplicateFound.booleanValue()){
 				throw new BusinessException("DuplicateFound");
 			}
 			initContext.put("accessUserId",cdr.getAccess_id());
 			mediation_RoutingSub.newInstance().execute(initContext, currentUser);
-			
+
 			@SuppressWarnings("unchecked")
 			List<Access> accesses = (List<Access>) initContext.get("accesses");
 			if(accesses == null || accesses.isEmpty()){
@@ -3179,7 +3179,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
 			}
 
 			mediation_CreateEdr.newInstance().execute(initContext, currentUser);
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new BusinessException("ErrTech",e);
@@ -3253,9 +3253,9 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
             <bean name="cdr" class="org.meveo.admin.parse.csv.CDR"/>
            <line delimit=";">
                 <record-element length="0" beanref="cdr.timestamp" type="date">
-                    <conversion-option name="format" value="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"/>                  
+                    <conversion-option name="format" value="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"/>
                 </record-element>
-                <record-element length="0" beanref="cdr.quantity" type="bigDecimal">                 
+                <record-element length="0" beanref="cdr.quantity" type="bigDecimal">
                 </record-element>
                 <record-element length="0" beanref="cdr.access_id" type="char"/>
                 <record-element length="0" beanref="cdr.param1" type="char" />
@@ -3315,7 +3315,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateField>\r
-         
+
          <customField code="${#TestSuite#entityPrefix}" description="TOPTEN_NUMBERS from file">\r
             <fieldType>STRING</fieldType>\r
             <appliesTo>SUB</appliesTo>\r
@@ -3922,7 +3922,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
                                                             </value>
                                                             <value>
             							                         <stringValue>0304050609</stringValue>
-                                                            </value>			             
+                                                            </value>
                                                             </listValue>
             							             </customField>
     							                 </customFields>
@@ -3981,7 +3981,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
    <soapenv:Body>
       <ws:createAccess>
          <access code="${#TestSuite#entityPrefix}_${#TestSuite#index}_access">
-            <subscription>${#TestSuite#entityPrefix}_${#TestSuite#index}_SUB1</subscription> 
+            <subscription>${#TestSuite#entityPrefix}_${#TestSuite#index}_SUB1</subscription>
          </access>
       </ws:createAccess>
    </soapenv:Body>
@@ -4420,7 +4420,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
 	EdrService edrService = (EdrService) getServiceInterface("EdrService");
 	SubscriptionService subService = (SubscriptionService) getServiceInterface("SubscriptionService");
      CustomFieldInstanceService cfService = (CustomFieldInstanceService) getServiceInterface("CustomFieldInstanceService");
-    
+
 	@Override
 	public void execute(Map<String, Object> initContext)throws BusinessException {
 		log.debug("Execute...");
@@ -4581,13 +4581,13 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
                mediation_DuplicatedCheck.newInstance().execute(initContext);
 			Boolean duplicateFound = (Boolean)initContext.get("duplicateFound");
 			log.info("duplicateFound:"+duplicateFound);
-			
+
 			if(duplicateFound != null && duplicateFound.booleanValue()){
 				throw new BusinessException("DuplicateFound");
 			}
 			initContext.put("accessUserId",cdr.getAccess_id());
 			mediation_RoutingSub.newInstance().execute(initContext);
-			
+
 			@SuppressWarnings("unchecked")
 			List<Access> accesses = (List<Access>) initContext.get("accesses");
 			if(accesses == null || accesses.isEmpty()){
@@ -4595,7 +4595,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
 			}
 
 			mediation_CreateEdr.newInstance().execute(initContext);
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new BusinessException("ErrTech",e);
@@ -5313,7 +5313,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
    <soapenv:Body>
       <ws:createAccess>
          <access code="+3312${#TestSuite#entityPrefix}_${#TestSuite#index}">
-            <subscription>${#TestSuite#entityPrefix}_${#TestSuite#index}_SUB1</subscription> 
+            <subscription>${#TestSuite#entityPrefix}_${#TestSuite#index}_SUB1</subscription>
          </access>
       </ws:createAccess>
    </soapenv:Body>
@@ -5357,7 +5357,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
    <soapenv:Body>
       <ws:createAccess>
          <access code="+012${#TestSuite#entityPrefix}_${#TestSuite#index}">
-            <subscription>${#TestSuite#entityPrefix}_${#TestSuite#index}_SUB1</subscription> 
+            <subscription>${#TestSuite#entityPrefix}_${#TestSuite#index}_SUB1</subscription>
          </access>
       </ws:createAccess>
    </soapenv:Body>
@@ -6036,13 +6036,13 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
                mediation_DuplicatedCheck.newInstance().execute(initContext);
 			Boolean duplicateFound = (Boolean)initContext.get("duplicateFound");
 			log.info("duplicateFound:"+duplicateFound);
-			
+
 			if(duplicateFound != null && duplicateFound.booleanValue()){
 				throw new BusinessException("DuplicateFound");
 			}
 			initContext.put("accessUserId",cdr.getAccess_id());
 			mediation_RoutingSub.newInstance().execute(initContext);
-			
+
 			@SuppressWarnings("unchecked")
 			List<Access> accesses = (List<Access>) initContext.get("accesses");
 			if(accesses == null || accesses.isEmpty()){
@@ -6050,7 +6050,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
 			}
 
 			mediation_CreateEdr.newInstance().execute(initContext);
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new BusinessException("ErrTech",e);
@@ -6173,7 +6173,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateField>\r
-         
+
          <customField code="${#TestSuite#entityPrefix}" description="Zonning plan">\r
             <fieldType>STRING</fieldType>\r
             <appliesTo>CUST</appliesTo>\r
@@ -6770,7 +6770,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
       <ws:createAccess>
          <!--Optional:-->
          <access code="+3312${#TestSuite#entityPrefix}_${#TestSuite#index}">
-            <subscription>${#TestSuite#entityPrefix}_${#TestSuite#index}_SUB1</subscription> 
+            <subscription>${#TestSuite#entityPrefix}_${#TestSuite#index}_SUB1</subscription>
          </access>
       </ws:createAccess>
    </soapenv:Body>
@@ -6814,7 +6814,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
    <soapenv:Body>
       <ws:createAccess>
          <access code="+012${#TestSuite#entityPrefix}_${#TestSuite#index}">
-            <subscription>${#TestSuite#entityPrefix}_${#TestSuite#index}_SUB1</subscription> 
+            <subscription>${#TestSuite#entityPrefix}_${#TestSuite#index}_SUB1</subscription>
          </access>
       </ws:createAccess>
    </soapenv:Body>

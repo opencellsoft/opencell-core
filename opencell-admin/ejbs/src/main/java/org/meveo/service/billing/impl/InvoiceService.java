@@ -556,7 +556,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
    
    public void produceInvoicePdf(Invoice invoice) throws BusinessException  {
         
-        String meveoDir = paramBean.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + appProvider.getCode() + File.separator;
+        String meveoDir = paramBean.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator;
         String invoiceXmlFileName = getFullXmlFilePath(invoice);
         Map<String, Object> parameters = pDFParametersConstruction.constructParameters(invoice);
 
@@ -965,7 +965,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	
 	public String getBillingRunPath(BillingRun billingRun,Date invoiceCreation){
 		ParamBean paramBean = ParamBean.getInstance();
-		String providerDir = paramBean.getProperty("providers.rootDir", "/tmp/meveo");
+		String providerDir = paramBean.getProperty("providers.rootDir", "./opencelldata");
 		String sep = File.separator;
 		String brPath = providerDir + sep + appProvider.getCode() + sep + "invoices" + sep + "xml" + sep + 
 				(billingRun == null ? DateUtils.formatDateWithPattern(invoiceCreation, paramBean.getProperty("meveo.dateTimeFormat.string", "ddMMyyyy_HHmmss")) : billingRun.getId());
@@ -1020,7 +1020,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public String getFullPdfFilePath(Invoice invoice) {
 
-        String meveoDir = paramBean.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + appProvider.getCode() + File.separator;
+        String meveoDir = paramBean.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator;
 
         String pdfDirectory = meveoDir + "invoices" + File.separator + "pdf" + File.separator;
         (new File(pdfDirectory)).mkdirs();

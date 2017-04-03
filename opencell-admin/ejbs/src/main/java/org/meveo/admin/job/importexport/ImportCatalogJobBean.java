@@ -61,7 +61,7 @@ public class ImportCatalogJobBean {
 		try {
 
 			ParamBean parambean = ParamBean.getInstance();
-			String catalogDir = parambean.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + appProvider.getCode() + File.separator + "imports" + File.separator
+			String catalogDir = parambean.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator + "imports" + File.separator
 					+ "catalog" + File.separator;
 
 			inputDir = catalogDir + "input";

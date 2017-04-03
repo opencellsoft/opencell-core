@@ -135,7 +135,7 @@ public class UserBean extends CustomFieldBean<User> {
     private String repeatedPassword;
 
     ParamBean param = ParamBean.getInstance();
-    private String providerFilePath = param.getProperty("providers.rootDir", "/tmp/meveo/");
+    private String providerFilePath = param.getProperty("providers.rootDir", "./opencelldata/");
     private String selectedFolder;
     private boolean currentDirEmpty;
     private String selectedFileName;

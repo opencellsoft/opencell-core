@@ -35,7 +35,7 @@ public class SepaFile {
 		fileName = fileName + "_" + appProvider.getCode();
 		fileName = fileName + "_" + DateUtils.formatDateWithPattern(new Date(), "yyyyMMdd") + ArConfig.getDDRequestFileNameExtension();
 
-		String outputDir = ParamBean.getInstance().getProperty("providers.rootDir", "/tmp/meveo");
+		String outputDir = ParamBean.getInstance().getProperty("providers.rootDir", "./opencelldata");
 
 		outputDir = outputDir + File.separator + appProvider.getCode() + File.separator + ArConfig.getDDRequestOutputDirectory();
 		outputDir = outputDir.replaceAll("\\..", "");

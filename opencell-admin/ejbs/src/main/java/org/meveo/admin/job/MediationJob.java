@@ -62,7 +62,7 @@ public class MediationJob extends Job {
 
 
 			ParamBean parambean = ParamBean.getInstance();
-			String meteringDir = parambean.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + appProvider.getCode() + File.separator + "imports" + File.separator
+			String meteringDir = parambean.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator + "imports" + File.separator
 					+ "metering" + File.separator;
 
 			String inputDir = meteringDir + "input";

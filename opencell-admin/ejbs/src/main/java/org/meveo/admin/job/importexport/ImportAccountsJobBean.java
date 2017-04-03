@@ -86,7 +86,7 @@ public class ImportAccountsJobBean {
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public void execute(JobExecutionResultImpl result) {
 
-		String importDir = param.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + appProvider.getCode()
+		String importDir = param.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode()
 				+ File.separator + "imports" + File.separator + "accounts" + File.separator;
 		String dirIN = importDir + "input";
 
@@ -426,7 +426,7 @@ public class ImportAccountsJobBean {
 	}
 
 	private void generateReport(String fileName) throws Exception {
-		String importDir = param.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + appProvider.getCode()
+		String importDir = param.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode()
 				+ File.separator + "imports" + File.separator + "accounts" + File.separator;
 
 		if (billingAccountsWarning.getWarnings() != null) {

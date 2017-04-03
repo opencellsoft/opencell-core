@@ -98,7 +98,7 @@ public class RessourceServlet extends HttpServlet {
                     + requestedFile + "' must contain provider code.");
         }
         requestedFile=requestedFile.substring(providerCode.length());
-        String basePath = ParamBean.getInstance().getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + providerCode; 
+        String basePath = ParamBean.getInstance().getProperty("providers.rootDir", "./opencelldata/") + File.separator + providerCode; 
         File dir =  new File(basePath);
         if (!dir.exists() || !dir.isDirectory() || !dir.canRead()) {
             throw new IOException("RessourceServlet dir '"

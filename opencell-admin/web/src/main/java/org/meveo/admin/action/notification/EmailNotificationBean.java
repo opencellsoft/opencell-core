@@ -57,7 +57,7 @@ public class EmailNotificationBean extends BaseNotificationBean<EmailNotificatio
     ScriptInstanceService scriptInstanceService;
     
     CsvBuilder csv = null;
-   	private String providerDir=paramBean.getProperty("providers.rootDir","/tmp/meveo_integr");
+   	private String providerDir=paramBean.getProperty("providers.rootDir","./opencelldata");
    	private String existingEntitiesCsvFile=null;
    	
 	

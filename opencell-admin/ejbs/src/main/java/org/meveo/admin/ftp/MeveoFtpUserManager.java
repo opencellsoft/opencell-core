@@ -32,7 +32,7 @@ public class MeveoFtpUserManager extends AbstractUserManager {
 	private static final String ADMINISTRATOR="administrateur";
 
 	private Logger log = LoggerFactory.getLogger(MeveoFtpUserManager.class);
-	private static final String PREFIX = ParamBean.getInstance().getProperty("providers.rootDir", "/opt/jboss/files/meveo");
+	private static final String PREFIX = ParamBean.getInstance().getProperty("providers.rootDir", "./opencelldata");
 
 	private UserService userService;
 
@@ -100,7 +100,7 @@ public class MeveoFtpUserManager extends AbstractUserManager {
 			log.error("Ftp user {} doesn't exist!",username);
 			throw new FtpException(String.format("Ftp user {} doesn't exist!", username));
 		}
-		
+
 		BaseUser user = new BaseUser();
 		user.setName(username);
 		List<Authority> authorities = new ArrayList<Authority>();
@@ -119,7 +119,7 @@ public class MeveoFtpUserManager extends AbstractUserManager {
 
 	/**
 	 * load ftp User by meveo User.
-	 * 
+	 *
 	 * @param meveoUser
 	 *            Meveo user
 	 * @return ftp user

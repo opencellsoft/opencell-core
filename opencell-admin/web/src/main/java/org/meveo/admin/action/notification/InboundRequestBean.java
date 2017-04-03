@@ -55,7 +55,7 @@ public class InboundRequestBean extends UpdateMapTypeFieldBean<InboundRequest> {
     CsvReader csvReader = null;
     private UploadedFile file;
     CsvBuilder csv = null;
-    private String providerDir = paramBean.getProperty("providers.rootDir", "/tmp/meveo_integr");
+    private String providerDir = paramBean.getProperty("providers.rootDir", "./opencelldata");
     private String existingEntitiesCsvFile = null;
 
     private StrategyImportTypeEnum strategyImportType;

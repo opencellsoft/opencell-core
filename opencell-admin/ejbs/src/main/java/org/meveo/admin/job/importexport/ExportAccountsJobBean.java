@@ -63,7 +63,7 @@ public class ExportAccountsJobBean {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, String parameter) {
         
-        String exportDir = param.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + appProvider.getCode() + File.separator + "exports" + File.separator + "accounts"
+        String exportDir = param.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator + "exports" + File.separator + "accounts"
                 + File.separator;
         log.info("exportDir=" + exportDir);
         File dir = new File(exportDir);

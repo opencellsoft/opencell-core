@@ -170,7 +170,7 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
     	String jasperCommercial = paramBean.getProperty("jasper.invoiceTemplate.commercial","invoice.jasper");
     	String jasperAdjustment = paramBean.getProperty("jasper.invoiceTemplate.adjustment","invoice.jasper");
     	//check jaspers files
-    	File jasperDir= new File(paramBean.getProperty("providers.rootDir","/tmp/meveo/")+ File.separator + appProvider.getCode() + File.separator+"jasper");
+    	File jasperDir= new File(paramBean.getProperty("providers.rootDir","./opencelldata/")+ File.separator + appProvider.getCode() + File.separator+"jasper");
     	if(!jasperDir.exists()){
     		jasperDir.mkdirs();
     	}

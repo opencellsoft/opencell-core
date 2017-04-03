@@ -59,7 +59,7 @@ public class PaynumFile {
 		"_"+(ddRequestLot.getInvoicesAmount().setScale((appProvider.getRounding()==null?2:appProvider.getRounding()), RoundingMode.HALF_UP).multiply(new BigDecimal(100)).longValue())+
 		"_ppf_factures_"+codeCreancier+".csv";	
 			
-		String outputDir = ParamBean.getInstance().getProperty("providers.rootDir", "/tmp/meveo");
+		String outputDir = ParamBean.getInstance().getProperty("providers.rootDir", "./opencelldata");
 
 		outputDir = outputDir + File.separator + appProvider.getCode() + File.separator + ArConfig.getDDRequestOutputDirectory();
 		outputDir = outputDir.replaceAll("\\..", "");

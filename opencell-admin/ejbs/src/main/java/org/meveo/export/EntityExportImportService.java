@@ -472,7 +472,7 @@ public class EntityExportImportService implements Serializable {
         String shortFilename = exportTemplate.getName() + DateUtils.formatDateWithPattern(new Date(), "_yyyy-MM-dd_HH-mm-ss");
         boolean asZip = (parameters.get(EXPORT_PARAM_ZIP) != null && ((boolean) parameters.get(EXPORT_PARAM_ZIP)));
 
-        String path = param.getProperty("providers.rootDir", "/tmp/meveo/");
+        String path = param.getProperty("providers.rootDir", "./opencelldata/");
         if (!path.endsWith(File.separator)) {
             path = path + File.separator;
         }

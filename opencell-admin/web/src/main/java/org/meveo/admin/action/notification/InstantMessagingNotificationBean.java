@@ -64,7 +64,7 @@ public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingN
 
     ParamBean paramBean = ParamBean.getInstance();
     CsvBuilder csv = null;
-    private String providerDir = paramBean.getProperty("providers.rootDir", "/tmp/meveo_integr");
+    private String providerDir = paramBean.getProperty("providers.rootDir", "./opencelldata");
     private String existingEntitiesCsvFile = null;
 
     CsvReader csvReader = null;

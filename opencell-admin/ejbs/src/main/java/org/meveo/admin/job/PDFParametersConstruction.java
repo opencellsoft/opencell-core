@@ -96,7 +96,7 @@ public class PDFParametersConstruction {
 
 			ParamBean paramBean = ParamBean.getInstance();
 			String meveoDir = paramBean.getProperty("providers.rootDir",
-					"/tmp/meveo");
+					"./opencelldata");
 			String resDir = meveoDir + File.separator + appProvider.getCode()
 					+ File.separator + "jasper";
 			String templateDir = new StringBuilder(resDir)
