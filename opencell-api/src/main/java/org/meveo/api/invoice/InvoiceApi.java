@@ -376,8 +376,9 @@ public class InvoiceApi extends BaseApi {
 	 * @param customerAccountCode customer account code
 	 * @return list of invoice DTOs
 	 * @throws MeveoApiException Meveo Api exception
+	 * @throws BusinessException 
 	 */
-	public List<InvoiceDto> list(String customerAccountCode) throws MeveoApiException {
+	public List<InvoiceDto> list(String customerAccountCode) throws MeveoApiException, BusinessException {
 		return listByPresentInAR(customerAccountCode, false)	;
 	}
 	
@@ -386,12 +387,13 @@ public class InvoiceApi extends BaseApi {
 	 * @param customerAccountCode customer account code
 	 * @return list of invoice DTOs
 	 * @throws MeveoApiException Meveo Api exception
+	 * @throws BusinessException 
 	 */
-	public List<InvoiceDto> listPresentInAR(String customerAccountCode) throws MeveoApiException {
+	public List<InvoiceDto> listPresentInAR(String customerAccountCode) throws MeveoApiException, BusinessException {
 		return listByPresentInAR(customerAccountCode, true)	;
 	}
 
-	public List<InvoiceDto> listByPresentInAR(String customerAccountCode, boolean isPresentInAR) throws MeveoApiException {
+	public List<InvoiceDto> listByPresentInAR(String customerAccountCode, boolean isPresentInAR) throws MeveoApiException, BusinessException {
 		if (StringUtils.isBlank(customerAccountCode)) {
             missingParameters.add("customerAccountCode");
             handleMissingParameters();
@@ -470,10 +472,13 @@ public class InvoiceApi extends BaseApi {
 	 * @throws InvoiceExistException 
 	 * @throws Exception
 	 */
-	 public GenerateInvoiceResultDto generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto) throws BusinessException, MeveoApiException, FileNotFoundException, InvoiceExistException, ImportInvoiceException {
-		 return generateInvoice(generateInvoiceRequestDto,false);
-	 }
-    public GenerateInvoiceResultDto generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto, boolean isDraft) throws BusinessException, MeveoApiException, FileNotFoundException, InvoiceExistException, ImportInvoiceException {
+    public GenerateInvoiceResultDto generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto)
+            throws BusinessException, MeveoApiException, FileNotFoundException, InvoiceExistException, ImportInvoiceException {
+        return generateInvoice(generateInvoiceRequestDto, false);
+    }
+
+    public GenerateInvoiceResultDto generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto, boolean isDraft)
+            throws BusinessException, MeveoApiException, FileNotFoundException, InvoiceExistException, ImportInvoiceException {
 
 		if (generateInvoiceRequestDto == null) {
 			missingParameters.add("generateInvoiceRequest");
@@ -517,18 +522,22 @@ public class InvoiceApi extends BaseApi {
 			if(generateInvoiceRequestDto.getGenerateAO() != null){
 				generateInvoiceRequestDto.setGenerateAO(Boolean.FALSE);
 			}
-		}
-		if((generateInvoiceRequestDto.getGenerateXML() != null && generateInvoiceRequestDto.getGenerateXML())||(generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF())){			
-			invoiceService.getXMLInvoice(invoice,invoice.getInvoiceNumber(), isDraft);
         }
-        if((generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF())){
-        	invoice.setPdf(invoiceService.generatePdfInvoice(invoice,invoice.getInvoiceNumber()));
+		
+        if ((generateInvoiceRequestDto.getGenerateXML() != null && generateInvoiceRequestDto.getGenerateXML())
+                || (generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF())) {
+            invoiceService.produceInvoiceXml(invoice);
         }
-        if(generateInvoiceRequestDto.getGenerateAO() != null && generateInvoiceRequestDto.getGenerateAO()){
-        	recordedInvoiceService.generateRecordedInvoice(invoice);
-        }    
         
-        GenerateInvoiceResultDto generateInvoiceResultDto = new GenerateInvoiceResultDto(invoice, true);
+        if ((generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF())) {
+            invoiceService.produceInvoicePdf(invoice);
+        }
+        
+        if (generateInvoiceRequestDto.getGenerateAO() != null && generateInvoiceRequestDto.getGenerateAO()) {
+            recordedInvoiceService.generateRecordedInvoice(invoice);
+        }
+        
+        GenerateInvoiceResultDto generateInvoiceResultDto = createGenerateInvoiceResultDto(invoice, true);
         if(isDraft){        	
         	invoiceService.cancelInvoice(invoice);
         }
@@ -536,13 +545,28 @@ public class InvoiceApi extends BaseApi {
 		return generateInvoiceResultDto;
 	}
 
+    public GenerateInvoiceResultDto createGenerateInvoiceResultDto(Invoice invoice, boolean includePdf) throws BusinessException {
+        GenerateInvoiceResultDto dto = new GenerateInvoiceResultDto();
+        dto.setInvoiceNumber(invoice.getInvoiceNumber());
+        dto.setTemporaryInvoiceNumber(invoice.getTemporaryInvoiceNumber());
+        dto.setInvoiceTypeCode(invoice.getInvoiceType().getCode());
+        dto.setAmount(invoice.getAmount());
+        dto.setAmountWithoutTax(invoice.getAmountWithoutTax());
+        dto.setAmountWithTax(invoice.getAmountWithTax());
+        dto.setAmountTax(invoice.getAmountTax());
+        if (includePdf && invoiceService.isInvoicePdfExist(invoice)) {
+            dto.setPdf(invoiceService.getInvoicePdf(invoice));
+        }
+        return dto;
+    }
+    
 	public String getXMLInvoice(String invoiceNumber) throws FileNotFoundException, MissingParameterException, EntityDoesNotExistsException, BusinessException {
 		return getXMLInvoice(invoiceNumber, invoiceTypeService.getDefaultCommertial().getCode());
 	}
 
 
-    public String getXMLInvoice(String invoiceNumber, String invoiceTypeCode) throws FileNotFoundException, MissingParameterException,
-            EntityDoesNotExistsException, BusinessException {
+    public String getXMLInvoice(String invoiceNumber, String invoiceTypeCode) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
+
 		log.debug("getXMLInvoice  invoiceNumber:{}", invoiceNumber);
 		if (StringUtils.isBlank(invoiceNumber)) {
 			missingParameters.add("invoiceNumber");
@@ -562,7 +586,7 @@ public class InvoiceApi extends BaseApi {
 			throw new EntityDoesNotExistsException(Invoice.class, invoiceNumber, "invoiceNumber", invoiceTypeCode, "invoiceTypeCode");
 		}
 		
-		return invoiceService.getXMLInvoice(invoice, invoiceNumber, true);
+		return invoiceService.getInvoiceXml(invoice);
 	}
 	
     /**
@@ -574,8 +598,8 @@ public class InvoiceApi extends BaseApi {
      * @throws EntityDoesNotExistsException
      * @throws Exception
      */
-	public byte[] getPdfInvoince(String invoiceNumber) throws MissingParameterException, EntityDoesNotExistsException, Exception {
-		return getPdfInvoince(invoiceNumber, invoiceTypeService.getDefaultCommertial().getCode());
+	public byte[] getPdfInvoice(String invoiceNumber) throws MissingParameterException, EntityDoesNotExistsException, Exception {
+		return getPdfInvoice(invoiceNumber, invoiceTypeService.getDefaultCommertial().getCode());
 	}
 
 	/**
@@ -588,7 +612,7 @@ public class InvoiceApi extends BaseApi {
 	 * @throws EntityDoesNotExistsException
 	 * @throws Exception
 	 */
-	public byte[] getPdfInvoince(String invoiceNumber, String invoiceTypeCode) throws MissingParameterException, EntityDoesNotExistsException, Exception {
+	public byte[] getPdfInvoice(String invoiceNumber, String invoiceTypeCode) throws MissingParameterException, EntityDoesNotExistsException, Exception {
 		log.debug("getPdfInvoince  invoiceNumber:{}", invoiceNumber);
 		if (StringUtils.isBlank(invoiceNumber)) {
 			missingParameters.add("invoiceNumber");
@@ -608,7 +632,7 @@ public class InvoiceApi extends BaseApi {
 			throw new EntityDoesNotExistsException(Invoice.class, invoiceNumber, "invoiceNumber", invoiceTypeCode, "invoiceTypeCode");
 		}
 		
-		return invoiceService.generatePdfInvoice(invoice, invoiceNumber);
+		return invoiceService.getInvoicePdf(invoice);
 	}
 
 	/**
@@ -812,7 +836,7 @@ public class InvoiceApi extends BaseApi {
 		return amountWithTax.subtract(amountWithoutTax);
 	}
 
-    public InvoiceDto invoiceToDto(Invoice invoice, boolean includeTransactions) {
+    public InvoiceDto invoiceToDto(Invoice invoice, boolean includeTransactions) throws BusinessException {
         
         InvoiceDto invoiceDto = new InvoiceDto();
         
@@ -826,7 +850,6 @@ public class InvoiceApi extends BaseApi {
         invoiceDto.setAmountWithTax(invoice.getAmountWithTax());
         invoiceDto.setInvoiceNumber(invoice.getInvoiceNumber());
         invoiceDto.setPaymentMethod(invoice.getPaymentMethod());
-        invoiceDto.setPdfPresent(invoice.getPdf() != null);
         invoiceDto.setInvoiceType(invoice.getInvoiceType().getCode());
 
         for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
@@ -909,7 +932,10 @@ public class InvoiceApi extends BaseApi {
             invoiceDto.setRecordedInvoiceDto(recordedInvoiceDto);
         }
 
-        invoiceDto.setPdf(invoice.getPdf());
+        if (invoiceService.isInvoicePdfExist(invoice)) {
+            invoiceDto.setPdfPresent(true);
+            invoiceDto.setPdf(invoiceService.getInvoicePdf(invoice));
+        }
         invoiceDto.setNetToPay(invoice.getNetToPay());
         
         return invoiceDto;

@@ -51,13 +51,14 @@ public class CustomEntityInstanceApi extends BaseApi {
 
         handleMissingParameters();
 
-        if (!currentUser.hasRole(CustomEntityTemplate.getModifyPermission(dto.getCode()))) {
-            throw new ActionForbiddenException("User does not have permission '" + CustomEntityTemplate.getModifyPermission(dto.getCode()) + "'");
-        }
         
         CustomEntityTemplate cet = customEntityTemplateService.findByCode(dto.getCetCode());
         if (cet == null) {
             throw new EntityDoesNotExistsException(CustomEntityTemplate.class, dto.getCetCode());
+        }        
+
+        if (!currentUser.hasRole(CustomEntityTemplate.getModifyPermission(dto.getCetCode()))) {
+            throw new ActionForbiddenException("User does not have permission '" + CustomEntityTemplate.getModifyPermission(dto.getCetCode()) + "'");
         }
 
         if (customEntityInstanceService.findByCodeByCet(dto.getCetCode(), dto.getCode()) != null) {
@@ -90,16 +91,16 @@ public class CustomEntityInstanceApi extends BaseApi {
         }
 
         handleMissingParameters();
-
-        if (!currentUser.hasRole(CustomEntityTemplate.getModifyPermission(dto.getCode()))) {
-            throw new ActionForbiddenException("User does not have permission '" + CustomEntityTemplate.getModifyPermission(dto.getCode()) + "'");
-        }
         
         CustomEntityTemplate cet = customEntityTemplateService.findByCode(dto.getCetCode());
         if (cet == null) {
             throw new EntityDoesNotExistsException(CustomEntityTemplate.class, dto.getCetCode());
         }
 
+        if (!currentUser.hasRole(CustomEntityTemplate.getModifyPermission(dto.getCetCode()))) {
+            throw new ActionForbiddenException("User does not have permission '" + CustomEntityTemplate.getModifyPermission(dto.getCetCode()) + "'");
+        }
+        
         CustomEntityInstance cei = customEntityInstanceService.findByCodeByCet(dto.getCetCode(), dto.getCode());
         if (cei == null) {
             throw new EntityDoesNotExistsException(CustomEntityInstance.class, dto.getCode());

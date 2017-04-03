@@ -1117,5 +1117,9 @@
         <addUniqueConstraint columnNames="code" constraintName="uk_cust_cet" deferrable="false" disabled="false"
             initiallyDeferred="false" tableName="cust_cet" />
     </changeSet>
+        
+	<changeSet id="#2486_20170402" author="AndriusKarpavicius">
+        <dropColumn tableName="BILLING_INVOICE" columnName="PDF"/>
+    </changeSet>
 	
 </databaseChangeLog>

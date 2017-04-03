@@ -25,7 +25,6 @@ import org.meveo.api.invoice.InvoiceApi;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.parameter.SecureMethodParameter;
-import org.meveo.api.security.parameter.UserParser;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
@@ -416,7 +415,7 @@ public class BillingAccountApi extends AccountApi {
 		}
 	}
 
-	public BillingAccountsDto listByCustomerAccount(String customerAccountCode) throws MeveoApiException {
+	public BillingAccountsDto listByCustomerAccount(String customerAccountCode) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(customerAccountCode)) {
 			missingParameters.add("customerAccountCode");

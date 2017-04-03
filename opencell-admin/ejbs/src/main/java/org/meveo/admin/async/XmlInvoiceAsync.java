@@ -15,7 +15,7 @@ import javax.inject.Inject;
 
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.service.billing.impl.XMLInvoiceCreator;
+import org.meveo.service.billing.impl.InvoiceService;
 import org.slf4j.Logger;
 
 /**
@@ -25,29 +25,29 @@ import org.slf4j.Logger;
 
 @Stateless
 public class XmlInvoiceAsync {
-	
-	@Inject
-	private XMLInvoiceCreator xmlInvoiceCreator;
-	
-	@Inject
-	protected Logger log;
 
-	@Asynchronous
-	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public Future<String> launchAndForget(List<Invoice> invoices, JobExecutionResultImpl result) {
-		
-		for (Invoice invoice : invoices) {
-			long startDate = System.currentTimeMillis();
-			try {
-				xmlInvoiceCreator.createXMLInvoiceInNewTransaction(invoice.getId());
-				result.registerSucces();
-			} catch (Exception e) {		
-				result.registerError(e.getMessage());
-				log.error("Failed to create XML invoice", e);
-			}
-			log.info("Invoice creation delay :" + (System.currentTimeMillis() - startDate) );
-		}
-		
-		return new AsyncResult<String>("OK");
-	}
+    @Inject
+    private InvoiceService invoiceService;
+
+    @Inject
+    protected Logger log;
+
+    @Asynchronous
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public Future<String> launchAndForget(List<Invoice> invoices, JobExecutionResultImpl result) {
+
+        for (Invoice invoice : invoices) {
+            long startDate = System.currentTimeMillis();
+            try {
+                invoiceService.produceInvoiceXmlInNewTransaction(invoice.getId());
+                result.registerSucces();
+            } catch (Exception e) {
+                result.registerError(e.getMessage());
+                log.error("Failed to create XML invoice", e);
+            }
+            log.info("Invoice creation delay :" + (System.currentTimeMillis() - startDate));
+        }
+
+        return new AsyncResult<String>("OK");
+    }
 }

@@ -85,10 +85,10 @@
 								</h:panelGroup>
 							</p:fieldset>
 							<p:outputPanel
-								rendered="#{invoiceBean.entity.pdf!=null or invoiceBean.xmlInvoiceAlreadyGenerated}">
+								rendered="#{invoiceBean.pdfInvoiceAlreadyGenerated or invoiceBean.xmlInvoiceAlreadyGenerated}">
 								<p:fieldset legend="#{messages['invoice.attachments']}">
 									<p:panelGrid columns="1">
-										<p:outputPanel rendered="#{invoiceBean.entity.pdf!=null}">
+										<p:outputPanel rendered="#{invoiceBean.pdfInvoiceAlreadyGenerated}">
 											<h:commandLink
 												action="#{billingAccountBean.generatePDF(invoiceBean.entity.id)}">
 												<h:outputText
@@ -258,7 +258,7 @@
 							</p:button>
 							<p:commandButton value="#{messages['invoice.generatePdf']}"
 								icon="ui-icon-refresh"
-								disabled="#{invoiceBean.entity.pdf!=null}"
+								disabled="#{invoiceBean.pdfInvoiceAlreadyGenerated}"
 								action="#{invoiceBean.generatePdf()}"
 								update=":headerForm:tabView,buttonGenerate" />
 							<p:commandButton value="#{messages['invoice.generateXml']}"

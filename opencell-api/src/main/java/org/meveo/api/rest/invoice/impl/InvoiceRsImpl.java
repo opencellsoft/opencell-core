@@ -42,7 +42,7 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
         	result = invoiceApi.create(invoiceDto);
         	if(invoiceDto.isAutoValidation()){
         		String invoiceXml = invoiceApi.getXMLInvoice(result.getInvoiceNumber(), invoiceDto.getInvoiceType());
-        		byte[] invoicePdf = invoiceApi.getPdfInvoince(result.getInvoiceNumber(), invoiceDto.getInvoiceType());
+        		byte[] invoicePdf = invoiceApi.getPdfInvoice(result.getInvoiceNumber(), invoiceDto.getInvoiceType());
         		if(invoiceDto.isReturnXml()){
         			result.setXmlInvoice(invoiceXml);
         		}
@@ -136,7 +136,7 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
         GetPdfInvoiceResponseDto result = new GetPdfInvoiceResponseDto();
         try {
 
-            result.setPdfContent(invoiceApi.getPdfInvoince(invoiceNumber, invoiceType));
+            result.setPdfContent(invoiceApi.getPdfInvoice(invoiceNumber, invoiceType));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         } catch (Exception e) {

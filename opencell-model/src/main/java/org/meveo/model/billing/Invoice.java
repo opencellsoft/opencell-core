@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -35,7 +34,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -146,11 +144,6 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
 	@Column(name = "COMMENT", length = 1200)
 	@Size(max = 1200)
 	private String comment;
-
-	@Column(name = "PDF")
-	@Basic(fetch = FetchType.LAZY)
-	@Lob
-	private byte[] pdf;
 
 	@Type(type="numeric_boolean")
     @Column(name = "DETAILED_INVOICE")
@@ -340,31 +333,6 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
 		if (amountToAdd != null) {
 			amountTax = amountTax.add(amountToAdd);
 		}
-	}
-
-	/*
-	 * public Blob getPdfBlob() { return pdfBlob; }
-	 * 
-	 * public void setPdfBlob(Blob pdfBlob) { this.pdfBlob = pdfBlob; }
-	 */
-
-	/*
-	 * public byte[] getPdf() { byte[] result = null; try { if (pdfBlob != null)
-	 * { int size; size = (int) pdfBlob.length(); result = pdfBlob.getBytes(1L,
-	 * size); } } catch (SQLException e) {
-	 * logger.error("Error while accessing pdf blob field in database. Return null."
-	 * , e); } return result; }
-	 * 
-	 * public void setPdf(byte[] pdf) { this.pdfBlob =
-	 * Hibernate.createBlob(pdf); }
-	 */
-
-	public byte[] getPdf() {
-		return pdf;
-	}
-
-	public void setPdf(byte[] pdf) {
-		this.pdf = pdf;
 	}
 
 	public String getTemporaryInvoiceNumber() {

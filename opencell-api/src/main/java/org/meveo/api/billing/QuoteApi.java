@@ -24,6 +24,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.invoice.InvoiceApi;
 import org.meveo.api.order.OrderProductCharacteristicEnum;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.ProductInstance;
@@ -99,6 +100,9 @@ public class QuoteApi extends BaseApi {
 
     @Inject
     private OrderApi orderApi;
+    
+    @Inject
+    private InvoiceApi invoiceApi;
 
     @Inject
     private ScriptInstanceService scriptInstanceService;
@@ -775,7 +779,8 @@ public class QuoteApi extends BaseApi {
         if (quote.getInvoices() != null && !quote.getInvoices().isEmpty()) {
             productQuote.setInvoices(new ArrayList<GenerateInvoiceResultDto>());
             for (Invoice invoice : quote.getInvoices()) {
-                GenerateInvoiceResultDto invoiceDto = new GenerateInvoiceResultDto(invoice, false);
+                
+                GenerateInvoiceResultDto invoiceDto = invoiceApi.createGenerateInvoiceResultDto(invoice, false);
                 productQuote.getInvoices().add(invoiceDto);
             }
         }

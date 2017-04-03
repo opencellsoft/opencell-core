@@ -13,16 +13,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.SubCategoryInvoiceAgregateDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
-import org.meveo.api.dto.payment.MatchingAmountDto;
-import org.meveo.api.dto.payment.MatchingAmountsDto;
-import org.meveo.model.billing.CategoryInvoiceAgregate;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceAgregate;
-import org.meveo.model.billing.SubCategoryInvoiceAgregate;
-import org.meveo.model.billing.TaxInvoiceAgregate;
-import org.meveo.model.payments.AccountOperation;
-import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.payments.MatchingAmount;
 import org.meveo.model.payments.PaymentMethodEnum;
 
 /**
@@ -56,82 +46,6 @@ public class Invoice4_2Dto extends BaseDto {
     private List<AccountOperationDto> accountOperations = new ArrayList<AccountOperationDto>();   
     
     public Invoice4_2Dto() {
-    }
-
-    public Invoice4_2Dto(Invoice invoice, String billingAccountCode) {
-        super();
-        this.setBillingAccountCode(billingAccountCode);
-        this.setInvoiceDate(invoice.getInvoiceDate());
-        this.setDueDate(invoice.getDueDate());
-        this.pdf = invoice.getPdf();
-
-        this.setAmountWithoutTax(invoice.getAmountWithoutTax());
-        this.setAmountTax(invoice.getAmountTax());
-        this.setAmountWithTax(invoice.getAmountWithTax());
-        this.setInvoiceNumber(invoice.getInvoiceNumber());
-        this.setPaymentMethod(invoice.getPaymentMethod());
-        this.setPDFpresent(invoice.getPdf() != null);
-        this.setInvoiceType(invoice.getInvoiceType().getCode());
-        
-        SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = null;
-
-        for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
-
-            subCategoryInvoiceAgregateDto = new SubCategoryInvoiceAgregateDto();
-
-            if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
-                subCategoryInvoiceAgregateDto.setType("R");
-            } else if (invoiceAgregate instanceof SubCategoryInvoiceAgregate) {
-                subCategoryInvoiceAgregateDto.setType("F");
-            } else if (invoiceAgregate instanceof TaxInvoiceAgregate) {
-                subCategoryInvoiceAgregateDto.setType("T");
-            }
-
-            subCategoryInvoiceAgregateDto.setItemNumber(invoiceAgregate.getItemNumber());
-            subCategoryInvoiceAgregateDto.setAccountingCode(invoiceAgregate.getAccountingCode());
-            subCategoryInvoiceAgregateDto.setDescription(invoiceAgregate.getDescription());
-            subCategoryInvoiceAgregateDto.setQuantity(invoiceAgregate.getQuantity());
-            subCategoryInvoiceAgregateDto.setDiscount(invoiceAgregate.getDiscount());
-            subCategoryInvoiceAgregateDto.setAmountWithoutTax(invoiceAgregate.getAmountWithoutTax());
-            subCategoryInvoiceAgregateDto.setAmountTax(invoiceAgregate.getAmountTax());
-            subCategoryInvoiceAgregateDto.setAmountWithTax(invoiceAgregate.getAmountWithTax());
-            this.getSubCategoryInvoiceAgregates().add(subCategoryInvoiceAgregateDto);
-        }
-
-        CustomerAccount ca = invoice.getBillingAccount().getCustomerAccount();
-        AccountOperationDto accountOperationDto = null;
-        for (AccountOperation accountOp : ca.getAccountOperations()) {
-            accountOperationDto = new AccountOperationDto();
-            accountOperationDto.setId(accountOp.getId());
-            accountOperationDto.setDueDate(accountOp.getDueDate());
-            accountOperationDto.setType(accountOp.getType());
-            accountOperationDto.setTransactionDate(accountOp.getTransactionDate());
-            accountOperationDto.setTransactionCategory(accountOp.getTransactionCategory());
-            accountOperationDto.setReference(accountOp.getReference());
-            accountOperationDto.setAccountCode(accountOp.getAccountCode());
-            accountOperationDto.setAccountCodeClientSide(accountOp.getAccountCodeClientSide());
-            accountOperationDto.setAmount(accountOp.getAmount());
-            accountOperationDto.setMatchingAmount(accountOp.getMatchingAmount());
-            accountOperationDto.setUnMatchingAmount(accountOp.getUnMatchingAmount());
-            accountOperationDto.setMatchingStatus(accountOp.getMatchingStatus());
-            accountOperationDto.setOccCode(accountOp.getOccCode());
-            accountOperationDto.setOccDescription(accountOp.getOccDescription());
-
-            List<MatchingAmount> matchingAmounts = accountOp.getMatchingAmounts();
-            MatchingAmountDto matchingAmountDto = null;
-            MatchingAmountsDto matchingAmountsDto = new MatchingAmountsDto();
-            if (matchingAmounts != null && matchingAmounts.size() > 0) {
-                for (MatchingAmount matchingAmount : matchingAmounts) {
-                    matchingAmountDto = new MatchingAmountDto();
-                    matchingAmountDto.setMatchingCode(matchingAmount.getMatchingCode().getCode());
-                    matchingAmountDto.setMatchingAmount(matchingAmount.getMatchingAmount());
-                    matchingAmountsDto.getMatchingAmount().add(matchingAmountDto);
-                }
-                accountOperationDto.setMatchingAmounts(matchingAmountsDto);
-            }
-
-            this.getAccountOperations().add(accountOperationDto);
-        }
     }
 
     public String getInvoiceNumber() {
@@ -210,7 +124,7 @@ public class Invoice4_2Dto extends BaseDto {
         return PDFpresent;
     }
 
-    public void setPDFpresent(boolean pDFpresent) {
+    public void setPdfPresent(boolean pDFpresent) {
         PDFpresent = pDFpresent;
     }
 

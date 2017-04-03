@@ -53,6 +53,6 @@ public class PdfInvoiceApi extends BaseApi {
         }
         invoice = invoiceService.getInvoice(invoiceNumber, customerAccount);
 
-        return invoice.getPdf();
+        return invoiceService.getInvoicePdf(invoice);
     }
 }

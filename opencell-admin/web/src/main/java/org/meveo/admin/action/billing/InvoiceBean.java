@@ -350,8 +350,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
 	public void deleteInvoicePdf() {
 		try {
-			entity.setPdf(null);
-			invoiceService.update(entity);
+			invoiceService.deleteInvoicePdf(entity);
 			messages.info(new BundleKey("messages", "delete.successful"));
 		} catch (Exception e) {
 			log.error("failed to generate PDF ", e);
@@ -360,8 +359,9 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
 	public void generatePdf() {
 		try {
-			invoiceService.producePdf(entity.getId());
-			entity=invoiceService.refreshOrRetrieve(entity);
+
+            entity=invoiceService.refreshOrRetrieve(entity);			
+            invoiceService.produceInvoicePdf(entity);			
 			messages.info(new BundleKey("messages", "invoice.pdfGeneration"));
 			
 		} catch (InvoiceXmlNotFoundException e) {
@@ -383,8 +383,10 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
 	public void generateXMLInvoice() throws BusinessException {
 		try {
-			xmlInvoiceCreator.createXMLInvoice(entity.getId());
-			messages.info(new BundleKey("messages", "invoice.xmlGeneration"));
+		    entity=invoiceService.refreshOrRetrieve(entity);          
+            invoiceService.produceInvoiceXml(entity);   
+            messages.info(new BundleKey("messages", "invoice.xmlGeneration"));
+            
 		} catch (Exception e) {
 			log.error("failed to generate xml invoice", e);
 		}
@@ -460,7 +462,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     @ActionMethod
     public void deleteXmlInvoice() {
 
-        boolean fileDeleted = xmlInvoiceCreator.deleteXmlInvoice(getEntity());
+        boolean fileDeleted = invoiceService.deleteInvoiceXml(getEntity());
         if (fileDeleted) {
             messages.info(new BundleKey("messages", "delete.successful"));
         } else {
@@ -469,28 +471,17 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     }
 
 	public boolean isXmlInvoiceAlreadyGenerated() {
-		String thePrefix =""; 
-		if(getEntity().getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode())){
-			thePrefix =paramBean.getProperty("invoicing.invoiceAdjustment.prefix", "_IA_"); 
-		} 
-		String fileDir = getXmlInvoiceDir().getAbsolutePath()
-				+ File.separator+thePrefix
-				+ (getEntity().getInvoiceNumber() != null ? getEntity().getInvoiceNumber() : getEntity()
-						.getTemporaryInvoiceNumber()) + ".xml";
-		File file = new File(fileDir);
-		return file.exists();
+		return invoiceService.isInvoiceXmlExist(entity);
 	}
 
 	public boolean isXmlInvoiceAdjustmentAlreadyGenerated() {
-		String fileDir = getXmlInvoiceDir().getAbsolutePath()
-				+ File.separator
-				+ paramBean.getProperty("invoicing.invoiceAdjustment.prefix", "_IA_")
-				+ (getEntity().getInvoiceNumber() != null ? getEntity().getInvoiceNumber() : getEntity()
-						.getTemporaryInvoiceNumber()) + ".xml";
-		File file = new File(fileDir);
-		return file.exists();
+	    return invoiceService.isInvoiceAdjustmentXmlAlreadyGenerated(entity);
 	}
 
+	public boolean isPdfInvoiceAlreadyGenerated() {
+        return invoiceService.isInvoicePdfExist(entity);
+    }
+	
 	public void excludeBillingAccounts(BillingRun billingrun) {
 		try {
 			log.debug("excludeBillingAccounts getSelectedEntities=" + getSelectedEntities().size());
@@ -702,10 +693,10 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
 		invoiceService.commit();
 		// create xml invoice adjustment
-		xmlInvoiceCreator.createXMLInvoice(entity.getId());
+		invoiceService.produceInvoiceXml(entity);
 		
 		// create pdf
-		invoiceService.producePdf(entity.getId());
+		invoiceService.produceInvoicePdf(entity);
 
 		return "/pages/billing/invoices/invoiceDetail.jsf?objectId=" + entity.getAdjustedInvoice().getId() + "&cid="
 				+ conversation.getId() + "&faces-redirect=true&includeViewParams=true";

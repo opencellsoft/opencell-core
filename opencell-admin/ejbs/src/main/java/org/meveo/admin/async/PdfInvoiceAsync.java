@@ -37,7 +37,7 @@ public class PdfInvoiceAsync {
     public Future<String> launchAndForget(List<Invoice> invoices, JobExecutionResultImpl result) {
         for (Invoice invoice : invoices) {
             try {
-                invoiceService.producePdfInNewTransaction(invoice.getId());
+                invoiceService.produceInvoicePdfInNewTransaction(invoice.getId());
                 result.registerSucces();                              
             } catch (Exception e) {
                 result.registerError(invoice.getInvoiceNumber(), e.getMessage());

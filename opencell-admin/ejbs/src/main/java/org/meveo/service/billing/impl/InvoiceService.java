@@ -549,27 +549,18 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void producePdfInNewTransaction(Long invoiceId) throws BusinessException {
-	    producePdf(invoiceId);
+	public void produceInvoicePdfInNewTransaction(Long invoiceId) throws BusinessException {
+	    Invoice invoice = findById(invoiceId);
+	    produceInvoicePdf(invoice);
 	}
-
-   public void producePdf(Long invoiceId) throws BusinessException {
-       Invoice invoice = findById(invoiceId);
-       producePdf(invoice, false);
-   }
    
-   public void producePdf(Invoice invoice, boolean isVirtual) throws BusinessException  {
+   public void produceInvoicePdf(Invoice invoice) throws BusinessException  {
         
         String meveoDir = paramBean.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + appProvider.getCode() + File.separator;
         String invoiceXmlFileName = getFullXmlFilePath(invoice);
         Map<String, Object> parameters = pDFParametersConstruction.constructParameters(invoice);
-       
-		log.info("PDFInvoiceGenerationJob is invoice key exists="
-				+ ((parameters != null) ? parameters.containsKey(PdfGeneratorConstants.INVOICE) + ""
-						: "parameters is null"));
 
-        String pdfDirectory = meveoDir + "invoices" + File.separator + "pdf" + File.separator;
-        (new File(pdfDirectory)).mkdirs();
+        log.info("PDFInvoiceGenerationJob is invoice key exists=" + ((parameters != null) ? parameters.containsKey(PdfGeneratorConstants.INVOICE) + "" : "parameters is null"));
 
         String INVOICE_TAG_NAME = "invoice";
 
@@ -577,7 +568,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         File invoiceXmlFile = new File(invoiceXmlFileName);
         if (!invoiceXmlFile.exists()) {
-            throw new InvoiceXmlNotFoundException("The xml invoice file doesn't exist.");
+            throw new InvoiceXmlNotFoundException("The xml invoice file " + invoiceXmlFileName + " doesn't exist.");
         }
         BillingAccount billingAccount = invoice.getBillingAccount();
         BillingCycle billingCycle = null;
@@ -587,14 +578,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         String billingTemplate = (billingCycle != null && billingCycle.getBillingTemplateName() != null) ? billingCycle.getBillingTemplateName() : "default";
         String resDir = meveoDir + "jasper";
 
-        String pdfFileName = getNameWoutSequence(pdfDirectory, invoice.getInvoiceDate(),
-            (!StringUtils.isBlank(invoice.getInvoiceNumber()) ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber()))
-                + ".pdf";
-        if (isInvoiceAdjustment) {
-            pdfFileName = getNameWoutSequence(pdfDirectory, invoice.getInvoiceDate(),
-                paramBean.getProperty("invoicing.invoiceAdjustment.prefix", "_IA_") + invoice.getInvoiceNumber())
-                    + ".pdf";
-        }
+        String pdfFileName = getFullPdfFilePath(invoice);
 
         try {
             File destDir = new File(resDir + File.separator + billingTemplate + File.separator + "pdf");
@@ -665,43 +649,34 @@ public class InvoiceService extends PersistenceService<Invoice> {
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
 
             JasperExportManager.exportReportToPdfFile(jasperPrint, pdfFileName);
-            log.info(String.format("PDF file '%s' produced", pdfFileName));
+            log.info("PDF file '{}' produced for invoice {}", pdfFileName, invoice.getInvoiceNumberOrTemporaryNumber());
             if(invoice.getInvoiceNumber() == null){            	
             	 PdfWaterMark.add(pdfFileName, paramBean.getProperty("invoice.pdf.waterMark", "PROFORMA"), null);
             }            
 
         } catch (IOException |JRException | XPathExpressionException | TransformerException | ParserConfigurationException | SAXException e) {
             throw new BusinessException("Failed to generate a PDF file " + pdfFileName, e);
-        }
-
-		FileInputStream fileInputStream = null;
-		try {
-			File file = new File(pdfFileName);
-			long fileSize = file.length();
-			if (fileSize > Integer.MAX_VALUE) {
-				throw new IllegalArgumentException("File is too big to put it to buffer in memory.");
-			}
-			byte[] fileBytes = new byte[(int) file.length()];
-			fileInputStream = new FileInputStream(file);
-			fileInputStream.read(fileBytes);
-			
-			invoice.setPdf(fileBytes);	
-            if (!isVirtual) {
-                update(invoice);
-            }
-			log.debug("invoice.setPdf update ok");
-		} catch (Exception e) {
-			log.error("Error saving file to DB as blob. {}", e);
-		} finally {
-			if (fileInputStream != null) {
-				try {
-					fileInputStream.close();
-				} catch (IOException e) {
-					log.error("Error closing file input stream.");
-				}
-			}
-		}
+        }		
 	}
+   
+
+   /**
+    * Delete invoice's PDF file
+    * 
+    * @param invoice Invoice
+    * @return True if file was deleted
+    */
+   public boolean deleteInvoicePdf(Invoice invoice) {
+
+       String pdfFilename = getFullPdfFilePath(invoice);
+
+       File file = new File(pdfFilename);
+       if (file.exists()) {
+           return file.delete();
+       } else {
+           return true;
+       }
+   }
 
 	private File getJasperTemplateFile(String resDir, String billingTemplate, PaymentMethodEnum paymentMethod,boolean isInvoiceAdjustment) {
 		String pdfDirName = new StringBuilder(resDir).append(File.separator).append(billingTemplate)
@@ -1011,9 +986,54 @@ public class InvoiceService extends PersistenceService<Invoice> {
             return (invoice.getInvoiceNumber() != null ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber()) + ".xml";
         }
     }
-        
+
+    public String getInvoiceAdjustmentXMLFilename(Invoice invoice) {
+       
+        return paramBean.getProperty("invoicing.invoiceAdjustment.prefix", "_IA_") + (invoice.getInvoiceNumber() != null ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber()) + ".xml";
+    }
+    
+    /**
+     * Get a full path to an invoice's XML file
+     * 
+     * @param invoice Invoice
+     * @return Absolute path to an XML file
+     */
     public String getFullXmlFilePath(Invoice invoice) {
         return getBillingRunPath(invoice) + File.separator + getInvoiceXMLFilename(invoice);
+    }
+    
+    /**
+     * Get a full path to an invoice's adjustment XML file
+     * 
+     * @param invoice Invoice
+     * @return Absolute path to an XML file
+     */
+    public String getFullAdjustmentXmlFilePath(Invoice invoice) {
+        return getBillingRunPath(invoice) + File.separator + getInvoiceAdjustmentXMLFilename(invoice);
+    }
+
+    /**
+     * Get a full path to an invoice's PDF file
+     * 
+     * @param invoice Invoice
+     * @return Absolute path to a PDF file
+     */
+    public String getFullPdfFilePath(Invoice invoice) {
+
+        String meveoDir = paramBean.getProperty("providers.rootDir", "/tmp/meveo/") + File.separator + appProvider.getCode() + File.separator;
+
+        String pdfDirectory = meveoDir + "invoices" + File.separator + "pdf" + File.separator;
+        (new File(pdfDirectory)).mkdirs();
+
+        String pdfFileName = getNameWoutSequence(pdfDirectory, invoice.getInvoiceDate(),
+            (!StringUtils.isBlank(invoice.getInvoiceNumber()) ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber())) + ".pdf";
+        boolean isInvoiceAdjustment = invoice.getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode());
+        if (isInvoiceAdjustment) {
+            pdfFileName = getNameWoutSequence(pdfDirectory, invoice.getInvoiceDate(),
+                paramBean.getProperty("invoicing.invoiceAdjustment.prefix", "_IA_") + invoice.getInvoiceNumber()) + ".pdf";
+        }
+
+        return pdfFileName;
     }
 	
 	/**
@@ -1040,37 +1060,174 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		return chooseSeller(seller.getSeller(), cfName, date, invoiceType);
 		
 		
-	}
-	
-	public String getXMLInvoice(Invoice invoice, String invoiceNumber, boolean refreshInvoice) throws BusinessException, FileNotFoundException {
-
-        File xmlFile = null;
-        if(refreshInvoice){
-        	xmlFile = xmlInvoiceCreator.createXMLInvoice(invoice.getId());
-        } else {
-        	xmlFile = xmlInvoiceCreator.createXMLInvoice(invoice, false);
-        }
-
-        Scanner scanner = new Scanner(xmlFile);
-        String xmlContent = scanner.useDelimiter("\\Z").next();
-        scanner.close();
-        log.debug("getXMLInvoice  invoiceNumber:{} done.", invoiceNumber);
-
-        return xmlContent;
     }
 
-
-	public byte[] generatePdfInvoice(Invoice invoice, String invoiceNumber) throws BusinessException {
-		if (invoice.getPdf() == null) {
-			producePdf(invoice.getId());
-		}
-		log.debug("getXMLInvoice invoiceNumber:{} done.", invoiceNumber);		
-		return invoice.getPdf();
-	}
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void produceInvoiceXmlInNewTransaction(Long invoiceId) throws BusinessException {
+        Invoice invoice = findById(invoiceId);
+        produceInvoiceXml(invoice);
+    }
 	
-	public void generateXmlAndPdfInvoice(Invoice invoice) throws Exception {
-		getXMLInvoice(invoice, invoice.getInvoiceNumber(), false);
-		generatePdfInvoice(invoice, invoice.getInvoiceNumber());
+    /**
+     * Produce invoice's XML file
+     * 
+     * @param invoice Invoice
+     * @param refreshInvoice Should invoice be refreshed
+     * @return XML File
+     * @throws BusinessException
+     */
+    public File produceInvoiceXml(Invoice invoice) throws BusinessException {
+
+        File xmlFile = xmlInvoiceCreator.createXMLInvoice(invoice, false);
+        return xmlFile;
+    }
+
+    /**
+     * Delete invoice's XML file
+     * 
+     * @param invoice Invoice
+     * @return True if file was deleted
+     */
+    public boolean deleteInvoiceXml(Invoice invoice) {
+
+        String xmlFilename = getFullXmlFilePath(invoice);
+
+        File file = new File(xmlFilename);
+        if (file.exists()) {
+            return file.delete();
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Check if invoice's XML file exists
+     * 
+     * @param invoice Invoice
+     * @return True if invoice's XML file exists
+     */
+    public boolean isInvoiceXmlExist(Invoice invoice) {
+
+        String xmlFileName = getFullXmlFilePath(invoice);
+        File xmlFile = new File(xmlFileName);
+        return xmlFile.exists();
+    }
+
+    /**
+     * Check if invoice's adjustment XML file exists
+     * 
+     * @param invoice Invoice
+     * @return True if invoice's adjustment XML file exists
+     */
+    public boolean isInvoiceAdjustmentXmlAlreadyGenerated(Invoice invoice) {
+        String xmlFileName = getFullAdjustmentXmlFilePath(invoice);
+        File xmlFile = new File(xmlFileName);
+        return !xmlFile.exists();
+    }
+
+    /**
+     * Retrieve invoice's XML file contents as a string
+     * 
+     * @param invoice Invoice
+     * @return Invoice's XML file contents as a string
+     * @throws BusinessException
+     * @throws FileNotFoundException
+     */
+    public String getInvoiceXml(Invoice invoice) throws BusinessException {
+
+        String xmlFileName = getFullXmlFilePath(invoice);
+        File xmlFile = new File(xmlFileName);
+        if (!xmlFile.exists()) {
+            produceInvoiceXml(invoice);
+        }
+
+        Scanner scanner = null;
+        try {
+            scanner = new Scanner(xmlFile);
+            String xmlContent = scanner.useDelimiter("\\Z").next();
+            scanner.close();
+            return xmlContent;
+        } catch (Exception e) {
+            log.error("Error reading invoice XML file {} contents", xmlFileName, e);
+
+        } finally {
+            if (scanner != null) {
+                try {
+                    scanner.close();
+                } catch (Exception e) {
+                    log.error("Error closing file scanner", e);
+                }
+            }
+
+        }
+        return null;
+    }
+
+    /**
+     * Check if invoice's PDF file exists
+     * 
+     * @param invoice Invoice
+     * @return True if invoice's PDF file exists
+     */
+    public boolean isInvoicePdfExist(Invoice invoice) {
+
+        String pdfFileName = getFullPdfFilePath(invoice);
+        File pdfFile = new File(pdfFileName);
+        return pdfFile.exists();
+    }
+
+    /**
+     * Retrieve invoice's PDF file contents as a byte array
+     * 
+     * @param invoice Invoice
+     * @return Invoice's PDF file contents as a byte array
+     * @throws BusinessException
+     * @throws FileNotFoundException
+     */
+    public byte[] getInvoicePdf(Invoice invoice) throws BusinessException {
+
+        String pdfFileName = getFullPdfFilePath(invoice);
+        File pdfFile = new File(pdfFileName);
+        if (!pdfFile.exists()) {
+            produceInvoicePdf(invoice);
+        }
+
+        FileInputStream fileInputStream = null;
+        try {
+            long fileSize = pdfFile.length();
+            if (fileSize > Integer.MAX_VALUE) {
+                throw new IllegalArgumentException("File is too big to put it to buffer in memory.");
+            }
+            byte[] fileBytes = new byte[(int) fileSize];
+            fileInputStream = new FileInputStream(pdfFile);
+            fileInputStream.read(fileBytes);
+            return fileBytes;
+
+        } catch (Exception e) {
+            log.error("Error reading invoice PDF file {} contents", pdfFileName, e);
+
+        } finally {
+            if (fileInputStream != null) {
+                try {
+                    fileInputStream.close();
+                } catch (IOException e) {
+                    log.error("Error closing file input stream", e);
+                }
+            }
+        }
+
+        return null;
+    }
+	
+    /**
+     * Generate XML and PDF files for Invoice
+     * @param invoice Invoice
+     * @throws BusinessException
+     */
+	public void generateXmlAndPdfInvoice(Invoice invoice) throws BusinessException {
+		
+	    produceInvoiceXml(invoice);		
+		produceInvoicePdf(invoice);		
 	}
 	
 	public Invoice getLinkedInvoice(Invoice invoice){
@@ -1142,8 +1299,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		Invoice invoice = createAgregatesAndInvoice(billingAccount,null,ratedTxFilter, orderNumber,invoiceDate,lastTransactionDate);		
 		if(!isDraft){
 			invoice.setInvoiceNumber(getInvoiceNumber(invoice));
-		}
-		invoice.setPdf(null);							
+		}						
 		update(invoice);						
 		
 		return invoice;

@@ -6,8 +6,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.model.billing.Invoice;
-
 @XmlRootElement(name = "GenerateInvoiceResult")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GenerateInvoiceResultDto {
@@ -28,22 +26,6 @@ public class GenerateInvoiceResultDto {
 
     private byte[] pdf;
 
-    public GenerateInvoiceResultDto() {
-
-    }
-
-    public GenerateInvoiceResultDto(Invoice invoice, boolean includePdf) {
-        this.invoiceNumber = invoice.getInvoiceNumber();
-        this.temporaryInvoiceNumber = invoice.getTemporaryInvoiceNumber();
-        this.invoiceTypeCode = invoice.getInvoiceType().getCode();
-        this.amount = invoice.getAmount();
-        this.amountWithoutTax = invoice.getAmountWithoutTax();
-        this.amountWithTax = invoice.getAmountWithTax();
-        this.amountTax = invoice.getAmountTax();
-        if (includePdf) {
-            this.pdf = invoice.getPdf();
-        }
-    }
 
     /**
      * @return the invoiceNumber

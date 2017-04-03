@@ -33,10 +33,11 @@
 			<artifactId>opencell-model</artifactId>
 		</dependency>
 
+		<!-- Libraries included in JBoss -->
+		
 		<dependency>
 			<groupId>org.keycloak</groupId>
 			<artifactId>keycloak-core</artifactId>
-			<version>1.9.8.Final</version>
 			<exclusions>
 				<exclusion>
 					<groupId>com.fasterxml.jackson.core</groupId>
@@ -48,13 +49,12 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
-
-		<!-- Libraries included in JBoss -->
 
 		<dependency>
 			<groupId>org.jboss.spec.javax.ejb</groupId>

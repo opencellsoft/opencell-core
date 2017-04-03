@@ -2747,7 +2747,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
       <con:testStep type="restrequest" name="CDR HTTP Request" id="215defe0-e8a6-40a2-af80-62add49372b2">
         <con:settings/>
         <con:config service="http://integration.i.opencellsoft.com" methodName="Mediation" resourcePath="/inbound/demo/mediation" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:restRequest name="C" id="0d1df372-1186-484c-858b-4f1184c534b1" mediaType="application/json">
+          <con:restRequest name="CDR HTTP Request" id="0d1df372-1186-484c-858b-4f1184c534b1" mediaType="application/json">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -2781,7 +2781,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
       <con:testStep type="restrequest" name="CDR HTTP Request 1" id="9ac479f6-2b5a-428b-9603-f4108fe51081">
         <con:settings/>
         <con:config service="http://integration.i.opencellsoft.com" methodName="Mediation" resourcePath="/inbound/demo/mediation" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:restRequest name="Copy of CDR HTTP Request" id="0d1df372-1186-484c-858b-4f1184c534b1" mediaType="application/json">
+          <con:restRequest name="CDR HTTP Request 1" id="0d1df372-1186-484c-858b-4f1184c534b1" mediaType="application/json">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -2815,7 +2815,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
       <con:testStep type="restrequest" name="CDR HTTP Request 2" id="7e3d6eb0-bff2-4a7c-9abb-665ebc54fee7">
         <con:settings/>
         <con:config service="http://integration.i.opencellsoft.com" methodName="Mediation" resourcePath="/inbound/demo/mediation" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:restRequest name="Copy of Copy of CDR HTTP Request" id="0d1df372-1186-484c-858b-4f1184c534b1" mediaType="application/json">
+          <con:restRequest name="CDR HTTP Request 2" id="0d1df372-1186-484c-858b-4f1184c534b1" mediaType="application/json">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>

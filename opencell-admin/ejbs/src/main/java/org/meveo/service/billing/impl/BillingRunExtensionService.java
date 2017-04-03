@@ -115,7 +115,6 @@ public class BillingRunExtensionService extends PersistenceService<BillingRun> {
 
         for (Invoice invoice : billingRun.getInvoices()) {
             invoice.setInvoiceNumber(invoiceService.getInvoiceNumber(invoice));
-            invoice.setPdf(null);
             BillingAccount billingAccount = invoice.getBillingAccount();
             Date initCalendarDate = billingAccount.getSubscriptionDate();
             if (initCalendarDate == null) {

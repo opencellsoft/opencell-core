@@ -33,7 +33,7 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
         	result = invoiceApi.create(invoiceDto);  
         	if(invoiceDto.isAutoValidation()){
         		String invoiceXml = invoiceApi.getXMLInvoice(result.getInvoiceNumber(), invoiceDto.getInvoiceType());
-        		byte[] invoicePdf = invoiceApi.getPdfInvoince(result.getInvoiceNumber(), invoiceDto.getInvoiceType());
+        		byte[] invoicePdf = invoiceApi.getPdfInvoice(result.getInvoiceNumber(), invoiceDto.getInvoiceType());
         		if(invoiceDto.isReturnXml()){
         			result.setXmlInvoice(invoiceXml);
         		}
@@ -116,7 +116,7 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
         GetPdfInvoiceResponseDto result = new GetPdfInvoiceResponseDto();
         try {
 
-            result.setPdfContent(invoiceApi.getPdfInvoince(invoiceNumber));
+            result.setPdfContent(invoiceApi.getPdfInvoice(invoiceNumber));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
 		} catch (Exception e) {
@@ -131,7 +131,7 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
         GetPdfInvoiceResponseDto result = new GetPdfInvoiceResponseDto();
         try {
 
-            result.setPdfContent(invoiceApi.getPdfInvoince(invoiceNumber, invoiceType));
+            result.setPdfContent(invoiceApi.getPdfInvoice(invoiceNumber, invoiceType));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
 		} catch (Exception e) {

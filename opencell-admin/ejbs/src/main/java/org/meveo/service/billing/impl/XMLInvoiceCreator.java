@@ -35,8 +35,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -150,24 +148,11 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 	private TransformerFactory transfac = TransformerFactory.newInstance();
 	
-	
-
 	private List<Long> serviceIds = null,  offerIds =null , priceplanIds = null;
 	private Map<String,String> littleCache = new HashMap<String, String>();
 
 	private static String DEFAULT_DATE_PATTERN = "dd/MM/yyyy";
 	private static String DEFAULT_DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss";
-
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void createXMLInvoiceInNewTransaction(Long invoiceId) throws BusinessException {
-		createXMLInvoice(invoiceId);
-	}
-
-	public File createXMLInvoice(Long invoiceId) throws BusinessException {
-		Invoice invoice = findById(invoiceId);
-		invoice = invoiceService.refreshOrRetrieve(invoice);
-		return createXMLInvoice(invoice, false);
-	}
 
 	public File createXMLInvoice(Invoice invoice, boolean isVirtual) throws BusinessException {
 		log.debug("Creating xml for invoice id={} number={}. {}", invoice.getId(),
@@ -1500,17 +1485,5 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			result += inv.getInvoiceNumber() + " ";
 		}
 		return result;
-	}
-
-	public boolean deleteXmlInvoice(Invoice invoice) {
-
-		String xmlFilename = invoiceService.getFullXmlFilePath(invoice);
-
-		File file = new File(xmlFilename);
-		if (file.exists()) {
-			return file.delete();
-		} else {
-			return true;
-		}
 	}
 }
