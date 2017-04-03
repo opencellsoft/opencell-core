@@ -341,7 +341,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		try {
 			QueryBuilder qb = new QueryBuilder(Invoice.class, "i");
 			qb.addCriterionEntity("i.billingRun.status", BillingRunStatusEnum.VALIDATED);
-			qb.addSql("i.pdf is null");
+			qb.addSql("i.isPdfGenerated is false");
 
 			if (br != null) {
 				qb.addCriterionEntity("i.billingRun", br);
@@ -653,7 +653,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             if(invoice.getInvoiceNumber() == null){            	
             	 PdfWaterMark.add(pdfFileName, paramBean.getProperty("invoice.pdf.waterMark", "PROFORMA"), null);
             }            
-
+            invoice.setPdfGenerated(true);
+            update(invoice);     
         } catch (IOException |JRException | XPathExpressionException | TransformerException | ParserConfigurationException | SAXException e) {
             throw new BusinessException("Failed to generate a PDF file " + pdfFileName, e);
         }		
