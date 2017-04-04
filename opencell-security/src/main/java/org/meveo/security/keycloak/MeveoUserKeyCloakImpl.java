@@ -8,6 +8,7 @@ import javax.ejb.SessionContext;
 
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.KeycloakSecurityContext;
+import org.keycloak.representations.AccessToken;
 import org.meveo.security.MeveoUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,6 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
      * Field in token containing provider code
      */
     private static String CLAIM_PROVIDER = "provider";
-    private static String RESOURCE_PROVIDER = "opencell-web";
 
     /**
      * JAAS security context
@@ -51,30 +51,36 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
         if (securityContext.getCallerPrincipal() instanceof KeycloakPrincipal) {
             KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) securityContext.getCallerPrincipal();
             KeycloakSecurityContext keycloakSecurityContext = keycloakPrincipal.getKeycloakSecurityContext();
-//            log.trace("Produced user from keycloak from principal is {}, {}, {}, {}, {}", keycloakSecurityContext.getToken().getSubject(),
-//                keycloakSecurityContext.getToken().getName(),
-//                keycloakSecurityContext.getToken().getRealmAccess() != null ? keycloakSecurityContext.getToken().getRealmAccess().getRoles() : null,
-//                keycloakSecurityContext.getToken().getResourceAccess(RESOURCE_PROVIDER) != null ? keycloakSecurityContext.getToken().getResourceAccess(RESOURCE_PROVIDER).getRoles()
-//                        : null,
-//                keycloakSecurityContext.getToken().getOtherClaims());
+            AccessToken accessToken = keycloakSecurityContext.getToken();
 
-            this.subject = keycloakSecurityContext.getToken().getSubject();
-            this.userName = keycloakSecurityContext.getToken().getPreferredUsername();
-            this.fullName = keycloakSecurityContext.getToken().getName();
+            // log.trace("Produced user from keycloak from principal is {}, {}, {}, {}, {}", accessToken.getSubject(),
+            // accessToken.getName(),
+            // accessToken.getRealmAccess() != null ? accessToken.getRealmAccess().getRoles() : null,
+            // accessToken.getResourceAccess(RESOURCE_PROVIDER) != null ? accessToken.getResourceAccess(RESOURCE_PROVIDER).getRoles()
+            // : null,
+            // accessToken.getOtherClaims());
 
-            if (keycloakSecurityContext.getToken().getOtherClaims() != null) {
-                this.providerCode = (String) keycloakSecurityContext.getToken().getOtherClaims().get(CLAIM_PROVIDER);
+            this.subject = accessToken.getSubject();
+            this.userName = accessToken.getPreferredUsername();
+            this.fullName = accessToken.getName();
+
+            if (accessToken.getOtherClaims() != null) {
+                this.providerCode = (String) accessToken.getOtherClaims().get(CLAIM_PROVIDER);
             }
 
-            // Import roles
-            if (keycloakSecurityContext.getToken().getRealmAccess() != null) {
-                this.roles.addAll(keycloakSecurityContext.getToken().getRealmAccess().getRoles());
+            // Import realm roles
+            if (accessToken.getRealmAccess() != null) {
+                this.roles.addAll(accessToken.getRealmAccess().getRoles());
             }
-            // TODO should add all roles from all resource providers?? as name should not be hardcoded
-            if (keycloakSecurityContext.getToken().getResourceAccess(RESOURCE_PROVIDER) != null) {
-                this.roles.addAll(keycloakSecurityContext.getToken().getResourceAccess(RESOURCE_PROVIDER).getRoles());
+
+            // Import client roles
+            String clientName = System.getProperty("opencell.keycloak.client");
+            if (accessToken.getResourceAccess(clientName) != null) {
+                this.roles.addAll(accessToken.getResourceAccess(clientName).getRoles());
             }
-            authenticated = true;
+            
+            this.locale = accessToken.getLocale();
+            this.authenticated = true;
 
         } else {
             this.securityContext = securityContext;
@@ -82,7 +88,7 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
             log.trace("User is authenticated by jaas principal is {}, forcedUsername is {}", securityContext.getCallerPrincipal().getName(), forcedUserName);
 
             this.subject = securityContext.getCallerPrincipal().getName();
-            
+
             if (forcedUserName != null) {
                 this.userName = forcedUserName;
 
@@ -104,10 +110,10 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
             }
         }
 
-//        log.trace("Current user {} resolved roles/permissions {}", this.userName, this.roles);
-        
+        // log.trace("Current user {} resolved roles/permissions {}", this.userName, this.roles);
+
         if (this.authenticated && !this.forcedAuthentication && this.providerCode == null) {
-//            throw new RuntimeException("User has no provider assigned");
+            // throw new RuntimeException("User has no provider assigned");
         }
     }
 

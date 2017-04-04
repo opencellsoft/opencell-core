@@ -75,7 +75,7 @@ public class CurrentUserProvider {
 
         supplementOrCreateUserInApp(user);
 
-        log.trace("Produced {}", user);
+        log.trace("Current user is {}", user);
         return user;
     }
 
