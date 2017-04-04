@@ -844,7 +844,7 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            accountOperationApi.create(postData);
+        	result.setMessage(""+accountOperationApi.create(postData));
         } catch (MeveoApiException e) {
             result.setErrorCode(e.getErrorCode());
             result.setStatus(ActionStatusEnum.FAIL);

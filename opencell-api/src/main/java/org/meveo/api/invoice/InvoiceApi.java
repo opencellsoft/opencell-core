@@ -546,6 +546,9 @@ public class InvoiceApi extends BaseApi {
         if (includePdf && invoiceService.isInvoicePdfExist(invoice)) {
             dto.setPdf(invoiceService.getInvoicePdf(invoice));
         }
+        if(invoice.getRecordedInvoice() != null){
+        	dto.setAccountOperationId(invoice.getRecordedInvoice().getId());
+        }
         return dto;
     }
     

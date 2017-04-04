@@ -57,7 +57,7 @@ public class AccountOperationApi extends BaseApi {
     @Inject
     private RecordedInvoiceService recordedInvoiceService;
 
-    public void create(AccountOperationDto postData) throws MeveoApiException, BusinessException {
+    public Long create(AccountOperationDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getType())) {
             missingParameters.add("Type");
@@ -173,6 +173,7 @@ public class AccountOperationApi extends BaseApi {
                 accountOperation.getMatchingAmounts().add(matchingAmount);
             }
         }
+        return accountOperation.getId();
     }
 
     public AccountOperationsResponseDto list(String customerAccountCode) throws MeveoApiException {

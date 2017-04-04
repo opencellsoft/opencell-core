@@ -25,6 +25,8 @@ public class GenerateInvoiceResultDto {
     private BigDecimal amountTax;
 
     private byte[] pdf;
+    
+    private Long accountOperationId;
 
 
     /**
@@ -102,8 +104,18 @@ public class GenerateInvoiceResultDto {
     public void setPdf(byte[] pdf) {
         this.pdf = pdf;
     }
+    
 
-    /*
+
+	public Long getAccountOperationId() {
+		return accountOperationId;
+	}
+
+	public void setAccountOperationId(Long accountOperationId) {
+		this.accountOperationId = accountOperationId;
+	}
+
+	/*
      * (non-Javadoc)
      * 
      * @see java.lang.Object#toString()

@@ -32,7 +32,7 @@ public class AccountOperationRsImpl extends BaseRs implements AccountOperationRs
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            accountOperationApi.create(postData);
+        	result.setMessage(""+accountOperationApi.create(postData));
         } catch (MeveoApiException e) {
             result.setStatus(ActionStatusEnum.FAIL);
             result.setMessage(e.getMessage());
