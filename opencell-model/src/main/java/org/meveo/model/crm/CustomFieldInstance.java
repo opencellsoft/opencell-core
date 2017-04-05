@@ -70,6 +70,9 @@ public class CustomFieldInstance extends EnableEntity {
 
     @Column(name = "PRIORITY")
     private int priority;
+    
+    @Column(name = "DESCRIPTION")
+    private String description;
 
     @Embedded
     private CustomFieldValue cfValue;
@@ -211,8 +214,18 @@ public class CustomFieldInstance extends EnableEntity {
     public String getValueAsString() {
         return getCfValue().getValueAsString(sdf);
     }
+    
+    
 
-    @Override
+    public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	@Override
     public boolean equals(Object obj) {
         
         if (this == obj) {
@@ -252,6 +265,7 @@ public class CustomFieldInstance extends EnableEntity {
     public static CustomFieldInstance fromTemplate(CustomFieldTemplate cft, ICustomFieldEntity entity) {
         CustomFieldInstance cfi = new CustomFieldInstance();
         cfi.setCode(cft.getCode());
+        cfi.setDescription(cft.getDescriptionOrCode());
         cfi.setAppliesToEntity(entity.getUuid());
 
         // Set a default value
@@ -374,19 +388,21 @@ public class CustomFieldInstance extends EnableEntity {
 
     @Override
     public String toString() {
-        return String.format("CustomFieldInstance [code=%s, appliesToEntity=%s, periodStartDate=%s, periodEndDate=%s, priority=%s, cfValue=%s, disabled=%s]", code,
-            appliesToEntity, periodStartDate, periodEndDate, priority, cfValue, isDisabled());
+        return String.format("CustomFieldInstance [code=%s, description=%s, appliesToEntity=%s, periodStartDate=%s, periodEndDate=%s, priority=%s, cfValue=%s, disabled=%s]", code,
+            description,appliesToEntity, periodStartDate, periodEndDate, priority, cfValue, isDisabled());
     }
 
     public String toJson() {
         String result = code + ":";
         result += getCfValue().toJson(sdf);
+        result+=",description:"+description;
         return result;
     }
 
     public Element toDomElement(Document doc) {
         Element customFieldTag = doc.createElement("customField");
         customFieldTag.setAttribute("code", code);
+        customFieldTag.setAttribute("description", description);
         if (periodStartDate != null) {
             customFieldTag.setAttribute("periodStartDate", xmlsdf.format(periodStartDate));
         }

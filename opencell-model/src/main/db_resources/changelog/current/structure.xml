@@ -2343,5 +2343,9 @@
 		<dropColumn tableName="BILLING_INVOICE" columnName="PDF" />
 	</changeSet>
 
-
+	<changeSet id="#2179_20170304" author="anasseh">
+		<addColumn tableName="CRM_CUSTOM_FIELD_INST">
+			<column name="description" type="VARCHAR(256)" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
