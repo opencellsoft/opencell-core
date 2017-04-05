@@ -130,9 +130,6 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-45">
         <createSequence sequenceName="billing_invoice_sub_cat_seq" startValue="3" />
     </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-46">
-        <createSequence sequenceName="billing_invoice_sub_country_seq" />
-    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-47">
         <createSequence sequenceName="billing_invoice_template_seq" />
     </changeSet>
@@ -376,7 +373,7 @@
 		<createSequence sequenceName="ord_order_item_seq" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-141">
-		<createSequence sequenceName="billing_product_charge_inst_seq" />
+		<createSequence sequenceName="BILLING_PRODUCT_CHRG_INST_SEQ" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-142">
 		<createSequence sequenceName="billing_product_instance_seq" />
