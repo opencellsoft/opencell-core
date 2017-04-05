@@ -371,19 +371,23 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
 
         return value;
     }
+    public String getCFValuesAsJson(ICustomFieldEntity entity) {
+    	return getCFValuesAsJson(entity,false);
+    }
 
     /**
      * Get custom field values of an entity as JSON string
      * 
      * @param entity Entity
+     * @param includeParent  include parentCFEntities or not
      * @return JSON format string
      */
-    public String getCFValuesAsJson(ICustomFieldEntity entity) {
+    public String getCFValuesAsJson(ICustomFieldEntity entity,boolean includeParent) {
 
         String result = "";
         String sep = "";
 
-        Map<String, List<CustomFieldInstance>> customFieldsMap = getCustomFieldInstances(entity);
+        Map<String, List<CustomFieldInstance>> customFieldsMap = getCustomFieldInstances(entity,includeParent);
 
         for (List<CustomFieldInstance> customFields : customFieldsMap.values()) {
             for (CustomFieldInstance cf : customFields) {
@@ -394,10 +398,12 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
 
         return result;
     }
-
     public Element getCFValuesAsDomElement(ICustomFieldEntity entity, Document doc) {
+    	return getCFValuesAsDomElement(entity, doc,false); 
+    }
+    public Element getCFValuesAsDomElement(ICustomFieldEntity entity, Document doc,boolean includeParent) {
         Element customFieldsTag = doc.createElement("customFields");
-        Map<String, List<CustomFieldInstance>> customFieldsMap = getCustomFieldInstances(entity);
+        Map<String, List<CustomFieldInstance>> customFieldsMap = getCustomFieldInstances(entity,includeParent);
         for (List<CustomFieldInstance> cfis : customFieldsMap.values()) {
             for (CustomFieldInstance cfi : cfis) {
                 Element customFieldTag = cfi.toDomElement(doc);
@@ -590,6 +596,24 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
             customFieldsCacheContainerProvider.removeCustomFieldFromCache(entity, cfisInfo.getKey());
         }
     }
+
+	/**
+	 * Get All custom field instances for a given entity and his parentCFEntities.
+	 * 
+	 * @param entity Entity
+	 * @param includeParent flag to include parentCFEntities or not
+	 * @return A map of Custom field instances with CF code as a key
+	 */
+	public Map<String, List<CustomFieldInstance>> getCustomFieldInstances(ICustomFieldEntity entity, boolean includeParent) {
+		Map<String, List<CustomFieldInstance>> cfisAsMap = new HashMap<String, List<CustomFieldInstance>>();
+		if (includeParent && entity.getParentCFEntities() != null) {
+			for (ICustomFieldEntity entityParent : entity.getParentCFEntities()) {
+				cfisAsMap.putAll(getCustomFieldInstances(entityParent));
+			}
+		}
+		cfisAsMap.putAll(getCustomFieldInstances(entity));
+		return cfisAsMap;
+	}
 
     /**
      * Get All custom field instances for a given entity.

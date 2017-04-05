@@ -677,7 +677,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 						calendarText = doc.createTextNode("");
 					}
 					calendarTag.appendChild(calendarText);
-					addCustomFields(serviceTemplate, invoice, doc, serviceTag);
+					addCustomFields(serviceTemplate, invoice, doc, serviceTag,true);
 					servicesTag.appendChild(serviceTag);
 					serviceIds.add(serviceTemplate.getId());
 				}
@@ -712,13 +712,16 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 	}
 
 	private void addCustomFields(ICustomFieldEntity entity, Invoice invoice, Document doc, Element parent) {
+		addCustomFields( entity,  invoice,  doc, parent,false);
+	}
+	private void addCustomFields(ICustomFieldEntity entity, Invoice invoice, Document doc, Element parent,boolean includeParentCFEntities) {
 		if(appProvider.getInvoiceConfiguration() != null
 				&& appProvider.getInvoiceConfiguration().getDisplayCfAsXML() != null
 				&& appProvider.getInvoiceConfiguration().getDisplayCfAsXML()){	    
-			Element customFieldsTag = customFieldInstanceService.getCFValuesAsDomElement(entity,doc);
+			Element customFieldsTag = customFieldInstanceService.getCFValuesAsDomElement(entity,doc,includeParentCFEntities);
 			parent.appendChild(customFieldsTag);
 		} else {
-			String json = customFieldInstanceService.getCFValuesAsJson(entity);
+			String json = customFieldInstanceService.getCFValuesAsJson(entity,includeParentCFEntities);
 			if (json!=null && json.length() > 0) {
 				parent.setAttribute("customFields", json);
 			}
