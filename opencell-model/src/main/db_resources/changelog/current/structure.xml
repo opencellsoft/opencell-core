@@ -2683,5 +2683,8 @@
 		<sql>update dwh_account_operation set type=0 where type is null</sql>
 	</changeSet>
 
+	<changeSet id="#2504_20170407" author="AndriusKarpavicius">
+		<dropColumn tableName="CRM_PROVIDER" columnName="LOGO"/>
+	</changeSet>
 
 </databaseChangeLog>

@@ -18,19 +18,16 @@
  */
 package org.meveo.model.crm;
 
-import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -64,7 +61,8 @@ import org.meveo.model.shared.InterBankTitle;
 @CustomFieldEntity(cftCodePrefix = "PROVIDER")
 @ExportIdentifier("code")
 @Table(name = "CRM_PROVIDER", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CRM_PROVIDER_SEQ"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "CRM_PROVIDER_SEQ"), })
 public class Provider extends AuditableEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;
@@ -78,7 +76,7 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     @Size(max = 255)
     protected String description;
 
-    @Type(type="numeric_boolean")
+    @Type(type = "numeric_boolean")
     @Column(name = "DISABLED", nullable = false)
     @NotNull
     private boolean disabled;
@@ -95,15 +93,15 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     @JoinColumn(name = "LANGUAGE_ID")
     private Language language;
 
-    @Type(type="numeric_boolean")
+    @Type(type = "numeric_boolean")
     @Column(name = "MULTICOUNTRY_FLAG")
     private boolean multicountryFlag;
 
-    @Type(type="numeric_boolean")
+    @Type(type = "numeric_boolean")
     @Column(name = "MULTICURRENCY_FLAG")
     private boolean multicurrencyFlag;
 
-    @Type(type="numeric_boolean")
+    @Type(type = "numeric_boolean")
     @Column(name = "MULTILANGUAGE_FLAG")
     private boolean multilanguageFlag;
 
@@ -132,33 +130,28 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     @Transient
     private List<PaymentMethodEnum> paymentMethods;
 
-    @Column(name = "LOGO")
-    @Lob
-    @Basic(fetch = FetchType.LAZY)
-    private Blob logo;
-
     @Column(name = "RATING_ROUNDING", columnDefinition = "int DEFAULT 2")
     private Integer rounding = 2;
 
     @Embedded
     private BankCoordinates bankCoordinates = new BankCoordinates();
 
-    @Type(type="numeric_boolean")
+    @Type(type = "numeric_boolean")
     @Column(name = "ENTREPRISE")
     private boolean entreprise = false;
 
-    @Type(type="numeric_boolean")
+    @Type(type = "numeric_boolean")
     @Column(name = "AUTOMATIC_INVOICING")
     private boolean automaticInvoicing = false;
 
     @Embedded
-    private InterBankTitle interBankTitle=new InterBankTitle();
+    private InterBankTitle interBankTitle = new InterBankTitle();
 
-    @Type(type="numeric_boolean")
+    @Type(type = "numeric_boolean")
     @Column(name = "AMOUNT_VALIDATION")
     private boolean amountValidation = false;
 
-    @Type(type="numeric_boolean")
+    @Type(type = "numeric_boolean")
     @Column(name = "LEVEL_DUPLICATION")
     private boolean levelDuplication = false;
 
@@ -167,7 +160,7 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     @Size(max = 100)
     protected String email;
 
-    @Type(type="numeric_boolean")
+    @Type(type = "numeric_boolean")
     @Column(name = "DISPLAY_FREE_TX_IN_INVOICE")
     private boolean displayFreeTransacInInvoice = false;
 
@@ -183,14 +176,12 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     @Column(name = "PREPAID_RESRV_DELAY_MS")
     private Long prepaidReservationExpirationDelayinMillisec = Long.valueOf(60000);
 
-    @OneToOne(mappedBy="provider",cascade= CascadeType.ALL, targetEntity = org.meveo.model.billing.InvoiceConfiguration.class,orphanRemoval=true)
+    @OneToOne(mappedBy = "provider", cascade = CascadeType.ALL, targetEntity = org.meveo.model.billing.InvoiceConfiguration.class, orphanRemoval = true)
     private InvoiceConfiguration invoiceConfiguration = new InvoiceConfiguration();
-	
-	
-    @Type(type="numeric_boolean")
+
+    @Type(type = "numeric_boolean")
     @Column(name = "RECOGNIZE_REVENUE")
-	private boolean recognizeRevenue;
-	
+    private boolean recognizeRevenue;
 
     public String getCode() {
         return code;
@@ -340,23 +331,6 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
         }
     }
 
-    // public List<User> getUsers() {
-    // return users;
-    // }
-    //
-    // public void setUsers(List<User> users) {
-    // this.users = users;
-    // }
-
-    public Blob getLogo() {
-        return logo;
-    }
-
-    public void setLogo(Blob logo) {
-        this.logo = logo;
-    }
-
-
     public void setBankCoordinates(BankCoordinates bankCoordinates) {
         this.bankCoordinates = bankCoordinates;
     }
@@ -372,8 +346,6 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     public void setEntreprise(boolean entreprise) {
         this.entreprise = entreprise;
     }
-
-
 
     public InterBankTitle getInterBankTitle() {
         return interBankTitle;
@@ -449,7 +421,7 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
 
     @Override
     public boolean equals(Object obj) {
-        
+
         if (this == obj) {
             return true;
         } else if (obj == null) {
@@ -492,15 +464,15 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
         return null;
     }
 
-	public boolean isRecognizeRevenue() {
-		return recognizeRevenue;
-	}
+    public boolean isRecognizeRevenue() {
+        return recognizeRevenue;
+    }
 
-	public void setRecognizeRevenue(boolean recognizeRevenue) {
-		this.recognizeRevenue = recognizeRevenue;
-	}
+    public void setRecognizeRevenue(boolean recognizeRevenue) {
+        this.recognizeRevenue = recognizeRevenue;
+    }
 
-	@Override
+    @Override
     public String getUuid() {
         return uuid;
     }
@@ -508,8 +480,7 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     public void setUuid(String uuid) {
         this.uuid = uuid;
     }
-    
-    
+
     @Override
     public String clearUuid() {
         String oldUuid = uuid;
