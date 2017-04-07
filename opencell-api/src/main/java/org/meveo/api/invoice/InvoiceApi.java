@@ -160,7 +160,7 @@ public class InvoiceApi extends BaseApi {
 				invoiceService.update(invoiceTmp);
 			}
 		}
-		invoiceService.update(invoice);
+		invoice = invoiceService.update(invoice);
 		List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
 		if (userAccounts == null || userAccounts.isEmpty()) {
 			throw new BusinessApiException("BillingAccount " + invoiceDTO.getBillingAccountCode() + " has no userAccount");
@@ -335,7 +335,7 @@ public class InvoiceApi extends BaseApi {
 			netToPay = invoice.getAmountWithTax().add(balance);
 		}
 		invoice.setNetToPay(netToPay);
-		invoiceService.update(invoice);
+		invoice = invoiceService.update(invoice);
 	
 		try {
 			populateCustomFields(invoiceDTO.getCustomFields(), invoice, true, true);
@@ -356,11 +356,21 @@ public class InvoiceApi extends BaseApi {
 		response.setDueDate(invoice.getDueDate());
 		response.setInvoiceDate(invoice.getInvoiceDate());
 		response.setNetToPay(invoice.getNetToPay());
-		
-		//pdf and xml are added to response in the ws impl
-		if (invoiceDTO.isAutoValidation()) {
-			response.setInvoiceNumber(validateInvoice(invoice.getId()));
-		}
+
+        // pdf and xml are added to response if requested
+        if (invoiceDTO.isAutoValidation()) {
+            response.setInvoiceNumber(validateInvoice(invoice.getId()));
+            if (invoiceDTO.isReturnXml() || invoiceDTO.isReturnPdf()) {
+                invoiceService.produceInvoiceXml(invoice);
+                String invoiceXml = invoiceService.getInvoiceXml(invoice);
+                response.setXmlInvoice(invoiceXml);
+            }
+            if (invoiceDTO.isReturnPdf()) {
+                invoice = invoiceService.produceInvoicePdf(invoice);
+                byte[] invoicePdf = invoiceService.getInvoicePdf(invoice);
+                response.setPdfInvoice(invoicePdf);
+            }
+        }
 		return response;
 	}
 

@@ -40,17 +40,7 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
 
         try {
         	result = invoiceApi.create(invoiceDto);
-        	if(invoiceDto.isAutoValidation()){
-        		String invoiceXml = invoiceApi.getXMLInvoice(result.getInvoiceNumber(), invoiceDto.getInvoiceType());
-        		byte[] invoicePdf = invoiceApi.getPdfInvoice(result.getInvoiceNumber(), invoiceDto.getInvoiceType());
-        		if(invoiceDto.isReturnXml()){
-        			result.setXmlInvoice(invoiceXml);
-        		}
-            	if(invoiceDto.isReturnPdf()){
-            		result.setPdfInvoice(invoicePdf);
-            	}
-        	}
-            result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+        	result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
 		} catch (Exception e) {
 			super.processException(e, result.getActionStatus());
