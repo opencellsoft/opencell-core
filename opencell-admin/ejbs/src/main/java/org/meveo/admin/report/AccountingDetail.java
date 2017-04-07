@@ -119,15 +119,16 @@ public class AccountingDetail extends FileProducer implements Reporting {
 				writer.append(accountOperationTransformation.getReference() + ";");
 				writer.append(sdf.format(accountOperationTransformation.getTransactionDate()) + ";");
 				writer.append(sdf.format(accountOperationTransformation.getDueDate()) + ";");
-				if (accountOperationTransformation.getCategory() == 0)
+				if (accountOperationTransformation.getCategory() == 0) {
 					writer.append((amount + ";").replace('.', ','));
-				else
+				} else {
 					writer.append("0;");
-				if (accountOperationTransformation.getCategory() == 1)
+				}
+				if (accountOperationTransformation.getCategory() == 1) {
 					writer.append((amount + ";").replace('.', ','));
-				else
+				} else {
 					writer.append("0;");
-
+				}
 			}
 			writer.append(String.valueOf(solde).replace('.', ','));
 			writer.append('\n');

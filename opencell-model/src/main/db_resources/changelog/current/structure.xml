@@ -640,6 +640,87 @@
 		<dropIndex tableName="ord_quote_item" indexName="fk_ord_quote_item_crm_provider" />
 	</changeSet>
 
+
+	<changeSet id="#2334_20170213-3" author="AndriusKarpavicius">
+		<dropUniqueConstraint tableName="cat_discount_plan_item" constraintName="uk_1q0ayvmttpoo254r1v8hl0kjn" />
+		<dropUniqueConstraint tableName="billing_invoice_template" constraintName="uk_23jasgq9b22ry02e4tl773c8i" />
+		<dropUniqueConstraint tableName="adm_notification" constraintName="uk_3ycqdueceguo8a0s21h1gkcqw" />
+		<dropUniqueConstraint tableName="cat_hour_in_day" constraintName="uk_46j9b2xyivfvbibad362o1dlr" />
+		<dropUniqueConstraint tableName="cat_discount_plan" constraintName="uk_4qps24of1qada6uyq7lh5ua0t" />
+		<dropUniqueConstraint tableName="cat_price_plan_matrix" constraintName="uk_52v1uwefc75bgqrj5encpyd9w" />
+		<dropUniqueConstraint tableName="com_contact_coords" constraintName="uk_6lkh6xsel27sl2bp1vgdhj0hm" />
+		<dropUniqueConstraint tableName="cat_service_template" constraintName="uk_6u1l58s8u672jj9sqb9tgqdbu" />
+		<dropUniqueConstraint tableName="billing_subscription" constraintName="uk_9fnf93rp352nkw2kpd4oq5xp9" />
+		<dropUniqueConstraint tableName="crm_customer_brand" constraintName="uk_bf0bq2sqe9fefsoud50t0fbjp" />
+		<dropUniqueConstraint tableName="billing_subscrip_termin_reason" constraintName="uk_cygiejvomk5mi5v4o04hf4uny" />
+		<dropUniqueConstraint tableName="billing_cycle" constraintName="uk_cyq7rhfwc1wqvxbj2tukw34f2" />
+		<dropUniqueConstraint tableName="com_contact" constraintName="uk_ddfq13s4y41whndo63ore4t05" />
+		<dropUniqueConstraint tableName="adm_currency" constraintName="uk_dqcyys6yxxl4onj137n9c1nwu" />
+		<dropUniqueConstraint tableName="cat_triggered_edr" constraintName="uk_e5epl6nn8r6uyegu6ytx0c3op" />
+		<dropUniqueConstraint tableName="com_sender_config" constraintName="uk_e9tdxu2w5ebts1p1nr1ejqbgp" />
+		<dropUniqueConstraint tableName="billing_tax" constraintName="uk_ej17p1cs8977u8njoppj4ebug" />
+		<dropUniqueConstraint tableName="CRM_PROVIDER" constraintName="UK_CRM_PROVIDER" />
+		<dropUniqueConstraint tableName="adm_inbound_request" constraintName="uk_fg8lvusnsfih36f76coxmh8qi" />
+		<dropUniqueConstraint tableName="cat_day_in_year" constraintName="uk_gm4w28fbb5i1t0403tjbjyjrq" />
+		<dropUniqueConstraint tableName="com_campaign" constraintName="uk_h1vbmdpl6hby6wefd9isqht8" />
+		<dropUniqueConstraint tableName="com_msg_var_value" constraintName="uk_i4iy89rb3qcvhd7qivhjvw2mo" />
+		<dropUniqueConstraint tableName="com_msg_tmpl_variable" constraintName="uk_ie5npbxx0nxnpogq73fdsi9fp" />
+		<dropUniqueConstraint tableName="crm_customer_category" constraintName="uk_ila682ivfyhhi6dfk9yfuahr" />
+		<dropUniqueConstraint tableName="cat_offer_template" constraintName="uk_j2krifijlux8tsm1w5hoqyxqq" />
+		<dropUniqueConstraint tableName="billing_invoice_template" constraintName="uk_k9ha8me5f8rka8uqrgempqwuo" />
+		<dropUniqueConstraint tableName="medina_access" constraintName="uk_lca62y5gn9qo1e6jr84i9w3lr" />
+		<dropUniqueConstraint tableName="adm_title" constraintName="uk_lqvhsn08tpoq8kiy1qdc8j6ms" />
+		<dropUniqueConstraint tableName="cat_wallet_template" constraintName="uk_m7m3ix32qoai9fv3xncoys8c9" />
+		<dropUniqueConstraint tableName="ACCOUNT_ENTITY" constraintName="UK_ACCOUNT_ENTITY" />
+		<dropUniqueConstraint tableName="cat_calendar" constraintName="uk_my3lp1lx5r0jeftgekg48nf89" />
+		<dropUniqueConstraint tableName="cat_charge_template" constraintName="uk_n2bbtllrbgypse7qh9h3w6uy8" />
+		<dropUniqueConstraint tableName="adm_user" constraintName="uk_n9pt70038bt2ufk8x4pc7gr3l" />
+		<dropUniqueConstraint tableName="crm_provider_contact" constraintName="uk_o5gj61ogdrv2lqs68uxkswvn2" />
+		<dropUniqueConstraint tableName="dwh_journal_entries" constraintName="uk_og8li9rlut4trrxgajab23j7y" />
+		<dropUniqueConstraint tableName="rm_service_param_template" constraintName="uk_ojqvlgvkqu3rnvm79bekf7k0b" />
+		<dropUniqueConstraint tableName="billing_invoice" constraintName="uk_olfbcf2pmj73v5xdhnbp5i5gn" />
+		<dropUniqueConstraint tableName="cat_counter_template" constraintName="uk_p12oo75s9gryyvaw53y06xoh3" />
+		<dropUniqueConstraint tableName="ar_occ_template" constraintName="uk_p2nr7j9ik6ri37gmd8o1hojhb" />
+		<dropUniqueConstraint tableName="dwh_chart" constraintName="uk_pehkecunepva2oq9dx9faajhg" />
+		<dropUniqueConstraint tableName="billing_invoice_sub_cat" constraintName="uk_pxj2js3rc3kkeo9bqewgai3yl" />
+		<dropUniqueConstraint tableName="billing_invoice_cat" constraintName="uk_qck1376ll09l9itat2bcomhpl" />
+		<dropUniqueConstraint tableName="com_message_template" constraintName="uk_r0shu06cdbx57w86f2h57t66p" />
+		<dropUniqueConstraint tableName="dwh_measurable_quant" constraintName="uk_r7ba8gp6uk4ncc8q1a7rrt3fi" />
+		<dropUniqueConstraint tableName="crm_seller" constraintName="uk_rsylyj7p2u3xkey9tkiu9rn7d" />
+		<dropUniqueConstraint tableName="bi_job" constraintName="uk_stegw04bvx8bxued1pkncywxl" />
+		<dropUniqueConstraint tableName="BILLING_WALLET" constraintName="UK_BILLING_WALLET" />
+		<dropUniqueConstraint tableName="meveo_filter" constraintName="uk_meveo_filter_provider" />
+		<dropUniqueConstraint tableName="MEVEO_SCRIPT_INSTANCE" constraintName="uk_meveo_script_instance" />
+		<dropUniqueConstraint tableName="com_meveo_instance" constraintName="uk_p7r8cy3d1w7g8pir7rxq17071" />
+		<dropUniqueConstraint tableName="meveo_job_instance" constraintName="uk_meveo_job_instance" />
+		<dropUniqueConstraint tableName="meveo_timer" constraintName="uk_q4ys10jgsw0px36rcvwdajh47" />
+		<dropUniqueConstraint tableName="crm_custom_field_tmpl" constraintName="uk_abfci88fr16lqf19cf961b08d" />
+		<dropUniqueConstraint tableName="CUST_CEI" constraintName="uk_cust_cei" />
+		<dropUniqueConstraint tableName="crm_custom_field_inst" constraintName="uk_crm_custom_field_inst" />
+		<dropUniqueConstraint tableName="meveo_module" constraintName="uk_meveo_module_provider" />
+		<dropUniqueConstraint tableName="cat_offer_template_category" constraintName="uk_cat_offer_template_category" />
+		<dropUniqueConstraint tableName="billing_invoice_configuration" constraintName="uk_billing_invoice_configuration" />
+		<dropUniqueConstraint tableName="billing_invoice_type" constraintName="uk_billing_invoice_type" />
+		<dropUniqueConstraint tableName="billing_invoice" constraintName="uk_billing_invoice" />
+		<dropUniqueConstraint tableName="wf_workflow" constraintName="uk_j8v4x5olh5um1g7y5vnsayrka" />
+		<dropUniqueConstraint tableName="cat_channel" constraintName="uk_cat_channel" />
+		<dropUniqueConstraint tableName="ord_order" constraintName="uk_ord_order" />
+		<dropUniqueConstraint tableName="hierarchy_entity" constraintName="uk_code_hierarchy_provider" />
+		<dropUniqueConstraint tableName="cat_digital_resource" constraintName="uk_digital_resource" />
+		<dropUniqueConstraint tableName="ADM_MESSAGES" constraintName="uk_6clw4f7dfrs63yijhrwc87vnq" />
+		<dropUniqueConstraint tableName="wf_decision_rule" constraintName="uk_decision_rule_name_value_provider_id" />
+		<dropUniqueConstraint tableName="wf_transition" constraintName="uk_wf_transition_uuid_provider_id" />
+		<dropUniqueConstraint tableName="wf_action" constraintName="uk_wf_action_uuid_provider_id" />
+		<dropUniqueConstraint tableName="ord_quote" constraintName="uk_ord_quote" />
+		<!-- <dropUniqueConstraint tableName="BILLING_SEQ_INVTYP_SELL" constraintName="uk_bill_seq_it_sell" /> -->
+		<!-- <dropUniqueConstraint tableName="adm_notif_im_user" constraintName="uk_6g7agb8u5whyi5ukj627l2qc9" /> -->
+		<!-- <dropUniqueConstraint tableName="com_contact_com_message" constraintName="uk_e1trke21afbfr3v8wqnsks2is" /> -->
+		<!-- <dropUniqueConstraint tableName="billing_counter_period" constraintName="uk_mns6ldfxmurbo0j4y890h4ipe" /> -->
+		<!-- <dropUniqueConstraint tableName="adm_notif_email_user" constraintName="uk_mp4h7biod5wtjo1x3yp80q3um" /> -->
+		<!-- <dropUniqueConstraint tableName="cat_offer_serv_templates" constraintName="uk_cat_offer_serv_templates" /> -->
+		<!-- <dropUniqueConstraint tableName="cat_bundle_product_template" constraintName="uk_cat_bundle_prod_tpl" /> -->
+	</changeSet>
+
 	<changeSet id="#2334_20170213-1" author="AndriusKarpavicius" dbms="mysql">
 		<addColumn tableName="ADM_USER">
 			<column name="creator" type="VARCHAR(100)" />
@@ -1613,6 +1694,253 @@
 	</changeSet>
 
 
+	<!-- Replace ALL UK constaints in rebuild file - note that some are comented out, but only because they did not contain provider_id field. Comment should be removed when moved to rebuild file -->
+
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-422">
+		<addUniqueConstraint columnNames="code" constraintName="uk_1q0ayvmttpoo254r1v8hl0kjn" deferrable="false" disabled="false" initiallyDeferred="false" tableName="cat_discount_plan_item" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-423">
+		<addUniqueConstraint columnNames="file_name" constraintName="uk_23jasgq9b22ry02e4tl773c8i" deferrable="false" disabled="false" initiallyDeferred="false" tableName="billing_invoice_template" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-424">
+		<addUniqueConstraint columnNames="code" constraintName="uk_3ycqdueceguo8a0s21h1gkcqw" deferrable="false" disabled="false" initiallyDeferred="false" tableName="adm_notification" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-425">
+		<addUniqueConstraint columnNames="hour, min" constraintName="uk_46j9b2xyivfvbibad362o1dlr" deferrable="false" disabled="false" initiallyDeferred="false" tableName="cat_hour_in_day" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-426">
+		<addUniqueConstraint columnNames="code" constraintName="uk_4qps24of1qada6uyq7lh5ua0t" deferrable="false" disabled="false" initiallyDeferred="false" tableName="cat_discount_plan" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-427">
+		<addUniqueConstraint columnNames="code" constraintName="uk_52v1uwefc75bgqrj5encpyd9w" deferrable="false" disabled="false" initiallyDeferred="false" tableName="cat_price_plan_matrix" />
+	</changeSet>
+	<!-- <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-428"> -->
+	<!-- <addUniqueConstraint columnNames="users_id" constraintName="uk_6g7agb8u5whyi5ukj627l2qc9" deferrable="false" disabled="false" initiallyDeferred="false" tableName="adm_notif_im_user" /> -->
+	<!-- </changeSet> -->
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-429">
+		<addUniqueConstraint columnNames="code" constraintName="uk_6lkh6xsel27sl2bp1vgdhj0hm" deferrable="false" disabled="false" initiallyDeferred="false" tableName="com_contact_coords" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-430">
+		<addUniqueConstraint columnNames="code" constraintName="uk_6u1l58s8u672jj9sqb9tgqdbu" deferrable="false" disabled="false" initiallyDeferred="false" tableName="cat_service_template" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-432">
+		<addUniqueConstraint columnNames="code" constraintName="uk_9fnf93rp352nkw2kpd4oq5xp9" deferrable="false" disabled="false" initiallyDeferred="false" tableName="billing_subscription" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-433">
+		<addUniqueConstraint columnNames="code" constraintName="uk_bf0bq2sqe9fefsoud50t0fbjp" deferrable="false" disabled="false" initiallyDeferred="false" tableName="crm_customer_brand" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-435">
+		<addUniqueConstraint columnNames="code" constraintName="uk_cygiejvomk5mi5v4o04hf4uny" deferrable="false" disabled="false" initiallyDeferred="false" tableName="billing_subscrip_termin_reason" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-436">
+		<addUniqueConstraint columnNames="code" constraintName="uk_cyq7rhfwc1wqvxbj2tukw34f2" deferrable="false" disabled="false" initiallyDeferred="false" tableName="billing_cycle" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-437">
+		<addUniqueConstraint columnNames="contact_code" constraintName="uk_ddfq13s4y41whndo63ore4t05" deferrable="false" disabled="false" initiallyDeferred="false" tableName="com_contact" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-438">
+		<addUniqueConstraint columnNames="currency_code" constraintName="uk_dqcyys6yxxl4onj137n9c1nwu" deferrable="false" disabled="false" initiallyDeferred="false" tableName="adm_currency" />
+	</changeSet>
+	<!-- <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-439"> -->
+	<!-- <addUniqueConstraint columnNames="messages_id" constraintName="uk_e1trke21afbfr3v8wqnsks2is" deferrable="false" disabled="false" initiallyDeferred="false" tableName="com_contact_com_message" /> -->
+	<!-- </changeSet> -->
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-440">
+		<addUniqueConstraint columnNames="code" constraintName="uk_e5epl6nn8r6uyegu6ytx0c3op" deferrable="false" disabled="false" initiallyDeferred="false" tableName="cat_triggered_edr" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-441">
+		<addUniqueConstraint columnNames="code" constraintName="uk_e9tdxu2w5ebts1p1nr1ejqbgp" deferrable="false" disabled="false" initiallyDeferred="false" tableName="com_sender_config" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-442">
+		<addUniqueConstraint columnNames="code" constraintName="uk_ej17p1cs8977u8njoppj4ebug" deferrable="false" disabled="false" initiallyDeferred="false" tableName="billing_tax" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-443">
+		<addUniqueConstraint constraintName="UK_CRM_PROVIDER" columnNames="CODE" tableName="CRM_PROVIDER" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-445">
+		<addUniqueConstraint columnNames="code" constraintName="uk_fg8lvusnsfih36f76coxmh8qi" deferrable="false" disabled="false" initiallyDeferred="false" tableName="adm_inbound_request" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-446">
+		<addUniqueConstraint columnNames="day, month" constraintName="uk_gm4w28fbb5i1t0403tjbjyjrq" deferrable="false" disabled="false" initiallyDeferred="false" tableName="cat_day_in_year" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-447">
+		<addUniqueConstraint columnNames="code" constraintName="uk_h1vbmdpl6hby6wefd9isqht8" deferrable="false" disabled="false" initiallyDeferred="false" tableName="com_campaign" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-448">
+		<addUniqueConstraint columnNames="code" constraintName="uk_i4iy89rb3qcvhd7qivhjvw2mo" deferrable="false" disabled="false" initiallyDeferred="false" tableName="com_msg_var_value" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-449">
+		<addUniqueConstraint columnNames="code" constraintName="uk_ie5npbxx0nxnpogq73fdsi9fp" deferrable="false" disabled="false" initiallyDeferred="false" tableName="com_msg_tmpl_variable" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-450">
+		<addUniqueConstraint columnNames="code" constraintName="uk_ila682ivfyhhi6dfk9yfuahr" deferrable="false" disabled="false" initiallyDeferred="false" tableName="crm_customer_category" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-451">
+		<addUniqueConstraint columnNames="code" constraintName="uk_j2krifijlux8tsm1w5hoqyxqq" deferrable="false" disabled="false" initiallyDeferred="false" tableName="cat_offer_template" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-452">
+		<addUniqueConstraint columnNames="code" constraintName="uk_k9ha8me5f8rka8uqrgempqwuo" deferrable="false" disabled="false" initiallyDeferred="false" tableName="billing_invoice_template" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-453">
+		<addUniqueConstraint columnNames="acces_user_id, subscription_id" constraintName="uk_lca62y5gn9qo1e6jr84i9w3lr" deferrable="false" disabled="false" initiallyDeferred="false"
+			tableName="medina_access" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-454">
+		<addUniqueConstraint columnNames="code" constraintName="uk_lqvhsn08tpoq8kiy1qdc8j6ms" deferrable="false" disabled="false" initiallyDeferred="false" tableName="adm_title" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-455">
+		<addUniqueConstraint columnNames="code" constraintName="uk_m7m3ix32qoai9fv3xncoys8c9" deferrable="false" disabled="false" initiallyDeferred="false" tableName="cat_wallet_template" />
+	</changeSet>
+	<!-- <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-456"> -->
+	<!-- <addUniqueConstraint columnNames="counter_instance_id, period_start_date" constraintName="uk_mns6ldfxmurbo0j4y890h4ipe" deferrable="false" disabled="false" initiallyDeferred="false" -->
+	<!-- tableName="billing_counter_period" /> -->
+	<!-- </changeSet> -->
+	<!-- <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-457"> -->
+	<!-- <addUniqueConstraint columnNames="users_id" constraintName="uk_mp4h7biod5wtjo1x3yp80q3um" deferrable="false" disabled="false" initiallyDeferred="false" tableName="adm_notif_email_user" /> -->
+	<!-- </changeSet> -->
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-458">
+		<addUniqueConstraint columnNames="CODE, ACCOUNT_TYPE" tableName="ACCOUNT_ENTITY" constraintName="UK_ACCOUNT_ENTITY" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-459">
+		<addUniqueConstraint columnNames="code" constraintName="uk_my3lp1lx5r0jeftgekg48nf89" deferrable="false" disabled="false" initiallyDeferred="false" tableName="cat_calendar" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-460">
+		<addUniqueConstraint columnNames="code" constraintName="uk_n2bbtllrbgypse7qh9h3w6uy8" deferrable="false" disabled="false" initiallyDeferred="false" tableName="cat_charge_template" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-461">
+		<addUniqueConstraint columnNames="username" constraintName="uk_n9pt70038bt2ufk8x4pc7gr3l" deferrable="false" disabled="false" initiallyDeferred="false" tableName="adm_user" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-462">
+		<addUniqueConstraint columnNames="code" constraintName="uk_o5gj61ogdrv2lqs68uxkswvn2" deferrable="false" disabled="false" initiallyDeferred="false" tableName="crm_provider_contact" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-464">
+		<addUniqueConstraint columnNames="origin_id, invoice_number, accounting_code" constraintName="uk_og8li9rlut4trrxgajab23j7y" deferrable="false" disabled="false" initiallyDeferred="false"
+			tableName="dwh_journal_entries" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-465">
+		<addUniqueConstraint columnNames="code" constraintName="uk_ojqvlgvkqu3rnvm79bekf7k0b" deferrable="false" disabled="false" initiallyDeferred="false" tableName="rm_service_param_template" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-466">
+		<addUniqueConstraint columnNames="temporary_invoice_number" constraintName="uk_olfbcf2pmj73v5xdhnbp5i5gn" deferrable="false" disabled="false" initiallyDeferred="false" tableName="billing_invoice" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-467">
+		<addUniqueConstraint columnNames="code" constraintName="uk_p12oo75s9gryyvaw53y06xoh3" deferrable="false" disabled="false" initiallyDeferred="false" tableName="cat_counter_template" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-468">
+		<addUniqueConstraint columnNames="code" constraintName="uk_p2nr7j9ik6ri37gmd8o1hojhb" deferrable="false" disabled="false" initiallyDeferred="false" tableName="ar_occ_template" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-469">
+		<addUniqueConstraint columnNames="code" constraintName="uk_pehkecunepva2oq9dx9faajhg" deferrable="false" disabled="false" initiallyDeferred="false" tableName="dwh_chart" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-470">
+		<addUniqueConstraint columnNames="code" constraintName="uk_pxj2js3rc3kkeo9bqewgai3yl" deferrable="false" disabled="false" initiallyDeferred="false" tableName="billing_invoice_sub_cat" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-471">
+		<addUniqueConstraint columnNames="code" constraintName="uk_qck1376ll09l9itat2bcomhpl" deferrable="false" disabled="false" initiallyDeferred="false" tableName="billing_invoice_cat" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-473">
+		<addUniqueConstraint columnNames="code" constraintName="uk_r0shu06cdbx57w86f2h57t66p" deferrable="false" disabled="false" initiallyDeferred="false" tableName="com_message_template" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-474">
+		<addUniqueConstraint columnNames="code" constraintName="uk_r7ba8gp6uk4ncc8q1a7rrt3fi" deferrable="false" disabled="false" initiallyDeferred="false" tableName="dwh_measurable_quant" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-475">
+		<addUniqueConstraint columnNames="code" constraintName="uk_rsylyj7p2u3xkey9tkiu9rn7d" deferrable="false" disabled="false" initiallyDeferred="false" tableName="crm_seller" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-476">
+		<addUniqueConstraint columnNames="name" constraintName="uk_stegw04bvx8bxued1pkncywxl" deferrable="false" disabled="false" initiallyDeferred="false" tableName="bi_job" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-477">
+		<addUniqueConstraint columnNames="CODE, USER_ACCOUNT_ID" tableName="BILLING_WALLET" constraintName="UK_BILLING_WALLET" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-478">
+		<addUniqueConstraint columnNames="code" constraintName="uk_ar_credit_category" deferrable="false" disabled="false" initiallyDeferred="false" tableName="ar_credit_category" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-479">
+		<addUniqueConstraint columnNames="code" constraintName="uk_meveo_filter" deferrable="false" disabled="false" initiallyDeferred="false" tableName="meveo_filter" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-481">
+		<addUniqueConstraint columnNames="code" constraintName="uk_meveo_script_instance" deferrable="false" disabled="false" initiallyDeferred="false" tableName="MEVEO_SCRIPT_INSTANCE" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-483">
+		<addUniqueConstraint columnNames="code" constraintName="uk_p7r8cy3d1w7g8pir7rxq17071" deferrable="false" disabled="false" initiallyDeferred="false" tableName="com_meveo_instance" />
+	</changeSet>
+
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-485">
+		<addUniqueConstraint columnNames="code" constraintName="uk_meveo_job_instance" deferrable="false" disabled="false" initiallyDeferred="false" tableName="meveo_job_instance" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-486">
+		<addUniqueConstraint columnNames="code" constraintName="uk_q4ys10jgsw0px36rcvwdajh47" deferrable="false" disabled="false" initiallyDeferred="false" tableName="meveo_timer" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-488">
+		<addUniqueConstraint columnNames="code,applies_to" constraintName="uk_abfci88fr16lqf19cf961b08d" deferrable="false" disabled="false" initiallyDeferred="false" tableName="crm_custom_field_tmpl" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-489">
+		<addUniqueConstraint columnNames="code,cet_code" constraintName="uk_cust_cei" deferrable="false" disabled="false" initiallyDeferred="false" tableName="CUST_CEI" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-490">
+		<addUniqueConstraint columnNames="APPLIES_TO_UUID, code, period_start_date, period_end_date" tableName="crm_custom_field_inst" constraintName="uk_crm_custom_field_inst" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-492">
+		<addUniqueConstraint columnNames="code" constraintName="uk_meveo_module" deferrable="false" disabled="false" initiallyDeferred="false" tableName="meveo_module" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-493">
+		<addUniqueConstraint columnNames="code" constraintName="uk_cat_offer_template_category" deferrable="false" disabled="false" initiallyDeferred="false" tableName="cat_offer_template_category" />
+	</changeSet>
+	<!-- <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-494"> -->
+	<!-- <addUniqueConstraint columnNames="offer_template_id, service_template_id" tableName="cat_offer_serv_templates" constraintName="uk_cat_offer_serv_templates" /> -->
+	<!-- </changeSet> -->
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-495">
+		<addUniqueConstraint columnNames="provider_id" constraintName="uk_billing_invoice_configuration" deferrable="false" disabled="false" initiallyDeferred="false"
+			tableName="billing_invoice_configuration" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-496">
+		<addUniqueConstraint columnNames="code, occ_template_id" constraintName="uk_billing_invoice_type" deferrable="false" disabled="false" initiallyDeferred="false" tableName="billing_invoice_type" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-497">
+		<addUniqueConstraint constraintName="uk_billing_invoice" columnNames="invoice_number, invoice_type_id" tableName="billing_invoice" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-498">
+		<addUniqueConstraint columnNames="code" constraintName="uk_j8v4x5olh5um1g7y5vnsayrka" deferrable="false" disabled="false" initiallyDeferred="false" tableName="wf_workflow" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-499">
+		<addUniqueConstraint columnNames="code" constraintName="uk_cat_channel" deferrable="false" disabled="false" initiallyDeferred="false" tableName="cat_channel" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-501">
+		<addUniqueConstraint columnNames="code" constraintName="uk_ord_order" deferrable="false" disabled="false" initiallyDeferred="false" tableName="ord_order" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-502">
+		<addUniqueConstraint columnNames="code, hierarchy_type" constraintName="uk_code_hierarchy" deferrable="false" disabled="false" initiallyDeferred="false" tableName="hierarchy_entity" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-503">
+		<addUniqueConstraint columnNames="code" constraintName="uk_digital_resource" deferrable="false" disabled="false" initiallyDeferred="false" tableName="cat_digital_resource" />
+	</changeSet>
+	<!-- <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-504"> -->
+	<!-- <addUniqueConstraint columnNames="product_template_id, bundle_template_id" constraintName="uk_cat_bundle_prod_tpl" deferrable="false" disabled="false" initiallyDeferred="false" -->
+	<!-- tableName="cat_bundle_product_template" /> -->
+	<!-- </changeSet> -->
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-505">
+		<addUniqueConstraint columnNames="entity_code,entity_class,language_code" tableName="ADM_MESSAGES" constraintName="uk_6clw4f7dfrs63yijhrwc87vnq" deferrable="false" disabled="false"
+			initiallyDeferred="false" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-506">
+		<addUniqueConstraint columnNames="name, value" constraintName="uk_decision_rule_name_value" deferrable="false" disabled="false" initiallyDeferred="false" tableName="wf_decision_rule" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-507">
+		<addUniqueConstraint columnNames="uuid" constraintName="uk_wf_transition_uuid" deferrable="false" disabled="false" initiallyDeferred="false" tableName="wf_transition" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-508">
+		<addUniqueConstraint columnNames="uuid" constraintName="uk_wf_action_uuid" deferrable="false" disabled="false" initiallyDeferred="false" tableName="wf_action" />
+	</changeSet>
+	<changeSet author="AndriusKarpavicius" id="rebuild-str-uk-510">
+		<addUniqueConstraint columnNames="code" constraintName="uk_ord_quote" deferrable="false" disabled="false" initiallyDeferred="false" tableName="ord_quote" />
+	</changeSet>
+	<!-- <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-511"> -->
+	<!-- <addUniqueConstraint columnNames="seller_id, invoicetype_id" constraintName="uk_bill_seq_it_sell" deferrable="false" disabled="false" initiallyDeferred="false" tableName="BILLING_SEQ_INVTYP_SELL" 
+		/> -->
+	<!-- </changeSet> -->
+
+	<!-- End of all UK constraints -->
+
 	<changeSet id="#2394_20170322-Code-length" author="AndriusKarpavicius">
 		<modifyDataType tableName="BILLING_INVOICE_SUB_CAT" columnName="CODE" newDataType="VARCHAR(255)" />
 		<modifyDataType tableName="DWH_CHART" columnName="CODE" newDataType="VARCHAR(255)" />
@@ -2341,6 +2669,18 @@
 		</addColumn>
 		<sql>update BILLING_INVOICE set pdf_generated = 1 where pdf is not null </sql>
 		<dropColumn tableName="BILLING_INVOICE" columnName="PDF" />
+	</changeSet>
+
+	<changeSet id="#2504_20170406" author="AndriusKarpavicius">
+		<modifyDataType tableName="dwh_account_operation" columnName="category" newDataType="INT4" />
+		<addDefaultValue tableName="dwh_account_operation" columnName="category" defaultValueNumeric="0" />
+		<modifyDataType tableName="dwh_account_operation" columnName="status" newDataType="INT4" />
+		<addDefaultValue tableName="dwh_account_operation" columnName="status" defaultValueNumeric="0" />
+		<modifyDataType tableName="dwh_account_operation" columnName="type" newDataType="INT4" />
+		<addDefaultValue tableName="dwh_account_operation" columnName="type" defaultValueNumeric="0" />
+		<sql>update dwh_account_operation set category=0 where category is null</sql>
+		<sql>update dwh_account_operation set status=0 where status is null</sql>
+		<sql>update dwh_account_operation set type=0 where type is null</sql>
 	</changeSet>
 
 

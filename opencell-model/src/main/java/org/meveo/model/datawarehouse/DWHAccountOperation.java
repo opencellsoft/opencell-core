@@ -67,10 +67,10 @@ public class DWHAccountOperation extends BaseEntity {
 	private Integer dueMonth;
 
 	@Column(name = "CATEGORY")
-	private byte category;
+	private int category;
 
 	@Column(name = "TYPE")
-	private byte type;
+	private int type;
 
 	@Column(name = "OCC_CODE", length = 10)
 	@Size(max = 10)
@@ -88,7 +88,7 @@ public class DWHAccountOperation extends BaseEntity {
 	private BigDecimal amount;
 
 	@Column(name = "STATUS")
-	private byte status;
+	private int status;
 
 	public String getAccountCode() {
 		return accountCode;
@@ -146,19 +146,19 @@ public class DWHAccountOperation extends BaseEntity {
 		this.dueMonth = dueMonth;
 	}
 
-	public byte getCategory() {
+	public int getCategory() {
 		return category;
 	}
 
-	public void setCategory(byte category) {
+	public void setCategory(int category) {
 		this.category = category;
 	}
 
-	public byte getType() {
+	public int getType() {
 		return type;
 	}
 
-	public void setType(byte type) {
+	public void setType(int type) {
 		this.type = type;
 	}
 
@@ -194,11 +194,11 @@ public class DWHAccountOperation extends BaseEntity {
 		this.amount = amount;
 	}
 
-	public byte getStatus() {
+	public int getStatus() {
 		return status;
 	}
 
-	public void setStatus(byte status) {
+	public void setStatus(int status) {
 		this.status = status;
 	}
 
