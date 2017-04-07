@@ -16,6 +16,8 @@ import javax.annotation.PreDestroy;
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.ejb.TransactionAttribute;
@@ -60,6 +62,7 @@ import org.slf4j.Logger;
  */
 @Startup
 @Singleton
+@Lock(LockType.READ)
 public class ElasticClient {
 
     public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
@@ -175,10 +178,11 @@ public class ElasticClient {
     }
 
     /**
-     * Apply a partial update to the entity in Elastic Search
+     * Apply a partial update to the entity in Elastic Search. Used to update CF field values of an entity
      * 
      * @param entity Entity corresponding to a document in Elastic Search. Is used to construct document id only
-     * @param valuesToUpdate A map of fieldname and values to update in entity
+     * @param fieldName Field name
+     * @param fieldValue Field value
      */
     public void partialUpdate(BusinessEntity entity, String fieldName, Object fieldValue) {
 
@@ -603,6 +607,12 @@ public class ElasticClient {
         log.info("Start to repopulate Elastic Search");
 
         try {
+            // // Load configuration again, so correct provider code would be substituted
+            // esConfiguration.loadConfiguration(appProvider);
+
+            shutdownES();
+            initES();
+
             // Drop all indexes
             elasticSearchIndexPopulationService.dropIndexes();
 
@@ -642,7 +652,8 @@ public class ElasticClient {
     }
 
     /**
-     * Recreate index 
+     * Recreate index
+     * 
      * @throws BusinessException
      */
     public void createIndexes() throws BusinessException {
@@ -691,6 +702,12 @@ public class ElasticClient {
     protected static String cleanUpCode(String code) {
 
         code = code.replace(' ', '_');
+        return code;
+    }
+
+    protected static String cleanUpAndLowercaseCode(String code) {
+
+        code = cleanUpCode(code).toLowerCase();
         return code;
     }
 

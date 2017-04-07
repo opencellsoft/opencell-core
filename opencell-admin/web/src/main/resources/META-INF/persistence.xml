@@ -13,7 +13,7 @@
 			<property name="hibernate.cache.use_second_level_cache" value="true" />
 			<property name="hibernate.cache.use_minimal_puts" value="true" />
 			<property name="hibernate.discriminator.ignore_explicit_for_joined" value="true" />
-			<!-- <property name="hibernate.ejb.event.flush" value="org.meveo.jpa.event.FlushEventListener" /> Needed for ES -->
+			<property name="hibernate.ejb.event.flush" value="org.meveo.jpa.event.FlushEventListener" /> <!-- Needed for ES  -->
 		</properties>
 	</persistence-unit>
 

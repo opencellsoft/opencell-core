@@ -46,13 +46,11 @@ import org.meveo.model.IEntity;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
-import org.meveo.util.ApplicationProvider;
 import org.meveo.util.EntityCustomizationUtils;
 import org.meveo.util.MeveoJpa;
 import org.meveo.util.MeveoJpaForJobs;
@@ -62,8 +60,6 @@ import org.slf4j.Logger;
 public class ElasticSearchIndexPopulationService implements Serializable {
 
     private static final long serialVersionUID = 6177817839276664632L;
-
-    private static String INDEX_PROVIDER_PREFIX = "<provider>";
 
     @Inject
     @MeveoJpa
@@ -91,10 +87,6 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     @Inject
     private Logger log;    
     
-    @Inject
-    @ApplicationProvider
-    protected Provider appProvider;
-
     private ParamBean paramBean = ParamBean.getInstance();
 
     @SuppressWarnings("unchecked")
@@ -356,14 +348,14 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void createIndexes() throws BusinessException {
 
-        log.debug("Creating Elastic Search indexes with prefix {}", appProvider.getCode());
+        log.debug("Creating Elastic Search indexes");
 
         ResteasyClient client = new ResteasyClientBuilder().build();
 
         // Create indexes
         for (Entry<String, String> model : esConfiguration.getDataModel().entrySet()) {
-            String indexName = model.getKey().replace(INDEX_PROVIDER_PREFIX, appProvider.getCode());
-            String modelJson = model.getValue().replace(INDEX_PROVIDER_PREFIX, appProvider.getCode());
+            String indexName = model.getKey();
+            String modelJson = model.getValue();
 
             String uri = paramBean.getProperty("elasticsearch.restUri", "http://localhost:9200");
 
@@ -377,7 +369,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
             }
         }
 
-        log.trace("Creating Elastic Search mappings for CETs with prefix {}", appProvider.getCode());
+        log.trace("Creating Elastic Search mappings for CETs");
 
         // Create mappings for custom entity templates
         List<CustomEntityTemplate> cets = customEntityTemplateService.listNoCache();
@@ -385,7 +377,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
             createCETMapping(cet);
         }
 
-        log.trace("Updating Elastic Search mappings for CFTs with prefix {}", appProvider.getCode());
+        log.trace("Updating Elastic Search mappings for CFTs");
 
         // Update model mapping with custom fields
         List<CustomFieldTemplate> cfts = customFieldTemplateService.getCFTForIndex();

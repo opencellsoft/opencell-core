@@ -10,24 +10,24 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.ejb.Lock;
+import javax.ejb.LockType;
 import javax.ejb.Singleton;
-import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.util.ApplicationProvider;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Singleton
+@Lock(LockType.READ)
 public class ElasticSearchConfiguration implements Serializable {
 
     private static final long serialVersionUID = 7200163625956435849L;
@@ -72,10 +72,6 @@ public class ElasticSearchConfiguration implements Serializable {
     // @Inject
     // private Logger log;
 
-    @Inject
-    @ApplicationProvider
-    private Provider appProvider;
-    
     /**
      * Load configuration from elasticSearchConfiguration.json file
      * 
@@ -178,8 +174,7 @@ public class ElasticSearchConfiguration implements Serializable {
         Class clazz = clazzToConvert;
         while (!BusinessEntity.class.equals(clazz)) {
             if (indexMap.containsKey(clazz.getSimpleName())) {
-
-                return appProvider.getCode()+"_" + indexMap.get(clazz.getSimpleName());
+                return indexMap.get(clazz.getSimpleName());
             }
             clazz = clazz.getSuperclass();
         }
@@ -212,10 +207,7 @@ public class ElasticSearchConfiguration implements Serializable {
     public Set<String> getIndexes() {
 
         Set<String> indexNames = new HashSet<>();
-
-        for (String indexName : indexMap.values()) {
-            indexNames.add(appProvider.getCode()+"_" + indexName);
-        }
+        indexNames.addAll(indexMap.values());
 
         return indexNames;
     }
