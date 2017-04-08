@@ -1,6 +1,5 @@
 package org.meveo.service.index;
 
-import java.net.InetAddress;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,15 +10,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.Future;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
+import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
@@ -31,9 +25,6 @@ import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.cluster.node.DiscoveryNode;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.SimpleQueryStringBuilder.Operator;
@@ -41,7 +32,6 @@ import org.elasticsearch.search.sort.SortOrder;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -53,16 +43,12 @@ import org.meveo.service.index.ElasticSearchChangeset.ElasticSearchAction;
 import org.slf4j.Logger;
 
 /**
- * Connect to an Elastic Search cluster
+ * Provides functionality to interact with Elastic Search cluster
  * 
- * Provider code superseeds index names
- * 
- * @author smichea
+ * @author Andrius Karpavicius
  * 
  */
-@Startup
-@Singleton
-@Lock(LockType.READ)
+@Stateless
 public class ElasticClient {
 
     public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
@@ -75,15 +61,6 @@ public class ElasticClient {
 
     @Inject
     private ElasticClientQueuedChanges queuedChanges;
-
-    private ParamBean paramBean = ParamBean.getInstance();
-
-    private TransportClient client = null;
-
-    /**
-     * Is Elastic Search enabled/connected
-     */
-    private boolean esEnabled = false;
 
     @Inject
     private ElasticSearchConfiguration esConfiguration;
@@ -100,63 +77,8 @@ public class ElasticClient {
     @Inject
     private CustomFieldsCacheContainerProvider cfCache;
 
-    /**
-     * Initialize Elastic Search client
-     */
-    @PostConstruct
-    private void initES() {
-
-        String clusterName = null;
-        String[] hosts = null;
-        String portStr = null;
-
-        try {
-            clusterName = paramBean.getProperty("elasticsearch.cluster.name", "");
-            hosts = paramBean.getProperty("elasticsearch.hosts", "localhost").split(";");
-            portStr = paramBean.getProperty("elasticsearch.port", "9300");
-            String sniffingStr = paramBean.getProperty("elasticsearch.client.transport.sniff", "false").toLowerCase();
-            if (!StringUtils.isBlank(portStr) && StringUtils.isNumeric(portStr) && (sniffingStr.equals("true") || sniffingStr.equals("false")) && !StringUtils.isBlank(clusterName)
-                    && hosts.length > 0) {
-                log.debug("Connecting to elasticSearch cluster {} and hosts {}, port {}", clusterName, StringUtils.join(hosts, ";"), portStr);
-                boolean sniffing = Boolean.parseBoolean(sniffingStr);
-                Settings settings = Settings.settingsBuilder().put("client.transport.sniff", sniffing).put("cluster.name", clusterName).build();
-                client = TransportClient.builder().settings(settings).build();
-                int port = Integer.parseInt(portStr);
-                for (String host : hosts) {
-                    client.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(host), port));
-                }
-                List<DiscoveryNode> nodes = client.connectedNodes();
-                if (nodes.isEmpty()) {
-                    log.error("No nodes available. Verify ES is running!. Current settings: clusterName={}, hosts={}, port={}", clusterName, hosts, portStr);
-                    throw new RuntimeException("No nodes available. Verify ES is running!");
-                } else {
-                    log.debug("connected elasticsearch to {} nodes. Current settings: clusterName={}, hosts={}, port={}", nodes.size(), clusterName, hosts, portStr);
-                }
-            } else {
-                log.warn("Elastic search is not enabled. Current settings: clusterName={}, hosts={}, port={}", clusterName, hosts, portStr);
-            }
-
-        } catch (Exception e) {
-            log.error("Error while initializing elastic search. Current settings: clusterName={}, hosts={}, port={}", clusterName, hosts, portStr, e);
-            shutdownES();
-            throw new RuntimeException(
-                "Failed to connect to or initialize elastic search client. Application will be stopped. You can disable Elastic Search integration by clearing 'elasticsearch.cluster.name' property in meveo-admin.properties file.");
-        }
-
-        try {
-            if (client != null) {
-                esConfiguration.loadConfiguration();
-            }
-        } catch (Exception e) {
-            log.error("Error while loading elastic search mapping configuration", e);
-            shutdownES();
-            throw new RuntimeException(
-                "Error while loading elastic search mapping configuration. Application will be stopped. You can disable Elastic Search integration by clearing 'elasticsearch.cluster.name' property in meveo-admin.properties file.");
-        }
-
-        esEnabled = client != null;
-
-    }
+    @Inject
+    private ElasticClientConnection esConnection;
 
     /**
      * Store and index entity in Elastic Search
@@ -199,7 +121,7 @@ public class ElasticClient {
      */
     public void partialUpdate(BusinessEntity entity, Map<String, Object> fieldsToUpdate) {
 
-        if (!esEnabled) {
+        if (!esConnection.isEnabled()) {
             return;
         }
 
@@ -235,7 +157,7 @@ public class ElasticClient {
      */
     private void createOrUpdate(BusinessEntity entity, boolean partialUpdate) {
 
-        if (!esEnabled) {
+        if (!esConnection.isEnabled()) {
             return;
         }
 
@@ -275,7 +197,7 @@ public class ElasticClient {
      */
     public void remove(BusinessEntity entity) {
 
-        if (!esEnabled) {
+        if (!esConnection.isEnabled()) {
             return;
         }
 
@@ -308,7 +230,7 @@ public class ElasticClient {
      */
     public void flushChanges() {
 
-        if (!esEnabled) {
+        if (!esConnection.isEnabled()) {
             return;
         }
 
@@ -316,6 +238,7 @@ public class ElasticClient {
             log.trace("Nothing to flush to ES");
             return;
         }
+        TransportClient client = esConnection.getClient(); 
 
         // Prepare bulk request
         BulkRequestBuilder bulkRequest = client.prepareBulk();
@@ -368,7 +291,7 @@ public class ElasticClient {
      */
     public String search(PaginationConfiguration paginationConfig, String[] classnamesOrCetCodes) throws BusinessException {
 
-        if (!esEnabled) {
+        if (!esConnection.isEnabled()) {
             return "{}";
         }
 
@@ -403,7 +326,7 @@ public class ElasticClient {
     public String search(String query, Integer from, Integer size, String sortField, SortOrder sortOrder, String[] returnFields, List<ElasticSearchClassInfo> classInfo)
             throws BusinessException {
 
-        if (!esEnabled) {
+        if (!esConnection.isEnabled()) {
             return "{}";
         }
 
@@ -434,7 +357,7 @@ public class ElasticClient {
 
         log.debug("Execute Elastic Search search for \"{}\" records {}-{} on {}, {} sort by {} {}", query, from, from + size, indexes, types, sortField, sortOrder);
 
-        SearchRequestBuilder reqBuilder = client.prepareSearch(indexes.toArray(new String[0]));
+        SearchRequestBuilder reqBuilder = esConnection.getClient().prepareSearch(indexes.toArray(new String[0]));
 
         if (types != null) {
             reqBuilder.setTypes(types.toArray(new String[0]));
@@ -484,7 +407,7 @@ public class ElasticClient {
     public String search(Map<String, ?> queryValues, Integer from, Integer size, String sortField, SortOrder sortOrder, String[] returnFields,
             List<ElasticSearchClassInfo> classInfo) throws BusinessException {
 
-        if (!esEnabled) {
+        if (!esConnection.isEnabled()) {
             return "{}";
         }
 
@@ -515,7 +438,7 @@ public class ElasticClient {
 
         log.debug("Execute Elastic Search search for {} records {}-{} on {}, {} sort by {} {}", queryValues, from, from + size, indexes, types, sortField, sortOrder);
 
-        SearchRequestBuilder reqBuilder = client.prepareSearch(indexes.toArray(new String[0]));
+        SearchRequestBuilder reqBuilder = esConnection.getClient().prepareSearch(indexes.toArray(new String[0]));
         if (types != null) {
             reqBuilder.setTypes(types.toArray(new String[0]));
         }
@@ -567,21 +490,6 @@ public class ElasticClient {
     }
 
     /**
-     * Shutdown Elastic Search client
-     */
-    @PreDestroy
-    private void shutdownES() {
-        if (client != null) {
-            try {
-                client.close();
-                client = null;
-            } catch (Exception e) {
-                log.error("Failed to close ES client", e);
-            }
-        }
-    }
-
-    /**
      * Get a list of entity classes that is managed by Elastic Search
      * 
      * @return A list of entity simple classnames
@@ -591,7 +499,7 @@ public class ElasticClient {
     }
 
     public boolean isEnabled() {
-        return esEnabled;
+        return esConnection.isEnabled();
     }
 
     @Asynchronous
@@ -600,18 +508,15 @@ public class ElasticClient {
 
         ReindexingStatistics statistics = new ReindexingStatistics();
 
-        if (!esEnabled) {
+        if (!esConnection.isEnabled()) {
             return new AsyncResult<ReindexingStatistics>(statistics);
         }
 
         log.info("Start to repopulate Elastic Search");
 
         try {
-            // // Load configuration again, so correct provider code would be substituted
-            // esConfiguration.loadConfiguration(appProvider);
-
-            shutdownES();
-            initES();
+            
+            esConnection.reinitES();
 
             // Drop all indexes
             elasticSearchIndexPopulationService.dropIndexes();
@@ -631,7 +536,7 @@ public class ElasticClient {
                 boolean hasMore = true;
 
                 while (hasMore) {
-                    int found = elasticSearchIndexPopulationService.populateIndex(classname, from, statistics, client);
+                    int found = elasticSearchIndexPopulationService.populateIndex(classname, from, statistics);
 
                     from = from + INDEX_POPULATE_PAGE_SIZE;
                     totalProcessed = totalProcessed + found;
@@ -658,7 +563,7 @@ public class ElasticClient {
      */
     public void createIndexes() throws BusinessException {
 
-        if (!esEnabled) {
+        if (!esConnection.isEnabled()) {
             return;
         }
 
@@ -673,7 +578,7 @@ public class ElasticClient {
      */
     public void createCETMapping(CustomEntityTemplate cet) throws BusinessException {
 
-        if (!esEnabled) {
+        if (!esConnection.isEnabled()) {
             return;
         }
 
@@ -688,15 +593,11 @@ public class ElasticClient {
      */
     public void updateCFMapping(CustomFieldTemplate cft) throws BusinessException {
 
-        if (!esEnabled) {
+        if (!esConnection.isEnabled()) {
             return;
         }
 
         elasticSearchIndexPopulationService.updateCFMapping(cft);
-    }
-
-    protected TransportClient getClient() {
-        return client;
     }
 
     protected static String cleanUpCode(String code) {

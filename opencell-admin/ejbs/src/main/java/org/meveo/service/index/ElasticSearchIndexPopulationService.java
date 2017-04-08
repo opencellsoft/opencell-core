@@ -31,7 +31,6 @@ import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.client.transport.TransportClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
@@ -85,13 +84,16 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     private CustomEntityTemplateService customEntityTemplateService;
 
     @Inject
-    private Logger log;    
-    
+    private ElasticClientConnection esConnection;
+
+    @Inject
+    private Logger log;
+
     private ParamBean paramBean = ParamBean.getInstance();
 
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public int populateIndex(String classname, int from, ReindexingStatistics statistics, TransportClient client) {
+    public int populateIndex(String classname, int from, ReindexingStatistics statistics) {
 
         Set<String> cftIndexable = new HashSet<>();
         Set<String> cftNotIndexable = new HashSet<>();
@@ -143,7 +145,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         }
 
         // Prepare bulk request
-        BulkRequestBuilder bulkRequest = client.prepareBulk();
+        BulkRequestBuilder bulkRequest = esConnection.getClient().prepareBulk();
 
         // Convert entities to map of values and supplement it with custom field values if applicable and add to a bulk request
         for (BusinessEntity entity : entities) {
@@ -335,8 +337,8 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
         Response response = target.request().delete();
         if (response.getStatus() != HttpURLConnection.HTTP_OK) {
-            throw new BusinessException("Failed to communicate or process data in Elastic Search. Http status " + response.getStatus() + " "
-                    + response.getStatusInfo().getReasonPhrase());
+            throw new BusinessException(
+                "Failed to communicate or process data in Elastic Search. Http status " + response.getStatus() + " " + response.getStatusInfo().getReasonPhrase());
         }
     }
 
@@ -364,8 +366,8 @@ public class ElasticSearchIndexPopulationService implements Serializable {
             Response response = target.request().put(javax.ws.rs.client.Entity.entity(modelJson, MediaType.APPLICATION_JSON_TYPE));
             response.close();
             if (response.getStatus() != HttpURLConnection.HTTP_OK) {
-                throw new BusinessException("Failed to create index " + indexName + " in Elastic Search. Http status " + response.getStatus() + " "
-                        + response.getStatusInfo().getReasonPhrase());
+                throw new BusinessException(
+                    "Failed to create index " + indexName + " in Elastic Search. Http status " + response.getStatus() + " " + response.getStatusInfo().getReasonPhrase());
             }
         }
 
@@ -419,8 +421,8 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         response.close();
         if (response.getStatus() != HttpURLConnection.HTTP_OK) {
             log.error("Failed to update {}/{} mapping in Elastic Search with field mapping {}", index, type, fieldMappingJson);
-            throw new BusinessException("Failed to update " + index + "/_mapping/" + type + " in Elastic Search. Http status " + response.getStatus() + " "
-                    + response.getStatusInfo().getReasonPhrase());
+            throw new BusinessException(
+                "Failed to update " + index + "/_mapping/" + type + " in Elastic Search. Http status " + response.getStatus() + " " + response.getStatusInfo().getReasonPhrase());
         } else {
             log.error("Updated {}/{} mapping in Elastic Search with field mapping {}", index, type, fieldMappingJson);
         }
@@ -483,8 +485,8 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         response.close();
         if (response.getStatus() != HttpURLConnection.HTTP_OK) {
             log.error("Failed to update {}/{} mapping in Elastic Search with field mapping {}", index, type, fieldMappingJson);
-            throw new BusinessException("Failed to update " + index + "/_mapping/" + type + " in Elastic Search. Http status " + response.getStatus() + " "
-                    + response.getStatusInfo().getReasonPhrase());
+            throw new BusinessException(
+                "Failed to update " + index + "/_mapping/" + type + " in Elastic Search. Http status " + response.getStatus() + " " + response.getStatusInfo().getReasonPhrase());
         } else {
             log.error("Updated {}/{} mapping in Elastic Search with field mapping {}", index, type, fieldMappingJson);
         }
