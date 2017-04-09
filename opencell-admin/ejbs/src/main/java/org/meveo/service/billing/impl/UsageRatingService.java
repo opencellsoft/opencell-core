@@ -54,6 +54,7 @@ import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
@@ -120,6 +121,9 @@ public class UsageRatingService {
     @Inject
     @ApplicationProvider
     private Provider appProvider;
+    
+	@Inject
+	protected CatMessagesService catMessagesService;
 
     // @PreDestroy
     // accessing Entity manager in predestroy is bugged in jboss7.1.3
@@ -206,7 +210,7 @@ public class UsageRatingService {
         // overridden by charging algorithm
         walletOperation.setWallet(userAccount.getWallet());
         walletOperation.setCode(cachedChargeInstance.getChargeTemplate().getCode());
-        walletOperation.setDescription(cachedChargeInstance.getDescription());
+        walletOperation.setDescription(catMessagesService.getMessageDescriptionByCodeAndLanguage(cachedChargeInstance.getChargeTemplate().getCode(),userAccount.getBillingAccount().getTradingLanguage().getLanguageCode(),cachedChargeInstance.getDescription()));
         walletOperation.setQuantity(quantityToCharge);
 
         walletOperation.setQuantity(NumberUtil.getInChargeUnit(walletOperation.getQuantity(), cachedChargeInstance.getChargeTemplate().getUnitMultiplicator(), cachedChargeInstance
