@@ -150,10 +150,10 @@ public class WalletApi extends BaseApi {
 
             try {
                 if (walletBalance.isAmountWithTax()) {
-                    return walletReservationService.getOpenBalanceWithoutTax(walletBalance.getSellerCode(), walletBalance.getUserAccountCode(),
+                    return walletReservationService.getOpenBalanceWithTax(walletBalance.getSellerCode(), walletBalance.getUserAccountCode(),
                         walletBalance.getStartDate(), walletBalance.getEndDate());
                 } else {
-                    return walletReservationService.getOpenBalanceWithTax(walletBalance.getSellerCode(), walletBalance.getUserAccountCode(),
+                    return walletReservationService.getOpenBalanceWithoutTax(walletBalance.getSellerCode(), walletBalance.getUserAccountCode(),
                         walletBalance.getStartDate(), walletBalance.getEndDate());
                 }
             } catch (BusinessException e) {
@@ -289,7 +289,7 @@ public class WalletApi extends BaseApi {
             try {
                 return reservationService.confirmReservation(walletReservation.getReservationId(), walletReservation.getSellerCode(),
                     walletReservation.getOfferCode(), walletReservation.getSubscriptionDate(), walletReservation.getTerminationDate(), walletReservation.getParam1(),
-                    walletReservation.getParam2(), walletReservation.getParam3());
+                    walletReservation.getParam2(), walletReservation.getParam3(),walletReservation.isAmountWithTax());
             } catch (BusinessException e) {
                 throw new MeveoApiException(e.getMessage());
             }

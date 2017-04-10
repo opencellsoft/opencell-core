@@ -80,7 +80,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 	// FIXME: rethink this service in term of prepaid wallets
 	public Long createReservation(String sellerCode, String offerCode, String userAccountCode,
 			Date subscriptionDate, Date expiryDate, BigDecimal creditLimit, String param1, String param2,
-			String param3, boolean amountWithTax) throws BusinessException {
+			String param3, boolean isAmountWithTax) throws BusinessException {
 		
 
 		// #1 Check the credit limit (servicesSum + getCurrentAmount) & return
@@ -117,10 +117,10 @@ public class ReservationService extends PersistenceService<Reservation> {
 		}
 
 		BigDecimal servicesSum = walletReservationService.computeServicesSum(offerTemplate, userAccount,
-				subscriptionDate, param1, param2, param3, new BigDecimal(1));
+				subscriptionDate, param1, param2, param3, new BigDecimal(1),isAmountWithTax);
 
 		BigDecimal ratedAmount = walletReservationService.computeRatedAmount(seller, userAccount,
-				subscriptionDate);
+				subscriptionDate,isAmountWithTax);
 
 		BigDecimal spentCredit = servicesSum.add(ratedAmount);
 
@@ -141,7 +141,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 		reservation.setReservationDate(new Date());
 		reservation.setExpiryDate(expiryDate);
 		reservation.setWallet(wallet);
-		if (amountWithTax) {
+		if (isAmountWithTax) {
 			reservation.setAmountWithTax(spentCredit);
 		} else {
 			reservation.setAmountWithoutTax(spentCredit);
@@ -166,7 +166,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 		walletReservation.setStartDate(null);
 		walletReservation.setEndDate(null);
 		walletReservation.setCurrency(currency.getCurrency());
-		if (amountWithTax) {
+		if (isAmountWithTax) {
 			walletReservation.setAmountWithTax(servicesSum);
 		} else {
 			walletReservation.setAmountWithoutTax(servicesSum);
@@ -180,7 +180,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 
 	public void updateReservation(Long reservationId, String sellerCode, String offerCode,
 			String userAccountCode, Date subscriptionDate, Date expiryDate, BigDecimal creditLimit, String param1,
-			String param2, String param3, boolean amountWithTax) throws BusinessException {
+			String param2, String param3, boolean isAmountWithTax) throws BusinessException {
 	
 		// #1 Check the credit limit (servicesSum + getCurrentAmount) & return
 		// error if KO.
@@ -216,10 +216,10 @@ public class ReservationService extends PersistenceService<Reservation> {
 		}
 
 		BigDecimal servicesSum = walletReservationService.computeServicesSum(offerTemplate, userAccount,
-				subscriptionDate, param1, param2, param3, new BigDecimal(1));
+				subscriptionDate, param1, param2, param3, new BigDecimal(1),isAmountWithTax);
 
 		BigDecimal ratedAmount = walletReservationService.computeRatedAmount(seller, userAccount,
-				subscriptionDate);
+				subscriptionDate,isAmountWithTax);
 
 		BigDecimal spentCredit = servicesSum.add(ratedAmount);
 
@@ -243,7 +243,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 		reservation.setReservationDate(new Date());
 		reservation.setExpiryDate(expiryDate);
 		reservation.setWallet(wallet);
-		if (amountWithTax) {
+		if (isAmountWithTax) {
 			reservation.setAmountWithTax(spentCredit);
 			walletReservationService.updateSpendCredit(reservationId, servicesSum, true);
 		} else {
@@ -312,7 +312,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 	}
 
 	public BigDecimal confirmReservation(Long reservationId, String sellerCode, String offerCode,
-			Date subscriptionDate, Date terminationDate, String param1, String param2, String param3)
+			Date subscriptionDate, Date terminationDate, String param1, String param2, String param3,boolean isAmountWithTax)
 			throws BusinessException {
 
 		Reservation reservation = findById(reservationId);
@@ -361,10 +361,10 @@ public class ReservationService extends PersistenceService<Reservation> {
 		// difference in amount when the credit is reserved and on the actual
 		// date of the subscription.
 		BigDecimal servicesSum = walletReservationService.computeServicesSum(offerTemplate,
-				reservation.getUserAccount(), subscriptionDate, param1, param2, param3, new BigDecimal(1));
+				reservation.getUserAccount(), subscriptionDate, param1, param2, param3, new BigDecimal(1),isAmountWithTax);
 
 		BigDecimal ratedAmount = walletReservationService.computeRatedAmount(seller,
-				reservation.getUserAccount(), subscriptionDate);
+				reservation.getUserAccount(), subscriptionDate,isAmountWithTax);
 
 		if (servicesSum != null && ratedAmount != null) {
 			return servicesSum.subtract(ratedAmount);
