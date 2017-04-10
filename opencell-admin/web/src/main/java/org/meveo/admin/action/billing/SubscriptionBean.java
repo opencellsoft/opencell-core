@@ -330,7 +330,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
 			oneShotChargeInstanceService.oneShotChargeApplication(entity, (OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate(), selectedWalletTemplate.getCode(),
 					oneShotChargeInstance.getChargeDate(), oneShotChargeInstance.getAmountWithoutTax(), oneShotChargeInstance.getAmountWithTax(), oneShotChargeInstanceQuantity,
-					oneShotChargeInstance.getCriteria1(), oneShotChargeInstance.getCriteria2(), oneShotChargeInstance.getCriteria3(), null, true);
+					oneShotChargeInstance.getCriteria1(), oneShotChargeInstance.getCriteria2(), oneShotChargeInstance.getCriteria3(), description, null, true);
 
 			oneShotChargeInstance = null;
 			oneShotChargeInstances = null;
