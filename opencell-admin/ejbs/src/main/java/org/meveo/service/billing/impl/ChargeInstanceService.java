@@ -29,10 +29,12 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
+import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionStatusEnum;
+import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.service.base.BusinessService;
 
@@ -41,6 +43,12 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
 
 	@EJB
 	private RecurringChargeInstanceService recurringChargeInstanceService;
+	
+	@EJB
+	private UsageChargeInstanceService usageChargeInstanceService;
+	
+	@EJB
+	private OneShotChargeInstanceService oneShotChargeInstanceService;
 
 	@SuppressWarnings("unchecked")
 	public P findByCodeAndService(String code, Long subscriptionId) {
@@ -179,6 +187,33 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
 			log.warn("failed to find By code and subscription",e);
 			return null;
 		}
+	}
+	
+	/**
+	 * workround to find serviceInstance from chargeInstance , to avoid hibernate proxy cast
+	 * @param chargeInstance
+	 * @return
+	 */
+	
+	public ServiceInstance getServiceInstanceFromChargeInstance(ChargeInstance chargeInstance){			
+		RecurringChargeInstance recurringChargeInstance = recurringChargeInstanceService.findById(chargeInstance.getId());
+		if(recurringChargeInstance != null){
+			return recurringChargeInstance.getServiceInstance();
+		}
+		UsageChargeInstance usageChargeInstance = usageChargeInstanceService.findById(chargeInstance.getId());
+		if(usageChargeInstance != null){
+			return usageChargeInstance.getServiceInstance();
+		}	
+		OneShotChargeInstance oneShotChargeInstance = oneShotChargeInstanceService.findById(chargeInstance.getId());
+		if(oneShotChargeInstance != null){
+			ServiceInstance serviceInstance = null;
+			serviceInstance = oneShotChargeInstance.getSubscriptionServiceInstance();
+			if (serviceInstance == null) {
+				serviceInstance = oneShotChargeInstance.getTerminationServiceInstance();
+			}
+			return serviceInstance;
+		}			
+		return null;				
 	}
 
 }
