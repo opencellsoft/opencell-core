@@ -119,7 +119,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
     private ProductTemplateService productTemplateService;
 	   
 	private CounterInstance selectedCounterInstance;
-	private ProductInstance productInstance;
+	private ProductInstance productInstance = new ProductInstance();
 	private ProductChargeInstance productChargeInstance = new ProductChargeInstance();
 
 	private Long billingAccountId;
@@ -549,6 +549,10 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
 	public void setProductChargeInstance(ProductChargeInstance productChargeInstance) {
 		this.productChargeInstance = productChargeInstance;
+	}
+
+	public void setAndRefreshProductInstance(ProductInstance prodInstance) {
+		this.productInstance = productInstanceService.refreshOrRetrieve(prodInstance);
 	}
 
 }

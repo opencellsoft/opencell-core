@@ -68,18 +68,18 @@
 
         <p:tab title="#{tabLabel}" rendered="#{renderTab}">
             <c:if test="#{renderForm}">
-                <h:form id="#{prefix}_form_#{cfTabStatus.index}">
+                <h:form id="#{prefix}_form_group_#{cfTabStatus.index}">
                     <h:panelGroup id="form_panel">
                         <hftl:customFieldFormOrPanel cfTag="#{cfTab}" entity="#{entity}" cft="#{cft}" edit="#{edit}" messagesId="#{messagesId}" datePattern="#{datePattern}"
-                            dateTimePattern="#{dateTimePattern}" prefix="#{prefix}" />
+                            dateTimePattern="#{dateTimePattern}" prefix="#{prefix}_form_#{cfTabStatus.index}" />
                     </h:panelGroup>
                 </h:form>
             </c:if>
 
             <c:if test="#{!renderForm}">
-                <h:panelGroup id="#{prefix}_form_#{cfTabStatus.index}">
+                <h:panelGroup id="#{prefix}_panel_group_#{cfTabStatus.index}">
                     <hftl:customFieldFormOrPanel cfTag="#{cfTab}" entity="#{entity}" cft="#{cft}" edit="#{edit}" messagesId="#{messagesId}" datePattern="#{datePattern}"
-                        dateTimePattern="#{dateTimePattern}" prefix="#{prefix}" />
+                        dateTimePattern="#{dateTimePattern}" prefix="#{prefix}_panel_#{cfTabStatus.index}" />
                 </h:panelGroup>
             </c:if>
         </p:tab>
