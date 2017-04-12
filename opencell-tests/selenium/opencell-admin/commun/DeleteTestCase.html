@@ -13,8 +13,23 @@
 </thead><tbody>
 <tr>
 	<td>assertText</td>
-	<td>//a[contains(text(),'${Code}')]</td>
-	<td>${Code}</td>
+	<td>//a[contains(text(),'${LoginValue}')]</td>
+	<td>${LoginValue}</td>
+</tr>
+<tr>
+	<td>selectWindow</td>
+	<td>null</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=searchForm:userName_txt</td>
+	<td>${LoginValue}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=searchForm:buttonSearch</td>
+	<td></td>
 </tr>
 <tr>
 	<td>click</td>

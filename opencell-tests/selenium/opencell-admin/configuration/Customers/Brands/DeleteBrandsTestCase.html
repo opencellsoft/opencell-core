@@ -27,13 +27,18 @@
 	<td>${Code}</td>
 </tr>
 <tr>
-	<td>assertElementPresent</td>
-	<td>//a[contains(text(),'${Code}')]</td>
+	<td>type</td>
+	<td>id=searchForm:code_txt</td>
+	<td>${Code}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=searchForm:buttonSearch</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>id=datatable_results:1:resultsdeletelink</td>
+	<td>id=datatable_results:0:resultsdeletelink</td>
 	<td></td>
 </tr>
 <tr>
