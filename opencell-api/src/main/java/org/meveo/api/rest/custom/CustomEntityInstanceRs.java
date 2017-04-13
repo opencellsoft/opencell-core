@@ -25,26 +25,67 @@ import org.meveo.api.rest.IBaseRs;
 
 public interface CustomEntityInstanceRs extends IBaseRs {
 
+    /**
+     * Create a new custom entity instance using a custom entity template
+     *
+     * @param dto The custom entity instance's data
+     * @param customEntityTemplateCode The custom entity template's code
+     * @return Request processing status
+     */
     @POST
     @Path("/{customEntityTemplateCode}")
     ActionStatus create(@PathParam("customEntityTemplateCode") String customEntityTemplateCode, CustomEntityInstanceDto dto);
 
+    /**
+     * Update an existing custom entity instance using a custom entity template
+     * 
+     * @param dto The custom entity instance's data
+     * @param customEntityTemplateCode The custom entity template's code
+     * @return Request processing status
+     */
     @PUT
     @Path("/{customEntityTemplateCode}")
     ActionStatus update(@PathParam("customEntityTemplateCode") String customEntityTemplateCode, CustomEntityInstanceDto dto);
 
+    /**
+     * Remove an existing custom entity instance with a given code from a custom entity template given by code
+     * 
+     * @param customEntityTemplateCode The custom entity template's code
+     * @param code The custom entity instance's code
+     * @return Request processing status
+     */
     @DELETE
     @Path("/{customEntityTemplateCode}/{code}")
     ActionStatus remove(@PathParam("customEntityTemplateCode") String customEntityTemplateCode, @PathParam("code") String code);
 
+    /**
+     * Find a #### with a given (exemple) code 
+     * 
+     * @param customEntityTemplateCode The custom entity template's code
+     * @param code The custom entity instance's code
+     * @return Return a customEntityInstance
+     */
     @GET
     @Path("/{customEntityTemplateCode}/{code}")
     CustomEntityInstanceResponseDto find(@PathParam("customEntityTemplateCode") String customEntityTemplateCode, @PathParam("code") String code);
 
+    /**
+     * List custom entity instances
+     * 
+     * @param customEntityTemplateCode The custom entity instance's code
+     * @return A list of custom entity instances
+     */
     @GET
     @Path("/list/{customEntityTemplateCode}")
     CustomEntityInstancesResponseDto list(@PathParam("customEntityTemplateCode") String customEntityTemplateCode);
 
+    /**
+     * Create new or update an existing custom entity instance with a given code
+     * 
+     * @param dto The custom entity instance's data
+     * @param postData The custom entity instance's data
+     * @return Request processing status
+     */
     @POST
     @Path("/{customEntityTemplateCode}/createOrUpdate")
     ActionStatus createOrUpdate(@PathParam("customEntityTemplateCode") String customEntityTemplateCode, CustomEntityInstanceDto dto);

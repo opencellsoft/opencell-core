@@ -34,53 +34,57 @@ import org.meveo.api.rest.IBaseRs;
 public interface ProviderContactRs extends IBaseRs {
 
 	/**
-	 * create a providerContact
-	 * @param providerContactDto
-	 * @return
+	 * Create a provider contact
+	 * @param providerContactDto The provider contact's data
+	 * @return Request processing status
 	 */
     @POST
     @Path("/")
     ActionStatus create(ProviderContactDto providerContactDto);
 
     /**
-     * update a providerContact
-     * @param providerContactDto
-     * @return
+     * Update an existing provider contact
+     * 
+     * @param providerContactDto The provider contact's data
+     * @return Request processing status
      */
     @PUT
     @Path("/")
     ActionStatus update(ProviderContactDto providerContactDto);
 
     /**
-     * find a providerContact by code
-     * @param code
-     * @return
+     * Search for a provider contact with a given code 
+     * @param providerContactCode The provider contact's code
+     * @return A provider contact
      */
     @GET
     @Path("/")
-    ProviderContactResponseDto find(@QueryParam("providerContactCode") String code);
+    ProviderContactResponseDto find(@QueryParam("providerContactCode") String providerContactCode);
 
     /**
-     * remove a providerContact by code
-     * @param code
-     * @return
+     * Remove an existing provider contact with a given code 
+     * 
+     * @param providerContactCode The provider contact's code
+     * @return Request processing status
      */
     @DELETE
     @Path("/{code}")
-    ActionStatus remove(@PathParam("providerContactCode") String code);
+    ActionStatus remove(@PathParam("providerContactCode") String providerContactCode);
 
     /**
-     * list providerContacts
-     * @return
+     * List of provider contacts
+     *
+     * @return A list of provider contacts
      */
     @GET
     @Path("/list")
     ProviderContactsResponseDto list();
     
     /**
-     * createOrUpdate a providerContact
-     * @param providerContactDto
-     * @return
+     * Create new or update an existing provider contact
+     * 
+     * @param providerContactDto The provider contact's data
+     * @return Request processing status
      */
     @POST
     @Path("/createOrUpdate")

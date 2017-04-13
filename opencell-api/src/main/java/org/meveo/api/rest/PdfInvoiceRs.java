@@ -18,6 +18,13 @@ import org.meveo.api.dto.response.PdfInvoiceResponse;
 
 public interface PdfInvoiceRs extends IBaseRs {
 
+	/**
+     * Find a PDF invoice with a given invoice number and a customer account code 
+     * 
+     * @param invoiceNumber The invoice number
+     * @param customerAccountCode The customer account's number
+     * @return
+     */
     @GET
     @Path("/")
     public PdfInvoiceResponse getPDFInvoice(@QueryParam("invoiceNumber") String invoiceNumber, @QueryParam("customerAccountCode") String customerAccountCode);

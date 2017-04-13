@@ -30,9 +30,10 @@ import org.meveo.api.rest.IBaseRs;
 public interface EmailTemplateRs extends IBaseRs {
 
 	/**
-	 * create an emailTemplate by dto
-	 * @param emailTemplateDto
-	 * @return
+	 * Create an email template by dto
+     *
+	 * @param emailTemplateDto The email template's data
+	 * @return Request processing status
 	 */
 	@POST
     @Path("/")
@@ -40,17 +41,19 @@ public interface EmailTemplateRs extends IBaseRs {
 
 	/**
 	 * update an emailTemplate by dto
-	 * @param emailTemplateDto
-	 * @return
+     *
+	 * @param emailTemplateDto The email template's data 
+	 * @return Request processing status
 	 */
     @PUT
     @Path("/")
     ActionStatus update(EmailTemplateDto emailTemplateDto);
 
     /**
-     * find an emailTemplate by code
-     * @param code
-     * @return
+     * Find an email template with a given code
+     * 
+     * @param code The email template's code
+     * @return Returns an email template
      */
     @GET
     @Path("/")
@@ -58,25 +61,28 @@ public interface EmailTemplateRs extends IBaseRs {
 
     /**
      * remove an emailTemplate by code
-     * @param code
-     * @return
+     * 
+     * @param code The email template's code
+     * @return Request processing status
      */
     @DELETE
     @Path("/{code}")
     ActionStatus remove(@PathParam("code") String code);
 
     /**
-     * list emailTemplates
-     * @return
+     * List email templates
+     * 
+     * @return List of email templates
      */
     @GET
     @Path("/list")
     EmailTemplatesResponseDto list();
 
     /**
-     * createOrUpdate emailTemplate by dto
-     * @param emailTemplateDto
-     * @return
+     * Create new or update an existing email template by dto
+     * 
+     * @param emailTemplateDto The email template's data
+     * @return Request processing status
      */
     @POST
     @Path("/createOrUpdate")

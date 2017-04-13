@@ -37,7 +37,7 @@ public interface AccessRs extends IBaseRs {
     ActionStatus create(AccessDto postData);
 
     /**
-     * Update existing access
+     * Update an existing access
      * 
      * @param postData Access data
      * @return Request processing status
@@ -47,7 +47,7 @@ public interface AccessRs extends IBaseRs {
     ActionStatus update(AccessDto postData);
 
     /**
-     * Search for a access with a given access code and subscription code.
+     * Search for an access with a given access code and subscription code.
      * 
      * @param accessCode Access code
      * @param subscriptionCode Subscription code
@@ -58,7 +58,7 @@ public interface AccessRs extends IBaseRs {
     GetAccessResponseDto find(@QueryParam("accessCode") String accessCode, @QueryParam("subscriptionCode") String subscriptionCode);
 
     /**
-     * Remove access with a given access code and subscription code.
+     * Remove an access with a given access code and subscription code.
      * 
      * @param accessCode Access code
      * @param subscriptionCode Subscription code
@@ -79,7 +79,7 @@ public interface AccessRs extends IBaseRs {
     AccessesResponseDto listBySubscription(@QueryParam("subscriptionCode") String subscriptionCode);
 
     /**
-     * Create new or update existing access
+     * Create new or update an existing access
      * 
      * @param Access data
      * @return Request processing status

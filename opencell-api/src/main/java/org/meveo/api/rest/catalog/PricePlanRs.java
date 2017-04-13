@@ -29,49 +29,61 @@ import org.meveo.api.rest.IBaseRs;
 public interface PricePlanRs extends IBaseRs {
 
     /**
-     * Create price plan.
+     * Create a new price plan matrix
      * 
-     * @param postData
-     * @return
+     * @param postData The price plan matrix's data
+     * @return Request processing status
      */
     @Path("/")
     @POST
     ActionStatus create(PricePlanMatrixDto postData);
 
     /**
-     * Update price plan.
+     * Update an existing price plan matrix
      * 
-     * @param postData
-     * @return
+     * @param postData The price plan matrix's data
+     * @return Request processing status
      */
     @Path("/")
     @PUT
     ActionStatus update(PricePlanMatrixDto postData);
 
     /**
-     * Search price plan with a given id.
+     * Find a price plan matrix with a given code 
      * 
-     * @param id
-     * @return
+     * @param pricePlanCode The price plan's code
+     * @return pricePlanMatrixDto Returns pricePlanMatrixDto containing pricePlan
      */
     @Path("/")
     @GET
     GetPricePlanResponseDto find(@QueryParam("pricePlanCode") String pricePlanCode);
 
     /**
-     * Remove price plan with a given id.
+     * Remove an existing price plan matrix with a given code 
      * 
-     * @param id
-     * @return
+     * @param pricePlanCode The price plan's code
+     * @return Request processing status
      */
     @Path("/{pricePlanCode}")
     @DELETE
-    ActionStatus remove(@PathParam("pricePlanCode") String pricePlanCode);
+    ActionStatus remove(@PathParam("price plan matrix") String pricePlanCode);
 
+    /**
+     * List price plan matrix.
+     * 
+     * @param eventCode The charge's code linked to price plan.
+     * @return Return pricePlanMatrixes
+     */
     @Path("/list")
     @GET
     PricePlanMatrixesResponseDto listPricePlanByEventCode(@QueryParam("eventCode") String eventCode);
-
+    
+    /**
+     * Create new or update an existing price plan matrix
+     * 
+     * @param postData The price plan matrix's data
+     * @return Request processing status
+     */
     @Path("/createOrUpdate")
     @POST
     ActionStatus createOrUpdate(PricePlanMatrixDto postData);

@@ -27,30 +27,70 @@ import org.meveo.api.rest.IBaseRs;
 
 public interface NotificationRs extends IBaseRs {
 
+    /**
+     * Create a new notification
+     * 
+     * @param postData The notification's data
+     * @return Request processing status
+     */
     @POST
     @Path("/")
     ActionStatus create(NotificationDto postData);
 
+    /**
+     * Update an existing notification
+     * 
+     * @param postData The notification's data
+     * @return Request processing status
+     */
     @PUT
     @Path("/")
     ActionStatus update(NotificationDto postData);
 
+    /**
+     * Find a notification with a given code 
+     * 
+     * @param notificationCode The notification's code
+     * @return
+     */
     @GET
     @Path("/")
     GetNotificationResponseDto find(@QueryParam("notificationCode") String notificationCode);
 
+    /**
+     * Remove an existing notification with a given code 
+     * 
+     * @param notificationCode The notification's code
+     * @return Request processing status
+     */
     @DELETE
     @Path("/{notificationCode}")
     ActionStatus remove(@PathParam("notificationCode") String notificationCode);
-
+    
+    /**
+     * List the notification history
+     * 
+     * @return
+     */
     @GET
     @Path("/listNotificationHistory")
     NotificationHistoriesResponseDto listNotificationHistory();
 
+    /**
+     * List inbound requests
+     * 
+     * @return
+     */
     @GET
     @Path("/listInboundRequest")
     InboundRequestsResponseDto listInboundRequest();
 
+    /**
+     * Create new or update an existing notification with a given code
+     * 
+     * @param postData The notification's data
+     * @return Request processing status
+     */
     @POST
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(NotificationDto postData);

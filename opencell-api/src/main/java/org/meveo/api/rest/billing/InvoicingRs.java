@@ -20,10 +20,23 @@ import org.meveo.api.rest.IBaseRs;
 
 public interface InvoicingRs extends IBaseRs {
 
+    /**
+     * Create a new billing run
+     * 
+     * @param createBillingRunDto The billing run's data
+     * @return Request processing status
+     */
     @POST
     @Path("/createBillingRun")
     ActionStatus createBillingRun(CreateBillingRunDto createBillingRunDto);
 
+
+    /**
+     * Search for a billing run info with a given Id 
+     * 
+     * @param billingRunId The billing run's Id
+     * @return The billing run info
+     */
     @POST
     @Path("/getBillingRunInfo")
     GetBillingRunInfoResponseDto getBillingRunInfo(Long billingRunId);
@@ -31,38 +44,50 @@ public interface InvoicingRs extends IBaseRs {
     /**
      * Returns the list of billable billing accounts of a billing run
      * 
-     * @param billingRunId Billing run id
-     * @return
+     * @param billingRunId The billing run id
+     * @return A list of billing accounts
      */
     @POST
     @Path("/getBillingAccountListInRun")
     GetBillingAccountListInRunResponseDto getBillingAccountListInRun(Long billingRunId);
 
+    /**
+     * Returns the pre-invoicing report for a given billing run Id
+     * 
+     * @param billingRunId The billing run id
+     * @return A pre-invoicing reports
+     */
     @POST
     @Path("/getPreInvoicingReport")
     GetPreInvoicingReportsResponseDto getPreInvoicingReport(Long billingRunId);
 
+    /**
+     * Returns the post-invoicing report for a given billing run Id
+     * 
+     * @param billingRunId The billing run id
+     * @return A post-invoicing reports
+     */
     @POST
     @Path("/getPostInvoicingReport")
     GetPostInvoicingReportsResponseDto getPostInvoicingReport(Long billingRunId);
 
     /**
-     * Depending on the status of the billing run, produce the preinvoicing report, the postInvoicing report or validates a billing run. Sets the next invoice date of a billing
+     * Depending on the status of the billing run, produce the pre-invoicing report, the post-Invoicing report or validates a billing run. Sets the next invoice date of a billing
      * account to the next calendar date.
      * 
-     * @param billingRunId Billing run id
-     * @return
+     * @param billingRunId The billing run id
+     * @return Request processing status 
      */
     @POST
     @Path("/validateBillingRun")
     ActionStatus validateBillingRun(Long billingRunId);
 
     /**
-     * Cancels a billing run. Sets RatedTransaction.status associated to billingRun to OPEN. Remove aggregates and invoice associated to the billingRun. Set
+     * Cancels a billing run. Sets RatedTransaction.status associated to billing run to OPEN. Remove aggregates and invoice associated to the billing run. Set
      * billingAccount.billingRun to null.
      * 
      * @param billingRunId Billing run id
-     * @return
+     * @return Request processing status 
      */
     @POST
     @Path("/cancelBillingRun")

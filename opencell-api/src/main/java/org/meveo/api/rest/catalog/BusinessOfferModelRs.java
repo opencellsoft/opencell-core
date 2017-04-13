@@ -26,30 +26,71 @@ import org.meveo.api.rest.IBaseRs;
 
 public interface BusinessOfferModelRs extends IBaseRs {
 
+    /**
+     * Create a new business offer model
+     * 
+     * @param postData The business offer model's data
+     * @return Request processing status
+     */
     @Path("/")
     @POST
     ActionStatus create(BusinessOfferModelDto postData);
 
+    /**
+     * Update an existing business offer model
+     * 
+     * @param postData The business offer model's data
+     * @return Request processing status
+     */
     @Path("/")
     @PUT
     ActionStatus update(BusinessOfferModelDto postData);
 
+    /**
+     * Remove an existing business offer model with a given code 
+     * 
+     * @param businessOfferModelCode The business offer model's code
+     * @return A business offer model
+     */
     @Path("/")
     @GET
     GetBusinessOfferModelResponseDto find(@QueryParam("businessOfferModelCode") String businessOfferModelCode);
 
+
+    /**
+     * Remove an existing business offer model with a given code 
+     * 
+     * @param businessOfferModelCode The business offer model's code
+     * @return Request processing status
+     */
     @Path("/{businessOfferModelCode}")
     @DELETE
     ActionStatus remove(@PathParam("businessOfferModelCode") String businessOfferModelCode);
 
+    /**
+     * Create new or update an existing business offer model
+     * 
+     * @param postData The business offer model's data
+     * @return Request processing status
+     */
     @Path("/createOrUpdate")
     @POST
     ActionStatus createOrUpdate(BusinessOfferModelDto postData);
 
+    /**
+     * List business offer models
+     * 
+     * @return A list of business offer models
+     */
     @GET
     @Path("/list")
     public MeveoModuleDtosResponse list();
 
+    /**
+     * Install business offer model module
+     * 
+     * @return Request processing status
+     */
     @PUT
     @Path("/install")
     public ActionStatus install(BusinessOfferModelDto moduleDto);

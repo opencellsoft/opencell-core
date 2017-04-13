@@ -26,45 +26,51 @@ import org.meveo.api.rest.IBaseRs;
 public interface TriggeredEdrRs extends IBaseRs {
 
     /**
-     * Create triggered edr.
+     * Create a new triggered edr. template
      * 
-     * @param postData
-     * @return
+     * @param postData The triggered edr. template's data
+     * @return Request processing status
      */
     @Path("/")
     @POST
     ActionStatus create(TriggeredEdrTemplateDto postData);
 
     /**
-     * Update triggered edr.
+     * Update an existing triggered edr. template
      * 
-     * @param postData
-     * @return
+     * @param postData The triggered edr. template's data
+     * @return Request processing status
      */
     @Path("/")
     @PUT
     ActionStatus update(TriggeredEdrTemplateDto postData);
 
     /**
-     * Search triggered edr with a given code.
+     * Find triggered edr with a given code.
      * 
-     * @param triggeredEdrCode
-     * @return
+     * @param triggeredEdrCode The triggered edr's code
+     * @return Returns triggeredEdrTemplate
      */
     @Path("/")
     @GET
     GetTriggeredEdrResponseDto find(@QueryParam("triggeredEdrCode") String triggeredEdrCode);
 
     /**
-     * Remove triggered edr with a given code.
+     * Remove an existing triggered edr template with a given code.
      * 
-     * @param triggeredEdrCode
-     * @return
+     * @param triggeredEdrCode The triggered edr's code
+     * @return Request processing status
      */
     @Path("/{triggeredEdrCode}")
     @DELETE
     ActionStatus remove(@PathParam("triggeredEdrCode") String triggeredEdrCode);
 
+    /**
+     * Create new or update an existing triggered edr template
+     * 
+     * @param postData The triggered edr template's data
+     * @return Request processing status
+     */
     @Path("/createOrUpdate")
     @POST
     ActionStatus createOrUpdate(TriggeredEdrTemplateDto postData);

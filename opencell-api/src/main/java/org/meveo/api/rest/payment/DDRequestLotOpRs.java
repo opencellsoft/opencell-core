@@ -21,7 +21,8 @@ import org.meveo.model.payments.DDRequestOpStatusEnum;
 public interface DDRequestLotOpRs extends IBaseRs {
 
 	/**
-	 * create a ddrequestLotOp by dto
+	 * Create a ddrequestLotOp by dto
+     *
 	 * @param dto
 	 * @return
 	 */
@@ -30,7 +31,8 @@ public interface DDRequestLotOpRs extends IBaseRs {
     ActionStatus create(DDRequestLotOpDto dto);
 
     /**
-     * list ddrequestLotOps by fromDueDate,toDueDate,status
+     * List ddrequestLotOps by fromDueDate,toDueDate,status
+     *
      * @param fromDueDate
      * @param toDueDate
      * @param status

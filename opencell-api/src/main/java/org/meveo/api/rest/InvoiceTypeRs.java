@@ -67,10 +67,21 @@ public interface InvoiceTypeRs extends IBaseRs {
     @DELETE
     public ActionStatus remove(@PathParam("invoiceTypeCode") String invoiceTypeCode);
 
+    /**
+     * Create new or update an existing invoiceType with a given code
+     * 
+     * @param invoiceTypeDto The invoiceType's data
+     * @return Request processing status
+     */
     @Path("/createOrUpdate")
     @POST
     public ActionStatus createOrUpdate(InvoiceTypeDto invoiceTypeDto);
 
+    /**
+     * List of invoiceType.
+     * 
+     * @return A list of invoiceType
+     */
     @Path("/list")
     @GET
     public GetInvoiceTypesResponse list();

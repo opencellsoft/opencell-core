@@ -73,7 +73,7 @@ public interface QuoteRs {
     /**
      * Delete a product quote
      * 
-     * @param id Product quote code
+     * @param quoteId Product quote code
      * @param info Http request context
      * @return
      */

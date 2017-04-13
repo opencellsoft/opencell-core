@@ -25,22 +25,52 @@ import org.meveo.api.dto.response.ScriptInstanceReponseDto;
 
 public interface ScriptInstanceRs extends IBaseRs {
 
+    /**
+     * Create a new script instance
+     * 
+     * @param postData The script instance's data
+     * @return Request processing status
+     */
     @POST
     @Path("/")
     ScriptInstanceReponseDto create(ScriptInstanceDto postData);
 
+    /**
+     * Update an existing script instance
+     * 
+     * @param postData The script instance's data
+     * @return Request processing status
+     */
     @PUT
     @Path("/")
     ScriptInstanceReponseDto update(ScriptInstanceDto postData);
 
+    /**
+     * Remove an existing script instance with a given code 
+     * 
+     * @param scriptInstanceCode The script instance's code
+     * @return Request processing status
+     */
     @DELETE
     @Path("/{scriptInstanceCode}")
     ActionStatus remove(@PathParam("scriptInstanceCode") String scriptInstanceCode);
 
+    /**
+     * Find a script instance with a given code 
+     * 
+     * @param scriptInstanceCode The script instance's code
+     * @return
+     */
     @GET
     @Path("/")
     GetScriptInstanceResponseDto find(@QueryParam("scriptInstanceCode") String scriptInstanceCode);
 
+    /**
+     * Create new or update an existing script instance with a given code
+     * 
+     * @param postData The script instance's data
+     * @return Request processing status
+     */
     @POST
     @Path("/createOrUpdate")
     ScriptInstanceReponseDto createOrUpdate(ScriptInstanceDto postData);

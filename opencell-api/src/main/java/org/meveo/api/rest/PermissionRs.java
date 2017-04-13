@@ -14,6 +14,11 @@ import org.meveo.api.dto.response.PermissionResponseDto;
 
 public interface PermissionRs extends IBaseRs {
 
+	/**
+     * List of permissions
+     * 
+     * @return A list of permissions
+     */
     @Path("/list")
     @GET
     PermissionResponseDto list();
