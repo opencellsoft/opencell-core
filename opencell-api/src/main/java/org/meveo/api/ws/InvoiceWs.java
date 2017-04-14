@@ -58,7 +58,7 @@ public interface InvoiceWs extends IBaseWs {
      * @return
      */
 	@WebMethod
-	public GetXmlInvoiceResponseDto findXMLInvoice(@WebParam(name = "invoiceNumber") String invoiceNumber);
+	public GetXmlInvoiceResponseDto findXMLInvoice(@WebParam(name = "invoiceId") Long invoiceId,@WebParam(name = "invoiceNumber") String invoiceNumber);
 	
 	/**
      * Finds an invoice based on invoice number and invoice type. It returns the result as xml string
@@ -68,7 +68,7 @@ public interface InvoiceWs extends IBaseWs {
      * @return
      */
 	@WebMethod
-	public GetXmlInvoiceResponseDto findXMLInvoiceWithType(@WebParam(name = "invoiceNumber") String invoiceNumber,
+	public GetXmlInvoiceResponseDto findXMLInvoiceWithType(@WebParam(name = "invoiceId") Long invoiceId,@WebParam(name = "invoiceNumber") String invoiceNumber,
 			@WebParam(name = "invoiceType") String invoiceType);
 
 	/**
@@ -79,7 +79,7 @@ public interface InvoiceWs extends IBaseWs {
      * @return
      */
 	@WebMethod
-	public GetPdfInvoiceResponseDto findPdfInvoice(@WebParam(name = "invoiceNumber") String invoiceNumber);
+	public GetPdfInvoiceResponseDto findPdfInvoice(@WebParam(name = "invoiceId") Long invoiceId,@WebParam(name = "invoiceNumber") String invoiceNumber);
 	
 	/**
      * Finds an invoice based on invoice number and invoice type and return it as pdf as byte []. 
@@ -90,7 +90,7 @@ public interface InvoiceWs extends IBaseWs {
      * @return
      */
 	@WebMethod
-	public GetPdfInvoiceResponseDto findPdfInvoiceWithType(@WebParam(name = "invoiceNumber") String invoiceNumber,
+	public GetPdfInvoiceResponseDto findPdfInvoiceWithType(@WebParam(name = "invoiceId") Long invoiceId,@WebParam(name = "invoiceNumber") String invoiceNumber,
 			@WebParam(name = "invoiceType") String invoiceType);
 	
 	/**

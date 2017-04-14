@@ -70,11 +70,11 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
     }
 
     @Override
-    public GetXmlInvoiceResponseDto findXMLInvoice(String invoiceNumber) {
+    public GetXmlInvoiceResponseDto findXMLInvoice(Long invoiceId,String invoiceNumber) {
         GetXmlInvoiceResponseDto result = new GetXmlInvoiceResponseDto();
         try {
 
-            result.setXmlContent(invoiceApi.getXMLInvoice(invoiceNumber));
+            result.setXmlContent(invoiceApi.getXMLInvoice(invoiceId,invoiceNumber));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
 		} catch (Exception e) {
@@ -86,11 +86,11 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
    
 
     @Override
-    public GetXmlInvoiceResponseDto findXMLInvoiceWithType(String invoiceNumber, String invoiceType) {
+    public GetXmlInvoiceResponseDto findXMLInvoiceWithType(Long invoiceId,String invoiceNumber, String invoiceType) {
         GetXmlInvoiceResponseDto result = new GetXmlInvoiceResponseDto();
         try {
 
-            result.setXmlContent(invoiceApi.getXMLInvoice(invoiceNumber, invoiceType));
+            result.setXmlContent(invoiceApi.getXMLInvoice(invoiceId,invoiceNumber, invoiceType));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
 		} catch (Exception e) {
@@ -101,11 +101,11 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
     }
 
     @Override
-    public GetPdfInvoiceResponseDto findPdfInvoice(String invoiceNumber) {
+    public GetPdfInvoiceResponseDto findPdfInvoice(Long invoiceId,String invoiceNumber) {
         GetPdfInvoiceResponseDto result = new GetPdfInvoiceResponseDto();
         try {
 
-            result.setPdfContent(invoiceApi.getPdfInvoice(invoiceNumber));
+            result.setPdfContent(invoiceApi.getPdfInvoice(invoiceId,invoiceNumber));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
 		} catch (Exception e) {
@@ -116,11 +116,11 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
     }
 
     @Override
-    public GetPdfInvoiceResponseDto findPdfInvoiceWithType(String invoiceNumber, String invoiceType) {
+    public GetPdfInvoiceResponseDto findPdfInvoiceWithType(Long invoiceId,String invoiceNumber, String invoiceType) {
         GetPdfInvoiceResponseDto result = new GetPdfInvoiceResponseDto();
         try {
 
-            result.setPdfContent(invoiceApi.getPdfInvoice(invoiceNumber, invoiceType));
+            result.setPdfContent(invoiceApi.getPdfInvoice(invoiceId,invoiceNumber, invoiceType));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
 		} catch (Exception e) {
