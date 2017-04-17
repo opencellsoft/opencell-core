@@ -2671,6 +2671,7 @@
 		<dropColumn tableName="BILLING_INVOICE" columnName="PDF" />
 	</changeSet>
 
+<<<<<<< HEAD
 	<changeSet id="#2504_20170406" author="AndriusKarpavicius">
 		<modifyDataType tableName="dwh_account_operation" columnName="category" newDataType="INT4" />
 		<addDefaultValue tableName="dwh_account_operation" columnName="category" defaultValueNumeric="0" />
@@ -2687,4 +2688,11 @@
 		<dropColumn tableName="CRM_PROVIDER" columnName="LOGO"/>
 	</changeSet>
 
+=======
+	<changeSet id="#2179_20170304" author="anasseh">
+		<addColumn tableName="CRM_CUSTOM_FIELD_INST">
+			<column name="description" type="VARCHAR(256)" />
+		</addColumn>
+	</changeSet>
+>>>>>>> refs/heads/ticket_2459
 </databaseChangeLog>

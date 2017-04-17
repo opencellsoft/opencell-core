@@ -235,8 +235,8 @@ public class RatingService extends BusinessService<WalletOperation>{
                 walletOperation.setInvoicingDate(chargeInstance.getInvoicingCalendar().nextCalendarDate(walletOperation.getOperationDate()));
             }
         }
-		walletOperation.setCode(chargeTemplate.getCode());
-        walletOperation.setDescription(catMessagesService.getMessageDescription(chargeInstance!=null?chargeInstance:chargeTemplate, languageCode));
+		walletOperation.setCode(chargeTemplate.getCode());		
+        walletOperation.setDescription(catMessagesService.getMessageDescriptionByCodeAndLanguage(chargeTemplate.getCode(),languageCode,chargeTemplate.getDescription()));      
         walletOperation.setTaxPercent(isExonerated?BigDecimal.ZERO:taxPercent);
 		walletOperation.setCurrency(tCurrency.getCurrency());
 		walletOperation.setStartDate(startdate);
