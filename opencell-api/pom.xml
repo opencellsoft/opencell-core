@@ -64,7 +64,7 @@
 			<artifactId>slf4j-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
@@ -74,7 +74,7 @@
 			<groupId>javax.validation</groupId>
 			<artifactId>validation-api</artifactId>
 		</dependency>
-		
+
 		<!-- <dependency> -->
 		<!-- <groupId>org.jboss.resteasy</groupId> -->
 		<!-- <artifactId>resteasy-jaxb-provider</artifactId> -->
@@ -86,11 +86,6 @@
 		<!-- <artifactId>resteasy-jaxrs</artifactId> -->
 		<!-- <scope>provided</scope> -->
 		<!-- </dependency> -->
-
-		<dependency>
-			<groupId>org.jboss.spec.javax.ws.rs</groupId>
-			<artifactId>jboss-jaxrs-api_2.0_spec</artifactId>
-		</dependency>			
 
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
@@ -190,6 +185,10 @@
 				<dependency>
 					<groupId>org.reflections</groupId>
 					<artifactId>reflections</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.jboss.spec.javax.ws.rs</groupId>
+					<artifactId>jboss-jaxrs-api_2.0_spec</artifactId>
 				</dependency>
 			</dependencies>
 			<build>
