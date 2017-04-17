@@ -32,10 +32,22 @@
 						field="applicationDate" isDate="true" />
 					<hftl:column label="#{messages['commons.quantity']}"
 						field="quantity" converter="bigDecimal4DigitsConverter" />
+					<p:column styleClass="actions-column">
+						<f:facet name="header">
+							<h:outputText value="#{messages['commons.actions']}" />
+						</f:facet>
+						<p:commandButton id="viewProductInstanceDetailLink"
+							action="#{subscriptionBean.setAndRefreshProductInstance(entity)}"
+							oncomplete="PF('dlg_productInstanceDetailPopup').show()"
+							update=":productInstanceDetailPopupPanel" icon="ui-icon-document">
+						</p:commandButton>
+						<p:tooltip for="viewProductInstanceDetailLink"
+							value="#{messages['commons.view']}" />
+					</p:column>
 				</p:dataTable>
 
 				<p:commandButton value="#{messages['action.applyProduct']}"
-					actionListener="#{backingBean.initProductInstance}"
+					actionListener="#{backingBean.initProductInstance()}"
 					update=":subscriptionTab:applyProductPanel"
 					oncomplete="PF('applyProductPanel').toggle()" />
 			</h:form>
@@ -67,6 +79,10 @@
 							action="#{backingBean.applyProduct()}"
 							oncomplete="PF('applyProductPanel').toggle()"
 							update=":subscriptionTab:productInstanceResultsForm :subscriptionTab:applyProductMessages"></p:commandButton>
+						<p:commandButton value="#{messages['button.closeButton']}"
+							action="#{backingBean.initProductInstance()}"
+							update=":subscriptionTab:applyProductForm"
+							oncomplete="PF('applyProductPanel').close()" immediate="true" />
 					</h:panelGroup>
 				</hftl:formPanel>
 			</p:panel>

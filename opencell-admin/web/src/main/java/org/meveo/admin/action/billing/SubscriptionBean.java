@@ -145,7 +145,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
 	private ServiceInstance selectedServiceInstance;
 
-	private ProductInstance productInstance;
+	private ProductInstance productInstance = new ProductInstance();
 
 	private BigDecimal quantity = BigDecimal.ONE;
 
@@ -588,7 +588,6 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 		}
 		productChargeInstances = null;
 		productInstances = null;
-		productInstance = null;
 		clearObjectId();
 	}
 
@@ -960,5 +959,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 	
 	public void updateProductInstanceCode() {
 		productInstance.setCode(productInstance.getProductTemplate().getCode());
+	}
+	
+	public void setAndRefreshProductInstance(ProductInstance prodInstance) {
+		this.productInstance = productInstanceService.refreshOrRetrieve(prodInstance);
 	}
 }
