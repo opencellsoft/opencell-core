@@ -141,7 +141,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 	
 	@Inject
 	private ScriptInstanceService scriptInstanceService;
-
+	
     @Inject
     @ApplicationProvider
     private Provider appProvider;
@@ -653,36 +653,35 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 	private void addServices(Subscription subscription, Invoice invoice, Document doc, Element invoiceTag) {
 		OfferTemplate offerTemplate = subscription.getOffer();
 		if (offerTemplate.getOfferServiceTemplates() != null && offerTemplate.getOfferServiceTemplates().size() > 0) {
-
 			Element servicesTag = getCollectionTag(doc, invoiceTag, "services");
-			Element serviceTag = null;
-			Element calendarTag = null;
-			ServiceTemplate serviceTemplate = null;
-
-			for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {				
-				serviceTemplate =serviceInstance.getServiceTemplate();
+			for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {	
+				ServiceTemplate serviceTemplate = serviceInstance.getServiceTemplate();;
 				if (!serviceIds.contains(serviceTemplate.getId())) {
-					serviceTag = doc.createElement("service");
-					serviceTag.setAttribute("code", serviceTemplate.getCode() != null ? serviceTemplate.getCode() : "");
-					serviceTag.setAttribute("offerCode",
-							offerTemplate.getCode() != null ? offerTemplate.getCode() : "");
-					serviceTag.setAttribute("description",
-							serviceTemplate.getDescription() != null ? serviceTemplate.getDescription() : "");
-
-					calendarTag = doc.createElement("calendar");
-					Text calendarText = null;
-					if (serviceTemplate.getInvoicingCalendar() != null) {
-						calendarText = doc.createTextNode(serviceTemplate.getInvoicingCalendar().getCode());
-					} else {
-						calendarText = doc.createTextNode("");
-					}
-					calendarTag.appendChild(calendarText);
-					addCustomFields(serviceTemplate, invoice, doc, serviceTag,true);
-					servicesTag.appendChild(serviceTag);
+					addService(serviceInstance, doc, offerTemplate.getCode(), invoice, servicesTag);
 					serviceIds.add(serviceTemplate.getId());
 				}
-			}
+			}				
 		}
+	}
+	
+	private void addService(ServiceInstance serviceInstance,Document doc,String offerCode,Invoice invoice,Element parentElement ){
+		ServiceTemplate serviceTemplate = serviceInstance.getServiceTemplate();		
+		Element serviceTag = doc.createElement("service");
+		serviceTag.setAttribute("code", serviceTemplate.getCode() != null ? serviceTemplate.getCode() : "");
+		serviceTag.setAttribute("offerCode",offerCode != null ? offerCode : "");
+		serviceTag.setAttribute("description",serviceTemplate.getDescription() != null ? serviceTemplate.getDescription() : "");
+
+		Element calendarTag = doc.createElement("calendar");
+		Text calendarText = null;
+		if (serviceTemplate.getInvoicingCalendar() != null) {
+			calendarText = doc.createTextNode(serviceTemplate.getInvoicingCalendar().getCode());
+		} else {
+			calendarText = doc.createTextNode("");
+		}
+		calendarTag.appendChild(calendarText);
+		addCustomFields(serviceTemplate, invoice, doc, serviceTag,true);
+		parentElement.appendChild(serviceTag);
+
 	}
 	private void addPricePlans(PricePlanMatrix pricePlan, Invoice invoice, Document doc, Element invoiceTag) {
 
@@ -1218,9 +1217,15 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 									.getDecimalParam5().toPlainString() : "");
 							line.appendChild(edrInfo);
 						}
-
+						if(!isVirtual){
+				            if(walletOperation != null){
+				            	ServiceInstance serviceInstance = chargeInstanceService.getServiceInstanceFromChargeInstance(walletOperation.getChargeInstance());						
+								if(serviceInstance != null){								
+									addService(serviceInstance, doc, ratedTransaction.getOfferCode(), invoice, line);
+								} 
+				            }
+						}
 						subCategory.appendChild(line);
-
 					}
 					addCustomFields(invoiceSubCat, invoice, doc, subCategory);				
 				}
@@ -1486,5 +1491,5 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			result += inv.getInvoiceNumber() + " ";
 		}
 		return result;
-	}
+	}	
 }
