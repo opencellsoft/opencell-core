@@ -10,6 +10,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GenerateInvoiceResultDto {
 
+	private Long invoiceId;
+	 
     private String invoiceNumber;
 
     private String temporaryInvoiceNumber;
@@ -114,6 +116,16 @@ public class GenerateInvoiceResultDto {
 	public void setAccountOperationId(Long accountOperationId) {
 		this.accountOperationId = accountOperationId;
 	}
+	
+	
+
+	public Long getInvoiceId() {
+		return invoiceId;
+	}
+
+	public void setInvoiceId(Long invoiceId) {
+		this.invoiceId = invoiceId;
+	}
 
 	/*
      * (non-Javadoc)
@@ -122,6 +134,6 @@ public class GenerateInvoiceResultDto {
      */
     @Override
     public String toString() {
-        return "GenerateInvoiceResultDto [invoiceNumber=" + (invoiceNumber != null ? invoiceNumber : temporaryInvoiceNumber) + "]";
+        return "GenerateInvoiceResultDto [invoiceNumber=" + (invoiceNumber != null ? invoiceNumber : temporaryInvoiceNumber) + " ,invoiceId:"+invoiceId+"]";
     }
 }

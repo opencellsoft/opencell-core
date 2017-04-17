@@ -77,8 +77,8 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
     }
 
     @Override
-    public GetXmlInvoiceResponseDto findXMLInvoice(String invoiceNumber) {
-        return findXMLInvoiceWithType(invoiceNumber, invoiceTypeService.getCommercialCode() );
+    public GetXmlInvoiceResponseDto findXMLInvoice(Long invoiceId,String invoiceNumber) {
+        return findXMLInvoiceWithType(invoiceId,invoiceNumber, invoiceTypeService.getCommercialCode() );
     }
 
     @Override
@@ -88,15 +88,15 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
         if(StringUtils.isBlank(invoiceType)){
             invoiceType = invoiceTypeService.getCommercialCode();
         }
-        return findXMLInvoiceWithType(invoiceNumber, invoiceType);
+        return findXMLInvoiceWithType(null,invoiceNumber, invoiceType);
     }
 
     @Override
-    public GetXmlInvoiceResponseDto findXMLInvoiceWithType(String invoiceNumber, String invoiceType) {
+    public GetXmlInvoiceResponseDto findXMLInvoiceWithType(Long invoiceId,String invoiceNumber, String invoiceType) {
         GetXmlInvoiceResponseDto result = new GetXmlInvoiceResponseDto();
         try {
 
-            result.setXmlContent(invoiceApi.getXMLInvoice(invoiceNumber, invoiceType));
+            result.setXmlContent(invoiceApi.getXMLInvoice( invoiceId,invoiceNumber, invoiceType));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         } catch (Exception e) {
@@ -107,8 +107,8 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
     }
 
     @Override
-    public GetPdfInvoiceResponseDto findPdfInvoice(String invoiceNumber) {
-        return findPdfInvoiceWithType(invoiceNumber, invoiceTypeService.getCommercialCode());
+    public GetPdfInvoiceResponseDto findPdfInvoice(Long invoiceId,String invoiceNumber) {
+        return findPdfInvoiceWithType(invoiceId,invoiceNumber, invoiceTypeService.getCommercialCode());
     }
 
     @Override
@@ -118,15 +118,15 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
         if(StringUtils.isBlank(invoiceType)){
             invoiceType = invoiceTypeService.getCommercialCode();
         }
-        return findPdfInvoiceWithType(invoiceNumber, invoiceType);
+        return findPdfInvoiceWithType(null,invoiceNumber, invoiceType);
     }
 
     @Override
-    public GetPdfInvoiceResponseDto findPdfInvoiceWithType(String invoiceNumber, String invoiceType) {
+    public GetPdfInvoiceResponseDto findPdfInvoiceWithType(Long invoiceId,String invoiceNumber, String invoiceType) {
         GetPdfInvoiceResponseDto result = new GetPdfInvoiceResponseDto();
         try {
 
-            result.setPdfContent(invoiceApi.getPdfInvoice(invoiceNumber, invoiceType));
+            result.setPdfContent(invoiceApi.getPdfInvoice( invoiceId,invoiceNumber, invoiceType));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         } catch (Exception e) {

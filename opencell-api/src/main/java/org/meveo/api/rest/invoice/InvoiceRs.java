@@ -89,7 +89,7 @@ public interface InvoiceRs extends IBaseRs {
      */
     @POST
     @Path("/getXMLInvoice")
-    public GetXmlInvoiceResponseDto findXMLInvoice(String invoiceNumber);
+    public GetXmlInvoiceResponseDto findXMLInvoice(Long invoiceId,String invoiceNumber);
 
     /**
      * Finds an invoice based on its invoice number and optionally an invoice type and return it as
@@ -111,7 +111,7 @@ public interface InvoiceRs extends IBaseRs {
      */
     @POST
     @Path("/getXMLInvoiceWithType")
-    public GetXmlInvoiceResponseDto findXMLInvoiceWithType(String invoiceNumber,String invoiceType);
+    public GetXmlInvoiceResponseDto findXMLInvoiceWithType(Long invoiceId,String invoiceNumber,String invoiceType);
 
     /**
      * Finds an invoice based on invoice number and return it as pdf as byte []. 
@@ -122,7 +122,7 @@ public interface InvoiceRs extends IBaseRs {
      */
     @POST
     @Path("/getPdfInvoice")
-    public GetPdfInvoiceResponseDto findPdfInvoice(String invoiceNumber);
+    public GetPdfInvoiceResponseDto findPdfInvoice(Long invoiceId,String invoiceNumber);
 
     /**
      * Finds an invoice based on invoice number and optionally an invoice type and
@@ -146,7 +146,7 @@ public interface InvoiceRs extends IBaseRs {
      */
     @POST
     @Path("/getPdfInvoiceWithType")
-    public GetPdfInvoiceResponseDto findPdfInvoiceWithType(String invoiceNumber, String invoiceType);
+    public GetPdfInvoiceResponseDto findPdfInvoiceWithType(Long invoiceId,String invoiceNumber, String invoiceType);
     
     /**
      * Cancel an invoice based on invoice id

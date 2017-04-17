@@ -465,6 +465,7 @@ public class Invoice4_2Api extends BaseApi {
         }
 
         GenerateInvoiceResultDto generateInvoiceResultDto = new GenerateInvoiceResultDto();
+        generateInvoiceResultDto.setInvoiceId(invoices.get(0).getId());
         generateInvoiceResultDto.setInvoiceNumber(invoices.get(0).getInvoiceNumber());
         return generateInvoiceResultDto;
     }
