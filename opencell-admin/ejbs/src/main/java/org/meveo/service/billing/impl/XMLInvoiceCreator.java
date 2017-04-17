@@ -1217,12 +1217,14 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 									.getDecimalParam5().toPlainString() : "");
 							line.appendChild(edrInfo);
 						}
-			            if(walletOperation != null){
-			            	ServiceInstance serviceInstance = chargeInstanceService.getServiceInstanceFromChargeInstance(walletOperation.getChargeInstance());						
-							if(serviceInstance != null){								
-								addService(serviceInstance, doc, ratedTransaction.getOfferCode(), invoice, line);
-							} 
-			            }
+						if(!isVirtual){
+				            if(walletOperation != null){
+				            	ServiceInstance serviceInstance = chargeInstanceService.getServiceInstanceFromChargeInstance(walletOperation.getChargeInstance());						
+								if(serviceInstance != null){								
+									addService(serviceInstance, doc, ratedTransaction.getOfferCode(), invoice, line);
+								} 
+				            }
+						}
 						subCategory.appendChild(line);
 					}
 					addCustomFields(invoiceSubCat, invoice, doc, subCategory);				
