@@ -310,7 +310,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 				selectedWalletTemplate.setCode(WalletTemplate.PRINCIPAL);
 			}
 			
-			entity = subscriptionService.attach(entity);
+			entity = subscriptionService.refreshOrRetrieve(entity);
 			String description = oneShotChargeInstance.getDescription();
 			oneShotChargeInstance.setChargeTemplate(oneShotChargeTemplateService.attach((OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate()));
 			oneShotChargeInstance.setDescription(description);
