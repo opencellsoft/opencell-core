@@ -10,6 +10,7 @@ import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
@@ -28,9 +29,7 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.job.Job;
 import org.meveo.service.payments.impl.DDRequestItemService;
 
-@Startup
-@Singleton
-@Lock(LockType.READ)
+@Stateless
 public class SepaRejectedTransactionsJob extends Job {
 
     @Inject

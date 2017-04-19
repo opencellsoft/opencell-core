@@ -1,5 +1,6 @@
 package org.meveo.cache;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -42,7 +43,9 @@ import org.slf4j.Logger;
  */
 @Startup
 @Singleton
-public class CustomFieldsCacheContainerProvider {
+public class CustomFieldsCacheContainerProvider implements CacheContainerProvider, Serializable {
+
+    private static final long serialVersionUID = 180156064688145292L;
 
     @Inject
     protected Logger log;
@@ -62,8 +65,8 @@ public class CustomFieldsCacheContainerProvider {
     private Map<String, Integer> cfValueCacheTime = new HashMap<String, Integer>();
 
     /**
-     * Group custom field templates applicable to the same entity type. Key format: <custom field template appliesTo code>. Value is a map of custom field templates
-     * identified by a template code
+     * Group custom field templates applicable to the same entity type. Key format: <custom field template appliesTo code>. Value is a map of custom field templates identified by a
+     * template code
      */
     private Map<String, Map<String, CustomFieldTemplate>> cftsByAppliesTo = new HashMap<String, Map<String, CustomFieldTemplate>>();
 
@@ -454,8 +457,9 @@ public class CustomFieldsCacheContainerProvider {
     /**
      * Get a summary of cached information
      * 
-     * @return A list of a map containing cache information with cache name as a key and cache as a value
+     * @return A map containing cache information with cache name as a key and cache as a value
      */
+    @Override
     @SuppressWarnings("rawtypes")
     public Map<String, BasicCache> getCaches() {
         Map<String, BasicCache> summaryOfCaches = new HashMap<String, BasicCache>();
@@ -469,6 +473,7 @@ public class CustomFieldsCacheContainerProvider {
      * 
      * @param cacheName Name of cache to refresh or null to refresh all caches
      */
+    @Override
     @Asynchronous
     public void refreshCache(String cacheName) {
 

@@ -59,7 +59,7 @@
                             <p:selectOneMenu id="timerFollowingJob" value="#{jobInstanceBean.entity.followingJob}" rendered="#{jobInstanceBean.edit}">
                                 <hftl:objectConverter />
                                 <f:selectItem itemLabel="#{messages['commons.select']}" />
-                                <f:selectItems value="#{jobInstanceBean.getTimerEntityList()}" var="t_" itemLabel="#{t_.code}" itemValue="#{t_}" />
+                                <f:selectItems value="#{jobInstanceBean.getFollowingJobList()}" var="t_" itemLabel="#{t_.code}" itemValue="#{t_}" />
                             </p:selectOneMenu>
                         </hftl:decorateFormField>
                         <hftl:decorateFormField label="#{messages['meveoModule.partOfModules']}" rendered="#{!jobInstanceBean.entity.transient}">

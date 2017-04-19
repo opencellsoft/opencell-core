@@ -1,5 +1,6 @@
 package org.meveo.cache;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +30,9 @@ import org.slf4j.Logger;
  */
 @Startup
 @Singleton
-public class NotificationCacheContainerProvider {
+public class NotificationCacheContainerProvider implements CacheContainerProvider, Serializable {
+
+    private static final long serialVersionUID = 358151068726872948L;
 
     @Inject
     protected Logger log;
@@ -159,6 +162,7 @@ public class NotificationCacheContainerProvider {
      * 
      * @return A list of a map containing cache information with cache name as a key and cache as a value
      */
+    @Override
     @SuppressWarnings("rawtypes")
     public Map<String, BasicCache> getCaches() {
         Map<String, BasicCache> summaryOfCaches = new HashMap<String, BasicCache>();
@@ -172,6 +176,7 @@ public class NotificationCacheContainerProvider {
      * 
      * @param cacheName Name of cache to refresh or null to refresh all caches
      */
+    @Override
     @Asynchronous
     public void refreshCache(String cacheName) {
 

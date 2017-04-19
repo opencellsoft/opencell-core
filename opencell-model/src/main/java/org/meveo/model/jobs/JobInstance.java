@@ -37,6 +37,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
@@ -45,9 +46,10 @@ import org.meveo.model.ModuleItem;
 @Entity
 @ModuleItem
 @CustomFieldEntity(cftCodePrefix = "JOB", cftCodeFields = "jobTemplate")
-@ExportIdentifier({ "code"})
-@Table(name = "MEVEO_JOB_INSTANCE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "MEVEO_JOB_INSTANCE_SEQ"), })
+@ExportIdentifier({ "code" })
+@Table(name = "MEVEO_JOB_INSTANCE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "MEVEO_JOB_INSTANCE_SEQ"), })
 public class JobInstance extends BusinessCFEntity {
 
     private static final long serialVersionUID = -5517252645289726288L;
@@ -76,9 +78,14 @@ public class JobInstance extends BusinessCFEntity {
     @JoinColumn(name = "FOLLOWING_JOB_ID")
     private JobInstance followingJob;
 
-    public JobInstance() {
+    @Column(name = "RUN_ON_NODES", length = 255)
+    @Size(max = 255)
+    private String runOnNodes;
 
-    }
+    @Type(type = "numeric_boolean")
+    @Column(name = "SINGLE_NODE", nullable = false)
+    @NotNull
+    private boolean limitToSingleNode = true;
 
     /**
      * @return the jobTemplate
@@ -152,6 +159,22 @@ public class JobInstance extends BusinessCFEntity {
         this.executionResults = executionResults;
     }
 
+    public String getRunOnNodes() {
+        return runOnNodes;
+    }
+
+    public void setRunOnNodes(String runOnNodes) {
+        this.runOnNodes = runOnNodes;
+    }
+
+    public boolean isLimitToSingleNode() {
+        return limitToSingleNode;
+    }
+
+    public void setLimitToSingleNode(boolean limitToSingleNode) {
+        this.limitToSingleNode = limitToSingleNode;
+    }
+
     @Override
     public boolean equals(Object obj) {
 
@@ -162,12 +185,32 @@ public class JobInstance extends BusinessCFEntity {
         } else if (!(obj instanceof JobInstance)) {
             return false;
         }
-        
+
         JobInstance other = (JobInstance) obj;
 
         if (this.getId() == other.getId()) {
             return true;
         }
+        return false;
+    }
+
+    /**
+     * Check if job instance is runnable on a current cluster node
+     * 
+     * @param currentNode Current cluster node
+     * @return True if either current cluster node is unknown (non-clustered mode), runOnNodes is not specified or current cluster node matches any node in a list of nodes
+     */
+    public boolean isRunnableOnNode(String currentNode) {
+        if (currentNode == null || runOnNodes == null) {
+            return true;
+        }
+        String[] nodes = runOnNodes.split(",");
+        for (String node : nodes) {
+            if (node.trim().equals(currentNode)) {
+                return true;
+            }
+        }
+
         return false;
     }
 

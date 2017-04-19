@@ -1,5 +1,6 @@
 package org.meveo.api.job;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import javax.ejb.Stateless;
@@ -211,7 +212,7 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
             handleMissingParameters();
         }
 
-        JobInstance jobInstance = jobInstanceService.findByCode(code);
+        JobInstance jobInstance = jobInstanceService.findByCode(code, Arrays.asList("timerEntity"));
         if (jobInstance == null) {
             throw new EntityDoesNotExistsException(JobInstance.class, code);
         }

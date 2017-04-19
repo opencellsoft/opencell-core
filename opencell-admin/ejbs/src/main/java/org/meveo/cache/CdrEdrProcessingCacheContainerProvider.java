@@ -1,5 +1,6 @@
 package org.meveo.cache;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +30,9 @@ import org.slf4j.Logger;
  */
 @Startup
 @Singleton
-public class CdrEdrProcessingCacheContainerProvider {
+public class CdrEdrProcessingCacheContainerProvider implements CacheContainerProvider, Serializable {
+
+    private static final long serialVersionUID = 1435137623784514994L;
 
     @Inject
     protected Logger log;
@@ -113,8 +116,7 @@ public class CdrEdrProcessingCacheContainerProvider {
     public void removeAccessFromCache(Access access) {
 
         // Case when AccessUserId value has not changed
-        if (accessCache.containsKey(access.getAccessUserId())
-                && accessCache.get(access.getAccessUserId()).contains(access)) {
+        if (accessCache.containsKey(access.getAccessUserId()) && accessCache.get(access.getAccessUserId()).contains(access)) {
             accessCache.get(access.getAccessUserId()).remove(access);
             log.trace("Removed access {} from access cache", access);
             return;
@@ -149,8 +151,8 @@ public class CdrEdrProcessingCacheContainerProvider {
      * @return A list of accesses
      */
     public List<Access> getAccessesByAccessUserId(String accessUserId) {
-        log.trace("lookup access {}",accessUserId);
-    	return accessCache.get(accessUserId);
+        log.trace("lookup access {}", accessUserId);
+        return accessCache.get(accessUserId);
     }
 
     /**
@@ -200,8 +202,9 @@ public class CdrEdrProcessingCacheContainerProvider {
     /**
      * Get a summary of cached information
      * 
-     * @return A list of a map containing cache information with cache name as a key and cache as a value
+     * @return A a map containing cache information with cache name as a key and cache as a value
      */
+    @Override
     @SuppressWarnings("rawtypes")
     public Map<String, BasicCache> getCaches() {
         Map<String, BasicCache> summaryOfCaches = new HashMap<String, BasicCache>();
@@ -216,6 +219,7 @@ public class CdrEdrProcessingCacheContainerProvider {
      * 
      * @param cacheName Name of cache to refresh or null to refresh all caches
      */
+    @Override
     @Asynchronous
     public void refreshCache(String cacheName) {
 

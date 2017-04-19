@@ -1,5 +1,6 @@
 package org.meveo.cache;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,7 +21,6 @@ import org.infinispan.commons.api.BasicCache;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.CounterPeriod;
-import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.cache.CachedCounterInstance;
 import org.meveo.model.cache.CachedCounterPeriod;
@@ -45,7 +45,9 @@ import org.slf4j.Logger;
  */
 @Startup
 @Singleton
-public class RatingCacheContainerProvider {
+public class RatingCacheContainerProvider implements CacheContainerProvider, Serializable {
+
+    private static final long serialVersionUID = -8177539254337953136L;
 
     public static String COUNTER_CACHE = "counterCache";
 
@@ -63,7 +65,7 @@ public class RatingCacheContainerProvider {
 
     @Inject
     private CounterPeriodService counterPeriodService;
-    
+
     @Inject
     private CalendarService calendarService;
 
@@ -169,8 +171,8 @@ public class RatingCacheContainerProvider {
 
     private void preloadCache(Calendar calendar) {
         if (calendar != null) {
-        	calendar = calendarService.refreshOrRetrieve(calendar);
-			calendar.nextCalendarDate(new Date());
+            calendar = calendarService.refreshOrRetrieve(calendar);
+            calendar.nextCalendarDate(new Date());
         }
     }
 
@@ -211,10 +213,10 @@ public class RatingCacheContainerProvider {
             pricePlan.getOfferTemplate().getCode();
         }
 
-        if (pricePlan.getScriptInstance() !=null){
-        	pricePlan.getScriptInstance().getCode();
+        if (pricePlan.getScriptInstance() != null) {
+            pricePlan.getScriptInstance().getCode();
         }
-        
+
         if (pricePlan.getValidityCalendar() != null) {
             preloadCache(pricePlan.getValidityCalendar());
         }
@@ -307,7 +309,7 @@ public class RatingCacheContainerProvider {
             for (CachedUsageChargeInstance charge : charges) {
                 if (charge.getId() == usageChargeInstance.getId()) {
                     cachedCharge = charge;
-                    cacheContainsCharge = true;  
+                    cacheContainsCharge = true;
                 }
             }
         } else {
@@ -476,6 +478,7 @@ public class RatingCacheContainerProvider {
      * 
      * @return A list of a map containing cache information with cache name as a key and cache as a value
      */
+    @Override
     @SuppressWarnings("rawtypes")
     public Map<String, BasicCache> getCaches() {
         Map<String, BasicCache> summaryOfCaches = new HashMap<String, BasicCache>();
@@ -492,6 +495,7 @@ public class RatingCacheContainerProvider {
      * 
      * @param cacheName Name of cache to refresh or null to refresh all caches
      */
+    @Override
     @Asynchronous
     public void refreshCache(String cacheName) {
 

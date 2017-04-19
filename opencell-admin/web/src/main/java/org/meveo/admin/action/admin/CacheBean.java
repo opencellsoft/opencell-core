@@ -37,6 +37,7 @@ import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
+import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.NotificationCacheContainerProvider;
 import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.cache.WalletCacheContainerProvider;
@@ -69,6 +70,9 @@ public class CacheBean implements Serializable {
     @Inject
     private CustomFieldsCacheContainerProvider customFieldsCacheContainerProvider;
 
+    @Inject
+    private JobCacheContainerProvider jobCacheContainerProvider;
+    
     /** Logger. */
     @Inject
     protected org.slf4j.Logger log;
@@ -130,6 +134,7 @@ public class CacheBean implements Serializable {
             caches.putAll(notificationCacheContainerProvider.getCaches());
             caches.putAll(ratingCacheContainerProvider.getCaches());
             caches.putAll(customFieldsCacheContainerProvider.getCaches());
+            caches.putAll(jobCacheContainerProvider.getCaches());
 
             selectedCache = caches.get(cacheName);
         }
@@ -149,6 +154,7 @@ public class CacheBean implements Serializable {
         caches.putAll(notificationCacheContainerProvider.getCaches());
         caches.putAll(ratingCacheContainerProvider.getCaches());
         caches.putAll(customFieldsCacheContainerProvider.getCaches());
+        caches.putAll(jobCacheContainerProvider.getCaches());
         caches = new TreeMap<String, BasicCache>(caches);
 
         for (Entry<String, BasicCache> cache : caches.entrySet()) {
@@ -174,6 +180,7 @@ public class CacheBean implements Serializable {
         notificationCacheContainerProvider.refreshCache(cacheName);
         ratingCacheContainerProvider.refreshCache(cacheName);
         customFieldsCacheContainerProvider.refreshCache(cacheName);
+        jobCacheContainerProvider.refreshCache(cacheName);
         messages.info(new BundleKey("messages", "cache.refreshInitiated"));
     }
 
@@ -183,6 +190,7 @@ public class CacheBean implements Serializable {
         notificationCacheContainerProvider.refreshCache(null);
         ratingCacheContainerProvider.refreshCache(null);
         customFieldsCacheContainerProvider.refreshCache(null);
+        jobCacheContainerProvider.refreshCache(null);
         messages.info(new BundleKey("messages", "cache.refreshInitiated"));
     }
 

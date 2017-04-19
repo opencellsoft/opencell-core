@@ -35,11 +35,11 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class EjbUtils {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(EjbUtils.class);
 
     private static final String LOCALHOST = "127.0.0.1";
-    
+
     /**
      * Non instantiable class.
      */
@@ -49,10 +49,8 @@ public class EjbUtils {
     /**
      * Obtain interface of an object in JNDI
      * 
-     * @param nameEJB
-     *            Full JNDI path to an object
-     * @param serverName
-     *            Server address where to look for an object
+     * @param nameEJB Full JNDI path to an object
+     * @param serverName Server address where to look for an object
      * @return Object instance
      * 
      */
@@ -70,10 +68,8 @@ public class EjbUtils {
     /**
      * Obtain remote interface of an object in JNDI
      * 
-     * @param nameEJB
-     *            Full JNDI path to an object
-     * @param serverName
-     *            Server address where to look for an object
+     * @param nameEJB Full JNDI path to an object
+     * @param serverName Server address where to look for an object
      * @return Object instance
      * 
      */
@@ -89,7 +85,7 @@ public class EjbUtils {
         properties.put(Context.PROVIDER_URL, serverName);
         return new InitialContext(properties);
     }
-    
+
     /**
      * Return a service
      * 
@@ -105,5 +101,13 @@ public class EjbUtils {
             log.error("Failed to obtain service interface for {} {}", serviceInterfaceName, e.getMessage());
         }
         return null;
+    }
+
+    public static String getCurrentClusterNode() {
+        return System.getProperty("jboss.node.name");
+    }
+
+    public static boolean isRunningInClusterMode() {
+        return System.getProperty("jboss.node.name") != null;
     }
 }

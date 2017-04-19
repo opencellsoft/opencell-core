@@ -1,5 +1,6 @@
 package org.meveo.cache;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,7 +36,9 @@ import org.slf4j.Logger;
  */
 @Startup
 @Singleton
-public class WalletCacheContainerProvider {
+public class WalletCacheContainerProvider implements CacheContainerProvider, Serializable {
+
+    private static final long serialVersionUID = -4969288143287203121L;
 
     @Inject
     protected Logger log;
@@ -264,6 +267,7 @@ public class WalletCacheContainerProvider {
      * 
      * @return A list of a map containing cache information with cache name as a key and cache as a value
      */
+    @Override
     @SuppressWarnings("rawtypes")
     public Map<String, BasicCache> getCaches() {
         Map<String, BasicCache> summaryOfCaches = new HashMap<String, BasicCache>();
@@ -279,6 +283,7 @@ public class WalletCacheContainerProvider {
      * 
      * @param cacheName Name of cache to refresh or null to refresh all caches
      */
+    @Override
     @Asynchronous
     public void refreshCache(String cacheName) {
 
