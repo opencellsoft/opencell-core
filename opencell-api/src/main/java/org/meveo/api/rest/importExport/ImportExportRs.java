@@ -38,7 +38,7 @@ public interface ImportExportRs extends IBaseRs {
     /**
      * Check for execution results for a given execution identifier
      * 
-     * @param Id Execution id returned in /importExport/importData call
+     * @param executionId Returned in /importExport/importData call
      * @return
      */
     @GET

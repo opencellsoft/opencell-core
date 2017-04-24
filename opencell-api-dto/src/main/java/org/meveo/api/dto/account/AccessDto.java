@@ -23,15 +23,31 @@ public class AccessDto extends BaseDto {
 
     private static final long serialVersionUID = 6495211234062070223L;
 
+    /**
+     * Code
+     */
     @XmlAttribute(required = false)
     private String code;
 
+    /**
+     * Subscription
+     */
     @XmlElement(required = true)
     private String subscription;
 
+    /**
+     * Starting date
+     */
     private Date startDate;
+
+    /**
+     * Ending date
+     */
     private Date endDate;
 
+    /**
+     * Custom fields
+     */
     @XmlElement(required = false)
     private CustomFieldsDto customFields;
 

@@ -19,6 +19,12 @@ import org.meveo.api.rest.IBaseRs;
 
 public interface ChargeTemplateRs extends IBaseRs {
 
+	/**
+     * Search for a charge template with a given code 
+     * 
+     * @param chargeTemplateCode The charge template's code
+     * @return A charge template
+     */
     @GET
     @Path("/")
     GetChargeTemplateResponseDto find(@QueryParam("chargeTemplateCode") String chargeTemplateCode);

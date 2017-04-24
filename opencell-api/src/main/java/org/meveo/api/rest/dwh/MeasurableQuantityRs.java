@@ -30,7 +30,7 @@ public interface MeasurableQuantityRs extends IBaseRs {
 	public ActionStatus create(MeasurableQuantityDto postData);
 
 	/**
-	 * Update Measurable quantity
+	 * Update Measurable quantity from mesearable quantities
 	 * 
 	 * @param postData
 	 * @return
@@ -40,9 +40,9 @@ public interface MeasurableQuantityRs extends IBaseRs {
 	public ActionStatus update(MeasurableQuantityDto postData);
 	
 	/**
-	 * Get Measurable quantity
+	 * Get Measurable quantity from a given code
 	 * 
-	 * @param code
+	 * @param code Measureable quantity's code
 	 * @return
 	 */
 	@GET
@@ -55,7 +55,7 @@ public interface MeasurableQuantityRs extends IBaseRs {
 	 * @param fromDate format yyyy-MM-dd'T'HH:mm:ss or yyyy-MM-dd
 	 * @param toDate   format yyyy-MM-dd'T'HH:mm:ss or yyyy-MM-dd
 	 * @param period
-	 * @param mqCode
+	 * @param mqCode Measureable quantity's code
 	 * @return
 	 */
 	@GET
@@ -66,13 +66,19 @@ public interface MeasurableQuantityRs extends IBaseRs {
     /**
      * Remove Measurable quantity with a given code.
      * 
-     * @param Mcode
+     * @param code Measurable quantity's code
      * @return
      */
     @Path("/{code}")
     @DELETE
     public ActionStatus remove(@PathParam("code") String code);
-    
+   
+     /**
+     * List Measurable quantity with a given code.
+     * 
+     * @param code Measurable quantity's code
+     * @return A list of measurable quantities
+     */
     @Path("/list")
     @GET
     public GetListMeasurableQuantityResponse list();

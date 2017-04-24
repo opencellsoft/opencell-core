@@ -30,58 +30,142 @@ import org.meveo.api.rest.IBaseRs;
 
 public interface WalletRs extends IBaseRs {
 
+    /**
+     * Create a new wallet template
+     * 
+     * @param postData The wallet template's data
+     * @return Request processing status
+     */
     @POST
     @Path("/template")
     ActionStatus createWalletTemplate(WalletTemplateDto postData);
 
+    /**
+     * Update an existing wallet template
+     * 
+     * @param postData The wallet template's data
+     * @return Request processing status
+     */
     @PUT
     @Path("/template")
     ActionStatus updateWalletTemplate(WalletTemplateDto postData);
 
+    /**
+     * Remove an existing wallet template with a given code 
+     * 
+     * @param walletTemplateCode The wallet template's code
+     * @return Request processing status
+     */
     @DELETE
     @Path("/template/{walletTemplateCode}")
     ActionStatus removeWalletTemplate(@PathParam("walletTemplateCode") String walletTemplateCode);
-
+    
+    /**
+     * Search for a wallet template with a given code 
+     * 
+     * @param walletTemplateCode The wallet template's code
+     * @return A wallet template
+     */
     @GET
     @Path("/template")
     GetWalletTemplateResponseDto findWalletTemplate(@QueryParam("walletTemplateCode") String walletTemplateCode);
 
+    /**
+     * Gets the current balance amount given provider, seller, user account and date. In wallet operation, status='OPEN OR RESERVED'.
+     * 
+     * @param postData WalletBalanceDto
+     * @return Request processing status
+     */
     @POST
     @Path("/balance/current")
     ActionStatus currentBalance(WalletBalanceDto postData);
 
+    /**
+     * Gets the reserved balance amount given provider, seller, user account and date.  In wallet operation, status='RESERVED'.
+     * 
+     * @param postData WalletBalanceDto
+     * @return Request processing status
+     */
     @POST
     @Path("/balance/reserved")
     ActionStatus reservedBalance(WalletBalanceDto postData);
 
+    /**
+     * Gets the open balance amount given provider, seller, user account and date. In wallet operation, status='OPEN'.
+     * 
+     * @param postData WalletBalanceDto
+     * @return Request processing status
+     */
     @POST
     @Path("/balance/open")
     ActionStatus openBalance(WalletBalanceDto postData);
 
+    /**
+     * Create reservation for a given offer, user account, seller, provider and date. 
+     * 
+     * @param postData The reservation's data
+     * @return Request processing status
+     */
     @POST
     @Path("/reservation")
     ActionStatus createReservation(WalletReservationDto postData);
 
+    /**
+     * Updates a reservation. Same as create we just need to pass the id of the reservation. 
+     * 
+     * @param postData The reservation's data
+     * @return Request processing status
+     */
     @PUT
     @Path("/reservation")
     ActionStatus updateReservation(WalletReservationDto postData);
 
+    /**
+     * Cancel a reservation given an id.
+     * 
+     * @param reservationId The reservation's id
+     * @return Request processing status
+     */
     @DELETE
     @Path("/reservation/{reservationId:[0-9]+}")
     ActionStatus cancelReservation(@PathParam("reservationId") Long reservationId);
 
+    /**
+     * Confirm a reservation given an id.
+     * 
+     * @param postData The reservation's id
+     * @return Request processing status
+     */
     @POST
     @Path("/reservation/confirm")
     ActionStatus confirmReservation(WalletReservationDto postData);
 
+    /**
+     * Create a new operation
+     * 
+     * @param postData The operation's data
+     * @return Request processing status
+     */
     @POST
     @Path("/operation")
     ActionStatus createOperation(WalletOperationDto postData);
 
+    /**
+     * Search for an operation with a given (exemple) code 
+     * 
+     * @param postData The operation's data (FindWalletOperationsDto)
+     * @return
+     */
     @POST
     @Path("/operation/find")
     FindWalletOperationsResponseDto findOperations(FindWalletOperationsDto postData);
 
+    /**
+     * Create new or update an existing wallet template
+     * 
+     * @param postData The wallet template's data
+     * @return Request processing status
+     */
     @POST
     @Path("/template/createOrUpdate")
     ActionStatus createOrUpdateWalletTemplate(WalletTemplateDto postData);

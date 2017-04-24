@@ -25,22 +25,52 @@ import org.meveo.api.rest.IBaseRs;
 
 public interface EmailNotificationRs extends IBaseRs {
 
+    /**
+     * Create a new email notification
+     * 
+     * @param postData The email notification's data
+     * @return Request processing status
+     */
     @POST
     @Path("/")
     ActionStatus create(EmailNotificationDto postData);
 
+    /**
+     * Update an existing email notification
+     * 
+     * @param postData The email notification's data
+     * @return Request processing status
+     */
     @PUT
     @Path("/")
     ActionStatus update(EmailNotificationDto postData);
 
+    /**
+     * Find a email notification with a given code 
+     * 
+     * @param notificationCode The email notification's code
+     * @return
+     */
     @GET
     @Path("/")
     GetEmailNotificationResponseDto find(@QueryParam("notificationCode") String notificationCode);
 
+    /**
+     * Remove an existing email notification with a given code 
+     * 
+     * @param notificationCode The email notification's code
+     * @return Request processing status
+     */
     @DELETE
     @Path("/{notificationCode}")
     ActionStatus remove(@PathParam("notificationCode") String notificationCode);
 
+    /**
+     * Create new or update an existing email notification with a given code
+     * 
+     * @param postData The email notification's data
+     * @return Request processing status
+     */
     @POST
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(EmailNotificationDto postData);

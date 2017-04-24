@@ -28,10 +28,10 @@ import org.meveo.api.rest.IBaseRs;
 public interface UsageChargeTemplateRs extends IBaseRs {
 
     /**
-     * Create usage charge template.
+     * Create new usage charge template.
      * 
-     * @param postData
-     * @return
+     * @param postData The usage charge template's data 
+     * @return Request processing status
      */
     @POST
     @Path("/")
@@ -40,18 +40,18 @@ public interface UsageChargeTemplateRs extends IBaseRs {
     /**
      * Update usage charge template.
      * 
-     * @param postData
-     * @return
+     * @param postData The usage charge template's data
+     * @return Request processing status
      */
     @PUT
     @Path("/")
     public ActionStatus update(UsageChargeTemplateDto postData);
 
     /**
-     * Search usage charge template with a given code.
+     * Find an existing usage charge template with a given code.
      * 
-     * @param usageChargeTemplateCode
-     * @return
+     * @param usageChargeTemplateCode The charge template's code
+     * @return Returns a usageChargeTemplate
      */
     @GET
     @Path("/")
@@ -60,18 +60,18 @@ public interface UsageChargeTemplateRs extends IBaseRs {
     /**
      * Remove usage charge template with a given code.
      * 
-     * @param usageChargeTemplateCode
-     * @return
+     * @param usageChargeTemplateCode The charge template's code
+     * @return Request processing status
      */
     @DELETE
     @Path("/{usageChargeTemplateCode}")
     public ActionStatus remove(@PathParam("usageChargeTemplateCode") String usageChargeTemplateCode);
 
     /**
-     * Create or update charge template with a given code.
+     * Create new or update an existing charge template with a given code.
      * 
-     * @param postData
-     * @return
+     * @param postData The usage charge template's data
+     * @return Request processing status
      */
     @POST
     @Path("/createOrUpdate")
