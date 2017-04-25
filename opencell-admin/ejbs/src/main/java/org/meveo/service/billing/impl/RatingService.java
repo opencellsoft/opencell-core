@@ -679,7 +679,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 								
 				TradingCountry tradingCountry = operationToRerate.getChargeInstance().getUserAccount().getBillingAccount().getTradingCountry();				
 				InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.
-						findInvoiceSubCategoryCountry(operationToRerate.getChargeInstance().getChargeTemplate().getInvoiceSubCategory().getId(), tradingCountry.getId());
+						findInvoiceSubCategoryCountry(operationToRerate.getChargeInstance().getChargeTemplate().getInvoiceSubCategory().getId(), tradingCountry.getId(), operation.getOperationDate());
 				if (invoiceSubcategoryCountry == null) {
 					throw new IncorrectChargeTemplateException("reRate: No invoiceSubcategoryCountry exists for invoiceSubCategory code=" + operationToRerate.getChargeInstance().getChargeTemplate().getInvoiceSubCategory().getCode() + " and trading country="
 							+ tradingCountry.getCountryCode());

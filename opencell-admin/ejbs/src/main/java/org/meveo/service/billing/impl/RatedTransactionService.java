@@ -85,6 +85,9 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 public class RatedTransactionService extends PersistenceService<RatedTransaction> {
 	
 	@Inject
+	private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
+	
+	@Inject
 	private UserAccountService userAccountService;
 
 	@Inject
@@ -393,11 +396,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 for (InvoiceSubcategoryCountry invoicesubcatCountry : invoiceSubCategory.getInvoiceSubcategoryCountries()) {
                     if (invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode())
                             && invoiceSubCategoryService.matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(), billingAccount, invoice)) {
-    					if(StringUtils.isBlank(invoicesubcatCountry.getTaxCodeEL())){
-    						taxes.add(invoicesubcatCountry.getTax());
-    					} else {
-    						taxes.add(invoiceSubCategoryService.evaluateTaxCodeEL(invoicesubcatCountry.getTaxCodeEL(),userAccount,billingAccount, invoice));
-    					}
+						Tax tax = invoiceSubCategoryCountryService.isInvoiceSubCategoryTaxValid(invoicesubcatCountry,
+								userAccount, billingAccount, invoice, new Date());
+						if (tax != null) {
+							taxes.add(tax);
+						}
                     }
                 }
 

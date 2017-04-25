@@ -186,7 +186,7 @@ public class UsageRatingService {
         TradingCountry country = userAccount.getBillingAccount().getTradingCountry();
         Long countryId = country.getId();
         InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(cachedChargeInstance.getChargeTemplate()
-            .getInvoiceSubCategoryCode(), countryId);
+            .getInvoiceSubCategoryCode(), countryId, edr.getEventDate());
 
         if (invoiceSubcategoryCountry == null) {
             throw new BusinessException("No tax defined for countryId=" + countryId + " in invoice Sub-Category="
