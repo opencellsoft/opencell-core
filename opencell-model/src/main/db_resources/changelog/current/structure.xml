@@ -2693,4 +2693,8 @@
 		</addColumn>
 	</changeSet>
 
+	<changeSet id="#2530_20170425" author="TonyAlejandro">
+		<modifyDataType tableName="adm_inbound_req_headers" columnName="headers" newDataType="TEXT" />
+	</changeSet>
+
 </databaseChangeLog>
