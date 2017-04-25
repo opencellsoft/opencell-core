@@ -26,22 +26,52 @@ import org.meveo.api.rest.IBaseRs;
 
 public interface JobInstanceRs extends IBaseRs {
 
+    /**
+     * Create a new job instance
+     * 
+     * @param postData The job instance's data
+     * @return Request processing status
+     */
     @Path("/create")
     @POST
     ActionStatus create(JobInstanceDto postData);
 
+    /**
+     * Update an existing job instance
+     * 
+     * @param postData The job instance's data
+     * @return Request processing status
+     */
     @Path("/update")
     @POST
     ActionStatus update(JobInstanceDto postData);
 
+    /**
+     * Create new or update an existing job instance with a given code
+     * 
+     * @param postData The job instance's data
+     * @return Request processing status
+     */
     @Path("/createOrUpdate")
     @POST
     ActionStatus createOrUpdate(JobInstanceDto postData);
 
+    /**
+     * Find a job instance with a given code 
+     * 
+     * @param jobInstanceCode The job instance's code
+     * @return
+     */
     @Path("/")
     @GET
     JobInstanceResponseDto find(@QueryParam("jobInstanceCode") String jobInstanceCode);
 
+    /**
+     * Remove an existing job instance with a given code 
+     * 
+     * @param jobInstanceCode The job instance's code
+     * @return Request processing status
+     */
     @Path("/{jobInstanceCode}")
     @DELETE
     ActionStatus remove(@PathParam("jobInstanceCode") String jobInstanceCode);

@@ -30,7 +30,8 @@ import org.meveo.api.rest.IBaseRs;
 public interface MeveoInstanceRs extends IBaseRs {
 
 	/**
-	 * create a meveoInstance by dto
+	 * Create a meveoInstance by dto
+     *
 	 * @param meveoInstanceDto
 	 * @return
 	 */
@@ -39,7 +40,8 @@ public interface MeveoInstanceRs extends IBaseRs {
     ActionStatus create(MeveoInstanceDto meveoInstanceDto);
 
 	/**
-	 * update a meveoInstance by dto
+	 * Update a meveoInstance by dto
+     *
 	 * @param meveoInstanceDto
 	 * @return
 	 */
@@ -48,7 +50,8 @@ public interface MeveoInstanceRs extends IBaseRs {
     ActionStatus update(MeveoInstanceDto meveoInstanceDto);
 
     /**
-     * find a meveoInstance by code
+     * Find a meveoInstance by code
+     *
      * @param code
      * @return
      */
@@ -57,7 +60,8 @@ public interface MeveoInstanceRs extends IBaseRs {
     MeveoInstanceResponseDto find(@QueryParam("code") String code);
 
     /**
-     * remove a meveoInstance by code
+     * Remove a meveoInstance by code
+     *
      * @param code
      * @return
      */
@@ -66,7 +70,8 @@ public interface MeveoInstanceRs extends IBaseRs {
     ActionStatus remove(@PathParam("code") String code);
 
     /**
-     * list meveoInstances
+     * List meveoInstances
+     *
      * @return
      */
     @GET
@@ -74,7 +79,8 @@ public interface MeveoInstanceRs extends IBaseRs {
     MeveoInstancesResponseDto list();
 
     /**
-     * createOrUpdate a meveoInstance by dto
+     * CreateOrUpdate a meveoInstance by dto
+     *
      * @param meveoInstanceDto
      * @return
      */

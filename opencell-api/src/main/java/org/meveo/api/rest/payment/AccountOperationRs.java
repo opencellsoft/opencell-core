@@ -25,26 +25,62 @@ import org.meveo.api.rest.IBaseRs;
 
 public interface AccountOperationRs extends IBaseRs {
 
+    /**
+     * Create a new account operation
+     * 
+     * @param postData The account operation's data
+     * @return Request processing status
+     */
     @POST
     @Path("/")
     ActionStatus create(AccountOperationDto postData);
 
+    /**
+     * List of account operations
+     * 
+     * @param customerAccountCode The customer account's code
+     * @return A list of account operations
+     */
     @GET
     @Path("/list")
     AccountOperationsResponseDto list(@QueryParam("customerAccountCode") String customerAccountCode);
 
+    /**
+     * Match operations
+     * 
+     * @param postData The matching operation's data
+     * @return Request processing status
+     */
     @POST
     @Path("/matchOperations")
     ActionStatus matchOperations(MatchOperationRequestDto postData);
 
+    /**
+     * Unmatching operations
+     * 
+     * @param postData The unmatching operations data
+     * @return Request processing status
+     */
     @POST
     @Path("/unMatchingOperations")
     ActionStatus unMatchingOperations(UnMatchingOperationRequestDto postData);
 
+    /**
+     * Add a new litigation
+     * 
+     * @param postData The litigation's data
+     * @return Request processing status
+     */
     @POST
     @Path("/addLitigation")
     ActionStatus addLitigation(LitigationRequestDto postData);
 
+    /**
+     * Cancel a litigation
+     * 
+     * @param postData The litigation's data
+     * @return Request processing status
+     */
     @POST
     @Path("/cancelLitigation")
     ActionStatus cancelLitigation(LitigationRequestDto postData);

@@ -29,7 +29,7 @@ public interface CountryIsoRs extends IBaseRs {
     /**
      * Creates a tradingCountry base from the supplied country code. If the country code does not exists, a country and tradingCountry records are created
      * 
-     * @param countryDto
+     * @param countryIsoDto
      * @return
      */
     @POST
@@ -50,7 +50,6 @@ public interface CountryIsoRs extends IBaseRs {
      * Does not delete a country but the tradingCountry associated to it.
      * 
      * @param countryCode
-     * @param currencyCode
      * @return
      */
     @DELETE
@@ -60,7 +59,7 @@ public interface CountryIsoRs extends IBaseRs {
     /**
      * Modify a country. Same input parameter as create. The country and tradingCountry are created if they don't exists. The operation fails if the tradingCountry is null.
      * 
-     * @param countryDto
+     * @param countryIsoDto
      * @return
      */
     @PUT

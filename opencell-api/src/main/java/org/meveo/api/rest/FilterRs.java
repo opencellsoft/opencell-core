@@ -19,6 +19,12 @@ import org.meveo.api.dto.FilterDto;
 
 public interface FilterRs extends IBaseRs {
 
+    /**
+     * Create new or update an existing filter with a given code
+     * 
+     * @param postData The filter's data
+     * @return Request processing status
+     */
     @Path("/createOrUpdate")
     @POST
     public ActionStatus createOrUpdate(FilterDto postData);

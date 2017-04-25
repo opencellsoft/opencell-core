@@ -28,45 +28,51 @@ import org.meveo.api.rest.IBaseRs;
 public interface RecurringChargeTemplateRs extends IBaseRs {
 
     /**
-     * Create recurring charge template.
+     * Create a new recurring charge template.
      * 
-     * @param postData
-     * @return
+     * @param postData The recurring charge template's data
+     * @return Request processing status
      */
     @POST
     @Path("/")
     public ActionStatus create(RecurringChargeTemplateDto postData);
 
     /**
-     * Search recurring charge template with a given code.
+     * Find a recurring charge template with a given code.
      * 
-     * @param recurringChargeTemplateCode
-     * @return
+     * @param recurringChargeTemplateCode The reccuring charge template's code
+     * @return Return a recurringChargeTemplate
      */
     @GET
     @Path("/")
     public GetRecurringChargeTemplateResponseDto find(@QueryParam("recurringChargeTemplateCode") String recurringChargeTemplateCode);
 
     /**
-     * Update recurring charge template.
+     * Update an existing recurring charge template.
      * 
-     * @param postData
-     * @return
+     * @param postData The recurring charge template's data
+     * @return Request processing status
      */
     @PUT
     @Path("/")
     public ActionStatus update(RecurringChargeTemplateDto postData);
 
     /**
-     * Remove recurring charge template with a given code.
+     * Remove an existing recurring charge template with a given code.
      * 
      * @param recurringChargeTemplateCode
-     * @return
+     * @return Request processing status
      */
     @DELETE
     @Path("/{recurringChargeTemplateCode}")
     public ActionStatus remove(@PathParam("recurringChargeTemplateCode") String recurringChargeTemplateCode);
 
+    /**
+     * Create new or update an existing recurring charge template
+     * 
+     * @param postData The recurring charge template's data
+     * @return Request processing status
+     */
     @POST
     @Path("/createOrUpdate")
     public ActionStatus createOrUpdate(RecurringChargeTemplateDto postData);

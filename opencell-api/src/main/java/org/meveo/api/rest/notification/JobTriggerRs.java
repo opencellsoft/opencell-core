@@ -25,22 +25,52 @@ import org.meveo.api.rest.IBaseRs;
 
 public interface JobTriggerRs extends IBaseRs {
 
+    /**
+     * Create a new job trigger
+     * 
+     * @param postData The job trigger's data
+     * @return Request processing status
+     */
     @POST
     @Path("/")
     ActionStatus create(JobTriggerDto postData);
 
+    /**
+     * Update an existing job trigger
+     * 
+     * @param postData The job trigger's data
+     * @return Request processing status
+     */
     @PUT
     @Path("/")
     ActionStatus update(JobTriggerDto postData);
 
+    /**
+     * Find a job trigger with a given code 
+     * 
+     * @param notificationCode The job trigger's code
+     * @return
+     */
     @GET
     @Path("/")
     GetJobTriggerResponseDto find(@QueryParam("notificationCode") String notificationCode);
 
+    /**
+     * Remove an existing job trigger with a given code 
+     * 
+     * @param notificationCode The job trigger's code
+     * @return Request processing status
+     */
     @DELETE
     @Path("/{notificationCode}")
     ActionStatus remove(@PathParam("notificationCode") String notificationCode);
 
+    /**
+     * Create new or update an existing job trigger with a given code
+     * 
+     * @param postData The job trigger's data
+     * @return Request processing status
+     */
     @POST
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(JobTriggerDto postData);

@@ -23,42 +23,101 @@ import org.meveo.api.rest.IBaseRs;
 
 public interface ModuleRs extends IBaseRs {
 
+    /**
+     * Create a new meveo module
+     * 
+     * @param moduleDto The meveo module's data
+     * @return Request processing status
+     */
     @POST
     @Path("/")
     public ActionStatus create(MeveoModuleDto moduleDto);
 
+    /**
+     * Update an existing Meveo module
+     * 
+     * @param moduleDto The Meveo module's data
+     * @return Request processing status
+     */
     @PUT
     @Path("/")
     public ActionStatus update(MeveoModuleDto moduleDto);
 
+    /**
+     * Create new or update an existing Meveo module
+     * 
+     * @param moduleDto The Meveo module's data
+     * @return Request processing status
+     */
     @POST
     @Path("/createOrUpdate")
     public ActionStatus createOrUpdate(MeveoModuleDto moduleDto);
 
+    /**
+     * Remove an existing module with a given code 
+     * 
+     * @param code The module's code
+     * @return Request processing status
+     */
     @DELETE
     @Path("/{code}")
     public ActionStatus delete(@PathParam("code") String code);
 
+    /**
+     * List all Meveo's modules
+     * 
+     * @return A list of Meveo's modules
+     */
     @GET
     @Path("/list")
     public MeveoModuleDtosResponse list();
 
+    /**
+     * Install Meveo module
+     * 
+     * @param moduleDto
+     * @return Request processing status
+     */
     @PUT
     @Path("/install")
     public ActionStatus install(MeveoModuleDto moduleDto);
 
+    /**
+     * Find a Meveo's module with a given code 
+     * 
+     * @param code The Meveo module's code
+     * @return
+     */
     @GET
     @Path("/")
     public MeveoModuleDtoResponse get(@QueryParam("code") String code);
 
+    /**
+     * uninstall a Meveo's module with a given code
+     * 
+     * @param code The Meveo module's code
+     * @return Request processing status
+     */
     @GET
     @Path("/uninstall")
     public ActionStatus uninstall(@QueryParam("code") String code);
 
+    /**
+     * Enable a Meveo's module with a given code
+     * 
+     * @param code The Meveo module's code
+     * @return Request processing status
+     */
     @GET
     @Path("/enable")
     public ActionStatus enable(@QueryParam("code") String code);
 
+    /**
+     * Disable a Meveo's module with a given code
+     * 
+     * @param code The Meveo module's code
+     * @return Request processing status
+     */
     @GET
     @Path("/disable")
     public ActionStatus disable(@QueryParam("code") String code);

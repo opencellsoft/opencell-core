@@ -28,10 +28,22 @@ import org.meveo.api.rest.IBaseRs;
 
 public interface UserAccountRs extends IBaseRs {
 
+    /**
+     * Create a new user account
+     * 
+     * @param postData The user account's data
+     * @return Request processing status
+     */
     @POST
     @Path("/")
     ActionStatus create(UserAccountDto postData);
 
+    /**
+     * Update an existing user account
+     * 
+     * @param postData The user account's data
+     * @return Request processing status
+     */
     @PUT
     @Path("/")
     ActionStatus update(UserAccountDto postData);
@@ -39,35 +51,48 @@ public interface UserAccountRs extends IBaseRs {
     /**
      * Search for a user account with a given code.
      * 
-     * @param userAccountCode
+     * @param userAaccountCodeThe exemple's code
      * @return
      */
     @GET
     @Path("/")
     GetUserAccountResponseDto find(@QueryParam("userAccountCode") String userAccountCode);
 
+    /**
+     * Remove an existing user account with a given code 
+     * 
+     * @param userAccountCode The user account's code
+     * @return Request processing status
+     */
     @DELETE
     @Path("/{userAccountCode}")
     ActionStatus remove(@PathParam("userAccountCode") String userAccountCode);
 
     /**
-     * List UserAccount filter by billingAccountCode.
+     * List user accounts filtered by a billing account's code.
      * 
-     * @param billingAccountCode
+     * @param billingAccountCode The user billing account's code
      * @return
      */
     @GET
     @Path("/list")
     UserAccountsResponseDto listByBillingAccount(@QueryParam("billingAccountCode") String billingAccountCode);
 
+    /**
+     * Create new or update an existing user account
+     * 
+     * @param postData The user account's data
+     * @return Request processing status
+     */
     @POST
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(UserAccountDto postData);
     
     /**
-     * filter counters by period date
-     * @param userAccountCode
-     * @param date
+     * Filter counters by period date
+     *
+     * @param userAccountCode The user account's code
+     * @param date The date corresponding to the period
      * @return
      */
     @GET
@@ -76,8 +101,9 @@ public interface UserAccountRs extends IBaseRs {
 			@QueryParam("date") String date);
 
     /**
-     * Apply a product on a userAccount.
-     * @param ApplyProductRequestDto userAccount field must be set
+     * Apply a product on a user account.
+     *
+     * @param postData ApplyProductRequestDto userAccount field must be set
      * @return
      */
     @POST

@@ -25,22 +25,52 @@ import org.meveo.api.rest.IBaseRs;
 
 public interface WebHookNotificationRs extends IBaseRs {
 
+    /**
+     * Create a new web hook notification
+     * 
+     * @param postData The web hook notification's data
+     * @return Request processing status
+     */
     @POST
     @Path("/")
     ActionStatus create(WebHookDto postData);
 
+    /**
+     * Update an existing web hook notification
+     * 
+     * @param postData The web hook notification's data
+     * @return Request processing status
+     */
     @PUT
     @Path("/")
     ActionStatus update(WebHookDto postData);
 
+    /**
+     * Find a web hook notification with a given code 
+     * 
+     * @param notificationCode The web hook notification's code
+     * @return
+     */
     @GET
     @Path("/")
     GetWebHookNotificationResponseDto find(@QueryParam("notificationCode") String notificationCode);
 
+    /**
+     * Remove an existing web hook notification with a given code 
+     * 
+     * @param notificationCode The web hook notification's code
+     * @return Request processing status
+     */
     @DELETE
     @Path("/{notificationCode}")
     ActionStatus remove(@PathParam("notificationCode") String notificationCode);
 
+    /**
+     * Create new or update an existing web hook notification with a given code
+     * 
+     * @param postData The web hook notification's data
+     * @return Request processing status
+     */
     @POST
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(WebHookDto postData);

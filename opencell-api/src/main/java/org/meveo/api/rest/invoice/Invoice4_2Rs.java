@@ -40,9 +40,9 @@ public interface Invoice4_2Rs extends IBaseRs {
     public InvoiceCreationResponse create(Invoice4_2Dto invoiceDto);
 
     /**
-     * Search for a list of invoice given a customer account code.
+     * Search for a list of invoice given a customer account's code.
      * 
-     * @param customerAccountCode Customer account code
+     * @param customerAccountCode Customer account's code
      * @return
      */
     @GET
