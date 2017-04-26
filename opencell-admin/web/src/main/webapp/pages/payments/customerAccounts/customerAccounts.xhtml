@@ -41,8 +41,8 @@ xmlns:h="http://xmlns.jcp.org/jsf/html"
                 objectIdParamName="customerId" />
             <hftl:column label="#{messages['customerAccount.paymentMethod']}" field="paymentMethod.label" isMessage="true" />
             <hftl:column label="#{messages['customerAccount.creditCategory']}" field="creditCategory.code" />
-            <hftl:column label="#{messages['tradingCountry.languageCode']}" field="tradingLanguage.languageCode" />
-            <hftl:column label="#{messages['currency.codeCurrency']}" field="tradingCurrency.currencyCode" />
+            <hftl:column label="#{messages['tradingCountry.languageCode']}" field="tradingLanguage.language.languageCode" />
+            <hftl:column label="#{messages['currency.codeCurrency']}" field="tradingCurrency.currency.currencyCode" />
             <hftl:column label="#{messages['customerAccount.status']}" field="status.label" isMessage="true" />
 
             <hftl:actionsColumn useCustomIdParam="true" permission="#{persistentPermissionResolver.hasPermission('account','accountManagement')}" />
