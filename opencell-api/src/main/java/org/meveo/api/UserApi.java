@@ -69,7 +69,7 @@ public class UserApi extends BaseApi {
 			postData.getRoles().add(postData.getRole());
 		}
 
-		if (!(currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationManagement")))) {
+		if (!(currentUser.hasRole("userManagement") || currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationManagement")))) {
 			throw new ActionForbiddenException("User has no permission to manage users for provider");
 		}
 
