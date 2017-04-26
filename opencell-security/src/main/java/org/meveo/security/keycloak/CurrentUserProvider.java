@@ -115,10 +115,6 @@ public class CurrentUserProvider {
                 log.info("A new application user was registered with username {} and name {}", user.getUserName(), user.getName().getFullName());
             }
 
-            if (user != null) {
-                em.detach(user);
-            }
-
         } catch (Exception e) {
             log.error("Failed to supplement current user information from db and/or create new user in db", e);
         }

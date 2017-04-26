@@ -129,7 +129,7 @@ public class UserApi extends BaseApi {
 			throw new EntityDoesNotExistsException(User.class, postData.getUsername(), "username");
 		}
 
-        if (!(currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationVisualization")))) {
+        if (!(currentUser.hasRole("userManagement") || currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationVisualization")))) {
 			throw new ActionForbiddenException("User has no permission to manage users for provider");
 		}
 
