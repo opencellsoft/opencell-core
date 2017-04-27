@@ -30,7 +30,7 @@ public class DateProcessor extends PrimitiveFilterProcessor {
                 dateValue = sdf.parse(strDateValue);
             } catch (ParseException e) {
                 try {
-                    sdf = new SimpleDateFormat(parameters.getProperty("meveo.dateTimeFormat", "dd/MM/yyyy HH:mm"));
+                    sdf = new SimpleDateFormat(parameters.getProperty("meveo.dateTimeFormat", "dd/MM/yyyy HH:mm:ss"));
                     dateValue = sdf.parse(strDateValue);
                 } catch (ParseException e1) {
                     throw new FilterException(e1.getMessage());
