@@ -51,7 +51,7 @@ import org.meveo.service.base.PersistenceService;
  * User service implementation.
  */
 @Stateless
-@DeclareRoles({"userManagement"})
+@DeclareRoles({"userManagement", "userSelfManagement"})
 public class UserService extends PersistenceService<User> {
 
 	static User systemUser = null;
@@ -59,7 +59,7 @@ public class UserService extends PersistenceService<User> {
 	private ParamBean paramBean = ParamBean.getInstance();
 
 	@Override
-	@RolesAllowed({"userManagement"}) 
+	@RolesAllowed({"userManagement", "userSelfManagement"})
 	public void create(User user) throws UsernameAlreadyExistsException, BusinessException {
 
 		if (isUsernameExists(user.getUserName())) {
@@ -74,7 +74,7 @@ public class UserService extends PersistenceService<User> {
 	}
 
 	@Override
-    @RolesAllowed({"userManagement"}) 
+    @RolesAllowed({"userManagement", "userSelfManagement"})
 	public User update(User user) throws UsernameAlreadyExistsException, BusinessException {
 		if (isUsernameExists(user.getUserName(), user.getId())) {
 			getEntityManager().refresh(user);
