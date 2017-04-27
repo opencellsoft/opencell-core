@@ -13,24 +13,23 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
 
+import org.infinispan.Cache;
 import org.infinispan.commons.api.BasicCache;
-import org.meveo.admin.exception.BusinessException;
+import org.infinispan.context.Flag;
+import org.meveo.model.CounterValueChangeInfo;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.billing.UsageChargeInstance;
-import org.meveo.model.cache.CachedCounterInstance;
-import org.meveo.model.cache.CachedCounterPeriod;
-import org.meveo.model.cache.CachedUsageChargeInstance;
-import org.meveo.model.cache.CachedUsageChargeTemplate;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
-import org.meveo.service.billing.impl.CounterPeriodService;
 import org.meveo.service.billing.impl.UsageChargeInstanceService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
@@ -45,7 +44,8 @@ import org.slf4j.Logger;
  */
 @Startup
 @Singleton
-public class RatingCacheContainerProvider implements CacheContainerProvider, Serializable {
+@Lock(LockType.READ)
+public class RatingCacheContainerProvider implements Serializable { // CacheContainerProvider, Serializable {
 
     private static final long serialVersionUID = -8177539254337953136L;
 
@@ -64,34 +64,32 @@ public class RatingCacheContainerProvider implements CacheContainerProvider, Ser
     private UsageChargeTemplateService usageChargeTemplateService;
 
     @Inject
-    private CounterPeriodService counterPeriodService;
-
-    @Inject
     private CalendarService calendarService;
 
     /**
-     * Contains association between charge code and price plans. Key format: <charge template code, which is pricePlanMatrix.eventCode>
+     * Contains association between charge code and price plans. Key format: <charge template code, which is pricePlanMatrix.eventCode>, value: List of <PricePlanMatrix entity>
      */
     @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-price-plan")
-    private BasicCache<String, List<PricePlanMatrix>> pricePlanCache;
+    private Cache<String, List<PricePlanMatrix>> pricePlanCache;
 
     /**
-     * Contains association between usage charge template id and cached usage charge template information. Key format: UsageChargeTemplate.id
+     * Contains association between usage charge template ID and cached usage charge template information. Key format: UsageChargeTemplate.id, value: <DTO version of
+     * UsageChargeTemplate>
      */
-    @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-usage-charge-template-cache-cache")
-    private BasicCache<Long, CachedUsageChargeTemplate> usageChargeTemplateCacheCache;
+    @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-usage-charge-template-cache")
+    private Cache<Long, CachedUsageChargeTemplate> usageChargeTemplateCache;
 
     /**
-     * Contains association between subscription and usage charge instances. Key format: Subscription.id
+     * Contains association between subscription and usage charge instances. Key format: Subscription.id, value: List of <DTO version of UsageChargeInstance>
      */
     @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-charge-instance-cache")
-    private BasicCache<Long, List<CachedUsageChargeInstance>> usageChargeInstanceCache;
+    private Cache<Long, List<CachedUsageChargeInstance>> usageChargeInstanceCache;
 
     /**
-     * Contains association between counter instance id and cached counter information. Key format: CounterInstance.id
+     * Contains association between counter instance ID and cached counter information. Key format: CounterInstance.id, value: <DTO version of CounterInstance>
      */
     @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-counter-cache")
-    private BasicCache<Long, CachedCounterInstance> counterCache;
+    private Cache<Long, CachedCounterInstance> counterCache;
 
     // @Resource(name = "java:jboss/infinispan/container/meveo")
     // private CacheContainer meveoContainer;
@@ -105,8 +103,7 @@ public class RatingCacheContainerProvider implements CacheContainerProvider, Ser
             // usageChargeInstanceCache = meveoContainer.getCache("meveo-charge-instance-cache");
             // counterCache = meveoContainer.getCache("meveo-counter-cache");
 
-            populatePricePlanCache();
-            populateUsageChargeCache();
+            refreshCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
 
             log.info("RatingCacheContainerProvider initialized");
 
@@ -123,15 +120,26 @@ public class RatingCacheContainerProvider implements CacheContainerProvider, Ser
 
         log.debug("Start to populate price plan cache");
 
+        pricePlanCache.startBatch();
         pricePlanCache.clear();
+
+        String lastEventCode = null;
+        List<PricePlanMatrix> chargePriceListSameEventCode = null;
+
+        // Retrieve price plans ordered by event code
         List<PricePlanMatrix> activePricePlans = pricePlanMatrixService.getPricePlansForCache();
 
         for (PricePlanMatrix pricePlan : activePricePlans) {
-            String cacheKey = pricePlan.getEventCode();
-            if (!pricePlanCache.containsKey(cacheKey)) {
-                pricePlanCache.put(cacheKey, new ArrayList<PricePlanMatrix>());
+            if (lastEventCode == null) {
+                chargePriceListSameEventCode = new ArrayList<PricePlanMatrix>();
+                lastEventCode = pricePlan.getEventCode();
+
+            } else if (!lastEventCode.equals(pricePlan.getEventCode())) {
+                Collections.sort(chargePriceListSameEventCode);
+                pricePlanCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(lastEventCode, chargePriceListSameEventCode);
+                chargePriceListSameEventCode = new ArrayList<PricePlanMatrix>();
+                lastEventCode = pricePlan.getEventCode();
             }
-            List<PricePlanMatrix> chargePriceList = pricePlanCache.get(cacheKey);
 
             if (pricePlan.getCriteria1Value() != null && pricePlan.getCriteria1Value().length() == 0) {
                 pricePlan.setCriteria1Value(null);
@@ -157,14 +165,17 @@ public class RatingCacheContainerProvider implements CacheContainerProvider, Ser
                 preloadCache(pricePlan.getValidityCalendar());
             }
 
+            chargePriceListSameEventCode.add(pricePlan);
+
             log.debug("Added pricePlan to cache chargeCode {} ; priceplan {}", pricePlan.getEventCode(), pricePlan);
-            chargePriceList.add(pricePlan);
-
         }
 
-        for (List<PricePlanMatrix> chargePriceList : pricePlanCache.values()) {
-            Collections.sort(chargePriceList);
+        if (chargePriceListSameEventCode != null && !chargePriceListSameEventCode.isEmpty()) {
+            Collections.sort(chargePriceListSameEventCode);
+            pricePlanCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(lastEventCode, chargePriceListSameEventCode);
         }
+
+        pricePlanCache.endBatch(true);
 
         log.info("Price plan cache populated with {} price plans", activePricePlans.size());
     }
@@ -181,13 +192,8 @@ public class RatingCacheContainerProvider implements CacheContainerProvider, Ser
      * 
      * @param pricePlan Price plan to add
      */
+    // @Lock(LockType.WRITE)
     public void addPricePlanToCache(PricePlanMatrix pricePlan) {
-
-        String cacheKey = pricePlan.getEventCode();
-        if (!pricePlanCache.containsKey(cacheKey)) {
-            pricePlanCache.put(cacheKey, new ArrayList<PricePlanMatrix>());
-        }
-        List<PricePlanMatrix> chargePriceList = pricePlanCache.get(cacheKey);
 
         if (pricePlan.getCriteria1Value() != null && pricePlan.getCriteria1Value().length() == 0) {
             pricePlan.setCriteria1Value(null);
@@ -221,11 +227,16 @@ public class RatingCacheContainerProvider implements CacheContainerProvider, Ser
             preloadCache(pricePlan.getValidityCalendar());
         }
 
-        chargePriceList.add(pricePlan);
+        String cacheKey = pricePlan.getEventCode();
+        log.trace("Adding pricePlan {} to pricePlan cache under key {}", pricePlan.getId(), cacheKey);
+        pricePlanCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).putIfAbsent(cacheKey, new ArrayList<PricePlanMatrix>());
 
+        List<PricePlanMatrix> chargePriceList = pricePlanCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
+
+        chargePriceList.add(pricePlan);
         Collections.sort(chargePriceList);
 
-        log.debug("Added pricePlan to cache chargeCode {} pricePlan {}", pricePlan.getEventCode(), pricePlan);
+        pricePlanCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, chargePriceList);
     }
 
     /**
@@ -236,22 +247,21 @@ public class RatingCacheContainerProvider implements CacheContainerProvider, Ser
     public void removePricePlanFromCache(PricePlanMatrix pricePlan) {
 
         String cacheKey = pricePlan.getEventCode();
-        List<PricePlanMatrix> chargePriceList = pricePlanCache.get(cacheKey);
+        log.trace("Removing pricePlan {} from priceplan cache under key {}", pricePlan.getId(), cacheKey);
 
-        if (chargePriceList == null)
-            return;
+        List<PricePlanMatrix> chargePriceList = pricePlanCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
 
-        int index = 0;
-        for (PricePlanMatrix chargePricePlan : chargePriceList) {
-            if (pricePlan.getId().equals(chargePricePlan.getId())) {
-                chargePriceList.remove(index);
-                log.debug("Removed pricePlan from cache chargeCode {} priceplan {}", pricePlan.getEventCode(), pricePlan);
-                break;
+        if (chargePriceList != null && chargePriceList.isEmpty()) {
+            boolean removed = chargePriceList.remove(pricePlan);
+            if (removed) {
+                // Remove cached value altogether if no value are left in the list
+                if (chargePriceList.isEmpty()) {
+                    pricePlanCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).remove(cacheKey);
+                } else {
+                    pricePlanCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, chargePriceList);
+                }
             }
-            index++;
         }
-
-        pricePlanCache.replace(cacheKey, chargePriceList);
     }
 
     public void updatePricePlanInCache(PricePlanMatrix pricePlan) {
@@ -269,10 +279,17 @@ public class RatingCacheContainerProvider implements CacheContainerProvider, Ser
         return pricePlanCache.get(chargeCode);
     }
 
+    /**
+     * Populate usage charge related caches
+     */
     private void populateUsageChargeCache() {
-        log.info("Loading usage charge cache");
+        log.debug("Loading usage charge cache");
 
-        usageChargeTemplateCacheCache.clear();
+        usageChargeTemplateCache.startBatch();
+        usageChargeInstanceCache.startBatch();
+        counterCache.startBatch();
+
+        usageChargeTemplateCache.clear();
         usageChargeInstanceCache.clear();
         counterCache.clear();
 
@@ -284,96 +301,110 @@ public class RatingCacheContainerProvider implements CacheContainerProvider, Ser
             }
         }
 
+        usageChargeTemplateCache.endBatch(true);
+        usageChargeInstanceCache.endBatch(true);
+        counterCache.endBatch(true);
+
         log.info("Usage charge cache populated with {} usage charge instances", usageChargeInstances.size());
     }
 
+    /**
+     * Updated cached usageChangeInstance and related info
+     * 
+     * @param usageChargeInstance Usage charge instance
+     */
     public void updateUsageChargeInstanceInCache(UsageChargeInstance usageChargeInstance) {
+
         if (usageChargeInstance == null) {
             return;
         }
 
-        CachedUsageChargeInstance cachedCharge = new CachedUsageChargeInstance();
-        // UsageChargeTemplate usageChargeTemplate=(UsageChargeTemplate)
-        // usageChargeInstance.getChargeTemplate();
         UsageChargeTemplate usageChargeTemplate = usageChargeTemplateService.findById(usageChargeInstance.getChargeTemplate().getId());
         Long subscriptionId = usageChargeInstance.getServiceInstance().getSubscription().getId();
+
         log.debug("Updating usageChargeInstance cache with usageChargeInstance: subscription Id: {}, charge id={}, usageChargeTemplate id: {}", subscriptionId,
             usageChargeInstance.getId(), usageChargeTemplate.getId());
 
-        boolean cacheContainsKey = usageChargeInstanceCache.containsKey(subscriptionId);
-        boolean cacheContainsCharge = false;
+        boolean cacheContainsSubscriptionCharges = usageChargeInstanceCache.containsKey(subscriptionId);
+        boolean cachedSubscriptionContainsCharge = false;
 
-        List<CachedUsageChargeInstance> charges = null;
-        if (cacheContainsKey) {
-            charges = usageChargeInstanceCache.get(subscriptionId);
-            for (CachedUsageChargeInstance charge : charges) {
+        CachedUsageChargeInstance cachedCharge = null;
+        List<CachedUsageChargeInstance> cachedSubscriptionCharges = null;
+
+        if (cacheContainsSubscriptionCharges) {
+            cachedSubscriptionCharges = usageChargeInstanceCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(subscriptionId);
+            for (CachedUsageChargeInstance charge : cachedSubscriptionCharges) {
                 if (charge.getId() == usageChargeInstance.getId()) {
                     cachedCharge = charge;
-                    cacheContainsCharge = true;
+                    cachedSubscriptionContainsCharge = true;
                 }
             }
         } else {
-            charges = new ArrayList<CachedUsageChargeInstance>();
+            cachedSubscriptionCharges = new ArrayList<CachedUsageChargeInstance>();
+            cachedCharge = new CachedUsageChargeInstance();
         }
-        CachedUsageChargeTemplate templateCache = updateUsageChargeTemplateInCache(usageChargeTemplate);
-        templateCache.getSubscriptionIds().add(subscriptionId);
-        CachedCounterInstance counterCacheValue = null;
+        CachedUsageChargeTemplate cachedChargeTemplate = updateUsageChargeTemplateInCache(usageChargeTemplate, subscriptionId);
+
+        CachedCounterInstance cachedCounterInstance = null;
         if (usageChargeInstance.getCounter() != null) {
-            counterCacheValue = addIfAbsentCounterInstanceToCache(usageChargeInstance.getCounter());
+            cachedCounterInstance = getOrAddCounterInstanceToCache(usageChargeInstance.getCounter());
         }
 
-        cachedCharge.populateFromUsageChargeInstance(usageChargeInstance, usageChargeTemplate, templateCache, counterCacheValue);
+        cachedCharge.populateFromUsageChargeInstance(usageChargeInstance, usageChargeTemplate, cachedChargeTemplate, cachedCounterInstance);
 
-        if (!cacheContainsCharge) {
-            charges.add(cachedCharge);
-            Collections.sort(charges);
+        if (!cachedSubscriptionContainsCharge) {
+            cachedSubscriptionCharges.add(cachedCharge);
+            Collections.sort(cachedSubscriptionCharges);
         }
 
-        if (!cacheContainsKey) {
-            usageChargeInstanceCache.put(subscriptionId, charges);
-        }
+        usageChargeInstanceCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(subscriptionId, cachedSubscriptionCharges);
 
-        log.debug("UsageChargeInstance " + (!cacheContainsCharge ? "added" : "updated") + " in usageChargeInstanceCache: subscription id {}, charge id {}", subscriptionId,
-            usageChargeInstance.getId());
+        log.debug("UsageChargeInstance " + (!cachedSubscriptionContainsCharge ? "added" : "updated") + " in usageChargeInstanceCache: subscription id {}, charge id {}",
+            subscriptionId, usageChargeInstance.getId());
 
-        reorderUserChargeInstancesInCache(subscriptionId);
     }
 
     /**
      * Update usage charge template in cache
      * 
      * @param usageChargeTemplate Usage charge template to update
+     * @param subscriptionId Id of subscription to relate template to
      * @return Cached usage charge template
      */
-    public CachedUsageChargeTemplate updateUsageChargeTemplateInCache(UsageChargeTemplate usageChargeTemplate) {
+    public CachedUsageChargeTemplate updateUsageChargeTemplateInCache(UsageChargeTemplate usageChargeTemplate, Long subscriptionId) {
 
         if (usageChargeTemplate == null) {
             return null;
         }
 
         CachedUsageChargeTemplate cachedTemplate = null;
-        boolean addedToCache = false;
-        if (usageChargeTemplateCacheCache.containsKey(usageChargeTemplate.getId())) {
-            cachedTemplate = usageChargeTemplateCacheCache.get(usageChargeTemplate.getId());
+        boolean addToCache = false;
+        boolean priorityChanged = false;
+        if (usageChargeTemplateCache.containsKey(usageChargeTemplate.getId())) {
+            cachedTemplate = usageChargeTemplateCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(usageChargeTemplate.getId());
+            priorityChanged = cachedTemplate.getPriority() != usageChargeTemplate.getPriority();
         } else {
             cachedTemplate = new CachedUsageChargeTemplate();
-            usageChargeTemplateCacheCache.put(usageChargeTemplate.getId(), cachedTemplate);
-            addedToCache = true;
+            addToCache = true;
         }
 
-        boolean priorityChanged = cachedTemplate.getPriority() != usageChargeTemplate.getPriority();
+        // Covers a case when new subscription is added. Usage charge ordering in that subscription is happening in updateUsageChargeInstanceInCache() method
+        if (subscriptionId != null) {
+            cachedTemplate.getSubscriptionIds().add(subscriptionId);
+        }
 
-        cachedTemplate.populateFromUsageChargeTemplate(usageChargeTemplate);
+        usageChargeTemplateCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(usageChargeTemplate.getId(), cachedTemplate);
 
-        if (priorityChanged) {
-            // If priority has changed then reorder all cacheInstance associated
-            // to this template
-            for (Long subscriptionId : cachedTemplate.getSubscriptionIds()) {
-                reorderUserChargeInstancesInCache(subscriptionId);
+        // If priority has changed then reorder all cacheInstance associated to this template. Priority can change only when chargeTemplate was cached earlier, as for new
+        // chargeTemplates, no subscriptions are linked yet, thus nothing to reorder.
+
+        if (!addToCache && priorityChanged) {
+            for (Long subscId : cachedTemplate.getSubscriptionIds()) {
+                reorderUserChargeInstancesInCache(subscId);
             }
         }
 
-        log.debug("UsageChargeTemplate " + (addedToCache ? "added" : "updated") + " in usageChargeTemplateCacheCache: template {}", usageChargeTemplate.getCode());
+        log.debug("UsageChargeTemplate " + (addToCache ? "added" : "updated") + " in usageChargeTemplateCacheCache: template {}", usageChargeTemplate.getCode());
 
         return cachedTemplate;
     }
@@ -389,35 +420,23 @@ public class RatingCacheContainerProvider implements CacheContainerProvider, Ser
         List<UsageChargeTemplate> charges = usageChargeTemplateService.findAssociatedToEDRTemplate(triggeredEDRTemplate);
 
         for (UsageChargeTemplate charge : charges) {
-            updateUsageChargeTemplateInCache(charge);
+            updateUsageChargeTemplateInCache(charge, null);
         }
     }
 
-    public void restoreCounters(Map<Long, BigDecimal> counterPeriodValues) throws BusinessException {
-        for (Long cId : counterPeriodValues.keySet()) {
-            CounterPeriod counterPeriod = counterPeriodService.findById(cId);
-            BigDecimal value = counterPeriodValues.get(cId);
-            Long counterInstanceId = counterPeriod.getCounterInstance().getId();
-            CachedCounterInstance counterCacheValue = counterCache.get(counterInstanceId);
-            if (counterCacheValue != null) {
-                for (CachedCounterPeriod cpc : counterCacheValue.getCounterPeriods()) {
-                    if (cpc.getCounterPeriodId() == cId) {
-                        cpc.getValue().add(value);
-                        log.debug("Added {} to counter period in cache (new value {}, period id {})", value, cpc.getValue(), cId);
-                        break;
-                    }
-                }
-            }
-
-            counterPeriod.setValue(counterPeriod.getValue().add(value));
-            log.debug("Added {}  (new value {}) to counterPeriod {}, counter {}", value, counterPeriod.getValue(), counterPeriod.getId(), counterInstanceId);
-        }
-    }
-
+    /**
+     * Reorder cached usage charge instances associated to a given subscription
+     * 
+     * @param subscriptionId Subscription ID
+     */
     private void reorderUserChargeInstancesInCache(Long subscriptionId) {
-        List<CachedUsageChargeInstance> charges = usageChargeInstanceCache.get(subscriptionId);
+
+        List<CachedUsageChargeInstance> charges = usageChargeInstanceCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(subscriptionId);
         Collections.sort(charges);
-        log.debug("Sorted subscription {} {} usage charges", subscriptionId, charges.size());
+
+        usageChargeInstanceCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(subscriptionId, charges);
+
+        log.debug("Sorted cached subscription {} {} usage charges", subscriptionId, charges.size());
     }
 
     /**
@@ -429,19 +448,19 @@ public class RatingCacheContainerProvider implements CacheContainerProvider, Ser
     private CachedCounterInstance addCounterInstanceToCache(CounterInstance counterInstance) {
 
         CachedCounterInstance counterCacheValue = new CachedCounterInstance(counterInstance);
-        counterCache.put(counterInstance.getId(), counterCacheValue);
+        counterCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(counterInstance.getId(), counterCacheValue);
         log.debug("Added counter to the counter cache counter: {}", counterInstance);
 
         return counterCacheValue;
     }
 
     /**
-     * Add counter instance to cache if not cached yet
+     * Add counter instance to cache if not cached yet and return cached counter instance
      * 
      * @param counterInstance Counter instance to add
-     * @return Cached counter instance value
+     * @return Cached counter instance
      */
-    private CachedCounterInstance addIfAbsentCounterInstanceToCache(CounterInstance counterInstance) {
+    private CachedCounterInstance getOrAddCounterInstanceToCache(CounterInstance counterInstance) {
         if (counterCache.containsKey(counterInstance.getId())) {
             return counterCache.get(counterInstance.getId());
         } else {
@@ -449,8 +468,24 @@ public class RatingCacheContainerProvider implements CacheContainerProvider, Ser
         }
     }
 
+    /**
+     * Retrieve cached counter instance
+     * 
+     * @param counterId Counter instance ID
+     * @return Cached counter instance
+     */
     public CachedCounterInstance getCounterInstance(Long counterId) {
         return counterCache.get(counterId);
+    }
+
+    /**
+     * Retrieve cached usage charge template
+     * 
+     * @param chargeTemplateId Usage charge template ID
+     * @return Cached usage charge template
+     */
+    public CachedUsageChargeTemplate getUsageChargeTemplate(Long chargeTemplateId) {
+        return usageChargeTemplateCache.get(chargeTemplateId);
     }
 
     /**
@@ -478,12 +513,12 @@ public class RatingCacheContainerProvider implements CacheContainerProvider, Ser
      * 
      * @return A list of a map containing cache information with cache name as a key and cache as a value
      */
-    @Override
+    // @Override
     @SuppressWarnings("rawtypes")
     public Map<String, BasicCache> getCaches() {
         Map<String, BasicCache> summaryOfCaches = new HashMap<String, BasicCache>();
         summaryOfCaches.put(pricePlanCache.getName(), pricePlanCache);
-        summaryOfCaches.put(usageChargeTemplateCacheCache.getName(), usageChargeTemplateCacheCache);
+        summaryOfCaches.put(usageChargeTemplateCache.getName(), usageChargeTemplateCache);
         summaryOfCaches.put(usageChargeInstanceCache.getName(), usageChargeInstanceCache);
         summaryOfCaches.put(counterCache.getName(), counterCache);
 
@@ -495,16 +530,140 @@ public class RatingCacheContainerProvider implements CacheContainerProvider, Ser
      * 
      * @param cacheName Name of cache to refresh or null to refresh all caches
      */
-    @Override
+    // @Override
     @Asynchronous
     public void refreshCache(String cacheName) {
 
-        if (cacheName == null || cacheName.equals(pricePlanCache.getName())) {
+        if (cacheName == null || cacheName.equals(pricePlanCache.getName()) || cacheName.contains(pricePlanCache.getName())) {
             populatePricePlanCache();
         }
-        if (cacheName == null || cacheName.equals(usageChargeTemplateCacheCache.getName()) || cacheName.equals(usageChargeInstanceCache.getName())
-                || cacheName.equals(counterCache.getName()) || cacheName.equals(COUNTER_CACHE)) {
+        if (cacheName == null || cacheName.equals(usageChargeTemplateCache.getName()) || cacheName.equals(usageChargeInstanceCache.getName())
+                || cacheName.equals(counterCache.getName()) || cacheName.equals(COUNTER_CACHE) || cacheName.contains(usageChargeTemplateCache.getName())
+                || cacheName.contains(usageChargeInstanceCache.getName()) || cacheName.contains(counterCache.getName())) {
             populateUsageChargeCache();
         }
+    }
+
+    /**
+     * Add counterPeriodToCache
+     * 
+     * @param counterPeriod Counter period
+     * @return
+     */
+    public CachedCounterPeriod addCounterPeriodToCache(CounterPeriod counterPeriod) {
+
+        CachedCounterInstance cachedCounterInstance = counterCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(counterPeriod.getCounterInstance().getId());
+        if (cachedCounterInstance == null) {
+            cachedCounterInstance = new CachedCounterInstance(counterPeriod.getCounterInstance());
+        }
+        CachedCounterPeriod cachedCounterPeriod = cachedCounterInstance.addCounterPeriod(counterPeriod);
+
+        counterCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cachedCounterInstance.getId(), cachedCounterInstance);
+        log.debug("Added counter period to the counter cache counter: {}", counterPeriod);
+
+        return cachedCounterPeriod;
+    }
+
+    /**
+     * Retrieve cached counter period by counter instance and counter period ids
+     * 
+     * @param counterInstanceId Counter instance id
+     * @param counterPeriodId Counter period id
+     * @return Cached counter period
+     */
+    public CachedCounterPeriod getCounterPeriod(Long counterInstanceId, Long counterPeriodId) {
+
+        CachedCounterInstance cachedCounterInstance = counterCache.get(counterInstanceId);
+        if (cachedCounterInstance == null) {
+            return null;
+        }
+
+        return cachedCounterInstance.getCounterPeriod(counterPeriodId);
+    }
+
+    /**
+     * Retrieve cached counter period by counter instance and date
+     * 
+     * @param counterInstanceId Counter instance id
+     * @param date Date to match
+     * @return Cached counter period
+     */
+    public CachedCounterPeriod getCounterPeriod(Long counterInstanceId, Date date) {
+
+        CachedCounterInstance cachedCounterInstance = counterCache.get(counterInstanceId);
+        if (cachedCounterInstance == null) {
+            return null;
+        }
+
+        return cachedCounterInstance.getCounterPeriod(date);
+    }
+
+    /**
+     * Deduce current counterPeriod's value by a given amount. If given amount exceeds current value, only partial amount will be deduced
+     * 
+     * @param counterInstanceId Counter instance id to update
+     * @param counterPeriodId Counter period id to update
+     * @param deduceBy Amount to deduce by
+     * @return Previous, the actual deduced value and new counter value. or NULL if value is not tracked (initial counter value is not set)
+     */
+    public CounterValueChangeInfo deduceCounterValue(Long counterInstanceId, Long counterPeriodId, BigDecimal deduceBy) {
+
+        CachedCounterInstance cachedCounterInstance = counterCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(counterInstanceId);
+        CachedCounterPeriod counterPeriodToUpdate = cachedCounterInstance.getCounterPeriod(counterPeriodId);
+
+        BigDecimal previousValue = null;
+        BigDecimal deducedQuantity = null;
+
+        // No initial value, so no need to track present value (will always be able to deduce by any amount) and thus no need to update cache
+        if (counterPeriodToUpdate.getLevel() == null) {
+            return null;
+
+        } else if (counterPeriodToUpdate.getValue().compareTo(BigDecimal.ZERO) == 0) {
+            return new CounterValueChangeInfo(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
+
+        } else if (counterPeriodToUpdate.getValue().compareTo(deduceBy) < 0) {
+            previousValue = counterPeriodToUpdate.getValue();
+            deducedQuantity = counterPeriodToUpdate.getValue();
+            counterPeriodToUpdate.setValue(BigDecimal.ZERO);
+
+        } else {
+            previousValue = counterPeriodToUpdate.getValue();
+            deducedQuantity = deduceBy;
+            counterPeriodToUpdate.setValue(counterPeriodToUpdate.getValue().subtract(deduceBy));
+        }
+
+        counterCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cachedCounterInstance.getId(), cachedCounterInstance);
+
+        log.debug("Deduced cached {}/{} counter period by {} to a new value {}", counterInstanceId, counterPeriodId, deducedQuantity, counterPeriodToUpdate.getValue());
+
+        return new CounterValueChangeInfo(previousValue, deducedQuantity, counterPeriodToUpdate.getValue());
+    }
+
+    /**
+     * Increment current counterPeriod's value by a given amount.
+     * 
+     * @param counterInstanceId Counter instance id to update
+     * @param counterPeriodId Counter period id to update
+     * @param incrementBy Amount to increment by
+     * @return The new value, or NULL if value is not tracked (initial value is not set)
+     */
+    public BigDecimal incrementCounterValue(Long counterInstanceId, Long counterPeriodId, BigDecimal incrementBy) {
+
+        CachedCounterInstance cachedCounterInstance = counterCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(counterInstanceId);
+        CachedCounterPeriod counterPeriodToUpdate = cachedCounterInstance.getCounterPeriod(counterPeriodId);
+
+        // No initial value, so no need to track present value (will always be able to deduce by any amount) and thus no need to update cache
+        if (counterPeriodToUpdate.getLevel() == null) {
+            return null;
+
+        } else {
+            counterPeriodToUpdate.setValue(counterPeriodToUpdate.getValue().add(incrementBy));
+        }
+
+        counterCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cachedCounterInstance.getId(), cachedCounterInstance);
+
+        log.debug("Incremented cached {}/{} counter period by {} to a new value {}", counterInstanceId, counterPeriodId, incrementBy, counterPeriodToUpdate.getValue());
+
+        return counterPeriodToUpdate.getValue();
     }
 }

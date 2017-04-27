@@ -17,6 +17,7 @@ import javax.inject.Inject;
 
 import org.infinispan.Cache;
 import org.infinispan.commons.api.BasicCache;
+import org.infinispan.context.Flag;
 import org.meveo.commons.utils.EjbUtils;
 import org.slf4j.Logger;
 
@@ -29,7 +30,7 @@ import org.slf4j.Logger;
 @Startup
 @Singleton
 @Lock(LockType.READ)
-public class JobCacheContainerProvider implements CacheContainerProvider, Serializable {
+public class JobCacheContainerProvider implements Serializable { //CacheContainerProvider, Serializable {
 
     private static final long serialVersionUID = -4730906690144309131L;
 
@@ -41,7 +42,7 @@ public class JobCacheContainerProvider implements CacheContainerProvider, Serial
     protected Logger log;
 
     /**
-     * Contains association between job instance and cluster nodes it runs in. Key format: JobInstance.id, values: List of cluster node names
+     * Contains association between job instance and cluster nodes it runs in. Key format: <JobInstance.id>, value: List of <cluster node name>
      */
     @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-running-jobs")
     private Cache<Long, List<String>> runningJobsCache;
@@ -65,7 +66,7 @@ public class JobCacheContainerProvider implements CacheContainerProvider, Serial
      * 
      * @return A list of a map containing cache information with cache name as a key and cache as a value
      */
-    @Override
+//    @Override
     @SuppressWarnings("rawtypes")
     public Map<String, BasicCache> getCaches() {
         Map<String, BasicCache> summaryOfCaches = new HashMap<String, BasicCache>();
@@ -79,7 +80,7 @@ public class JobCacheContainerProvider implements CacheContainerProvider, Serial
      * 
      * @param cacheName Name of cache to refresh or null to refresh all caches
      */
-    @Override
+//    @Override
     @Asynchronous
     public void refreshCache(String cacheName) {
 
@@ -123,7 +124,7 @@ public class JobCacheContainerProvider implements CacheContainerProvider, Serial
     @Lock(LockType.WRITE)
     public void markJobAsRunning(Long jobInstanceId) {
 
-        List<String> nodes = runningJobsCache.get(jobInstanceId);
+        List<String> nodes = runningJobsCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(jobInstanceId);
         if (nodes == null) {
             nodes = new ArrayList<>();
         }
@@ -133,7 +134,8 @@ public class JobCacheContainerProvider implements CacheContainerProvider, Serial
             nodes.add("Current");
         }
 
-        runningJobsCache.putAsync(jobInstanceId, nodes);
+        // Use flags to not return previous value
+        runningJobsCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(jobInstanceId, nodes);
     }
 
     /**
@@ -144,15 +146,18 @@ public class JobCacheContainerProvider implements CacheContainerProvider, Serial
     public void markJobAsNotRunning(Long jobInstanceId) {
 
         if (EjbUtils.isRunningInClusterMode()) {
-            List<String> nodes = runningJobsCache.get(jobInstanceId);
+            List<String> nodes = runningJobsCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(jobInstanceId);
             nodes.remove(EjbUtils.getCurrentClusterNode());
             if (nodes.isEmpty()) {
-                runningJobsCache.removeAsync(jobInstanceId);
+                // Use flags to not return previous value
+                runningJobsCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).remove(jobInstanceId);
             } else {
-                runningJobsCache.putAsync(jobInstanceId, nodes);
+                // Use flags to not return previous value
+                runningJobsCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(jobInstanceId, nodes);
             }
         } else {
-            runningJobsCache.removeAsync(jobInstanceId);
+            // Use flags to not return previous value
+            runningJobsCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).remove(jobInstanceId);
         }
     }
 }

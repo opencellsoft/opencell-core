@@ -156,10 +156,11 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
      * Check if a job is running.
      * 
      * @param jobInstance JobInstance entity
+     * @return 
      * @return True if running
      */
-    public boolean isTimerRunning(JobInstance jobInstance) {
-        return jobCacheContainerProvider.isJobRunning(jobInstance.getId()) != JobRunningStatusEnum.NOT_RUNNING;
+    public JobRunningStatusEnum isTimerRunning(JobInstance jobInstance) {
+        return jobCacheContainerProvider.isJobRunning(jobInstance.getId());
     }
 
     /**

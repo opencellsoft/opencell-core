@@ -49,17 +49,19 @@ public class JobLoader implements Serializable {
     }
 
     private void cleanAllTimers() {
-        Collection<Timer> alltimers = timerService.getAllTimers();
-        log.info("Canceling job timers");
+        // timerService.getAllTimers() work on singleton bean only, so disabled for now
 
-        for (Timer timer : alltimers) {
-            try {
-                if (timer.getInfo() instanceof JobInstance) {
-                    timer.cancel();
-                }
-            } catch (Exception e) {
-                log.error("Failed to cancel timer {} ", timer.getHandle(), e);
-            }
-        }
+        // Collection<Timer> alltimers = timerService.getAllTimers();
+        // log.info("Canceling job timers");
+        //
+        // for (Timer timer : alltimers) {
+        // try {
+        // if (timer.getInfo() instanceof JobInstance) {
+        // timer.cancel();
+        // }
+        // } catch (Exception e) {
+        // log.error("Failed to cancel timer {} ", timer.getHandle(), e);
+        // }
+        // }
     }
 }

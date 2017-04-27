@@ -18,6 +18,7 @@
  */
 package org.meveo.service.billing.impl;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -145,12 +146,17 @@ public class EdrService extends PersistenceService<EDR> {
 	}
 
     /**
-     * Get EDRs that are unprocessed
+     * Get EDRs that are unprocessed. Sorted in ascending order, limited to a number of items to return as configured in 'mediation.deduplicateCacheSize' setting
      * 
-     * @param maxRecords Max records to retrieve
      * @return A list of EDR identifiers
      */
-    public List<String> getUnprocessedEdrsForCache(int maxRecords) {
-        return getEntityManager().createNamedQuery("EDR.getEdrsForCache", String.class).getResultList();
+    public List<String> getUnprocessedEdrsForCache() {
+        int maxRecords = Integer.parseInt(paramBean.getProperty("mediation.deduplicateCacheSize", "100000"));
+
+        List<String> edrCacheKeys = getEntityManager().createNamedQuery("EDR.getEdrsForCache", String.class).setMaxResults(maxRecords).getResultList();
+        // Reverse the list, so the latest records, would be later in the list
+        Collections.reverse(edrCacheKeys);
+
+        return edrCacheKeys;
     }
 }

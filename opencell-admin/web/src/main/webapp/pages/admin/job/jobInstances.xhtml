@@ -9,6 +9,7 @@
     </ui:define>
 
     <ui:define name="body">
+    	<p:importEnum type="org.meveo.cache.JobRunningStatusEnum" var="JobRunningStatusEnum" />
 		<h:form id="crumbmenuForm">
 			<p:breadCrumb homeDisplay="text" id="crumbmenu">
 				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
@@ -40,7 +41,8 @@
                 <hftl:column label="#{messages['timer.schedule']}" field="timerEntity." />
                 <hftl:column label="#{messages['timer.active']}" field="active" isMessage="true" />
                 <p:column headerText="#{messages['timer.isRunning']}">
-                    <h:outputText styleClass="ui-icon ui-icon-circle-check" rendered="#{jobInstanceListBean.isTimerRunning(entity)}" />
+                    <h:outputText styleClass="ui-icon ui-icon-circle-check" title="#{messages['timer.isRunning.this']}" rendered="#{jobInstanceListBean.isTimerRunning(entity)== JobRunningStatusEnum.RUNNING_THIS}" />
+                    <h:outputText styleClass="ui-icon ui-icon-circle-check" title="#{messages['timer.isRunning.other']}" rendered="#{jobInstanceListBean.isTimerRunning(entity)== JobRunningStatusEnum.RUNNING_THIS}" />
                 </p:column>
                 <hftl:actionsColumn permission="#{currentUser.hasRole('administrationManagement')}" renderEnableLink="true" />
             </hftl:dataList>
