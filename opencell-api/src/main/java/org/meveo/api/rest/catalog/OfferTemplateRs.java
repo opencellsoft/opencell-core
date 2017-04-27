@@ -30,8 +30,8 @@ public interface OfferTemplateRs extends IBaseRs {
     /**
      * Create offer template.
      * 
-     * @param postData
-     * @return
+     * @param postData The offer template's data
+     * @return Request processing status
      */
     @Path("/")
     @POST
@@ -40,8 +40,8 @@ public interface OfferTemplateRs extends IBaseRs {
     /**
      * Update offer template.
      * 
-     * @param postData
-     * @return
+     * @param postData The offer template's data
+     * @return Request processing status
      */
     @Path("/")
     @PUT
@@ -50,8 +50,8 @@ public interface OfferTemplateRs extends IBaseRs {
     /**
      * Search offer template with a given code.
      * 
-     * @param offerTemplateCode
-     * @return
+     * @param offerTemplateCode The offer template's code
+     * @return Return offerTemplateDto containing offerTemplate
      */
     @Path("/")
     @GET
@@ -60,8 +60,8 @@ public interface OfferTemplateRs extends IBaseRs {
     /**
      * Remove offer template with a given code.
      * 
-     * @param offerTemplateCode
-     * @return
+     * @param offerTemplateCode The offer template's code
+     * @return Request processing status
      */
     @Path("/{offerTemplateCode}")
     @DELETE
@@ -70,8 +70,8 @@ public interface OfferTemplateRs extends IBaseRs {
     /**
      * Create or update offer template based on a given code.
      * 
-     * @param postData
-     * @return
+     * @param postData The offer template's data
+     * @return Request processing status
      */
     @Path("/createOrUpdate")
     @POST

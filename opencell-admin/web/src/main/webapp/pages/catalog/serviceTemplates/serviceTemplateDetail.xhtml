@@ -102,7 +102,7 @@
 							showEnableDisableButton="true"
 							updateConfirmationMessage="#{serviceTemplateBean.usedInSubscription ? messages['confirmationMessage.confirmUpdate'] : ''}"
 							ajaxSubmit="true"
-							submitPartialProcess=":tabView:formId #{cfde:getCFComponentIds(':tabView:cf_form_',':form_panel', customFieldDataEntryBean.getGroupedFieldTemplates(serviceTemplateBean.entity).children.size())}"
+							submitPartialProcess=":tabView:formId #{cfde:getCFComponentIds(':tabView:cf_form_group_',':form_panel', customFieldDataEntryBean.getGroupedFieldTemplates(serviceTemplateBean.entity).children.size())}"
 							enctype="multipart/form-data">
 
 							<hftl:formField label="#{messages['commons.image']}"

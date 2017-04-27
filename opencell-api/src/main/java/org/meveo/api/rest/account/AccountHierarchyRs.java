@@ -81,14 +81,23 @@ public interface AccountHierarchyRs extends IBaseRs {
     @Path("/findAccountHierarchy")
     GetAccountHierarchyResponseDto findAccountHierarchy2(FindAccountHierachyRequestDto postData);
 
+    /**
+     * Create a CRMAccountHerarchy
+     */
     @POST
     @Path("/createCRMAccountHierarchy")
     ActionStatus createCRMAccountHierarchy(CRMAccountHierarchyDto postData);
 
+    /**
+     * Update a CRM Account HerarHierarchychy
+     */
     @POST
     @Path("/updateCRMAccountHierarchy")
     ActionStatus updateCRMAccountHierarchy(CRMAccountHierarchyDto postData);
 
+    /**
+     * Create or update a CRM Account Hierarchy
+     */
     @POST
     @Path("/createOrUpdateCRMAccountHierarchy")
     ActionStatus createOrUpdateCRMAccountHierarchy(CRMAccountHierarchyDto postData);

@@ -26,10 +26,10 @@ import org.meveo.api.dto.response.ListCalendarResponse;
 public interface CalendarRs extends IBaseRs {
 
     /**
-     * Create calendar.
+     * Create a new calendar.
      * 
-     * @param postData
-     * @return
+     * @param postData The calendar's data
+     * @return Request processing status
      */
     @Path("/")
     @POST
@@ -39,7 +39,7 @@ public interface CalendarRs extends IBaseRs {
      * Update calendar.
      * 
      * @param postData
-     * @return
+     * @return Request processing status
      */
     @Path("/")
     @PUT
@@ -48,7 +48,7 @@ public interface CalendarRs extends IBaseRs {
     /**
      * Search for calendar with a given code.
      * 
-     * @param calendarCode
+     * @param calendarCode The calendar's code
      * @return
      */
     @Path("/")
@@ -67,13 +67,19 @@ public interface CalendarRs extends IBaseRs {
     /**
      * Remove calendar with a given code.
      * 
-     * @param calendarCode
+     * @param calendarCode The calendar's code
      * @return
      */
     @Path("/{calendarCode}")
     @DELETE
     public ActionStatus remove(@PathParam("calendarCode") String calendarCode);
 
+    /**
+     * Create new or update an existing calendar with a given code
+     * 
+     * @param postData The calendars data
+     * @return Request processing status
+     */
     @Path("/createOrUpdate")
     @POST
     public ActionStatus createOrUpdate(CalendarDto postData);

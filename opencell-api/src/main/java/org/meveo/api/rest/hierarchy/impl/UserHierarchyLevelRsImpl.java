@@ -111,7 +111,7 @@ public class UserHierarchyLevelRsImpl extends BaseRs implements UserHierarchyLev
 	public ActionStatus createOrUpdate(UserHierarchyLevelDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		try {
-			userHierarchyLevelApi.update(postData);
+			userHierarchyLevelApi.createOrUpdate(postData);
 		} catch (Exception e) {
 			processException(e, result);
 		}

@@ -31,8 +31,8 @@ public interface OneShotChargeTemplateRs extends IBaseRs {
     /**
      * Create one shot charge template.
      * 
-     * @param postData
-     * @return
+     * @param postData The one shot charge template's data
+     * @return Request processing status
      */
     @POST
     @Path("/")
@@ -41,8 +41,8 @@ public interface OneShotChargeTemplateRs extends IBaseRs {
     /**
      * Update one shot charge template.
      * 
-     * @param postData
-     * @return
+     * @param postData The one shot charge template's data
+     * @return Request processing status
      */
     @PUT
     @Path("/")
@@ -51,7 +51,7 @@ public interface OneShotChargeTemplateRs extends IBaseRs {
     /**
      * Search one shot charge templatewith a given code.
      * 
-     * @param oneShotChargeTemplateCode
+     * @param oneShotChargeTemplateCode The one shot charge template's code
      * @return
      */
     @GET
@@ -66,7 +66,7 @@ public interface OneShotChargeTemplateRs extends IBaseRs {
      * @param currencyCode
      * @param sellerCode
      * @param date
-     * @return
+     * @return 
      */
     @GET
     @Path("/list")
@@ -74,15 +74,21 @@ public interface OneShotChargeTemplateRs extends IBaseRs {
             @QueryParam("currencyCode") String currencyCode, @QueryParam("sellerCode") String sellerCode, @QueryParam("date") String date);
 
     /**
-     * Remove one shot charge template with a given code.
+     * Remove one shot charge tesmplate with a given code.
      * 
-     * @param oneShotChargeTemplateCode
-     * @return
+     * @param oneShotChargeTemplateCode The one shot charge template's code
+     * @return Request processing status
      */
     @DELETE
     @Path("/{oneShotChargeTemplateCode}")
     public ActionStatus remove(@PathParam("oneShotChargeTemplateCode") String oneShotChargeTemplateCode);
 
+    /**
+     * Create new or update an existing ###
+     * 
+     * @param postData The exemple's data
+     * @return Request processing status
+     */
     @POST
     @Path("/createOrUpdate")
     public ActionStatus createOrUpdate(OneShotChargeTemplateDto postData);

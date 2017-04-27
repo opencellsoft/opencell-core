@@ -679,7 +679,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			calendarText = doc.createTextNode("");
 		}
 		calendarTag.appendChild(calendarText);
-		addCustomFields(serviceTemplate, invoice, doc, serviceTag,true);
+		addCustomFields(serviceInstance, invoice, doc, serviceTag,true);
 		parentElement.appendChild(serviceTag);
 
 	}

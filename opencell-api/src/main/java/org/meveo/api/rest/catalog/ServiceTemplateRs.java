@@ -28,30 +28,30 @@ import org.meveo.api.rest.IBaseRs;
 public interface ServiceTemplateRs extends IBaseRs {
 
     /**
-     * Create service template.
+     * Create a new service template.
      * 
-     * @param postData
-     * @return
+     * @param postData The service template's data
+     * @return Request processing status
      */
     @Path("/")
     @POST
     ActionStatus create(ServiceTemplateDto postData);
 
     /**
-     * Update service template.
+     * Update an existing service template.
      * 
-     * @param postData
-     * @return
+     * @param postData The service template's data
+     * @return Request processing status
      */
     @Path("/")
     @PUT
     ActionStatus update(ServiceTemplateDto postData);
 
     /**
-     * Search service template with a given code.
+     * Find a service template with a given code.
      * 
-     * @param serviceTemplateCode
-     * @return
+     * @param serviceTemplateCode The service template's code
+     * @return Return serviceTemplate
      */
     @Path("/")
     @GET
@@ -60,13 +60,19 @@ public interface ServiceTemplateRs extends IBaseRs {
     /**
      * Remove service template with a given code.
      * 
-     * @param serviceTemplateCode
-     * @return
+     * @param serviceTemplateCode The service template's code
+     * @return Request processing status
      */
     @Path("/{serviceTemplateCode}")
     @DELETE
     ActionStatus remove(@PathParam("serviceTemplateCode") String serviceTemplateCode);
 
+    /**
+     * Create new or update an existing service template
+     * 
+     * @param postData The service template's data
+     * @return Request processing status
+     */
     @Path("/createOrUpdate")
     @POST
     ActionStatus createOrUpdate(ServiceTemplateDto postData);

@@ -40,7 +40,7 @@
 		</h:form>
 		
 		<hftl:formPanel formId="offerForm" ajaxSubmit="true"
-			submitPartialProcess=":offerForm:tabView:offerInfo #{cfde:getCFComponentIds(':offerForm:tabView:cf_form_',null, customFieldDataEntryBean.getGroupedFieldTemplates(offerTemplateBean.entity).children.size())}"
+			submitPartialProcess=":offerForm:tabView:offerInfo #{cfde:getCFComponentIds(':offerForm:tabView:cf_panel_group_',null, customFieldDataEntryBean.getGroupedFieldTemplates(offerTemplateBean.entity).children.size())}"
 			backingBean="#{offerTemplateBean}" showEnableDisableButton="true"
 			updateConfirmationMessage="#{offerTemplateBean.usedInSubscription ? messages['confirmationMessage.confirmUpdate'] : ''}"
 			enctype="multipart/form-data">

@@ -22,22 +22,52 @@ import org.meveo.api.rest.IBaseRs;
 public interface ChannelRs extends IBaseRs {
 
 
+    /**
+     * Create a new channel
+     * 
+     * @param postData The channel's data
+     * @return Request processing status
+     */
     @Path("/")
     @POST
     ActionStatus create(ChannelDto postData);
 
+    /**
+     * Update an existing channel
+     * 
+     * @param postData The channel's data
+     * @return Request processing status
+     */
     @Path("/")
     @PUT
     ActionStatus update(ChannelDto postData);
 
+    /**
+     * Search for a channel with a given code 
+     * 
+     * @param channelCode The channel's code
+     * @return A channel
+     */
     @GET
     @Path("/")
     GetChannelResponseDto find(@QueryParam("channelCode") String channelCode);
 
+    /**
+     * Remove an existing channel with a given code 
+     * 
+     * @param channelCode The channel's code
+     * @return Request processing status
+     */
     @Path("/")
     @DELETE
     ActionStatus delete(@QueryParam("channelCode") String channelCode);
 
+    /**
+     * Create new or update an existing channel
+     * 
+     * @param postData The channel's data
+     * @return Request processing status
+     */
     @Path("/createOrUpdate")
     @POST
     ActionStatus createOrUpdate(ChannelDto postData);

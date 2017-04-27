@@ -20,7 +20,7 @@ public interface CommunicationRs extends IBaseRs {
      * Receives inbout communication from external source given the rest url above. MEVEO handles it by throwing an inbount communication event with the communicationRequestDto.
      * 
      * @param communicationRequestDto
-     * @return
+     * @return Request processing status
      */
     @POST
     @Path("/inbound")
