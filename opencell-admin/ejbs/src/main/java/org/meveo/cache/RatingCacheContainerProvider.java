@@ -20,7 +20,6 @@ import javax.ejb.Startup;
 import javax.inject.Inject;
 
 import org.infinispan.Cache;
-import org.infinispan.commons.api.BasicCache;
 import org.infinispan.context.Flag;
 import org.meveo.model.CounterValueChangeInfo;
 import org.meveo.model.billing.CounterInstance;
@@ -69,26 +68,26 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
     /**
      * Contains association between charge code and price plans. Key format: <charge template code, which is pricePlanMatrix.eventCode>, value: List of <PricePlanMatrix entity>
      */
-    @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-price-plan")
+    @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-price-plan")
     private Cache<String, List<PricePlanMatrix>> pricePlanCache;
 
     /**
      * Contains association between usage charge template ID and cached usage charge template information. Key format: UsageChargeTemplate.id, value: <DTO version of
      * UsageChargeTemplate>
      */
-    @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-usage-charge-template-cache")
+    @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-usage-charge-template-cache")
     private Cache<Long, CachedUsageChargeTemplate> usageChargeTemplateCache;
 
     /**
      * Contains association between subscription and usage charge instances. Key format: Subscription.id, value: List of <DTO version of UsageChargeInstance>
      */
-    @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-charge-instance-cache")
+    @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-charge-instance-cache")
     private Cache<Long, List<CachedUsageChargeInstance>> usageChargeInstanceCache;
 
     /**
      * Contains association between counter instance ID and cached counter information. Key format: CounterInstance.id, value: <DTO version of CounterInstance>
      */
-    @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-counter-cache")
+    @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-counter-cache")
     private Cache<Long, CachedCounterInstance> counterCache;
 
     // @Resource(name = "java:jboss/infinispan/container/meveo")
@@ -319,38 +318,40 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
             return;
         }
 
-        UsageChargeTemplate usageChargeTemplate = usageChargeTemplateService.findById(usageChargeInstance.getChargeTemplate().getId());
         Long subscriptionId = usageChargeInstance.getServiceInstance().getSubscription().getId();
 
-        log.debug("Updating usageChargeInstance cache with usageChargeInstance: subscription Id: {}, charge id={}, usageChargeTemplate id: {}", subscriptionId,
-            usageChargeInstance.getId(), usageChargeTemplate.getId());
+        CachedUsageChargeTemplate cachedChargeTemplate = usageChargeTemplateCache.get(usageChargeInstance.getChargeTemplate().getId());
+        if (cachedChargeTemplate == null) {
+            UsageChargeTemplate usageChargeTemplate = usageChargeTemplateService.findById(usageChargeInstance.getChargeTemplate().getId());
+            cachedChargeTemplate = updateUsageChargeTemplateInCache(usageChargeTemplate, subscriptionId, false);
+        }
 
-        boolean cacheContainsSubscriptionCharges = usageChargeInstanceCache.containsKey(subscriptionId);
+        log.debug("Updating usageChargeInstance cache with usageChargeInstance: subscription Id: {}, charge id={}, usageChargeTemplate id: {}", subscriptionId,
+            usageChargeInstance.getId(), cachedChargeTemplate.getId());
+
         boolean cachedSubscriptionContainsCharge = false;
 
         CachedUsageChargeInstance cachedCharge = null;
-        List<CachedUsageChargeInstance> cachedSubscriptionCharges = null;
-
-        if (cacheContainsSubscriptionCharges) {
-            cachedSubscriptionCharges = usageChargeInstanceCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(subscriptionId);
+        List<CachedUsageChargeInstance> cachedSubscriptionCharges = usageChargeInstanceCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(subscriptionId);
+        if (cachedSubscriptionCharges != null) {
             for (CachedUsageChargeInstance charge : cachedSubscriptionCharges) {
                 if (charge.getId() == usageChargeInstance.getId()) {
                     cachedCharge = charge;
                     cachedSubscriptionContainsCharge = true;
                 }
             }
-        } else {
+        }
+        if (cachedCharge == null) {
             cachedSubscriptionCharges = new ArrayList<CachedUsageChargeInstance>();
             cachedCharge = new CachedUsageChargeInstance();
         }
-        CachedUsageChargeTemplate cachedChargeTemplate = updateUsageChargeTemplateInCache(usageChargeTemplate, subscriptionId);
 
         CachedCounterInstance cachedCounterInstance = null;
         if (usageChargeInstance.getCounter() != null) {
             cachedCounterInstance = getOrAddCounterInstanceToCache(usageChargeInstance.getCounter());
         }
 
-        cachedCharge.populateFromUsageChargeInstance(usageChargeInstance, usageChargeTemplate, cachedChargeTemplate, cachedCounterInstance);
+        cachedCharge.populateFromUsageChargeInstance(usageChargeInstance, cachedChargeTemplate, cachedCounterInstance);
 
         if (!cachedSubscriptionContainsCharge) {
             cachedSubscriptionCharges.add(cachedCharge);
@@ -371,7 +372,7 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
      * @param subscriptionId Id of subscription to relate template to
      * @return Cached usage charge template
      */
-    public CachedUsageChargeTemplate updateUsageChargeTemplateInCache(UsageChargeTemplate usageChargeTemplate, Long subscriptionId) {
+    public CachedUsageChargeTemplate updateUsageChargeTemplateInCache(UsageChargeTemplate usageChargeTemplate, Long subscriptionId, boolean updateExisting) {
 
         if (usageChargeTemplate == null) {
             return null;
@@ -380,28 +381,45 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
         CachedUsageChargeTemplate cachedTemplate = null;
         boolean addToCache = false;
         boolean priorityChanged = false;
+        boolean codeChanged = false;
         if (usageChargeTemplateCache.containsKey(usageChargeTemplate.getId())) {
             cachedTemplate = usageChargeTemplateCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(usageChargeTemplate.getId());
             priorityChanged = cachedTemplate.getPriority() != usageChargeTemplate.getPriority();
+            codeChanged = !cachedTemplate.getCode().equals(usageChargeTemplate.getCode());
+            updateExisting = updateExisting || codeChanged || priorityChanged;
+            if (updateExisting) {
+                cachedTemplate.populateFromUsageChargeTemplate(usageChargeTemplate);
+            }
+
+            log.error("AKK priority changed {}  was {} is {}", priorityChanged, cachedTemplate.getPriority(), usageChargeTemplate.getPriority());
         } else {
-            cachedTemplate = new CachedUsageChargeTemplate();
+            cachedTemplate = new CachedUsageChargeTemplate(usageChargeTemplate);
             addToCache = true;
         }
 
-        // Covers a case when new subscription is added. Usage charge ordering in that subscription is happening in updateUsageChargeInstanceInCache() method
-        if (subscriptionId != null) {
-            cachedTemplate.getSubscriptionIds().add(subscriptionId);
+        // Update priority and chargeTemplateCode fields in CachedUsageChargeInstance class if code or priority has change d
+        if (codeChanged || priorityChanged) {
+            // TODO run update command
         }
-
-        usageChargeTemplateCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(usageChargeTemplate.getId(), cachedTemplate);
 
         // If priority has changed then reorder all cacheInstance associated to this template. Priority can change only when chargeTemplate was cached earlier, as for new
         // chargeTemplates, no subscriptions are linked yet, thus nothing to reorder.
 
-        if (!addToCache && priorityChanged) {
+        if (priorityChanged) {
+
             for (Long subscId : cachedTemplate.getSubscriptionIds()) {
                 reorderUserChargeInstancesInCache(subscId);
             }
+        }
+
+        // Covers a case when new subscription is added. Usage charge ordering in that subscription is happening in updateUsageChargeInstanceInCache() method
+        boolean newSubscription = false;
+        if (subscriptionId != null) {
+            newSubscription = cachedTemplate.getSubscriptionIds().add(subscriptionId);
+        }
+
+        if (addToCache || updateExisting || newSubscription) {
+            usageChargeTemplateCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(usageChargeTemplate.getId(), cachedTemplate);
         }
 
         log.debug("UsageChargeTemplate " + (addToCache ? "added" : "updated") + " in usageChargeTemplateCacheCache: template {}", usageChargeTemplate.getCode());
@@ -420,7 +438,7 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
         List<UsageChargeTemplate> charges = usageChargeTemplateService.findAssociatedToEDRTemplate(triggeredEDRTemplate);
 
         for (UsageChargeTemplate charge : charges) {
-            updateUsageChargeTemplateInCache(charge, null);
+            updateUsageChargeTemplateInCache(charge, null, true);
         }
     }
 
@@ -432,11 +450,13 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
     private void reorderUserChargeInstancesInCache(Long subscriptionId) {
 
         List<CachedUsageChargeInstance> charges = usageChargeInstanceCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(subscriptionId);
-        Collections.sort(charges);
+        if (charges != null) {
+            Collections.sort(charges);
 
-        usageChargeInstanceCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(subscriptionId, charges);
+            usageChargeInstanceCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(subscriptionId, charges);
 
-        log.debug("Sorted cached subscription {} {} usage charges", subscriptionId, charges.size());
+            log.debug("Sorted cached subscription {} {} usage charges", subscriptionId, charges.size());
+        }
     }
 
     /**
@@ -515,8 +535,8 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
      */
     // @Override
     @SuppressWarnings("rawtypes")
-    public Map<String, BasicCache> getCaches() {
-        Map<String, BasicCache> summaryOfCaches = new HashMap<String, BasicCache>();
+    public Map<String, Cache> getCaches() {
+        Map<String, Cache> summaryOfCaches = new HashMap<String, Cache>();
         summaryOfCaches.put(pricePlanCache.getName(), pricePlanCache);
         summaryOfCaches.put(usageChargeTemplateCache.getName(), usageChargeTemplateCache);
         summaryOfCaches.put(usageChargeInstanceCache.getName(), usageChargeInstanceCache);

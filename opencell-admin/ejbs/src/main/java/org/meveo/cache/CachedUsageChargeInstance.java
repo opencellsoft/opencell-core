@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import org.meveo.model.billing.UsageChargeInstance;
-import org.meveo.model.catalog.UsageChargeTemplate;
 
 public class CachedUsageChargeInstance implements Comparable<CachedUsageChargeInstance> {
 
@@ -22,7 +21,7 @@ public class CachedUsageChargeInstance implements Comparable<CachedUsageChargeIn
     private BigDecimal amountWithTax;
 
     // Properties copied from chargeTemplate
-    protected String chargeTemplateCode;
+    private String chargeTemplateCode;
     private int priority;
 
     public Long getId() {
@@ -82,7 +81,7 @@ public class CachedUsageChargeInstance implements Comparable<CachedUsageChargeIn
         return priority - o.priority;
     }
 
-    public void populateFromUsageChargeInstance(UsageChargeInstance usageChargeInstance, UsageChargeTemplate usageChargeTemplate, CachedUsageChargeTemplate cachedChargeTemplate,
+    public void populateFromUsageChargeInstance(UsageChargeInstance usageChargeInstance, CachedUsageChargeTemplate cachedChargeTemplate,
             CachedCounterInstance cachedCounterInstance) {
 
         subscriptionDate = usageChargeInstance.getServiceInstance().getSubscriptionDate();

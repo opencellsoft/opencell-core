@@ -2,7 +2,7 @@ package org.meveo.cache;
 
 import java.util.Map;
 
-import org.infinispan.commons.api.BasicCache;
+import org.infinispan.Cache;
 
 public interface CacheContainerProvider {
 
@@ -25,6 +25,6 @@ public interface CacheContainerProvider {
      * @return A a map containing cache information with cache name as a key and cache as a value
      */
 //    @SuppressWarnings("rawtypes")
-    public Map<String, BasicCache> getCaches();
+    public Map<String, Cache> getCaches();
 
 }

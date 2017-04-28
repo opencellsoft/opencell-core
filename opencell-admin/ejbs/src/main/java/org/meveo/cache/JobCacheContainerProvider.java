@@ -16,7 +16,6 @@ import javax.ejb.Startup;
 import javax.inject.Inject;
 
 import org.infinispan.Cache;
-import org.infinispan.commons.api.BasicCache;
 import org.infinispan.context.Flag;
 import org.meveo.commons.utils.EjbUtils;
 import org.slf4j.Logger;
@@ -44,7 +43,7 @@ public class JobCacheContainerProvider implements Serializable { //CacheContaine
     /**
      * Contains association between job instance and cluster nodes it runs in. Key format: <JobInstance.id>, value: List of <cluster node name>
      */
-    @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-running-jobs")
+    @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-running-jobs")
     private Cache<Long, List<String>> runningJobsCache;
 
     @PostConstruct
@@ -68,8 +67,8 @@ public class JobCacheContainerProvider implements Serializable { //CacheContaine
      */
 //    @Override
     @SuppressWarnings("rawtypes")
-    public Map<String, BasicCache> getCaches() {
-        Map<String, BasicCache> summaryOfCaches = new HashMap<String, BasicCache>();
+    public Map<String, Cache> getCaches() {
+        Map<String, Cache> summaryOfCaches = new HashMap<String, Cache>();
         summaryOfCaches.put(runningJobsCache.getName(), runningJobsCache);
 
         return summaryOfCaches;

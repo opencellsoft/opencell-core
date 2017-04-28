@@ -17,7 +17,6 @@ import javax.ejb.Startup;
 import javax.inject.Inject;
 
 import org.infinispan.Cache;
-import org.infinispan.commons.api.BasicCache;
 import org.infinispan.context.Flag;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.event.IEvent;
@@ -52,7 +51,7 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
     /**
      * Contains association between event type, entity class and notifications. Key format: <eventTypeFilter>-<entity class>
      */
-    @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-notification-cache")
+    @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-notification-cache")
     private Cache<String, List<Notification>> eventNotificationCache;
 
     // @Resource(name = "java:jboss/infinispan/container/meveo")
@@ -190,8 +189,8 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
      */
     // @Override
     @SuppressWarnings("rawtypes")
-    public Map<String, BasicCache> getCaches() {
-        Map<String, BasicCache> summaryOfCaches = new HashMap<String, BasicCache>();
+    public Map<String, Cache> getCaches() {
+        Map<String, Cache> summaryOfCaches = new HashMap<String, Cache>();
         summaryOfCaches.put(eventNotificationCache.getName(), eventNotificationCache);
 
         return summaryOfCaches;

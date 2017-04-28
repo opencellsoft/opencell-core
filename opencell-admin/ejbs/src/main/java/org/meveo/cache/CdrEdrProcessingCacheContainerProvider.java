@@ -17,7 +17,6 @@ import javax.ejb.Startup;
 import javax.inject.Inject;
 
 import org.infinispan.Cache;
-import org.infinispan.commons.api.BasicCache;
 import org.infinispan.context.Flag;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.mediation.Access;
@@ -53,13 +52,13 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
     /**
      * Contains association between access code and accesses sharing this code. Key format: <Access.accessUserId>, value: List of <Access entity>
      */
-    @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-access-cache")
+    @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-access-cache")
     private Cache<String, List<Access>> accessCache;
 
     /**
      * Stores a list of processed EDR's. Key format: <originBatch>_<originRecord>, value: 0 (no meaning, only keys are used)
      */
-    @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-edr-cache")
+    @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-edr-cache")
     private Cache<String, Integer> edrCache;
 
     @PostConstruct
@@ -222,8 +221,8 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
      */
     // @Override
     @SuppressWarnings("rawtypes")
-    public Map<String, BasicCache> getCaches() {
-        Map<String, BasicCache> summaryOfCaches = new HashMap<String, BasicCache>();
+    public Map<String, Cache> getCaches() {
+        Map<String, Cache> summaryOfCaches = new HashMap<String, Cache>();
         summaryOfCaches.put(accessCache.getName(), accessCache);
         summaryOfCaches.put(edrCache.getName(), edrCache);
 

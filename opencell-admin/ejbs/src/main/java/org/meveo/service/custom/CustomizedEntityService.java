@@ -19,6 +19,7 @@ import org.meveo.service.job.Job;
 import org.meveo.service.job.JobInstanceService;
 import org.meveo.util.EntityCustomizationUtils;
 import org.reflections.Reflections;
+import org.slf4j.Logger;
 
 public class CustomizedEntityService implements Serializable {
 
@@ -29,6 +30,9 @@ public class CustomizedEntityService implements Serializable {
 
     @Inject
     private CustomEntityTemplateService customEntityTemplateService;
+    
+    @Inject
+    private Logger log;
 
     /**
      * Get a list of customized/customizable entities optionally filtering by a name and custom entities only and whether to include non-managed entities.  
@@ -120,6 +124,8 @@ public class CustomizedEntityService implements Serializable {
     private List<CustomizedEntity> searchJobs(String entityName) {
         List<CustomizedEntity> jobs = new ArrayList<>();
         for (Job job : jobInstanceService.getJobs()) {
+            
+            log.error("AKK job is null {}", job==null);
             if (job.getCustomFields() != null && (entityName == null || (entityName != null && job.getClass().getSimpleName().toLowerCase().contains(entityName)))) {
                 jobs.add(new CustomizedEntity(job.getClass()));
             }

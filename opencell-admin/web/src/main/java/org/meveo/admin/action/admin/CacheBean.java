@@ -32,6 +32,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.lang3.reflect.MethodUtils;
+import org.infinispan.Cache;
 import org.infinispan.commons.api.BasicCache;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
@@ -129,7 +130,7 @@ public class CacheBean implements Serializable {
     public void preRenderView() {
 
         if (cacheName != null) {
-            Map<String, BasicCache> caches = walletCacheContainerProvider.getCaches();
+            Map<String, Cache> caches = walletCacheContainerProvider.getCaches();
             caches.putAll(cdrEdrProcessingCacheContainerProvider.getCaches());
             caches.putAll(notificationCacheContainerProvider.getCaches());
             caches.putAll(ratingCacheContainerProvider.getCaches());
@@ -149,15 +150,15 @@ public class CacheBean implements Serializable {
     public List<Map<String, String>> getSummaryOfCaches() {
         List<Map<String, String>> cacheSummary = new ArrayList<Map<String, String>>();
 
-        Map<String, BasicCache> caches = walletCacheContainerProvider.getCaches();
+        Map<String, Cache> caches = walletCacheContainerProvider.getCaches();
         caches.putAll(cdrEdrProcessingCacheContainerProvider.getCaches());
         caches.putAll(notificationCacheContainerProvider.getCaches());
         caches.putAll(ratingCacheContainerProvider.getCaches());
         caches.putAll(customFieldsCacheContainerProvider.getCaches());
         caches.putAll(jobCacheContainerProvider.getCaches());
-        caches = new TreeMap<String, BasicCache>(caches);
+        caches = new TreeMap<String, Cache>(caches);
 
-        for (Entry<String, BasicCache> cache : caches.entrySet()) {
+        for (Entry<String, Cache> cache : caches.entrySet()) {
             Map<String, String> cacheInfo = new HashMap<String, String>();
             cacheInfo.put("name", cache.getKey());
             cacheInfo.put("count", Integer.toString(cache.getValue().size()));

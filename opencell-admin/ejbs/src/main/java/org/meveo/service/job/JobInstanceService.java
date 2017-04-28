@@ -79,7 +79,7 @@ public class JobInstanceService extends BusinessService<JobInstance> {
                 started++;
             }
         }
-        log.debug("Found {} job instances for {}, started {}", jobInstances.size(), job.getClass().getSimpleName(), started);
+        log.debug("Found {} job instances for {}, started {}", jobInstances.size(), ReflectionUtils.getCleanClassName(job.getClass().getSimpleName()), started);
 
     }
 
@@ -99,7 +99,7 @@ public class JobInstanceService extends BusinessService<JobInstance> {
 
         for (List<Class<? extends Job>> jobList : jobClasses.values()) {
             for (Class<? extends Job> jobClass : jobList) {
-                Job job = getJobByName(jobClass.getSimpleName());
+                Job job = getJobByName(ReflectionUtils.getCleanClassName(jobClass.getSimpleName()));
                 jobs.add(job);
             }
         }
@@ -111,7 +111,7 @@ public class JobInstanceService extends BusinessService<JobInstance> {
 
         for (List<Class<? extends Job>> jobList : jobClasses.values()) {
             for (Class<? extends Job> jobClass : jobList) {
-                jobs.add(jobClass.getSimpleName());
+                jobs.add(ReflectionUtils.getCleanClassName(jobClass.getSimpleName()));
             }
         }
         return jobs;
@@ -122,7 +122,7 @@ public class JobInstanceService extends BusinessService<JobInstance> {
 
         if (jobClasses.containsKey(jobCategory)) {
             for (Class<? extends Job> jobClass : jobClasses.get(jobCategory)) {
-                jobs.add(jobClass.getSimpleName());
+                jobs.add(ReflectionUtils.getCleanClassName(jobClass.getSimpleName()));
             }
         }
         return jobs;

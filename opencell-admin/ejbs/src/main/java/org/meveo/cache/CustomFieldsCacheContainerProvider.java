@@ -21,7 +21,6 @@ import javax.ejb.Startup;
 import javax.inject.Inject;
 
 import org.infinispan.Cache;
-import org.infinispan.commons.api.BasicCache;
 import org.infinispan.context.Flag;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.catalog.CalendarDaily;
@@ -63,26 +62,26 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
     /**
      * How long custom field period value should be cached. Key format: <custom field template code>. Value is a number of days to cache custom field value
      */
-    @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-cft-timeout-cache")
+    @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-cft-timeout-cache")
     private Cache<String, Integer> cfValueCacheTime;
 
     /**
      * Groups custom field templates applicable to the same entity type. Key format: <custom field template appliesTo code>. Value is a map of custom field templates identified by
      * a template code
      */
-    @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-cft-cache")
+    @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-cft-cache")
     private Cache<String, Map<String, CustomFieldTemplate>> cftsByAppliesTo;
 
     /**
      * Contains custom entity templates.Key format: <CET code>, value: <CustomEntityTemplate>
      */
-    @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-cet-cache")
+    @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-cet-cache")
     private Cache<String, CustomEntityTemplate> cetsByCode;
 
     /**
      * Contains association between entity, and custom field value(s). Key format: <entity class>_<entity id>. Value is a map where key is CFI code and value is a list of values
      */
-    @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-cfv-cache")
+    @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-cfv-cache")
     private Cache<String, Map<String, List<CachedCFPeriodValue>>> customFieldValueCache;
 
     // @Resource(name = "java:jboss/infinispan/container/meveo")
@@ -333,9 +332,9 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
         // Remove no only CFI record, but also CF group if no CFIs are left after removal
         boolean needUpdate = false;
         if (entityCFValues != null && entityCFValues.containsKey(cfi.getCode())) {
-            
+
             needUpdate = entityCFValues.get(cfi.getCode()).remove(cfvValue);
-            
+
             if (needUpdate && entityCFValues.get(cfi.getCode()).isEmpty()) {
                 entityCFValues.remove(cfi.getCode());
             }
@@ -360,18 +359,20 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
 
         String cacheKey = getCacheKey(entity);
         Map<String, List<CachedCFPeriodValue>> cachedCFValues = customFieldValueCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
-        if (cachedCFValues.containsKey(code)) {
 
-            cachedCFValues.remove(code);
-
-            if (cachedCFValues.isEmpty()) {
-                customFieldValueCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).remove(cacheKey);
-            } else {
-                customFieldValueCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, cachedCFValues);
-            }
-
-            log.trace("Removed custom field {} from CustomFieldInstance cache for entity uuid {}", code, cacheKey);
+        if (cachedCFValues == null || !cachedCFValues.containsKey(code)) {
+            return;
         }
+
+        cachedCFValues.remove(code);
+
+        if (cachedCFValues.isEmpty()) {
+            customFieldValueCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).remove(cacheKey);
+        } else {
+            customFieldValueCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, cachedCFValues);
+        }
+
+        log.trace("Removed custom field {} from CustomFieldInstance cache for entity uuid {}", code, cacheKey);
     }
 
     /**
@@ -439,14 +440,15 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
 
         Map<String, List<CachedCFPeriodValue>> cachedValues = customFieldValueCache.get(cacheKey);
 
-        if (cachedValues != null && cachedValues.containsKey(code)) {
-            // Only value that is not versioned
-            for (CachedCFPeriodValue cfValue : cachedValues.get(code)) {
-                if (!cfValue.isVersioned()) {
-                    return cfValue.getValue();
-                }
-            }
+        if (cachedValues == null || !cachedValues.containsKey(code)) {
+            return null;
+        }
 
+        // Only value that is not versioned
+        for (CachedCFPeriodValue cfValue : cachedValues.get(code)) {
+            if (!cfValue.isVersioned()) {
+                return cfValue.getValue();
+            }
         }
 
         return null;
@@ -481,6 +483,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
         if (cachedValues == null) {
             return values;
         }
+
         // Add only values that are versioned, with highest priority
         for (Entry<String, List<CachedCFPeriodValue>> cfValuesInfo : cachedValues.entrySet()) {
             CachedCFPeriodValue periodFound = null;
@@ -528,6 +531,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
         if (cachedValues == null || !cachedValues.containsKey(code)) {
             return null;
         }
+
         // Add only values that are versioned, with highest priority
         CachedCFPeriodValue periodFound = null;
         for (CachedCFPeriodValue period : cachedValues.get(code)) {
@@ -551,8 +555,8 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
      */
     // @Override
     @SuppressWarnings("rawtypes")
-    public Map<String, BasicCache> getCaches() {
-        Map<String, BasicCache> summaryOfCaches = new HashMap<String, BasicCache>();
+    public Map<String, Cache> getCaches() {
+        Map<String, Cache> summaryOfCaches = new HashMap<String, Cache>();
         summaryOfCaches.put(cfValueCacheTime.getName(), cfValueCacheTime);
         summaryOfCaches.put(cftsByAppliesTo.getName(), cftsByAppliesTo);
         summaryOfCaches.put(cetsByCode.getName(), cetsByCode);
@@ -604,13 +608,15 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
      */
     private Date calculateCutoffDate(String code, ICustomFieldEntity entity) {
 
-        Date cutoffDate = null;
         Integer cutoffPeriod = cfValueCacheTime.get(code);
-        if (cutoffPeriod != null) {
-            Calendar calendar = new GregorianCalendar();
-            calendar.add(Calendar.DATE, (-1) * cutoffPeriod.intValue());
-            cutoffDate = calendar.getTime();
+        if (cutoffPeriod == null) {
+            return null;
         }
+        
+        Calendar calendar = new GregorianCalendar();
+        calendar.add(Calendar.DATE, (-1) * cutoffPeriod.intValue());
+        Date cutoffDate = calendar.getTime();
+
         return cutoffDate;
     }
 
@@ -643,7 +649,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
 
         String cacheKeyByAppliesTo = getCFTCacheKeyByAppliesTo(cft);
 
-        cftsByAppliesTo.putIfAbsent(cacheKeyByAppliesTo, new TreeMap<String, CustomFieldTemplate>());
+        cftsByAppliesTo.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).putIfAbsent(cacheKeyByAppliesTo, new TreeMap<String, CustomFieldTemplate>());
         Map<String, CustomFieldTemplate> cfts = cftsByAppliesTo.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKeyByAppliesTo);
 
         // Load calendar for lazy loading

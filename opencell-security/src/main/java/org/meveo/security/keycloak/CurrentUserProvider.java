@@ -115,10 +115,6 @@ public class CurrentUserProvider {
                 log.info("A new application user was registered with username {} and name {}", user.getUserName(), user.getName().getFullName());
             }
 
-            if (user != null) {
-                em.detach(user);
-            }
-
         } catch (Exception e) {
             log.error("Failed to supplement current user information from db and/or create new user in db", e);
         }
@@ -132,9 +128,11 @@ public class CurrentUserProvider {
      */
     private Map<String, Set<String>> getRoleToPermissionMapping() {
 
+        
+        log.error("AKK gettring role to permission map is null {}", CurrentUserProvider.roleToPermissionMapping == null);
         synchronized (this) {
-            if (roleToPermissionMapping == null) {
-                roleToPermissionMapping = new HashMap<>();
+            if (CurrentUserProvider.roleToPermissionMapping == null) {
+                CurrentUserProvider.roleToPermissionMapping = new HashMap<>();
 
                 try {
                     List<Role> userRoles = em.createNamedQuery("Role.getAllRoles", Role.class).getResultList();
@@ -145,7 +143,7 @@ public class CurrentUserProvider {
                             rolePermissions.add(permission.getPermission());
                         }
 
-                        roleToPermissionMapping.put(role.getName(), rolePermissions);
+                        CurrentUserProvider.roleToPermissionMapping.put(role.getName(), rolePermissions);
                     }
 
                 } catch (Exception e) {
@@ -153,7 +151,7 @@ public class CurrentUserProvider {
                 }
             }
 
-            return roleToPermissionMapping;
+            return CurrentUserProvider.roleToPermissionMapping;
         }
     }
 
@@ -161,7 +159,7 @@ public class CurrentUserProvider {
      * Invalidate cached role to permission mapping (usually after role save/update event)
      */
     public void invalidateRoleToPermissionMapping() {
-        roleToPermissionMapping = null;
+        CurrentUserProvider.roleToPermissionMapping = null;
     }
 
     /**

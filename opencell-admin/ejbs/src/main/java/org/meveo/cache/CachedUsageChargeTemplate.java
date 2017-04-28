@@ -1,5 +1,6 @@
 package org.meveo.cache;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
@@ -14,7 +15,9 @@ import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 
-public class CachedUsageChargeTemplate {
+public class CachedUsageChargeTemplate implements Serializable {
+
+    private static final long serialVersionUID = 5720248298194275643L;
 
     private Long id;
     private String code;
@@ -104,6 +107,13 @@ public class CachedUsageChargeTemplate {
 
     public String getInvoiceSubCategoryCode() {
         return invoiceSubCategoryCode;
+    }
+
+    public CachedUsageChargeTemplate() {
+    }
+
+    public CachedUsageChargeTemplate(UsageChargeTemplate usageChargeTemplate) {
+        populateFromUsageChargeTemplate(usageChargeTemplate);
     }
 
     @Override

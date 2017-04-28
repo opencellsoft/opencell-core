@@ -19,7 +19,6 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.infinispan.Cache;
-import org.infinispan.commons.api.BasicCache;
 import org.infinispan.context.Flag;
 import org.meveo.event.qualifier.LowBalance;
 import org.meveo.model.billing.BillingWalletTypeEnum;
@@ -61,20 +60,20 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
     /**
      * Contains association between prepaid wallet instance and balance value. Key format: <WalletInstance.id>, value: <prepaid wallet balance amount>
      */
-    @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-balance")
+    @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-balance")
     private Cache<Long, BigDecimal> balanceCache;
 
     /**
      * Contains association between prepaid wallet instance and reserved balance value. Key format: <WalletInstance.id>, value: <prepaid wallet reserved balance amount>
      */
-    @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-reservedBalance")
+    @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-reservedBalance")
     private Cache<Long, BigDecimal> reservedBalanceCache;
 
     /**
      * Contains association between usage chargeInstance and wallets ids (if it is not the only principal one). Key format: <UsageChargeInstance.id>, value: List of
      * <WalletInstance.id>
      */
-    @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-usageChargeInstanceWallet")
+    @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-usageChargeInstanceWallet")
     private Cache<Long, List<Long>> usageChargeInstanceWalletCache;
 
     // @Resource(name = "java:jboss/infinispan/container/meveo")
@@ -323,8 +322,8 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
      */
     // @Override
     @SuppressWarnings("rawtypes")
-    public Map<String, BasicCache> getCaches() {
-        Map<String, BasicCache> summaryOfCaches = new HashMap<String, BasicCache>();
+    public Map<String, Cache> getCaches() {
+        Map<String, Cache> summaryOfCaches = new HashMap<String, Cache>();
         summaryOfCaches.put(balanceCache.getName(), balanceCache);
         summaryOfCaches.put(reservedBalanceCache.getName(), reservedBalanceCache);
         summaryOfCaches.put(usageChargeInstanceWalletCache.getName(), usageChargeInstanceWalletCache);
@@ -342,7 +341,7 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
     public void refreshCache(String cacheName) {
 
         if (cacheName == null || cacheName.equals(balanceCache.getName()) || cacheName.equals(reservedBalanceCache.getName())
-                || cacheName.equals(usageChargeInstanceWalletCache.getName()) || cacheName.contains(reservedBalanceCache.getName())
+                || cacheName.equals(usageChargeInstanceWalletCache.getName()) || cacheName.contains(balanceCache.getName()) || cacheName.contains(reservedBalanceCache.getName())
                 || cacheName.contains(usageChargeInstanceWalletCache.getName())) {
             populateWalletCache();
         }

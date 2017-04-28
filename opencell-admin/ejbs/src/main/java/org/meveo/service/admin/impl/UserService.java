@@ -96,13 +96,6 @@ public class UserService extends PersistenceService<User> {
 		super.remove(user);
 	}
 
-	public User getSystemUser() {
-		if (systemUser == null) {
-			systemUser = findUsersByRoles("administrateur").get(0);
-		}
-		return systemUser;
-	}
-
 	@SuppressWarnings("unchecked")
 	public List<User> findUsersByRoles(String... roles) {
 		String queryString = "select distinct u from User u join u.roles as r where r.name in (:roles) ";
