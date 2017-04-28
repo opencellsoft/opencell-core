@@ -203,10 +203,8 @@ public class UserApi extends BaseApi {
             name.setFirstName(postData.getFirstName());
             user.setName(name);
         }
-        if (!roles.isEmpty()) {
+        if (isManagingAllUsers) {
             user.setRoles(roles);
-        }
-        if (!securedEntities.isEmpty()) {
             user.setSecuredEntities(securedEntities);
         }
         user.setUserLevel(userHierarchyLevel);
