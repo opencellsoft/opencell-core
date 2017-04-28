@@ -2692,6 +2692,12 @@
 			<column name="description" type="VARCHAR(256)" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="#20171123" author="smichea">
+        <addColumn tableName="CAT_DISCOUNT_PLAN_ITEM">
+            <column name="DISCOUNT_PERCENT_EL" type="VARCHAR(2000)"/>        
+        </addColumn>
+    </changeSet>
 
 	<changeSet id="#2530_20170425" author="TonyAlejandro">
 		<modifyDataType tableName="adm_inbound_req_headers" columnName="headers" newDataType="TEXT" />

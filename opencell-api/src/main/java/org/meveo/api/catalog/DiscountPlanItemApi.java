@@ -223,6 +223,9 @@ public class DiscountPlanItemApi extends BaseApi {
         if(dto.getExpressionEl()!=null){
         	discountPlanItem.setExpressionEl(dto.getExpressionEl());
         }
+        if(dto.getDiscountPercentEl()!=null){
+        	discountPlanItem.setDiscountPercentEl(dto.getDiscountPercentEl());
+        }
     	return discountPlanItem;
     }
 }

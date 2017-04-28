@@ -235,6 +235,7 @@ public class RatingService extends BusinessService<WalletOperation>{
                 walletOperation.setInvoicingDate(chargeInstance.getInvoicingCalendar().nextCalendarDate(walletOperation.getOperationDate()));
             }
         }
+        
 		walletOperation.setCode(chargeTemplate.getCode());		
         walletOperation.setDescription(catMessagesService.getMessageDescriptionByCodeAndLanguage(chargeTemplate.getCode(),languageCode,chargeTemplate.getDescription()));      
         walletOperation.setTaxPercent(isExonerated?BigDecimal.ZERO:taxPercent);
@@ -251,6 +252,9 @@ public class RatingService extends BusinessService<WalletOperation>{
         }
 		// TODO:check that setting the principal wallet at this stage is correct
 		walletOperation.setWallet(userAccount.getWallet());
+		if(chargeInstance.getSubscription() != null) {
+			walletOperation.setBillingAccount(chargeInstance.getSubscription().getUserAccount().getBillingAccount());
+		}
 
 		BigDecimal unitPriceWithoutTax = amountWithoutTax;
 		BigDecimal unitPriceWithTax = null;
