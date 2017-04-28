@@ -148,12 +148,15 @@
 							<hftl:formField
 								label="#{messages['discountPlanItem.accountingCode']}"
 								field="accountingCode" />
+								
+							<hftl:formField label="#{messages['discountPlanItem.expressionEl']}"
+							 field="expressionEl"  textArea="true" maxlength="2000"/>
 
 							<hftl:formField label="#{messages['discountPlanItem.percent']}"
 								field="percent" required="true" minValue="-100" maxValue="100" />
 								 
-							<hftl:formField label="#{messages['discountPlanItem.expressionEl']}"
-							 field="expressionEl"  textArea="true" maxlength="2000"/>
+							<hftl:formField label="#{messages['discountPlanItem.percent']} EL"
+							 field="discountPercentEl"  textArea="true" maxlength="2000"/>
 							 
 							<hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false"
 							field="disabled" isMessage="true" />

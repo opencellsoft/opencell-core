@@ -209,6 +209,7 @@ public class UsageRatingService {
         // we set here the wallet to the principal wallet but it will later be
         // overridden by charging algorithm
         walletOperation.setWallet(userAccount.getWallet());
+        walletOperation.setBillingAccount(chargeInstance.getSubscription().getUserAccount().getBillingAccount());
         walletOperation.setCode(cachedChargeInstance.getChargeTemplate().getCode());
         walletOperation.setDescription(catMessagesService.getMessageDescriptionByCodeAndLanguage(cachedChargeInstance.getChargeTemplate().getCode(),userAccount.getBillingAccount().getTradingLanguage().getLanguageCode(),cachedChargeInstance.getDescription()));
         walletOperation.setQuantity(quantityToCharge);

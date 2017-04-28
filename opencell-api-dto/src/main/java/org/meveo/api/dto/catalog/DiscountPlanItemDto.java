@@ -35,7 +35,10 @@ public class DiscountPlanItemDto extends BaseDto {
 	private BigDecimal percent;
 	private String accountingCode;
 	private String expressionEl;
+	private String discountPercentEl;
+	
 	public DiscountPlanItemDto(){}
+	
 	public DiscountPlanItemDto(DiscountPlanItem discountPlanItem){
 		this.code=discountPlanItem.getCode();
 		this.discountPlanCode=discountPlanItem.getDiscountPlan().getCode();
@@ -44,6 +47,7 @@ public class DiscountPlanItemDto extends BaseDto {
 		this.percent=discountPlanItem.getPercent();
 		this.accountingCode=discountPlanItem.getAccountingCode();
 		this.expressionEl=discountPlanItem.getExpressionEl();
+		this.discountPercentEl=discountPlanItem.getDiscountPercentEl();
 	}
 	public String getCode() {
 		return code;
@@ -91,6 +95,14 @@ public class DiscountPlanItemDto extends BaseDto {
 	public String toString() {
 		return "DiscountPlanItemDto [code=" + code + ", discountPlanCode=" + discountPlanCode + ", invoiceCategoryCode=" + invoiceCategoryCode + ", invoiceSubCategoryCode="
 				+ invoiceSubCategoryCode + ", percent=" + percent + ", accountingCode=" + accountingCode + ", expressionEl=" + expressionEl + "]";
+	}
+
+	public String getDiscountPercentEl() {
+		return discountPercentEl;
+	}
+
+	public void setDiscountPercentEl(String discountPercentEl) {
+		this.discountPercentEl = discountPercentEl;
 	}
 
 }
