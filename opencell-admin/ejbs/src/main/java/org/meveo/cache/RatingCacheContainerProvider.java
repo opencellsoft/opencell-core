@@ -340,9 +340,11 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
                     cachedSubscriptionContainsCharge = true;
                 }
             }
-        }
-        if (cachedCharge == null) {
+        } else {
             cachedSubscriptionCharges = new ArrayList<CachedUsageChargeInstance>();
+        }
+        
+        if (cachedCharge == null) {
             cachedCharge = new CachedUsageChargeInstance();
         }
 

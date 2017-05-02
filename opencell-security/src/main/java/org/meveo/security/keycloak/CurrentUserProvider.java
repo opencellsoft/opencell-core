@@ -128,8 +128,6 @@ public class CurrentUserProvider {
      */
     private Map<String, Set<String>> getRoleToPermissionMapping() {
 
-        
-        log.error("AKK gettring role to permission map is null {}", CurrentUserProvider.roleToPermissionMapping == null);
         synchronized (this) {
             if (CurrentUserProvider.roleToPermissionMapping == null) {
                 CurrentUserProvider.roleToPermissionMapping = new HashMap<>();
