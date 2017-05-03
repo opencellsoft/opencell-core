@@ -29,13 +29,9 @@ import org.slf4j.Logger;
 @Startup
 @Singleton
 @Lock(LockType.READ)
-public class JobCacheContainerProvider implements Serializable { //CacheContainerProvider, Serializable {
+public class JobCacheContainerProvider implements Serializable { // CacheContainerProvider, Serializable {
 
     private static final long serialVersionUID = -4730906690144309131L;
-
-    public enum JobRunningStatusEnum {
-        NOT_RUNNING, RUNNING_THIS, RUNNING_OTHER
-    };
 
     @Inject
     protected Logger log;
@@ -65,7 +61,7 @@ public class JobCacheContainerProvider implements Serializable { //CacheContaine
      * 
      * @return A list of a map containing cache information with cache name as a key and cache as a value
      */
-//    @Override
+    // @Override
     @SuppressWarnings("rawtypes")
     public Map<String, Cache> getCaches() {
         Map<String, Cache> summaryOfCaches = new HashMap<String, Cache>();
@@ -79,7 +75,7 @@ public class JobCacheContainerProvider implements Serializable { //CacheContaine
      * 
      * @param cacheName Name of cache to refresh or null to refresh all caches
      */
-//    @Override
+    // @Override
     @Asynchronous
     public void refreshCache(String cacheName) {
 
@@ -146,13 +142,17 @@ public class JobCacheContainerProvider implements Serializable { //CacheContaine
 
         if (EjbUtils.isRunningInClusterMode()) {
             List<String> nodes = runningJobsCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(jobInstanceId);
-            nodes.remove(EjbUtils.getCurrentClusterNode());
-            if (nodes.isEmpty()) {
-                // Use flags to not return previous value
-                runningJobsCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).remove(jobInstanceId);
-            } else {
-                // Use flags to not return previous value
-                runningJobsCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(jobInstanceId, nodes);
+            if (nodes != null && !nodes.isEmpty()) {
+                boolean removed = nodes.remove(EjbUtils.getCurrentClusterNode());
+                if (removed) {
+                    if (nodes.isEmpty()) {
+                        // Use flags to not return previous value
+                        runningJobsCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).remove(jobInstanceId);
+                    } else {
+                        // Use flags to not return previous value
+                        runningJobsCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(jobInstanceId, nodes);
+                    }
+                }
             }
         } else {
             // Use flags to not return previous value

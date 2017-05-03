@@ -1,5 +1,6 @@
 package org.meveo.cache;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,7 +10,9 @@ import java.util.Map.Entry;
 
 import org.meveo.model.billing.CounterPeriod;
 
-public class CachedCounterPeriod {
+public class CachedCounterPeriod implements Serializable {
+
+    private static final long serialVersionUID = 5267933089763181401L;
 
     private Long id;
     private Date startDate;
@@ -89,7 +92,7 @@ public class CachedCounterPeriod {
 
     @Override
     public String toString() {
-        return String.format("CachedCounterPeriod [counterPeriodId=%s, startDate=%s, endDate=%s, value=%s, level=%s, dbDirty=%s, notificationLevels=%s]", id,
-            startDate, endDate, value, level, dbDirty, notificationLevels);
+        return String.format("CachedCounterPeriod [counterPeriodId=%s, startDate=%s, endDate=%s, value=%s, level=%s, dbDirty=%s, notificationLevels=%s]", id, startDate, endDate,
+            value, level, dbDirty, notificationLevels);
     }
 }

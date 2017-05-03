@@ -18,7 +18,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.cache.JobCacheContainerProvider;
-import org.meveo.cache.JobCacheContainerProvider.JobRunningStatusEnum;
+import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.event.qualifier.Processed;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
@@ -155,7 +155,7 @@ public abstract class Job {
         TimerConfig timerConfig = new TimerConfig();
         timerConfig.setInfo(jobInstance);
         // timerConfig.setPersistent(false);
-        log.error("AKK creating a timer for {}", jobInstance.getCode());
+        // log.error("AKK creating a timer for {}", jobInstance.getCode());
         return timerService.createCalendarTimer(scheduleExpression, timerConfig);
     }
 

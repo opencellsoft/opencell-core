@@ -228,9 +228,11 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
 
         String cacheKey = pricePlan.getEventCode();
         log.trace("Adding pricePlan {} to pricePlan cache under key {}", pricePlan.getId(), cacheKey);
-        pricePlanCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).putIfAbsent(cacheKey, new ArrayList<PricePlanMatrix>());
 
         List<PricePlanMatrix> chargePriceList = pricePlanCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
+        if (chargePriceList == null) {
+            chargePriceList = new ArrayList<PricePlanMatrix>();
+        }
 
         chargePriceList.add(pricePlan);
         Collections.sort(chargePriceList);
@@ -250,7 +252,7 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
 
         List<PricePlanMatrix> chargePriceList = pricePlanCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
 
-        if (chargePriceList != null && chargePriceList.isEmpty()) {
+        if (chargePriceList != null && !chargePriceList.isEmpty()) {
             boolean removed = chargePriceList.remove(pricePlan);
             if (removed) {
                 // Remove cached value altogether if no value are left in the list
@@ -343,7 +345,7 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
         } else {
             cachedSubscriptionCharges = new ArrayList<CachedUsageChargeInstance>();
         }
-        
+
         if (cachedCharge == null) {
             cachedCharge = new CachedUsageChargeInstance();
         }
@@ -393,7 +395,7 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
                 cachedTemplate.populateFromUsageChargeTemplate(usageChargeTemplate);
             }
 
-            log.error("AKK priority changed {}  was {} is {}", priorityChanged, cachedTemplate.getPriority(), usageChargeTemplate.getPriority());
+            // log.error("AKK priority changed {}  was {} is {}", priorityChanged, cachedTemplate.getPriority(), usageChargeTemplate.getPriority());
         } else {
             cachedTemplate = new CachedUsageChargeTemplate(usageChargeTemplate);
             addToCache = true;

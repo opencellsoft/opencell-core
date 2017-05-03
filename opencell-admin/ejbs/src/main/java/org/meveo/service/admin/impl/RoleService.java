@@ -28,6 +28,8 @@ import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
+import org.meveo.event.monitoring.ClusterEventPublisher;
 import org.meveo.model.security.Role;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.PersistenceService;
@@ -40,6 +42,9 @@ public class RoleService extends PersistenceService<Role> {
 
     @Inject
     private CurrentUserProvider currentUserProvider;
+
+    @Inject
+    private ClusterEventPublisher clusterEventPublisher;
 
     @SuppressWarnings("unchecked")
     public List<Role> getAllRoles() {
@@ -61,15 +66,27 @@ public class RoleService extends PersistenceService<Role> {
     }
 
     @Override
-    public void create(Role e) throws BusinessException {
-        super.create(e);
+    public void create(Role role) throws BusinessException {
+        super.create(role);
         currentUserProvider.invalidateRoleToPermissionMapping();
+        clusterEventPublisher.publishEvent(role, CrudActionEnum.create);
     }
 
     @Override
-    public Role update(Role e) throws BusinessException {
-        e = super.update(e);
+    public Role update(Role role) throws BusinessException {
+        role = super.update(role);
         currentUserProvider.invalidateRoleToPermissionMapping();
-        return e;
+
+        clusterEventPublisher.publishEvent(role, CrudActionEnum.update);
+        return role;
+    }
+
+    @Override
+    public void remove(Role role) throws BusinessException {
+        super.remove(role);
+
+        currentUserProvider.invalidateRoleToPermissionMapping();
+
+        clusterEventPublisher.publishEvent(role, CrudActionEnum.remove);
     }
 }

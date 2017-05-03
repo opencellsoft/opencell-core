@@ -45,6 +45,8 @@ import org.meveo.admin.exception.InvalidScriptException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.event.monitoring.ClusterEventPublisher;
+import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
 import org.meveo.model.IEntity;
 import org.meveo.model.scripts.CustomScript;
 import org.meveo.model.scripts.ScriptInstanceError;
@@ -55,6 +57,9 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
 
     @Inject
     private ResourceBundle resourceMessages;
+
+    @Inject
+    private ClusterEventPublisher clusterEventPublisher;
 
     protected final Class<SI> scriptInterfaceClass;
 
@@ -120,6 +125,8 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
 
         super.create(script);
         compileScript(script, false);
+
+        clusterEventPublisher.publishEvent(script, CrudActionEnum.create);
     }
 
     @Override
@@ -140,6 +147,34 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         script = super.update(script);
 
         compileScript(script, false);
+
+        clusterEventPublisher.publishEvent(script, CrudActionEnum.update);
+        return script;
+    }
+
+    @Override
+    public void remove(T script) throws BusinessException {
+        super.remove(script);
+
+        clusterEventPublisher.publishEvent(script, CrudActionEnum.remove);
+    }
+
+    @Override
+    public T enable(T script) throws BusinessException {
+
+        script = super.enable(script);
+
+        clusterEventPublisher.publishEvent(script, CrudActionEnum.enable);
+
+        return script;
+    }
+
+    @Override
+    public T disable(T script) throws BusinessException {
+        
+        script = super.disable(script);
+
+        clusterEventPublisher.publishEvent(script, CrudActionEnum.disable);
 
         return script;
     }
@@ -220,7 +255,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         } else {
             compileScript(script, false);
         }
-        detach(script);
+//        detach(script);
     }
 
     /**

@@ -1,11 +1,14 @@
 package org.meveo.cache;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
 import org.meveo.model.billing.UsageChargeInstance;
 
-public class CachedUsageChargeInstance implements Comparable<CachedUsageChargeInstance> {
+public class CachedUsageChargeInstance implements Comparable<CachedUsageChargeInstance>, Serializable {
+
+    private static final long serialVersionUID = 2291426584953781851L;
 
     private Long id;
     private Long currencyId;

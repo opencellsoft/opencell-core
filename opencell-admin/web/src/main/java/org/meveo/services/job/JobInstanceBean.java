@@ -15,7 +15,8 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.action.admin.custom.CustomFieldDataEntryBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.JobCacheContainerProvider;
-import org.meveo.cache.JobCacheContainerProvider.JobRunningStatusEnum;
+import org.meveo.cache.JobRunningStatusEnum;
+import org.meveo.commons.utils.EjbUtils;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.jobs.JobCategoryEnum;
@@ -153,14 +154,33 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
     }
 
     /**
-     * Check if a job is running.
+     * Check if a job is running and where
      * 
      * @param jobInstance JobInstance entity
-     * @return 
-     * @return True if running
+     * @return Running status
      */
     public JobRunningStatusEnum isTimerRunning(JobInstance jobInstance) {
         return jobCacheContainerProvider.isJobRunning(jobInstance.getId());
+    }
+
+    /**
+     * Check if job can be run on a current server or cluster node if deployed in cluster environment
+     * 
+     * @param jobInstance JobInstance entity
+     * @return True if it can be executed locally
+     */
+    public boolean isAllowedToExecute(JobInstance jobInstance) {
+
+        JobRunningStatusEnum isRunning = jobCacheContainerProvider.isJobRunning(jobInstance.getId());
+        if (isRunning == JobRunningStatusEnum.NOT_RUNNING) {
+            return true;
+        } else if (isRunning == JobRunningStatusEnum.RUNNING_THIS) {
+            return false;
+        } else {
+
+            String nodeToCheck = EjbUtils.getCurrentClusterNode();
+            return jobInstance.isRunnableOnNode(nodeToCheck);
+        }
     }
 
     /**

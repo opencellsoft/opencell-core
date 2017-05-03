@@ -109,9 +109,11 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
         access.getSubscription().getId();
 
         String cacheKey = access.getAccessUserId();
-        accessCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).putIfAbsent(cacheKey, new ArrayList<Access>());
 
         List<Access> accesses = accessCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
+        if (accesses == null) {
+            accesses = new ArrayList<Access>();
+        }
         accesses.add(access);
         accessCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, accesses);
 
@@ -131,7 +133,7 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
         String cacheKey = access.getAccessUserId();
         List<Access> accesses = accessCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
 
-        if (accesses != null && accesses.isEmpty()) {
+        if (accesses != null && !accesses.isEmpty()) {
             boolean removed = accesses.remove(access);
             if (removed) {
                 // Remove cached value altogether if no value are left in the list

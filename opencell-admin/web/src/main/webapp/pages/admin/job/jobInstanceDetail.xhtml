@@ -50,7 +50,7 @@
                             <p:selectOneMenu id="timer" value="#{jobInstanceBean.entity.timerEntity}" rendered="#{jobInstanceBean.edit}">
                                 <hftl:objectConverter />
                                 <f:selectItem itemLabel="#{messages['commons.select']}" />
-                                <f:selectItems value="#{timerEntityBean.getTimerEntityList()}" var="t_" itemLabel="#{t_.code}" itemValue="#{t_}" />
+                                <f:selectItems value="#{timerEntityBean.listAll()}" var="t_" itemLabel="#{t_.code}" itemValue="#{t_}" />
                             </p:selectOneMenu>
                         </hftl:decorateFormField>
 
@@ -72,7 +72,7 @@
 
                 </p:tabView>
 
-                <hf:formButtons execute="#{!jobInstanceBean.isTimerRunning(jobInstanceBean.entity)}" executeLabel="#{messages['job.executeJobNow']}" backingBean="#{jobInstanceBean}" edit="#{jobInstanceBean.edit}" ajaxSubmit="true"
+                <hf:formButtons execute="#{jobInstanceBean.isAllowedToExecute(jobInstanceBean.entity)}" executeLabel="#{messages['job.executeJobNow']}" backingBean="#{jobInstanceBean}" edit="#{jobInstanceBean.edit}" ajaxSubmit="true"
                     submitPartialProcess=":formId:tabView" showEnableDisableButton="true" />
 
 

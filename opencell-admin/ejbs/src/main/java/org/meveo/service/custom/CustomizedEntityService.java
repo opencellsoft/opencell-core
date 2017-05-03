@@ -19,7 +19,6 @@ import org.meveo.service.job.Job;
 import org.meveo.service.job.JobInstanceService;
 import org.meveo.util.EntityCustomizationUtils;
 import org.reflections.Reflections;
-import org.slf4j.Logger;
 
 public class CustomizedEntityService implements Serializable {
 
@@ -30,23 +29,21 @@ public class CustomizedEntityService implements Serializable {
 
     @Inject
     private CustomEntityTemplateService customEntityTemplateService;
-    
-    @Inject
-    private Logger log;
 
     /**
-     * Get a list of customized/customizable entities optionally filtering by a name and custom entities only and whether to include non-managed entities.  
-     * Non-managed Entities are entities that will not be shown in the Entity Customization list page.
+     * Get a list of customized/customizable entities optionally filtering by a name and custom entities only and whether to include non-managed entities. Non-managed Entities are
+     * entities that will not be shown in the Entity Customization list page.
      * 
      * @param entityName Optional filter by a name
      * @param customEntityTemplatesOnly Return custom entity templates only
      * @param includeNonManagedEntities If true, entities that are not managed through the Entity Customization list page will be included.
      * @param sortBy Sort by. Valid values are: "description" or null to sort by entity name
      * @param sortOrder Sort order. Valid values are "DESCENDING" or "ASCENDING". By default will sort in Ascending order.
-
+     * 
      * @return A list of customized/customizable entities
      */
-    public List<CustomizedEntity> getCustomizedEntities(String entityName, boolean customEntityTemplatesOnly, boolean includeNonManagedEntities, final String sortBy, final String sortOrder) {
+    public List<CustomizedEntity> getCustomizedEntities(String entityName, boolean customEntityTemplatesOnly, boolean includeNonManagedEntities, final String sortBy,
+            final String sortOrder) {
         List<CustomizedEntity> entities = new ArrayList<>();
 
         if (entityName != null) {
@@ -79,12 +76,11 @@ public class CustomizedEntityService implements Serializable {
         for (Class<? extends ICustomFieldEntity> cfClass : cfClasses) {
 
             annotation = cfClass.getAnnotation(CustomFieldEntity.class);
-            boolean isSkipped = JobInstance.class.isAssignableFrom(cfClass)
-                || Modifier.isAbstract(cfClass.getModifiers())
-                || (entityName != null && !cfClass.getSimpleName().toLowerCase().contains(entityName.toLowerCase()))
-                || (!includeNonManagedEntities && !annotation.isManuallyManaged());
+            boolean isSkipped = JobInstance.class.isAssignableFrom(cfClass) || Modifier.isAbstract(cfClass.getModifiers())
+                    || (entityName != null && !cfClass.getSimpleName().toLowerCase().contains(entityName.toLowerCase()))
+                    || (!includeNonManagedEntities && !annotation.isManuallyManaged());
 
-            if(isSkipped){
+            if (isSkipped) {
                 continue;
             }
 
@@ -97,7 +93,7 @@ public class CustomizedEntityService implements Serializable {
      * Searches all custom entity templates.
      *
      * @param entityName Optional filter by a name
-
+     * 
      * @return A list of custom entity templates.
      */
     private List<CustomizedEntity> searchCustomEntityTemplates(String entityName) {
@@ -124,8 +120,7 @@ public class CustomizedEntityService implements Serializable {
     private List<CustomizedEntity> searchJobs(String entityName) {
         List<CustomizedEntity> jobs = new ArrayList<>();
         for (Job job : jobInstanceService.getJobs()) {
-            
-            log.error("AKK job is null {}", job==null);
+
             if (job.getCustomFields() != null && (entityName == null || (entityName != null && job.getClass().getSimpleName().toLowerCase().contains(entityName)))) {
                 jobs.add(new CustomizedEntity(job.getClass()));
             }
@@ -135,6 +130,7 @@ public class CustomizedEntityService implements Serializable {
 
     /**
      * The comparator used to sort customized entities.
+     * 
      * @param sortBy Sort by. Valid values are: "description" or null to sort by entity name
      * @param sortOrder Sort order. Valid values are "DESCENDING" or "ASCENDING". By default will sort in Ascending order.
      * @return The customized entity comparator instance.
@@ -163,7 +159,7 @@ public class CustomizedEntityService implements Serializable {
      * Get a customized/customizable entity that matched a given appliesTo value as it is used in customFieldtemplate or EntityActionScript
      * 
      * @param appliesTo appliesTo value as it is used in customFieldtemplate or EntityActionScript
-
+     * 
      * @return A customized/customizable entity
      */
     public CustomizedEntity getCustomizedEntity(String appliesTo) {

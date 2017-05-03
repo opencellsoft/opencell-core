@@ -1,11 +1,15 @@
 package org.meveo.cache;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang.StringUtils;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CachedTriggeredEDR {
+public class CachedTriggeredEDR implements Serializable {
+
+    private static final long serialVersionUID = 2996256505159048303L;
 
     private Long id;
     private String code;
@@ -29,7 +33,7 @@ public class CachedTriggeredEDR {
         id = edrTemplate.getId();
         code = edrTemplate.getCode();
         subscriptionEL = edrTemplate.getSubscriptionEl();
-        meveoInstanceCode = edrTemplate.getMeveoInstance()==null?null:edrTemplate.getMeveoInstance().getCode();
+        meveoInstanceCode = edrTemplate.getMeveoInstance() == null ? null : edrTemplate.getMeveoInstance().getCode();
 
         if (edrTemplate.getQuantityEl() == null || (edrTemplate.getQuantityEl().equals(""))) {
             Logger log = LoggerFactory.getLogger(this.getClass());
@@ -63,10 +67,10 @@ public class CachedTriggeredEDR {
     }
 
     public String getMeveoInstanceCode() {
-		return meveoInstanceCode;
-	}
+        return meveoInstanceCode;
+    }
 
-	public String getConditionEL() {
+    public String getConditionEL() {
         return conditionEL;
     }
 

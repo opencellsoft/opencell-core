@@ -14,6 +14,7 @@ import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.IEntity;
 import org.slf4j.Logger;
 
 @JMSDestinationDefinitions(value = { @JMSDestinationDefinition(name = "java:/topic/CLUSTEREVENTTOPIC", interfaceName = "javax.jms.Topic", destinationName = "ClusterEventTopic") })
@@ -31,14 +32,15 @@ public class ClusterEventPublisher implements Serializable {
     @Resource(lookup = "java:/topic/CLUSTEREVENTTOPIC")
     private Topic topic;
 
-    public void publishEvent(BusinessEntity entity, CrudActionEnum action) {
+    public void publishEvent(IEntity entity, CrudActionEnum action) {
 
         if (!EjbUtils.isRunningInClusterMode()) {
             return;
         }
 
         try {
-            ClusterEventDto eventDto = new ClusterEventDto(ReflectionUtils.getCleanClassName(entity.getClass().getSimpleName()), entity.getId(), entity.getCode(), action);
+            String code = entity instanceof BusinessEntity ? ((BusinessEntity) entity).getCode() : null;
+            ClusterEventDto eventDto = new ClusterEventDto(ReflectionUtils.getCleanClassName(entity.getClass().getSimpleName()), (Long) entity.getId(), code, action);
             log.trace("Publishing data synchronization between cluster nodes event {}", eventDto);
 
             context.createProducer().send(topic, eventDto);

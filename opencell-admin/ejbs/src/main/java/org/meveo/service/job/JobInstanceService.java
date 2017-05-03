@@ -27,6 +27,7 @@ import java.util.Map;
 import javax.ejb.ScheduleExpression;
 import javax.ejb.Stateless;
 import javax.ejb.Timer;
+import javax.inject.Inject;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
@@ -34,13 +35,24 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
+import org.meveo.event.monitoring.ClusterEventPublisher;
+import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.TimerEntity;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.util.EntityCustomizationUtils;
 
 @Stateless
 public class JobInstanceService extends BusinessService<JobInstance> {
+
+    @Inject
+    private ClusterEventPublisher clusterEventPublisher;
+
+    @Inject
+    private CustomFieldTemplateService customFieldTemplateService;
 
     private static Map<JobCategoryEnum, List<Class<? extends Job>>> jobClasses = new HashMap<>();
     private static Map<Long, Timer> jobTimers = new HashMap<Long, Timer>();
@@ -57,6 +69,16 @@ public class JobInstanceService extends BusinessService<JobInstance> {
                 jobClasses.put(job.getJobCategory(), new ArrayList<>());
             }
             jobClasses.get(job.getJobCategory()).add(job.getClass());
+
+            Map<String, CustomFieldTemplate> cfts = job.getCustomFields();
+            if (cfts != null && !cfts.isEmpty()) {
+                try {
+                    customFieldTemplateService.createMissingTemplates(EntityCustomizationUtils.getAppliesTo(job.getClass(), null), cfts.values());
+                } catch (BusinessException e) {
+                    log.error("Failed to registed missing CF templates for job " + job.getClass());
+                }
+            }
+
             log.debug("Registered a job {} of category {}", job.getClass(), job.getJobCategory());
         }
         startTimers(job);
@@ -74,6 +96,7 @@ public class JobInstanceService extends BusinessService<JobInstance> {
             .setParameter("jobName", ReflectionUtils.getCleanClassName(job.getClass().getSimpleName())).getResultList();
 
         int started = 0;
+
         for (JobInstance jobInstance : jobInstances) {
             if (scheduleJob(jobInstance, job)) {
                 started++;
@@ -133,6 +156,8 @@ public class JobInstanceService extends BusinessService<JobInstance> {
 
         super.create(jobInstance);
         scheduleJob(jobInstance, null);
+
+        clusterEventPublisher.publishEvent(jobInstance, CrudActionEnum.create);
     }
 
     @Override
@@ -141,26 +166,30 @@ public class JobInstanceService extends BusinessService<JobInstance> {
         super.update(jobInstance);
         scheduleUnscheduleJob(jobInstance);
 
+        clusterEventPublisher.publishEvent(jobInstance, CrudActionEnum.update);
+
         return jobInstance;
     }
 
     @Override
-    public void remove(JobInstance entity) throws BusinessException {
-        log.info("remove jobInstance {}, id={}", entity.getJobTemplate(), entity.getId());
-        if (entity.getId() == null) {
+    public void remove(JobInstance jobInstance) throws BusinessException {
+        log.info("remove jobInstance {}, id={}", jobInstance.getJobTemplate(), jobInstance.getId());
+        if (jobInstance.getId() == null) {
             log.info("removing jobInstance entity with null id, something is wrong");
-        } else if (jobTimers.containsKey(entity.getId())) {
+        } else if (jobTimers.containsKey(jobInstance.getId())) {
             try {
-                Timer timer = jobTimers.get(entity.getId());
+                Timer timer = jobTimers.get(jobInstance.getId());
                 timer.cancel();
             } catch (Exception ex) {
                 log.info("cannot cancel timer " + ex);
             }
-            jobTimers.remove(entity.getId());
+            jobTimers.remove(jobInstance.getId());
         } else {
             log.info("jobInstance timer not found, cannot remove it");
         }
-        super.remove(entity);
+        super.remove(jobInstance);
+
+        clusterEventPublisher.publishEvent(jobInstance, CrudActionEnum.remove);
     }
 
     @Override
@@ -169,6 +198,8 @@ public class JobInstanceService extends BusinessService<JobInstance> {
 
         log.info("Enabling jobInstance {}, id={}", jobInstance.getJobTemplate(), jobInstance.getId());
         scheduleUnscheduleJob(jobInstance);
+
+        clusterEventPublisher.publishEvent(jobInstance, CrudActionEnum.enable);
 
         return jobInstance;
     }
@@ -179,6 +210,8 @@ public class JobInstanceService extends BusinessService<JobInstance> {
 
         log.info("Disabling jobInstance {}, id={}", jobInstance.getJobTemplate(), jobInstance.getId());
         scheduleUnscheduleJob(jobInstance);
+
+        clusterEventPublisher.publishEvent(jobInstance, CrudActionEnum.disable);
 
         return jobInstance;
     }
@@ -217,7 +250,7 @@ public class JobInstanceService extends BusinessService<JobInstance> {
             ScheduleExpression scheduleExpression = getScheduleExpression(jobInstance.getTimerEntity());
             log.info("Scheduling job {} of type {} for {}", jobInstance.getCode(), jobInstance.getJobTemplate(), scheduleExpression);
 
-            detach(jobInstance);
+            // detach(jobInstance);
             jobTimers.put(jobInstance.getId(), job.createTimer(scheduleExpression, jobInstance));
             return true;
 
@@ -250,8 +283,9 @@ public class JobInstanceService extends BusinessService<JobInstance> {
         JobInstance jobInstance = findById(jobInstanceId, Arrays.asList("timerEntity"));
         if (jobInstance == null) {
             unscheduleJob(jobInstanceId);
+        } else {
+            scheduleUnscheduleJob(jobInstance);
         }
-        scheduleUnscheduleJob(jobInstance);
     }
 
     private ScheduleExpression getScheduleExpression(TimerEntity timerEntity) {

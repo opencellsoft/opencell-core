@@ -102,8 +102,10 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
         try {
             log.trace("Adding notification {} to notification cache under key {}", notif.getId(), cacheKey);
 
-            eventNotificationCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).putIfAbsent(cacheKey, new ArrayList<Notification>());
             List<Notification> notifications = eventNotificationCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
+            if (notifications == null) {
+                notifications = new ArrayList<Notification>();
+            }
             notifications.add(notif);
             eventNotificationCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, notifications);
 
@@ -125,7 +127,7 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
 
         List<Notification> notifs = eventNotificationCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
 
-        if (notifs != null && notifs.isEmpty()) {
+        if (notifs != null && !notifs.isEmpty()) {
             boolean removed = notifs.remove(notif);
             if (removed) {
                 // Remove cached value altogether if no value are left in the list

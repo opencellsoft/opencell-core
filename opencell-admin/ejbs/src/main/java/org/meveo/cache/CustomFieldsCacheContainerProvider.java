@@ -287,9 +287,11 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
             // If value is still cacheable - update (remove and add) the value
             CachedCFPeriodValue cfvValue = convertFromCFI(cfi, calculateCutoffDate(cfi.getCode(), entity));
             if (cfvValue != null) {
-                customFieldValueCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).putIfAbsent(cacheKey, new TreeMap<String, List<CachedCFPeriodValue>>());
 
                 Map<String, List<CachedCFPeriodValue>> entityCFValues = customFieldValueCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
+                if (entityCFValues == null) {
+                    entityCFValues = new TreeMap<String, List<CachedCFPeriodValue>>();
+                }
 
                 entityCFValues.putIfAbsent(cfi.getCode(), new ArrayList<CachedCFPeriodValue>());
                 entityCFValues.get(cfi.getCode()).remove(cfvValue);
@@ -612,7 +614,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
         if (cutoffPeriod == null) {
             return null;
         }
-        
+
         Calendar calendar = new GregorianCalendar();
         calendar.add(Calendar.DATE, (-1) * cutoffPeriod.intValue());
         Date cutoffDate = calendar.getTime();
@@ -649,25 +651,30 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
 
         String cacheKeyByAppliesTo = getCFTCacheKeyByAppliesTo(cft);
 
-        cftsByAppliesTo.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).putIfAbsent(cacheKeyByAppliesTo, new TreeMap<String, CustomFieldTemplate>());
         Map<String, CustomFieldTemplate> cfts = cftsByAppliesTo.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKeyByAppliesTo);
+        if (cfts == null) {
+            cfts = new TreeMap<String, CustomFieldTemplate>();
+        }
 
         // Load calendar for lazy loading
         if (cft.getCalendar() != null) {
             cft.setCalendar(PersistenceUtils.initializeAndUnproxy(cft.getCalendar()));
             if (cft.getCalendar() instanceof CalendarDaily) {
                 ((CalendarDaily) cft.getCalendar()).setHours(PersistenceUtils.initializeAndUnproxy(((CalendarDaily) cft.getCalendar()).getHours()));
+                ((CalendarDaily) cft.getCalendar()).nextPeriodStartDate(new Date());
             } else if (cft.getCalendar() instanceof CalendarYearly) {
                 ((CalendarYearly) cft.getCalendar()).setDays(PersistenceUtils.initializeAndUnproxy(((CalendarYearly) cft.getCalendar()).getDays()));
+                ((CalendarYearly) cft.getCalendar()).nextPeriodStartDate(new Date());
             } else if (cft.getCalendar() instanceof CalendarInterval) {
                 ((CalendarInterval) cft.getCalendar()).setIntervals(PersistenceUtils.initializeAndUnproxy(((CalendarInterval) cft.getCalendar()).getIntervals()));
+                ((CalendarInterval) cft.getCalendar()).nextPeriodStartDate(new Date());
             }
         }
         if (cft.getListValues() != null) {
             cft.setListValues(PersistenceUtils.initializeAndUnproxy(cft.getListValues()));
         }
 
-        cftsByAppliesTo.get(cacheKeyByAppliesTo).put(cft.getCode(), cft);
+        cfts.put(cft.getCode(), cft);
         cftsByAppliesTo.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKeyByAppliesTo, cfts);
 
         if (cft.isVersionable()) {

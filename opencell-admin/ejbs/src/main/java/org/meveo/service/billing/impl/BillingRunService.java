@@ -646,7 +646,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		case CANCELED:
 		case NEW:
 		default:
-			throw new BusinessException("BillingRun with status NEW,VALIDATED or CANCELED cannot be validated");
+			throw new BusinessException("BillingRun with status " + billingRun.getStatus() + " cannot be validated");
 		}
 	}
 	
