@@ -82,6 +82,16 @@
 	<td></td>
 </tr>
 <tr>
+	<td>type</td>
+	<td>id=userAccountPopuppopupForm:searchField1</td>
+	<td>UA_SELENIUM</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=userAccountPopuppopupForm:buttonSearch</td>
+	<td></td>
+</tr>
+<tr>
 	<td>click</td>
 	<td>//tbody[@id='userAccountPopuppopupForm:userAccountPopupdatatable_data']/tr/td</td>
 	<td></td>
@@ -92,13 +102,28 @@
 	<td></td>
 </tr>
 <tr>
+	<td>type</td>
+	<td>id=offerPopuppopupForm:searchField1</td>
+	<td>OF_SELENIUM</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=offerPopuppopupForm:buttonSearch</td>
+	<td></td>
+</tr>
+<tr>
 	<td>click</td>
 	<td>//tbody[@id='offerPopuppopupForm:offerPopupdatatable_data']/tr/td</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>id=quoteForm:tabView:j_idt327</td>
+	<td>//span[3]/div/div/input</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[2]/div[2]/button</td>
 	<td></td>
 </tr>
 <tr>
@@ -106,7 +131,6 @@
 	<td>//button[contains(@id,'saveButtonAjax')]</td>
 	<td></td>
 </tr>
-
 </tbody></table>
 </body>
 </html>

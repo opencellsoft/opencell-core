@@ -67,6 +67,16 @@
 	<td></td>
 </tr>
 <tr>
+	<td>type</td>
+	<td>id=userAccountPopuppopupForm:searchField1</td>
+	<td>UA_SELENIUM</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=userAccountPopuppopupForm:buttonSearch</td>
+	<td></td>
+</tr>
+<tr>
 	<td>click</td>
 	<td>//tbody[@id='userAccountPopuppopupForm:userAccountPopupdatatable_data']/tr/td</td>
 	<td></td>
@@ -74,6 +84,16 @@
 <tr>
 	<td>click</td>
 	<td>id=orderForm:tabView:offer_selectLink</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=offerPopuppopupForm:searchField1</td>
+	<td>OF_SELENIUM</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=offerPopuppopupForm:buttonSearch</td>
 	<td></td>
 </tr>
 <tr>
@@ -96,7 +116,6 @@
 	<td>id=datatable_results:0:code_id_message_link</td>
 	<td>OR_SELENIUM</td>
 </tr>
-
 </tbody></table>
 </body>
 </html>

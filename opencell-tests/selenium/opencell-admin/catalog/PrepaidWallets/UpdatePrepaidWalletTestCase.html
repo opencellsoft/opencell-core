@@ -12,14 +12,19 @@
 <tr><td rowspan="1" colspan="3">UpdatePrepaidWalletTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>assertText</td>
-	<td>//a[contains(text(),'${CodePPW}')]</td>
+	<td>type</td>
+	<td>id=searchForm:code_txt</td>
 	<td>${CodePPW}</td>
 </tr>
 <tr>
-	<td>assertElementPresent</td>
-	<td>//a[contains(text(),'${CodePPW}')]</td>
+	<td>click</td>
+	<td>id=searchForm:buttonSearch</td>
 	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${CodePPW}')]</td>
+	<td>${CodePPW}</td>
 </tr>
 <tr>
 	<td>clickAndWait</td>

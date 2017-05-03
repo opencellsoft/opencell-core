@@ -12,11 +12,6 @@
 <tr><td rowspan="1" colspan="3">DeleteQuote</td></tr>
 </thead><tbody>
 <tr>
-	<td>open</td>
-	<td>/opencell/pages/quote/quotes/quotes.jsf?cid=46</td>
-	<td></td>
-</tr>
-<tr>
 	<td>type</td>
 	<td>id=searchForm:code_txt</td>
 	<td>QT_SELENIUM</td>
@@ -27,31 +22,15 @@
 	<td></td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
-	<td>id=searchForm:buttonNew</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForPopUp</td>
-	<td>_self</td>
-	<td>30000</td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>id=quoteForm:tabView:quoteInfo:code_txt</td>
-	<td></td>
-</tr>
-<tr>
 	<td>click</td>
 	<td>//button[contains(@id,'deletelink')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//div[69]/div[3]/button</td>
+	<td>${deleteYes}</td>
 	<td></td>
 </tr>
-
 </tbody></table>
 </body>
 </html>

@@ -12,18 +12,13 @@
 <tr><td rowspan="1" colspan="3">UpdateQuote</td></tr>
 </thead><tbody>
 <tr>
-	<td>clickAndWait</td>
-	<td>//a[@id='menu:quotes']/span</td>
-	<td></td>
-</tr>
-<tr>
-	<td>clickAndWait</td>
-	<td>link=QT_SELENIUM</td>
-	<td></td>
+	<td>type</td>
+	<td>id=searchForm:code_txt</td>
+	<td>QT_SELENIUM</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//div[3]/div/div[2]/button</td>
+	<td>id=searchForm:buttonSearch</td>
 	<td></td>
 </tr>
 <tr>
@@ -33,10 +28,14 @@
 </tr>
 <tr>
 	<td>clickAndWait</td>
+	<td>link=QT_SELENIUM</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
 	<td>//button[contains(@id,'saveButtonAjax')]</td>
 	<td></td>
 </tr>
-
 </tbody></table>
 </body>
 </html>
