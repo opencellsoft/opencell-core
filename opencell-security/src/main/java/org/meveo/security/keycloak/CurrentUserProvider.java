@@ -100,7 +100,7 @@ public class CurrentUserProvider {
             } catch (NoResultException e) {
 
                 user = new User();
-                user.setUserName(currentUser.getUserName());
+                user.setUserName(currentUser.getUserName().toUpperCase());
                 if (currentUser.getFullName() != null) {
                     int spacePos = currentUser.getFullName().indexOf(' ');
                     if (spacePos > 0) {
@@ -112,6 +112,7 @@ public class CurrentUserProvider {
                 }
                 user.updateAudit(currentUser);
                 em.persist(user);
+                em.flush();
                 log.info("A new application user was registered with username {} and name {}", user.getUserName(), user.getName().getFullName());
             }
 
