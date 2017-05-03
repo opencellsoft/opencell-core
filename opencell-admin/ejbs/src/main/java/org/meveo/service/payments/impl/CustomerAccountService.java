@@ -31,6 +31,7 @@ import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
+import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
@@ -295,6 +296,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 	 *      org.meveo.model.payments.PaymentMethodEnum,
 	 *      org.meveo.model.admin.User)
 	 */
+	@MeveoAudit
 	public void updateCustomerAccount(Long id, String code, String title, String firstName, String lastName,
 			String address1, String address2, String zipCode, String city, String state, String email,
 			String creditCategory, PaymentMethodEnum paymentMethod) throws BusinessException {
@@ -337,6 +339,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 		log.info("successfully update customer account with code:" + code);
 	}
 
+	@MeveoAudit
 	public void closeCustomerAccount(CustomerAccount customerAccount) throws BusinessException {
 		log.info("closeCustomerAccount customerAccount {}", (customerAccount == null ? "null" : customerAccount.getCode()));
 
@@ -381,6 +384,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 		closeCustomerAccount(findCustomerAccount(customerAccountId, customerAccountCode));
 	}
 
+	@MeveoAudit
 	public void transferAccount(CustomerAccount fromCustomerAccount, CustomerAccount toCustomerAccount,
 			BigDecimal amount) throws BusinessException, Exception {
 		log.info("transfertAccount fromCustomerAccount {} toCustomerAccount {} amount {}", (fromCustomerAccount == null ? "null" : fromCustomerAccount.getCode()), (toCustomerAccount == null ? "null" : toCustomerAccount.getCode()),  amount);
@@ -458,6 +462,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 	/**
 	 * update dunningLevel for one existed customer account by id or code
 	 */
+	@MeveoAudit
 	public void updateDunningLevel(Long id, String code, DunningLevelEnum dunningLevel)
 			throws BusinessException {
 		log.info("start updateDunningLevel with id:" + id + ",code:" + code);
@@ -475,6 +480,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 	/**
 	 * update paymentMethod for one existed customer account by id or code
 	 */
+	@MeveoAudit
 	public void updatePaymentMethod(Long id, String code, PaymentMethodEnum paymentMethod)
 			throws BusinessException {
 		log.info("start updatePaymentMethod with id:" + id + ",code:" + code);

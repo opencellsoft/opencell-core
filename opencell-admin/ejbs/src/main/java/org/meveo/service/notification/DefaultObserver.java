@@ -16,6 +16,7 @@ import org.meveo.admin.ftp.event.FileDelete;
 import org.meveo.admin.ftp.event.FileDownload;
 import org.meveo.admin.ftp.event.FileRename;
 import org.meveo.admin.ftp.event.FileUpload;
+import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.cache.NotificationCacheContainerProvider;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.CFEndPeriodEvent;
@@ -302,12 +303,14 @@ public class DefaultObserver {
         checkEvent(NotificationEventTypeEnum.LOGGED_IN, e);
     }
 
+    @MeveoAudit
     public void inboundRequest(@Observes @InboundRequestReceived InboundRequest e) {
         log.debug("Defaut observer : inbound request {} ", e.getCode());
         boolean fired = checkEvent(NotificationEventTypeEnum.INBOUND_REQ, e);
         e.getHeaders().put("fired", fired?"true":"false");
     }
 
+    @MeveoAudit
     public void LowBalance(@Observes @LowBalance WalletInstance e) {
         log.debug("Defaut observer : low balance on {} ", e.getCode());
         checkEvent(NotificationEventTypeEnum.LOW_BALANCE, e);

@@ -45,14 +45,14 @@ import org.meveo.model.admin.User;
 import org.meveo.model.security.Role;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.shared.Title;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.AuditablePersistenceService;
 
 /**
  * User service implementation.
  */
 @Stateless
 @DeclareRoles({"userManagement"})
-public class UserService extends PersistenceService<User> {
+public class UserService extends AuditablePersistenceService<User> {
 
 	static User systemUser = null;
 

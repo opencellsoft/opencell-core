@@ -27,6 +27,7 @@ import javax.inject.Inject;
 import javax.persistence.DiscriminatorValue;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.payments.MatchingStatusEnum;
@@ -120,6 +121,7 @@ public class OtherCreditAndChargeService extends
      * Set the discriminatorValue value, so it would be available in the list of entities right away
      * @throws BusinessException 
      */
+	@MeveoAudit
     @Override
     public void create(OtherCreditAndCharge occ) throws BusinessException {
 
