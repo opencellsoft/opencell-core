@@ -760,11 +760,11 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
     }
 
     @Override
-    public CustomersResponseDto listCustomerWithFilter(CustomerDto postData) {
+    public CustomersResponseDto listCustomerWithFilter(CustomerDto postData, Integer firstRow, Integer numberOfRows) {
         CustomersResponseDto result = new CustomersResponseDto();
 
         try {
-            result.setCustomers(customerApi.filterCustomer(postData));
+            result.setCustomers(customerApi.filterCustomer(postData, firstRow, numberOfRows));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);

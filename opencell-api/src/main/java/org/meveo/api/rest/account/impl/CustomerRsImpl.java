@@ -110,11 +110,11 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
     }
 
     @Override
-    public CustomersResponseDto list(CustomerDto postData) {
+    public CustomersResponseDto list(CustomerDto postData, int firstRow, int numberOfRows) {
         CustomersResponseDto result = new CustomersResponseDto();
 
         try {
-            result.setCustomers(customerApi.filterCustomer(postData));
+            result.setCustomers(customerApi.filterCustomer(postData, firstRow, numberOfRows));
         } catch (MeveoApiException e) {
             result.getActionStatus().setErrorCode(e.getErrorCode());
             result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
