@@ -78,7 +78,7 @@ public class QuoteService extends BusinessService<Quote> {
      * @param productInstances Sumulated product instances
      * @param fromDate Date range for recuring charges - from
      * @param toDate Date range for recuring charges - to
-
+     * 
      * @return
      * @throws BusinessException
      */
@@ -112,11 +112,21 @@ public class QuoteService extends BusinessService<Quote> {
                 if (quoteInvoiceInfo.getSubscription() != null) {
                     billingAccount = quoteInvoiceInfo.getSubscription().getUserAccount().getBillingAccount();
 
-                    // Add subscription charges
+                    // Add Service charges
                     for (ServiceInstance serviceInstance : quoteInvoiceInfo.getSubscription().getServiceInstances()) {
+
+                        // Add subscription charges
                         for (OneShotChargeInstance subscriptionCharge : serviceInstance.getSubscriptionChargeInstances()) {
                             walletOperations.add(oneShotChargeInstanceService.oneShotChargeApplicationVirtual(quoteInvoiceInfo.getSubscription(), subscriptionCharge,
                                 serviceInstance.getSubscriptionDate(), serviceInstance.getQuantity()));
+                        }
+
+                        // Add termination charges
+                        if (serviceInstance.getTerminationDate() != null && serviceInstance.getSubscriptionTerminationReason().isApplyTerminationCharges()) {
+                            for (OneShotChargeInstance terminationCharge : serviceInstance.getTerminationChargeInstances()) {
+                                walletOperations.add(oneShotChargeInstanceService.oneShotChargeApplicationVirtual(quoteInvoiceInfo.getSubscription(), terminationCharge,
+                                    serviceInstance.getTerminationDate(), serviceInstance.getQuantity()));
+                            }
                         }
 
                         // Add recurring charges
@@ -170,7 +180,7 @@ public class QuoteService extends BusinessService<Quote> {
                     }
                 }
             }
-            
+
             // Create rated transactions from wallet operations
             for (WalletOperation walletOperation : walletOperations) {
                 ratedTransactions.add(ratedTransactionService.createRatedTransaction(walletOperation, true));
