@@ -30,8 +30,7 @@
             <hftl:column label="#{messages['user.name']}" field="name.fullName"/>
             <hftl:column label="#{messages['user.userGroupLevel']}" field="userLevel.descriptionOrCode"/>
 			<hftl:column label="#{messages['user.roles']}" field="roles"
-				valueLabelField="name" isList="true" sort="false" />
-            <hftl:column label="#{messages['commons.provider']}" field="provider.code" rendered="#{currentUser.hasRole('superAdminManagement')}" />             
+				valueLabelField="name" isList="true" sort="false" />            
 
 			<hftl:actionsColumn
 				permission="#{currentUser.hasRole('administrationManagement')}" />
