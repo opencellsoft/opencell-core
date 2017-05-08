@@ -5395,7 +5395,86 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-403">
         <addPrimaryKey columnNames="product_id, digital_resource_id" constraintName="cat_product_offer_digital_res_pkey" tableName="cat_product_offer_digital_res" />
     </changeSet>
-
+    
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-404">
+        <addPrimaryKey columnNames="emailnotification_id, attachmentexpressions" constraintName="adm_notif_email_attach_pkey" tableName="adm_notif_email_attach" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-405">
+        <addPrimaryKey columnNames="emailnotification_id, emails" constraintName="adm_notif_email_list_pkey" tableName="adm_notif_email_list" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-406">
+        <addPrimaryKey columnNames="emailnotification_id, users_id" constraintName="adm_notif_email_attach_pkey" tableName="adm_notif_email_user" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-407">
+        <addPrimaryKey columnNames="instantmessagingnotification_id, ids" constraintName="adm_notif_im_list_pkey" tableName="adm_notif_im_list" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-408">
+        <addPrimaryKey columnNames="role_id, permission_id" constraintName="adm_role_permission_pkey" tableName="adm_role_permission" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-409">
+        <addPrimaryKey columnNames="role_id, child_role_id" constraintName="adm_role_role_pkey" tableName="adm_role_role" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-410">
+        <addPrimaryKey columnNames="user_id, code, entity_class" constraintName="adm_secured_entity_pkey" tableName="adm_secured_entity" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-411">
+        <addPrimaryKey columnNames="invoice_id, order_id" constraintName="billing_invoices_orders_pkey" tableName="billing_invoices_orders" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-412">
+        <addPrimaryKey columnNames="sub_cat_invoice_aggregat_id, tax_id" constraintName="billing_invoice_agregate_taxes_pkey" tableName="billing_invoice_agregate_taxes" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-413">
+        <addPrimaryKey columnNames="invoice_type_id, applies_to_id" constraintName="billing_invoice_type_applies_to_pkey" tableName="billing_invoice_type_applies_to" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-414">
+        <addPrimaryKey columnNames="id, linked_invoice_id" constraintName="billing_linked_invoices_pkey" tableName="billing_linked_invoices" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-415">
+        <addPrimaryKey columnNames="report_id, email_id" constraintName="bi_report_emails_pkey" tableName="bi_report_emails" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-416">
+        <addPrimaryKey columnNames="calendar_id, day_id" constraintName="cat_calendar_days_pkey" tableName="cat_calendar_days" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-417">
+        <addPrimaryKey columnNames="calendar_id, hour_id" constraintName="cat_calendar_hours_pkey" tableName="cat_calendar_hours" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-418">
+        <addPrimaryKey columnNames="charge_tmpl_id, trigg_edr_id" constraintName="cat_chrg_edr_pkey" tableName="cat_chrg_edr" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-419">
+        <addPrimaryKey columnNames="product_charge_template_id, product_template_id" constraintName="cat_product_templ_charge_templ_pkey" tableName="cat_product_templ_charge_templ" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-420">
+        <addPrimaryKey columnNames="product_template_id, wallet_template_id" constraintName="cat_product_wallet_template_pkey" tableName="cat_product_wallet_template" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-421">
+        <addPrimaryKey columnNames="com_contact_id, messages_id" constraintName="com_contact_com_message_pkey" tableName="com_contact_com_message" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-422">
+        <addPrimaryKey columnNames="cft_id, code" constraintName="crm_custom_field_tmpl_mcols_pkey" tableName="crm_custom_field_tmpl_mcols" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-423">
+        <addPrimaryKey columnNames="field_name, order_condition_id" constraintName="meveo_filter_oc_field_names_pkey" tableName="meveo_filter_oc_field_names" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-424">
+        <addPrimaryKey columnNames="filter_selector_id, display_field" constraintName="meveo_filter_selector_display_fields_pkey" tableName="meveo_filter_selector_display_fields" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-425">
+        <addPrimaryKey columnNames="filter_selector_id, export_field" constraintName="meveo_filter_selector_export_fields_pkey" tableName="meveo_filter_selector_export_fields" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-426">
+        <addPrimaryKey columnNames="filter_selector_id, ignored_field" constraintName="meveo_filter_selector_ignore_fields_pkey" tableName="meveo_filter_selector_ignore_fields" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-427">
+        <addPrimaryKey columnNames="order_item_id, prd_instance_id" constraintName="ord_item_prd_instance_pkey" tableName="ord_item_prd_instance" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-428">
+        <addPrimaryKey columnNames="email_id, report_id" constraintName="report_emails_pkey" tableName="report_emails" />
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-429">
+        <addPrimaryKey columnNames="transition_id, decision_rule_id" constraintName="wf_transition_decision_rule_pkey" tableName="wf_transition_decision_rule" />
+    </changeSet>
+ 
     <!-- end pk -->
     <!-- start uk -->
 

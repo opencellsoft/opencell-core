@@ -2087,574 +2087,858 @@
 
     </changeSet>
 
-
+ 
 	<changeSet id="#2334_20170404" author="AndriusKarpavicius" dbms="mysql">
 		<createTable tableName="account_entity_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="account_entity_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into account_entity_seq (select IFNULL(max(id),0)+1 from account_entity)</sql>
 		<createTable tableName="adm_country_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="adm_country_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into adm_country_seq (select IFNULL(max(id),0)+1 from adm_country)</sql>
 		<createTable tableName="adm_currency_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="adm_currency_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into adm_currency_seq (select IFNULL(max(id),0)+1 from adm_currency)</sql>
 		<createTable tableName="adm_inbound_request_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="adm_inbound_request_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into adm_inbound_request_seq (select IFNULL(max(id),0)+1 from adm_inbound_request)</sql>
 		<createTable tableName="adm_input_history_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="adm_input_history_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into adm_input_history_seq (select IFNULL(max(id),0)+1 from adm_input_history)</sql>
 		<createTable tableName="adm_language_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="adm_language_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into adm_language_seq (select IFNULL(max(id),0)+1 from adm_language)</sql>
 		<createTable tableName="adm_messages_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="adm_messages_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into adm_messages_seq (select IFNULL(max(id),0)+1 from adm_messages)</sql>
 		<createTable tableName="adm_notif_history_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="adm_notif_history_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into adm_notif_history_seq (select IFNULL(max(id),0)+1 from adm_notif_history)</sql>
 		<createTable tableName="adm_notification_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="adm_notification_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into adm_notification_seq (select IFNULL(max(id),0)+1 from adm_notification)</sql>
 		<createTable tableName="adm_permission_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="adm_permission_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into adm_permission_seq (select IFNULL(max(id),0)+1 from adm_permission)</sql>
 		<createTable tableName="adm_role_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="adm_role_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into adm_role_seq (select IFNULL(max(id),0)+1 from adm_role)</sql>
 		<createTable tableName="adm_title_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="adm_title_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into adm_title_seq (select IFNULL(max(id),0)+1 from adm_title)</sql>
 		<createTable tableName="adm_user_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="adm_user_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into adm_user_seq (select IFNULL(max(id),0)+1 from adm_user)</sql>
 		<createTable tableName="ar_account_operation_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_account_operation_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into ar_account_operation_seq (select IFNULL(max(id),0)+1 from ar_account_operation)</sql>
 		<createTable tableName="ar_action_dunning_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_action_dunning_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into ar_action_dunning_seq (select IFNULL(max(id),0)+1 from ar_action_dunning)</sql>
 		<createTable tableName="ar_bank_operation_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_bank_operation_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into ar_bank_operation_seq (select IFNULL(max(id),0)+1 from ar_bank_operation)</sql>
 		<createTable tableName="ar_ddrequest_item_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_ddrequest_item_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into ar_ddrequest_item_seq (select IFNULL(max(id),0)+1 from ar_ddrequest_item)</sql>
 		<createTable tableName="ar_ddrequest_lot_op_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_ddrequest_lot_op_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into ar_ddrequest_lot_op_seq (select IFNULL(max(id),0)+1 from ar_ddrequest_lot_op)</sql>
 		<createTable tableName="ar_ddrequest_lot_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_ddrequest_lot_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into ar_ddrequest_lot_seq (select IFNULL(max(id),0)+1 from ar_ddrequest_lot)</sql>
 		<createTable tableName="ar_due_date_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_due_date_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into ar_due_date_seq (select IFNULL(max(id),0)+1 from ar_due_date)</sql>
 		<createTable tableName="ar_dunning_lot_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_dunning_lot_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into ar_dunning_lot_seq (select IFNULL(max(id),0)+1 from ar_dunning_lot)</sql>
 		<createTable tableName="ar_matching_amount_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_matching_amount_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into ar_matching_amount_seq (select IFNULL(max(id),0)+1 from ar_matching_amount)</sql>
 		<createTable tableName="ar_matching_code_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_matching_code_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into ar_matching_code_seq (select IFNULL(max(id),0)+1 from ar_matching_code)</sql>
 		<createTable tableName="ar_occ_template_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_occ_template_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into ar_occ_template_seq (select IFNULL(max(id),0)+1 from ar_occ_template)</sql>
 		<createTable tableName="bi_job_history_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="bi_job_history_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into bi_job_history_seq (select IFNULL(max(id),0)+1 from bi_job_history)</sql>
 		<createTable tableName="bi_job_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="bi_job_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into bi_job_seq (select IFNULL(max(id),0)+1 from bi_job)</sql>
 		<createTable tableName="bi_report_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="bi_report_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into bi_report_seq (select IFNULL(max(id),0)+1 from bi_report)</sql>
 		<createTable tableName="billing_billing_run_list_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_billing_run_list_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into billing_billing_run_list_seq (select IFNULL(max(id),0)+1 from billing_billing_run_list)</sql>
 		<createTable tableName="billing_billing_run_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_billing_run_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into billing_billing_run_seq (select IFNULL(max(id),0)+1 from billing_billing_run)</sql>
 		<createTable tableName="billing_charge_instance_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_charge_instance_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into billing_charge_instance_seq (select IFNULL(max(id),0)+1 from billing_charge_instance)</sql>
 		<createTable tableName="billing_counter_instance_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_counter_instance_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into billing_counter_instance_seq (select IFNULL(max(id),0)+1 from billing_counter)</sql>
 		<createTable tableName="billing_counter_period_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_counter_period_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into billing_counter_period_seq (select IFNULL(max(id),0)+1 from billing_counter_period)</sql>
 		<createTable tableName="billing_cycle_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_cycle_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into billing_cycle_seq (select IFNULL(max(id),0)+1 from billing_cycle)</sql>
 		<createTable tableName="billing_disc_inst_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_disc_inst_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into billing_disc_inst_seq (select IFNULL(max(id),0)+1 from billing_discplan_inst)</sql>
 		<createTable tableName="billing_discount_language_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_discount_language_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into billing_discount_language_seq (select IFNULL(max(id),0)+1 from billing_discount_language)</sql>
 		<createTable tableName="billing_discount_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_discount_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into billing_discount_seq (select IFNULL(max(id),0)+1 from billing_discount)</sql>
 		<createTable tableName="billing_inv_sub_cat_country_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_inv_sub_cat_country_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into billing_inv_sub_cat_country_seq (select IFNULL(max(id),0)+1 from billing_inv_sub_cat_country)</sql>
 		<createTable tableName="billing_invoice_agregate_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_invoice_agregate_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into billing_invoice_agregate_seq (select IFNULL(max(id),0)+1 from billing_invoice_agregate)</sql>
 		<createTable tableName="billing_invoice_cat_lang_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_invoice_cat_lang_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into billing_invoice_cat_lang_seq (select IFNULL(max(id),0)+1 from billing_invoice_cat_lang)</sql>
 		<createTable tableName="billing_invoice_cat_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_invoice_cat_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into billing_invoice_cat_seq (select IFNULL(max(id),0)+1 from billing_invoice_cat)</sql>
 		<createTable tableName="billing_invoice_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_invoice_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into billing_invoice_seq (select IFNULL(max(id),0)+1 from billing_invoice)</sql>
 		<createTable tableName="billing_invoice_sub_cat_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_invoice_sub_cat_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into billing_invoice_sub_cat_seq (select IFNULL(max(id),0)+1 from billing_invoice_sub_cat)</sql>
-		<createTable tableName="billing_invoice_sub_country_seq">
-			<column name="next_val" type="BIGINT" />
-		</createTable>
-		<sql>insert into billing_inv_sub_cat_country_seq (select IFNULL(max(id),0)+1 from billing_inv_sub_cat_country)</sql>
+<!-- 		<createTable tableName="billing_invoice_sub_country_seq"> -->
+<!-- 			<column name="next_val" type="BIGINT" > -->
+<!--                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_invoice_sub_country_seq_pk" /> -->
+<!--             </column> -->
+<!-- 		</createTable> -->
+<!-- 		<sql>insert into billing_inv_sub_country_seq (select IFNULL(max(id),0)+1 from billing_inv_sub_country)</sql> -->
 		<createTable tableName="billing_invoice_template_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_invoice_template_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into billing_invoice_template_seq (select IFNULL(max(id),0)+1 from billing_invoice_template)</sql>
 		<createTable tableName="billing_rated_transaction_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_rated_transaction_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into billing_rated_transaction_seq (select IFNULL(max(id),0)+1 from billing_rated_transaction)</sql>
 		<createTable tableName="billing_rejected_ba_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_rejected_ba_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into billing_rejected_ba_seq (select IFNULL(max(id),0)+1 from billing_rejected_billing_accounts)</sql>
 		<createTable tableName="billing_reservation_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_reservation_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into billing_reservation_seq (select IFNULL(max(id),0)+1 from billing_reservation)</sql>
 		<createTable tableName="billing_service_instance_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_service_instance_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into billing_service_instance_seq (select IFNULL(max(id),0)+1 from billing_service_instance)</sql>
 		<createTable tableName="billing_sub_term_reason_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_sub_term_reason_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into billing_sub_term_reason_seq (select IFNULL(max(id),0)+1 from billing_subscrip_termin_reason)</sql>
 		<createTable tableName="billing_subscription_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_subscription_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into billing_subscription_seq (select IFNULL(max(id),0)+1 from billing_subscription)</sql>
 		<createTable tableName="billing_tax_language_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_tax_language_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into billing_tax_language_seq (select IFNULL(max(id),0)+1 from billing_tax_language)</sql>
 		<createTable tableName="billing_tax_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_tax_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into billing_tax_seq (select IFNULL(max(id),0)+1 from billing_tax)</sql>
 		<createTable tableName="billing_trading_country_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_trading_country_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into billing_trading_country_seq (select IFNULL(max(id),0)+1 from billing_trading_country)</sql>
 		<createTable tableName="billing_trading_currency_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_trading_currency_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into billing_trading_currency_seq (select IFNULL(max(id),0)+1 from billing_trading_currency)</sql>
 		<createTable tableName="billing_trading_language_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_trading_language_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into billing_trading_language_seq (select IFNULL(max(id),0)+1 from billing_trading_language)</sql>
 		<createTable tableName="billing_wallet_operation_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_wallet_operation_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into billing_wallet_operation_seq (select IFNULL(max(id),0)+1 from billing_wallet_operation)</sql>
 		<createTable tableName="billing_wallet_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_wallet_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into billing_wallet_seq (select IFNULL(max(id),0)+1 from billing_wallet)</sql>
 		<createTable tableName="cat_calendar_interval_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_calendar_interval_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into cat_calendar_interval_seq (select IFNULL(max(id),0)+1 from cat_calendar_interval)</sql>
 		<createTable tableName="cat_calendar_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_calendar_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into cat_calendar_seq (select IFNULL(max(id),0)+1 from cat_calendar)</sql>
 		<createTable tableName="cat_charge_template_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_charge_template_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into cat_charge_template_seq (select IFNULL(max(id),0)+1 from cat_charge_template)</sql>
 		<createTable tableName="cat_counter_template_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_counter_template_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into cat_counter_template_seq (select IFNULL(max(id),0)+1 from cat_counter_template)</sql>
 		<createTable tableName="cat_day_in_year_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_day_in_year_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into cat_day_in_year_seq (select IFNULL(max(id),0)+1 from cat_day_in_year)</sql>
 		<createTable tableName="cat_discount_plan_item_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_discount_plan_item_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into cat_discount_plan_item_seq (select IFNULL(max(id),0)+1 from cat_discount_plan_item)</sql>
 		<createTable tableName="cat_discount_plan_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_discount_plan_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into cat_discount_plan_seq (select IFNULL(max(id),0)+1 from cat_discount_plan)</sql>
 		<createTable tableName="cat_hour_in_day_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_hour_in_day_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into cat_hour_in_day_seq (select IFNULL(max(id),0)+1 from cat_hour_in_day)</sql>
 		<createTable tableName="cat_offer_template_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_offer_template_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into cat_offer_template_seq (select IFNULL(max(id),0)+1 from cat_offer_template)</sql>
 		<createTable tableName="cat_price_plan_matrix_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_price_plan_matrix_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into cat_price_plan_matrix_seq (select IFNULL(max(id),0)+1 from cat_price_plan_matrix)</sql>
 		<createTable tableName="cat_serv_recchrg_templt_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_serv_recchrg_templt_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into cat_serv_recchrg_templt_seq (select IFNULL(max(id),0)+1 from cat_serv_rec_charge_template)</sql>
 		<createTable tableName="cat_serv_subchrg_templt_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_serv_subchrg_templt_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into cat_serv_subchrg_templt_seq (select IFNULL(max(id),0)+1 from cat_serv_sub_charge_template)</sql>
 		<createTable tableName="cat_serv_trmchrg_templt_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_serv_trmchrg_templt_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into cat_serv_trmchrg_templt_seq (select IFNULL(max(id),0)+1 from cat_serv_trm_charge_template)</sql>
 		<createTable tableName="cat_serv_usagechrg_templt_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_serv_usagechrg_templt_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into cat_serv_usagechrg_templt_seq (select IFNULL(max(id),0)+1 from cat_serv_usage_charge_template)</sql>
 		<createTable tableName="cat_service_template_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_service_template_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into cat_service_template_seq (select IFNULL(max(id),0)+1 from cat_service_template)</sql>
 		<createTable tableName="cat_triggered_edr_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_triggered_edr_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into cat_triggered_edr_seq (select IFNULL(max(id),0)+1 from cat_triggered_edr)</sql>
 		<createTable tableName="cat_wallet_template_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_wallet_template_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into cat_wallet_template_seq (select IFNULL(max(id),0)+1 from cat_wallet_template)</sql>
 		<createTable tableName="com_campaign_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="com_campaign_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into com_campaign_seq (select IFNULL(max(id),0)+1 from com_campaign)</sql>
 		<createTable tableName="com_contact_coords_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="com_contact_coords_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into com_contact_coords_seq (select IFNULL(max(id),0)+1 from com_contact_coords)</sql>
 		<createTable tableName="com_contact_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="com_contact_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into com_contact_seq (select IFNULL(max(id),0)+1 from com_contact)</sql>
 		<createTable tableName="com_message_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="com_message_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into com_message_seq (select IFNULL(max(id),0)+1 from com_message)</sql>
 		<createTable tableName="com_msg_tmpl_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="com_msg_tmpl_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into com_msg_tmpl_seq (select IFNULL(max(id),0)+1 from COM_MESSAGE_TEMPLATE)</sql>
 		<createTable tableName="com_msg_tmpl_var_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="com_msg_tmpl_var_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into com_msg_tmpl_var_seq (select IFNULL(max(id),0)+1 from COM_MSG_TMPL_VARIABLE)</sql>
 		<createTable tableName="com_msg_var_val_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="com_msg_var_val_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into com_msg_var_val_seq (select IFNULL(max(id),0)+1 from COM_MSG_VAR_VALUE)</sql>
 		<createTable tableName="com_prov_pol_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="com_prov_pol_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into com_prov_pol_seq (select IFNULL(max(id),0)+1 from COM_PROVIDER_POLICY)</sql>
 		<createTable tableName="com_sndr_conf_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="com_sndr_conf_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into com_sndr_conf_seq (select IFNULL(max(id),0)+1 from COM_SENDER_CONFIG)</sql>
 		<createTable tableName="crm_custom_field_inst_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="crm_custom_field_inst_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into crm_custom_field_inst_seq (select IFNULL(max(id),0)+1 from crm_custom_field_inst)</sql>
 		<createTable tableName="crm_custom_fld_tmp_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="crm_custom_fld_tmp_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into crm_custom_fld_tmp_seq (select IFNULL(max(id),0)+1 from CRM_CUSTOM_FIELD_TMPL)</sql>
 		<createTable tableName="crm_customer_brand_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="crm_customer_brand_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into crm_customer_brand_seq (select IFNULL(max(id),0)+1 from crm_customer_brand)</sql>
 		<createTable tableName="crm_customer_category_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="crm_customer_category_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into crm_customer_category_seq (select IFNULL(max(id),0)+1 from crm_customer_category)</sql>
 		<createTable tableName="crm_email_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="crm_email_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into crm_email_seq (select IFNULL(max(id),0)+1 from crm_email)</sql>
 		<createTable tableName="crm_provider_contact_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="crm_provider_contact_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into crm_provider_contact_seq (select IFNULL(max(id),0)+1 from crm_provider_contact)</sql>
 		<createTable tableName="crm_provider_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="crm_provider_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into crm_provider_seq (select IFNULL(max(id),0)+1 from crm_provider)</sql>
 		<createTable tableName="crm_seller_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="crm_seller_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into crm_seller_seq (select IFNULL(max(id),0)+1 from crm_seller)</sql>
 		<createTable tableName="dwh_account_operation_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dwh_account_operation_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into dwh_account_operation_seq (select IFNULL(max(id),0)+1 from dwh_account_operation)</sql>
 		<createTable tableName="dwh_journal_entries_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dwh_journal_entries_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into dwh_journal_entries_seq (select IFNULL(max(id),0)+1 from dwh_journal_entries)</sql>
 		<createTable tableName="dwh_measurable_quant_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dwh_measurable_quant_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into dwh_measurable_quant_seq (select IFNULL(max(id),0)+1 from dwh_measurable_quant)</sql>
 		<createTable tableName="dwh_measured_value_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dwh_measured_value_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into dwh_measured_value_seq (select IFNULL(max(id),0)+1 from dwh_measured_value)</sql>
 		<createTable tableName="job_execution_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="job_execution_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into job_execution_seq (select IFNULL(max(id),0)+1 from job_execution)</sql>
 		<createTable tableName="medina_access_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="medina_access_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into medina_access_seq (select IFNULL(max(id),0)+1 from medina_access)</sql>
 		<createTable tableName="meveo_timer_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="meveo_timer_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into meveo_timer_seq (select IFNULL(max(id),0)+1 from meveo_timer)</sql>
 		<createTable tableName="rating_edr_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="rating_edr_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into rating_edr_seq (select IFNULL(max(id),0)+1 from rating_edr)</sql>
 		<createTable tableName="rm_service_param_template_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="rm_service_param_template_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into rm_service_param_template_seq (select IFNULL(max(id),0)+1 from rm_service_param_template)</sql>
 		<createTable tableName="billing_invoice_configuration_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_invoice_configuration_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into billing_invoice_configuration_seq (select IFNULL(max(id),0)+1 from billing_invoice_configuration)</sql>
 		<createTable tableName="ar_credit_category_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_credit_category_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into ar_credit_category_seq (select IFNULL(max(id),0)+1 from ar_credit_category)</sql>
 		<createTable tableName="com_meveo_instance_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="com_meveo_instance_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into com_meveo_instance_seq (select IFNULL(max(id),0)+1 from com_meveo_instance)</sql>
 		<createTable tableName="meveo_job_instance_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="meveo_job_instance_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into meveo_job_instance_seq (select IFNULL(max(id),0)+1 from meveo_job_instance)</sql>
 		<createTable tableName="meveo_script_instance_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="meveo_script_instance_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into meveo_script_instance_seq (select IFNULL(max(id),0)+1 from meveo_script_instance)</sql>
 		<createTable tableName="meveo_filter_condition_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="meveo_filter_condition_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into meveo_filter_condition_seq (select IFNULL(max(id),0)+1 from meveo_filter_condition)</sql>
 		<createTable tableName="meveo_filter_order_condition_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="meveo_filter_order_condition_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into meveo_filter_order_condition_seq (select IFNULL(max(id),0)+1 from meveo_filter_order_condition)</sql>
 		<createTable tableName="meveo_primitive_filter_condition_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="meveo_primitive_filter_condition_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into meveo_primitive_filter_condition_seq (select IFNULL(max(id),0)+1 from meveo_primitive_filter_condition)</sql>
 		<createTable tableName="meveo_native_filter_condition_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="meveo_native_filter_condition_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into meveo_native_filter_condition_seq (select IFNULL(max(id),0)+1 from meveo_native_filter_condition)</sql>
 		<createTable tableName="meveo_filter_selector_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="meveo_filter_selector_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into meveo_filter_selector_seq (select IFNULL(max(id),0)+1 from meveo_filter_selector)</sql>
 		<createTable tableName="meveo_filter_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="meveo_filter_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into meveo_filter_seq (select IFNULL(max(id),0)+1 from meveo_filter)</sql>
 		<createTable tableName="cust_cet_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cust_cet_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into cust_cet_seq (select IFNULL(max(id),0)+1 from cust_cet)</sql>
 		<createTable tableName="cust_cei_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cust_cei_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into cust_cei_seq (select IFNULL(max(id),0)+1 from cust_cei)</sql>
 		<createTable tableName="meveo_module_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="meveo_module_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into meveo_module_seq (select IFNULL(max(id),0)+1 from meveo_module)</sql>
 		<createTable tableName="meveo_module_item_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="meveo_module_item_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into meveo_module_item_seq (select IFNULL(max(id),0)+1 from meveo_module_item)</sql>
 		<createTable tableName="ftp_imported_file_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ftp_imported_file_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into ftp_imported_file_seq (select IFNULL(max(id),0)+1 from ftp_imported_file)</sql>
 		<createTable tableName="cat_offer_template_category_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_offer_template_category_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into cat_offer_template_category_seq (select IFNULL(max(id),0)+1 from cat_offer_template_category)</sql>
 		<createTable tableName="cat_offer_serv_templt_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_offer_serv_templt_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into cat_offer_serv_templt_seq (select IFNULL(max(id),0)+1 from CAT_OFFER_SERV_TEMPLATES)</sql>
 		<createTable tableName="ar_revenue_recog_rule_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_revenue_recog_rule_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into ar_revenue_recog_rule_seq (select IFNULL(max(id),0)+1 from ar_revenue_recog_rule)</sql>
 		<createTable tableName="ar_revenue_schedule_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_revenue_schedule_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into ar_revenue_schedule_seq (select IFNULL(max(id),0)+1 from ar_revenue_schedule)</sql>
 		<createTable tableName="crm_custom_action_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="crm_custom_action_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into crm_custom_action_seq (select IFNULL(max(id),0)+1 from crm_custom_action)</sql>
 		<createTable tableName="billing_invoice_type_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_invoice_type_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into billing_invoice_type_seq (select IFNULL(max(id),0)+1 from billing_invoice_type)</sql>
 		<createTable tableName="ord_order_item_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ord_order_item_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into ord_order_item_seq (select IFNULL(max(id),0)+1 from ord_order_item)</sql>
 		<createTable tableName="billing_product_chrg_inst_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_product_chrg_inst_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into billing_product_chrg_inst_seq (select IFNULL(max(id),0)+1 from BILLING_PRODUCT_CHARGE_INST)</sql>
 		<createTable tableName="billing_product_instance_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_product_instance_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into billing_product_instance_seq (select IFNULL(max(id),0)+1 from billing_product_instance)</sql>
 		<createTable tableName="cat_bundle_product_template_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_bundle_product_template_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into cat_bundle_product_template_seq (select IFNULL(max(id),0)+1 from cat_bundle_product_template)</sql>
 		<createTable tableName="cat_digital_resource_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_digital_resource_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into cat_digital_resource_seq (select IFNULL(max(id),0)+1 from cat_digital_resource)</sql>
 		<createTable tableName="wf_action_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="wf_action_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into wf_action_seq (select IFNULL(max(id),0)+1 from wf_action)</sql>
 		<createTable tableName="wf_transition_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="wf_transition_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into wf_transition_seq (select IFNULL(max(id),0)+1 from wf_transition)</sql>
 		<createTable tableName="wf_workflow_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="wf_workflow_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into wf_workflow_seq (select IFNULL(max(id),0)+1 from wf_workflow)</sql>
 		<createTable tableName="cat_channel_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_channel_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into cat_channel_seq (select IFNULL(max(id),0)+1 from cat_channel)</sql>
 		<createTable tableName="cat_offer_product_template_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cat_offer_product_template_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into cat_offer_product_template_seq (select IFNULL(max(id),0)+1 from cat_offer_product_template)</sql>
 		<createTable tableName="ord_order_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ord_order_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into ord_order_seq (select IFNULL(max(id),0)+1 from ord_order)</sql>
 		<createTable tableName="hierarchy_entity_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="hierarchy_entity_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into hierarchy_entity_seq (select IFNULL(max(id),0)+1 from hierarchy_entity)</sql>
 		<createTable tableName="ord_quote_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ord_quote_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into ord_quote_seq (select IFNULL(max(id),0)+1 from ord_quote)</sql>
 		<createTable tableName="ord_quote_item_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ord_quote_item_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into ord_quote_item_seq (select IFNULL(max(id),0)+1 from ord_quote_item)</sql>
 		<createTable tableName="wf_decision_rule_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="wf_decision_rule_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into wf_decision_rule_seq (select IFNULL(max(id),0)+1 from wf_decision_rule)</sql>
 		<createTable tableName="wf_history_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="wf_history_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into wf_history_seq (select IFNULL(max(id),0)+1 from wf_history)</sql>
 		<createTable tableName="wf_history_action_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="wf_history_action_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into wf_history_action_seq (select IFNULL(max(id),0)+1 from wf_history_action)</sql>
 		<createTable tableName="ord_item_offerings_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ord_item_offerings_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into ord_item_offerings_seq (select IFNULL(max(id),0)+1 from ord_item_offerings)</sql>
 		<createTable tableName="ord_quot_item_offerings_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ord_quot_item_offerings_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into ord_quot_item_offerings_seq (select IFNULL(max(id),0)+1 from ord_quot_item_offerings)</sql>
 		<createTable tableName="bill_seq_it_sell_seq">
-			<column name="next_val" type="BIGINT" />
+			<column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="bill_seq_it_sell_seq_pk" />
+            </column>
 		</createTable>
 		<sql>insert into bill_seq_it_sell_seq (select IFNULL(max(id),0)+1 from billing_seq_invtyp_sell)</sql>
 
@@ -2702,7 +2986,7 @@
     </changeSet>
 
 	<changeSet id="#2530_20170425" author="TonyAlejandro">
-		<modifyDataType tableName="adm_inbound_req_headers" columnName="headers" newDataType="text" />
+		<modifyDataType tableName="adm_inbound_req_headers" columnName="headers" newDataType="${type.longtext}" />
 	</changeSet>
 	
 	 <changeSet id="#2518_20170405 - Add rating unit to rt" author="EdwardPLegaspi">

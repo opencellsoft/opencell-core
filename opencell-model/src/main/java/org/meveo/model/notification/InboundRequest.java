@@ -78,7 +78,8 @@ public class InboundRequest extends BusinessEntity {
 	
 	@ElementCollection(fetch=FetchType.LAZY)
 	@CollectionTable(name="ADM_INBOUND_REQ_HEADERS")
-	private Map<String,String> headers = new HashMap<String, String>();
+    @Column(name = "headers", columnDefinition = "LONGTEXT")
+    private Map<String, String> headers = new HashMap<String, String>();
 
 	@Column(name="PATH_INFO",length=255)
     @Size(max = 255)
