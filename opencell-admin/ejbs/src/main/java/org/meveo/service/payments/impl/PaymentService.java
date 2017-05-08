@@ -19,8 +19,15 @@
 package org.meveo.service.payments.impl;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.payment.DoPaymentResponseDto;
+import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.Payment;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -28,4 +35,18 @@ import org.meveo.service.base.PersistenceService;
  */
 @Stateless
 public class PaymentService extends PersistenceService<Payment> {
+	
+	@Inject
+	private CardTokenService cardTokenService;
+
+	public DoPaymentResponseDto doPayment(CustomerAccount customerAccount, Long ctsAmount, Invoice invoice) throws BusinessException {
+		if(customerAccount.getPaymentTokens() == null || customerAccount.getPaymentTokens().isEmpty()){
+			throw new BusinessException("There no payment token for customerAccount:"+customerAccount.getCode());
+		}
+		GatewayPaymentInterface  gatewayPaymentInterface = GatewayPaymentFactory.getInstance(GatewayPaymentNamesEnum.valueOf(ParamBean.getInstance().getProperty("meveo.gatewayPayment", "INGENICO")));		
+		if(PaymentMethodEnum.CARD.name().equals(customerAccount.getPaymentMethod().name())){
+			return gatewayPaymentInterface.doPayment(cardTokenService.getPreferedToken(customerAccount), ctsAmount);
+		}		
+		throw new BusinessException("Unsupported payment method:"+customerAccount.getPaymentMethod());
+	}
 }
