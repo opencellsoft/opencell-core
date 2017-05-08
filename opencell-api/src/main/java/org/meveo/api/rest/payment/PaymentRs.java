@@ -9,6 +9,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.payment.CardTokenRequestDto;
+import org.meveo.api.dto.payment.CardTokenResponseDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
 import org.meveo.api.rest.IBaseRs;
@@ -38,5 +40,15 @@ public interface PaymentRs extends IBaseRs {
     @GET
     @Path("/customerPayment")
     public CustomerPaymentsResponse list(@QueryParam("customerAccountCode") String customerAccountCode);
+    
+    /**
+     * Tokenize payment card details
+     * 
+     * @param cardTokenRequestDto
+     * @return
+     */
+    @POST
+    @Path("/createCardToken")
+    public CardTokenResponseDto createCardToken(CardTokenRequestDto postData);
 
 }

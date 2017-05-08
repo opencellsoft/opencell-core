@@ -7,7 +7,11 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 
 import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.payment.CardTokenRequestDto;
+import org.meveo.api.dto.payment.CardTokenResponseDto;
 import org.meveo.api.dto.payment.DDRequestLotOpDto;
+import org.meveo.api.dto.payment.DoPaymentRequestDto;
+import org.meveo.api.dto.payment.DoPaymentResponseDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
 import org.meveo.api.dto.response.payment.DDRequestLotOpsResponseDto;
@@ -38,5 +42,11 @@ public interface PaymentWs extends IBaseWs {
 	 */
 	@WebMethod
 	DDRequestLotOpsResponseDto listDDRequestLotops(@WebParam(name="fromDueDate")Date fromDueDate,@WebParam(name="toDueDate")Date toDueDate,@WebParam(name="status")DDRequestOpStatusEnum status);
+	
+	@WebMethod
+	public CardTokenResponseDto createCardToken(@WebParam(name = "CardTokenRequest")CardTokenRequestDto cardTokenRequestDto);
+	
+	@WebMethod
+	public DoPaymentResponseDto doPayment(@WebParam(name = "DoPaymentRequest")DoPaymentRequestDto doPaymentRequestDto);
 
 }

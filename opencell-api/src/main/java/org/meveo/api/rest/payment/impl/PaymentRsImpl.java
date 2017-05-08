@@ -5,9 +5,10 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.ws.rs.QueryParam;
 
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.payment.CardTokenRequestDto;
+import org.meveo.api.dto.payment.CardTokenResponseDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
 import org.meveo.api.logging.WsRestApiInterceptor;
@@ -32,15 +33,9 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
 
         try {
             paymentApi.createPayment(postData);
-        } catch (BusinessException e) {
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-            log.error("error occurred while creating payment ", e);
-        } catch (Exception e) {
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-            log.error("error generated while creating payment ", e);
-        }
+		}catch(Exception e){
+			processException(e, result);
+		}
 
         return result;
     }
@@ -53,12 +48,24 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
         try {
             result.setCustomerPaymentDtoList(paymentApi.getPaymentList(customerAccountCode));
             result.setBalance(paymentApi.getBalance(customerAccountCode));
-        } catch (Exception e) {
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
-        }
+		}catch(Exception e){
+			processException(e, result.getActionStatus());
+		}
 
         return result;
     }
+
+	@Override
+	public CardTokenResponseDto createCardToken(CardTokenRequestDto cardTokenRequestDto) {
+		CardTokenResponseDto response = new CardTokenResponseDto();
+		response.setActionStatus(new ActionStatus(ActionStatusEnum.SUCCESS, ""));
+		try{
+			response.setTokenID(paymentApi.createCardToken(cardTokenRequestDto));
+		}catch(Exception e){
+			processException(e, response.getActionStatus());
+		}
+		
+		return response;
+	}
 
 }

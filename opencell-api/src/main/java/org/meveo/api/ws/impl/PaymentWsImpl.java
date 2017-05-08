@@ -6,15 +6,16 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.jws.WebService;
 
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.payment.CardTokenRequestDto;
+import org.meveo.api.dto.payment.CardTokenResponseDto;
 import org.meveo.api.dto.payment.DDRequestLotOpDto;
+import org.meveo.api.dto.payment.DoPaymentRequestDto;
+import org.meveo.api.dto.payment.DoPaymentResponseDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
 import org.meveo.api.dto.response.payment.DDRequestLotOpsResponseDto;
-import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.payment.DDRequestLotOpApi;
 import org.meveo.api.payment.PaymentApi;
@@ -37,15 +38,9 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
 
         try {
             paymentApi.createPayment(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
             log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -59,15 +54,9 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
         try {
             result.setCustomerPaymentDtoList(paymentApi.getPaymentList(customerAccountCode));
             result.setBalance(paymentApi.getBalance(customerAccountCode));
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
             log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -79,17 +68,10 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
 
         try {
             ddrequestLotOpApi.create(ddrequestLotOp);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
             log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
-
         return result;	
         }
 
@@ -99,17 +81,41 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
 
         try {
             result.setDdrequestLotOps(ddrequestLotOpApi.listDDRequestLotOps(fromDueDate,toDueDate,status));
-//        } catch (MeveoApiException e) {
-//            result.getActionStatus().setErrorCode(e.getErrorCode());
-//            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-//            result.getActionStatus().setMessage(e.getMessage());
+
         } catch (Exception e) {
             log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
 
-        return result;	}
+        return result;	
+        }
+
+	
+	@Override
+	public CardTokenResponseDto createCardToken(CardTokenRequestDto cardTokenRequestDto) {
+		CardTokenResponseDto response = new CardTokenResponseDto();
+		response.setActionStatus(new ActionStatus(ActionStatusEnum.FAIL, ""));
+		try{
+			response.setTokenID(paymentApi.createCardToken(cardTokenRequestDto));
+			response.setActionStatus(new ActionStatus(ActionStatusEnum.SUCCESS, ""));
+		}catch(Exception e){
+			processException(e, response.getActionStatus());
+		}
+		
+		return response;
+	}
+
+	@Override
+	public DoPaymentResponseDto doPayment(DoPaymentRequestDto doPaymentRequestDto) {
+		DoPaymentResponseDto response = new DoPaymentResponseDto();	
+		response.setActionStatus(new ActionStatus(ActionStatusEnum.FAIL, ""));
+		try{
+			response = paymentApi.doPayment(doPaymentRequestDto);
+			response.setActionStatus(new ActionStatus(ActionStatusEnum.SUCCESS, ""));
+		}catch(Exception e){
+			processException(e, response.getActionStatus());
+		}		
+		return response;
+	}
 
 }

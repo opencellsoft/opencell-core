@@ -136,7 +136,13 @@ public class CustomerAccount extends AccountEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TRADING_LANGUAGE_ID")
 	private TradingLanguage tradingLanguage;
+	
+	@OneToMany(mappedBy = "customerAccount", cascade = CascadeType.ALL)
+	// TODO : Add orphanRemoval annotation.
+	// @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+	private List<PaymentToken> paymentTokens = new ArrayList<PaymentToken>();
 
+	
 	public Customer getCustomer() {
 		return customer;
 	}
@@ -293,4 +299,14 @@ public class CustomerAccount extends AccountEntity {
 	public void setDueDateDelayEL(String dueDateDelayEL) {
 		this.dueDateDelayEL = dueDateDelayEL;
 	}
+
+	public List<PaymentToken> getPaymentTokens() {
+		return paymentTokens;
+	}
+
+	public void setPaymentTokens(List<PaymentToken> paymentTokens) {
+		this.paymentTokens = paymentTokens;
+	}
+	
+	
 }
