@@ -15,6 +15,7 @@ import org.meveo.api.dto.CustomFieldValueDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EntityReferenceDto;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
@@ -178,4 +179,25 @@ public class EntityToDtoConverter {
         }
         return dtos;
     }
+
+	public CustomFieldsDto getCustomFieldsWithInheritedDTO(Subscription entity, boolean includeInheritedCF) {
+		CustomFieldsDto customFieldsDto = getCustomFieldsDTO(entity);
+		if (customFieldsDto == null) {
+			customFieldsDto = new CustomFieldsDto();
+		}
+		
+		if (includeInheritedCF) {			
+			ICustomFieldEntity[] parentEntities = entity.getParentCFEntities();
+			if (parentEntities != null) {
+				for (ICustomFieldEntity iCustomFieldEntity : parentEntities) {
+					CustomFieldsDto inheritedCustomFieldsDto = getCustomFieldsDTO(iCustomFieldEntity,
+							includeInheritedCF);
+					if (inheritedCustomFieldsDto != null) {
+						customFieldsDto.getInheritedCustomField().addAll(inheritedCustomFieldsDto.getCustomField());
+					}
+				}
+			}
+		}
+		return customFieldsDto;
+	}
 }
