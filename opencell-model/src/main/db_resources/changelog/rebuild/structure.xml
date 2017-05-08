@@ -525,6 +525,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="inboundrequest_id, coockies_key" constraintName="adm_inbound_req_cookies_pkey" tableName="adm_inbound_req_cookies" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-118">
         <createTable tableName="adm_inbound_req_headers">
@@ -536,6 +537,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="inboundrequest_id, headers_key" constraintName="adm_inbound_req_headers_pkey" tableName="adm_inbound_req_headers" />        
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-119">
         <createTable tableName="adm_inbound_req_params">
@@ -547,6 +549,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="inboundrequest_id, parameters_key" constraintName="adm_inbound_req_params_pkey" tableName="adm_inbound_req_params" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-120">
         <createTable tableName="adm_inbound_request">
@@ -593,6 +596,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="inboundrequest_id, responsecoockies_key" constraintName="adm_inbound_resp_cookies_pkey" tableName="adm_inbound_resp_cookies" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-122">
         <createTable tableName="adm_inbound_resp_headers">
@@ -604,6 +608,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="inboundrequest_id, responseheaders_key" constraintName="adm_inbound_resp_headers_pkey" tableName="adm_inbound_resp_headers" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-123">
         <createTable tableName="adm_input_history">
@@ -675,6 +680,7 @@
             </column>
             <column name="attachmentexpressions" type="varchar(255)" />
         </createTable>
+        <addPrimaryKey columnNames="emailnotification_id, attachmentexpressions" constraintName="adm_notif_email_attach_pkey" tableName="adm_notif_email_attach" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-128">
         <createTable tableName="adm_notif_email_list">
@@ -683,6 +689,7 @@
             </column>
             <column name="emails" type="varchar(255)" />
         </createTable>
+        <addPrimaryKey columnNames="emailnotification_id, emails" constraintName="adm_notif_email_list_pkey" tableName="adm_notif_email_list" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-129">
         <createTable tableName="adm_notif_email_user">
@@ -693,6 +700,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="emailnotification_id, users_id" constraintName="adm_notif_email_attach_pkey" tableName="adm_notif_email_user" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-130">
         <createTable tableName="adm_notif_history">
@@ -745,6 +753,7 @@
             </column>
             <column name="ids" type="varchar(255)" />
         </createTable>
+        <addPrimaryKey columnNames="instantmessagingnotification_id, ids" constraintName="adm_notif_im_list_pkey" tableName="adm_notif_im_list" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-133">
         <createTable tableName="adm_notif_im_user">
@@ -755,6 +764,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="instantmessagingnotification_id, users_id" constraintName="adm_notif_im_user_pkey" tableName="adm_notif_im_user" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-134">
         <createTable tableName="adm_notif_webhook_header">
@@ -766,6 +776,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="webhook_id, headers_key" constraintName="adm_notif_webhook_header_pkey" tableName="adm_notif_webhook_header" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-135">
         <createTable tableName="adm_notif_webhook_param">
@@ -777,6 +788,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="webhook_id, webhookparams_key" constraintName="adm_notif_webhookparam_pkey" tableName="adm_notif_webhook_param" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-136">
         <createTable tableName="adm_notif_webhooks">
@@ -870,6 +882,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="role_id, permission_id" constraintName="adm_role_permission_pkey" tableName="adm_role_permission" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-141">
         <createTable tableName="adm_title">
@@ -932,6 +945,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="user_id, role_id" constraintName="adm_user_role_pkey" tableName="adm_user_role" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-145">
         <createTable tableName="ar_account_operation">
@@ -1395,6 +1409,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="report_id, email_id" constraintName="bi_report_emails_pkey" tableName="bi_report_emails" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-164">
         <createTable tableName="billing_billing_account">
@@ -1557,6 +1572,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="chrg_instance_id, indx" constraintName="billing_chrginst_wallet_pkey" tableName="billing_chrginst_wallet" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-169">
         <createTable tableName="billing_counter">
@@ -2094,6 +2110,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="reservation_id, counterperiodvalues_key" constraintName="billing_resrv_countid_pkey" tableName="billing_resrv_countid" />
     </changeSet>
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-191">
@@ -2453,6 +2470,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="calendar_id, day_id" constraintName="cat_calendar_days_pkey" tableName="cat_calendar_days" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-205">
         <createTable tableName="cat_calendar_hours">
@@ -2463,6 +2481,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="calendar_id, hour_id" constraintName="cat_calendar_hours_pkey" tableName="cat_calendar_hours" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-206">
         <createTable tableName="cat_calendar_interval">
@@ -2526,6 +2545,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="charge_tmpl_id, trigg_edr_id" constraintName="cat_chrg_edr_pkey" tableName="cat_chrg_edr" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-209">
         <createTable tableName="cat_counter_template">
@@ -2803,6 +2823,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="service_rec_templt_id, indx" constraintName="cat_serv_rec_wallet_template_pkey" tableName="cat_serv_rec_wallet_template" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-221">
         <createTable tableName="cat_serv_sub_charge_template">
@@ -2827,6 +2848,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="service_sub_templt_id, indx" constraintName="cat_serv_sub_wallet_template_pkey" tableName="cat_serv_sub_wallet_template" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-223">
         <createTable tableName="cat_serv_trm_charge_template">
@@ -2851,6 +2873,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="service_trm_templt_id, indx" constraintName="cat_serv_trm_wallet_template_pkey" tableName="cat_serv_trm_wallet_template" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-225">
         <createTable tableName="cat_serv_usage_charge_template">
@@ -2876,6 +2899,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="service_usage_templt_id, indx" constraintName="cat_serv_usage_wallet_template_pkey" tableName="cat_serv_usage_wallet_template" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-227">
         <createTable tableName="cat_service_template">
@@ -3033,6 +3057,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="com_contact_id, messages_id" constraintName="com_contact_com_message_pkey" tableName="com_contact_com_message" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-234">
         <createTable tableName="com_contact_coords">
@@ -3337,6 +3362,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="customfieldtemplate_id, listvalues_key" constraintName="crm_custom_field_tmpl_val_pkey" tableName="crm_custom_field_tmpl_val" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-244">
         <createTable tableName="crm_customer">
@@ -3952,6 +3978,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="email_id, report_id" constraintName="report_emails_pkey" tableName="report_emails" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-273">
         <createTable tableName="rm_service_param_template">
@@ -3988,6 +4015,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="sub_cat_invoice_aggregat_id, tax_id" constraintName="billing_invoice_agregate_taxes_pkey" tableName="billing_invoice_agregate_taxes" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-275">
         <createTable tableName="billing_invoice_configuration">
@@ -4168,17 +4196,17 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
-
-
     </changeSet>
+    
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-283">
 
         <createTable tableName="meveo_filter_oc_field_names">
             <column name="field_name" type="varchar(100)" />
             <column name="order_condition_id" type="bigint" />
         </createTable>
-
+        <addPrimaryKey columnNames="field_name, order_condition_id" constraintName="meveo_filter_oc_field_names_pkey" tableName="meveo_filter_oc_field_names" />
     </changeSet>
+    
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-284">
         <createTable tableName="meveo_filter_order_condition">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -4190,8 +4218,8 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
-
     </changeSet>
+    
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-285">
         <createTable tableName="meveo_primitive_filter_condition">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
@@ -4290,6 +4318,7 @@
             </column>
             <column name="display_field" type="varchar(100)"></column>
         </createTable>
+        <addPrimaryKey columnNames="filter_selector_id, display_field" constraintName="meveo_filter_selector_display_fields_pkey" tableName="meveo_filter_selector_display_fields" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-292">
         <createTable tableName="meveo_filter_selector_export_fields">
@@ -4298,8 +4327,9 @@
             </column>
             <column name="export_field" type="varchar(100)"></column>
         </createTable>
-
+        <addPrimaryKey columnNames="filter_selector_id, export_field" constraintName="meveo_filter_selector_export_fields_pkey" tableName="meveo_filter_selector_export_fields" />
     </changeSet>
+
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-293">
         <createTable tableName="meveo_filter_selector_ignore_fields">
             <column name="filter_selector_id" type="bigint">
@@ -4307,8 +4337,9 @@
             </column>
             <column name="ignored_field" type="varchar(100)"></column>
         </createTable>
-
+        <addPrimaryKey columnNames="filter_selector_id, ignored_field" constraintName="meveo_filter_selector_ignore_fields_pkey" tableName="meveo_filter_selector_ignore_fields" />
     </changeSet>
+    
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-294">
         <createTable tableName="adm_notification_params">
             <column name="notification_id" type="bigint">
@@ -4319,7 +4350,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
-
+        <addPrimaryKey columnNames="notification_id, params_key" constraintName="pk_adm_notification_params" tableName="adm_notification_params" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-295">
         <createTable tableName="adm_notif_job_params">
@@ -4331,6 +4362,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="jobtrigger_id, jobparams_key" constraintName="pk_adm_notif_job_params" tableName="adm_notif_job_params" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-298">
         <createTable tableName="cust_cet">
@@ -4474,6 +4506,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="role_id, child_role_id" constraintName="adm_role_role_pkey" tableName="adm_role_role" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-306">
         <createTable tableName="adm_script_exec_role">
@@ -4484,6 +4517,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="script_instance_id, role_id" constraintName="adm_script_exec_role_pkey" tableName="adm_script_exec_role" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-307">
         <createTable tableName="adm_script_sourc_role">
@@ -4494,6 +4528,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="script_instance_id, role_id" constraintName="adm_script_sourc_role_pkey" tableName="adm_script_sourc_role" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-308">
         <createTable tableName="cat_offer_template_category">
@@ -4557,6 +4592,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="offer_service_template_id, service_template_id" constraintName="pk_cat_offer_serv_incomp" tableName="cat_offer_serv_incomp" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-312">
         <createTable tableName="crm_custom_field_tmpl_mcols">
@@ -4576,6 +4612,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="cft_id, code" constraintName="crm_custom_field_tmpl_mcols_pkey" tableName="crm_custom_field_tmpl_mcols" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-313">
         <createTable tableName="crm_business_account_model">
@@ -4702,6 +4739,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="invoice_type_id, applies_to_id" constraintName="billing_invoice_type_applies_to_pkey" tableName="billing_invoice_type_applies_to" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-319">
         <createTable tableName="billing_linked_invoices">
@@ -4712,6 +4750,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="id, linked_invoice_id" constraintName="billing_linked_invoices_pkey" tableName="billing_linked_invoices" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-320">
         <createTable tableName="billing_seq_invtyp_sell">
@@ -4742,6 +4781,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="user_id, code, entity_class" constraintName="adm_secured_entity_pkey" tableName="adm_secured_entity" />
     </changeSet>
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-322">
@@ -4863,6 +4903,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="product_id, offer_template_cat_id" constraintName="cat_product_offer_tmpl_cat_pkey" tableName="cat_product_offer_tmpl_cat" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-328">
         <createTable tableName="cat_product_offer_bam">
@@ -4876,6 +4917,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="product_id, bam_id" constraintName="cat_product_offer_bam_pkey" tableName="cat_product_offer_bam" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-329">
         <createTable tableName="cat_product_offer_channels">
@@ -4889,6 +4931,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="product_id, channel_id" constraintName="cat_prod_off_channels_pkey" tableName="cat_product_offer_channels" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-330">
         <createTable tableName="cat_digital_resource">
@@ -4926,6 +4969,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="product_id, digital_resource_id" constraintName="cat_product_offer_digital_res_pkey" tableName="cat_product_offer_digital_res" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-332">
         <createTable tableName="cat_product_charge_templ">
@@ -4946,6 +4990,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="product_template_id, wallet_template_id" constraintName="cat_product_wallet_template_pkey" tableName="cat_product_wallet_template" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-334">
         <createTable tableName="cat_offer_product_template">
@@ -5139,6 +5184,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="order_item_id, prd_instance_id" constraintName="ord_item_prd_instance_pkey" tableName="ord_item_prd_instance" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-343">
         <createTable tableName="wf_decision_rule">
@@ -5174,6 +5220,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey columnNames="transition_id, decision_rule_id" constraintName="wf_transition_decision_rule_pkey" tableName="wf_transition_decision_rule" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-345">
         <createTable tableName="ord_quote">
@@ -5264,12 +5311,14 @@
             <column name="invoice_id" type="bigint" />
             <column name="order_id" type="bigint" />
         </createTable>
+        <addPrimaryKey columnNames="invoice_id, order_id" constraintName="billing_invoices_orders_pkey" tableName="billing_invoices_orders" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-349">
         <createTable tableName="cat_product_templ_charge_templ">
             <column name="product_charge_template_id" type="bigint" />
             <column name="product_template_id" type="bigint" />
         </createTable>
+        <addPrimaryKey columnNames="product_charge_template_id, product_template_id" constraintName="cat_product_templ_charge_templ_pkey" tableName="cat_product_templ_charge_templ" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-350">
         <createTable tableName="wf_history">
@@ -5315,167 +5364,9 @@
     </changeSet>
 
 
-
-
     <!-- end tables -->
-    <!-- start pk -->
 
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-277">
-        <addPrimaryKey columnNames="inboundrequest_id, coockies_key" constraintName="adm_inbound_req_cookies_pkey" tableName="adm_inbound_req_cookies" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-278">
-        <addPrimaryKey columnNames="inboundrequest_id, headers_key" constraintName="adm_inbound_req_headers_pkey" tableName="adm_inbound_req_headers" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-279">
-        <addPrimaryKey columnNames="inboundrequest_id, parameters_key" constraintName="adm_inbound_req_params_pkey" tableName="adm_inbound_req_params" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-281">
-        <addPrimaryKey columnNames="inboundrequest_id, responsecoockies_key" constraintName="adm_inbound_resp_cookies_pkey" tableName="adm_inbound_resp_cookies" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-282">
-        <addPrimaryKey columnNames="inboundrequest_id, responseheaders_key" constraintName="adm_inbound_resp_headers_pkey" tableName="adm_inbound_resp_headers" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-290">
-        <addPrimaryKey columnNames="instantmessagingnotification_id, users_id" constraintName="adm_notif_im_user_pkey" tableName="adm_notif_im_user" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-291">
-        <addPrimaryKey columnNames="webhook_id, headers_key" constraintName="adm_notif_webhook_header_pkey" tableName="adm_notif_webhook_header" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-292">
-        <addPrimaryKey columnNames="webhook_id, webhookparams_key" constraintName="adm_notif_webhookparam_pkey" tableName="adm_notif_webhook_param" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-300">
-        <addPrimaryKey columnNames="user_id, role_id" constraintName="adm_user_role_pkey" tableName="adm_user_role" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-323">
-        <addPrimaryKey columnNames="chrg_instance_id, indx" constraintName="billing_chrginst_wallet_pkey" tableName="billing_chrginst_wallet" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-344">
-        <addPrimaryKey columnNames="reservation_id, counterperiodvalues_key" constraintName="billing_resrv_countid_pkey" tableName="billing_resrv_countid" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-371">
-        <addPrimaryKey columnNames="service_rec_templt_id, indx" constraintName="cat_serv_rec_wallet_template_pkey" tableName="cat_serv_rec_wallet_template" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-373">
-        <addPrimaryKey columnNames="service_sub_templt_id, indx" constraintName="cat_serv_sub_wallet_template_pkey" tableName="cat_serv_sub_wallet_template" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-375">
-        <addPrimaryKey columnNames="service_trm_templt_id, indx" constraintName="cat_serv_trm_wallet_template_pkey" tableName="cat_serv_trm_wallet_template" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-377">
-        <addPrimaryKey columnNames="service_usage_templt_id, indx" constraintName="cat_serv_usage_wallet_template_pkey" tableName="cat_serv_usage_wallet_template" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-393">
-        <addPrimaryKey columnNames="customfieldtemplate_id, listvalues_key" constraintName="crm_custom_field_tmpl_val_pkey" tableName="crm_custom_field_tmpl_val" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-394">
-        <addPrimaryKey columnNames="jobtrigger_id, jobparams_key" constraintName="pk_adm_notif_job_params" tableName="adm_notif_job_params" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-395">
-        <addPrimaryKey columnNames="notification_id, params_key" constraintName="pk_adm_notification_params" tableName="adm_notification_params" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-396">
-        <addPrimaryKey columnNames="script_instance_id, role_id" constraintName="adm_script_exec_role_pkey" tableName="adm_script_exec_role" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-397">
-        <addPrimaryKey columnNames="script_instance_id, role_id" constraintName="adm_script_sourc_role_pkey" tableName="adm_script_sourc_role" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-398">
-        <addPrimaryKey columnNames="offer_service_template_id, service_template_id" constraintName="pk_cat_offer_serv_incomp" tableName="cat_offer_serv_incomp" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-400">
-        <addPrimaryKey columnNames="product_id, channel_id" constraintName="cat_prod_off_channels_pkey" tableName="cat_product_offer_channels" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-401">
-        <addPrimaryKey columnNames="product_id, bam_id" constraintName="cat_product_offer_bam_pkey" tableName="cat_product_offer_bam" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-402">
-        <addPrimaryKey columnNames="product_id, offer_template_cat_id" constraintName="cat_product_offer_tmpl_cat_pkey" tableName="cat_product_offer_tmpl_cat" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-403">
-        <addPrimaryKey columnNames="product_id, digital_resource_id" constraintName="cat_product_offer_digital_res_pkey" tableName="cat_product_offer_digital_res" />
-    </changeSet>
-    
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-404">
-        <addPrimaryKey columnNames="emailnotification_id, attachmentexpressions" constraintName="adm_notif_email_attach_pkey" tableName="adm_notif_email_attach" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-405">
-        <addPrimaryKey columnNames="emailnotification_id, emails" constraintName="adm_notif_email_list_pkey" tableName="adm_notif_email_list" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-406">
-        <addPrimaryKey columnNames="emailnotification_id, users_id" constraintName="adm_notif_email_attach_pkey" tableName="adm_notif_email_user" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-407">
-        <addPrimaryKey columnNames="instantmessagingnotification_id, ids" constraintName="adm_notif_im_list_pkey" tableName="adm_notif_im_list" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-408">
-        <addPrimaryKey columnNames="role_id, permission_id" constraintName="adm_role_permission_pkey" tableName="adm_role_permission" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-409">
-        <addPrimaryKey columnNames="role_id, child_role_id" constraintName="adm_role_role_pkey" tableName="adm_role_role" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-410">
-        <addPrimaryKey columnNames="user_id, code, entity_class" constraintName="adm_secured_entity_pkey" tableName="adm_secured_entity" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-411">
-        <addPrimaryKey columnNames="invoice_id, order_id" constraintName="billing_invoices_orders_pkey" tableName="billing_invoices_orders" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-412">
-        <addPrimaryKey columnNames="sub_cat_invoice_aggregat_id, tax_id" constraintName="billing_invoice_agregate_taxes_pkey" tableName="billing_invoice_agregate_taxes" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-413">
-        <addPrimaryKey columnNames="invoice_type_id, applies_to_id" constraintName="billing_invoice_type_applies_to_pkey" tableName="billing_invoice_type_applies_to" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-414">
-        <addPrimaryKey columnNames="id, linked_invoice_id" constraintName="billing_linked_invoices_pkey" tableName="billing_linked_invoices" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-415">
-        <addPrimaryKey columnNames="report_id, email_id" constraintName="bi_report_emails_pkey" tableName="bi_report_emails" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-416">
-        <addPrimaryKey columnNames="calendar_id, day_id" constraintName="cat_calendar_days_pkey" tableName="cat_calendar_days" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-417">
-        <addPrimaryKey columnNames="calendar_id, hour_id" constraintName="cat_calendar_hours_pkey" tableName="cat_calendar_hours" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-418">
-        <addPrimaryKey columnNames="charge_tmpl_id, trigg_edr_id" constraintName="cat_chrg_edr_pkey" tableName="cat_chrg_edr" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-419">
-        <addPrimaryKey columnNames="product_charge_template_id, product_template_id" constraintName="cat_product_templ_charge_templ_pkey" tableName="cat_product_templ_charge_templ" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-420">
-        <addPrimaryKey columnNames="product_template_id, wallet_template_id" constraintName="cat_product_wallet_template_pkey" tableName="cat_product_wallet_template" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-421">
-        <addPrimaryKey columnNames="com_contact_id, messages_id" constraintName="com_contact_com_message_pkey" tableName="com_contact_com_message" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-422">
-        <addPrimaryKey columnNames="cft_id, code" constraintName="crm_custom_field_tmpl_mcols_pkey" tableName="crm_custom_field_tmpl_mcols" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-423">
-        <addPrimaryKey columnNames="field_name, order_condition_id" constraintName="meveo_filter_oc_field_names_pkey" tableName="meveo_filter_oc_field_names" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-424">
-        <addPrimaryKey columnNames="filter_selector_id, display_field" constraintName="meveo_filter_selector_display_fields_pkey" tableName="meveo_filter_selector_display_fields" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-425">
-        <addPrimaryKey columnNames="filter_selector_id, export_field" constraintName="meveo_filter_selector_export_fields_pkey" tableName="meveo_filter_selector_export_fields" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-426">
-        <addPrimaryKey columnNames="filter_selector_id, ignored_field" constraintName="meveo_filter_selector_ignore_fields_pkey" tableName="meveo_filter_selector_ignore_fields" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-427">
-        <addPrimaryKey columnNames="order_item_id, prd_instance_id" constraintName="ord_item_prd_instance_pkey" tableName="ord_item_prd_instance" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-428">
-        <addPrimaryKey columnNames="email_id, report_id" constraintName="report_emails_pkey" tableName="report_emails" />
-    </changeSet>
-    <changeSet author="AndriusKarpavicius" id="rebuild-str-pk-429">
-        <addPrimaryKey columnNames="transition_id, decision_rule_id" constraintName="wf_transition_decision_rule_pkey" tableName="wf_transition_decision_rule" />
-    </changeSet>
- 
-    <!-- end pk -->
+
     <!-- start uk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-422">
