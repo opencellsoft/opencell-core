@@ -28,6 +28,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.BusinessOfferModel;
+import org.meveo.model.catalog.BusinessProductModel;
 import org.meveo.model.catalog.BusinessServiceModel;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.module.MeveoModule;
@@ -36,6 +37,7 @@ import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.script.module.ModuleScriptService;
@@ -57,6 +59,9 @@ public class GenericModuleService<T extends MeveoModule> extends BusinessService
 
     @Inject
     private OfferTemplateService offerTemplateService;
+    
+    @Inject
+    private ProductTemplateService productTemplateService;
 
     public void loadModuleItem(MeveoModuleItem item) {
 
@@ -105,6 +110,8 @@ public class GenericModuleService<T extends MeveoModule> extends BusinessService
             serviceTemplateService.disable(((BusinessServiceModel) module).getServiceTemplate());
         } else if (module instanceof BusinessOfferModel) {
             offerTemplateService.disable(((BusinessOfferModel) module).getOfferTemplate());
+        } else if (module instanceof BusinessProductModel) {
+        	productTemplateService.disable(((BusinessProductModel) module).getProductTemplate());
         }
 
         for (MeveoModuleItem item : module.getModuleItems()) {
@@ -162,6 +169,8 @@ public class GenericModuleService<T extends MeveoModule> extends BusinessService
             serviceTemplateService.enable(((BusinessServiceModel) module).getServiceTemplate());
         } else if (module instanceof BusinessOfferModel) {
             offerTemplateService.enable(((BusinessOfferModel) module).getOfferTemplate());
+        } else if (module instanceof BusinessProductModel) {
+            productTemplateService.enable(((BusinessProductModel) module).getProductTemplate());
         }
 
         for (MeveoModuleItem item : module.getModuleItems()) {
