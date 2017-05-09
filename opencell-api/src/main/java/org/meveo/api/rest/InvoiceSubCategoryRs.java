@@ -52,7 +52,7 @@ public interface InvoiceSubCategoryRs extends IBaseRs {
      * @param postData
      * @return
      */
-    @Path("/")
+    @Path("/createOrUpdate")
     @POST
     public ActionStatus createOrUpdate(InvoiceSubCategoryDto postData);
 
