@@ -84,6 +84,9 @@ public class RatedTransactionBean extends BaseBean<RatedTransaction> {
 	}
 
 	public String getWalletOperationCode(Long walletOperationId){
+		if(walletOperationId == null){
+			return null;
+		}
 		try{
 			WalletOperation walletOperation = walletOperationService.findById(walletOperationId);
 		    return walletOperation!=null?walletOperation.getCode():null;
