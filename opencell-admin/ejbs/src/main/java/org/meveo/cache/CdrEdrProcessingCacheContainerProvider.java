@@ -105,6 +105,8 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
     // @Lock(LockType.WRITE)
     public void addAccessToCache(Access access) {
 
+        log.trace("Adding access {} to access cache", access.getId());
+
         // because accessed later, to avoid lazy init
         access.getSubscription().getId();
 
@@ -117,7 +119,6 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
         accesses.add(access);
         accessCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, accesses);
 
-        log.trace("Added access {} to access cache", access);
     }
 
     /**
@@ -142,6 +143,8 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
                 } else {
                     accessCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, accesses);
                 }
+
+                log.trace("Removed access {} from access cache", access.getId());
             }
         }
     }
@@ -163,7 +166,6 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
      * @return A list of accesses
      */
     public List<Access> getAccessesByAccessUserId(String accessUserId) {
-        log.trace("Lookup access {} from cache", accessUserId);
 
         String cacheKey = accessUserId;
         return accessCache.get(cacheKey);

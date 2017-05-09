@@ -151,7 +151,7 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
             }
         }
 
-        log.debug("UpdateCache usageChargeInstanceWallet charge {} wallets:{}", charge.getId(), walletIds.size());
+        log.debug("Update usageChargeInstanceWallet cache with charge {} wallets:{}", charge.getId(), walletIds.size());
         if (walletIds.size() > 0) {
             usageChargeInstanceWalletCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(charge.getId(), walletIds);
         } else {

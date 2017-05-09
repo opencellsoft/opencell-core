@@ -131,6 +131,8 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
 
         // Use flags to not return previous value
         runningJobsCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(jobInstanceId, nodes);
+
+        log.trace("Job {} marked as running in job cache", jobInstanceId);
     }
 
     /**
@@ -148,15 +150,19 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
                     if (nodes.isEmpty()) {
                         // Use flags to not return previous value
                         runningJobsCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).remove(jobInstanceId);
+                        log.trace("Job {} marked as not running in job cache", jobInstanceId);
+
                     } else {
                         // Use flags to not return previous value
                         runningJobsCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(jobInstanceId, nodes);
+                        log.trace("Job {} marked as not running in job cache", jobInstanceId);
                     }
                 }
             }
         } else {
             // Use flags to not return previous value
             runningJobsCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).remove(jobInstanceId);
+            log.trace("Job {} marked as not running in job cache", jobInstanceId);
         }
     }
 }

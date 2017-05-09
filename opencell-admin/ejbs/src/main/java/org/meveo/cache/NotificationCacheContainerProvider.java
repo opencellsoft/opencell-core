@@ -99,8 +99,9 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
     public void addNotificationToCache(Notification notif) {
 
         String cacheKey = getCacheKey(notif);
+
+        log.trace("Adding notification {} to notification cache under key {}", notif.getId(), cacheKey);
         try {
-            log.trace("Adding notification {} to notification cache under key {}", notif.getId(), cacheKey);
 
             List<Notification> notifications = eventNotificationCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
             if (notifications == null) {
@@ -112,7 +113,6 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
         } catch (Exception e) {
             log.error("Failed to add Notification {} to cache under key {}", notif.getId(), cacheKey);
         }
-
     }
 
     /**
@@ -123,6 +123,7 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
     public void removeNotificationFromCache(Notification notif) {
 
         String cacheKey = getCacheKey(notif);
+
         log.trace("Removing notification {} from notification cache under key {}", notif.getId(), cacheKey);
 
         List<Notification> notifs = eventNotificationCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
@@ -136,6 +137,7 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
                 } else {
                     eventNotificationCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, notifs);
                 }
+                log.trace("Removed notification {} from notification cache under key {}", notif.getId(), cacheKey);
             }
         }
     }

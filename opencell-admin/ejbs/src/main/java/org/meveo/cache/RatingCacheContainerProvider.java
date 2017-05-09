@@ -167,7 +167,7 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
 
             chargePriceListSameEventCode.add(pricePlan);
 
-            log.debug("Added pricePlan to cache chargeCode {} ; priceplan {}", pricePlan.getEventCode(), pricePlan);
+            // log.trace("Added pricePlan to cache chargeCode {} ; priceplan {}", pricePlan.getEventCode(), pricePlan);
         }
 
         if (chargePriceListSameEventCode != null && !chargePriceListSameEventCode.isEmpty()) {
@@ -194,6 +194,10 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
      */
     // @Lock(LockType.WRITE)
     public void addPricePlanToCache(PricePlanMatrix pricePlan) {
+
+        String cacheKey = pricePlan.getEventCode();
+
+        log.trace("Adding pricePlan {} to pricePlan cache under key {}", pricePlan.getId(), cacheKey);
 
         if (pricePlan.getCriteria1Value() != null && pricePlan.getCriteria1Value().length() == 0) {
             pricePlan.setCriteria1Value(null);
@@ -227,9 +231,6 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
             preloadCache(pricePlan.getValidityCalendar());
         }
 
-        String cacheKey = pricePlan.getEventCode();
-        log.trace("Adding pricePlan {} to pricePlan cache under key {}", pricePlan.getId(), cacheKey);
-
         List<PricePlanMatrix> chargePriceList = pricePlanCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
         if (chargePriceList == null) {
             chargePriceList = new ArrayList<PricePlanMatrix>();
@@ -249,6 +250,7 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
     public void removePricePlanFromCache(PricePlanMatrix pricePlan) {
 
         String cacheKey = pricePlan.getEventCode();
+
         log.trace("Removing pricePlan {} from priceplan cache under key {}", pricePlan.getId(), cacheKey);
 
         List<PricePlanMatrix> chargePriceList = pricePlanCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
@@ -262,6 +264,7 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
                 } else {
                     pricePlanCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, chargePriceList);
                 }
+                log.trace("Removed pricePlan {} from priceplan cache under key {}", pricePlan.getId(), cacheKey);
             }
         }
     }
@@ -323,6 +326,9 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
 
         Long subscriptionId = usageChargeInstance.getServiceInstance().getSubscription().getId();
 
+        log.debug("Updating usageChargeInstance cache with usageChargeInstance: subscription Id: {}, charge id={}, usageChargeTemplate id: {}", subscriptionId,
+            usageChargeInstance.getId(), usageChargeInstance.getChargeTemplate().getId());
+
         CachedUsageChargeTemplate cachedChargeTemplate = usageChargeTemplateCache.get(usageChargeInstance.getChargeTemplate().getId());
         if (cachedChargeTemplate == null) {
             UsageChargeTemplate usageChargeTemplate = usageChargeTemplateService.findById(usageChargeInstance.getChargeTemplate().getId());
@@ -331,9 +337,6 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
         } else {
             cachedChargeTemplate = associateUsageChargeTemplateWithSubscription(cachedChargeTemplate, subscriptionId);
         }
-
-        log.debug("Updating usageChargeInstance cache with usageChargeInstance: subscription Id: {}, charge id={}, usageChargeTemplate id: {}", subscriptionId,
-            usageChargeInstance.getId(), cachedChargeTemplate.getId());
 
         boolean cachedSubscriptionContainsCharge = false;
 
@@ -382,12 +385,13 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
     private CachedUsageChargeTemplate associateUsageChargeTemplateWithSubscription(CachedUsageChargeTemplate cachedChargeTemplate, Long subscriptionId) {
 
         if (!cachedChargeTemplate.getSubscriptionIds().contains(subscriptionId)) {
+
+            log.debug("Associating subscription {} to cached UsageChargeTemplate {}/{} ", subscriptionId, cachedChargeTemplate.getId(), cachedChargeTemplate.getCode());
+
             cachedChargeTemplate = usageChargeTemplateCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cachedChargeTemplate.getId());
             cachedChargeTemplate.getSubscriptionIds().add(subscriptionId);
 
             usageChargeTemplateCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cachedChargeTemplate.getId(), cachedChargeTemplate);
-
-            log.debug("Subscription {} associated to cached UsageChargeTemplate {}/{} ", subscriptionId, cachedChargeTemplate.getId(), cachedChargeTemplate.getCode());
         }
 
         return cachedChargeTemplate;
@@ -451,7 +455,7 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
      * @param triggeredEDRTemplate Triggered EDR template
      */
     public void updateUsageChargeTemplateInCache(TriggeredEDRTemplate triggeredEDRTemplate) {
-        log.debug("UpdateTemplateCache for triggeredEDR {}", triggeredEDRTemplate.toString());
+        log.debug("Updating charge template for triggeredEDR {} in usage charge template cache", triggeredEDRTemplate.toString());
 
         List<UsageChargeTemplate> charges = usageChargeTemplateService.findAssociatedToEDRTemplate(triggeredEDRTemplate);
 
@@ -468,6 +472,8 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
      * @param priorityChanged Priority has changed?
      */
     private void updateAndReorderUserChargeInstancesInCache(Long subscriptionId, CachedUsageChargeTemplate chargeTemplate, boolean priorityChanged) {
+
+        log.debug("Updating and sorted cached subscription {} usage charges", subscriptionId);
 
         BiFunction<? super Long, ? super List<CachedUsageChargeInstance>, ? extends List<CachedUsageChargeInstance>> remappingFunction = (subId, charges) -> {
             if (charges == null) {
@@ -488,7 +494,6 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
 
         usageChargeInstanceCache.compute(subscriptionId, remappingFunction);
 
-        log.debug("Updated and sorted cached subscription {} usage charges", subscriptionId);
     }
 
     /**
@@ -499,9 +504,10 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
      */
     private CachedCounterInstance addCounterInstanceToCache(CounterInstance counterInstance) {
 
+        log.debug("Adding counter to the counter cache counter: {}", counterInstance);
+
         CachedCounterInstance counterCacheValue = new CachedCounterInstance(counterInstance);
         counterCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(counterInstance.getId(), counterCacheValue);
-        log.debug("Added counter to the counter cache counter: {}", counterInstance);
 
         return counterCacheValue;
     }
@@ -604,6 +610,8 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
      */
     public CachedCounterPeriod addCounterPeriodToCache(CounterPeriod counterPeriod) {
 
+        log.debug("Adding counter period to the counter cache counter: {}", counterPeriod);
+
         CachedCounterInstance cachedCounterInstance = counterCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(counterPeriod.getCounterInstance().getId());
         if (cachedCounterInstance == null) {
             cachedCounterInstance = new CachedCounterInstance(counterPeriod.getCounterInstance());
@@ -611,7 +619,6 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
         CachedCounterPeriod cachedCounterPeriod = cachedCounterInstance.addCounterPeriod(counterPeriod);
 
         counterCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cachedCounterInstance.getId(), cachedCounterInstance);
-        log.debug("Added counter period to the counter cache counter: {}", counterPeriod);
 
         return cachedCounterPeriod;
     }
