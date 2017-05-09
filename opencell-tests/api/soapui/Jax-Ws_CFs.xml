@@ -26846,6 +26846,7 @@ public class Action1 extends Script {
                   <storageType>SINGLE</storageType>\r
                   <valueRequired>true</valueRequired>\r
                   <versionable>false</versionable>\r
+                  <tags>page1 page4</tags>
                </field>\r
                <field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT2" description="Entity field2">\r
                   <fieldType>LONG</fieldType>\r
@@ -26853,6 +26854,7 @@ public class Action1 extends Script {
                   <storageType>SINGLE</storageType>\r
                   <valueRequired>false</valueRequired>\r
                   <versionable>false</versionable>\r
+                  <tags>page2 page4</tags>
                </field>\r
             </fields>\r
             <actions>\r
@@ -26949,6 +26951,7 @@ public class Action1 extends Script {
                      <hideOnNew>false</hideOnNew>
                      <maxValue>50</maxValue>
                      <cacheValue>false</cacheValue>
+                     <tags>page1 page4</tags>
                   </field>]]></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
@@ -26968,6 +26971,7 @@ public class Action1 extends Script {
                      <allowEdit>true</allowEdit>
                      <hideOnNew>false</hideOnNew>
                      <cacheValue>false</cacheValue>
+                     <tags>page2 page4</tags>
                   </field>]]></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>

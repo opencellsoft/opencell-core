@@ -2708,5 +2708,11 @@
     		<column name="rating_unit_description" type="VARCHAR(20)" />
     	</addColumn>
     </changeSet>
-
-</databaseChangeLog>
+	
+	<changeSet id="#2456_20170505" author="AndriusKarpavicius">
+		<addColumn tableName="CRM_CUSTOM_FIELD_TMPL">
+    		<column name="tags" type="VARCHAR(2000)" />
+    	</addColumn>
+	</changeSet>
+	
+</databaseChangeLog> 
