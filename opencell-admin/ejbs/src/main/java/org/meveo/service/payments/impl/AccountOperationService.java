@@ -87,12 +87,14 @@ public class AccountOperationService extends PersistenceService<AccountOperation
      * Set the discriminatorValue value, so it would be available in the list of entities right away
      * @throws BusinessException 
      */	
-    public void create(AccountOperation aop) throws BusinessException {
+    public Long createAndReturnId(AccountOperation aop) throws BusinessException {
 
         if (aop.getClass().isAnnotationPresent(DiscriminatorValue.class)) {
             aop.setType(aop.getClass().getAnnotation(DiscriminatorValue.class).value());
         }
 
-        super.create(aop);        
+        super.create(aop);
+        return aop.getId();
+        
     }
 }
