@@ -84,6 +84,13 @@ public class CachedUsageChargeInstance implements Comparable<CachedUsageChargeIn
         return priority - o.priority;
     }
 
+    /**
+     * Populate with info from charge instance and charge template
+     * 
+     * @param usageChargeInstance Charge instance
+     * @param cachedChargeTemplate Charge template
+     * @param cachedCounterInstance Counter instance
+     */
     public void populateFromUsageChargeInstance(UsageChargeInstance usageChargeInstance, CachedUsageChargeTemplate cachedChargeTemplate,
             CachedCounterInstance cachedCounterInstance) {
 
@@ -106,6 +113,25 @@ public class CachedUsageChargeInstance implements Comparable<CachedUsageChargeIn
         // Copy values from charge template
         priority = cachedChargeTemplate.getPriority();
         chargeTemplateCode = cachedChargeTemplate.getCode();
+    }
+
+    /**
+     * Update stored charge template information. Safe to call on any charge instance - a match for charge template will be done first
+     * 
+     * @param chargeTemplate Charge template
+     * @return True, if charge template ID matched and charge template info was updated
+     */
+    public boolean updateChargeTemplateInfo(CachedUsageChargeTemplate chargeTemplate) {
+
+        if (chargeTemplateId.equals(chargeTemplate.getId())) {
+
+            // Copy values from charge template
+            priority = chargeTemplate.getPriority();
+            chargeTemplateCode = chargeTemplate.getCode();
+            return true;
+        }
+
+        return false;
     }
 
     @Override
