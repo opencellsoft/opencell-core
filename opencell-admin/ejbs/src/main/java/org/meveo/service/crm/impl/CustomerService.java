@@ -60,7 +60,7 @@ public class CustomerService extends AccountService<Customer> {
 
 	@SuppressWarnings("unchecked")
 	public List<Customer> filter(String customerCode, CustomerCategory customerCategory, Seller seller,
-			CustomerBrand brand, int firstRow, int numberOfRows) {
+			CustomerBrand brand, Integer firstRow, Integer numberOfRows) {
 		QueryBuilder qb = new QueryBuilder(Customer.class, "c");
 		qb.addCriterion("code", "=", customerCode, true);
 
