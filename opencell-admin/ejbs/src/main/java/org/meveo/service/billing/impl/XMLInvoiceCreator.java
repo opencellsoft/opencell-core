@@ -1121,6 +1121,12 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 							lineUnit.appendChild(lineUnitTxt);
 							line.appendChild(lineUnit);
 						}
+						if (!StringUtils.isBlank(ratedTransaction.getRatingUnitDescription())) {
+							Element lineRatingUnit = doc.createElement("ratingUnit");
+							Text lineUnitTxt = doc.createTextNode(ratedTransaction.getRatingUnitDescription());
+							lineRatingUnit.appendChild(lineUnitTxt);
+							line.appendChild(lineRatingUnit);
+						}
 						Element lineUnitAmountWithoutTax = doc.createElement("unitAmountWithoutTax");
 						Text lineUnitAmountWithoutTaxTxt = doc.createTextNode(ratedTransaction
 								.getUnitAmountWithoutTax().toPlainString());

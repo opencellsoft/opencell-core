@@ -4051,9 +4051,9 @@
         </insert>
        	<insert tableName="adm_permission">
 			<column name="id" value="-17" />
-			<column name="name" value="Marketing Catalog"></column>
-			<column name="ressource" value="marketing"></column>
-			<column name="permission" value="marketingCatalogManager"></column>
+			<column name="name" value="Marketing Catalog"/>
+			<column name="ressource" value="marketing"/>
+			<column name="permission" value="marketingCatalogManager"/>
 		</insert>
         <insert tableName="adm_permission">
             <column name="id" valueNumeric="-18" />
@@ -4069,21 +4069,21 @@
         </insert>    
 		<insert tableName="adm_permission">
 			<column name="id" valueNumeric="-20" />
-			<column name="name" value="Finance visualization"></column>
-			<column name="ressource" value="finance"></column>
-			<column name="permission" value="financeVisualization"></column>
+			<column name="name" value="Finance visualization"/>
+			<column name="ressource" value="finance"/>
+			<column name="permission" value="financeVisualization"/>
 		</insert>		
 		<insert tableName="adm_permission">
 			<column name="id" valueNumeric="-21" />
-			<column name="name" value="Finance management"></column>
-			<column name="ressource" value="finance"></column>
-			<column name="permission" value="financeManagement"></column>
+			<column name="name" value="Finance management"/>
+			<column name="ressource" value="finance"/>
+			<column name="permission" value="financeManagement"/>
 		</insert>
 		<insert tableName="adm_permission">
 			<column name="id" valueNumeric="-22" />
-			<column name="name" value="Marketing Catalog visualization"></column>
-			<column name="ressource" value="marketing"></column>
-			<column name="permission" value="marketingCatalogVisualization"></column>
+			<column name="name" value="Marketing Catalog visualization"/>
+			<column name="ressource" value="marketing"/>
+			<column name="permission" value="marketingCatalogVisualization"/>
 		</insert>	
         <insert tableName="adm_permission">
             <column name="id" valueNumeric="-23" />
@@ -4096,7 +4096,19 @@
             <column name="name" value="Quote management" />
             <column name="permission" value="quoteManagement" />
             <column name="ressource" value="quote" />
-        </insert>    
+        </insert>
+        <insert tableName="adm_permission">
+            <column name="id" valueNumeric="-25" />
+            <column name="name" value="User Management" />
+            <column name="permission" value="userManagement" />
+            <column name="ressource" value="user" />
+        </insert>
+        <insert tableName="adm_permission">
+            <column name="id" valueNumeric="-26" />
+            <column name="name" value="User Self Management" />
+            <column name="permission" value="userSelfManagement" />
+            <column name="ressource" value="user" />
+        </insert>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-data-calendarDays">
         <insert tableName="cat_day_in_year">
@@ -6887,7 +6899,15 @@
         <insert tableName="adm_role_permission">
             <column name="role_id" valueNumeric="-1" />
             <column name="permission_id" valueNumeric="-24" />
-        </insert>     
+        </insert>
+        <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="-1" />
+            <column name="permission_id" valueNumeric="-25" />
+        </insert>
+        <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="-1" />
+            <column name="permission_id" valueNumeric="-26" />
+        </insert>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-data-usersDEMO">
         <insert tableName="adm_user">

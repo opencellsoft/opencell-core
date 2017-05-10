@@ -193,8 +193,8 @@ public class CustomFieldTemplateApi extends BaseApi {
             missingParameters.add("appliesTo");
         }
 
-        handleMissingParameters();       
-        
+        handleMissingParameters();
+
         if (!getCustomizedEntitiesAppliesTo().contains(appliesTo)) {
             throw new InvalidParameterException("appliesTo", appliesTo);
         }
@@ -217,9 +217,9 @@ public class CustomFieldTemplateApi extends BaseApi {
      * @throws MissingParameterException A parameter, necessary to find an Custom Field Template, was not provided
      */
     public CustomFieldTemplateDto findIgnoreNotFound(String code, String appliesTo) throws MissingParameterException, InvalidParameterException {
-        try{
+        try {
             return find(code, appliesTo);
-        } catch (EntityDoesNotExistsException e){
+        } catch (EntityDoesNotExistsException e) {
             return null;
         }
     }
@@ -302,7 +302,8 @@ public class CustomFieldTemplateApi extends BaseApi {
 
         cft.setMapKeyType(dto.getMapKeyType());
         cft.setIndexType(dto.getIndexType());
-        
+        cft.setTags(dto.getTags());
+
         if (cft.getStorageType() == CustomFieldStorageTypeEnum.MAP && cft.getMapKeyType() == null) {
             cft.setMapKeyType(CustomFieldMapKeyEnum.STRING);
         }

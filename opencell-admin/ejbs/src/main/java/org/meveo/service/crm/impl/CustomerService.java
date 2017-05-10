@@ -60,10 +60,9 @@ public class CustomerService extends AccountService<Customer> {
 
 	@SuppressWarnings("unchecked")
 	public List<Customer> filter(String customerCode, CustomerCategory customerCategory, Seller seller,
-			CustomerBrand brand) {
+			CustomerBrand brand, Integer firstRow, Integer numberOfRows) {
 		QueryBuilder qb = new QueryBuilder(Customer.class, "c");
 		qb.addCriterion("code", "=", customerCode, true);
-		
 
 		if (customerCategory != null) {
 			qb.addCriterionEntity("customerCategory", customerCategory);
@@ -76,9 +75,13 @@ public class CustomerService extends AccountService<Customer> {
 		if (brand != null) {
 			qb.addCriterionEntity("customerBrand", brand);
 		}
+		
+		
+		Query query = qb.getQuery(getEntityManager());
+		qb.applyPagination(query, firstRow, numberOfRows);
 
 		try {
-			return (List<Customer>) qb.getQuery(getEntityManager()).getResultList();
+			return (List<Customer>) query.getResultList();
 		} catch (NoResultException e) {
 			return null;
 		}

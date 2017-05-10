@@ -136,6 +136,10 @@ public class RatedTransaction extends BaseEntity {
 	@Column(name = "UNITY_DESCRIPTION", length = 20)
 	@Size(max = 20)
 	private String unityDescription;
+	
+	@Column(name = "RATING_UNIT_DESCRIPTION", length = 20)
+    @Size(max = 20)
+	private String ratingUnitDescription;
 
 	@Column(name = "UNIT_AMOUNT_WITHOUT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal unitAmountWithoutTax;
@@ -253,6 +257,7 @@ public class RatedTransaction extends BaseEntity {
 		this.setOfferCode(ratedTransaction.getOfferCode());
 		this.setEdr(ratedTransaction.getEdr());
 		this.setOfferTemplate(ratedTransaction.getOfferTemplate());
+		setRatingUnitDescription(ratedTransaction.getRatingUnitDescription());
 	}
 
 	public RatedTransaction(WalletOperation walletOperation, Date usageDate, BigDecimal unitAmountWithoutTax,
@@ -579,4 +584,12 @@ public class RatedTransaction extends BaseEntity {
         }
         return true;
     }
+
+	public String getRatingUnitDescription() {
+		return ratingUnitDescription;
+	}
+
+	public void setRatingUnitDescription(String ratingUnitDescription) {
+		this.ratingUnitDescription = ratingUnitDescription;
+	}
 }

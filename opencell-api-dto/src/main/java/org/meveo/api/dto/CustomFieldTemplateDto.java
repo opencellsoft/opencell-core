@@ -184,7 +184,15 @@ public class CustomFieldTemplateDto extends BaseDto {
     @XmlElement(name = "fieldCode")
     private List<String> childEntityFieldsForSummary;
 
+    /**
+     * If and how custom field values should be indexed in Elastic Search
+     */
     private CustomFieldIndexTypeEnum indexType;
+
+    /**
+     * Tags assigned to custom field template
+     */
+    private String tags;
 
     public CustomFieldTemplateDto() {
 
@@ -219,6 +227,7 @@ public class CustomFieldTemplateDto extends BaseDto {
         applicableOnEl = cf.getApplicableOnEl();
         mapKeyType = cf.getMapKeyType();
         indexType = cf.getIndexType();
+        tags = cf.getTags();
 
         if (cf.getStorageType() == CustomFieldStorageTypeEnum.MATRIX && cf.getMatrixColumns() != null) {
             matrixColumns = new ArrayList<>();
@@ -458,5 +467,13 @@ public class CustomFieldTemplateDto extends BaseDto {
 
     public void setIndexType(CustomFieldIndexTypeEnum indexType) {
         this.indexType = indexType;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
     }
 }

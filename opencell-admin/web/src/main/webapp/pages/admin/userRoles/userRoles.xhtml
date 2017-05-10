@@ -35,9 +35,6 @@
 				field="description" />
 			<hftl:column label="#{messages['role.permissions']}"
 				field="permissions" valueLabelField="name" isList="true" />
-			<hftl:column label="#{messages['commons.provider']}"
-				field="provider.code"
-				rendered="#{currentUser.hasRole( 'superAdminManagement')}" />
 
 			<hftl:actionsColumn
 				permission="#{currentUser.hasRole('administrationManagement')}" />
