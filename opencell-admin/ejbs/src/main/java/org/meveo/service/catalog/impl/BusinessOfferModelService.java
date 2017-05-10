@@ -257,15 +257,17 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 		}
 
 		// create the languages
-		for (String languageKey : languageMessagesMap.keySet()) {
-			String description = languageMessagesMap.get(languageKey);
-			CatMessages catMsg = catMessagesService.getCatMessages((BusinessEntity) newOfferTemplate, languageKey);
-			if (catMsg != null) {
-				catMsg.setDescription(description);
-				catMessagesService.update(catMsg);
-			} else {
-				CatMessages catMessages = new CatMessages((BusinessEntity) newOfferTemplate, languageKey, description);
-				catMessagesService.create(catMessages);
+		if(languageMessagesMap != null) {
+			for (String languageKey : languageMessagesMap.keySet()) {
+				String description = languageMessagesMap.get(languageKey);
+				CatMessages catMsg = catMessagesService.getCatMessages((BusinessEntity) newOfferTemplate, languageKey);
+				if (catMsg != null) {
+					catMsg.setDescription(description);
+					catMessagesService.update(catMsg);
+				} else {
+					CatMessages catMessages = new CatMessages((BusinessEntity) newOfferTemplate, languageKey, description);
+					catMessagesService.create(catMessages);
+				}
 			}
 		}
 
