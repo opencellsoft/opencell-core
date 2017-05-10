@@ -2698,10 +2698,6 @@
             <column name="DISCOUNT_PERCENT_EL" type="VARCHAR(2000)"/>        
         </addColumn>
     </changeSet>
-
-	<changeSet id="#2530_20170425" author="TonyAlejandro">
-		<modifyDataType tableName="adm_inbound_req_headers" columnName="headers" newDataType="TEXT" />
-	</changeSet>
 	
 	 <changeSet id="#2518_20170405 - Add rating unit to rt" author="EdwardPLegaspi">
     	<addColumn tableName="billing_rated_transaction">
