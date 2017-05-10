@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -15,6 +16,8 @@ import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.catalog.ServiceConfigurationDto;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.BusinessEntity;
+import org.meveo.model.billing.CatMessages;
 import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.BusinessServiceModel;
 import org.meveo.model.catalog.Channel;
@@ -54,6 +57,9 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 
 	@Inject
 	private OfferModelScriptService offerModelScriptService;
+	
+	@Inject
+	private CatMessagesService catMessagesService;
 
 	/**
 	 * Creates an offer given a BusinessOfferModel.
@@ -70,7 +76,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 	public OfferTemplate createOfferFromBOM(BusinessOfferModel businessOfferModel, List<CustomFieldDto> customFields, String code, String name, String offerDescription,
 			List<ServiceConfigurationDto> serviceCodes) throws BusinessException {
 		return createOfferFromBOM(businessOfferModel, customFields, code, name, offerDescription, serviceCodes, null,
-				null, null, LifeCycleStatusEnum.IN_DESIGN, null, null, null);
+				null, null, LifeCycleStatusEnum.IN_DESIGN, null, null, null, null);
 	}
 
 	/**
@@ -91,7 +97,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 	 */
 	public OfferTemplate createOfferFromBOM(BusinessOfferModel businessOfferModel, List<CustomFieldDto> customFields, String code, String name, String offerDescription,
 			List<ServiceConfigurationDto> serviceCodes, List<Channel> channels, List<BusinessAccountModel> bams, List<OfferTemplateCategory> offerTemplateCategories,
-			LifeCycleStatusEnum lifeCycleStatusEnum, String imagePath, Date validFrom, Date validTo) throws BusinessException {
+			LifeCycleStatusEnum lifeCycleStatusEnum, String imagePath, Date validFrom, Date validTo, Map<String, String> languageMessagesMap) throws BusinessException {
 		OfferTemplate bomOffer = businessOfferModel.getOfferTemplate();
 		bomOffer = offerTemplateService.refreshOrRetrieve(bomOffer);
 
@@ -250,7 +256,20 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 			}
 		}
 
-		// save the cf
+		// create the languages
+		if(languageMessagesMap != null) {
+			for (String languageKey : languageMessagesMap.keySet()) {
+				String description = languageMessagesMap.get(languageKey);
+				CatMessages catMsg = catMessagesService.getCatMessages((BusinessEntity) newOfferTemplate, languageKey);
+				if (catMsg != null) {
+					catMsg.setDescription(description);
+					catMessagesService.update(catMsg);
+				} else {
+					CatMessages catMessages = new CatMessages((BusinessEntity) newOfferTemplate, languageKey, description);
+					catMessagesService.create(catMessages);
+				}
+			}
+		}
 
 		return newOfferTemplate;
 	}

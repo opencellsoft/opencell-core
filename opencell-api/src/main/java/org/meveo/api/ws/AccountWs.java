@@ -102,7 +102,8 @@ public interface AccountWs extends IBaseWs {
      * @return
      */
     @WebMethod
-    CustomersResponseDto listCustomerWithFilter(@WebParam(name = "customer") CustomerDto postData);
+	CustomersResponseDto listCustomerWithFilter(@WebParam(name = "customer") CustomerDto postData,
+			@WebParam(name = "firstRow") Integer firstRow, @WebParam(name = "numberOfRows") Integer numberOfRows);
 
     // customer brand
 

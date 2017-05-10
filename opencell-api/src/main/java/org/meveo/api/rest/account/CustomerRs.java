@@ -76,7 +76,7 @@ public interface CustomerRs extends IBaseRs {
      */
     @POST
     @Path("/list")
-    CustomersResponseDto list(CustomerDto postData);
+    CustomersResponseDto list(CustomerDto postData, @QueryParam("firstRow") int firstRow, @QueryParam("numberOfRows") int numberOfRows);
 
     /**
      * Create a new customer brand
