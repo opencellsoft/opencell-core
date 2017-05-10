@@ -289,7 +289,7 @@ public class CustomerApi extends AccountApi {
 	@SecuredBusinessEntityMethod(
 			resultFilter = AccountDtoListFilter.class, 
 			validate = @SecureMethodParameter(parser = NullParser.class))
-	public CustomersDto filterCustomer(CustomerDto postData) throws MeveoApiException {
+	public CustomersDto filterCustomer(CustomerDto postData, int firstRow, int numberOfRows) throws MeveoApiException {
 		
 		CustomerCategory customerCategory = null;
 		if (!StringUtils.isBlank(postData.getCustomerCategory())) {
@@ -316,7 +316,7 @@ public class CustomerApi extends AccountApi {
 		}
 
 		CustomersDto result = new CustomersDto();
-		List<Customer> customers = customerService.filter(postData.getCode(), customerCategory, seller, customerBrand);
+		List<Customer> customers = customerService.filter(postData.getCode(), customerCategory, seller, customerBrand, firstRow, numberOfRows);
 		if (customers != null) {
 			for (Customer c : customers) {
 				result.getCustomer().add(accountHierarchyApi.customerToDto(c));
