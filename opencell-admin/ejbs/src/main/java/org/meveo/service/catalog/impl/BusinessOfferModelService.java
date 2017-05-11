@@ -229,6 +229,10 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 			List<ServiceConfigurationDto> productCodes, BusinessOfferModel businessOfferModel) throws BusinessException {
 		List<OfferProductTemplate> newOfferProductTemplates = new ArrayList<>();
 
+        if (bomOffer.getOfferProductTemplates() == null || bomOffer.getOfferProductTemplates().isEmpty() || productCodes == null || productCodes.isEmpty()) {
+            return newOfferProductTemplates;
+        }
+		
 		if (bomOffer.getOfferProductTemplates() != null) {
 			// check if service template exists
 			if (productCodes != null && productCodes.size() > 0) {				
