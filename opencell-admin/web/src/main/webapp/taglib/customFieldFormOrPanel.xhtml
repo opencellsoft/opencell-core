@@ -67,14 +67,14 @@
 					<hftl:decorateFormField fieldId="#{prefix}period_start_date"
 						label="#{messages['customFieldTemplate.periodDate']}">
 						<h:outputText id="#{prefix}period_start_date"
-							value="#{cfValueHolder.selectedValuePeriod.periodStartDate}">
+							value="#{cfValueHolder.selectedValuePeriod.period.from}">
 							<f:convertDateTime type="date" pattern="#{dateTimePattern}" />
 						</h:outputText>
 					</hftl:decorateFormField>
 					<hftl:decorateFormField fieldId="#{prefix}period_end_date"
 						label="#{messages['customFieldTemplate.periodEndDate']}">
 						<h:outputText id="#{prefix}period_end_date"
-							value="#{cfValueHolder.selectedValuePeriod.periodEndDate}">
+							value="#{cfValueHolder.selectedValuePeriod.period.to}">
 							<f:convertDateTime type="date" pattern="#{dateTimePattern}" />
 						</h:outputText>
 					</hftl:decorateFormField>

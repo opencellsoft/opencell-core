@@ -1317,12 +1317,12 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
      */
     private void triggerEndPeriodEvent(CustomFieldInstance cfi) {
 
-        if (cfi.getPeriodEndDate() != null && cfi.getPeriodEndDate().before(new Date())) {
+        if (cfi.getPeriod().getTo() != null && cfi.getPeriod().getTo().before(new Date())) {
             CFEndPeriodEvent event = new CFEndPeriodEvent();
             event.setCustomFieldInstance(cfi);
             cFEndPeriodEvent.fire(event);
 
-        } else if (cfi.getPeriodEndDate() != null) {
+        } else if (cfi.getPeriod().getTo() != null) {
 
             TimerConfig timerConfig = new TimerConfig();
             timerConfig.setInfo(cfi);
@@ -1331,9 +1331,9 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
             // expiration = new Date();
             // expiration = DateUtils.addMinutes(expiration, 1);
 
-            log.debug("Creating timer for triggerEndPeriodEvent for Custom field value {} with expiration={}", cfi, cfi.getPeriodEndDate());
+            log.debug("Creating timer for triggerEndPeriodEvent for Custom field value {} with expiration={}", cfi, cfi.getPeriod().getTo());
 
-            timerService.createSingleActionTimer(cfi.getPeriodEndDate(), timerConfig);
+            timerService.createSingleActionTimer(cfi.getPeriod().getTo(), timerConfig);
         }
     }
 

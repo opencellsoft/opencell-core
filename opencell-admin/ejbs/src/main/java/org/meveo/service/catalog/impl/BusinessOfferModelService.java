@@ -149,15 +149,13 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 		} else {
 			newOfferTemplate.setName(name);
 		}
-		if (validFrom == null) {
-			newOfferTemplate.setValidFrom(bomOffer.getValidFrom());
-		} else {
-			newOfferTemplate.setValidFrom(validFrom);
+		
+		newOfferTemplate.setValidity(bomOffer.getValidity());
+		if (validFrom != null) {
+			newOfferTemplate.getValidity().setFrom(validFrom);
 		}
-		if (validTo == null) {
-			newOfferTemplate.setValidTo(bomOffer.getValidTo());
-		} else {
-			newOfferTemplate.setValidTo(validTo);
+		if (validTo != null) {
+			newOfferTemplate.getValidity().setTo(validTo);
 		}
 		newOfferTemplate.setBusinessOfferModel(businessOfferModel);
 		if (bomOffer.getAttachments() != null) {
@@ -229,6 +227,10 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 			List<ServiceConfigurationDto> productCodes, BusinessOfferModel businessOfferModel) throws BusinessException {
 		List<OfferProductTemplate> newOfferProductTemplates = new ArrayList<>();
 
+		if (bomOffer.getOfferProductTemplates()==null || bomOffer.getOfferProductTemplates().isEmpty() || productCodes==null || productCodes.isEmpty()){
+		    return newOfferProductTemplates;
+		}
+		
 		if (bomOffer.getOfferProductTemplates() != null) {
 			// check if service template exists
 			if (productCodes != null && productCodes.size() > 0) {				

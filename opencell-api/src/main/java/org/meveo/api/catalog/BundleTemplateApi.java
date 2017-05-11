@@ -18,6 +18,7 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.BundleProductTemplate;
 import org.meveo.model.catalog.BundleTemplate;
 import org.meveo.model.catalog.OfferTemplate;
@@ -124,8 +125,7 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
 		bundleTemplate.setCode(postData.getCode());
 		bundleTemplate.setDescription(postData.getDescription());
 		bundleTemplate.setName(postData.getName());
-		bundleTemplate.setValidFrom(postData.getValidFrom());
-		bundleTemplate.setValidTo(postData.getValidTo());
+		bundleTemplate.setValidity(new DatePeriod(postData.getValidFrom(), postData.getValidTo()));
 		bundleTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
 		try {
 			saveImage(bundleTemplate, postData.getImagePath(), postData.getImageBase64());
@@ -173,8 +173,7 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
 		bundleTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode())?postData.getCode():postData.getUpdatedCode());
 		bundleTemplate.setDescription(postData.getDescription());
 		bundleTemplate.setName(postData.getName());
-		bundleTemplate.setValidFrom(postData.getValidFrom());
-		bundleTemplate.setValidTo(postData.getValidTo());
+		bundleTemplate.setValidity(new DatePeriod(postData.getValidFrom(), postData.getValidTo()));
 		bundleTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
 		try {
 			saveImage(bundleTemplate, postData.getImagePath(), postData.getImageBase64());

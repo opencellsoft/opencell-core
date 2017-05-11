@@ -21,8 +21,8 @@
     <hftl:formField label="#{messages['commons.name']}" field="name"
         required="true" id="name" />               
 	<hftl:formField label="#{messages['commons.validFrom']}"
-		field="validFrom" id="validFrom" />
-	<hftl:formField label="#{messages['commons.validTo']}" field="validTo"
+		field="validity" childField="from" id="validFrom" />
+	<hftl:formField label="#{messages['commons.validTo']}" field="validity" childField="to"
 		id="validTo" />
     <hftl:formLanguageFields entity="#{mainBackingBean.entity}"
         backingBean="#{mainBackingBean}" multiLang="true" /> 

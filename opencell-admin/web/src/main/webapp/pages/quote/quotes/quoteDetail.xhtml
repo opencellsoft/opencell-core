@@ -53,8 +53,8 @@
                         <hftl:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true" allowEdit="false" />
                         <hftl:formField label="#{messages['businessEntity.description']}" field="description" />
                         <hftl:formField label="#{messages['quote.quoteDate']}" field="quoteDate" doNotShowOnNew="true" allowEdit="false" />
-                        <hftl:formField label="#{messages['quote.validFrom']}" field="validFrom" newLine="true" />
-                        <hftl:formField label="#{messages['quote.validTo']}" field="validTo" />
+                        <hftl:formField label="#{messages['quote.validFrom']}" field="validity" childField="from" newLine="true" />
+                        <hftl:formField label="#{messages['quote.validTo']}" field="validity" childField="to" />
                         <hftl:formField label="#{messages['quote.category']}" field="category" />
 
                         <hftl:formField id="userAccountQuote" label="#{messages['quote.userAccount']}" field="userAccount" valueLabelField="code" popup="true"

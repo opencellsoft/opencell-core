@@ -86,9 +86,9 @@
 									listBean="#{businessAccountModelListBean}" componentWidth="30" />
 
 								<hftl:formField label="#{messages['commons.validFrom']}"
-									field="validFrom" />
+									field="validity" childField="from" />
 								<hftl:formField label="#{messages['commons.validTo']}"
-									field="validTo" />
+									field="validity" childField="to" />
 
 								<hftl:formField label="#{messages['enableEntity.disabled']}"
 									doNotShowOnNew="true" allowEdit="false" field="disabled"
@@ -175,10 +175,10 @@
 									newLine="true" />
 								<hftl:formField
 									entity="#{offerTemplateBean.offerServiceTemplate}"
-									label="#{messages['commons.validFrom']}" field="validFrom" />
+									label="#{messages['commons.validFrom']}" field="validity" childField="from" />
 								<hftl:formField
 									entity="#{offerTemplateBean.offerServiceTemplate}"
-									label="#{messages['commons.validTo']}" field="validTo" />
+									label="#{messages['commons.validTo']}" field="validity" childField="to"  />
 
 								<h:panelGroup layout="block" styleClass="form-panel-actions">
 									<p:commandButton

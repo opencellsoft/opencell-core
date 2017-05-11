@@ -17,6 +17,7 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.service.catalog.impl.ProductTemplateService;
@@ -104,8 +105,7 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 		productTemplate.setCode(postData.getCode());
 		productTemplate.setDescription(postData.getDescription());
 		productTemplate.setName(postData.getName());
-		productTemplate.setValidFrom(postData.getValidFrom());
-		productTemplate.setValidTo(postData.getValidTo());
+		productTemplate.setValidity(new DatePeriod(postData.getValidFrom(), postData.getValidTo()));
 		productTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
 		try {
 			saveImage(productTemplate, postData.getImagePath(), postData.getImageBase64());
@@ -164,8 +164,7 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 		productTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode())?postData.getCode():postData.getUpdatedCode());
 		productTemplate.setDescription(postData.getDescription());
 		productTemplate.setName(postData.getName());
-		productTemplate.setValidFrom(postData.getValidFrom());
-		productTemplate.setValidTo(postData.getValidTo());
+		productTemplate.setValidity(new DatePeriod(postData.getValidFrom(), postData.getValidTo()));
 		productTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
 		try {
 			saveImage(productTemplate, postData.getImagePath(), postData.getImageBase64());

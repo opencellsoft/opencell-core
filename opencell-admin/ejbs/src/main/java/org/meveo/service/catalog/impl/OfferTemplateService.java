@@ -239,7 +239,7 @@ public class OfferTemplateService extends MultilanguageEntityService<OfferTempla
 				catalogHierarchyBuilderService.buildOfferProductTemplate(entity, offerProductTemplates, prefix);
 			}
 			
-			update(entity);
+			entity = update(entity);
 		}
 
 		return entity;

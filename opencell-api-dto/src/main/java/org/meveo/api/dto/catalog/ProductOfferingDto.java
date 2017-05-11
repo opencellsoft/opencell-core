@@ -60,8 +60,8 @@ public class ProductOfferingDto extends BusinessDto {
 		this.setCode(product.getCode());
 		this.setDescription(product.getDescription());
 		this.setName(product.getName());
-		this.setValidFrom(product.getValidFrom());
-		this.setValidTo(product.getValidTo());
+		this.setValidFrom(product.getValidity().getFrom());
+		this.setValidTo(product.getValidity().getTo());
 		this.setLifeCycleStatus(product.getLifeCycleStatus());
 		this.imagePath = product.getImagePath();
 		

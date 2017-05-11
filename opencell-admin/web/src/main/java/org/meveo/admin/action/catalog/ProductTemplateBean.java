@@ -109,7 +109,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 	}
 
 	public String activateProduct() throws BusinessException {
-		if (entity.getValidFrom().before(entity.getValidTo())) {
+		if (entity.getValidity().isValid()) {
 			entity.setActive(true);
 			return saveOrUpdate(false);
 		} else {
@@ -120,7 +120,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 	}
 
 	public String saveAsDraft() throws BusinessException {
-		if (entity.getValidFrom().before(entity.getValidTo())) {
+		if (entity.getValidity().isValid()) {
 			entity.setActive(false);
 			return saveOrUpdate(false);
 		} else {
@@ -297,19 +297,10 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 		return "code";
 	}
 	
-	public boolean displayStatus(ProductTemplate e) {
-		Date now = new Date();
+	public boolean displayStatus(ProductTemplate product) {
 
-		if ((Arrays.asList(LifeCycleStatusEnum.ACTIVE, LifeCycleStatusEnum.LAUNCHED, LifeCycleStatusEnum.IN_TEST).contains(e.getLifeCycleStatus()))) {
-			if (e.getValidFrom() == null && e.getValidTo() == null) {
-				return true;
-			} else if (e.getValidFrom() != null && e.getValidTo() != null && (now.compareTo(e.getValidFrom()) >= 0 && now.compareTo(e.getValidTo()) <= 0)) {
-				return true;
-			} else if ((e.getValidFrom() != null && e.getValidTo() == null) && now.compareTo(e.getValidFrom()) > 0) {
-				return true;
-			} else if ((e.getValidFrom() == null && e.getValidTo() != null) && now.compareTo(e.getValidTo()) < 0) {
-				return true;
-			}
+		if ((Arrays.asList(LifeCycleStatusEnum.ACTIVE, LifeCycleStatusEnum.LAUNCHED, LifeCycleStatusEnum.IN_TEST).contains(product.getLifeCycleStatus()))) {
+			return product.getValidity().isCorrespondsToPeriod(new Date());
 		}
 
 		return false;

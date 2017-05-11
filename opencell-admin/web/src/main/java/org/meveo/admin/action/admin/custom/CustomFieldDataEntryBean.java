@@ -367,7 +367,7 @@ public class CustomFieldDataEntryBean implements Serializable {
             } else {
                 period = entityValueHolder.getValuePeriod(cft, periodStartDate, periodEndDate, false, false);
                 if (period != null) {
-                    strictMatch = period.isCorrespondsToPeriod(periodStartDate, periodEndDate, true);
+                    strictMatch = period.getPeriod().isCorrespondsToPeriod(periodStartDate, periodEndDate, true);
                 }
             }
 
@@ -379,15 +379,15 @@ public class CustomFieldDataEntryBean implements Serializable {
                 // For a strict match need to edit an existing period
                 if (strictMatch) {
                     messages.error(new BundleKey("messages", "customFieldTemplate.matchingPeriodFound.noNew"),
-                        period.getPeriodStartDate() == null ? "" : DateUtils.formatDateWithPattern(period.getPeriodStartDate(), datePattern),
-                        period.getPeriodEndDate() == null ? "" : DateUtils.formatDateWithPattern(period.getPeriodEndDate(), datePattern));
+                        period.getPeriod().getFrom() == null ? "" : DateUtils.formatDateWithPattern(period.getPeriod().getFrom(), datePattern),
+                        period.getPeriod().getTo() == null ? "" : DateUtils.formatDateWithPattern(period.getPeriod().getTo(), datePattern));
                     entityValueHolder.setValuePeriodMatched(false);
 
                     // For a non-strict match user has an option to create a period with a higher priority
                 } else {
                     messages.warn(new BundleKey("messages", "customFieldTemplate.matchingPeriodFound"),
-                        period.getPeriodStartDate() == null ? "" : DateUtils.formatDateWithPattern(period.getPeriodStartDate(), datePattern),
-                        period.getPeriodEndDate() == null ? "" : DateUtils.formatDateWithPattern(period.getPeriodEndDate(), datePattern));
+                        period.getPeriod().getFrom() == null ? "" : DateUtils.formatDateWithPattern(period.getPeriod().getFrom(), datePattern),
+                        period.getPeriod().getTo() == null ? "" : DateUtils.formatDateWithPattern(period.getPeriod().getTo(), datePattern));
                     entityValueHolder.setValuePeriodMatched(true);
                 }
                 FacesContext.getCurrentInstance().validationFailed();

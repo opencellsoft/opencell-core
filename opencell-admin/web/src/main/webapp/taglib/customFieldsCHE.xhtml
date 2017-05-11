@@ -75,12 +75,12 @@
                         <p:panel>
                             <h:panelGroup id="#{prefix}periodFields" layout="block" styleClass="form-panel">
                                 <hftl:decorateFormField fieldId="period_start_date" label="#{messages['customFieldTemplate.periodDate']}">
-                                    <h:outputText id="period_start_date" value="#{cfValueHolder.selectedValuePeriod.periodStartDate}">
+                                    <h:outputText id="period_start_date" value="#{cfValueHolder.selectedValuePeriod.period.from}">
                                         <f:convertDateTime type="date" pattern="#{dateTimePattern}" />
                                     </h:outputText>
                                 </hftl:decorateFormField>
                                 <hftl:decorateFormField fieldId="period_end_date" label="#{messages['customFieldTemplate.periodEndDate']}">
-                                    <h:outputText id="period_end_date" value="#{cfValueHolder.selectedValuePeriod.periodEndDate}">
+                                    <h:outputText id="period_end_date" value="#{cfValueHolder.selectedValuePeriod.period.to}">
                                         <f:convertDateTime type="date" pattern="#{dateTimePattern}" />
                                     </h:outputText>
                                 </hftl:decorateFormField>

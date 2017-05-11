@@ -178,18 +178,18 @@
 											<p:separator></p:separator>
 											<p:panelGrid columns="3">
 												<p:panelGrid columns="1"
-													rendered="#{prod.validFrom ne null and prod.validFrom ne ''}">
+													rendered="#{prod.validity.from != null}">
 													<h:outputText value="#{messages['commons.validFrom']}: "></h:outputText>
-													<h:outputText value="#{prod.validFrom}">
+													<h:outputText value="#{prod.validity.from}">
 														<f:convertDateTime type="date"
 															pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy HH:mm')}" />
 													</h:outputText>
 												</p:panelGrid>
 												<p:panel></p:panel>
 												<p:panelGrid columns="1"
-													rendered="#{prod.validTo ne null and prod.validTo ne ''}">
+													rendered="#{prod.validity.to != null}">
 													<h:outputText value="#{messages['commons.validTo']}: "></h:outputText>
-													<h:outputText value="#{prod.validTo}">
+													<h:outputText value="#{prod.validity.to}">
 														<f:convertDateTime type="date"
 															pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy HH:mm')}" />
 													</h:outputText>
@@ -296,10 +296,10 @@
 								valueLabelField="descriptionOrCode">
 							</hftl:column>
 							<hftl:column label="#{messages['commons.validFrom']}"
-								field="validFrom" isDate="true">
+								field="validity.from" isDate="true">
 							</hftl:column>
 							<hftl:column label="#{messages['commons.validTo']}"
-								field="validTo" isDate="true">
+								field="validity.to" isDate="true">
 							</hftl:column>
 							<p:column>
 								<f:facet name="header">#{messages['commons.status']}</f:facet>

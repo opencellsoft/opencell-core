@@ -162,8 +162,7 @@ public class QuoteApi extends BaseApi {
         quote.setRequestedCompletionDate(productQuote.getQuoteCompletionDate());
         quote.setFulfillmentStartDate(productQuote.getFulfillmentStartDate());
         if (productQuote.getValidFor() != null) {
-            quote.setValidFrom(productQuote.getValidFor().getStartDateTime());
-            quote.setValidTo(productQuote.getValidFor().getEndDateTime());
+            quote.setValidity(productQuote.getValidFor().toDatePeriod());;
         }
 
         if (productQuote.getState() != null) {

@@ -159,17 +159,17 @@
                                             </p>
                                             <p:panelGrid columns="2">
                                                 <p:panelGrid columns="1"
-                                                             rendered="#{entity.validFrom ne null and entity.validFrom ne ''}">
+                                                             rendered="#{entity.validity.from != null}">
                                                     <h:outputText value="#{messages['commons.validFrom']}: "/>
-                                                    <h:outputText value="#{entity.validFrom}">
+                                                    <h:outputText value="#{entity.validity.from}">
                                                         <f:convertDateTime type="date"
                                                                            pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy HH:mm')}"/>
                                                     </h:outputText>
                                                 </p:panelGrid>
                                                 <p:panelGrid columns="1"
-                                                             rendered="#{entity.validTo ne null and entity.validTo ne ''}">
+                                                             rendered="#{entity.validity.to != null}">
                                                     <h:outputText value="#{messages['commons.validTo']}: "/>
-                                                    <h:outputText value="#{entity.validTo}">
+                                                    <h:outputText value="#{entity.validity.to}">
                                                         <f:convertDateTime type="date"
                                                                            pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy HH:mm')}"/>
                                                     </h:outputText>
@@ -349,10 +349,10 @@
                                          valueLabelField="descriptionOrCode">
                             </hftl:column>
                             <hftl:column label="#{messages['commons.validFrom']}"
-                                         field="validFrom" isDate="true">
+                                         field="validity.from" isDate="true">
                             </hftl:column>
                             <hftl:column label="#{messages['commons.validTo']}"
-                                         field="validTo" isDate="true">
+                                         field="validity.to" isDate="true">
                             </hftl:column>
                             <p:column>
                                 <f:facet name="header">#{messages['commons.status']}</f:facet>

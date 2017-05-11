@@ -214,7 +214,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 			OfferTemplate newOfferTemplate = businessOfferModelService.createOfferFromBOM(businessOfferModel, cfsDto != null ? cfsDto.getCustomField() : null, entity.getCode(),
 					entity.getName(), entity.getDescription(), servicesConfigurations, productsConfigurations, entity.getChannels(), entity.getBusinessAccountModels(),
-					entity.getOfferTemplateCategories(), entity.getLifeCycleStatus(), entity.getImagePath(), entity.getValidFrom(), entity.getValidTo(), getLanguageMessagesMap());
+					entity.getOfferTemplateCategories(), entity.getLifeCycleStatus(), entity.getImagePath(), entity.getValidity().getFrom(), entity.getValidity().getTo(), getLanguageMessagesMap());
 
             // populate service custom fields
             for (OfferServiceTemplate ost : entity.getOfferServiceTemplates()) {
@@ -481,19 +481,10 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
         messages.info(new BundleKey("messages", "offerTemplate.productTemplate.create.successful"));
     }
     
-    public boolean displayStatus(OfferTemplate e) {
-		Date now = new Date();
+    public boolean displayStatus(OfferTemplate offer) {
 
-		if ((Arrays.asList(LifeCycleStatusEnum.ACTIVE, LifeCycleStatusEnum.LAUNCHED, LifeCycleStatusEnum.IN_TEST).contains(e.getLifeCycleStatus()))) {
-			if (e.getValidFrom() == null && e.getValidTo() == null) {
-				return true;
-			} else if (e.getValidFrom() != null && e.getValidTo() != null && (now.compareTo(e.getValidFrom()) >= 0 && now.compareTo(e.getValidTo()) <= 0)) {
-				return true;
-			} else if ((e.getValidFrom() != null && e.getValidTo() == null) && now.compareTo(e.getValidFrom()) > 0) {
-				return true;
-			} else if ((e.getValidFrom() == null && e.getValidTo() != null) && now.compareTo(e.getValidTo()) < 0) {
-				return true;
-			}
+		if ((Arrays.asList(LifeCycleStatusEnum.ACTIVE, LifeCycleStatusEnum.LAUNCHED, LifeCycleStatusEnum.IN_TEST).contains(offer.getLifeCycleStatus()))) {
+			return offer.getValidity().isCorrespondsToPeriod(new Date());
 		}
 
 		return false;

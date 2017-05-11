@@ -323,8 +323,7 @@ public class CatalogHierarchyBuilderService {
 		if (offerServiceTemplate.getIncompatibleServices() != null) {
 			newOfferServiceTemplate.getIncompatibleServices().addAll(offerServiceTemplate.getIncompatibleServices());
 		}
-		newOfferServiceTemplate.setValidFrom(offerServiceTemplate.getValidFrom());
-		newOfferServiceTemplate.setValidTo(offerServiceTemplate.getValidTo());
+		newOfferServiceTemplate.setValidity(offerServiceTemplate.getValidity());
 
 		ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(offerServiceTemplate.getServiceTemplate().getCode());
 		serviceTemplate.getServiceRecurringCharges().size();

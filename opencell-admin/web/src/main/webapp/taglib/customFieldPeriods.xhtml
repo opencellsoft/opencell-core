@@ -29,7 +29,7 @@
     <o:importConstants type="org.meveo.model.crm.custom.CustomFieldTypeEnum" />
     <o:importConstants type="org.meveo.model.crm.custom.CustomFieldStorageTypeEnum" />
     <p:dataTable id="periodTable_omitFromSubmit" lazy="false" value="#{cfValueHolder.values[cft.code]}" var="period"
-        sortField="#{cft.calendar!=null?period.periodStartDate:period.priority}" editable="#{edit and cft.storageType==CustomFieldStorageTypeEnum.SINGLE and !disabled}"
+        sortField="#{cft.calendar!=null?period.period.from:period.priority}" editable="#{edit and cft.storageType==CustomFieldStorageTypeEnum.SINGLE and !disabled}"
         editMode="cell" resizableColumns="true" reflow="true">
 
         <p:ajax event="cellEdit" update="#{messagesId}" partialSubmit="true" partialSubmitFilter=":not([name*='addNewFields'])" />
@@ -37,13 +37,13 @@
         <p:column headerText="#{messages['customFieldTemplate.priority']}" width="10%" sortBy="#{period.priority}" rendered="#{cft.calendar==null}">
             <h:outputText value="#{period.priority}"></h:outputText>
         </p:column>
-        <p:column headerText="#{messages['customFieldTemplate.periodStartDate']}" width="13%" sortBy="#{period.periodStartDate}">
-            <h:outputText value="#{period.periodStartDate}">
+        <p:column headerText="#{messages['customFieldTemplate.periodStartDate']}" width="13%" sortBy="#{period.period.from}">
+            <h:outputText value="#{period.period.from}">
                 <f:convertDateTime type="date" pattern="#{dateTimePattern}" />
             </h:outputText>
         </p:column>
-        <p:column headerText="#{messages['customFieldTemplate.periodEndDate']}" width="13%" sortBy="#{period.periodEndDate}">
-            <h:outputText value="#{period.periodEndDate}">
+        <p:column headerText="#{messages['customFieldTemplate.periodEndDate']}" width="13%" sortBy="#{period.period.to}">
+            <h:outputText value="#{period.period.to}">
                 <f:convertDateTime type="date" pattern="#{dateTimePattern}" />
             </h:outputText>
         </p:column>
