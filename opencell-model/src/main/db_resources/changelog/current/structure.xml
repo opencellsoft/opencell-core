@@ -2715,4 +2715,10 @@
     	</addColumn>
 	</changeSet>
 	
+	<changeSet id="#2537_20170509 - Add product template to bpm" author="EdwardPLegaspi">
+    	<addColumn tableName="cat_business_product_model">
+    		<column name="product_template_id" type="BIGINT"></column>
+    	</addColumn>
+    </changeSet>
+	
 </databaseChangeLog> 
