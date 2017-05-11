@@ -21,6 +21,7 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
@@ -159,7 +160,8 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 		offerTemplate.setName(postData.getName());
 		offerTemplate.setLongDescription(postData.getLongDescription());
 		offerTemplate.setDisabled(postData.isDisabled());
-		
+        offerTemplate.setValidity(new DatePeriod(postData.getValidFrom(), postData.getValidTo()));
+
 		try {
 			saveImage(offerTemplate, postData.getImagePath(), postData.getImageBase64());
 		} catch (IOException e1) {
@@ -379,6 +381,8 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
         dto.setLongDescription(offerTemplate.getLongDescription());
         dto.setDisabled(offerTemplate.isDisabled());
         dto.setImagePath(offerTemplate.getImagePath());
+        dto.setValidFrom(offerTemplate.getValidity().getFrom());
+        dto.setValidTo(offerTemplate.getValidity().getTo());
 
         if (offerTemplate.getBusinessOfferModel() != null) {
             dto.setBomCode(offerTemplate.getBusinessOfferModel().getCode());
