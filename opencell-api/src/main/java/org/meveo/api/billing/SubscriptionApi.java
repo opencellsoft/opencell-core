@@ -832,7 +832,7 @@ public class SubscriptionApi extends BaseApi {
             }
         }
 
-        dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(subscription));
+        dto.setCustomFields(entityToDtoConverter.getCustomFieldsWithInheritedDTO(subscription, true));
 
         if (subscription.getServiceInstances() != null) {
             for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
