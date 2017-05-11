@@ -24,6 +24,7 @@ public class CustomersResponseDto extends BaseResponse {
 
 	public void setCustomers(CustomersDto customers) {
 		this.customers = customers;
+		getActionStatus().setMessage(String.valueOf(customers.getTotalNumberOfRecords()));
 	}
 
 	@Override
