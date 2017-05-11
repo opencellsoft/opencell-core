@@ -21,6 +21,7 @@ public class CustomersDto implements Serializable {
 	private static final long serialVersionUID = -1693325835765290126L;
 
 	private List<CustomerDto> customer;
+	private Long totalNumberOfRecords;
 
 	public List<CustomerDto> getCustomer() {
 		if (customer == null) {
@@ -37,6 +38,14 @@ public class CustomersDto implements Serializable {
 	@Override
 	public String toString() {
 		return "CustomersDto [customer=" + customer + "]";
+	}
+
+	public Long getTotalNumberOfRecords() {
+		return totalNumberOfRecords;
+	}
+
+	public void setTotalNumberOfRecords(Long totalNumberOfRecords) {
+		this.totalNumberOfRecords = totalNumberOfRecords;
 	}
 
 }

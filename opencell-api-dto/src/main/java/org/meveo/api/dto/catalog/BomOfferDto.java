@@ -44,6 +44,10 @@ public class BomOfferDto extends BaseDto {
 	@XmlElementWrapper(name = "servicesToActivate")
 	@XmlElement(name = "serviceToActivate")
 	private List<ServiceConfigurationDto> servicesToActivate;
+	
+	@XmlElementWrapper(name = "productsToActivate")
+	@XmlElement(name = "productToActivate")
+	private List<ServiceConfigurationDto> productsToActivate;
 
 	public String getBomCode() {
 		return bomCode;
@@ -87,8 +91,9 @@ public class BomOfferDto extends BaseDto {
 
 	@Override
 	public String toString() {
-		return "BomOfferDto [bomCode=" + bomCode + ", code=" + code + ", name=" + name + ", description=" + description + ", customFields=" + customFields + ", prefix=" + prefix
-				+ ", servicesToActivate=" + servicesToActivate + "]";
+		return "BomOfferDto [bomCode=" + bomCode + ", code=" + code + ", name=" + name + ", description=" + description
+				+ ", customFields=" + customFields + ", prefix=" + prefix + ", servicesToActivate=" + servicesToActivate
+				+ ", productsToActivate=" + productsToActivate + "]";
 	}
 
 	public String getCode() {
@@ -105,6 +110,14 @@ public class BomOfferDto extends BaseDto {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public List<ServiceConfigurationDto> getProductsToActivate() {
+		return productsToActivate;
+	}
+
+	public void setProductsToActivate(List<ServiceConfigurationDto> productsToActivate) {
+		this.productsToActivate = productsToActivate;
 	}
 
 }

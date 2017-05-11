@@ -44,6 +44,7 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
+import org.meveo.model.billing.ProductChargeInstance;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
@@ -838,6 +839,15 @@ public class SubscriptionApi extends BaseApi {
                 dto.getServices().getServiceInstance().add(new ServiceInstanceDto(serviceInstance, entityToDtoConverter.getCustomFieldsDTO(serviceInstance,true)));
             }
         }
+        
+		if (subscription.getProductInstances() != null) {
+			for (ProductInstance productInstance : subscription.getProductInstances()) {
+				for (ProductChargeInstance pci : productInstance.getProductChargeInstances()) {
+					dto.getProducts().getProducts()
+							.add(new ProductDto(pci, entityToDtoConverter.getCustomFieldsDTO(productInstance, true)));
+				}
+			}
+		}
 
         return dto;
     }

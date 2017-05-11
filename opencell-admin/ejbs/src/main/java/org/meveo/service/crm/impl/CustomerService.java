@@ -57,11 +57,32 @@ public class CustomerService extends AccountService<Customer> {
 			return null;
 		}
 	}
-
+	
+	public Long countFilter(String customerCode, CustomerCategory customerCategory, Seller seller,
+			CustomerBrand brand, int firstRow, int numberOfRows) {
+		QueryBuilder qb = new QueryBuilder(Customer.class, "c");
+		filter(qb, customerCode, customerCategory, seller, brand, firstRow, numberOfRows);
+		Long recordCount = (Long) qb.getCountQuery(getEntityManager()).getSingleResult();
+		return recordCount;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public List<Customer> filter(String customerCode, CustomerCategory customerCategory, Seller seller,
 			CustomerBrand brand, Integer firstRow, Integer numberOfRows) {
 		QueryBuilder qb = new QueryBuilder(Customer.class, "c");
+		Query query = filter(qb, customerCode, customerCategory, seller, brand, firstRow, numberOfRows);
+		qb.applyPagination(query, firstRow, numberOfRows);
+		
+		try {
+			return (List<Customer>) query.getResultList();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
+	private Query filter(QueryBuilder qb, String customerCode, CustomerCategory customerCategory, Seller seller,
+			CustomerBrand brand, int firstRow, int numberOfRows) {
+		
 		qb.addCriterion("code", "=", customerCode, true);
 
 		if (customerCategory != null) {
@@ -78,13 +99,8 @@ public class CustomerService extends AccountService<Customer> {
 		
 		
 		Query query = qb.getQuery(getEntityManager());
-		qb.applyPagination(query, firstRow, numberOfRows);
-
-		try {
-			return (List<Customer>) query.getResultList();
-		} catch (NoResultException e) {
-			return null;
-		}
+		
+		return query;
 	}
 
 	@SuppressWarnings("unchecked")
