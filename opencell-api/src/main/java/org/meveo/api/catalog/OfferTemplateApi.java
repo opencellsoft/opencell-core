@@ -159,6 +159,8 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 		offerTemplate.setName(postData.getName());
 		offerTemplate.setLongDescription(postData.getLongDescription());
 		offerTemplate.setDisabled(postData.isDisabled());
+		offerTemplate.setValidFrom(postData.getValidFrom());
+		offerTemplate.setValidTo(postData.getValidTo());
 		
 		try {
 			saveImage(offerTemplate, postData.getImagePath(), postData.getImageBase64());
@@ -379,6 +381,8 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
         dto.setLongDescription(offerTemplate.getLongDescription());
         dto.setDisabled(offerTemplate.isDisabled());
         dto.setImagePath(offerTemplate.getImagePath());
+        dto.setValidFrom(offerTemplate.getValidFrom());
+        dto.setValidTo(offerTemplate.getValidTo());
 
         if (offerTemplate.getBusinessOfferModel() != null) {
             dto.setBomCode(offerTemplate.getBusinessOfferModel().getCode());
