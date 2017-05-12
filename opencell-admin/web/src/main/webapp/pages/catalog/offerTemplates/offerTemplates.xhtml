@@ -46,6 +46,7 @@
 			<hftl:column label="#{messages['offerTemplate.description']}"
 				field="description" />
 			<hftl:column label="#{messages['offerTemplate.name']}" field="name" />
+			<hftl:column label="#{messages['offerTemplate.validity']}" field="validity" isDatePeriod="true" width="11%"/>
 			<hftl:column label="#{messages['offerTemplate.serviceTemplates']}"
 				field="offerServiceTemplates" isList="true"
 				valueLabelField="serviceTemplate.code"
@@ -61,7 +62,17 @@
 			<hftl:actionsColumn
 				permission="#{currentUser.hasRole('catalogManagement')}"
 				renderEnableLink="#{offerTemplateListBean.canUserUpdateEntity()}" 
-				renderDuplicateLink="true" />
+				renderDuplicateLink="true" width="10%">
+
+				<p:tooltip for="newVersionLink" value="#{messages['commons.newVersion']}" showEffect="slide" hideEffect="slide" />
+				<p:button id="newVersionLink" outcome="#{offerTemplateListBean.editViewName}" icon="ui-icon-copy">
+					<f:param name="objectId" value="#{entity.id}" />
+					<f:param name="edit" value="true" />
+					<f:param name="newVersion" value="true" />
+					<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+				</p:button>
+
+			</hftl:actionsColumn>
 		</hftl:dataList>
 
 	</ui:define>

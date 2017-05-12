@@ -639,10 +639,10 @@ public class WorkflowBean extends BaseBean<Workflow> {
         if (entity != null && entity.getId() != null) {
             try {
                 workflowService.duplicate(entity);
-                messages.info(new BundleKey("messages", "save.successful"));
+                messages.info(new BundleKey("messages", "duplicate.successfull"));
             } catch (BusinessException e) {
-                log.error("Error encountered persisting {} entity: {}: {}", new Object[] { entity.getClass().getSimpleName(), entity.getCode(), e });
-                messages.error(new BundleKey("messages", "save.unsuccessful"));
+                log.error("Error encountered duplicating {} entity: {}", new Object[] { entity.getClass().getSimpleName(), entity.getCode(), e });
+                messages.error(new BundleKey("messages", "error.duplicate.unexpected"));
             }
         }
     }

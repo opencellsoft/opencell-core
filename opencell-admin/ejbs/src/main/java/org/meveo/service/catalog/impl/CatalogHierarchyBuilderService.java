@@ -92,7 +92,7 @@ public class CatalogHierarchyBuilderService {
 	@Inject
 	private ProductChargeTemplateService productChargeTemplateService;
 
-	public void buildOfferServiceTemplate(OfferTemplate entity, List<OfferServiceTemplate> offerServiceTemplates, String prefix)
+	public void duplicateOfferServiceTemplate(OfferTemplate entity, List<OfferServiceTemplate> offerServiceTemplates, String prefix)
 			throws BusinessException {
 		List<OfferServiceTemplate> newOfferServiceTemplates = new ArrayList<>();
 		List<PricePlanMatrix> pricePlansInMemory = new ArrayList<>();
@@ -110,7 +110,7 @@ public class CatalogHierarchyBuilderService {
 		}
 	}
 
-	public void buildOfferProductTemplate(OfferTemplate entity, List<OfferProductTemplate> offerProductTemplates, String prefix)
+	public void duplicateOfferProductTemplate(OfferTemplate entity, List<OfferProductTemplate> offerProductTemplates, String prefix)
 			throws BusinessException {
 		List<OfferProductTemplate> newOfferProductTemplates = new ArrayList<>();
 		List<PricePlanMatrix> pricePlansInMemory = new ArrayList<>();

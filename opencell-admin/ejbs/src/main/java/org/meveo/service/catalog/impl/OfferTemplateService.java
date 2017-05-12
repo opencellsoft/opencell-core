@@ -21,6 +21,7 @@ package org.meveo.service.catalog.impl;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -32,6 +33,7 @@ import javax.persistence.Query;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.model.Auditable;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.DigitalResource;
 import org.meveo.model.catalog.OfferProductTemplate;
@@ -117,11 +119,51 @@ public class OfferTemplateService extends MultilanguageEntityService<OfferTempla
 		return result;
 	}
 
-	public synchronized OfferTemplate duplicate(OfferTemplate entity) throws BusinessException {
-		return duplicate(entity, false);
-	}
+    /**
+     * Create a shallow duplicate of an offer template (main offer template information and custom fields). A new offer template will have a code with suffix "- Copy"
+     * 
+     * @param offer Offer template to duplicate
+     * @return A persisted duplicated offer template
+     * @throws BusinessException
+     */
+    public synchronized OfferTemplate duplicate(OfferTemplate offer) throws BusinessException {
+        return duplicate(offer, false, true);
+    }
 
-	public synchronized OfferTemplate duplicate(OfferTemplate entity, boolean duplicateHierarchy) throws BusinessException {
+    /**
+     * Create a new version of an offer. It is a shallow copy of an offer template (main offer template information and custom fields) with identical code and validity start date
+     * matching latest version's validity end date or current date.
+     * 
+     * @param offer Offer template to create new version for
+     * @return
+     * @throws BusinessException
+     */
+    public synchronized OfferTemplate instantiateNewVersion(OfferTemplate offer) throws BusinessException {
+
+        // Find the latest version of an offer for duplication and to calculate a validity start date for a new offer
+        OfferTemplate latestVersion = findTheLatestVersion(offer.getCode());
+        String code = latestVersion.getCode();
+        Date endDate = latestVersion.getValidity().getTo();
+
+        offer = duplicate(latestVersion, false, false);
+
+        offer.setCode(code);
+
+        Date from = endDate != null ? endDate : new Date();
+        offer.setValidity(new DatePeriod(from, null));
+
+        return offer;
+    }
+
+	/**
+	 * Create a duplicate version of a given offer template with an option to duplicate superficial data (offer and CFs) or all hierarchy deep - services, charges, price plans 
+	 * @param entity Entity to duplicate
+	 * @param duplicateHierarchy To duplicate superficial data (offer info and CFs) or all hierarchy deep - services, charges, price plans
+	 * @param persist Shall new entity be persisted
+	 * @return
+	 * @throws BusinessException
+	 */
+	private synchronized OfferTemplate duplicate(OfferTemplate entity, boolean duplicateHierarchy, boolean persist) throws BusinessException {
 
 		entity = refreshOrRetrieve(entity);
 		// Lazy load related values first
@@ -225,24 +267,39 @@ public class OfferTemplateService extends MultilanguageEntityService<OfferTempla
 			}
 		}
 
-		create(entity);
 		customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity);
 
 		if (duplicateHierarchy) {
 			String prefix = entity.getId() + "_";
 			
 			if (offerServiceTemplates != null) {			
-				catalogHierarchyBuilderService.buildOfferServiceTemplate(entity, offerServiceTemplates, prefix);				
+				catalogHierarchyBuilderService.duplicateOfferServiceTemplate(entity, offerServiceTemplates, prefix);				
 			}
 			
 			if (offerProductTemplates != null) {
-				catalogHierarchyBuilderService.buildOfferProductTemplate(entity, offerProductTemplates, prefix);
+				catalogHierarchyBuilderService.duplicateOfferProductTemplate(entity, offerProductTemplates, prefix);
 			}
 			
-			entity = update(entity);
+		}
+		
+		if (persist) {
+		    create(entity);
 		}
 
 		return entity;
 	}
 
+    /**
+     * Find the latest version of offer template matching a given code
+     * 
+     * @param code Code to match
+     * @return Offer template with the highest validity start date
+     */
+    private OfferTemplate findTheLatestVersion(String code) {
+
+        OfferTemplate latestVersion = (OfferTemplate) getEntityManager().createNamedQuery("ProductOffering.findLatestVersion").setParameter("code", code).setMaxResults(1)
+            .getSingleResult();
+        return latestVersion;
+    }
+	
 }

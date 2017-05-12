@@ -20,7 +20,7 @@
         Boolean - as a checkbox
         Entity - as a list of values or selection via popup search
         Map - as an editable list of key and value pairs
-        Date - as a calendar
+        Date and datePeriod - as a calendar
         Enum - as a list of enum values
         List - as a dual picklist or list of values
         
@@ -72,7 +72,7 @@
         isMessage - display a translatable message commons.yes/no instead of a plain true/false value 
         listenerUpdate - components (ids) to update when value changes 
      
-     Additional attributes applicable to Date type fields
+     Additional attributes applicable to Date and DatePeriod type fields
         datePattern - date pattern to apply in calendar selection. If not provided, time attribute is consulted whether to add time part to a date 
         time - should a date selection be time specific.  
      
@@ -317,13 +317,16 @@
         </c:if>
 
         <!-- If the value binding is a date, display a p:calendar field. -->
-        <c:if test="${fieldInfo.fieldType == FieldTypeEnum.Date}">
+        <c:if test="${fieldInfo.fieldType == FieldTypeEnum.Date or fieldInfo.fieldType == FieldTypeEnum.DatePeriod}">
 
             <c:if test="${empty(time)}">
                 <c:set var="time" value="false" />
             </c:if>
             <c:if test="${empty(datePattern)}">
                 <c:set var="datePattern" value="#{time?paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy HH:mm'):paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
+            </c:if>
+            <c:if test="${fieldInfo.fieldType == FieldTypeEnum.DatePeriod}">
+                <c:set var="datePeriod" value="true" />
             </c:if>
 
             <hftl:formDateField id="${empty(id)?fieldIdPrefix.concat('_date'):id}" fieldItem="#{fieldItem}" label="${label}" disabled="${disabled}" required="${required}"

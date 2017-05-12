@@ -395,33 +395,19 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 			}
 		}
 
+        entity = saveOrUpdate(entity);
+
         // Save description translations
-        if (!isMultilanguageEntity()) {
-            entity = saveOrUpdate(entity);
+        if (isMultilanguageEntity() && entity instanceof BusinessEntity) {
 
-        } else if (entity instanceof BusinessEntity) {
-            if (entity.getId() != null) {
-
-                for (String languageKey : languageMessagesMap.keySet()) {
-                    String description = languageMessagesMap.get(languageKey);
-                    CatMessages catMsg = catMessagesService.getCatMessages((BusinessEntity) entity, languageKey);
-                    if (catMsg != null) {
-                        catMsg.setDescription(description);
-                        catMessagesService.update(catMsg);
-                    } else {
-                        CatMessages catMessages = new CatMessages((BusinessEntity) entity, languageKey, description);
-                        catMessagesService.create(catMessages);
-                    }
-                }
-
-                entity = saveOrUpdate(entity);
-
-            } else {
-                entity = saveOrUpdate(entity);
-
-                for (String msgKey : languageMessagesMap.keySet()) {
-                    String description = languageMessagesMap.get(msgKey);
-                    CatMessages catMessages = new CatMessages((BusinessEntity) entity, msgKey, description);
+            for (String languageKey : languageMessagesMap.keySet()) {
+                String description = languageMessagesMap.get(languageKey);
+                CatMessages catMsg = catMessagesService.getCatMessages((BusinessEntity) entity, languageKey);
+                if (catMsg != null) {
+                    catMsg.setDescription(description);
+                    catMessagesService.update(catMsg);
+                } else {
+                    CatMessages catMessages = new CatMessages((BusinessEntity) entity, languageKey, description);
                     catMessagesService.create(catMessages);
                 }
             }

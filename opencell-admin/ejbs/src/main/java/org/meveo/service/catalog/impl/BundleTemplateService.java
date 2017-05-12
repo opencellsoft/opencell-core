@@ -46,7 +46,7 @@ public class BundleTemplateService extends MultilanguageEntityService<BundleTemp
 
 	public long productTemplateAlmostExpiredCount() {
 		long result = 0;
-		String sqlQuery = "SELECT COUNT(*) FROM " + BundleTemplate.class.getName() + " p WHERE DATE_PART('day',p.validTo - '"
+		String sqlQuery = "SELECT COUNT(*) FROM " + BundleTemplate.class.getName() + " p WHERE DATE_PART('day',p.validity.to - '"
 				+ DateUtils.formatDateWithPattern(new Date(), "yyyy-MM-dd hh:mm:ss") + "') <= 7";
 		Query query = getEntityManager().createQuery(sqlQuery);
 		result = (long) query.getSingleResult();

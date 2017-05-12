@@ -46,7 +46,7 @@ import org.meveo.model.catalog.ChargeTemplate.ChargeTypeEnum;
 @ImageType
 @NamedQueries({ @NamedQuery(name = "OfferTemplate.countActive", query = "SELECT COUNT(*) FROM OfferTemplate WHERE disabled=false and businessOfferModel is not null"),
 		@NamedQuery(name = "OfferTemplate.countDisabled", query = "SELECT COUNT(*) FROM OfferTemplate WHERE disabled=true and businessOfferModel is not null"),
-		@NamedQuery(name = "OfferTemplate.countExpiring", query = "SELECT COUNT(*) FROM OfferTemplate WHERE :nowMinus1Day<validTo and validTo > NOW() and businessOfferModel is not null") })
+		@NamedQuery(name = "OfferTemplate.countExpiring", query = "SELECT COUNT(*) FROM OfferTemplate WHERE :nowMinus1Day<validity.to and validity.to > NOW() and businessOfferModel is not null") })
 public class OfferTemplate extends ProductOffering {
 	private static final long serialVersionUID = 1L;
 

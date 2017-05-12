@@ -23,7 +23,7 @@ import org.meveo.model.annotation.ImageType;
 @ImageType
 @NamedQueries({ @NamedQuery(name = "BundleTemplate.countActive", query = "SELECT COUNT(*) FROM BundleTemplate WHERE disabled=false"),
 		@NamedQuery(name = "BundleTemplate.countDisabled", query = "SELECT COUNT(*) FROM BundleTemplate WHERE disabled=true"),
-		@NamedQuery(name = "BundleTemplate.countExpiring", query = "SELECT COUNT(*) FROM BundleTemplate WHERE :nowMinus1Day<validTo and validTo > NOW()") })
+		@NamedQuery(name = "BundleTemplate.countExpiring", query = "SELECT COUNT(*) FROM BundleTemplate WHERE :nowMinus1Day<validity.to and validity.to > NOW()") })
 public class BundleTemplate extends ProductTemplate {
 
 	private static final long serialVersionUID = -4295608354238684804L;

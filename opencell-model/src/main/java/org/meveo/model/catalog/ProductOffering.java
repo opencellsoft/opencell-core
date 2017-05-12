@@ -16,6 +16,8 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -46,6 +48,7 @@ import org.meveo.model.crm.BusinessAccountModel;
         @Parameter(name = "sequence_name", value = "CAT_OFFER_TEMPLATE_SEQ"), })
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING)
+@NamedQueries({ @NamedQuery(name = "ProductOffering.findLatestVersion", query = "select e from ProductOffering e where e.code = :code order by e.validity.from desc")})
 public abstract class ProductOffering extends BusinessCFEntity implements IImageUpload {
 
     private static final long serialVersionUID = 6877386866687396135L;

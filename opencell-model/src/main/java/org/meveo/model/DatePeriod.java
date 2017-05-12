@@ -32,7 +32,7 @@ import org.meveo.model.shared.DateUtils;
  * @created 2009.10.20
  */
 @Embeddable
-public class DatePeriod {
+public class DatePeriod implements Comparable<DatePeriod> {
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "START_DATE")
@@ -119,5 +119,28 @@ public class DatePeriod {
     @Override
     public String toString() {
         return from + ">" + to;
+    }
+
+    @Override
+    public int compareTo(DatePeriod other) {
+
+        if (this.from == null && other.getFrom() == null) {
+            return 0;
+        } else if (this.from != null && other.getFrom() == null) {
+            return 1;
+        } else if (this.from == null && other.getFrom() != null) {
+            return -1;
+        } else {
+            return this.from.compareTo(other.getFrom());
+        }
+    }
+
+    /**
+     * Is period empty - are both From and To values are not specified
+     * 
+     * @return True if both From and To values are not specified
+     */
+    public boolean isEmpty() {
+        return from == null && to == null;
     }
 }

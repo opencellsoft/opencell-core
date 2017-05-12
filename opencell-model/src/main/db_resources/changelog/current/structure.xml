@@ -2717,4 +2717,10 @@
     	</addColumn>
     </changeSet>
 	
+    
+    <changeSet id="#2470_20170511" author="AndriusKarpavicius">
+        <dropUniqueConstraint tableName="cat_offer_template" constraintName="uk_j2krifijlux8tsm1w5hoqyxqq" />
+        <addUniqueConstraint columnNames="code, valid_from, valid_to" constraintName="cat_offer_template_uk" deferrable="false" disabled="false"
+            initiallyDeferred="false" tableName="cat_offer_template" />
+    </changeSet>
 </databaseChangeLog> 

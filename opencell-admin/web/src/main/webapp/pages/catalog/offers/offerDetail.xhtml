@@ -6,6 +6,7 @@
         <f:metadata>
             <o:viewParam name="bomId" value="#{offerTemplateBean.bomId}" />
             <f:viewParam name="objectId" value="#{offerTemplateBean.objectId}" />
+			<f:viewParam name="newVersion" value="#{offerTemplateBean.newVersion}" />
         </f:metadata>
     </ui:define>
 
@@ -49,7 +50,7 @@
                         <h:outputText value="#{offerTemplateBean.entity.nameOrCode}" rendered="#{!offerTemplateBean.edit}"></h:outputText>
                         <hftl:formField label="#{messages['offerTemplate.name']}" required="true" field="name" rendered="#{offerTemplateBean.edit}" />
                         <c:if test="#{offerTemplateBean.bomId eq null}">
-                        	<hftl:formField id="code" label="#{messages['offerTemplate.code']}" field="code" required="true" validateUnique="true" />
+                        	<hftl:formField id="code" label="#{messages['offerTemplate.code']}" field="code" required="true" />
                             <hftl:formField label="#{messages['marketingManager.catalog.family']}" allowEdit="false" field="businessOfferModel" valueLabelField="code"
                                 listBean="#{businessOfferModelBean}" />
                         </c:if>
@@ -63,8 +64,7 @@
                         </c:if>
                         <hftl:formLanguageFields entity="#{offerTemplateBean.entity}" backingBean="#{offerTemplateBean}" multiLang="true" />
 
-                        <hftl:formField label="#{messages['commons.validFrom']}" field="validity" childField="from" time="true" displayOneLine="true" labelWidth="100" />
-                        <hftl:formField label="#{messages['commons.validTo']}" field="validity" childField="to" time="true" displayOneLine="true" labelWidth="100" />
+                        <hftl:formField label="#{messages['commons.valid']}" field="validity" time="true" displayOneLine="true" labelWidth="100" />
                         <hftl:formField label="#{messages['commons.status']}" field="lifeCycleStatus" displayOneLine="true" labelWidth="100" />
                         <hftl:formField label="#{messages['commons.lastEditor']}" entity="#{offerTemplateBean.entity.auditable}" field="creator" valueLabelField="nameOrUsername"
                             edit="false" />

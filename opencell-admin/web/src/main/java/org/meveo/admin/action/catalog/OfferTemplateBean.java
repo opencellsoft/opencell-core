@@ -94,6 +94,8 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
     private Long bomId;
 
+    private boolean newVersion;
+    
     private DualListModel<ServiceTemplate> incompatibleServices;
     private OfferServiceTemplate offerServiceTemplate;
     private OfferProductTemplate offerProductTemplate;
@@ -108,13 +110,19 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
     @Override
     public OfferTemplate initEntity() {
-        OfferTemplate result = super.initEntity();
+        super.initEntity();
 
         if (bomId != null) {
             businessOfferModel = businessOfferModelService.findById(bomId);
         }
 
-        return result;
+        if (newVersion){
+            instantiateNewVersion();
+            setObjectId(entity.getId());
+            newVersion = false;
+        }
+        
+        return entity;
     }
 
     /**
@@ -150,23 +158,23 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
         if (entity != null && entity.getId() != null) {
             try {
                 offerTemplateService.duplicate(entity);
-                messages.info(new BundleKey("messages", "save.successful"));
+                messages.info(new BundleKey("messages", "duplicate.successfull"));
             } catch (BusinessException e) {
-                log.error("Error encountered persisting offer template entity: {}: {}", entity.getCode(), e);
-                messages.error(new BundleKey("messages", "save.unsuccessful"));
+                log.error("Error encountered duplicating offer template entity: {}", entity.getCode(), e);
+                messages.error(new BundleKey("messages", "error.duplicate.unexpected"));
             }
         }
     }
     
     @ActionMethod
-    public void duplicateCatalogHierarchy() {
+    public void instantiateNewVersion() {
         if (entity != null && entity.getId() != null) {
             try {
-                offerTemplateService.duplicate(entity, true);
-                messages.info(new BundleKey("messages", "save.successful"));
+                entity = offerTemplateService.instantiateNewVersion(entity);
+                messages.info(new BundleKey("messages", "newVersion.successful"));
             } catch (BusinessException e) {
                 log.error("Error encountered persisting offer template entity: {}: {}", entity.getCode(), e);
-                messages.error(new BundleKey("messages", "save.unsuccessful"));
+                messages.error(new BundleKey("messages", "error.newVersion.unsuccessful"));
             }
         }
     }
@@ -440,6 +448,14 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
         this.bomId = bomId;
     }
 
+    public void setNewVersion(boolean newVersion) {
+        this.newVersion = newVersion;
+    }
+    
+    public boolean isNewVersion() {
+        return newVersion;
+    }
+    
     public ExportTemplate getMarketingCatalogExportTemplate() {
         return entityExportImportService.getExportImportTemplate("Offers");
     }

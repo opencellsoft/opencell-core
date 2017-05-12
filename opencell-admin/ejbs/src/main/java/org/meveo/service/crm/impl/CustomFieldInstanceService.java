@@ -1271,7 +1271,9 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
      * @throws BusinessException
      */
     public void duplicateCfValues(String sourceAppliesToEntity, ICustomFieldEntity entity) throws BusinessException {
+        
         TypedQuery<CustomFieldInstance> query = getEntityManager().createNamedQuery("CustomFieldInstance.getCfiByEntity", CustomFieldInstance.class);
+        
         query.setParameter("appliesToEntity", sourceAppliesToEntity);
 
         List<CustomFieldInstance> cfis = query.getResultList();
