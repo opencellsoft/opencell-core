@@ -639,13 +639,18 @@ public class CatalogHierarchyBuilderService {
 				serviceChargeTemplateUsageService.create(serviceChargeTemplate);
 
 				if (serviceCharge.getCounterTemplate() != null) {
-					CounterTemplate newCounterTemplate = new CounterTemplate();
-					BeanUtils.copyProperties(newCounterTemplate, serviceCharge.getCounterTemplate());
-					newCounterTemplate.setAuditable(null);
-					newCounterTemplate.setId(null);
-					newCounterTemplate.setCode(prefix + serviceCharge.getCounterTemplate().getCode());
+					// check if counter code already exists
+					String newCounterCode = prefix + serviceCharge.getCounterTemplate().getCode();
+					CounterTemplate newCounterTemplate = null;
+					newCounterTemplate = counterTemplateService.findByCode(newCounterCode);
+					if (newCounterTemplate != null) {
+						BeanUtils.copyProperties(newCounterTemplate, serviceCharge.getCounterTemplate());
+						newCounterTemplate.setAuditable(null);
+						newCounterTemplate.setId(null);
+						newCounterTemplate.setCode(newCounterCode);
 
-					counterTemplateService.create(newCounterTemplate);
+						counterTemplateService.create(newCounterTemplate);
+					}
 
 					serviceChargeTemplate.setCounterTemplate(newCounterTemplate);
 				}
