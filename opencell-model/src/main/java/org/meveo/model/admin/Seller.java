@@ -179,5 +179,11 @@ public class Seller extends BusinessCFEntity {
 	public Class<? extends BusinessEntity> getParentEntityType() {
 		return Seller.class;
 	}
-
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = prime * 1; //super.hashCode();
+        result = prime * result + ((code == null) ? 0 : ("Seller"+code).hashCode());
+        return result;
+    }
 }
