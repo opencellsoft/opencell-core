@@ -56,15 +56,15 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
 
     @Inject
     private ResourceBundle resourceMessages;
-        
+
     protected final Class<SI> scriptInterfaceClass;
 
     private Map<String, List<String>> allLogs = new HashMap<String, List<String>>();
 
     private Map<String, Class<SI>> allScriptInterfaces = new HashMap<String, Class<SI>>();
 
-	private Map<String, SI> allScriptInstances=new HashMap<String,SI>();
-	
+    private Map<String, SI> allScriptInstances = new HashMap<String, SI>();
+
     private CharSequenceCompiler<SI> compiler;
 
     private String classpath = "";
@@ -167,22 +167,29 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     private void constructClassPath() throws IOException {
 
         if (classpath.length() == 0) {
-            String jbossHome = System.getProperty("jboss.home.dir");
-            File deploymentLibDirs = new File(jbossHome + "/standalone/tmp/vfs/deployment");
-            if (!deploymentLibDirs.exists()) {
-                log.error("cannot find " + jbossHome + "/standalone/tmp/vfs/deployment .. are you deploying on jboss ?");
-                return;
-            } else {
-                File deploymentDir = null;
-                for (File deployment : deploymentLibDirs.listFiles()) {
-                    if (deploymentDir == null) {
-                        deploymentDir = deployment;
-                    } else {
-                        if (deployment.lastModified() > deploymentDir.lastModified()) {
-                            deploymentDir = deployment;
-                        }
+
+            // Check if deploying an exploded archive or a compressed file
+            String thisClassfile = this.getClass().getProtectionDomain().getCodeSource().getLocation().getFile();
+
+            File realFile = new File(thisClassfile);
+
+            // Was deployed as exploded archive
+            if (realFile.exists()) {
+                File deploymentDir = realFile.getParentFile();
+                for (File file : deploymentDir.listFiles()) {
+                    if (file.getName().endsWith(".jar")) {
+                        classpath += file.getCanonicalPath() + File.pathSeparator;
                     }
                 }
+
+                // War was deployed as compressed archive
+            } else {
+
+                org.jboss.vfs.VirtualFile vFile = org.jboss.vfs.VFS.getChild(thisClassfile);
+                realFile = new File(org.jboss.vfs.VFSUtils.getPhysicalURI(vFile).getPath());
+
+                File deploymentDir = realFile.getParentFile().getParentFile();
+
                 for (File physicalLibDir : deploymentDir.listFiles()) {
                     if (physicalLibDir.isDirectory()) {
                         for (File f : FileUtils.getFilesToProcess(physicalLibDir, "*", "jar")) {
@@ -195,15 +202,15 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         log.info("compileAll classpath={}", classpath);
 
     }
-    
+
     /**
      * Build the classpath and compile all scripts
      */
     protected void compile(List<T> scripts) {
         try {
-            
+
             constructClassPath();
-            
+
             for (T script : scripts) {
                 compileScript(script, false);
             }
@@ -229,10 +236,10 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
             Class<SI> compiledScript = compileJavaSource(codeSource, qName);
 
             if (!testCompile) {
-                
+
                 allScriptInterfaces.put(script.getCode(), compiledScript);
 
-                allScriptInstances.put(script.getCode(),compiledScript.newInstance());
+                allScriptInstances.put(script.getCode(), compiledScript.newInstance());
                 log.debug("Added script {} to Map", script.getCode());
             }
         } catch (CharSequenceCompilerException e) {
@@ -268,10 +275,10 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @throws CharSequenceCompilerException
      */
     protected Class<SI> compileJavaSource(String javaSrc, String fullClassName) throws CharSequenceCompilerException {
-        
+
         supplementClassPathWithMissingImports(javaSrc);
         log.debug("Compile script {} with classpath {}", fullClassName, classpath);
-        
+
         compiler = new CharSequenceCompiler<SI>(this.getClass().getClassLoader(), Arrays.asList(new String[] { "-cp", classpath }));
         final DiagnosticCollector<JavaFileObject> errs = new DiagnosticCollector<JavaFileObject>();
         Class<SI> compiledScript = compiler.compile(fullClassName, javaSrc, errs, new Class<?>[] { scriptInterfaceClass });
@@ -279,12 +286,14 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     }
 
     /**
-     * Supplement classpath with classes needed for the particular script compilation. Solves issue when classes server as jboss modules are referenced in script. E.g. prg.slf4j.Logger
+     * Supplement classpath with classes needed for the particular script compilation. Solves issue when classes server as jboss modules are referenced in script. E.g.
+     * prg.slf4j.Logger
+     * 
      * @param javaSrc Java source to compile
      */
     @SuppressWarnings("rawtypes")
     private void supplementClassPathWithMissingImports(String javaSrc) {
-                
+
         String regex = "import (.*?);";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(javaSrc);
@@ -301,7 +310,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
                         if (location.endsWith("!/")) {
                             location = location.substring(0, location.length() - 2);
                         }
-                        
+
                         if (!classpath.contains(location)) {
                             classpath += File.pathSeparator + location;
                         }
@@ -314,7 +323,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
                 log.warn("Failed to find location for class {}", className);
             }
         }
-                
+
     }
 
     /**
@@ -327,9 +336,9 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      */
     public Class<SI> getScriptInterface(String scriptCode) throws ElementNotFoundException, InvalidScriptException {
         Class<SI> result = null;
-        
+
         result = allScriptInterfaces.get(scriptCode);
-        
+
         if (result == null) {
             T script = findByCode(scriptCode);
             if (script == null) {
@@ -375,11 +384,11 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     }
 
     public SI getCachedScriptInstance(String scriptCode) throws ElementNotFoundException, InvalidScriptException {
-    	SI script = null;
+        SI script = null;
         script = allScriptInstances.get(scriptCode);
         return script;
     }
-    
+
     /**
      * Add a log line for a script
      * 
@@ -387,7 +396,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @param scriptCode
      */
     public void addLog(String message, String scriptCode) {
-        
+
         if (!allLogs.containsKey(scriptCode)) {
             allLogs.put(scriptCode, new ArrayList<String>());
         }
@@ -401,7 +410,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @return
      */
     public List<String> getLogs(String scriptCode) {
-        
+
         if (!allLogs.containsKey(scriptCode)) {
             return new ArrayList<String>();
         }
@@ -440,7 +449,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         if (className == null) {
             className = StringUtils.patternMacher("public class (.*) implements", src);
         }
-        return className!=null?className.trim():null;
+        return className != null ? className.trim() : null;
     }
 
     /**
@@ -466,8 +475,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @throws ElementNotFoundException Script not found
      * @throws BusinessException Any execution exception
      */
-    public Map<String, Object> execute(IEntity entity, String scriptCode, String encodedParameters) throws InvalidPermissionException, ElementNotFoundException,
-            BusinessException {
+    public Map<String, Object> execute(IEntity entity, String scriptCode, String encodedParameters) throws InvalidPermissionException, ElementNotFoundException, BusinessException {
 
         return execute(entity, scriptCode, CustomScriptService.parseParameters(encodedParameters));
     }
@@ -484,8 +492,8 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @throws InvalidPermissionException Insufficient access to run the script
      * @throws BusinessException Any execution exception
      */
-    public Map<String, Object> execute(IEntity entity, String scriptCode, Map<String, Object> context) throws InvalidScriptException, ElementNotFoundException,
-            InvalidPermissionException, BusinessException {
+    public Map<String, Object> execute(IEntity entity, String scriptCode, Map<String, Object> context)
+            throws InvalidScriptException, ElementNotFoundException, InvalidPermissionException, BusinessException {
 
         if (context == null) {
             context = new HashMap<String, Object>();
@@ -501,15 +509,15 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @param entity Entity to execute action on
      * @param scriptCode Script to execute, identified by a code
      * @param context Method context
-
+     * 
      * @return Context parameters. Will not be null even if "context" parameter is null.
      * @throws InvalidScriptException Were not able to instantiate or compile a script
      * @throws ElementNotFoundException Script not found
      * @throws InvalidPermissionException Insufficient access to run the script
      * @throws BusinessException Any execution exception
      */
-    public Map<String, Object> execute(String scriptCode, Map<String, Object> context) throws ElementNotFoundException, InvalidScriptException,
-            InvalidPermissionException, BusinessException {
+    public Map<String, Object> execute(String scriptCode, Map<String, Object> context)
+            throws ElementNotFoundException, InvalidScriptException, InvalidPermissionException, BusinessException {
 
         log.trace("Script {} to be executed with parameters {}", scriptCode, context);
 
@@ -525,7 +533,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * 
      * @param compiledScript Compiled script class
      * @param context Method context
-
+     * 
      * @return Context parameters. Will not be null even if "context" parameter is null.
      * @throws BusinessException Any execution exception
      */
@@ -564,10 +572,11 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     }
 
     /**
-     * Get all script interfaces     * 
+     * Get all script interfaces *
+     * 
      * @return the allScriptInterfaces
      */
     public Map<String, Class<SI>> getAllScriptInterfaces() {
         return allScriptInterfaces;
-    } 
+    }
 }

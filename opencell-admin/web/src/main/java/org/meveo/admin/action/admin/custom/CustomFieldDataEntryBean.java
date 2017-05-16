@@ -140,14 +140,14 @@ public class CustomFieldDataEntryBean implements Serializable {
      * @return Custom field information
      */
     public GroupedCustomField getGroupedFieldTemplates(ICustomFieldEntity entity) {
-        
+
         if (entity == null) {
             return null;
         }
         if (!groupedFieldTemplates.containsKey(entity.getUuid())) {
             initFields(entity);
         }
-        
+
         return groupedFieldTemplates.get(entity.getUuid());
     }
 
@@ -208,7 +208,9 @@ public class CustomFieldDataEntryBean implements Serializable {
         Map<String, List<CustomFieldInstance>> cfisAsMap = null;
 
         // Get custom field instances mapped by a CFT code if entity has any field defined
-        if (!((IEntity) entity).isTransient() && customFieldTemplates != null && customFieldTemplates.size() > 0) {
+        // if (!((IEntity) entity).isTransient() && customFieldTemplates != null && customFieldTemplates.size() > 0) {
+        // No longer checking for isTransient as for offer new version creation, CFs are duplicated, but entity is not persisted, offering to review it in GUI before saving it.
+        if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
             cfisAsMap = customFieldInstanceService.getCustomFieldInstances((ICustomFieldEntity) entity);
         }
 
@@ -349,7 +351,7 @@ public class CustomFieldDataEntryBean implements Serializable {
             FacesContext.getCurrentInstance().validationFailed();
             return;
         }
-        
+
         CustomFieldInstance period = null;
         // First check if any period matches the dates
         if (entityValueHolder.getValuePeriodMatched() == null || !entityValueHolder.getValuePeriodMatched()) {
@@ -769,27 +771,21 @@ public class CustomFieldDataEntryBean implements Serializable {
         String uuid = entity.getUuid();
         saveCustomFieldsToEntity(entity, uuid, false, isNewEntity);
     }
-    
+
     public void saveCustomFieldsToEntity(ICustomFieldEntity entity, String uuid, boolean duplicateCFI, boolean isNewEntity) throws BusinessException {
-    	saveCustomFieldsToEntity(entity, uuid, duplicateCFI, isNewEntity, false);
+        saveCustomFieldsToEntity(entity, uuid, duplicateCFI, isNewEntity, false);
     }
 
-	/**
-	 * Save custom fields for a given entity
-	 * 
-	 * @param entity
-	 *            Entity, the fields relate to
-	 * @param isNewEntity
-	 *            Is it a new entity
-	 * @param removedOriginalCFI
-	 *            - When duplicating a CFI, this boolean is true when we want to
-	 *            remove the original CFI. Use specially in offer instantiation
-	 *            where we assigned CFT values on entity a but then save it on
-	 *            entity b. Entity a is then reverted. This flag is needed
-	 *            because on some part CFI is duplicated first, but is not
-	 *            updated, instead we duplicate again.
-	 * @throws BusinessException
-	 */
+    /**
+     * Save custom fields for a given entity
+     * 
+     * @param entity Entity, the fields relate to
+     * @param isNewEntity Is it a new entity
+     * @param removedOriginalCFI - When duplicating a CFI, this boolean is true when we want to remove the original CFI. Use specially in offer instantiation where we assigned CFT
+     *        values on entity a but then save it on entity b. Entity a is then reverted. This flag is needed because on some part CFI is duplicated first, but is not updated,
+     *        instead we duplicate again.
+     * @throws BusinessException
+     */
     public void saveCustomFieldsToEntity(ICustomFieldEntity entity, String uuid, boolean duplicateCFI, boolean isNewEntity, boolean removedOriginalCFI) throws BusinessException {
 
         CustomFieldValueHolder entityFieldsValues = getFieldValueHolderByUUID(uuid);
@@ -797,21 +793,20 @@ public class CustomFieldDataEntryBean implements Serializable {
         if (groupedCustomFields != null) {
             for (CustomFieldTemplate cft : groupedCustomFields.getFields()) {
                 for (CustomFieldInstance cfi : entityFieldsValues.getValues(cft)) {
-					if (duplicateCFI) {
-						if (removedOriginalCFI) {
-							List<CustomFieldInstance> cfisToBeRemove = customFieldInstanceService
-									.getCustomFieldInstances(entity, cfi.getCode());
-							if (cfisToBeRemove != null) {
-								for (CustomFieldInstance cfiToBeRemove : cfisToBeRemove) {
-									customFieldInstanceService.remove(cfiToBeRemove);
-								}
-							}
-						}
+                    if (duplicateCFI) {
+                        if (removedOriginalCFI) {
+                            List<CustomFieldInstance> cfisToBeRemove = customFieldInstanceService.getCustomFieldInstances(entity, cfi.getCode());
+                            if (cfisToBeRemove != null) {
+                                for (CustomFieldInstance cfiToBeRemove : cfisToBeRemove) {
+                                    customFieldInstanceService.remove(cfiToBeRemove);
+                                }
+                            }
+                        }
 
-						customFieldInstanceService.detach(cfi);
-						cfi.setId(null);
-						cfi.setAppliesToEntity(entity.getUuid());
-					}
+                        customFieldInstanceService.detach(cfi);
+                        cfi.setId(null);
+                        cfi.setAppliesToEntity(entity.getUuid());
+                    }
                     // Not saving empty values unless template has a default value or is versionable (to prevent that for SINGLE type CFT with a default value, value is
                     // instantiates automatically)
                     // Also don't save if CFT does not apply in a given entity lifecycle or because cft.applicableOnEL evaluates to false
@@ -1048,8 +1043,8 @@ public class CustomFieldDataEntryBean implements Serializable {
         }
 
         // Find current child entities, so the ones no longer referenced shall be removed
-        List<CustomEntityInstance> previousChildEntities = customEntityInstanceService.findChildEntities(
-            CustomFieldTemplate.retrieveCetCode(childEntityFieldDefinition.getEntityClazz()), mainEntity.getUuid());
+        List<CustomEntityInstance> previousChildEntities = customEntityInstanceService
+            .findChildEntities(CustomFieldTemplate.retrieveCetCode(childEntityFieldDefinition.getEntityClazz()), mainEntity.getUuid());
 
         for (CustomFieldValueHolder childEntityValueHolder : customFieldValue.getChildEntityValuesForGUI()) {
 

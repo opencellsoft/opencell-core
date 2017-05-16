@@ -50,74 +50,74 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
  * 
  */
 @Stateless
-public class OfferTemplateService extends MultilanguageEntityService<OfferTemplate>{
+public class OfferTemplateService extends MultilanguageEntityService<OfferTemplate> {
 
-	@Inject
-	private CustomFieldInstanceService customFieldInstanceService;
+    @Inject
+    private CustomFieldInstanceService customFieldInstanceService;
 
-	@Inject
-	private CatalogHierarchyBuilderService catalogHierarchyBuilderService;
+    @Inject
+    private CatalogHierarchyBuilderService catalogHierarchyBuilderService;
 
-	@SuppressWarnings("unchecked")
-	public List<OfferTemplate> findByServiceTemplate(EntityManager em, ServiceTemplate serviceTemplate) {
-		Query query = em.createQuery("FROM OfferTemplate t WHERE :serviceTemplate MEMBER OF t.serviceTemplates");
-		query.setParameter("serviceTemplate", serviceTemplate);
+    @SuppressWarnings("unchecked")
+    public List<OfferTemplate> findByServiceTemplate(EntityManager em, ServiceTemplate serviceTemplate) {
+        Query query = em.createQuery("FROM OfferTemplate t WHERE :serviceTemplate MEMBER OF t.serviceTemplates");
+        query.setParameter("serviceTemplate", serviceTemplate);
 
-		try {
-			return (List<OfferTemplate>) query.getResultList();
-		} catch (NoResultException e) {
-			return null;
-		}
-	}
+        try {
+            return (List<OfferTemplate>) query.getResultList();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 
-	@SuppressWarnings("unchecked")
-	public List<OfferTemplate> findByServiceTemplate(ServiceTemplate serviceTemplate) {
-		Query query = getEntityManager().createQuery("FROM OfferTemplate t WHERE :serviceTemplate MEMBER OF t.serviceTemplates");
-		query.setParameter("serviceTemplate", serviceTemplate);
+    @SuppressWarnings("unchecked")
+    public List<OfferTemplate> findByServiceTemplate(ServiceTemplate serviceTemplate) {
+        Query query = getEntityManager().createQuery("FROM OfferTemplate t WHERE :serviceTemplate MEMBER OF t.serviceTemplates");
+        query.setParameter("serviceTemplate", serviceTemplate);
 
-		try {
-			return (List<OfferTemplate>) query.getResultList();
-		} catch (NoResultException e) {
-			return null;
-		}
-	}
+        try {
+            return (List<OfferTemplate>) query.getResultList();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 
-	public long countActive() {
-		Long result = 0L;
-		Query query = getEntityManager().createNamedQuery("OfferTemplate.countActive");
-		try {
-			result = (long) query.getSingleResult();
-		} catch (NoResultException e) {
+    public long countActive() {
+        Long result = 0L;
+        Query query = getEntityManager().createNamedQuery("OfferTemplate.countActive");
+        try {
+            result = (long) query.getSingleResult();
+        } catch (NoResultException e) {
 
-		}
-		return result;
-	}
+        }
+        return result;
+    }
 
-	public long countDisabled() {
-		Long result = 0L;
-		Query query = getEntityManager().createNamedQuery("OfferTemplate.countDisabled");
-		try {
-			result = (long) query.getSingleResult();
-		} catch (NoResultException e) {
+    public long countDisabled() {
+        Long result = 0L;
+        Query query = getEntityManager().createNamedQuery("OfferTemplate.countDisabled");
+        try {
+            result = (long) query.getSingleResult();
+        } catch (NoResultException e) {
 
-		}
-		return result;
-	}
+        }
+        return result;
+    }
 
-	public long countExpiring() {
-		Long result = 0L;
-		Query query = getEntityManager().createNamedQuery("OfferTemplate.countExpiring");
-		Calendar c = Calendar.getInstance();
-		c.add(Calendar.DATE, -1);
-		query.setParameter("nowMinus1Day", c.getTime());
+    public long countExpiring() {
+        Long result = 0L;
+        Query query = getEntityManager().createNamedQuery("OfferTemplate.countExpiring");
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DATE, -1);
+        query.setParameter("nowMinus1Day", c.getTime());
 
-		try {
-			result = (long) query.getSingleResult();
-		} catch (NoResultException e) {
+        try {
+            result = (long) query.getSingleResult();
+        } catch (NoResultException e) {
 
-		}
-		return result;
-	}
+        }
+        return result;
+    }
 
     /**
      * Create a shallow duplicate of an offer template (main offer template information and custom fields). A new offer template will have a code with suffix "- Copy"
@@ -132,10 +132,10 @@ public class OfferTemplateService extends MultilanguageEntityService<OfferTempla
 
     /**
      * Create a new version of an offer. It is a shallow copy of an offer template (main offer template information and custom fields) with identical code and validity start date
-     * matching latest version's validity end date or current date.
+     * matching latest version's validity end date or current date. Note: new entity is not persisted
      * 
      * @param offer Offer template to create new version for
-     * @return
+     * @return Copy of offer template
      * @throws BusinessException
      */
     public synchronized OfferTemplate instantiateNewVersion(OfferTemplate offer) throws BusinessException {
@@ -155,139 +155,140 @@ public class OfferTemplateService extends MultilanguageEntityService<OfferTempla
         return offer;
     }
 
-	/**
-	 * Create a duplicate version of a given offer template with an option to duplicate superficial data (offer and CFs) or all hierarchy deep - services, charges, price plans 
-	 * @param entity Entity to duplicate
-	 * @param duplicateHierarchy To duplicate superficial data (offer info and CFs) or all hierarchy deep - services, charges, price plans
-	 * @param persist Shall new entity be persisted
-	 * @return
-	 * @throws BusinessException
-	 */
-	private synchronized OfferTemplate duplicate(OfferTemplate entity, boolean duplicateHierarchy, boolean persist) throws BusinessException {
+    /**
+     * Create a duplicate of a given Offer template with an option to duplicate superficial data (Offer and CFs) or all hierarchy deep - services, charges, price plans
+     * 
+     * @param offer Offer template to duplicate
+     * @param duplicateHierarchy To duplicate superficial data (offer info and CFs) or all hierarchy deep - services, charges, price plans
+     * @param persist Shall new entity be persisted
+     * @return A copy of Offer template
+     * @throws BusinessException
+     */
+    private synchronized OfferTemplate duplicate(OfferTemplate offer, boolean duplicateHierarchy, boolean persist) throws BusinessException {
 
-		entity = refreshOrRetrieve(entity);
-		// Lazy load related values first
-		entity.getOfferServiceTemplates().size();
-		entity.getBusinessAccountModels().size();
-		entity.getAttachments().size();
-		entity.getChannels().size();
-		entity.getOfferProductTemplates().size();
-		entity.getOfferTemplateCategories().size();
+        offer = refreshOrRetrieve(offer);
+        // Lazy load related values first
+        offer.getOfferServiceTemplates().size();
+        offer.getBusinessAccountModels().size();
+        offer.getAttachments().size();
+        offer.getChannels().size();
+        offer.getOfferProductTemplates().size();
+        offer.getOfferTemplateCategories().size();
 
-		if (entity.getOfferServiceTemplates() != null) {
-			for (OfferServiceTemplate offerServiceTemplate : entity.getOfferServiceTemplates()) {
-				offerServiceTemplate.getIncompatibleServices().size();
-			}
-		}
+        if (offer.getOfferServiceTemplates() != null) {
+            for (OfferServiceTemplate offerServiceTemplate : offer.getOfferServiceTemplates()) {
+                offerServiceTemplate.getIncompatibleServices().size();
+            }
+        }
 
-		String code = findDuplicateCode(entity);
+        String code = findDuplicateCode(offer);
 
-		// Detach and clear ids of entity and related entities
-		detach(entity);
-		entity.setId(null);
-		entity.setVersion(0);
-		entity.setAuditable(new Auditable());
-		String sourceAppliesToEntity = entity.clearUuid();
-		
-		ImageUploadEventHandler<OfferTemplate> offerImageUploadEventHandler = new ImageUploadEventHandler<>(appProvider);
-		try {
-			String newImagePath = offerImageUploadEventHandler.duplicateImage(entity, entity.getImagePath(), code);
-			entity.setImagePath(newImagePath);
-		} catch (IOException e1) {
-			log.error("IPIEL: Failed duplicating offer image: {}", e1.getMessage());
-		}
+        // Detach and clear ids of entity and related entities
+        detach(offer);
+        offer.setId(null);
+        offer.setVersion(0);
+        offer.setAuditable(new Auditable());
+        String sourceAppliesToEntity = offer.clearUuid();
 
-		entity.setCode(code);
+        ImageUploadEventHandler<OfferTemplate> offerImageUploadEventHandler = new ImageUploadEventHandler<>(appProvider);
+        try {
+            String newImagePath = offerImageUploadEventHandler.duplicateImage(offer, offer.getImagePath(), code);
+            offer.setImagePath(newImagePath);
+        } catch (IOException e1) {
+            log.error("IPIEL: Failed duplicating offer image: {}", e1.getMessage());
+        }
 
-		List<OfferServiceTemplate> offerServiceTemplates = entity.getOfferServiceTemplates();
-		entity.setOfferServiceTemplates(new ArrayList<OfferServiceTemplate>());
+        offer.setCode(code);
 
-		List<BusinessAccountModel> businessAccountModels = entity.getBusinessAccountModels();
-		entity.setBusinessAccountModels(new ArrayList<BusinessAccountModel>());
+        List<OfferServiceTemplate> offerServiceTemplates = offer.getOfferServiceTemplates();
+        offer.setOfferServiceTemplates(new ArrayList<OfferServiceTemplate>());
 
-		List<DigitalResource> attachments = entity.getAttachments();
-		entity.setAttachments(new ArrayList<DigitalResource>());
+        List<BusinessAccountModel> businessAccountModels = offer.getBusinessAccountModels();
+        offer.setBusinessAccountModels(new ArrayList<BusinessAccountModel>());
 
-		List<Channel> channels = entity.getChannels();
-		entity.setChannels(new ArrayList<Channel>());
+        List<DigitalResource> attachments = offer.getAttachments();
+        offer.setAttachments(new ArrayList<DigitalResource>());
 
-		List<OfferProductTemplate> offerProductTemplates = entity.getOfferProductTemplates();
-		entity.setOfferProductTemplates(new ArrayList<OfferProductTemplate>());
+        List<Channel> channels = offer.getChannels();
+        offer.setChannels(new ArrayList<Channel>());
 
-		List<OfferTemplateCategory> offerTemplateCategories = entity.getOfferTemplateCategories();
-		entity.setOfferTemplateCategories(new ArrayList<OfferTemplateCategory>());
+        List<OfferProductTemplate> offerProductTemplates = offer.getOfferProductTemplates();
+        offer.setOfferProductTemplates(new ArrayList<OfferProductTemplate>());
 
-		if (businessAccountModels != null) {
-			for (BusinessAccountModel bam : businessAccountModels) {
-				entity.getBusinessAccountModels().add(bam);
-			}
-		}
+        List<OfferTemplateCategory> offerTemplateCategories = offer.getOfferTemplateCategories();
+        offer.setOfferTemplateCategories(new ArrayList<OfferTemplateCategory>());
 
-		if (attachments != null) {
-			for (DigitalResource attachment : attachments) {
-				entity.addAttachment(attachment);
-			}
-		}
+        if (businessAccountModels != null) {
+            for (BusinessAccountModel bam : businessAccountModels) {
+                offer.getBusinessAccountModels().add(bam);
+            }
+        }
 
-		if (channels != null) {
-			for (Channel channel : channels) {
-				entity.getChannels().add(channel);
-			}
-		}		
+        if (attachments != null) {
+            for (DigitalResource attachment : attachments) {
+                offer.addAttachment(attachment);
+            }
+        }
 
-		if (offerTemplateCategories != null) {
-			for (OfferTemplateCategory offerTemplateCategory : offerTemplateCategories) {
-				entity.getOfferTemplateCategories().add(offerTemplateCategory);
-			}
-		}
+        if (channels != null) {
+            for (Channel channel : channels) {
+                offer.getChannels().add(channel);
+            }
+        }
 
-		if (!duplicateHierarchy) {
-			if (offerServiceTemplates != null) {
-				for (OfferServiceTemplate serviceTemplate : offerServiceTemplates) {
-					serviceTemplate.getIncompatibleServices().size();
-					serviceTemplate.setId(null);
-					List<ServiceTemplate> incompatibleServices = serviceTemplate.getIncompatibleServices();
-					serviceTemplate.setIncompatibleServices(new ArrayList<ServiceTemplate>());
-					if (incompatibleServices != null) {
-						for (ServiceTemplate incompatibleService : incompatibleServices) {
-							serviceTemplate.addIncompatibleServiceTemplate(incompatibleService);
-						}
-					}
-					serviceTemplate.setOfferTemplate(entity);
-					entity.addOfferServiceTemplate(serviceTemplate);
-				}
-			}
-			
-			if (offerProductTemplates != null) {
-				for (OfferProductTemplate offerProductTemplate : offerProductTemplates) {
-					offerProductTemplate.setId(null);
-					offerProductTemplate.setOfferTemplate(entity);
-					entity.getOfferProductTemplates().add(offerProductTemplate);
-				}
-			}
-		}
+        if (offerTemplateCategories != null) {
+            for (OfferTemplateCategory offerTemplateCategory : offerTemplateCategories) {
+                offer.getOfferTemplateCategories().add(offerTemplateCategory);
+            }
+        }
 
-		customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity);
+        if (!duplicateHierarchy) {
+            if (offerServiceTemplates != null) {
+                for (OfferServiceTemplate serviceTemplate : offerServiceTemplates) {
+                    serviceTemplate.getIncompatibleServices().size();
+                    serviceTemplate.setId(null);
+                    List<ServiceTemplate> incompatibleServices = serviceTemplate.getIncompatibleServices();
+                    serviceTemplate.setIncompatibleServices(new ArrayList<ServiceTemplate>());
+                    if (incompatibleServices != null) {
+                        for (ServiceTemplate incompatibleService : incompatibleServices) {
+                            serviceTemplate.addIncompatibleServiceTemplate(incompatibleService);
+                        }
+                    }
+                    serviceTemplate.setOfferTemplate(offer);
+                    offer.addOfferServiceTemplate(serviceTemplate);
+                }
+            }
 
-		if (duplicateHierarchy) {
-			String prefix = entity.getId() + "_";
-			
-			if (offerServiceTemplates != null) {			
-				catalogHierarchyBuilderService.duplicateOfferServiceTemplate(entity, offerServiceTemplates, prefix);				
-			}
-			
-			if (offerProductTemplates != null) {
-				catalogHierarchyBuilderService.duplicateOfferProductTemplate(entity, offerProductTemplates, prefix);
-			}
-			
-		}
-		
-		if (persist) {
-		    create(entity);
-		}
+            if (offerProductTemplates != null) {
+                for (OfferProductTemplate offerProductTemplate : offerProductTemplates) {
+                    offerProductTemplate.setId(null);
+                    offerProductTemplate.setOfferTemplate(offer);
+                    offer.getOfferProductTemplates().add(offerProductTemplate);
+                }
+            }
+        }
 
-		return entity;
-	}
+        customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, offer);
+
+        if (duplicateHierarchy) {
+            String prefix = offer.getId() + "_";
+
+            if (offerServiceTemplates != null) {
+                catalogHierarchyBuilderService.duplicateOfferServiceTemplate(offer, offerServiceTemplates, prefix);
+            }
+
+            if (offerProductTemplates != null) {
+                catalogHierarchyBuilderService.duplicateOfferProductTemplate(offer, offerProductTemplates, prefix);
+            }
+
+        }
+
+        if (persist) {
+            create(offer);
+        }
+
+        return offer;
+    }
 
     /**
      * Find the latest version of offer template matching a given code
@@ -301,5 +302,13 @@ public class OfferTemplateService extends MultilanguageEntityService<OfferTempla
             .getSingleResult();
         return latestVersion;
     }
-	
+
+    @SuppressWarnings("unchecked")
+    public List<OfferTemplate> listActiveByDate(Date date) {
+
+        List<OfferTemplate> offers = (List<OfferTemplate>) getEntityManager().createNamedQuery("ProductOffering.findActiveByDate").setParameter("clazz", OfferTemplate.class)
+            .setParameter("date", date).getResultList();
+
+        return offers;
+    }
 }

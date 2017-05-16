@@ -17,14 +17,17 @@
 
 	<hftl:formField label="#{messages['commons.image']}" field="imagePath" required="false" pictureGroupName="product" />
 	<hftl:formField label="#{messages['businessEntity.code']}" field="code"
-		required="true" validateUnique="true" />
+		required="true" />
     <hftl:formField label="#{messages['commons.name']}" field="name"
         required="true" id="name" />               
-	<hftl:formField label="#{messages['commons.validFrom']}"
-		field="validity" childField="from" id="validFrom" />
-	<hftl:formField label="#{messages['commons.validTo']}" field="validity" childField="to"
-		id="validTo" />
-    <hftl:formLanguageFields entity="#{mainBackingBean.entity}"
+        
+    <hftl:formField label="#{messages['commons.valid']}" field="validity" />
+
+	<o:validateMultiple components="#{idPath}:code_txt #{idPath}:validity_date #{idPath}:validity_date_toRange" validator="#{backingBean.validateUniqueVersion}" message="#{messages[mode eq 'BUNDLE'?'bundleTemplate.version.exists':'productTemplate.version.exists']}">
+		<f:attribute name="objectId" value="#{backingBean.entity.id}" />
+	</o:validateMultiple>
+
+	<hftl:formLanguageFields entity="#{mainBackingBean.entity}"
         backingBean="#{mainBackingBean}" multiLang="true" /> 
 	<hftl:formField label="#{messages['productOffering.lifeCycleStatus']}"
 		field="lifeCycleStatus" id="lifeCycleStatus" />
@@ -89,6 +92,7 @@
                     <p:column headerText="#{messages['BusinessEntity.description']}">
                         <h:outputText value="#{prod.productTemplate.description}" />
                     </p:column>
+                    <hftl:column label="#{messages['offerTemplate.validity']}" entity="#{prod}" field="productTemplate.validity" isDatePeriod="true" width="11%"/>  
                     <p:column headerText="#{messages['commons.actions']}" rendered="#{mainBackingBean.edit}">
                         <h:panelGroup layout="block" styleClass="form-panel-actions">
                             <p:commandButton value="#{messages['bundleTemplate.removeProduct']}" action="#{mainBackingBean.removeProductTemplateFromBundle(prod)}"

@@ -2,8 +2,11 @@ package org.meveo.admin.action.catalog;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import javax.faces.component.UIInput;
+import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -13,6 +16,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.BundleProductTemplate;
 import org.meveo.model.catalog.BundleTemplate;
 import org.meveo.model.catalog.Channel;
@@ -25,6 +29,7 @@ import org.meveo.service.catalog.impl.BundleTemplateService;
 import org.meveo.service.catalog.impl.ChannelService;
 import org.meveo.service.catalog.impl.DigitalResourceService;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
+import org.meveo.service.catalog.impl.ProductOfferingService;
 import org.meveo.service.crm.impl.BusinessAccountModelService;
 import org.primefaces.model.DualListModel;
 
@@ -35,250 +40,300 @@ import org.primefaces.model.DualListModel;
 @ViewScoped
 public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 
-	private static final long serialVersionUID = -2076286547281668406L;
+    private static final long serialVersionUID = -2076286547281668406L;
 
-	@Inject
-	protected BundleTemplateService bundleTemplateService;
+    @Inject
+    protected BundleTemplateService bundleTemplateService;
 
-	@Inject
-	private BusinessAccountModelService businessAccountModelService;
+    @Inject
+    private BusinessAccountModelService businessAccountModelService;
 
-	@Inject
-	private OfferTemplateCategoryService offerTemplateCategoryService;
+    @Inject
+    private OfferTemplateCategoryService offerTemplateCategoryService;
 
-	@Inject
-	private ChannelService channelService;
+    @Inject
+    private ChannelService channelService;
 
-	@Inject
-	private DigitalResourceService digitalResourceService;
+    @Inject
+    private DigitalResourceService digitalResourceService;
 
-	private BigDecimal salesPrice;
-	private BigDecimal catalogPrice;
-	private BigDecimal discountedAmount;
+    @Inject
+    private ProductOfferingService productOfferingService;
 
-	private String editMode;
+    private BigDecimal salesPrice;
+    private BigDecimal catalogPrice;
+    private BigDecimal discountedAmount;
 
-	private List<ProductTemplate> productTemplatesToAdd;
+    private String editMode;
 
-	private DualListModel<OfferTemplateCategory> offerTemplateCategoriesDM;
-	private DualListModel<DigitalResource> attachmentsDM;
-	private DualListModel<BusinessAccountModel> bamDM;
-	private DualListModel<Channel> channelDM;
+    private List<ProductTemplate> productTemplatesToAdd;
 
-	public BundleTemplateBean() {
-		super(BundleTemplate.class);
-	}
+    private DualListModel<OfferTemplateCategory> offerTemplateCategoriesDM;
+    private DualListModel<DigitalResource> attachmentsDM;
+    private DualListModel<BusinessAccountModel> bamDM;
+    private DualListModel<Channel> channelDM;
 
-	@Override
-	protected IPersistenceService<BundleTemplate> getPersistenceService() {
-		return bundleTemplateService;
-	}
+    private boolean newVersion;
 
-	@Override
-	public BundleTemplate initEntity() {
-		BundleTemplate result = super.initEntity();
-		
-		return result;
-	}
+    public BundleTemplateBean() {
+        super(BundleTemplate.class);
+    }
 
-	@Override
-	@ActionMethod
-	public String saveOrUpdate(boolean killConversation) throws BusinessException {
-		
-		if (offerTemplateCategoriesDM != null && (offerTemplateCategoriesDM.getSource() != null || offerTemplateCategoriesDM.getTarget() != null)) {
-			entity.getOfferTemplateCategories().clear();
-			entity.getOfferTemplateCategories().addAll(offerTemplateCategoryService.refreshOrRetrieve(offerTemplateCategoriesDM.getTarget()));
-		}
+    @Override
+    protected IPersistenceService<BundleTemplate> getPersistenceService() {
+        return bundleTemplateService;
+    }
 
-		if (attachmentsDM != null && (attachmentsDM.getSource() != null || attachmentsDM.getTarget() != null)) {
-			entity.getAttachments().clear();
-			entity.getAttachments().addAll(digitalResourceService.refreshOrRetrieve(attachmentsDM.getTarget()));
-		}
+    @Override
+    public BundleTemplate initEntity() {
+        super.initEntity();
 
-		if (bamDM != null && (bamDM.getSource() != null || bamDM.getTarget() != null)) {
-			entity.getBusinessAccountModels().clear();
-			entity.getBusinessAccountModels().addAll(businessAccountModelService.refreshOrRetrieve(bamDM.getTarget()));
-		}
+        if (newVersion) {
+            instantiateNewVersion();
+            setObjectId(entity.getId());
+            newVersion = false;
+        }
 
-		if (channelDM != null && (channelDM.getSource() != null || channelDM.getTarget() != null)) {
-			entity.getChannels().clear();
-			entity.getChannels().addAll(channelService.refreshOrRetrieve(channelDM.getTarget()));
-		}
+        return entity;
+    }
 
-		String outcome = super.saveOrUpdate(killConversation);
+    @Override
+    @ActionMethod
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
-		if (editMode != null && editMode.length() > 0) {
-			outcome = "mm_productTemplates";
-		}
+        if (offerTemplateCategoriesDM != null && (offerTemplateCategoriesDM.getSource() != null || offerTemplateCategoriesDM.getTarget() != null)) {
+            entity.getOfferTemplateCategories().clear();
+            entity.getOfferTemplateCategories().addAll(offerTemplateCategoryService.refreshOrRetrieve(offerTemplateCategoriesDM.getTarget()));
+        }
 
-		return outcome;
-	}
+        if (attachmentsDM != null && (attachmentsDM.getSource() != null || attachmentsDM.getTarget() != null)) {
+            entity.getAttachments().clear();
+            entity.getAttachments().addAll(digitalResourceService.refreshOrRetrieve(attachmentsDM.getTarget()));
+        }
 
-	public void addProductTemplateToBundle(ProductTemplate prodTemplate) {
-		boolean found = false;
-		for (BundleProductTemplate bpt : entity.getBundleProducts()) {
-			if (prodTemplate.equals(bpt.getProductTemplate())) {
-				found = true;
-			}
-		}
+        if (bamDM != null && (bamDM.getSource() != null || bamDM.getTarget() != null)) {
+            entity.getBusinessAccountModels().clear();
+            entity.getBusinessAccountModels().addAll(businessAccountModelService.refreshOrRetrieve(bamDM.getTarget()));
+        }
 
-		if (!found) {
-			BundleProductTemplate bpt = new BundleProductTemplate();
-			bpt.setProductTemplate(prodTemplate);
-			bpt.setBundleTemplate(entity);
-			
-			entity.addBundleProductTemplate(bpt);
+        if (channelDM != null && (channelDM.getSource() != null || channelDM.getTarget() != null)) {
+            entity.getChannels().clear();
+            entity.getChannels().addAll(channelService.refreshOrRetrieve(channelDM.getTarget()));
+        }
 
-			messages.info(new BundleKey("messages", "bundleTemplate.productTemplate.create.successful"));
-		}
-	}
+        String outcome = super.saveOrUpdate(killConversation);
 
-	public void removeProductTemplateFromBundle(BundleProductTemplate bundleProductTemplate) throws BusinessException {
-		try {
-			entity.getBundleProducts().remove(bundleProductTemplate);
+        if (editMode != null && editMode.length() > 0) {
+            outcome = "mm_productTemplates";
+        }
 
-			messages.info(new BundleKey("messages", "bundleTemplate.productTemplate.delete.successful"));
-		} catch (Exception e) {
-			messages.error(new BundleKey("messages", "error.delete.unexpected"));
-		}
-	}
+        return outcome;
+    }
 
-	public BigDecimal getCatalogPrice() {
-		return catalogPrice;
-	}
+    public void addProductTemplateToBundle(ProductTemplate prodTemplate) {
+        boolean found = false;
+        for (BundleProductTemplate bpt : entity.getBundleProducts()) {
+            if (prodTemplate.equals(bpt.getProductTemplate())) {
+                found = true;
+            }
+        }
 
-	public void setCatalogPrice(BigDecimal catalogPrice) {
-		this.catalogPrice = catalogPrice;
-	}
+        if (!found) {
+            BundleProductTemplate bpt = new BundleProductTemplate();
+            bpt.setProductTemplate(prodTemplate);
+            bpt.setBundleTemplate(entity);
 
-	public BigDecimal getSalesPrice() {
-		return salesPrice;
-	}
+            entity.addBundleProductTemplate(bpt);
 
-	public void setSalesPrice(BigDecimal salesPrice) {
-		this.salesPrice = salesPrice;
-	}
+            messages.info(new BundleKey("messages", "bundleTemplate.productTemplate.create.successful"));
+        }
+    }
 
-	public BigDecimal getDiscountedAmount() {
-		return discountedAmount;
-	}
+    public void removeProductTemplateFromBundle(BundleProductTemplate bundleProductTemplate) throws BusinessException {
+        try {
+            entity.getBundleProducts().remove(bundleProductTemplate);
 
-	public void setDiscountedAmount(BigDecimal discountedAmount) {
-		this.discountedAmount = discountedAmount;
-	}
+            messages.info(new BundleKey("messages", "bundleTemplate.productTemplate.delete.successful"));
+        } catch (Exception e) {
+            messages.error(new BundleKey("messages", "error.delete.unexpected"));
+        }
+    }
 
-	public String getEditMode() {
-		return editMode;
-	}
+    public BigDecimal getCatalogPrice() {
+        return catalogPrice;
+    }
 
-	public void setEditMode(String editMode) {
-		this.editMode = editMode;
-	}
+    public void setCatalogPrice(BigDecimal catalogPrice) {
+        this.catalogPrice = catalogPrice;
+    }
 
-	public List<ProductTemplate> getProductTemplatesToAdd() {
-		return productTemplatesToAdd;
-	}
+    public BigDecimal getSalesPrice() {
+        return salesPrice;
+    }
 
-	public void setProductTemplatesToAdd(List<ProductTemplate> productTemplatesToAdd) {
-		this.productTemplatesToAdd = productTemplatesToAdd;
-	}
+    public void setSalesPrice(BigDecimal salesPrice) {
+        this.salesPrice = salesPrice;
+    }
 
-	public DualListModel<OfferTemplateCategory> getOfferTemplateCategoriesDM() {
-		if (offerTemplateCategoriesDM == null) {
-			List<OfferTemplateCategory> perksSource = offerTemplateCategoryService.listActive();
+    public BigDecimal getDiscountedAmount() {
+        return discountedAmount;
+    }
 
-			List<OfferTemplateCategory> perksTarget = new ArrayList<OfferTemplateCategory>();
-			if (entity.getOfferTemplateCategories() != null) {
-				perksTarget.addAll(entity.getOfferTemplateCategories());
-			}
-			perksSource.removeAll(perksTarget);
+    public void setDiscountedAmount(BigDecimal discountedAmount) {
+        this.discountedAmount = discountedAmount;
+    }
 
-			offerTemplateCategoriesDM = new DualListModel<OfferTemplateCategory>(perksSource, perksTarget);
-		}
+    public String getEditMode() {
+        return editMode;
+    }
 
-		return offerTemplateCategoriesDM;
-	}
+    public void setEditMode(String editMode) {
+        this.editMode = editMode;
+    }
 
-	public void setOfferTemplateCategoriesDM(DualListModel<OfferTemplateCategory> offerTemplateCategoriesDM) {
-		this.offerTemplateCategoriesDM = offerTemplateCategoriesDM;
-	}
+    public List<ProductTemplate> getProductTemplatesToAdd() {
+        return productTemplatesToAdd;
+    }
 
-	public DualListModel<BusinessAccountModel> getBamDM() {
-		if (bamDM == null) {
-			List<BusinessAccountModel> perksSource = businessAccountModelService.listActive();
+    public void setProductTemplatesToAdd(List<ProductTemplate> productTemplatesToAdd) {
+        this.productTemplatesToAdd = productTemplatesToAdd;
+    }
 
-			List<BusinessAccountModel> perksTarget = new ArrayList<BusinessAccountModel>();
-			if (entity.getBusinessAccountModels() != null) {
-				perksTarget.addAll(entity.getBusinessAccountModels());
-			}
-			perksSource.removeAll(perksTarget);
+    public DualListModel<OfferTemplateCategory> getOfferTemplateCategoriesDM() {
+        if (offerTemplateCategoriesDM == null) {
+            List<OfferTemplateCategory> perksSource = offerTemplateCategoryService.listActive();
 
-			bamDM = new DualListModel<BusinessAccountModel>(perksSource, perksTarget);
-		}
+            List<OfferTemplateCategory> perksTarget = new ArrayList<OfferTemplateCategory>();
+            if (entity.getOfferTemplateCategories() != null) {
+                perksTarget.addAll(entity.getOfferTemplateCategories());
+            }
+            perksSource.removeAll(perksTarget);
 
-		return bamDM;
-	}
+            offerTemplateCategoriesDM = new DualListModel<OfferTemplateCategory>(perksSource, perksTarget);
+        }
 
-	public void setBamDM(DualListModel<BusinessAccountModel> bamDM) {
-		this.bamDM = bamDM;
-	}
+        return offerTemplateCategoriesDM;
+    }
 
-	public DualListModel<Channel> getChannelDM() {
-		if (channelDM == null) {
-			List<Channel> perksSource = channelService.listActive();
+    public void setOfferTemplateCategoriesDM(DualListModel<OfferTemplateCategory> offerTemplateCategoriesDM) {
+        this.offerTemplateCategoriesDM = offerTemplateCategoriesDM;
+    }
 
-			List<Channel> perksTarget = new ArrayList<Channel>();
-			if (entity.getChannels() != null) {
-				perksTarget.addAll(entity.getChannels());
-			}
-			perksSource.removeAll(perksTarget);
+    public DualListModel<BusinessAccountModel> getBamDM() {
+        if (bamDM == null) {
+            List<BusinessAccountModel> perksSource = businessAccountModelService.listActive();
 
-			channelDM = new DualListModel<Channel>(perksSource, perksTarget);
-		}
-		return channelDM;
-	}
+            List<BusinessAccountModel> perksTarget = new ArrayList<BusinessAccountModel>();
+            if (entity.getBusinessAccountModels() != null) {
+                perksTarget.addAll(entity.getBusinessAccountModels());
+            }
+            perksSource.removeAll(perksTarget);
 
-	public void onNameChange() {
-		if (StringUtils.isEmpty(entity.getCode())) {
-			entity.setCode(entity.getName());
-		}
-	}
+            bamDM = new DualListModel<BusinessAccountModel>(perksSource, perksTarget);
+        }
 
-	public void setChannelDM(DualListModel<Channel> channelDM) {
-		this.channelDM = channelDM;
-	}
+        return bamDM;
+    }
 
-	public DualListModel<DigitalResource> getAttachmentsDM() {
-		if (attachmentsDM == null) {
-			List<DigitalResource> perksSource = digitalResourceService.list( true);
+    public void setBamDM(DualListModel<BusinessAccountModel> bamDM) {
+        this.bamDM = bamDM;
+    }
 
-			List<DigitalResource> perksTarget = new ArrayList<DigitalResource>();
-			if (entity.getAttachments() != null) {
-				perksTarget.addAll(entity.getAttachments());
-			}
-			perksSource.removeAll(perksTarget);
+    public DualListModel<Channel> getChannelDM() {
+        if (channelDM == null) {
+            List<Channel> perksSource = channelService.listActive();
 
-			attachmentsDM = new DualListModel<DigitalResource>(perksSource, perksTarget);
-		}
+            List<Channel> perksTarget = new ArrayList<Channel>();
+            if (entity.getChannels() != null) {
+                perksTarget.addAll(entity.getChannels());
+            }
+            perksSource.removeAll(perksTarget);
 
-		return attachmentsDM;
-	}
+            channelDM = new DualListModel<Channel>(perksSource, perksTarget);
+        }
+        return channelDM;
+    }
 
-	public void setAttachmentsDM(DualListModel<DigitalResource> attachmentsDM) {
-		this.attachmentsDM = attachmentsDM;
-	}
+    public void onNameChange() {
+        if (StringUtils.isEmpty(entity.getCode())) {
+            entity.setCode(entity.getName());
+        }
+    }
 
-	@ActionMethod
-	public void duplicate() {
-		if (entity != null && entity.getId() != null) {
-			try {
-				bundleTemplateService.duplicate(entity);
-				messages.info(new BundleKey("messages", "duplicate.successfull"));
-			} catch (BusinessException e) {
-				log.error("Error encountered duplicating product bundle template entity: {}", entity.getCode(), e);
-				messages.error(new BundleKey("messages", "error.duplicate.unexpected"));
-			}
-		}
-	}
+    public void setChannelDM(DualListModel<Channel> channelDM) {
+        this.channelDM = channelDM;
+    }
 
+    public DualListModel<DigitalResource> getAttachmentsDM() {
+        if (attachmentsDM == null) {
+            List<DigitalResource> perksSource = digitalResourceService.list(true);
+
+            List<DigitalResource> perksTarget = new ArrayList<DigitalResource>();
+            if (entity.getAttachments() != null) {
+                perksTarget.addAll(entity.getAttachments());
+            }
+            perksSource.removeAll(perksTarget);
+
+            attachmentsDM = new DualListModel<DigitalResource>(perksSource, perksTarget);
+        }
+
+        return attachmentsDM;
+    }
+
+    public void setAttachmentsDM(DualListModel<DigitalResource> attachmentsDM) {
+        this.attachmentsDM = attachmentsDM;
+    }
+
+    @ActionMethod
+    public void duplicate() {
+        if (entity != null && entity.getId() != null) {
+            try {
+                bundleTemplateService.duplicate(entity);
+                messages.info(new BundleKey("messages", "duplicate.successfull"));
+            } catch (BusinessException e) {
+                log.error("Error encountered duplicating product bundle template entity: {}", entity.getCode(), e);
+                messages.error(new BundleKey("messages", "error.duplicate.unexpected"));
+            }
+        }
+    }
+
+    @ActionMethod
+    public void instantiateNewVersion() {
+        if (entity != null && entity.getId() != null) {
+            try {
+                entity = bundleTemplateService.instantiateNewVersion(entity);
+                messages.info(new BundleKey("messages", "newVersion.successful"));
+            } catch (BusinessException e) {
+                log.error("Error encountered instantiating new offer template entity version: {}", entity.getCode(), e);
+                messages.error(new BundleKey("messages", "error.newVersion.unsuccessful"));
+            }
+        }
+    }
+
+    public void setNewVersion(boolean newVersion) {
+        this.newVersion = newVersion;
+    }
+
+    public boolean isNewVersion() {
+        return newVersion;
+    }
+
+    public boolean validateUniqueVersion(FacesContext context, List<UIInput> components, List<Object> values) {
+
+        if (values.size() != 3) {
+            throw new RuntimeException("Please bind validator to two components in the following order: offer/product/bundle template code, dateFrom, dateTo");
+        }
+
+        String code = (String) values.get(0);
+        Date from = (Date) values.get(1);
+        Date to = (Date) values.get(2);
+
+        DatePeriod matchedVersion = productOfferingService.getMatchingVersion(code, from, to, entity.getId());
+
+        if (matchedVersion == null) {
+            return true;
+        }
+
+        return false;
+    }
 }

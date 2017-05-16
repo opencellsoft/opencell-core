@@ -176,23 +176,19 @@
 													rendered="#{prod.businessProductModel != null}"></h:outputText>
 											</p>
 											<p:separator></p:separator>
-											<p:panelGrid columns="3">
-												<p:panelGrid columns="1"
-													rendered="#{prod.validity.from != null}">
-													<h:outputText value="#{messages['commons.validFrom']}: "></h:outputText>
-													<h:outputText value="#{prod.validity.from}">
-														<f:convertDateTime type="date"
-															pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy HH:mm')}" />
-													</h:outputText>
-												</p:panelGrid>
-												<p:panel></p:panel>
-												<p:panelGrid columns="1"
-													rendered="#{prod.validity.to != null}">
-													<h:outputText value="#{messages['commons.validTo']}: "></h:outputText>
-													<h:outputText value="#{prod.validity.to}">
-														<f:convertDateTime type="date"
-															pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy HH:mm')}" />
-													</h:outputText>
+											<p:panelGrid columns="1">#{prod.validity==null}
+                                                <p:panelGrid columns="1"
+                                                             rendered="#{! prod.validity.isEmpty()}">
+													<h:outputText value="#{messages['commons.valid']}: " />
+													<h:panelGroup>
+														<h:outputText value="#{prod.validity.from}">
+															<f:convertDateTime type="date" pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy HH:mm')}" />
+														</h:outputText>
+														<h:outputText value="-" style="padding:5px" />
+														<h:outputText value="#{prod.validity.to}">
+															<f:convertDateTime type="date" pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy HH:mm')}" />
+														</h:outputText>
+													</h:panelGroup>
 												</p:panelGrid>
 											</p:panelGrid>
 										</p:panel>

@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.BundleProductTemplate;
 import org.meveo.model.catalog.BundleTemplate;
 import org.meveo.model.catalog.Channel;
@@ -53,87 +54,148 @@ public class BundleTemplateService extends MultilanguageEntityService<BundleTemp
 		return result;
 	}
 
-	public synchronized void duplicate(BundleTemplate entity) throws BusinessException {
-		entity = refreshOrRetrieve(entity);
+
+    /**
+     * Create a shallow duplicate of an Bundle template (main Bundle template information and custom fields). A new Bundle template will have a code with suffix "- Copy"
+     * 
+     * @param bundle Bundle template to duplicate
+     * @return A persisted duplicated Bundle template
+     * @throws BusinessException
+     */
+    public synchronized void duplicate(BundleTemplate bundle) throws BusinessException {
+        duplicate(bundle, true);
+        
+    }
+
+    /**
+     * Create a new version of an Bundle template. It is a shallow copy of an Bundle template (main Bundle template information and custom fields) with identical code and validity start date matching latest version's validity end
+     * date or current date.
+     * 
+     * @param bundle Bundle template to create new version for
+     * @return A not-persisted copy of Bundle template
+     * @throws BusinessException
+     */
+    public synchronized BundleTemplate instantiateNewVersion(BundleTemplate bundle) throws BusinessException {
+
+        // Find the latest version of an offer for duplication and to calculate a validity start date for a new offer
+        BundleTemplate latestVersion = findTheLatestVersion(bundle.getCode());
+        String code = latestVersion.getCode();
+        Date endDate = latestVersion.getValidity().getTo();
+
+        bundle = duplicate(latestVersion, false);
+
+        bundle.setCode(code);
+
+        Date from = endDate != null ? endDate : new Date();
+        bundle.setValidity(new DatePeriod(from, null));
+
+        return bundle;
+    }
+
+    /**
+     * Create a duplicate of a given Bundle template. It is a shallow copy of an Bundle template (main Bundle template information and custom fields)
+     * 
+     * @param bundle Bundle template to duplicate
+     * @param persist Shall new entity be persisted
+     * @return A copy of Bundle template
+     * @throws BusinessException
+     */
+	private synchronized BundleTemplate duplicate(BundleTemplate bundle, boolean persist) throws BusinessException {
+		
+	    bundle = refreshOrRetrieve(bundle);
 
 		// Lazy load related values first
-		entity.getWalletTemplates().size();
-		entity.getBusinessAccountModels().size();
-		entity.getAttachments().size();
-		entity.getChannels().size();
-		entity.getOfferTemplateCategories().size();
-		entity.getBundleProducts().size();
+		bundle.getWalletTemplates().size();
+		bundle.getBusinessAccountModels().size();
+		bundle.getAttachments().size();
+		bundle.getChannels().size();
+		bundle.getOfferTemplateCategories().size();
+		bundle.getBundleProducts().size();
 
-		String code = findDuplicateCode(entity);
+		String code = findDuplicateCode(bundle);
 
 		// Detach and clear ids of entity and related entities
-		detach(entity);
-		entity.setId(null);
-		String sourceAppliesToEntity = entity.clearUuid();
+		detach(bundle);
+		bundle.setId(null);
+		String sourceAppliesToEntity = bundle.clearUuid();
 
-		List<BusinessAccountModel> businessAccountModels = entity.getBusinessAccountModels();
-		entity.setBusinessAccountModels(new ArrayList<BusinessAccountModel>());
+		List<BusinessAccountModel> businessAccountModels = bundle.getBusinessAccountModels();
+		bundle.setBusinessAccountModels(new ArrayList<BusinessAccountModel>());
 
-		List<DigitalResource> attachments = entity.getAttachments();
-		entity.setAttachments(new ArrayList<DigitalResource>());
+		List<DigitalResource> attachments = bundle.getAttachments();
+		bundle.setAttachments(new ArrayList<DigitalResource>());
 
-		List<Channel> channels = entity.getChannels();
-		entity.setChannels(new ArrayList<Channel>());
+		List<Channel> channels = bundle.getChannels();
+		bundle.setChannels(new ArrayList<Channel>());
 
-		List<OfferTemplateCategory> offerTemplateCategories = entity.getOfferTemplateCategories();
-		entity.setOfferTemplateCategories(new ArrayList<OfferTemplateCategory>());
+		List<OfferTemplateCategory> offerTemplateCategories = bundle.getOfferTemplateCategories();
+		bundle.setOfferTemplateCategories(new ArrayList<OfferTemplateCategory>());
 
-		List<WalletTemplate> walletTemplates = entity.getWalletTemplates();
-		entity.setWalletTemplates(new ArrayList<WalletTemplate>());
+		List<WalletTemplate> walletTemplates = bundle.getWalletTemplates();
+		bundle.setWalletTemplates(new ArrayList<WalletTemplate>());
 
-		List<BundleProductTemplate> bundleProductTemplates = entity.getBundleProducts();
-		entity.setBundleProducts(new ArrayList<BundleProductTemplate>());
+		List<BundleProductTemplate> bundleProductTemplates = bundle.getBundleProducts();
+		bundle.setBundleProducts(new ArrayList<BundleProductTemplate>());
 
-		entity.setCode(code);
+		bundle.setCode(code);
 
 		if (businessAccountModels != null) {
 			for (BusinessAccountModel bam : businessAccountModels) {
-				entity.getBusinessAccountModels().add(bam);
+				bundle.getBusinessAccountModels().add(bam);
 			}
 		}
 
 		if (attachments != null) {
 			for (DigitalResource attachment : attachments) {
-				entity.addAttachment(attachment);
+				bundle.addAttachment(attachment);
 			}
 		}
 
 		if (channels != null) {
 			for (Channel channel : channels) {
-				entity.getChannels().add(channel);
+				bundle.getChannels().add(channel);
 			}
 		}
 
 		if (offerTemplateCategories != null) {
 			for (OfferTemplateCategory offerTemplateCategory : offerTemplateCategories) {
-				entity.getOfferTemplateCategories().add(offerTemplateCategory);
+				bundle.getOfferTemplateCategories().add(offerTemplateCategory);
 			}
 		}
 
 		if (walletTemplates != null) {
 			for (WalletTemplate wt : walletTemplates) {
-				entity.getWalletTemplates().add(wt);
+				bundle.getWalletTemplates().add(wt);
 			}
 		}
 
 		if (bundleProductTemplates != null) {
-			for (BundleProductTemplate bpt : bundleProductTemplates) {
-				entity.getBundleProducts().add(bpt);
-			}
+
 			for (BundleProductTemplate bpt : bundleProductTemplates) {
 				bpt.setId(null);
-				bpt.setBundleTemplate(entity);
-				entity.addBundleProductTemplate(bpt);
+				bundle.addBundleProductTemplate(bpt);
 			}
 		}
 
+        customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, bundle);
 
-        create(entity);
-		customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity);
+        if (persist) {
+            create(bundle);
+        }
+        
+        return bundle;
 	}
+
+    /**
+     * Find the latest version of bundle template matching a given code
+     * 
+     * @param code Code to match
+     * @return Bundle template with the highest validity start date
+     */
+    private BundleTemplate findTheLatestVersion(String code) {
+
+        BundleTemplate latestVersion = (BundleTemplate) getEntityManager().createNamedQuery("ProductOffering.findLatestVersion").setParameter("code", code).setMaxResults(1)
+            .getSingleResult();
+        return latestVersion;
+    }
 }

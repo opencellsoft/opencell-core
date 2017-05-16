@@ -8,6 +8,7 @@
 	<ui:define name="metadata">
 		<f:metadata>
 			<f:viewParam name="objectId" value="#{productTemplateBean.objectId}" />
+			<f:viewParam name="newVersion" value="#{productTemplateBean.newVersion}" />
 		</f:metadata>
 	</ui:define>
 
@@ -45,6 +46,7 @@
 						<ui:include src="productTemplateDetailCommon.xhtml">
 							<ui:param name="backingBean" value="#{productTemplateBean}" />
 							<ui:param name="mode" value="PRODUCT" />
+							<ui:param name="idPath" value=":tabView:formId" />
 						</ui:include>
 				</hftl:formPanel>
 				</p:tab>

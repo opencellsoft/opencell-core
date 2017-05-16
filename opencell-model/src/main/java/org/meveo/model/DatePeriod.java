@@ -118,7 +118,23 @@ public class DatePeriod implements Comparable<DatePeriod> {
 
     @Override
     public String toString() {
-        return from + ">" + to;
+        return from + " - " + to;
+    }
+
+    public String toString(String datePattern) {
+        if (isEmpty()) {
+            return "";
+        }
+
+        String txt = " - ";
+        if (from != null) {
+            txt = DateUtils.formatDateWithPattern(from, datePattern) + txt;
+        }
+        if (to != null) {
+            txt = txt + DateUtils.formatDateWithPattern(to, datePattern);
+        }
+
+        return txt;
     }
 
     @Override

@@ -48,7 +48,10 @@ import org.meveo.model.crm.BusinessAccountModel;
         @Parameter(name = "sequence_name", value = "CAT_OFFER_TEMPLATE_SEQ"), })
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING)
-@NamedQueries({ @NamedQuery(name = "ProductOffering.findLatestVersion", query = "select e from ProductOffering e where e.code = :code order by e.validity.from desc")})
+@NamedQueries({
+        @NamedQuery(name = "ProductOffering.findLatestVersion", query = "select e from ProductOffering e where e.code = :code order by e.validity.from desc, e.validity.to desc"),
+        @NamedQuery(name = "ProductOffering.findVersionDates", query = "select e.validity from ProductOffering e where e.code = :code and e.id !=:id"),
+        @NamedQuery(name = "ProductOffering.findActiveByDate", query = "select e from ProductOffering e where type(e)= :clazz and ((e.validity.from IS NULL and e.validity.to IS NULL) or (e.validity.from<=:date and :date<e.validity.to) or (e.validity.from<=:date and e.validity.to IS NULL) or (e.validity.from IS NULL and :date<e.validity.to))")})
 public abstract class ProductOffering extends BusinessCFEntity implements IImageUpload {
 
     private static final long serialVersionUID = 6877386866687396135L;
@@ -62,8 +65,7 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
     @OrderColumn(name = "INDX")
     private List<OfferTemplateCategory> offerTemplateCategories = new ArrayList<>();
 
-    @AttributeOverrides({ @AttributeOverride(name = "from", column = @Column(name = "VALID_FROM")),
-            @AttributeOverride(name = "to", column = @Column(name = "VALID_TO")) })
+    @AttributeOverrides({ @AttributeOverride(name = "from", column = @Column(name = "VALID_FROM")), @AttributeOverride(name = "to", column = @Column(name = "VALID_TO")) })
     private DatePeriod validity = new DatePeriod();
 
     @ImageType

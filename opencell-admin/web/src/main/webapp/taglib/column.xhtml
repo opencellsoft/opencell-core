@@ -231,7 +231,7 @@
                             <f:convertDateTime pattern="#{datePattern}" />
                         </h:outputText>
                     </c:if>
-                    <c:if test="${isDatePeriod}">
+                    <c:if test="${isDatePeriod and !valueField.isEmpty()}">
                         <h:outputText value="#{valueField.from}">
                             <f:convertDateTime pattern="#{datePattern}" />
                         </h:outputText>

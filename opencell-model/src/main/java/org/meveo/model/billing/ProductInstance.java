@@ -71,7 +71,7 @@ public class ProductInstance extends BusinessCFEntity {
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "APPLICATION_DATE")
-    private Date applicationDate;
+    private Date applicationDate = new Date();
 
     @OneToMany(mappedBy = "productInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     // TODO : Add orphanRemoval annotation.

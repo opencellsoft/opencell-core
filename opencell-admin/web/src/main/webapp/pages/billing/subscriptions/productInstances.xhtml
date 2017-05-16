@@ -59,14 +59,14 @@
 					entity="#{backingBean.productInstance}" styleClass="formPanel"
 					formId="applyProductForm" showFormButtons="false">
 					<hftl:formField label="#{messages['commons.quantity']}"
-						field="quantity" required="true" />
+						field="quantity" required="true" width="10"/>
 					<hftl:formField
 						label="#{messages['chargeApplication.applicationDate']}"
-						field="applicationDate" />
+						field="applicationDate" required="true" listenerUpdate="productTemplatePopup"/>
 					<hftl:formField id="productTemplateSelectedId"
 						label="#{messages['productTemplate.title']}"
 						field="productTemplate" popup="true" required="true"
-						popupId="productTemplatePopup" valueLabelField="code" />
+						popupId="productTemplatePopup" valueLabelField="code" width="30"/>
 
 					<p:outputPanel id="productCF">
 						<hftl:customFields backingBean="#{productInstanceBean}"
@@ -77,7 +77,7 @@
 					<h:panelGroup layout="block" styleClass="form-panel-actions">
 						<p:commandButton value="#{messages['action.save']}"
 							action="#{backingBean.applyProduct()}"
-							oncomplete="PF('applyProductPanel').toggle()"
+							oncomplete="if (args &amp;&amp; !args.validationFailed){PF('applyProductPanel').toggle();}"
 							update=":subscriptionTab:productInstanceResultsForm :subscriptionTab:applyProductMessages"></p:commandButton>
 						<p:commandButton value="#{messages['button.closeButton']}"
 							action="#{backingBean.initProductInstance()}"

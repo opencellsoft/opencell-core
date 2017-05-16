@@ -65,6 +65,8 @@
                         <hftl:formLanguageFields entity="#{offerTemplateBean.entity}" backingBean="#{offerTemplateBean}" multiLang="true" />
 
                         <hftl:formField label="#{messages['commons.valid']}" field="validity" time="true" displayOneLine="true" labelWidth="100" />
+                        <o:validateMultiple components=":offerForm:code :offerForm:validity_date :offerForm:validity_date_toRange"
+									validator="#{offerTemplateBean.validateUniqueVersion}" message="#{messages['offerTemplate.version.exists']}" />
                         <hftl:formField label="#{messages['commons.status']}" field="lifeCycleStatus" displayOneLine="true" labelWidth="100" />
                         <hftl:formField label="#{messages['commons.lastEditor']}" entity="#{offerTemplateBean.entity.auditable}" field="creator" valueLabelField="nameOrUsername"
                             edit="false" />
