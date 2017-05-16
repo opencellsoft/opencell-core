@@ -67,7 +67,7 @@ public class UserService extends PersistenceService<User> {
         }
 
         user.setUserName(user.getUserName().toUpperCase());
-        user.setPassword(Sha1Encrypt.encodePassword(user.getPassword()));
+        //user.setPassword(Sha1Encrypt.encodePassword(user.getPassword()));
         user.setLastPasswordModification(new Date());
 
         super.create(user);
