@@ -59,9 +59,9 @@ public class CustomerService extends AccountService<Customer> {
 	}
 	
 	public Long countFilter(String customerCode, CustomerCategory customerCategory, Seller seller,
-			CustomerBrand brand, int firstRow, int numberOfRows) {
+			CustomerBrand brand) {
 		QueryBuilder qb = new QueryBuilder(Customer.class, "c");
-		filter(qb, customerCode, customerCategory, seller, brand, firstRow, numberOfRows);
+		filter(qb, customerCode, customerCategory, seller, brand);
 		Long recordCount = (Long) qb.getCountQuery(getEntityManager()).getSingleResult();
 		return recordCount;
 	}
@@ -70,8 +70,10 @@ public class CustomerService extends AccountService<Customer> {
 	public List<Customer> filter(String customerCode, CustomerCategory customerCategory, Seller seller,
 			CustomerBrand brand, Integer firstRow, Integer numberOfRows) {
 		QueryBuilder qb = new QueryBuilder(Customer.class, "c");
-		Query query = filter(qb, customerCode, customerCategory, seller, brand, firstRow, numberOfRows);
-		qb.applyPagination(query, firstRow, numberOfRows);
+		Query query = filter(qb, customerCode, customerCategory, seller, brand);
+		if (firstRow != null && numberOfRows != null) {
+			qb.applyPagination(query, firstRow, numberOfRows);
+		}
 		
 		try {
 			return (List<Customer>) query.getResultList();
@@ -81,7 +83,7 @@ public class CustomerService extends AccountService<Customer> {
 	}
 
 	private Query filter(QueryBuilder qb, String customerCode, CustomerCategory customerCategory, Seller seller,
-			CustomerBrand brand, int firstRow, int numberOfRows) {
+			CustomerBrand brand) {
 		
 		qb.addCriterion("code", "=", customerCode, true);
 

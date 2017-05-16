@@ -317,7 +317,7 @@ public class CustomerApi extends AccountApi {
 
         CustomersDto result = new CustomersDto();
         List<Customer> customers = customerService.filter(postData.getCode(), customerCategory, seller, customerBrand, firstRow, numberOfRows);
-        result.setTotalNumberOfRecords(customerService.countFilter(postData.getCode(), customerCategory, seller, customerBrand, firstRow, numberOfRows));
+        result.setTotalNumberOfRecords(customerService.countFilter(postData.getCode(), customerCategory, seller, customerBrand));
         if (customers != null) {
             for (Customer c : customers) {
                 result.getCustomer().add(accountHierarchyApi.customerToDto(c));
