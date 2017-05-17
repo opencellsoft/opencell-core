@@ -36,6 +36,7 @@ import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
+import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.AccountStatusEnum;
@@ -96,6 +97,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		return update(billingAccount);
 	}
 
+	@MeveoAudit
 	public BillingAccount billingAccountTermination(BillingAccount billingAccount, Date terminationDate,
 			SubscriptionTerminationReason terminationReason) throws BusinessException {
 		if (terminationDate == null) {
@@ -112,6 +114,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		return update(billingAccount);
 	}
 
+	@MeveoAudit
 	public BillingAccount billingAccountCancellation(BillingAccount billingAccount, Date terminationDate)
 			throws BusinessException {
 		if (terminationDate == null) {
@@ -126,6 +129,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		return update(billingAccount);
 	}
 
+	@MeveoAudit
 	public BillingAccount billingAccountReactivation(BillingAccount billingAccount, Date activationDate)
 			throws BusinessException {
 		if (activationDate == null) {
@@ -140,6 +144,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		return update(billingAccount);
 	}
 
+	@MeveoAudit
 	public BillingAccount closeBillingAccount(BillingAccount billingAccount) throws BusinessException {
 
 		/**

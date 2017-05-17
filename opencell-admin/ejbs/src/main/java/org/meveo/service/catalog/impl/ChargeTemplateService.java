@@ -27,7 +27,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
-import org.meveo.service.base.MultilanguageEntityService;
+import org.meveo.service.base.AuditableMultilanguageService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 
 /**
@@ -35,7 +35,7 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
  * 
  */
 @Stateless
-public class ChargeTemplateService<P extends ChargeTemplate> extends MultilanguageEntityService<P> {
+public class ChargeTemplateService<P extends ChargeTemplate> extends AuditableMultilanguageService<P> {
 	
 	@Inject
 	private TriggeredEDRTemplateService edrTemplateService;

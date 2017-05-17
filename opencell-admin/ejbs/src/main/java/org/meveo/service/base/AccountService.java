@@ -35,7 +35,7 @@ import org.meveo.model.shared.Address;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.shared.Name;
 
-public abstract class AccountService<P extends AccountEntity> extends BusinessService<P> {
+public abstract class AccountService<P extends AccountEntity> extends AuditableBusinessService<P> {
 
 	@SuppressWarnings("unchecked")
 	public P findByExternalRef1(String externalRef1) {

@@ -34,7 +34,7 @@ import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.AuditableMultilanguageService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 
 /**
@@ -42,7 +42,7 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
  * 
  */
 @Stateless
-public class ServiceTemplateService extends BusinessService<ServiceTemplate> {
+public class ServiceTemplateService extends AuditableMultilanguageService<ServiceTemplate> {
 	
 	@Inject
 	private ServiceChargeTemplateSubscriptionService serviceChargeTemplateSubscriptionService;
