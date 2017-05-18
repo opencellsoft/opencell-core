@@ -191,7 +191,7 @@
 							<hftl:formField id="recurringChargeTemplateSelectedId"
 								label="#{messages['pricePlanMatrix.eventCode']}"
 								field="chargeTemplate" valueLabelField="code" popup="true"
-								popupId="searchRecurringChargeTemplatePopup" clearButton="true"
+								popupId="searchRecurringChargeTemplatePopup"
 								required="true"
 								disabled="#{!serviceTemplateBean.serviceChargeTemplateRecurring.transient}" />
 							<hftl:formField label="#{messages['menu.wallets']}"
@@ -287,7 +287,7 @@
 								label="#{messages['pricePlanMatrix.eventCode']}"
 								field="chargeTemplate" valueLabelField="code" popup="true"
 								popupId="searchSubscriptionChargeTemplatePopup"
-								clearButton="true" required="true"
+								required="true"
 								disabled="#{!serviceTemplateBean.serviceChargeTemplateSubscription.transient}" />
 							<hftl:formField label="#{messages['menu.wallets']}"
 								listType="pickUpList" field="walletTemplates"
@@ -379,7 +379,7 @@
 								label="#{messages['pricePlanMatrix.eventCode']}"
 								field="chargeTemplate" valueLabelField="code" popup="true"
 								popupId="searchTerminationChargeTemplatePopup"
-								clearButton="true" required="true"
+								required="true"
 								disabled="#{!serviceTemplateBean.serviceChargeTemplateTermination.transient}" />
 							<hftl:formField label="#{messages['menu.wallets']}"
 								listType="pickUpList" field="walletTemplates"
@@ -473,7 +473,7 @@
 							<hftl:formField id="usageChargeTemplateSelectedId"
 								label="#{messages['pricePlanMatrix.eventCode']}"
 								field="chargeTemplate" valueLabelField="code" popup="true"
-								popupId="searchUsageChargeTemplatePopup" clearButton="true"
+								popupId="searchUsageChargeTemplatePopup"
 								required="true"
 								disabled="#{!serviceTemplateBean.serviceChargeTemplateUsage.transient}" />
 							<hftl:formField label="#{messages['menu.wallets']}"
@@ -483,7 +483,7 @@
 							<hftl:formField id="counterTemplateSelectedId"
 								label="#{messages['counterTemplate.title']}"
 								field="counterTemplate" valueLabelField="code" popup="true"
-								popupId="searchCounterTemplatePopup" clearButton="true"
+								popupId="searchCounterTemplatePopup" showResetButton="true"
 								required="false" />
 							<ui:param name="buttons" value="true" />
 							<ui:define name="buttons">

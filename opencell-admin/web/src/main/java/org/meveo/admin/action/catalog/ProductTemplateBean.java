@@ -403,4 +403,8 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 
         return true;
     }
+    
+    public List<ProductTemplate> listActiveByDate(Date date) {
+        return productTemplateService.listActiveByDate(date);
+    }
 }

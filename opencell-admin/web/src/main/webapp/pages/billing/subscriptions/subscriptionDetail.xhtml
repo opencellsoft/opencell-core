@@ -54,26 +54,18 @@
 			}			
 		}	
 		</script>
-		
-		<hftl:entityPopup id="productTemplatePopup" header="#{messages['productTemplate.title']}" backingBean="#{productTemplateBean}" dataModel="#{subscriptionBean.getOfferProductTemplatesByDate(subscriptionBean.productInstance.applicationDate)}"
-            searchField1Label="#{messages['BusinessEntity.code']}"
-            searchField1="code"
-            searchField2Label="#{messages['BusinessEntity.description']}"
-            searchField2="description"
-            searchField3Label="#{messages['commons.validFrom']}"
-            searchField3="validity.from"
-            searchField4Label="#{messages['commons.validTo']}"
-            searchField4="validity.to"
-            column1Label="#{messages['BusinessEntity.code']}" column1="code"
-            column2Label="#{messages['BusinessEntity.description']}" column2="description"           
-            column3Label="#{messages['commons.validFrom']}" column3="validity" column3Child="from"
-            column4Label="#{messages['commons.validTo']}" column4="validity" column4Child="to"
-            selection="#{subscriptionBean.productInstance.productTemplate}"
-            selectionListenerBean="#{subscriptionBean}" selectionListenerMethod="updateProductInstanceCode" 
+
+        <hftl:entityPopup id="productTemplatePopup" header="#{messages['productTemplate.title']}" backingBean="#{productTemplateBean}"
+            dataModel="#{subscriptionBean.getOfferProductTemplatesByDate(subscriptionBean.productInstance.applicationDate)}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
+            searchField2Label="#{messages['businessEntity.description']}" searchField2="description" searchField3Label="#{messages['commons.validFrom']}" searchField3="validity.from"
+            searchField4Label="#{messages['commons.validTo']}" searchField4="validity.to" column1Label="#{messages['businessEntity.code']}" column1="code"
+            column2Label="#{messages['businessEntity.description']}" column2="description" column3Label="#{messages['commons.validFrom']}" column3="validity" column3Child="from"
+            column4Label="#{messages['commons.validTo']}" column4="validity" column4Child="to" selection="#{subscriptionBean.productInstance.productTemplate}"
+            selectionListenerBean="#{subscriptionBean}" selectionListenerMethod="updateProductInstanceCode"
             updateField=":subscriptionTab:applyProductForm:productTemplateSelectedId :subscriptionTab:applyProductForm:productTemplateSelectedId_text :#{p:component('productCF')}">
         </hftl:entityPopup>
 
-		<hftl:entityPopup id="userAccountPopup"
+        <hftl:entityPopup id="userAccountPopup"
 			header="#{messages['userAccount.popup.header']}"
 			backingBean="#{userAccountBean}"
 			searchField1Label="#{messages['userAccount.code']}"
@@ -88,16 +80,16 @@
 		<hftl:entityPopup id="offerPopup"
 			header="#{messages['offer.popup.header']}"
 			backingBean="#{offerTemplateBean}"
-			searchField1Label="#{messages['offerTemplate.code']}"
+			searchField1Label="#{messages['businessEntity.code']}"
 			searchField1="code"
-			searchField2Label="#{messages['offerTemplate.description']}"
+			searchField2Label="#{messages['businessEntity.description']}"
 			searchField2="description"
 			searchField3Label="#{messages['commons.validFrom']}"
 			searchField3="validity.from"
 			searchField4Label="#{messages['commons.validTo']}"
 			searchField4="validity.to"
-			column1Label="#{messages['offerTemplate.code']}" column1="code"
-			column2Label="#{messages['offerTemplate.description']}" column2="description"			
+			column1Label="#{messages['businessEntity.code']}" column1="code"
+			column2Label="#{messages['businessEntity.description']}" column2="description"			
 			column3Label="#{messages['commons.validFrom']}" column3="validity" column3Child="from"
 			column4Label="#{messages['commons.validTo']}" column4="validity" column4Child="to"
 			selection="#{subscriptionBean.entity.offer}" width="1000"
@@ -508,7 +500,7 @@
 														<hftl:column label="#{messages['chargeInstance.code']}"
 															field="code" />
 														<hftl:column
-															label="#{messages['BusinessEntity.description']}"
+															label="#{messages['businessEntity.description']}"
 															field="description" isMessage="false" />
 														<hftl:column
 															label="#{messages['serviceInstance.status']}"

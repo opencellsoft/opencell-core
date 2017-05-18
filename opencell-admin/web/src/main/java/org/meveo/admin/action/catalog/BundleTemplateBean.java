@@ -333,4 +333,8 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 
         return true;
     }
+
+    public List<BundleTemplate> listActiveByDate(Date date) {
+        return bundleTemplateService.listActiveByDate(date);
+    }
 }

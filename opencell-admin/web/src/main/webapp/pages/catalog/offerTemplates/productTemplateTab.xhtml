@@ -12,14 +12,18 @@
 
     <hftl:entityPopup id="searchProductTemplatePopup" header="#{messages['productTemplate.title']}"
         updateField="${mainFormId}:tabView:productTemplateCode ${mainFormId}:tabView:productTemplateCode_text" selection="#{mainBackingBean.offerProductTemplate.productTemplate}"
-        backingBean="#{productTemplateBean}" searchField1Label="#{messages['BusinessEntity.code']}" searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
-        column1="code"></hftl:entityPopup>
+        backingBean="#{productTemplateBean}" width="1000" searchField1Label="#{messages['businessEntity.code']}" searchField1="code" searchField2Label="#{messages['businessEntity.description']}"
+        searchField2="description" searchField3Label="#{messages['commons.validFrom']}" searchField3="validity.from" searchField4Label="#{messages['commons.validTo']}" searchField4="validity.to"
+        column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['businessEntity.description']}" column2="description" column3Label="#{messages['commons.validFrom']}"
+        column3="validity" column3Child="from" column4Label="#{messages['commons.validTo']}" column4="validity" column4Child="to" />
 
     <p:dataTable id="offerProducts" var="entity" value="#{mainBackingBean.entity.offerProductTemplates}" paginator="false" rows="30" lazy="false" styleClass="custom-grid"
         rowIndexVar="rowIndex" resizableColumns="true">
 
         <hftl:column label="#{messages['productTemplate.title']}" field="productTemplate.code" entityView="productTemplateDetail" valueIdField="productTemplate.id" />
         <hftl:column label="#{messages['offerServiceTemplate.mandatory']}" field="mandatory" isMessage="true" />
+        <hftl:column label="#{messages['commons.validFrom']}" field="productTemplate.validity.from" isDate="true"/>
+        <hftl:column label="#{messages['commons.validTo']}" field="productTemplate.validity.to" isDate="true"/>
 
         <p:column styleClass="actions-column" rendered="#{mainBackingBean.edit}">
             <f:facet name="header">
@@ -49,7 +53,7 @@
             <p:outputPanel styleClass="form-panel-fields #{edit?'':' form-panel-fields-view'}">
 
                 <hftl:formField entity="#{mainBackingBean.offerProductTemplate}" label="#{messages['productTemplate.title']}" id="productTemplateCode" field="productTemplate"
-                    valueLabelField="code" popup="true" popupId="searchProductTemplatePopup" clearButton="true" required="true"
+                    valueLabelField="code" popup="true" popupId="searchProductTemplatePopup" required="true"
                     disabled="#{!mainBackingBean.offerProductTemplate.transient}" />
                 <hftl:formField entity="#{mainBackingBean.offerProductTemplate}" label="#{messages['offerServiceTemplate.mandatory']}" id="mandatoryProduct" field="mandatory" />
 

@@ -13,21 +13,14 @@
     </ui:define>
 
 	<ui:define name="body">
-<!-- 		<hftl:entityPopup id="offerPopup" -->
-<!-- 			header="#{messages['offer.search']}" -->
-<!-- 			backingBean="#{offerTemplateBean}" -->
-<!-- 			searchField1Label="#{messages['offerTemplate.code']}" -->
-<!-- 			searchField1="code" -->
-<!-- 			searchField2Label="#{messages['offerTemplate.description']}" -->
-<!-- 			searchField2="description" -->
-<!-- 			column1Label="#{messages['offerTemplate.code']}" column1="code" -->
-<!-- 			column2Label="#{messages['offerTemplate.description']}" -->
-<!-- 			column2="description" -->
-<!-- 			selection="#{pricePlanMatrixListBean.filters['offerTemplate']}" -->
-<!-- 			lazy="false" dataModel="#{offerTemplateBean.listActive()}" -->
-<!-- 			updateField=":searchForm:offer"> -->
-<!-- 		</hftl:entityPopup> -->
-		<hftl:entityPopup id="searchSellerPopup"
+        <hftl:entityPopup id="offerPopup" header="#{messages['offer.search']}" backingBean="#{offerTemplateBean}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
+            searchField2Label="#{messages['businessEntity.description']}" searchField2="description" searchField3Label="#{messages['commons.validFrom']}" searchField3="validity.from"
+            searchField4Label="#{messages['commons.validTo']}" searchField4="validity.to" column1Label="#{messages['businessEntity.code']}" column1="code"
+            column2Label="#{messages['businessEntity.description']}" column2="description" column3Label="#{messages['commons.validFrom']}" column3="validity" column3Child="from"
+            column4Label="#{messages['commons.validTo']}" column4="validity" column4Child="to" selection="#{pricePlanMatrixListBean.filters['offerTemplate']}" width="1000" lazy="false"
+            dataModel="#{offerTemplateBean.listActive()}" updateField=":searchForm:offer">
+        </hftl:entityPopup>
+        <hftl:entityPopup id="searchSellerPopup"
 			header="#{messages['seller.search']}" backingBean="#{sellerBean}"
 			searchField1Label="#{messages['BusinessEntity.code']}"
 			searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
@@ -84,20 +77,20 @@
 				field="eventCode" />
 			<hftl:searchField id="offer"
 				label="#{messages['pricePlanMatrix.offerCode']}"
-				field="offerTemplate" valueLabelField="code" listElements="#{offerTemplateBean.listActive()}"/>
-<!--                 popup="true" popupId="offerPopup" clearButton="true" /> -->
+				field="offerTemplate" valueLabelField="code" 
+                popup="true" popupId="offerPopup" /> 
 			<hftl:searchField id="seller" label="#{messages['seller.title']}"
 				field="seller" valueLabelField="descriptionOrCode" popup="true"
-				popupId="searchSellerPopup" clearButton="true" />
+				popupId="searchSellerPopup" />
 			<h:panelGroup rendered="#{pricePlanMatrixListBean.advanced}">
 				<hftl:searchField id="tradingCountry"
 					label="#{messages['tradingCountry.tradingCountry']}"
 					field="tradingCountry" valueLabelField="countryCode" listBean="#{tradingCountryBean}" />
-<!--                     popup="true" popupId="searchTradingCountryPopup" clearButton="true" /> -->
+<!--                     popup="true" popupId="searchTradingCountryPopup" /> -->
 				<hftl:searchField id="tradingCurrency"
 					label="#{messages['currency.codeCurrency']}"
 					field="tradingCurrency" valueLabelField="currencyCode" listBean="#{tradingCurrencyBean}" />
-<!--                     popup="true" popupId="searchTradingCurrencyPopup" clearButton="true" /> -->
+<!--                     popup="true" popupId="searchTradingCurrencyPopup" /> -->
 				<hftl:searchMinMaxField
 					label="#{messages['pricePlanMatrix.quantity']}"
 					minField="minQuantity" maxField="maxQuantity" />
@@ -186,13 +179,13 @@
 				</f:facet>
 				<p:cellEditor>
 					<f:facet name="output">
-						<h:outputText value="#{entity.offerTemplate.code}" />
+						<h:outputText value="#{entity.offerTemplate.code}  #{entity.offerTemplate.validity.toString(paramBean.dateFormat)}" />
 					</f:facet>
 					<f:facet name="input">
 						<h:selectOneMenu value="#{entity.offerTemplate}" style="width:75%">
 							<f:selectItem itemLabel="" itemValue="" />
 							<f:selectItems value="#{offerTemplateBean.listAll()}" var="item"
-								itemLabel="#{item.code}" itemValue="#{item}" />
+								itemLabel="#{item.code}  #{item.validity.toString(paramBean.dateFormat)}" itemValue="#{item}" />
 							<hftl:objectConverter />
 						</h:selectOneMenu>
 					</f:facet>

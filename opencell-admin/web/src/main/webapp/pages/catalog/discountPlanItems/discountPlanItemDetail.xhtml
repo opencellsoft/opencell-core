@@ -26,18 +26,6 @@
 				updateField=":formDiscountPlanItem:discountPlan :formDiscountPlanItem:discountPlan_text">
 			</hftl:entityPopup>
 
-			<hftl:entityPopup id="popupOfferTemplates"
-				header="#{messages['commons.search']}"
-				selection="#{discountPlanItemBean.entity.offerTemplate}"
-				backingBean="#{offerTemplateBean}"
-				searchField1Label="#{messages['BusinessEntity.code']}"
-				searchField1="code"
-				column1Label="#{messages['BusinessEntity.code']}" column1="code"
-				column2Label="#{messages['BusinessEntity.description']}"
-				column2="description"
-				updateField=":formDiscountPlanItem:offerTemplate :formDiscountPlanItem:offerTemplate_text">
-			</hftl:entityPopup>
-
 			<hftl:entityPopup id="popupChargeTemplates"
 				header="#{messages['commons.search']}"
 				selection="#{discountPlanItemBean.entity.chargeTemplate}"
@@ -67,11 +55,6 @@
 				label="#{messages['discountPlan.title']}" field="discountPlan"
 				valueLabelField="code" required="true" popup="true"
 				popupId="popupDiscountPlans" />
-
-			<hftl:formField id="offerTemplate"
-				label="#{messages['discountPlanItem.offerTemplate']}"
-				field="offerTemplate" valueLabelField="code" required="false"
-				popup="true" popupId="popupOfferTemplates" />
 
 			<hftl:formField id="invoiceCategory"
 				label="#{messages['discountPlanItem.invoiceCategory']}"

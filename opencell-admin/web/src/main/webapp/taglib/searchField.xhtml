@@ -2,8 +2,8 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:p="http://primefaces.org/ui" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:hftl="http://hftl.org"
-    xmlns:o="http://omnifaces.org/ui" xmlns:l="http://www.lapis.com/jsf/exporter" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+    xmlns:p="http://primefaces.org/ui" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:hftl="http://hftl.org" xmlns:o="http://omnifaces.org/ui" xmlns:l="http://www.lapis.com/jsf/exporter"
+    xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
 <!--
     Makes part of "happy faces" component group.
     A custom component to display a search field with a label and a data entry control 
@@ -54,14 +54,14 @@
         listBean - a backing bean to provide a list of entities via listAll method
         listElements - a list of entities
         valueLabelField - selected entity's attribute to display when entity is selected. In a list of entities used as a label attribute for list item.
-
+        showResetButton - reset filter value to be NULL
 -->
 
 <ui:composition>
     <o:importConstants type="org.meveo.util.view.FieldInformation.FieldTypeEnum" />
 
     <c:set var="fieldIdPrefix" value="#{fn:replace(field, '\\.', '_')}" />
-    
+
     <c:if test="${empty(disabled)}">
         <c:set var="disabled" value="false" />
     </c:if>
@@ -82,6 +82,10 @@
         <c:set var="componentWidth" value="${size>40?50:25}" />
     </c:if>
 
+    <c:if test="${empty(showResetButton)}">
+        <c:set var="showResetButton" value="true" />
+    </c:if>
+
     <hftl:getFieldInformation backingBean="${backingBean}" fieldName="${field}" var="fieldInfo" />
 
     <!-- If value binding is a text field, display a text input field -->
@@ -92,8 +96,8 @@
             </c:if>
             <hftl:searchTextField id="${empty(id)?fieldIdPrefix.concat('_txt'):id}" backingBean="${backingBean}" field="${field}" label="${label}" disabled="${disabled}"
                 componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}" style="${style}" labelStyle="${labelStyle}"
-                labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}" inputWidth="${inputWidth}"
-                size="${size}" maxlength="${maxlength}" listValues="${listValues}" i18nLabels="${i18nLabels}" isAutocomplete="${isAutocomplete}" autocompleteBean="#{autocompleteBean}"
+                labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}" inputWidth="${inputWidth}" size="${size}"
+                maxlength="${maxlength}" listValues="${listValues}" i18nLabels="${i18nLabels}" isAutocomplete="${isAutocomplete}" autocompleteBean="#{autocompleteBean}"
                 autocompleteMethod="${autocompleteMethod}" converter="${converter}" />
         </c:if>
 
@@ -102,10 +106,10 @@
                 <c:set var="isAutocomplete" value="false" />
             </c:if>
 
-            <hftl:searchEntityField id="${empty(id)?fieldIdPrefix.concat('_entity'):id}" backingBean="${backingBean}" field="${field}" fieldIdPrefix="${fieldIdPrefix}"
-                label="${label}" disabled="${disabled}" componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}"
-                style="${style}" labelStyle="${labelStyle}" labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}"
-                labelWidth="${labelWidth}" inputWidth="${inputWidth}" listElements="${listElements}" valueLabelField="${valueLabelField}" valueField="${valueField}" size="${size}" />
+            <hftl:searchEntityField id="${empty(id)?fieldIdPrefix.concat('_entity'):id}" backingBean="${backingBean}" field="${field}" fieldIdPrefix="${fieldIdPrefix}" label="${label}"
+                disabled="${disabled}" componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}" style="${style}" labelStyle="${labelStyle}"
+                labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}" inputWidth="${inputWidth}"
+                listElements="${listElements}" valueLabelField="${valueLabelField}" valueField="${valueField}" size="${size}" />
         </c:if>
     </c:if>
 
@@ -128,8 +132,8 @@
 
         <hftl:searchDateField id="${empty(id)?fieldIdPrefix.concat('_date'):id}" backingBean="${backingBean}" field="${field}" label="${label}" disabled="${disabled}"
             componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}" style="${style}" labelStyle="${labelStyle}"
-            labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}" inputWidth="${inputWidth}"
-            rangeSearch="${rangeSearch}" datePattern="${datePattern}" />
+            labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}" inputWidth="${inputWidth}" rangeSearch="${rangeSearch}"
+            datePattern="${datePattern}" />
     </c:if>
 
     <!--  If the value binding is an enum, display a drop down. -->
@@ -139,16 +143,15 @@
         </c:if>
         <hftl:searchEnumField id="${empty(id)?fieldIdPrefix.concat('_enum'):id}" backingBean="${backingBean}" field="${field}" label="${label}" disabled="${disabled}"
             componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}" style="${style}" labelStyle="${labelStyle}"
-            labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}" inputWidth="${inputWidth}"
-            listValues="${listValues}" enumClassname="#{fieldInfo.enumClassname}" />
+            labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}" inputWidth="${inputWidth}" listValues="${listValues}"
+            enumClassname="#{fieldInfo.enumClassname}" />
     </c:if>
 
     <!--  If the value binding is a number display number field. -->
     <c:if test="${fieldInfo.fieldType == FieldTypeEnum.Number}">
-        <hftl:searchNumberField id="${empty(id)?fieldIdPrefix.concat('_number'):id}" converterId="${fieldInfo.numberConverter}" backingBean="${backingBean}" field="${field}"
-            label="${label}" disabled="${disabled}" componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}"
-            style="${style}" labelStyle="${labelStyle}" labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}"
-            labelWidth="${labelWidth}" inputWidth="${inputWidth}" rangeSearch="${rangeSearch}" />
+        <hftl:searchNumberField id="${empty(id)?fieldIdPrefix.concat('_number'):id}" converterId="${fieldInfo.numberConverter}" backingBean="${backingBean}" field="${field}" label="${label}"
+            disabled="${disabled}" componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}" style="${style}" labelStyle="${labelStyle}"
+            labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}" inputWidth="${inputWidth}" rangeSearch="${rangeSearch}" />
     </c:if>
 
 
@@ -163,10 +166,9 @@
             <c:set var="popupId" value="popup" />
         </c:if>
         <hftl:searchEntityField id="${empty(id)?fieldIdPrefix.concat('_entity'):id}" backingBean="${backingBean}" field="${field}" fieldIdPrefix="${fieldIdPrefix}" label="${label}"
-            disabled="${disabled}" componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}" style="${style}"
-            labelStyle="${labelStyle}" labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}"
-            inputWidth="${inputWidth}" popup="${popup}" popupId="${popupId}" listBean="${listBean}" listElements="${listElements}" valueLabelField="${valueLabelField}"
-            size="${size}" />
+            disabled="${disabled}" componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}" style="${style}" labelStyle="${labelStyle}"
+            labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}" inputWidth="${inputWidth}" popup="${popup}"
+            popupId="${popupId}" listBean="${listBean}" listElements="${listElements}" valueLabelField="${valueLabelField}" size="${size}" />
     </c:if>
 </ui:composition>
 

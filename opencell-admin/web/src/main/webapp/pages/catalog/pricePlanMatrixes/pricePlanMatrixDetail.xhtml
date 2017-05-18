@@ -12,27 +12,15 @@
 	</ui:define>
 
 	<ui:define name="body">
-	   <hftl:entityPopup id="offerPopup"
-			header="#{messages['offer.popup.header']}"
-			backingBean="#{offerTemplateBean}"
-			searchField1Label="#{messages['businessEntity.code']}"
-			searchField1="code"
-			searchField2Label="#{messages['businessEntity.description']}"
-			searchField2="description"
-			searchField3Label="#{messages['commons.validFrom']}"
-			searchField3="validity.from"
-			searchField4Label="#{messages['commons.validTo']}"
-			searchField4="validity.to"
-			column1Label="#{messages['businessEntity.code']}" column1="code"
-			column2Label="#{messages['businessEntity.description']}" column2="description"			
-			column3Label="#{messages['commons.validFrom']}" column3="validity" column3Child="from"
-			column4Label="#{messages['commons.validTo']}" column4="validity" column4Child="to"
-			selection="#{pricePlanMatrixBean.entity.offerTemplate}"
-			lazy="false" dataModel="#{offerTemplateBean.listActive()}" width="1000"
-			updateField=":formPricePlan:tabView:offerSelectId :formPricePlan:tabView:offerSelectId_text">
-		</hftl:entityPopup>
+        <hftl:entityPopup id="offerPopup" header="#{messages['offer.popup.header']}" backingBean="#{offerTemplateBean}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
+            searchField2Label="#{messages['businessEntity.description']}" searchField2="description" searchField3Label="#{messages['commons.validFrom']}" searchField3="validity.from"
+            searchField4Label="#{messages['commons.validTo']}" searchField4="validity.to" column1Label="#{messages['businessEntity.code']}" column1="code"
+            column2Label="#{messages['businessEntity.description']}" column2="description" column3Label="#{messages['commons.validFrom']}" column3="validity" column3Child="from"
+            column4Label="#{messages['commons.validTo']}" column4="validity" column4Child="to" selection="#{pricePlanMatrixBean.entity.offerTemplate}" lazy="false"
+            dataModel="#{offerTemplateBean.listActive()}" width="1000" updateField=":formPricePlan:tabView:offerSelectId :formPricePlan:tabView:offerSelectId_text">
+        </hftl:entityPopup>
 
-		<hftl:entityPopup id="pricPlanMatChargePopup"
+        <hftl:entityPopup id="pricPlanMatChargePopup"
 			header="#{messages['charge.popup.header']}"
 			backingBean="#{chargeTemplateBean}"
 			selection="#{chargeTemplateBean.entity}"
@@ -143,7 +131,7 @@
 							listBean="#{tradingCountryBean}" />
 						<!-- 					popup="true" popupId="tradingCountryPopup" /> -->
 						<hftl:formField id="offerSelectId"
-							label="#{messages['pricePlanMatrix.offerCode']}"
+							label="#{messages['pricePlanMatrix.offerCode']}" showResetButton="true"
 							field="offerTemplate" valueLabelField="code" popup="true" popupId="offerPopup"/>
 						<hftl:formField id="customerCurrencySelectId"
 							label="#{messages['currency.codeCurrency']}"

@@ -22,7 +22,7 @@
         </h:form>
 
         <hftl:searchPanel backingBean="#{workflowHistoryListBean}" renderNewButton="false">
-            <hftl:searchField label="#{messages['workflow.title']}" id="workflowId" field="workflow" valueLabelField="code" popup="true" popupId="workflowPopup" clearButton="true" />
+            <hftl:searchField label="#{messages['workflow.title']}" id="workflowId" field="workflow" valueLabelField="code" popup="true" popupId="workflowPopup" />
             <hftl:searchField label="#{messages['workflowHistory.actionDate']}" field="actionDate" />
             <hftl:searchField label="#{messages['dunningPlanTransition.fromStatus']}" field="fromStatus" />
             <hftl:searchField label="#{messages['dunningPlanTransition.toStatus']}" field="toStatus" />
