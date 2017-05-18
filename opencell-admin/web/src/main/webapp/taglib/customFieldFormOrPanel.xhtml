@@ -55,47 +55,45 @@
 		</c:if>
 	</c:forEach>
 
-	<c:if test="#{cfTabStatus.first}">
-		<p:dialog id="#{prefix}dlg_periodValues"
-			widgetVar="#{prefix}periodValuesDialogWidget"
-			header="#{messages['customFieldTemplate.periodValues']}"
-			closeOnEscape="true" modal="true" appendTo="@(body)" width="900">
+	<p:dialog id="#{prefix}dlg_periodValues"
+		widgetVar="#{prefix}periodValuesDialogWidget"
+		header="#{messages['customFieldTemplate.periodValues']}"
+		closeOnEscape="true" modal="true" appendTo="@(body)" width="900">
 
-			<p:panel>
-				<h:panelGroup id="#{prefix}periodFields" layout="block"
-					styleClass="form-panel">
-					<hftl:decorateFormField fieldId="#{prefix}period_start_date"
-						label="#{messages['customFieldTemplate.periodDate']}">
-						<h:outputText id="#{prefix}period_start_date"
-							value="#{cfValueHolder.selectedValuePeriod.periodStartDate}">
-							<f:convertDateTime type="date" pattern="#{dateTimePattern}" />
-						</h:outputText>
-					</hftl:decorateFormField>
-					<hftl:decorateFormField fieldId="#{prefix}period_end_date"
-						label="#{messages['customFieldTemplate.periodEndDate']}">
-						<h:outputText id="#{prefix}period_end_date"
-							value="#{cfValueHolder.selectedValuePeriod.periodEndDate}">
-							<f:convertDateTime type="date" pattern="#{dateTimePattern}" />
-						</h:outputText>
-					</hftl:decorateFormField>
-					<p:remoteCommand name="updateMasterTable"
-						update="#{cfValueHolder.selectedValuePeriodId}" process="@this"
-						partialSubmit="true"
-						partialSubmitFilter=":not([name*='addNewFields'])" />
-					<!--  only customFieldListTable as for simple values no need to show a periodvalue dialog -->
-					<hftl:customFieldListTable edit="#{edit}"
-						cft="#{cfValueHolder.selectedFieldTemplate}" entity="#{entity}"
-						field="#{cfValueHolder.selectedValuePeriod.cfValue}"
-						updateOnAddEdit="#{cfValueHolder.selectedValuePeriodId}"
-						messagesId="#{messagesId}"
-						popupWidgetVar="#{prefix}periodValuesDialogWidget"
-						prefix="#{prefix}" datePattern="#{datePattern}"
-						componentWidth="100" />
+		<p:panel>
+			<h:panelGroup id="#{prefix}periodFields" layout="block"
+				styleClass="form-panel">
+				<hftl:decorateFormField fieldId="#{prefix}period_start_date"
+					label="#{messages['customFieldTemplate.periodDate']}">
+					<h:outputText id="#{prefix}period_start_date"
+						value="#{cfValueHolder.selectedValuePeriod.periodStartDate}">
+						<f:convertDateTime type="date" pattern="#{dateTimePattern}" />
+					</h:outputText>
+				</hftl:decorateFormField>
+				<hftl:decorateFormField fieldId="#{prefix}period_end_date"
+					label="#{messages['customFieldTemplate.periodEndDate']}">
+					<h:outputText id="#{prefix}period_end_date"
+						value="#{cfValueHolder.selectedValuePeriod.periodEndDate}">
+						<f:convertDateTime type="date" pattern="#{dateTimePattern}" />
+					</h:outputText>
+				</hftl:decorateFormField>
+				<p:remoteCommand name="updateMasterTable"
+					update="#{cfValueHolder.selectedValuePeriodId}" process="@this"
+					partialSubmit="true"
+					partialSubmitFilter=":not([name*='addNewFields'])" />
+				<!--  only customFieldListTable as for simple values no need to show a periodvalue dialog -->
+				<hftl:customFieldListTable edit="#{edit}"
+					cft="#{cfValueHolder.selectedFieldTemplate}" entity="#{entity}"
+					field="#{cfValueHolder.selectedValuePeriod.cfValue}"
+					updateOnAddEdit="#{cfValueHolder.selectedValuePeriodId}"
+					messagesId="#{messagesId}"
+					popupWidgetVar="#{prefix}periodValuesDialogWidget"
+					prefix="#{prefix}" datePattern="#{datePattern}"
+					componentWidth="100" />
 
-				</h:panelGroup>
-			</p:panel>
-		</p:dialog>
-	</c:if>
-
+			</h:panelGroup>
+		</p:panel>
+	</p:dialog>
+	
 </ui:composition>
 </html>
