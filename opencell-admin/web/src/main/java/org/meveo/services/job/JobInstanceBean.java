@@ -159,4 +159,21 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
         createMissingCustomFieldTemplates();
         customFieldDataEntryBean.refreshFieldsAndActions(entity);
     }
+    
+    protected List<String> getFormFieldsToFetch() {
+        return Arrays.asList("executionResults");
+    }
+    
+    @Override
+    public void enable() {    	
+    	super.enable();
+    	initEntity();
+    }
+    
+    @Override
+    public void disable() {
+    	super.disable();
+    	initEntity();
+    }
+    
 }

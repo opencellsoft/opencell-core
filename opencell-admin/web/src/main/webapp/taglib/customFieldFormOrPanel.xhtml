@@ -55,7 +55,6 @@
 		</c:if>
 	</c:forEach>
 
-	<c:if test="#{cfTabStatus.first}">
 		<p:dialog id="#{prefix}dlg_periodValues"
 			widgetVar="#{prefix}periodValuesDialogWidget"
 			header="#{messages['customFieldTemplate.periodValues']}"
@@ -95,7 +94,6 @@
 				</h:panelGroup>
 			</p:panel>
 		</p:dialog>
-	</c:if>
 
 </ui:composition>
 </html>

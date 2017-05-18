@@ -45,14 +45,14 @@ import org.meveo.model.admin.User;
 import org.meveo.model.security.Role;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.shared.Title;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.AuditablePersistenceService;
 
 /**
  * User service implementation.
  */
 @Stateless
 @DeclareRoles({"userManagement", "userSelfManagement"})
-public class UserService extends PersistenceService<User> {
+public class UserService extends AuditablePersistenceService<User> {
 
     static User systemUser = null;
 
@@ -67,7 +67,7 @@ public class UserService extends PersistenceService<User> {
         }
 
         user.setUserName(user.getUserName().toUpperCase());
-        user.setPassword(Sha1Encrypt.encodePassword(user.getPassword()));
+        //user.setPassword(Sha1Encrypt.encodePassword(user.getPassword()));
         user.setLastPasswordModification(new Date());
 
         super.create(user);

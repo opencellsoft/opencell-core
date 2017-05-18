@@ -29,7 +29,7 @@
 
             <p:column headerText="#{messages['menu.businessServiceModels']}">
                 <ui:repeat value="#{businessOfferModelListBean.getBusinessServiceModels(entity)}" var="c">
-                    <hf:linkToEntity linkId="bsm_message_link" entity="#{c}" objectIdParamName="objectId" entityId="#{c.id}" propagateConversation="true" value="#{c.code}"
+                    <hf:linkToEntity linkId="bsm_message_link" entity="#{c}" objectIdParamName="businessServiceModelId" entityId="#{c.id}" propagateConversation="true" value="#{c.code}"
                         view="businessServiceModelDetail" />
                     <br />
                 </ui:repeat>

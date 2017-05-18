@@ -333,8 +333,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 		customerAccountTag.setAttribute("externalRef2",
 				customerAccount.getExternalRef2() != null ? customerAccount.getExternalRef2() : "");
 		customerAccountTag.setAttribute("currency",
-				customerAccount.getTradingCurrency().getPrDescription() != null ? customerAccount
-						.getTradingCurrency().getPrDescription() : "");
+				customerAccount.getTradingCurrency().getCurrencyCode() != null ? customerAccount
+						.getTradingCurrency().getCurrencyCode() : "");
 		customerAccountTag.setAttribute("language",
 				customerAccount.getTradingLanguage().getPrDescription() != null ? customerAccount
 						.getTradingLanguage().getPrDescription() : "");
