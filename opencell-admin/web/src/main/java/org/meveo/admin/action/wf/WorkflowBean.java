@@ -448,8 +448,8 @@ public class WorkflowBean extends BaseBean<Workflow> {
     }
 
     public boolean checkAndPopulateDecisionRules(List<GroupedDecisionRule> groupedDecisionRules, List<WFDecisionRule> wfDecisionRules) {
-        ParamBean paramBean = ParamBean.getInstance();
-        String datePattern = paramBean.getProperty("meveo.dateFormat", "dd/MM/yyyy");
+
+        String datePattern = ParamBean.getInstance().getDateFormat();
         List<RuleNameValue> uniqueNameValues = new ArrayList<>();
         for (GroupedDecisionRule groupedDecisionRule : groupedDecisionRules) {
             if (groupedDecisionRule.getValue() != null && groupedDecisionRule.getValue().getModel()) {

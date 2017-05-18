@@ -123,7 +123,7 @@
             <c:set var="time" value="false" />
         </c:if>
         <c:if test="${empty(datePattern)}">
-            <c:set var="datePattern" value="${time?paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy HH:mm'):paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
+            <c:set var="datePattern" value="${time?paramBean.dateTimeFormat:paramBean.dateFormat}" />
         </c:if>
 
         <hftl:searchDateField id="${empty(id)?fieldIdPrefix.concat('_date'):id}" backingBean="${backingBean}" field="${field}" label="${label}" disabled="${disabled}"

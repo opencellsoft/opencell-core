@@ -50,7 +50,7 @@
     </c:if>
 
     <c:if test="${empty(datePattern)}">
-        <c:set var="datePattern" value="${paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
+        <c:set var="datePattern" value="${paramBean.dateFormat}" />
     </c:if>
 
     <c:if test="${empty(componentWidth)}">

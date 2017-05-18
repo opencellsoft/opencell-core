@@ -25,12 +25,12 @@ public class DateProcessor extends PrimitiveFilterProcessor {
             String strDateValue = condition.getOperand().substring(PREFIX.length());
             Date dateValue = null;
 
-            SimpleDateFormat sdf = new SimpleDateFormat(parameters.getProperty("meveo.dateFormat", "dd/MM/yyyy"));
+            SimpleDateFormat sdf = new SimpleDateFormat(parameters.getDateFormat());
             try {
                 dateValue = sdf.parse(strDateValue);
             } catch (ParseException e) {
                 try {
-                    sdf = new SimpleDateFormat(parameters.getProperty("meveo.dateTimeFormat", "dd/MM/yyyy HH:mm:ss"));
+                    sdf = new SimpleDateFormat(parameters.getDateTimeFormat());
                     dateValue = sdf.parse(strDateValue);
                 } catch (ParseException e1) {
                     throw new FilterException(e1.getMessage());

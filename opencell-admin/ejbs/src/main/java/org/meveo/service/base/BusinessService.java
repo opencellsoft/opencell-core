@@ -27,8 +27,7 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.QueryBuilder.QueryLikeStyleEnum;
 import org.meveo.model.BusinessEntity;
 
-public abstract class BusinessService<P extends BusinessEntity> extends
-		PersistenceService<P> {
+public abstract class BusinessService<P extends BusinessEntity> extends PersistenceService<P> {
 
     /**
      * Find entity by code - strict match
@@ -36,9 +35,9 @@ public abstract class BusinessService<P extends BusinessEntity> extends
      * @param code Code to match
      * @return A single entity matching code
      */
-	public P findByCode(String code) {
-		return findByCode(code, null);
-	}
+    public P findByCode(String code) {
+        return findByCode(code, null);
+    }
 
     /**
      * Find entity by code - strict match
@@ -47,13 +46,27 @@ public abstract class BusinessService<P extends BusinessEntity> extends
      * @param fetchFields Fields to fetch
      * @return A single entity matching code
      */
-    @SuppressWarnings("unchecked")
     public P findByCode(String code, List<String> fetchFields) {
+        return findByCode(code, fetchFields, null, null, null);
+    }
+
+    /**
+     * Find entity by code - strict match
+     * 
+     * @param code Code to match
+     * @param fetchFields Fields to fetch
+     * @param additionalSql Additional sql to append to the find clause
+     * @param additionalParamName Parameter name in additional sql
+     * @param additionalParamValue Parameter value in additional sql
+     * @return A single entity matching code
+     */
+    @SuppressWarnings("unchecked")
+    protected P findByCode(String code, List<String> fetchFields, String additionalSql, String additionalParamName, Object additionalParamValue) {
         QueryBuilder qb = new QueryBuilder(getEntityClass(), "be", fetchFields);
         qb.addCriterion("be.code", "=", code, true);
 
-		try {
-			return (P) qb.getQuery(getEntityManager()).getSingleResult();
+        try {
+            return (P) qb.getQuery(getEntityManager()).getSingleResult();
         } catch (NoResultException e) {
             log.debug("No {} of code {} found", getEntityClass().getSimpleName(), code);
             return null;
@@ -61,7 +74,7 @@ public abstract class BusinessService<P extends BusinessEntity> extends
             log.error("More than one entity of type {} with code {} found", entityClass, code);
             return null;
         }
-	}
+    }
 
     /**
      * Find entity by code - match the beginning of code
@@ -74,7 +87,7 @@ public abstract class BusinessService<P extends BusinessEntity> extends
         try {
             QueryBuilder qb = new QueryBuilder(getEntityClass(), "be");
             qb.like("be.code", codePrefix, QueryLikeStyleEnum.MATCH_BEGINNING, false);
-            
+
             return (List<P>) qb.getQuery(getEntityManager()).getResultList();
         } catch (NoResultException ne) {
             return null;
@@ -82,25 +95,25 @@ public abstract class BusinessService<P extends BusinessEntity> extends
             return null;
         }
     }
-    
-	public String findDuplicateCode(BusinessEntity entity) {
-		return findDuplicateCode(entity, " - Copy");
-	}
 
-	public String findDuplicateCode(BusinessEntity entity, String suffix) {
-		String code = entity.getCode() + suffix;
-		int id = 1;
-		String criteria = code;
-		BusinessEntity temp = null;
-		while (true) {
-			temp = findByCode(criteria);
-			if (temp == null) {
-				break;
-			}
-			id++;
-			criteria = code + " " + id;
-		}
-		return criteria;
-	}
+    public String findDuplicateCode(BusinessEntity entity) {
+        return findDuplicateCode(entity, " - Copy");
+    }
+
+    public String findDuplicateCode(BusinessEntity entity, String suffix) {
+        String code = entity.getCode() + suffix;
+        int id = 1;
+        String criteria = code;
+        BusinessEntity temp = null;
+        while (true) {
+            temp = findByCode(criteria);
+            if (temp == null) {
+                break;
+            }
+            id++;
+            criteria = code + " " + id;
+        }
+        return criteria;
+    }
 
 }

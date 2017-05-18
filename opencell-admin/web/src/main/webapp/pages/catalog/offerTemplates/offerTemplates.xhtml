@@ -36,6 +36,10 @@
 			<hftl:searchField label="#{messages['offerTemplate.category']}"
 				field="offerTemplateCategory" valueLabelField="descriptionOrCode"
 				listBean="#{offerTemplateCategoryListBean}" />
+            <hftl:searchField label="#{messages['commons.validFrom']}"
+                field="validity.from" rangeSearch="true"/>
+            <hftl:searchField label="#{messages['commons.validTo']}"
+                field="validity.to" rangeSearch="true"/>    
 			<hftl:searchField label="#{messages['enableEntity.disabled']}"
 				field="disabled" />
 		</hftl:searchPanel>
@@ -46,7 +50,8 @@
 			<hftl:column label="#{messages['offerTemplate.description']}"
 				field="description" />
 			<hftl:column label="#{messages['offerTemplate.name']}" field="name" />
-			<hftl:column label="#{messages['offerTemplate.validity']}" field="validity" isDatePeriod="true" width="11%"/>
+			<hftl:column label="#{messages['commons.validFrom']}" field="validity.from" isDate="true"/>
+            <hftl:column label="#{messages['commons.validTo']}" field="validity.to" isDate="true"/>
 			<hftl:column label="#{messages['offerTemplate.serviceTemplates']}"
 				field="offerServiceTemplates" isList="true"
 				valueLabelField="serviceTemplate.code"

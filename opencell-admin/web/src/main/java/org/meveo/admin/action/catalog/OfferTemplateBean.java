@@ -40,12 +40,12 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.catalog.ServiceConfigurationDto;
 import org.meveo.export.EntityExportImportService;
 import org.meveo.export.ExportTemplate;
-import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.CustomFieldInstance;
@@ -55,7 +55,6 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.catalog.impl.BusinessOfferModelService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
-import org.meveo.service.catalog.impl.ProductOfferingService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.primefaces.model.DualListModel;
@@ -94,9 +93,6 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
     @Inject
     private EntityExportImportService entityExportImportService;
-
-    @Inject
-    private ProductOfferingService productOfferingService;
 
     private Long bomId;
 
@@ -256,7 +252,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
             return back();
         } else {
-            boolean newEntity = (entity.getId() == null);
+            boolean isNewEntity = (entity.getId() == null);
 
             String outcome = super.saveOrUpdate(killConversation);
 
@@ -274,7 +270,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
                     }
                 }
 
-                return (newEntity && !outcome.equals("mm_offers")) ? getEditViewName() : outcome;
+                return (isNewEntity && !outcome.equals("mm_offers")) ? getEditViewName() : outcome;
             }
         }
 
@@ -519,12 +515,13 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
         Date from = (Date) values.get(1);
         Date to = (Date) values.get(2);
 
-        DatePeriod matchedVersion = productOfferingService.getMatchingVersion(code, from, to, entity.getId());
+        List<ProductOffering> matchedVersions = offerTemplateService.getMatchingVersions(code, from, to, entity.getId(), true);
 
-        if (matchedVersion == null) {
-            return true;
+        if (!matchedVersions.isEmpty()) {
+            messages.error(new BundleKey("messages", "offerTemplate.version.exists"), matchedVersions.get(0).getValidity().toString(paramBean.getDateFormat()));
+            return false;
         }
 
-        return false;
+        return true;
     }
 }

@@ -42,18 +42,13 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
-import org.meveo.service.base.MultilanguageEntityService;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
 
 /**
  * Offer Template service implementation.
  * 
  */
 @Stateless
-public class OfferTemplateService extends MultilanguageEntityService<OfferTemplate> {
-
-    @Inject
-    private CustomFieldInstanceService customFieldInstanceService;
+public class OfferTemplateService extends GenericProductOfferingService<OfferTemplate> {
 
     @Inject
     private CatalogHierarchyBuilderService catalogHierarchyBuilderService;
@@ -288,27 +283,5 @@ public class OfferTemplateService extends MultilanguageEntityService<OfferTempla
         }
 
         return offer;
-    }
-
-    /**
-     * Find the latest version of offer template matching a given code
-     * 
-     * @param code Code to match
-     * @return Offer template with the highest validity start date
-     */
-    private OfferTemplate findTheLatestVersion(String code) {
-
-        OfferTemplate latestVersion = (OfferTemplate) getEntityManager().createNamedQuery("ProductOffering.findLatestVersion").setParameter("code", code).setMaxResults(1)
-            .getSingleResult();
-        return latestVersion;
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<OfferTemplate> listActiveByDate(Date date) {
-
-        List<OfferTemplate> offers = (List<OfferTemplate>) getEntityManager().createNamedQuery("ProductOffering.findActiveByDate").setParameter("clazz", OfferTemplate.class)
-            .setParameter("date", date).getResultList();
-
-        return offers;
     }
 }

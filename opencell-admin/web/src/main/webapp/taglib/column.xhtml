@@ -84,11 +84,11 @@
     </c:if>
 
     <c:if test="${time}">
-        <c:set var="datePattern" value="#{paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy HH:mm')}" />
+        <c:set var="datePattern" value="#{paramBean.dateTimeFormat}" />
     </c:if>
 
     <c:if test="${!time}">
-        <c:set var="datePattern" value="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
+        <c:set var="datePattern" value="#{paramBean.dateFormat}" />
     </c:if>
 
     <c:if test="${empty isList}">
@@ -200,7 +200,7 @@
                         </c:if>
                         <c:if test="${showTruncated}">
 
-                            <h:outputText value="#{valueField}" rendered="#{show and valueField.length()&lt;=50}" converter="#{converter}" />
+                            <h:outputText value="#{valueField}" rendered="#{show and valueField.length() &lt;=50}" converter="#{converter}" />
                             <p:lightBox rendered="#{show and valueField.length()>50}">
                                 <h:outputLink value="#">
                                     <h:outputText value="#{fn:substring(valueField,0,50)} ..." rendered="#{show}" converter="#{converter}" />

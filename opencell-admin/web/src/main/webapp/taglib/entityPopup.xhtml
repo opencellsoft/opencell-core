@@ -20,9 +20,9 @@
         header - dialog header
         width - dialog width
         selectionListenerBean and selectionListenerMethod - action listener bean and method to execute when value is selected from a list.
-        searchField(1-3) and searchField(1-3)Label - a search field name and a label - up to 3 fields. Allows a use of "." in a fieldname
-        searchField(1-3)Converter - up to 3 value converters (id) for corresponding search field
-        isAutocomplete(1-3), autocompleteBean(1-3) and autocompleteMethod(1-3) - up to 3 autocomplete beans and their methods for field value autocompletion
+        searchField(1-4) and searchField(1-4)Label - a search field name and a label - up to 4 fields. Allows a use of "." in a fieldname
+        searchField(1-4)Converter - up to 4 value converters (id) for corresponding search field
+        isAutocomplete(1-4), autocompleteBean(1-4) and autocompleteMethod(1-4) - up to 4 autocomplete beans and their methods for field value autocompletion
         column(1-7) and column(1-7)Child - name of a field and child field in case of field hierarchy  of up to 7 columns in search results datatable
         column(1-7)Label - up to 7 column labels 
         column(1-7)Converter - up to 7 value converters (short name - see GetConverter.java for appropriate names) for corresponding search results datatable columns
@@ -55,6 +55,9 @@
     <c:if test="${empty(isAutocomplete3)}">
         <c:set var="isAutocomplete3" value="false" />
     </c:if>
+    <c:if test="${empty(isAutocomplete4)}">
+        <c:set var="isAutocomplete4" value="false" />
+    </c:if>
 
 
     <p:dialog id="#{id}" header="#{header}" widgetVar="dlg_#{id}" dynamic="true" modal="true" styleClass="form-dialog" closeOnEscape="true" width="#{width}" appendTo="@(body)">
@@ -74,6 +77,11 @@
                             <hftl:searchField id="searchField3" label="#{searchField3Label}" backingBean="#{backingBean}" field="#{searchField3}"
                                 isAutocomplete="#{isAutocomplete3}" autocompleteBean="#{autocompleteBean3}" autocompleteMethod="#{autocompleteMethod3}"
                                 converter="#{searchField3Converter}" />
+                        </c:if>
+                        <c:if test="#{not empty searchField4}">
+                            <hftl:searchField id="searchField4" label="#{searchField4Label}" backingBean="#{backingBean}" field="#{searchField4}"
+                                isAutocomplete="#{isAutocomplete4}" autocompleteBean="#{autocompleteBean4}" autocompleteMethod="#{autocompleteMethod4}"
+                                converter="#{searchField4Converter}" />
                         </c:if>
                     </p:outputPanel>
                     <h:panelGroup layout="block" styleClass="search-panel-actions">

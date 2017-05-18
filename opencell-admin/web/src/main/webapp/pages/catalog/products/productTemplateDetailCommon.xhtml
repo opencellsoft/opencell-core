@@ -57,7 +57,7 @@
         </p:panel>
         
         <o:validateMultiple components="#{idPath}:code #{idPath}:validity_date #{idPath}:validity_date_toRange"
-			validator="#{backingBean.validateUniqueVersion}" message="#{messages[mode eq 'BUNDLE'?'bundleTemplate.version.exists':'productTemplate.version.exists']}" />
+			validator="#{backingBean.validateUniqueVersion}" message="#{messages[mode eq 'BUNDLE'?'bundleTemplate.version.exists.short':'productTemplate.version.exists.short']}" />
  
         <h:panelGrid columns="1" styleClass="ui-panelgrid-blank Wid100">
             <hftl:formField id="offerTemplateCategories" label="#{messages['offerTemplate.category']}" field="offerTemplateCategories" listType="selectCheckbox" valueLabelField="descriptionOrCode"

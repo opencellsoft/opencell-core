@@ -321,7 +321,7 @@
                 <c:set var="time" value="false" />
             </c:if>
             <c:if test="${empty(datePattern)}">
-                <c:set var="datePattern" value="#{time?paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy HH:mm'):paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
+                <c:set var="datePattern" value="#{time?paramBean.dateTimeFormat:paramBean.dateFormat}" />
             </c:if>
             <c:if test="${fieldInfo.fieldType == FieldTypeEnum.DatePeriod}">
                 <c:set var="datePeriod" value="true" />

@@ -189,22 +189,22 @@
                 <f:facet name="output">
                     <h:outputText value="#{entity.startRatingDate}">
                         <f:convertDateTime
-                                pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}"/>
+                                pattern="#{paramBean.dateFormat}"/>
                     </h:outputText>
                     <h:outputText value=" - "
                                   rendered="#{not empty entity.startRatingDate or not empty entity.endRatingDate}"/>
                     <h:outputText value="#{entity.endRatingDate}">
                         <f:convertDateTime
-                                pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}"/>
+                                pattern="#{paramBean.dateFormat}"/>
                     </h:outputText>
                 </f:facet>
                 <f:facet name="input">
                     <p:calendar value="#{entity.startRatingDate}"
-                                pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}"
+                                pattern="#{paramBean.dateFormat}"
                                 size="10" showOn="button"/>
                     <h:outputText value=" - "/>
                     <p:calendar value="#{entity.endRatingDate}"
-                                pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}"
+                                pattern="#{paramBean.dateFormat}"
                                 size="10" showOn="button"/>
                 </f:facet>
             </p:cellEditor>
@@ -351,21 +351,21 @@
                 <f:facet name="output">
                     <h:outputText value="#{entity.startSubscriptionDate}">
                         <f:convertDateTime
-                                pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}"/>
+                                pattern="#{paramBean.dateFormat}"/>
                     </h:outputText>
                     <h:outputText value=" - "/>
                     <h:outputText value="#{entity.endSubscriptionDate}">
                         <f:convertDateTime
-                                pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}"/>
+                                pattern="#{paramBean.dateFormat}"/>
                     </h:outputText>
                 </f:facet>
                 <f:facet name="input">
                     <p:calendar value="#{entity.startSubscriptionDate}"
-                                pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}"
+                                pattern="#{paramBean.dateFormat}"
                                 size="10" showOn="button"/>
                     <h:outputText value=" - "/>
                     <p:calendar value="#{entity.endSubscriptionDate}"
-                                pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}"
+                                pattern="#{paramBean.dateFormat}"
                                 size="10" showOn="button"/>
                 </f:facet>
             </p:cellEditor>

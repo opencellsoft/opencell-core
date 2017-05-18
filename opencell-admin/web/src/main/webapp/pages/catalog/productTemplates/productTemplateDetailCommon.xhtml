@@ -23,7 +23,7 @@
         
     <hftl:formField label="#{messages['commons.valid']}" field="validity" />
 
-	<o:validateMultiple components="#{idPath}:code_txt #{idPath}:validity_date #{idPath}:validity_date_toRange" validator="#{backingBean.validateUniqueVersion}" message="#{messages[mode eq 'BUNDLE'?'bundleTemplate.version.exists':'productTemplate.version.exists']}">
+	<o:validateMultiple components="#{idPath}:code_txt #{idPath}:validity_date #{idPath}:validity_date_toRange" validator="#{backingBean.validateUniqueVersion}" message="#{messages[mode eq 'BUNDLE'?'bundleTemplate.version.exists.short':'productTemplate.version.exists.short']}">
 		<f:attribute name="objectId" value="#{backingBean.entity.id}" />
 	</o:validateMultiple>
 

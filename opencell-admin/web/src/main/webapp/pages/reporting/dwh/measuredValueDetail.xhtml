@@ -141,7 +141,7 @@
 						<p:column styleClass="ui-editable-column" id="col0">
 							<h:outputText value="#{meas.date}">
 								<f:convertDateTime
-									pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
+									pattern="#{paramBean.dateFormat}" />
 							</h:outputText>
 						</p:column>
 
@@ -192,7 +192,7 @@
 					<h:outputText id="mvdate"
 						value="#{measurementBean.selectedMV.date}" styleClass="value">
 						<f:convertDateTime
-							pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
+							pattern="#{paramBean.dateFormat}" />
 					</h:outputText>
 
 					<p:outputLabel for="mvPeriod"

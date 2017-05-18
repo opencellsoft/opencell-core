@@ -182,11 +182,11 @@
 													<h:outputText value="#{messages['commons.valid']}: " />
 													<h:panelGroup>
 														<h:outputText value="#{prod.validity.from}">
-															<f:convertDateTime type="date" pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy HH:mm')}" />
+															<f:convertDateTime type="date" pattern="#{paramBean.dateFormat}" />
 														</h:outputText>
 														<h:outputText value="-" style="padding:5px" />
 														<h:outputText value="#{prod.validity.to}">
-															<f:convertDateTime type="date" pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy HH:mm')}" />
+															<f:convertDateTime type="date" pattern="#{paramBean.dateFormat}" />
 														</h:outputText>
 													</h:panelGroup>
 												</p:panelGrid>

@@ -16,12 +16,12 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.BundleProductTemplate;
 import org.meveo.model.catalog.BundleTemplate;
 import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.DigitalResource;
 import org.meveo.model.catalog.OfferTemplateCategory;
+import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.service.base.local.IPersistenceService;
@@ -29,7 +29,6 @@ import org.meveo.service.catalog.impl.BundleTemplateService;
 import org.meveo.service.catalog.impl.ChannelService;
 import org.meveo.service.catalog.impl.DigitalResourceService;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
-import org.meveo.service.catalog.impl.ProductOfferingService;
 import org.meveo.service.crm.impl.BusinessAccountModelService;
 import org.primefaces.model.DualListModel;
 
@@ -56,9 +55,6 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 
     @Inject
     private DigitalResourceService digitalResourceService;
-
-    @Inject
-    private ProductOfferingService productOfferingService;
 
     private BigDecimal salesPrice;
     private BigDecimal catalogPrice;
@@ -328,12 +324,13 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
         Date from = (Date) values.get(1);
         Date to = (Date) values.get(2);
 
-        DatePeriod matchedVersion = productOfferingService.getMatchingVersion(code, from, to, entity.getId());
+        List<ProductOffering> matchedVersions = bundleTemplateService.getMatchingVersions(code, from, to, entity.getId(), true);
 
-        if (matchedVersion == null) {
-            return true;
+        if (!matchedVersions.isEmpty()) {
+            messages.error(new BundleKey("messages", "bundleTemplate.version.exists"), matchedVersions.get(0).getValidity().toString(paramBean.getDateFormat()));
+            return false;
         }
 
-        return false;
+        return true;
     }
 }

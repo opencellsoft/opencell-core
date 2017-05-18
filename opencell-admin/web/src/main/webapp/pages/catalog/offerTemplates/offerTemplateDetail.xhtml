@@ -68,7 +68,7 @@
 								<hftl:formField label="#{messages['commons.valid']}" field="validity" />
 
 								<o:validateMultiple components=":offerForm:tabView:offerInfo:code_txt :offerForm:tabView:offerInfo:validity_date :offerForm:tabView:offerInfo:validity_date_toRange"
-									validator="#{offerTemplateBean.validateUniqueVersion}" message="#{messages['offerTemplate.version.exists']}" />
+									validator="#{offerTemplateBean.validateUniqueVersion}" message="#{messages['offerTemplate.version.exists.short']}" />
 
 								<!--                                 <hftl:formField label="#{messages['offerTemplate.description']}" field="description" useConverter="false" id="description" /> -->
                                 <hftl:formLanguageFields backingBean="#{offerTemplateBean}" entity="#{offerTemplateBean.entity}" multiLang="true" />

@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
@@ -18,42 +17,36 @@ import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.base.MultilanguageEntityService;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
 
 /**
  * @author Edward P. Legaspi
  */
 @Stateless
-public class BundleTemplateService extends MultilanguageEntityService<BundleTemplate> {
+public class BundleTemplateService extends GenericProductOfferingService<BundleTemplate> {
 
-	@Inject
-	private CustomFieldInstanceService customFieldInstanceService;
+    public long bundleTemplateActiveCount(boolean status) {
+        long result = 0;
 
-	public long bundleTemplateActiveCount(boolean status) {
-		long result = 0;
+        Query query;
 
-		Query query;
+        if (status) {
+            query = getEntityManager().createNamedQuery("BundleTemplate.countActive");
+        } else {
+            query = getEntityManager().createNamedQuery("BundleTemplate.countDisabled");
+        }
 
-		if (status) {
-			query = getEntityManager().createNamedQuery("BundleTemplate.countActive");
-		} else {
-			query = getEntityManager().createNamedQuery("BundleTemplate.countDisabled");
-		}
+        result = (long) query.getSingleResult();
+        return result;
+    }
 
-		result = (long) query.getSingleResult();
-		return result;
-	}
-
-	public long productTemplateAlmostExpiredCount() {
-		long result = 0;
-		String sqlQuery = "SELECT COUNT(*) FROM " + BundleTemplate.class.getName() + " p WHERE DATE_PART('day',p.validity.to - '"
-				+ DateUtils.formatDateWithPattern(new Date(), "yyyy-MM-dd hh:mm:ss") + "') <= 7";
-		Query query = getEntityManager().createQuery(sqlQuery);
-		result = (long) query.getSingleResult();
-		return result;
-	}
-
+    public long productTemplateAlmostExpiredCount() {
+        long result = 0;
+        String sqlQuery = "SELECT COUNT(*) FROM " + BundleTemplate.class.getName() + " p WHERE DATE_PART('day',p.validity.to - '"
+                + DateUtils.formatDateWithPattern(new Date(), "yyyy-MM-dd hh:mm:ss") + "') <= 7";
+        Query query = getEntityManager().createQuery(sqlQuery);
+        result = (long) query.getSingleResult();
+        return result;
+    }
 
     /**
      * Create a shallow duplicate of an Bundle template (main Bundle template information and custom fields). A new Bundle template will have a code with suffix "- Copy"
@@ -64,12 +57,12 @@ public class BundleTemplateService extends MultilanguageEntityService<BundleTemp
      */
     public synchronized void duplicate(BundleTemplate bundle) throws BusinessException {
         duplicate(bundle, true);
-        
+
     }
 
     /**
-     * Create a new version of an Bundle template. It is a shallow copy of an Bundle template (main Bundle template information and custom fields) with identical code and validity start date matching latest version's validity end
-     * date or current date.
+     * Create a new version of an Bundle template. It is a shallow copy of an Bundle template (main Bundle template information and custom fields) with identical code and validity
+     * start date matching latest version's validity end date or current date.
      * 
      * @param bundle Bundle template to create new version for
      * @return A not-persisted copy of Bundle template
@@ -100,102 +93,89 @@ public class BundleTemplateService extends MultilanguageEntityService<BundleTemp
      * @return A copy of Bundle template
      * @throws BusinessException
      */
-	private synchronized BundleTemplate duplicate(BundleTemplate bundle, boolean persist) throws BusinessException {
-		
-	    bundle = refreshOrRetrieve(bundle);
+    private synchronized BundleTemplate duplicate(BundleTemplate bundle, boolean persist) throws BusinessException {
 
-		// Lazy load related values first
-		bundle.getWalletTemplates().size();
-		bundle.getBusinessAccountModels().size();
-		bundle.getAttachments().size();
-		bundle.getChannels().size();
-		bundle.getOfferTemplateCategories().size();
-		bundle.getBundleProducts().size();
+        bundle = refreshOrRetrieve(bundle);
 
-		String code = findDuplicateCode(bundle);
+        // Lazy load related values first
+        bundle.getWalletTemplates().size();
+        bundle.getBusinessAccountModels().size();
+        bundle.getAttachments().size();
+        bundle.getChannels().size();
+        bundle.getOfferTemplateCategories().size();
+        bundle.getBundleProducts().size();
 
-		// Detach and clear ids of entity and related entities
-		detach(bundle);
-		bundle.setId(null);
-		String sourceAppliesToEntity = bundle.clearUuid();
+        String code = findDuplicateCode(bundle);
 
-		List<BusinessAccountModel> businessAccountModels = bundle.getBusinessAccountModels();
-		bundle.setBusinessAccountModels(new ArrayList<BusinessAccountModel>());
+        // Detach and clear ids of entity and related entities
+        detach(bundle);
+        bundle.setId(null);
+        String sourceAppliesToEntity = bundle.clearUuid();
 
-		List<DigitalResource> attachments = bundle.getAttachments();
-		bundle.setAttachments(new ArrayList<DigitalResource>());
+        List<BusinessAccountModel> businessAccountModels = bundle.getBusinessAccountModels();
+        bundle.setBusinessAccountModels(new ArrayList<BusinessAccountModel>());
 
-		List<Channel> channels = bundle.getChannels();
-		bundle.setChannels(new ArrayList<Channel>());
+        List<DigitalResource> attachments = bundle.getAttachments();
+        bundle.setAttachments(new ArrayList<DigitalResource>());
 
-		List<OfferTemplateCategory> offerTemplateCategories = bundle.getOfferTemplateCategories();
-		bundle.setOfferTemplateCategories(new ArrayList<OfferTemplateCategory>());
+        List<Channel> channels = bundle.getChannels();
+        bundle.setChannels(new ArrayList<Channel>());
 
-		List<WalletTemplate> walletTemplates = bundle.getWalletTemplates();
-		bundle.setWalletTemplates(new ArrayList<WalletTemplate>());
+        List<OfferTemplateCategory> offerTemplateCategories = bundle.getOfferTemplateCategories();
+        bundle.setOfferTemplateCategories(new ArrayList<OfferTemplateCategory>());
 
-		List<BundleProductTemplate> bundleProductTemplates = bundle.getBundleProducts();
-		bundle.setBundleProducts(new ArrayList<BundleProductTemplate>());
+        List<WalletTemplate> walletTemplates = bundle.getWalletTemplates();
+        bundle.setWalletTemplates(new ArrayList<WalletTemplate>());
 
-		bundle.setCode(code);
+        List<BundleProductTemplate> bundleProductTemplates = bundle.getBundleProducts();
+        bundle.setBundleProducts(new ArrayList<BundleProductTemplate>());
 
-		if (businessAccountModels != null) {
-			for (BusinessAccountModel bam : businessAccountModels) {
-				bundle.getBusinessAccountModels().add(bam);
-			}
-		}
+        bundle.setCode(code);
 
-		if (attachments != null) {
-			for (DigitalResource attachment : attachments) {
-				bundle.addAttachment(attachment);
-			}
-		}
+        if (businessAccountModels != null) {
+            for (BusinessAccountModel bam : businessAccountModels) {
+                bundle.getBusinessAccountModels().add(bam);
+            }
+        }
 
-		if (channels != null) {
-			for (Channel channel : channels) {
-				bundle.getChannels().add(channel);
-			}
-		}
+        if (attachments != null) {
+            for (DigitalResource attachment : attachments) {
+                bundle.addAttachment(attachment);
+            }
+        }
 
-		if (offerTemplateCategories != null) {
-			for (OfferTemplateCategory offerTemplateCategory : offerTemplateCategories) {
-				bundle.getOfferTemplateCategories().add(offerTemplateCategory);
-			}
-		}
+        if (channels != null) {
+            for (Channel channel : channels) {
+                bundle.getChannels().add(channel);
+            }
+        }
 
-		if (walletTemplates != null) {
-			for (WalletTemplate wt : walletTemplates) {
-				bundle.getWalletTemplates().add(wt);
-			}
-		}
+        if (offerTemplateCategories != null) {
+            for (OfferTemplateCategory offerTemplateCategory : offerTemplateCategories) {
+                bundle.getOfferTemplateCategories().add(offerTemplateCategory);
+            }
+        }
 
-		if (bundleProductTemplates != null) {
+        if (walletTemplates != null) {
+            for (WalletTemplate wt : walletTemplates) {
+                bundle.getWalletTemplates().add(wt);
+            }
+        }
 
-			for (BundleProductTemplate bpt : bundleProductTemplates) {
-				bpt.setId(null);
-				bundle.addBundleProductTemplate(bpt);
-			}
-		}
+        if (bundleProductTemplates != null) {
+
+            for (BundleProductTemplate bpt : bundleProductTemplates) {
+                bpt.setId(null);
+                bundle.addBundleProductTemplate(bpt);
+            }
+        }
 
         customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, bundle);
 
         if (persist) {
             create(bundle);
         }
-        
+
         return bundle;
-	}
-
-    /**
-     * Find the latest version of bundle template matching a given code
-     * 
-     * @param code Code to match
-     * @return Bundle template with the highest validity start date
-     */
-    private BundleTemplate findTheLatestVersion(String code) {
-
-        BundleTemplate latestVersion = (BundleTemplate) getEntityManager().createNamedQuery("ProductOffering.findLatestVersion").setParameter("code", code).setMaxResults(1)
-            .getSingleResult();
-        return latestVersion;
     }
 }

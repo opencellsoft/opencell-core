@@ -18,13 +18,13 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.BundleTemplate;
 import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.DigitalResource;
 import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ProductChargeTemplate;
+import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
@@ -34,7 +34,6 @@ import org.meveo.service.catalog.impl.ChannelService;
 import org.meveo.service.catalog.impl.DigitalResourceService;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 import org.meveo.service.catalog.impl.ProductChargeTemplateService;
-import org.meveo.service.catalog.impl.ProductOfferingService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.crm.impl.BusinessAccountModelService;
 import org.primefaces.model.DualListModel;
@@ -68,9 +67,6 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 
     @Inject
     private ProductChargeTemplateService productChargeTemplateService;
-
-    @Inject
-    private ProductOfferingService productOfferingService;
 
     private DualListModel<OfferTemplateCategory> offerTemplateCategoriesDM;
     private DualListModel<DigitalResource> attachmentsDM;
@@ -398,12 +394,13 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
         Date from = (Date) values.get(1);
         Date to = (Date) values.get(2);
 
-        DatePeriod matchedVersion = productOfferingService.getMatchingVersion(code, from, to, entity.getId());
+        List<ProductOffering> matchedVersions = productTemplateService.getMatchingVersions(code, from, to, entity.getId(), true);
 
-        if (matchedVersion == null) {
-            return true;
+        if (!matchedVersions.isEmpty()) {
+            messages.error(new BundleKey("messages", "productTemplate.version.exists"), matchedVersions.get(0).getValidity().toString(paramBean.getDateFormat()));
+            return false;
         }
 
-        return false;
+        return true;
     }
 }

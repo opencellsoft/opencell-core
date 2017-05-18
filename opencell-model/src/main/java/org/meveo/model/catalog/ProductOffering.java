@@ -49,9 +49,9 @@ import org.meveo.model.crm.BusinessAccountModel;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING)
 @NamedQueries({
-        @NamedQuery(name = "ProductOffering.findLatestVersion", query = "select e from ProductOffering e where e.code = :code order by e.validity.from desc, e.validity.to desc"),
-        @NamedQuery(name = "ProductOffering.findVersionDates", query = "select e.validity from ProductOffering e where e.code = :code and e.id !=:id"),
-        @NamedQuery(name = "ProductOffering.findActiveByDate", query = "select e from ProductOffering e where type(e)= :clazz and ((e.validity.from IS NULL and e.validity.to IS NULL) or (e.validity.from<=:date and :date<e.validity.to) or (e.validity.from<=:date and e.validity.to IS NULL) or (e.validity.from IS NULL and :date<e.validity.to))")})
+        @NamedQuery(name = "ProductOffering.findLatestVersion", query = "select e from ProductOffering e where type(e)= :clazz and e.code = :code order by e.validity.from desc, e.validity.to desc"),
+        @NamedQuery(name = "ProductOffering.findMatchingVersions", query = "select e from ProductOffering e where type(e)= :clazz and e.code = :code and e.id !=:id order by id"),
+        @NamedQuery(name = "ProductOffering.findActiveByDate", query = "select e from ProductOffering e where type(e)= :clazz and ((e.validity.from IS NULL and e.validity.to IS NULL) or (e.validity.from<=:date and :date<e.validity.to) or (e.validity.from<=:date and e.validity.to IS NULL) or (e.validity.from IS NULL and :date<e.validity.to))") })
 public abstract class ProductOffering extends BusinessCFEntity implements IImageUpload {
 
     private static final long serialVersionUID = 6877386866687396135L;
@@ -201,5 +201,36 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
 
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof ProductOffering)) { // Fails with proxed objects: getClass() != obj.getClass()){
+            return false;
+        }
+
+        ProductOffering other = (ProductOffering) obj;
+
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
+             return true;
+        }
+        if (code == null) {
+            if (other.getCode() != null) {
+                return false;
+            }
+        } else if (!code.equals(other.getCode())) {
+            return false;
+        }
+        
+        if (!getValidity().equals(other.getValidity())){
+            return false;
+        }
+        
+        return true;
     }
 }

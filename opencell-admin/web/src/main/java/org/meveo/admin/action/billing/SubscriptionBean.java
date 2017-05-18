@@ -260,7 +260,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
         if (entity.getOffer().getValidity() != null && !entity.getOffer().getValidity().isCorrespondsToPeriod(entity.getSubscriptionDate())) {
 
-            String datePattern = paramBean.getProperty("meveo.dateFormat", "dd/MM/yyyy");
+            String datePattern = paramBean.getDateFormat();
             messages.error(new BundleKey("messages", "subscription.error.offerTemplateInvalidVersion"), entity.getOffer().getValidity().toString(datePattern),
                 DateUtils.formatDateWithPattern(entity.getSubscriptionDate(), datePattern));
             FacesContext.getCurrentInstance().validationFailed();
@@ -572,7 +572,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         if (productInstance.getProductTemplate().getValidity() != null
                 && !productInstance.getProductTemplate().getValidity().isCorrespondsToPeriod(productInstance.getApplicationDate())) {
 
-            String datePattern = paramBean.getProperty("meveo.dateFormat", "dd/MM/yyyy");
+            String datePattern = paramBean.getDateFormat();
             messages.error(new BundleKey("messages", "productInstance.error.productTemplateInvalidVersion"),
                 productInstance.getProductTemplate().getValidity().toString(datePattern), DateUtils.formatDateWithPattern(productInstance.getApplicationDate(), datePattern));
             FacesContext.getCurrentInstance().validationFailed();

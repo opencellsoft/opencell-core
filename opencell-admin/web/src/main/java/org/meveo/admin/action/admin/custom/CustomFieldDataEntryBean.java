@@ -376,7 +376,7 @@ public class CustomFieldDataEntryBean implements Serializable {
             if (period != null) {
                 entityValueHolder.setValuePeriodMatched(true);
                 ParamBean paramBean = ParamBean.getInstance();
-                String datePattern = paramBean.getProperty("meveo.dateFormat", "dd/MM/yyyy");
+                String datePattern = paramBean.getDateFormat();
 
                 // For a strict match need to edit an existing period
                 if (strictMatch) {
