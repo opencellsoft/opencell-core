@@ -530,14 +530,13 @@ public class CatalogHierarchyBuilderService {
 				copyChargeTemplate(chargeTemplate, newChargeTemplate, prefix);
 
 				if (chargeTemplateInMemory.contains(newChargeTemplate)) {
-					continue;
+					newChargeTemplate = (RecurringChargeTemplate) chargeTemplateInMemory
+							.get(chargeTemplateInMemory.indexOf(newChargeTemplate));
 				} else {
 					chargeTemplateInMemory.add(newChargeTemplate);
+					recurringChargeTemplateService.create(newChargeTemplate);
+					copyEdrTemplates(chargeTemplate, newChargeTemplate);
 				}
-
-				recurringChargeTemplateService.create(newChargeTemplate);
-
-				copyEdrTemplates(chargeTemplate, newChargeTemplate);
 
 				ServiceChargeTemplateRecurring serviceChargeTemplate = new ServiceChargeTemplateRecurring();
 				serviceChargeTemplate.setChargeTemplate(newChargeTemplate);
@@ -560,14 +559,13 @@ public class CatalogHierarchyBuilderService {
 				copyChargeTemplate(chargeTemplate, newChargeTemplate, prefix);
 
 				if (chargeTemplateInMemory.contains(newChargeTemplate)) {
-					continue;
+					newChargeTemplate = (OneShotChargeTemplate) chargeTemplateInMemory
+							.get(chargeTemplateInMemory.indexOf(newChargeTemplate));
 				} else {
 					chargeTemplateInMemory.add(newChargeTemplate);
+					oneShotChargeTemplateService.create(newChargeTemplate);
+					copyEdrTemplates(chargeTemplate, newChargeTemplate);
 				}
-
-				oneShotChargeTemplateService.create(newChargeTemplate);
-
-				copyEdrTemplates(chargeTemplate, newChargeTemplate);
 
 				ServiceChargeTemplateSubscription serviceChargeTemplate = new ServiceChargeTemplateSubscription();
 				serviceChargeTemplate.setChargeTemplate(newChargeTemplate);
@@ -590,14 +588,13 @@ public class CatalogHierarchyBuilderService {
 				copyChargeTemplate(chargeTemplate, newChargeTemplate, prefix);
 
 				if (chargeTemplateInMemory.contains(newChargeTemplate)) {
-					continue;
+					newChargeTemplate = (OneShotChargeTemplate) chargeTemplateInMemory
+							.get(chargeTemplateInMemory.indexOf(newChargeTemplate));
 				} else {
 					chargeTemplateInMemory.add(newChargeTemplate);
+					oneShotChargeTemplateService.create(newChargeTemplate);
+					copyEdrTemplates(chargeTemplate, newChargeTemplate);
 				}
-
-				oneShotChargeTemplateService.create(newChargeTemplate);
-
-				copyEdrTemplates(chargeTemplate, newChargeTemplate);
 
 				ServiceChargeTemplateTermination serviceChargeTemplate = new ServiceChargeTemplateTermination();
 				serviceChargeTemplate.setChargeTemplate(newChargeTemplate);
@@ -620,14 +617,13 @@ public class CatalogHierarchyBuilderService {
 				copyChargeTemplate(chargeTemplate, newChargeTemplate, prefix);
 
 				if (chargeTemplateInMemory.contains(newChargeTemplate)) {
-					continue;
+					newChargeTemplate = (UsageChargeTemplate) chargeTemplateInMemory
+							.get(chargeTemplateInMemory.indexOf(newChargeTemplate));
 				} else {
 					chargeTemplateInMemory.add(newChargeTemplate);
+					usageChargeTemplateService.create(newChargeTemplate);
+					copyEdrTemplates(chargeTemplate, newChargeTemplate);
 				}
-
-				usageChargeTemplateService.create(newChargeTemplate);
-
-				copyEdrTemplates(chargeTemplate, newChargeTemplate);
 
 				ServiceChargeTemplateUsage serviceChargeTemplate = new ServiceChargeTemplateUsage();
 				serviceChargeTemplate.setChargeTemplate(newChargeTemplate);
@@ -636,24 +632,25 @@ public class CatalogHierarchyBuilderService {
 					serviceChargeTemplate.setWalletTemplates(new ArrayList<WalletTemplate>());
 					serviceChargeTemplate.getWalletTemplates().addAll(serviceCharge.getWalletTemplates());
 				}
-				serviceChargeTemplateUsageService.create(serviceChargeTemplate);
 
+				CounterTemplate newCounterTemplate = null;
 				if (serviceCharge.getCounterTemplate() != null) {
 					// check if counter code already exists
 					String newCounterCode = prefix + serviceCharge.getCounterTemplate().getCode();
-					CounterTemplate newCounterTemplate = null;
 					newCounterTemplate = counterTemplateService.findByCode(newCounterCode);
-					if (newCounterTemplate != null) {
+
+					if (newCounterTemplate == null) {
+						newCounterTemplate = new CounterTemplate();
 						BeanUtils.copyProperties(newCounterTemplate, serviceCharge.getCounterTemplate());
+						newCounterTemplate.setCode(newCounterCode);
 						newCounterTemplate.setAuditable(null);
 						newCounterTemplate.setId(null);
-						newCounterTemplate.setCode(newCounterCode);
-
 						counterTemplateService.create(newCounterTemplate);
 					}
-
+					
 					serviceChargeTemplate.setCounterTemplate(newCounterTemplate);
 				}
+				serviceChargeTemplateUsageService.create(serviceChargeTemplate);
 
 				newServiceTemplate.getServiceUsageCharges().add(serviceChargeTemplate);
 			}
