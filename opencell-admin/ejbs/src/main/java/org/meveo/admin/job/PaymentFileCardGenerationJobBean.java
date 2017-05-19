@@ -48,7 +48,7 @@ public class PaymentFileCardGenerationJobBean {
 		
 		try {
 			
-			List<Long> ids = edrService.getEDRidsToRate();		
+			List<Long> ids = recordedInvoiceService.getEDRidsToRate();		
 			log.debug("edr to rate:" + ids.size());
 			result.setNbItemsToProcess(ids.size());
 			Long nbRuns = new Long(1);		
