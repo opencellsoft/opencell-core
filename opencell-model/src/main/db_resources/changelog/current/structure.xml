@@ -4397,4 +4397,11 @@
         <addUniqueConstraint columnNames="code, valid_from, valid_to" constraintName="cat_offer_template_uk" deferrable="false" disabled="false"
             initiallyDeferred="false" tableName="cat_offer_template" />
     </changeSet>
+        
+    <changeSet id="#2470_20170518" author="AndriusKarpavicius">
+        <addColumn tableName="MEVEO_MODULE_ITEM">        
+            <column name="valid_from" type="DATETIME"/>
+            <column name="valid_to" type="DATETIME"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog> 

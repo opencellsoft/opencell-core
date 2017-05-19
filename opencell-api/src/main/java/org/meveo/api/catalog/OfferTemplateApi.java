@@ -11,6 +11,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.catalog.OfferProductTemplateDto;
 import org.meveo.api.dto.catalog.OfferServiceTemplateDto;
+import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.catalog.ProductTemplateDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
@@ -41,156 +42,152 @@ import org.meveo.service.catalog.impl.ServiceTemplateService;
 @Stateless
 public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDto> {
 
-	@Inject
-	private OfferTemplateService offerTemplateService;
+    @Inject
+    private OfferTemplateService offerTemplateService;
 
-	@Inject
-	private ServiceTemplateService serviceTemplateService;
+    @Inject
+    private ServiceTemplateService serviceTemplateService;
 
-	@Inject
-	private BusinessOfferModelService businessOfferModelService;
+    @Inject
+    private BusinessOfferModelService businessOfferModelService;
 
-	@Inject
-	private OfferTemplateCategoryService offerTemplateCategoryService;
+    @Inject
+    private OfferTemplateCategoryService offerTemplateCategoryService;
 
-	@Inject
-	private ProductTemplateService productTemplateService;
+    @Inject
+    private ProductTemplateService productTemplateService;
 
-	public OfferTemplate create(OfferTemplateDto postData) throws MeveoApiException, BusinessException {
+    public OfferTemplate create(OfferTemplateDto postData) throws MeveoApiException, BusinessException {
 
-		if (StringUtils.isBlank(postData.getCode())) {
-			missingParameters.add("code");
-		}
-		if (StringUtils.isBlank(postData.getName())) {
-		    postData.setName(postData.getCode());
-		}
-		handleMissingParameters();
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
+        if (StringUtils.isBlank(postData.getName())) {
+            postData.setName(postData.getCode());
+        }
+        handleMissingParameters();
 
-		
+        if (offerTemplateService.findByCode(postData.getCode()) != null) {
+            throw new EntityAlreadyExistsException(OfferTemplate.class, postData.getCode());
+        }
 
-		if (offerTemplateService.findByCode(postData.getCode()) != null) {
-			throw new EntityAlreadyExistsException(OfferTemplate.class, postData.getCode());
-		}		
+        OfferTemplate offerTemplate = new OfferTemplate();
+        populateFromDto(offerTemplate, postData);
 
-		OfferTemplate offerTemplate = new OfferTemplate();
-		populateFromDto(offerTemplate, postData);
+        offerTemplateService.create(offerTemplate);
 
-		offerTemplateService.create(offerTemplate);
-
-		// populate customFields
-		try {
-			populateCustomFields(postData.getCustomFields(), offerTemplate, true);
+        // populate customFields
+        try {
+            populateCustomFields(postData.getCustomFields(), offerTemplate, true);
         } catch (MissingParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
-		} catch (Exception e) {
-			log.error("Failed to associate custom field instance to an entity", e);
-			throw e;
-		}
-		return offerTemplate;
-	}
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
+        return offerTemplate;
+    }
 
-	public OfferTemplate update(OfferTemplateDto postData) throws MeveoApiException, BusinessException {
+    public OfferTemplate update(OfferTemplateDto postData) throws MeveoApiException, BusinessException {
 
-		if (StringUtils.isBlank(postData.getCode())) {
-			missingParameters.add("code");
-		}
-		if (StringUtils.isBlank(postData.getName())) {
-		    postData.setName(postData.getCode());
-		}
-		handleMissingParameters();
-		
-		
-		OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getCode());
-		if (offerTemplate == null) {
-			throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getCode());
-		}
-		
-		populateFromDto(offerTemplate, postData);
-		offerTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode())?postData.getCode():postData.getUpdatedCode());
-		offerTemplate = offerTemplateService.update(offerTemplate);
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
+        if (StringUtils.isBlank(postData.getName())) {
+            postData.setName(postData.getCode());
+        }
+        handleMissingParameters();
 
-		// populate customFields
-		try {
-			populateCustomFields(postData.getCustomFields(), offerTemplate, false);
+        OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getCode());
+        if (offerTemplate == null) {
+            throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getCode());
+        }
+
+        populateFromDto(offerTemplate, postData);
+        offerTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
+        offerTemplate = offerTemplateService.update(offerTemplate);
+
+        // populate customFields
+        try {
+            populateCustomFields(postData.getCustomFields(), offerTemplate, false);
         } catch (MissingParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
-		} catch (Exception e) {
-			log.error("Failed to associate custom field instance to an entity", e);
-			throw e;
-		}
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
 
-		return offerTemplate;
-	}
-	
-	private void populateFromDto(OfferTemplate offerTemplate, OfferTemplateDto postData) throws MeveoApiException, BusinessException {
-		
-	
-		BusinessOfferModel businessOffer = null;
-		if (!StringUtils.isBlank(postData.getBomCode())) {
-			businessOffer = businessOfferModelService.findByCode(postData.getBomCode());
-			if (businessOffer == null) {
-				throw new EntityDoesNotExistsException(BusinessOfferModel.class, postData.getBomCode());
-			}
-		}
-		
-		if (!StringUtils.isBlank(postData.getOfferTemplateCategoryCode())) {
-			OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(postData.getOfferTemplateCategoryCode());
-			if (offerTemplateCategory == null) {
-				throw new EntityDoesNotExistsException(OfferTemplateCategory.class, postData.getOfferTemplateCategoryCode());
-			}
-			offerTemplate.addOfferTemplateCategory(offerTemplateCategory);
-		}
-		
-		if (postData.getOfferTemplateCategories() != null) {
-			offerTemplate.getOfferTemplateCategories().clear();
-			for (String categoryCode : postData.getOfferTemplateCategories()) {
-				OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(categoryCode);
-				if (offerTemplateCategory == null) {
-					throw new EntityDoesNotExistsException(OfferTemplateCategory.class, categoryCode);
-				}
-				offerTemplate.addOfferTemplateCategory(offerTemplateCategory);
-			}
-		}
-		
-		offerTemplate.setBusinessOfferModel(businessOffer);
-		offerTemplate.setCode(postData.getCode());
-		offerTemplate.setDescription(postData.getDescription());
-		offerTemplate.setName(postData.getName());
-		offerTemplate.setLongDescription(postData.getLongDescription());
-		offerTemplate.setDisabled(postData.isDisabled());
+        return offerTemplate;
+    }
+
+    private void populateFromDto(OfferTemplate offerTemplate, OfferTemplateDto postData) throws MeveoApiException, BusinessException {
+
+        BusinessOfferModel businessOffer = null;
+        if (!StringUtils.isBlank(postData.getBomCode())) {
+            businessOffer = businessOfferModelService.findByCode(postData.getBomCode());
+            if (businessOffer == null) {
+                throw new EntityDoesNotExistsException(BusinessOfferModel.class, postData.getBomCode());
+            }
+        }
+
+        if (!StringUtils.isBlank(postData.getOfferTemplateCategoryCode())) {
+            OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(postData.getOfferTemplateCategoryCode());
+            if (offerTemplateCategory == null) {
+                throw new EntityDoesNotExistsException(OfferTemplateCategory.class, postData.getOfferTemplateCategoryCode());
+            }
+            offerTemplate.addOfferTemplateCategory(offerTemplateCategory);
+        }
+
+        if (postData.getOfferTemplateCategories() != null) {
+            offerTemplate.getOfferTemplateCategories().clear();
+            for (OfferTemplateCategoryDto categoryDto : postData.getOfferTemplateCategories()) {
+                OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(categoryDto.getCode());
+                if (offerTemplateCategory == null) {
+                    throw new EntityDoesNotExistsException(OfferTemplateCategory.class, categoryDto.getCode());
+                }
+                offerTemplate.addOfferTemplateCategory(offerTemplateCategory);
+            }
+        }
+
+        offerTemplate.setBusinessOfferModel(businessOffer);
+        offerTemplate.setCode(postData.getCode());
+        offerTemplate.setDescription(postData.getDescription());
+        offerTemplate.setName(postData.getName());
+        offerTemplate.setLongDescription(postData.getLongDescription());
+        offerTemplate.setDisabled(postData.isDisabled());
         offerTemplate.setValidity(new DatePeriod(postData.getValidFrom(), postData.getValidTo()));
 
-		try {
-			saveImage(offerTemplate, postData.getImagePath(), postData.getImageBase64());
-		} catch (IOException e1) {
-			log.error("Invalid image data={}", e1.getMessage());
-			throw new InvalidImageData();
-		}
+        try {
+            saveImage(offerTemplate, postData.getImagePath(), postData.getImageBase64());
+        } catch (IOException e1) {
+            log.error("Invalid image data={}", e1.getMessage());
+            throw new InvalidImageData();
+        }
 
-		// check service templates
-		processOfferServiceTemplates(postData, offerTemplate);
+        // check service templates
+        processOfferServiceTemplates(postData, offerTemplate);
 
-		// check offer product templates
-		processOfferProductTemplates(postData, offerTemplate);
-	}
+        // check offer product templates
+        processOfferProductTemplates(postData, offerTemplate);
+    }
 
-	private void processOfferServiceTemplates(OfferTemplateDto postData, OfferTemplate offerTemplate) throws MeveoApiException, BusinessException {
-		List<OfferServiceTemplateDto> offerServiceTemplateDtos = postData.getOfferServiceTemplates();
-		boolean hasOfferServiceTemplateDtos = offerServiceTemplateDtos != null && !offerServiceTemplateDtos.isEmpty();
+    private void processOfferServiceTemplates(OfferTemplateDto postData, OfferTemplate offerTemplate) throws MeveoApiException, BusinessException {
+        List<OfferServiceTemplateDto> offerServiceTemplateDtos = postData.getOfferServiceTemplates();
+        boolean hasOfferServiceTemplateDtos = offerServiceTemplateDtos != null && !offerServiceTemplateDtos.isEmpty();
 
-		List<OfferServiceTemplate> existingServiceTemplates = offerTemplate.getOfferServiceTemplates();
-		boolean hasExistingServiceTemplates = existingServiceTemplates != null && !existingServiceTemplates.isEmpty();
+        List<OfferServiceTemplate> existingServiceTemplates = offerTemplate.getOfferServiceTemplates();
+        boolean hasExistingServiceTemplates = existingServiceTemplates != null && !existingServiceTemplates.isEmpty();
 
-		if (hasOfferServiceTemplateDtos) {
-			List<OfferServiceTemplate> newOfferServiceTemplates = new ArrayList<>();
-			OfferServiceTemplate offerServiceTemplate = null;
-			for (OfferServiceTemplateDto offerServiceTemplateDto : offerServiceTemplateDtos) {
-				offerServiceTemplate = getOfferServiceTemplatesFromDto(offerServiceTemplateDto);
-				offerServiceTemplate.setOfferTemplate(offerTemplate);
-				newOfferServiceTemplates.add(offerServiceTemplate);
-			}
+        if (hasOfferServiceTemplateDtos) {
+            List<OfferServiceTemplate> newOfferServiceTemplates = new ArrayList<>();
+            OfferServiceTemplate offerServiceTemplate = null;
+            for (OfferServiceTemplateDto offerServiceTemplateDto : offerServiceTemplateDtos) {
+                offerServiceTemplate = getOfferServiceTemplatesFromDto(offerServiceTemplateDto);
+                offerServiceTemplate.setOfferTemplate(offerTemplate);
+                newOfferServiceTemplates.add(offerServiceTemplate);
+            }
 
             if (!hasExistingServiceTemplates) {
                 offerTemplate.getOfferServiceTemplates().addAll(newOfferServiceTemplates);
@@ -212,121 +209,125 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
                         existingServiceTemplates.add(ostNew);
                     }
                 }
-			}
-			
-		} else if (hasExistingServiceTemplates) {
-			offerTemplate.getOfferServiceTemplates().removeAll(existingServiceTemplates);
-		}
-	}
+            }
 
-	private void processOfferProductTemplates(OfferTemplateDto postData, OfferTemplate offerTemplate) throws MeveoApiException, BusinessException {
-		List<OfferProductTemplateDto> offerProductTemplateDtos = postData.getOfferProductTemplates();
-		boolean hasOfferProductTemplateDtos = offerProductTemplateDtos != null && !offerProductTemplateDtos.isEmpty();
-		List<OfferProductTemplate> existingProductTemplates = offerTemplate.getOfferProductTemplates();
-		boolean hasExistingProductTemplates = existingProductTemplates != null && !existingProductTemplates.isEmpty();
-		if (hasOfferProductTemplateDtos) {
-			List<OfferProductTemplate> newOfferProductTemplates = new ArrayList<>();
-			OfferProductTemplate offerProductTemplate = null;
-			for (OfferProductTemplateDto offerProductTemplateDto : offerProductTemplateDtos) {
-				offerProductTemplate = getOfferProductTemplatesFromDto(offerProductTemplateDto);
-				offerProductTemplate.setOfferTemplate(offerTemplate);
-				newOfferProductTemplates.add(offerProductTemplate);
-			}
+        } else if (hasExistingServiceTemplates) {
+            offerTemplate.getOfferServiceTemplates().removeAll(existingServiceTemplates);
+        }
+    }
 
-			if (hasExistingProductTemplates) {
-				List<OfferProductTemplate> offerProductTemplatesForRemoval = new ArrayList<>(existingProductTemplates);
-				offerProductTemplatesForRemoval.removeAll(newOfferProductTemplates);
-				List<OfferProductTemplate> retainOfferProductTemplates = new ArrayList<>(newOfferProductTemplates);
-				retainOfferProductTemplates.retainAll(existingProductTemplates);
-				offerProductTemplatesForRemoval.addAll(retainOfferProductTemplates);
-				newOfferProductTemplates.removeAll(new ArrayList<>(existingProductTemplates));
-				offerTemplate.getOfferProductTemplates().removeAll(new ArrayList<>(offerProductTemplatesForRemoval));
-				offerTemplate.getOfferProductTemplates().addAll(retainOfferProductTemplates);
-			}
+    private void processOfferProductTemplates(OfferTemplateDto postData, OfferTemplate offerTemplate) throws MeveoApiException, BusinessException {
+        List<OfferProductTemplateDto> offerProductTemplateDtos = postData.getOfferProductTemplates();
+        boolean hasOfferProductTemplateDtos = offerProductTemplateDtos != null && !offerProductTemplateDtos.isEmpty();
+        List<OfferProductTemplate> existingProductTemplates = offerTemplate.getOfferProductTemplates();
+        boolean hasExistingProductTemplates = existingProductTemplates != null && !existingProductTemplates.isEmpty();
+        if (hasOfferProductTemplateDtos) {
+            List<OfferProductTemplate> newOfferProductTemplates = new ArrayList<>();
+            OfferProductTemplate offerProductTemplate = null;
+            for (OfferProductTemplateDto offerProductTemplateDto : offerProductTemplateDtos) {
+                offerProductTemplate = getOfferProductTemplatesFromDto(offerProductTemplateDto);
+                offerProductTemplate.setOfferTemplate(offerTemplate);
+                newOfferProductTemplates.add(offerProductTemplate);
+            }
 
-			offerTemplate.getOfferProductTemplates().addAll(newOfferProductTemplates);
+            if (hasExistingProductTemplates) {
+                List<OfferProductTemplate> offerProductTemplatesForRemoval = new ArrayList<>(existingProductTemplates);
+                offerProductTemplatesForRemoval.removeAll(newOfferProductTemplates);
+                List<OfferProductTemplate> retainOfferProductTemplates = new ArrayList<>(newOfferProductTemplates);
+                retainOfferProductTemplates.retainAll(existingProductTemplates);
+                offerProductTemplatesForRemoval.addAll(retainOfferProductTemplates);
+                newOfferProductTemplates.removeAll(new ArrayList<>(existingProductTemplates));
+                offerTemplate.getOfferProductTemplates().removeAll(new ArrayList<>(offerProductTemplatesForRemoval));
+                offerTemplate.getOfferProductTemplates().addAll(retainOfferProductTemplates);
+            }
 
-		} else if (hasExistingProductTemplates) {
-			offerTemplate.getOfferProductTemplates().removeAll(existingProductTemplates);
-		}
-	}
+            offerTemplate.getOfferProductTemplates().addAll(newOfferProductTemplates);
 
-	private OfferServiceTemplate getOfferServiceTemplatesFromDto(OfferServiceTemplateDto offerServiceTemplateDto) throws MeveoApiException, BusinessException {
+        } else if (hasExistingProductTemplates) {
+            offerTemplate.getOfferProductTemplates().removeAll(existingProductTemplates);
+        }
+    }
 
-		ServiceTemplateDto serviceTemplateDto = offerServiceTemplateDto.getServiceTemplate();
-		ServiceTemplate serviceTemplate = null;
-		if (serviceTemplateDto != null) {
-			serviceTemplate = serviceTemplateService.findByCode(serviceTemplateDto.getCode());
-			if (serviceTemplate == null) {
-				throw new MeveoApiException(String.format("ServiceTemplatecode %s does not exist.", serviceTemplateDto.getCode()));
-			}
-		}
+    private OfferServiceTemplate getOfferServiceTemplatesFromDto(OfferServiceTemplateDto offerServiceTemplateDto) throws MeveoApiException, BusinessException {
 
-		OfferServiceTemplate offerServiceTemplate = new OfferServiceTemplate();
-		Boolean mandatory = offerServiceTemplateDto.getMandatory();
-		mandatory = mandatory == null ? false : mandatory;
+        ServiceTemplateDto serviceTemplateDto = offerServiceTemplateDto.getServiceTemplate();
+        ServiceTemplate serviceTemplate = null;
+        if (serviceTemplateDto != null) {
+            serviceTemplate = serviceTemplateService.findByCode(serviceTemplateDto.getCode());
+            if (serviceTemplate == null) {
+                throw new MeveoApiException(String.format("ServiceTemplatecode %s does not exist.", serviceTemplateDto.getCode()));
+            }
+        }
 
-		offerServiceTemplate.setServiceTemplate(serviceTemplate);
-		offerServiceTemplate.setMandatory(mandatory);
+        OfferServiceTemplate offerServiceTemplate = new OfferServiceTemplate();
+        Boolean mandatory = offerServiceTemplateDto.getMandatory();
+        mandatory = mandatory == null ? false : mandatory;
 
-		if (offerServiceTemplateDto.getIncompatibleServices() != null) {
-			List<ServiceTemplate> incompatibleServices = new ArrayList<>();
-			for (ServiceTemplateDto stDto : offerServiceTemplateDto.getIncompatibleServices()) {
-				ServiceTemplate incompatibleService = serviceTemplateService.findByCode(stDto.getCode());
-				if (incompatibleService == null) {
-					throw new EntityDoesNotExistsException(ServiceTemplate.class, stDto.getCode());
-				}
-				incompatibleServices.add(incompatibleService);
-			}
-			offerServiceTemplate.setIncompatibleServices(incompatibleServices);
-		}
+        offerServiceTemplate.setServiceTemplate(serviceTemplate);
+        offerServiceTemplate.setMandatory(mandatory);
 
-		return offerServiceTemplate;
-	}
+        if (offerServiceTemplateDto.getIncompatibleServices() != null) {
+            List<ServiceTemplate> incompatibleServices = new ArrayList<>();
+            for (ServiceTemplateDto stDto : offerServiceTemplateDto.getIncompatibleServices()) {
+                ServiceTemplate incompatibleService = serviceTemplateService.findByCode(stDto.getCode());
+                if (incompatibleService == null) {
+                    throw new EntityDoesNotExistsException(ServiceTemplate.class, stDto.getCode());
+                }
+                incompatibleServices.add(incompatibleService);
+            }
+            offerServiceTemplate.setIncompatibleServices(incompatibleServices);
+        }
 
-	private OfferProductTemplate getOfferProductTemplatesFromDto(OfferProductTemplateDto offerProductTemplateDto) throws MeveoApiException, BusinessException {
+        return offerServiceTemplate;
+    }
 
-		ProductTemplateDto productTemplateDto = offerProductTemplateDto.getProductTemplate();
-		ProductTemplate productTemplate = null;
-		if (productTemplateDto != null) {
-			productTemplate = productTemplateService.findByCode(productTemplateDto.getCode());
-			if (productTemplate == null) {
-				throw new MeveoApiException(String.format("ProductTemplate %s does not exist.", productTemplateDto.getCode()));
-			}
-		}
+    private OfferProductTemplate getOfferProductTemplatesFromDto(OfferProductTemplateDto offerProductTemplateDto) throws MeveoApiException, BusinessException {
 
-		OfferProductTemplate offerProductTemplate = new OfferProductTemplate();
-		Boolean mandatory = offerProductTemplateDto.getMandatory();
-		mandatory = mandatory == null ? false : mandatory;
+        ProductTemplateDto productTemplateDto = offerProductTemplateDto.getProductTemplate();
+        ProductTemplate productTemplate = null;
+        if (productTemplateDto != null) {
+            productTemplate = productTemplateService.findByCode(productTemplateDto.getCode());
+            if (productTemplate == null) {
+                throw new MeveoApiException(String.format("ProductTemplate %s does not exist.", productTemplateDto.getCode()));
+            }
+        }
 
-		offerProductTemplate.setProductTemplate(productTemplate);
-		offerProductTemplate.setMandatory(mandatory);
+        OfferProductTemplate offerProductTemplate = new OfferProductTemplate();
+        Boolean mandatory = offerProductTemplateDto.getMandatory();
+        mandatory = mandatory == null ? false : mandatory;
 
-		return offerProductTemplate;
-	}
+        offerProductTemplate.setProductTemplate(productTemplate);
+        offerProductTemplate.setMandatory(mandatory);
 
-    /* (non-Javadoc)
+        return offerProductTemplate;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.meveo.api.ApiService#find(java.lang.String)
      */
     @Override
-	public OfferTemplateDto find(String code) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException {
+    public OfferTemplateDto find(String code) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException {
 
-		if (StringUtils.isBlank(code)) {
-			missingParameters.add("offerTemplateCode");
-			handleMissingParameters();
-		}
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("offerTemplateCode");
+            handleMissingParameters();
+        }
 
-		OfferTemplate offerTemplate = offerTemplateService.findByCode(code);
-		if (offerTemplate == null) {
-			throw new EntityDoesNotExistsException(OfferTemplate.class, code);
-		}
+        OfferTemplate offerTemplate = offerTemplateService.findByCode(code);
+        if (offerTemplate == null) {
+            throw new EntityDoesNotExistsException(OfferTemplate.class, code);
+        }
 
-		OfferTemplateDto offerTemplateDto = convertOfferTemplateToDto(offerTemplate);
+        OfferTemplateDto offerTemplateDto = convertOfferTemplateToDto(offerTemplate);
 
-		return offerTemplateDto;
-	}
+        return offerTemplateDto;
+    }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.meveo.api.ApiService#findIgnoreNotFound(java.lang.String)
      */
     @Override
@@ -337,40 +338,40 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
             return null;
         }
     }
-    
-	public void remove(String code) throws MeveoApiException, BusinessException {
 
-		if (StringUtils.isBlank(code)) {
-			missingParameters.add("offerTemplateCode");
-			handleMissingParameters();
-		}
+    public void remove(String code) throws MeveoApiException, BusinessException {
 
-		OfferTemplate offerTemplate = offerTemplateService.findByCode(code);
-		if (offerTemplate == null) {
-			throw new EntityDoesNotExistsException(OfferTemplate.class, code);
-		}
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("offerTemplateCode");
+            handleMissingParameters();
+        }
 
-		// deleteImage(offerTemplate);
-		offerTemplateService.remove(offerTemplate);
-	}
+        OfferTemplate offerTemplate = offerTemplateService.findByCode(code);
+        if (offerTemplate == null) {
+            throw new EntityDoesNotExistsException(OfferTemplate.class, code);
+        }
 
-	/**
-	 * Create or updates the OfferTemplate based on code
-	 *
-	 * @param postData
+        // deleteImage(offerTemplate);
+        offerTemplateService.remove(offerTemplate);
+    }
 
-	 * @throws MeveoApiException
-	 * @throws BusinessException
-	 */
-	public OfferTemplate createOrUpdate(OfferTemplateDto postData) throws MeveoApiException, BusinessException {		
-		OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getCode());
+    /**
+     * Create or updates the OfferTemplate based on code
+     *
+     * @param postData
+     * 
+     * @throws MeveoApiException
+     * @throws BusinessException
+     */
+    public OfferTemplate createOrUpdate(OfferTemplateDto postData) throws MeveoApiException, BusinessException {
+        OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getCode());
 
-		if (offerTemplate == null) {
-			return create(postData);
-		} else {
-			return update(postData);
-		}
-	}
+        if (offerTemplate == null) {
+            return create(postData);
+        } else {
+            return update(postData);
+        }
+    }
 
     public OfferTemplateDto convertOfferTemplateToDto(OfferTemplate offerTemplate) {
 
@@ -389,9 +390,9 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
         }
 
         if (offerTemplate.getOfferTemplateCategories() != null && !offerTemplate.getOfferTemplateCategories().isEmpty()) {
-            List<String> offerTemplateCategories = new ArrayList<>();
+            List<OfferTemplateCategoryDto> offerTemplateCategories = new ArrayList<>();
             for (OfferTemplateCategory oc : offerTemplate.getOfferTemplateCategories()) {
-                offerTemplateCategories.add(oc.getCode());
+                offerTemplateCategories.add(new OfferTemplateCategoryDto(oc.getCode()));
             }
             dto.setOfferTemplateCategories(offerTemplateCategories);
         }

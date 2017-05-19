@@ -22,160 +22,172 @@ import org.meveo.model.catalog.ProductOffering;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProductOfferingDto extends BusinessDto {
 
-	private static final long serialVersionUID = 4599063410509766484L;
+    private static final long serialVersionUID = 4599063410509766484L;
 
-	@XmlAttribute(required = true)
-	private String code;
+    @XmlAttribute(required = true)
+    protected String code;
 
-	@XmlAttribute()
-	private String description;
+    @XmlAttribute()
+    protected String description;
 
-	private String name;
+    protected String name;
 
-	@XmlElementWrapper(name = "offerTemplateCategories")
-	@XmlElement(name = "offerTemplateCategory")
-	private List<OfferTemplateCategoryDto> offerTemplateCategories;
+    @XmlElementWrapper(name = "offerTemplateCategories")
+    @XmlElement(name = "offerTemplateCategory")
+    protected List<OfferTemplateCategoryDto> offerTemplateCategories;
 
-	@XmlElementWrapper(name = "digitalResources")
-	@XmlElement(name = "digitalResource")
-	private List<DigitalResourcesDto> attachments;
+    @XmlElementWrapper(name = "digitalResources")
+    @XmlElement(name = "digitalResource")
+    protected List<DigitalResourcesDto> attachments;
 
-	private String modelCode;
+    protected String modelCode;
 
-	private Date validFrom;
+    protected Date validFrom;
 
-	private Date validTo;
+    protected Date validTo;
 
-	private LifeCycleStatusEnum lifeCycleStatus;
+    protected LifeCycleStatusEnum lifeCycleStatus;
 
-	private CustomFieldsDto customFields = new CustomFieldsDto();
-	
-	private String imagePath;
-	private String imageBase64;
+    protected CustomFieldsDto customFields = new CustomFieldsDto();
 
-	public ProductOfferingDto() {
-	}
+    /**
+     * This field is populated on find and list. Use to pull the image from a servlet later on.
+     */
+    protected String imagePath;
+    protected String imageBase64;
 
-	public ProductOfferingDto(ProductOffering product, CustomFieldsDto customFieldsDto) {
-		this.setCode(product.getCode());
-		this.setDescription(product.getDescription());
-		this.setName(product.getName());
-		this.setValidFrom(product.getValidity().getFrom());
-		this.setValidTo(product.getValidity().getTo());
-		this.setLifeCycleStatus(product.getLifeCycleStatus());
-		this.imagePath = product.getImagePath();
-		
-		List<OfferTemplateCategory> offerTemplateCategories = product.getOfferTemplateCategories();
-		if (offerTemplateCategories != null && !offerTemplateCategories.isEmpty()) {
-			this.setOfferTemplateCategories(new ArrayList<OfferTemplateCategoryDto>());
-			for (OfferTemplateCategory offerTemplateCategory : offerTemplateCategories) {
-				this.getOfferTemplateCategories().add(new OfferTemplateCategoryDto(offerTemplateCategory));
-			}
-		}
-		List<DigitalResource> attachments = product.getAttachments();
-		if (attachments != null && !attachments.isEmpty()) {
-			this.setAttachments(new ArrayList<DigitalResourcesDto>());
-			for (DigitalResource digitalResource : attachments) {
-				this.getAttachments().add(new DigitalResourcesDto(digitalResource));
-			}
-		}
-		this.customFields = customFieldsDto;
-	}
+    protected boolean disabled = false;
 
-	public String getCode() {
-		return code;
-	}
+    public ProductOfferingDto() {
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public ProductOfferingDto(ProductOffering product, CustomFieldsDto customFieldsDto) {
+        this.setCode(product.getCode());
+        this.setDescription(product.getDescription());
+        this.setName(product.getName());
+        this.setValidFrom(product.getValidity().getFrom());
+        this.setValidTo(product.getValidity().getTo());
+        this.setLifeCycleStatus(product.getLifeCycleStatus());
+        this.imagePath = product.getImagePath();
 
-	public String getDescription() {
-		return description;
-	}
+        List<OfferTemplateCategory> offerTemplateCategories = product.getOfferTemplateCategories();
+        if (offerTemplateCategories != null && !offerTemplateCategories.isEmpty()) {
+            this.setOfferTemplateCategories(new ArrayList<OfferTemplateCategoryDto>());
+            for (OfferTemplateCategory offerTemplateCategory : offerTemplateCategories) {
+                this.getOfferTemplateCategories().add(new OfferTemplateCategoryDto(offerTemplateCategory));
+            }
+        }
+        List<DigitalResource> attachments = product.getAttachments();
+        if (attachments != null && !attachments.isEmpty()) {
+            this.setAttachments(new ArrayList<DigitalResourcesDto>());
+            for (DigitalResource digitalResource : attachments) {
+                this.getAttachments().add(new DigitalResourcesDto(digitalResource));
+            }
+        }
+        this.customFields = customFieldsDto;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public List<OfferTemplateCategoryDto> getOfferTemplateCategories() {
-		return offerTemplateCategories;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public void setOfferTemplateCategories(List<OfferTemplateCategoryDto> offerTemplateCategories) {
-		this.offerTemplateCategories = offerTemplateCategories;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public List<DigitalResourcesDto> getAttachments() {
-		return attachments;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setAttachments(List<DigitalResourcesDto> attachments) {
-		this.attachments = attachments;
-	}
+    public List<OfferTemplateCategoryDto> getOfferTemplateCategories() {
+        return offerTemplateCategories;
+    }
 
-	public String getModelCode() {
-		return modelCode;
-	}
+    public void setOfferTemplateCategories(List<OfferTemplateCategoryDto> offerTemplateCategories) {
+        this.offerTemplateCategories = offerTemplateCategories;
+    }
 
-	public void setModelCode(String modelCode) {
-		this.modelCode = modelCode;
-	}
+    public List<DigitalResourcesDto> getAttachments() {
+        return attachments;
+    }
 
-	public Date getValidFrom() {
-		return validFrom;
-	}
+    public void setAttachments(List<DigitalResourcesDto> attachments) {
+        this.attachments = attachments;
+    }
 
-	public void setValidFrom(Date validFrom) {
-		this.validFrom = validFrom;
-	}
+    public String getModelCode() {
+        return modelCode;
+    }
 
-	public Date getValidTo() {
-		return validTo;
-	}
+    public void setModelCode(String modelCode) {
+        this.modelCode = modelCode;
+    }
 
-	public void setValidTo(Date validTo) {
-		this.validTo = validTo;
-	}
+    public Date getValidFrom() {
+        return validFrom;
+    }
 
-	public LifeCycleStatusEnum getLifeCycleStatus() {
-		return lifeCycleStatus;
-	}
+    public void setValidFrom(Date validFrom) {
+        this.validFrom = validFrom;
+    }
 
-	public void setLifeCycleStatus(LifeCycleStatusEnum lifeCycleStatus) {
-		this.lifeCycleStatus = lifeCycleStatus;
-	}
+    public Date getValidTo() {
+        return validTo;
+    }
 
-	public CustomFieldsDto getCustomFields() {
-		return customFields;
-	}
+    public void setValidTo(Date validTo) {
+        this.validTo = validTo;
+    }
 
-	public void setCustomFields(CustomFieldsDto customFields) {
-		this.customFields = customFields;
-	}
+    public LifeCycleStatusEnum getLifeCycleStatus() {
+        return lifeCycleStatus;
+    }
 
-	public String getImagePath() {
-		return imagePath;
-	}
+    public void setLifeCycleStatus(LifeCycleStatusEnum lifeCycleStatus) {
+        this.lifeCycleStatus = lifeCycleStatus;
+    }
 
-	public void setImagePath(String imagePath) {
-		this.imagePath = imagePath;
-	}
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
 
-	public String getImageBase64() {
-		return imageBase64;
-	}
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
+    }
 
-	public void setImageBase64(String imageBase64) {
-		this.imageBase64 = imageBase64;
-	}
+    public String getImagePath() {
+        return imagePath;
+    }
 
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
+    public String getImageBase64() {
+        return imageBase64;
+    }
+
+    public void setImageBase64(String imageBase64) {
+        this.imageBase64 = imageBase64;
+    }
+
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
+    }
 }

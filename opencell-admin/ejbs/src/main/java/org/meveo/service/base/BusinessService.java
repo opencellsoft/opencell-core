@@ -56,14 +56,17 @@ public abstract class BusinessService<P extends BusinessEntity> extends Persiste
      * @param code Code to match
      * @param fetchFields Fields to fetch
      * @param additionalSql Additional sql to append to the find clause
-     * @param additionalParamName Parameter name in additional sql
+     * @param additionalParameters An array of Parameter names and values for additional sql
      * @param additionalParamValue Parameter value in additional sql
      * @return A single entity matching code
      */
     @SuppressWarnings("unchecked")
-    protected P findByCode(String code, List<String> fetchFields, String additionalSql, String additionalParamName, Object additionalParamValue) {
+    protected P findByCode(String code, List<String> fetchFields, String additionalSql, Object... additionalParameters) {
         QueryBuilder qb = new QueryBuilder(getEntityClass(), "be", fetchFields);
         qb.addCriterion("be.code", "=", code, true);
+        if (additionalSql!=null){
+            qb.addSqlCriterionMultiple(additionalSql, additionalParameters);
+        }
 
         try {
             return (P) qb.getQuery(getEntityManager()).getSingleResult();

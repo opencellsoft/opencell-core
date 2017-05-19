@@ -21,6 +21,8 @@ public class GenericProductOfferingService<T extends ProductOffering> extends Au
 
     private static String FIND_CODE_BY_DATE_CLAUSE = "((be.validity.from IS NULL and be.validity.to IS NULL) or (be.validity.from<=:date and :date<be.validity.to) or (be.validity.from<=:date and be.validity.to IS NULL) or (be.validity.from IS NULL and :date<be.validity.to))";
 
+    private static String FIND_CODE_BY_FROM_TO_DATE_CLAUSE = "be.validity.from=:from and be.validity.to=:to";
+
     @Inject
     protected CustomFieldInstanceService customFieldInstanceService;
 
@@ -179,6 +181,18 @@ public class GenericProductOfferingService<T extends ProductOffering> extends Au
     public T findByCode(String code, Date date) {
         // Append search by a current date
         return super.findByCode(code, null, FIND_CODE_BY_DATE_CLAUSE, "date", date);
+    }
+
+    /**
+     * Find a particular product offering version, valid on a given date
+     * 
+     * @param code Product offering code
+     * @param date Date to match
+     * @return Product offering
+     */
+    public T findByCode(String code, Date from, Date to) {
+        // Append search by a from and to dates
+        return super.findByCode(code, null, FIND_CODE_BY_FROM_TO_DATE_CLAUSE, "from", from, "to", to);
     }
 
     /**
