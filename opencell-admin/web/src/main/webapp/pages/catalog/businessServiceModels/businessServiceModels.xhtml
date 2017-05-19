@@ -30,7 +30,7 @@
             <p:column headerText="#{messages['businessOfferModels']}">
                 <ui:repeat value="#{businessServiceModelBean.getBusinessOfferModels(entity)}" var="c">
                     <hf:linkToEntity linkId="bom_message_link" entity="#{c}" objectIdParamName="businessOfferModelId" entityId="#{c.id}" propagateConversation="true" value="#{c.code}"
-                        view="businessOfferModelDetail" />
+                        view="businessOfferModelDetail" backView="businessServiceModels"/>
                     <br />
                 </ui:repeat>
             </p:column>
