@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.meveo.admin.filter;
+package org.meveo.admin.web.filter;
 
 import java.io.IOException;
 
@@ -26,17 +26,34 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
- * @author R.AITYAAZZA
+ * Handles cases when user refresh a stale page, bound to a session, that is when url contains CID parameter
+ * 
+ * @author Andrius Karpavicius
  *
  */
-public class UTF8CharacterEncodingFilter implements Filter {
+@WebFilter(filterName = "redirectToStaleSessionFilter", urlPatterns = { "/pages/*" })
+public class RedirectToStaleSessionFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
-        req.setCharacterEncoding("UTF-8");
-        resp.setCharacterEncoding("UTF-8");
+
+        HttpServletRequest reqHttp = (HttpServletRequest) req;
+
+        String referer = reqHttp.getHeader("Referer");
+
+        if ("GET".equals(reqHttp.getMethod()) && referer != null && referer.contains("/auth") && reqHttp.getParameter("cid") != null) {
+            String url = reqHttp.getRequestURL().toString();
+            String indexUrl = url.substring(0, url.indexOf(reqHttp.getContextPath())) + reqHttp.getContextPath() + "/index.html";
+
+            ((HttpServletResponse) resp).sendRedirect(indexUrl);
+            return;
+        }
+
         chain.doFilter(req, resp);
     }
 
