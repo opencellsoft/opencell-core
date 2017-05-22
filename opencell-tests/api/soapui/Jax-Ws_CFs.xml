@@ -18589,6 +18589,111 @@ public class Action1 extends Script {
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="request" name="Create CFT Matrix String no columns" id="494d9298-7079-4105-86a3-fa15d4f051bd">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createField</con:operation>
+          <con:request name="Create CFT Matrix String no columns" id="3753bce2-3fec-40e6-a41f-454620694710">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoEndpoint}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateField>\r
+         <customField code="${#Project#baseEntityPrefix}_STRING_MATRIX_NO_COLUMN" description="No columns">\r
+            <fieldType>STRING</fieldType>\r
+            <appliesTo>CUST</appliesTo>\r
+            <storageType>MATRIX</storageType>\r
+            <mapKeyType>STRING</mapKeyType>\r
+            <matrixColumns></matrixColumns>\r
+         </customField>\r
+      </ws:createOrUpdateField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/>
+            <con:assertion type="Simple Contains" id="d66b73c0-4bea-4ff4-ab95-469cc8c65a36" name="Contains">
+              <con:configuration>
+                <token>&lt;status>FAIL&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="cd5e2df1-6421-4322-9e65-d20bc17cced9" name="Contains 1">
+              <con:configuration>
+                <token>The following parameters are required or contain invalid values: matrixColumns</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create CFT Matrix String missing column data" id="860d242a-d32e-4e74-8714-69902fbe9b29">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createField</con:operation>
+          <con:request name="Create CFT Matrix String missing column data" id="3753bce2-3fec-40e6-a41f-454620694710">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoEndpoint}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateField>\r
+         <customField code="${#Project#baseEntityPrefix}_STRING_MATRIX_NO_COLUMN" description="No columns">\r
+            <fieldType>STRING</fieldType>\r
+            <appliesTo>CUST</appliesTo>\r
+            <storageType>MATRIX</storageType>\r
+            <mapKeyType>STRING</mapKeyType>\r
+            <matrixColumns>\r
+               <matrixColumn code="MAT_1" position="1" keyType="STRING"/>\r
+               <matrixColumn code="MAT_2" position="2" label="Two"/>\r
+            </matrixColumns>\r
+         </customField>\r
+      </ws:createOrUpdateField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/>
+            <con:assertion type="Simple Contains" id="d66b73c0-4bea-4ff4-ab95-469cc8c65a36" name="Contains">
+              <con:configuration>
+                <token>&lt;status>FAIL&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="314d90ea-2980-4f08-9c56-91a54e2ae7e5" name="Contains 1">
+              <con:configuration>
+                <token>The following parameters are required or contain invalid values: matrixColumns/label, matrixColumns/keyType</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
       <con:properties/>
     </con:testCase>
     <con:testCase id="e614be4d-eeff-469a-a965-fe53f4dd4d6d" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CF Validation - parent inherited required value and default value instantiation" searchProperties="true">

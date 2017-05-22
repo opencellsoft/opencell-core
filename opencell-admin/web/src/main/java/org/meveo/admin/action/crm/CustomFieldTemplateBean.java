@@ -5,13 +5,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.UpdateMapTypeFieldBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
@@ -42,6 +46,9 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
     @Inject
     private CustomizedEntityService customizedEntityService;
 
+    @Inject
+    private ResourceBundle resourceMessages;
+
     private DualListModel<CustomFieldMatrixColumn> childEntityFieldDM;
 
     public CustomFieldTemplateBean() {
@@ -52,9 +59,9 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
     public CustomFieldTemplate initEntity() {
         CustomFieldTemplate customFieldTemplate = super.initEntity();
 
-		if (customFieldTemplate != null) {
-			extractMapTypeFieldFromEntity(customFieldTemplate.getListValues(), "listValues");
-		}
+        if (customFieldTemplate != null) {
+            extractMapTypeFieldFromEntity(customFieldTemplate.getListValues(), "listValues");
+        }
 
         return customFieldTemplate;
     }
@@ -74,7 +81,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
             return null;
         }
 
-        // Update childEntityCcolums
+        // Update childEntityColumns
         if (getEntity().getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY) {
             List<String> cheColumns = new ArrayList<>();
             for (CustomFieldMatrixColumn cheColumn : childEntityFieldDM.getTarget()) {
@@ -180,8 +187,8 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
             perksSource.add(new CustomFieldMatrixColumn("code", "Code"));
             perksSource.add(new CustomFieldMatrixColumn("description", "Description"));
 
-            Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(
-                EntityCustomizationUtils.getAppliesTo(CustomEntityTemplate.class, CustomFieldTemplate.retrieveCetCode(entity.getEntityClazz())));
+            Map<String, CustomFieldTemplate> cfts = customFieldTemplateService
+                .findByAppliesTo(EntityCustomizationUtils.getAppliesTo(CustomEntityTemplate.class, CustomFieldTemplate.retrieveCetCode(entity.getEntityClazz())));
 
             for (CustomFieldTemplate cft : cfts.values()) {
                 perksSource.add(new CustomFieldMatrixColumn(cft.getCode(), cft.getDescription()));
@@ -209,5 +216,43 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
 
     public void setChildEntityFieldListModel(DualListModel<CustomFieldMatrixColumn> childEntityFieldDM) {
         this.childEntityFieldDM = childEntityFieldDM;
+    }
+
+    /**
+     * Validate matrix columns of a custom field template
+     * 
+     * @param cft Custom field template
+     */
+    public void validateMatrixColumns(CustomFieldTemplate cft) {
+
+        if (cft.getStorageType() != CustomFieldStorageTypeEnum.MATRIX) {
+            return;
+        }
+
+        FacesContext fc = FacesContext.getCurrentInstance();
+        boolean valid = true;
+
+        if (cft.getMatrixColumns() == null || cft.getMatrixColumns().isEmpty()) {
+            FacesMessage msg = new FacesMessage(resourceMessages.getString("customFieldTemplate.matrixColumn.error.atLeastOne"));
+            msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fc.addMessage(null, msg);
+            valid = false;
+        } else {
+            for (CustomFieldMatrixColumn column : cft.getMatrixColumns()) {
+                if (StringUtils.isBlank(column.getCode()) || StringUtils.isBlank(column.getLabel()) || column.getKeyType() == null) {
+                    FacesMessage msg = new FacesMessage(resourceMessages.getString("customFieldTemplate.matrixColumn.error.missingFields"));
+                    msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+                    fc.addMessage(null, msg);
+                    valid = false;
+                    break;
+                }
+            }
+        }
+
+        if (!valid) {
+
+            fc.validationFailed();
+            fc.renderResponse();
+        }
     }
 }
