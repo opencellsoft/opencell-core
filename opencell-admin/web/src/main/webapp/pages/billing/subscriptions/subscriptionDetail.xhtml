@@ -338,17 +338,18 @@
 								<p:tabView id="informationTab" styleClass="tab-child"
 									activeIndex="#{subscriptionBean.activeTab}">
 									<p:tab title="#{messages['subscription.panel']}">
-
 										<!--Creation window fields-->
 										<hftl:formField id="userSelectId"
 											label="#{messages['subscription.userAccount']}"
 											field="userAccount" valueLabelField="code" required="true"
-											popup="true" popupId="userAccountPopup" allowEdit="false" />
+												popup="true" popupId="userAccountPopup" allowEdit="false" />
 										<hftl:formField id="offerSelectId"
 											label="#{messages['subscription.offer']}" field="offer"
 											valueLabelField="code" listBean="#{offerTemplateBean}"
-											required="true" modifyOnCreate="true" />
-										<!--                                         popup="true" popupId="offerPopup" -->
+											required="true" modifyOnCreate="true"
+											actionListenerBean="#{subscriptionBean}"
+											actionListenerMethod="onOfferSelected" listenerUpdate=":subscriptionTab:subscriptionFormId:messages" />
+										<!-- popup="true" popupId="offerPopup" -->
 										<hftl:formField label="#{messages['businessEntity.code']}"
 											field="code" required="true" validateUnique="true"/>
 										<hftl:formField
