@@ -34,6 +34,9 @@ public class UnitPaymentCardJobBean {
 
     @Inject
     private RecordedInvoiceService recordedInvoiceService;
+    
+    @Inject
+    private PaymentA paymentApi;
 
    
     // @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
