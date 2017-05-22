@@ -24,10 +24,12 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.admin.exception.InvoiceExistException;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
@@ -37,6 +39,8 @@ import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
+import org.meveo.model.rating.EDR;
+import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 
@@ -258,5 +262,16 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 		recordedInvoice.setMatchingStatus(MatchingStatusEnum.O);
 		create(recordedInvoice);
 		invoice.setRecordedInvoice(recordedInvoice);
+	}
+
+	public List<Long> getAOidsToPay() {
+		QueryBuilder qb = new QueryBuilder("SELECT ao.id FROM "+RecordedInvoice.class.getName()+" ao");
+		qb.addCriterionEnum("ao.paymentMethod", PaymentMethodEnum.CARD);
+		qb.addCriterionEnum("ao.matchingStatus",MatchingStatusEnum.O);
+		try {
+			return (List<Long>) qb.getQuery(getEntityManager()).getResultList();
+		} catch (NoResultException e) {
+			return null;
+		}
 	}
 }
