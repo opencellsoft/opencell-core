@@ -24,266 +24,266 @@ import org.meveo.api.ws.SuperAdminSettingsWs;
 /**
  * @author Edward P. Legaspi
  **/
-@WebService(serviceName = "SuperAdminSettingsWs", endpointInterface = "org.meveo.api.ws.SuperAdminSettingsWs",targetNamespace = "http://superAdmin.ws.api.meveo.org/")
+@WebService(serviceName = "SuperAdminSettingsWs", endpointInterface = "org.meveo.api.ws.SuperAdminSettingsWs", targetNamespace = "http://superAdmin.ws.api.meveo.org/")
 @Interceptors({ WsRestApiInterceptor.class })
 public class SuperAdminSettingsWsImpl extends BaseWs implements SuperAdminSettingsWs {
 
-	@Inject
-	private CountryIsoApi countryIsoApi;
+    @Inject
+    private CountryIsoApi countryIsoApi;
 
-	@Inject
-	private LanguageIsoApi languageIsoApi;
+    @Inject
+    private LanguageIsoApi languageIsoApi;
 
-	@Inject
-	private CurrencyIsoApi currencyIsoApi;
+    @Inject
+    private CurrencyIsoApi currencyIsoApi;
 
-	@Inject
-	private ProviderApi providerApi;
+    @Inject
+    private ProviderApi providerApi;
 
-	@Override
-	public ActionStatus createProvider(ProviderDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus createProvider(ProviderDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			providerApi.create(postData);
+        try {
+            providerApi.create(postData);
 
-		} catch (Exception e) {
-			super.processException(e, result);
-		}
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public GetProviderResponse findProvider(String providerCode) {
-		GetProviderResponse result = new GetProviderResponse();
+    @Override
+    public GetProviderResponse findProvider(String providerCode) {
+        GetProviderResponse result = new GetProviderResponse();
 
-		try {
-			result.setProvider(providerApi.find());
+        try {
+            result.setProvider(providerApi.find());
 
-		} catch (Exception e) {
-			super.processException(e, result.getActionStatus());
-		}
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public ActionStatus updateProvider(ProviderDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus updateProvider(ProviderDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			providerApi.update(postData);
-		} catch (Exception e) {
-			super.processException(e, result);
-		}
+        try {
+            providerApi.update(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public ActionStatus createOrUpdateProvider(ProviderDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus createOrUpdateProvider(ProviderDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			providerApi.update(postData);
-		} catch (Exception e) {
-			super.processException(e, result);
-		}
+        try {
+            providerApi.update(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public ActionStatus createLanguage(LanguageIsoDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus createLanguage(LanguageIsoDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			languageIsoApi.create(postData);
-		} catch (Exception e) {
-			super.processException(e, result);
-		}
+        try {
+            languageIsoApi.create(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public GetLanguageIsoResponse findLanguage(String languageCode) {
-		GetLanguageIsoResponse result = new GetLanguageIsoResponse();
+    @Override
+    public GetLanguageIsoResponse findLanguage(String languageCode) {
+        GetLanguageIsoResponse result = new GetLanguageIsoResponse();
 
-		try {
-			result.setLanguage(languageIsoApi.find(languageCode));
-		} catch (Exception e) {
-			super.processException(e, result.getActionStatus());
-		}
-		return result;
-	}
+        try {
+            result.setLanguage(languageIsoApi.find(languageCode));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+        return result;
+    }
 
-	@Override
-	public ActionStatus removeLanguage(String languageCode) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus removeLanguage(String languageCode) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			languageIsoApi.remove(languageCode);
-		} catch (Exception e) {
-			super.processException(e, result);
-		}
+        try {
+            languageIsoApi.remove(languageCode);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public ActionStatus updateLanguage(LanguageIsoDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus updateLanguage(LanguageIsoDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			languageIsoApi.update(postData);
-		} catch (Exception e) {
-			super.processException(e, result);
-		}
-		return result;
-	}
+        try {
+            languageIsoApi.update(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+    }
 
-	@Override
-	public ActionStatus createOrUpdateLanguage(LanguageIsoDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus createOrUpdateLanguage(LanguageIsoDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			languageIsoApi.createOrUpdate(postData);
-		} catch (Exception e) {
-			super.processException(e, result);
-		}
+        try {
+            languageIsoApi.createOrUpdate(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public ActionStatus createCountry(CountryIsoDto countryIsoDto) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus createCountry(CountryIsoDto countryIsoDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			countryIsoApi.create(countryIsoDto);
-		} catch (Exception e) {
-			super.processException(e, result);
-		}
+        try {
+            countryIsoApi.create(countryIsoDto);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public GetCountryIsoResponse findCountry(String countryCode) {
-		GetCountryIsoResponse result = new GetCountryIsoResponse();
+    @Override
+    public GetCountryIsoResponse findCountry(String countryCode) {
+        GetCountryIsoResponse result = new GetCountryIsoResponse();
 
-		try {
-			result.setCountry(countryIsoApi.find(countryCode));
-		} catch (Exception e) {
-			super.processException(e, result.getActionStatus());
-		}
+        try {
+            result.setCountry(countryIsoApi.find(countryCode));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public ActionStatus removeCountry(String countryCode) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus removeCountry(String countryCode) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			countryIsoApi.remove(countryCode);
-		} catch (Exception e) {
-			super.processException(e, result);
-		}
+        try {
+            countryIsoApi.remove(countryCode);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public ActionStatus updateCountry(CountryIsoDto countryIsoDto) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus updateCountry(CountryIsoDto countryIsoDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			countryIsoApi.update(countryIsoDto);
-		} catch (Exception e) {
-			super.processException(e, result);
-		}
+        try {
+            countryIsoApi.update(countryIsoDto);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public ActionStatus createOrUpdateCountry(CountryIsoDto countryIsoDto) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus createOrUpdateCountry(CountryIsoDto countryIsoDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			countryIsoApi.createOrUpdate(countryIsoDto);
-		} catch (Exception e) {
-			super.processException(e, result);
-		}
+        try {
+            countryIsoApi.createOrUpdate(countryIsoDto);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public ActionStatus createCurrency(CurrencyIsoDto currencyIsoDto) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus createCurrency(CurrencyIsoDto currencyIsoDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			currencyIsoApi.create(currencyIsoDto);
-		} catch (Exception e) {
-			super.processException(e, result);
-		}
+        try {
+            currencyIsoApi.create(currencyIsoDto);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public GetCurrencyIsoResponse findCurrency(String currencyCode) {
-		GetCurrencyIsoResponse result = new GetCurrencyIsoResponse();
+    @Override
+    public GetCurrencyIsoResponse findCurrency(String currencyCode) {
+        GetCurrencyIsoResponse result = new GetCurrencyIsoResponse();
 
-		try {
-			result.setCurrency(currencyIsoApi.find(currencyCode));
-		} catch (Exception e) {
-			super.processException(e, result.getActionStatus());
-		}
+        try {
+            result.setCurrency(currencyIsoApi.find(currencyCode));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public ActionStatus removeCurrency(String currencyCode) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus removeCurrency(String currencyCode) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			currencyIsoApi.remove(currencyCode);
-		} catch (Exception e) {
-			super.processException(e, result);
-		}
+        try {
+            currencyIsoApi.remove(currencyCode);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public ActionStatus updateCurrency(CurrencyIsoDto currencyIsoDto) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus updateCurrency(CurrencyIsoDto currencyIsoDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			currencyIsoApi.update(currencyIsoDto);
-		} catch (Exception e) {
-			super.processException(e, result);
-		}
+        try {
+            currencyIsoApi.update(currencyIsoDto);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public ActionStatus createOrUpdateCurrency(CurrencyIsoDto currencyIsoDto) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus createOrUpdateCurrency(CurrencyIsoDto currencyIsoDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			currencyIsoApi.createOrUpdate(currencyIsoDto);
-		} catch (Exception e) {
-			super.processException(e, result);
-		}
+        try {
+            currencyIsoApi.createOrUpdate(currencyIsoDto);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-		return result;
-	}
+        return result;
+    }
 }

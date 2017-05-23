@@ -29,7 +29,7 @@ public class InvoiceTypeRsImpl extends BaseRs implements InvoiceTypeRs {
 	    try {
 			invoiceTypeApi.create(invoiceTypeDto);
 		} catch (Exception e) {
-			super.processException(e, result);
+			processException(e, result);
 		}
 	    return result;
 	}
@@ -40,7 +40,7 @@ public class InvoiceTypeRsImpl extends BaseRs implements InvoiceTypeRs {
 	    try {
 			invoiceTypeApi.update(invoiceTypeDto);
 		} catch (Exception e) {
-			super.processException(e, result);
+			processException(e, result);
 		}
 	    return result;
 	}
@@ -52,7 +52,7 @@ public class InvoiceTypeRsImpl extends BaseRs implements InvoiceTypeRs {
 	    try {
 	    	result.setInvoiceTypeDto(invoiceTypeApi.find(invoiceTypeCode));
 		} catch (Exception e) {
-			super.processException(e, result.getActionStatus());
+			processException(e, result.getActionStatus());
 		}
 	    return result;
 	}
@@ -63,7 +63,7 @@ public class InvoiceTypeRsImpl extends BaseRs implements InvoiceTypeRs {
 	    try {
 			invoiceTypeApi.remove(invoiceTypeCode);
 		} catch (Exception e) {
-			super.processException(e, result);
+			processException(e, result);
 		}
 	    return result;
 	}
@@ -74,7 +74,7 @@ public class InvoiceTypeRsImpl extends BaseRs implements InvoiceTypeRs {
 	    try {
 			invoiceTypeApi.createOrUpdate(invoiceTypeDto);
 		} catch (Exception e) {
-			super.processException(e, result);
+			processException(e, result);
 		}
 	    return result;
 	}
@@ -86,7 +86,7 @@ public class InvoiceTypeRsImpl extends BaseRs implements InvoiceTypeRs {
 	    try {
 	    	result.setInvoiceTypesDto(invoiceTypeApi.list());
 		} catch (Exception e) {
-			super.processException(e, result.getActionStatus());
+            processException(e, result.getActionStatus());
 		}
 	    return result;
 	}
