@@ -280,7 +280,9 @@
 
 			<hftl:formPanel formId="cftForm" label="#{messages['customFieldTemplate.panel']}" backingBean="#{customFieldTemplateBean}" showFormButtons="false">
 
-				<hftl:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" allowEdit="false" componentWidth="15" />
+                <f:event listener="#{customFieldTemplateBean.validateMatrixColumns(customFieldTemplateBean.entity)}" type="postValidate" />
+				
+                <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" allowEdit="false" componentWidth="15" />
 				<hftl:formField label="#{messages['customFieldTemplate.fieldLabel']}" field="description" required="true" useConverter="false" id="description" componentWidth="35" />
 				<hftl:formField label="#{messages['customFieldTemplate.fieldType']}" field="fieldType" required="true" componentWidth="10"
 					listenerUpdate="listValuesField defaultValueField entityClazzField validations versioning storageType_enum matrixColumns childEntityFields" actionListenerBean="#{customFieldTemplateBean}"
