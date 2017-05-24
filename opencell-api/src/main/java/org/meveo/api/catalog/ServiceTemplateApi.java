@@ -266,8 +266,6 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 			throw new InvalidImageData();
 		}
 
-        serviceTemplateService.create(serviceTemplate);
-
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), serviceTemplate, true);
@@ -278,6 +276,8 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+
+        serviceTemplateService.create(serviceTemplate);
 
         // check for recurring charges
         createServiceChargeTemplateRecurring(postData, serviceTemplate);
@@ -337,8 +337,6 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 			throw new InvalidImageData();
 		}
 
-        serviceTemplate = serviceTemplateService.update(serviceTemplate);
-
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), serviceTemplate, false);
@@ -349,6 +347,8 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+
+        serviceTemplate = serviceTemplateService.update(serviceTemplate);
 
         serviceChargeTemplateRecurringService.removeByServiceTemplate(serviceTemplate);
         serviceChargeTemplateSubscriptionService.removeByServiceTemplate(serviceTemplate);

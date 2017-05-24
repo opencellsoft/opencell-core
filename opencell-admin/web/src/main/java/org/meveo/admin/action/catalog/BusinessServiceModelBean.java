@@ -15,7 +15,6 @@ import org.meveo.model.module.MeveoModule;
 import org.meveo.model.module.MeveoModuleItem;
 import org.meveo.service.admin.impl.MeveoModuleService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.catalog.impl.BusinessOfferModelService;
 import org.meveo.service.catalog.impl.BusinessServiceModelService;
 
 @Named
@@ -26,9 +25,6 @@ public class BusinessServiceModelBean extends GenericModuleBean<BusinessServiceM
 
     @Inject
     private BusinessServiceModelService businessServiceModelService;
-
-    @Inject
-    private BusinessOfferModelService businessOfferModelService;
 
     private BusinessOfferModel businessOfferModel;
 
@@ -54,7 +50,9 @@ public class BusinessServiceModelBean extends GenericModuleBean<BusinessServiceM
             if (meveoModuleItems != null) {
                 for (MeveoModuleItem meveoModuleItem : meveoModuleItems) {
                     MeveoModule meveoModule = meveoModuleItem.getMeveoModule();
-                    result.add(businessOfferModelService.findByCode(meveoModule.getCode()));
+                    if (meveoModule instanceof BusinessOfferModel) {
+                        result.add((BusinessOfferModel) meveoModule);
+                    }
                 }
             }
         }

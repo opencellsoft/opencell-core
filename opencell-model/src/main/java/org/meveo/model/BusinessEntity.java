@@ -106,10 +106,10 @@ public class BusinessEntity extends EnableEntity {
 	}
  
     @Override
-    public int hashCode() {
+    public int hashCode() {    	
         final int prime = 31;
         int result = prime * 1; //super.hashCode();
-        result = prime * result + ((code == null) ? 0 : code.hashCode());
+        result = prime * result + ((code == null) ? 0 : (this.getClass().getName()+code).hashCode());
         return result;
     }
 

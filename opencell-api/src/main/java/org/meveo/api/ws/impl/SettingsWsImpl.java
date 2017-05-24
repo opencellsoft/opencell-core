@@ -4,7 +4,6 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.jws.WebService;
 
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BillingCycleApi;
 import org.meveo.api.CalendarApi;
 import org.meveo.api.CatMessagesApi;
@@ -16,7 +15,6 @@ import org.meveo.api.InvoiceSubCategoryApi;
 import org.meveo.api.InvoiceSubCategoryCountryApi;
 import org.meveo.api.InvoiceTypeApi;
 import org.meveo.api.LanguageApi;
-import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.OccTemplateApi;
 import org.meveo.api.PermissionApi;
 import org.meveo.api.ProviderApi;
@@ -89,7 +87,6 @@ import org.meveo.api.dto.response.communication.EmailTemplateResponseDto;
 import org.meveo.api.dto.response.communication.EmailTemplatesResponseDto;
 import org.meveo.api.dto.response.communication.MeveoInstanceResponseDto;
 import org.meveo.api.dto.response.communication.MeveoInstancesResponseDto;
-import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.hierarchy.UserHierarchyLevelApi;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.SettingsWs;
@@ -158,13 +155,13 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
     @Inject
     private InvoiceTypeApi invoiceTypeApi;
-    
+
     @Inject
     private ProviderContactApi providerContactApi;
-    
+
     @Inject
     private EmailTemplateApi emailTemplateApi;
-    
+
     @Inject
     private MeveoInstanceApi meveoInstanceApi;
 
@@ -178,15 +175,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             countryApi.create(countryDto);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -200,15 +190,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             result.setCountry(countryApi.find(countryCode));
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -221,15 +204,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             countryApi.remove(countryCode, currencyCode);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -242,15 +218,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             countryApi.update(countryDto);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -263,15 +232,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             currencyApi.create(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -284,15 +246,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             result.setCurrency(currencyApi.find(currencyCode));
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -305,15 +260,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             currencyApi.remove(currencyCode);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -326,15 +274,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             currencyApi.update(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -347,15 +288,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             currencyApi.createOrUpdate(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -367,15 +301,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             invoiceCategoryApi.create(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -387,15 +314,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             invoiceCategoryApi.update(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -407,15 +327,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             result.setInvoiceCategory(invoiceCategoryApi.find(invoiceCategoryCode));
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -427,15 +340,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             invoiceCategoryApi.remove(invoiceCategoryCode);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -447,15 +353,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             invoiceSubCategoryCountryApi.create(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -467,15 +366,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             invoiceSubCategoryCountryApi.update(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -487,15 +379,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             result.setInvoiceSubCategoryCountryDto(invoiceSubCategoryCountryApi.find(invoiceSubCategoryCode, country));
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -507,15 +392,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             invoiceSubCategoryCountryApi.remove(invoiceSubCategoryCode, country);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -527,15 +405,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             invoiceSubCategoryApi.create(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -547,15 +418,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             invoiceSubCategoryApi.update(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -567,15 +431,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             result.setInvoiceSubCategory(invoiceSubCategoryApi.find(invoiceSubCategoryCode));
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -587,15 +444,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             invoiceSubCategoryApi.remove(invoiceSubCategoryCode);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -607,15 +457,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             languageApi.create(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -627,15 +470,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             result.setLanguage(languageApi.find(languageCode));
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -647,15 +483,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             languageApi.remove(languageCode);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -667,15 +496,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             languageApi.update(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -688,15 +510,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             providerApi.create(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -710,15 +525,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         try {
             result.setProvider(providerApi.find());
 
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -731,15 +539,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             providerApi.update(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -751,15 +552,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             sellerApi.create(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -771,15 +565,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             sellerApi.update(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -791,15 +578,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             result.setSeller(sellerApi.find(sellerCode));
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -811,15 +591,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             sellerApi.remove(sellerCode);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -831,15 +604,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             result = sellerApi.listSellerCodes();
-//        } catch (MeveoApiException e) {
-//            result.getActionStatus().setErrorCode(e.getErrorCode());
-//            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-//            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -851,15 +617,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             taxApi.create(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -871,15 +630,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             taxApi.update(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -891,15 +643,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             result.setTax(taxApi.find(taxCode));
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -911,15 +656,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             taxApi.remove(taxCode);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -931,15 +669,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             result.setTaxesDto(taxApi.list());
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -951,15 +682,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             userApi.create(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -971,15 +695,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             userApi.update(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -991,15 +708,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             userApi.remove(username);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -1011,15 +721,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             result.setUser(userApi.find(username));
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -1031,15 +734,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             billingCycleApi.create(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -1051,15 +747,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             billingCycleApi.update(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -1072,15 +761,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             result.setBillingCycle(billingCycleApi.find(billingCycleCode));
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -1092,15 +774,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             billingCycleApi.remove(billingCycleCode);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -1112,15 +787,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             calendarApi.create(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -1132,15 +800,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             calendarApi.update(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -1153,15 +814,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             result.setCalendar(calendarApi.find(calendarCode));
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -1175,15 +829,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         try {
             calendarsDto.setCalendar(calendarApi.list());
             result.setCalendars(calendarsDto);
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -1195,15 +842,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             calendarApi.remove(calendarCode);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -1216,10 +856,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         try {
             result.setSellers(sellerApi.list());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -1232,15 +869,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         try {
             result = providerApi.getTradingConfiguration();
 
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -1253,15 +883,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         try {
             result = providerApi.getInvoicingConfiguration();
 
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -1274,15 +897,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         try {
             result = providerApi.getCustomerConfiguration();
 
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -1295,15 +911,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         try {
             result = providerApi.getCustomerAccountConfiguration();
 
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -1315,15 +924,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             occTemplateApi.create(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -1335,15 +937,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             occTemplateApi.update(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -1355,15 +950,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             result.setOccTemplate(occTemplateApi.find(occTemplateCode));
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -1375,15 +963,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             occTemplateApi.remove(occTemplateCode);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -1395,15 +976,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             customFieldTemplateApi.create(postData, null);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -1415,15 +989,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             customFieldTemplateApi.update(postData, null);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -1435,15 +1002,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             customFieldTemplateApi.remove(customFieldTemplateCode, appliesTo);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -1455,15 +1015,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             result.setCustomFieldTemplate(customFieldTemplateApi.find(customFieldTemplateCode, appliesTo));
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -1475,15 +1028,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             countryApi.createOrUpdate(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -1495,15 +1041,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             billingCycleApi.createOrUpdate(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -1515,15 +1054,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             calendarApi.createOrUpdate(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -1534,15 +1066,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
             taxApi.createOrUpdate(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -1553,15 +1078,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
             sellerApi.createOrUpdate(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -1572,15 +1090,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
             customFieldTemplateApi.createOrUpdate(postData, null);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -1592,15 +1103,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             invoiceCategoryApi.createOrUpdate(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -1612,15 +1116,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             invoiceSubCategoryCountryApi.createOrUpdate(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -1632,15 +1129,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             occTemplateApi.createOrUpdate(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -1653,15 +1143,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             providerApi.update(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -1673,35 +1156,20 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             userApi.createOrUpdate(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
     }
-
 
     public ActionStatus createOrUpdateInvoiceSubCategory(InvoiceSubCategoryDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
             invoiceSubCategoryApi.createOrUpdate(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -1714,9 +1182,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         try {
             result.setPermissionsDto(permissionApi.list());
         } catch (Exception e) {
-            result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -1727,15 +1193,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
             roleApi.create(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -1746,15 +1205,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
             roleApi.update(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -1765,15 +1217,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
             roleApi.remove(name, provider);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -1784,15 +1229,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         GetRoleResponse result = new GetRoleResponse();
         try {
             result.setRoleDto(roleApi.find(name, provider));
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -1803,15 +1241,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         GetRoleResponse result = new GetRoleResponse();
         try {
             result.setRoleDto(roleApi.find(name, null));
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -1822,15 +1253,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
             roleApi.createOrUpdate(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -1842,15 +1266,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             catMessagesApi.createOrUpdate(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -1862,15 +1279,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             catMessagesApi.createOrUpdate(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -1883,15 +1293,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             result.setCatMessagesDto(catMessagesApi.find(entityClass, code, languageCode));
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -1903,15 +1306,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             catMessagesApi.remove(entityClass, code, languageCode);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -1923,15 +1319,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             catMessagesApi.createOrUpdate(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -1943,15 +1332,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             result.setCatMessages(catMessagesApi.list());
-//        } catch (MeveoApiException e) {
-//            result.getActionStatus().setErrorCode(e.getErrorCode());
-//            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-//            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -1963,15 +1345,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             terminationReasonApi.create(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -1983,15 +1358,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             terminationReasonApi.update(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -2003,15 +1371,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             terminationReasonApi.createOrUpdate(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -2023,15 +1384,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             terminationReasonApi.remove(code);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -2043,15 +1397,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             result.getTerminationReason().add(terminationReasonApi.find(code));
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -2063,15 +1410,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             result.getTerminationReason().addAll(terminationReasonApi.list());
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -2084,15 +1424,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             languageApi.createOrUpdate(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -2193,9 +1526,9 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         return result;
     }
 
-	@Override
-	public ActionStatus createProviderContact(ProviderContactDto providerContactDto) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus createProviderContact(ProviderContactDto providerContactDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
             providerContactApi.create(providerContactDto);
@@ -2204,11 +1537,11 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         }
 
         return result;
-     }
+    }
 
-	@Override
-	public ActionStatus updateProviderContact(ProviderContactDto providerContactDto) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus updateProviderContact(ProviderContactDto providerContactDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
             providerContactApi.update(providerContactDto);
@@ -2217,11 +1550,11 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         }
 
         return result;
-	}
+    }
 
-	@Override
-	public ProviderContactResponseDto findProviderContact(String providerContactCode) {
-		ProviderContactResponseDto result=new ProviderContactResponseDto();
+    @Override
+    public ProviderContactResponseDto findProviderContact(String providerContactCode) {
+        ProviderContactResponseDto result = new ProviderContactResponseDto();
 
         try {
             result.setProviderContact(providerContactApi.find(providerContactCode));
@@ -2230,11 +1563,11 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         }
 
         return result;
-	}
+    }
 
-	@Override
-	public ActionStatus removeProviderContact(String providerContactCode) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus removeProviderContact(String providerContactCode) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
             providerContactApi.remove(providerContactCode);
@@ -2243,11 +1576,11 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         }
 
         return result;
-	}
+    }
 
-	@Override
-	public ProviderContactsResponseDto listProviderContacts() {
-		ProviderContactsResponseDto result = new ProviderContactsResponseDto();
+    @Override
+    public ProviderContactsResponseDto listProviderContacts() {
+        ProviderContactsResponseDto result = new ProviderContactsResponseDto();
 
         try {
             result.setProviderContacts(providerContactApi.list());
@@ -2255,11 +1588,11 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
             processException(e, result.getActionStatus());
         }
         return result;
-	}
+    }
 
-	@Override
-	public ActionStatus createOrUpdateProviderContact(ProviderContactDto providerContactDto) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus createOrUpdateProviderContact(ProviderContactDto providerContactDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
             providerContactApi.createOrUpdate(providerContactDto);
@@ -2267,11 +1600,11 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
             processException(e, result);
         }
         return result;
-	}
+    }
 
-	@Override
-	public ActionStatus createEmailTemplate(EmailTemplateDto emailTemplateDto) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus createEmailTemplate(EmailTemplateDto emailTemplateDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
             emailTemplateApi.create(emailTemplateDto);
@@ -2280,11 +1613,11 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         }
 
         return result;
-	}
+    }
 
-	@Override
-	public ActionStatus updateEmailTemplate(EmailTemplateDto emailTemplateDto) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus updateEmailTemplate(EmailTemplateDto emailTemplateDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
             emailTemplateApi.update(emailTemplateDto);
@@ -2293,11 +1626,11 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         }
 
         return result;
-	}
+    }
 
-	@Override
-	public EmailTemplateResponseDto findEmailTemplate(String emailTemplateCode) {
-		EmailTemplateResponseDto result = new EmailTemplateResponseDto();
+    @Override
+    public EmailTemplateResponseDto findEmailTemplate(String emailTemplateCode) {
+        EmailTemplateResponseDto result = new EmailTemplateResponseDto();
 
         try {
             result.setEmailTemplate(emailTemplateApi.find(emailTemplateCode));
@@ -2306,11 +1639,11 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         }
 
         return result;
-	}
+    }
 
-	@Override
-	public ActionStatus removeEmailTemplate(String emailTemplateCode) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus removeEmailTemplate(String emailTemplateCode) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
             emailTemplateApi.remove(emailTemplateCode);
@@ -2319,11 +1652,11 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         }
 
         return result;
-	}
+    }
 
-	@Override
-	public EmailTemplatesResponseDto listEmailTemplates() {
-		EmailTemplatesResponseDto result = new EmailTemplatesResponseDto();
+    @Override
+    public EmailTemplatesResponseDto listEmailTemplates() {
+        EmailTemplatesResponseDto result = new EmailTemplatesResponseDto();
 
         try {
             result.setEmailTemplates(emailTemplateApi.list());
@@ -2332,11 +1665,11 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         }
 
         return result;
-	}
+    }
 
-	@Override
-	public ActionStatus createOrUpdateEmailTemplate(EmailTemplateDto emailTemplateDto) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus createOrUpdateEmailTemplate(EmailTemplateDto emailTemplateDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
             emailTemplateApi.createOrUpdate(emailTemplateDto);
@@ -2345,24 +1678,24 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         }
 
         return result;
-	}
+    }
 
-	@Override
-	public ActionStatus createMeveoInstance(MeveoInstanceDto meveoInstanceDto) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus createMeveoInstance(MeveoInstanceDto meveoInstanceDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-        	log.debug("start to create in meveoInstanceApi");
+            log.debug("start to create in meveoInstanceApi");
             meveoInstanceApi.create(meveoInstanceDto);
         } catch (Exception e) {
             processException(e, result);
         }
         return result;
-	}
+    }
 
-	@Override
-	public ActionStatus updateMeveoInstance(MeveoInstanceDto meveoInstanceDto) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus updateMeveoInstance(MeveoInstanceDto meveoInstanceDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
             meveoInstanceApi.update(meveoInstanceDto);
@@ -2371,11 +1704,11 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         }
 
         return result;
-	}
+    }
 
-	@Override
-	public MeveoInstanceResponseDto findMeveoInstance(String meveoInstanceCode) {
-		MeveoInstanceResponseDto result = new MeveoInstanceResponseDto();
+    @Override
+    public MeveoInstanceResponseDto findMeveoInstance(String meveoInstanceCode) {
+        MeveoInstanceResponseDto result = new MeveoInstanceResponseDto();
         try {
             result.setMeveoInstance(meveoInstanceApi.find(meveoInstanceCode));
         } catch (Exception e) {
@@ -2383,24 +1716,24 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         }
 
         return result;
-	}
+    }
 
-	@Override
-	public ActionStatus removeMeveoInstance(String meveoInstanceCode) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus removeMeveoInstance(String meveoInstanceCode) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		try {
-			meveoInstanceApi.remove(meveoInstanceCode);
-		} catch (Exception e) {
-			processException(e, result);
-		}
+        try {
+            meveoInstanceApi.remove(meveoInstanceCode);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public MeveoInstancesResponseDto listMeveoInstances() {
-		MeveoInstancesResponseDto result = new MeveoInstancesResponseDto();
+    @Override
+    public MeveoInstancesResponseDto listMeveoInstances() {
+        MeveoInstancesResponseDto result = new MeveoInstancesResponseDto();
 
         try {
             result.setMeveoInstances(meveoInstanceApi.list());
@@ -2409,23 +1742,23 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         }
 
         return result;
-	}
-
-	@Override
-	public ActionStatus createOrUpdateMeveoInstance(MeveoInstanceDto meveoInstanceDto) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
-		try {
-			meveoInstanceApi.createOrUpdate(meveoInstanceDto);
-		} catch (Exception e) {
-			processException(e, result);
-		}
-
-		return result;
-	}
+    }
 
     @Override
-    public ActionStatus createUserHierarchyLevel(UserHierarchyLevelDto userHierarchyLevelDto){
+    public ActionStatus createOrUpdateMeveoInstance(MeveoInstanceDto meveoInstanceDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            meveoInstanceApi.createOrUpdate(meveoInstanceDto);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus createUserHierarchyLevel(UserHierarchyLevelDto userHierarchyLevelDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
@@ -2438,7 +1771,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     }
 
     @Override
-    public ActionStatus updateUserHierarchyLevel(UserHierarchyLevelDto userHierarchyLevelDto){
+    public ActionStatus updateUserHierarchyLevel(UserHierarchyLevelDto userHierarchyLevelDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
@@ -2450,20 +1783,20 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     }
 
     @Override
-    public ActionStatus removeUserHierarchyLevel(String hierarchyLevelCode){
-    	ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    public ActionStatus removeUserHierarchyLevel(String hierarchyLevelCode) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-    	try {
-    		userHierarchyLevelApi.remove(hierarchyLevelCode);
-    	} catch (Exception e) {
-    		processException(e, result);
-    	}
+        try {
+            userHierarchyLevelApi.remove(hierarchyLevelCode);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-    	return result;
+        return result;
     }
 
     @Override
-    public UserHierarchyLevelResponseDto findUserHierarchyLevel(String hierarchyLevelCode){
+    public UserHierarchyLevelResponseDto findUserHierarchyLevel(String hierarchyLevelCode) {
         UserHierarchyLevelResponseDto result = new UserHierarchyLevelResponseDto();
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
@@ -2476,15 +1809,15 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         return result;
     }
 
-	@Override
-	public ActionStatus createOrUpdateUserHierarchyLevel(UserHierarchyLevelDto userHierarchyLevelDto) {
+    @Override
+    public ActionStatus createOrUpdateUserHierarchyLevel(UserHierarchyLevelDto userHierarchyLevelDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
             userHierarchyLevelApi.createOrUpdate(userHierarchyLevelDto);
         } catch (Exception e) {
-           processException(e, result);
+            processException(e, result);
         }
         return result;
-	}
+    }
 }

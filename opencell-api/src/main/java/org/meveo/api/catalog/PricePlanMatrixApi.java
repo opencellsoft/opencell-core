@@ -157,7 +157,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         pricePlanMatrix.setCriteria3Value(postData.getCriteria3());
         pricePlanMatrix.setDescription(postData.getDescription());
         pricePlanMatrix.setCriteriaEL(postData.getCriteriaEL());
-        pricePlanMatrixService.create(pricePlanMatrix);
+        
         try {
             populateCustomFields(postData.getCustomFields(), pricePlanMatrix, true);
         } catch (MissingParameterException e) {
@@ -167,6 +167,8 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+
+        pricePlanMatrixService.create(pricePlanMatrix);
         
         return pricePlanMatrix;
     }
@@ -267,7 +269,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         pricePlanMatrix.setCriteria3Value(postData.getCriteria3());
         pricePlanMatrix.setDescription(postData.getDescription());
         pricePlanMatrix.setCriteriaEL(postData.getCriteriaEL());
-        pricePlanMatrix = pricePlanMatrixService.update(pricePlanMatrix);
+        
         try {
             populateCustomFields(postData.getCustomFields(), pricePlanMatrix, false);
         } catch (MissingParameterException e) {
@@ -277,6 +279,8 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+        
+        pricePlanMatrix = pricePlanMatrixService.update(pricePlanMatrix);
         
         return pricePlanMatrix;
     }

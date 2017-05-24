@@ -101,6 +101,11 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
         String cacheKey = getCacheKey(notif);
 
         log.trace("Adding notification {} to notification cache under key {}", notif.getId(), cacheKey);
+        // Solve lazy loading issues when firing notification
+        if (notif.getScriptInstance() != null) {
+            notif.getScriptInstance().getCode();
+        }
+
         try {
 
             List<Notification> notifications = eventNotificationCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);

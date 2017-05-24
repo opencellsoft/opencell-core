@@ -4,16 +4,13 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.CalendarApi;
-import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.CalendarDto;
 import org.meveo.api.dto.CalendarsDto;
 import org.meveo.api.dto.response.GetCalendarResponse;
 import org.meveo.api.dto.response.ListCalendarResponse;
-import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.CalendarRs;
 
@@ -33,15 +30,8 @@ public class CalendarRsImpl extends BaseRs implements CalendarRs {
 
         try {
             calendarApi.create(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -53,15 +43,8 @@ public class CalendarRsImpl extends BaseRs implements CalendarRs {
 
         try {
             calendarApi.update(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -74,15 +57,8 @@ public class CalendarRsImpl extends BaseRs implements CalendarRs {
 
         try {
             result.setCalendar(calendarApi.find(calendarCode));
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -96,15 +72,8 @@ public class CalendarRsImpl extends BaseRs implements CalendarRs {
         try {
             calendarsDto.setCalendar(calendarApi.list());
             result.setCalendars(calendarsDto);
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -116,15 +85,8 @@ public class CalendarRsImpl extends BaseRs implements CalendarRs {
 
         try {
             calendarApi.remove(calendarCode);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -136,15 +98,8 @@ public class CalendarRsImpl extends BaseRs implements CalendarRs {
 
         try {
             calendarApi.createOrUpdate(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;

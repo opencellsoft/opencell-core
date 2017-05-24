@@ -654,13 +654,9 @@ public class CustomFieldValue implements Serializable {
 
             // Find the first not null value to determine item class.
             Iterator iterator = ((List) valueToSerialize).iterator();
-            Object item = iterator.next();
-            while (item == null && iterator.hasNext()) {
-                item = iterator.next();
-            }
-            // If non found - don't save any value
-            if (item != null) {
-                Class itemClass = item.getClass();
+            Class itemClass = findItemClass(iterator);            
+            
+            if (itemClass != null) {
                 sValue = "list_" + itemClass.getSimpleName() + SERIALIZATION_SEPARATOR + gson.toJson(((List) valueToSerialize));
             } else {
                 sValue = null;
@@ -683,16 +679,12 @@ public class CustomFieldValue implements Serializable {
                 } else if (columnNames instanceof Collection) {
                     columnNamesString = StringUtils.concatenate(MATRIX_COLUMN_NAME_SEPARATOR, (Collection) columnNames);
                 }
-
-                // Find the first not null value to determine item class.
-                Iterator iterator = mapCopy.values().iterator();
-                Object item = iterator.next();
-                while (item == null && iterator.hasNext()) {
-                    item = iterator.next();
-                }
-                // If non found - don't save any value
-                if (item != null) {
-                    Class itemClass = item.getClass();
+                
+				// Find the first not null value to determine item class.
+				Iterator iterator = mapCopy.values().iterator();
+				Class itemClass = findItemClass(iterator);
+                
+                if (itemClass != null) {
                     sValue = "matrix_" + itemClass.getSimpleName() + SERIALIZATION_SEPARATOR + columnNamesString + SERIALIZATION_SEPARATOR + gson.toJson(mapCopy);
                 } else {
                     sValue = null;
@@ -702,14 +694,10 @@ public class CustomFieldValue implements Serializable {
             } else {
 
                 // Find the first not null value to determine item class.
-                Iterator iterator = ((Map) valueToSerialize).values().iterator();
-                Object item = iterator.next();
-                while (item == null && iterator.hasNext()) {
-                    item = iterator.next();
-                }
-                // If non found - don't save any value
-                if (item != null) {
-                    Class itemClass = item.getClass();
+                Iterator iterator = ((Map) valueToSerialize).values().iterator();                
+                Class itemClass = findItemClass(iterator);
+                
+                if (itemClass != null) {
                     sValue = "map_" + itemClass.getSimpleName() + SERIALIZATION_SEPARATOR + gson.toJson(((Map) valueToSerialize));
                 } else {
                     sValue = null;
@@ -718,6 +706,43 @@ public class CustomFieldValue implements Serializable {
         }
         return sValue;
     }
+    
+    /**
+	 * Get the data type of the first item. If the type is Integer check for
+	 * further item in the list to see if a Double item exists.
+	 */
+    @SuppressWarnings("rawtypes")
+	private static Class findItemClass(Iterator iterator) {
+		if (!iterator.hasNext()) {
+			return null;
+		}
+		Object item = iterator.next();
+		while (item == null && iterator.hasNext()) {
+			item = iterator.next();
+		}
+		
+		Class itemClass = null;
+		if (item != null) {
+			itemClass = item.getClass();
+		} else {
+			return null;
+		}
+
+		if (itemClass != null && (itemClass.equals(Long.class) || itemClass.equals(Integer.class))) {
+			// check for further type
+			while (iterator.hasNext()) {
+				item = iterator.next();
+				if (item != null) {
+					if (Double.class.equals(item.getClass())) {
+						itemClass = Double.class;
+						break;
+					}
+				}
+			}
+		}
+
+		return itemClass;
+	}
 
     /**
      * Deserialize JSON value serializedValue to a reference to an entity, list or map of values. See method serialize() for serialized value format

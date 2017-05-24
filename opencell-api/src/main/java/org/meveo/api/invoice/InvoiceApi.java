@@ -335,7 +335,6 @@ public class InvoiceApi extends BaseApi {
 			netToPay = invoice.getAmountWithTax().add(balance);
 		}
 		invoice.setNetToPay(netToPay);
-		invoice = invoiceService.update(invoice);
 	
 		try {
 			populateCustomFields(invoiceDTO.getCustomFields(), invoice, true, true);
@@ -347,6 +346,8 @@ public class InvoiceApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+
+        invoice = invoiceService.update(invoice);
 
 		CreateInvoiceResponseDto response = new CreateInvoiceResponseDto();
 		response.setInvoiceId(invoice.getId());

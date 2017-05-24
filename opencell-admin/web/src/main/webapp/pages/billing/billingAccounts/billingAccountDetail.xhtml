@@ -463,6 +463,8 @@
 									<h:outputText
 										value="#{messages[entity.billingRun.status.label]}" />
 								</p:column>
+								<hftl:column label="#{messages['invoice.invoiceType']}"
+									field="invoiceType.code"  />
 								<p:column width="100">
 									<f:facet name="header">
 										<h:outputText value="#{messages['billingAccount.invoice']}" />

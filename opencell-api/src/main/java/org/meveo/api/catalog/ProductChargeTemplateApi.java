@@ -140,8 +140,6 @@ public class ProductChargeTemplateApi extends BaseCrudApi<ProductChargeTemplate,
 			chargeTemplate.setEdrTemplates(edrTemplates);
 		}
 
-		productChargeTemplateService.create(chargeTemplate);
-
 		// populate customFields
 		try {
 			populateCustomFields(postData.getCustomFields(), chargeTemplate, true);
@@ -153,6 +151,8 @@ public class ProductChargeTemplateApi extends BaseCrudApi<ProductChargeTemplate,
             throw e;
         }
 
+        productChargeTemplateService.create(chargeTemplate);
+        
 		// create cat messages
 		if (postData.getLanguageDescriptions() != null) {
 			for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
@@ -282,8 +282,6 @@ public class ProductChargeTemplateApi extends BaseCrudApi<ProductChargeTemplate,
 			chargeTemplate.setEdrTemplates(edrTemplates);
 		}
 
-		chargeTemplate = productChargeTemplateService.update(chargeTemplate);
-
 		// populate customFields
 		try {
 			populateCustomFields(postData.getCustomFields(), chargeTemplate, false);
@@ -294,6 +292,8 @@ public class ProductChargeTemplateApi extends BaseCrudApi<ProductChargeTemplate,
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+
+        chargeTemplate = productChargeTemplateService.update(chargeTemplate);
 		
 		return chargeTemplate;
 	}

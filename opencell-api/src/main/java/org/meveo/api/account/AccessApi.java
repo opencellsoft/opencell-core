@@ -50,8 +50,6 @@ public class AccessApi extends BaseApi {
                 throw new MeveoApiException(MeveoApiErrorCodeEnum.DUPLICATE_ACCESS, "Duplicate subscription / access point pair.");
             }
 
-            accessService.create(access);
-
             // populate customFields
             try {
                 populateCustomFields(postData.getCustomFields(), access, true);
@@ -62,6 +60,8 @@ public class AccessApi extends BaseApi {
                 log.error("Failed to associate custom field instance to an entity", e);
                 throw e;
             }
+            
+            accessService.create(access);
 
         } else {
             if (StringUtils.isBlank(postData.getCode())) {
@@ -92,8 +92,6 @@ public class AccessApi extends BaseApi {
             access.setStartDate(postData.getStartDate());
             access.setEndDate(postData.getEndDate());
 
-            access = accessService.update(access);
-
             // populate customFields
             try {
                 populateCustomFields(postData.getCustomFields(), access, false);
@@ -104,6 +102,8 @@ public class AccessApi extends BaseApi {
                 log.error("Failed to associate custom field instance to an entity", e);
                 throw e;
             }
+
+            access = accessService.update(access);
 
         } else {
             if (postData.getCode() == null) {

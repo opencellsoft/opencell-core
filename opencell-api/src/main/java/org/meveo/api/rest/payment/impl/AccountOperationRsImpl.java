@@ -11,7 +11,6 @@ import org.meveo.api.dto.payment.LitigationRequestDto;
 import org.meveo.api.dto.payment.MatchOperationRequestDto;
 import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
-import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.payment.AccountOperationApi;
 import org.meveo.api.rest.impl.BaseRs;
@@ -32,15 +31,9 @@ public class AccountOperationRsImpl extends BaseRs implements AccountOperationRs
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-        	result.setMessage(""+accountOperationApi.create(postData));
-        } catch (MeveoApiException e) {
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-            log.error("error occurred while creating account operation ", e);
+            result.setMessage("" + accountOperationApi.create(postData));
         } catch (Exception e) {
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-            log.error("error generated while creating account operation ", e);
+            processException(e, result);
         }
 
         return result;
@@ -52,14 +45,8 @@ public class AccountOperationRsImpl extends BaseRs implements AccountOperationRs
 
         try {
             result = accountOperationApi.list(customerAccountCode);
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
-            log.error("error occurred while getting list account operation ", e);
         } catch (Exception e) {
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
-            log.error("error generated while getting list account operation ", e);
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -70,14 +57,8 @@ public class AccountOperationRsImpl extends BaseRs implements AccountOperationRs
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
             accountOperationApi.matchOperations(postData);
-        } catch (MeveoApiException e) {
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-            log.error("error occurred while matching account operation ", e);
         } catch (Exception e) {
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-            log.error("error generated while matching account operation ", e);
+            processException(e, result);
         }
 
         return result;
@@ -88,14 +69,8 @@ public class AccountOperationRsImpl extends BaseRs implements AccountOperationRs
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
             accountOperationApi.unMatchingOperations(postData);
-        } catch (MeveoApiException e) {
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-            log.error("error occurred while unMatching account operation ", e);
         } catch (Exception e) {
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-            log.error("error generated while unMatching account operation ", e);
+            processException(e, result);
         }
 
         return result;
@@ -106,14 +81,8 @@ public class AccountOperationRsImpl extends BaseRs implements AccountOperationRs
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
             accountOperationApi.addLitigation(postData);
-        } catch (MeveoApiException e) {
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-            log.error("error occurred while adding Litigation account operation ", e);
         } catch (Exception e) {
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-            log.error("error generated while adding Litigation account operation ", e);
+            processException(e, result);
         }
 
         return result;
@@ -124,14 +93,8 @@ public class AccountOperationRsImpl extends BaseRs implements AccountOperationRs
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
             accountOperationApi.cancelLitigation(postData);
-        } catch (MeveoApiException e) {
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-            log.error("error occurred while cancelling litigation account operation ", e);
         } catch (Exception e) {
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-            log.error("error generated while cancelling Litigation account operation ", e);
+            processException(e, result);
         }
 
         return result;

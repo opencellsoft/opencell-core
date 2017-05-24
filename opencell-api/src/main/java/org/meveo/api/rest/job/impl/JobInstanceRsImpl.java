@@ -4,13 +4,10 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.job.JobInstanceDto;
 import org.meveo.api.dto.response.job.JobInstanceResponseDto;
-import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.job.JobInstanceApi;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
@@ -33,15 +30,8 @@ public class JobInstanceRsImpl extends BaseRs implements JobInstanceRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
             jobInstanceApi.create(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -52,15 +42,8 @@ public class JobInstanceRsImpl extends BaseRs implements JobInstanceRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
             jobInstanceApi.update(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -71,15 +54,8 @@ public class JobInstanceRsImpl extends BaseRs implements JobInstanceRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
             jobInstanceApi.createOrUpdate(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -91,15 +67,8 @@ public class JobInstanceRsImpl extends BaseRs implements JobInstanceRs {
 
         try {
             result.setJobInstanceDto(jobInstanceApi.find(jobInstanceCode));
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
-            log.error("error occurred while getting webhook notification ", e);
         } catch (Exception e) {
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
-            log.error("error generated while getting webhook notification ", e);
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -110,15 +79,8 @@ public class JobInstanceRsImpl extends BaseRs implements JobInstanceRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
             jobInstanceApi.remove(jobInstanceCode);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;

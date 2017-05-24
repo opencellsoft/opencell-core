@@ -82,7 +82,7 @@
 
 			<!-- ===================================== JOB EXECUTION RESULTS ===================================== -->
 
-			<p:outputPanel id="jobExecutions" rendered="#{!jobInstanceBean.entity.transient}">
+            <p:panel id="jobExecutions" rendered="#{!jobInstanceBean.entity.transient}">
 				<p:dataTable id="jobExecutionsDatatable" var="entity" sortBy="#{entity.startDate}" sortOrder="descending" paginator="true" value="#{jobInstanceBean.entity.executionResults}" rows="10"
 					rowKey="#{entity.id}" widget="jobExecutionsTable" resizableColumns="true">
 					<p:column sortBy="#{entity.startDate}">
@@ -130,7 +130,7 @@
 					<hftl:column label="#{messages['jobExecution.report']}" field="report" showTruncated="true" />
 
 				</p:dataTable>
-			</p:outputPanel>
-		</p:panel>
+            </p:panel>
+        </p:panel>
 	</ui:define>
 </ui:composition>

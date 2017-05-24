@@ -4,8 +4,6 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.billing.SubscriptionApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -23,7 +21,6 @@ import org.meveo.api.dto.billing.UpdateServicesRequestDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsResponseDto;
-import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.billing.SubscriptionRs;
 import org.meveo.api.rest.impl.BaseRs;
@@ -45,15 +42,8 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 
         try {
             subscriptionApi.create(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -65,15 +55,8 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 
         try {
             subscriptionApi.update(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -85,15 +68,8 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 
         try {
             subscriptionApi.instantiateServices(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -104,16 +80,9 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            subscriptionApi.activateServices(postData, null,  false);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            subscriptionApi.activateServices(postData, null, false);
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -125,38 +94,24 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 
         try {
             subscriptionApi.applyOneShotChargeInstance(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
     }
-    
-	@Override
-	public ActionStatus applyProduct(ApplyProductRequestDto postData) {
-	       ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-	        try {
-	        	subscriptionApi.applyProduct(postData);
-	        } catch (MeveoApiException e) {
-	            result.setErrorCode(e.getErrorCode());
-	            result.setStatus(ActionStatusEnum.FAIL);
-	            result.setMessage(e.getMessage());
-	        } catch (Exception e) {
-	            log.error("Failed to execute API", e);
-	            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-	            result.setStatus(ActionStatusEnum.FAIL);
-	            result.setMessage(e.getMessage());
-	        }
-	        return result;
-	}
+    @Override
+    public ActionStatus applyProduct(ApplyProductRequestDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            subscriptionApi.applyProduct(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+    }
 
     @Override
     public ActionStatus terminateSubscription(TerminateSubscriptionRequestDto postData) {
@@ -164,15 +119,8 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 
         try {
             subscriptionApi.terminateSubscription(postData, ChargeInstance.NO_ORDER_NUMBER);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -184,15 +132,8 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 
         try {
             subscriptionApi.terminateServices(postData, ChargeInstance.NO_ORDER_NUMBER);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -204,15 +145,8 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 
         try {
             result.setSubscriptions(subscriptionApi.listByUserAccount(userAccountCode));
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -224,15 +158,8 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 
         try {
             result.setSubscription(subscriptionApi.findSubscription(subscriptionCode));
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -244,15 +171,8 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 
         try {
             subscriptionApi.createOrUpdate(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -267,22 +187,15 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 
             SubscriptionsListDto subscriptionsDto = subscriptionApi.listAll(pageSize, pageNumber);
             result.setSubscriptions(subscriptionsDto);
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
 
         return result;
     }
 
-	@Override
-	public ActionStatus suspendSubscription(OperationSubscriptionRequestDto postData) {
+    @Override
+    public ActionStatus suspendSubscription(OperationSubscriptionRequestDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
@@ -292,10 +205,10 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         }
 
         return result;
-	}
+    }
 
-	@Override
-	public ActionStatus resumeSubscription(OperationSubscriptionRequestDto postData) {
+    @Override
+    public ActionStatus resumeSubscription(OperationSubscriptionRequestDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
@@ -305,10 +218,10 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         }
 
         return result;
-	}
+    }
 
-	@Override
-	public ActionStatus suspendServices(OperationServicesRequestDto postData) {
+    @Override
+    public ActionStatus suspendServices(OperationServicesRequestDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
@@ -318,30 +231,29 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         }
 
         return result;
-	}
+    }
 
-	@Override
-	public ActionStatus resumeServices(OperationServicesRequestDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus resumeServices(OperationServicesRequestDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
             subscriptionApi.resumeServices(postData);
         } catch (Exception e) {
             processException(e, result);
         }
         return result;
-	}
-	
-	@Override
-	public ActionStatus updateServices(UpdateServicesRequestDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    }
 
-		try {
-			subscriptionApi.updateServiceInstance(postData);
-		} catch (Exception e) {
-			processException(e, result);
-		}
+    @Override
+    public ActionStatus updateServices(UpdateServicesRequestDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		return result;
-	}
-	
+        try {
+            subscriptionApi.updateServiceInstance(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
 }

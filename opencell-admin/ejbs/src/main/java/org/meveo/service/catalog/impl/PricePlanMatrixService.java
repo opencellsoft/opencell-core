@@ -48,11 +48,11 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
-import org.meveo.service.base.MultilanguageEntityService;
+import org.meveo.service.base.AuditableMultilanguageService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 
 @Stateless
-public class PricePlanMatrixService extends MultilanguageEntityService<PricePlanMatrix> {
+public class PricePlanMatrixService extends AuditableMultilanguageService<PricePlanMatrix> {
 
 	@Inject
 	private RatingCacheContainerProvider ratingCacheContainerProvider;

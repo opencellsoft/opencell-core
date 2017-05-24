@@ -168,8 +168,6 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
             chargeTemplate.setEdrTemplates(edrTemplates);
         }
 
-        oneShotChargeTemplateService.create(chargeTemplate);
-
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), chargeTemplate, true);
@@ -189,6 +187,8 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
                 catMessagesService.create(catMsg);
             }
         }
+
+        oneShotChargeTemplateService.create(chargeTemplate);
         
         return chargeTemplate;
     }
@@ -291,8 +291,6 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
             chargeTemplate.setEdrTemplates(edrTemplates);
         }
 
-        chargeTemplate = oneShotChargeTemplateService.update(chargeTemplate);
-
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), chargeTemplate, false);
@@ -303,6 +301,8 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+
+        chargeTemplate = oneShotChargeTemplateService.update(chargeTemplate);
         
         return chargeTemplate;
     }

@@ -33,6 +33,9 @@ import org.meveo.model.ExportIdentifier;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CRM_CUSTOMER_BRAND_SEQ"), })
 public class CustomerBrand extends BusinessEntity {
 
-	private static final long serialVersionUID = 1L;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4284972526441749139L;
 
 }

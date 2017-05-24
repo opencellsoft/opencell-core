@@ -44,6 +44,7 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
+import org.meveo.model.billing.ProductChargeInstance;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
@@ -156,8 +157,6 @@ public class SubscriptionApi extends BaseApi {
         subscription.setTerminationDate(postData.getTerminationDate());
         subscription.setEndAgreementDate(postData.getEndAgreementDate());
 
-        subscriptionService.create(subscription);
-
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), subscription, true);
@@ -168,6 +167,8 @@ public class SubscriptionApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+
+        subscriptionService.create(subscription);
 
         if (postData.getProducts() != null) {
             for (ProductDto productDto : postData.getProducts().getProducts()) {
@@ -229,8 +230,6 @@ public class SubscriptionApi extends BaseApi {
         subscription.setTerminationDate(postData.getTerminationDate());
         subscription.setEndAgreementDate(postData.getEndAgreementDate());
 
-        subscription = subscriptionService.update(subscription);
-
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), subscription, false);
@@ -241,6 +240,8 @@ public class SubscriptionApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+
+        subscription = subscriptionService.update(subscription);
 
         if (postData.getProducts() != null) {
             for (ProductDto productDto : postData.getProducts().getProducts()) {
@@ -365,17 +366,6 @@ public class SubscriptionApi extends BaseApi {
                 serviceInstance.setQuantity(serviceToActivateDto.getQuantity());
                 serviceInstance.setOrderNumber(orderNumber);
                 
-                try {
-                    serviceInstanceService.serviceInstanciation(serviceInstance);
-
-                    if (serviceToActivateDto.getSubscriptionDate() != null) {
-                        serviceInstances.add(serviceInstance);
-                    }
-                } catch (BusinessException e) {
-                    log.error("Failed to instantiate a service {} on subscription {}", serviceToActivateDto.getCode(), subscription.getCode(), e);
-                    throw new BusinessApiException(e.getMessage());
-                }
-
                 // populate customFields
                 try {
                     populateCustomFields(serviceToActivateDto.getCustomFields(), serviceInstance, true);
@@ -385,6 +375,17 @@ public class SubscriptionApi extends BaseApi {
                 } catch (Exception e) {
                     log.error("Failed to associate custom field instance to an entity {}",serviceToActivateDto.getCode(), e);
                     throw new MeveoApiException("Failed to associate custom field instance to an entity " + serviceToActivateDto.getCode());
+                }
+                
+                try {
+                    serviceInstanceService.serviceInstanciation(serviceInstance);
+
+                    if (serviceToActivateDto.getSubscriptionDate() != null) {
+                        serviceInstances.add(serviceInstance);
+                    }
+                } catch (BusinessException e) {
+                    log.error("Failed to instantiate a service {} on subscription {}", serviceToActivateDto.getCode(), subscription.getCode(), e);
+                    throw new BusinessApiException(e.getMessage());
                 }
             }
             
@@ -517,14 +518,6 @@ public class SubscriptionApi extends BaseApi {
                 }
                 serviceInstance.setQuantity(serviceToInstantiateDto.getQuantity());
 
-                try {
-                    serviceInstanceService.serviceInstanciation(serviceInstance);
-
-                } catch (BusinessException e) {
-                    log.error("Failed to instantiate a service {} on subscription {}", serviceToInstantiateDto.getCode(), subscription.getCode(), e);
-                    throw new BusinessApiException(e.getMessage());
-                }
-
                 // populate customFields
                 try {
                     populateCustomFields(serviceToInstantiateDto.getCustomFields(), serviceInstance, true);
@@ -534,6 +527,15 @@ public class SubscriptionApi extends BaseApi {
                 } catch (Exception e) {
                     log.error("Failed to associate custom field instance to an entity {}",serviceToInstantiateDto.getCode(), e);
                     throw new MeveoApiException("Failed to associate custom field instance to an entity " + serviceToInstantiateDto.getCode());
+                }
+                
+
+                try {
+                    serviceInstanceService.serviceInstanciation(serviceInstance);
+
+                } catch (BusinessException e) {
+                    log.error("Failed to instantiate a service {} on subscription {}", serviceToInstantiateDto.getCode(), subscription.getCode(), e);
+                    throw new BusinessApiException(e.getMessage());
                 }
                 
             }
@@ -629,7 +631,6 @@ public class SubscriptionApi extends BaseApi {
 		try {
 			ProductInstance productInstance = new ProductInstance(null, subscription, productTemplate, postData.getQuantity(), postData.getOperationDate(), postData.getProduct(),
 					StringUtils.isBlank(postData.getDescription()) ? productTemplate.getDescriptionOrCode() : postData.getDescription(), null);
-			productInstanceService.instantiateProductInstance(productInstance, postData.getCriteria1(), postData.getCriteria2(), postData.getCriteria3(), false);
 
 			// populate customFields
 			try {
@@ -638,6 +639,8 @@ public class SubscriptionApi extends BaseApi {
 				log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
 				throw e;
 			}
+
+		    productInstanceService.instantiateProductInstance(productInstance, postData.getCriteria1(), postData.getCriteria2(), postData.getCriteria3(), false);
 
 			walletOperations = productInstanceService.applyProductInstance(productInstance, postData.getCriteria1(), postData.getCriteria2(), postData.getCriteria3(),
 					true, false);
@@ -831,13 +834,22 @@ public class SubscriptionApi extends BaseApi {
             }
         }
 
-        dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(subscription));
+        dto.setCustomFields(entityToDtoConverter.getCustomFieldsWithInheritedDTO(subscription, true));
 
         if (subscription.getServiceInstances() != null) {
             for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
                 dto.getServices().getServiceInstance().add(new ServiceInstanceDto(serviceInstance, entityToDtoConverter.getCustomFieldsDTO(serviceInstance,true)));
             }
         }
+        
+		if (subscription.getProductInstances() != null) {
+			for (ProductInstance productInstance : subscription.getProductInstances()) {
+				for (ProductChargeInstance pci : productInstance.getProductChargeInstances()) {
+					dto.getProducts().getProducts()
+							.add(new ProductDto(pci, entityToDtoConverter.getCustomFieldsDTO(productInstance, true)));
+				}
+			}
+		}
 
         return dto;
     }
@@ -1080,8 +1092,6 @@ public class SubscriptionApi extends BaseApi {
 				serviceToUpdate.setEndAgreementDate(serviceToUpdateDto.getEndAgreementDate());
 			}
 
-			serviceInstanceService.update(serviceToUpdate);
-
 			// populate customFields
 			try {
 				populateCustomFields(serviceToUpdateDto.getCustomFields(), serviceToUpdate, false);
@@ -1092,6 +1102,8 @@ public class SubscriptionApi extends BaseApi {
 				log.error("Failed to associate custom field instance to an entity", e);
 				throw e;
 			}
+
+            serviceInstanceService.update(serviceToUpdate);
 		}
 	}
 	

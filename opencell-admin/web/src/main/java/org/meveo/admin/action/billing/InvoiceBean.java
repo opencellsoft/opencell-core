@@ -35,7 +35,6 @@ import java.util.Set;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.persistence.DiscriminatorValue;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.seam.international.status.builder.BundleKey;
@@ -45,7 +44,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InvoiceJasperNotFoundException;
 import org.meveo.admin.exception.InvoiceXmlNotFoundException;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.model.Auditable;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
@@ -57,8 +55,6 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubCategoryDTO;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
-import org.meveo.model.billing.Tax;
-import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -151,11 +147,11 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 			log.warn("No billingAccount code");
 		} else {
 			filters.put("billingAccount", ba);
-			try {
-				filters.put("invoiceType", invoiceTypeService.getDefaultCommertial());
-			} catch (BusinessException e) {				
-				log.error("Error on geting invoiceType",e);
-			}
+//			try {
+//				filters.put("invoiceType", invoiceTypeService.getDefaultCommertial());
+//			} catch (BusinessException e) {				
+//				log.error("Error on geting invoiceType",e);
+//			}
 			return getLazyDataModel();
 		}
 

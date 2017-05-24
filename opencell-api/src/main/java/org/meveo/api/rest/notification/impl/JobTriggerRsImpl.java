@@ -8,7 +8,6 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.notification.JobTriggerDto;
 import org.meveo.api.dto.response.notification.GetJobTriggerResponseDto;
-import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.notification.JobTriggerApi;
 import org.meveo.api.rest.impl.BaseRs;
@@ -30,17 +29,9 @@ public class JobTriggerRsImpl extends BaseRs implements JobTriggerRs {
 
         try {
             jobTriggerApi.create(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-            log.error("error occurred while creating job trigger ", e);
         } catch (Exception e) {
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-            log.error("error generated while creating job trigger ", e);
+            processException(e, result);
         }
-
         return result;
     }
 
@@ -50,15 +41,8 @@ public class JobTriggerRsImpl extends BaseRs implements JobTriggerRs {
 
         try {
             jobTriggerApi.update(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-            log.error("error occurred while updating job trigger ", e);
         } catch (Exception e) {
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-            log.error("error generated while updating job trigger ", e);
+            processException(e, result);
         }
 
         return result;
@@ -70,15 +54,8 @@ public class JobTriggerRsImpl extends BaseRs implements JobTriggerRs {
 
         try {
             result.setJobTriggerDto(jobTriggerApi.find(notificationCode));
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
-            log.error("error occurred while getting job trigger ", e);
         } catch (Exception e) {
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
-            log.error("error generated while getting job trigger ", e);
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -90,15 +67,8 @@ public class JobTriggerRsImpl extends BaseRs implements JobTriggerRs {
 
         try {
             jobTriggerApi.remove(notificationCode);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-            log.error("error occurred while removing job trigger ", e);
         } catch (Exception e) {
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-            log.error("error generated while removing job trigger ", e);
+            processException(e, result);
         }
 
         return result;
@@ -110,15 +80,8 @@ public class JobTriggerRsImpl extends BaseRs implements JobTriggerRs {
 
         try {
             jobTriggerApi.createOrUpdate(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-            log.error("error occurred while creating job trigger ", e);
         } catch (Exception e) {
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-            log.error("error generated while creating  job trigger ", e);
+            processException(e, result);
         }
 
         return result;

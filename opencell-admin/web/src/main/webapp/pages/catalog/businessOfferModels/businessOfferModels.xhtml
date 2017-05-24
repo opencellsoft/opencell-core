@@ -27,10 +27,12 @@
             <hftl:column label="#{messages['BusinessEntity.description']}" field="description" />
             <hftl:column label="#{messages['offerTemplate.title']}" field="offerTemplate.code" />
 
-            <p:column headerText="#{messages['menu.businessServiceModels']}">
-                <ui:repeat value="#{businessOfferModelListBean.getBusinessServiceModels(entity)}" var="c">
-                    <hf:linkToEntity linkId="bsm_message_link" entity="#{c}" objectIdParamName="objectId" entityId="#{c.id}" propagateConversation="true" value="#{c.code}"
-                        view="businessServiceModelDetail" />
+            <p:column headerText="#{messages['businessOffer.businessServiceAndProductModels']}">
+                <ui:repeat value="#{businessOfferModelListBean.getBusinessServiceAndProductModels(entity)}" var="c">
+                    <hf:linkToEntity linkId="bsm_message_link" entity="#{c}" objectIdParamName="businessServiceModelId" entityId="#{c.id}" propagateConversation="true" value="#{c.code}"
+                        view="businessServiceModelDetail" backView="businessOfferModels" rendered="#{c.class.simpleName.startsWith('BusinessServiceModel')}" />
+                    <hf:linkToEntity linkId="bpm_message_link" entity="#{c}" objectIdParamName="businessProductModelId" entityId="#{c.id}" propagateConversation="true" value="#{c.code}"
+                        view="businessProductModelDetail" backView="businessOfferModels" rendered="#{c.class.simpleName.startsWith('BusinessProductModel')}" />
                     <br />
                 </ui:repeat>
             </p:column>

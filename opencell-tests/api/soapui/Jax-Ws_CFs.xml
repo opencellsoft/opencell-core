@@ -1069,6 +1069,90 @@
       <con:settings/>
     </con:operation>
   </con:interface>
+  <con:interface xsi:type="con:WsdlInterface" id="113af333-62db-47ab-b545-ba7add0056c2" wsaVersion="NONE" name="NotificationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}NotificationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/NotificationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <con:settings/>
+    <con:endpoints>
+      <con:endpoint>http://localhost:8080/opencell/NotificationWs</con:endpoint>
+    </con:endpoints>
+    <con:operation id="b0e86045-32da-40b4-8faa-4dd1aef403ce" isOneWay="false" action="" name="createEmailNotification" bindingOperationName="createEmailNotification" type="Request-Response" outputName="createEmailNotificationResponse" inputName="createEmailNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="e78c8d0a-e698-4415-96fc-d4d93ccfe26c" isOneWay="false" action="" name="createNotification" bindingOperationName="createNotification" type="Request-Response" outputName="createNotificationResponse" inputName="createNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="5aa24286-4c98-4261-868f-adaa42c25441" isOneWay="false" action="" name="createOrUpdateEmailNotification" bindingOperationName="createOrUpdateEmailNotification" type="Request-Response" outputName="createOrUpdateEmailNotificationResponse" inputName="createOrUpdateEmailNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="28cebd0c-3296-4fdd-b687-9e89c528c779" isOneWay="false" action="" name="createOrUpdateNotification" bindingOperationName="createOrUpdateNotification" type="Request-Response" outputName="createOrUpdateNotificationResponse" inputName="createOrUpdateNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="95ac05d0-7a42-4cd6-a9b5-72c26c54164a" isOneWay="false" action="" name="createOrUpdateWebHookNotification" bindingOperationName="createOrUpdateWebHookNotification" type="Request-Response" outputName="createOrUpdateWebHookNotificationResponse" inputName="createOrUpdateWebHookNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="1cee498a-bacf-4510-b7ed-8c4fbdf4696f" isOneWay="false" action="" name="createWebHookNotification" bindingOperationName="createWebHookNotification" type="Request-Response" outputName="createWebHookNotificationResponse" inputName="createWebHookNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="e9c665b6-8c6e-4628-a7ab-f3cc9a42b2c7" isOneWay="false" action="" name="findEmailNotification" bindingOperationName="findEmailNotification" type="Request-Response" outputName="findEmailNotificationResponse" inputName="findEmailNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="f618f37f-bc65-4f43-af21-d3d2cf2cc7a2" isOneWay="false" action="" name="findNotification" bindingOperationName="findNotification" type="Request-Response" outputName="findNotificationResponse" inputName="findNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="dddf7e7e-8af2-4d63-99eb-1e1dfa05c3cd" isOneWay="false" action="" name="findWebHookNotification" bindingOperationName="findWebHookNotification" type="Request-Response" outputName="findWebHookNotificationResponse" inputName="findWebHookNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="2030abc8-8300-4349-8b6a-ce1295ae18ec" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="c2b13d80-f6cc-482d-bef3-70a7269b9717" isOneWay="false" action="" name="listInboundRequest" bindingOperationName="listInboundRequest" type="Request-Response" outputName="listInboundRequestResponse" inputName="listInboundRequest" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="d0447242-dc7d-4961-9a0b-f2f4b1695d9f" isOneWay="false" action="" name="listNotificationHistory" bindingOperationName="listNotificationHistory" type="Request-Response" outputName="listNotificationHistoryResponse" inputName="listNotificationHistory" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="de241693-7b85-416e-b14d-ea312ea5bc22" isOneWay="false" action="" name="removeEmailNotification" bindingOperationName="removeEmailNotification" type="Request-Response" outputName="removeEmailNotificationResponse" inputName="removeEmailNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="e78a5b35-4875-4034-896c-9c2b2c7e3cad" isOneWay="false" action="" name="removeNotification" bindingOperationName="removeNotification" type="Request-Response" outputName="removeNotificationResponse" inputName="removeNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="9e6a896e-ed48-4f8c-a5e0-596329c72e5b" isOneWay="false" action="" name="removeWebHookNotification" bindingOperationName="removeWebHookNotification" type="Request-Response" outputName="removeWebHookNotificationResponse" inputName="removeWebHookNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="ab316b61-007b-4893-ad7e-edb5c57a7bbf" isOneWay="false" action="" name="updateEmailNotification" bindingOperationName="updateEmailNotification" type="Request-Response" outputName="updateEmailNotificationResponse" inputName="updateEmailNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="d80435c5-a0cf-44b9-b076-9ca52527abfc" isOneWay="false" action="" name="updateNotification" bindingOperationName="updateNotification" type="Request-Response" outputName="updateNotificationResponse" inputName="updateNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="be183993-7a5c-449c-92db-dbdca3376746" isOneWay="false" action="" name="updateWebHookNotification" bindingOperationName="updateWebHookNotification" type="Request-Response" outputName="updateWebHookNotificationResponse" inputName="updateWebHookNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+  </con:interface>
+  <con:interface xsi:type="con:WsdlInterface" id="6d7ccb5c-e1f9-4338-bf86-f62b3673643b" wsaVersion="NONE" name="ScriptInstanceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}ScriptInstanceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/ScriptInstanceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <con:settings/>
+    <con:endpoints>
+      <con:endpoint>http://localhost:8080/opencell/ScriptInstanceWs</con:endpoint>
+    </con:endpoints>
+    <con:operation id="f9f2f711-974a-4052-b02d-9b3c68b71f86" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="756aba71-8a9d-4a94-a35d-af030e28b969" isOneWay="false" action="" name="createOrUpdate" bindingOperationName="createOrUpdate" type="Request-Response" outputName="createOrUpdateResponse" inputName="createOrUpdate" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="3774c803-7580-4359-b5a5-42b55e7175a6" isOneWay="false" action="" name="find" bindingOperationName="find" type="Request-Response" outputName="findResponse" inputName="find" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="e857748a-86df-4f60-8446-22783526f796" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="70f81909-0644-478e-9f58-8a4d36e22fd7" isOneWay="false" action="" name="remove" bindingOperationName="remove" type="Request-Response" outputName="removeResponse" inputName="remove" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="3b068fef-0723-49f3-a579-dd9054082586" isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+  </con:interface>
   <con:testSuite id="472fe052-2321-48cc-894f-c262e1826cd3" name="Setup Authorization">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
@@ -19134,6 +19218,111 @@ public class Action1 extends Script {
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="request" name="Create CFT Matrix String no columns" id="494d9298-7079-4105-86a3-fa15d4f051bd">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createField</con:operation>
+          <con:request name="Create CFT Matrix String no columns" id="3753bce2-3fec-40e6-a41f-454620694710">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateField>\r
+         <customField code="${#Project#entityPrefix}_${#TestSuite#index}_STRING_MATRIX_NO_COLUMN" description="No columns">\r
+            <fieldType>STRING</fieldType>\r
+            <appliesTo>CUST</appliesTo>\r
+            <storageType>MATRIX</storageType>\r
+            <mapKeyType>STRING</mapKeyType>\r
+            <matrixColumns></matrixColumns>\r
+         </customField>\r
+      </ws:createOrUpdateField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/>
+            <con:assertion type="Simple Contains" id="d66b73c0-4bea-4ff4-ab95-469cc8c65a36" name="Contains">
+              <con:configuration>
+                <token>&lt;status>FAIL&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="cd5e2df1-6421-4322-9e65-d20bc17cced9" name="Contains 1">
+              <con:configuration>
+                <token>The following parameters are required or contain invalid values: matrixColumns</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create CFT Matrix String missing column data" id="860d242a-d32e-4e74-8714-69902fbe9b29">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createField</con:operation>
+          <con:request name="Create CFT Matrix String missing column data" id="3753bce2-3fec-40e6-a41f-454620694710">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateField>\r
+         <customField code="${#Project#entityPrefix}_${#TestSuite#index}_STRING_MATRIX_NO_COLUMN" description="No columns">\r
+            <fieldType>STRING</fieldType>\r
+            <appliesTo>CUST</appliesTo>\r
+            <storageType>MATRIX</storageType>\r
+            <mapKeyType>STRING</mapKeyType>\r
+            <matrixColumns>\r
+               <matrixColumn code="MAT_1" position="1" keyType="STRING"/>\r
+               <matrixColumn code="MAT_2" position="2" label="Two"/>\r
+            </matrixColumns>\r
+         </customField>\r
+      </ws:createOrUpdateField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/>
+            <con:assertion type="Simple Contains" id="d66b73c0-4bea-4ff4-ab95-469cc8c65a36" name="Contains">
+              <con:configuration>
+                <token>&lt;status>FAIL&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="314d90ea-2980-4f08-9c56-91a54e2ae7e5" name="Contains 1">
+              <con:configuration>
+                <token>The following parameters are required or contain invalid values: matrixColumns/label, matrixColumns/keyType</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
       <con:properties/>
     </con:testCase>
     <con:testCase id="e614be4d-eeff-469a-a965-fe53f4dd4d6d" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CF Validation - parent inherited required value and default value instantiation" searchProperties="true">
@@ -29201,6 +29390,410 @@ public class Action1 extends Script {
       </con:testStep>
       <con:properties/>
       <con:reportParameters/>
+    </con:testCase>
+    <con:testCase id="a532b59b-a869-4bdb-8178-95f85cda832d" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CF update order in Notification scripts" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="request" name="Create UpdateCF ScriptInstance" id="d3c7a36d-dc70-4b34-9f8d-0d16d5380666">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>ScriptInstanceWsSoapBinding</con:interface>
+          <con:operation>create</con:operation>
+          <con:request name="Create UpdateCF ScriptInstance" id="8bc39b95-9e34-42c4-b335-a27ce494eb10">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:create>\r
+         <createScriptInstanceRequest code="org.meveo.service.script.The${#Project#entityPrefix}_${#TestSuite#index}_UpdateCF" description="Throw exception on customer update">\r
+            <type>JAVA</type>\r
+            <script>package org.meveo.service.script;
+
+import java.util.Map;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.model.crm.Customer;
+import org.meveo.service.script.Script;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class The${#Project#entityPrefix}_${#TestSuite#index}_UpdateCF extends Script {
+private static final Logger log = LoggerFactory.getLogger(The${#Project#entityPrefix}_${#TestSuite#index}_UpdateCF.class);
+private CustomFieldInstanceService customFieldInstanceService = (CustomFieldInstanceService) getServiceInterface("CustomFieldInstanceService");
+
+@Override
+public void execute(Map&lt;String, Object> methodContext) throws BusinessException {
+	Customer customer = (Customer) methodContext.get("entity");
+	log.debug("Customer {} : ", customer.getCode());
+	customer.setDescription(customer.getDescription()+" from script");
+
+	String cfValue = (String)customFieldInstanceService.getCFValue(customer, "${#Project#baseEntityPrefix}_CUST_STRING_SINGLE_NV");
+	customFieldInstanceService.setCFValue(customer, "${#Project#baseEntityPrefix}_CUST_STRING_SINGLE_NV", cfValue+" from script");
+	
+}
+}</script>\r
+         </createScriptInstanceRequest>\r
+      </ws:create>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="71a37117-2b99-4993-8782-68533d209aa1" name="SOAP Response">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.admin</con:username>
+              <con:password>meveo.admin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create Customer Update Notification" id="5770543b-e6c8-4b87-bf23-ba27bc81bad2">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>NotificationWsSoapBinding</con:interface>
+          <con:operation>createNotification</con:operation>
+          <con:request name="Create Customer Update Notification" id="648bfe89-e15a-4777-bee3-85c7cb8f113e">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/NotificationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createNotification>\r
+         <notification code="${#Project#entityPrefix}_${#TestSuite#index}_Notification_UpdateCF">\r
+            <classNameFilter>org.meveo.model.crm.Customer</classNameFilter>\r
+            <eventTypeFilter>UPDATED</eventTypeFilter>\r
+            <scriptInstanceCode>org.meveo.service.script.The${#Project#entityPrefix}_${#TestSuite#index}_UpdateCF</scriptInstanceCode>\r
+            <scriptParams>\r
+               <entry>\r
+                  <key>entity</key>\r
+                  <value>#{event}</value>\r
+               </entry>\r
+            </scriptParams>\r
+         </notification>\r
+      </ws:createNotification>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="ad94f33a-7ed2-436d-b38f-282bf5e66663"/>
+            <con:assertion type="Simple Contains" id="474b5607-2a9f-4a65-9b2d-e65bc66ded90" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="09d9ff27-0d90-48ff-bd32-7121bff45be1" name="XPath Match Status">
+              <con:configuration>
+                <path>declare namespace ns2='http://ws.api.meveo.org/';//ns2:createNotificationResponse[1]/return[1]/status[1]/text()</path>
+                <content>SUCCESS</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Valid HTTP Status Codes" id="1a5fa72e-fb51-469f-a97d-0a5176c91b83" name="Valid HTTP Status Codes [200]">
+              <con:configuration>
+                <codes>200</codes>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create customer" id="6942d87f-3711-4b55-87d1-8606f4bb1314">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>createCustomer</con:operation>
+          <con:request name="Create customer" id="cded2d9e-3e19-47d3-b5e3-deaeea3a091b">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createCustomer>\r
+         <customer code="${#Project#entityPrefix}_${#TestSuite#index}_CUST_UpdateCF" description="Description">\r
+            <customerCategory>CLIENT</customerCategory>\r
+            <seller>SELLER_FR</seller>\r
+            <customerBrand>DEFAULT</customerBrand>\r
+            <customFields>\r
+               <customField code="${#Project#baseEntityPrefix}_CUST_STRING_SINGLE_NV">\r
+                  <stringValue>created</stringValue>\r
+               </customField>\r
+            </customFields>\r
+         </customer>\r
+      </ws:createCustomer>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="c69a3d67-6225-448d-b49b-6e7a6b05921a"/>
+            <con:assertion type="Simple Contains" name="Contains" id="151d68fe-5f64-4fb1-8ddd-ee2e998c4c6c">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Update customer" id="b0441d20-e740-44c8-8ade-3b43c6f6a674">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>updateCustomer</con:operation>
+          <con:request name="Update customer" id="7d9f2f3a-a0cc-4523-87f1-ca9a852c03f0">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updateCustomer>\r
+         <customer code="${#Project#entityPrefix}_${#TestSuite#index}_CUST_UpdateCF" description="Description updated">\r
+            <customerCategory>CLIENT</customerCategory>\r
+            <seller>SELLER_FR</seller>\r
+            <customerBrand>DEFAULT</customerBrand>\r
+            <customFields>\r
+               <customField code="${#Project#baseEntityPrefix}_CUST_STRING_SINGLE_NV">\r
+                  <stringValue>updated</stringValue>\r
+               </customField>\r
+            </customFields>\r
+         </customer>\r
+      </ws:updateCustomer>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="94c7a58b-7ae4-4eb6-9ac2-2bd721f950d6"/>
+            <con:assertion type="Simple Contains" name="Contains" id="135ab146-8924-49c0-8d10-b1a7a3034db2">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Find Customer" id="a227f125-1dda-450b-ac3b-53be08eda3a7">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>findCustomer</con:operation>
+          <con:request name="Find Customer" id="1957439a-4ce5-4ed4-a8df-6ca966fcc088">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findCustomer>\r
+         <customerCode>${#Project#entityPrefix}_${#TestSuite#index}_CUST_UpdateCF</customerCode>\r
+      </ws:findCustomer>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="2ef48a03-ba20-4912-a714-42a3781b7d32"/>
+            <con:assertion type="Simple Contains" name="Contains" id="87c9a245-a6cc-476c-b3c6-a99a31cc9018">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="ad2db34a-39b8-45dd-8579-0414bac12852" name="Contains 1">
+              <con:configuration>
+                <token>description="Description updated from script"</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="508d21bb-7e58-4d26-bdbe-5f0f7b2a1816" name="Contains 2">
+              <con:configuration>
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_CUST_STRING_SINGLE_NV">
+                     &lt;stringValue>updated from script&lt;/stringValue>
+                  &lt;/customField></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Delete Customer" id="d13145df-3624-4b68-b4ff-2e853b594441">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>removeCustomer</con:operation>
+          <con:request name="Delete Customer" id="fb387227-0662-4bad-a170-6a7f59ccbbc3">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeCustomer>\r
+         <customerCode>${#Project#entityPrefix}_${#TestSuite#index}_CUST_UpdateCF</customerCode>\r
+      </ws:removeCustomer>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="ef79b773-8596-4bd4-95ff-8183275d8480"/>
+            <con:assertion type="Simple Contains" name="Contains" id="896129d6-7d9e-47df-8bd7-87c4e762bc89">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Remove Customer Update Notification" id="53bed0e9-e362-49a5-8811-7135b3e2e311">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>NotificationWsSoapBinding</con:interface>
+          <con:operation>removeNotification</con:operation>
+          <con:request name="Remove Customer Update Notification" id="103f3644-a889-4242-8d86-5de097e18109">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/NotificationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeNotification>
+      	<notificationCode>${#Project#entityPrefix}_${#TestSuite#index}_Notification_UpdateCF</notificationCode>
+      </ws:removeNotification>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="64d04093-53e3-4916-9a0c-5c235dfbd777"/>
+            <con:assertion type="Simple Contains" id="f185605f-a86a-44a9-b8a0-784dfefa2cab" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="60b40322-2fe0-47bd-846b-f14fb6c0f626" name="XPath Match Status">
+              <con:configuration>
+                <path>declare namespace ns2='http://ws.api.meveo.org/';//ns2:removeNotificationResponse[1]/return[1]/status[1]/text()</path>
+                <content>SUCCESS</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Delete UpdateCF ScriptInstance" id="b6c2dfe7-2c65-4af8-984e-320bab71c472">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>ScriptInstanceWsSoapBinding</con:interface>
+          <con:operation>remove</con:operation>
+          <con:request name="Delete UpdateCF ScriptInstance" id="e5b60b95-12ed-4df5-b7ac-f957662a0b81">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:remove>      	
+         	<removeScriptInstanceRequest>org.meveo.service.script.The${#Project#entityPrefix}_${#TestSuite#index}_UpdateCF</removeScriptInstanceRequest>
+      </ws:remove>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" id="4dc84850-62df-427d-b445-9dcf0644de9e" name="SOAP Response">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
     </con:testCase>
     <con:properties>
       <con:property>

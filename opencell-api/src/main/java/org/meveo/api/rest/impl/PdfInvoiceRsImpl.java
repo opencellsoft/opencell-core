@@ -31,8 +31,7 @@ public class PdfInvoiceRsImpl extends BaseRs implements PdfInvoiceRs {
         try {
             result.setPdfInvoice(pdfInvoiceApi.getPDFInvoice(invoiceNumber, customerAccountCode));
         } catch (Exception e) {
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
 
         return result;

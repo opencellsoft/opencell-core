@@ -18,6 +18,7 @@ public class CustomFieldsDto implements Serializable {
     private static final long serialVersionUID = 7751924530575980282L;
 
     private List<CustomFieldDto> customField;
+    private List<CustomFieldDto> inheritedCustomField;
 
     public CustomFieldsDto() {
 
@@ -52,5 +53,17 @@ public class CustomFieldsDto implements Serializable {
     public boolean isEmpty() {
         return customField == null || customField.isEmpty();
     }
+
+	public List<CustomFieldDto> getInheritedCustomField() {
+		if (inheritedCustomField == null) {
+			inheritedCustomField = new ArrayList<CustomFieldDto>();
+		}
+
+		return inheritedCustomField;
+	}
+
+	public void setInheritedCustomField(List<CustomFieldDto> inheritedCustomField) {
+		this.inheritedCustomField = inheritedCustomField;
+	}
 
 }

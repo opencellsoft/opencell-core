@@ -159,4 +159,5 @@ public class Customer extends AccountEntity{
 	public Class<? extends BusinessEntity> getParentEntityType() {
 		return Seller.class;
 	}
+	
 }

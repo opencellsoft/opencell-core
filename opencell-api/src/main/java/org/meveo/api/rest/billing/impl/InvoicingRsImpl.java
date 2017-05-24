@@ -4,8 +4,6 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.billing.InvoicingApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -14,7 +12,6 @@ import org.meveo.api.dto.response.billing.GetBillingAccountListInRunResponseDto;
 import org.meveo.api.dto.response.billing.GetBillingRunInfoResponseDto;
 import org.meveo.api.dto.response.billing.GetPostInvoicingReportsResponseDto;
 import org.meveo.api.dto.response.billing.GetPreInvoicingReportsResponseDto;
-import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.billing.InvoicingRs;
 import org.meveo.api.rest.impl.BaseRs;
@@ -31,22 +28,15 @@ public class InvoicingRsImpl extends BaseRs implements InvoicingRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         log.info("createBillingRun request={}", createBillingRunDto);
         try {
-        	long billingRunId=invoicingApi.createBillingRun(createBillingRunDto);
-        	result.setMessage(billingRunId + "");
-        } catch (MeveoApiException mpe) {
-            result.setErrorCode(mpe.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(mpe.getMessage());
+            long billingRunId = invoicingApi.createBillingRun(createBillingRunDto);
+            result.setMessage(billingRunId + "");
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
     }
-    
+
     @Override
     public GetBillingRunInfoResponseDto getBillingRunInfo(Long billingRunId) {
         GetBillingRunInfoResponseDto result = new GetBillingRunInfoResponseDto();
@@ -55,15 +45,8 @@ public class InvoicingRsImpl extends BaseRs implements InvoicingRs {
 
             result.setBillingRunDto(invoicingApi.getBillingRunInfo(billingRunId));
 
-        } catch (MeveoApiException mpe) {
-            result.getActionStatus().setErrorCode(mpe.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(mpe.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
         log.info("getBillingRunInfo Response={}", result);
         return result;
@@ -77,15 +60,8 @@ public class InvoicingRsImpl extends BaseRs implements InvoicingRs {
 
             result.setBillingAccountsDto(invoicingApi.getBillingAccountListInRun(billingRunId));
 
-        } catch (MeveoApiException mpe) {
-            result.getActionStatus().setErrorCode(mpe.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(mpe.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
         log.info("getBillingAccountListInRun Response={}", result);
         return result;
@@ -99,19 +75,8 @@ public class InvoicingRsImpl extends BaseRs implements InvoicingRs {
 
             result.setPreInvoicingReportsDTO(invoicingApi.getPreInvoicingReport(billingRunId));
 
-        } catch (MeveoApiException mpe) {
-            result.getActionStatus().setErrorCode(mpe.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(mpe.getMessage());
-        } catch (BusinessException be) {
-            result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(be.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
         log.info("getPreInvoicingReport Response={}", result);
         return result;
@@ -125,19 +90,8 @@ public class InvoicingRsImpl extends BaseRs implements InvoicingRs {
 
             result.setPostInvoicingReportsDTO(invoicingApi.getPostInvoicingReport(billingRunId));
 
-        } catch (MeveoApiException mpe) {
-            result.getActionStatus().setErrorCode(mpe.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(mpe.getMessage());
-        } catch (BusinessException be) {
-            result.getActionStatus().setErrorCode(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(be.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
         log.info("getPostInvoicingReport Response={}", result);
         return result;
@@ -151,15 +105,8 @@ public class InvoicingRsImpl extends BaseRs implements InvoicingRs {
 
             invoicingApi.validateBillingRun(billingRunId);
 
-        } catch (MeveoApiException mpe) {
-            result.setErrorCode(mpe.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(mpe.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
         log.info("validateBillingRun Response={}", result);
         return result;
@@ -173,15 +120,8 @@ public class InvoicingRsImpl extends BaseRs implements InvoicingRs {
 
             invoicingApi.cancelBillingRun(billingRunId);
 
-        } catch (MeveoApiException mpe) {
-            result.setErrorCode(mpe.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(mpe.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
         log.info("cancelBillingRun Response={}", result);
         return result;

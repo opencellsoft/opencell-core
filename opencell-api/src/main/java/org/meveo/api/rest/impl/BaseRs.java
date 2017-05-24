@@ -1,8 +1,13 @@
 package org.meveo.api.rest.impl;
 
+import java.sql.SQLException;
+import java.util.Set;
+
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
@@ -46,7 +51,7 @@ public abstract class BaseRs implements IBaseRs {
     // one way to get HttpServletResponse
     @Context
     protected HttpServletResponse httpServletResponse;
-    
+
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
@@ -121,11 +126,43 @@ public abstract class BaseRs implements IBaseRs {
             status.setErrorCode(((MeveoApiException) e).getErrorCode());
             status.setStatus(ActionStatusEnum.FAIL);
             status.setMessage(e.getMessage());
+
         } else {
             log.warn("Failed to execute API", e);
-            status.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
+
+            String message = e.getMessage();
+            MeveoApiErrorCodeEnum errorCode = MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION;
+            Throwable cause = e;
+
+            // See if can get to the root of the exception cause
+            if (!(e instanceof BusinessException)) {
+                cause = e.getCause();
+                while (cause != null) {
+
+                    if (cause instanceof SQLException || cause instanceof BusinessException || cause instanceof ConstraintViolationException) {
+
+                        if (cause instanceof ConstraintViolationException) {
+                            ConstraintViolationException cve = (ConstraintViolationException) (cause);
+                            Set<ConstraintViolation<?>> violations = cve.getConstraintViolations();
+                            message = "";
+                            for (ConstraintViolation<?> cv : violations) {
+                                message += cv.getPropertyPath() + " " + cv.getMessage() + ",";
+                            }
+                            message = message.substring(0, message.length() - 1);
+                            errorCode = MeveoApiErrorCodeEnum.INVALID_PARAMETER;
+                        } else {
+                            message = cause.getMessage();
+                            errorCode = cause instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION;
+                        }
+                        break;
+                    }
+                    cause = cause.getCause();
+                }
+            }
+
+            status.setErrorCode(errorCode);
             status.setStatus(ActionStatusEnum.FAIL);
-            status.setMessage(e.getMessage());
+            status.setMessage(message);
         }
     }
 }

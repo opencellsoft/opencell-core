@@ -12,6 +12,16 @@
 <tr><td rowspan="1" colspan="3">UpdateServicesInfoTestCase</td></tr>
 </thead><tbody>
 <tr>
+	<td>clickAndWait</td>
+	<td>${CatalogueServices}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>id=searchForm:code_txt</td>
 	<td>${Code}</td>
@@ -72,13 +82,18 @@
 	<td></td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
-	<td>${saveButtonWhenUpdateAjax}</td>
+	<td>click</td>
+	<td>${saveButtonWhenUpdate}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPageToLoad</td>
-	<td>${defaultTimeout}</td>
+	<td>waitForElementPresent</td>
+	<td>${disableYes}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@id='j_idt577']</td>
 	<td></td>
 </tr>
 <tr>

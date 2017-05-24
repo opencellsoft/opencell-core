@@ -1,5 +1,6 @@
 package org.meveo.api.dto.catalog;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -9,9 +10,11 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.commons.lang3.StringUtils;
+
+
 import org.meveo.api.dto.BusinessDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.commons.utils.StringUtils;
 
 /**
  * @author Edward P. Legaspi
@@ -35,6 +38,8 @@ public class OfferTemplateDto extends BusinessDto {
 
     private boolean disabled = false;
     private String bomCode;
+    private Date validFrom;
+    private Date validTo;
 
     @Deprecated
     private String offerTemplateCategoryCode;
@@ -90,7 +95,7 @@ public class OfferTemplateDto extends BusinessDto {
     @Override
     public String toString() {
         return "OfferTemplateDto [code=" + code + ", description=" + description + ", longDescription=" + longDescription + ", disabled=" + disabled + ", bomCode=" + bomCode
-                + ", offerTemplateCategoryCode=" + offerTemplateCategoryCode + ", offerServiceTemplates=" + offerServiceTemplates + ", customFields=" + customFields + "]";
+                + ", offerTemplateCategoryCode=" + offerTemplateCategoryCode + ", offerServiceTemplates=" + offerServiceTemplates + ", customFields=" + customFields + ", validFrom="+validFrom+", validTo="+validTo+"]";
     }
 
     public CustomFieldsDto getCustomFields() {
@@ -177,5 +182,23 @@ public class OfferTemplateDto extends BusinessDto {
 	public void setImageBase64(String imageBase64) {
 		this.imageBase64 = imageBase64;
 	}
+
+	public Date getValidFrom() {
+		return validFrom;
+	}
+
+	public void setValidFrom(Date validFrom) {
+		this.validFrom = validFrom;
+	}
+
+	public Date getValidTo() {
+		return validTo;
+	}
+
+	public void setValidTo(Date validTo) {
+		this.validTo = validTo;
+	}
+	
+	
 
 }

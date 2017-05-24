@@ -64,17 +64,13 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 		    postData.setName(postData.getCode());
 		}
 		handleMissingParameters();
-
 		
-
 		if (offerTemplateService.findByCode(postData.getCode()) != null) {
 			throw new EntityAlreadyExistsException(OfferTemplate.class, postData.getCode());
 		}		
 
 		OfferTemplate offerTemplate = new OfferTemplate();
 		populateFromDto(offerTemplate, postData);
-
-		offerTemplateService.create(offerTemplate);
 
 		// populate customFields
 		try {
@@ -86,6 +82,9 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 			log.error("Failed to associate custom field instance to an entity", e);
 			throw e;
 		}
+
+        offerTemplateService.create(offerTemplate);
+        
 		return offerTemplate;
 	}
 
@@ -107,8 +106,7 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 		
 		populateFromDto(offerTemplate, postData);
 		offerTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode())?postData.getCode():postData.getUpdatedCode());
-		offerTemplate = offerTemplateService.update(offerTemplate);
-
+		
 		// populate customFields
 		try {
 			populateCustomFields(postData.getCustomFields(), offerTemplate, false);
@@ -119,6 +117,8 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 			log.error("Failed to associate custom field instance to an entity", e);
 			throw e;
 		}
+		
+		offerTemplate = offerTemplateService.update(offerTemplate);
 
 		return offerTemplate;
 	}
@@ -159,6 +159,8 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 		offerTemplate.setName(postData.getName());
 		offerTemplate.setLongDescription(postData.getLongDescription());
 		offerTemplate.setDisabled(postData.isDisabled());
+		offerTemplate.setValidFrom(postData.getValidFrom());
+		offerTemplate.setValidTo(postData.getValidTo());
 		
 		try {
 			saveImage(offerTemplate, postData.getImagePath(), postData.getImageBase64());
@@ -379,6 +381,8 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
         dto.setLongDescription(offerTemplate.getLongDescription());
         dto.setDisabled(offerTemplate.isDisabled());
         dto.setImagePath(offerTemplate.getImagePath());
+        dto.setValidFrom(offerTemplate.getValidFrom());
+        dto.setValidTo(offerTemplate.getValidTo());
 
         if (offerTemplate.getBusinessOfferModel() != null) {
             dto.setBomCode(offerTemplate.getBusinessOfferModel().getCode());
