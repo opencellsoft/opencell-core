@@ -176,8 +176,8 @@ public class DefaultObserver {
             // Rethink notif and script - maybe create pre and post script
             if (!(notif instanceof WebHook)) {
                 if (notif.getScriptInstance() != null) {
-                    ScriptInstance script = (ScriptInstance) scriptInstanceService.attach(notif.getScriptInstance());
-                    executeScript(script, entityOrEvent, notif.getParams(), context);
+                    // ScriptInstance script = (ScriptInstance) scriptInstanceService.refreshOrRetrieve(notif.getScriptInstance());
+                    executeScript(notif.getScriptInstance(), entityOrEvent, notif.getParams(), context);
                 }
             }
 
