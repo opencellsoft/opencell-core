@@ -3,9 +3,12 @@ package org.meveo.service.payments.impl;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.payment.DoPaymentResponseDto;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.ingenico.connect.gateway.sdk.java.ApiException;
 import com.ingenico.connect.gateway.sdk.java.Client;
@@ -17,7 +20,6 @@ import com.ingenico.connect.gateway.sdk.java.domain.definitions.AmountOfMoney;
 import com.ingenico.connect.gateway.sdk.java.domain.definitions.Card;
 import com.ingenico.connect.gateway.sdk.java.domain.definitions.CardWithoutCvv;
 import com.ingenico.connect.gateway.sdk.java.domain.definitions.CompanyInformation;
-import com.ingenico.connect.gateway.sdk.java.domain.payment.CancelPaymentResponse;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.CreatePaymentRequest;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.CreatePaymentResponse;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.CardPaymentMethodSpecificInput;
@@ -31,6 +33,8 @@ import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.TokenCard;
 import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.TokenCardData;
 
 public class IngenicoGatewayPayment implements GatewayPaymentInterface {
+	
+	protected Logger log = LoggerFactory.getLogger(IngenicoGatewayPayment.class);
 
 	private static Client client = null;
 	private String merchantId = ParamBean.getInstance().getProperty("ingenico.merchantId", null);
@@ -55,6 +59,8 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			String cardHolderName, String expirayDate, String issueNumber, int productPaymentId, String countryCode)
 			throws BusinessException {
 		try {
+			
+			log.info("\n\n\n dans le gate way");
 			Address billingAddress = new Address();
 			if (customerAccount.getAddress() != null) {
 				billingAddress.setAdditionalInfo(customerAccount.getAddress().getAddress3());
@@ -108,16 +114,20 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			CreateTokenRequest body = new CreateTokenRequest();
 			body.setCard(tokenCard);
 			body.setPaymentProductId(productPaymentId);
-
+			log.info("\n\n\n before the call ");
 			CreateTokenResponse response = getClient().merchant(merchantId).tokens().create(body);
+			log.info("\n\n\n after the call ");
 			if (!response.getIsNewToken()) {
+				log.warn("A token already exist for card:"+StringUtils.hideCardNumber(cardNumber));
 				return null;
 			}
 			return response.getToken();
 		} catch (ApiException ev) {
+			log.info("\n\n\n dans le catch the call ev:"+ev.getMessage());
 			throw new BusinessException(ev.getResponseBody());
 
 		} catch (Exception e) {
+			log.info("\n\n\n dans le catch the call e "+e.getMessage());
 			throw new BusinessException(e.getMessage());
 		}
 

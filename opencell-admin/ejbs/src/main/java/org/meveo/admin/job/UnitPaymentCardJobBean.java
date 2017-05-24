@@ -1,23 +1,18 @@
 package org.meveo.admin.job;
 
-import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Arrays;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.InsufficientBalanceException;
-import org.meveo.event.qualifier.Rejected;
+import org.meveo.api.dto.payment.DoPaymentResponseDto;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.RecordedInvoice;
-import org.meveo.model.rating.EDR;
-import org.meveo.model.rating.EDRStatusEnum;
-import org.meveo.service.billing.impl.EdrService;
-import org.meveo.service.billing.impl.UsageRatingService;
+import org.meveo.service.payments.impl.PaymentService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.slf4j.Logger;
 
@@ -36,12 +31,12 @@ public class UnitPaymentCardJobBean {
     private RecordedInvoiceService recordedInvoiceService;
     
     @Inject
-    private PaymentA paymentApi;
+    private PaymentService paymentService;
 
    
     // @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void execute(JobExecutionResultImpl result, Long aoId) {
+    public void execute(JobExecutionResultImpl result, Long aoId, String callingMode, boolean createAO, boolean matchingAO) {
         log.debug("Running with RecordedInvoice ID={}", aoId);
 
         RecordedInvoice recordedInvoice = null;
@@ -50,23 +45,16 @@ public class UnitPaymentCardJobBean {
             if (recordedInvoice == null) {
                 return;
             }
-            
-            usageRatingService.ratePostpaidUsage(edr);
-            
-            if (edr.getStatus() == EDRStatusEnum.RATED) {
-                edr = edrService.updateNoCheck(edr);
-                result.registerSucces();
-            } else {
-                edr = edrService.updateNoCheck(edr);
-                rejectededEdrProducer.fire(edr);
-                result.registerError(edr.getId(), edr.getRejectReason());
-                result.addReport("EdrId : " + edr.getId() + " RejectReason : " + edr.getRejectReason());
+           DoPaymentResponseDto doPaymentResponseDto =  paymentService.doPaymentCardToken(recordedInvoice.getCustomerAccount(), recordedInvoice.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), Arrays.asList(aoId), createAO, matchingAO);
+           if(!StringUtils.isBlank(doPaymentResponseDto.getPaymentID())){
+        	   result.registerSucces();
             }
-        } catch (BusinessException e) {
-            if (!(e instanceof InsufficientBalanceException)) {
-                log.error("Failed to unit usage rate for {}", edrId, e);
-            }
-            unitUsageRatingJobBean.registerFailedEdr(result, edr, e);
+            
+        } catch (Exception e) {
+        	log.error("Failed to pay recorded invoice id:"+aoId, e);
+            result.registerError(aoId, e.getMessage());
+            result.addReport("RecordedInvoice id : " + aoId + " RejectReason : " + e.getMessage());
+            
         }
     }
 

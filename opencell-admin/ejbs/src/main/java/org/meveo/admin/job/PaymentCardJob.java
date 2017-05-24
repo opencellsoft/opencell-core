@@ -88,16 +88,6 @@ public class PaymentCardJob extends Job {
 		outputDirectoryCF.setMaxValue(256L);
 		result.put("PaymentCardJob_inputDir", outputDirectoryCF);
 
-		CustomFieldTemplate mappingConf = new CustomFieldTemplate();
-		mappingConf.setCode("PaymentCardJob_mappingConf");
-		mappingConf.setAppliesTo("JOB_PaymentCardJob");
-		mappingConf.setActive(true);
-		mappingConf.setDescription("Mapping");
-		mappingConf.setFieldType(CustomFieldTypeEnum.TEXT_AREA);
-		mappingConf.setDefaultValue("");
-		mappingConf.setValueRequired(false);
-		result.put("PaymentCardJob_mappingConf", mappingConf);
-
 		CustomFieldTemplate recordVariableName = new CustomFieldTemplate();
 		recordVariableName.setCode("PaymentCardJob_recordVariableName");
 		recordVariableName.setAppliesTo("JOB_PaymentCardJob");
@@ -133,7 +123,17 @@ public class PaymentCardJob extends Job {
 		matchingAO.setFieldType(CustomFieldTypeEnum.LIST);
 		matchingAO.setValueRequired(false);
 		matchingAO.setListValues(lisValuesYesNo);
-		result.put("PaymentCardJob_createAO", matchingAO);
+		result.put("PaymentCardJob_matchingAO", matchingAO);
+		
+		CustomFieldTemplate mappingConf = new CustomFieldTemplate();
+		mappingConf.setCode("PaymentCardJob_mappingConf");
+		mappingConf.setAppliesTo("JOB_PaymentCardJob");
+		mappingConf.setActive(true);
+		mappingConf.setDescription("Mapping");
+		mappingConf.setFieldType(CustomFieldTypeEnum.TEXT_AREA);
+		mappingConf.setDefaultValue("");
+		mappingConf.setValueRequired(false);
+		result.put("PaymentCardJob_mappingConf", mappingConf);
 
 		return result;
 	}

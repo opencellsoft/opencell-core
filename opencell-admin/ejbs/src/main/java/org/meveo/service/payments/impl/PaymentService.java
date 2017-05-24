@@ -66,8 +66,8 @@ public class PaymentService extends PersistenceService<Payment> {
 		}		
 
 		DoPaymentResponseDto doPaymentResponseDto =  gatewayPaymentInterface.doPaymentToken(cardTokenService.getPreferedToken(customerAccount), ctsAmount);
-		//TODO succes payment status
-		if(true /*doPaymentResponseDto.getPaymentStatus()*/){
+
+		if(!StringUtils.isBlank(doPaymentResponseDto.getPaymentID())){
 			Long aoPaymentId = null;
 			if(createAO){
 				try{
@@ -111,8 +111,8 @@ public class PaymentService extends PersistenceService<Payment> {
 			throw new BusinessException("Unsupported payment method:"+customerAccount.getPaymentMethod());
 		}				
 		DoPaymentResponseDto doPaymentResponseDto =  gatewayPaymentInterface.doPaymentCard(customerAccount, ctsAmount, cardNumber, ownerName,  cvv, expirayDate,cardType);		
-		//TODO succes payment status
-		if(true /*doPaymentResponseDto.getPaymentStatus()*/){
+		
+		if(!StringUtils.isBlank(doPaymentResponseDto.getPaymentID())){
 			CardToken cardToken = new CardToken(); 
 			cardToken.setAlias("Card_"+ownerName);
 			cardToken.setCardNumber(cardNumber);
