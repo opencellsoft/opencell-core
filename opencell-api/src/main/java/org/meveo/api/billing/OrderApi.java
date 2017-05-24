@@ -251,8 +251,6 @@ public class OrderApi extends BaseApi {
             order.addOrderItem(orderItem);
         }
 
-        orderService.create(order);
-
         // populate customFields
         try {
             populateCustomFields(productOrder.getCustomFields(), order, true);
@@ -263,6 +261,8 @@ public class OrderApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+
+        orderService.create(order);
 
         // Commit before initiating workflow/order processing
         orderService.commit();
@@ -533,8 +533,6 @@ public class OrderApi extends BaseApi {
         subscription.setEndAgreementDate((Date) getProductCharacteristic(productOrderItem.getProduct(),
             OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(), Date.class, null));
 
-        subscriptionService.create(subscription);
-
         // Validate and populate customFields
         CustomFieldsDto customFields = extractCustomFields(productOrderItem.getProduct(), Subscription.class);
 
@@ -548,6 +546,9 @@ public class OrderApi extends BaseApi {
             throw new BusinessException("Failed to associate custom field instance to an entity", e);
         }
 
+
+        subscriptionService.create(subscription);
+        
         // instantiate and activate services
         processServices(subscription, services, orderNumber);
 
@@ -569,8 +570,6 @@ public class OrderApi extends BaseApi {
         ProductInstance productInstance = new ProductInstance(orderItem.getUserAccount(), subscription, productTemplate, quantity, chargeDate, code,
             productTemplate.getDescription(), orderNumber);
 
-        productInstanceService.applyProductInstance(productInstance, null, null, null, true);
-
         try {
             CustomFieldsDto customFields = extractCustomFields(product, ProductInstance.class);
             populateCustomFields(customFields, productInstance, true, true);
@@ -581,6 +580,8 @@ public class OrderApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw new BusinessException("Failed to associate custom field instance to an entity", e);
         }
+
+        productInstanceService.applyProductInstance(productInstance, null, null, null, true);
 
         return productInstance;
     }

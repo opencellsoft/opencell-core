@@ -126,8 +126,6 @@ public class CustomerApi extends AccountApi {
             customer.setBusinessAccountModel(businessAccountModel);
         }
 
-        customerService.create(customer);
-
         // Validate and populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), customer, true, checkCustomFields);
@@ -139,6 +137,8 @@ public class CustomerApi extends AccountApi {
             throw e;
         }
 
+        customerService.create(customer);
+        
         return customer;
     }
 
@@ -234,7 +234,6 @@ public class CustomerApi extends AccountApi {
             customer.setBusinessAccountModel(businessAccountModel);
         }
 
-        customer = customerService.update(customer);
 
         // Validate and populate customFields
         try {
@@ -247,6 +246,8 @@ public class CustomerApi extends AccountApi {
             throw e;
         }
 
+        customer = customerService.update(customer);
+        
         return customer;
     }
 

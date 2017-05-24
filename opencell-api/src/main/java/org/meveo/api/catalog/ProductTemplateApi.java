@@ -113,11 +113,7 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 			log.error("Invalid image data={}", e1.getMessage());
 			throw new InvalidImageData();
 		}
-		
-		// save product template now so that they can be referenced by the
-		// related entities below.
-		productTemplateService.create(productTemplate);
-		
+				
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), productTemplate, false);
@@ -128,7 +124,11 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
-		
+
+        // save product template now so that they can be referenced by the
+        // related entities below.
+        productTemplateService.create(productTemplate);
+        
 		if(postData.getProductChargeTemplates()!= null){
 			processProductChargeTemplate(postData, productTemplate);
 		}
@@ -183,7 +183,6 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 		if(postData.getAttachments() != null){
 			processDigitalResources(postData, productTemplate);
 		}
-		productTemplate= productTemplateService.update(productTemplate);
 
         // populate customFields
         try {
@@ -195,6 +194,8 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+
+        productTemplate= productTemplateService.update(productTemplate);
 
 		return productTemplate;
 	}

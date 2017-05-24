@@ -188,8 +188,6 @@ public class BillingAccountApi extends AccountApi {
 			billingAccount.setBusinessAccountModel(businessAccountModel);
 		}
 
-		billingAccountService.createBillingAccount(billingAccount);
-
 		// Validate and populate customFields
 		try {
 			populateCustomFields(postData.getCustomFields(), billingAccount, true, checkCustomFields);
@@ -200,6 +198,8 @@ public class BillingAccountApi extends AccountApi {
             log.error("Failed to associate custom field instance to an entity", e);
 			throw e;
 		}
+
+        billingAccountService.createBillingAccount(billingAccount);
 
 		return billingAccount;
 	}
@@ -360,12 +360,6 @@ public class BillingAccountApi extends AccountApi {
 			billingAccount.setBusinessAccountModel(businessAccountModel);
 		}
 
-		try {
-			billingAccount = billingAccountService.update(billingAccount);
-		} catch (BusinessException e1) {
-			throw new MeveoApiException(e1.getMessage());
-		}
-
 		// Validate and populate customFields
 		try {
 			populateCustomFields(postData.getCustomFields(), billingAccount, false, checkCustomFields);
@@ -376,6 +370,12 @@ public class BillingAccountApi extends AccountApi {
             log.error("Failed to associate custom field instance to an entity", e);
 			throw e;
 		}
+
+        try {
+            billingAccount = billingAccountService.update(billingAccount);
+        } catch (BusinessException e1) {
+            throw new MeveoApiException(e1.getMessage());
+        }
 
 		return billingAccount;
 	}

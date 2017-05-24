@@ -26,7 +26,6 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.parameter.SecureMethodParameter;
-import org.meveo.api.security.parameter.UserParser;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
@@ -103,12 +102,6 @@ public class UserAccountApi extends AccountApi {
 			userAccount.setBusinessAccountModel(businessAccountModel);
 		}
 
-		try {
-			userAccountService.createUserAccount(billingAccount, userAccount);
-		} catch (AccountAlreadyExistsException e) {
-			throw new EntityAlreadyExistsException(UserAccount.class, postData.getCode());
-		}
-
 		// Validate and populate customFields
 		try {
 			populateCustomFields(postData.getCustomFields(), userAccount, true, checkCustomFields);
@@ -118,6 +111,12 @@ public class UserAccountApi extends AccountApi {
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
+        }
+		
+        try {
+            userAccountService.createUserAccount(billingAccount, userAccount);
+        } catch (AccountAlreadyExistsException e) {
+            throw new EntityAlreadyExistsException(UserAccount.class, postData.getCode());
         }
 
 		return userAccount;
@@ -169,12 +168,6 @@ public class UserAccountApi extends AccountApi {
 			userAccount.setBusinessAccountModel(businessAccountModel);
 		}
 
-		try {
-			userAccount = userAccountService.update(userAccount);
-		} catch (BusinessException e1) {
-			throw new MeveoApiException(e1.getMessage());
-		}
-
 		// Validate and populate customFields
 		try {
 			populateCustomFields(postData.getCustomFields(), userAccount, false, checkCustomFields);
@@ -184,6 +177,12 @@ public class UserAccountApi extends AccountApi {
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
+        }
+
+        try {
+            userAccount = userAccountService.update(userAccount);
+        } catch (BusinessException e1) {
+            throw new MeveoApiException(e1.getMessage());
         }
 
 		return userAccount;
@@ -384,7 +383,6 @@ public class UserAccountApi extends AccountApi {
 		try {
 			ProductInstance productInstance = new ProductInstance(userAccount, null, productTemplate, postData.getQuantity(), postData.getOperationDate(), postData.getProduct(),
 					postData.getDescription(), null);
-			productInstanceService.instantiateProductInstance(productInstance, postData.getCriteria1(), postData.getCriteria2(), postData.getCriteria3(), false);
 
 			// Validate and populate customFields
 			try {
@@ -393,6 +391,8 @@ public class UserAccountApi extends AccountApi {
 				log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
 				throw e;
 			}
+
+			productInstanceService.instantiateProductInstance(productInstance, postData.getCriteria1(), postData.getCriteria2(), postData.getCriteria3(), false);
 
 			walletOperations = productInstanceService.applyProductInstance(productInstance, postData.getCriteria1(), postData.getCriteria2(), postData.getCriteria3(), 
 					true, false);

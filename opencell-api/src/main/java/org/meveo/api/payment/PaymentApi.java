@@ -111,7 +111,7 @@ public class PaymentApi extends BaseApi {
 		payment.setPaymentOrder(paymentDto.getPaymentOrder());
 		payment.setFees(paymentDto.getFees());
 		payment.setComment(paymentDto.getComment());
-		paymentService.create(payment);
+		
 		// populate customFields
         try {
             populateCustomFields(paymentDto.getCustomFields(), payment, true); 
@@ -122,6 +122,8 @@ public class PaymentApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+
+        paymentService.create(payment);
         
 		int nbOccMatched = 0;
 		if (paymentDto.isToMatching()) {

@@ -122,7 +122,6 @@ public class AccountOperationApi extends BaseApi {
             accountOperation.setExcludedFromDunning(false);
         }
 
-        accountOperationService.create(accountOperation);
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), accountOperation, true, true);
@@ -135,6 +134,8 @@ public class AccountOperationApi extends BaseApi {
             throw e;
         }
 
+        accountOperationService.create(accountOperation);
+        
         if (postData.getMatchingAmounts() != null) {
             for (MatchingAmountDto matchingAmountDto : postData.getMatchingAmounts().getMatchingAmount()) {
                 MatchingAmount matchingAmount = new MatchingAmount();
