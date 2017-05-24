@@ -713,6 +713,8 @@ public class CustomFieldValue implements Serializable {
 	 */
     @SuppressWarnings("rawtypes")
 	private static Class findItemClass(Iterator iterator) {
+		if (!iterator.hasNext())
+			return null;
 		Object item = iterator.next();
 		while (item == null && iterator.hasNext()) {
 			item = iterator.next();
