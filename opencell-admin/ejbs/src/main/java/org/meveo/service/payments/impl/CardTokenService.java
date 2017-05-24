@@ -38,10 +38,10 @@ import org.meveo.service.base.PersistenceService;
  */
 @Stateless
 public class CardTokenService extends PersistenceService<CardToken> {
-	
+
 	@Inject
 	private CountryService countryService;
-	
+
 	@Override
 	public void create(CardToken cardToken) throws BusinessException{
 		String coutryCode = null;
@@ -49,21 +49,25 @@ public class CardTokenService extends PersistenceService<CardToken> {
 		if(country != null){
 			coutryCode = country.getCountryCode();
 		}
-		GatewayPaymentInterface  gatewayPaymentInterface = GatewayPaymentFactory.getInstance(GatewayPaymentNamesEnum.valueOf(ParamBean.getInstance().getProperty("meveo.gatewayPayment", "INGENICO")));
-		String tockenID = gatewayPaymentInterface.createCardToken(cardToken.getCustomerAccount(), cardToken.getAlias(), cardToken.getCardNumber(), cardToken.getOwner(),
-				StringUtils.getLongAsNChar(cardToken.getMonthExpiration(), 2)+StringUtils.getLongAsNChar(cardToken.getYearExpiration(),2), cardToken.getIssueNumber(),cardToken.getCardType().getId(),coutryCode);
-		if(tockenID != null){
+		if(cardToken.getTokenId() == null){
+			GatewayPaymentInterface  gatewayPaymentInterface = GatewayPaymentFactory.getInstance(GatewayPaymentNamesEnum.valueOf(ParamBean.getInstance().getProperty("meveo.gatewayPayment", "INGENICO")));
+			String tockenID = gatewayPaymentInterface.createCardToken(cardToken.getCustomerAccount(), cardToken.getAlias(), cardToken.getCardNumber(), cardToken.getOwner(),
+					StringUtils.getLongAsNChar(cardToken.getMonthExpiration(), 2)+StringUtils.getLongAsNChar(cardToken.getYearExpiration(),2), cardToken.getIssueNumber(),cardToken.getCardType().getId(),coutryCode);
 			cardToken.setTokenId(tockenID);
-			super.create(cardToken);
 		}
+		super.create(cardToken);
 		if(cardToken.getIsDefault()){			
-			getEntityManager().createNamedQuery("CardToken.updateDefaultToken").setParameter("defaultOne", cardToken.getTokenId())	.executeUpdate();
+			getEntityManager().createNamedQuery("CardToken.updateDefaultToken").setParameter("defaultOne", cardToken.getTokenId()).executeUpdate();
 		}
-		
 	}
-	
+
+	/**
+	 * Return the default token, if expired return other valid token
+	 * @param customerAccount
+	 * @return
+	 * @throws BusinessException
+	 */
 	public CardToken getPreferedToken(CustomerAccount customerAccount) throws BusinessException{
-		
 		CardToken cardToken = (CardToken) getEntityManager().createNamedQuery("CardToken.getDefaultToken")
 				.setParameter("monthExpiration", DateUtils.getMonthFromDate(new Date()))
 				.setParameter("yearExpiration", new Integer((""+DateUtils.getYearFromDate(new Date())).substring(2, 3)))

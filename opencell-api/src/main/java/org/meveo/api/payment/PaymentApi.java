@@ -41,6 +41,7 @@ import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CardTokenService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
@@ -68,6 +69,9 @@ public class PaymentApi extends BaseApi {
 
 	@Inject
 	private CardTokenService cardTokenService;
+	
+	@Inject
+	private AccountOperationService accountOperationService;
 
 	public void createPayment(PaymentDto paymentDto) throws  NoAllOperationUnmatchedException, UnbalanceAmountException, BusinessException, MeveoApiException {
 		log.info("create payment for amount:" + paymentDto.getAmount() + " paymentMethodEnum:" + paymentDto.getPaymentMethod() + " isToMatching:" + paymentDto.isToMatching() + "  customerAccount:" + paymentDto.getCustomerAccountCode() + "...");
@@ -87,10 +91,7 @@ public class PaymentApi extends BaseApi {
 		if (StringUtils.isBlank(paymentDto.getPaymentMethod())) {
 			missingParameters.add("paymentMethod");
 		}
-
 		handleMissingParameters();
-
-
 		CustomerAccount customerAccount = customerAccountService.findByCode(paymentDto.getCustomerAccountCode());
 		if (customerAccount == null) {
 			throw new BusinessException("Cannot find customer account with code=" + paymentDto.getCustomerAccountCode());
@@ -243,13 +244,8 @@ public class PaymentApi extends BaseApi {
 		cardToken.setIssueNumber(cardTokenRequestDto.getIssueNumber());
 		cardToken.setYearExpiration(cardTokenRequestDto.getYearExpiration());
 		cardToken.setMonthExpiration(cardTokenRequestDto.getMonthExpiration());		
-		cardToken.setHiddenCardNumber( (cardTokenRequestDto.getCardNumber() != null && cardTokenRequestDto.getCardNumber().length() == 16) ? "************"+cardTokenRequestDto.getCardNumber().substring(12, 15): "invalid" );
-
+		cardToken.setHiddenCardNumber(StringUtils.hideCardNumber(cardTokenRequestDto.getCardNumber()) );
 		cardTokenService.create(cardToken);
-
-		CardTokenResponseDto response = new CardTokenResponseDto();
-		response.setTokenID(cardToken.getTokenId());
-		response.setActionStatus(new ActionStatus(ActionStatusEnum.SUCCESS, ""));
 		return cardToken.getTokenId();
 	}
 
@@ -265,35 +261,41 @@ public class PaymentApi extends BaseApi {
 		if(StringUtils.isBlank(doPaymentRequestDto.getCustomerAccountCode())){
 			missingParameters.add("CustomerAccountCode");
 		}
-
-		if(doPaymentRequestDto.isToMatching() && StringUtils.isBlank(doPaymentRequestDto.getInvoiceNumber())){
-			missingParameters.add("InvoiceNumber");
+		boolean useCard = false;
+        //case card payment
+		if(!StringUtils.isBlank(doPaymentRequestDto.getCardNumber())){
+			useCard = true;
+			if(StringUtils.isBlank(doPaymentRequestDto.getCvv())){
+				missingParameters.add("Cvv");
+			}
+			if( StringUtils.isBlank(doPaymentRequestDto.getExpirayDate()) ||
+			    doPaymentRequestDto.getExpirayDate().length() != 4   ||
+			    !org.apache.commons.lang3.StringUtils.isNumeric(doPaymentRequestDto.getExpirayDate()) ){
+				
+					missingParameters.add("ExpirayDate");			
+			}
+			if(StringUtils.isBlank(doPaymentRequestDto.getOwnerName())){
+				missingParameters.add("OwnerName");
+			}
+			if(StringUtils.isBlank(doPaymentRequestDto.getCardType())){
+				missingParameters.add("CardType");
+			}			
 		}
-
 		handleMissingParameters();
+		
 		CustomerAccount customerAccount = customerAccountService.findByCode(doPaymentRequestDto.getCustomerAccountCode());
 		if(customerAccount == null){
 			throw new EntityDoesNotExistsException(CustomerAccount.class, doPaymentRequestDto.getCustomerAccountCode());
 		}
-
-		DoPaymentResponseDto doPaymentResponseDto = paymentService.doPayment(customerAccount,doPaymentRequestDto.getCtsAmount(),null/*Invoice*/);
-		//TODO auto matching here 
-		if(true /*doPaymentResponseDto.getPaymentStatus()*/){
-			if(doPaymentRequestDto.isCreateAO()){
-				PaymentDto paymentDto = new PaymentDto();
-				paymentDto.setAmount((new BigDecimal(doPaymentRequestDto.getCtsAmount()).divide(new BigDecimal(100))));
-				paymentDto.setCustomerAccountCode(customerAccount.getCode());
-				paymentDto.setListOCCReferenceforMatching(Arrays.asList(doPaymentRequestDto.getInvoiceNumber()));
-				paymentDto.setOccTemplateCode(ParamBean.getInstance().getProperty("occ.payment.card", "RG_TIP"));
-				paymentDto.setPaymentMethod(PaymentMethodEnum.CARD);
-				paymentDto.setReference(doPaymentResponseDto.getTransactionId());
-				paymentDto.setTransactionDate(new Date());
-				if(doPaymentRequestDto.isToMatching()){
-					paymentDto.setToMatching(true);
-				}
-				createPayment(paymentDto);
-			}
+		DoPaymentResponseDto doPaymentResponseDto = null;
+		if(useCard){
+			doPaymentResponseDto = paymentService.doPaymentCard(customerAccount, doPaymentRequestDto.getCtsAmount(), doPaymentRequestDto.getCardNumber(), doPaymentRequestDto.getOwnerName(),
+					doPaymentRequestDto.getCvv(), doPaymentRequestDto.getExpirayDate(), doPaymentRequestDto.getCardType(), doPaymentRequestDto.getAoToPay(), doPaymentRequestDto.isCreateAO(), doPaymentRequestDto.isToMatching());
+		}else{
+			doPaymentResponseDto = paymentService.doPaymentCardToken(customerAccount,  doPaymentRequestDto.getCtsAmount(), doPaymentRequestDto.getAoToPay(), doPaymentRequestDto.isCreateAO(), doPaymentRequestDto.isToMatching());
 		}
+		
+	
 		return doPaymentResponseDto;
 	}
 

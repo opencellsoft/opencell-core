@@ -31,7 +31,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.AuditableEntity;
 import org.meveo.model.MatchingReturnObject;
 import org.meveo.model.PartialMatchingOccToSelect;
 import org.meveo.model.payments.AccountOperation;
@@ -147,6 +146,9 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
 		for (Long id : operationIds) {
 			AccountOperation accountOperation = accountOperationService.findById(id);
+			if(accountOperation == null){
+				throw new BusinessException("Cannot find account operation with id:"+id);
+			}
 			listOcc.add(accountOperation);
 
 		}

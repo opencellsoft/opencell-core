@@ -2,6 +2,7 @@ package org.meveo.service.payments.impl;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.payment.DoPaymentResponseDto;
+import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentToken;
 
@@ -29,6 +30,29 @@ public interface GatewayPaymentInterface {
 	 * @return
 	 * @throws BusinessException
 	 */
-	public DoPaymentResponseDto doPayment(PaymentToken paymentToken, Long ctsAmount)throws BusinessException;
+	public DoPaymentResponseDto doPaymentToken(PaymentToken paymentToken, Long ctsAmount)throws BusinessException;
+	
+	
+	/**
+	 * 
+	 * @param customerAccount
+	 * @param ctsAmount
+	 * @param cardNumber
+	 * @param ownerName
+	 * @param cvv
+	 * @param expirayDate format MMyy
+	 * @param cardType
+	 * @return
+	 * @throws BusinessException
+	 */
+	public DoPaymentResponseDto doPaymentCard(CustomerAccount customerAccount, Long ctsAmount,String cardNumber,String ownerName, String cvv,String expirayDate,CreditCardTypeEnum cardType)throws BusinessException;
+	
+	/**
+	 * This makes it impossible to process the payment any further and will also try to reverse an authorization on a card.
+	 * 
+	 * @param paymentID
+	 * @throws BusinessException
+	 */
+	public void cancelPayment(String paymentID)throws BusinessException;
 
 }
