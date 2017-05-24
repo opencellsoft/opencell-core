@@ -1,22 +1,14 @@
 package org.meveo.api.rest.catalog.impl;
 
-import java.util.Set;
-
-import javax.ejb.EJBTransactionRolledbackException;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.catalog.UsageChargeTemplateApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
 import org.meveo.api.dto.response.catalog.GetUsageChargeTemplateResponseDto;
-import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.catalog.UsageChargeTemplateRs;
 import org.meveo.api.rest.impl.BaseRs;
@@ -37,37 +29,8 @@ public class UsageChargeTemplateRsImpl extends BaseRs implements UsageChargeTemp
 
         try {
             usageChargeTemplateApi.create(postData);
-        } catch (EJBTransactionRolledbackException e) {
-            Throwable t = e.getCause();
-            while ((t != null) && !(t instanceof ConstraintViolationException)) {
-                t = t.getCause();
-            }
-            if (t instanceof ConstraintViolationException) {
-                ConstraintViolationException cve = (ConstraintViolationException) (t);
-                Set<ConstraintViolation<?>> violations = cve.getConstraintViolations();
-                String errMsg = "";
-                for (ConstraintViolation<?> cv : violations) {
-                    errMsg += cv.getPropertyPath() + " " + cv.getMessage() + ",";
-                }
-                errMsg = errMsg.substring(0, errMsg.length() - 1);
-                result.setErrorCode(MeveoApiErrorCodeEnum.INVALID_PARAMETER);
-                result.setStatus(ActionStatusEnum.FAIL);
-                result.setMessage(errMsg);
-            } else {
-                log.error("Failed to execute API", e);
-                result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-                result.setStatus(ActionStatusEnum.FAIL);
-                result.setMessage(e.getMessage());
-            }
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -79,39 +42,9 @@ public class UsageChargeTemplateRsImpl extends BaseRs implements UsageChargeTemp
 
         try {
             usageChargeTemplateApi.update(postData);
-        } catch (EJBTransactionRolledbackException e) {
-            Throwable t = e.getCause();
-            while ((t != null) && !(t instanceof ConstraintViolationException)) {
-                t = t.getCause();
-            }
-            if (t instanceof ConstraintViolationException) {
-                ConstraintViolationException cve = (ConstraintViolationException) (t);
-                Set<ConstraintViolation<?>> violations = cve.getConstraintViolations();
-                String errMsg = "";
-                for (ConstraintViolation<?> cv : violations) {
-                    errMsg += cv.getPropertyPath() + " " + cv.getMessage() + ",";
-                }
-                errMsg = errMsg.substring(0, errMsg.length() - 1);
-                result.setErrorCode(MeveoApiErrorCodeEnum.INVALID_PARAMETER);
-                result.setStatus(ActionStatusEnum.FAIL);
-                result.setMessage(errMsg);
-            } else {
-                log.error("Failed to execute API", e);
-                result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-                result.setStatus(ActionStatusEnum.FAIL);
-                result.setMessage(e.getMessage());
-            }
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
-
         return result;
     }
 
@@ -121,15 +54,8 @@ public class UsageChargeTemplateRsImpl extends BaseRs implements UsageChargeTemp
 
         try {
             result.setUsageChargeTemplate(usageChargeTemplateApi.find(usageChargeTemplateCode));
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -141,15 +67,8 @@ public class UsageChargeTemplateRsImpl extends BaseRs implements UsageChargeTemp
 
         try {
             usageChargeTemplateApi.remove(usageChargeTemplateCode);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
@@ -162,39 +81,9 @@ public class UsageChargeTemplateRsImpl extends BaseRs implements UsageChargeTemp
 
         try {
             usageChargeTemplateApi.createOrUpdate(postData);
-        } catch (EJBTransactionRolledbackException e) {
-            Throwable t = e.getCause();
-            while ((t != null) && !(t instanceof ConstraintViolationException)) {
-                t = t.getCause();
-            }
-            if (t instanceof ConstraintViolationException) {
-                ConstraintViolationException cve = (ConstraintViolationException) (t);
-                Set<ConstraintViolation<?>> violations = cve.getConstraintViolations();
-                String errMsg = "";
-                for (ConstraintViolation<?> cv : violations) {
-                    errMsg += cv.getPropertyPath() + " " + cv.getMessage() + ",";
-                }
-                errMsg = errMsg.substring(0, errMsg.length() - 1);
-                result.setErrorCode(MeveoApiErrorCodeEnum.INVALID_PARAMETER);
-                result.setStatus(ActionStatusEnum.FAIL);
-                result.setMessage(errMsg);
-            } else {
-                log.error("Failed to execute API", e);
-                result.setErrorCode(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-                result.setStatus(ActionStatusEnum.FAIL);
-                result.setMessage(e.getMessage());
-            }
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
-
         return result;
     }
 

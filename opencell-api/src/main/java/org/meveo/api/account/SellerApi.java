@@ -23,7 +23,6 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.parameter.SecureMethodParameter;
-import org.meveo.api.security.parameter.UserParser;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.InvoiceType;
@@ -136,8 +135,6 @@ public class SellerApi extends BaseApi {
             seller.setBusinessAccountModel(businessAccountModel);
         }
 
-        sellerService.create(seller);
-
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), seller, true, checkCustomField);
@@ -148,6 +145,8 @@ public class SellerApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+
+        sellerService.create(seller);
         
         return seller;
     }
@@ -244,8 +243,6 @@ public class SellerApi extends BaseApi {
             seller.setBusinessAccountModel(businessAccountModel);
         }
 
-        seller = sellerService.update(seller);
-
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), seller, false, checkCustomField);
@@ -256,6 +253,8 @@ public class SellerApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+
+        seller = sellerService.update(seller);
 
         return seller;
     }

@@ -93,16 +93,6 @@ public class InvoiceSubCategoryApi extends BaseApi {
             }
         }
 
-        invoiceSubCategoryService.create(invoiceSubCategory);
-
-        // create cat messages
-        if (postData.getLanguageDescriptions() != null) {
-            for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-                CatMessages catMsg = new CatMessages(InvoiceSubCategory.class.getSimpleName(), invoiceSubCategory.getCode(), ld.getLanguageCode(), ld.getDescription());
-
-                catMessagesService.create(catMsg);
-            }
-        }
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), invoiceSubCategory, true, true);
@@ -113,7 +103,18 @@ public class InvoiceSubCategoryApi extends BaseApi {
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
-        }       
+        }        
+
+        invoiceSubCategoryService.create(invoiceSubCategory);
+
+        // create cat messages
+        if (postData.getLanguageDescriptions() != null) {
+            for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
+                CatMessages catMsg = new CatMessages(InvoiceSubCategory.class.getSimpleName(), invoiceSubCategory.getCode(), ld.getLanguageCode(), ld.getDescription());
+
+                catMessagesService.create(catMsg);
+            }
+        }        
     }
 
     public void update(InvoiceSubCategoryDto postData) throws MeveoApiException, BusinessException {
@@ -180,8 +181,6 @@ public class InvoiceSubCategoryApi extends BaseApi {
             }
         }
         
-        invoiceSubCategoryService.update(invoiceSubCategory);
-        
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), invoiceSubCategory, false, true);
@@ -193,6 +192,8 @@ public class InvoiceSubCategoryApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+        
+        invoiceSubCategory = invoiceSubCategoryService.update(invoiceSubCategory);
     }
 
     public InvoiceSubCategoryDto find(String code) throws MeveoApiException {

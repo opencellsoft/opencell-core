@@ -4,14 +4,11 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.catalog.ChannelApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.ChannelDto;
 import org.meveo.api.dto.response.catalog.GetChannelResponseDto;
-import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.catalog.ChannelRs;
 import org.meveo.api.rest.impl.BaseRs;
@@ -23,105 +20,69 @@ public class ChannelRsImpl extends BaseRs implements ChannelRs {
     @Inject
     private ChannelApi channelApi;
 
-	@Override
-	public ActionStatus create(ChannelDto postData) {
-	        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
-	        try {
-	        	channelApi.create(postData);
-	        } catch (MeveoApiException e) {
-	            result.setErrorCode(e.getErrorCode());
-	            result.setStatus(ActionStatusEnum.FAIL);
-	            result.setMessage(e.getMessage());
-	        } catch (Exception e) {
-	            log.error("Failed to execute API", e);
-	            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-	            result.setStatus(ActionStatusEnum.FAIL);
-	            result.setMessage(e.getMessage());
-	        }
-
-	        return result;
-	}
-
-	@Override
-	public ActionStatus update(ChannelDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus create(ChannelDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            channelApi.update(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            channelApi.create(postData);
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
+            processException(e, result);
         }
 
         return result;
-	}
+    }
 
-	@Override
-	public GetChannelResponseDto find(String channelCode) {
-		GetChannelResponseDto result = new GetChannelResponseDto();
+    @Override
+    public ActionStatus update(ChannelDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-	        try {
-	            result.setChannel(channelApi.find(channelCode));
-	        } catch (MeveoApiException e) {
-	            result.getActionStatus().setErrorCode(e.getErrorCode());
-	            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-	            result.getActionStatus().setMessage(e.getMessage());
-	        } catch (Exception e) {
-	            log.error("Failed to execute API", e);
-	            result.getActionStatus().setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-	            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-	            result.getActionStatus().setMessage(e.getMessage());
-	        }
+        try {
+            channelApi.update(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-	        return result;
-	}
+        return result;
+    }
 
-	@Override
-	public ActionStatus delete(String channelCode) {
-		 ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public GetChannelResponseDto find(String channelCode) {
+        GetChannelResponseDto result = new GetChannelResponseDto();
 
-	        try {
-	            channelApi.remove(channelCode);
-	        } catch (MeveoApiException e) {
-	            result.setErrorCode(e.getErrorCode());
-	            result.setStatus(ActionStatusEnum.FAIL);
-	            result.setMessage(e.getMessage());
-	        } catch (Exception e) {
-	            log.error("Failed to execute API", e);
-	            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-	            result.setStatus(ActionStatusEnum.FAIL);
-	            result.setMessage(e.getMessage());
-	        }
+        try {
+            result.setChannel(channelApi.find(channelCode));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
 
-	        return result;
-	}
+        return result;
+    }
 
-	@Override
-	public ActionStatus createOrUpdate(ChannelDto postData) {
-		 ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus delete(String channelCode) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-	        try {
-	            channelApi.createOrUpdate(postData);
-	        } catch (MeveoApiException e) {
-	            result.setErrorCode(e.getErrorCode());
-	            result.setStatus(ActionStatusEnum.FAIL);
-	            result.setMessage(e.getMessage());
-	        } catch (Exception e) {
-	            log.error("Failed to execute API", e);
-	            result.setErrorCode(e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION);
-	            result.setStatus(ActionStatusEnum.FAIL);
-	            result.setMessage(e.getMessage());
-	        }
+        try {
+            channelApi.remove(channelCode);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-	        return result;
-	}
+        return result;
+    }
 
+    @Override
+    public ActionStatus createOrUpdate(ChannelDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            channelApi.createOrUpdate(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
 
 }

@@ -74,8 +74,6 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
         OfferTemplate offerTemplate = new OfferTemplate();
         populateFromDto(offerTemplate, postData);
 
-        offerTemplateService.create(offerTemplate);
-
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), offerTemplate, true);
@@ -86,6 +84,9 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+
+        offerTemplateService.create(offerTemplate);
+        
         return offerTemplate;
     }
 
@@ -106,7 +107,6 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 
         populateFromDto(offerTemplate, postData);
         offerTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
-        offerTemplate = offerTemplateService.update(offerTemplate);
 
         // populate customFields
         try {
@@ -118,6 +118,8 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+
+		offerTemplate = offerTemplateService.update(offerTemplate);
 
         return offerTemplate;
     }

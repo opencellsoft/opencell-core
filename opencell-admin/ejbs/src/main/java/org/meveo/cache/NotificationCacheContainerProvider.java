@@ -84,6 +84,10 @@ public class NotificationCacheContainerProvider {
     @SuppressWarnings("unchecked")
     public void addNotificationToCache(Notification notif) {
 
+        // Solve lazy loading issues when firing notification
+        if (notif.getScriptInstance() != null) {
+            notif.getScriptInstance().getCode();
+        }
         try {
             String cacheKey = notif.getEventTypeFilter().name();
 

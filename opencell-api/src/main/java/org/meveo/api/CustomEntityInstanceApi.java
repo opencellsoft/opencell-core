@@ -67,8 +67,6 @@ public class CustomEntityInstanceApi extends BaseApi {
 
         CustomEntityInstance cei = CustomEntityInstanceDto.fromDTO(dto, null);
 
-        customEntityInstanceService.create(cei);
-
         // populate customFields
         try {
             populateCustomFields(dto.getCustomFields(), cei, true);
@@ -79,6 +77,8 @@ public class CustomEntityInstanceApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+
+        customEntityInstanceService.create(cei);
     }
 
     public void update(CustomEntityInstanceDto dto) throws MeveoApiException, BusinessException {
@@ -108,8 +108,6 @@ public class CustomEntityInstanceApi extends BaseApi {
 
         cei = CustomEntityInstanceDto.fromDTO(dto, cei);
 
-        cei = customEntityInstanceService.update(cei);
-
         // populate customFields
         try {
             populateCustomFields(dto.getCustomFields(), cei, false);
@@ -120,6 +118,8 @@ public class CustomEntityInstanceApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+
+        cei = customEntityInstanceService.update(cei);
     }
 
     public void remove(String cetCode, String code) throws EntityDoesNotExistsException, MissingParameterException, MeveoApiException, BusinessException {

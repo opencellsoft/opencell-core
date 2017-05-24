@@ -85,17 +85,6 @@ public class TaxApi extends BaseApi {
                 }
             }
         }
-
-        taxService.create(tax);
-
-        // create cat messages
-        if (postData.getLanguageDescriptions() != null) {
-            for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-                CatMessages catMsg = new CatMessages(Tax.class.getSimpleName() , tax.getCode(), ld.getLanguageCode(), ld.getDescription());
-
-                catMessagesService.create(catMsg);
-            }
-        }
      
         // populate customFields
         try {
@@ -107,6 +96,17 @@ public class TaxApi extends BaseApi {
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
+        }
+
+        taxService.create(tax);
+
+        // create cat messages
+        if (postData.getLanguageDescriptions() != null) {
+            for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
+                CatMessages catMsg = new CatMessages(Tax.class.getSimpleName() , tax.getCode(), ld.getLanguageCode(), ld.getDescription());
+
+                catMessagesService.create(catMsg);
+            }
         }
 
         return result;
@@ -171,8 +171,6 @@ public class TaxApi extends BaseApi {
                 }
             }
         }
-
-        taxService.update(tax);
         
      // populate customFields
         try {
@@ -185,6 +183,8 @@ public class TaxApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+
+        tax = taxService.update(tax);
 
         return result;
     }

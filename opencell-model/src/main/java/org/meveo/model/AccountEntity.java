@@ -114,11 +114,11 @@ public abstract class AccountEntity extends BusinessCFEntity {
 	}
 
 	public Address getAddress() {
-		if (address != null) {
-			return address;
+		if (address == null) {
+			address = new Address();
 		}
 
-		return new Address();
+		return address;
 	}
 
 	public void setAddress(Address address) {

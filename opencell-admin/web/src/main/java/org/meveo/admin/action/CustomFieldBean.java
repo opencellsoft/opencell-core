@@ -51,8 +51,10 @@ public abstract class CustomFieldBean<T extends IEntity> extends BaseBean<T> {
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
         boolean isNew = entity.isTransient();
-        String outcome = super.saveOrUpdate(killConversation);
+        
         customFieldDataEntryBean.saveCustomFieldsToEntity((ICustomFieldEntity) entity, isNew);
+        String outcome = super.saveOrUpdate(killConversation);
+        
         return outcome;
     }    
 }

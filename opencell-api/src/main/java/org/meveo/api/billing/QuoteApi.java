@@ -286,8 +286,6 @@ public class QuoteApi extends BaseApi {
             quote.addQuoteItem(quoteItem);
         }
 
-        quoteService.create(quote);
-
         // populate customFields
         try {
             populateCustomFields(productQuote.getCustomFields(), quote, true);
@@ -299,6 +297,8 @@ public class QuoteApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+
+        quoteService.create(quote);
 
         if (productQuote.getCharacteristic().size() > 0) {
             for (Characteristic quoteCharacteristic : productQuote.getCharacteristic()) {
@@ -650,8 +650,6 @@ public class QuoteApi extends BaseApi {
         ProductInstance productInstance = new ProductInstance(quoteItem.getUserAccount(), subscription, productTemplate, quantity, chargeDate, code,
             productTemplate.getDescription(), null);
 
-        productInstanceService.instantiateProductInstance(productInstance, null, null, null, true);
-
         try {
             CustomFieldsDto customFields = extractCustomFields(product, ProductInstance.class);
             populateCustomFields(customFields, productInstance, true, true);
@@ -662,6 +660,9 @@ public class QuoteApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw new BusinessException("Failed to associate custom field instance to an entity", e);
         }
+        
+        productInstanceService.instantiateProductInstance(productInstance, null, null, null, true);
+   
         return productInstance;
     }
 

@@ -182,7 +182,6 @@ public class ProviderApi extends BaseApi {
         }
 
         provider=fromDto(postData, provider);
-        provider = providerService.update(provider);
 
         // populate customFields
         try {
@@ -194,6 +193,8 @@ public class ProviderApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+
+        provider = providerService.update(provider);
     }
 
     /**

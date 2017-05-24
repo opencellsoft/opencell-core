@@ -84,7 +84,6 @@ public class BillingCycleApi extends BaseApi {
         billingCycle.setInvoicingThreshold(postData.getInvoicingThreshold());
         billingCycle.setInvoiceType(invoiceType);
 
-        billingCycleService.create(billingCycle);
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), billingCycle, true, true);
@@ -96,6 +95,8 @@ public class BillingCycleApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+        
+        billingCycleService.create(billingCycle);
     }
 
     public void update(BillingCycleDto postData) throws MeveoApiException, BusinessException {
@@ -150,8 +151,6 @@ public class BillingCycleApi extends BaseApi {
         billingCycle.setInvoiceDateProductionDelay(postData.getInvoiceDateProductionDelay());
         billingCycle.setInvoicingThreshold(postData.getInvoicingThreshold());
         billingCycle.setInvoiceType(invoiceType);
-        
-        billingCycleService.update(billingCycle);
 	   // populate customFields
 	    try {
 	        populateCustomFields(postData.getCustomFields(), billingCycle, true, true);
@@ -163,6 +162,8 @@ public class BillingCycleApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }  
+        
+        billingCycle = billingCycleService.update(billingCycle);
     }
     
     public BillingCycleDto find(String billingCycleCode) throws MeveoApiException {

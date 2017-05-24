@@ -15,6 +15,8 @@ import javax.validation.ConstraintViolationException;
 
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,18 +83,24 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
 
             // See if can get to the root of the exception cause
             String message = e.getMessage();
+            boolean validation = false;
             Throwable cause = e.getCause();
             while (cause != null) {
 
-                if (cause instanceof SQLException) {
+                if (cause instanceof SQLException || cause instanceof BusinessException) {
                     message = cause.getMessage();
+                    validation = cause instanceof ValidationException;
                     break;
                 }
                 cause = cause.getCause();
             }
 
             messages.clear();
-            messages.error(new BundleKey("messages", "error.action.failed"), message == null ? e.getClass().getSimpleName() : message);
+            if (validation && message != null) {
+                messages.error(message);
+            } else {
+                messages.error(new BundleKey("messages", "error.action.failed"), message == null ? e.getClass().getSimpleName() : message);
+            }
             FacesContext.getCurrentInstance().validationFailed();
         }
 

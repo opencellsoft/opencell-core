@@ -8,7 +8,6 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.notification.WebHookDto;
 import org.meveo.api.dto.response.notification.GetWebHookNotificationResponseDto;
-import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.notification.WebHookApi;
 import org.meveo.api.rest.impl.BaseRs;
@@ -30,15 +29,8 @@ public class WebHookNotificationRsImpl extends BaseRs implements WebHookNotifica
 
         try {
             webhookNotificationApi.create(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-            log.error("error occured while creating webhook notification ", e);
         } catch (Exception e) {
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-            log.error("error generated while creating webhook notification ", e);
+            processException(e, result);
         }
 
         return result;
@@ -50,15 +42,8 @@ public class WebHookNotificationRsImpl extends BaseRs implements WebHookNotifica
 
         try {
             webhookNotificationApi.update(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-            log.error("error occured while updating webhook notification ", e);
         } catch (Exception e) {
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-            log.error("error generated while updating webhook notification ", e);
+            processException(e, result);
         }
 
         return result;
@@ -70,15 +55,8 @@ public class WebHookNotificationRsImpl extends BaseRs implements WebHookNotifica
 
         try {
             result.setWebhookDto(webhookNotificationApi.find(notificationCode));
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
-            log.error("error occurred while getting webhook notification ", e);
         } catch (Exception e) {
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
-            log.error("error generated while getting webhook notification ", e);
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -90,15 +68,8 @@ public class WebHookNotificationRsImpl extends BaseRs implements WebHookNotifica
 
         try {
             webhookNotificationApi.remove(notificationCode);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-            log.error("error occurred while removing webhook notification ", e);
         } catch (Exception e) {
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-            log.error("error generated while removing webhook notification ", e);
+            processException(e, result);
         }
 
         return result;
@@ -110,15 +81,8 @@ public class WebHookNotificationRsImpl extends BaseRs implements WebHookNotifica
 
         try {
             webhookNotificationApi.createOrUpdate(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-            log.error("error occured while creating webhook notification ", e);
         } catch (Exception e) {
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-            log.error("error generated while creating webhook notification ", e);
+            processException(e, result);
         }
 
         return result;
