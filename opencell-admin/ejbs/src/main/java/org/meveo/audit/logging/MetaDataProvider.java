@@ -8,6 +8,9 @@ import javax.ws.rs.core.Context;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 
+/**
+ * @author Edward P. Legaspi
+ **/
 @Stateless
 public class MetaDataProvider {
 

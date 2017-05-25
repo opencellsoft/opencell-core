@@ -9,6 +9,9 @@ import javax.interceptor.InvocationContext;
 
 import org.meveo.audit.logging.annotations.MeveoAudit;
 
+/**
+ * @author Edward P. Legaspi
+ **/
 @MeveoAudit
 @Interceptor
 public class AuditInterceptor implements Serializable {

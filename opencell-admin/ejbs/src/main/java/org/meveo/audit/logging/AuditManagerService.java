@@ -52,7 +52,7 @@ public class AuditManagerService {
 	public void audit(AnnotationAuditEvent event) throws BusinessException {
 		AuditEvent auditEvent = transformToEvent(event);
 		auditEvent = metadataHandler.addSignature(auditEvent);
-
+		System.out.println("AUDIT_LOG-" + auditEvent.toString());
 		auditEventDBWriter.write(auditEvent);
 	}
 
@@ -61,7 +61,7 @@ public class AuditManagerService {
 		event.setEntity(getEntityClass(annotationEvent.getClazz()).getName());
 
 		if (annotationEvent.getClazz().isAnnotationPresent(MeveoAudit.class)
-				&& !annotationEvent.getMethod().isAnnotationPresent(IgnoreAudit.class)) {			
+				&& !annotationEvent.getMethod().isAnnotationPresent(IgnoreAudit.class)) {
 			MeveoAudit audit = annotationEvent.getClazz().getAnnotation(MeveoAudit.class);
 			event.setFields(getParameterLines(annotationEvent.getMethod(), annotationEvent.getParamValues()));
 
