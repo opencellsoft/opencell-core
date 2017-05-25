@@ -8,7 +8,6 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.notification.EmailNotificationDto;
 import org.meveo.api.dto.response.notification.GetEmailNotificationResponseDto;
-import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.notification.EmailNotificationApi;
 import org.meveo.api.rest.impl.BaseRs;
@@ -30,15 +29,8 @@ public class EmailNotificationRsImpl extends BaseRs implements EmailNotification
 
         try {
             emailNotificationApi.create(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-            log.error("error occurred while creating email notification ", e);
         } catch (Exception e) {
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-            log.error("error generated while creating  email notification ", e);
+            processException(e, result);
         }
 
         return result;
@@ -50,15 +42,8 @@ public class EmailNotificationRsImpl extends BaseRs implements EmailNotification
 
         try {
             emailNotificationApi.update(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-            log.error("error occurred while updating email notification ", e);
         } catch (Exception e) {
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-            log.error("error generated while updating email notification ", e);
+            processException(e, result);
         }
 
         return result;
@@ -70,15 +55,8 @@ public class EmailNotificationRsImpl extends BaseRs implements EmailNotification
 
         try {
             result.setEmailNotificationDto(emailNotificationApi.find(notificationCode));
-        } catch (MeveoApiException e) {
-            result.getActionStatus().setErrorCode(e.getErrorCode());
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
-            log.error("error occurred while getting email notification ", e);
         } catch (Exception e) {
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
-            log.error("error generated while getting email notification ", e);
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -90,15 +68,8 @@ public class EmailNotificationRsImpl extends BaseRs implements EmailNotification
 
         try {
             emailNotificationApi.remove(notificationCode);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-            log.error("error occurred while removing email notification ", e);
         } catch (Exception e) {
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-            log.error("error generated while removing email notification ", e);
+            processException(e, result);
         }
 
         return result;
@@ -110,15 +81,8 @@ public class EmailNotificationRsImpl extends BaseRs implements EmailNotification
 
         try {
             emailNotificationApi.createOrUpdate(postData);
-        } catch (MeveoApiException e) {
-            result.setErrorCode(e.getErrorCode());
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-            log.error("error occurred while creating email notification ", e);
         } catch (Exception e) {
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-            log.error("error generated while creating  email notification ", e);
+            processException(e, result);
         }
 
         return result;

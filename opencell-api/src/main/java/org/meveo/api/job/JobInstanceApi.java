@@ -87,12 +87,6 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
             customFieldTemplateService.createMissingTemplates(jobInstance, jobCustomFields.values());
         }
 
-        try {
-            jobInstanceService.create(jobInstance);
-        } catch (BusinessException e1) {
-            throw new MeveoApiException(e1.getMessage());
-        }
-
         // Populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), jobInstance, true);
@@ -102,6 +96,12 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
+        }
+
+        try {
+            jobInstanceService.create(jobInstance);
+        } catch (BusinessException e1) {
+            throw new MeveoApiException(e1.getMessage());
         }
 
         return jobInstance;
@@ -164,8 +164,6 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
             customFieldTemplateService.createMissingTemplates(jobInstance, jobCustomFields.values());
         }
 
-        jobInstance = jobInstanceService.update(jobInstance);
-
         // Populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), jobInstance, false);
@@ -176,6 +174,8 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+
+        jobInstance = jobInstanceService.update(jobInstance);
 
         return jobInstance;
     }
