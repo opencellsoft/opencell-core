@@ -62,42 +62,6 @@ public class PaymentCardJob extends Job {
 		waitingMillis.setDefaultValue("0");
 		result.put("waitingMillis", waitingMillis);
 		
-
-		CustomFieldTemplate callingMode = new CustomFieldTemplate();
-		callingMode.setCode("PaymentCardJob_callingMode");
-		callingMode.setAppliesTo("JOB_PaymentCardJob");
-		callingMode.setActive(true);
-		callingMode.setDefaultValue("SERVICE");
-		callingMode.setDescription("Payment mode");
-		callingMode.setFieldType(CustomFieldTypeEnum.LIST);
-		callingMode.setValueRequired(false);
-		Map<String,String> listValues = new HashMap<String,String>();
-		listValues.put("SERVICE","SERVICE");
-		listValues.put("FILE","FILE");
-		callingMode.setListValues(listValues);
-		result.put("PaymentCardJob_callingMode", callingMode);
-
-		CustomFieldTemplate outputDirectoryCF = new CustomFieldTemplate();
-		outputDirectoryCF.setCode("PaymentCardJob_inputDir");
-		outputDirectoryCF.setAppliesTo("JOB_PaymentCardJob");
-		outputDirectoryCF.setActive(true);
-		outputDirectoryCF.setDescription("Output directory");
-		outputDirectoryCF.setFieldType(CustomFieldTypeEnum.STRING);
-		outputDirectoryCF.setDefaultValue(null);
-		outputDirectoryCF.setValueRequired(false);
-		outputDirectoryCF.setMaxValue(256L);
-		result.put("PaymentCardJob_inputDir", outputDirectoryCF);
-
-		CustomFieldTemplate recordVariableName = new CustomFieldTemplate();
-		recordVariableName.setCode("PaymentCardJob_recordVariableName");
-		recordVariableName.setAppliesTo("JOB_PaymentCardJob");
-		recordVariableName.setActive(true);
-		recordVariableName.setDefaultValue("record");
-		recordVariableName.setDescription("Record variable name");
-		recordVariableName.setFieldType(CustomFieldTypeEnum.STRING);
-		recordVariableName.setValueRequired(true);
-		recordVariableName.setMaxValue(50L);
-		result.put("PaymentCardJob_recordVariableName", recordVariableName);
 		
 		Map<String,String> lisValuesYesNo = new HashMap<String,String>();
 		lisValuesYesNo.put("YES","YES");
@@ -124,16 +88,7 @@ public class PaymentCardJob extends Job {
 		matchingAO.setValueRequired(false);
 		matchingAO.setListValues(lisValuesYesNo);
 		result.put("PaymentCardJob_matchingAO", matchingAO);
-		
-		CustomFieldTemplate mappingConf = new CustomFieldTemplate();
-		mappingConf.setCode("PaymentCardJob_mappingConf");
-		mappingConf.setAppliesTo("JOB_PaymentCardJob");
-		mappingConf.setActive(true);
-		mappingConf.setDescription("Mapping");
-		mappingConf.setFieldType(CustomFieldTypeEnum.TEXT_AREA);
-		mappingConf.setDefaultValue("");
-		mappingConf.setValueRequired(false);
-		result.put("PaymentCardJob_mappingConf", mappingConf);
+				
 
 		return result;
 	}

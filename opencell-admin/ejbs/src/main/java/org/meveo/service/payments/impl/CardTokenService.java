@@ -44,20 +44,17 @@ public class CardTokenService extends PersistenceService<CardToken> {
 
 	@Override
 	public void create(CardToken cardToken) throws BusinessException{
-		String coutryCode = null;
-		Country country = countryService.findByName(cardToken.getCustomerAccount().getAddress() != null ? cardToken.getCustomerAccount().getAddress().getCountry() : null);
-		if(country != null){
-			coutryCode = country.getCountryCode();
-		}
-		log.info("\n\n\n cardToken.getTokenId():"+cardToken.getTokenId());
-		if(StringUtils.isBlank(cardToken.getTokenId())){
-			log.info("\n\n\n dans le if");
+
+		if(StringUtils.isBlank(cardToken.getTokenId())){	
+			String coutryCode = null;
+			Country country = countryService.findByName(cardToken.getCustomerAccount().getAddress() != null ? cardToken.getCustomerAccount().getAddress().getCountry() : null);
+			if(country != null){
+				coutryCode = country.getCountryCode();
+			}	
 			GatewayPaymentInterface  gatewayPaymentInterface = GatewayPaymentFactory.getInstance(GatewayPaymentNamesEnum.valueOf(ParamBean.getInstance().getProperty("meveo.gatewayPayment", "INGENICO")));
 			String tockenID = gatewayPaymentInterface.createCardToken(cardToken.getCustomerAccount(), cardToken.getAlias(), cardToken.getCardNumber(), cardToken.getOwner(),
-					StringUtils.getLongAsNChar(cardToken.getMonthExpiration(), 2)+StringUtils.getLongAsNChar(cardToken.getYearExpiration(),2), cardToken.getIssueNumber(),cardToken.getCardType().getId(),coutryCode);
+					StringUtils.getLongAsNChar(cardToken.getMonthExpiration(), 2)+StringUtils.getLongAsNChar(cardToken.getYearExpiration(),2), cardToken.getIssueNumber(),cardToken.getCardType().getId(),coutryCode);			
 			cardToken.setTokenId(tockenID);
-		}else{
-			log.info("\n\n\n dans le else size : "+cardToken.getTokenId().length());
 		}
 		super.create(cardToken);
 		if(cardToken.getIsDefault()){			
@@ -72,15 +69,23 @@ public class CardTokenService extends PersistenceService<CardToken> {
 	 * @throws BusinessException
 	 */
 	public CardToken getPreferedToken(CustomerAccount customerAccount) throws BusinessException{
-		CardToken cardToken = (CardToken) getEntityManager().createNamedQuery("CardToken.getDefaultToken")
-				.setParameter("monthExpiration", DateUtils.getMonthFromDate(new Date()))
-				.setParameter("yearExpiration", new Integer((""+DateUtils.getYearFromDate(new Date())).substring(2, 3)))
-				.getSingleResult();
-		if(cardToken == null){
-			cardToken = (CardToken) getEntityManager().createNamedQuery("CardToken.getAvailableToken")
+		CardToken cardToken = null;
+		try{
+			cardToken = (CardToken) getEntityManager().createNamedQuery("CardToken.getDefaultToken")
 					.setParameter("monthExpiration", DateUtils.getMonthFromDate(new Date()))
 					.setParameter("yearExpiration", new Integer((""+DateUtils.getYearFromDate(new Date())).substring(2, 3)))
 					.getSingleResult();
+		}catch (Exception e) {
+		}
+
+		if(cardToken == null){
+			try{
+				cardToken = (CardToken) getEntityManager().createNamedQuery("CardToken.getAvailableToken")
+						.setParameter("monthExpiration", DateUtils.getMonthFromDate(new Date()))
+						.setParameter("yearExpiration", new Integer((""+DateUtils.getYearFromDate(new Date())).substring(2, 3)))
+						.getSingleResult();
+			}catch (Exception e) {
+			}
 		}
 		if(cardToken == null){
 			throw new BusinessException("There no valid token for customerAccount:"+customerAccount.getCode());

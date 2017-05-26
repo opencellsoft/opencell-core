@@ -36,7 +36,7 @@ public class UnitPaymentCardJobBean {
    
     // @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void execute(JobExecutionResultImpl result, Long aoId, String callingMode, boolean createAO, boolean matchingAO) {
+    public void execute(JobExecutionResultImpl result, Long aoId, boolean createAO, boolean matchingAO) {
         log.debug("Running with RecordedInvoice ID={}", aoId);
 
         RecordedInvoice recordedInvoice = null;

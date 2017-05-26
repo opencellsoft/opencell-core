@@ -690,9 +690,6 @@ public class InvoiceApi extends BaseApi {
 		if (StringUtils.isBlank(invoiceDTO.getInvoiceType())) {
 			missingParameters.add("invoiceType");
 		}
-		if (StringUtils.isBlank(invoiceDTO.getInvoiceMode())) {
-			missingParameters.add("invoiceMode");
-		}
 
 		if (StringUtils.isBlank(invoiceDTO.getCategoryInvoiceAgregates()) || invoiceDTO.getCategoryInvoiceAgregates().isEmpty()) {
 			missingParameters.add("categoryInvoiceAgregates");

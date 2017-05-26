@@ -52,11 +52,7 @@ public class PaymentCardJobBean {
 		
 		try {					
 			Long nbRuns = new Long(1);		
-			Long waitingMillis = new Long(0);
-			String mappingConf = null;
-			String outputDir = null;			
-			String recordVariableName = null;			
-			String callingMode = null;
+			Long waitingMillis = new Long(0);			
 			boolean createAO = true;
 			boolean matchingAO = true;
 			try{
@@ -64,13 +60,7 @@ public class PaymentCardJobBean {
 				waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis");
 				if(nbRuns == -1){
 					nbRuns  = (long) Runtime.getRuntime().availableProcessors();
-				}
-				recordVariableName = (String) customFieldInstanceService.getCFValue(jobInstance, "PaymentCardJob_recordVariableName");							
-				mappingConf = (String) customFieldInstanceService.getCFValue(jobInstance, "PaymentCardJob_mappingConf");
-				outputDir = ParamBean.getInstance().getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() +
-						((String)customFieldInstanceService.getCFValue(jobInstance, "PaymentCardJob_inputDir")).replaceAll("\\..", "");
-			
-				callingMode = (String) customFieldInstanceService.getCFValue(jobInstance, "PaymentCardJob_callingMode");
+				}				
 				createAO = "YES".equals((String) customFieldInstanceService.getCFValue(jobInstance, "PaymentCardJob_createAO"));
 				matchingAO = "YES".equals((String) customFieldInstanceService.getCFValue(jobInstance, "PaymentCardJob_createAO"));
 			}catch(Exception e){
@@ -88,7 +78,7 @@ public class PaymentCardJobBean {
 	    	log.debug("block to run:" + subListCreator.getBlocToRun());
 	    	log.debug("nbThreads:" + nbRuns);
 			while (subListCreator.isHasNext()) {	
-				futures.add(paymentCardAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(),result,callingMode,createAO,matchingAO,mappingConf,outputDir,recordVariableName));
+				futures.add(paymentCardAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(),result,createAO,matchingAO));
 
                 if (subListCreator.isHasNext()) {
                     try {

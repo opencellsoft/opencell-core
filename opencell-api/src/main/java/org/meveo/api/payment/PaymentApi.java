@@ -268,6 +268,11 @@ public class PaymentApi extends BaseApi {
 				missingParameters.add("CardType");
 			}			
 		}
+		if(doPaymentRequestDto.isToMatching()){
+			if(doPaymentRequestDto.getAoToPay() == null || doPaymentRequestDto.getAoToPay().isEmpty() ){
+				missingParameters.add("AoToPay");
+			}	
+		}
 		handleMissingParameters();
 		
 		CustomerAccount customerAccount = customerAccountService.findByCode(doPaymentRequestDto.getCustomerAccountCode());

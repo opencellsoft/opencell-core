@@ -14,8 +14,8 @@ import javax.validation.constraints.NotNull;
 @DiscriminatorValue(value = "CARD")
 @NamedQueries({
 	@NamedQuery(name = "CardToken.updateDefaultToken", query = "UPDATE CardToken ct set ct.isDefault = false where ct.tokenId <> :defaultOne"),
-	@NamedQuery(name = "CardToken.getDefaultToken", query = "SELECT ct FROM CardToken ct  WHERE ct.isDefault = true and ct.monthExpiration <= :monthExpiration and ct.yearExpiration <=:yearExpiration"),
-	@NamedQuery(name = "CardToken.getAvailableToken", query = "SELECT ct FROM CardToken ct  WHERE ct.monthExpiration <= :monthExpiration and ct.yearExpiration <=:yearExpiration")
+	@NamedQuery(name = "CardToken.getDefaultToken", query = "SELECT ct FROM CardToken ct  WHERE ct.isDefault = true and ct.yearExpiration >:yearExpiration or (ct.monthExpiration >= :monthExpiration and ct.yearExpiration =:yearExpiration)"),
+	@NamedQuery(name = "CardToken.getAvailableToken", query = "SELECT ct FROM CardToken ct  WHERE ct.yearExpiration >:yearExpiration or (ct.monthExpiration >= :monthExpiration and ct.yearExpiration =:yearExpiration)")
 	
 })
 public class CardToken extends PaymentToken {

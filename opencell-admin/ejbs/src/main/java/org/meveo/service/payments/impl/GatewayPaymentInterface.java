@@ -45,7 +45,7 @@ public interface GatewayPaymentInterface {
 	 * @return
 	 * @throws BusinessException
 	 */
-	public DoPaymentResponseDto doPaymentCard(CustomerAccount customerAccount, Long ctsAmount,String cardNumber,String ownerName, String cvv,String expirayDate,CreditCardTypeEnum cardType)throws BusinessException;
+	public DoPaymentResponseDto doPaymentCard(CustomerAccount customerAccount, Long ctsAmount,String cardNumber,String ownerName, String cvv,String expirayDate,CreditCardTypeEnum cardType,String countryCode)throws BusinessException;
 	
 	/**
 	 * This makes it impossible to process the payment any further and will also try to reverse an authorization on a card.

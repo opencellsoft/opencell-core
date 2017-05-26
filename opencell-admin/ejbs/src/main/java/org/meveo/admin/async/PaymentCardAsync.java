@@ -29,9 +29,9 @@ public class PaymentCardAsync {
 
     @Asynchronous
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result, String callingMode, boolean createAO, boolean matchingAO, String mappingConf, String outputDir, String recordVariableName) {
+    public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result, boolean createAO, boolean matchingAO) {
         for (Long id : ids) {
-        	unitPaymentCardJobBean.execute(result, id,callingMode,createAO,matchingAO);
+        	unitPaymentCardJobBean.execute(result, id,createAO,matchingAO);
         }
         return new AsyncResult<String>("OK");
     }

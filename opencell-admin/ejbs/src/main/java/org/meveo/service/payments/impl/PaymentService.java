@@ -31,6 +31,7 @@ import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.api.dto.payment.DoPaymentResponseDto;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.Country;
 import org.meveo.model.payments.CardToken;
 import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
@@ -39,6 +40,7 @@ import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -55,6 +57,9 @@ public class PaymentService extends PersistenceService<Payment> {
 
 	@Inject
 	private MatchingCodeService matchingCodeService;
+	
+	@Inject
+	private CountryService countryService;
 
 	public DoPaymentResponseDto doPaymentCardToken(CustomerAccount customerAccount, Long ctsAmount, List<Long> aoIdsToPay,boolean createAO,boolean matchingAO) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
 		if(customerAccount.getPaymentTokens() == null || customerAccount.getPaymentTokens().isEmpty()){
@@ -63,7 +68,7 @@ public class PaymentService extends PersistenceService<Payment> {
 		GatewayPaymentInterface  gatewayPaymentInterface = GatewayPaymentFactory.getInstance(GatewayPaymentNamesEnum.valueOf(ParamBean.getInstance().getProperty("meveo.gatewayPayment", "INGENICO")));		
 		if(!PaymentMethodEnum.CARD.name().equals(customerAccount.getPaymentMethod().name())){
 			throw new BusinessException("Unsupported payment method:"+customerAccount.getPaymentMethod());
-		}		
+		}
 
 		DoPaymentResponseDto doPaymentResponseDto =  gatewayPaymentInterface.doPaymentToken(cardTokenService.getPreferedToken(customerAccount), ctsAmount);
 
@@ -110,7 +115,12 @@ public class PaymentService extends PersistenceService<Payment> {
 		if(!PaymentMethodEnum.CARD.name().equals(customerAccount.getPaymentMethod().name())){
 			throw new BusinessException("Unsupported payment method:"+customerAccount.getPaymentMethod());
 		}				
-		DoPaymentResponseDto doPaymentResponseDto =  gatewayPaymentInterface.doPaymentCard(customerAccount, ctsAmount, cardNumber, ownerName,  cvv, expirayDate,cardType);		
+		String coutryCode = null;
+		Country country = countryService.findByName(customerAccount.getAddress() != null ? customerAccount.getAddress().getCountry() : null);
+		if(country != null){
+			coutryCode = country.getCountryCode();
+		}	
+		DoPaymentResponseDto doPaymentResponseDto =  gatewayPaymentInterface.doPaymentCard(customerAccount, ctsAmount, cardNumber, ownerName,  cvv, expirayDate,cardType,coutryCode);		
 		
 		if(!StringUtils.isBlank(doPaymentResponseDto.getPaymentID())){
 			CardToken cardToken = new CardToken(); 

@@ -244,7 +244,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 			throw new ImportInvoiceException("Error on invoiceDate");
 		}
 
-		recordedInvoice.setPaymentMethod(billingAccount.getPaymentMethod());
+		recordedInvoice.setPaymentMethod(billingAccount.getCustomerAccount().getPaymentMethod());
 
 		if (billingAccount.getBankCoordinates() != null) {
 			recordedInvoice.setPaymentInfo(billingAccount.getBankCoordinates().getIban());

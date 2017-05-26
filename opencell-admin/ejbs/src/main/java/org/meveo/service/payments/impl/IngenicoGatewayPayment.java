@@ -23,6 +23,7 @@ import com.ingenico.connect.gateway.sdk.java.domain.definitions.CompanyInformati
 import com.ingenico.connect.gateway.sdk.java.domain.payment.CreatePaymentRequest;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.CreatePaymentResponse;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.CardPaymentMethodSpecificInput;
+import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.Customer;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.Order;
 import com.ingenico.connect.gateway.sdk.java.domain.token.CreateTokenRequest;
 import com.ingenico.connect.gateway.sdk.java.domain.token.CreateTokenResponse;
@@ -56,22 +57,8 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 
 	@Override
 	public String createCardToken(CustomerAccount customerAccount, String alias, String cardNumber,
-			String cardHolderName, String expirayDate, String issueNumber, int productPaymentId, String countryCode)
-			throws BusinessException {
-		try {
-			
-			log.info("\n\n\n dans le gate way");
-			Address billingAddress = new Address();
-			if (customerAccount.getAddress() != null) {
-				billingAddress.setAdditionalInfo(customerAccount.getAddress().getAddress3());
-				billingAddress.setCity(customerAccount.getAddress().getCity());
-				billingAddress.setCountryCode(countryCode);
-				billingAddress.setHouseNumber(customerAccount.getAddress().getAddress1());
-				billingAddress.setState(customerAccount.getAddress().getState());
-				billingAddress.setStreet(customerAccount.getAddress().getAddress2());
-				billingAddress.setZip(customerAccount.getAddress().getZipCode());
-			}
-
+			String cardHolderName, String expirayDate, String issueNumber, int productPaymentId, String countryCode)throws BusinessException {
+		try {		
 			CompanyInformation companyInformation = new CompanyInformation();
 			companyInformation.setName(customerAccount.getCode());
 
@@ -79,18 +66,17 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			if (customerAccount.getName() != null) {
 				name.setFirstName(customerAccount.getName().getFirstName());
 				name.setSurname(customerAccount.getName().getLastName());
-				name.setSurnamePrefix(customerAccount.getName().getTitle() == null ? ""
-						: customerAccount.getName().getTitle().getCode());
+				name.setSurnamePrefix(customerAccount.getName().getTitle() == null ? "" : customerAccount.getName().getTitle().getCode());
 			}
 
 			PersonalInformationToken personalInformation = new PersonalInformationToken();
 			personalInformation.setName(name);
 
-			CustomerToken customer = new CustomerToken();
-			customer.setBillingAddress(billingAddress);
-			customer.setCompanyInformation(companyInformation);
-			customer.setMerchantCustomerId(customerAccount.getCode());
-			customer.setPersonalInformation(personalInformation);
+			CustomerToken customerToken = new CustomerToken();
+			customerToken.setBillingAddress(getBillingAddress(customerAccount, countryCode));
+			customerToken.setCompanyInformation(companyInformation);
+			customerToken.setMerchantCustomerId(customerAccount.getCode());
+			customerToken.setPersonalInformation(personalInformation);
 
 			CardWithoutCvv cardWithoutCvv = new CardWithoutCvv();
 			cardWithoutCvv.setCardholderName(cardHolderName);
@@ -108,26 +94,22 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 
 			TokenCard tokenCard = new TokenCard();
 			tokenCard.setAlias(alias);
-			tokenCard.setCustomer(customer);
+			tokenCard.setCustomer(customerToken);
 			tokenCard.setData(tokenCardData);
 
 			CreateTokenRequest body = new CreateTokenRequest();
 			body.setCard(tokenCard);
 			body.setPaymentProductId(productPaymentId);
-			log.info("\n\n\n before the call ");
-			CreateTokenResponse response = getClient().merchant(merchantId).tokens().create(body);
-			log.info("\n\n\n after the call ");
-			if (!response.getIsNewToken()) {
-				log.warn("A token already exist for card:"+StringUtils.hideCardNumber(cardNumber));
-				return null;
+			
+			CreateTokenResponse response = getClient().merchant(merchantId).tokens().create(body);			
+			if (!response.getIsNewToken()) {				
+				throw new BusinessException("A token already exist for card:"+StringUtils.hideCardNumber(cardNumber));
 			}
 			return response.getToken();
-		} catch (ApiException ev) {
-			log.info("\n\n\n dans le catch the call ev:"+ev.getMessage());
+		} catch (ApiException ev) {			
 			throw new BusinessException(ev.getResponseBody());
 
-		} catch (Exception e) {
-			log.info("\n\n\n dans le catch the call e "+e.getMessage());
+		} catch (Exception e) {			
 			throw new BusinessException(e.getMessage());
 		}
 
@@ -136,17 +118,24 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 	@Override
 	public DoPaymentResponseDto doPaymentToken(PaymentToken paymentToken, Long ctsAmount) throws BusinessException {
 
-		return doPayment(paymentToken, ctsAmount, paymentToken.getCustomerAccount(), null, null, null,null, null);
+		return doPayment(paymentToken, ctsAmount, paymentToken.getCustomerAccount(), null, null, null,null, null,null);
 	}
 
 	@Override
 	public DoPaymentResponseDto doPaymentCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber,
-			String ownerName, String cvv, String expirayDate,CreditCardTypeEnum cardType) throws BusinessException {
-		return doPayment(null, ctsAmount, customerAccount, cardNumber, ownerName, cvv, expirayDate,cardType);
+			String ownerName, String cvv, String expirayDate,CreditCardTypeEnum cardType,String countryCode) throws BusinessException {
+		return doPayment(null, ctsAmount, customerAccount, cardNumber, ownerName, cvv, expirayDate,cardType,countryCode);
 	}
 
 	private DoPaymentResponseDto doPayment(PaymentToken paymentToken, Long ctsAmount, CustomerAccount customerAccount,String cardNumber, String ownerName, String cvv, 
-			String expirayDate,CreditCardTypeEnum cardType) throws BusinessException {
+			String expirayDate,CreditCardTypeEnum cardType,String countryCode) throws BusinessException {
+		
+		AmountOfMoney amountOfMoney = new AmountOfMoney();
+		amountOfMoney.setAmount(ctsAmount);
+		amountOfMoney.setCurrencyCode(customerAccount.getTradingCurrency().getCurrencyCode());
+		
+		Order order = new Order();
+		order.setAmountOfMoney(amountOfMoney);
 
 		CardPaymentMethodSpecificInput cardPaymentMethodSpecificInput = new CardPaymentMethodSpecificInput();
 		if (paymentToken != null) {
@@ -159,16 +148,11 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			card.setExpiryDate(expirayDate);
 			cardPaymentMethodSpecificInput.setCard(card);
 			cardPaymentMethodSpecificInput.setPaymentProductId(cardType.getId());
+			Customer customer = new Customer();
+			customer.setBillingAddress(getBillingAddress(customerAccount, countryCode));
+			order.setCustomer(customer);
+			
 		}
-
-		AmountOfMoney amountOfMoney = new AmountOfMoney();
-		amountOfMoney.setAmount(ctsAmount);
-		amountOfMoney.setCurrencyCode(customerAccount.getTradingCurrency().getCurrencyCode());
-
-		Order order = new Order();
-		order.setAmountOfMoney(amountOfMoney);
-		
-
 		CreatePaymentRequest body = new CreatePaymentRequest();
 		body.setCardPaymentMethodSpecificInput(cardPaymentMethodSpecificInput);
 		body.setOrder(order);
@@ -196,5 +180,19 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 		}catch (ApiException e) {
 			throw new BusinessException(e.getResponseBody());
 		}		
+	}
+	
+	private Address getBillingAddress(CustomerAccount customerAccount, String countryCode){
+		Address billingAddress = new Address();
+		if (customerAccount.getAddress() != null) {
+			billingAddress.setAdditionalInfo(customerAccount.getAddress().getAddress3());
+			billingAddress.setCity(customerAccount.getAddress().getCity());
+			billingAddress.setCountryCode(countryCode);
+			billingAddress.setHouseNumber(customerAccount.getAddress().getAddress1());
+			billingAddress.setState(customerAccount.getAddress().getState());
+			billingAddress.setStreet(customerAccount.getAddress().getAddress2());
+			billingAddress.setZip(customerAccount.getAddress().getZipCode());
+		}
+		return billingAddress;
 	}
 }
