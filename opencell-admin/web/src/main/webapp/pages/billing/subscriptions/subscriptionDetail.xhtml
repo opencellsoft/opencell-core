@@ -345,10 +345,8 @@
 												popup="true" popupId="userAccountPopup" allowEdit="false" />
 										<hftl:formField id="offerSelectId"
 											label="#{messages['subscription.offer']}" field="offer"
-											valueLabelField="code" listBean="#{offerTemplateBean}"
-											required="true" modifyOnCreate="true"
-											actionListenerBean="#{subscriptionBean}"
-											actionListenerMethod="onOfferSelected" listenerUpdate=":subscriptionTab:subscriptionFormId:messages" />
+											valueLabelField="code" listElements="#{offerTemplateBean.listActive()}"
+											required="true" modifyOnCreate="true" />
 										<!-- popup="true" popupId="offerPopup" -->
 										<hftl:formField label="#{messages['businessEntity.code']}"
 											field="code" required="true" validateUnique="true"/>
