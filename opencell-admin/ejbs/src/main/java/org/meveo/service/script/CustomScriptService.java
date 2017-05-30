@@ -385,7 +385,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         while (matcher.find()) {
             String className = matcher.group(1);
             try {
-                if (!className.startsWith("java") && !className.startsWith("org.meveo")) {
+                if ((!className.startsWith("java") || className.startsWith("javax.persistence")) && !className.startsWith("org.meveo")) {
                     Class clazz = Class.forName(className);
                     try {
                         String location = clazz.getProtectionDomain().getCodeSource().getLocation().getFile();
