@@ -1,7 +1,5 @@
 package org.meveo.services.job;
 
-import java.util.List;
-
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -20,26 +18,16 @@ public class TimerEntityBean extends BaseBean<TimerEntity> {
     @Inject
     TimerEntityService timerEntityservice;
 
-   
-
     public TimerEntityBean() {
         super(TimerEntity.class);
     }
-
 
     @Override
     protected IPersistenceService<TimerEntity> getPersistenceService() {
         return timerEntityservice;
     }
 
-    public List<TimerEntity> getTimerEntityList() {
-        return timerEntityservice.list();
-    }
-
-  
     protected String getListViewName() {
         return "timerEntities";
     }
-
-
 }

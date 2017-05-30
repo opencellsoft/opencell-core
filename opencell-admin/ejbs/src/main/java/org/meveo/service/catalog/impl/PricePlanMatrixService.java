@@ -504,9 +504,9 @@ public class PricePlanMatrixService extends AuditableMultilanguageService<PriceP
 
 
 	/**
-	 * Get a list of priceplans to populate a cache
+	 * Get a list of priceplans to populate a cache. 
 	 * 
-	 * @return A list of active priceplans
+	 * @return A list of active priceplans ordered by eventCode and priority
 	 */
 	public List<PricePlanMatrix> getPricePlansForCache() {
 		return getEntityManager().createNamedQuery("PricePlanMatrix.getPricePlansForCache", PricePlanMatrix.class)

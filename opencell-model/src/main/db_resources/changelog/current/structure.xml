@@ -4336,6 +4336,13 @@
 	<changeSet id="#2504_20170407" author="AndriusKarpavicius">
 		<dropColumn tableName="CRM_PROVIDER" columnName="LOGO"/>
 	</changeSet>
+	
+	<changeSet id="#2455_20170417" author="AndriusKarpavicius">
+		<addColumn tableName="MEVEO_JOB_INSTANCE">
+			<column name="RUN_ON_NODES" type="VARCHAR(100)" />
+			<column name="SINGLE_NODE" type="${type.boolean}" defaultValueNumeric="1" />
+		</addColumn>
+	</changeSet>
 
 	<changeSet id="#2179_20170304" author="anasseh">
 		<addColumn tableName="CRM_CUSTOM_FIELD_INST">

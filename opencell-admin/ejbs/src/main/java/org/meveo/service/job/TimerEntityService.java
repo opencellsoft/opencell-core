@@ -19,11 +19,37 @@
 package org.meveo.service.job;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
+import org.meveo.event.monitoring.ClusterEventPublisher;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.TimerEntity;
 import org.meveo.service.base.BusinessService;
 
 @Stateless
 public class TimerEntityService extends BusinessService<TimerEntity> {
 
+    @Inject
+    private JobInstanceService jobInstanceService;
+
+    @Inject
+    private ClusterEventPublisher clusterEventPublisher;
+
+    @Override
+    public TimerEntity update(TimerEntity entity) throws BusinessException {
+        entity = super.update(entity);
+
+        // Reschedule jobs that are bound to the timer
+        for (JobInstance jobInstance : entity.getJobInstances()) {
+            if (jobInstance.isActive()) {
+                jobInstanceService.scheduleUnscheduleJob(jobInstance.getId());
+
+                clusterEventPublisher.publishEvent(jobInstance, CrudActionEnum.update);
+            }
+        }
+
+        return entity;
+    }
 }

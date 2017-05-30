@@ -114,7 +114,7 @@ public class WalletService extends PersistenceService<WalletInstance> {
 	}
 
 	/**
-	 * Get a list of prepaid and active wallet ids to populate a cache
+	 * Get a list of prepaid and active wallet ids (user account is active) to populate a cache
 	 * 
 	 * @return A list of prepaid and active wallet ids
 	 */

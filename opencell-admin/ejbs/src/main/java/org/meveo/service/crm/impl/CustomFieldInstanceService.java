@@ -123,8 +123,8 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     // }
 
     public void remove(CustomFieldInstance cfi) throws BusinessException {
-        customFieldsCacheContainerProvider.removeCustomFieldFromCache(cfi);
         super.remove(cfi);
+        customFieldsCacheContainerProvider.removeCustomFieldFromCache(cfi);
     }
 
     /**

@@ -40,6 +40,7 @@ import org.meveo.event.qualifier.Updated;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.mediation.MeveoFtpFile;
 import org.meveo.model.notification.EmailNotification;
@@ -131,7 +132,7 @@ public class DefaultObserver {
             scriptInterface.finalize(context);
         } catch (Exception e) {
             log.error("failed script execution", e);
-            if(e instanceof BusinessException) {
+            if (e instanceof BusinessException) {
                 throw e;
             } else {
                 throw new BusinessException(e);
@@ -162,7 +163,8 @@ public class DefaultObserver {
             // Check if the counter associated to notification was not exhausted yet
             if (notif.getCounterInstance() != null) {
                 try {
-                    counterInstanceService.deduceCounterValue(notif.getCounterInstance(), new Date(), notif.getAuditable().getCreated(), new BigDecimal(1));
+                    CounterInstance counterInstance = counterInstanceService.refreshOrRetrieve(notif.getCounterInstance());
+                    counterInstanceService.deduceCounterValue(counterInstance, new Date(), notif.getAuditable().getCreated(), new BigDecimal(1));
                 } catch (CounterValueInsufficientException ex) {
                     sendNotify = false;
                 }
@@ -176,7 +178,6 @@ public class DefaultObserver {
             // Rethink notif and script - maybe create pre and post script
             if (!(notif instanceof WebHook)) {
                 if (notif.getScriptInstance() != null) {
-                    // ScriptInstance script = (ScriptInstance) scriptInstanceService.refreshOrRetrieve(notif.getScriptInstance());
                     executeScript(notif.getScriptInstance(), entityOrEvent, notif.getParams(), context);
                 }
             }
@@ -220,9 +221,9 @@ public class DefaultObserver {
                 throw new BusinessException(e1);
             } else {
                 throw (BusinessException) e1;
-            }
         }
-        
+        }
+
         return true;
     }
 
@@ -311,7 +312,7 @@ public class DefaultObserver {
     public void inboundRequest(@Observes @InboundRequestReceived InboundRequest e) throws BusinessException {
         log.debug("Defaut observer : inbound request {} ", e.getCode());
         boolean fired = checkEvent(NotificationEventTypeEnum.INBOUND_REQ, e);
-        e.getHeaders().put("fired", fired?"true":"false");
+        e.getHeaders().put("fired", fired ? "true" : "false");
     }
 
     @MeveoAudit
@@ -322,32 +323,19 @@ public class DefaultObserver {
     }
 
     public void businesException(@Observes BusinessExceptionEvent bee) {
-    	log.debug("BusinessExceptionEvent handler inactivated {}",bee);/*
-        log.debug("Defaut observer : BusinessExceptionEvent {} ", bee);
-        StringWriter errors = new StringWriter();
-        bee.getException().printStackTrace(new PrintWriter(errors));
-        String meveoInstanceCode = ParamBean.getInstance().getProperty("monitoring.instanceCode", "");
-        int bodyMaxLegthByte = Integer.parseInt(ParamBean.getInstance().getProperty("meveo.notifier.stackTrace.lengthInBytes", "9999"));
-        String stackTrace = errors.toString();
-        String input = "{"
-                + "	  #meveoInstanceCode#: #"
-                + meveoInstanceCode
-                + "#,"
-                + "	  #subject#: #"
-                + bee.getException().getMessage()
-                + "#,"
-                + "	  #body#: #"
-                + StringUtils.truncate(stackTrace, bodyMaxLegthByte, true)
-                + "#,"
-                + "	  #additionnalInfo1#: #"
-                + LogExtractionService.getLogs(
-                    new Date(System.currentTimeMillis() - Integer.parseInt(ParamBean.getInstance().getProperty("meveo.notifier.log.timeBefore_ms", "5000"))), new Date()) + "#,"
-                + "	  #additionnalInfo2#: ##," + "	  #additionnalInfo3#: ##," + "	  #additionnalInfo4#: ##" + "}";
-        log.trace("Defaut observer : input {} ", input.replaceAll("#", "\""));
-        remoteInstanceNotifier.invoke(input.replaceAll("\"", "'").replaceAll("#", "\"").replaceAll("\\[", "(").replaceAll("\\]", ")"),
-            ParamBean.getInstance().getProperty("inboundCommunication.url", "http://version.meveo.info/meveo-moni/api/rest/inboundCommunication"));
-
-       */
+        log.debug("BusinessExceptionEvent handler inactivated {}",
+            bee);/*
+                  * log.debug("Defaut observer : BusinessExceptionEvent {} ", bee); StringWriter errors = new StringWriter(); bee.getException().printStackTrace(new
+                  * PrintWriter(errors)); String meveoInstanceCode = ParamBean.getInstance().getProperty("monitoring.instanceCode", ""); int bodyMaxLegthByte =
+                  * Integer.parseInt(ParamBean.getInstance().getProperty("meveo.notifier.stackTrace.lengthInBytes", "9999")); String stackTrace = errors.toString(); String input =
+                  * "{" + "	  #meveoInstanceCode#: #" + meveoInstanceCode + "#," + "	  #subject#: #" + bee.getException().getMessage() + "#," + "	  #body#: #" +
+                  * StringUtils.truncate(stackTrace, bodyMaxLegthByte, true) + "#," + "	  #additionnalInfo1#: #" + LogExtractionService.getLogs( new Date(System.currentTimeMillis()
+                  * - Integer.parseInt(ParamBean.getInstance().getProperty("meveo.notifier.log.timeBefore_ms", "5000"))), new Date()) + "#," + "	  #additionnalInfo2#: ##," +
+                  * "	  #additionnalInfo3#: ##," + "	  #additionnalInfo4#: ##" + "}"; log.trace("Defaut observer : input {} ", input.replaceAll("#", "\""));
+                  * remoteInstanceNotifier.invoke(input.replaceAll("\"", "'").replaceAll("#", "\"").replaceAll("\\[", "(").replaceAll("\\]", ")"),
+                  * ParamBean.getInstance().getProperty("inboundCommunication.url", "http://version.meveo.info/meveo-moni/api/rest/inboundCommunication"));
+                  * 
+                  */
 
     }
 

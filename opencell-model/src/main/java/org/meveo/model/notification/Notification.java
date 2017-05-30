@@ -20,6 +20,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -37,11 +38,13 @@ import org.meveo.validation.constraint.ClassName;
 
 @Entity
 @ModuleItem
-@ExportIdentifier({ "code"})
-@Table(name = "ADM_NOTIFICATION", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ADM_NOTIFICATION_SEQ"), })
+@ExportIdentifier({ "code" })
+@Table(name = "ADM_NOTIFICATION", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "ADM_NOTIFICATION_SEQ"), })
 @Inheritance(strategy = InheritanceType.JOINED)
-@NamedQueries({ @NamedQuery(name = "Notification.getNotificationsForCache", query = "SELECT n from Notification n where n.disabled=false") })
+@NamedQueries({ @NamedQuery(name = "Notification.getNotificationsForCache", query = "SELECT n from Notification n where n.disabled=false", hints = {
+        @QueryHint(name = "org.hibernate.readOnly", value = "true") }) })
 public class Notification extends BusinessEntity {
 
     private static final long serialVersionUID = 2634877161620665288L;

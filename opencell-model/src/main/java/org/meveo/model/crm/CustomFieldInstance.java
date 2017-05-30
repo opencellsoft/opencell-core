@@ -33,9 +33,9 @@ import org.w3c.dom.Text;
 @Entity
 @ExportIdentifier({ "appliesToEntity", "code", "period.from", "period.to" })
 @Table(name = "CRM_CUSTOM_FIELD_INST", uniqueConstraints = @UniqueConstraint(columnNames = { "APPLIES_TO_UUID", "CODE", "PERIOD_START_DATE", "PERIOD_END_DATE" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "CRM_CUSTOM_FIELD_INST_SEQ"), })
-@NamedQueries({ @NamedQuery(name = "CustomFieldInstance.getCfiForCache", query = "select cfi from CustomFieldInstance cfi where cfi.disabled=false"),
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CRM_CUSTOM_FIELD_INST_SEQ"), })
+@NamedQueries({
+        @NamedQuery(name = "CustomFieldInstance.getCfiForCache", query = "select cfi from CustomFieldInstance cfi where cfi.disabled=false order by cfi.appliesToEntity"),
         @NamedQuery(name = "CustomFieldInstance.getCfiByCode", query = "select cfi from CustomFieldInstance cfi where cfi.appliesToEntity=:appliesToEntity and cfi.code=:code "),
         @NamedQuery(name = "CustomFieldInstance.getCfiByCodeAndDate", query = "select cfi from CustomFieldInstance cfi where cfi.appliesToEntity=:appliesToEntity and cfi.code=:code  and ((cfi.period.from<=:date and :date<cfi.period.to) or (cfi.period.from<=:date and cfi.period.to IS NULL) or (cfi.period.from IS NULL and :date<cfi.period.to)) order by cfi.priority desc "),
         @NamedQuery(name = "CustomFieldInstance.getCfiByCodeAndDateRange", query = "select cfi from CustomFieldInstance cfi where cfi.appliesToEntity=:appliesToEntity and cfi.code=:code  and (cfi.period.from=:dateFrom and cfi.period.to=:dateTo)  order by cfi.priority desc "),

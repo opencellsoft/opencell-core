@@ -1,14 +1,10 @@
 package org.meveo.service.job;
 
-import java.util.Collection;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
 import javax.ejb.ScheduleExpression;
 import javax.ejb.Timeout;
 import javax.ejb.Timer;
@@ -21,6 +17,8 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
+import org.meveo.cache.JobCacheContainerProvider;
+import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.event.qualifier.Processed;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
@@ -43,7 +41,6 @@ import org.slf4j.LoggerFactory;
  * @author seb
  * 
  */
-@Lock(LockType.READ)
 public abstract class Job {
 
     public static String CFT_PREFIX = "JOB";
@@ -78,12 +75,10 @@ public abstract class Job {
     @ApplicationProvider
     protected Provider appProvider;
 
-    protected Logger log = LoggerFactory.getLogger(this.getClass());
+    @Inject
+    private JobCacheContainerProvider jobCacheContainerProvider;
 
-    @PostConstruct
-    public void init() {
-        jobInstanceService.registerJob(this);
-    }
+    protected Logger log = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Execute job instance with results published to a given job execution result entity.
@@ -99,12 +94,12 @@ public abstract class Job {
             result = new JobExecutionResultImpl();
         }
 
-        boolean isRunning = jobInstanceService.isJobRunning(jobInstance.getId());
-        if (!isRunning) {
+        JobRunningStatusEnum isRunning = jobCacheContainerProvider.isJobRunning(jobInstance.getId());
+        if (isRunning == JobRunningStatusEnum.NOT_RUNNING || (isRunning == JobRunningStatusEnum.RUNNING_OTHER && !jobInstance.isLimitToSingleNode())) {
             log.debug("Starting Job {} of type {} with currentUser {} ", jobInstance.getCode(), jobInstance.getJobTemplate(), currentUser.getUserName());
 
             try {
-                JobInstanceService.runningJobs.add(jobInstance.getId());
+                jobCacheContainerProvider.markJobAsRunning(jobInstance.getId());
                 execute(result, jobInstance);
                 result.close();
 
@@ -122,7 +117,7 @@ public abstract class Job {
                 log.error("Failed to execute a job {} of type {}", jobInstance.getJobTemplate(), jobInstance.getJobTemplate(), e);
                 throw new BusinessException(e);
             } finally {
-                JobInstanceService.runningJobs.remove(jobInstance.getId());
+                jobCacheContainerProvider.markJobAsNotRunning(jobInstance.getId());
             }
 
         } else {
@@ -154,24 +149,14 @@ public abstract class Job {
      */
     protected abstract void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException;
 
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public Timer createTimer(ScheduleExpression scheduleExpression, JobInstance jobInstance) {
+
         TimerConfig timerConfig = new TimerConfig();
         timerConfig.setInfo(jobInstance);
-        timerConfig.setPersistent(false);
+        // timerConfig.setPersistent(false);
+        // log.error("AKK creating a timer for {}", jobInstance.getCode());
         return timerService.createCalendarTimer(scheduleExpression, timerConfig);
-    }
-
-    public void cleanAllTimers() {
-        Collection<Timer> alltimers = timerService.getTimers();
-        log.info("Cancel " + alltimers.size() + " timers for" + this.getClass().getSimpleName());
-
-        for (Timer timer : alltimers) {
-            try {
-                timer.cancel();
-            } catch (Exception e) {
-                log.error("failed to clean all timers ", e);
-            }
-        }
     }
 
     /**
@@ -190,10 +175,6 @@ public abstract class Job {
         } catch (Exception e) {
             log.error("Failed to execute a job {} of type {}", jobInstance.getCode(), jobInstance.getJobTemplate(), e);
         }
-    }
-
-    public JobExecutionService getJobExecutionService() {
-        return jobExecutionService;
     }
 
     public abstract JobCategoryEnum getJobCategory();

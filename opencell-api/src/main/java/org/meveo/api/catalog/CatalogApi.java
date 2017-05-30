@@ -83,27 +83,24 @@ public class CatalogApi extends BaseApi {
             price.setDutyFreeAmount(new BigDecimal(0));
             price.setTaxIncludedAmount(new BigDecimal(0));
 
+			String chargeCode = null;
             for (ServiceChargeTemplateSubscription serviceChargeTemplateSubscription : serviceTemplate.getServiceSubscriptionCharges()) {
-                List<PricePlanMatrix> offerPricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(offerTemplate.getCode(),
-                    serviceChargeTemplateSubscription.getChargeTemplate().getCode());
+				
                 if (serviceChargeTemplateSubscription.getChargeTemplate().getInvoiceSubCategory().getInvoiceSubcategoryCountries() != null
                         && serviceChargeTemplateSubscription.getChargeTemplate().getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax() != null) {
                     price.setTaxRate(serviceChargeTemplateSubscription.getChargeTemplate().getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax().getPercent());
                 }
 
-                if (offerPricePlans != null && offerPricePlans.size() > 0) {
-                    price.setDutyFreeAmount(price.getDutyFreeAmount().add(offerPricePlans.get(0).getAmountWithoutTax()));
+                chargeCode = serviceChargeTemplateSubscription.getChargeTemplate().getCode();
+
+                List<PricePlanMatrix> pricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(offerTemplate.getCode(), chargeCode);
+                if (pricePlans == null || pricePlans.isEmpty()) {
+                    pricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(null, chargeCode);
+                }
+                if (pricePlans != null && !pricePlans.isEmpty()) {
+                    price.setDutyFreeAmount(price.getDutyFreeAmount().add(pricePlans.get(0).getAmountWithoutTax()));
                     if (!appProvider.isEntreprise()) {
-                        price.setTaxIncludedAmount(price.getTaxIncludedAmount().add(offerPricePlans.get(0).getAmountWithTax()));
-                    }
-                } else {
-                    List<PricePlanMatrix> pricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(null,
-                        serviceChargeTemplateSubscription.getChargeTemplate().getCode());
-                    if (pricePlans != null && pricePlans.size() > 0) {
-                        price.setDutyFreeAmount(price.getDutyFreeAmount().add(pricePlans.get(0).getAmountWithoutTax()));
-                        if (!appProvider.isEntreprise()) {
-                            price.setTaxIncludedAmount(price.getTaxIncludedAmount().add(pricePlans.get(0).getAmountWithTax()));
-                        }
+                        price.setTaxIncludedAmount(price.getTaxIncludedAmount().add(pricePlans.get(0).getAmountWithTax()));
                     }
                 }
             }
@@ -135,34 +132,29 @@ public class CatalogApi extends BaseApi {
         if (serviceTemplate.getServiceRecurringCharges() != null) {
             ProductOfferingPrice offerPrice = null;
             Price price = null;
+			String chargeCode = null;
             for (ServiceChargeTemplateRecurring serviceChargeTemplateRecurring : serviceTemplate.getServiceRecurringCharges()) {
 
                 price = new Price();
                 price.setDutyFreeAmount(new BigDecimal(0));
                 price.setTaxIncludedAmount(new BigDecimal(0));
 
-                List<PricePlanMatrix> offerPricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(offerTemplate.getCode(),
-                    serviceChargeTemplateRecurring.getChargeTemplate().getCode());
+                chargeCode = serviceChargeTemplateRecurring.getChargeTemplate().getCode();
+                
                 if (serviceChargeTemplateRecurring.getChargeTemplate().getInvoiceSubCategory().getInvoiceSubcategoryCountries() != null
                         && serviceChargeTemplateRecurring.getChargeTemplate().getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax() != null) {
                     price.setTaxRate(serviceChargeTemplateRecurring.getChargeTemplate().getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax().getPercent());
                 }
 
-                if (offerPricePlans != null && offerPricePlans.size() > 0) {
-                    price.setDutyFreeAmount(price.getDutyFreeAmount().add(offerPricePlans.get(0).getAmountWithoutTax()));
+                List<PricePlanMatrix> pricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(offerTemplate.getCode(), chargeCode);
+                if (pricePlans == null || pricePlans.isEmpty()) {
+                    pricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(null, chargeCode);
+                }
+                if (pricePlans != null && !pricePlans.isEmpty()) {
+                    price.setDutyFreeAmount(price.getDutyFreeAmount().add(pricePlans.get(0).getAmountWithoutTax()));
                     if (!appProvider.isEntreprise()) {
-                        price.setTaxIncludedAmount(price.getTaxIncludedAmount().add(offerPricePlans.get(0).getAmountWithTax()));
-                    }
-                } else {
-                    List<PricePlanMatrix> pricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(null, serviceChargeTemplateRecurring.getChargeTemplate().getCode());
-                    if (pricePlans != null && pricePlans.size() > 0) {
-                        price.setDutyFreeAmount(price.getDutyFreeAmount().add(pricePlans.get(0).getAmountWithoutTax()));
-                        if (!appProvider.isEntreprise()) {
-                            if (price.getTaxIncludedAmount() != null) {
-                                price.setTaxIncludedAmount(
-                                    price.getTaxIncludedAmount().add(pricePlans.get(0).getAmountWithTax() != null ? pricePlans.get(0).getAmountWithTax() : BigDecimal.ZERO));
-                            }
-                        }
+                        price.setTaxIncludedAmount(
+                            price.getTaxIncludedAmount().add(pricePlans.get(0).getAmountWithTax() != null ? pricePlans.get(0).getAmountWithTax() : BigDecimal.ZERO));
                     }
                 }
 
@@ -220,21 +212,15 @@ public class CatalogApi extends BaseApi {
                         && productChargeTemplate.getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax() != null) {
                     price.setTaxRate(productChargeTemplate.getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax().getPercent());
                 }
-
-                List<PricePlanMatrix> offerPricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(offerTemplate.getCode(), chargeCode);
-
-                if (offerPricePlans != null && offerPricePlans.size() > 0) {
-                    price.setDutyFreeAmount(price.getDutyFreeAmount().add(offerPricePlans.get(0).getAmountWithoutTax()));
+				
+				List<PricePlanMatrix> pricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(offerTemplate.getCode(), chargeCode);
+                if (pricePlans == null || pricePlans.isEmpty()) {
+                    pricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(null, chargeCode);
+                }
+                if (pricePlans != null && !pricePlans.isEmpty()) {
+                    price.setDutyFreeAmount(price.getDutyFreeAmount().add(pricePlans.get(0).getAmountWithoutTax()));
                     if (!appProvider.isEntreprise()) {
-                        price.setTaxIncludedAmount(price.getTaxIncludedAmount().add(offerPricePlans.get(0).getAmountWithTax()));
-                    }
-                } else {
-                    List<PricePlanMatrix> pricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(null, productChargeTemplate.getCode());
-                    if (pricePlans != null && pricePlans.size() > 0) {
-                        price.setDutyFreeAmount(price.getDutyFreeAmount().add(pricePlans.get(0).getAmountWithoutTax()));
-                        if (!appProvider.isEntreprise()) {
-                            price.setTaxIncludedAmount(price.getTaxIncludedAmount().add(pricePlans.get(0).getAmountWithTax()));
-                        }
+                        price.setTaxIncludedAmount(price.getTaxIncludedAmount().add(pricePlans.get(0).getAmountWithTax()));
                     }
                 }
 

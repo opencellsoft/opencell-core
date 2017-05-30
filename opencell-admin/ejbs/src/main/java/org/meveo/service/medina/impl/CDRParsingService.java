@@ -128,8 +128,8 @@ public class CDRParsingService extends PersistenceService<EDR> {
         edr.setQuantity(edrDAO.getQuantity());
         edr.setStatus(EDRStatusEnum.OPEN);
         if (accessPoint != null) {
-            edr.setSubscription(accessPoint.getSubscription());
-            edr.setAccessCode(accessPoint.getAccessUserId());            
+            edr.setSubscription(getEntityManager().getReference(Subscription.class, accessPoint.getSubscription().getId()));
+            edr.setAccessCode(accessPoint.getAccessUserId());
         } else if (subscription != null) {
             edr.setSubscription(subscription);
         }

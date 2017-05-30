@@ -10,6 +10,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.notification.JobTrigger;
 import org.meveo.model.notification.NotificationHistoryStatusEnum;
 import org.meveo.service.job.JobExecutionService;
+import org.meveo.service.job.JobInstanceService;
 import org.slf4j.Logger;
 
 /**
@@ -27,6 +28,9 @@ public class JobTriggerLauncher {
 
     @Inject
     private JobExecutionService jobExecutionService;
+    
+    @Inject
+    private JobInstanceService jobInstanceService;
 
     @Inject
     private Logger log;
@@ -38,7 +42,7 @@ public class JobTriggerLauncher {
             HashMap<Object, Object> params = new HashMap<Object, Object>();
             params.put("event", entityOrEvent);
             
-            jobExecutionService.executeJob(jobTrigger.getJobInstance(), params);
+            jobExecutionService.executeJob(jobInstanceService.refreshOrRetrieve(jobTrigger.getJobInstance()), params);
             
             log.debug("launch jobTrigger:{} launched", jobTrigger);
 
