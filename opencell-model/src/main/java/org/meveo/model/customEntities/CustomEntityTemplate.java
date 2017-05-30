@@ -21,7 +21,7 @@ import org.meveo.model.ModuleItem;
 @ExportIdentifier({ "code"})
 @Table(name = "CUST_CET", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CUST_CET_SEQ"), })
-@NamedQueries({ @NamedQuery(name = "CustomEntityTemplate.getCETForCache", query = "SELECT cet from CustomEntityTemplate cet where cet.disabled=false  ") })
+@NamedQueries({ @NamedQuery(name = "CustomEntityTemplate.getCETForCache", query = "SELECT cet from CustomEntityTemplate cet where cet.disabled=false order by cet.name ") })
 public class CustomEntityTemplate extends BusinessEntity implements Comparable<CustomEntityTemplate> {
 
     private static final long serialVersionUID = 8281478284763353310L;

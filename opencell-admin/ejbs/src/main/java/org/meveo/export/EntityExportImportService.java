@@ -87,6 +87,7 @@ import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.response.utilities.ImportExportResponseDto;
 import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
+import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.NotificationCacheContainerProvider;
 import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.cache.WalletCacheContainerProvider;
@@ -161,11 +162,11 @@ public class EntityExportImportService implements Serializable {
 
     @Inject
     private Conversation conversation;
-    
+
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
-        
+
     @Inject
     @ApplicationProvider
     protected Provider appProvider;
@@ -189,6 +190,9 @@ public class EntityExportImportService implements Serializable {
 
     @Inject
     private CustomFieldsCacheContainerProvider customFieldsCacheContainerProvider;
+
+    @Inject
+    private JobCacheContainerProvider jobCacheContainerProvider;
 
     private Map<Class<? extends IEntity>, String[]> exportIdMapping;
 
@@ -320,7 +324,7 @@ public class EntityExportImportService implements Serializable {
 
             exportTemplate.addRelatedEntity(null, null, cfSelect, cfParameters, CustomFieldInstance.class);
 
-            if (exportTemplate.getClassesToExportAsFull()==null){
+            if (exportTemplate.getClassesToExportAsFull() == null) {
                 exportTemplate.setClassesToExportAsFull(new ArrayList<Class<? extends IEntity>>());
             }
             exportTemplate.getClassesToExportAsFull().add(CustomFieldInstance.class);
@@ -1142,16 +1146,16 @@ public class EntityExportImportService implements Serializable {
                     // Do not overwrite @oneToMany and @oneToOne fields THAT DO NOT CASCADE as they wont be saved anyway - that is handled apart in saveEntityToTarget()
                     if (field.isAnnotationPresent(OneToMany.class)) {
                         OneToMany oneToManyAnotation = field.getAnnotation(OneToMany.class);
-                        if (!(ArrayUtils.contains(oneToManyAnotation.cascade(), CascadeType.ALL) || ArrayUtils.contains(oneToManyAnotation.cascade(), CascadeType.MERGE) || ArrayUtils
-                            .contains(oneToManyAnotation.cascade(), CascadeType.PERSIST))) {
+                        if (!(ArrayUtils.contains(oneToManyAnotation.cascade(), CascadeType.ALL) || ArrayUtils.contains(oneToManyAnotation.cascade(), CascadeType.MERGE)
+                                || ArrayUtils.contains(oneToManyAnotation.cascade(), CascadeType.PERSIST))) {
                             continue;
                         }
 
                         // Extract @oneToOne fields that do not cascade
                     } else if (field.isAnnotationPresent(OneToOne.class)) {
                         OneToOne oneToOneAnotation = field.getAnnotation(OneToOne.class);
-                        if (!(ArrayUtils.contains(oneToOneAnotation.cascade(), CascadeType.ALL) || ArrayUtils.contains(oneToOneAnotation.cascade(), CascadeType.MERGE) || ArrayUtils
-                            .contains(oneToOneAnotation.cascade(), CascadeType.PERSIST))) {
+                        if (!(ArrayUtils.contains(oneToOneAnotation.cascade(), CascadeType.ALL) || ArrayUtils.contains(oneToOneAnotation.cascade(), CascadeType.MERGE)
+                                || ArrayUtils.contains(oneToOneAnotation.cascade(), CascadeType.PERSIST))) {
                             continue;
                         }
 
@@ -1235,8 +1239,7 @@ public class EntityExportImportService implements Serializable {
      *        OfferServiceTemplate
      */
     @SuppressWarnings({ "rawtypes" })
-    private void saveNotManagedFields(IEntity entityDeserialized, boolean lookupById, ExportImportStatistics importStats, Provider forceToProvider,
-            IEntity parentEntity) {
+    private void saveNotManagedFields(IEntity entityDeserialized, boolean lookupById, ExportImportStatistics importStats, Provider forceToProvider, IEntity parentEntity) {
 
         Class clazz = entityDeserialized.getClass();
 
@@ -1299,8 +1302,8 @@ public class EntityExportImportService implements Serializable {
         boolean isCascadedField = false;
         if (field.isAnnotationPresent(OneToMany.class)) {
             OneToMany oneToManyAnotation = field.getAnnotation(OneToMany.class);
-            if (!(ArrayUtils.contains(oneToManyAnotation.cascade(), CascadeType.ALL) || ArrayUtils.contains(oneToManyAnotation.cascade(), CascadeType.MERGE) || ArrayUtils
-                .contains(oneToManyAnotation.cascade(), CascadeType.PERSIST))) {
+            if (!(ArrayUtils.contains(oneToManyAnotation.cascade(), CascadeType.ALL) || ArrayUtils.contains(oneToManyAnotation.cascade(), CascadeType.MERGE)
+                    || ArrayUtils.contains(oneToManyAnotation.cascade(), CascadeType.PERSIST))) {
                 return fieldValue;
             } else {
                 isCascadedField = true;
@@ -1309,8 +1312,8 @@ public class EntityExportImportService implements Serializable {
             // Extract @oneToOne fields that do not cascade
         } else if (field.isAnnotationPresent(OneToOne.class)) {
             OneToOne oneToOneAnotation = field.getAnnotation(OneToOne.class);
-            if (!(ArrayUtils.contains(oneToOneAnotation.cascade(), CascadeType.ALL) || ArrayUtils.contains(oneToOneAnotation.cascade(), CascadeType.MERGE) || ArrayUtils.contains(
-                oneToOneAnotation.cascade(), CascadeType.PERSIST))) {
+            if (!(ArrayUtils.contains(oneToOneAnotation.cascade(), CascadeType.ALL) || ArrayUtils.contains(oneToOneAnotation.cascade(), CascadeType.MERGE)
+                    || ArrayUtils.contains(oneToOneAnotation.cascade(), CascadeType.PERSIST))) {
                 return fieldValue;
             } else {
                 isCascadedField = true;
@@ -1517,8 +1520,8 @@ public class EntityExportImportService implements Serializable {
             return entity;
 
         } catch (NoResultException | NonUniqueResultException e) {
-            log.debug("Entity {} not found matching attributes: {}, sql {}. Reason:{} Entity will be inserted.", entityToSave.getClass().getName(), parameters, sql, e.getClass()
-                .getName());
+            log.debug("Entity {} not found matching attributes: {}, sql {}. Reason:{} Entity will be inserted.", entityToSave.getClass().getName(), parameters, sql,
+                e.getClass().getName());
             return null;
 
         } catch (Exception e) {
@@ -1655,16 +1658,16 @@ public class EntityExportImportService implements Serializable {
                     // Extract @oneToMany fields that do not cascade
                     if (field.isAnnotationPresent(OneToMany.class)) {
                         OneToMany oneToManyAnotation = field.getAnnotation(OneToMany.class);
-                        if (!(ArrayUtils.contains(oneToManyAnotation.cascade(), CascadeType.ALL) || ArrayUtils.contains(oneToManyAnotation.cascade(), CascadeType.MERGE) || ArrayUtils
-                            .contains(oneToManyAnotation.cascade(), CascadeType.PERSIST))) {
+                        if (!(ArrayUtils.contains(oneToManyAnotation.cascade(), CascadeType.ALL) || ArrayUtils.contains(oneToManyAnotation.cascade(), CascadeType.MERGE)
+                                || ArrayUtils.contains(oneToManyAnotation.cascade(), CascadeType.PERSIST))) {
                             classNonCascadableFields.add(field);
                         }
 
                         // Extract @oneToOne fields that do not cascade
                     } else if (field.isAnnotationPresent(OneToOne.class)) {
                         OneToOne oneToOneAnotation = field.getAnnotation(OneToOne.class);
-                        if (!(ArrayUtils.contains(oneToOneAnotation.cascade(), CascadeType.ALL) || ArrayUtils.contains(oneToOneAnotation.cascade(), CascadeType.MERGE) || ArrayUtils
-                            .contains(oneToOneAnotation.cascade(), CascadeType.PERSIST))) {
+                        if (!(ArrayUtils.contains(oneToOneAnotation.cascade(), CascadeType.ALL) || ArrayUtils.contains(oneToOneAnotation.cascade(), CascadeType.MERGE)
+                                || ArrayUtils.contains(oneToOneAnotation.cascade(), CascadeType.PERSIST))) {
                             classNonCascadableFields.add(field);
                         }
                     }
@@ -2164,6 +2167,7 @@ public class EntityExportImportService implements Serializable {
         notificationCacheContainerProvider.refreshCache(null);
         ratingCacheContainerProvider.refreshCache(null);
         customFieldsCacheContainerProvider.refreshCache(null);
+        jobCacheContainerProvider.refreshCache(null);
     }
 
     /**
@@ -2290,8 +2294,8 @@ public class EntityExportImportService implements Serializable {
                 if (response.getStatus() == HttpURLConnection.HTTP_UNAUTHORIZED || response.getStatus() == HttpURLConnection.HTTP_FORBIDDEN) {
                     throw new RemoteAuthenticationException(response.getStatusInfo().getReasonPhrase());
                 } else {
-                    throw new RemoteImportException("Failed to communicate or process data in remote meveo instance. Http status " + response.getStatus() + " "
-                            + response.getStatusInfo().getReasonPhrase());
+                    throw new RemoteImportException(
+                        "Failed to communicate or process data in remote meveo instance. Http status " + response.getStatus() + " " + response.getStatusInfo().getReasonPhrase());
                 }
             }
             ImportExportResponseDto resultDto = response.readEntity(ImportExportResponseDto.class);
@@ -2322,14 +2326,14 @@ public class EntityExportImportService implements Serializable {
      * @throws RemoteImportException
      * @throws Exception
      */
-    public ImportExportResponseDto checkRemoteMeveoInstanceImportStatus(String executionId, MeveoInstance remoteInstance) throws RemoteAuthenticationException,
-            RemoteImportException {
+    public ImportExportResponseDto checkRemoteMeveoInstanceImportStatus(String executionId, MeveoInstance remoteInstance)
+            throws RemoteAuthenticationException, RemoteImportException {
 
         log.debug("Checking status of import in remote meveo instance {} with execution id {}", remoteInstance.getCode(), executionId);
 
         ResteasyClient client = new ResteasyClientBuilder().build();
-        ResteasyWebTarget target = client.target(remoteInstance.getUrl() + (remoteInstance.getUrl().endsWith("/") ? "" : "/")
-                + "api/rest/importExport/checkImportDataResult?executionId=" + executionId);
+        ResteasyWebTarget target = client
+            .target(remoteInstance.getUrl() + (remoteInstance.getUrl().endsWith("/") ? "" : "/") + "api/rest/importExport/checkImportDataResult?executionId=" + executionId);
 
         BasicAuthentication basicAuthentication = new BasicAuthentication(remoteInstance.getAuthUsername(), remoteInstance.getAuthPassword());
         target.register(basicAuthentication);
@@ -2339,8 +2343,8 @@ public class EntityExportImportService implements Serializable {
             if (response.getStatus() == HttpURLConnection.HTTP_UNAUTHORIZED || response.getStatus() == HttpURLConnection.HTTP_FORBIDDEN) {
                 throw new RemoteAuthenticationException(response.getStatusInfo().getReasonPhrase());
             } else {
-                throw new RemoteImportException("Failed to communicate to remote meveo instance. Http status " + response.getStatus() + " "
-                        + response.getStatusInfo().getReasonPhrase());
+                throw new RemoteImportException(
+                    "Failed to communicate to remote meveo instance. Http status " + response.getStatus() + " " + response.getStatusInfo().getReasonPhrase());
             }
         }
         ImportExportResponseDto resultDto = response.readEntity(ImportExportResponseDto.class);

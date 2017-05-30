@@ -457,11 +457,11 @@ public class RatingService extends BusinessService<WalletOperation>{
 				HashMap<String, Object> context = new HashMap<String, Object>();
 				context.put(Script.CONTEXT_ENTITY, bareWalletOperation);	
 				script.execute(context);
-			} catch (Exception e) {
-				log.error("Error when run script {}, user {}",ratePrice.getScriptInstance().getCode());
-				throw new BusinessException("failed when run script "+ratePrice.getScriptInstance().getCode()+" ,info "+e.getMessage());
-			}
-		}
+            } catch (Exception e) {
+                log.error("Error when run script {}", ratePrice.getScriptInstance().getCode(), e);
+                throw new BusinessException("failed when run script " + ratePrice.getScriptInstance().getCode() + ", info " + e.getMessage());
+            }
+        }
 	}
 
 	

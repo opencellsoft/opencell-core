@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map.Entry;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -30,7 +31,6 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.model.Auditable;
 import org.meveo.model.admin.Seller;
@@ -73,9 +73,9 @@ public class ReservationService extends PersistenceService<Reservation> {
     
 	@Inject
     private WalletCacheContainerProvider walletCacheContainerProvider;
-    	
+    	    
     @Inject
-    private RatingCacheContainerProvider ratingCacheContainerProvider;
+    private CounterInstanceService counterInstanceService;
 
 	// FIXME: rethink this service in term of prepaid wallets
 	public Long createReservation(String sellerCode, String offerCode, String userAccountCode,
@@ -289,10 +289,13 @@ public class ReservationService extends PersistenceService<Reservation> {
 			walletCacheContainerProvider.updateBalanceCache(op);
 		}
 
-		// restore all counters values
-		if (reservation.getCounterPeriodValues().size() > 0) {
-		    ratingCacheContainerProvider.restoreCounters(reservation.getCounterPeriodValues());
-		}
+        // restore all counters values
+        if (reservation.getCounterPeriodValues().size() > 0) {
+
+            for (Entry<Long, BigDecimal> periodInfo : reservation.getCounterPeriodValues().entrySet()) {
+                counterInstanceService.incrementCounterValue(periodInfo.getKey(), periodInfo.getValue());
+            }
+        }
 
 		reservation.setStatus(ReservationStatus.CANCELLED);
 	}

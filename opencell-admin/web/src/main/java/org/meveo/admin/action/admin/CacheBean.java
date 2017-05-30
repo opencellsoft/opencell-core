@@ -32,11 +32,13 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.lang3.reflect.MethodUtils;
+import org.infinispan.Cache;
 import org.infinispan.commons.api.BasicCache;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
+import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.NotificationCacheContainerProvider;
 import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.cache.WalletCacheContainerProvider;
@@ -69,6 +71,9 @@ public class CacheBean implements Serializable {
     @Inject
     private CustomFieldsCacheContainerProvider customFieldsCacheContainerProvider;
 
+    @Inject
+    private JobCacheContainerProvider jobCacheContainerProvider;
+    
     /** Logger. */
     @Inject
     protected org.slf4j.Logger log;
@@ -125,11 +130,12 @@ public class CacheBean implements Serializable {
     public void preRenderView() {
 
         if (cacheName != null) {
-            Map<String, BasicCache> caches = walletCacheContainerProvider.getCaches();
+            Map<String, Cache> caches = walletCacheContainerProvider.getCaches();
             caches.putAll(cdrEdrProcessingCacheContainerProvider.getCaches());
             caches.putAll(notificationCacheContainerProvider.getCaches());
             caches.putAll(ratingCacheContainerProvider.getCaches());
             caches.putAll(customFieldsCacheContainerProvider.getCaches());
+            caches.putAll(jobCacheContainerProvider.getCaches());
 
             selectedCache = caches.get(cacheName);
         }
@@ -144,14 +150,15 @@ public class CacheBean implements Serializable {
     public List<Map<String, String>> getSummaryOfCaches() {
         List<Map<String, String>> cacheSummary = new ArrayList<Map<String, String>>();
 
-        Map<String, BasicCache> caches = walletCacheContainerProvider.getCaches();
+        Map<String, Cache> caches = walletCacheContainerProvider.getCaches();
         caches.putAll(cdrEdrProcessingCacheContainerProvider.getCaches());
         caches.putAll(notificationCacheContainerProvider.getCaches());
         caches.putAll(ratingCacheContainerProvider.getCaches());
         caches.putAll(customFieldsCacheContainerProvider.getCaches());
-        caches = new TreeMap<String, BasicCache>(caches);
+        caches.putAll(jobCacheContainerProvider.getCaches());
+        caches = new TreeMap<String, Cache>(caches);
 
-        for (Entry<String, BasicCache> cache : caches.entrySet()) {
+        for (Entry<String, Cache> cache : caches.entrySet()) {
             Map<String, String> cacheInfo = new HashMap<String, String>();
             cacheInfo.put("name", cache.getKey());
             cacheInfo.put("count", Integer.toString(cache.getValue().size()));
@@ -174,6 +181,7 @@ public class CacheBean implements Serializable {
         notificationCacheContainerProvider.refreshCache(cacheName);
         ratingCacheContainerProvider.refreshCache(cacheName);
         customFieldsCacheContainerProvider.refreshCache(cacheName);
+        jobCacheContainerProvider.refreshCache(cacheName);
         messages.info(new BundleKey("messages", "cache.refreshInitiated"));
     }
 
@@ -183,6 +191,7 @@ public class CacheBean implements Serializable {
         notificationCacheContainerProvider.refreshCache(null);
         ratingCacheContainerProvider.refreshCache(null);
         customFieldsCacheContainerProvider.refreshCache(null);
+        jobCacheContainerProvider.refreshCache(null);
         messages.info(new BundleKey("messages", "cache.refreshInitiated"));
     }
 

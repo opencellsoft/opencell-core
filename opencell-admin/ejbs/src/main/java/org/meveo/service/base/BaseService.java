@@ -20,7 +20,6 @@ package org.meveo.service.base;
 
 import java.util.Random;
 
-import javax.ejb.EJB;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
@@ -29,7 +28,6 @@ import javax.inject.Inject;
 import org.meveo.model.crm.Provider;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
-import org.meveo.service.admin.impl.UserService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,8 +48,8 @@ public abstract class BaseService {
 	@Inject
 	private BeanManager beanManager;
 
-	@EJB
-	private UserService userService;	
+//	@EJB
+//	private UserService userService;	
 
 	protected String generateRequestId() {
 		return "MEVEOADMIN-" + String.valueOf(RANDOM.nextInt());

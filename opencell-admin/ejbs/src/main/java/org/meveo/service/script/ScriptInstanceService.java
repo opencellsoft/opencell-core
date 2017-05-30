@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.ejb.TransactionAttribute;
@@ -42,6 +44,7 @@ import org.meveo.model.security.Role;
 
 @Singleton
 @Startup
+@Lock(LockType.READ)
 public class ScriptInstanceService extends CustomScriptService<ScriptInstance, ScriptInterface> {
 
     /**
@@ -51,7 +54,7 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
      */
     public List<CustomScript> getScriptInstancesWithError() {
         return ((List<CustomScript>) getEntityManager().createNamedQuery("CustomScript.getScriptInstanceOnError", CustomScript.class).setParameter("isError", Boolean.TRUE)
-                .getResultList());
+            .getResultList());
     }
 
     /**
@@ -60,8 +63,7 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
      * @return
      */
     public long countScriptInstancesWithError() {
-        return ((Long) getEntityManager().createNamedQuery("CustomScript.countScriptInstanceOnError", Long.class).setParameter("isError", Boolean.TRUE)
-                .getSingleResult());
+        return ((Long) getEntityManager().createNamedQuery("CustomScript.countScriptInstanceOnError", Long.class).setParameter("isError", Boolean.TRUE).getSingleResult());
     }
 
     /**
@@ -77,17 +79,17 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
     /**
      * Execute the script identified by a script code. No init nor finalize methods are called.
      *
-     * @param scriptCode      ScriptInstanceCode
-     * @param context         Context parameters (optional)
-     * @param currentUser     User executor
+     * @param scriptCode ScriptInstanceCode
+     * @param context Context parameters (optional)
+     * @param currentUser User executor
      * @return Context parameters. Will not be null even if "context" parameter is null.
      * @throws InvalidPermissionException Insufficient access to run the script
-     * @throws ElementNotFoundException   Script not found
-     * @throws BusinessException          Any execution exception
+     * @throws ElementNotFoundException Script not found
+     * @throws BusinessException Any execution exception
      */
     @Override
-    public Map<String, Object> execute(String scriptCode, Map<String, Object> context) throws ElementNotFoundException, InvalidScriptException,
-            InvalidPermissionException, BusinessException {
+    public Map<String, Object> execute(String scriptCode, Map<String, Object> context)
+            throws ElementNotFoundException, InvalidScriptException, InvalidPermissionException, BusinessException {
 
         ScriptInstance scriptInstance = findByCode(scriptCode);
         // Check access to the script
@@ -107,9 +109,9 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
             ScriptInstance scriptInstance = findByCode(scriptCode);
             isUserHasExecutionRole(scriptInstance);
             String javaSrc = scriptInstance.getScript();
-            javaSrc = javaSrc.replaceAll("LoggerFactory.getLogger", "new org.meveo.service.script.RunTimeLogger(" + getClassName(javaSrc) + ".class,\""
-                    + appProvider.getCode() + "\",\"" + scriptCode + "\",\"ScriptInstanceService\");//");
-            Class<ScriptInterface> compiledScript = compileJavaSource(javaSrc, getFullClassname(scriptInstance.getScript()));
+            javaSrc = javaSrc.replaceAll("LoggerFactory.getLogger", "new org.meveo.service.script.RunTimeLogger(" + getClassName(javaSrc) + ".class,\"" + appProvider.getCode()
+                    + "\",\"" + scriptCode + "\",\"ScriptInstanceService\");//");
+            Class<ScriptInterface> compiledScript = compileJavaSource(javaSrc);
             execute(compiledScript.newInstance(), context);
 
         } catch (Exception e) {
@@ -129,11 +131,11 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
         if (scriptInstance != null && scriptInstance.getExecutionRoles() != null && !scriptInstance.getExecutionRoles().isEmpty()) {
             Set<Role> execRoles = scriptInstance.getExecutionRoles();
             for (Role role : execRoles) {
-                if (currentUser.hasRole(role.getName())){
+                if (currentUser.hasRole(role.getName())) {
                     return;
                 }
             }
-            throw new InvalidPermissionException();            
+            throw new InvalidPermissionException();
         }
     }
 
@@ -141,7 +143,7 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
         if (scriptInstance != null && scriptInstance.getSourcingRoles() != null && !scriptInstance.getSourcingRoles().isEmpty()) {
             Set<Role> sourcingRoles = scriptInstance.getSourcingRoles();
             for (Role role : sourcingRoles) {
-                if (currentUser.hasRole(role.getName())){
+                if (currentUser.hasRole(role.getName())) {
                     return true;
                 }
             }
@@ -156,7 +158,7 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
      *
      * @param workerName The name of the API or service that will be invoked.
      * @param methodName The name of the method that will be invoked.
-     * @param parameters The array of parameters accepted by the method.  They must be specified in exactly the same order as the target method.
+     * @param parameters The array of parameters accepted by the method. They must be specified in exactly the same order as the target method.
      * @throws BusinessException
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -182,7 +184,7 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
             method.setAccessible(true);
             method.invoke(worker, parameters);
         } catch (Exception e) {
-            if(e.getCause() != null){
+            if (e.getCause() != null) {
                 throw new BusinessException(e.getCause());
             } else {
                 throw new BusinessException(e);

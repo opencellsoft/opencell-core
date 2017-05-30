@@ -244,7 +244,6 @@ public class FtpAdapterJobBean {
 
 	/**
 	 * 
-	 * @param code
 	 * @param fileName
 	 * @param lastModification
 	 * @param size

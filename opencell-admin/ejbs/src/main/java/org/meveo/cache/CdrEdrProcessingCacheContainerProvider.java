@@ -1,5 +1,6 @@
 package org.meveo.cache;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,11 +10,14 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
 
-import org.infinispan.commons.api.BasicCache;
+import org.infinispan.Cache;
+import org.infinispan.context.Flag;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.EDR;
@@ -29,7 +33,10 @@ import org.slf4j.Logger;
  */
 @Startup
 @Singleton
-public class CdrEdrProcessingCacheContainerProvider {
+@Lock(LockType.READ)
+public class CdrEdrProcessingCacheContainerProvider implements Serializable { // CacheContainerProvider, Serializable {
+
+    private static final long serialVersionUID = 1435137623784514994L;
 
     @Inject
     protected Logger log;
@@ -43,19 +50,16 @@ public class CdrEdrProcessingCacheContainerProvider {
     private ParamBean paramBean = ParamBean.getInstance();
 
     /**
-     * Contains association between access code and accesses sharing this code. Key format: <Access.accessUserId>
+     * Contains association between access code and accesses sharing this code. Key format: <Access.accessUserId>, value: List of <Access entity>
      */
-    @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-access-cache")
-    private BasicCache<String, List<Access>> accessCache;
-
-    // @Resource(name = "java:jboss/infinispan/container/meveo")
-    // private CacheContainer meveoContainer;
+    @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-access-cache")
+    private Cache<String, List<Access>> accessCache;
 
     /**
-     * Stores a list of processed EDR's. Key format: <originBatch>_<originRecord>
+     * Stores a list of processed EDR's. Key format: <originBatch>_<originRecord>, value: 0 (no meaning, only keys are used)
      */
-    @Resource(lookup = "java:jboss/infinispan/cache/meveo/meveo-edr-cache")
-    private BasicCache<String, Integer> edrCache;
+    @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-edr-cache")
+    private Cache<String, Integer> edrCache;
 
     @PostConstruct
     private void init() {
@@ -64,8 +68,7 @@ public class CdrEdrProcessingCacheContainerProvider {
             // accessCache = meveoContainer.getCache("meveo-access-cache");
             // edrCache = meveoContainer.getCache("meveo-edr-cache");
 
-            populateAccessCache();
-            populateEdrCache();
+            refreshCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
 
             log.info("CdrEdrProcessingCacheContainerProvider initialized");
 
@@ -81,12 +84,15 @@ public class CdrEdrProcessingCacheContainerProvider {
     private void populateAccessCache() {
 
         log.debug("Start to populate access cache");
-        accessCache.clear();
+
         List<Access> activeAccesses = accessService.getAccessesForCache();
+        accessCache.startBatch();
+        accessCache.clear();
 
         for (Access access : activeAccesses) {
             addAccessToCache(access);
         }
+        accessCache.endBatch(true);
 
         log.info("Access cache populated with {} accesses", activeAccesses.size());
     }
@@ -96,13 +102,23 @@ public class CdrEdrProcessingCacheContainerProvider {
      * 
      * @param access Access to add
      */
+    // @Lock(LockType.WRITE)
     public void addAccessToCache(Access access) {
-        String cacheKey = access.getAccessUserId();
-        accessCache.putIfAbsent(cacheKey, new ArrayList<Access>());
-        // because acccessed later, to avoid lazy init
+
+        log.trace("Adding access {} to access cache", access.getId());
+
+        // because accessed later, to avoid lazy init
         access.getSubscription().getId();
-        accessCache.get(cacheKey).add(access);
-        log.trace("Added access {} to access cache", access);
+
+        String cacheKey = access.getAccessUserId();
+
+        List<Access> accesses = accessCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
+        if (accesses == null) {
+            accesses = new ArrayList<Access>();
+        }
+        accesses.add(access);
+        accessCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, accesses);
+
     }
 
     /**
@@ -110,26 +126,27 @@ public class CdrEdrProcessingCacheContainerProvider {
      * 
      * @param access Access to remove
      */
+    // @Lock(LockType.WRITE)
     public void removeAccessFromCache(Access access) {
 
-        // Case when AccessUserId value has not changed
-        if (accessCache.containsKey(access.getAccessUserId())
-                && accessCache.get(access.getAccessUserId()).contains(access)) {
-            accessCache.get(access.getAccessUserId()).remove(access);
-            log.trace("Removed access {} from access cache", access);
-            return;
+        log.trace("Removing access {} from access cache", access.getId());
 
-            // Case when AccessUserId values has changed
-        } else {
-            for (List<Access> accesses : accessCache.values()) {
-                if (accesses.contains(access)) {
-                    accesses.remove(access);
-                    log.trace("Removed access {} from access cache", access);
-                    return;
+        String cacheKey = access.getAccessUserId();
+        List<Access> accesses = accessCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
+
+        if (accesses != null && !accesses.isEmpty()) {
+            boolean removed = accesses.remove(access);
+            if (removed) {
+                // Remove cached value altogether if no value are left in the list
+                if (accesses.isEmpty()) {
+                    accessCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).remove(cacheKey);
+                } else {
+                    accessCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, accesses);
                 }
+
+                log.trace("Removed access {} from access cache", access.getId());
             }
         }
-        log.error("Failed to find and remove access {} from access cache", access);
     }
 
     /**
@@ -149,8 +166,9 @@ public class CdrEdrProcessingCacheContainerProvider {
      * @return A list of accesses
      */
     public List<Access> getAccessesByAccessUserId(String accessUserId) {
-        log.trace("lookup access {}",accessUserId);
-    	return accessCache.get(accessUserId);
+
+        String cacheKey = accessUserId;
+        return accessCache.get(cacheKey);
     }
 
     /**
@@ -166,14 +184,17 @@ public class CdrEdrProcessingCacheContainerProvider {
 
         log.debug("Start to populate EDR cache");
 
+        edrCache.startBatch();
         edrCache.clear();
-        int maxDuplicateRecords = Integer.parseInt(paramBean.getProperty("mediation.deduplicateCacheSize", "100000"));
-        List<String> edrs = edrService.getUnprocessedEdrsForCache(maxDuplicateRecords);
-        for (String edrHash : edrs) {
-            edrCache.put(edrHash, 0);
-        }
 
-        log.info("EDR cache populated with {} EDRs", edrs.size());
+        List<String> edrCacheKeys = edrService.getUnprocessedEdrsForCache();
+
+        for (String edrCacheKey : edrCacheKeys) {
+            edrCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(edrCacheKey, 0);
+        }
+        edrCache.endBatch(true);
+
+        log.info("EDR cache populated with {} EDRs", edrCacheKeys.size());
     }
 
     /**
@@ -194,17 +215,18 @@ public class CdrEdrProcessingCacheContainerProvider {
      * @param edr EDR to add to cache
      */
     public void addEdrToCache(EDR edr) {
-        edrCache.putIfAbsent(edr.getOriginBatch() + "_" + edr.getOriginRecord(), 0);
+        edrCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(edr.getOriginBatch() + "_" + edr.getOriginRecord(), 0);
     }
 
     /**
      * Get a summary of cached information
      * 
-     * @return A list of a map containing cache information with cache name as a key and cache as a value
+     * @return A a map containing cache information with cache name as a key and cache as a value
      */
+    // @Override
     @SuppressWarnings("rawtypes")
-    public Map<String, BasicCache> getCaches() {
-        Map<String, BasicCache> summaryOfCaches = new HashMap<String, BasicCache>();
+    public Map<String, Cache> getCaches() {
+        Map<String, Cache> summaryOfCaches = new HashMap<String, Cache>();
         summaryOfCaches.put(accessCache.getName(), accessCache);
         summaryOfCaches.put(edrCache.getName(), edrCache);
 
@@ -216,14 +238,15 @@ public class CdrEdrProcessingCacheContainerProvider {
      * 
      * @param cacheName Name of cache to refresh or null to refresh all caches
      */
+    // @Override
     @Asynchronous
     public void refreshCache(String cacheName) {
 
-        if (cacheName == null || cacheName.equals(accessCache.getName())) {
+        if (cacheName == null || cacheName.equals(accessCache.getName()) || cacheName.contains(accessCache.getName())) {
             populateAccessCache();
 
         }
-        if (cacheName == null || cacheName.equals(edrCache.getName())) {
+        if (cacheName == null || cacheName.equals(edrCache.getName()) || cacheName.contains(edrCache.getName())) {
             populateEdrCache();
         }
     }

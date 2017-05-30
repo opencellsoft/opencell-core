@@ -44,8 +44,9 @@ import org.meveo.admin.exception.InvalidPermissionException;
 import org.meveo.admin.exception.InvalidScriptException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.FileUtils;
-import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.event.monitoring.ClusterEventPublisher;
+import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
 import org.meveo.model.IEntity;
 import org.meveo.model.scripts.CustomScript;
 import org.meveo.model.scripts.ScriptInstanceError;
@@ -56,15 +57,18 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
 
     @Inject
     private ResourceBundle resourceMessages;
-        
+
+    @Inject
+    private ClusterEventPublisher clusterEventPublisher;
+
     protected final Class<SI> scriptInterfaceClass;
 
     private Map<String, List<String>> allLogs = new HashMap<String, List<String>>();
 
     private Map<String, Class<SI>> allScriptInterfaces = new HashMap<String, Class<SI>>();
 
-	private Map<String, SI> allScriptInstances=new HashMap<String,SI>();
-	
+    private Map<String, SI> allScriptInstances = new HashMap<String, SI>();
+
     private CharSequenceCompiler<SI> compiler;
 
     private String classpath = "";
@@ -89,7 +93,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     }
 
     /**
-     * Find scripts by type
+     * Find scripts by source type
      * 
      * @param type
      * @return
@@ -97,10 +101,8 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     @SuppressWarnings("unchecked")
     public List<T> findByType(ScriptSourceTypeEnum type) {
         List<T> result = new ArrayList<T>();
-        QueryBuilder qb = new QueryBuilder(getEntityClass(), "t");
-        qb.addCriterionEnum("t.sourceTypeEnum", type);
         try {
-            result = (List<T>) qb.getQuery(getEntityManager()).getResultList();
+            result = (List<T>) getEntityManager().createNamedQuery("CustomScript.getScriptInstanceByTypeActive").setParameter("sourceTypeEnum", type).getResultList();
         } catch (NoResultException e) {
 
         }
@@ -123,6 +125,8 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
 
         super.create(script);
         compileScript(script, false);
+
+        clusterEventPublisher.publishEvent(script, CrudActionEnum.create);
     }
 
     @Override
@@ -143,6 +147,34 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         script = super.update(script);
 
         compileScript(script, false);
+
+        clusterEventPublisher.publishEvent(script, CrudActionEnum.update);
+        return script;
+    }
+
+    @Override
+    public void remove(T script) throws BusinessException {
+        super.remove(script);
+
+        clusterEventPublisher.publishEvent(script, CrudActionEnum.remove);
+    }
+
+    @Override
+    public T enable(T script) throws BusinessException {
+
+        script = super.enable(script);
+
+        clusterEventPublisher.publishEvent(script, CrudActionEnum.enable);
+
+        return script;
+    }
+
+    @Override
+    public T disable(T script) throws BusinessException {
+        
+        script = super.disable(script);
+
+        clusterEventPublisher.publishEvent(script, CrudActionEnum.disable);
 
         return script;
     }
@@ -195,15 +227,15 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         log.info("compileAll classpath={}", classpath);
 
     }
-    
+
     /**
      * Build the classpath and compile all scripts
      */
     protected void compile(List<T> scripts) {
         try {
-            
+
             constructClassPath();
-            
+
             for (T script : scripts) {
                 compileScript(script, false);
             }
@@ -212,31 +244,76 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         }
     }
 
+    /*
+     * Compile a script
+     */
+    public void refreshCompiledScript(String scriptCode) {
+
+        T script = findByCode(scriptCode);
+        if (script == null) {
+            clearCompiledScripts(scriptCode);
+        } else {
+            compileScript(script, false);
+        }
+//        detach(script);
+    }
+
     /**
-     * Compile script and update status
+     * Compile script, a and update script entity status with compilation errors. Successfully compiled script is added to a compiled script cache if active and not in test
+     * compilation mode.
      * 
      * @param script Script entity to compile
+     * @param testCompile Is it a compilation for testing purpose. Won't clear nor overwrite existing compiled script cache.
      */
     public void compileScript(T script, boolean testCompile) {
+
+        List<ScriptInstanceError> scriptErrors = compileScript(script.getCode(), script.getSourceTypeEnum(), script.getScript(), script.isActive(), testCompile);
+
+        if (!testCompile) {
+            script.setError(scriptErrors != null && !scriptErrors.isEmpty());
+            script.setScriptErrors(scriptErrors);
+        }
+    }
+
+    /**
+     * Compile script. DOES NOT update script entity status. Successfully compiled script is added to a compiled script cache if active and not in test compilation mode.
+     * 
+     * @param scriptCode Script entity code
+     * @param sourceType Source code language type
+     * @param sourceCode Source code
+     * @param isActive Is script active. It will compile it anyway. Will clear but not overwrite existing compiled script cache.
+     * @param testCompile Is it a compilation for testing purpose. Won't clear nor overwrite existing compiled script cache.
+     * 
+     * @return A list of compilation errors if not compiled
+     */
+    private List<ScriptInstanceError> compileScript(String scriptCode, ScriptSourceTypeEnum sourceType, String sourceCode, boolean isActive, boolean testCompile) {
+
+        log.debug("Compile script {}", scriptCode);
+
         try {
-            final String qName = getFullClassname(script.getScript());
-            final String codeSource = script.getScript();
-
-            log.debug("Compiling code for {}: {}", qName, codeSource);
-            script.setError(false);
-            script.getScriptErrors().clear();
-
-            Class<SI> compiledScript = compileJavaSource(codeSource, qName);
-
             if (!testCompile) {
-                
-                allScriptInterfaces.put(script.getCode(), compiledScript);
-
-                allScriptInstances.put(script.getCode(),compiledScript.newInstance());
-                log.debug("Added script {} to Map", script.getCode());
+                clearCompiledScripts(scriptCode);
             }
+
+            // For now no need to check source type if (sourceType==ScriptSourceTypeEnum.JAVA){
+
+            Class<SI> compiledScript = compileJavaSource(sourceCode);
+
+            if (!testCompile && isActive) {
+
+                allScriptInterfaces.put(scriptCode, compiledScript);
+                allScriptInstances.put(scriptCode, compiledScript.newInstance());
+
+                log.debug("Compiled script {} added to compiled interface map", scriptCode);
+            }
+
+            return null;
+
         } catch (CharSequenceCompilerException e) {
-            log.error("Failed to compile script {}. Compilation errors:", script.getCode());
+            log.error("Failed to compile script {}. Compilation errors:", scriptCode);
+
+            List<ScriptInstanceError> scriptErrors = new ArrayList<>();
+
             List<Diagnostic<? extends JavaFileObject>> diagnosticList = e.getDiagnostics().getDiagnostics();
             for (Diagnostic<? extends JavaFileObject> diagnostic : diagnosticList) {
                 if ("ERROR".equals(diagnostic.getKind().name())) {
@@ -246,16 +323,22 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
                     scriptInstanceError.setColumnNumber(diagnostic.getColumnNumber());
                     scriptInstanceError.setSourceFile(diagnostic.getSource().toString());
                     // scriptInstanceError.setScript(scriptInstance);
-                    script.getScriptErrors().add(scriptInstanceError);
+                    scriptErrors.add(scriptInstanceError);
                     // scriptInstanceErrorService.create(scriptInstanceError, scriptInstance.getAuditable().getCreator());
-                    log.warn("{} script {} location {}:{}: {}", diagnostic.getKind().name(), script.getCode(), diagnostic.getLineNumber(), diagnostic.getColumnNumber(),
+                    log.warn("{} script {} location {}:{}: {}", diagnostic.getKind().name(), scriptCode, diagnostic.getLineNumber(), diagnostic.getColumnNumber(),
                         diagnostic.getMessage(Locale.getDefault()));
                 }
             }
-            script.setError(true);
+            return scriptErrors;
 
         } catch (Exception e) {
-            log.error("", e);
+            log.error("Failed while compiling script", e);
+            List<ScriptInstanceError> scriptErrors = new ArrayList<>();
+            ScriptInstanceError scriptInstanceError = new ScriptInstanceError();
+            scriptInstanceError.setMessage(e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
+            scriptErrors.add(scriptInstanceError);
+
+            return scriptErrors;
         }
     }
 
@@ -263,15 +346,17 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * Compile java Source script
      * 
      * @param javaSrc Java source to compile
-     * @param fullClassName Canonical class name
      * @return Compiled class instance
      * @throws CharSequenceCompilerException
      */
-    protected Class<SI> compileJavaSource(String javaSrc, String fullClassName) throws CharSequenceCompilerException {
-        
+    protected Class<SI> compileJavaSource(String javaSrc) throws CharSequenceCompilerException {
+
         supplementClassPathWithMissingImports(javaSrc);
-        log.debug("Compile script {} with classpath {}", fullClassName, classpath);
-        
+
+        String fullClassName = getFullClassname(javaSrc);
+
+        log.trace("Compile JAVA script {} with classpath {}", fullClassName, classpath);
+
         compiler = new CharSequenceCompiler<SI>(this.getClass().getClassLoader(), Arrays.asList(new String[] { "-cp", classpath }));
         final DiagnosticCollector<JavaFileObject> errs = new DiagnosticCollector<JavaFileObject>();
         Class<SI> compiledScript = compiler.compile(fullClassName, javaSrc, errs, new Class<?>[] { scriptInterfaceClass });
@@ -279,12 +364,14 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     }
 
     /**
-     * Supplement classpath with classes needed for the particular script compilation. Solves issue when classes server as jboss modules are referenced in script. E.g. prg.slf4j.Logger
+     * Supplement classpath with classes needed for the particular script compilation. Solves issue when classes server as jboss modules are referenced in script. E.g.
+     * prg.slf4j.Logger
+     * 
      * @param javaSrc Java source to compile
      */
     @SuppressWarnings("rawtypes")
     private void supplementClassPathWithMissingImports(String javaSrc) {
-                
+
         String regex = "import (.*?);";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(javaSrc);
@@ -301,7 +388,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
                         if (location.endsWith("!/")) {
                             location = location.substring(0, location.length() - 2);
                         }
-                        
+
                         if (!classpath.contains(location)) {
                             classpath += File.pathSeparator + location;
                         }
@@ -314,7 +401,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
                 log.warn("Failed to find location for class {}", className);
             }
         }
-                
+
     }
 
     /**
@@ -327,9 +414,9 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      */
     public Class<SI> getScriptInterface(String scriptCode) throws ElementNotFoundException, InvalidScriptException {
         Class<SI> result = null;
-        
+
         result = allScriptInterfaces.get(scriptCode);
-        
+
         if (result == null) {
             T script = findByCode(scriptCode);
             if (script == null) {
@@ -375,11 +462,11 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     }
 
     public SI getCachedScriptInstance(String scriptCode) throws ElementNotFoundException, InvalidScriptException {
-    	SI script = null;
+        SI script = null;
         script = allScriptInstances.get(scriptCode);
         return script;
     }
-    
+
     /**
      * Add a log line for a script
      * 
@@ -387,7 +474,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @param scriptCode
      */
     public void addLog(String message, String scriptCode) {
-        
+
         if (!allLogs.containsKey(scriptCode)) {
             allLogs.put(scriptCode, new ArrayList<String>());
         }
@@ -401,7 +488,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @return
      */
     public List<String> getLogs(String scriptCode) {
-        
+
         if (!allLogs.containsKey(scriptCode)) {
             return new ArrayList<String>();
         }
@@ -440,7 +527,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         if (className == null) {
             className = StringUtils.patternMacher("public class (.*) implements", src);
         }
-        return className!=null?className.trim():null;
+        return className != null ? className.trim() : null;
     }
 
     /**
@@ -466,8 +553,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @throws ElementNotFoundException Script not found
      * @throws BusinessException Any execution exception
      */
-    public Map<String, Object> execute(IEntity entity, String scriptCode, String encodedParameters) throws InvalidPermissionException, ElementNotFoundException,
-            BusinessException {
+    public Map<String, Object> execute(IEntity entity, String scriptCode, String encodedParameters) throws InvalidPermissionException, ElementNotFoundException, BusinessException {
 
         return execute(entity, scriptCode, CustomScriptService.parseParameters(encodedParameters));
     }
@@ -484,8 +570,8 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @throws InvalidPermissionException Insufficient access to run the script
      * @throws BusinessException Any execution exception
      */
-    public Map<String, Object> execute(IEntity entity, String scriptCode, Map<String, Object> context) throws InvalidScriptException, ElementNotFoundException,
-            InvalidPermissionException, BusinessException {
+    public Map<String, Object> execute(IEntity entity, String scriptCode, Map<String, Object> context)
+            throws InvalidScriptException, ElementNotFoundException, InvalidPermissionException, BusinessException {
 
         if (context == null) {
             context = new HashMap<String, Object>();
@@ -501,15 +587,15 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @param entity Entity to execute action on
      * @param scriptCode Script to execute, identified by a code
      * @param context Method context
-
+     * 
      * @return Context parameters. Will not be null even if "context" parameter is null.
      * @throws InvalidScriptException Were not able to instantiate or compile a script
      * @throws ElementNotFoundException Script not found
      * @throws InvalidPermissionException Insufficient access to run the script
      * @throws BusinessException Any execution exception
      */
-    public Map<String, Object> execute(String scriptCode, Map<String, Object> context) throws ElementNotFoundException, InvalidScriptException,
-            InvalidPermissionException, BusinessException {
+    public Map<String, Object> execute(String scriptCode, Map<String, Object> context)
+            throws ElementNotFoundException, InvalidScriptException, InvalidPermissionException, BusinessException {
 
         log.trace("Script {} to be executed with parameters {}", scriptCode, context);
 
@@ -525,7 +611,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * 
      * @param compiledScript Compiled script class
      * @param context Method context
-
+     * 
      * @return Context parameters. Will not be null even if "context" parameter is null.
      * @throws BusinessException Any execution exception
      */
@@ -564,10 +650,17 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     }
 
     /**
-     * Get all script interfaces     * 
+     * Get all script interfaces *
+     * 
      * @return the allScriptInterfaces
      */
     public Map<String, Class<SI>> getAllScriptInterfaces() {
         return allScriptInterfaces;
-    } 
+    }
+
+    private void clearCompiledScripts(String scriptCode) {
+        allScriptInstances.remove(scriptCode);
+        allScriptInterfaces.remove(scriptCode);
+        allLogs.remove(scriptCode);
+    }
 }

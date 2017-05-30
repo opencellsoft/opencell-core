@@ -130,8 +130,8 @@ public class CurrentUserProvider {
     private Map<String, Set<String>> getRoleToPermissionMapping() {
 
         synchronized (this) {
-            if (roleToPermissionMapping == null) {
-                roleToPermissionMapping = new HashMap<>();
+            if (CurrentUserProvider.roleToPermissionMapping == null) {
+                CurrentUserProvider.roleToPermissionMapping = new HashMap<>();
 
                 try {
                     List<Role> userRoles = em.createNamedQuery("Role.getAllRoles", Role.class).getResultList();
@@ -142,7 +142,7 @@ public class CurrentUserProvider {
                             rolePermissions.add(permission.getPermission());
                         }
 
-                        roleToPermissionMapping.put(role.getName(), rolePermissions);
+                        CurrentUserProvider.roleToPermissionMapping.put(role.getName(), rolePermissions);
                     }
 
                 } catch (Exception e) {
@@ -150,7 +150,7 @@ public class CurrentUserProvider {
                 }
             }
 
-            return roleToPermissionMapping;
+            return CurrentUserProvider.roleToPermissionMapping;
         }
     }
 
@@ -158,7 +158,7 @@ public class CurrentUserProvider {
      * Invalidate cached role to permission mapping (usually after role save/update event)
      */
     public void invalidateRoleToPermissionMapping() {
-        roleToPermissionMapping = null;
+        CurrentUserProvider.roleToPermissionMapping = null;
     }
 
     /**

@@ -2,21 +2,14 @@ package org.meveo.service.notification;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMessage.RecipientType;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
@@ -54,7 +47,7 @@ public class EmailNotifier {
             } else {
                  body = (String) ValueExpressionWrapper.evaluateExpression(notification.getBody(), userMap, String.class);               
             }
-          List<String> to = new ArrayList<String>();
+            List<String> to = new ArrayList<String>();
 
             if (!StringUtils.isBlank(notification.getEmailToEl())) {
                to.add((String) ValueExpressionWrapper.evaluateExpression(notification.getEmailToEl(), userMap, String.class));
