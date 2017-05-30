@@ -1,5 +1,7 @@
 package org.meveo.api.ws;
 
+import java.util.Date;
+
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
@@ -154,10 +156,10 @@ public interface CatalogWs extends IBaseWs {
     ActionStatus updateOfferTemplate(@WebParam(name = "offerTemplate") OfferTemplateDto postData);
 
     @WebMethod
-    GetOfferTemplateResponseDto findOfferTemplate(@WebParam(name = "offerTemplateCode") String offerTemplateCode);
+    GetOfferTemplateResponseDto findOfferTemplate(@WebParam(name = "offerTemplateCode") String offerTemplateCode, @WebParam(name = "validFrom") Date validFrom, @WebParam(name = "validTo") Date validTo);
 
     @WebMethod
-    ActionStatus removeOfferTemplate(@WebParam(name = "offerTemplateCode") String offerTemplateCode);
+    ActionStatus removeOfferTemplate(@WebParam(name = "offerTemplateCode") String offerTemplateCode, @WebParam(name = "validFrom") Date validFrom, @WebParam(name = "validTo") Date validTo);
 
     @WebMethod
     ActionStatus createOrUpdateOfferTemplate(@WebParam(name = "offerTemplate") OfferTemplateDto postData);
@@ -311,13 +313,13 @@ public interface CatalogWs extends IBaseWs {
     ActionStatus createOrUpdateProductTemplate(@WebParam(name = "productTemplate") ProductTemplateDto postData);
 
     @WebMethod
-    ActionStatus removeProductTemplate(@WebParam(name = "productTemplateCode") String code);
+    ActionStatus removeProductTemplate(@WebParam(name = "productTemplateCode") String code, @WebParam(name = "validFrom") Date validFrom, @WebParam(name = "validTo") Date validTo);
     
     @WebMethod
     GetListProductTemplateResponseDto listProductTemplate();
 
     @WebMethod
-    GetProductTemplateResponseDto findProductTemplate(@WebParam(name = "productTemplateCode") String code);
+    GetProductTemplateResponseDto findProductTemplate(@WebParam(name = "productTemplateCode") String code, @WebParam(name = "validFrom") Date validFrom, @WebParam(name = "validTo") Date validTo);
     
     @WebMethod
     ActionStatus createDigitalResource(@WebParam(name = "digitalResource") DigitalResourcesDto postData);
@@ -359,10 +361,10 @@ public interface CatalogWs extends IBaseWs {
     ActionStatus createOrUpdateBundleTemplate(@WebParam(name = "bundleTemplate") BundleTemplateDto postData);
 
     @WebMethod
-    ActionStatus removeBundleTemplate(@WebParam(name = "bundleTemplateCode") String code);
+    ActionStatus removeBundleTemplate(@WebParam(name = "bundleTemplateCode") String code, @WebParam(name = "validFrom") Date validFrom, @WebParam(name = "validTo") Date validTo);
 
     @WebMethod
-    GetBundleTemplateResponseDto findBundleTemplate(@WebParam(name = "bundleTemplateCode") String code);
+    GetBundleTemplateResponseDto findBundleTemplate(@WebParam(name = "bundleTemplateCode") String code, @WebParam(name = "validFrom") Date validFrom, @WebParam(name = "validTo") Date validTo);
 
 
     @WebMethod

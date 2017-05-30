@@ -96,7 +96,7 @@ import org.meveo.model.Auditable;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
-import org.meveo.model.IVersionedEntity;
+import org.meveo.model.IJPAVersionedEntity;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Provider;
@@ -1007,8 +1007,8 @@ public class EntityExportImportService implements Serializable {
 
         if (entityFound == null) {
             // Clear version field
-            if (IVersionedEntity.class.isAssignableFrom(entityToSave.getClass())) {
-                ((IVersionedEntity) entityToSave).setVersion(null);
+            if (IJPAVersionedEntity.class.isAssignableFrom(entityToSave.getClass())) {
+                ((IJPAVersionedEntity) entityToSave).setVersion(null);
             }
 
             saveNotManagedFields(entityToSave, lookupById, importStats, forceToProvider, parentEntity);
@@ -1114,9 +1114,9 @@ public class EntityExportImportService implements Serializable {
         entityDeserialized.setId((Long) entityFromDB.getId());
         log.trace("Deserialized entity updated with id {}", entityFromDB.getId());
 
-        if (IVersionedEntity.class.isAssignableFrom(entityDeserialized.getClass())) {
-            ((IVersionedEntity) entityDeserialized).setVersion(((IVersionedEntity) entityFromDB).getVersion());
-            log.trace("Deserialized entity updated with version {}", ((IVersionedEntity) entityFromDB).getVersion());
+        if (IJPAVersionedEntity.class.isAssignableFrom(entityDeserialized.getClass())) {
+            ((IJPAVersionedEntity) entityDeserialized).setVersion(((IJPAVersionedEntity) entityFromDB).getVersion());
+            log.trace("Deserialized entity updated with version {}", ((IJPAVersionedEntity) entityFromDB).getVersion());
         }
 
         // Copy data from deserialized entity to an entity from DB field by field

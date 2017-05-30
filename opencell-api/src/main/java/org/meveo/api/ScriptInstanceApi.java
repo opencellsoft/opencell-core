@@ -115,18 +115,6 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
         }
         return scriptInstanceDtoResult;
     }
-
-    /* (non-Javadoc)
-     * @see org.meveo.api.ApiService#findIgnoreNotFound(java.lang.String)
-     */
-    @Override
-    public ScriptInstanceDto findIgnoreNotFound(String code) throws MissingParameterException, InvalidParameterException, MeveoApiException {
-        try {
-            return find(code);
-        } catch (EntityDoesNotExistsException e) {
-            return null;
-        }
-    }
     
     public void removeScriptInstance(String scriptInstanceCode) throws EntityDoesNotExistsException, MissingParameterException, BusinessException {
         if (StringUtils.isBlank(scriptInstanceCode)) {

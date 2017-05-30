@@ -338,18 +338,6 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
         return result;
     }
 
-    /* (non-Javadoc)
-     * @see org.meveo.api.ApiService#findIgnoreNotFound(java.lang.String)
-     */
-    @Override
-    public OneShotChargeTemplateDto findIgnoreNotFound(String code) throws MissingParameterException, InvalidParameterException, MeveoApiException {
-        try {
-            return find(code);
-        } catch (EntityDoesNotExistsException e) {
-            return null;
-        }
-    }
-
     public void remove(String code) throws MeveoApiException, BusinessException  {
 
         if (StringUtils.isBlank(code)) {

@@ -64,7 +64,7 @@ public class OfferTemplate4_1RsImpl extends BaseRs implements OfferTemplate4_1Rs
         GetOfferTemplateResponseDto result = new GetOfferTemplateResponseDto();
 
         try {
-            result.setOfferTemplate(offerTemplateApi.find(offerTemplateCode));
+            result.setOfferTemplate(offerTemplateApi.find(offerTemplateCode, null, null));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -77,7 +77,7 @@ public class OfferTemplate4_1RsImpl extends BaseRs implements OfferTemplate4_1Rs
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            offerTemplateApi.remove(offerTemplateCode);
+            offerTemplateApi.remove(offerTemplateCode, null, null);
         } catch (Exception e) {
             processException(e, result);
         }

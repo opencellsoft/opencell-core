@@ -67,12 +67,13 @@ public class SubscriptionImportService extends ImportService{
 			org.meveo.model.jaxb.subscription.Subscription jaxbSubscription, String fileName, int i)
 			throws BusinessException, SubscriptionServiceException, ImportIgnoredException {
 
-		OfferTemplate offerTemplate = null;
-		try {
-			offerTemplate = offerTemplateService.findByCode(jaxbSubscription.getOfferCode().toUpperCase());
-		} catch (Exception e) {
-			log.warn("failed to find offerTemplate ",e);
-		}
+        OfferTemplate offerTemplate = null;
+        try {
+            offerTemplate = offerTemplateService.findByCode(jaxbSubscription.getOfferCode().toUpperCase(),
+                DateUtils.parseDateWithPattern(jaxbSubscription.getSubscriptionDate(), paramBean.getProperty("connectorCRM.dateFormat", "dd/MM/yyyy")));
+        } catch (Exception e) {
+            log.warn("failed to find offerTemplate ", e);
+        }
 		checkSubscription.offerTemplate = offerTemplate;
 
 		UserAccount userAccount = null;

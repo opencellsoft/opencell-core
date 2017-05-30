@@ -30,6 +30,7 @@ import org.meveo.model.jaxb.subscription.Subscriptions;
 import org.meveo.model.jaxb.subscription.WarningSubscription;
 import org.meveo.model.jaxb.subscription.Warnings;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SubscriptionImportHistoService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UserAccountService;
@@ -292,14 +293,15 @@ public class ImportSubscriptionsJobBean {
 
 		OfferTemplate offerTemplate = null;
 		try {
-			offerTemplate = offerTemplateService.findByCode(jaxbSubscription.getOfferCode().toUpperCase());
+			offerTemplate = offerTemplateService.findByCode(jaxbSubscription.getOfferCode().toUpperCase(), DateUtils.parseDateWithPattern(jaxbSubscription.getSubscriptionDate(),
+                paramBean.getProperty("connectorCRM.dateFormat", "dd/MM/yyyy")));
 		} catch (Exception e) {
-			log.warn("failed to find offerTemplate",e);
+			log.warn("failed to find offerTemplate ",e);
 		}
 
 		if (offerTemplate == null) {
 			createSubscriptionError(jaxbSubscription,
-					"Cannot find OfferTemplate with code=" + jaxbSubscription.getOfferCode());
+					"Cannot find OfferTemplate with code=" + jaxbSubscription.getOfferCode() + " / "+ jaxbSubscription.getSubscriptionDate());
 			return null;
 		}
 		checkSubscription.offerTemplate = offerTemplate;

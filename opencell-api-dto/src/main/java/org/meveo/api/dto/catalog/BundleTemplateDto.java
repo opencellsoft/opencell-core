@@ -25,8 +25,8 @@ public class BundleTemplateDto extends ProductTemplateDto implements Serializabl
 	public BundleTemplateDto() {
 	}
 
-	public BundleTemplateDto(BundleTemplate bundleTemplate, CustomFieldsDto customFieldsDto) {
-		super(bundleTemplate, customFieldsDto);
+	public BundleTemplateDto(BundleTemplate bundleTemplate, CustomFieldsDto customFieldsDto, boolean asLink) {
+		super(bundleTemplate, customFieldsDto, asLink);
 	}
 
 	public List<BundleProductTemplateDto> getBundleProductTemplates() {

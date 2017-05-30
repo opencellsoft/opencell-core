@@ -228,7 +228,7 @@ public class QueryBuilder {
 
         q.append(sql);
 
-        for (int i = 0; i < multiParams.length - 2; i = i + 2) {
+        for (int i = 0; i < multiParams.length - 1; i = i + 2) {
             params.put((String)multiParams[i], multiParams[i + 1]);
         }
 

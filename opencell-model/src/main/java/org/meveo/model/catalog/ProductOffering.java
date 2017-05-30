@@ -32,6 +32,7 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.MultilanguageEntity;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.VersionedEntity;
 import org.meveo.model.annotation.ImageType;
 import org.meveo.model.crm.BusinessAccountModel;
 
@@ -41,6 +42,7 @@ import org.meveo.model.crm.BusinessAccountModel;
 @Entity
 @ModuleItem
 @ObservableEntity
+@VersionedEntity
 @MultilanguageEntity(key = "menu.catalog.offersAndProducts", group = "ProductOffering")
 @ExportIdentifier({ "code", "validity.startDate", "validity.endDate" })
 @Table(name = "CAT_OFFER_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "VALID_FROM", "VALID_TO" }))

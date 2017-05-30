@@ -76,8 +76,6 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
 
         handleMissingParameters();
 
-        
-
         // search for eventCode
         if (chargeTemplateServiceAll.findByCode(postData.getEventCode()) == null) {
             throw new EntityDoesNotExistsException(ChargeTemplate.class, postData.getEventCode());
@@ -113,12 +111,21 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
                 throw new EntityDoesNotExistsException(TradingCurrency.class, postData.getCurrency());
             }
             pricePlanMatrix.setTradingCurrency(tradingCurrency);
-        }
-
-        if (!StringUtils.isBlank(postData.getOfferTemplate())) {
+        }       
+        
+        if (postData.getOfferTemplateVersion() != null && !StringUtils.isBlank(postData.getOfferTemplateVersion().getCode())) {
+            OfferTemplate offerTemplate = offerTemplateService.findByCodeBestValidityMatch(postData.getOfferTemplateVersion().getCode(),
+                postData.getOfferTemplateVersion().getValidFrom(), postData.getOfferTemplateVersion().getValidTo());
+            if (offerTemplate == null) {
+                throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getOfferTemplateVersion().getCode() + " / " + postData.getOfferTemplateVersion().getValidFrom()
+                        + " / " + postData.getOfferTemplateVersion().getValidTo());
+            }
+            pricePlanMatrix.setOfferTemplate(offerTemplate);
+        
+        } else if (!StringUtils.isBlank(postData.getOfferTemplate())){
             OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getOfferTemplate());
             if (offerTemplate == null) {
-                throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getOfferTemplate());
+                throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getOfferTemplateVersion().getCode() + " / Current date");
             }
             pricePlanMatrix.setOfferTemplate(offerTemplate);
         }
@@ -187,8 +194,6 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
 
         handleMissingParameters();
 
-        
-
         // search for eventCode
         if (chargeTemplateServiceAll.findByCode(postData.getEventCode()) == null) {
             throw new EntityDoesNotExistsException(ChargeTemplate.class, postData.getEventCode());
@@ -225,10 +230,19 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
             pricePlanMatrix.setTradingCurrency(tradingCurrency);
         }
 
-        if (!StringUtils.isBlank(postData.getOfferTemplate())) {
+        if (postData.getOfferTemplateVersion() != null && !StringUtils.isBlank(postData.getOfferTemplateVersion().getCode())) {
+            OfferTemplate offerTemplate = offerTemplateService.findByCodeBestValidityMatch(postData.getOfferTemplateVersion().getCode(), postData.getOfferTemplateVersion().getValidFrom(),
+                postData.getOfferTemplateVersion().getValidTo());
+            if (offerTemplate == null) {
+                throw new EntityDoesNotExistsException(OfferTemplate.class,
+                    postData.getOfferTemplateVersion().getCode() + " / " + postData.getOfferTemplateVersion().getValidFrom() + " / " + postData.getOfferTemplateVersion().getValidTo());
+            }
+            pricePlanMatrix.setOfferTemplate(offerTemplate);
+
+        } else if (!StringUtils.isBlank(postData.getOfferTemplate())) {
             OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getOfferTemplate());
             if (offerTemplate == null) {
-                throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getOfferTemplate());
+                throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getOfferTemplateVersion().getCode() + " / Current date");
             }
             pricePlanMatrix.setOfferTemplate(offerTemplate);
         }
@@ -301,18 +315,6 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         }
 
         return new PricePlanMatrixDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsDTO(pricePlanMatrix));
-    }
-
-    /* (non-Javadoc)
-     * @see org.meveo.api.ApiService#findIgnoreNotFound(java.lang.String)
-     */
-    @Override
-    public PricePlanMatrixDto findIgnoreNotFound(String code) throws MissingParameterException, InvalidParameterException, MeveoApiException {
-        try {
-            return find(code);
-        } catch (EntityDoesNotExistsException e) {
-            return null;
-        }
     }
 
     public void remove(String pricePlanCode) throws MeveoApiException, BusinessException {

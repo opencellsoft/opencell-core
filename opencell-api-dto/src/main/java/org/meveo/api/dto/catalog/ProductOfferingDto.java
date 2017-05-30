@@ -30,6 +30,12 @@ public class ProductOfferingDto extends BusinessDto {
     @XmlAttribute()
     protected String description;
 
+    @XmlAttribute()
+    protected Date validFrom;
+
+    @XmlAttribute()
+    protected Date validTo;
+
     protected String name;
 
     @XmlElementWrapper(name = "offerTemplateCategories")
@@ -41,10 +47,6 @@ public class ProductOfferingDto extends BusinessDto {
     protected List<DigitalResourcesDto> attachments;
 
     protected String modelCode;
-
-    protected Date validFrom;
-
-    protected Date validTo;
 
     protected LifeCycleStatusEnum lifeCycleStatus;
 
@@ -61,23 +63,34 @@ public class ProductOfferingDto extends BusinessDto {
     public ProductOfferingDto() {
     }
 
-    public ProductOfferingDto(ProductOffering product, CustomFieldsDto customFieldsDto) {
-        this.setCode(product.getCode());
-        this.setDescription(product.getDescription());
-        this.setName(product.getName());
-        this.setValidFrom(product.getValidity().getFrom());
-        this.setValidTo(product.getValidity().getTo());
-        this.setLifeCycleStatus(product.getLifeCycleStatus());
-        this.imagePath = product.getImagePath();
+    /**
+     * Constructor
+     * 
+     * @param productOffering Product offering entity
+     * @param customFieldsDto Custom fields DTO
+     * @param asLink Convert to DTO with minimal information only - code and validity dates
+     */
+    public ProductOfferingDto(ProductOffering productOffering, CustomFieldsDto customFieldsDto, boolean asLink) {
+        this.setCode(productOffering.getCode());
+        this.setValidFrom(productOffering.getValidity().getFrom());
+        this.setValidTo(productOffering.getValidity().getTo());
 
-        List<OfferTemplateCategory> offerTemplateCategories = product.getOfferTemplateCategories();
+        if (asLink) {
+            return;
+        }
+        this.setDescription(productOffering.getDescription());
+        this.setName(productOffering.getName());
+        this.setLifeCycleStatus(productOffering.getLifeCycleStatus());
+        this.imagePath = productOffering.getImagePath();
+
+        List<OfferTemplateCategory> offerTemplateCategories = productOffering.getOfferTemplateCategories();
         if (offerTemplateCategories != null && !offerTemplateCategories.isEmpty()) {
             this.setOfferTemplateCategories(new ArrayList<OfferTemplateCategoryDto>());
             for (OfferTemplateCategory offerTemplateCategory : offerTemplateCategories) {
                 this.getOfferTemplateCategories().add(new OfferTemplateCategoryDto(offerTemplateCategory));
             }
         }
-        List<DigitalResource> attachments = product.getAttachments();
+        List<DigitalResource> attachments = productOffering.getAttachments();
         if (attachments != null && !attachments.isEmpty()) {
             this.setAttachments(new ArrayList<DigitalResourcesDto>());
             for (DigitalResource digitalResource : attachments) {

@@ -158,18 +158,6 @@ public class WorkflowApi extends BaseCrudApi<Workflow, WorkflowDto> {
 
         return new WorkflowDto(workflow);
 	}
-    
-    /* (non-Javadoc)
-     * @see org.meveo.api.ApiService#findIgnoreNotFound(java.lang.String)
-     */
-    @Override
-    public WorkflowDto findIgnoreNotFound(String code) throws MissingParameterException, InvalidParameterException, MeveoApiException {
-        try {
-            return find(code);
-        } catch (EntityDoesNotExistsException e) {
-            return null;
-        }
-    }
 
 	/**
 	 * 

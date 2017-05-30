@@ -136,26 +136,26 @@ public class CatalogHierarchyBuilderService {
 	}
 
 	/**
-	 * Duplicate product, product charge template and prices.
-	 * 
-	 * @param offerProductTemplate
-	 * @param chargeTemplateInMemory
-	 * @param pricePlansInMemory
-	 * @param prefix
-	 * @throws BusinessException
-	 */
-	public OfferProductTemplate duplicateProduct(OfferProductTemplate offerProductTemplate, String prefix,
-			ServiceConfigurationDto serviceConfiguration, List<PricePlanMatrix> pricePlansInMemory,
-			List<ChargeTemplate> chargeTemplateInMemory) throws BusinessException {
-		OfferProductTemplate newOfferProductTemplate = new OfferProductTemplate();
-		
-		if (serviceConfiguration != null) {
-			newOfferProductTemplate.setMandatory(serviceConfiguration.isMandatory());
+     * Duplicate product, product charge template and prices.
+     * 
+     * @param offerProductTemplate
+     * @param chargeTemplateInMemory
+     * @param pricePlansInMemory
+     * @param prefix
+     * @throws BusinessException
+     */
+    public OfferProductTemplate duplicateProduct(OfferProductTemplate offerProductTemplate, String prefix, ServiceConfigurationDto serviceConfiguration,
+            List<PricePlanMatrix> pricePlansInMemory, List<ChargeTemplate> chargeTemplateInMemory) throws BusinessException {
+
+        OfferProductTemplate newOfferProductTemplate = new OfferProductTemplate();
+
+        if (serviceConfiguration != null) {
+            newOfferProductTemplate.setMandatory(serviceConfiguration.isMandatory());
 		} else {
 			newOfferProductTemplate.setMandatory(offerProductTemplate.isMandatory());
 		}
 
-		ProductTemplate productTemplate = productTemplateService.findByCode(offerProductTemplate.getProductTemplate().getCode());
+		ProductTemplate productTemplate = productTemplateService.findById(offerProductTemplate.getProductTemplate().getId());
 
 		ProductTemplate newProductTemplate = new ProductTemplate();
 		String sourceAppliesToEntity = productTemplate.getUuid();

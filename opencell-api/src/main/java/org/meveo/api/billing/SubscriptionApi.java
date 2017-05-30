@@ -142,9 +142,9 @@ public class SubscriptionApi extends BaseApi {
             throw new EntityDoesNotExistsException(UserAccount.class, postData.getUserAccount());
         }
 
-        OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getOfferTemplate());
+        OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getOfferTemplate(), postData.getSubscriptionDate());
         if (offerTemplate == null) {
-            throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getOfferTemplate());
+            throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getOfferTemplate() + " / " + postData.getSubscriptionDate());
         }
 
         Subscription subscription = new Subscription();
@@ -218,9 +218,9 @@ public class SubscriptionApi extends BaseApi {
             subscription.setUserAccount(userAccount);
         }
         
-        OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getOfferTemplate());
+        OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getOfferTemplate(), postData.getSubscriptionDate());
         if (offerTemplate == null) {
-            throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getOfferTemplate());
+            throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getOfferTemplate() + " / " + postData.getSubscriptionDate());
         }
 
         subscription.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
@@ -609,12 +609,10 @@ public class SubscriptionApi extends BaseApi {
 
 		handleMissingParameters();
 
-		
-
-		ProductTemplate productTemplate = productTemplateService.findByCode(postData.getProduct());
-		if (productTemplate == null) {
-			throw new EntityDoesNotExistsException(ProductTemplate.class, postData.getProduct());
-		}
+        ProductTemplate productTemplate = productTemplateService.findByCode(postData.getProduct(), postData.getOperationDate());
+        if (productTemplate == null) {
+            throw new EntityDoesNotExistsException(ProductTemplate.class, postData.getProduct() + "/" + postData.getOperationDate());
+        }
 
 		Subscription subscription = subscriptionService.findByCode(postData.getSubscription());
 		if (subscription == null) {

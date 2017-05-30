@@ -21,8 +21,6 @@ public class GenericProductOfferingService<T extends ProductOffering> extends Au
 
     private static String FIND_CODE_BY_DATE_CLAUSE = "((be.validity.from IS NULL and be.validity.to IS NULL) or (be.validity.from<=:date and :date<be.validity.to) or (be.validity.from<=:date and be.validity.to IS NULL) or (be.validity.from IS NULL and :date<be.validity.to))";
 
-    private static String FIND_CODE_BY_FROM_TO_DATE_CLAUSE = "be.validity.from=:from and be.validity.to=:to";
-
     @Inject
     protected CustomFieldInstanceService customFieldInstanceService;
 
@@ -172,28 +170,70 @@ public class GenericProductOfferingService<T extends ProductOffering> extends Au
     }
 
     /**
-     * Find a particular product offering version, valid on a given date
+     * Find a particular product offering version, valid on a given date. If date is null, a current date will be used
      * 
      * @param code Product offering code
      * @param date Date to match
      * @return Product offering
      */
     public T findByCode(String code, Date date) {
-        // Append search by a current date
+        // Append search by a date or a current date
+        if (date == null) {
+            date = new Date();
+        }
         return super.findByCode(code, null, FIND_CODE_BY_DATE_CLAUSE, "date", date);
     }
 
     /**
-     * Find a particular product offering version, valid on a given date
+     * Find a particular product offering version, matching validity start and end dates
      * 
      * @param code Product offering code
-     * @param date Date to match
+     * @param from Validity date range start date
+     * @param to Validity date range end date
      * @return Product offering
      */
     public T findByCode(String code, Date from, Date to) {
         // Append search by a from and to dates
-        return super.findByCode(code, null, FIND_CODE_BY_FROM_TO_DATE_CLAUSE, "from", from, "to", to);
+
+        if (from != null && to != null) {
+            return super.findByCode(code, null, "be.validity.from=:from and be.validity.to=:to", "from", from, "to", to);
+
+        } else if (from == null && to == null) {
+            return super.findByCode(code, null, "be.validity.from is null and be.validity.to is null");
+
+        } else if (from != null) {
+            return super.findByCode(code, null, "be.validity.from=:from and be.validity.to is null", "from", from);
+
+            // } else if (to != null) {
+        } else {
+            return super.findByCode(code, null, "be.validity.from is null and be.validity.to=:to", "to", to);
+        }
     }
+
+    /**
+     * Find a particular product offering version, attempting to match validity start and end dates. First both dates will be tried to match, then only start date as a single date
+     * and then current date as a single date
+     * 
+     * @param code Product offering code
+     * @param from Validity date range start date
+     * @param to Validity date range end date
+     * @return Product offering
+     */
+    public T findByCodeBestValidityMatch(String code, Date from, Date to) {
+        T offering = findByCode(code, from, to);
+        if (offering == null) {
+            offering = findByCode(code, from);
+        }
+        if (offering == null) {
+            offering = findByCode(code);
+        }
+        return offering;
+    }
+
+    // TODO remove me
+    // public T findByCode(String code) {
+    // throw new RuntimeException("Remove me");
+    // }
 
     /**
      * Find a particular product offering version with additional fields to fetch. A current date will be used to select a valid version.

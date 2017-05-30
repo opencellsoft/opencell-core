@@ -118,8 +118,8 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 		OfferTemplate newOfferTemplate = new OfferTemplate();
 
 		// check if offer already exists
-		if (offerTemplateService.findByCode(code) != null) {
-			throw new BusinessException("Offer template with code " + code + " already exists");
+		if (offerTemplateService.findByCode(code, validFrom, validTo) != null) {
+			throw new BusinessException("Offer template with code " + code + " for dates " + validFrom + " / " + validTo + " already exists");
 		}
 
 		if (businessOfferModel != null && businessOfferModel.getScript() != null) {
@@ -222,91 +222,91 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 
 		return newOfferTemplate;
 	}
-	
-	private List<OfferProductTemplate> getOfferProductTemplate(String prefix, OfferTemplate bomOffer,
-			List<ServiceConfigurationDto> productCodes, BusinessOfferModel businessOfferModel)
-			throws BusinessException {
-		List<OfferProductTemplate> newOfferProductTemplates = new ArrayList<>();
 
-		if (bomOffer.getOfferProductTemplates() == null || bomOffer.getOfferProductTemplates().isEmpty()
-				|| productCodes == null || productCodes.isEmpty()) {
-			return newOfferProductTemplates;
-		}
+    private List<OfferProductTemplate> getOfferProductTemplate(String prefix, OfferTemplate offerTemplateInBom, List<ServiceConfigurationDto> productConfigurations,
+            BusinessOfferModel businessOfferModel) throws BusinessException {
 
-		for (ServiceConfigurationDto serviceCodeDto : productCodes) {
-			boolean productFound = false;
-			String productCode = serviceCodeDto.getCode();
+        List<OfferProductTemplate> newOfferProductTemplates = new ArrayList<>();
 
-			for (OfferProductTemplate offerProductTemplate : bomOffer.getOfferProductTemplates()) {
-				ProductTemplate productTemplate = offerProductTemplate.getProductTemplate();
-				if (productCode.equals(productTemplate.getCode())) {
-					productFound = true;
-					break;
-				}
-			}
+        if (offerTemplateInBom.getOfferProductTemplates() == null || offerTemplateInBom.getOfferProductTemplates().isEmpty() || productConfigurations == null
+                || productConfigurations.isEmpty()) {
+            return newOfferProductTemplates;
+        }
 
-			if (!productFound) {
-				throw new BusinessException(
-						"ProductTemplate with code=" + productCode + " is not defined in the offer");
-			}
-		}
+        // Validate that product configurations are valid
+        for (ServiceConfigurationDto productConfiguration : productConfigurations) {
+            boolean productFound = false;
+            String productCode = productConfiguration.getCode();
 
-		List<PricePlanMatrix> pricePlansInMemory = new ArrayList<>();
-		List<ChargeTemplate> chargeTemplateInMemory = new ArrayList<>();
-		for (OfferProductTemplate offerProductTemplate : bomOffer.getOfferProductTemplates()) {
-			ProductTemplate productTemplate = productTemplateService
-					.findByCode(offerProductTemplate.getProductTemplate().getCode());
+            for (OfferProductTemplate offerProductTemplate : offerTemplateInBom.getOfferProductTemplates()) {
+                ProductTemplate productTemplate = offerProductTemplate.getProductTemplate();
+                if (productCode.equals(productTemplate.getCode())) {
+                    productFound = true;
+                    break;
+                }
+            }
 
-			boolean productFound = false;
-			ServiceConfigurationDto serviceConfigurationDto = new ServiceConfigurationDto();
-			for (ServiceConfigurationDto tempProductCodeDto : productCodes) {
-				String serviceCode = tempProductCodeDto.getCode();
-				if (serviceCode.equals(productTemplate.getCode())) {
-					serviceConfigurationDto = tempProductCodeDto;
-					productFound = true;
-					break;
-				}
-			}
-			if (!productFound) {
-				continue;
-			}
+            if (!productFound) {
+                throw new BusinessException("ProductTemplate with code=" + productCode + " is not defined in the offer");
+            }
+        }
 
-			// get the BPM from BOM
-			BusinessProductModel bpm = null;
-			for (MeveoModuleItem item : businessOfferModel.getModuleItems()) {
-				if (item.getItemClass().equals(BusinessProductModel.class.getName())) {
-					bpm = businessProductModelService.findByCode(item.getItemCode());
-					if (bpm.getProductTemplate().equals(productTemplate)) {
-						break;
-					}
-				}
-			}
+        // Instantiate products
+        List<PricePlanMatrix> pricePlansInMemory = new ArrayList<>();
+        List<ChargeTemplate> chargeTemplateInMemory = new ArrayList<>();
+        for (OfferProductTemplate offerProductTemplate : offerTemplateInBom.getOfferProductTemplates()) {
+            ProductTemplate productTemplate = productTemplateService.findById(offerProductTemplate.getProductTemplate().getId());
 
-			if (bpm != null && bpm.getScript() != null) {
-				try {
-					productModelScriptService.beforeCreateServiceFromBSM(serviceConfigurationDto.getCustomFields(),
-							bpm.getScript().getCode());
-				} catch (BusinessException e) {
-					log.error("Failed to execute a script {}", bpm.getScript().getCode(), e);
-				}
-			}
+            boolean productFound = false;
+            ServiceConfigurationDto matchedProductConfigurationDto = null;
+            for (ServiceConfigurationDto productConfiguration : productConfigurations) {
+                String serviceCode = productConfiguration.getCode();
+                if (serviceCode.equals(productTemplate.getCode())) {
+                    matchedProductConfigurationDto = productConfiguration;
+                    productFound = true;
+                    break;
+                }
+            }
+            if (!productFound) {
+                continue;
+            }
 
-			OfferProductTemplate newOfferProductTemplate = catalogHierarchyBuilderService.duplicateProduct(
-					offerProductTemplate, prefix, serviceConfigurationDto, pricePlansInMemory, chargeTemplateInMemory);
-			newOfferProductTemplates.add(newOfferProductTemplate);
+            // get the BPM from BOM
+            BusinessProductModel bpm = null;
+            for (MeveoModuleItem item : businessOfferModel.getModuleItems()) {
+                if (item.getItemClass().equals(BusinessProductModel.class.getName())) {
+                    bpm = businessProductModelService.findByCode(item.getItemCode());
+                    if (bpm.getProductTemplate().equals(productTemplate)) {
+                        break;
+                    }
+                }
+            }
 
-			if (bpm != null && bpm.getScript() != null) {
-				try {
-					productModelScriptService.afterCreateServiceFromBSM(newOfferProductTemplate.getProductTemplate(),
-							serviceConfigurationDto.getCustomFields(), bpm.getScript().getCode());
-				} catch (BusinessException e) {
-					log.error("Failed to execute a script {}", bpm.getScript().getCode(), e);
-				}
-			}
-		}
+            if (bpm != null && bpm.getScript() != null) {
+                try {
+                    productModelScriptService.beforeCreateServiceFromBSM(matchedProductConfigurationDto.getCustomFields(), bpm.getScript().getCode());
+                } catch (BusinessException e) {
+                    log.error("Failed to execute a script {}", bpm.getScript().getCode(), e);
+                }
+            }
 
-		return newOfferProductTemplates;
-	}
+            OfferProductTemplate newOfferProductTemplate = catalogHierarchyBuilderService.duplicateProduct(offerProductTemplate, prefix, matchedProductConfigurationDto,
+                pricePlansInMemory, chargeTemplateInMemory);
+            
+            newOfferProductTemplates.add(newOfferProductTemplate);
+
+            if (bpm != null && bpm.getScript() != null) {
+                try {
+                    productModelScriptService.afterCreateServiceFromBSM(newOfferProductTemplate.getProductTemplate(), matchedProductConfigurationDto.getCustomFields(),
+                        bpm.getScript().getCode());
+                } catch (BusinessException e) {
+                    log.error("Failed to execute a script {}", bpm.getScript().getCode(), e);
+                }
+            }
+        }
+
+        return newOfferProductTemplates;
+    }
 	
 	private List<OfferServiceTemplate> getOfferServiceTemplate(String prefix, OfferTemplate bomOffer,
 			List<ServiceConfigurationDto> serviceCodes, BusinessOfferModel businessOfferModel)

@@ -8,7 +8,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.catalog.OfferTemplate;
 
 /**
  * @author Edward P. Legaspi
@@ -35,7 +37,17 @@ public class OfferTemplateDto extends ProductOfferingDto {
     private List<OfferProductTemplateDto> offerProductTemplates;
 
     public OfferTemplateDto() {
+    }
 
+    /**
+     * Constructor
+     * 
+     * @param offerTemplate Offer template entity
+     * @param customFieldsDto Custom fields DTO
+     * @param asLink Convert to DTO with minimal information only - code and validity dates
+     */
+    public OfferTemplateDto(OfferTemplate offerTemplate, CustomFieldsDto customFieldsDto, boolean asLink) {
+        super(offerTemplate, customFieldsDto, asLink);
     }
 
     public String getBomCode() {

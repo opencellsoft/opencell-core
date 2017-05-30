@@ -44,7 +44,7 @@ import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
 
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
-public class UserAccountApi extends AccountApi {
+public class UserAccountApi extends AccountEntityApi {
 
 	@Inject
 	private SubscriptionTerminationReasonService subscriptionTerminationReasonService;
@@ -364,10 +364,10 @@ public class UserAccountApi extends AccountApi {
 
 		
 
-		ProductTemplate productTemplate = productTemplateService.findByCode(postData.getProduct());
-		if (productTemplate == null) {
-			throw new EntityDoesNotExistsException(ProductTemplate.class, postData.getProduct());
-		}
+        ProductTemplate productTemplate = productTemplateService.findByCode(postData.getProduct(), postData.getOperationDate());
+        if (productTemplate == null) {
+            throw new EntityDoesNotExistsException(ProductTemplate.class, postData.getProduct() + "/" + postData.getOperationDate());
+        }
 
 		UserAccount userAccount = userAccountService.findByCode(postData.getUserAccount());
 		if (userAccount == null) {

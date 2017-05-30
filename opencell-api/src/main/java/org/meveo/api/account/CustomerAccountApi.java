@@ -48,7 +48,7 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
-public class CustomerAccountApi extends AccountApi {
+public class CustomerAccountApi extends AccountEntityApi {
 
 	@Inject
 	private CreditCategoryService creditCategoryService;

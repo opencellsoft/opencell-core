@@ -35,9 +35,13 @@ public class ProductTemplateDto extends ProductOfferingDto implements Serializab
 	public ProductTemplateDto() {
 	}
 
-	public ProductTemplateDto(ProductTemplate productTemplate, CustomFieldsDto customFieldsDto) {
-		super(productTemplate, customFieldsDto);
+	public ProductTemplateDto(ProductTemplate productTemplate, CustomFieldsDto customFieldsDto, boolean asLink) {
+		super(productTemplate, customFieldsDto, asLink);
 
+		if (asLink){
+		    return;
+		}
+		
 		BusinessProductModel businessProductModel = productTemplate.getBusinessProductModel();
 		BusinessProductModelDto businessProductModelDto = null;
 		if (businessProductModel != null) {
