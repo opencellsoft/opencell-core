@@ -170,7 +170,10 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
      * @return True if it can be executed locally
      */
     public boolean isAllowedToExecute(JobInstance jobInstance) {
-
+		if (jobInstance == null || jobInstance.getId() == null) {
+			return false;
+		}
+    	
         JobRunningStatusEnum isRunning = jobCacheContainerProvider.isJobRunning(jobInstance.getId());
         if (isRunning == JobRunningStatusEnum.NOT_RUNNING) {
             return true;
