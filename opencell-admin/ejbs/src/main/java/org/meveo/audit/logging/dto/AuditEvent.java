@@ -103,4 +103,10 @@ public class AuditEvent {
 		this.clientIp = clientIp;
 	}
 
+	@Override
+	public String toString() {
+		return "AuditEvent [actor=" + actor + ", clientIp=" + clientIp + ", entity=" + entity + ", action=" + action
+				+ ", fields=" + fields + "]";
+	}
+
 }

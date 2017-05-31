@@ -1,1 +1,1 @@
-com.byteslounge.extension.AuditExtension
+org.meveo.audit.logging.extension.AuditSpiExtension

@@ -1,4 +1,4 @@
-package org.meveo.audit.logging.core;
+package org.meveo.audit.logging.extension;
 
 import java.lang.annotation.Annotation;
 
@@ -8,18 +8,22 @@ import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
 
 import org.meveo.audit.logging.annotations.MeveoAudit;
-import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.audit.logging.core.AuditContext;
 
 /**
  * @author Edward P. Legaspi
+ * 
+ *         https://docs.jboss.org/weld/reference/latest/en-US/html/extend.html
  **/
-public class AuditExtension implements Extension {
+public class AuditSpiExtension implements Extension {
 
 	public <T> void processAnnotatedType(@Observes ProcessAnnotatedType<T> processAnnotatedType) {
 
 		AnnotatedType<T> annotatedType = processAnnotatedType.getAnnotatedType();
 
-		if (annotatedType.getJavaClass().equals(OfferTemplateService.class)) {
+		// check if the class is to be audited
+		if (AuditContext.getInstance().getAuditConfiguration()
+				.findByClassName(annotatedType.getJavaClass().getName()) != null) {
 
 			Annotation auditAnnotation = new Annotation() {
 				@Override
@@ -33,7 +37,9 @@ public class AuditExtension implements Extension {
 			wrapper.addAnnotation(auditAnnotation);
 
 			processAnnotatedType.setAnnotatedType(wrapper);
+
 		}
 
 	}
+
 }

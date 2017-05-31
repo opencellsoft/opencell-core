@@ -1,4 +1,4 @@
-package org.meveo.audit.logging.core;
+package org.meveo.audit.logging.extension;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;

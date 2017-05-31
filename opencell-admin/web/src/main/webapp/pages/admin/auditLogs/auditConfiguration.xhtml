@@ -1,0 +1,46 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+	template="/layout/template.xhtml">
+
+	<ui:define name="body">
+
+		<h:form>
+
+			<p:messages id="messages"></p:messages>
+
+			<p:selectBooleanCheckbox
+				value="#{auditConfigurationBean.auditConfiguration.enabled}">
+			</p:selectBooleanCheckbox>
+
+			<p:pickList id="handlerSelection"
+				value="#{auditConfigurationBean.handlers}" var="handler"
+				itemLabel="#{handler}" itemValue="#{handler}" />
+
+			<p:selectOneMenu id="classes" filter="true"
+				filterMatchMode="startsWith"
+				value="#{auditConfigurationBean.selectedClass}"
+				converter="omnifaces.SelectItemsConverter">
+				<p:ajax listener="#{auditConfigurationBean.onClassChange()}"
+					update="methods messages" />
+				<f:selectItem itemLabel="#{messages['commons.select']}" itemValue=""
+					noSelectionOption="true" />
+				<f:selectItems value="#{auditConfigurationBean.serviceClasses}"
+					var="e" itemLabel="#{e.simpleName}" />
+			</p:selectOneMenu>
+
+			<p:pickList id="methods" value="#{auditConfigurationBean.methods}"
+				var="m" itemLabel="#{m.methodName}" itemValue="#{m}" />
+
+			<p:commandButton value="#{messages['action.save']}" update="messages"
+				actionListener="#{auditConfigurationBean.saveOrUpdate}" />
+
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

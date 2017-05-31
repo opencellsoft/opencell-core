@@ -1,4 +1,4 @@
-package org.meveo.audit.logging;
+package org.meveo.audit.logging.core;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;

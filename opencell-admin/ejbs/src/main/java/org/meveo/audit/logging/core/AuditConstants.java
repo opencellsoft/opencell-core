@@ -1,4 +1,4 @@
-package org.meveo.audit.logging;
+package org.meveo.audit.logging.core;
 
 /**
  * @author Edward P. Legaspi

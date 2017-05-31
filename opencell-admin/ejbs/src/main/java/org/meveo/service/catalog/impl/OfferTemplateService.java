@@ -244,5 +244,10 @@ public class OfferTemplateService extends MultilanguageEntityService<OfferTempla
 
 		return entity;
 	}
+	
+	@Override
+	public void create(OfferTemplate entity) throws BusinessException {
+		super.create(entity);
+	}
 
 }
