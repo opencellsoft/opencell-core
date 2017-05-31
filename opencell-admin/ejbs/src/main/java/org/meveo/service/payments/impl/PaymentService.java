@@ -124,7 +124,7 @@ public class PaymentService extends PersistenceService<Payment> {
 		
 		if(!StringUtils.isBlank(doPaymentResponseDto.getPaymentID())){
 			CardToken cardToken = new CardToken(); 
-			cardToken.setAlias("Card_"+ownerName);
+			cardToken.setAlias("Card_"+cardNumber.substring(12, 16));
 			cardToken.setCardNumber(cardNumber);
 			cardToken.setCardType(cardType);
 			cardToken.setCustomerAccount(customerAccount);

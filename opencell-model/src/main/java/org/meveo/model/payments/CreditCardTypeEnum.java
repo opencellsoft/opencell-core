@@ -25,7 +25,8 @@ public enum CreditCardTypeEnum {
 
     VISA(1, "CreditCardTypeEnum.VISA"),
     MASTERCARD(2, "CreditCardTypeEnum.MASTERCARD"),
-    AMERICAN_EXPRESS(3, "CreditCardTypeEnum.AMERICAN_EXPRESS");
+    AMERICAN_EXPRESS(3, "CreditCardTypeEnum.AMERICAN_EXPRESS"),
+	CB(130, "CreditCardTypeEnum.CB");
 
     private Integer id;
     private String label;

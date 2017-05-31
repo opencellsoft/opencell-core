@@ -85,11 +85,6 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			cardWithoutCvv.setIssueNumber(issueNumber);
 
 			TokenCardData tokenCardData = new TokenCardData();
-			// Date of the first transaction (for ATOS),Format: YYYYMMDD
-			tokenCardData.setFirstTransactionDate("");
-			// Reference of the provider (of the first transaction) - used to
-			// store the ATOS Transaction Certificate
-			tokenCardData.setProviderReference("");
 			tokenCardData.setCardWithoutCvv(cardWithoutCvv);
 
 			TokenCard tokenCard = new TokenCard();
