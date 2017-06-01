@@ -130,23 +130,23 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 	public void terminateUsageChargeInstance(UsageChargeInstance usageChargeInstance, Date terminationDate) throws BusinessException {
 		usageChargeInstance.setTerminationDate(terminationDate);
 		usageChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
+        update(usageChargeInstance);
 		ratingCacheContainerProvider.updateUsageChargeInstanceInCache(usageChargeInstance);
-		update(usageChargeInstance);
 	}
 
 	public void suspendUsageChargeInstance(UsageChargeInstance usageChargeInstance, Date suspensionDate) throws BusinessException {
 		usageChargeInstance.setTerminationDate(suspensionDate);
 		usageChargeInstance.setStatus(InstanceStatusEnum.SUSPENDED);
+        update(usageChargeInstance);
 		ratingCacheContainerProvider.updateUsageChargeInstanceInCache(usageChargeInstance);
-		update(usageChargeInstance);
 	}
 
 	public void reactivateUsageChargeInstance(UsageChargeInstance usageChargeInstance, Date reactivationDate) throws BusinessException {
 		usageChargeInstance.setChargeDate(reactivationDate);
 		usageChargeInstance.setTerminationDate(null);
 		usageChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
+        update(usageChargeInstance);
 		ratingCacheContainerProvider.updateUsageChargeInstanceInCache(usageChargeInstance);
-		update(usageChargeInstance);
 	}
 
 	@SuppressWarnings("unchecked")

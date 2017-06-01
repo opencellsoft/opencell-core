@@ -16,6 +16,7 @@ import org.meveo.admin.ftp.event.FileDelete;
 import org.meveo.admin.ftp.event.FileDownload;
 import org.meveo.admin.ftp.event.FileRename;
 import org.meveo.admin.ftp.event.FileUpload;
+import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.cache.NotificationCacheContainerProvider;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.CFEndPeriodEvent;
@@ -39,6 +40,7 @@ import org.meveo.event.qualifier.Updated;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.mediation.MeveoFtpFile;
 import org.meveo.model.notification.EmailNotification;
@@ -66,9 +68,6 @@ public class DefaultObserver {
 
     @Inject
     private Logger log;
-
-    @Inject
-    private GenericNotificationService genericNotificationService;
 
     @Inject
     private BeanManager manager;
@@ -133,7 +132,7 @@ public class DefaultObserver {
             scriptInterface.finalize(context);
         } catch (Exception e) {
             log.error("failed script execution", e);
-            if(e instanceof BusinessException) {
+            if (e instanceof BusinessException) {
                 throw e;
             } else {
                 throw new BusinessException(e);
@@ -141,7 +140,7 @@ public class DefaultObserver {
         }
     }
 
-    private boolean fireNotification(Notification notif, Object entityOrEvent) {
+    private boolean fireNotification(Notification notif, Object entityOrEvent) throws BusinessException {
         if (notif == null) {
             return false;
         }
@@ -164,7 +163,8 @@ public class DefaultObserver {
             // Check if the counter associated to notification was not exhausted yet
             if (notif.getCounterInstance() != null) {
                 try {
-                    counterInstanceService.deduceCounterValue(notif.getCounterInstance(), new Date(), notif.getAuditable().getCreated(), new BigDecimal(1));
+                    CounterInstance counterInstance = counterInstanceService.refreshOrRetrieve(notif.getCounterInstance());
+                    counterInstanceService.deduceCounterValue(counterInstance, new Date(), notif.getAuditable().getCreated(), new BigDecimal(1));
                 } catch (CounterValueInsufficientException ex) {
                     sendNotify = false;
                 }
@@ -178,8 +178,7 @@ public class DefaultObserver {
             // Rethink notif and script - maybe create pre and post script
             if (!(notif instanceof WebHook)) {
                 if (notif.getScriptInstance() != null) {
-                    ScriptInstance script = (ScriptInstance) scriptInstanceService.attach(notif.getScriptInstance());
-                    executeScript(script, entityOrEvent, notif.getParams(), context);
+                    executeScript(notif.getScriptInstance(), entityOrEvent, notif.getParams(), context);
                 }
             }
 
@@ -209,7 +208,7 @@ public class DefaultObserver {
             }
 
         } catch (Exception e1) {
-            log.error("Error while firing notification {}: {} ", notif.getCode(), e1);
+            log.error("Error while firing notification {} ", notif.getCode(), e1);
             try {
                 NotificationHistory notificationHistory = notificationHistoryService.create(notif, entityOrEvent, e1.getMessage(), NotificationHistoryStatusEnum.FAILED);
                 if (entityOrEvent instanceof InboundRequest) {
@@ -218,12 +217,17 @@ public class DefaultObserver {
             } catch (Exception e2) {
                 log.error("Failed to create notification history", e2);
             }
+            if (!(e1 instanceof BusinessException)) {
+                throw new BusinessException(e1);
+            } else {
+                throw (BusinessException) e1;
         }
-        
+        }
+
         return true;
     }
 
-    private void fireCdrNotification(Notification notif, Object cdr) {
+    private void fireCdrNotification(Notification notif, Object cdr) throws BusinessException {
         log.debug("Fire Cdr Notification for notif {} and  cdr {}", notif, cdr);
         try {
             if (!StringUtils.isBlank(notif.getScriptInstance()) && matchExpression(notif.getElFilter(), cdr)) {
@@ -231,116 +235,107 @@ public class DefaultObserver {
             }
         } catch (BusinessException e1) {
             log.error("Error while firing notification {}: {} ", notif.getCode(), e1);
+            throw e1;
         }
 
     }
 
-   /**
-    * 
-    * @param type
-    * @param entityOrEvent
-    * @return return true if one notification has been trigerred
-    */
-    private boolean checkEvent(NotificationEventTypeEnum type, Object entityOrEvent) {
-    	boolean result=false;
+    /**
+     * Check and fire all matched notifications
+     * 
+     * @param type Notification type
+     * @param entityOrEvent Entity or event triggered
+     * @return True if at least one notification has been triggered
+     * @throws BusinessException
+     */
+    private boolean checkEvent(NotificationEventTypeEnum type, Object entityOrEvent) throws BusinessException {
+        boolean result = false;
         for (Notification notif : notificationCacheContainerProvider.getApplicableNotifications(type, entityOrEvent)) {
-            notif = genericNotificationService.findById(notif.getId());
             result = result || fireNotification(notif, entityOrEvent);
         }
         return result;
     }
 
-    public void entityCreated(@Observes @Created BaseEntity e) {
+    public void entityCreated(@Observes @Created BaseEntity e) throws BusinessException {
         log.debug("Defaut observer : Entity {} with id {} created", e.getClass().getName(), e.getId());
         checkEvent(NotificationEventTypeEnum.CREATED, e);
     }
 
-    public void entityUpdated(@Observes @Updated BaseEntity e) {
+    public void entityUpdated(@Observes @Updated BaseEntity e) throws BusinessException {
         log.debug("Defaut observer : Entity {} with id {} updated", e.getClass().getName(), e.getId());
         checkEvent(NotificationEventTypeEnum.UPDATED, e);
     }
 
-    public void entityRemoved(@Observes @Removed BaseEntity e) {
+    public void entityRemoved(@Observes @Removed BaseEntity e) throws BusinessException {
         log.debug("Defaut observer : Entity {} with id {} removed", e.getClass().getName(), e.getId());
         checkEvent(NotificationEventTypeEnum.REMOVED, e);
     }
 
-    public void entityDisabled(@Observes @Disabled BaseEntity e) {
+    public void entityDisabled(@Observes @Disabled BaseEntity e) throws BusinessException {
         log.debug("Defaut observer : Entity {} with id {} disabled", e.getClass().getName(), e.getId());
         checkEvent(NotificationEventTypeEnum.DISABLED, e);
     }
 
-    public void entityEnabled(@Observes @Enabled BaseEntity e) {
+    public void entityEnabled(@Observes @Enabled BaseEntity e) throws BusinessException {
         log.debug("Defaut observer : Entity {} with id {} enabled", e.getClass().getName(), e.getId());
         checkEvent(NotificationEventTypeEnum.ENABLED, e);
     }
 
-    public void entityTerminated(@Observes @Terminated BaseEntity e) {
+    public void entityTerminated(@Observes @Terminated BaseEntity e) throws BusinessException {
         log.debug("Defaut observer : Entity {} with id {} terminated", e.getClass().getName(), e.getId());
         checkEvent(NotificationEventTypeEnum.TERMINATED, e);
     }
 
-    public void entityProcessed(@Observes @Processed BaseEntity e) {
+    public void entityProcessed(@Observes @Processed BaseEntity e) throws BusinessException {
         log.debug("Defaut observer : Entity {} with id {} processed", e.getClass().getName(), e.getId());
         checkEvent(NotificationEventTypeEnum.PROCESSED, e);
     }
 
-    public void entityRejected(@Observes @Rejected BaseEntity e) {
+    public void entityRejected(@Observes @Rejected BaseEntity e) throws BusinessException {
         log.debug("Defaut observer : Entity {} with id {} rejected", e.getClass().getName(), e.getId());
         checkEvent(NotificationEventTypeEnum.REJECTED, e);
     }
 
-    public void cdrRejected(@Observes @RejectedCDR Object cdr) {
+    public void cdrRejected(@Observes @RejectedCDR Object cdr) throws BusinessException {
         log.debug("Defaut observer : cdr {} rejected", cdr);
         for (Notification notif : notificationCacheContainerProvider.getApplicableNotifications(NotificationEventTypeEnum.REJECTED_CDR, cdr)) {
             fireCdrNotification(notif, cdr);
         }
     }
 
-    public void loggedIn(@Observes @LoggedIn User e) {
+    public void loggedIn(@Observes @LoggedIn User e) throws BusinessException {
         log.debug("Defaut observer : logged in class={} ", e.getClass().getName());
         checkEvent(NotificationEventTypeEnum.LOGGED_IN, e);
     }
 
-    public void inboundRequest(@Observes @InboundRequestReceived InboundRequest e) {
+    @MeveoAudit
+    public void inboundRequest(@Observes @InboundRequestReceived InboundRequest e) throws BusinessException {
         log.debug("Defaut observer : inbound request {} ", e.getCode());
         boolean fired = checkEvent(NotificationEventTypeEnum.INBOUND_REQ, e);
-        e.getHeaders().put("fired", fired?"true":"false");
+        e.getHeaders().put("fired", fired ? "true" : "false");
     }
 
-    public void LowBalance(@Observes @LowBalance WalletInstance e) {
+    @MeveoAudit
+    public void LowBalance(@Observes @LowBalance WalletInstance e) throws BusinessException {
         log.debug("Defaut observer : low balance on {} ", e.getCode());
         checkEvent(NotificationEventTypeEnum.LOW_BALANCE, e);
 
     }
 
     public void businesException(@Observes BusinessExceptionEvent bee) {
-    	log.debug("BusinessExceptionEvent handler inactivated {}",bee);/*
-        log.debug("Defaut observer : BusinessExceptionEvent {} ", bee);
-        StringWriter errors = new StringWriter();
-        bee.getException().printStackTrace(new PrintWriter(errors));
-        String meveoInstanceCode = ParamBean.getInstance().getProperty("monitoring.instanceCode", "");
-        int bodyMaxLegthByte = Integer.parseInt(ParamBean.getInstance().getProperty("meveo.notifier.stackTrace.lengthInBytes", "9999"));
-        String stackTrace = errors.toString();
-        String input = "{"
-                + "	  #meveoInstanceCode#: #"
-                + meveoInstanceCode
-                + "#,"
-                + "	  #subject#: #"
-                + bee.getException().getMessage()
-                + "#,"
-                + "	  #body#: #"
-                + StringUtils.truncate(stackTrace, bodyMaxLegthByte, true)
-                + "#,"
-                + "	  #additionnalInfo1#: #"
-                + LogExtractionService.getLogs(
-                    new Date(System.currentTimeMillis() - Integer.parseInt(ParamBean.getInstance().getProperty("meveo.notifier.log.timeBefore_ms", "5000"))), new Date()) + "#,"
-                + "	  #additionnalInfo2#: ##," + "	  #additionnalInfo3#: ##," + "	  #additionnalInfo4#: ##" + "}";
-        log.trace("Defaut observer : input {} ", input.replaceAll("#", "\""));
-        remoteInstanceNotifier.invoke(input.replaceAll("\"", "'").replaceAll("#", "\"").replaceAll("\\[", "(").replaceAll("\\]", ")"),
-            ParamBean.getInstance().getProperty("inboundCommunication.url", "http://version.meveo.info/meveo-moni/api/rest/inboundCommunication"));
-
-       */
+        log.debug("BusinessExceptionEvent handler inactivated {}",
+            bee);/*
+                  * log.debug("Defaut observer : BusinessExceptionEvent {} ", bee); StringWriter errors = new StringWriter(); bee.getException().printStackTrace(new
+                  * PrintWriter(errors)); String meveoInstanceCode = ParamBean.getInstance().getProperty("monitoring.instanceCode", ""); int bodyMaxLegthByte =
+                  * Integer.parseInt(ParamBean.getInstance().getProperty("meveo.notifier.stackTrace.lengthInBytes", "9999")); String stackTrace = errors.toString(); String input =
+                  * "{" + "	  #meveoInstanceCode#: #" + meveoInstanceCode + "#," + "	  #subject#: #" + bee.getException().getMessage() + "#," + "	  #body#: #" +
+                  * StringUtils.truncate(stackTrace, bodyMaxLegthByte, true) + "#," + "	  #additionnalInfo1#: #" + LogExtractionService.getLogs( new Date(System.currentTimeMillis()
+                  * - Integer.parseInt(ParamBean.getInstance().getProperty("meveo.notifier.log.timeBefore_ms", "5000"))), new Date()) + "#," + "	  #additionnalInfo2#: ##," +
+                  * "	  #additionnalInfo3#: ##," + "	  #additionnalInfo4#: ##" + "}"; log.trace("Defaut observer : input {} ", input.replaceAll("#", "\""));
+                  * remoteInstanceNotifier.invoke(input.replaceAll("\"", "'").replaceAll("#", "\"").replaceAll("\\[", "(").replaceAll("\\]", ")"),
+                  * ParamBean.getInstance().getProperty("inboundCommunication.url", "http://version.meveo.info/meveo-moni/api/rest/inboundCommunication"));
+                  * 
+                  */
 
     }
 
@@ -352,27 +347,27 @@ public class DefaultObserver {
         log.debug("DefaultObserver.knownMeveoInstance" + event);
     }
 
-    public void ftpFileUpload(@Observes @FileUpload MeveoFtpFile importedFile) {
+    public void ftpFileUpload(@Observes @FileUpload MeveoFtpFile importedFile) throws BusinessException {
         log.debug("observe a file upload event ");
         checkEvent(NotificationEventTypeEnum.FILE_UPLOAD, importedFile);
     }
 
-    public void ftpFileDownload(@Observes @FileDownload MeveoFtpFile importedFile) {
+    public void ftpFileDownload(@Observes @FileDownload MeveoFtpFile importedFile) throws BusinessException {
         log.debug("observe a file download event ");
         checkEvent(NotificationEventTypeEnum.FILE_DOWNLOAD, importedFile);
     }
 
-    public void ftpFileDelete(@Observes @FileDelete MeveoFtpFile importedFile) {
+    public void ftpFileDelete(@Observes @FileDelete MeveoFtpFile importedFile) throws BusinessException {
         log.debug("observe a file delete event ");
         checkEvent(NotificationEventTypeEnum.FILE_DELETE, importedFile);
     }
 
-    public void ftpFileRename(@Observes @FileRename MeveoFtpFile importedFile) {
+    public void ftpFileRename(@Observes @FileRename MeveoFtpFile importedFile) throws BusinessException {
         log.debug("observe a file rename event ");
         checkEvent(NotificationEventTypeEnum.FILE_RENAME, importedFile);
     }
 
-    public void counterUpdated(@Observes CounterPeriodEvent event) {
+    public void counterUpdated(@Observes CounterPeriodEvent event) throws BusinessException {
         log.debug("DefaultObserver.counterUpdated " + event);
         checkEvent(NotificationEventTypeEnum.COUNTER_DEDUCED, event);
     }

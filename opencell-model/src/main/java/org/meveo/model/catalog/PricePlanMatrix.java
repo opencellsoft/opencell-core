@@ -54,75 +54,77 @@ import org.meveo.model.scripts.ScriptInstance;
 @ObservableEntity
 @MultilanguageEntity(key = "menu.pricePlanMatrixes", group = "PricePlanMatrix")
 @CustomFieldEntity(cftCodePrefix = "PRICEPLAN")
-@ExportIdentifier({ "code"})
-@Table(name = "CAT_PRICE_PLAN_MATRIX", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CAT_PRICE_PLAN_MATRIX_SEQ"), })
-@NamedQueries({ @NamedQuery(name = "PricePlanMatrix.getPricePlansForCache", query = "SELECT ppm from PricePlanMatrix ppm left join ppm.offerTemplate ot left join ppm.validityCalendar vc where ppm.disabled is false order by ppm.priority ASC") })
+@ExportIdentifier({ "code" })
+@Table(name = "CAT_PRICE_PLAN_MATRIX", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "CAT_PRICE_PLAN_MATRIX_SEQ"), })
+@NamedQueries({
+        @NamedQuery(name = "PricePlanMatrix.getPricePlansForCache", query = "SELECT ppm from PricePlanMatrix ppm left join ppm.offerTemplate ot left join ppm.validityCalendar vc where ppm.disabled is false order by ppm.eventCode, ppm.priority ASC") })
 public class PricePlanMatrix extends BusinessCFEntity implements Comparable<PricePlanMatrix> {
     private static final long serialVersionUID = 1L;
 
-	@Column(name = "EVENT_CODE", length = 255, nullable = false)
-	@Size(min = 1, max = 255)
-	@NotNull
-	private String eventCode;
+    @Column(name = "EVENT_CODE", length = 255, nullable = false)
+    @Size(min = 1, max = 255)
+    @NotNull
+    private String eventCode;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "OFFER_ID")
-	private OfferTemplate offerTemplate;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "OFFER_ID")
+    private OfferTemplate offerTemplate;
 
-	@Column(name = "START_SUBSCRIPTION_DATE")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date startSubscriptionDate;
+    @Column(name = "START_SUBSCRIPTION_DATE")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date startSubscriptionDate;
 
-	@Column(name = "END_SUBSCRIPTION_DATE")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date endSubscriptionDate;
+    @Column(name = "END_SUBSCRIPTION_DATE")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date endSubscriptionDate;
 
-	@Column(name = "START_RATING_DATE")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date startRatingDate;
+    @Column(name = "START_RATING_DATE")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date startRatingDate;
 
-	@Column(name = "END_RATING_DATE")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date endRatingDate;
+    @Column(name = "END_RATING_DATE")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date endRatingDate;
 
-	@Column(name = "MIN_QUANTITY")
-	@Digits(integer = 23, fraction = 12)
-	private BigDecimal minQuantity;
+    @Column(name = "MIN_QUANTITY")
+    @Digits(integer = 23, fraction = 12)
+    private BigDecimal minQuantity;
 
-	@Column(name = "MAX_QUANTITY")
-	@Digits(integer = 23, fraction = 12)
-	private BigDecimal maxQuantity;
-	
-	@Column(name = "MIN_SUBSCR_AGE")
-	private Long minSubscriptionAgeInMonth;
+    @Column(name = "MAX_QUANTITY")
+    @Digits(integer = 23, fraction = 12)
+    private BigDecimal maxQuantity;
 
-	@Column(name = "MAX_SUBSCR_AGE")
-	private Long maxSubscriptionAgeInMonth;
+    @Column(name = "MIN_SUBSCR_AGE")
+    private Long minSubscriptionAgeInMonth;
 
-	@Column(name = "CRITERIA_1", length = 255)
-	@Size(max = 255)
-	private String criteria1Value;
+    @Column(name = "MAX_SUBSCR_AGE")
+    private Long maxSubscriptionAgeInMonth;
 
-	@Column(name = "CRITERIA_2", length = 255)
+    @Column(name = "CRITERIA_1", length = 255)
     @Size(max = 255)
-	private String criteria2Value;
+    private String criteria1Value;
 
-	@Column(name = "CRITERIA_3", length = 255)
+    @Column(name = "CRITERIA_2", length = 255)
     @Size(max = 255)
-	private String criteria3Value;
-	
-	@Column(name = "CRITERIA_EL", length=2000)
-	@Size(max = 2000)
-	private String criteriaEL;
+    private String criteria2Value;
 
-	@Column(name = "AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
-	@Digits(integer = 23, fraction = 12)
-	private BigDecimal amountWithoutTax;
+    @Column(name = "CRITERIA_3", length = 255)
+    @Size(max = 255)
+    private String criteria3Value;
 
-	@Column(name = "AMOUNT_WITH_TAX", precision = 23, scale = 12)
-	@Digits(integer = 23, fraction = 12)
-	private BigDecimal amountWithTax;
+    @Column(name = "CRITERIA_EL", length = 2000)
+    @Size(max = 2000)
+    private String criteriaEL;
+
+    @Column(name = "AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
+    @Digits(integer = 23, fraction = 12)
+    private BigDecimal amountWithoutTax;
+
+    @Column(name = "AMOUNT_WITH_TAX", precision = 23, scale = 12)
+    @Digits(integer = 23, fraction = 12)
+    private BigDecimal amountWithTax;
 
     @Column(name = "AMOUNT_WITHOUT_TAX_EL", length = 2000)
     @Size(max = 2000)
@@ -131,268 +133,262 @@ public class PricePlanMatrix extends BusinessCFEntity implements Comparable<Pric
     @Column(name = "AMOUNT_WITH_TAX_EL", length = 2000)
     @Size(max = 2000)
     private String amountWithTaxEL;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TRADING_CURRENCY_ID")
-	private TradingCurrency tradingCurrency;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TRADING_COUNTRY_ID")
-	private TradingCountry tradingCountry;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TRADING_CURRENCY_ID")
+    private TradingCurrency tradingCurrency;
 
-	@Column(name = "PRIORITY", columnDefinition = "int DEFAULT 1")
-	private int priority = 1;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TRADING_COUNTRY_ID")
+    private TradingCountry tradingCountry;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "SELLER_ID")
-	private Seller seller;
-	
+    @Column(name = "PRIORITY", columnDefinition = "int DEFAULT 1")
+    private int priority = 1;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "SELLER_ID")
+    private Seller seller;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "VALID_CAL_ID")
     private Calendar validityCalendar;
-    
+
     @Column(name = "SEQUENCE")
-	private Long sequence;
-    
+    private Long sequence;
+
     @ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "SCRIPT_INSTANCE_ID")
-	private ScriptInstance scriptInstance;
-	
-    
-	public String getEventCode() {
-		return eventCode;
-	}
+    @JoinColumn(name = "SCRIPT_INSTANCE_ID")
+    private ScriptInstance scriptInstance;
 
-	public void setEventCode(String eventCode) {
-		this.eventCode = eventCode;
-	}
+    public String getEventCode() {
+        return eventCode;
+    }
 
-	public OfferTemplate getOfferTemplate() {
-		return offerTemplate;
-	}
+    public void setEventCode(String eventCode) {
+        this.eventCode = eventCode;
+    }
 
-	public void setOfferTemplate(OfferTemplate offerTemplate) {
-		this.offerTemplate = offerTemplate;
-	}
+    public OfferTemplate getOfferTemplate() {
+        return offerTemplate;
+    }
 
-	public Date getStartSubscriptionDate() {
-		return startSubscriptionDate;
-	}
+    public void setOfferTemplate(OfferTemplate offerTemplate) {
+        this.offerTemplate = offerTemplate;
+    }
 
-	public void setStartSubscriptionDate(Date startSubscriptionDate) {
-		this.startSubscriptionDate = startSubscriptionDate;
-	}
+    public Date getStartSubscriptionDate() {
+        return startSubscriptionDate;
+    }
 
-	public Date getEndSubscriptionDate() {
-		return endSubscriptionDate;
-	}
+    public void setStartSubscriptionDate(Date startSubscriptionDate) {
+        this.startSubscriptionDate = startSubscriptionDate;
+    }
 
-	public void setEndSubscriptionDate(Date endSubscriptionDate) {
-		this.endSubscriptionDate = endSubscriptionDate;
-	}
+    public Date getEndSubscriptionDate() {
+        return endSubscriptionDate;
+    }
 
-	public Date getStartRatingDate() {
-		return startRatingDate;
-	}
+    public void setEndSubscriptionDate(Date endSubscriptionDate) {
+        this.endSubscriptionDate = endSubscriptionDate;
+    }
 
-	public void setStartRatingDate(Date startRatingDate) {
-		this.startRatingDate = startRatingDate;
-	}
+    public Date getStartRatingDate() {
+        return startRatingDate;
+    }
 
-	public Date getEndRatingDate() {
-		return endRatingDate;
-	}
+    public void setStartRatingDate(Date startRatingDate) {
+        this.startRatingDate = startRatingDate;
+    }
 
-	public void setEndRatingDate(Date endRatingDate) {
-		this.endRatingDate = endRatingDate;
-	}
+    public Date getEndRatingDate() {
+        return endRatingDate;
+    }
 
-	public BigDecimal getMinQuantity() {
-		return minQuantity;
-	}
+    public void setEndRatingDate(Date endRatingDate) {
+        this.endRatingDate = endRatingDate;
+    }
 
-	public void setMinQuantity(BigDecimal minQuantity) {
-		this.minQuantity = minQuantity;
-	}
+    public BigDecimal getMinQuantity() {
+        return minQuantity;
+    }
 
-	public BigDecimal getMaxQuantity() {
-		return maxQuantity;
-	}
+    public void setMinQuantity(BigDecimal minQuantity) {
+        this.minQuantity = minQuantity;
+    }
 
-	public void setMaxQuantity(BigDecimal maxQuantity) {
-		this.maxQuantity = maxQuantity;
-	}
+    public BigDecimal getMaxQuantity() {
+        return maxQuantity;
+    }
 
-	public Long getMinSubscriptionAgeInMonth() {
-		return minSubscriptionAgeInMonth;
-	}
+    public void setMaxQuantity(BigDecimal maxQuantity) {
+        this.maxQuantity = maxQuantity;
+    }
 
-	public void setMinSubscriptionAgeInMonth(Long minSubscriptionAgeInMonth) {
-		this.minSubscriptionAgeInMonth = minSubscriptionAgeInMonth;
-	}
+    public Long getMinSubscriptionAgeInMonth() {
+        return minSubscriptionAgeInMonth;
+    }
 
-	public Long getMaxSubscriptionAgeInMonth() {
-		return maxSubscriptionAgeInMonth;
-	}
+    public void setMinSubscriptionAgeInMonth(Long minSubscriptionAgeInMonth) {
+        this.minSubscriptionAgeInMonth = minSubscriptionAgeInMonth;
+    }
 
-	public void setMaxSubscriptionAgeInMonth(Long maxSubscriptionAgeInMonth) {
-		this.maxSubscriptionAgeInMonth = maxSubscriptionAgeInMonth;
-	}
+    public Long getMaxSubscriptionAgeInMonth() {
+        return maxSubscriptionAgeInMonth;
+    }
 
-	public String getCriteria1Value() {
-		return criteria1Value;
-	}
+    public void setMaxSubscriptionAgeInMonth(Long maxSubscriptionAgeInMonth) {
+        this.maxSubscriptionAgeInMonth = maxSubscriptionAgeInMonth;
+    }
 
-	public void setCriteria1Value(String criteria1Value) {
-		this.criteria1Value = criteria1Value;
-	}
+    public String getCriteria1Value() {
+        return criteria1Value;
+    }
 
-	public String getCriteria2Value() {
-		return criteria2Value;
-	}
+    public void setCriteria1Value(String criteria1Value) {
+        this.criteria1Value = criteria1Value;
+    }
 
-	public void setCriteria2Value(String criteria2Value) {
-		this.criteria2Value = criteria2Value;
-	}
+    public String getCriteria2Value() {
+        return criteria2Value;
+    }
 
-	public String getCriteria3Value() {
-		return criteria3Value;
-	}
+    public void setCriteria2Value(String criteria2Value) {
+        this.criteria2Value = criteria2Value;
+    }
 
-	public void setCriteria3Value(String criteria3Value) {
-		this.criteria3Value = criteria3Value;
-	}
+    public String getCriteria3Value() {
+        return criteria3Value;
+    }
 
-	public String getCriteriaEL() {
-		return criteriaEL;
-	}
+    public void setCriteria3Value(String criteria3Value) {
+        this.criteria3Value = criteria3Value;
+    }
 
-	public void setCriteriaEL(String criteriaEL) {
-		this.criteriaEL = criteriaEL;
-	}
+    public String getCriteriaEL() {
+        return criteriaEL;
+    }
 
-	public BigDecimal getAmountWithoutTax() {
-		return amountWithoutTax;
-	}
+    public void setCriteriaEL(String criteriaEL) {
+        this.criteriaEL = criteriaEL;
+    }
 
-	public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
-		this.amountWithoutTax = amountWithoutTax;
-	}
+    public BigDecimal getAmountWithoutTax() {
+        return amountWithoutTax;
+    }
 
-	public BigDecimal getAmountWithTax() {
-		return amountWithTax;
-	}
+    public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
+        this.amountWithoutTax = amountWithoutTax;
+    }
 
-	public void setAmountWithTax(BigDecimal amountWithTax) {
-		this.amountWithTax = amountWithTax;
-	}
+    public BigDecimal getAmountWithTax() {
+        return amountWithTax;
+    }
 
-	public String getAmountWithoutTaxEL() {
-		return amountWithoutTaxEL;
-	}
+    public void setAmountWithTax(BigDecimal amountWithTax) {
+        this.amountWithTax = amountWithTax;
+    }
 
-	public void setAmountWithoutTaxEL(String amountWithoutTaxEL) {
-		this.amountWithoutTaxEL = amountWithoutTaxEL;
-	}
+    public String getAmountWithoutTaxEL() {
+        return amountWithoutTaxEL;
+    }
 
-	public String getAmountWithTaxEL() {
-		return amountWithTaxEL;
-	}
+    public void setAmountWithoutTaxEL(String amountWithoutTaxEL) {
+        this.amountWithoutTaxEL = amountWithoutTaxEL;
+    }
 
-	public void setAmountWithTaxEL(String amountWithTaxEL) {
-		this.amountWithTaxEL = amountWithTaxEL;
-	}
+    public String getAmountWithTaxEL() {
+        return amountWithTaxEL;
+    }
 
-	public TradingCurrency getTradingCurrency() {
-		return tradingCurrency;
-	}
+    public void setAmountWithTaxEL(String amountWithTaxEL) {
+        this.amountWithTaxEL = amountWithTaxEL;
+    }
 
-	public void setTradingCurrency(TradingCurrency tradingCurrency) {
-		this.tradingCurrency = tradingCurrency;
-	}
+    public TradingCurrency getTradingCurrency() {
+        return tradingCurrency;
+    }
 
-	public TradingCountry getTradingCountry() {
-		return tradingCountry;
-	}
+    public void setTradingCurrency(TradingCurrency tradingCurrency) {
+        this.tradingCurrency = tradingCurrency;
+    }
 
-	public void setTradingCountry(TradingCountry tradingCountry) {
-		this.tradingCountry = tradingCountry;
-	}
+    public TradingCountry getTradingCountry() {
+        return tradingCountry;
+    }
 
-	public int getPriority() {
-		return priority;
-	}
+    public void setTradingCountry(TradingCountry tradingCountry) {
+        this.tradingCountry = tradingCountry;
+    }
 
-	public void setPriority(int priority) {
-		this.priority = priority;
-	}
+    public int getPriority() {
+        return priority;
+    }
 
-	public Seller getSeller() {
-		return seller;
-	}
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
 
-	public void setSeller(Seller seller) {
-		this.seller = seller;
-	}
+    public Seller getSeller() {
+        return seller;
+    }
 
-	public Calendar getValidityCalendar() {
+    public void setSeller(Seller seller) {
+        this.seller = seller;
+    }
+
+    public Calendar getValidityCalendar() {
         return validityCalendar;
     }
 
     public void setValidityCalendar(Calendar validityCalendar) {
         this.validityCalendar = validityCalendar;
     }
-    
-   public Long getSequence() {
-		return sequence;
-	}
 
-	public void setSequence(Long sequence) {
-		this.sequence = sequence;
-	}
+    public Long getSequence() {
+        return sequence;
+    }
 
-	public ScriptInstance getScriptInstance() {
-		return scriptInstance;
-	}
+    public void setSequence(Long sequence) {
+        this.sequence = sequence;
+    }
 
-	public void setScriptInstance(ScriptInstance scriptInstance) {
-		this.scriptInstance = scriptInstance;
-	}
+    public ScriptInstance getScriptInstance() {
+        return scriptInstance;
+    }
 
-	@Override
-    public String toString() {
-        return String
-            .format(
-                "PricePlanMatrix [%s, eventCode=%s, offerTemplate=%s, startSubscriptionDate=%s, endSubscriptionDate=%s, startRatingDate=%s, endRatingDate=%s, minQuantity=%s, maxQuantity=%s, minSubscriptionAgeInMonth=%s, maxSubscriptionAgeInMonth=%s, criteria1Value=%s, criteria2Value=%s, criteria3Value=%s, criteriaEL=%s, amountWithoutTax=%s, amountWithTax=%s, tradingCurrency=%s, tradingCountry=%s, priority=%s, seller=%s, validityCalendar=%s]",
-                super.toString(), eventCode, offerTemplate != null ? offerTemplate.getId() : null, startSubscriptionDate, endSubscriptionDate, startRatingDate, endRatingDate,
-                minQuantity, maxQuantity, minSubscriptionAgeInMonth, maxSubscriptionAgeInMonth, criteria1Value, criteria2Value, criteria3Value, criteriaEL, amountWithoutTax,
-                amountWithTax, tradingCurrency != null ? tradingCurrency.getId() : null, tradingCountry != null ? tradingCountry.getId() : null, priority,
-                seller != null ? seller.getId() : null, validityCalendar != null ? validityCalendar.getId() : null);
+    public void setScriptInstance(ScriptInstance scriptInstance) {
+        this.scriptInstance = scriptInstance;
     }
 
     @Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((criteria1Value == null) ? 0 : criteria1Value.hashCode());
-		result = prime * result + ((criteria2Value == null) ? 0 : criteria2Value.hashCode());
-		result = prime * result + ((criteria3Value == null) ? 0 : criteria3Value.hashCode());
-		result = prime * result + ((endRatingDate == null) ? 0 : endRatingDate.hashCode());
-		result = prime * result
-				+ ((endSubscriptionDate == null) ? 0 : endSubscriptionDate.hashCode());
-		result = prime * result + ((eventCode == null) ? 0 : eventCode.hashCode());
-		result = prime * result
-				+ ((maxSubscriptionAgeInMonth == null) ? 0 : maxSubscriptionAgeInMonth.hashCode());
-		result = prime * result
-				+ ((minSubscriptionAgeInMonth == null) ? 0 : minSubscriptionAgeInMonth.hashCode());
-		result = prime * result + ((startRatingDate == null) ? 0 : startRatingDate.hashCode());
-		result = prime * result
-				+ ((startSubscriptionDate == null) ? 0 : startSubscriptionDate.hashCode());
-		return result;
-	}
+    public String toString() {
+        return String.format(
+            "PricePlanMatrix [%s, eventCode=%s, offerTemplate=%s, startSubscriptionDate=%s, endSubscriptionDate=%s, startRatingDate=%s, endRatingDate=%s, minQuantity=%s, maxQuantity=%s, minSubscriptionAgeInMonth=%s, maxSubscriptionAgeInMonth=%s, criteria1Value=%s, criteria2Value=%s, criteria3Value=%s, criteriaEL=%s, amountWithoutTax=%s, amountWithTax=%s, tradingCurrency=%s, tradingCountry=%s, priority=%s, seller=%s, validityCalendar=%s]",
+            super.toString(), eventCode, offerTemplate != null ? offerTemplate.getId() : null, startSubscriptionDate, endSubscriptionDate, startRatingDate, endRatingDate,
+            minQuantity, maxQuantity, minSubscriptionAgeInMonth, maxSubscriptionAgeInMonth, criteria1Value, criteria2Value, criteria3Value, criteriaEL, amountWithoutTax,
+            amountWithTax, tradingCurrency != null ? tradingCurrency.getId() : null, tradingCountry != null ? tradingCountry.getId() : null, priority,
+            seller != null ? seller.getId() : null, validityCalendar != null ? validityCalendar.getId() : null);
+    }
 
-	@Override
-	public boolean equals(Object obj) {
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((criteria1Value == null) ? 0 : criteria1Value.hashCode());
+        result = prime * result + ((criteria2Value == null) ? 0 : criteria2Value.hashCode());
+        result = prime * result + ((criteria3Value == null) ? 0 : criteria3Value.hashCode());
+        result = prime * result + ((endRatingDate == null) ? 0 : endRatingDate.hashCode());
+        result = prime * result + ((endSubscriptionDate == null) ? 0 : endSubscriptionDate.hashCode());
+        result = prime * result + ((eventCode == null) ? 0 : eventCode.hashCode());
+        result = prime * result + ((maxSubscriptionAgeInMonth == null) ? 0 : maxSubscriptionAgeInMonth.hashCode());
+        result = prime * result + ((minSubscriptionAgeInMonth == null) ? 0 : minSubscriptionAgeInMonth.hashCode());
+        result = prime * result + ((startRatingDate == null) ? 0 : startRatingDate.hashCode());
+        result = prime * result + ((startSubscriptionDate == null) ? 0 : startSubscriptionDate.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
 
         if (this == obj) {
             return true;
@@ -401,88 +397,93 @@ public class PricePlanMatrix extends BusinessCFEntity implements Comparable<Pric
         } else if (!(obj instanceof PricePlanMatrix)) {
             return false;
         }
-        
-		PricePlanMatrix other = (PricePlanMatrix) obj;
-		if (criteria1Value == null) {
-			if (other.criteria1Value != null)
-				return false;
-		} else if (!criteria1Value.equals(other.criteria1Value))
-			return false;
-		if (criteria2Value == null) {
-			if (other.criteria2Value != null)
-				return false;
-		} else if (!criteria2Value.equals(other.criteria2Value))
-			return false;
-		if (criteria3Value == null) {
-			if (other.criteria3Value != null)
-				return false;
-		} else if (!criteria3Value.equals(other.criteria3Value))
-			return false;
-		if (endRatingDate == null) {
-			if (other.endRatingDate != null)
-				return false;
-		} else if (!endRatingDate.equals(other.endRatingDate))
-			return false;
-		if (endSubscriptionDate == null) {
-			if (other.endSubscriptionDate != null)
-				return false;
-		} else if (!endSubscriptionDate.equals(other.endSubscriptionDate))
-			return false;
-		if (eventCode == null) {
-			if (other.eventCode != null)
-				return false;
-		} else if (!eventCode.equals(other.eventCode))
-			return false;
-		if (maxSubscriptionAgeInMonth == null) {
-			if (other.maxSubscriptionAgeInMonth != null)
-				return false;
-		} else if (!maxSubscriptionAgeInMonth.equals(other.maxSubscriptionAgeInMonth))
-			return false;
-		if (minSubscriptionAgeInMonth == null) {
-			if (other.minSubscriptionAgeInMonth != null)
-				return false;
-		} else if (!minSubscriptionAgeInMonth.equals(other.minSubscriptionAgeInMonth))
-			return false;
-		if (startRatingDate == null) {
-			if (other.startRatingDate != null)
-				return false;
-		} else if (!startRatingDate.equals(other.startRatingDate))
-			return false;
-		if (startSubscriptionDate == null) {
-			if (other.startSubscriptionDate != null)
-				return false;
-		} else if (!startSubscriptionDate.equals(other.startSubscriptionDate))
-			return false;
-		if (seller == null) {
-			if (other.seller != null) {
-				return false;
-			}
-		} else if (other.seller == null || (seller.getId() != other.seller.getId())) {
-			return false;
-		}
-		if (scriptInstance == null) {
-			if (other.scriptInstance != null) {
-				return false;
-			}
-		} else if (other.scriptInstance == null || (scriptInstance.getId() != other.scriptInstance.getId())) {
-			return false;
-		}
-		if (priority != other.priority) {
-			return false;
-		}
-		if (validityCalendar == null) {
-			if (other.validityCalendar != null) {
-				return false;
-			}
-		} else if (other.validityCalendar == null || (validityCalendar.getId() != other.getValidityCalendar().getId())) {
-			return false;
-		}
-		
-		return true;
-	}
 
-	@Override
-	public int compareTo(PricePlanMatrix o) {
-		return this.getPriority()-o.getPriority();
-	}
+        PricePlanMatrix other = (PricePlanMatrix) obj;
+
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
+            return true;
+        }
+
+        if (criteria1Value == null) {
+            if (other.criteria1Value != null)
+                return false;
+        } else if (!criteria1Value.equals(other.criteria1Value))
+            return false;
+        if (criteria2Value == null) {
+            if (other.criteria2Value != null)
+                return false;
+        } else if (!criteria2Value.equals(other.criteria2Value))
+            return false;
+        if (criteria3Value == null) {
+            if (other.criteria3Value != null)
+                return false;
+        } else if (!criteria3Value.equals(other.criteria3Value))
+            return false;
+        if (endRatingDate == null) {
+            if (other.endRatingDate != null)
+                return false;
+        } else if (!endRatingDate.equals(other.endRatingDate))
+            return false;
+        if (endSubscriptionDate == null) {
+            if (other.endSubscriptionDate != null)
+                return false;
+        } else if (!endSubscriptionDate.equals(other.endSubscriptionDate))
+            return false;
+        if (eventCode == null) {
+            if (other.eventCode != null)
+                return false;
+        } else if (!eventCode.equals(other.eventCode))
+            return false;
+        if (maxSubscriptionAgeInMonth == null) {
+            if (other.maxSubscriptionAgeInMonth != null)
+                return false;
+        } else if (!maxSubscriptionAgeInMonth.equals(other.maxSubscriptionAgeInMonth))
+            return false;
+        if (minSubscriptionAgeInMonth == null) {
+            if (other.minSubscriptionAgeInMonth != null)
+                return false;
+        } else if (!minSubscriptionAgeInMonth.equals(other.minSubscriptionAgeInMonth))
+            return false;
+        if (startRatingDate == null) {
+            if (other.startRatingDate != null)
+                return false;
+        } else if (!startRatingDate.equals(other.startRatingDate))
+            return false;
+        if (startSubscriptionDate == null) {
+            if (other.startSubscriptionDate != null)
+                return false;
+        } else if (!startSubscriptionDate.equals(other.startSubscriptionDate))
+            return false;
+        if (seller == null) {
+            if (other.seller != null) {
+                return false;
+            }
+        } else if (other.seller == null || (seller.getId() != other.seller.getId())) {
+            return false;
+        }
+        if (scriptInstance == null) {
+            if (other.scriptInstance != null) {
+                return false;
+            }
+        } else if (other.scriptInstance == null || (scriptInstance.getId() != other.scriptInstance.getId())) {
+            return false;
+        }
+        if (priority != other.priority) {
+            return false;
+        }
+        if (validityCalendar == null) {
+            if (other.validityCalendar != null) {
+                return false;
+            }
+        } else if (other.validityCalendar == null || (validityCalendar.getId() != other.getValidityCalendar().getId())) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int compareTo(PricePlanMatrix o) {
+        return this.getPriority() - o.getPriority();
+    }
 }

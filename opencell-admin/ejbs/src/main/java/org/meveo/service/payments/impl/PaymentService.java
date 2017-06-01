@@ -20,6 +20,8 @@ package org.meveo.service.payments.impl;
 
 import javax.ejb.Stateless;
 
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.model.payments.Payment;
 import org.meveo.service.base.PersistenceService;
 
@@ -28,4 +30,11 @@ import org.meveo.service.base.PersistenceService;
  */
 @Stateless
 public class PaymentService extends PersistenceService<Payment> {
+
+	@MeveoAudit
+	@Override
+	public void create(Payment entity) throws BusinessException {
+		super.create(entity);
+	}
+
 }

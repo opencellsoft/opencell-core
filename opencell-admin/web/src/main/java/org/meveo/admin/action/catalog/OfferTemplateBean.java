@@ -201,10 +201,20 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
                     }
                 }
             }
+            
+            List<ServiceConfigurationDto> productsConfigurations = new ArrayList<>();
+			// process products
+			for (OfferProductTemplate opt : entity.getOfferProductTemplates()) {
+				ProductTemplate pt = opt.getProductTemplate();
+				ServiceConfigurationDto serviceConfigurationDto = new ServiceConfigurationDto();
+				serviceConfigurationDto.setCode(pt.getCode());
+				serviceConfigurationDto.setDescription(pt.getDescription());
+				productsConfigurations.add(serviceConfigurationDto);
+			}
 
 			OfferTemplate newOfferTemplate = businessOfferModelService.createOfferFromBOM(businessOfferModel, cfsDto != null ? cfsDto.getCustomField() : null, entity.getCode(),
-					entity.getName(), entity.getDescription(), servicesConfigurations, entity.getChannels(), entity.getBusinessAccountModels(),
-					entity.getOfferTemplateCategories(), entity.getLifeCycleStatus(), entity.getImagePath(), entity.getValidFrom(), entity.getValidTo());
+					entity.getName(), entity.getDescription(), servicesConfigurations, productsConfigurations, entity.getChannels(), entity.getBusinessAccountModels(),
+					entity.getOfferTemplateCategories(), entity.getLifeCycleStatus(), entity.getImagePath(), entity.getValidFrom(), entity.getValidTo(), getLanguageMessagesMap());
 
             // populate service custom fields
             for (OfferServiceTemplate ost : entity.getOfferServiceTemplates()) {

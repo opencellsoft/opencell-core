@@ -818,7 +818,7 @@ public class CustomFieldDataEntryBean implements Serializable {
                     if ((cfi.isValueEmptyForGui() && (cft.getDefaultValue() == null || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE) && !cft.isVersionable())
                             || ((isNewEntity && cft.isHideOnNew()) || !ValueExpressionWrapper.evaluateToBoolean(cft.getApplicableOnEl(), "entity", entity))) {
                         if (!cfi.isTransient()) {
-                            customFieldInstanceService.remove(cfi);
+                            customFieldInstanceService.remove(cfi.getId());
                             log.trace("Remove empty cfi value {}", cfi);
                         } else {
                             log.trace("Will ommit from saving cfi {}", cfi);

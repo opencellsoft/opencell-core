@@ -43,11 +43,11 @@ import org.meveo.model.shared.DateUtils;
 
 @Entity
 @ModuleItem
-@ExportIdentifier({ "code", "appliesTo"})
+@ExportIdentifier({ "code", "appliesTo" })
 @Table(name = "CRM_CUSTOM_FIELD_TMPL", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "APPLIES_TO" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CRM_CUSTOM_FLD_TMP_SEQ"), })
 @NamedQueries({
-        @NamedQuery(name = "CustomFieldTemplate.getCFTForCache", query = "SELECT cft from CustomFieldTemplate cft left join fetch cft.calendar where cft.disabled=false  "),
+        @NamedQuery(name = "CustomFieldTemplate.getCFTForCache", query = "SELECT cft from CustomFieldTemplate cft left join fetch cft.calendar where cft.disabled=false order by cft.appliesTo"),
         @NamedQuery(name = "CustomFieldTemplate.getCFTForIndex", query = "SELECT cft from CustomFieldTemplate cft where cft.disabled=false and cft.indexType is not null ") })
 public class CustomFieldTemplate extends BusinessEntity {
 
@@ -71,7 +71,7 @@ public class CustomFieldTemplate extends BusinessEntity {
     @NotNull
     private String appliesTo;
 
-    @Type(type="numeric_boolean")
+    @Type(type = "numeric_boolean")
     @Column(name = "VALUE_REQUIRED")
     private boolean valueRequired;
 
@@ -89,7 +89,7 @@ public class CustomFieldTemplate extends BusinessEntity {
     @Transient
     private boolean matrixColumnsSorted;
 
-    @Type(type="numeric_boolean")
+    @Type(type = "numeric_boolean")
     @Column(name = "VERSIONABLE")
     private boolean versionable;
 
@@ -120,7 +120,7 @@ public class CustomFieldTemplate extends BusinessEntity {
     @Enumerated(EnumType.STRING)
     private CustomFieldMapKeyEnum mapKeyType;
 
-    @Type(type="numeric_boolean")
+    @Type(type = "numeric_boolean")
     @Column(name = "TRIGGER_END_PERIOD_EVENT", nullable = false)
     private boolean triggerEndPeriodEvent;
 
@@ -128,12 +128,12 @@ public class CustomFieldTemplate extends BusinessEntity {
     @Size(max = 100)
     private String guiPosition;
 
-    @Type(type="numeric_boolean")
+    @Type(type = "numeric_boolean")
     @Column(name = "ALLOW_EDIT")
     @NotNull
     private boolean allowEdit = true;
 
-    @Type(type="numeric_boolean")
+    @Type(type = "numeric_boolean")
     @Column(name = "HIDE_ON_NEW")
     @NotNull
     private boolean hideOnNew;
@@ -152,7 +152,7 @@ public class CustomFieldTemplate extends BusinessEntity {
     @Size(max = 2000)
     private String applicableOnEl;
 
-    @Type(type="numeric_boolean")
+    @Type(type = "numeric_boolean")
     @Column(name = "CACHE_VALUE")
     @NotNull
     private boolean cacheValue;
@@ -164,9 +164,19 @@ public class CustomFieldTemplate extends BusinessEntity {
     @Size(max = 500)
     private String childEntityFields;
 
+    /**
+     * If and how custom field value should be indexed in Elastic Search
+     */
     @Column(name = "INDEX_TYPE", length = 10)
     @Enumerated(EnumType.STRING)
     private CustomFieldIndexTypeEnum indexType;
+
+    /**
+     * Tags assigned to custom field template
+     */
+    @Column(name = "TAGS", length = 2000)
+    @Size(max = 2000)
+    private String tags;
 
     public CustomFieldTypeEnum getFieldType() {
         return fieldType;
@@ -463,7 +473,7 @@ public class CustomFieldTemplate extends BusinessEntity {
 
     @Override
     public boolean equals(Object obj) {
-        
+
         if (this == obj) {
             return true;
         } else if (obj == null) {
@@ -515,6 +525,14 @@ public class CustomFieldTemplate extends BusinessEntity {
 
     public void setIndexType(CustomFieldIndexTypeEnum indexType) {
         this.indexType = indexType;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
     }
 
     @Override

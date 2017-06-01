@@ -23,28 +23,63 @@ import org.meveo.api.rest.IBaseRs;
 
 public interface RevenueRecognitionRulesRs extends IBaseRs {
 	
-	    @POST
-	    @Path("/")
-	    ActionStatus create(RevenueRecognitionRuleDto postData);
+	/**
+     * Create a new revenue recognition rule
+     * 
+     * @param postData The revenue recognition rule's data
+     * @return Request processing status
+     */
+    @POST
+    @Path("/")
+    ActionStatus create(RevenueRecognitionRuleDto postData);
 
-	    @PUT
-	    @Path("/")
-	    ActionStatus update(RevenueRecognitionRuleDto postData);
+	/**
+     * Update an existing revenue recognition rule
+     * 
+     * @param postData The revenue recognition rule's data
+     * @return Request processing status
+     */
+    @PUT
+    @Path("/")
+    ActionStatus update(RevenueRecognitionRuleDto postData);
 
-	    @GET
-	    @Path("/")
-	    RevenueRecognitionRuleDtoResponse find(@QueryParam("revenueRecognitionRuleCode") String revenueRecognitionRuleCode);
+	/**
+     * Find a revenue recognition rule with a given code 
+     * 
+     * @param revenueRecognitionRuleCode The revenue recognition rule's code
+     * @return
+     */
+    @GET
+    @Path("/")
+    RevenueRecognitionRuleDtoResponse find(@QueryParam("revenueRecognitionRuleCode") String revenueRecognitionRuleCode);
 
-	    @POST
-	    @Path("/createOrUpdate")
-	    ActionStatus createOrUpdate(RevenueRecognitionRuleDto postData);
-	    		
-	    @DELETE
-	    @Path("/{revenueRecognitionRuleCode}")
-	    ActionStatus remove(@PathParam("revenueRecognitionRuleCode") String revenueRecognitionRuleCode);
+    /**
+     * Create new or update an existing revenue recognition rule with a given code
+     * 
+     * @param postData The revenue recognition rule's data
+     * @return Request processing status
+     */
+    @POST
+    @Path("/createOrUpdate")
+    ActionStatus createOrUpdate(RevenueRecognitionRuleDto postData);
+    
+	/**
+     * Remove an existing revenue recognition rule with a given code 
+     * 
+     * @param revenueRecognitionRuleCode The revenue recognition rule's code
+     * @return Request processing status
+     */
+    @DELETE
+    @Path("/{revenueRecognitionRuleCode}")
+    ActionStatus remove(@PathParam("revenueRecognitionRuleCode") String revenueRecognitionRuleCode);
 
-	    @POST
-	    @Path("/list")
-	    RevenueRecognitionRuleDtosResponse list();
+	/**
+     * List of revenue recognition rules.
+     * 
+     * @return A list of revenue recognition rules
+     */
+    @POST
+    @Path("/list")
+    RevenueRecognitionRuleDtosResponse list();
 
 }

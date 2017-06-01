@@ -13,8 +13,10 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.BusinessOfferModel;
+import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.service.catalog.impl.BusinessOfferModelService;
 
@@ -47,14 +49,15 @@ public class BusinessOfferApi extends BaseApi {
 			throw new MeveoApiException("No offer template attached");
 		}
 
-		if (bomOffer.getOfferServiceTemplates() == null || bomOffer.getOfferServiceTemplates().size() == 0) {
-			throw new MeveoApiException("No service template attached");
+		if ((bomOffer.getOfferServiceTemplates() == null || bomOffer.getOfferServiceTemplates().isEmpty())
+				&& (bomOffer.getOfferProductTemplates() == null || bomOffer.getOfferProductTemplates().isEmpty())) {
+			throw new MeveoApiException("No service or product template attached");
 		}
 
 		OfferTemplate newOfferTemplate = null;
 		try {
 			newOfferTemplate = businessOfferModelService.createOfferFromBOM(businessOfferModel, postData.getCustomFields(), postData.getCode(), postData.getName(),
-					postData.getDescription(), postData.getServicesToActivate());
+					postData.getDescription(), postData.getServicesToActivate(), postData.getProductsToActivate());
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e.getMessage());
 		}
@@ -77,6 +80,33 @@ public class BusinessOfferApi extends BaseApi {
 			                throw e;
 			            } catch (Exception e) {
 			                log.error("Failed to associate custom field instance to an entity", e);
+							throw e;
+						}
+						break;
+					}
+				}
+			}
+		}
+		
+		// populate product custom fields
+		for (OfferProductTemplate opt : newOfferTemplate.getOfferProductTemplates()) {
+			ProductTemplate productTemplate = opt.getProductTemplate();
+
+			for (ServiceConfigurationDto productCodeDto : postData.getProductsToActivate()) {
+				// Caution the productCode building algo must match that of
+				// BusinessOfferModelService.createOfferFromBOM
+				String productCode = opt.getOfferTemplate().getId() + "_" + productCodeDto.getCode();
+				if (productCode.equals(productTemplate.getCode())) {
+					if (productCodeDto.getCustomFields() != null) {
+						try {
+							CustomFieldsDto cfsDto = new CustomFieldsDto();
+							cfsDto.setCustomField(productCodeDto.getCustomFields());
+							populateCustomFields(cfsDto, productTemplate, true);
+						} catch (MissingParameterException e) {
+							log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+							throw e;
+						} catch (Exception e) {
+							log.error("Failed to associate custom field instance to an entity", e);
 							throw e;
 						}
 						break;

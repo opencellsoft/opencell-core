@@ -21,22 +21,52 @@ import org.meveo.api.rest.IBaseRs;
 
 public interface OfferTemplateCategoryRs extends IBaseRs {
 
+    /**
+     * Create a new offer template category
+     * 
+     * @param postData The offer template category's data
+     * @return Request processing status
+     */
     @Path("/")
     @POST
     ActionStatus create(OfferTemplateCategoryDto postData);
 
+    /**
+     * Update an existing offer template category
+     * 
+     * @param postData The offer template category's data
+     * @return Request processing status
+     */
     @Path("/")
     @PUT
     ActionStatus update(OfferTemplateCategoryDto postData);
 
+    /**
+     * Find a offer template category with a given code 
+     * 
+     * @param offerTemplateCategoryCode The offer template category's code
+     * @return Return offerTemplateCategoryCodeDto containing offerTemplateCategoryCode
+     */
     @Path("/")
     @GET
     GetOfferTemplateCategoryResponseDto find(@QueryParam("offerTemplateCategoryCode") String offerTemplateCategoryCode);
 
+    /**
+     * Remove an existing offer template category with a given code 
+     * 
+     * @param offerTemplateCategoryCode The offer template category's code
+     * @return Request processing status
+     */
     @Path("/")
     @DELETE
     ActionStatus delete(@QueryParam("offerTemplateCategoryCode") String offerTemplateCategoryCode);
 
+    /**
+     * Create new or update an existing offer template category
+     * 
+     * @param postData The offer template category's data
+     * @return Request processing status
+     */
     @Path("/createOrUpdate")
     @POST
     ActionStatus createOrUpdate(OfferTemplateCategoryDto postData);

@@ -31,10 +31,22 @@ import org.meveo.api.rest.IBaseRs;
 
 public interface CustomerAccountRs extends IBaseRs {
 
+    /**
+     * Create a new customer account
+     * 
+     * @param postData The customer account's data
+     * @return Request processing status
+     */
     @POST
     @Path("/")
     ActionStatus create(CustomerAccountDto postData);
 
+    /**
+     * Update an existing customer account
+     * 
+     * @param postData The customer account's data
+     * @return Request processing status
+     */
     @PUT
     @Path("/")
     ActionStatus update(CustomerAccountDto postData);
@@ -43,21 +55,26 @@ public interface CustomerAccountRs extends IBaseRs {
      * Search for a customer account with a given code.
      * 
      * @param customerAccountCode The customer account's code
-     *
      * @return
      */
     @GET
     @Path("/")
     GetCustomerAccountResponseDto find(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("calculateBalances") Boolean calculateBalances);
 
+    /**
+     * Remove customerAccount with a given code 
+     * 
+     * @param customerAccountCode The customer account's code
+     * @return Request processing status
+     */
     @DELETE
     @Path("/{customerAccountCode}")
     ActionStatus remove(@PathParam("customerAccountCode") String customerAccountCode);
 
     /**
-     * List CustomerAccount filter by customerCode.
+     * List CustomerAccount filtered by customerCode.
      * 
-     * @param customerCode
+     * @param customerCode The customer account's code
      * @return
      */
     @GET
@@ -74,14 +91,32 @@ public interface CustomerAccountRs extends IBaseRs {
     @Path("/dunningInclusionExclusion")
     ActionStatus dunningInclusionExclusion(DunningInclusionExclusionDto DunningInclusionExclusionDto);
 
+    /**
+     * Create a new credit category
+     * 
+     * @param postData The credit category's data
+     * @return Request processing status
+     */
     @POST
     @Path("/creditCategory")
     ActionStatus createCreditCategory(CreditCategoryDto postData);
 
+    /**
+     * Remove credit category with a given code
+     * 
+     * @param creditCategoryCode The credit category's code
+     * @return Request processing status
+     */
     @DELETE
     @Path("/creditCategory")
     ActionStatus removeCreditCategory(@PathParam("creditCategoryCode") String creditCategoryCode);
 
+    /**
+     * Create new or update existing customer account
+     * 
+     * @param postData The customer account's data
+     * @return Request processing status
+     */
     @POST
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(CustomerAccountDto postData);

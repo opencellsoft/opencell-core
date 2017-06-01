@@ -28,6 +28,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.AccountAlreadyExistsException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
+import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingWalletDetailDTO;
@@ -65,6 +66,7 @@ public class UserAccountService extends AccountService<UserAccount> {
 		userAccount.setWallet(wallet);
 	}
 
+	@MeveoAudit
 	public UserAccount userAccountTermination(UserAccount userAccount, Date terminationDate,
 			SubscriptionTerminationReason terminationReason) throws BusinessException {
 
@@ -82,6 +84,7 @@ public class UserAccountService extends AccountService<UserAccount> {
 		return update(userAccount);
 	}
 
+	@MeveoAudit
 	public UserAccount userAccountCancellation(UserAccount userAccount, Date cancelationDate)
 			throws BusinessException {
 
@@ -99,6 +102,7 @@ public class UserAccountService extends AccountService<UserAccount> {
 		return update(userAccount);
 	}
 
+	@MeveoAudit
 	public UserAccount userAccountReactivation(UserAccount userAccount, Date activationDate)
 			throws BusinessException {
 		if (activationDate == null) {
@@ -143,7 +147,6 @@ public class UserAccountService extends AccountService<UserAccount> {
 	}
 
 
-	@SuppressWarnings("unchecked")
 	public List<UserAccount> listByBillingAccount(BillingAccount billingAccount) {
 		return billingAccount.getUsersAccounts();
 //		TODO : why ?

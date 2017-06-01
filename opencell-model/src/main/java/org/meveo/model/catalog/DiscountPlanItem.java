@@ -63,6 +63,10 @@ public class DiscountPlanItem extends EnableEntity {
 	@Column(name = "EXPRESSION_EL", length = 2000)
    	@Size(max = 2000)
    	private String expressionEl;
+	
+	@Column(name = "DISCOUNT_PERCENT_EL", length = 2000)
+   	@Size(max = 2000)
+   	private String discountPercentEl;
 
 	public DiscountPlan getDiscountPlan() {
 		return discountPlan;
@@ -146,6 +150,14 @@ public class DiscountPlanItem extends EnableEntity {
 
 	public void setAccountingCode(String accountingCode) {
 		this.accountingCode = accountingCode;
+	}
+
+	public String getDiscountPercentEl() {
+		return discountPercentEl;
+	}
+
+	public void setDiscountPercentEl(String discountPercentEl) {
+		this.discountPercentEl = discountPercentEl;
 	}
 
 }

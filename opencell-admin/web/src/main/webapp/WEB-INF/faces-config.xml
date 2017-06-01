@@ -1551,6 +1551,18 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 		<to-view-id>/pages/reporting/cache/caches.xhtml</to-view-id>
 		<redirect />
 	</navigation-case>
+	
+	<navigation-case>
+		<from-outcome>auditLog</from-outcome>
+		<to-view-id>/pages/admin/auditLogs/auditLogs.xhtml</to-view-id>
+		<redirect />
+	</navigation-case>
+	
+	<navigation-case>
+		<from-outcome>auditLogDetail</from-outcome>
+		<to-view-id>/pages/admin/auditLogs/auditLogs.xhtml</to-view-id>
+		<redirect />
+	</navigation-case>
 
 </navigation-rule>
 <navigation-rule>

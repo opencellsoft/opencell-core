@@ -12,14 +12,29 @@
 <tr><td rowspan="1" colspan="3">DeleteRecurringChargeTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>assertText</td>
-	<td>//td[3]/div/div</td>
-	<td>${RecCode}</td>
+	<td>clickAndWait</td>
+	<td>${PricePlans}</td>
+	<td></td>
 </tr>
 <tr>
-	<td>assertElementPresent</td>
-	<td>//td[3]/div/div</td>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
 	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=searchForm:eventCode_txt</td>
+	<td>${PPCodeValue}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=searchForm:buttonSearch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//td[3]/div/div</td>
+	<td>${ChargeCodeValue}</td>
 </tr>
 <tr>
 	<td>click</td>

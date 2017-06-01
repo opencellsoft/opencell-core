@@ -173,12 +173,10 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 			quantity = BigDecimal.ONE;
 		}
 		
-		if(!chargetemplate.getAmountEditable()){
-			amoutWithoutTax=null;
-			amoutWithoutTx2=null;
-			description=null;
+		if (!chargetemplate.getAmountEditable()) {
+			amoutWithoutTax = null;
+			amoutWithoutTx2 = null;
 		}
-		
 		
 		BigDecimal inputQuantity = quantity;
 		quantity = NumberUtil.getInChargeUnit(quantity, chargetemplate.getUnitMultiplicator(), chargetemplate.getUnitNbDecimal(),chargetemplate.getRoundingMode());

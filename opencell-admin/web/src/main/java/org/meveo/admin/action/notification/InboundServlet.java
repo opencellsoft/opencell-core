@@ -39,7 +39,7 @@ public class InboundServlet extends HttpServlet {
     protected Event<InboundRequest> eventProducer;
 
     private void doService(HttpServletRequest req, HttpServletResponse res) {
-        
+
         try {
 
             String path = req.getPathInfo();
@@ -95,7 +95,9 @@ public class InboundServlet extends HttpServlet {
 
                 while (headerNames.hasMoreElements()) {
                     String headerName = headerNames.nextElement();
-                    inReq.getHeaders().put(headerName, req.getHeader(headerName));
+                    if (headerName != null && !headerName.toLowerCase().equals("authorization")) {
+                        inReq.getHeaders().put(headerName, req.getHeader(headerName));
+                    }
                 }
             }
             inReq.setPathInfo(path);
@@ -136,7 +138,7 @@ public class InboundServlet extends HttpServlet {
             }
 
             inReq = inboundRequestService.update(inReq);
-            
+
 
             log.debug("Inbound request finished with status {}", res.getStatus());
 

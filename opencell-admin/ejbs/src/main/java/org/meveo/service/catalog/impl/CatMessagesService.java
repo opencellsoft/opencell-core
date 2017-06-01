@@ -77,12 +77,13 @@ public class CatMessagesService extends PersistenceService<CatMessages> {
         return result;
     }
 
+    public String getMessageDescriptionByCodeAndLanguage(String entityCode, String languageCode, String defaultDescription) {
+       return getMessageDescription(entityCode, null,languageCode,defaultDescription);
+    }
+    
     @SuppressWarnings("unchecked")
     public String getMessageDescription(String entityCode, String entityClass, String languageCode, String defaultDescription) {
         long startDate = System.currentTimeMillis();
-        if (entityCode == null || entityClass == null || languageCode == null) {
-            return defaultDescription;
-        }
         QueryBuilder qb = new QueryBuilder(CatMessages.class, "c");
         qb.addCriterion("c.entityCode", "=", entityCode, true);
         qb.addCriterion("c.entityClass", "=", entityClass, true);

@@ -27,10 +27,22 @@ import org.meveo.api.rest.IBaseRs;
 
 public interface BillingAccountRs extends IBaseRs {
 
+    /**
+     * Create a new billing account
+     * 
+     * @param posteData Billing account data
+     * @return Request processing status
+     */
     @POST
     @Path("/")
     ActionStatus create(BillingAccountDto postData);
 
+    /**
+     * Update existing billing account
+     * 
+     * @param posteData Billing account data
+     * @return Request processing status
+     */
     @PUT
     @Path("/")
     ActionStatus update(BillingAccountDto postData);
@@ -39,12 +51,18 @@ public interface BillingAccountRs extends IBaseRs {
      * Search for a billing account with a given code.
      * 
      * @param billingAccountCode
-     * @return
+     * @return Billing account
      */
     @GET
     @Path("/")
     GetBillingAccountResponseDto find(@QueryParam("billingAccountCode") String billingAccountCode);
 
+    /**
+     * Remove a billing account with a Billing Account Code
+     *
+     * @param billingAccountCode Billing account code
+     * @return Request processing status
+     */
     @DELETE
     @Path("/{billingAccountCode}")
     ActionStatus remove(@PathParam("billingAccountCode") String billingAccountCode);
@@ -52,8 +70,8 @@ public interface BillingAccountRs extends IBaseRs {
     /**
      * List BillingAccount filter by customerAccountCode.
      * 
-     * @param customerAccountCode
-     * @return
+     * @param customerAccountCode Customer account code
+     * @return 
      */
     @GET
     @Path("/list")
@@ -62,8 +80,8 @@ public interface BillingAccountRs extends IBaseRs {
     /**
      * Create or update Billing Account based on code.
      * 
-     * @param postData
-     * @return
+     * @param postData Billing account data
+     * @return Request processing status
      */
     @POST
     @Path("/createOrUpdate")
@@ -71,8 +89,9 @@ public interface BillingAccountRs extends IBaseRs {
     
     /**
      * filter counters by period date
-     * @param billingAccountCode
-     * @param date
+     *
+     * @param billingAccountCode Billing account code
+     * @param date Date
      * @return
      */
     @GET

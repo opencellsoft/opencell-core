@@ -32,16 +32,15 @@ import org.meveo.service.base.PersistenceService;
 
 @Stateless
 public class CounterPeriodService extends PersistenceService<CounterPeriod> {
-	
-	public CounterPeriod getCounterPeriod(CounterInstance counterInstance, Date date) throws BusinessException {
-		Query query = getEntityManager().createNamedQuery("CounterPeriod.findByPeriodDate");
-		query.setParameter("counterInstance", counterInstance);
-		query.setParameter("date", date, TemporalType.TIMESTAMP);
-		try {
-			return (CounterPeriod) query.getSingleResult();
-		} catch (NoResultException e) {
-			return null;
-		}
-	}
- 
+
+    public CounterPeriod getCounterPeriod(CounterInstance counterInstance, Date date) throws BusinessException {
+        Query query = getEntityManager().createNamedQuery("CounterPeriod.findByPeriodDate");
+        query.setParameter("counterInstance", counterInstance);
+        query.setParameter("date", date, TemporalType.TIMESTAMP);
+        try {
+            return (CounterPeriod) query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 }

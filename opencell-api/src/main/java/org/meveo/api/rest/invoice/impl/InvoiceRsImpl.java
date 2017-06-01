@@ -30,35 +30,35 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
 
     @Inject
     private InvoiceApi invoiceApi;
-    
+
     @Inject
     private InvoiceTypeService invoiceTypeService;
 
     @Override
     public CreateInvoiceResponseDto create(InvoiceDto invoiceDto) {
-    	CreateInvoiceResponseDto result = new CreateInvoiceResponseDto();
+        CreateInvoiceResponseDto result = new CreateInvoiceResponseDto();
 
         try {
-        	result = invoiceApi.create(invoiceDto);
-        	result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+            result = invoiceApi.create(invoiceDto);
+            result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
-		} catch (Exception e) {
-			super.processException(e, result.getActionStatus());
-		}
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
 
         return result;
     }
 
     @Override
     public CustomerInvoicesResponse find(@QueryParam("customerAccountCode") String customerAccountCode) {
-    	CustomerInvoicesResponse result = new CustomerInvoicesResponse();
+        CustomerInvoicesResponse result = new CustomerInvoicesResponse();
 
         try {
             result.setCustomerInvoiceDtoList(invoiceApi.list(customerAccountCode));
 
         } catch (Exception e) {
-			processException(e, result.getActionStatus());
-		}
+            processException(e, result.getActionStatus());
+        }
 
         return result;
     }
@@ -70,129 +70,129 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
             result.setGenerateInvoiceResultDto(invoiceApi.generateInvoice(generateInvoiceRequestDto));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
         } catch (Exception e) {
-        	processException(e, result.getActionStatus());            
+            processException(e, result.getActionStatus());
         }
         log.info("generateInvoice Response={}", result);
         return result;
     }
 
     @Override
-    public GetXmlInvoiceResponseDto findXMLInvoice(String invoiceNumber) {
-        return findXMLInvoiceWithType(invoiceNumber, invoiceTypeService.getCommercialCode() );
+    public GetXmlInvoiceResponseDto findXMLInvoice(Long invoiceId, String invoiceNumber) {
+        return findXMLInvoiceWithType(invoiceId, invoiceNumber, invoiceTypeService.getCommercialCode());
     }
 
     @Override
     public GetXmlInvoiceResponseDto findXMLInvoice(GetXmlInvoiceRequestDto xmlInvoiceRequestDto) {
         String invoiceNumber = xmlInvoiceRequestDto.getInvoiceNumber();
         String invoiceType = xmlInvoiceRequestDto.getInvoiceType();
-        if(StringUtils.isBlank(invoiceType)){
+        if (StringUtils.isBlank(invoiceType)) {
             invoiceType = invoiceTypeService.getCommercialCode();
         }
-        return findXMLInvoiceWithType(invoiceNumber, invoiceType);
+        return findXMLInvoiceWithType(null, invoiceNumber, invoiceType);
     }
 
     @Override
-    public GetXmlInvoiceResponseDto findXMLInvoiceWithType(String invoiceNumber, String invoiceType) {
+    public GetXmlInvoiceResponseDto findXMLInvoiceWithType(Long invoiceId, String invoiceNumber, String invoiceType) {
         GetXmlInvoiceResponseDto result = new GetXmlInvoiceResponseDto();
         try {
 
-            result.setXmlContent(invoiceApi.getXMLInvoice(invoiceNumber, invoiceType));
+            result.setXmlContent(invoiceApi.getXMLInvoice(invoiceId, invoiceNumber, invoiceType));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         } catch (Exception e) {
-			processException(e, result.getActionStatus());
-		}
+            processException(e, result.getActionStatus());
+        }
         log.info("getXMLInvoice Response={}", result);
         return result;
     }
 
     @Override
-    public GetPdfInvoiceResponseDto findPdfInvoice(String invoiceNumber) {
-        return findPdfInvoiceWithType(invoiceNumber, invoiceTypeService.getCommercialCode());
+    public GetPdfInvoiceResponseDto findPdfInvoice(Long invoiceId, String invoiceNumber) {
+        return findPdfInvoiceWithType(invoiceId, invoiceNumber, invoiceTypeService.getCommercialCode());
     }
 
     @Override
     public GetPdfInvoiceResponseDto findPdfInvoice(GetPdfInvoiceRequestDto pdfInvoiceRequestDto) {
         String invoiceNumber = pdfInvoiceRequestDto.getInvoiceNumber();
         String invoiceType = pdfInvoiceRequestDto.getInvoiceType();
-        if(StringUtils.isBlank(invoiceType)){
+        if (StringUtils.isBlank(invoiceType)) {
             invoiceType = invoiceTypeService.getCommercialCode();
         }
-        return findPdfInvoiceWithType(invoiceNumber, invoiceType);
+        return findPdfInvoiceWithType(null, invoiceNumber, invoiceType);
     }
 
     @Override
-    public GetPdfInvoiceResponseDto findPdfInvoiceWithType(String invoiceNumber, String invoiceType) {
+    public GetPdfInvoiceResponseDto findPdfInvoiceWithType(Long invoiceId, String invoiceNumber, String invoiceType) {
         GetPdfInvoiceResponseDto result = new GetPdfInvoiceResponseDto();
         try {
 
-            result.setPdfContent(invoiceApi.getPdfInvoice(invoiceNumber, invoiceType));
+            result.setPdfContent(invoiceApi.getPdfInvoice(invoiceId, invoiceNumber, invoiceType));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         } catch (Exception e) {
-			processException(e, result.getActionStatus());
-		}
+            processException(e, result.getActionStatus());
+        }
         log.info("getPdfInvoice Response={}", result);
         return result;
     }
 
+    @Override
+    public ActionStatus cancel(Long invoiceId) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            invoiceApi.cancelInvoice(invoiceId);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+    }
 
-	@Override
-	public ActionStatus cancel(Long invoiceId) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-		try {
-			invoiceApi.cancelInvoice(invoiceId);
-		} catch (Exception e) {
-			super.processException(e, result);
-		}
-		return result;
-	}
+    @Override
+    public ActionStatus validate(Long invoiceId) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            result.setMessage(invoiceApi.validateInvoice(invoiceId));
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+    }
 
-	@Override
-	public ActionStatus validate(Long invoiceId) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-		try {
-			result.setMessage(invoiceApi.validateInvoice(invoiceId));
-		} catch (Exception e) {
-			super.processException(e, result);
-		}
-		return result;
-	}
-	
-	@Override
-	public GetInvoiceResponseDto findInvoiceByIdOrType(Long id, String invoiceNumber, String invoiceType, boolean includeTransactions) {
-		GetInvoiceResponseDto result = new GetInvoiceResponseDto();
-		try {
+    @Override
+    public GetInvoiceResponseDto findInvoiceByIdOrType(Long id, String invoiceNumber, String invoiceType, boolean includeTransactions) {
+        GetInvoiceResponseDto result = new GetInvoiceResponseDto();
+        try {
             result.setInvoice(invoiceApi.find(id, invoiceNumber, invoiceType, includeTransactions));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
         } catch (Exception e) {
-			processException(e, result.getActionStatus());
-		}
+            processException(e, result.getActionStatus());
+        }
 
         return result;
-	}
-	@Override
-	public CustomerInvoicesResponse listPresentInAR(@QueryParam("customerAccountCode") String customerAccountCode) {
-		CustomerInvoicesResponse result = new CustomerInvoicesResponse();
-		try {
-			result.setCustomerInvoiceDtoList(invoiceApi.listPresentInAR(customerAccountCode));
-		} catch (Exception e) {
-			processException(e, result.getActionStatus());
-		}
-		return result;
-	}
+    }
 
-	@Override
-	public GenerateInvoiceResponseDto generateDraftInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto) {
-		GenerateInvoiceResponseDto result = new GenerateInvoiceResponseDto();
-		try {
-			result.setGenerateInvoiceResultDto(invoiceApi.generateInvoice(generateInvoiceRequestDto, true));
-			result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
-		} catch (Exception e) {
-			processException(e, result.getActionStatus());
-		}
-		log.info("generateInvoice Response={}", result);
-		return result;
-	}
-	
+    @Override
+    public CustomerInvoicesResponse listPresentInAR(@QueryParam("customerAccountCode") String customerAccountCode) {
+        CustomerInvoicesResponse result = new CustomerInvoicesResponse();
+        try {
+            result.setCustomerInvoiceDtoList(invoiceApi.listPresentInAR(customerAccountCode));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+        return result;
+    }
+
+    @Override
+    public GenerateInvoiceResponseDto generateDraftInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto) {
+        GenerateInvoiceResponseDto result = new GenerateInvoiceResponseDto();
+        try {
+            result.setGenerateInvoiceResultDto(invoiceApi.generateInvoice(generateInvoiceRequestDto, true));
+            result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+        log.info("generateInvoice Response={}", result);
+        return result;
+    }
+
 }

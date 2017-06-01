@@ -61,7 +61,21 @@ public class CustomFieldTemplateApi extends BaseApi {
         }
         if (postData.getStorageType() == CustomFieldStorageTypeEnum.MATRIX && (postData.getMatrixColumns() == null || postData.getMatrixColumns().isEmpty())) {
             missingParameters.add("matrixColumns");
+            
+        } else if (postData.getStorageType() == CustomFieldStorageTypeEnum.MATRIX){
+            for (CustomFieldMatrixColumnDto columnDto : postData.getMatrixColumns()) {
+                if (StringUtils.isBlank(columnDto.getCode())){
+                    missingParameters.add("matrixColumns/code");
+                }
+                if (StringUtils.isBlank(columnDto.getLabel())){
+                    missingParameters.add("matrixColumns/label");
+                }
+                if (columnDto.getKeyType()== null){
+                    missingParameters.add("matrixColumns/keyType");
+                }                
+            }            
         }
+        
         if (postData.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY && (postData.getStorageType() != CustomFieldStorageTypeEnum.LIST || postData.isVersionable())) {
             throw new InvalidParameterException("Custom field of type CHILD_ENTITY only supports unversioned values and storage type of LIST");
         }
@@ -115,6 +129,18 @@ public class CustomFieldTemplateApi extends BaseApi {
         }
         if (postData.getStorageType() == CustomFieldStorageTypeEnum.MATRIX && (postData.getMatrixColumns() == null || postData.getMatrixColumns().isEmpty())) {
             missingParameters.add("matrixColumns");
+        } else if (postData.getStorageType() == CustomFieldStorageTypeEnum.MATRIX){
+            for (CustomFieldMatrixColumnDto columnDto : postData.getMatrixColumns()) {
+                if (StringUtils.isBlank(columnDto.getCode())){
+                    missingParameters.add("matrixColumns/code");
+                }
+                if (StringUtils.isBlank(columnDto.getLabel())){
+                    missingParameters.add("matrixColumns/label");
+                }
+                if (columnDto.getKeyType()== null){
+                    missingParameters.add("matrixColumns/keyType");
+                }                
+            }            
         }
         if (postData.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY && (postData.getStorageType() != CustomFieldStorageTypeEnum.LIST || postData.isVersionable())) {
             throw new InvalidParameterException("Custom field of type CHILD_ENTITY only supports unversioned values and storage type of LIST");
@@ -193,8 +219,8 @@ public class CustomFieldTemplateApi extends BaseApi {
             missingParameters.add("appliesTo");
         }
 
-        handleMissingParameters();       
-        
+        handleMissingParameters();
+
         if (!getCustomizedEntitiesAppliesTo().contains(appliesTo)) {
             throw new InvalidParameterException("appliesTo", appliesTo);
         }
@@ -217,9 +243,9 @@ public class CustomFieldTemplateApi extends BaseApi {
      * @throws MissingParameterException A parameter, necessary to find an Custom Field Template, was not provided
      */
     public CustomFieldTemplateDto findIgnoreNotFound(String code, String appliesTo) throws MissingParameterException, InvalidParameterException {
-        try{
+        try {
             return find(code, appliesTo);
-        } catch (EntityDoesNotExistsException e){
+        } catch (EntityDoesNotExistsException e) {
             return null;
         }
     }
@@ -302,7 +328,8 @@ public class CustomFieldTemplateApi extends BaseApi {
 
         cft.setMapKeyType(dto.getMapKeyType());
         cft.setIndexType(dto.getIndexType());
-        
+        cft.setTags(dto.getTags());
+
         if (cft.getStorageType() == CustomFieldStorageTypeEnum.MAP && cft.getMapKeyType() == null) {
             cft.setMapKeyType(CustomFieldMapKeyEnum.STRING);
         }

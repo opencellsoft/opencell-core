@@ -54,29 +54,29 @@ public abstract class AccountEntity extends BusinessCFEntity {
     
 	@Column(name = "EXTERNAL_REF_1", length = 50)
 	@Size(max = 50)
-	private String externalRef1;
+	protected String externalRef1;
 
 	@Column(name = "EXTERNAL_REF_2", length = 50)
 	@Size(max = 50)
-	private String externalRef2;
+	protected String externalRef2;
 
 	@Embedded
-	private Name name = new Name();
+	protected Name name = new Name();
 
 	@Embedded
-	private Address address = new Address();
+	protected Address address = new Address();
 
 	@Type(type="numeric_boolean")
     @Column(name = "DEFAULT_LEVEL")
-	private Boolean defaultLevel = true;
+	protected Boolean defaultLevel = true;
 
     @Column(name = "PROVIDER_CONTACT", length = 255)
     @Size(max = 255)
-	private String providerContact;
+    protected String providerContact;
 
 	@ManyToOne
 	@JoinColumn(name = "PRIMARY_CONTACT")
-	private ProviderContact primaryContact;
+	protected ProviderContact primaryContact;
 
     @Column(name = "ACCOUNT_TYPE", insertable = true, updatable = false, length = 10)
     @Size(max = 10)
@@ -84,7 +84,7 @@ public abstract class AccountEntity extends BusinessCFEntity {
         
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "BAM_ID")
-	private BusinessAccountModel businessAccountModel;
+	protected BusinessAccountModel businessAccountModel;
         
     public String getExternalRef1() {
 		return externalRef1;
@@ -114,11 +114,11 @@ public abstract class AccountEntity extends BusinessCFEntity {
 	}
 
 	public Address getAddress() {
-		if (address != null) {
-			return address;
+		if (address == null) {
+			address = new Address();
 		}
 
-		return new Address();
+		return address;
 	}
 
 	public void setAddress(Address address) {

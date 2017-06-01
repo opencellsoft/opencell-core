@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project activeEnvironment="Default" name="Full REST WS Test Entities" resourceRoot="" soapui-version="5.2.1" abortOnError="false" runType="SEQUENTIAL" id="2921cfe0-4f05-49a4-98d7-baf966009880" xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project activeEnvironment="Default" name="Full REST WS Test Entities" resourceRoot="" soapui-version="5.3.0" abortOnError="false" runType="SEQUENTIAL" id="2921cfe0-4f05-49a4-98d7-baf966009880" xmlns:con="http://eviware.com/soapui/config">
   <con:settings/>
   <con:interface xsi:type="con:RestService" wadlVersion="http://wadl.dev.java.net/2009/02" name="http://localhost:8080" type="rest" id="ecf2ec08-6f4d-47e4-8bd0-7e4c64c6e6c3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
@@ -16210,7 +16210,7 @@
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="${#Project#authorization}" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:endpoint>${#Project#meveoUrl}</con:endpoint>
-            <con:request></con:request>
+            <con:request/>
             <con:originalUri>http://localhost/opencell/api/rest/country/PH/PHP</con:originalUri>
             <con:credentials>
               <con:username>meveo.admin</con:username>
@@ -19510,6 +19510,7 @@
   <con:wssContainer/>
   <con:databaseConnectionContainer/>
   <con:oAuth2ProfileContainer/>
+  <con:oAuth1ProfileContainer/>
   <con:reporting>
     <con:xmlTemplates/>
     <con:parameters/>

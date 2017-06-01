@@ -12,6 +12,21 @@
 <tr><td rowspan="1" colspan="3">DeleteContactTestCase</td></tr>
 </thead><tbody>
 <tr>
+	<td>type</td>
+	<td>id=searchPanel:entityName</td>
+	<td>${CodeECT}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=searchPanel:buttonSearch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Custom Entity Template - ${CodeECT}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>assertElementPresent</td>
 	<td>//button[@id='fieldsForm:fields:0_0:deletelink']</td>
 	<td></td>

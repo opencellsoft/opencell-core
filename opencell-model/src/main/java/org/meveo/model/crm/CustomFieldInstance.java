@@ -35,7 +35,7 @@ import org.w3c.dom.Text;
 @Table(name = "CRM_CUSTOM_FIELD_INST", uniqueConstraints = @UniqueConstraint(columnNames = { "APPLIES_TO_UUID", "CODE", "PERIOD_START_DATE", "PERIOD_END_DATE" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CRM_CUSTOM_FIELD_INST_SEQ"), })
 @NamedQueries({
-        @NamedQuery(name = "CustomFieldInstance.getCfiForCache", query = "select cfi from CustomFieldInstance cfi where cfi.disabled=false"),
+        @NamedQuery(name = "CustomFieldInstance.getCfiForCache", query = "select cfi from CustomFieldInstance cfi where cfi.disabled=false order by cfi.appliesToEntity"),
         @NamedQuery(name = "CustomFieldInstance.getCfiByCode", query = "select cfi from CustomFieldInstance cfi where cfi.appliesToEntity=:appliesToEntity and cfi.code=:code "),
         @NamedQuery(name = "CustomFieldInstance.getCfiByCodeAndDate", query = "select cfi from CustomFieldInstance cfi where cfi.appliesToEntity=:appliesToEntity and cfi.code=:code  and ((cfi.periodStartDate<=:date and :date<cfi.periodEndDate) or (cfi.periodStartDate<=:date and cfi.periodEndDate IS NULL) or (cfi.periodStartDate IS NULL and :date<cfi.periodEndDate)) order by cfi.priority desc "),
         @NamedQuery(name = "CustomFieldInstance.getCfiByCodeAndDateRange", query = "select cfi from CustomFieldInstance cfi where cfi.appliesToEntity=:appliesToEntity and cfi.code=:code  and (cfi.periodStartDate=:dateFrom and cfi.periodEndDate=:dateTo)  order by cfi.priority desc "),
@@ -70,6 +70,9 @@ public class CustomFieldInstance extends EnableEntity {
 
     @Column(name = "PRIORITY")
     private int priority;
+    
+    @Column(name = "DESCRIPTION")
+    private String description;
 
     @Embedded
     private CustomFieldValue cfValue;
@@ -211,8 +214,18 @@ public class CustomFieldInstance extends EnableEntity {
     public String getValueAsString() {
         return getCfValue().getValueAsString(sdf);
     }
+    
+    
 
-    @Override
+    public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	@Override
     public boolean equals(Object obj) {
         
         if (this == obj) {
@@ -252,6 +265,7 @@ public class CustomFieldInstance extends EnableEntity {
     public static CustomFieldInstance fromTemplate(CustomFieldTemplate cft, ICustomFieldEntity entity) {
         CustomFieldInstance cfi = new CustomFieldInstance();
         cfi.setCode(cft.getCode());
+        cfi.setDescription(cft.getDescriptionOrCode());
         cfi.setAppliesToEntity(entity.getUuid());
 
         // Set a default value
@@ -374,19 +388,21 @@ public class CustomFieldInstance extends EnableEntity {
 
     @Override
     public String toString() {
-        return String.format("CustomFieldInstance [code=%s, appliesToEntity=%s, periodStartDate=%s, periodEndDate=%s, priority=%s, cfValue=%s, disabled=%s]", code,
-            appliesToEntity, periodStartDate, periodEndDate, priority, cfValue, isDisabled());
+        return String.format("CustomFieldInstance [code=%s, description=%s, appliesToEntity=%s, periodStartDate=%s, periodEndDate=%s, priority=%s, cfValue=%s, disabled=%s]", code,
+            description,appliesToEntity, periodStartDate, periodEndDate, priority, cfValue, isDisabled());
     }
 
     public String toJson() {
         String result = code + ":";
         result += getCfValue().toJson(sdf);
+        result+=",description:"+description;
         return result;
     }
 
     public Element toDomElement(Document doc) {
         Element customFieldTag = doc.createElement("customField");
         customFieldTag.setAttribute("code", code);
+        customFieldTag.setAttribute("description", description);
         if (periodStartDate != null) {
             customFieldTag.setAttribute("periodStartDate", xmlsdf.format(periodStartDate));
         }

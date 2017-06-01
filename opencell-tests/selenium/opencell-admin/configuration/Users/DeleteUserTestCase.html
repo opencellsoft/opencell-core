@@ -12,18 +12,33 @@
 <tr><td rowspan="1" colspan="3">DeleteContactTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>assertText</td>
-	<td>link=${LoginValue}</td>
-	<td>${LoginValue}</td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>link=${LoginValue}</td>
+	<td>clickAndWait</td>
+	<td>${ProviderUsers}</td>
 	<td></td>
 </tr>
 <tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=searchForm:userName_txt</td>
+	<td>${LoginValue}</td>
+</tr>
+<tr>
 	<td>click</td>
-	<td>id=datatable_results:2:resultsdeletelink</td>
+	<td>id=searchForm:buttonSearch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${LoginValue}')]</td>
+	<td>${LoginValue}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${IconDelete}</td>
 	<td></td>
 </tr>
 <tr>

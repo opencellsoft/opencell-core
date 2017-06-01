@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>opencell-admin</artifactId>
 		<groupId>com.opencellsoft</groupId>
-		<version>4.5</version>
+		<version>4.5.1</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>opencell-admin-ejbs</artifactId>
@@ -34,7 +35,8 @@
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>2.7</version>
 				<executions>
-					<!-- Copy message, authentication and other configuration files from configuration module for testing -->
+					<!-- Copy message, authentication and other configuration files from 
+						configuration module for testing -->
 					<execution>
 						<id>copy-config-properties-file</id>
 						<phase>process-test-resources</phase>
@@ -118,7 +120,8 @@
 		</plugins>
 		<pluginManagement>
 			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
@@ -263,6 +266,13 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.jboss.spec.javax.jms</groupId>
+			<artifactId>jboss-jms-api_2.0_spec</artifactId>
+			<version>1.0.0.Final</version>
+			<scope>provided</scope>
+		</dependency>
+
 		<!-- End of libraries included in Jboss -->
 
 		<dependency>
@@ -353,10 +363,10 @@
 			<artifactId>joda-time</artifactId>
 		</dependency>
 
-<!-- 		<dependency> -->
-<!-- 			<groupId>xalan</groupId> -->
-<!-- 			<artifactId>xalan</artifactId> -->
-<!-- 		</dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>xalan</groupId> -->
+		<!-- <artifactId>xalan</artifactId> -->
+		<!-- </dependency> -->
 
 		<dependency>
 			<groupId>jaxen</groupId>
@@ -543,6 +553,35 @@
 		<!-- <scope>test</scope> -->
 		<!-- </dependency> -->
 
+<!-- 		<dependency> -->
+<!-- 			<groupId>com.opencellsoft</groupId> -->
+<!-- 			<artifactId>opencell-audit-logging</artifactId> -->
+<!-- 			<version>${project.version}</version> -->
+<!-- 		</dependency> -->
+		
+		<!-- Audit4j Dependencies -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.audit4j</groupId> -->
+		<!-- <artifactId>audit4j-core</artifactId> -->
+		<!-- <version>2.4.1</version> -->
+		<!-- <exclusions> -->
+		<!-- <exclusion> -->
+		<!-- <groupId>javax.ejb</groupId> -->
+		<!-- <artifactId>ejb-api</artifactId> -->
+		<!-- </exclusion> -->
+		<!-- <exclusion> -->
+		<!-- <groupId>javax.servlet</groupId> -->
+		<!-- <artifactId>servlet-api</artifactId> -->
+		<!-- </exclusion> -->
+		<!-- </exclusions> -->
+		<!-- </dependency> -->
+
+		<!-- <dependency> -->
+		<!-- <groupId>org.audit4j</groupId> -->
+		<!-- <artifactId>audit4j-db</artifactId> -->
+		<!-- <version>2.4.1</version> -->
+		<!-- </dependency> -->
+
 	</dependencies>
 
 	<profiles>
@@ -566,8 +605,10 @@
 		</profile>
 
 		<profile>
-			<!-- An optional Arquillian testing profile that executes tests in your JBoss AS instance -->
-			<!-- This profile will start a new JBoss AS instance, and execute the test, shutting it down when done -->
+			<!-- An optional Arquillian testing profile that executes tests in your 
+				JBoss AS instance -->
+			<!-- This profile will start a new JBoss AS instance, and execute the 
+				test, shutting it down when done -->
 			<!-- Run with: mvn clean test -Parq-jbossas-managed -->
 			<id>arq-jbossas-managed</id>
 

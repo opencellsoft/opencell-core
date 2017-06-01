@@ -6,7 +6,7 @@
 		<groupId>com.opencellsoft</groupId>
 		<artifactId>opencell</artifactId>
 		<relativePath>../pom.xml</relativePath>
-		<version>4.5</version>
+		<version>4.5.1</version>
 	</parent>
 	<artifactId>opencell-api</artifactId>
 	<name>Opencell API</name>
@@ -220,7 +220,7 @@
 					<plugin>
 						<groupId>com.webcohesion.enunciate</groupId>
 						<artifactId>enunciate-maven-plugin</artifactId>
-						<version>2.2.0</version>
+						<version>2.9.1</version>
 						<executions>
 							<execution>
 								<goals>

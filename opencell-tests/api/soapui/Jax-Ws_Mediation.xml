@@ -1059,16 +1059,25 @@
       <con:setupScript>import com.eviware.soapui.impl.wsdl.teststeps.*
 import com.eviware.soapui.support.types.*;
 
-StringToStringMap headers = new StringToStringMap();
+StringToStringMap headersForUser = new StringToStringMap();
+StringToStringMap headersForAdmin = new StringToStringMap();
 StringToStringMap headersForSuper = new StringToStringMap();
 
-String supeUserPass = testCase.testSuite.project.getPropertyValue("meveoSuperUsername")+":"+testCase.testSuite.project.getPropertyValue("meveoSuperPassword");
- log.info("userPass="+supeUserPass);
+int count = 1;
+boolean isClusterEnabled = !(testCase.testSuite.project.getPropertyValue("meveoUrl").equals(testCase.testSuite.project.getPropertyValue("meveoUrl2")));
 
-String userPass = testCase.testSuite.project.getPropertyValue("meveoUsername")+":"+testCase.testSuite.project.getPropertyValue("meveoPassword");
+String superUserPass = testCase.testSuite.project.getPropertyValue("meveoSuperUsername")+":"+testCase.testSuite.project.getPropertyValue("meveoSuperPassword");
+ log.info("superUserPass="+superUserPass);
+ 
+String adminPass = testCase.testSuite.project.getPropertyValue("meveoAdminUsername")+":"+testCase.testSuite.project.getPropertyValue("meveoAdminPassword");
+ log.info("adminPass="+adminPass);
+
+String userPass = testCase.testSuite.project.getPropertyValue("meveoUserUsername")+":"+testCase.testSuite.project.getPropertyValue("meveoUserPassword");
  log.info("userPass="+userPass);
-headers.put("Authorization","Basic "+userPass.getBytes().encodeBase64());
-headersForSuper.put("Authorization","Basic "+supeUserPass.getBytes().encodeBase64());
+
+headersForUser.put("Authorization","Basic "+userPass.getBytes().encodeBase64());
+headersForAdmin.put("Authorization","Basic "+adminPass.getBytes().encodeBase64());
+headersForSuper.put("Authorization","Basic "+superUserPass.getBytes().encodeBase64());
 for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 	for( testCaseItem in testSuiteItem.getTestCaseList() ) {
 	    log.info("Setting basic auth for all WSDL test requests in test case ["+testCaseItem.getName()+"]")
@@ -1077,22 +1086,35 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 	          if (!(testStep instanceof WsdlTestRequestStep || testStep instanceof RestTestRequestStep || testStep instanceof HttpTestRequestStep )){
 	          	continue;
 	          }
-
+	          
+			if (testStep instanceof WsdlTestRequestStep || testStep instanceof RestTestRequestStep){
+				String endpoint = testStep.getPropertyValue("Endpoint");
+				endpoint = endpoint.replace("meveoUrl2", "meveoUrl");
+				if (isClusterEnabled &amp;&amp; count %2 ==0){
+					endpoint = endpoint.replace("meveoUrl", "meveoUrl2");
+				}
+				testStep.setPropertyValue("Endpoint", endpoint);
+			}
+			count++;
+	    	
 	    		testStep.getTestRequest().setPreemptive(true);
-
+	    	
 
 			if(testStep.getName().contains("AUTHORIZATION_MANUAL")) {
 				testStep.getTestRequest().setRequestHeaders(new StringToStringMap());
-
+				
+		    	} else if (testStep.getName().contains("AUTHORIZATION_USER")) {
+		    		testStep.getTestRequest().setRequestHeaders(headersForUser);
+		    		
 		    	} else if (testStep.getName().contains("AUTHORIZATION_ADMIN")) {
-		    		testStep.getTestRequest().setRequestHeaders(headers);
-
-		    	} else if(testCaseItem.getName().contains("AUTHORIZATION_SUPERADMIN")
+		    		testStep.getTestRequest().setRequestHeaders(headersForAdmin);
+		    		
+		    	} else if(testCaseItem.getName().contains("AUTHORIZATION_SUPERADMIN") 
 		    	    || testStep.getName().contains("AUTHORIZATION_SUPERADMIN")){
 		    		testStep.getTestRequest().setRequestHeaders(headersForSuper);
-
+		    	
 		    	} else if(!testStep.getName().contains("AUTHORIZATION_MANUAL")) {
-				testStep.getTestRequest().setRequestHeaders(headers);
+				testStep.getTestRequest().setRequestHeaders(headersForAdmin);
 		    	}
 	    }
 	}
@@ -7570,11 +7592,15 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
       <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
     </con:property>
     <con:property>
-      <con:name>meveoUserName</con:name>
+      <con:name>meveoUrl2</con:name>
+      <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
+    </con:property>
+    <con:property>
+      <con:name>meveoAdminUserName</con:name>
       <con:value>opencell.admin</con:value>
     </con:property>
     <con:property>
-      <con:name>meveoPassword</con:name>
+      <con:name>meveoAdminPassword</con:name>
       <con:value>opencell.admin</con:value>
     </con:property>
     <con:property>

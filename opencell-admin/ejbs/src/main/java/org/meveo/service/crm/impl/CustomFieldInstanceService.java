@@ -43,6 +43,7 @@ import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.index.ElasticClient;
 import org.meveo.util.PersistenceUtils;
 import org.slf4j.Logger;
@@ -117,12 +118,13 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     // @Override
     // public void remove(CustomFieldInstance e) {
     // throw new RuntimeException(
-    // "CustomFieldInstanceService.remove(CustomFieldInstance cfi) method not supported. Should use CustomFieldInstanceService.remove(CustomFieldInstance cfi, ICustomFieldEntity entity) method instead");
+    // "CustomFieldInstanceService.remove(CustomFieldInstance cfi) method not supported. Should use CustomFieldInstanceService.remove(CustomFieldInstance cfi, ICustomFieldEntity
+    // entity) method instead");
     // }
 
     public void remove(CustomFieldInstance cfi) throws BusinessException {
-        customFieldsCacheContainerProvider.removeCustomFieldFromCache(cfi);
         super.remove(cfi);
+        customFieldsCacheContainerProvider.removeCustomFieldFromCache(cfi);
     }
 
     /**
@@ -189,12 +191,11 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
      * @param defaultParamBeanValue A default value to set as custom field value in case settings/configuration parameter was not set
      * @param entity Entity holding custom field value
      * @param saveInCFIfNotExist Set CF value if it does not exist yet
-
+     * 
      * @return A value, or a default value if none was found in neither custom field nor settings/configuration parameter
      * @throws BusinessException
      */
-    public Object getOrCreateCFValueFromParamValue(String code, String defaultParamBeanValue, ICustomFieldEntity entity, boolean saveInCFIfNotExist)
-            throws BusinessException {
+    public Object getOrCreateCFValueFromParamValue(String code, String defaultParamBeanValue, ICustomFieldEntity entity, boolean saveInCFIfNotExist) throws BusinessException {
 
         Object value = getCFValue(entity, code, true);
         if (value != null) {
@@ -228,14 +229,15 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
                 create(cfi, cft, entity);
             }
         } catch (CustomFieldException e) {
-            log.error("Can not determine applicable CFT type for entity of {} class. Value from propeties file will NOT be saved as customfield", entity.getClass().getSimpleName());
+            log.error("Can not determine applicable CFT type for entity of {} class. Value from propeties file will NOT be saved as customfield",
+                entity.getClass().getSimpleName());
         }
         return value;
     }
 
-
     /**
-     * Get a custom field value for a given entity. If custom field is versionable, a current date will be used to access the value. Will instantiate a default value if value was not found.
+     * Get a custom field value for a given entity. If custom field is versionable, a current date will be used to access the value. Will instantiate a default value if value was
+     * not found.
      * 
      * @param entity Entity
      * @param code Custom field code
@@ -244,7 +246,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     public Object getCFValue(ICustomFieldEntity entity, String code) {
         return getCFValue(entity, code, true);
     }
-    
+
     /**
      * Get a custom field value for a given entity. If custom field is versionable, a current date will be used to access the value.
      * 
@@ -279,7 +281,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
             TypedQuery<CustomFieldValue> query = getEntityManager().createNamedQuery("CustomFieldInstance.getCfiValueByCode", CustomFieldValue.class);
             query.setParameter("appliesToEntity", entity.getUuid());
             query.setParameter("code", code);
-            
+
             List<CustomFieldValue> cfvs = query.getResultList();
             if (!cfvs.isEmpty()) {
                 CustomFieldValue cfv = cfvs.get(0);
@@ -290,19 +292,13 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
             }
         }
 
-        // Create such CF with default value if one is specified on CFT
-        if (value == null && cft.getDefaultValue() != null && instantiateDefaultValue) {
-            value = cft.getDefaultValueConverted();
-            try {
-                setCFValue(entity, code, value);
-            } catch (BusinessException e) {
-                log.error("Failed to set a default Custom field value {}/{}", entity.getClass().getSimpleName(), code, e);
-            }
+        // Create such CF with default value if one is specified on CFT and other conditions match
+        if (value == null && instantiateDefaultValue) {
+            value = instantiateCFWithDefaultValue(cft, entity);
         }
 
         return value;
     }
-    
 
     /**
      * Get a custom field value for a given entity and a date. Will instantiate a default value if value not found.
@@ -359,31 +355,31 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
             }
         }
 
-        // Create such CF with default value if one is specified on CFT and field is versioned by a calendar
-        if (value == null && cft.getDefaultValue() != null && cft.getCalendar() != null && instantiateDefaultValue) {
-            value = cft.getDefaultValueConverted();
-            try {
-                setCFValue(entity, code, value, date);
-            } catch (BusinessException e) {
-                log.error("Failed to set a default Custom field value {}/{}", entity.getClass().getSimpleName(), code, e);
-            }
+        // Create such CF with default value if one is specified on CFT and other conditions match
+        if (value == null && instantiateDefaultValue) {
+            value = instantiateCFWithDefaultValue(cft, entity, date);
         }
 
         return value;
+    }
+
+    public String getCFValuesAsJson(ICustomFieldEntity entity) {
+        return getCFValuesAsJson(entity, false);
     }
 
     /**
      * Get custom field values of an entity as JSON string
      * 
      * @param entity Entity
+     * @param includeParent include parentCFEntities or not
      * @return JSON format string
      */
-    public String getCFValuesAsJson(ICustomFieldEntity entity) {
+    public String getCFValuesAsJson(ICustomFieldEntity entity, boolean includeParent) {
 
         String result = "";
         String sep = "";
 
-        Map<String, List<CustomFieldInstance>> customFieldsMap = getCustomFieldInstances(entity);
+        Map<String, List<CustomFieldInstance>> customFieldsMap = getCustomFieldInstances(entity, includeParent);
 
         for (List<CustomFieldInstance> customFields : customFieldsMap.values()) {
             for (CustomFieldInstance cf : customFields) {
@@ -396,8 +392,12 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     }
 
     public Element getCFValuesAsDomElement(ICustomFieldEntity entity, Document doc) {
+        return getCFValuesAsDomElement(entity, doc, false);
+    }
+
+    public Element getCFValuesAsDomElement(ICustomFieldEntity entity, Document doc, boolean includeParent) {
         Element customFieldsTag = doc.createElement("customFields");
-        Map<String, List<CustomFieldInstance>> customFieldsMap = getCustomFieldInstances(entity);
+        Map<String, List<CustomFieldInstance>> customFieldsMap = getCustomFieldInstances(entity, includeParent);
         for (List<CustomFieldInstance> cfis : customFieldsMap.values()) {
             for (CustomFieldInstance cfi : cfis) {
                 Element customFieldTag = cfi.toDomElement(doc);
@@ -415,7 +415,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
      * @param entity Entity
      * @param code Custom field value code
      * @param value Value to set
-
+     * 
      * @throws BusinessException
      */
     public CustomFieldInstance setCFValue(ICustomFieldEntity entity, String code, Object value) throws BusinessException {
@@ -429,8 +429,8 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         }
 
         if (cft.isVersionable()) {
-            throw new RuntimeException("Can not determine a period for Custom Field " + entity.getClass().getSimpleName() + "/" + code
-                    + " value if no date or date range is provided");
+            throw new RuntimeException(
+                "Can not determine a period for Custom Field " + entity.getClass().getSimpleName() + "/" + code + " value if no date or date range is provided");
         }
 
         List<CustomFieldInstance> cfis = getCustomFieldInstances(entity, code);
@@ -559,7 +559,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     /**
      * Remove Custom field instance
      * 
-
+     * 
      * 
      * @param code Custom field code to remove
      */
@@ -575,7 +575,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     /**
      * Remove all custom field values for a given entity
      * 
-
+     * 
      * 
      * @param entity
      */
@@ -592,15 +592,33 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     }
 
     /**
+     * Get All custom field instances for a given entity and his parentCFEntities.
+     * 
+     * @param entity Entity
+     * @param includeParent flag to include parentCFEntities or not
+     * @return A map of Custom field instances with CF code as a key
+     */
+    public Map<String, List<CustomFieldInstance>> getCustomFieldInstances(ICustomFieldEntity entity, boolean includeParent) {
+        Map<String, List<CustomFieldInstance>> cfisAsMap = new HashMap<String, List<CustomFieldInstance>>();
+        if (includeParent && entity.getParentCFEntities() != null) {
+            for (ICustomFieldEntity entityParent : entity.getParentCFEntities()) {
+                cfisAsMap.putAll(getCustomFieldInstances(entityParent));
+            }
+        }
+        cfisAsMap.putAll(getCustomFieldInstances(entity));
+        return cfisAsMap;
+    }
+
+    /**
      * Get All custom field instances for a given entity.
      * 
      * @param entity Entity
      * @return A map of Custom field instances with CF code as a key
      */
     public Map<String, List<CustomFieldInstance>> getCustomFieldInstances(ICustomFieldEntity entity) {
-        if (((IEntity) entity).isTransient()) {
-            return new HashMap<String, List<CustomFieldInstance>>();
-        }
+        // if (((IEntity) entity).isTransient()) {
+        // return new HashMap<String, List<CustomFieldInstance>>();
+        // }
 
         TypedQuery<CustomFieldInstance> query = getEntityManager().createNamedQuery("CustomFieldInstance.getCfiByEntity", CustomFieldInstance.class);
         query.setParameter("appliesToEntity", entity.getUuid());
@@ -615,9 +633,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         Map<String, List<CustomFieldInstance>> cfisAsMap = new HashMap<String, List<CustomFieldInstance>>();
 
         for (CustomFieldInstance cfi : cfis) {
-            if (!cfisAsMap.containsKey(cfi.getCode())) {
-                cfisAsMap.put(cfi.getCode(), new ArrayList<CustomFieldInstance>());
-            }
+            cfisAsMap.putIfAbsent(cfi.getCode(), new ArrayList<CustomFieldInstance>());
             cfisAsMap.get(cfi.getCode()).add(cfi);
         }
 
@@ -712,12 +728,12 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
                 if (parentCfEntity == null) {
                     continue;
                 }
-                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one. 
-                if (parentCfEntity instanceof Provider){
+                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one.
+                if (parentCfEntity instanceof Provider) {
                     parentCfEntity = appProvider;
                 } else {
                     parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
-                }                
+                }
                 Object value = getInheritedCFValue(parentCfEntity, code);
                 if (value != null) {
                     return value;
@@ -741,8 +757,8 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
                 if (parentCfEntity == null) {
                     continue;
                 }
-                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one. 
-                if (parentCfEntity instanceof Provider){
+                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one.
+                if (parentCfEntity instanceof Provider) {
                     parentCfEntity = appProvider;
                 } else {
                     parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
@@ -841,8 +857,8 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
             if (parentCfEntity == null) {
                 continue;
             }
-            // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one. 
-            if (parentCfEntity instanceof Provider){
+            // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one.
+            if (parentCfEntity instanceof Provider) {
                 parentCfEntity = appProvider;
             } else {
                 parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
@@ -923,12 +939,12 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
                 if (parentCfEntity == null) {
                     continue;
                 }
-                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one. 
-                if (parentCfEntity instanceof Provider){
+                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one.
+                if (parentCfEntity instanceof Provider) {
                     parentCfEntity = appProvider;
                 } else {
                     parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
-                }                
+                }
                 Object value = getInheritedCFValue(parentCfEntity, code, date);
                 if (value != null) {
                     return value;
@@ -959,8 +975,8 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
                 if (parentCfEntity == null) {
                     continue;
                 }
-                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one. 
-                if (parentCfEntity instanceof Provider){
+                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one.
+                if (parentCfEntity instanceof Provider) {
                     parentCfEntity = appProvider;
                 } else {
                     parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
@@ -999,8 +1015,8 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
                 if (parentCfEntity == null) {
                     continue;
                 }
-                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one. 
-                if (parentCfEntity instanceof Provider){
+                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one.
+                if (parentCfEntity instanceof Provider) {
                     parentCfEntity = appProvider;
                 } else {
                     parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
@@ -1039,8 +1055,8 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
                 if (parentCfEntity == null) {
                     continue;
                 }
-                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one. 
-                if (parentCfEntity instanceof Provider){
+                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one.
+                if (parentCfEntity instanceof Provider) {
                     parentCfEntity = appProvider;
                 } else {
                     parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
@@ -1078,8 +1094,8 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
                 if (parentCfEntity == null) {
                     continue;
                 }
-                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one. 
-                if (parentCfEntity instanceof Provider){
+                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one.
+                if (parentCfEntity instanceof Provider) {
                     parentCfEntity = appProvider;
                 } else {
                     parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
@@ -1117,8 +1133,8 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
                 if (parentCfEntity == null) {
                     continue;
                 }
-                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one. 
-                if (parentCfEntity instanceof Provider){
+                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one.
+                if (parentCfEntity instanceof Provider) {
                     parentCfEntity = appProvider;
                 } else {
                     parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
@@ -1157,8 +1173,8 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
                 if (parentCfEntity == null) {
                     continue;
                 }
-                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one. 
-                if (parentCfEntity instanceof Provider){
+                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one.
+                if (parentCfEntity instanceof Provider) {
                     parentCfEntity = appProvider;
                 } else {
                     parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
@@ -1194,8 +1210,8 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
                 if (parentCfEntity == null) {
                     continue;
                 }
-                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one. 
-                if (parentCfEntity instanceof Provider){
+                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one.
+                if (parentCfEntity instanceof Provider) {
                     parentCfEntity = appProvider;
                 } else {
                     parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
@@ -1232,8 +1248,8 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
                 if (parentCfEntity == null) {
                     continue;
                 }
-                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one. 
-                if (parentCfEntity instanceof Provider){
+                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one.
+                if (parentCfEntity instanceof Provider) {
                     parentCfEntity = appProvider;
                 } else {
                     parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
@@ -1322,6 +1338,10 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     }
 
     private IEntity refreshOrRetrieveAny(IEntity entity) {
+
+        if (entity.isTransient()) {
+            return entity;
+        }
 
         if (getEntityManager().contains(entity)) {
             getEntityManager().refresh(entity);
@@ -1826,14 +1846,14 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     public Object instantiateCFWithDefaultValue(ICustomFieldEntity entity, String code) {
 
         CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(code, entity);
-        if (cft == null || cft.getDefaultValue() == null) {
+        if (cft == null || cft.getDefaultValue() == null || !isCFTApplicableToEntity(cft, entity)) {
             // log.trace("No CFT found or no default value specified {}/{}", entity, code);
             return null;
-        } 
+        }
 
         if (cft.isVersionable()) {
-            log.warn("Trying to instantiate CF value from default value on a versionable custom field {}/{} value with no provided date. Current date will be used", entity
-                .getClass().getSimpleName(), code);
+            log.warn("Trying to instantiate CF value from default value on a versionable custom field {}/{} value with no provided date. Current date will be used",
+                entity.getClass().getSimpleName(), code);
             return instantiateCFWithDefaultValue(entity, code, new Date());
         }
 
@@ -1860,10 +1880,10 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
 
         // If field is not versionable - get the value without the date
         CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(code, entity);
-        if (cft == null || cft.getDefaultValue() == null || cft.getCalendar() == null) {
+        if (cft == null || cft.getDefaultValue() == null || cft.getCalendar() == null || !isCFTApplicableToEntity(cft, entity)) {
             // log.trace("No CFT found or no default value or calendar specified {}/{}", entity, code);
             return null;
-        } 
+        }
 
         if (!cft.isVersionable()) {
             return instantiateCFWithDefaultValue(entity, code);
@@ -1874,6 +1894,69 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
             setCFValue(entity, code, value, date);
         } catch (BusinessException e) {
             log.error("Failed to set a default Custom field value {}/{}", entity.getClass().getSimpleName(), code, e);
+        }
+
+        return value;
+    }
+
+    /**
+     * Instantiate a custom field value with default value for a given entity. If custom field is versionable, a current date will be used to access the value. Can be instantiated
+     * only if cft.applicableOnEl condition pass
+     * 
+     * @param cft Custom field template
+     * @param entity Entity
+     * @return Custom field value
+     */
+    private Object instantiateCFWithDefaultValue(CustomFieldTemplate cft, ICustomFieldEntity entity) {
+
+        if (cft.getDefaultValue() == null || !isCFTApplicableToEntity(cft, entity)) {
+            // log.trace("No CFT found or no default value specified {}/{}", entity, cft.getCode());
+            return null;
+        }
+
+        if (cft.isVersionable()) {
+            log.warn("Trying to instantiate CF value from default value on a versionable custom field {}/{} value with no provided date. Current date will be used",
+                entity.getClass().getSimpleName(), cft.getCode());
+            return instantiateCFWithDefaultValue(cft, entity, new Date());
+        }
+
+        // Create such CF with default value if one is specified on CFT
+        Object value = cft.getDefaultValueConverted();
+        try {
+            setCFValue(entity, cft.getCode(), value);
+        } catch (BusinessException e) {
+            log.error("Failed to set a default Custom field value {}/{}", entity.getClass().getSimpleName(), cft.getCode(), e);
+        }
+
+        return value;
+    }
+
+    /**
+     * Instantiate a custom field value with default value for a given entity and a date. Can be instantiated only if values are versioned by a calendar and cft.applicableOnEl
+     * condition pass
+     * 
+     * @param cft Custom field template
+     * @param entity Entity
+     * @param date Date
+     * @return Custom field value
+     */
+    private Object instantiateCFWithDefaultValue(CustomFieldTemplate cft, ICustomFieldEntity entity, Date date) {
+
+        if (cft.getDefaultValue() == null || cft.getCalendar() == null || !isCFTApplicableToEntity(cft, entity)) {
+            // log.trace("No CFT found or no default value or calendar specified {}/{}", entity, code);
+            return null;
+        }
+
+        // If field is not versionable - instantiate the value without the date
+        if (!cft.isVersionable()) {
+            return instantiateCFWithDefaultValue(cft, entity);
+        }
+
+        Object value = cft.getDefaultValueConverted();
+        try {
+            setCFValue(entity, cft.getCode(), value, date);
+        } catch (BusinessException e) {
+            log.error("Failed to set a default Custom field value {}/{}", entity.getClass().getSimpleName(), cft.getCode(), e);
         }
 
         return value;
@@ -2086,5 +2169,19 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     @Deprecated
     public Object getInheritedCFValueByMatrix(ICustomFieldEntity entity, String code, Date date, Object... keys) {
         return getInheritedCFValueByKey(entity, code, date, keys);
+    }
+
+    /**
+     * Check if Custom field template is applicable to a given entity - evaluate cft.applicableOnEl expression is set
+     * 
+     * @param cft Custom field template
+     * @param entity Entity to check
+     * @return True if cft.applicableOnEl expression is null or evaluates to true
+     */
+    private boolean isCFTApplicableToEntity(CustomFieldTemplate cft, ICustomFieldEntity entity) {
+        if (cft.getApplicableOnEl() != null) {
+            return ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(cft.getApplicableOnEl(), "entity", entity);
+        }
+        return true;
     }
 }

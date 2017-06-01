@@ -72,17 +72,6 @@ public class InvoiceCategoryApi extends BaseApi {
                 }
             }
         }
-
-        invoiceCategoryService.create(invoiceCategory);
-
-        // create cat messages
-        if (postData.getLanguageDescriptions() != null) {
-            for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-                CatMessages catMsg = new CatMessages(InvoiceCategory.class.getSimpleName(),invoiceCategory.getCode(), ld.getLanguageCode(), ld.getDescription());
-
-                catMessagesService.create(catMsg);
-            }
-        }
         
         // populate customFields
         try {
@@ -94,6 +83,17 @@ public class InvoiceCategoryApi extends BaseApi {
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
+        }
+        
+        invoiceCategoryService.create(invoiceCategory);
+
+        // create cat messages
+        if (postData.getLanguageDescriptions() != null) {
+            for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
+                CatMessages catMsg = new CatMessages(InvoiceCategory.class.getSimpleName(),invoiceCategory.getCode(), ld.getLanguageCode(), ld.getDescription());
+
+                catMessagesService.create(catMsg);
+            }
         }
     }
 
@@ -145,8 +145,6 @@ public class InvoiceCategoryApi extends BaseApi {
                 }
             }
         }
-
-        invoiceCategoryService.update(invoiceCategory);
         
         // populate customFields
         try {
@@ -159,6 +157,8 @@ public class InvoiceCategoryApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+
+        invoiceCategory = invoiceCategoryService.update(invoiceCategory);
     }
 
     public InvoiceCategoryDto find(String code) throws MeveoApiException {

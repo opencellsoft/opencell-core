@@ -14,6 +14,9 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.action.admin.custom.CustomFieldDataEntryBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.cache.JobCacheContainerProvider;
+import org.meveo.cache.JobRunningStatusEnum;
+import org.meveo.commons.utils.EjbUtils;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.jobs.JobCategoryEnum;
@@ -32,7 +35,7 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
 
     @Inject
     private JobInstanceService jobInstanceService;
-    
+
     @Inject
     private JobExecutionService jobExecutionService;
 
@@ -41,7 +44,10 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
 
     @Inject
     private CustomFieldDataEntryBean customFieldDataEntryBean;
-    
+
+    @Inject
+    private JobCacheContainerProvider jobCacheContainerProvider;
+
     public JobInstanceBean() {
         super(JobInstance.class);
     }
@@ -49,9 +55,9 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
     @Override
     public JobInstance initEntity() {
         super.initEntity();
-        
+
         createMissingCustomFieldTemplates();
-          
+
         return entity;
     }
 
@@ -64,8 +70,15 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
         return Arrays.asList(JobCategoryEnum.values());
     }
 
-    public List<JobInstance> getTimerEntityList() {
-        return jobInstanceService.find(null);
+    /**
+     * Get a list of jobs suitable as a next job to execute (all jobs, minus a current one)
+     * 
+     * @return A list of jobs minus a current one
+     */
+    public List<JobInstance> getFollowingJobList() {
+        List<JobInstance> jobs = jobInstanceService.list();
+        jobs.remove(entity);
+        return jobs;
     }
 
     public List<String> getJobNames() {
@@ -86,10 +99,10 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
 
         return getEditViewName();
     }
-    
-    public String saveOrUpdate(boolean killConversation) throws BusinessException{
-    	super.saveOrUpdate(killConversation);
-    	return getEditViewName();
+
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
+        super.saveOrUpdate(killConversation);
+        return getEditViewName();
     }
 
     protected String getListViewName() {
@@ -132,7 +145,7 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
         } else {
             jobTemplatesFromJob = jobCustomFields.values();
         }
-     
+
         try {
             customFieldTemplateService.createMissingTemplates((ICustomFieldEntity) entity, jobTemplatesFromJob);
         } catch (BusinessException e) {
@@ -141,22 +154,63 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
     }
 
     /**
-     * Check if a job is running.
+     * Check if a job is running and where
      * 
      * @param jobInstance JobInstance entity
-     * @return True if running
+     * @return Running status
      */
-    public boolean isTimerRunning(JobInstance jobInstance) {
-        return jobInstanceService.isJobRunning(jobInstance.getId());
+    public JobRunningStatusEnum isTimerRunning(JobInstance jobInstance) {
+        return jobCacheContainerProvider.isJobRunning(jobInstance.getId());
+    }
+
+    /**
+     * Check if job can be run on a current server or cluster node if deployed in cluster environment
+     * 
+     * @param jobInstance JobInstance entity
+     * @return True if it can be executed locally
+     */
+    public boolean isAllowedToExecute(JobInstance jobInstance) {
+		if (jobInstance == null || jobInstance.getId() == null) {
+			return false;
+		}
+    	
+        JobRunningStatusEnum isRunning = jobCacheContainerProvider.isJobRunning(jobInstance.getId());
+        if (isRunning == JobRunningStatusEnum.NOT_RUNNING) {
+            return true;
+        } else if (isRunning == JobRunningStatusEnum.RUNNING_THIS) {
+            return false;
+        } else {
+
+            String nodeToCheck = EjbUtils.getCurrentClusterNode();
+            return jobInstance.isRunnableOnNode(nodeToCheck);
+        }
     }
 
     /**
      * Explicitly refresh custom fields and action definitions. Should be used when job template change, as on it depends what fields and actions apply
-     * @throws BusinessException 
+     * 
+     * @throws BusinessException
      */
     public void refreshCustomFieldsAndActions() throws BusinessException {
 
         createMissingCustomFieldTemplates();
         customFieldDataEntryBean.refreshFieldsAndActions(entity);
     }
+    
+    protected List<String> getFormFieldsToFetch() {
+        return Arrays.asList("executionResults");
+    }
+    
+    @Override
+    public void enable() {    	
+    	super.enable();
+    	initEntity();
+    }
+    
+    @Override
+    public void disable() {
+    	super.disable();
+    	initEntity();
+    }
+    
 }

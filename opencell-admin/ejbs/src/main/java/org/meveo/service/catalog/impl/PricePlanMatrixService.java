@@ -48,11 +48,11 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
-import org.meveo.service.base.MultilanguageEntityService;
+import org.meveo.service.base.AuditableMultilanguageService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 
 @Stateless
-public class PricePlanMatrixService extends MultilanguageEntityService<PricePlanMatrix> {
+public class PricePlanMatrixService extends AuditableMultilanguageService<PricePlanMatrix> {
 
 	@Inject
 	private RatingCacheContainerProvider ratingCacheContainerProvider;
@@ -504,9 +504,9 @@ public class PricePlanMatrixService extends MultilanguageEntityService<PricePlan
 
 
 	/**
-	 * Get a list of priceplans to populate a cache
+	 * Get a list of priceplans to populate a cache. 
 	 * 
-	 * @return A list of active priceplans
+	 * @return A list of active priceplans ordered by eventCode and priority
 	 */
 	public List<PricePlanMatrix> getPricePlansForCache() {
 		return getEntityManager().createNamedQuery("PricePlanMatrix.getPricePlansForCache", PricePlanMatrix.class)

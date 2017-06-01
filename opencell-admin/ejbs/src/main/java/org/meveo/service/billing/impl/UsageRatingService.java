@@ -24,8 +24,14 @@ import org.meveo.admin.parse.csv.CDR;
 import org.meveo.admin.util.NumberUtil;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.cache.CachedCounterInstance;
+import org.meveo.cache.CachedCounterPeriod;
+import org.meveo.cache.CachedTriggeredEDR;
+import org.meveo.cache.CachedUsageChargeInstance;
+import org.meveo.cache.CachedUsageChargeTemplate;
 import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.event.CounterPeriodEvent;
+import org.meveo.model.CounterValueChangeInfo;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
@@ -41,11 +47,6 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.billing.WalletReservation;
-import org.meveo.model.cache.CachedCounterInstance;
-import org.meveo.model.cache.CachedCounterPeriod;
-import org.meveo.model.cache.CachedTriggeredEDR;
-import org.meveo.model.cache.CachedUsageChargeInstance;
-import org.meveo.model.cache.CachedUsageChargeTemplate;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.crm.Provider;
@@ -54,6 +55,7 @@ import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
@@ -120,6 +122,9 @@ public class UsageRatingService {
     @Inject
     @ApplicationProvider
     private Provider appProvider;
+    
+	@Inject
+	protected CatMessagesService catMessagesService;
 
     // @PreDestroy
     // accessing Entity manager in predestroy is bugged in jboss7.1.3
@@ -158,13 +163,16 @@ public class UsageRatingService {
         } else {
             for (ServiceInstance serviceInstance : edr.getSubscription().getServiceInstances()) {
                 for(UsageChargeInstance usageChargeInstance: serviceInstance.getUsageChargeInstances()){
-                    if (usageChargeInstance.getCode().equals(cachedChargeInstance.getChargeTemplate().getCode())){
+                    if (usageChargeInstance.getCode().equals(cachedChargeInstance.getChargeTemplateCode())){
                         chargeInstance = usageChargeInstance;
                         break;
                     }
                 }
             }            
         }
+        
+        CachedUsageChargeTemplate chargeTemplate = ratingCacheContainerProvider.getUsageChargeTemplate(cachedChargeInstance.getChargeTemplateId());
+        
         walletOperation.setChargeInstance(chargeInstance);
         UserAccount userAccount = chargeInstance.getUserAccount();
         CounterInstance counterInstance = chargeInstance.getCounter();
@@ -181,12 +189,12 @@ public class UsageRatingService {
         // FIXME: copy those info in chargeInstance instead of performing multiple queries
         TradingCountry country = userAccount.getBillingAccount().getTradingCountry();
         Long countryId = country.getId();
-        InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(cachedChargeInstance.getChargeTemplate()
-            .getInvoiceSubCategoryCode(), countryId);
+        
+        InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(chargeTemplate.getInvoiceSubCategoryCode(), countryId);
 
         if (invoiceSubcategoryCountry == null) {
             throw new BusinessException("No tax defined for countryId=" + countryId + " in invoice Sub-Category="
-                    + cachedChargeInstance.getChargeTemplate().getInvoiceSubCategoryCode());
+                    + chargeTemplate.getInvoiceSubCategoryCode());
         }
 
         boolean isExonerated = billingAccountService.isExonerated(userAccount.getBillingAccount());
@@ -199,18 +207,18 @@ public class UsageRatingService {
 
         walletOperation.setInvoiceSubCategory(invoiceSubcategoryCountry.getInvoiceSubCategory());
         walletOperation.setRatingUnitDescription(cachedChargeInstance.getRatingUnitDescription());
-        walletOperation.setInputUnitDescription(cachedChargeInstance.getChargeTemplate().getInputUnitDescription());
+        walletOperation.setInputUnitDescription(chargeTemplate.getInputUnitDescription());
         walletOperation.setSeller(userAccount.getBillingAccount().getCustomerAccount().getCustomer().getSeller());
 
         // we set here the wallet to the principal wallet but it will later be
         // overridden by charging algorithm
         walletOperation.setWallet(userAccount.getWallet());
-        walletOperation.setCode(cachedChargeInstance.getChargeTemplate().getCode());
-        walletOperation.setDescription(cachedChargeInstance.getDescription());
+        walletOperation.setBillingAccount(chargeInstance.getSubscription().getUserAccount().getBillingAccount());
+        walletOperation.setCode(chargeTemplate.getCode());
+        walletOperation.setDescription(catMessagesService.getMessageDescriptionByCodeAndLanguage(chargeTemplate.getCode(),userAccount.getBillingAccount().getTradingLanguage().getLanguageCode(),cachedChargeInstance.getDescription()));
         walletOperation.setQuantity(quantityToCharge);
 
-        walletOperation.setQuantity(NumberUtil.getInChargeUnit(walletOperation.getQuantity(), cachedChargeInstance.getChargeTemplate().getUnitMultiplicator(), cachedChargeInstance
-            .getChargeTemplate().getUnitNbDecimal(), cachedChargeInstance.getChargeTemplate().getRoundingMode()));
+        walletOperation.setQuantity(NumberUtil.getInChargeUnit(walletOperation.getQuantity(), chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(), chargeTemplate.getRoundingMode()));
         walletOperation.setTaxPercent(isExonerated ? BigDecimal.ZERO : tax.getPercent());
         walletOperation.setStartDate(null);
         walletOperation.setEndDate(null);
@@ -230,83 +238,81 @@ public class UsageRatingService {
      * @param cachedCharge Cached charge definition
      * @param reservation Is charge event part of reservation
      * @param isVirtual Is charge event a virtual operation? If so, no entities should be created/updated/persisted in DB
-     * @return if edr quantity fits partially in the counter, returns the remaining quantity
+     * @return if EDR quantity fits partially in the counter, returns the remaining quantity. NOTE: counter and EDR units might differ - translation is performed.
      * @throws BusinessException
      */
     private BigDecimal deduceCounter(EDR edr, CachedUsageChargeInstance cachedCharge, Reservation reservation, boolean isVirtual) throws BusinessException {
-        log.info("Deduce counter for key " + cachedCharge.getCounter().getCounterInstanceId());
+        log.info("Deduce counter for key " + cachedCharge.getCounterInstanceId());
 
-        BigDecimal deducedQuantity = BigDecimal.ZERO;
         BigDecimal deducedQuantityInEDRUnit = BigDecimal.ZERO;
-        CachedCounterInstance cachedCounterInstance = ratingCacheContainerProvider.getCounterInstance(cachedCharge.getCounter().getCounterInstanceId());
-        CachedCounterPeriod cachedCounterPeriod = cachedCounterInstance.getCounterPeriod(edr.getEventDate());
+
+        CachedCounterPeriod cachedCounterPeriod = ratingCacheContainerProvider.getCounterPeriod(cachedCharge.getCounterInstanceId(), edr.getEventDate());
 
         if (cachedCounterPeriod != null) {
             log.info("Found counter period in cache:" + cachedCounterPeriod);
+
+            // Need to create a counter period first
         } else {
 
             CounterPeriod counterPeriod = null;
             if (isVirtual) {
+
+                CachedCounterInstance cachedCounterInstance = ratingCacheContainerProvider.getCounterInstance(cachedCharge.getCounterInstanceId());
                 CounterTemplate counterTemplate = counterTemplateService.findByCode(cachedCounterInstance.getCode());
                 counterPeriod = counterInstanceService.instantiateCounterPeriod(counterTemplate, edr.getEventDate(), cachedCharge.getSubscriptionDate(), null);
 
             } else {
-                CounterInstance counterInstance = counterInstanceService.findById(cachedCounterInstance.getCounterInstanceId());
+                CounterInstance counterInstance = counterInstanceService.findById(cachedCharge.getCounterInstanceId());
                 UsageChargeInstance usageChargeInstance = usageChargeInstanceService.findById(cachedCharge.getId());
                 counterPeriod = counterInstanceService.createPeriod(counterInstance, edr.getEventDate(), cachedCharge.getSubscriptionDate(), usageChargeInstance);
-            }
-            if (counterPeriod != null) {
-                cachedCounterPeriod = new CachedCounterPeriod(counterPeriod, cachedCounterInstance);
-                cachedCounterInstance.getCounterPeriods().add(cachedCounterPeriod);
-
-                log.debug("created counter period in cache:{}", cachedCounterPeriod);
+                cachedCounterPeriod = ratingCacheContainerProvider.getCounterPeriod(cachedCharge.getCounterInstanceId(), counterPeriod.getId());
             }
         }
 
-        if (cachedCounterPeriod != null) {
-            BigDecimal initialValue = cachedCounterPeriod.getValue();
-            
-            synchronized (cachedCounterPeriod) {
-                BigDecimal countedValue = cachedCharge.getInChargeUnit(edr.getQuantity());
-                log.debug("value to deduce {} * {} = {} from current value {}", new Object[] { cachedCharge.getInChargeUnit(edr.getQuantity()),
-                        cachedCharge.getChargeTemplate().getUnitMultiplicator(), countedValue, cachedCounterPeriod.getValue() });
+        if (cachedCounterPeriod == null) {
+            return BigDecimal.ZERO;
+        }
 
-                if (cachedCounterPeriod.getLevel() == null) {
-                    deducedQuantity = countedValue;
-                } else if (cachedCounterPeriod.getValue().compareTo(BigDecimal.ZERO) > 0) {
-                    if (cachedCounterPeriod.getValue().compareTo(countedValue) < 0) {
-                        deducedQuantity = cachedCounterPeriod.getValue();
-                        cachedCounterPeriod.setValue(BigDecimal.ZERO);
-                        deducedQuantityInEDRUnit = cachedCharge.getInEDRUnit(deducedQuantity);
-                        log.debug("we deduced {} and set the counter period value to 0", deducedQuantity);
-                    } else {
-                        deducedQuantity = countedValue;
-                        cachedCounterPeriod.setValue(cachedCounterPeriod.getValue().subtract(countedValue));
-                        log.debug("we deduced {} and set the counter period value to {}", deducedQuantity, cachedCounterPeriod.getValue());
-                        deducedQuantityInEDRUnit = edr.getQuantity();
-                    }
-                    if (reservation != null && deducedQuantity.compareTo(BigDecimal.ZERO) > 0) {
-                        reservation.getCounterPeriodValues().put(cachedCounterPeriod.getCounterPeriodId(), deducedQuantity);
-                    }
+        CounterValueChangeInfo counterValueChangeInfo = null;
+        CachedUsageChargeTemplate chargeTemplate = ratingCacheContainerProvider.getUsageChargeTemplate(cachedCharge.getChargeTemplateId());
 
-                    // Save period value changes to DB unless it is a virtual operation
-                    if (!isVirtual) {
-                        // set the cache element to dirty so it is saved to DB when
-                        // shutdown the server
-                        // periodCache.setDbDirty(true);
-                        counterInstanceService.updateOrCreatePeriodValue(cachedCounterPeriod.getCounterPeriodId(), cachedCounterPeriod.getValue(), cachedCounterInstance.getCounterInstanceId(), edr.getEventDate(), cachedCharge.getSubscriptionDate(), cachedCharge.getId());
-                    }
+        synchronized (cachedCounterPeriod) {
+            BigDecimal deduceByQuantity = chargeTemplate.getInChargeUnit(edr.getQuantity());
+            log.debug("value to deduce {} * {} = {} from current value {}", edr.getQuantity(), chargeTemplate.getUnitMultiplicator(), deduceByQuantity,
+                cachedCounterPeriod.getValue());
+
+            counterValueChangeInfo = counterInstanceService.deduceCounterValue(cachedCharge.getCounterInstanceId(), cachedCounterPeriod.getId(), deduceByQuantity, isVirtual);
+
+            // Quantity is not tracked in counter (no initial value)
+            if (counterValueChangeInfo == null) {
+                deducedQuantityInEDRUnit = edr.getQuantity();
+
+            } else if (counterValueChangeInfo.getDeltaValue().compareTo(BigDecimal.ZERO) > 0) {
+
+                BigDecimal deducedQuantity = counterValueChangeInfo.getDeltaValue();
+
+                // Not everything was deduced
+                if (deducedQuantity.compareTo(deduceByQuantity) < 0) {
+                    deducedQuantityInEDRUnit = chargeTemplate.getInEDRUnit(deducedQuantity);
+                    // Everything was deduced
+                } else {
+                    deducedQuantityInEDRUnit = edr.getQuantity();
                 }
-
-                // put back the deduced quantity in charge unit
-
-                log.debug("in original EDR units, we deduced {}", deducedQuantityInEDRUnit);
+                if (reservation != null) {
+                    reservation.getCounterPeriodValues().put(cachedCounterPeriod.getId(), deducedQuantity);
+                }
             }
-            
-            List<Entry<String, BigDecimal>> counterPeriodEventLevels = cachedCounterPeriod.getMatchedNotificationLevels(initialValue, cachedCounterPeriod.getValue());
+
+            log.debug("in original EDR units, we deduced {}", deducedQuantityInEDRUnit);
+        }
+
+        // Fire notifications if counter value matches trigger value and counter value is tracked
+        if (counterValueChangeInfo != null) {
+            List<Entry<String, BigDecimal>> counterPeriodEventLevels = cachedCounterPeriod.getMatchedNotificationLevels(counterValueChangeInfo.getPreviousValue(),
+                counterValueChangeInfo.getNewValue());
 
             if (counterPeriodEventLevels != null && !counterPeriodEventLevels.isEmpty()) {
-                CounterPeriod counterPeriod = counterPeriodService.findById(cachedCounterPeriod.getCounterPeriodId());
+                CounterPeriod counterPeriod = counterPeriodService.findById(cachedCounterPeriod.getId());
                 triggerCounterPeriodEvent(counterPeriod, counterPeriodEventLevels);
             }
         }
@@ -341,7 +347,7 @@ public class UsageRatingService {
         boolean stopEDRRating = false;
         BigDecimal deducedQuantity = null;
 
-        if (cachedCharge.getCounter() != null) {
+        if (cachedCharge.getCounterInstanceId() != null) {
             // if the charge is associated to a counter, we decrement it. If decremented by the full quantity, rating is finished.
             // If decremented partially or none - proceed with another charge
             deducedQuantity = deduceCounter(edr, cachedCharge, null, isVirtual);
@@ -375,7 +381,9 @@ public class UsageRatingService {
             return stopEDRRating;
         }
 
-        for (CachedTriggeredEDR triggeredEDRCache : cachedCharge.getChargeTemplate().getEdrTemplates()) {
+        CachedUsageChargeTemplate chargeTemplate = ratingCacheContainerProvider.getUsageChargeTemplate(cachedCharge.getChargeTemplateId());
+        
+        for (CachedTriggeredEDR triggeredEDRCache : chargeTemplate.getEdrTemplates()) {
             if (triggeredEDRCache.getConditionEL() == null || "".equals(triggeredEDRCache.getConditionEL())
                     || matchExpression(triggeredEDRCache.getConditionEL(), edr, walletOperation)) {
                 if (triggeredEDRCache.getMeveoInstanceCode() == null) {
@@ -430,10 +438,22 @@ public class UsageRatingService {
         return stopEDRRating;
     }
 
+    /**
+     * Rate EDR and create wallet operation for reservation. If counter is used, and the quantity left in counter if less then quantity in EDR, EDR is updated with a left over quantity and the remaining quantity will
+     * be covered by a next charge or EDR will be marked as rejected.
+     * 
+     * @param reservation Reservation
+     * @param edr EDR to reserve
+     * @param charge Associated charge
+     * @return True EDR was rated fully - either no counter used, or quantity remaining in a counter was greater or equal to the quantity to rate
+     * @throws BusinessException
+     */
     private boolean reserveEDRonChargeAndCounters(Reservation reservation, EDR edr, CachedUsageChargeInstance charge) throws BusinessException {
         boolean stopEDRRating = false;
         BigDecimal deducedQuantity = null;
-        if (charge.getCounter() != null) {
+        if (charge.getCounterInstanceId() != null) {
+            // if the charge is associated to a counter, we decrement it. If decremented by the full quantity, rating is finished.
+            // If decremented partially or none - proceed with another charge
             deducedQuantity = deduceCounter(edr, charge, reservation, false);
             if (edr.getQuantity().compareTo(deducedQuantity) == 0) {
                 stopEDRRating = true;
@@ -476,6 +496,14 @@ public class UsageRatingService {
         return rateUsageWithinTransaction(edr, isVirtual);
     }
     
+    /**
+     * Rate EDR
+     * 
+     * @param edr EDR
+     * @param isVirtual Is this a virtual operation and no real counters or wallets should be affected (applies to quotes)
+     * @return A list of wallet operations corresponding to rated EDR
+     * @throws BusinessException
+     */
     @TransactionAttribute(TransactionAttributeType.MANDATORY)
     public List<WalletOperation> rateUsageWithinTransaction(EDR edr, boolean isVirtual) throws BusinessException {
         BigDecimal originalQuantity = edr.getQuantity();
@@ -504,7 +532,7 @@ public class UsageRatingService {
                     return null;
                 }
 
-                // TODO:order charges by priority and id
+                // Charges should be already ordered by priority and id (why id??) 
                 charges = ratingCacheContainerProvider.getUsageChargeInstances(edr.getSubscription().getId());
 
             } else {
@@ -512,18 +540,20 @@ public class UsageRatingService {
             }
 
             boolean foundPricePlan = true;
+            CachedUsageChargeTemplate chargeTemplate = null;
             // Find the first matching charge and rate it
             for (CachedUsageChargeInstance charge : charges) {
-                CachedUsageChargeTemplate templateCache = charge.getChargeTemplate();
-                log.trace("try templateCache=" + templateCache.toString());
+                
+                chargeTemplate =  ratingCacheContainerProvider.getUsageChargeTemplate(charge.getChargeTemplateId());
+                log.trace("try templateCache=" + chargeTemplate.toString());
 
                 try {
-                    if (!isChargeMatch(edr, templateCache.getCode(), templateCache.getFilterExpression(), templateCache.getFilter1(), templateCache.getFilter2(),
-                        templateCache.getFilter3(), templateCache.getFilter4())) {
+                    if (!isChargeMatch(edr, chargeTemplate.getCode(), chargeTemplate.getFilterExpression(), chargeTemplate.getFilter1(), chargeTemplate.getFilter2(),
+                        chargeTemplate.getFilter3(), chargeTemplate.getFilter4())) {
                         continue;
                     }
                 } catch (ChargeWitoutPricePlanException e) {
-                    log.debug("Charge {} was matched but does not contain a priceplan", templateCache.getCode());
+                    log.debug("Charge {} was matched but does not contain a priceplan", chargeTemplate.getCode());
                     foundPricePlan = false;
                     continue;
                 }
@@ -590,7 +620,7 @@ public class UsageRatingService {
 
                             if (chargeCode != null) {
                                 List<PricePlanMatrix> chargePricePlans = ratingCacheContainerProvider.getPricePlansByChargeCode(chargeCode);
-                                if (chargePricePlans == null || chargePricePlans.size() == 0) {
+                                if (chargePricePlans == null || chargePricePlans.isEmpty()) {
                                     throw new ChargeWitoutPricePlanException(chargeCode);
                                 }
                             }
@@ -603,6 +633,13 @@ public class UsageRatingService {
         return false;
     }
 
+    /**
+     * Rate EDR as reservation
+     * 
+     * @param edr EDR to rate
+     * @return Reservation
+     * @throws BusinessException
+     */
     @TransactionAttribute(TransactionAttributeType.MANDATORY)
     public Reservation reserveUsageWithinTransaction(EDR edr) throws BusinessException {
 
@@ -635,11 +672,11 @@ public class UsageRatingService {
                     em.persist(reservation);
 
                     for (CachedUsageChargeInstance charge : charges) {
-                        CachedUsageChargeTemplate templateCache = charge.getChargeTemplate();
-                        log.info("try templateCache=" + templateCache.toString());
+                        CachedUsageChargeTemplate chargeTemplate =  ratingCacheContainerProvider.getUsageChargeTemplate(charge.getChargeTemplateId());
+                        log.info("try templateCache=" + chargeTemplate.toString());
 
-                        if (isChargeMatch(edr, templateCache.getCode(), templateCache.getFilterExpression(), templateCache.getFilter1(), templateCache.getFilter2(),
-                            templateCache.getFilter3(), templateCache.getFilter4())) {
+                        if (isChargeMatch(edr, chargeTemplate.getCode(), chargeTemplate.getFilterExpression(), chargeTemplate.getFilter1(), chargeTemplate.getFilter2(),
+                            chargeTemplate.getFilter3(), chargeTemplate.getFilter4())) {
 
                             log.debug("found matchig charge inst : id=" + charge.getId());
                             edrIsRated = reserveEDRonChargeAndCounters(reservation, edr, charge);

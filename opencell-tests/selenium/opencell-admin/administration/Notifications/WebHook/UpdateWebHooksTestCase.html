@@ -12,14 +12,19 @@
 <tr><td rowspan="1" colspan="3">UpdateWebHooksTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>assertText</td>
-	<td>//a[contains(text(),'${CodeValue}')]</td>
+	<td>type</td>
+	<td>id=searchForm:code_txt</td>
 	<td>${CodeValue}</td>
 </tr>
 <tr>
-	<td>assertElementPresent</td>
-	<td>//a[contains(text(),'${CodeValue}')]</td>
+	<td>click</td>
+	<td>id=searchForm:buttonSearch</td>
 	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${CodeValue}')]</td>
+	<td>${CodeValue}</td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
@@ -104,7 +109,7 @@
 <tr>
 	<td>type</td>
 	<td>id=scriptInstancePopuppopupForm:searchField1</td>
-	<td></td>
+	<td>org.meveo.service.script.InvoiceXmlScript</td>
 </tr>
 <tr>
 	<td>click</td>

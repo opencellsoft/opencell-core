@@ -31,32 +31,123 @@ public class AccountHierarchyDto implements Serializable {
 	@Deprecated
 	private String customerId;
 	
+	/**
+	 * Customer Code
+	 */
 	private String customerCode;
+
+	/**
+	 * Seller Code
+	 */
 	private String sellerCode;
+
+	/**
+	 * SelCustomer Brand Code
+	 */
 	private String customerBrandCode;
+
+	/**
+	 * Custmork Code
+	 */
 	private String customerCategoryCode;
+
+	/**
+	 * Currency Code
+	 */
 	private String currencyCode;
+
+	/**
+	 * SeCountry Cideller Code
+	 */
 	private String countryCode;
+
+	/**
+	 * Language Code
+	 */
 	private String languageCode;
 
+
+	/**
+	 * Title Code
+	 */
 	private String titleCode;
+
+	/**
+	 * First Code
+	 */
 	private String firstName;
+
+	/**
+	 * Last Name
+	 */
 	private String lastName;
+
+	/**
+	 * Birth Date
+	 */
 	private Date birthDate;
+
+	/**
+	 * Phone Number
+	 */
 	private String phoneNumber;
 
+
+	/**
+	 * Billing Cycle Code
+	 */
 	private String billingCycleCode;
 
+	/**
+	 * Address 1
+	 */
 	private String address1;
+
+	/**
+	 * Address 2
+	 */
 	private String address2;
+
+	/**
+	 * Address 3
+	 */
 	private String address3;
+
+	/**
+	 * Zip Code
+	 */
 	private String zipCode;
+
+	/**
+	 * State
+	 */
 	private String state;
+
+	/**
+	 * City
+	 */
 	private String city;
+
+	/**
+	 * True if use prefix
+	 */
 	private Boolean usePrefix;
+
+	/**
+	 * Invoicing Threshold
+	 */
 	private BigDecimal invoicingThreshold;
-	private String discountPlan;
+
+	/**
+	 * Discount Plan
+	 */
+	private String discountPlan; 
+
+	/**
+	 * Custom Fiends
+	 */
 	private CustomFieldsDto customFields;
+
 
 	@XmlTransient
 	private int limit;

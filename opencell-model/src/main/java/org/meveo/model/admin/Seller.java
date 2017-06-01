@@ -178,6 +178,5 @@ public class Seller extends BusinessCFEntity {
 	@Override
 	public Class<? extends BusinessEntity> getParentEntityType() {
 		return Seller.class;
-	}
-
+	}    
 }

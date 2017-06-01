@@ -31,6 +31,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
+import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
@@ -56,6 +57,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
     @Inject
     private AccessService accessService;
 
+    @MeveoAudit
     @Override
     public void create(Subscription subscription) throws BusinessException {
         super.create(subscription);
@@ -70,6 +72,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
         }
     }
 
+    @MeveoAudit
     public void terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
 
@@ -81,6 +84,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
             terminationReason.isApplyTerminationCharges(), orderNumber);
     }
 
+    @MeveoAudit
     public void subscriptionCancellation(Subscription subscription, Date cancelationDate) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException,
             BusinessException {
         if (cancelationDate == null) {
@@ -95,6 +99,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
         update(subscription);
     }
 
+    @MeveoAudit
     public void subscriptionSuspension(Subscription subscription, Date suspensionDate) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException,
             BusinessException {
         if (suspensionDate == null) {
@@ -124,6 +129,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
         }
     }
 
+    @MeveoAudit
     public void subscriptionReactivation(Subscription subscription, Date reactivationDate) throws IncorrectSusbcriptionException,
             ElementNotResiliatedOrCanceledException, IncorrectServiceInstanceException, BusinessException {
 
@@ -162,6 +168,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
         }
     }
 
+    @MeveoAudit
     private void terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, boolean applyAgreement,
             boolean applyReimbursment, boolean applyTerminationCharges, String orderNumber) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
         if (terminationDate == null) {

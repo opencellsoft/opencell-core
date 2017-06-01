@@ -12,18 +12,23 @@
 <tr><td rowspan="1" colspan="3">UpdateJobInstancesTestCase</td></tr>
 </thead><tbody>
 <tr>
-	<td>assertText</td>
-	<td>//a[contains(text(),'org.meveo.service.script.MediationRoutingSub')]</td>
-	<td>org.meveo.service.script.MediationRoutingSub</td>
+	<td>type</td>
+	<td>id=searchForm:code_txt</td>
+	<td>org.meveo.service.script.InvoiceXmlScript</td>
 </tr>
 <tr>
-	<td>assertElementPresent</td>
-	<td>//a[contains(text(),'org.meveo.service.script.MediationRoutingSub')]</td>
+	<td>click</td>
+	<td>id=searchForm:buttonSearch</td>
 	<td></td>
 </tr>
 <tr>
+	<td>assertText</td>
+	<td>//a[contains(text(),'org.meveo.service.script.InvoiceXmlScript')]</td>
+	<td>org.meveo.service.script.InvoiceXmlScript</td>
+</tr>
+<tr>
 	<td>clickAndWait</td>
-	<td>//a[contains(text(),'org.meveo.service.script.MediationRoutingSub')]</td>
+	<td>//a[contains(text(),'org.meveo.service.script.InvoiceXmlScript')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -35,11 +40,6 @@
 	<td>assertElementPresent</td>
 	<td>${ScriptInstanceTextArea}</td>
 	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${ScriptInstanceTextArea}</td>
-	<td>${ScriptInstanceValue}</td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>

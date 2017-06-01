@@ -9,6 +9,7 @@
     </ui:define>
 
     <ui:define name="body">
+    	<p:importEnum type="org.meveo.cache.JobRunningStatusEnum" var="JobRunningStatusEnum" />
 		<h:form id="crumbmenuForm">
 			<p:breadCrumb homeDisplay="text" id="crumbmenu">
 				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
@@ -16,14 +17,13 @@
 			</p:breadCrumb>
 		</h:form>     
         <hftl:searchPanel label="#{messages['jobInstance.search']}" backingBean="#{jobInstanceListBean}" newButtonView="jobInstanceDetail" ajaxUpdateIds="timersBean_results_panel">
-            <h:panelGrid columns="2">
-                <p:outputLabel for="jobCategory" value="#{messages['timer.jobCategory']}" />
+            <hftl:decorateFormField label="#{messages['timer.jobCategory']}">
                 <p:selectOneMenu id="jobCategory" value="#{jobInstanceListBean.filters['jobCategoryEnum']}">
                     <f:selectItem itemLabel="" />
                     <f:selectItems value="#{jobInstanceListBean.jobCategoryEnumValues}" var="enumElement" itemValue="#{enumElement}" itemLabel="#{messages[enumElement.label]}" />
                     <f:converter converterId="enumConverter" />
                 </p:selectOneMenu>
-            </h:panelGrid>
+            </hftl:decorateFormField>
         </hftl:searchPanel>
 
         <h:panelGroup id="resultsDatatable">
@@ -37,10 +37,11 @@
                 </p:column>
                 <hftl:column label="#{messages['timer.jobName']}" field="jobTemplate" />
                 <hftl:column label="#{messages['job.category']}" field="jobCategoryEnum" />
-                <hftl:column label="#{messages['timer.schedule']}" field="timerEntity." />
+                <hftl:column label="#{messages['timer.schedule']}" field="timerEntity.code" />
                 <hftl:column label="#{messages['timer.active']}" field="active" isMessage="true" />
                 <p:column headerText="#{messages['timer.isRunning']}">
-                    <h:outputText styleClass="ui-icon ui-icon-circle-check" rendered="#{jobInstanceListBean.isTimerRunning(entity)}" />
+                    <h:outputText styleClass="ui-icon ui-icon-circle-check" title="#{messages['timer.isRunning.this']}" rendered="#{jobInstanceListBean.isTimerRunning(entity)== JobRunningStatusEnum.RUNNING_THIS}" />
+                    <h:outputText styleClass="ui-icon ui-icon-circle-check" title="#{messages['timer.isRunning.other']}" rendered="#{jobInstanceListBean.isTimerRunning(entity)== JobRunningStatusEnum.RUNNING_THIS}" />
                 </p:column>
                 <hftl:actionsColumn permission="#{currentUser.hasRole('administrationManagement')}" renderEnableLink="true" />
             </hftl:dataList>

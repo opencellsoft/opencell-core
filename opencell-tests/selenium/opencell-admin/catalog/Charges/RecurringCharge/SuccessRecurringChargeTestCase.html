@@ -173,7 +173,7 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>${SubcategorySelect2}</td>
+	<td>//li[@id='reccuringChargeId:tabView:invoiceSubCategorySelectedId_1']</td>
 	<td></td>
 </tr>
 <tr>
@@ -193,13 +193,13 @@
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${ChooseTriggeredEDR}</td>
-	<td>TR-EDR1</td>
+	<td>//div[18]/div/div/div/ul/li[2]</td>
+	<td>TRIGGER_SELENIUM</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${ChooseTriggeredEDR}</td>
-	<td>TR-EDR1</td>
+	<td>//div[@id='reccuringChargeId:tabView:edrTemplates_list']/div/ul/li[2]</td>
+	<td>TRIGGER_SELENIUM</td>
 </tr>
 <tr>
 	<td>click</td>
@@ -245,11 +245,6 @@
 	<td>clickAndWait</td>
 	<td>${backButton}</td>
 	<td></td>
-</tr>
-<tr>
-	<td>assertText</td>
-	<td>//a[contains(text(),'${Code}')]</td>
-	<td>${Code}</td>
 </tr>
 </tbody></table>
 </body>

@@ -172,7 +172,7 @@ public class ReflectionUtils {
         Field field = FieldUtils.getField(object.getClass(), fieldName, true);
         return field != null;
     }
-    
+
     /**
      * Check if class has a field
      * 
@@ -224,7 +224,7 @@ public class ReflectionUtils {
         Class<?> entityClass = null;
         if (!StringUtils.isBlank(className)) {
             Reflections reflections = new Reflections("org.meveo");
-            if (parentClass.getSimpleName().equals(className)){
+            if (parentClass.getSimpleName().equals(className)) {
                 return parentClass;
             }
             Set<Class<?>> classes = reflections.getSubTypesOf(parentClass);
@@ -236,6 +236,21 @@ public class ReflectionUtils {
             }
         }
         return entityClass;
+    }
+
+    /**
+     * Find subclasses of a certain class
+     * 
+     * @param parentClass Parent or interface class
+     * @return A list of class objects
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public static Set<Class<?>> getSubclasses(Class parentClass) {
+
+        Reflections reflections = new Reflections("org.meveo");
+        Set<Class<?>> classes = reflections.getSubTypesOf(parentClass);
+
+        return classes;
     }
 
     /**

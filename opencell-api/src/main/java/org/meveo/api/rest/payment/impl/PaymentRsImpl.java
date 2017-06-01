@@ -5,7 +5,6 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.ws.rs.QueryParam;
 
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.payment.PaymentDto;
@@ -32,14 +31,8 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
 
         try {
             paymentApi.createPayment(postData);
-        } catch (BusinessException e) {
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-            log.error("error occurred while creating payment ", e);
         } catch (Exception e) {
-            result.setStatus(ActionStatusEnum.FAIL);
-            result.setMessage(e.getMessage());
-            log.error("error generated while creating payment ", e);
+            processException(e, result);
         }
 
         return result;
@@ -54,8 +47,7 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
             result.setCustomerPaymentDtoList(paymentApi.getPaymentList(customerAccountCode));
             result.setBalance(paymentApi.getBalance(customerAccountCode));
         } catch (Exception e) {
-            result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
-            result.getActionStatus().setMessage(e.getMessage());
+            processException(e, result.getActionStatus());
         }
 
         return result;

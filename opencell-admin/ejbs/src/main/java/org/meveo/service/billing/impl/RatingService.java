@@ -235,8 +235,10 @@ public class RatingService extends BusinessService<WalletOperation>{
                 walletOperation.setInvoicingDate(chargeInstance.getInvoicingCalendar().nextCalendarDate(walletOperation.getOperationDate()));
             }
         }
-		walletOperation.setCode(chargeTemplate.getCode());
-        walletOperation.setDescription(catMessagesService.getMessageDescription(chargeInstance!=null?chargeInstance:chargeTemplate, languageCode));
+        
+		walletOperation.setCode(chargeTemplate.getCode());		
+		walletOperation.setDescription(catMessagesService.getMessageDescriptionByCodeAndLanguage(
+				chargeTemplate.getCode(), languageCode, chargeInstance.getDescription()));      
         walletOperation.setTaxPercent(isExonerated?BigDecimal.ZERO:taxPercent);
 		walletOperation.setCurrency(tCurrency.getCurrency());
 		walletOperation.setStartDate(startdate);
@@ -251,6 +253,9 @@ public class RatingService extends BusinessService<WalletOperation>{
         }
 		// TODO:check that setting the principal wallet at this stage is correct
 		walletOperation.setWallet(userAccount.getWallet());
+		if(chargeInstance.getSubscription() != null) {
+			walletOperation.setBillingAccount(chargeInstance.getSubscription().getUserAccount().getBillingAccount());
+		}
 
 		BigDecimal unitPriceWithoutTax = amountWithoutTax;
 		BigDecimal unitPriceWithTax = null;
@@ -452,11 +457,11 @@ public class RatingService extends BusinessService<WalletOperation>{
 				HashMap<String, Object> context = new HashMap<String, Object>();
 				context.put(Script.CONTEXT_ENTITY, bareWalletOperation);	
 				script.execute(context);
-			} catch (Exception e) {
-				log.error("Error when run script {}, user {}",ratePrice.getScriptInstance().getCode());
-				throw new BusinessException("failed when run script "+ratePrice.getScriptInstance().getCode()+" ,info "+e.getMessage());
-			}
-		}
+            } catch (Exception e) {
+                log.error("Error when run script {}", ratePrice.getScriptInstance().getCode(), e);
+                throw new BusinessException("failed when run script " + ratePrice.getScriptInstance().getCode() + ", info " + e.getMessage());
+            }
+        }
 	}
 
 	

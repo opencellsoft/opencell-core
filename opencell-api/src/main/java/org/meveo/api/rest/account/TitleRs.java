@@ -23,26 +23,61 @@ import org.meveo.api.rest.IBaseRs;
 
 public interface TitleRs extends IBaseRs {
 
+    /**
+     * Create a new title
+     * 
+     * @param postData The title's data
+     * @return Request processing status
+     */
     @POST
     @Path("/")
     ActionStatus create(TitleDto postData);
 
+    /**
+     * Search for a title with a given code 
+     * 
+     * @param titleCode The title's code
+     * @return A title's data
+     */
     @GET
     @Path("/")
     TitleResponseDto find(@QueryParam("titleCode") String titleCode);
 
+    /**
+     * List titles 
+     * 
+     * @return A list of titles
+     */
     @GET
     @Path("/list")
     TitlesResponseDto list();
 
+    /**
+     * Update an existing title
+     * 
+     * @param postData The title's data
+     * @return Request processing status
+     */
     @PUT
     @Path("/")
     ActionStatus update(TitleDto postData);
 
+    /**
+     * Remove an existing title with a given code 
+     * 
+     * @param titleCode The title's code
+     * @return Request processing status
+     */
     @DELETE
     @Path("/{titleCode}")
     public ActionStatus remove(@PathParam("titleCode") String titleCode);
 
+    /**
+     * Create new or update an existing title
+     * 
+     * @param postData The title's data
+     * @return Request processing status
+     */
     @POST
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(TitleDto postData);

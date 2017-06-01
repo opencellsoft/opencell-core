@@ -1,5 +1,6 @@
 package org.meveo.api.job;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import javax.ejb.Stateless;
@@ -87,12 +88,6 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
             customFieldTemplateService.createMissingTemplates(jobInstance, jobCustomFields.values());
         }
 
-        try {
-            jobInstanceService.create(jobInstance);
-        } catch (BusinessException e1) {
-            throw new MeveoApiException(e1.getMessage());
-        }
-
         // Populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), jobInstance, true);
@@ -102,6 +97,12 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
+        }
+
+        try {
+            jobInstanceService.create(jobInstance);
+        } catch (BusinessException e1) {
+            throw new MeveoApiException(e1.getMessage());
         }
 
         return jobInstance;
@@ -164,8 +165,6 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
             customFieldTemplateService.createMissingTemplates(jobInstance, jobCustomFields.values());
         }
 
-        jobInstance = jobInstanceService.update(jobInstance);
-
         // Populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), jobInstance, false);
@@ -176,6 +175,8 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+
+        jobInstance = jobInstanceService.update(jobInstance);
 
         return jobInstance;
     }
@@ -211,7 +212,7 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
             handleMissingParameters();
         }
 
-        JobInstance jobInstance = jobInstanceService.findByCode(code);
+        JobInstance jobInstance = jobInstanceService.findByCode(code, Arrays.asList("timerEntity"));
         if (jobInstance == null) {
             throw new EntityDoesNotExistsException(JobInstance.class, code);
         }

@@ -773,7 +773,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                 conversation.isTransient();
                 result = em;
             } catch (Exception e) {
-    }
+            }
         }
 
         // log.debug("em.txKey={}, em.hashCode={}", txReg.getTransactionKey(),

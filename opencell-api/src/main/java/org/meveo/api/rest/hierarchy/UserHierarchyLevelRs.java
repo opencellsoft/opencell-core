@@ -25,10 +25,22 @@ import org.meveo.api.rest.IBaseRs;
 
 public interface UserHierarchyLevelRs extends IBaseRs {
 
+    /**
+     * Create a new user hierarchy level
+     * 
+     * @param postData The user hierarchy level's data
+     * @return Request processing status
+     */
     @POST
     @Path("/")
     ActionStatus create(UserHierarchyLevelDto postData);
 
+    /**
+     * Update an existing user hierarchy level
+     * 
+     * @param postData The user hierarchy level's data
+     * @return Request processing status
+     */
     @PUT
     @Path("/")
     ActionStatus update(UserHierarchyLevelDto postData);
@@ -43,10 +55,22 @@ public interface UserHierarchyLevelRs extends IBaseRs {
     @Path("/")
     UserHierarchyLevelResponseDto find(@QueryParam("hierarchyLevelCode") String hierarchyLevelCode);
 
+    /**
+     * Remove an existing hierarchy level with a given code 
+     * 
+     * @param hierarchyLevelCode The hierarchy level's code
+     * @return Request processing status
+     */
     @DELETE
     @Path("/{hierarchyLevelCode}")
     ActionStatus remove(@PathParam("hierarchyLevelCode") String hierarchyLevelCode);
     
+    /**
+     * Create new or update an existing user hierarchy level with a given code
+     * 
+     * @param postData The user hierarchy level's data
+     * @return Request processing status
+     */
     @POST
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(UserHierarchyLevelDto postData);

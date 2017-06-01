@@ -100,7 +100,7 @@ public class CurrentUserProvider {
             } catch (NoResultException e) {
 
                 user = new User();
-                user.setUserName(currentUser.getUserName());
+                user.setUserName(currentUser.getUserName().toUpperCase());
                 if (currentUser.getFullName() != null) {
                     int spacePos = currentUser.getFullName().indexOf(' ');
                     if (spacePos > 0) {
@@ -112,11 +112,8 @@ public class CurrentUserProvider {
                 }
                 user.updateAudit(currentUser);
                 em.persist(user);
+                em.flush();
                 log.info("A new application user was registered with username {} and name {}", user.getUserName(), user.getName().getFullName());
-            }
-
-            if (user != null) {
-                em.detach(user);
             }
 
         } catch (Exception e) {
@@ -133,8 +130,8 @@ public class CurrentUserProvider {
     private Map<String, Set<String>> getRoleToPermissionMapping() {
 
         synchronized (this) {
-            if (roleToPermissionMapping == null) {
-                roleToPermissionMapping = new HashMap<>();
+            if (CurrentUserProvider.roleToPermissionMapping == null) {
+                CurrentUserProvider.roleToPermissionMapping = new HashMap<>();
 
                 try {
                     List<Role> userRoles = em.createNamedQuery("Role.getAllRoles", Role.class).getResultList();
@@ -145,7 +142,7 @@ public class CurrentUserProvider {
                             rolePermissions.add(permission.getPermission());
                         }
 
-                        roleToPermissionMapping.put(role.getName(), rolePermissions);
+                        CurrentUserProvider.roleToPermissionMapping.put(role.getName(), rolePermissions);
                     }
 
                 } catch (Exception e) {
@@ -153,7 +150,7 @@ public class CurrentUserProvider {
                 }
             }
 
-            return roleToPermissionMapping;
+            return CurrentUserProvider.roleToPermissionMapping;
         }
     }
 
@@ -161,7 +158,7 @@ public class CurrentUserProvider {
      * Invalidate cached role to permission mapping (usually after role save/update event)
      */
     public void invalidateRoleToPermissionMapping() {
-        roleToPermissionMapping = null;
+        CurrentUserProvider.roleToPermissionMapping = null;
     }
 
     /**

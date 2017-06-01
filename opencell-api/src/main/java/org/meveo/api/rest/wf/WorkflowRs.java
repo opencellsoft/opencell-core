@@ -24,38 +24,96 @@ import org.meveo.api.rest.IBaseRs;
 
 public interface WorkflowRs extends IBaseRs {
 
+    /**
+     * Create a new workflow
+     * 
+     * @param workflowDto The workflow's data
+     * @return Request processing status
+     */
     @POST
     @Path("/")
     ActionStatus create(WorkflowDto workflowDto);
     
+    /**
+     * Update an existing workflow
+     * 
+     * @param workflowDto The workflow's data
+     * @return Request processing status
+     */
     @PUT
     @Path("/")
     ActionStatus update(WorkflowDto workflowDto);
 
+    /**
+     * Find a workflow with a given code 
+     * 
+     * @param code The workflow's code
+     * @return
+     */
     @GET
     @Path("/")
     WorkflowResponseDto find(@QueryParam("code") String code);
 
+    /**
+     * Remove an existing workflow with a given code 
+     * 
+     * @param code The workflow's code
+     * @return Request processing status
+     */
     @DELETE
     @Path("/{code}")
     ActionStatus remove(@PathParam("code") String code);
 
+    /**
+     * List of workflows.
+     * 
+     * @return A list of workflow
+     */
     @GET
     @Path("/list")
     WorkflowsResponseDto list();
 
+    /**
+     * Create new or update an existing workflow with a given code
+     * 
+     * @param workflowDto The workflow's data
+     * @return Request processing status
+     */
     @POST
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(WorkflowDto workflowDto);
     
+    /**
+     * Execute a workflow
+     * 
+     * @param baseEntityName
+     * @param entityInstanceCode
+     * @param workflowCode
+     * @return Request processing status
+     */
     @POST
     @Path("/execute")
     ActionStatus execute(@QueryParam("baseEntityName") String baseEntityName, @QueryParam("entityInstanceCode") String entityInstanceCode,@QueryParam("workflowCode") String workflowCode);
     
+    /**
+     * Find a workflow by entity
+     * 
+     * @param baseEntityName
+     * @return Request processing status
+     */
     @GET
     @Path("/findByEntity")
     WorkflowsResponseDto findByEntity(@QueryParam("baseEntityName") String baseEntityName);
     
+    /**
+     * Find workflow history
+     * 
+     * @param entityInstanceCode
+     * @param workflowCode
+     * @param fromStatus
+     * @param toStatus
+     * @return Request processing status
+     */
     @GET
     @Path("/history")
     WorkflowHistoryResponseDto findHistory(@QueryParam("entityInstanceCode") String entityInstanceCode,@QueryParam("workflowCode") String workflowCode,

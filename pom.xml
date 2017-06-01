@@ -4,7 +4,7 @@
 	<groupId>com.opencellsoft</groupId>
 	<artifactId>opencell</artifactId>
 	<packaging>pom</packaging>
-	<version>4.5</version>
+	<version>4.5.1</version>
 	<name>Opencell Parent Project</name>
 
 	<modules>
@@ -15,7 +15,7 @@
 		<module>opencell-admin</module>
 		<module>opencell-api</module>
 		<module>opencell-client</module>
-	</modules>
+  </modules>
 
 	<properties>
 		<!-- Env set to dev, so that profile dev would be the default and also env value is used in copy some files for a specific configuration (e.g. import.sql) -->

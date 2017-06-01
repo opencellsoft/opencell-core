@@ -40,7 +40,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
-import org.meveo.service.base.MultilanguageEntityService;
+import org.meveo.service.base.AuditableMultilanguageService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 
 /**
@@ -48,14 +48,14 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
  * 
  */
 @Stateless
-public class OfferTemplateService extends MultilanguageEntityService<OfferTemplate>{
+public class OfferTemplateService extends AuditableMultilanguageService<OfferTemplate> {
 
 	@Inject
 	private CustomFieldInstanceService customFieldInstanceService;
 
 	@Inject
 	private CatalogHierarchyBuilderService catalogHierarchyBuilderService;
-
+	
 	@SuppressWarnings("unchecked")
 	public List<OfferTemplate> findByServiceTemplate(EntityManager em, ServiceTemplate serviceTemplate) {
 		Query query = em.createQuery("FROM OfferTemplate t WHERE :serviceTemplate MEMBER OF t.serviceTemplates");

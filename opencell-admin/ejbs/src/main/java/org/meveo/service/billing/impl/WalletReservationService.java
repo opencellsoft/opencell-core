@@ -161,12 +161,12 @@ public class WalletReservationService extends PersistenceService<WalletReservati
 
 	public BigDecimal getSpentCredit(Seller seller, OfferTemplate offerTemplate,
 			UserAccount userAccount, Date subscriptionDate, String param1, String param2, String param3,
-			BigDecimal quantity) throws BusinessException {
+			BigDecimal quantity,boolean isWithTax) throws BusinessException {
 
 		BigDecimal servicesSum = computeServicesSum(offerTemplate, userAccount, subscriptionDate, param1, param2,
-				param3, quantity);
+				param3, quantity,isWithTax);
 
-		BigDecimal ratedAmount = computeRatedAmount(seller, userAccount, subscriptionDate);
+		BigDecimal ratedAmount = computeRatedAmount(seller, userAccount, subscriptionDate,isWithTax);
 
 		BigDecimal spentCredit = servicesSum.add(ratedAmount);
 
@@ -174,7 +174,7 @@ public class WalletReservationService extends PersistenceService<WalletReservati
 	}
 
 	public BigDecimal computeRatedAmount(Seller seller, UserAccount userAccount,
-			Date subscriptionDate) {
+			Date subscriptionDate,boolean isWithTax) {
 		Date startDate = null;
 		Date endDate = null;
 
@@ -184,19 +184,19 @@ public class WalletReservationService extends PersistenceService<WalletReservati
 		endDate = cal.nextCalendarDate(subscriptionDate);
 
 		BigDecimal ratedAmount = walletOperationService.getBalanceAmount(seller, null, null, null,
-				userAccount, startDate, endDate, false, 1);
+				userAccount, startDate, endDate, isWithTax, 1);
 
 		return ratedAmount;
 	}
 
 	public BigDecimal computeServicesSum(OfferTemplate offerTemplate, UserAccount userAccount, Date subscriptionDate,
-			String param1, String param2, String param3, BigDecimal quantity) throws BusinessException {
+			String param1, String param2, String param3, BigDecimal quantity,boolean isWithTax) throws BusinessException {
 		BigDecimal servicesSum = new BigDecimal(0);
 
 		for (OfferServiceTemplate st : offerTemplate.getOfferServiceTemplates()) {
 			servicesSum = servicesSum.add(realtimeChargingService.getActivationServicePrice(
 					userAccount.getBillingAccount(), st.getServiceTemplate(), subscriptionDate, offerTemplate.getCode(), quantity, param1,
-					param2, param3, true));
+					param2, param3, isWithTax));
 		}
 
 		return servicesSum;

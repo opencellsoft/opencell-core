@@ -56,15 +56,39 @@ public interface AccountWs extends IBaseWs {
 
     // customer
 
+    /**
+     * Create a new customer
+     * 
+     * @param customer The customer's data
+     * @return Request processing status
+     */
     @WebMethod
     ActionStatus createCustomer(@WebParam(name = "customer") CustomerDto postData);
 
+    /**
+     * Update an existing customer
+     * 
+     * @param postData The customer's data
+     * @return Request processing status
+     */
     @WebMethod
     ActionStatus updateCustomer(@WebParam(name = "customer") CustomerDto postData);
 
+    /**
+     * Search for a customer with a given code 
+     * 
+     * @param customerCode The customer's code
+     * @return The customer's data
+     */
     @WebMethod
     GetCustomerResponseDto findCustomer(@WebParam(name = "customerCode") String customerCode);
 
+    /**
+     * Remove customer with a given code 
+     * 
+     * @param customerCode The customer's code
+     * @return Request processing status
+     */
     @WebMethod
     ActionStatus removeCustomer(@WebParam(name = "customerCode") String customerCode);
 
@@ -78,72 +102,187 @@ public interface AccountWs extends IBaseWs {
      * @return
      */
     @WebMethod
-    CustomersResponseDto listCustomerWithFilter(@WebParam(name = "customer") CustomerDto postData);
+	CustomersResponseDto listCustomerWithFilter(@WebParam(name = "customer") CustomerDto postData,
+			@WebParam(name = "firstRow") Integer firstRow, @WebParam(name = "numberOfRows") Integer numberOfRows);
 
     // customer brand
 
+    /**
+     * Create a new customer brand
+     * 
+     * @param postData The customer brand's data
+     * @return Request processing status
+     */
     @WebMethod
     ActionStatus createCustomerBrand(@WebParam(name = "customerBrand") CustomerBrandDto postData);
 
+    /**
+     * Update an existing customer brand
+     * 
+     * @param postData The customer brand's data
+     * @return Request processing status
+     */
     @WebMethod
     ActionStatus updateCustomerBrand(@WebParam(name = "customerBrand") CustomerBrandDto postData);
 
+    /**
+     * Remove existing customer brand with a given brand code 
+     * 
+     * @param brandCode The brand's code
+     * @return Request processing status
+     */
     @WebMethod
     ActionStatus removeCustomerBrand(@WebParam(name = "brandCode") String brandCode);
 
+    /**
+     * Create new or update an existing customer brand
+     * 
+     * @param postData The customer brand's data
+     * @return Request processing status
+     */
     @WebMethod
     ActionStatus createOrUpdateCustomerBrand(@WebParam(name = "customerBrand") CustomerBrandDto postData);
 
     // customer category
 
+    /**
+     * Create a new customer category
+     * 
+     * @param postData The customer category's data
+     * @return Request processing status
+     */
     @WebMethod
     ActionStatus createCustomerCategory(@WebParam(name = "customerCategory") CustomerCategoryDto postData);
 
+    /**
+     * Update an existing customer category
+     * 
+     * @param postData The customer category's data
+     * @return Request processing status
+     */
     @WebMethod
     ActionStatus updateCustomerCategory(@WebParam(name = "customerCategory") CustomerCategoryDto postData);
 
+    /**
+     * Create new or update an existing customer category
+     * 
+     * @param postData The customer category's data
+     * @return Request processing status
+     */
     @WebMethod
     ActionStatus createOrUpdateCustomerCategory(@WebParam(name = "customerCategory") CustomerCategoryDto postData);
 
+    /**
+     * Remove an existing customer category with a given category code 
+     * 
+     * @param categoryCode The category's code
+     * @return Request processing status
+     */
     @WebMethod
     ActionStatus removeCustomerCategory(@WebParam(name = "categoryCode") String categoryCode);
 
     // customer account
 
+    /**
+     * Create a new customer account
+     * 
+     * @param postData The customer account's data
+     * @return Request processing status
+     */
     @WebMethod
     ActionStatus createCustomerAccount(@WebParam(name = "customerAccount") CustomerAccountDto postData);
 
+    /**
+     * Update an existing customer account
+     * 
+     * @param postData The customer account's data
+     * @return Request processing status
+     */
     @WebMethod
     ActionStatus updateCustomerAccount(@WebParam(name = "customerAccount") CustomerAccountDto postData);
 
+    /**
+     * Search for a customer account with a given code.
+     * 
+     * @param customerAccountCode The customer account's code
+     * @return
+     */
     @WebMethod
     GetCustomerAccountResponseDto findCustomerAccount(@WebParam(name = "customerAccountCode") String customerAccountCode, @WebParam( name = "calculateBalances") Boolean calculateBalances);
 
+    /**
+     * Remove customerAccount with a given code 
+     * 
+     * @param customerAccountCode The customer account's code
+     * @return Request processing status
+     */
     @WebMethod
     ActionStatus removeCustomerAccount(@WebParam(name = "customerAccountCode") String customerAccountCode);
 
+    /**
+     * List CustomerAccount filtered by customerCode.
+     * 
+     * @param customerCode The customer account's code
+     * @return
+     */
     @WebMethod
     CustomerAccountsResponseDto listByCustomer(@WebParam(name = "customerCode") String customerCode);
 
     // credit category
 
+    /**
+     * Create a new credit category
+     * 
+     * @param postData The credit category's data
+     * @return Request processing status
+     */
     @WebMethod
     ActionStatus createCreditCategory(@WebParam(name = "creditCategory") CreditCategoryDto postData);
 
+    /**
+     * Update an existing credit category
+     * 
+     * @param postData The customer account's data
+     * @return Request processing status
+     */
     @WebMethod
     ActionStatus updateCreditCategory(@WebParam(name = "creditCategory") CreditCategoryDto postData);
 
+    /**
+     * Create a new credit category
+     * 
+     * @param postData The credit category's data
+     * @return Request processing status
+     */
     @WebMethod
     ActionStatus createOrUpdateCreditCategory(@WebParam(name = "creditCategory") CreditCategoryDto postData);
 
+    /**
+     * Remove credit category with a given code
+     * 
+     * @param creditCategoryCode The credit category's code
+     * @return Request processing status
+     */
     @WebMethod
     ActionStatus removeCreditCategory(@WebParam(name = "creditCategoryCode") String creditCategoryCode);
 
+    /**
+     * Create new or update existing customer account
+     * 
+     * @param postData The customer account's data
+     * @return Request processing status
+     */
     @WebMethod
     ActionStatus createOrUpdateCustomerAccount(@WebParam(name = "customerAccount") CustomerAccountDto postData);
 
     // billing account
 
+    /**
+     * Create a new billing account
+     * 
+     * @param posteData Billing account data
+     * @return Request processing status
+     */
     @WebMethod
     ActionStatus createBillingAccount(@WebParam(name = "billingAccount") BillingAccountDto postData);
 

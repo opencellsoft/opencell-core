@@ -28,6 +28,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -50,10 +51,13 @@ import org.meveo.model.billing.Subscription;
 @Entity
 @ObservableEntity
 @CustomFieldEntity(cftCodePrefix = "ACC")
-@ExportIdentifier({ "accessUserId", "subscription.code"})
+@ExportIdentifier({ "accessUserId", "subscription.code" })
 @Table(name = "MEDINA_ACCESS", uniqueConstraints = { @UniqueConstraint(columnNames = { "ACCES_USER_ID", "SUBSCRIPTION_ID" }) })
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "MEDINA_ACCESS_SEQ"), })
-@NamedQueries({ @NamedQuery(name = "Access.getAccessesForCache", query = "SELECT a from Access a left join fetch a.subscription where a.disabled=false order by a.accessUserId") })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "MEDINA_ACCESS_SEQ"), })
+@NamedQueries({
+        @NamedQuery(name = "Access.getAccessesForCache", query = "SELECT a from Access a left join fetch a.subscription where a.disabled=false order by a.accessUserId", hints = {
+                @QueryHint(name = "org.hibernate.readOnly", value = "true") }) })
 public class Access extends EnableEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;
@@ -124,14 +128,14 @@ public class Access extends EnableEntity implements ICustomFieldEntity {
     public void setUuid(String uuid) {
         this.uuid = uuid;
     }
-    
+
     @Override
     public String clearUuid() {
         String oldUuid = uuid;
         uuid = UUID.randomUUID().toString();
         return oldUuid;
     }
-    
+
     @Override
     public boolean equals(Object obj) {
 
@@ -160,6 +164,6 @@ public class Access extends EnableEntity implements ICustomFieldEntity {
 
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
-        return new ICustomFieldEntity[]{subscription};
+        return new ICustomFieldEntity[] { subscription };
     }
 }

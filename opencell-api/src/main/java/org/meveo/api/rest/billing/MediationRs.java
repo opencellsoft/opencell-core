@@ -21,29 +21,29 @@ public interface MediationRs extends IBaseRs {
     /**
      * Accepts a list of CDR line. This CDR is parsed and created as EDR. CDR is same format use in mediation job
      * 
-     * @param postData
-     * @return
+     * @param postData String of CDR
+     * @return Request processing status 
      */
     @POST
     @Path("/registerCdrList")
     ActionStatus registerCdrList(CdrListDto postData);
 
     /**
-     * Same as registerCDR, but at the same process rate the edr created
+     * Same as registerCdrList, but at the same process rate the EDR created
      * 
-     * @param cdr
-     * @return
+     * @param cdr String of CDR
+     * @return Request processing status 
      */
     @POST
     @Path("/chargeCdr")
     ActionStatus chargeCdr(String cdr);
 
     /**
-     * Allows the user to reserve a cdr, this will create a new reservation entity attached to a wallet operation. A reservation has expiration limit save in the provider entity
+     * Allows the user to reserve a CDR, this will create a new reservation entity attached to a wallet operation. A reservation has expiration limit save in the provider entity
      * (PREPAID_RESRV_DELAY_MS)
      * 
-     * @param cdr
-     * @return
+     * @param cdr String of CDR
+     * @return Available quantity and reservationID is returned
      */
     @POST
     @Path("/reserveCdr")
@@ -52,8 +52,8 @@ public interface MediationRs extends IBaseRs {
     /**
      * Confirms the reservation
      * 
-     * @param reservationDto
-     * @return
+     * @param reservationDto Prepaid reservation's data
+     * @return Request processing status 
      */
     @POST
     @Path("/confirmReservation")
@@ -62,8 +62,8 @@ public interface MediationRs extends IBaseRs {
     /**
      * Cancels the reservation
      * 
-     * @param reservationDto
-     * @return
+     * @param reservationDto Prepaid reservation's data
+     * @return Request processing status 
      */
     @POST
     @Path("/cancelReservation")

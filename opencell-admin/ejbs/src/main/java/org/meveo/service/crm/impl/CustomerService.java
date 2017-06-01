@@ -57,13 +57,35 @@ public class CustomerService extends AccountService<Customer> {
 			return null;
 		}
 	}
-
-	@SuppressWarnings("unchecked")
-	public List<Customer> filter(String customerCode, CustomerCategory customerCategory, Seller seller,
+	
+	public Long countFilter(String customerCode, CustomerCategory customerCategory, Seller seller,
 			CustomerBrand brand) {
 		QueryBuilder qb = new QueryBuilder(Customer.class, "c");
-		qb.addCriterion("code", "=", customerCode, true);
+		filter(qb, customerCode, customerCategory, seller, brand);
+		Long recordCount = (Long) qb.getCountQuery(getEntityManager()).getSingleResult();
+		return recordCount;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Customer> filter(String customerCode, CustomerCategory customerCategory, Seller seller,
+			CustomerBrand brand, Integer firstRow, Integer numberOfRows) {
+		QueryBuilder qb = new QueryBuilder(Customer.class, "c");
+		Query query = filter(qb, customerCode, customerCategory, seller, brand);
+		if (firstRow != null && numberOfRows != null) {
+			qb.applyPagination(query, firstRow, numberOfRows);
+		}
 		
+		try {
+			return (List<Customer>) query.getResultList();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
+	private Query filter(QueryBuilder qb, String customerCode, CustomerCategory customerCategory, Seller seller,
+			CustomerBrand brand) {
+		
+		qb.addCriterion("code", "=", customerCode, true);
 
 		if (customerCategory != null) {
 			qb.addCriterionEntity("customerCategory", customerCategory);
@@ -76,12 +98,11 @@ public class CustomerService extends AccountService<Customer> {
 		if (brand != null) {
 			qb.addCriterionEntity("customerBrand", brand);
 		}
-
-		try {
-			return (List<Customer>) qb.getQuery(getEntityManager()).getResultList();
-		} catch (NoResultException e) {
-			return null;
-		}
+		
+		
+		Query query = qb.getQuery(getEntityManager());
+		
+		return query;
 	}
 
 	@SuppressWarnings("unchecked")

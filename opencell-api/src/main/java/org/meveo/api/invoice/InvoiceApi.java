@@ -335,7 +335,6 @@ public class InvoiceApi extends BaseApi {
 			netToPay = invoice.getAmountWithTax().add(balance);
 		}
 		invoice.setNetToPay(netToPay);
-		invoice = invoiceService.update(invoice);
 	
 		try {
 			populateCustomFields(invoiceDTO.getCustomFields(), invoice, true, true);
@@ -347,6 +346,8 @@ public class InvoiceApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+
+        invoice = invoiceService.update(invoice);
 
 		CreateInvoiceResponseDto response = new CreateInvoiceResponseDto();
 		response.setInvoiceId(invoice.getId());
@@ -546,6 +547,7 @@ public class InvoiceApi extends BaseApi {
 
     public GenerateInvoiceResultDto createGenerateInvoiceResultDto(Invoice invoice, boolean includePdf) throws BusinessException {
         GenerateInvoiceResultDto dto = new GenerateInvoiceResultDto();
+        dto.setInvoiceId(invoice.getId());
         dto.setInvoiceNumber(invoice.getInvoiceNumber());
         dto.setTemporaryInvoiceNumber(invoice.getTemporaryInvoiceNumber());
         dto.setInvoiceTypeCode(invoice.getInvoiceType().getCode());
@@ -562,28 +564,19 @@ public class InvoiceApi extends BaseApi {
         return dto;
     }
     
-	public String getXMLInvoice(String invoiceNumber) throws FileNotFoundException, MissingParameterException, EntityDoesNotExistsException, BusinessException {
-		return getXMLInvoice(invoiceNumber, invoiceTypeService.getDefaultCommertial().getCode());
+	public String getXMLInvoice(Long invoiceId,String invoiceNumber) throws FileNotFoundException, MissingParameterException, EntityDoesNotExistsException, BusinessException {
+		return getXMLInvoice(invoiceId,invoiceNumber, invoiceTypeService.getDefaultCommertial().getCode());
 	}
 
 
-    public String getXMLInvoice(String invoiceNumber, String invoiceTypeCode) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
+    public String getXMLInvoice(Long invoiceId,String invoiceNumber, String invoiceTypeCode) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
 
-		log.debug("getXMLInvoice  invoiceNumber:{}", invoiceNumber);
-		if (StringUtils.isBlank(invoiceNumber)) {
-			missingParameters.add("invoiceNumber");
-		}
-		if (StringUtils.isBlank(invoiceTypeCode)) {
-			missingParameters.add("invoiceTypeCode");
+		if(StringUtils.isBlank(invoiceTypeCode)){
+			missingParameters.add("invoiceTypeCode");				
 		}
 		handleMissingParameters();
 
-		InvoiceType invoiceType = invoiceTypeService.findByCode(invoiceTypeCode);
-		if (invoiceType == null) {
-			throw new EntityDoesNotExistsException(InvoiceType.class, invoiceTypeCode);
-		}
-
-		Invoice invoice = invoiceService.findByInvoiceNumberAndType(invoiceNumber, invoiceType);
+		Invoice invoice = find(invoiceId, invoiceNumber, invoiceTypeCode);
 		if (invoice == null) {
 			throw new EntityDoesNotExistsException(Invoice.class, invoiceNumber, "invoiceNumber", invoiceTypeCode, "invoiceTypeCode");
 		}
@@ -600,8 +593,8 @@ public class InvoiceApi extends BaseApi {
      * @throws EntityDoesNotExistsException
      * @throws Exception
      */
-	public byte[] getPdfInvoice(String invoiceNumber) throws MissingParameterException, EntityDoesNotExistsException, Exception {
-		return getPdfInvoice(invoiceNumber, invoiceTypeService.getDefaultCommertial().getCode());
+	public byte[] getPdfInvoice(Long invoiceId,String invoiceNumber) throws MissingParameterException, EntityDoesNotExistsException, Exception {
+		return getPdfInvoice(invoiceId,invoiceNumber, invoiceTypeService.getDefaultCommertial().getCode());
 	}
 
 	/**
@@ -614,22 +607,15 @@ public class InvoiceApi extends BaseApi {
 	 * @throws EntityDoesNotExistsException
 	 * @throws Exception
 	 */
-	public byte[] getPdfInvoice(String invoiceNumber, String invoiceTypeCode) throws MissingParameterException, EntityDoesNotExistsException, Exception {
+	public byte[] getPdfInvoice(Long invoiceId,String invoiceNumber, String invoiceTypeCode) throws MissingParameterException, EntityDoesNotExistsException, Exception {
 		log.debug("getPdfInvoince  invoiceNumber:{}", invoiceNumber);
-		if (StringUtils.isBlank(invoiceNumber)) {
-			missingParameters.add("invoiceNumber");
-		}
+		
 		if (StringUtils.isBlank(invoiceTypeCode)) {
-			missingParameters.add("invoiceTypeCode");
+			missingParameters.add("invoiceTypeCode");			
 		}
 		handleMissingParameters();
-
-		InvoiceType invoiceType = invoiceTypeService.findByCode(invoiceTypeCode);
-		if (invoiceType == null) {
-			throw new EntityDoesNotExistsException(InvoiceType.class, invoiceTypeCode);
-		}
-
-		Invoice invoice = invoiceService.findByInvoiceNumberAndType(invoiceNumber, invoiceType);
+		
+		Invoice invoice = find(invoiceId, invoiceNumber, invoiceTypeCode);
 		if (invoice == null) {
 			throw new EntityDoesNotExistsException(Invoice.class, invoiceNumber, "invoiceNumber", invoiceTypeCode, "invoiceTypeCode");
 		}
@@ -779,41 +765,14 @@ public class InvoiceApi extends BaseApi {
 	 */
     public InvoiceDto find(Long id, String invoiceNumber, String invoiceTypeCode, boolean includeTransactions) throws MissingParameterException, EntityDoesNotExistsException,
             MeveoApiException, BusinessException {
-		boolean searchById = true;
-		
-        if (StringUtils.isBlank(id)) {
-        	searchById = false;
-        	if(StringUtils.isBlank(invoiceNumber) && StringUtils.isBlank(invoiceTypeCode)) {
-        		missingParameters.add("id");
-        		missingParameters.add("invoiceNumber");
-        		missingParameters.add("invoiceTypeCode");
-        	}
-            handleMissingParameters();
-        }
-
-        InvoiceDto result = new InvoiceDto();
-        Invoice invoice = null;
-        
-        if(searchById) {
-        	invoice = invoiceService.findById(id);
-        } else {
-        	InvoiceType invoiceType = invoiceTypeService.findByCode(invoiceTypeCode);
-        	if (invoiceType == null) {
-    			throw new EntityDoesNotExistsException(InvoiceType.class, invoiceTypeCode);
-    		}
-        	invoice = invoiceService.findByInvoiceNumberAndType(invoiceNumber, invoiceType);
-        }
-
+		Invoice invoice = find(id, invoiceNumber, invoiceTypeCode);
         if (invoice == null) {
-        	if(searchById)
+        	if(id != null)
         		throw new EntityDoesNotExistsException(Invoice.class, id);
         	else
         		throw new EntityDoesNotExistsException(Invoice.class, "invoiceNumber", invoiceNumber, "invoiceType", invoiceTypeCode);
         }
-
-        result = invoiceToDto(invoice, includeTransactions);
-
-        return result;
+        return  invoiceToDto(invoice, includeTransactions);
     }
 	
 	/**
@@ -943,4 +902,25 @@ public class InvoiceApi extends BaseApi {
         return invoiceDto;
     }
 
+	private Invoice find(Long id, String invoiceNumber, String invoiceTypeCode) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
+		if (StringUtils.isBlank(invoiceNumber) && id == null) {
+			missingParameters.add("id ,or");
+			missingParameters.add("invoiceNumber");	
+			handleMissingParameters();
+		}
+		if(id != null){
+			return invoiceService.findById(id);
+		}
+		InvoiceType invoiceType = null;
+		if(!StringUtils.isBlank(invoiceTypeCode)){
+			invoiceType = invoiceTypeService.findByCode(invoiceTypeCode);
+			if (invoiceType == null) {
+				throw new EntityDoesNotExistsException(InvoiceType.class, invoiceTypeCode);
+			}
+		}
+		if(invoiceType != null){
+			return invoiceService.findByInvoiceNumberAndType(invoiceNumber, invoiceType);
+		}
+		 return invoiceService.getInvoiceByNumber(invoiceNumber);
+	}
 }

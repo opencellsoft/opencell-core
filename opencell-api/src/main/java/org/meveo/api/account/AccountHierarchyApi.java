@@ -1143,7 +1143,6 @@ public class AccountHierarchyApi extends BaseApi {
 	/**
 	 * 
 	 * @param postData
-
 	 * @throws MeveoApiException
 	 * @throws BusinessException
 	 */

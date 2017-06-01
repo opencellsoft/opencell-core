@@ -25,7 +25,7 @@ import org.meveo.api.dto.response.GetBillingCycleResponse;
 public interface BillingCycleRs extends IBaseRs {
 
     /**
-     * Create billingCycle.
+     * Create a new billing cycle.
      * 
      * @param postData
      * @return
@@ -35,7 +35,7 @@ public interface BillingCycleRs extends IBaseRs {
     public ActionStatus create(BillingCycleDto postData);
 
     /**
-     * Update billingCycle.
+     * Update an existing billing cycle.
      * 
      * @param postData
      * @return
@@ -45,9 +45,9 @@ public interface BillingCycleRs extends IBaseRs {
     public ActionStatus update(BillingCycleDto postData);
 
     /**
-     * Search for billingCycle with a given code.
+     * Search for billing cycle with a given code.
      * 
-     * @param billingCycleCode
+     * @param billingCycleCode Thre billing cycle's code
      * @return
      */
     @Path("/")
@@ -55,15 +55,21 @@ public interface BillingCycleRs extends IBaseRs {
     public GetBillingCycleResponse find(@QueryParam("billingCycleCode") String billingCycleCode);
 
     /**
-     * Remove billingCycle with a given code.
+     * Remove an existing billing cycle with a given code.
      * 
-     * @param billingCycleCode
+     * @param billingCycleCode The billing cycle's code
      * @return
      */
     @Path("/{billingCycleCode}")
     @DELETE
     public ActionStatus remove(@PathParam("billingCycleCode") String billingCycleCode);
 
+    /**
+     * Create new or update an existing billing cycle with a given code
+     * 
+     * @param postData The billing cycle's data
+     * @return Request processing status
+     */
     @POST
     @Path("/createOrUpdate")
     public ActionStatus createOrUpdate(BillingCycleDto postData);

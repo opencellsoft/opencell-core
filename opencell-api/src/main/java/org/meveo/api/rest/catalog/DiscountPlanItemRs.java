@@ -30,9 +30,10 @@ import org.meveo.api.rest.IBaseRs;
 public interface DiscountPlanItemRs extends IBaseRs {
 
 	/**
-	 * create a new discount plan item
-	 * @param postData
-	 * @return
+	 * Create a new discount plan item
+     *
+	 * @param postData A discount plan item's data
+	 * @return Request processing status
 	 */
     @Path("/")
     @POST
@@ -40,17 +41,18 @@ public interface DiscountPlanItemRs extends IBaseRs {
 
     /**
      * update an existed discount plan item
-     * @param postData
-     * @return
+     * @param postData A discount plan item's data
+     * @return Request processing status
      */
     @Path("/")
     @PUT
     ActionStatus update(DiscountPlanItemDto postData);
 
     /**
-     * find a discount plan item by code
-     * @param discountPlanItemCode
-     * @return
+     * Find a discount plan item with a given code
+     *
+     * @param discountPlanItemCode A discount plan item's code
+     * @return A discount plan item
      */
     @Path("/")
     @GET
@@ -58,8 +60,9 @@ public interface DiscountPlanItemRs extends IBaseRs {
 
     /**
      * remove a discount plan item by code
+     *
      * @param discountPlanItemCode
-     * @return
+     * @return Request processing status
      */
     @Path("/{discountPlanItemCode}")
     @DELETE
@@ -67,16 +70,18 @@ public interface DiscountPlanItemRs extends IBaseRs {
 
     /**
      * create/update a discount plan item
+     *
      * @param postData
-     * @return
+     * @return Request processing status
      */
     @Path("/createOrUpdate")
     @POST
     ActionStatus createOrUpdate(DiscountPlanItemDto postData);
 
     /**
-     * list all discount plan items by current user
-     * @return
+     * List all discount plan items by current user
+     *
+     * @return List of discount plan items
      */
     @Path("/list")
     @GET

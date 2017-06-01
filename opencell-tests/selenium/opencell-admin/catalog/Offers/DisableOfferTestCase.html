@@ -12,6 +12,31 @@
 <tr><td rowspan="1" colspan="3">DeleteContactTestCase</td></tr>
 </thead><tbody>
 <tr>
+	<td>clickAndWait</td>
+	<td>${CatalogueOffers}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=searchForm:code_txt</td>
+	<td>${Code}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=searchForm:buttonSearch</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//a[contains(text(),'${Code}')]</td>
+	<td>${Code}</td>
+</tr>
+<tr>
 	<td>assertElementPresent</td>
 	<td>${IconCatalogDisable}</td>
 	<td></td>

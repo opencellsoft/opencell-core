@@ -45,21 +45,21 @@ import org.meveo.model.admin.User;
 import org.meveo.model.security.Role;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.shared.Title;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.AuditablePersistenceService;
 
 /**
  * User service implementation.
  */
 @Stateless
-@DeclareRoles({"userManagement"})
-public class UserService extends PersistenceService<User> {
+@DeclareRoles({"userManagement", "userSelfManagement"})
+public class UserService extends AuditablePersistenceService<User> {
 
 	static User systemUser = null;
 
 	private ParamBean paramBean = ParamBean.getInstance();
 
 	@Override
-	@RolesAllowed({"userManagement"}) 
+    @RolesAllowed({"userManagement", "userSelfManagement"})
 	public void create(User user) throws UsernameAlreadyExistsException, BusinessException {
 
 		if (isUsernameExists(user.getUserName())) {
@@ -67,14 +67,14 @@ public class UserService extends PersistenceService<User> {
 		}
 
 		user.setUserName(user.getUserName().toUpperCase());
-		user.setPassword(Sha1Encrypt.encodePassword(user.getPassword()));
+        //user.setPassword(Sha1Encrypt.encodePassword(user.getPassword()));
 		user.setLastPasswordModification(new Date());
-		
+
 		super.create(user);
 	}
 
 	@Override
-    @RolesAllowed({"userManagement"}) 
+    @RolesAllowed({"userManagement", "userSelfManagement"})
 	public User update(User user) throws UsernameAlreadyExistsException, BusinessException {
 		if (isUsernameExists(user.getUserName(), user.getId())) {
 			getEntityManager().refresh(user);
@@ -91,16 +91,9 @@ public class UserService extends PersistenceService<User> {
 	}
 
 	@Override
-    @RolesAllowed({"userManagement"}) 
+    @RolesAllowed({"userManagement"})
 	public void remove(User user) throws BusinessException {
 		super.remove(user);
-	}
-
-	public User getSystemUser() {
-		if (systemUser == null) {
-			systemUser = findUsersByRoles("administrateur").get(0);
-		}
-		return systemUser;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -210,7 +203,7 @@ public class UserService extends PersistenceService<User> {
 	}
 
 	public User loginChecks(String username, String password, boolean skipPasswordExpiracy) throws LoginException {
-		
+
 		User user = findByUsernameAndPassword(username, password);
 		if (skipPasswordExpiracy) {
 			// log.debug("[UserService] Skipping expiry check asked");
@@ -233,7 +226,7 @@ public class UserService extends PersistenceService<User> {
 			log.info("The user " + user.getId() + " is not active.");
 			throw new InactiveUserException("The user " + user.getId() + " is not active.");
 		}
-		
+
 		// Check if the user password has expired
 		String passwordExpiracy = paramBean.getProperty("password.Expiracy", "180");
 
@@ -316,51 +309,52 @@ public class UserService extends PersistenceService<User> {
 
 	/**
 	 * check and calculate number of days before password expiration
-	 * @author mhammam
+     *
 	 * @param user
 	 * @return number of days before password expiration
+     * @author mhammam
 	 */
 	public long checkPasswordExpirationNotification(User user) {
-		
+
 		// Check if the user password has expired
 		String passwordExpiracy = paramBean.getProperty("password.Expiracy", "180");
-		
+
 		// check if the system should send password expiration notification before :
 		String pwdNotifExpiracy = paramBean.getProperty("password.expiration.Notification", "7");
 
-		if(isPasswordExpirationNotification(user,Integer.parseInt(passwordExpiracy),Integer.parseInt(pwdNotifExpiracy))==true){
+        if (isPasswordExpirationNotification(user, Integer.parseInt(passwordExpiracy), Integer.parseInt(pwdNotifExpiracy)) == true) {
 
-			Date daysToExpiration = DateUtils.addDaysToDate(user.getLastPasswordModification(),Integer.parseInt(passwordExpiracy));
-			
-			long diff = (daysToExpiration.getTime() - System.currentTimeMillis())/ 1000 / 60 / 60 / 24;
-	        
+            Date daysToExpiration = DateUtils.addDaysToDate(user.getLastPasswordModification(), Integer.parseInt(passwordExpiracy));
+
+            long diff = (daysToExpiration.getTime() - System.currentTimeMillis()) / 1000 / 60 / 60 / 24;
+
 	        return diff;
-		}
-		else {
+        } else {
 			return -1;
 		}
 	}
+
     /**
      * Is the system should notify the user of the expiration of his password x day before the expiration date.
-     * 
+     *
      * @param user
      * @param expirationDelay
      * @param notificationDelai
      * @return true/false
      */
 
-	public boolean isPasswordExpirationNotification(User user,int expirationDelay,int notificationDelai) {
+    public boolean isPasswordExpirationNotification(User user, int expirationDelay, int notificationDelai) {
 		boolean result = false;
-		
-		if ( user.getLastPasswordModification() != null) {
-			Date startNotif = DateUtils.addDaysToDate(user.getLastPasswordModification(), (expirationDelay-notificationDelai));
-			if(System.currentTimeMillis()>=startNotif.getTime()){
+
+        if (user.getLastPasswordModification() != null) {
+            Date startNotif = DateUtils.addDaysToDate(user.getLastPasswordModification(), (expirationDelay - notificationDelai));
+            if (System.currentTimeMillis() >= startNotif.getTime()) {
 				result = true;
 			}
 		}
 		return result;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<User> listUsersInMM(List<String> roleNames) {
 		List<User> users = null;

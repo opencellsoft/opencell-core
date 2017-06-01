@@ -30,6 +30,7 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductOffering;
@@ -46,6 +47,7 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.ProductInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
+import org.meveo.service.billing.impl.TerminationReasonService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.ProductOfferingService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
@@ -100,7 +102,7 @@ public class QuoteApi extends BaseApi {
 
     @Inject
     private OrderApi orderApi;
-    
+
     @Inject
     private InvoiceApi invoiceApi;
 
@@ -110,11 +112,14 @@ public class QuoteApi extends BaseApi {
     @Inject
     private InvoiceService invoiceService;
 
+    @Inject
+    private TerminationReasonService terminationReasonService;
+
     /**
      * Register a quote from TMForumApi
      * 
      * @param productQuote Quote
-
+     * 
      * @return Quote updated
      * @throws MissingParameterException
      * @throws IncorrectSusbcriptionException
@@ -132,7 +137,6 @@ public class QuoteApi extends BaseApi {
         }
 
         handleMissingParameters();
-        
 
         if (productQuote.getCharacteristic().size() > 0) {
             for (Characteristic quoteCharacteristic : productQuote.getCharacteristic()) {
@@ -270,7 +274,8 @@ public class QuoteApi extends BaseApi {
 
             List<Product> products = new ArrayList<>();
             products.add(productQuoteItem.getProduct());
-            if (productOfferings.size() > 1 && productQuoteItem.getProduct().getProductRelationship() != null && !productQuoteItem.getProduct().getProductRelationship().isEmpty()) {
+            if (productOfferings.size() > 1 && productQuoteItem.getProduct().getProductRelationship() != null
+                    && !productQuoteItem.getProduct().getProductRelationship().isEmpty()) {
                 for (ProductRelationship productRelationship : productQuoteItem.getProduct().getProductRelationship()) {
                     products.add(productRelationship.getProduct());
                     if (productOfferings.size() >= products.size()) {
@@ -281,8 +286,6 @@ public class QuoteApi extends BaseApi {
 
             quote.addQuoteItem(quoteItem);
         }
-
-        quoteService.create(quote);
 
         // populate customFields
         try {
@@ -295,6 +298,8 @@ public class QuoteApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+
+        quoteService.create(quote);
 
         if (productQuote.getCharacteristic().size() > 0) {
             for (Characteristic quoteCharacteristic : productQuote.getCharacteristic()) {
@@ -321,7 +326,7 @@ public class QuoteApi extends BaseApi {
      * Initiate workflow on quote. If workflow is enabled on Quote class, then execute workflow. If workflow is not enabled - then process the quote right away.
      * 
      * @param quote Quote
-
+     * 
      * @return
      * @throws BusinessException
      * @throws MeveoApiException
@@ -347,7 +352,7 @@ public class QuoteApi extends BaseApi {
      * Process the quote for workflow
      * 
      * @param quote
-
+     * 
      * @throws BusinessException
      * @throws MeveoApiException
      */
@@ -383,7 +388,7 @@ public class QuoteApi extends BaseApi {
      * 
      * @param quote Quote
      * @param quoteItem Quote item
-
+     * 
      * @throws BusinessException
      * @throws MeveoApiException
      */
@@ -398,7 +403,7 @@ public class QuoteApi extends BaseApi {
      * Create invoices for the quote
      * 
      * @param quote Quote
-
+     * 
      * @throws BusinessException
      * @throws MeveoApiException
      */
@@ -420,6 +425,14 @@ public class QuoteApi extends BaseApi {
 
             List<Invoice> invoices = quoteService.provideQuote(quoteInvoiceInfos);
 
+            List<QuoteInvoiceInfo> quoteInvoiceInfosAll = new ArrayList<>();
+
+            for (List<QuoteInvoiceInfo> quoteInvoiceInfo : quoteInvoiceInfos.values()) {
+                quoteInvoiceInfosAll.addAll(quoteInvoiceInfo);
+            }
+
+            destroyInvoiceQuoteItems(quoteInvoiceInfosAll);
+
             for (Invoice invoice : invoices) {
                 invoice.setQuote(quote);
                 invoice = invoiceService.update(invoice);
@@ -428,7 +441,7 @@ public class QuoteApi extends BaseApi {
             quote = quoteService.update(quote);
 
         } catch (MeveoApiException e) {
-            throw new BusinessException(e);
+            throw new BusinessException(e.getMessage());
         }
 
         log.trace("Finished creating invoices for quote {}", quote.getCode());
@@ -437,11 +450,40 @@ public class QuoteApi extends BaseApi {
     }
 
     /**
+     * Destroy any temporary entities created for invoicing - remove CF values
+     * 
+     * @param quoteInvoiceInfo Instantiated product instances and subscriptions and other grouped information of quote item ready for invoicing
+     * @throws BusinessException
+     */
+    private void destroyInvoiceQuoteItems(List<QuoteInvoiceInfo> quoteInvoiceInfos) throws BusinessException {
+
+        for (QuoteInvoiceInfo quoteInvoiceInfo : quoteInvoiceInfos) {
+
+            // Remove CF values for product instances
+            if (quoteInvoiceInfo.getProductInstances() != null) {
+                for (ProductInstance productInstance : quoteInvoiceInfo.getProductInstances()) {
+                    customFieldInstanceService.removeCFValues(productInstance);
+                }
+            }
+
+            // Remove CF values for subscription and service instances
+            if (quoteInvoiceInfo.getSubscription() != null) {
+                customFieldInstanceService.removeCFValues(quoteInvoiceInfo.getSubscription());
+
+                for (ServiceInstance serviceInstance : quoteInvoiceInfo.getSubscription().getServiceInstances()) {
+                    customFieldInstanceService.removeCFValues(serviceInstance);
+                }
+            }
+        }
+
+    }
+
+    /**
      * Prepare info for invoicing for quote item
      * 
      * @param quote Quote
      * @param quoteItem Quote item
-
+     * 
      * @return Instantiated product instances and subscriptions and other grouped information of quote item ready for invoicing
      * @throws BusinessException
      * @throws MeveoApiException
@@ -497,7 +539,7 @@ public class QuoteApi extends BaseApi {
         }
 
         // Use either subscription start/end dates from subscription/products or subscription start/end value from quote item
-        // TODO does not support if dates in subscription, services and products differ one from another one. 
+        // TODO does not support if dates in subscription, services and products differ one from another one.
         Date fromDate = null;
         Date toDate = null;
         if (subscription != null) {
@@ -537,7 +579,7 @@ public class QuoteApi extends BaseApi {
     }
 
     private Subscription instantiateVirtualSubscription(OfferTemplate offerTemplate, Product product, List<Product> services, QuoteItem quoteItem,
-            ProductQuoteItem productQuoteItem) throws BusinessException, MeveoApiException {
+            ProductQuoteItem productQuoteItem) throws BusinessException, MissingParameterException, InvalidParameterException {
 
         log.debug("Instantiating virtual subscription from offer template {} for quote {} line {}", offerTemplate.getCode(), quoteItem.getQuote().getCode(), quoteItem.getItemId());
 
@@ -550,20 +592,43 @@ public class QuoteApi extends BaseApi {
         subscription.setOffer(offerTemplate);
         subscription.setSubscriptionDate((Date) getProductCharacteristic(productQuoteItem.getProduct(), OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(),
             Date.class, DateUtils.setTimeToZero(quoteItem.getQuote().getQuoteDate())));
-        subscription.setEndAgreementDate((Date) getProductCharacteristic(productQuoteItem.getProduct(),
-            OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(), Date.class, null));
+        subscription.setEndAgreementDate(
+            (Date) getProductCharacteristic(productQuoteItem.getProduct(), OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(), Date.class, null));
 
-        // // Validate and populate customFields
-        // CustomFieldsDto customFields = extractCustomFields(productQuoteItem.getProduct(), Subscription.class);
-        // try {
-        // populateCustomFields(customFields, subscription, true, true);
-        // } catch (MissingParameterException e) {
-        // log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
-        // throw e;
-        // } catch (Exception e) {
-        // log.error("Failed to associate custom field instance to an entity", e);
-        // throw new BusinessException("Failed to associate custom field instance to an entity", e);
-        // }
+        String terminationReasonCode = (String) getProductCharacteristic(productQuoteItem.getProduct(), OrderProductCharacteristicEnum.TERMINATION_REASON.getCharacteristicName(),
+            String.class, null);
+
+        Date terminationDate = (Date) getProductCharacteristic(productQuoteItem.getProduct(), OrderProductCharacteristicEnum.TERMINATION_DATE.getCharacteristicName(), Date.class,
+            null);
+
+        if (terminationDate == null && terminationReasonCode != null) {
+            throw new MissingParameterException("terminationDate");
+        } else if (terminationDate != null && terminationReasonCode == null) {
+            throw new MissingParameterException("terminationReason");
+        }
+
+        if (terminationReasonCode != null) {
+            subscription.setTerminationDate(terminationDate);
+
+            SubscriptionTerminationReason terminationReason = terminationReasonService.findByCode(terminationReasonCode);
+            if (terminationReason != null) {
+                subscription.setSubscriptionTerminationReason(terminationReason);
+            } else {
+                throw new InvalidParameterException("terminationReason", terminationReasonCode);
+            }
+        }
+
+        // Validate and populate customFields
+        CustomFieldsDto customFields = extractCustomFields(productQuoteItem.getProduct(), Subscription.class);
+        try {
+            populateCustomFields(customFields, subscription, true, true);
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw new BusinessException("Failed to associate custom field instance to an entity", e);
+        }
 
         // instantiate and activate services
         processServices(subscription, services);
@@ -572,36 +637,37 @@ public class QuoteApi extends BaseApi {
     }
 
     private ProductInstance instantiateVirtualProduct(ProductTemplate productTemplate, Product product, QuoteItem quoteItem, ProductQuoteItem productQuoteItem,
-            Subscription subscription) throws BusinessException {
+            Subscription subscription) throws BusinessException, MissingParameterException {
 
         log.debug("Instantiating virtual product from product template {} for quote {} line {}", productTemplate.getCode(), quoteItem.getQuote().getCode(), quoteItem.getItemId());
 
         BigDecimal quantity = ((BigDecimal) getProductCharacteristic(product, OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY.getCharacteristicName(), BigDecimal.class,
             new BigDecimal(1)));
         Date chargeDate = ((Date) getProductCharacteristic(product, OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(), Date.class,
-            DateUtils.setTimeToZero(new Date())));
+            DateUtils.setTimeToZero(quoteItem.getQuote().getQuoteDate())));
 
-        String code = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.PRODUCT_INSTANCE_CODE.getCharacteristicName(), String.class, UUID.randomUUID()
-            .toString());
+        String code = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.PRODUCT_INSTANCE_CODE.getCharacteristicName(), String.class,
+            UUID.randomUUID().toString());
         ProductInstance productInstance = new ProductInstance(quoteItem.getUserAccount(), subscription, productTemplate, quantity, chargeDate, code,
             productTemplate.getDescription(), null);
 
+        try {
+            CustomFieldsDto customFields = extractCustomFields(product, ProductInstance.class);
+            populateCustomFields(customFields, productInstance, true, true);
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw new BusinessException("Failed to associate custom field instance to an entity", e);
+        }
+        
         productInstanceService.instantiateProductInstance(productInstance, null, null, null, true);
-
-        // try {
-        // CustomFieldsDto customFields = extractCustomFields(product, ProductInstance.class);
-        // populateCustomFields(customFields, productInstance, true, true);
-        // } catch (MissingParameterException e) {
-        // log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
-        // throw e;
-        // } catch (Exception e) {
-        // log.error("Failed to associate custom field instance to an entity", e);
-        // throw new BusinessException("Failed to associate custom field instance to an entity", e);
-        // }
+   
         return productInstance;
     }
 
-    @SuppressWarnings({ "rawtypes", "unused" })
+    @SuppressWarnings({ "rawtypes" })
     private CustomFieldsDto extractCustomFields(Product product, Class appliesToClass) {
 
         if (product.getProductCharacteristic() == null || product.getProductCharacteristic().isEmpty()) {
@@ -661,8 +727,8 @@ public class QuoteApi extends BaseApi {
         return value;
     }
 
-    private void processServices(Subscription subscription, List<Product> services) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException,
-            BusinessException, MeveoApiException {
+    private void processServices(Subscription subscription, List<Product> services)
+            throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException, MissingParameterException, InvalidParameterException {
 
         for (Product serviceProduct : services) {
 
@@ -674,14 +740,54 @@ public class QuoteApi extends BaseApi {
 
             ServiceInstance serviceInstance = new ServiceInstance();
             serviceInstance.setCode(serviceCode);
-            serviceInstance.setEndAgreementDate((Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(),
-                Date.class, null));
             serviceInstance.setQuantity((BigDecimal) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY.getCharacteristicName(),
                 BigDecimal.class, new BigDecimal(1)));
             serviceInstance.setSubscriptionDate((Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(),
-                Date.class, DateUtils.setTimeToZero(new Date())));
+                Date.class, subscription.getSubscriptionDate()));
+            serviceInstance.setEndAgreementDate((Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(),
+                Date.class, subscription.getEndAgreementDate()));
+
+            String terminationReasonCode = (String) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.TERMINATION_REASON.getCharacteristicName(),
+                String.class, null);
+
+            Date terminationDate = (Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.TERMINATION_DATE.getCharacteristicName(), Date.class, null);
+
+            if (terminationDate == null && terminationReasonCode != null) {
+                throw new MissingParameterException("terminationDate");
+            } else if (terminationDate != null && terminationReasonCode == null) {
+                throw new MissingParameterException("terminationReason");
+            }
+
+            if (terminationReasonCode != null) {
+                serviceInstance.setTerminationDate(terminationDate);
+
+                SubscriptionTerminationReason terminationReason = terminationReasonService.findByCode(terminationReasonCode);
+                if (terminationReason != null) {
+                    serviceInstance.setSubscriptionTerminationReason(terminationReason);
+                } else {
+                    throw new InvalidParameterException("terminationReason", terminationReasonCode);
+                }
+            }
+
+            if (serviceInstance.getTerminationDate() == null && subscription.getTerminationDate() != null) {
+                serviceInstance.setTerminationDate(subscription.getTerminationDate());
+                serviceInstance.setSubscriptionTerminationReason(subscription.getSubscriptionTerminationReason());
+            }
+
             serviceInstance.setSubscription(subscription);
             serviceInstance.setServiceTemplate(serviceTemplateService.findByCode(serviceCode));
+
+            // Validate and populate customFields
+            CustomFieldsDto customFields = extractCustomFields(serviceProduct, ServiceInstance.class);
+            try {
+                populateCustomFields(customFields, serviceInstance, true, true);
+            } catch (MissingParameterException e) {
+                log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+                throw e;
+            } catch (Exception e) {
+                log.error("Failed to associate custom field instance to an entity", e);
+                throw new BusinessException("Failed to associate custom field instance to an entity", e);
+            }
 
             serviceInstanceService.serviceInstanciation(serviceInstance, null, null, true);
         }
@@ -779,7 +885,7 @@ public class QuoteApi extends BaseApi {
         if (quote.getInvoices() != null && !quote.getInvoices().isEmpty()) {
             productQuote.setInvoices(new ArrayList<GenerateInvoiceResultDto>());
             for (Invoice invoice : quote.getInvoices()) {
-                
+
                 GenerateInvoiceResultDto invoiceDto = invoiceApi.createGenerateInvoiceResultDto(invoice, false);
                 productQuote.getInvoices().add(invoiceDto);
             }
@@ -836,7 +942,7 @@ public class QuoteApi extends BaseApi {
      * Place an order from a quote
      * 
      * @param quote Quote to convert to an order
-
+     * 
      * @return Product order DTO object
      * @throws BusinessException
      * @throws MeveoApiException

@@ -20,26 +20,61 @@ import org.meveo.api.dto.response.GetTerminationReasonResponse;
 
 public interface TerminationReasonRs extends IBaseRs {
 
+    /**
+     * Create a new termination reason
+     * 
+     * @param postData The termination reason's data
+     * @return Request processing status
+     */
     @Path("/")
     @POST
     ActionStatus create(TerminationReasonDto postData);
 
+    /**
+     * Update an existing termination reason
+     * 
+     * @param postData The termination reason's data
+     * @return Request processing status
+     */
     @Path("/")
     @PUT
     ActionStatus update(TerminationReasonDto postData);
 
+    /**
+     * Create new or update an existing termination reason with a given code
+     * 
+     * @param postData The termination reason's data
+     * @return Request processing status
+     */
     @Path("/createOrUpdate")
     @POST
     ActionStatus createOrUpdate(TerminationReasonDto postData);
 
+    /**
+     * Remove an existing termination reason with a given code 
+     * 
+     * @param terminationReasonCode The termination reason's code
+     * @return Request processing status
+     */
     @Path("/")
     @DELETE
     ActionStatus remove(@QueryParam("terminationReasonCode") String code);
 
+    /**
+     * Find a termination reason with a given code 
+     * 
+     * @param terminationReasonCode The termination reason's code
+     * @return
+     */
     @Path("/")
     @GET
     GetTerminationReasonResponse find(@QueryParam("terminationReasonCode") String code);
 
+    /**
+     * List of termination reasons.
+     * 
+     * @return A list of termination reasons
+     */
     @Path("/list")
     @GET
     GetTerminationReasonResponse list();
