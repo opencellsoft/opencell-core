@@ -262,6 +262,11 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 	@Override
     @ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
+		if(entity.getOffer().isDisabled()) {
+			messages.error(new BundleKey("messages", "message.subscription.offerIsDisabled"));
+			return null;
+		}
+		
 		String outcome = super.saveOrUpdate(killConversation);
 
         if (outcome != null) {
@@ -964,4 +969,12 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 	public void setAndRefreshProductInstance(ProductInstance prodInstance) {
 		this.productInstance = productInstanceService.refreshOrRetrieve(prodInstance);
 	}
+	
+	public void onOfferSelected() {
+		if(entity.getOffer().isDisabled()) {
+			messages.error(new BundleKey("messages", "message.subscription.offerIsDisabled"));
+			return;
+		}
+	}
+	
 }

@@ -129,9 +129,7 @@ public class SubscriptionApi extends BaseApi {
             missingParameters.add("subscriptionDate");
         }
 
-        handleMissingParameters();
-
-        
+        handleMissingParameters();        
 
         if (subscriptionService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(Subscription.class, postData.getCode());
@@ -146,6 +144,10 @@ public class SubscriptionApi extends BaseApi {
         if (offerTemplate == null) {
             throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getOfferTemplate());
         }
+        
+        if(offerTemplate.isDisabled()) {
+			throw new MeveoApiException("Cannot subscribe to disabled offer");
+		}
 
         Subscription subscription = new Subscription();
         subscription.setCode(postData.getCode());
@@ -222,6 +224,10 @@ public class SubscriptionApi extends BaseApi {
         if (offerTemplate == null) {
             throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getOfferTemplate());
         }
+        
+        if(offerTemplate.isDisabled()) {
+			throw new MeveoApiException("Cannot subscribe to disabled offer");
+		}
 
         subscription.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         subscription.setOffer(offerTemplate);
