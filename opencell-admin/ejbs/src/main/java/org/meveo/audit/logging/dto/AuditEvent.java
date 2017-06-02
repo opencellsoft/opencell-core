@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * @author Edward P`. Legaspi
  **/
-public class AuditEvent {
+public class AuditEvent extends Event {
 
 	private String actor;
 	private String clientIp;

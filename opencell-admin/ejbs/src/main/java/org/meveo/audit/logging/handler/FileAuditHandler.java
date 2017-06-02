@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 Handler	
 <periodic-rotating-file-handler name="APPLICATION-AUDIT" autoflush="true">
 	<formatter>
-		<named-formatter name="PATTERN"/>
+		<named-formatter name="AUDIT-PATTERN"/>
 	</formatter>
 	<file relative-to="jboss.server.log.dir" path="application-audit.log"/>
 	<suffix value=".yyyy-MM-dd"/>
@@ -32,9 +32,8 @@ Logger
 </logger>
 
 Make sure you also have the pattern defined:
-<formatter name="PATTERN">
-	<pattern-formatter pattern=
-"%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c] (%t) %s%e%n"/>
+<formatter name="AUDIT-PATTERN">
+    <pattern-formatter pattern="%s%e%n"/>
 </formatter>
  *         </pre>
  * 

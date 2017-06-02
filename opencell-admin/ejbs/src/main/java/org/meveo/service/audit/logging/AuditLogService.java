@@ -11,4 +11,9 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class AuditLogService extends PersistenceService<AuditLog> {
 
+	public void purge() {
+		String hqlQuery = String.format("delete from AuditLog");
+		getEntityManager().createQuery(hqlQuery).executeUpdate();
+	}
+
 }

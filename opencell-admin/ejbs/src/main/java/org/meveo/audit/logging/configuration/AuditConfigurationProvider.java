@@ -3,6 +3,8 @@ package org.meveo.audit.logging.configuration;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -31,6 +33,13 @@ public class AuditConfigurationProvider {
 				result.add(clazz);
 			}
 		}
+
+		Collections.sort(result, new Comparator<Class<? extends IPersistenceService>>() {
+			@Override
+			public int compare(Class<? extends IPersistenceService> lhs, Class<? extends IPersistenceService> rhs) {
+				return lhs.getName().compareTo(rhs.getName());
+			}
+		});
 
 		return result;
 	}

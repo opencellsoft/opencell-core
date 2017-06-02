@@ -10,9 +10,12 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jboss.seam.international.status.Messages;
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.audit.logging.configuration.AuditConfiguration;
 import org.meveo.audit.logging.configuration.AuditConfigurationProvider;
 import org.meveo.audit.logging.core.AuditContext;
+import org.meveo.audit.logging.dto.ClassAndMethods;
 import org.meveo.audit.logging.dto.MethodWithParameter;
 import org.meveo.audit.logging.handler.ConsoleAuditHandler;
 import org.meveo.audit.logging.handler.DBAuditHandler;
@@ -35,12 +38,17 @@ public class AuditConfigurationBean implements Serializable {
 	private Logger log;
 
 	@Inject
+	private Messages messages;
+
+	@Inject
 	private AuditConfigurationProvider auditConfigurationProvider;
 
 	private List<Class<? extends IPersistenceService>> serviceClasses;
 	private Class<? extends IPersistenceService> selectedClass;
 	private DualListModel<String> handlers;
 	private DualListModel<MethodWithParameter> methods = new DualListModel<>();
+	private List<ClassAndMethods> selectedClassAndMethods = new ArrayList<>();
+	private ClassAndMethods selectedClassAndMethod;
 
 	@PostConstruct
 	private void init() {
@@ -64,6 +72,37 @@ public class AuditConfigurationBean implements Serializable {
 		}
 
 		handlers = new DualListModel<>(handlerSource, handlerTarget);
+
+		// load selected class and methods
+		selectedClassAndMethods = AuditContext.getInstance().getAuditConfiguration().getClasses();
+	}
+
+	public void addClass() {
+		if (selectedClass != null && methods.getTarget() != null && !methods.getTarget().isEmpty()) {
+			ClassAndMethods cm = new ClassAndMethods();
+			cm.setClassName(selectedClass.getName());
+
+			for (MethodWithParameter m : methods.getTarget()) {
+				cm.addMethod(m.getMethodName());
+			}
+
+			if (!selectedClassAndMethods.contains(cm)) {
+				selectedClassAndMethods.add(cm);
+			} else {
+				// update
+				int index = selectedClassAndMethods.indexOf(cm);
+				selectedClassAndMethods.set(index, cm);
+			}
+
+			selectedClass = null;
+			methods = new DualListModel<>();
+		}
+	}
+
+	public void removeClassAndMethods() {
+		if (selectedClassAndMethod != null && selectedClassAndMethods.contains(selectedClassAndMethod)) {
+			selectedClassAndMethods.remove(selectedClassAndMethod);
+		}
 	}
 
 	public void onClassChange() {
@@ -84,7 +123,12 @@ public class AuditConfigurationBean implements Serializable {
 				AuditContext.getInstance().getAuditConfiguration().getHandlers().add(handler);
 			}
 		}
+
+		AuditContext.getInstance().getAuditConfiguration().setClasses(selectedClassAndMethods);
+
 		AuditContext.getInstance().saveConfiguration();
+
+		messages.info(new BundleKey("messages", "update.successful"));
 	}
 
 	public AuditConfiguration getAuditConfiguration() {
@@ -121,6 +165,22 @@ public class AuditConfigurationBean implements Serializable {
 
 	public void setMethods(DualListModel<MethodWithParameter> methods) {
 		this.methods = methods;
+	}
+
+	public List<ClassAndMethods> getSelectedClassAndMethods() {
+		return selectedClassAndMethods;
+	}
+
+	public void setSelectedClassAndMethods(List<ClassAndMethods> selectedClassAndMethods) {
+		this.selectedClassAndMethods = selectedClassAndMethods;
+	}
+
+	public ClassAndMethods getSelectedClassAndMethod() {
+		return selectedClassAndMethod;
+	}
+
+	public void setSelectedClassAndMethod(ClassAndMethods selectedClassAndMethod) {
+		this.selectedClassAndMethod = selectedClassAndMethod;
 	}
 
 }

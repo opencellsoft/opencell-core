@@ -48,4 +48,9 @@ public class MethodWithParameter {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "MethodWithParameter [methodName=" + methodName + "]";
+	}
+
 }

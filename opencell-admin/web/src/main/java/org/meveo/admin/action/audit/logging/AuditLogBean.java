@@ -30,4 +30,8 @@ public class AuditLogBean extends BaseBean<AuditLog> {
 		return auditLogService;
 	}
 
+	public void purge() {
+		auditLogService.purge();
+	}
+
 }
