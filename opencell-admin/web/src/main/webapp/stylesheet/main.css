@@ -41,7 +41,7 @@ body {
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', endColorstr='#ffffff',GradientType=0 ); /* IE6-9 */
 
    /*font */
-  font-family : helvetica;
+  font-family : "Segoe UI Light","Segoe UI","Segoe WP","Helvetica Neue",sans-serif;
 
 }
 
@@ -103,7 +103,7 @@ select[disabled] { color : #000; }
 {
  	font-style: italic;
 	margin-top : 20px;
-	font-family : helvetica;
+	font-family : "Segoe UI Light","Segoe UI","Segoe WP","Helvetica Neue",sans-serif;
 	color : #55585b;
 	text-align : center;
 	font-size : 0.9em;
@@ -215,7 +215,7 @@ input[type="submit"]:hover
 {
    padding : 8px;
    margin-top : 10px;
-   font-family : helvetica;
+   font-family : "Segoe UI Light","Segoe UI","Segoe WP","Helvetica Neue",sans-serif;
    font-weight :bold;
 }
 .search-panel .ui-widget-header td[role="columnheader"]
@@ -277,7 +277,7 @@ div.body > table > thead,
 .ui-panel-titlebar { border: none !important; }
 .ui-datatable-header, .ui-datatable-footer { text-align: left !important; }
 .ui-editor { border-radius : 8px; overflow : hidden; border : 1px solid #d6d6d6; -webkit-box-shadow: inset 0px 1px 4px 2px rgba(0, 0, 2, .1); box-shadow: inset 0px 1px 4px 2px rgba(0, 0, 2, .1); }
-.ui-menubar { width : 93%; margin-left : auto; margin-right: auto; height : 40px; font-family: Arial, Helvetica, sans-serif; font-size: 0.9em; margin-top : 0px; color: #e6e6e6; padding: 1px; background : none; border : none; }
+.ui-menubar { width : 93%; margin-left : auto; margin-right: auto; height : 40px; font-family: "Segoe UI Light","Segoe UI","Segoe WP","Helvetica Neue",sans-serif; font-size: 0.9em; margin-top : 0px; color: #e6e6e6; padding: 1px; background : none; border : none; }
 .ui-menubar .ui-menu-list { clear: both; /*padding-top: 5px;*/ float: left; margin-top: 0; margin-left: 5px; }
 .ui-menubar .ui-menu-list .ui-menu-child { -webkit-border-radius: 0px 15px 0px 15px; border-radius: 0px 15px 0px 15px; width : 210px; margin-right : 10px !important; box-shadow : none; border-top : none; border-color : rgba(0, 0, 0, .1) !important; margin-left : -1px; }
 .ui-menubar .ui-menu-list .ui-menu-child .ui-menu-list { /*border-top : 1px solid  #b3cecb; padding : 3px 1px 1px 3px; margin-left : 3px;*/ }
@@ -328,14 +328,14 @@ div.body > table > thead,
 .ui-tabs-panels div[id*="childTab"]  > table > tbody >tr > td > table >tbody > tr > td span { color : #416a68 !Important; }
 .ui-tabs-panels div[id*="childTab"]  > table > tbody >tr > td > table >tbody > tr > td > label { font-style : normal; }
 .ui-tree { margin-top : 5px; }
-.ui-tree .ui-treenode-label a { font-size : 1em; color : #6b6b6b; text-decoration : none; font-family : helvetica; padding : 5px 2px 0px 2px; }
+.ui-tree .ui-treenode-label a { font-size : 1em; color : #6b6b6b; text-decoration : none; font-family : "Segoe UI Light","Segoe UI","Segoe WP","Helvetica Neue",sans-serif; padding : 5px 2px 0px 2px; }
 //.ui-outputlabel { display : inline-block; width : 95px; text-align : right; }
 .ui-state-highlight { background : #e84649 !Important; color : white !important; text-shadow : none !important; }
 .ui-fieldset-legend { border : none !important; background : none !important; font-size : 1em; }
 .ui-selectonemenu-list { background : white; }
 .ui-dialog-titlebar { width : 95% !important; }
 .ui-dialog-titlebar .ui-dialog-titlebar-close:hover { background : #b8eff7; }
-.ui-widget { font-size : 1em; }
+.ui-widget { font-size : 1em; font-family: "Segoe UI Light","Segoe UI","Segoe WP","Helvetica Neue",sans-serif;}
 .ui-widget-header { background : none; text-align : left}
 .ui-widget-content {
 	border-color: #d6d6d6;
@@ -378,7 +378,7 @@ div.body > table > thead,
 .ui-picklist-list,
 .ui-tree { -webkit-border-radius: 8px; border-radius: 8px; border : 1px solid #d6d6d6; -webkit-box-shadow: inset 0px 1px 8px 1px rgba(0, 0, 0, .1); box-shadow: inset 0px 1px 8px 1px rgba(0, 0, 0, .1); padding : 3px !Important; background: rgb(244,246,247); /* Old browsers */ background: -moz-linear-gradient(top,  rgba(244,246,247,1) 0%, rgba(255,255,255,1) 8%, rgba(249,249,249,1) 100%); /* FF3.6+ */ background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(244,246,247,1)), color-stop(8%,rgba(255,255,255,1)), color-stop(100%,rgba(249,249,249,1))); /* Chrome,Safari4+ */ background: -webkit-linear-gradient(top,  rgba(244,246,247,1) 0%,rgba(255,255,255,1) 8%,rgba(249,249,249,1) 100%); /* Chrome10+,Safari5.1+ */ background: -o-linear-gradient(top,  rgba(244,246,247,1) 0%,rgba(255,255,255,1) 8%,rgba(249,249,249,1) 100%); /* Opera 11.10+ */ background: -ms-linear-gradient(top,  rgba(244,246,247,1) 0%,rgba(255,255,255,1) 8%,rgba(249,249,249,1) 100%); /* IE10+ */ background: linear-gradient(to bottom,  rgba(244,246,247,1) 0%,rgba(255,255,255,1) 8%,rgba(249,249,249,1) 100%); /* W3C */ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f4f6f7', endColorstr='#f9f9f9',GradientType=0 ); /* IE6-9 */ }
 
-.ui-picklist-item { font-family : helvetica; background : #f2f6f6; width : 97%; text-indent : 5px; color : #494949 !important; }
+.ui-picklist-item { font-family : "Segoe UI Light","Segoe UI","Segoe WP","Helvetica Neue",sans-serif; background : #f2f6f6; width : 97%; text-indent : 5px; color : #494949 !important; }
 .ui-chkbox .ui-state-hover,
 .ui-datepicker tr:first-child th { background: -moz-linear-gradient(top,  rgba(232,70,73,0.22) 0%, rgba(232,70,73,0.22) 39%, rgba(232,70,73,0.22) 40%, rgba(232,70,73,0.44) 100%); /* FF3.6+ */ background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(232,70,73,0.22)), color-stop(39%,rgba(232,70,73,0.22)), color-stop(40%,rgba(232,70,73,0.22)), color-stop(100%,rgba(232,70,73,0.44))); /* Chrome,Safari4+ */ background: -webkit-linear-gradient(top,  rgba(232,70,73,0.22) 0%,rgba(232,70,73,0.22) 39%,rgba(232,70,73,0.22) 40%,rgba(232,70,73,0.44) 100%); /* Chrome10+,Safari5.1+ */ background: -o-linear-gradient(top,  rgba(232,70,73,0.22) 0%,rgba(232,70,73,0.22) 39%,rgba(232,70,73,0.22) 40%,rgba(232,70,73,0.44) 100%); /* Opera 11.10+ */ background: -ms-linear-gradient(top,  rgba(232,70,73,0.22) 0%,rgba(232,70,73,0.22) 39%,rgba(232,70,73,0.22) 40%,rgba(232,70,73,0.44) 100%); /* IE10+ */ background: linear-gradient(to bottom,  rgba(232,70,73,0.22) 0%,rgba(232,70,73,0.22) 39%,rgba(232,70,73,0.22) 40%,rgba(232,70,73,0.44) 100%); /* W3C */ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3804d3d3', endColorstr='#70009b9b',GradientType=0 ); /* IE6-9 */ border-color : #4d4242 !important; }
 .ui-datepicker { border-radius : 8px; -webkit-border-radius : 8px; }
@@ -387,10 +387,10 @@ div.body > table > thead,
 .ui-datepicker .ui-datepicker-calendar .ui-state-hover { background : #e8f2f1; }
 input[type="submit"]:hover,
 .ui-button:hover,
-.ui-datatable table .ui-button:hover { font-family: Arial, Helvetica, sans-serif;  color: #ffffff; padding: 0px 0px; background: #e84649; /* Old browsers */ background: -moz-linear-gradient(top, #e84649 0%, #d44043 100%); /* FF3.6+ */ background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e84649), color-stop(100%,#d44043)); /* Chrome,Safari4+ */ background: -webkit-linear-gradient(top, #e84649 0%,#d44043 100%); /* Chrome10+,Safari5.1+ */ background: -o-linear-gradient(top, #e84649 0%,#d44043 100%); /* Opera 11.10+ */ background: -ms-linear-gradient(top, #e84649 0%,#d44043 100%); /* IE10+ */ background: linear-gradient(to bottom, #e84649 0%,#d44043 100%); /* W3C */ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e84649', endColorstr='#d44043',GradientType=0 ); /* IE6-9 */ -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px; border: 1px solid #4d4242; -moz-box-shadow:0px 1px 3px rgba(000,000,000,0),inset 0px 0px 2px rgba(255,255,255,0); -webkit-box-shadow:0px 1px 3px rgba(000,000,000,0),inset 0px 0px 2px rgba(255,255,255,0); box-shadow:0px 1px 3px rgba(000,000,000,0),inset 0px 0px 2px rgba(255,255,255,0); text-shadow:-1px -1px 0px rgba(000,000,000,1),0px 0px 0px rgba(255,255,255,0); }
+.ui-datatable table .ui-button:hover { font-family: "Segoe UI Light","Segoe UI","Segoe WP","Helvetica Neue",sans-serif;  color: #ffffff; padding: 0px 0px; background: #e84649; /* Old browsers */ background: -moz-linear-gradient(top, #e84649 0%, #d44043 100%); /* FF3.6+ */ background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e84649), color-stop(100%,#d44043)); /* Chrome,Safari4+ */ background: -webkit-linear-gradient(top, #e84649 0%,#d44043 100%); /* Chrome10+,Safari5.1+ */ background: -o-linear-gradient(top, #e84649 0%,#d44043 100%); /* Opera 11.10+ */ background: -ms-linear-gradient(top, #e84649 0%,#d44043 100%); /* IE10+ */ background: linear-gradient(to bottom, #e84649 0%,#d44043 100%); /* W3C */ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e84649', endColorstr='#d44043',GradientType=0 ); /* IE6-9 */ -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px; border: 1px solid #4d4242; -moz-box-shadow:0px 1px 3px rgba(000,000,000,0),inset 0px 0px 2px rgba(255,255,255,0); -webkit-box-shadow:0px 1px 3px rgba(000,000,000,0),inset 0px 0px 2px rgba(255,255,255,0); box-shadow:0px 1px 3px rgba(000,000,000,0),inset 0px 0px 2px rgba(255,255,255,0); text-shadow:-1px -1px 0px rgba(000,000,000,1),0px 0px 0px rgba(255,255,255,0); }
 input[type="submit"],
-.ui-button { font-family: Arial, Helvetica, sans-serif;  padding: 0px 0px; -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px; border: 1px solid #c2c2c2; -moz-box-shadow:0px 1px 3px rgba(000,000,000,0), inset 0px 0px 2px rgba(255,255,255,0); -webkit-box-shadow:0px 1px 3px rgba(000,000,000,0),inset 0px 0px 2px rgba(255,255,255,0); box-shadow:0px 1px 3px rgba(000,000,000,0),inset 0px 0px 2px rgba(255,255,255,0); }
-/* .ui-button { font-family: Arial, Helvetica, sans-serif;  padding: 0px 0px; background: -moz-linear-gradient(top,#ffffff 0%,#ebebeb 50%,#dbdbdb); background: -webkit-gradient(linear, left top, left bottom, from(#ffffff),color-stop(0.50, #ebebeb),to(#dbdbdb)); -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px; border: 1px solid #c2c2c2; -moz-box-shadow:0px 1px 3px rgba(000,000,000,0), inset 0px 0px 2px rgba(255,255,255,0); -webkit-box-shadow:0px 1px 3px rgba(000,000,000,0),inset 0px 0px 2px rgba(255,255,255,0); box-shadow:0px 1px 3px rgba(000,000,000,0),inset 0px 0px 2px rgba(255,255,255,0); text-shadow:1px 1px 0px rgba(255,255,255,0.8),0px 0px 0px rgba(255,255,255,0); } */
+.ui-button { font-family: "Segoe UI Light","Segoe UI","Segoe WP","Helvetica Neue",sans-serif;  padding: 0px 0px; -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px; border: 1px solid #c2c2c2; -moz-box-shadow:0px 1px 3px rgba(000,000,000,0), inset 0px 0px 2px rgba(255,255,255,0); -webkit-box-shadow:0px 1px 3px rgba(000,000,000,0),inset 0px 0px 2px rgba(255,255,255,0); box-shadow:0px 1px 3px rgba(000,000,000,0),inset 0px 0px 2px rgba(255,255,255,0); }
+/* .ui-button { font-family: "Segoe UI Light","Segoe UI","Segoe WP","Helvetica Neue",sans-serif;  padding: 0px 0px; background: -moz-linear-gradient(top,#ffffff 0%,#ebebeb 50%,#dbdbdb); background: -webkit-gradient(linear, left top, left bottom, from(#ffffff),color-stop(0.50, #ebebeb),to(#dbdbdb)); -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px; border: 1px solid #c2c2c2; -moz-box-shadow:0px 1px 3px rgba(000,000,000,0), inset 0px 0px 2px rgba(255,255,255,0); -webkit-box-shadow:0px 1px 3px rgba(000,000,000,0),inset 0px 0px 2px rgba(255,255,255,0); box-shadow:0px 1px 3px rgba(000,000,000,0),inset 0px 0px 2px rgba(255,255,255,0); text-shadow:1px 1px 0px rgba(255,255,255,0.8),0px 0px 0px rgba(255,255,255,0); } */
 .ui-datatable-empty-message > td { border : 1px solid #aeaeae !important; margin-right : -6px; }
 .ui-tabs-top { float : left; width : 100%; }
 .ui-tabs { width : 99%; }
@@ -431,7 +431,7 @@ input[type="submit"],
 
 .no-padding td:first-child { padding: 0 0 0 2px; }
 
-.alert-box { color:#555; -webkit-border-radius:2px; -moz-border-radius:2px; border-radius:2px; font-family:Tahoma,Geneva,Arial,sans-serif;font-size:11px; padding:10px 10px 10px 43px; margin:10px; }
+.alert-box { color:#555; -webkit-border-radius:2px; -moz-border-radius:2px; border-radius:2px; font-family:"Segoe UI Light","Segoe UI","Segoe WP","Helvetica Neue",sans-serif;font-size:11px; padding:10px 10px 10px 43px; margin:10px; }
 .alert-box span { font-weight:bold; text-transform:uppercase; }
 .alert-box-error { background:#ffecec url('../resources/img/error.png') no-repeat 15px 50%; border:1px solid #f5aca6; } /* ui-messages-error-icon */
 .alert-box-success { background:#e9ffd9 url('../resources/img/success.png') no-repeat 10px 50%; border:1px solid #a6ca8a; }
@@ -473,6 +473,7 @@ vertical-align:top !important;
 }
 .panelGrid-column100{
 	width:100% !important;
+	font-weight: normal;
 }
 
 
