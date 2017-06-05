@@ -66,6 +66,7 @@ import org.meveo.service.admin.impl.PermissionService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.catalog.impl.CatMessagesService;
+import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.index.ElasticClient;
 import org.meveo.util.ApplicationProvider;
@@ -126,6 +127,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     @Inject
     private ElasticClient elasticClient;
+    
+    
+    @Inject
+    private ProviderService providerService;
 
     /** Search filters. */
     protected Map<String, Object> filters = new HashMap<String, Object>();
@@ -1301,6 +1306,17 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
 	public void setUploadedFile(UploadedFile uploadedFile) {
 		this.uploadedFile = uploadedFile;
+	}
+	
+	/**
+	 * @return provider code
+	 */
+	public String getProviderCode() {
+		if (this.providerService != null) {
+			return this.providerService.getProvider().getCode();
+		}
+		return null;
+		
 	}
 
 }

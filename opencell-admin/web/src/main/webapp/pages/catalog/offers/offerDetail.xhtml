@@ -163,7 +163,7 @@
                 <f:facet name="header">#{messages['marketingManager.catalog.servicesToInclude']}</f:facet>
 
                 <p:panel>
-                    <c:forEach items="#{offerTemplateBean.entity.offerServiceTemplates}" var="ost" varStatus="loopStatus">
+                    <c:forEach items="#{offerTemplateBean.sortedOfferServiceTemplates}" var="ost" varStatus="loopStatus">
                         <h:panelGrid columns="2" styleClass="Wid100 ui-panelgrid-blank" columnClasses="Wid25 Responsive100 VAlignTop Padding5, TexAlLeft Wid75 Responsive100 VAlignTop">
 					
 							<p:panel>
