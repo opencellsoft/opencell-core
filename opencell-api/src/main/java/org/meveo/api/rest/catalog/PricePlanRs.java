@@ -66,7 +66,7 @@ public interface PricePlanRs extends IBaseRs {
      */
     @Path("/{pricePlanCode}")
     @DELETE
-    ActionStatus remove(@PathParam("price plan matrix") String pricePlanCode);
+    ActionStatus remove(@PathParam("pricePlanCode") String pricePlanCode);
 
     /**
      * List price plan matrix.
