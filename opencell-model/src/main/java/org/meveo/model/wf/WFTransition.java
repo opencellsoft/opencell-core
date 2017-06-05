@@ -52,7 +52,7 @@ import org.meveo.model.ExportIdentifier;
 @ExportIdentifier({ "uuid"})
 @Table(name = "WF_TRANSITION", uniqueConstraints = @UniqueConstraint(columnNames = { "UUID" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "WF_TRANSITION_SEQ"), })
-@NamedQueries({ @NamedQuery(name = "WFTransition.listByFromStatus", query = "SELECT wft FROM WFTransition wft where wft.fromStatus=:fromStatusValue and workflow=:workflowValue order by priority ASC") })
+@NamedQueries({ @NamedQuery(name = "WFTransition.listByFromStatus", query = "SELECT wft FROM WFTransition wft where (wft.fromStatus=:fromStatusValue or wft.fromStatus='*') and workflow=:workflowValue order by priority ASC") })
 public class WFTransition extends EnableEntity implements Comparable<WFTransition> {
 
     private static final long serialVersionUID = 1L;
