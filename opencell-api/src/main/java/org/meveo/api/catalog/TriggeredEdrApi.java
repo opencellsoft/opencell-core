@@ -61,7 +61,7 @@ public class TriggeredEdrApi extends BaseApi {
                 missingParameters.add("quantityEl");
             }
 
-            handleMissingParameters();
+            handleMissingParametersAndValidate(postData);
         }
     }
 
@@ -98,7 +98,7 @@ public class TriggeredEdrApi extends BaseApi {
                 missingParameters.add("quantityEl");
             }
 
-            handleMissingParameters();
+            handleMissingParametersAndValidate(postData);
         }
     }
 

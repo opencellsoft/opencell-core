@@ -45,7 +45,7 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
             missingParameters.add("name");
         }
 
-        handleMissingParameters();
+        handleMissingParametersAndValidate(postData);
 
         
 
@@ -105,7 +105,7 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
             missingParameters.add("name");
         }
 
-        handleMissingParameters();
+        handleMissingParametersAndValidate(postData);
         
         OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(postData.getCode());
 

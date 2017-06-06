@@ -60,8 +60,6 @@ public class UsageChargeTemplateApi extends BaseCrudApi<UsageChargeTemplate, Usa
 
     public UsageChargeTemplate create(UsageChargeTemplateDto postData) throws MeveoApiException, BusinessException {
 
-        validate(postData);
-
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
@@ -69,7 +67,7 @@ public class UsageChargeTemplateApi extends BaseCrudApi<UsageChargeTemplate, Usa
             missingParameters.add("invoiceSubCategory");
         }
 
-        handleMissingParameters();
+        handleMissingParametersAndValidate(postData);
         
 
         
@@ -178,8 +176,6 @@ public class UsageChargeTemplateApi extends BaseCrudApi<UsageChargeTemplate, Usa
 
     public UsageChargeTemplate update(UsageChargeTemplateDto postData) throws MeveoApiException, BusinessException {
 
-        validate(postData);
-
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
@@ -187,7 +183,7 @@ public class UsageChargeTemplateApi extends BaseCrudApi<UsageChargeTemplate, Usa
             missingParameters.add("invoiceSubCategory");
         }
 
-        handleMissingParameters();
+        handleMissingParametersAndValidate(postData);
         
 
         

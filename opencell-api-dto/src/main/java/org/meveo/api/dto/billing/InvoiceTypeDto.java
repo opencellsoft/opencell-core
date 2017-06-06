@@ -11,7 +11,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.BusinessDto;
 import org.meveo.api.dto.SequenceDto;
 import org.meveo.model.billing.InvoiceType;
@@ -22,11 +21,6 @@ import org.meveo.model.billing.InvoiceTypeSellerSequence;
 public class InvoiceTypeDto  extends BusinessDto{
 	
 		private static final long serialVersionUID = 1L;
-		
-		@XmlElement(required = true)
-		private String code;
-		
-		private String description;
 		
 		@XmlElement(required = true)
 		private String occTemplateCode;
@@ -49,8 +43,8 @@ public class InvoiceTypeDto  extends BusinessDto{
 		}
 
 		public InvoiceTypeDto(InvoiceType invoiceType){
-			this.code = invoiceType.getCode();
-			this.description = invoiceType.getDescription();			
+			super(invoiceType);
+			
 			this.occTemplateCode = invoiceType.getOccTemplate() != null ? invoiceType.getOccTemplate().getCode():null;
 			this.occTemplateNegativeCode = invoiceType.getOccTemplateNegative() != null ? invoiceType.getOccTemplateNegative().getCode():null;
 			this.sequenceDto = new SequenceDto(invoiceType.getSequence());
@@ -65,35 +59,6 @@ public class InvoiceTypeDto  extends BusinessDto{
 			this.matchingAuto = invoiceType.isMatchingAuto();
 		}
 		
-		
-		/**
-		 * @return the code
-		 */
-		public String getCode() {
-			return code;
-		}
-
-		/**
-		 * @param code the code to set
-		 */
-		public void setCode(String code) {
-			this.code = code;
-		}
-
-		/**
-		 * @return the description
-		 */
-		public String getDescription() {
-			return description;
-		}
-
-		/**
-		 * @param description the description to set
-		 */
-		public void setDescription(String description) {
-			this.description = description;
-		}
-
 		/**
 		 * @return the occTemplateCode
 		 */
@@ -181,6 +146,6 @@ public class InvoiceTypeDto  extends BusinessDto{
 
 		@Override
 		public String toString() {
-			return "InvoiceTypeDto [code=" + code + ", description=" + description + ", occTemplateCode=" + occTemplateCode + ", occTemplateNegativeCode=" + occTemplateNegativeCode + ", sequenceDto=" + sequenceDto + ", sellerSequences=" + sellerSequences + ", appliesTo=" + appliesTo + ", matchingAuto=" + matchingAuto + "]";
+			return "InvoiceTypeDto [code=" + getCode() + ", description=" + getDescription() + ", occTemplateCode=" + occTemplateCode + ", occTemplateNegativeCode=" + occTemplateNegativeCode + ", sequenceDto=" + sequenceDto + ", sellerSequences=" + sellerSequences + ", appliesTo=" + appliesTo + ", matchingAuto=" + matchingAuto + "]";
 		}		
 }

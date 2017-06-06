@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -18,13 +17,7 @@ import org.meveo.model.billing.InvoiceSubCategory;
 public class InvoiceSubCategoryDto extends BusinessDto {
 
 	private static final long serialVersionUID = 1832246068609179546L;
-
-	@XmlAttribute(required = true)
-	private String code;
-
-	@XmlAttribute()
-	private String description;
-
+	
 	@XmlElement(required = true)
 	private String invoiceCategory;
 	
@@ -40,27 +33,10 @@ public class InvoiceSubCategoryDto extends BusinessDto {
 	}
 
 	public InvoiceSubCategoryDto(InvoiceSubCategory invoiceSubCategory, CustomFieldsDto customFieldInstances) {
-		code = invoiceSubCategory.getCode();
-		description = invoiceSubCategory.getDescription();
+		super(invoiceSubCategory);
 		invoiceCategory = invoiceSubCategory.getInvoiceCategory().getCode();
 		accountingCode=invoiceSubCategory.getAccountingCode();
 		customFields = customFieldInstances;
-	}
-
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
 	}
 
 	public String getInvoiceCategory() {
@@ -103,7 +79,7 @@ public class InvoiceSubCategoryDto extends BusinessDto {
 	
 	@Override
 	public String toString() {
-		return "InvoiceSubCategoryDto [code=" + code + ", description=" + description + ", invoiceCategory=" + invoiceCategory + ", accountingCode=" + accountingCode + ", languageDescriptions=" + languageDescriptions + ", customFields=" + customFields + "]";
+		return "InvoiceSubCategoryDto [code=" + getCode() + ", description=" + getDescription() + ", invoiceCategory=" + invoiceCategory + ", accountingCode=" + accountingCode + ", languageDescriptions=" + languageDescriptions + ", customFields=" + customFields + "]";
 	}
 
 	

@@ -5,7 +5,6 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -20,14 +19,8 @@ public class PricePlanMatrixDto extends BusinessDto {
 
     private static final long serialVersionUID = -9089693491690592072L;
 
-    @XmlAttribute(required = true)
-    private String code;
-
     @XmlElement(required = true)
     private String eventCode;
-
-    @XmlAttribute()
-    private String description;
 
     private String seller;
     private String country;
@@ -67,8 +60,8 @@ public class PricePlanMatrixDto extends BusinessDto {
     }
 
     public PricePlanMatrixDto(PricePlanMatrix e, CustomFieldsDto customFieldInstances) {
-
-        code = e.getCode();
+    	super(e);
+        
         eventCode = e.getEventCode();
         if (e.getSeller() != null) {
             seller = e.getSeller().getCode();
@@ -101,7 +94,6 @@ public class PricePlanMatrixDto extends BusinessDto {
         if (e.getValidityCalendar() != null) {
             validityCalendarCode = e.getValidityCalendar().getCode();
         }
-        description = e.getDescription();
         criteriaEL = e.getCriteriaEL();
         if(e.getScriptInstance() != null){
         	scriptInstance = e.getScriptInstance().getCode();
@@ -279,7 +271,7 @@ public class PricePlanMatrixDto extends BusinessDto {
 
     @Override
     public String toString() {
-        return "PricePlanDto [code=" + code + ", eventCode=" + eventCode + ", description=" + description + ", seller=" + seller + ", country=" + country + ", currency="
+        return "PricePlanDto [code=" + getCode() + ", eventCode=" + eventCode + ", description=" + getDescription() + ", seller=" + seller + ", country=" + country + ", currency="
                 + currency + ", minQuantity=" + minQuantity + ", maxQuantity=" + maxQuantity + ", offerTemplate=" + offerTemplate + ", startSubscriptionDate="
                 + startSubscriptionDate + ", endSubscriptionDate=" + endSubscriptionDate + ", startRatingDate=" + startRatingDate + ", endRatingDate=" + endRatingDate
                 + ", minSubscriptionAgeInMonth=" + minSubscriptionAgeInMonth + ", maxSubscriptionAgeInMonth=" + maxSubscriptionAgeInMonth + ", amountWithoutTax="
@@ -287,29 +279,13 @@ public class PricePlanMatrixDto extends BusinessDto {
                 + priority + ", criteria1=" + criteria1 + ", criteria2=" + criteria2 + ", criteria3=" + criteria3 + ", validityCalendarCode=" + validityCalendarCode 
                 + ", scriptInstance="+scriptInstance+"]";
     }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
+    
     public String getValidityCalendarCode() {
         return validityCalendarCode;
     }
 
     public void setValidityCalendarCode(String validityCalendarCode) {
         this.validityCalendarCode = validityCalendarCode;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getCriteriaEL() {

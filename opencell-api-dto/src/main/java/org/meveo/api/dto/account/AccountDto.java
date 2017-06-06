@@ -1,10 +1,7 @@
 package org.meveo.api.dto.account;
 
-import java.io.Serializable;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -21,13 +18,7 @@ import org.meveo.model.AccountEntity;
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class AccountDto extends BusinessDto {
 
-	private static final long serialVersionUID = -8818317499795113026L;
-
-	@XmlAttribute(required = true)
-	private String code;
-
-	@XmlAttribute()
-	private String description;
+	private static final long serialVersionUID = -8818317499795113026L;	
 	
 	private String externalRef1;
 	private String externalRef2;
@@ -41,7 +32,6 @@ public abstract class AccountDto extends BusinessDto {
 	@XmlTransient
 	protected boolean loaded = false;
 	
-
 	public AccountDto() {
 		super();
 	}
@@ -61,22 +51,6 @@ public abstract class AccountDto extends BusinessDto {
         customFields = customFieldInstances;
 
 		loaded = true;
-	}
-
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
 	}
 
 	public String getExternalRef1() {
@@ -139,7 +113,7 @@ public abstract class AccountDto extends BusinessDto {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((code == null) ? 0 : code.hashCode());
+		result = prime * result + ((getCode() == null) ? 0 : getCode().hashCode());
 		return result;
 	}
 
@@ -152,17 +126,17 @@ public abstract class AccountDto extends BusinessDto {
 		if (getClass() != obj.getClass())
 			return false;
 		AccountDto other = (AccountDto) obj;
-		if (code == null) {
-			if (other.code != null)
+		if (getCode() == null) {
+			if (other.getCode() != null)
 				return false;
-		} else if (!code.equals(other.code))
+		} else if (!getCode().equals(other.getCode()))
 			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "AccountDto [code=" + code + ", description=" + description
+		return "AccountDto [code=" + getCode() + ", description=" + getDescription()
 				+ ", externalRef1=" + externalRef1 + ", externalRef2="
 				+ externalRef2 + ", name=" + name + ", address=" + address
 				+ ", customFields=" + customFields + ", loaded=" + loaded

@@ -4,7 +4,6 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BusinessDto;
@@ -15,12 +14,6 @@ import org.meveo.model.catalog.OfferTemplateCategory;
 public class OfferTemplateCategoryDto extends BusinessDto {
 
 	private static final long serialVersionUID = 1L;
-	
-	@XmlAttribute(required = true)
-	private String code;
-	
-	@XmlAttribute()
-	private String description;
 	
 	private String name;
 	
@@ -46,10 +39,9 @@ public class OfferTemplateCategoryDto extends BusinessDto {
 	}
 	
 	public OfferTemplateCategoryDto (OfferTemplateCategory offerTemplateCategory) {
+		super(offerTemplateCategory);
 		
 		if (offerTemplateCategory != null) {
-			this.setCode(offerTemplateCategory.getCode());
-			this.setDescription(offerTemplateCategory.getDescription());
 			this.setId(offerTemplateCategory.getId());
 			this.setName(offerTemplateCategory.getName());
 			this.setVersion(offerTemplateCategory.getVersion());
@@ -71,22 +63,6 @@ public class OfferTemplateCategoryDto extends BusinessDto {
 		this(offerTemplateCategory);
 		this.setHref(String.format("%scatalogManagement/category/%s", baseUri, this.getId()));
 	}
-	
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
 
 	public String getName() {
 		return name;
@@ -106,7 +82,7 @@ public class OfferTemplateCategoryDto extends BusinessDto {
 
 	@Override
 	public String toString() {
-		return "OfferTemplateCategoryDto [code=" + code + ", description=" + description + ", name=" + name + ", offerTemplateCategoryCode=" + offerTemplateCategoryCode + ", id="
+		return "OfferTemplateCategoryDto [code=" + getCode() + ", description=" + getDescription() + ", name=" + name + ", offerTemplateCategoryCode=" + offerTemplateCategoryCode + ", id="
 				+ id + ", href=" + href + ", version=" + version + ", lastModified=" + lastModified + ", active=" + active + ", parentId=" + parentId + ", imagePath=" + imagePath
 				+ "]";
 	}

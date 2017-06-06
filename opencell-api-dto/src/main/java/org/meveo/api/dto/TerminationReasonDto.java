@@ -2,7 +2,6 @@ package org.meveo.api.dto;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.billing.SubscriptionTerminationReason;
@@ -16,12 +15,6 @@ public class TerminationReasonDto extends BusinessDto {
 
     private static final long serialVersionUID = 6013621511892042364L;
 
-    @XmlAttribute(required = true)
-    private String code;
-    
-    @XmlAttribute
-    private String description;
-
     private boolean applyAgreement;
 
     private boolean applyReimbursment;
@@ -33,27 +26,11 @@ public class TerminationReasonDto extends BusinessDto {
     }
 
     public TerminationReasonDto(SubscriptionTerminationReason e) {
-        code = e.getCode();
-        description = e.getDescription();
+        setCode(e.getCode());
+        setDescription(e.getDescription());
         applyAgreement = e.isApplyAgreement();
         applyReimbursment = e.isApplyReimbursment();
         applyTerminationCharges = e.isApplyTerminationCharges();
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-    
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public boolean isApplyAgreement() {
@@ -82,7 +59,7 @@ public class TerminationReasonDto extends BusinessDto {
 
     @Override
     public String toString() {
-        return "TerminationReasonDto [code=" + code + ", description=" + description + ", applyAgreement=" + applyAgreement + ", applyReimbursment=" + applyReimbursment
+        return "TerminationReasonDto [code=" + getCode() + ", description=" + getDescription() + ", applyAgreement=" + applyAgreement + ", applyReimbursment=" + applyReimbursment
                 + ", applyTerminationCharges=" + applyTerminationCharges + "]";
     }
 

@@ -41,40 +41,40 @@ public class InvoiceTypeApi extends BaseApi {
     private SellerService sellerService;
 
     
-    private void handleParameters(InvoiceTypeDto invoiceTypeDto) throws MissingParameterException{
-        if (StringUtils.isBlank(invoiceTypeDto.getCode())) {
+    private void handleParameters(InvoiceTypeDto postData) throws MeveoApiException{
+        if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
-        if (StringUtils.isBlank(invoiceTypeDto.getOccTemplateCode())) {
+        if (StringUtils.isBlank(postData.getOccTemplateCode())) {
             missingParameters.add("occTemplateCode");
         }     
-        handleMissingParameters();	
+        handleMissingParametersAndValidate(postData);	
     }
     
     
-    public ActionStatus create(InvoiceTypeDto invoiceTypeDto) throws MeveoApiException, BusinessException {
-        handleParameters(invoiceTypeDto);
+    public ActionStatus create(InvoiceTypeDto postData) throws MeveoApiException, BusinessException {
+        handleParameters(postData);
         ActionStatus result = new ActionStatus();
         
-        if (invoiceTypeService.findByCode(invoiceTypeDto.getCode()) != null) {
-            throw new EntityAlreadyExistsException(InvoiceType.class, invoiceTypeDto.getCode());
+        if (invoiceTypeService.findByCode(postData.getCode()) != null) {
+            throw new EntityAlreadyExistsException(InvoiceType.class, postData.getCode());
         }        
-        OCCTemplate occTemplate = occTemplateService.findByCode(invoiceTypeDto.getOccTemplateCode());        
+        OCCTemplate occTemplate = occTemplateService.findByCode(postData.getOccTemplateCode());        
         if (occTemplate == null) {
-            throw new EntityDoesNotExistsException(OCCTemplate.class, invoiceTypeDto.getOccTemplateCode());
+            throw new EntityDoesNotExistsException(OCCTemplate.class, postData.getOccTemplateCode());
         }    
         
         OCCTemplate occTemplateNegative = null;
-        if (!StringUtils.isBlank(invoiceTypeDto.getOccTemplateNegativeCode())) {
-        	occTemplateNegative = occTemplateService.findByCode(invoiceTypeDto.getOccTemplateNegativeCode());
+        if (!StringUtils.isBlank(postData.getOccTemplateNegativeCode())) {
+        	occTemplateNegative = occTemplateService.findByCode(postData.getOccTemplateNegativeCode());
         	if(occTemplateNegative == null){
-        		 throw new EntityDoesNotExistsException(OCCTemplate.class, invoiceTypeDto.getOccTemplateNegativeCode());
+        		 throw new EntityDoesNotExistsException(OCCTemplate.class, postData.getOccTemplateNegativeCode());
         	}
         }  
         
         List<InvoiceType> invoiceTypesToApplies = new ArrayList<InvoiceType>();       
-        if(invoiceTypeDto.getAppliesTo() != null){
-        	for(String invoiceTypeCode : invoiceTypeDto.getAppliesTo()){
+        if(postData.getAppliesTo() != null){
+        	for(String invoiceTypeCode : postData.getAppliesTo()){
         		 InvoiceType tmpInvoiceType = null;
         		 tmpInvoiceType = invoiceTypeService.findByCode(invoiceTypeCode);
         		 if(tmpInvoiceType == null){
@@ -84,14 +84,14 @@ public class InvoiceTypeApi extends BaseApi {
         	}
         }        
         InvoiceType invoiceType = new InvoiceType();
-        invoiceType.setCode(invoiceTypeDto.getCode());
-        invoiceType.setDescription(invoiceTypeDto.getDescription());
+        invoiceType.setCode(postData.getCode());
+        invoiceType.setDescription(postData.getDescription());
         invoiceType.setOccTemplate(occTemplate);
         invoiceType.setOccTemplateNegative(occTemplateNegative);
         invoiceType.setAppliesTo(invoiceTypesToApplies);
-        invoiceType.setSequence(invoiceTypeDto.getSequenceDto() == null ? null : invoiceTypeDto.getSequenceDto().fromDto());
-        if(invoiceTypeDto.getSellerSequences() != null){
-	        for(Entry<String,SequenceDto> entry : invoiceTypeDto.getSellerSequences().entrySet()){
+        invoiceType.setSequence(postData.getSequenceDto() == null ? null : postData.getSequenceDto().fromDto());
+        if(postData.getSellerSequences() != null){
+	        for(Entry<String,SequenceDto> entry : postData.getSellerSequences().entrySet()){
 	        	Seller seller = sellerService.findByCode(entry.getKey());
 	        	if(seller == null){
 	        		throw new EntityDoesNotExistsException(Seller.class, entry.getKey()); 
@@ -109,7 +109,7 @@ public class InvoiceTypeApi extends BaseApi {
 	        	}
 	        }
         }      
-        invoiceType.setMatchingAuto(invoiceTypeDto.isMatchingAuto());
+        invoiceType.setMatchingAuto(postData.isMatchingAuto());
         invoiceTypeService.create(invoiceType);
         return result;
     }

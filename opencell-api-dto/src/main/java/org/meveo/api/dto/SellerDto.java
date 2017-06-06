@@ -23,7 +23,6 @@ import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -41,18 +40,6 @@ import org.meveo.model.billing.InvoiceTypeSellerSequence;
 public class SellerDto extends BusinessDto {
 
 	private static final long serialVersionUID = 4763606402719751014L;
-
-	/**
-	 * Code
-	 */
-	@XmlAttribute(required = true)
-	private String code;
-
-	/**
-	 * Description
-	 */
-	@XmlAttribute()
-	private String description;
 
 	private String currencyCode;
 	private String countryCode;
@@ -72,8 +59,7 @@ public class SellerDto extends BusinessDto {
 	}
 
 	public SellerDto(Seller seller, CustomFieldsDto customFieldInstances) {
-		code = seller.getCode();
-		description = seller.getDescription();
+		super(seller);
 		if(seller.getInvoiceTypeSequence() != null){
 			for(InvoiceTypeSellerSequence seq : seller.getInvoiceTypeSequence() ){
 				invoiceTypeSequences.put(seq.getInvoiceType().getCode(), new SequenceDto(seq.getSequence()));
@@ -98,24 +84,6 @@ public class SellerDto extends BusinessDto {
 		
 		customFields = customFieldInstances;
 	}
-
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-
 
 	public String getCurrencyCode() {
 		return currencyCode;
@@ -189,6 +157,6 @@ public class SellerDto extends BusinessDto {
 
 	@Override
 	public String toString() {
-		return "SellerDto [code=" + code + ", description=" + description + ", currencyCode=" + currencyCode + ", countryCode=" + countryCode + ", languageCode=" + languageCode + ", parentSeller=" + parentSeller + ", customers=" + customers + ", customFields=" + customFields + ", invoiceTypeSequences=" + invoiceTypeSequences + ", businessAccountModel=" + businessAccountModel + "]";
+		return "SellerDto [code=" + getCode() + ", description=" + getDescription() + ", currencyCode=" + currencyCode + ", countryCode=" + countryCode + ", languageCode=" + languageCode + ", parentSeller=" + parentSeller + ", customers=" + customers + ", customFields=" + customFields + ", invoiceTypeSequences=" + invoiceTypeSequences + ", businessAccountModel=" + businessAccountModel + "]";
 	}	
 }

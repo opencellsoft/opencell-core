@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.billing.InvoiceCategory;
@@ -18,12 +17,6 @@ public class InvoiceCategoryDto extends BusinessDto {
 
 	private static final long serialVersionUID = 5166093858617578774L;
 
-	@XmlAttribute(required = true)
-	private String code;
-
-	@XmlAttribute()
-	private String description;
-
 	private List<LanguageDescriptionDto> languageDescriptions;
 	
 	private CustomFieldsDto customFields = new CustomFieldsDto();
@@ -33,25 +26,8 @@ public class InvoiceCategoryDto extends BusinessDto {
 	}
 
 	public InvoiceCategoryDto(InvoiceCategory invoiceCategory, CustomFieldsDto customFieldInstances) {
-		code = invoiceCategory.getCode();
-		description = invoiceCategory.getDescription();
+		super(invoiceCategory);
 		customFields = customFieldInstances;
-	}
-
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
 	}
 
 	public List<LanguageDescriptionDto> getLanguageDescriptions() {
@@ -79,7 +55,7 @@ public class InvoiceCategoryDto extends BusinessDto {
 
 	@Override
 	public String toString() {
-		return "InvoiceCategoryDto [code=" + code + ", description=" + description + ", languageDescriptions=" + languageDescriptions + ", customFields=" + customFields + "]";
+		return "InvoiceCategoryDto [code=" + getCode() + ", description=" + getDescription() + ", languageDescriptions=" + languageDescriptions + ", customFields=" + customFields + "]";
 	}
 
 

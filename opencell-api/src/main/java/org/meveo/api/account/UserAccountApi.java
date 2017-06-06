@@ -82,7 +82,7 @@ public class UserAccountApi extends AccountApi {
 			missingParameters.add("billingAccount");
 		}
 
-		handleMissingParameters();
+		handleMissingParametersAndValidate(postData);
 
 		
 
@@ -136,7 +136,7 @@ public class UserAccountApi extends AccountApi {
 			missingParameters.add("code");
 		}
 
-		handleMissingParameters();
+		handleMissingParametersAndValidate(postData);
 
 		
 
@@ -307,41 +307,41 @@ public class UserAccountApi extends AccountApi {
 		return new ArrayList<>(userAccountService.filterCountersByPeriod(userAccount.getCounters(), date).values());
 	}
 
-	public void createOrUpdatePartial(UserAccountDto userAccountDto) throws MeveoApiException, BusinessException{
+	public void createOrUpdatePartial(UserAccountDto postData) throws MeveoApiException, BusinessException{
 		UserAccountDto existedUserAccountDto = null;
 		try {
-			existedUserAccountDto = find(userAccountDto.getCode());
+			existedUserAccountDto = find(postData.getCode());
 		} catch (Exception e) {
 			existedUserAccountDto = null;
 		}
 		if (existedUserAccountDto == null) {// create
-			create(userAccountDto);
+			create(postData);
 		} else {
-			if (userAccountDto.getTerminationDate() != null) {
-				if (StringUtils.isBlank(userAccountDto.getTerminationReason())) {
+			if (postData.getTerminationDate() != null) {
+				if (StringUtils.isBlank(postData.getTerminationReason())) {
 					missingParameters.add("userAccount.terminationReason");
-					handleMissingParameters();
+					handleMissingParametersAndValidate(postData);
 				}
-				terminate(userAccountDto);
+				terminate(postData);
 			} else {
 
-                if (!StringUtils.isBlank(userAccountDto.getBillingAccount())) {
-                    existedUserAccountDto.setBillingAccount(userAccountDto.getBillingAccount());
+                if (!StringUtils.isBlank(postData.getBillingAccount())) {
+                    existedUserAccountDto.setBillingAccount(postData.getBillingAccount());
                 }
 			    
-				if (userAccountDto.getStatus() != null) {
-					existedUserAccountDto.setStatus(userAccountDto.getStatus());
+				if (postData.getStatus() != null) {
+					existedUserAccountDto.setStatus(postData.getStatus());
 				}
-				if (userAccountDto.getStatusDate() != null) {
-					existedUserAccountDto.setStatusDate(userAccountDto.getStatusDate());
+				if (postData.getStatusDate() != null) {
+					existedUserAccountDto.setStatusDate(postData.getStatusDate());
 				}
-				if (!StringUtils.isBlank(userAccountDto.getSubscriptionDate())) {
-					existedUserAccountDto.setSubscriptionDate(userAccountDto.getSubscriptionDate());
+				if (!StringUtils.isBlank(postData.getSubscriptionDate())) {
+					existedUserAccountDto.setSubscriptionDate(postData.getSubscriptionDate());
 				}
 
-				accountHierarchyApi.populateNameAddress(existedUserAccountDto, userAccountDto);
-				if(!StringUtils.isBlank(userAccountDto.getCustomFields())){
-					existedUserAccountDto.setCustomFields(userAccountDto.getCustomFields());
+				accountHierarchyApi.populateNameAddress(existedUserAccountDto, postData);
+				if(!StringUtils.isBlank(postData.getCustomFields())){
+					existedUserAccountDto.setCustomFields(postData.getCustomFields());
 				}
 				update(existedUserAccountDto);
 			}
@@ -360,7 +360,7 @@ public class UserAccountApi extends AccountApi {
 			missingParameters.add("operationDate");
 		}
 
-		handleMissingParameters();
+		handleMissingParametersAndValidate(postData);
 
 		
 

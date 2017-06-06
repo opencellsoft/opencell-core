@@ -16,12 +16,6 @@ public class TimerEntityDto extends BusinessDto {
     private static final long serialVersionUID = 5166093858617578774L;
 
     @XmlAttribute(required = true)
-    private String code;
-
-    @XmlAttribute()
-    private String description;
-
-    @XmlAttribute(required = true)
     private String hour = "*";
 
     @XmlAttribute(required = true)
@@ -46,8 +40,8 @@ public class TimerEntityDto extends BusinessDto {
     }
 
     public TimerEntityDto(TimerEntity timerEntity) {
-        this.code = timerEntity.getCode();
-        this.description = timerEntity.getDescription();
+        super(timerEntity);
+        
         this.year = timerEntity.getYear();
         this.month = timerEntity.getMonth();
         this.dayOfMonth = timerEntity.getDayOfMonth();
@@ -74,34 +68,6 @@ public class TimerEntityDto extends BusinessDto {
         timerEntity.setSecond(dto.getSecond());
 
         return timerEntity;
-    }
-
-    /**
-     * @return the code
-     */
-    public String getCode() {
-        return code;
-    }
-
-    /**
-     * @param code the code to set
-     */
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    /**
-     * @return the description
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * @param description the description to set
-     */
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getYear() {
@@ -162,7 +128,7 @@ public class TimerEntityDto extends BusinessDto {
 
     @Override
     public String toString() {
-        return "TimerEntityDto [code=" + code + ", description=" + description + ", hour=" + hour + ", minute=" + minute + ", second=" + second + ", year=" + year + ", month="
+        return "TimerEntityDto [code=" + getCode() + ", description=" + getDescription() + ", hour=" + hour + ", minute=" + minute + ", second=" + second + ", year=" + year + ", month="
                 + month + ", dayOfMonth=" + dayOfMonth + ", dayOfWeek=" + dayOfWeek + "]";
     }
 

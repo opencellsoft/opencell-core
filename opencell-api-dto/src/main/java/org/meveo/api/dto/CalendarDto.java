@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -31,17 +30,6 @@ import org.meveo.model.catalog.HourInDay;
 public class CalendarDto extends BusinessDto {
 
     private static final long serialVersionUID = 8269245242022483636L;
-
-    /**
-     * Code
-     */
-    @XmlAttribute(required = true)
-    private String code;
-
-    /**
-     * Description
-     */
-    private String description;
 
     /**
      * Calendar type
@@ -98,8 +86,7 @@ public class CalendarDto extends BusinessDto {
     }
 
     public CalendarDto(Calendar e) {
-        code = e.getCode();
-        description = e.getDescription();
+        super(e);
         calendarType = CalendarTypeEnum.valueOf(e.getCalendarTypeWSubtypes());
 
         if (e instanceof CalendarYearly) {
@@ -144,22 +131,6 @@ public class CalendarDto extends BusinessDto {
         }
     }
 
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public CalendarTypeEnum getCalendarType() {
         return calendarType;
     }
@@ -171,7 +142,7 @@ public class CalendarDto extends BusinessDto {
     @Override
     public String toString() {
         final int maxLen = 10;
-        return "CalendarDto [code=" + code + ", description=" + description + ", calendarType=" + calendarType + ", days="
+        return "CalendarDto [code=" + getCode() + ", description=" + getDescription() + ", calendarType=" + calendarType + ", days="
                 + (days != null ? days.subList(0, Math.min(days.size(), maxLen)) : null) + ", hours=" + (hours != null ? hours.subList(0, Math.min(hours.size(), maxLen)) : null)
                 + ", periodLength=" + periodLength + ", periodUnit=" + periodUnit + ", nbPeriods=" + nbPeriods + ", joinCalendar1Code=" + joinCalendar1Code
                 + ", joinCalendar2Code=" + joinCalendar2Code + ", intervalType=" + intervalType + ", intervals="

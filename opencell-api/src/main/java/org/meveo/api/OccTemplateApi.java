@@ -32,7 +32,7 @@ public class OccTemplateApi extends BaseApi {
             missingParameters.add("occCategory");
         }
 
-        handleMissingParameters();
+        handleMissingParametersAndValidate(postData);
 
         
 
@@ -62,7 +62,7 @@ public class OccTemplateApi extends BaseApi {
             missingParameters.add("occCategory");
         }
 
-        handleMissingParameters();
+        handleMissingParametersAndValidate(postData);
 
         
 

@@ -27,28 +27,29 @@ public class TitleApi extends BaseApi {
      * @throws MeveoApiException
      * @throws BusinessException 
      */
-    public void create(TitleDto postData) throws MeveoApiException, BusinessException {
+	public void create(TitleDto postData) throws MeveoApiException, BusinessException {
 
-        String titleCode = postData.getCode();
+		String titleCode = postData.getCode();
 
-        if (!StringUtils.isBlank(titleCode)) {
-            Title title = titleService.findByCode(titleCode);
+		if (StringUtils.isBlank(titleCode)) {
+			missingParameters.add("titleCode");
+		}
 
-            if (title != null) {
-                throw new EntityAlreadyExistsException(Title.class, titleCode);
-            }
+		handleMissingParametersAndValidate(postData);
 
-            Title newTitle = new Title();
-            newTitle.setCode(titleCode);
-            newTitle.setDescription(postData.getDescription());
-            newTitle.setIsCompany(postData.getIsCompany());
+		Title title = titleService.findByCode(titleCode);
 
-            titleService.create(newTitle);
-        } else {
-            missingParameters.add("titleCode");
-            handleMissingParameters();
-        }
-    }
+		if (title != null) {
+			throw new EntityAlreadyExistsException(Title.class, titleCode);
+		}
+
+		Title newTitle = new Title();
+		newTitle.setCode(titleCode);
+		newTitle.setDescription(postData.getDescription());
+		newTitle.setIsCompany(postData.getIsCompany());
+
+		titleService.create(newTitle);
+	}
 
     /**
      * Returns TitleDto based on title code.
@@ -82,23 +83,25 @@ public class TitleApi extends BaseApi {
      * @throws MeveoApiException
      * @throws BusinessException 
      */
-    public void update(TitleDto postData) throws MeveoApiException, BusinessException {
-        String titleCode = postData.getCode();
-        if (StringUtils.isBlank(titleCode)) {
-            missingParameters.add("titleCode");
-        }
-        handleMissingParameters();
+	public void update(TitleDto postData) throws MeveoApiException, BusinessException {
+		String titleCode = postData.getCode();
+		if (StringUtils.isBlank(titleCode)) {
+			missingParameters.add("titleCode");
+		}
 
-        Title title = titleService.findByCode(titleCode);
-        if (title != null) {
-        	title.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
-            title.setDescription(postData.getDescription());
-            title.setIsCompany(postData.getIsCompany());
-            titleService.update(title);
-        } else {
-            throw new EntityDoesNotExistsException(Title.class, titleCode);
-        }
-    }
+		handleMissingParametersAndValidate(postData);
+
+		Title title = titleService.findByCode(titleCode);
+		if (title != null) {
+			title.setCode(
+					StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
+			title.setDescription(postData.getDescription());
+			title.setIsCompany(postData.getIsCompany());
+			titleService.update(title);
+		} else {
+			throw new EntityDoesNotExistsException(Title.class, titleCode);
+		}
+	}
 
     /**
      * Removes a title based on title code.

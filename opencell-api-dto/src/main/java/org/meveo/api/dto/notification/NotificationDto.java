@@ -5,7 +5,6 @@ import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -21,9 +20,6 @@ import org.meveo.model.notification.NotificationEventTypeEnum;
 public class NotificationDto extends BusinessDto {
 
 	private static final long serialVersionUID = 3931479706274647165L;
-
-	@XmlAttribute(required = true)
-	private String code;
 
 	@XmlElement(required = true)
 	private String classNameFilter;
@@ -46,7 +42,7 @@ public class NotificationDto extends BusinessDto {
 	}
 
 	public NotificationDto(Notification e) {
-		code = e.getCode();
+		super(e);
 		classNameFilter = e.getClassNameFilter();
 		eventTypeFilter = e.getEventTypeFilter();
 		elFilter = e.getElFilter();
@@ -58,16 +54,7 @@ public class NotificationDto extends BusinessDto {
 			scriptParams.putAll(e.getParams());
 		}
 //		scriptParams = e.getParams();
-	}
-
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-	
+	}	
 
 	public String getClassNameFilter() {
 		return classNameFilter;
@@ -125,7 +112,7 @@ public class NotificationDto extends BusinessDto {
 
 	@Override
 	public String toString() {
-		return "NotificationDto [code=" + code + ", classNameFilter=" + classNameFilter + ", eventTypeFilter=" + eventTypeFilter + ", elFilter=" + elFilter + ", scriptInstanceCode="
+		return "NotificationDto [code=" + getCode() + ", classNameFilter=" + classNameFilter + ", eventTypeFilter=" + eventTypeFilter + ", elFilter=" + elFilter + ", scriptInstanceCode="
 				+ scriptInstanceCode + ", counterTemplate=" + counterTemplate + "]";
 	}
 

@@ -56,7 +56,7 @@ public class CalendarApi extends BaseApi {
             missingParameters.add("calendarType");
         }
 
-        handleMissingParameters();
+        handleMissingParametersAndValidate(postData);
         
 
         
@@ -184,7 +184,7 @@ public class CalendarApi extends BaseApi {
             missingParameters.add("calendarType");
         }
 
-        handleMissingParameters();
+        handleMissingParametersAndValidate(postData);
         
 
         

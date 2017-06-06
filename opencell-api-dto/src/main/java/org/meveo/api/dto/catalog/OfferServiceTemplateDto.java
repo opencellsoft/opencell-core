@@ -40,7 +40,7 @@ public class OfferServiceTemplateDto implements Serializable{
 		mandatory = e.isMandatory();
 		if (e.getIncompatibleServices() != null) {
 			for (ServiceTemplate st : e.getIncompatibleServices()) {
-				incompatibleServices.add(new ServiceTemplateDto(st.getCode()));
+				incompatibleServices.add(new ServiceTemplateDto(st));
 			}
 		}		
 	}

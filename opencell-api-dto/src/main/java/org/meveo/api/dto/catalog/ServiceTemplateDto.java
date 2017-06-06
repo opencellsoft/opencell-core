@@ -2,7 +2,6 @@ package org.meveo.api.dto.catalog;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.StringUtils;
@@ -25,12 +24,6 @@ public class ServiceTemplateDto extends BusinessDto {
 
     private static final long serialVersionUID = -6794700715161690227L;
 
-    @XmlAttribute(required = true)
-    private String code;
-
-    @XmlAttribute()
-    private String description;
-    
     private String longDescription;
 
     private String invoicingCalendar;
@@ -56,8 +49,8 @@ public class ServiceTemplateDto extends BusinessDto {
     }
 
     public ServiceTemplateDto(ServiceTemplate serviceTemplate, CustomFieldsDto customFieldInstances) {
-        code = serviceTemplate.getCode();
-        description = serviceTemplate.getDescription();
+        super(serviceTemplate);
+        
         longDescription = serviceTemplate.getLongDescription();
         invoicingCalendar = serviceTemplate.getInvoicingCalendar() == null ? null : serviceTemplate.getInvoicingCalendar().getCode();
         imagePath = serviceTemplate.getImagePath();
@@ -139,27 +132,11 @@ public class ServiceTemplateDto extends BusinessDto {
         customFields = customFieldInstances;
     }
 
-    public ServiceTemplateDto(String code) {
-        this.code = code;
-    }
+    public ServiceTemplateDto(ServiceTemplate serviceTemplate) {
+    	 super(serviceTemplate);
+	}
 
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getInvoicingCalendar() {
+	public String getInvoicingCalendar() {
         return invoicingCalendar;
     }
 
@@ -201,7 +178,7 @@ public class ServiceTemplateDto extends BusinessDto {
 
     @Override
 	public String toString() {
-		return "ServiceTemplateDto [code=" + code + ", description=" + description + ", longDescription=" + longDescription + ", invoicingCalendar=" + invoicingCalendar
+		return "ServiceTemplateDto [code=" + getCode() + ", description=" + getDescription() + ", longDescription=" + longDescription + ", invoicingCalendar=" + invoicingCalendar
 				+ ", serviceChargeTemplateRecurrings=" + serviceChargeTemplateRecurrings + ", serviceChargeTemplateSubscriptions=" + serviceChargeTemplateSubscriptions
 				+ ", serviceChargeTemplateTerminations=" + serviceChargeTemplateTerminations + ", serviceChargeTemplateUsages=" + serviceChargeTemplateUsages + ", customFields="
 				+ customFields + ", mandatory=" + mandatory + ", somCode=" + somCode + ", imagePath=" + imagePath + "]";
@@ -232,7 +209,7 @@ public class ServiceTemplateDto extends BusinessDto {
     }
 
     public boolean isCodeOnly() {
-        return StringUtils.isBlank(description) && StringUtils.isBlank(invoicingCalendar) && StringUtils.isBlank(somCode) && serviceChargeTemplateRecurrings == null
+        return StringUtils.isBlank(getDescription()) && StringUtils.isBlank(invoicingCalendar) && StringUtils.isBlank(somCode) && serviceChargeTemplateRecurrings == null
                 && serviceChargeTemplateSubscriptions == null && serviceChargeTemplateTerminations == null && serviceChargeTemplateUsages == null
                 && (customFields == null || customFields.isEmpty());
     }

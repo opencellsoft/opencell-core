@@ -32,9 +32,10 @@ public class TerminationReasonApi extends BaseApi {
     public void create(TerminationReasonDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-            handleMissingParameters();
+            missingParameters.add("code");            
         }
+        
+        handleMissingParametersAndValidate(postData);
 
         if (terminationReasonService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(SubscriptionTerminationReason.class, postData.getCode());
@@ -62,9 +63,11 @@ public class TerminationReasonApi extends BaseApi {
     public void update(TerminationReasonDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-            handleMissingParameters();
+            missingParameters.add("code");            
         }
+        
+        handleMissingParametersAndValidate(postData);
+        
         SubscriptionTerminationReason subscriptionTerminationReason = terminationReasonService.findByCode(postData.getCode());
 
         if (subscriptionTerminationReason == null) {

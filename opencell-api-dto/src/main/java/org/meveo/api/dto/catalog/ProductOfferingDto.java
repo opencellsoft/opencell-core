@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -23,12 +22,6 @@ import org.meveo.model.catalog.ProductOffering;
 public class ProductOfferingDto extends BusinessDto {
 
 	private static final long serialVersionUID = 4599063410509766484L;
-
-	@XmlAttribute(required = true)
-	private String code;
-
-	@XmlAttribute()
-	private String description;
 
 	private String name;
 
@@ -57,8 +50,8 @@ public class ProductOfferingDto extends BusinessDto {
 	}
 
 	public ProductOfferingDto(ProductOffering product, CustomFieldsDto customFieldsDto) {
-		this.setCode(product.getCode());
-		this.setDescription(product.getDescription());
+		super(product);
+		
 		this.setName(product.getName());
 		this.setValidFrom(product.getValidFrom());
 		this.setValidTo(product.getValidTo());
@@ -80,22 +73,6 @@ public class ProductOfferingDto extends BusinessDto {
 			}
 		}
 		this.customFields = customFieldsDto;
-	}
-
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
 	}
 
 	public String getName() {

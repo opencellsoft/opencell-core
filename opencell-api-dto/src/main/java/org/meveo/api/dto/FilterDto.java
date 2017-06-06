@@ -2,7 +2,6 @@ package org.meveo.api.dto;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.filter.Filter;
@@ -19,24 +18,10 @@ public class FilterDto extends BusinessDto {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	@XmlAttribute(required=true)
-	private String code;
-	@XmlAttribute()
-	private String description;
+
 	private Boolean shared;
 	private String inputXml;
-	public String getCode() {
-		return code;
-	}
-	public void setCode(String code) {
-		this.code = code;
-	}
-	public String getDescription() {
-		return description;
-	}
-	public void setDescription(String description) {
-		this.description = description;
-	}
+	
 	public Boolean getShared() {
 		return shared;
 	}
@@ -58,9 +43,10 @@ public class FilterDto extends BusinessDto {
 		dto.setInputXml(filter.getInputXml());
 		return dto;
 	}
+	
 	@Override
 	public String toString() {
-		return "FilterDto [code=" + code + ", description=" + description
+		return "FilterDto [code=" + getCode() + ", description=" + getDescription()
 				+ ", shared=" + shared + ", inputXml=" + inputXml + "]";
 	}
 	

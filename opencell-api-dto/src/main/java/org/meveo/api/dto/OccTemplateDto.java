@@ -1,10 +1,7 @@
 package org.meveo.api.dto;
 
-import java.io.Serializable;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -16,12 +13,6 @@ import org.meveo.model.payments.OperationCategoryEnum;
 public class OccTemplateDto extends BusinessDto {
 
     private static final long serialVersionUID = 2587489734648000805L;
-
-    @XmlAttribute(required = true)
-    private String code;
-
-    @XmlAttribute()
-    private String description;
 
     @XmlElement(required = true)
     private String accountCode;
@@ -35,27 +26,10 @@ public class OccTemplateDto extends BusinessDto {
     }
 
     public OccTemplateDto(OCCTemplate e) {
-        code = e.getCode();
-        description = e.getDescription();
+        super(e);
         accountCode = e.getAccountCode();
         occCategory = e.getOccCategory();
         accountCodeClientSide = e.getAccountCodeClientSide();
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getAccountCode() {
@@ -84,7 +58,7 @@ public class OccTemplateDto extends BusinessDto {
 
     @Override
     public String toString() {
-        return "OCCTemplateDto [code=" + code + ", description=" + description + ", accountCode=" + accountCode + ", occCategory=" + occCategory + ", accountCodeClientSide="
+        return "OCCTemplateDto [code=" + getCode() + ", description=" + getDescription() + ", accountCode=" + accountCode + ", occCategory=" + occCategory + ", accountCodeClientSide="
                 + accountCodeClientSide + "]";
     }
 }

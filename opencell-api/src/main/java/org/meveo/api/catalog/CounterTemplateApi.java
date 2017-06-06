@@ -38,7 +38,7 @@ public class CounterTemplateApi extends BaseCrudApi<CounterTemplate, CounterTemp
             missingParameters.add("calendar");
         }
 
-        handleMissingParameters();
+        handleMissingParametersAndValidate(postData);
 
         
 
@@ -80,7 +80,7 @@ public class CounterTemplateApi extends BaseCrudApi<CounterTemplate, CounterTemp
             missingParameters.add("calendar");
         }
 
-        handleMissingParameters();
+        handleMissingParametersAndValidate(postData);
 
         
         CounterTemplate counterTemplate = counterTemplateService.findByCode(postData.getCode());

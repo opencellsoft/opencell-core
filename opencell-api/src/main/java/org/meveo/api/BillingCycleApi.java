@@ -50,7 +50,7 @@ public class BillingCycleApi extends BaseApi {
             missingParameters.add("invoiceDateDelay");
         }
 
-        handleMissingParameters();
+        handleMissingParametersAndValidate(postData);
      
         
 
@@ -117,7 +117,7 @@ public class BillingCycleApi extends BaseApi {
             missingParameters.add("invoiceDateDelay");
         }
 
-        handleMissingParameters();
+        handleMissingParametersAndValidate(postData);
         
 
         

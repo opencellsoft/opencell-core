@@ -39,9 +39,9 @@ public class DiscountPlanApi extends BaseApi {
     public void create(DiscountPlanDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-            handleMissingParameters();
+            missingParameters.add("code");            
         }
+        handleMissingParametersAndValidate(postData);
         if (discountPlanService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(DiscountPlan.class, postData.getCode());
         }
@@ -64,9 +64,9 @@ public class DiscountPlanApi extends BaseApi {
     public void update(DiscountPlanDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-            handleMissingParameters();
+            missingParameters.add("code");            
         }
+        handleMissingParametersAndValidate(postData);
         
         DiscountPlan discountPlan = discountPlanService.findByCode(postData.getCode());
 

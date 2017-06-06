@@ -113,7 +113,7 @@ public class BillingAccountApi extends AccountApi {
 			missingParameters.add("paymentMethod");
 		}
 
-		handleMissingParameters();
+		handleMissingParametersAndValidate(postData);
 
 		
 
@@ -230,7 +230,7 @@ public class BillingAccountApi extends AccountApi {
 			missingParameters.add("paymentMethod");
 		}
 
-		handleMissingParameters();
+		handleMissingParametersAndValidate(postData);
 
 		
 
@@ -511,68 +511,68 @@ public class BillingAccountApi extends AccountApi {
 		return new ArrayList<>(billingAccountService.filterCountersByPeriod(billingAccount.getCounters(), date).values());
 	}
 
-	public void createOrUpdatePartial(BillingAccountDto billingAccountDto) throws MeveoApiException, BusinessException {
+	public void createOrUpdatePartial(BillingAccountDto postData) throws MeveoApiException, BusinessException {
 		BillingAccountDto existedBillingAccountDto = null;
 		try {
-			existedBillingAccountDto = find(billingAccountDto.getCode());
+			existedBillingAccountDto = find(postData.getCode());
 		} catch (Exception e) {
 			existedBillingAccountDto = null;
 		}
-		log.debug("createOrUpdate billingAccount {}", billingAccountDto);
+		log.debug("createOrUpdate billingAccount {}", postData);
 		if (existedBillingAccountDto == null) {// create
-			create(billingAccountDto);
+			create(postData);
 		} else {// update
-			if (billingAccountDto.getTerminationDate() != null) {
-				if (StringUtils.isBlank(billingAccountDto.getTerminationReason())) {
+			if (postData.getTerminationDate() != null) {
+				if (StringUtils.isBlank(postData.getTerminationReason())) {
 					missingParameters.add("billingAccount.terminationReason");
-					handleMissingParameters();
+					handleMissingParametersAndValidate(postData);
 				}
-				terminate(billingAccountDto);
+				terminate(postData);
 			} else {
 
-                if (!StringUtils.isBlank(billingAccountDto.getCustomerAccount())) {
-                    existedBillingAccountDto.setCustomerAccount(billingAccountDto.getCustomerAccount());
+                if (!StringUtils.isBlank(postData.getCustomerAccount())) {
+                    existedBillingAccountDto.setCustomerAccount(postData.getCustomerAccount());
                 }
 
-				if (!StringUtils.isBlank(billingAccountDto.getBillingCycle())) {
-					existedBillingAccountDto.setBillingCycle(billingAccountDto.getBillingCycle());
+				if (!StringUtils.isBlank(postData.getBillingCycle())) {
+					existedBillingAccountDto.setBillingCycle(postData.getBillingCycle());
 				}
-				if (!StringUtils.isBlank(billingAccountDto.getCountry())) {
-					existedBillingAccountDto.setCountry(billingAccountDto.getCountry());
+				if (!StringUtils.isBlank(postData.getCountry())) {
+					existedBillingAccountDto.setCountry(postData.getCountry());
 				}
-				if (!StringUtils.isBlank(billingAccountDto.getLanguage())) {
-					existedBillingAccountDto.setLanguage(billingAccountDto.getLanguage());
+				if (!StringUtils.isBlank(postData.getLanguage())) {
+					existedBillingAccountDto.setLanguage(postData.getLanguage());
 				}
 
-				if (billingAccountDto.getPaymentMethod() != null) {
-					existedBillingAccountDto.setPaymentMethod(billingAccountDto.getPaymentMethod());
+				if (postData.getPaymentMethod() != null) {
+					existedBillingAccountDto.setPaymentMethod(postData.getPaymentMethod());
 				}
-				if (billingAccountDto.getPaymentTerms() != null) {
-					existedBillingAccountDto.setPaymentTerms(billingAccountDto.getPaymentTerms());
+				if (postData.getPaymentTerms() != null) {
+					existedBillingAccountDto.setPaymentTerms(postData.getPaymentTerms());
 				}
 				//
-				if (!StringUtils.isBlank(billingAccountDto.getNextInvoiceDate())) {
-					existedBillingAccountDto.setNextInvoiceDate(billingAccountDto.getNextInvoiceDate());
+				if (!StringUtils.isBlank(postData.getNextInvoiceDate())) {
+					existedBillingAccountDto.setNextInvoiceDate(postData.getNextInvoiceDate());
 				}
-				if (!StringUtils.isBlank(billingAccountDto.getSubscriptionDate())) {
-					existedBillingAccountDto.setSubscriptionDate(billingAccountDto.getSubscriptionDate());
+				if (!StringUtils.isBlank(postData.getSubscriptionDate())) {
+					existedBillingAccountDto.setSubscriptionDate(postData.getSubscriptionDate());
 				}
-				if (!StringUtils.isBlank(billingAccountDto.getTerminationDate())) {
-					existedBillingAccountDto.setTerminationDate(billingAccountDto.getTerminationDate());
+				if (!StringUtils.isBlank(postData.getTerminationDate())) {
+					existedBillingAccountDto.setTerminationDate(postData.getTerminationDate());
 				}
-				if (!StringUtils.isBlank(billingAccountDto.getElectronicBilling())) {
-					existedBillingAccountDto.setElectronicBilling(billingAccountDto.getElectronicBilling());
+				if (!StringUtils.isBlank(postData.getElectronicBilling())) {
+					existedBillingAccountDto.setElectronicBilling(postData.getElectronicBilling());
 				}
-				if (!StringUtils.isBlank(billingAccountDto.getEmail())) {
-					existedBillingAccountDto.setEmail(billingAccountDto.getEmail());
+				if (!StringUtils.isBlank(postData.getEmail())) {
+					existedBillingAccountDto.setEmail(postData.getEmail());
 				}
-				if (billingAccountDto.getInvoicingThreshold() != null) {
-					existedBillingAccountDto.setInvoicingThreshold(billingAccountDto.getInvoicingThreshold());
+				if (postData.getInvoicingThreshold() != null) {
+					existedBillingAccountDto.setInvoicingThreshold(postData.getInvoicingThreshold());
 				}				
 				//
-				accountHierarchyApi.populateNameAddress(existedBillingAccountDto, billingAccountDto);
-				if (!StringUtils.isBlank(billingAccountDto.getCustomFields())) {
-					existedBillingAccountDto.setCustomFields(billingAccountDto.getCustomFields());
+				accountHierarchyApi.populateNameAddress(existedBillingAccountDto, postData);
+				if (!StringUtils.isBlank(postData.getCustomFields())) {
+					existedBillingAccountDto.setCustomFields(postData.getCustomFields());
 				}
 				update(existedBillingAccountDto);
 			}

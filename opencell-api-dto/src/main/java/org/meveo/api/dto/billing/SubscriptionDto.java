@@ -4,7 +4,6 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -20,12 +19,6 @@ import org.meveo.model.billing.SubscriptionStatusEnum;
 public class SubscriptionDto extends BusinessDto {
 
     private static final long serialVersionUID = -6021918810749866648L;
-
-    @XmlAttribute(required = true)
-    private String code;
-
-    @XmlAttribute()
-    private String description;
 
     @XmlElement(required = true)
     private String userAccount;
@@ -59,14 +52,6 @@ public class SubscriptionDto extends BusinessDto {
 
     public SubscriptionDto() {
 
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public String getUserAccount() {
@@ -111,17 +96,9 @@ public class SubscriptionDto extends BusinessDto {
 
     @Override
     public String toString() {
-        return "SubscriptionDto [code=" + code + ", description=" + description + ", userAccount=" + userAccount + ", offerTemplate=" + offerTemplate + ", subscriptionDate="
+        return "SubscriptionDto [code=" + getCode() + ", description=" + getDescription() + ", userAccount=" + userAccount + ", offerTemplate=" + offerTemplate + ", subscriptionDate="
                 + subscriptionDate + ", terminationDate=" + terminationDate + ", status=" + status + ",statusDate="+statusDate+", customFields=" + customFields + ", accesses=" + accesses + ", services="
                 + services + ", terminationReason=" + terminationReason + "]";
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public SubscriptionStatusEnum getStatus() {

@@ -15,7 +15,6 @@ import org.meveo.api.dto.CustomEntityInstanceDto;
 import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -205,11 +204,9 @@ public class CustomEntityInstanceApi extends BaseApi {
      * Validate CustomEntityInstance DTO without saving it
      * 
      * @param ceiDto CustomEntityInstance DTO to validate
-
-     * @throws MissingParameterException
-     * @throws InvalidParameterException
+     * @throws MeveoApiException 
      */
-    public void validateEntityInstanceDto(CustomEntityInstanceDto ceiDto) throws InvalidParameterException, MissingParameterException {
+    public void validateEntityInstanceDto(CustomEntityInstanceDto ceiDto) throws MeveoApiException {
 
         if (StringUtils.isBlank(ceiDto.getCode())) {
             missingParameters.add("code");

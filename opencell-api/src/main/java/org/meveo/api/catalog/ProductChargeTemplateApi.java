@@ -57,8 +57,6 @@ public class ProductChargeTemplateApi extends BaseCrudApi<ProductChargeTemplate,
 
 	public ProductChargeTemplate create(ProductChargeTemplateDto postData) throws MeveoApiException, BusinessException {
 
-		validate(postData);
-
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
 		}
@@ -66,9 +64,7 @@ public class ProductChargeTemplateApi extends BaseCrudApi<ProductChargeTemplate,
 			missingParameters.add("invoiceSubCategory");
 		}
 
-		handleMissingParameters();
-
-		
+		handleMissingParametersAndValidate(postData);
 
 		// check if code already exists
 		if (productChargeTemplateService.findByCode(postData.getCode()) != null) {
@@ -167,8 +163,6 @@ public class ProductChargeTemplateApi extends BaseCrudApi<ProductChargeTemplate,
 
 	public ProductChargeTemplate update(ProductChargeTemplateDto postData) throws MeveoApiException, BusinessException {
 
-		validate(postData);
-
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
 		}
@@ -176,7 +170,7 @@ public class ProductChargeTemplateApi extends BaseCrudApi<ProductChargeTemplate,
 			missingParameters.add("invoiceSubCategory");
 		}
 
-		handleMissingParameters();
+		handleMissingParametersAndValidate(postData);
 
 		
 

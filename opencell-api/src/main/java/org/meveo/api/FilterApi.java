@@ -23,43 +23,43 @@ public class FilterApi extends BaseCrudApi<Filter, FilterDto> {
     @Inject
     private FilterService filterService;
 
-    private Filter create(FilterDto dto) throws MeveoApiException, BusinessException {
+    private Filter create(FilterDto postData) throws MeveoApiException, BusinessException {
 
-        if (StringUtils.isBlank(dto.getCode())) {
+        if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
-        if (StringUtils.isBlank(dto.getInputXml())) {
+        if (StringUtils.isBlank(postData.getInputXml())) {
             missingParameters.add("inputXml");
         }
 
-        handleMissingParameters();
+        handleMissingParametersAndValidate(postData);
 
         Filter filter = new Filter();
-        mapDtoToFilter(dto, filter);
+        mapDtoToFilter(postData, filter);
         filterService.create(filter);
 
         return filter;
     }
 
-    private Filter update(FilterDto dto) throws MeveoApiException, BusinessException {
+    private Filter update(FilterDto postData) throws MeveoApiException, BusinessException {
 
-        if (StringUtils.isBlank(dto.getCode())) {
+        if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
-        if (StringUtils.isBlank(dto.getInputXml())) {
+        if (StringUtils.isBlank(postData.getInputXml())) {
             missingParameters.add("inputXml");
         }
 
-        handleMissingParameters();
+        handleMissingParametersAndValidate(postData);
 
         
-        Filter filter = filterService.findByCode(dto.getCode());
+        Filter filter = filterService.findByCode(postData.getCode());
 
         if (filter == null) {
-            throw new EntityDoesNotExistsException(Filter.class, dto.getCode());
+            throw new EntityDoesNotExistsException(Filter.class, postData.getCode());
         }
 
-        mapDtoToFilter(dto, filter);
+        mapDtoToFilter(postData, filter);
         filter = filterService.update(filter);
 
         return filter;

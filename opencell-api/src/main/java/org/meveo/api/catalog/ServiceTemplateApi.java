@@ -226,11 +226,10 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
     public ServiceTemplate create(ServiceTemplateDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-            handleMissingParameters();
+            missingParameters.add("code");            
         }
-
         
+        handleMissingParametersAndValidate(postData);        
 
         // check if code already exists
         if (serviceTemplateService.findByCode(postData.getCode()) != null) {
@@ -298,9 +297,9 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-            handleMissingParameters();
         }
-
+        
+        handleMissingParametersAndValidate(postData);
         
         // check if code already exists
         ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(postData.getCode());

@@ -2,7 +2,6 @@ package org.meveo.api.dto.dwh;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BusinessDto;
@@ -19,12 +18,6 @@ public class ChartDto extends BusinessDto {
 	
     private static final long serialVersionUID = 2573963792647472501L;
 
-    @XmlAttribute
-    private String code;
-
-    @XmlAttribute
-    private String description;
-
     private MeasurableQuantityDto measurableQuantity;
     private String width = "500px";
     private String height = "300px";
@@ -38,9 +31,8 @@ public class ChartDto extends BusinessDto {
     }
 
     public ChartDto(Chart chart) {
-        super();
-        setCode(chart.getCode());
-        setDescription(chart.getDescription());
+        super(chart);        
+
         if (chart.getMeasurableQuantity() != null) {
         	setMeasurableQuantity(new MeasurableQuantityDto(chart.getMeasurableQuantity()));
         }
@@ -108,25 +100,9 @@ public class ChartDto extends BusinessDto {
         this.visible = visible;
     }
 
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     @Override
     public String toString() {
-        return String.format("ChartDto [code=%s, description=%s, measurableQuantityDto=%s, width=%s, height=%s, style=%s, styleClass=%s, extender=%s, visible=%s]", code,
-            description, measurableQuantity, width, height, style, styleClass, extender, visible);
+        return String.format("ChartDto [code=%s, description=%s, measurableQuantityDto=%s, width=%s, height=%s, style=%s, styleClass=%s, extender=%s, visible=%s]", getCode(),
+            getDescription(), measurableQuantity, width, height, style, styleClass, extender, visible);
     }
 }

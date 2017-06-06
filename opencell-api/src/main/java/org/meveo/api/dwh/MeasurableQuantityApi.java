@@ -38,9 +38,10 @@ public class MeasurableQuantityApi extends BaseCrudApi<MeasurableQuantity, Measu
     public MeasurableQuantity create(MeasurableQuantityDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-            handleMissingParameters();
+            missingParameters.add("code");            
         }
+        
+        handleMissingParametersAndValidate(postData);
 
         if (measurableQuantityService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(MeasurableQuantity.class, postData.getCode());
@@ -54,9 +55,10 @@ public class MeasurableQuantityApi extends BaseCrudApi<MeasurableQuantity, Measu
 
     public MeasurableQuantity update(MeasurableQuantityDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("measurableQuantityCode");
-            handleMissingParameters();
+            missingParameters.add("measurableQuantityCode");            
         }
+        
+        handleMissingParametersAndValidate(postData);
 
         MeasurableQuantity measurableQuantity = measurableQuantityService.findByCode(postData.getCode());
         if (measurableQuantity == null) {

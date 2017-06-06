@@ -46,7 +46,7 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
             if (StringUtils.isBlank(postData.getCode())) {
                 missingParameters.add("code");
             }
-            handleMissingParameters();
+            handleMissingParametersAndValidate(postData);
         }
 
         
@@ -123,9 +123,9 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
 
         if (StringUtils.isBlank(jobInstanceCode)) {
             missingParameters.add("code");
-            handleMissingParameters();
-
         }
+        
+        handleMissingParametersAndValidate(postData);
 
         JobInstance jobInstance = jobInstanceService.findByCode(jobInstanceCode);
 

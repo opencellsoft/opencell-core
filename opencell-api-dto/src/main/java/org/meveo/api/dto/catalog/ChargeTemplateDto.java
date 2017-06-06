@@ -6,11 +6,9 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.BusinessDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.LanguageDescriptionDto;
@@ -24,12 +22,6 @@ import org.meveo.model.catalog.TriggeredEDRTemplate;
 public class ChargeTemplateDto extends BusinessDto implements Serializable {
 
     private static final long serialVersionUID = -5143285194077662656L;
-
-    @XmlAttribute(required = true)
-    private String code;
-
-    @XmlAttribute()
-    private String description;
 
     @XmlElement(required = true)
     private String invoiceSubCategory;
@@ -56,8 +48,7 @@ public class ChargeTemplateDto extends BusinessDto implements Serializable {
     }
     
     public ChargeTemplateDto(ChargeTemplate e, CustomFieldsDto customFieldInstances) {
-        code = e.getCode();
-        description = e.getDescription();
+        super(e);
         if (e.getInvoiceSubCategory() != null) {
             invoiceSubCategory = e.getInvoiceSubCategory().getCode();
         }
@@ -80,22 +71,6 @@ public class ChargeTemplateDto extends BusinessDto implements Serializable {
         revenueRecognitionRuleCode = e.getRevenueRecognitionRule()==null?null:e.getRevenueRecognitionRule().getCode();
     }
 
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public List<LanguageDescriptionDto> getLanguageDescriptions() {
         return languageDescriptions;
     }
@@ -106,7 +81,7 @@ public class ChargeTemplateDto extends BusinessDto implements Serializable {
 
     @Override
     public String toString() {
-        return "ChargeTemplateDto [code=" + code + ", description=" + description + ", invoiceSubCategory=" + invoiceSubCategory + ", disabled=" + disabled + ", amountEditable="
+        return "ChargeTemplateDto [code=" + getCode() + ", description=" + getDescription() + ", invoiceSubCategory=" + invoiceSubCategory + ", disabled=" + disabled + ", amountEditable="
                 + amountEditable + ", languageDescriptions=" + languageDescriptions + ", inputUnitDescription=" + inputUnitDescription + ", ratingUnitDescription="
                 + ratingUnitDescription + ", unitMultiplicator=" + unitMultiplicator + ", unitNbDecimal=" + unitNbDecimal + ", customFields=" + customFields + ", triggeredEdrs="
                 + triggeredEdrs + ",roundingModeDtoEnum=" + roundingModeDtoEnum + "]";

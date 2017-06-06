@@ -23,12 +23,6 @@ public class CounterTemplateDto extends BusinessDto implements Serializable {
     private static final long serialVersionUID = 2587489734648000805L;
 
     @XmlAttribute(required = true)
-    private String code;
-
-    @XmlAttribute()
-    private String description;
-
-    @XmlAttribute(required = true)
     private String calendar;
 
     private String unity;
@@ -43,8 +37,7 @@ public class CounterTemplateDto extends BusinessDto implements Serializable {
     }
 
     public CounterTemplateDto(CounterTemplate e) {
-        code = e.getCode();
-        description = e.getDescription();
+    	super(e);
         unity = e.getUnityDescription();
         type = e.getCounterType();
         ceiling = e.getCeiling();
@@ -53,22 +46,6 @@ public class CounterTemplateDto extends BusinessDto implements Serializable {
         counterLevel = e.getCounterLevel();
         ceilingExpressionEl = e.getCeilingExpressionEl();
         notificationLevels = e.getNotificationLevels();
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getUnity() {
@@ -140,7 +117,7 @@ public class CounterTemplateDto extends BusinessDto implements Serializable {
         return String
             .format(
                 "CounterTemplateDto [code=%s, description=%s, calendar=%s, unity=%s, type=%s, ceiling=%s, disabled=%s, counterLevel=%s, ceilingExpressionEl=%s, notificationLevels=%s]",
-                code, description, calendar, unity, type, ceiling, disabled, counterLevel, ceilingExpressionEl, notificationLevels);
+                getCode(), getDescription(), calendar, unity, type, ceiling, disabled, counterLevel, ceilingExpressionEl, notificationLevels);
     }
 
     @Override

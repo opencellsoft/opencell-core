@@ -59,7 +59,7 @@ public class ChartApi extends BaseCrudApi<Chart, ChartDto> {
             missingParameters.add("measurableQuantity.code");
         }
 
-        handleMissingParameters();
+        handleMissingParametersAndValidate(postData);
 
         Chart chart = chartService.findByCode(postData.getCode());
         if (chart != null) {
@@ -95,7 +95,7 @@ public class ChartApi extends BaseCrudApi<Chart, ChartDto> {
             missingParameters.add("measurableQuantity.code");
         }
 
-        handleMissingParameters();
+        handleMissingParametersAndValidate(postData);
 
         Chart chart = chartService.findByCode(postData.getCode());
         if (chart == null) {

@@ -97,7 +97,7 @@ public class CustomerAccountApi extends AccountApi {
 			missingParameters.add("name.lastName");
 		}
 
-		handleMissingParameters();
+		handleMissingParametersAndValidate(postData);
 
 		
 		// check if already exists
@@ -186,7 +186,7 @@ public class CustomerAccountApi extends AccountApi {
 			missingParameters.add("name.lastName");
 		}
 
-		handleMissingParameters();
+		handleMissingParametersAndValidate(postData);
 
 		
 		// check if already exists
@@ -402,7 +402,7 @@ public class CustomerAccountApi extends AccountApi {
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
-			handleMissingParameters();
+			handleMissingParametersAndValidate(postData);
 		}
 
 		if (creditCategoryService.findByCode(postData.getCode()) != null) {
@@ -427,7 +427,7 @@ public class CustomerAccountApi extends AccountApi {
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
-			handleMissingParameters();
+			handleMissingParametersAndValidate(postData);
 		}
 
 		CreditCategory creditCategory = creditCategoryService.findByCode(postData.getCode());
@@ -453,7 +453,7 @@ public class CustomerAccountApi extends AccountApi {
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
-			handleMissingParameters();
+			handleMissingParametersAndValidate(postData);
 		}
 
 		if (creditCategoryService.findByCode(postData.getCode()) == null) {

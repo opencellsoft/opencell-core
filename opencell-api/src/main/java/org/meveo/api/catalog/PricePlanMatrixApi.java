@@ -74,7 +74,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
             missingParameters.add("amountWithoutTax");
         }
 
-        handleMissingParameters();
+        handleMissingParametersAndValidate(postData);
 
         
 
@@ -185,7 +185,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
             missingParameters.add("amountWithoutTax");
         }
 
-        handleMissingParameters();
+        handleMissingParametersAndValidate(postData);
 
         
 

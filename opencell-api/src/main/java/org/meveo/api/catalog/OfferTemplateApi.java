@@ -63,7 +63,8 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 		if (StringUtils.isBlank(postData.getName())) {
 		    postData.setName(postData.getCode());
 		}
-		handleMissingParameters();
+		
+		handleMissingParametersAndValidate(postData);
 		
 		if (offerTemplateService.findByCode(postData.getCode()) != null) {
 			throw new EntityAlreadyExistsException(OfferTemplate.class, postData.getCode());
@@ -96,7 +97,7 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
 		if (StringUtils.isBlank(postData.getName())) {
 		    postData.setName(postData.getCode());
 		}
-		handleMissingParameters();
+		handleMissingParametersAndValidate(postData);
 		
 		
 		OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getCode());

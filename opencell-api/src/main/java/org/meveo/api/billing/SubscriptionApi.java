@@ -129,7 +129,7 @@ public class SubscriptionApi extends BaseApi {
             missingParameters.add("subscriptionDate");
         }
 
-        handleMissingParameters();        
+        handleMissingParametersAndValidate(postData);        
 
         if (subscriptionService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(Subscription.class, postData.getCode());
@@ -196,7 +196,7 @@ public class SubscriptionApi extends BaseApi {
             missingParameters.add("subscriptionDate");
         }
 
-        handleMissingParameters();
+        handleMissingParametersAndValidate(postData);
 
         
 
@@ -271,7 +271,7 @@ public class SubscriptionApi extends BaseApi {
             missingParameters.add("services");
         }
 
-        handleMissingParameters();
+        handleMissingParametersAndValidate(postData);
 
         
 
@@ -459,7 +459,7 @@ public class SubscriptionApi extends BaseApi {
             missingParameters.add("services");
         }
 
-        handleMissingParameters();
+        handleMissingParametersAndValidate(postData);
 
         
 
@@ -560,7 +560,7 @@ public class SubscriptionApi extends BaseApi {
             missingParameters.add("operationDate");
         }
 
-        handleMissingParameters();
+        handleMissingParametersAndValidate(postData);
 
         
 
@@ -613,7 +613,7 @@ public class SubscriptionApi extends BaseApi {
 			missingParameters.add("operationDate");
 		}
 
-		handleMissingParameters();
+		handleMissingParametersAndValidate(postData);
 
 		
 
@@ -673,9 +673,7 @@ public class SubscriptionApi extends BaseApi {
             missingParameters.add("terminationDate");
         }
 
-        handleMissingParameters();
-
-        
+        handleMissingParametersAndValidate(postData);        
 
         Subscription subscription = subscriptionService.findByCode(postData.getSubscriptionCode());
         if (subscription == null) {
@@ -714,9 +712,7 @@ public class SubscriptionApi extends BaseApi {
             missingParameters.add("terminationDate");
         }
 
-        handleMissingParameters();
-
-        
+        handleMissingParametersAndValidate(postData);        
 
         Subscription subscription = subscriptionService.findByCode(postData.getSubscriptionCode());
         if (subscription == null) {
@@ -1031,40 +1027,38 @@ public class SubscriptionApi extends BaseApi {
     /**
      * 
      * @param suspendServicesRequestDto
-     * @throws MissingParameterException
-     * @throws EntityDoesNotExistsException
      * @throws IncorrectSusbcriptionException
      * @throws IncorrectServiceInstanceException
      * @throws BusinessException
+     * @throws MeveoApiException 
      */
-	public void suspendServices(OperationServicesRequestDto provisionningServicesRequestDto) throws MissingParameterException, EntityDoesNotExistsException, IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+	public void suspendServices(OperationServicesRequestDto provisionningServicesRequestDto) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException, MeveoApiException {
 		suspendOrResumeServices(provisionningServicesRequestDto, true);     
 	}	
 	
-	public void resumeServices(OperationServicesRequestDto provisionningServicesRequestDto) throws MissingParameterException, EntityDoesNotExistsException, IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+	public void resumeServices(OperationServicesRequestDto provisionningServicesRequestDto) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException, MeveoApiException {
 		suspendOrResumeServices(provisionningServicesRequestDto, false);
 	}	
 	
-	private void suspendOrResumeServices(OperationServicesRequestDto provisionningServicesRequestDto,boolean isToSuspend) throws MissingParameterException, EntityDoesNotExistsException, IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
-		if (provisionningServicesRequestDto == null  ) {
-			missingParameters.add("provisionningServicesRequestDto");	
-			handleMissingParameters();
+	private void suspendOrResumeServices(OperationServicesRequestDto postData,boolean isToSuspend) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException, MeveoApiException {
+		if (postData == null  ) {
+			missingParameters.add("provisionningServicesRequestDto");
 		}
 		
-		if (StringUtils.isBlank(provisionningServicesRequestDto.getSubscriptionCode())) {
+		if (StringUtils.isBlank(postData.getSubscriptionCode())) {
 			missingParameters.add("subscriptionCode");			
 		}	
-		for(ServiceToUpdateDto serviceToSuspendDto: provisionningServicesRequestDto.getServicesToUpdate()){
+		for(ServiceToUpdateDto serviceToSuspendDto: postData.getServicesToUpdate()){
 			if (StringUtils.isBlank(serviceToSuspendDto.getCode())) {
 				missingParameters.add("serviceToSuspend.code");			
 			}
 		}
-		handleMissingParameters();
-		Subscription subscription = subscriptionService.findByCode(provisionningServicesRequestDto.getSubscriptionCode());
+		handleMissingParametersAndValidate(postData);
+		Subscription subscription = subscriptionService.findByCode(postData.getSubscriptionCode());
 		if (subscription == null) {
-			throw new EntityDoesNotExistsException(Subscription.class, provisionningServicesRequestDto.getSubscriptionCode());
+			throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscriptionCode());
 		}				
-		for(ServiceToUpdateDto serviceToSuspendDto: provisionningServicesRequestDto.getServicesToUpdate()){           
+		for(ServiceToUpdateDto serviceToSuspendDto: postData.getServicesToUpdate()){           
         	ServiceInstance serviceInstanceToSuspend = serviceInstanceService.findByCodeAndSubscription(serviceToSuspendDto.getCode(), subscription); 
         	if(serviceInstanceToSuspend == null){
         		throw new EntityDoesNotExistsException(ServiceInstance.class, serviceToSuspendDto.getCode());
@@ -1085,7 +1079,7 @@ public class SubscriptionApi extends BaseApi {
 			missingParameters.add("subscriptionCode");
 		}
 
-		handleMissingParameters();
+		handleMissingParametersAndValidate(postData);
 
 		Subscription subscription = subscriptionService.findByCode(postData.getSubscriptionCode());
 		if (subscription == null) {

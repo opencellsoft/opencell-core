@@ -4,7 +4,6 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -26,10 +25,7 @@ public class MeveoInstanceDto extends BusinessDto {
 	 * 
 	 */
 	private static final long serialVersionUID = -4747242987390520289L;
-	@XmlAttribute(required=true)
-	private String code;
-	@XmlAttribute
-	private String description;
+	
 	private String productName;
 	private String productVersion;
 	private String owner;
@@ -64,8 +60,7 @@ public class MeveoInstanceDto extends BusinessDto {
 		
 	}
 	public MeveoInstanceDto(MeveoInstance meveoInstance){
-		this.code=meveoInstance.getCode();
-		this.description=meveoInstance.getDescription();
+		super(meveoInstance);
 		this.productName=meveoInstance.getProductName();
 		this.productVersion=meveoInstance.getProductVersion();
 		this.owner=meveoInstance.getOwner();
@@ -97,18 +92,7 @@ public class MeveoInstanceDto extends BusinessDto {
 			this.customer=meveoInstance.getCustomer().getCode();
 		}
 	}
-	public String getCode() {
-		return code;
-	}
-	public void setCode(String code) {
-		this.code = code;
-	}
-	public String getDescription() {
-		return description;
-	}
-	public void setDescription(String description) {
-		this.description = description;
-	}
+
 	public String getProductName() {
 		return productName;
 	}

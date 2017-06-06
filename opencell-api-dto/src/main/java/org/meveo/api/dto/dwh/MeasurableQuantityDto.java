@@ -4,7 +4,6 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BusinessDto;
@@ -24,13 +23,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 public class MeasurableQuantityDto extends BusinessDto {
 
     private static final long serialVersionUID = 2678416518718451635L;
-
-    @XmlAttribute(required = true)
-    private String code;
-
-    @XmlAttribute
-    private String description;
-
+    
     private String theme;
     private String dimension1;
     private String dimension2;
@@ -44,7 +37,7 @@ public class MeasurableQuantityDto extends BusinessDto {
     private Date lastMeasureDate;
 
     public boolean isCodeOnly() {
-        return StringUtils.isBlank(description) && StringUtils.isBlank(theme) && StringUtils.isBlank(dimension1) && StringUtils.isBlank(dimension2)
+        return StringUtils.isBlank(getDescription()) && StringUtils.isBlank(theme) && StringUtils.isBlank(dimension1) && StringUtils.isBlank(dimension2)
                 && StringUtils.isBlank(dimension3) && StringUtils.isBlank(dimension4) && StringUtils.isBlank(sqlQuery) && measurementPeriod == null && lastMeasureDate == null;
     }
 
@@ -53,9 +46,8 @@ public class MeasurableQuantityDto extends BusinessDto {
     }
 
     public MeasurableQuantityDto(MeasurableQuantity mq) {
-        super();
-        setCode(mq.getCode());
-        setDescription(mq.getDescription());
+        super(mq);
+        
         setTheme(mq.getTheme());
         setDimension1(mq.getDimension1());
         setDimension2(mq.getDimension2());
@@ -66,22 +58,6 @@ public class MeasurableQuantityDto extends BusinessDto {
         setSqlQuery(mq.getSqlQuery());
         setMeasurementPeriod(mq.getMeasurementPeriod());
         setLastMeasureDate(mq.getLastMeasureDate());
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getTheme() {
@@ -169,6 +145,6 @@ public class MeasurableQuantityDto extends BusinessDto {
         return String
             .format(
                 "MeasurableQuantityDto [code=%s, description=%s, theme=%s, dimension1=%s, dimension2=%s, dimension3=%s, dimension4=%s, editable=%s, additive=%s, sqlQuery=%s, measurementPeriod=%s, lastMeasureDate=%s]",
-                code, description, theme, dimension1, dimension2, dimension3, dimension4, editable, additive, sqlQuery, measurementPeriod, lastMeasureDate);
+                getCode(), getDescription(), theme, dimension1, dimension2, dimension3, dimension4, editable, additive, sqlQuery, measurementPeriod, lastMeasureDate);
     }
 }

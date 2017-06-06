@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -18,12 +17,6 @@ import org.meveo.model.billing.BillingCycle;
 public class BillingCycleDto extends BusinessDto {
 
 	private static final long serialVersionUID = 5986901351613880941L;
-
-	@XmlAttribute(required = true)
-	private String code;
-
-	@XmlAttribute()
-	private String description;
 
 	private String billingTemplateName;
 
@@ -57,9 +50,9 @@ public class BillingCycleDto extends BusinessDto {
 	}
 
 	public BillingCycleDto(BillingCycle billingCycleEntity,CustomFieldsDto customFieldInstances) {
-		if(billingCycleEntity != null){
-			code = billingCycleEntity.getCode();
-			description = billingCycleEntity.getDescription();
+		super(billingCycleEntity);
+		
+		if(billingCycleEntity != null){			
 			billingTemplateName = billingCycleEntity.getBillingTemplateName();
 			invoiceDateDelay = billingCycleEntity.getInvoiceDateDelay();
 			dueDateDelay = billingCycleEntity.getDueDateDelay();
@@ -76,22 +69,6 @@ public class BillingCycleDto extends BusinessDto {
 			}
 			customFields = customFieldInstances;
 		}
-	}
-
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
 	}
 
 	public String getBillingTemplateName() {
@@ -184,7 +161,7 @@ public class BillingCycleDto extends BusinessDto {
 
 	@Override
 	public String toString() {
-		return "BillingCycleDto [code=" + code + ", description=" + description + ", billingTemplateName=" + billingTemplateName + ", invoiceDateDelay=" + invoiceDateDelay
+		return "BillingCycleDto [code=" + getCode() + ", description=" + getDescription() + ", billingTemplateName=" + billingTemplateName + ", invoiceDateDelay=" + invoiceDateDelay
 				+ ", dueDateDelay=" + dueDateDelay + ", dueDateDelayEL=" + dueDateDelayEL + ", invoiceDateProductionDelay=" + invoiceDateProductionDelay
 				+ ", transactionDateDelay=" + transactionDateDelay + ", calendar=" + calendar + ", invoicingThreshold=" + invoicingThreshold + ", invoiceTypeCode="
 				+ invoiceTypeCode + ", customFields=" + customFields + "]";

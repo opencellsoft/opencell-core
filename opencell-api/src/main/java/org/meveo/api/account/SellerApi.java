@@ -70,11 +70,10 @@ public class SellerApi extends BaseApi {
     public Seller create(SellerDto postData, boolean checkCustomField, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-            handleMissingParameters();
+            missingParameters.add("code");            
         }
-
         
+        handleMissingParametersAndValidate(postData);        
 
         if (sellerService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(Seller.class, postData.getCode());
@@ -162,11 +161,10 @@ public class SellerApi extends BaseApi {
     public Seller update(SellerDto postData, boolean checkCustomField, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-            handleMissingParameters();
+            missingParameters.add("code");            
         }
 
-        
+        handleMissingParametersAndValidate(postData);
 
         Seller seller = sellerService.findByCode(postData.getCode());
         if (seller == null) {

@@ -61,7 +61,7 @@ public class CurrencyApi extends BaseApi {
         tradingCurrencyService.create(tradingCurrency);
     }
 
-    public CurrencyDto find(String code) throws MeveoApiException {
+    public CurrencyDto find(String code) throws MissingParameterException, EntityDoesNotExistsException {
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
         }
@@ -76,7 +76,7 @@ public class CurrencyApi extends BaseApi {
         throw new EntityDoesNotExistsException(TradingLanguage.class, code);
     }
 
-    public void remove(String code) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
+    public void remove(String code) throws BusinessException, MissingParameterException, EntityDoesNotExistsException {
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
         }

@@ -95,7 +95,7 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
             missingParameters.add("oneShotChargeTemplateType");
         }
 
-        handleMissingParameters();
+        handleMissingParametersAndValidate(postData);
         
 
         
@@ -205,7 +205,7 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
             missingParameters.add("oneShotChargeTemplateType");
         }
 
-        handleMissingParameters();
+        handleMissingParametersAndValidate(postData);
         
 
         

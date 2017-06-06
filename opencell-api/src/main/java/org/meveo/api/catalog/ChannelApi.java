@@ -35,10 +35,7 @@ public class ChannelApi extends BaseApi {
             missingParameters.add("code");
         }
 
-        handleMissingParameters();
-        
-
-        
+        handleMissingParametersAndValidate(postData);        
 
         if (channelService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(Channel.class, postData.getCode());
@@ -65,9 +62,7 @@ public class ChannelApi extends BaseApi {
             missingParameters.add("code");
         }
 
-        handleMissingParameters();
-        
-
+        handleMissingParametersAndValidate(postData);
         
         Channel channel = channelService.findByCode(postData.getCode());
         if (channel == null) {

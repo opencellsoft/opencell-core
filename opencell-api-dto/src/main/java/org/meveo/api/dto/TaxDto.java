@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -21,12 +20,6 @@ public class TaxDto extends BusinessDto {
 
 	private static final long serialVersionUID = 5184602572648722134L;
 
-	@XmlAttribute(required = true)
-	private String code;
-
-	@XmlAttribute()
-	private String description;
-
 	@XmlElement(required = true)
 	private BigDecimal percent;
 
@@ -40,27 +33,10 @@ public class TaxDto extends BusinessDto {
 	}
 
 	public TaxDto(Tax tax,CustomFieldsDto customFieldInstances) {
-		code = tax.getCode();
-		description = tax.getDescription();
+		super(tax);
 		percent = tax.getPercent();
 		accountingCode = tax.getAccountingCode();
 		customFields = customFieldInstances;
-	}
-
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
 	}
 
 	public BigDecimal getPercent() {
@@ -99,7 +75,7 @@ public class TaxDto extends BusinessDto {
 
 	@Override
 	public String toString() {
-		return "TaxDto [code=" + code + ", description=" + description + ", percent=" + percent + ", accountingCode="
+		return "TaxDto [code=" + getCode() + ", description=" + getDescription() + ", percent=" + percent + ", accountingCode="
 				+ accountingCode + ", languageDescriptions=" + languageDescriptions + ", customFields=" + customFields + "]";
 	}
 

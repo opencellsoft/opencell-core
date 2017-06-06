@@ -53,7 +53,7 @@ public class OfferTemplate4_1Dto implements Serializable {
 
 		if (e.getOfferServiceTemplates() != null && e.getOfferServiceTemplates().size() > 0) {
 			for (OfferServiceTemplate st : e.getOfferServiceTemplates()) {
-				serviceTemplates.getServiceTemplate().add(new ServiceTemplateDto(st.getServiceTemplate().getCode()));
+				serviceTemplates.getServiceTemplate().add(new ServiceTemplateDto(st.getServiceTemplate()));
 			}
 		}
 

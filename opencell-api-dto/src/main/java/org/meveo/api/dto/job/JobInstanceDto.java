@@ -29,18 +29,6 @@ public class JobInstanceDto extends BusinessDto {
     private String jobTemplate;
 
     /**
-     * Cod
-     */
-    @XmlAttribute(required = true)
-    private String code;
-
-    /**
-     * Description
-     */
-    @XmlAttribute()
-    private String description;
-
-    /**
      * Following job to execute
      */
     private String followingJob;
@@ -81,22 +69,6 @@ public class JobInstanceDto extends BusinessDto {
 
     public void setJobTemplate(String jobTemplate) {
         this.jobTemplate = jobTemplate;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getParameter() {
@@ -144,6 +116,6 @@ public class JobInstanceDto extends BusinessDto {
         return String
             .format(
                 "JobInstanceDto [code=%s, description=%s, jobCategory=%s, jobTemplate=%s, followingJob=%s,  parameter=%s, active=%s, customFields=%s, timerCode=%s]",
-                code, description, jobCategory, jobTemplate, followingJob, parameter, active, customFields, timerCode);
+                getCode(), getDescription(), jobCategory, jobTemplate, followingJob, parameter, active, customFields, timerCode);
     }
 }

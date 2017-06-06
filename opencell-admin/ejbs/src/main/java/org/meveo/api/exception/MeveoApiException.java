@@ -7,33 +7,33 @@ import org.meveo.api.MeveoApiErrorCodeEnum;
 @ApplicationException(rollback = true)
 public class MeveoApiException extends Exception {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private MeveoApiErrorCodeEnum errorCode;
+	private MeveoApiErrorCodeEnum errorCode;
 
-    public MeveoApiException() {
-        errorCode = MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION;
-    }
+	public MeveoApiException() {
+		errorCode = MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION;
+	}
 
-    public MeveoApiException(Throwable e) {
-        super(e);
-        errorCode = MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION;
-    }
-    
-    public MeveoApiException(MeveoApiErrorCodeEnum errorCode, String message) {
-        super(message);
-        this.errorCode = errorCode;
-    }
+	public MeveoApiException(Throwable e) {
+		super(e);
+		errorCode = MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION;
+	}
 
-    public MeveoApiException(String message) {
-        super(message);
-    }
+	public MeveoApiException(MeveoApiErrorCodeEnum errorCode, String message) {
+		super(message);
+		this.errorCode = errorCode;
+	}
 
-    public MeveoApiErrorCodeEnum getErrorCode() {
-        return errorCode;
-    }
+	public MeveoApiException(String message) {
+		super(message);
+	}
 
-    public void setErrorCode(MeveoApiErrorCodeEnum errorCode) {
-        this.errorCode = errorCode;
-    }
+	public MeveoApiErrorCodeEnum getErrorCode() {
+		return errorCode;
+	}
+
+	public void setErrorCode(MeveoApiErrorCodeEnum errorCode) {
+		this.errorCode = errorCode;
+	}
 }

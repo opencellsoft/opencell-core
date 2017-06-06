@@ -38,114 +38,114 @@ public class MeveoInstanceApi extends BaseApi{
 	@Inject
 	private UserService userService;
 	
-	public void create(MeveoInstanceDto meveoInstanceDto) throws MeveoApiException, BusinessException {
-		log.debug("meveo instance api create by code {}",meveoInstanceDto.getCode());
-		if (StringUtils.isBlank(meveoInstanceDto.getCode())) {
+	public void create(MeveoInstanceDto postData) throws MeveoApiException, BusinessException {
+		log.debug("meveo instance api create by code {}",postData.getCode());
+		if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
-		if (StringUtils.isBlank(meveoInstanceDto.getUrl())) {
+		if (StringUtils.isBlank(postData.getUrl())) {
             missingParameters.add("url");
         }
-    	this.handleMissingParameters();
+    	handleMissingParametersAndValidate(postData);
 		  
-		MeveoInstance meveoInstance=meveoInstanceService.findByCode(meveoInstanceDto.getCode());
+		MeveoInstance meveoInstance=meveoInstanceService.findByCode(postData.getCode());
       	if(meveoInstance!=null){
-      		throw new EntityAlreadyExistsException(MeveoInstance.class, meveoInstanceDto.getCode());
+      		throw new EntityAlreadyExistsException(MeveoInstance.class, postData.getCode());
       	}
       	
         meveoInstance=new MeveoInstance();
-        meveoInstance.setCode(meveoInstanceDto.getCode());
-  		meveoInstance.setDescription(meveoInstanceDto.getDescription());
-  		meveoInstance.setProductName(meveoInstanceDto.getProductName());
-  		meveoInstance.setProductVersion(meveoInstanceDto.getProductVersion());
-  		meveoInstance.setOwner(meveoInstanceDto.getOwner());
-  		meveoInstance.setMd5(meveoInstanceDto.getMd5());
-  		meveoInstance.setStatus(meveoInstanceDto.getStatus());
-  		meveoInstance.setCreationDate(meveoInstanceDto.getCreationDate());
-  		meveoInstance.setUpdateDate(meveoInstanceDto.getUpdateDate());
-  		meveoInstance.setKeyEntreprise(meveoInstanceDto.getKeyEntreprise());
-  		meveoInstance.setMacAddress(meveoInstanceDto.getMacAddress());
-  		meveoInstance.setMachineVendor(meveoInstanceDto.getMachineVendor());
-  		meveoInstance.setInstallationMode(meveoInstanceDto.getInstallationMode());
-  		meveoInstance.setNbCores(meveoInstanceDto.getNbCores());
-  		meveoInstance.setMemory(meveoInstanceDto.getMemory());
-  		meveoInstance.setHdSize(meveoInstanceDto.getHdSize());
-  		meveoInstance.setOsName(meveoInstanceDto.getOsName());
-  		meveoInstance.setOsVersion(meveoInstanceDto.getOsVersion());
-  		meveoInstance.setOsArch(meveoInstanceDto.getOsArch());
-  		meveoInstance.setJavaVmName(meveoInstanceDto.getJavaVmName());
-  		meveoInstance.setJavaVmVersion(meveoInstanceDto.getJavaVmVersion());
-  		meveoInstance.setAsVendor(meveoInstanceDto.getAsVendor());
-  		meveoInstance.setAsVersion(meveoInstanceDto.getAsVersion());
-  		meveoInstance.setUrl(meveoInstanceDto.getUrl());
-  		meveoInstance.setAuthUsername(meveoInstanceDto.getAuthUsername());
-  		meveoInstance.setAuthPassword(meveoInstanceDto.getAuthPassword());
-  		if(!StringUtils.isBlank(meveoInstanceDto.getCustomer())){
-  			Customer customer=customerService.findByCode(meveoInstanceDto.getCustomer());
+        meveoInstance.setCode(postData.getCode());
+  		meveoInstance.setDescription(postData.getDescription());
+  		meveoInstance.setProductName(postData.getProductName());
+  		meveoInstance.setProductVersion(postData.getProductVersion());
+  		meveoInstance.setOwner(postData.getOwner());
+  		meveoInstance.setMd5(postData.getMd5());
+  		meveoInstance.setStatus(postData.getStatus());
+  		meveoInstance.setCreationDate(postData.getCreationDate());
+  		meveoInstance.setUpdateDate(postData.getUpdateDate());
+  		meveoInstance.setKeyEntreprise(postData.getKeyEntreprise());
+  		meveoInstance.setMacAddress(postData.getMacAddress());
+  		meveoInstance.setMachineVendor(postData.getMachineVendor());
+  		meveoInstance.setInstallationMode(postData.getInstallationMode());
+  		meveoInstance.setNbCores(postData.getNbCores());
+  		meveoInstance.setMemory(postData.getMemory());
+  		meveoInstance.setHdSize(postData.getHdSize());
+  		meveoInstance.setOsName(postData.getOsName());
+  		meveoInstance.setOsVersion(postData.getOsVersion());
+  		meveoInstance.setOsArch(postData.getOsArch());
+  		meveoInstance.setJavaVmName(postData.getJavaVmName());
+  		meveoInstance.setJavaVmVersion(postData.getJavaVmVersion());
+  		meveoInstance.setAsVendor(postData.getAsVendor());
+  		meveoInstance.setAsVersion(postData.getAsVersion());
+  		meveoInstance.setUrl(postData.getUrl());
+  		meveoInstance.setAuthUsername(postData.getAuthUsername());
+  		meveoInstance.setAuthPassword(postData.getAuthPassword());
+  		if(!StringUtils.isBlank(postData.getCustomer())){
+  			Customer customer=customerService.findByCode(postData.getCustomer());
   			if(customer==null){
-  				throw new EntityDoesNotExistsException(Customer.class, meveoInstanceDto.getCustomer());
+  				throw new EntityDoesNotExistsException(Customer.class, postData.getCustomer());
   			}
   			meveoInstance.setCustomer(customer);
   		}
-  		if(!StringUtils.isBlank(meveoInstanceDto.getUser())){
-  			User user=userService.findByUsername(meveoInstanceDto.getUser());
+  		if(!StringUtils.isBlank(postData.getUser())){
+  			User user=userService.findByUsername(postData.getUser());
   			if(user==null){
-  				throw new EntityDoesNotExistsException(User.class, meveoInstanceDto.getUser());
+  				throw new EntityDoesNotExistsException(User.class, postData.getUser());
   			}
   			meveoInstance.setUser(user);
   		}
         meveoInstanceService.create(meveoInstance);
     }
 
-    public void update(MeveoInstanceDto meveoInstanceDto) throws MeveoApiException, BusinessException {
-    	if (StringUtils.isBlank(meveoInstanceDto.getCode())) {
+    public void update(MeveoInstanceDto postData) throws MeveoApiException, BusinessException {
+    	if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
-    	this.handleMissingParameters();
+    	handleMissingParametersAndValidate(postData);
 		  
-		MeveoInstance meveoInstance=meveoInstanceService.findByCode(meveoInstanceDto.getCode());
+		MeveoInstance meveoInstance=meveoInstanceService.findByCode(postData.getCode());
       	if(meveoInstance==null){
-      		throw new EntityDoesNotExistsException(MeveoInstance.class, meveoInstanceDto.getCode());
+      		throw new EntityDoesNotExistsException(MeveoInstance.class, postData.getCode());
       	}
-      	meveoInstance.setCode(StringUtils.isBlank(meveoInstanceDto.getUpdatedCode()) ? meveoInstanceDto.getCode() : meveoInstanceDto.getUpdatedCode());
-  		meveoInstance.setDescription(meveoInstanceDto.getDescription());
-  		meveoInstance.setProductName(meveoInstanceDto.getProductName());
-  		meveoInstance.setProductVersion(meveoInstanceDto.getProductVersion());
-  		meveoInstance.setOwner(meveoInstanceDto.getOwner());
-  		meveoInstance.setMd5(meveoInstanceDto.getMd5());
-  		meveoInstance.setStatus(meveoInstanceDto.getStatus());
-  		meveoInstance.setCreationDate(meveoInstanceDto.getCreationDate());
-  		meveoInstance.setUpdateDate(meveoInstanceDto.getUpdateDate());
-  		meveoInstance.setKeyEntreprise(meveoInstanceDto.getKeyEntreprise());
-  		meveoInstance.setMacAddress(meveoInstanceDto.getMacAddress());
-  		meveoInstance.setMachineVendor(meveoInstanceDto.getMachineVendor());
-  		meveoInstance.setInstallationMode(meveoInstanceDto.getInstallationMode());
-  		meveoInstance.setNbCores(meveoInstanceDto.getNbCores());
-  		meveoInstance.setMemory(meveoInstanceDto.getMemory());
-  		meveoInstance.setHdSize(meveoInstanceDto.getHdSize());
-  		meveoInstance.setOsName(meveoInstanceDto.getOsName());
-  		meveoInstance.setOsVersion(meveoInstanceDto.getOsVersion());
-  		meveoInstance.setOsArch(meveoInstanceDto.getOsArch());
-  		meveoInstance.setJavaVmName(meveoInstanceDto.getJavaVmName());
-  		meveoInstance.setJavaVmVersion(meveoInstanceDto.getJavaVmVersion());
-  		meveoInstance.setAsVendor(meveoInstanceDto.getAsVendor());
-  		meveoInstance.setAsVersion(meveoInstanceDto.getAsVersion());
-  		if(!StringUtils.isBlank(meveoInstanceDto.getUrl())){
-  			meveoInstance.setUrl(meveoInstanceDto.getUrl());
+      	meveoInstance.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
+  		meveoInstance.setDescription(postData.getDescription());
+  		meveoInstance.setProductName(postData.getProductName());
+  		meveoInstance.setProductVersion(postData.getProductVersion());
+  		meveoInstance.setOwner(postData.getOwner());
+  		meveoInstance.setMd5(postData.getMd5());
+  		meveoInstance.setStatus(postData.getStatus());
+  		meveoInstance.setCreationDate(postData.getCreationDate());
+  		meveoInstance.setUpdateDate(postData.getUpdateDate());
+  		meveoInstance.setKeyEntreprise(postData.getKeyEntreprise());
+  		meveoInstance.setMacAddress(postData.getMacAddress());
+  		meveoInstance.setMachineVendor(postData.getMachineVendor());
+  		meveoInstance.setInstallationMode(postData.getInstallationMode());
+  		meveoInstance.setNbCores(postData.getNbCores());
+  		meveoInstance.setMemory(postData.getMemory());
+  		meveoInstance.setHdSize(postData.getHdSize());
+  		meveoInstance.setOsName(postData.getOsName());
+  		meveoInstance.setOsVersion(postData.getOsVersion());
+  		meveoInstance.setOsArch(postData.getOsArch());
+  		meveoInstance.setJavaVmName(postData.getJavaVmName());
+  		meveoInstance.setJavaVmVersion(postData.getJavaVmVersion());
+  		meveoInstance.setAsVendor(postData.getAsVendor());
+  		meveoInstance.setAsVersion(postData.getAsVersion());
+  		if(!StringUtils.isBlank(postData.getUrl())){
+  			meveoInstance.setUrl(postData.getUrl());
   		}
-  		meveoInstance.setAuthUsername(meveoInstanceDto.getAuthUsername());
-  		meveoInstance.setAuthPassword(meveoInstanceDto.getAuthPassword());
-  		if(!StringUtils.isBlank(meveoInstanceDto.getCustomer())){
-  			Customer customer=customerService.findByCode(meveoInstanceDto.getCustomer());
+  		meveoInstance.setAuthUsername(postData.getAuthUsername());
+  		meveoInstance.setAuthPassword(postData.getAuthPassword());
+  		if(!StringUtils.isBlank(postData.getCustomer())){
+  			Customer customer=customerService.findByCode(postData.getCustomer());
   			if(customer==null){
-  				throw new EntityDoesNotExistsException(Customer.class, meveoInstanceDto.getCustomer());
+  				throw new EntityDoesNotExistsException(Customer.class, postData.getCustomer());
   			}
   			meveoInstance.setCustomer(customer);
   		}
-  		if(!StringUtils.isBlank(meveoInstanceDto.getUser())){
-  			User user=userService.findByUsername(meveoInstanceDto.getUser());
+  		if(!StringUtils.isBlank(postData.getUser())){
+  			User user=userService.findByUsername(postData.getUser());
   			if(user==null){
-  				throw new EntityDoesNotExistsException(User.class, meveoInstanceDto.getUser());
+  				throw new EntityDoesNotExistsException(User.class, postData.getUser());
   			}
   			meveoInstance.setUser(user);
   		}

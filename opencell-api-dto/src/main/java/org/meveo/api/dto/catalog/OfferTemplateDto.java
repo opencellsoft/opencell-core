@@ -5,12 +5,9 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-
-
 
 import org.meveo.api.dto.BusinessDto;
 import org.meveo.api.dto.CustomFieldsDto;
@@ -24,12 +21,6 @@ import org.meveo.commons.utils.StringUtils;
 public class OfferTemplateDto extends BusinessDto {
 
     private static final long serialVersionUID = 9156372453581362595L;
-
-    @XmlAttribute(required = true)
-    private String code;
-
-    @XmlAttribute()
-    private String description;
 
 	@XmlElement(required = true)
     private String name;
@@ -68,22 +59,6 @@ public class OfferTemplateDto extends BusinessDto {
 
     }
 
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public boolean isDisabled() {
         return disabled;
     }
@@ -94,7 +69,7 @@ public class OfferTemplateDto extends BusinessDto {
 
     @Override
     public String toString() {
-        return "OfferTemplateDto [code=" + code + ", description=" + description + ", longDescription=" + longDescription + ", disabled=" + disabled + ", bomCode=" + bomCode
+        return "OfferTemplateDto [code=" + getCode() + ", description=" + getDescription() + ", longDescription=" + longDescription + ", disabled=" + disabled + ", bomCode=" + bomCode
                 + ", offerTemplateCategoryCode=" + offerTemplateCategoryCode + ", offerServiceTemplates=" + offerServiceTemplates + ", customFields=" + customFields + ", validFrom="+validFrom+", validTo="+validTo+"]";
     }
 
@@ -139,7 +114,7 @@ public class OfferTemplateDto extends BusinessDto {
     }
 
     public boolean isCodeOnly() {
-        return StringUtils.isBlank(description) && StringUtils.isBlank(bomCode) && StringUtils.isBlank(offerTemplateCategoryCode)
+        return StringUtils.isBlank(getDescription()) && StringUtils.isBlank(bomCode) && StringUtils.isBlank(offerTemplateCategoryCode)
                 && (offerServiceTemplates == null || offerServiceTemplates.isEmpty()) && (customFields == null || customFields.isEmpty());
     }
 

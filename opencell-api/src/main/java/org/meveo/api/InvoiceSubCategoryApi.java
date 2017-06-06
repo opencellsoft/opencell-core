@@ -50,9 +50,8 @@ public class InvoiceSubCategoryApi extends BaseApi {
         if (StringUtils.isBlank(postData.getInvoiceCategory())) {
             missingParameters.add("invoiceCategory");
         }
-
         
-        handleMissingParameters();
+        handleMissingParametersAndValidate(postData);
         
 
         
@@ -127,7 +126,7 @@ public class InvoiceSubCategoryApi extends BaseApi {
         }
 
         
-        handleMissingParameters();
+        handleMissingParametersAndValidate(postData);
         
 
         

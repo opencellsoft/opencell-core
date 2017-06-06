@@ -4,7 +4,6 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BusinessDto;
@@ -24,10 +23,7 @@ public class MessageTemplateDto extends BusinessDto {
 	 * 
 	 */
 	private static final long serialVersionUID = 2370984261457651138L;
-	@XmlAttribute(required=true)
-	private String code;
-	@XmlAttribute
-	private String description;
+	
 	private MediaEnum media=MediaEnum.EMAIL;
 	private String tagStartDelimiter="#{";
 	private String tagEndDelimiter="}";
@@ -37,8 +33,8 @@ public class MessageTemplateDto extends BusinessDto {
 	
 	public MessageTemplateDto(){}
 	public MessageTemplateDto(MessageTemplate messageTemplate){
-		this.code=messageTemplate.getCode();
-		this.description=messageTemplate.getDescription();
+		super(messageTemplate);
+		
 		this.media=messageTemplate.getMedia();
 		this.tagStartDelimiter=messageTemplate.getTagStartDelimiter();
 		this.tagEndDelimiter=messageTemplate.getTagEndDelimiter();
@@ -46,18 +42,7 @@ public class MessageTemplateDto extends BusinessDto {
 		this.endDate=messageTemplate.getEndDate();
 		this.type=messageTemplate.getType();
 	}
-	public String getCode() {
-		return code;
-	}
-	public void setCode(String code) {
-		this.code = code;
-	}
-	public String getDescription() {
-		return description;
-	}
-	public void setDescription(String description) {
-		this.description = description;
-	}
+
 	public MediaEnum getMedia() {
 		return media;
 	}

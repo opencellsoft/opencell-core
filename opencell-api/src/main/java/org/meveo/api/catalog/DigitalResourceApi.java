@@ -47,11 +47,10 @@ public class DigitalResourceApi extends BaseApi {
 	public void create(DigitalResourcesDto postData) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
-			missingParameters.add("code");
-			handleMissingParameters();
+			missingParameters.add("code");			
 		}
-
 		
+		handleMissingParametersAndValidate(postData);		
 
 		DigitalResource digitalResource = digitalResourceService.findByCode(postData.getCode());
 		if ( digitalResource != null) {
@@ -65,10 +64,10 @@ public class DigitalResourceApi extends BaseApi {
 	public void update(DigitalResourcesDto postData) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
-			missingParameters.add("code");
-			handleMissingParameters();
+			missingParameters.add("code");			
 		}
-
+		
+		handleMissingParametersAndValidate(postData);
 		
 		DigitalResource digitalResource = digitalResourceService.findByCode(postData.getCode());
 		if ( digitalResource == null) {

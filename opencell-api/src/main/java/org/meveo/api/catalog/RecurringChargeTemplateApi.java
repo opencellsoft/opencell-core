@@ -75,7 +75,7 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
             missingParameters.add("calendar");
         }
 
-        handleMissingParameters();
+        handleMissingParametersAndValidate(postData);
         
 
         
@@ -194,7 +194,7 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
             missingParameters.add("calendar");
         }
 
-        handleMissingParameters();
+        handleMissingParametersAndValidate(postData);
         
 
         

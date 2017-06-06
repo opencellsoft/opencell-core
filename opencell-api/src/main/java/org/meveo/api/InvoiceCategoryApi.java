@@ -39,11 +39,10 @@ public class InvoiceCategoryApi extends BaseApi {
     public void create(InvoiceCategoryDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-            handleMissingParameters();
+            missingParameters.add("code");            
         }
-
         
+        handleMissingParametersAndValidate(postData);        
 
         if (invoiceCategoryService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(InvoiceCategory.class, postData.getCode());
@@ -101,10 +100,9 @@ public class InvoiceCategoryApi extends BaseApi {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-            handleMissingParameters();
         }
-
         
+        handleMissingParametersAndValidate(postData);
 
         InvoiceCategory invoiceCategory = invoiceCategoryService.findByCode(postData.getCode());
         if (invoiceCategory == null) {

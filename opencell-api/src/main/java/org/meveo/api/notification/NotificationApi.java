@@ -62,7 +62,7 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
             missingParameters.add("eventTypeFilter");
         }
 
-        handleMissingParameters();
+        handleMissingParametersAndValidate(postData);
 
         if (notificationService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(Notification.class, postData.getCode());
@@ -151,7 +151,7 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
             missingParameters.add("eventTypeFilter");
         }
 
-        handleMissingParameters();
+        handleMissingParametersAndValidate(postData);
 
         ScriptNotification notif = notificationService.findByCode(postData.getCode());
         if (notif == null) {

@@ -48,7 +48,7 @@ public class TaxApi extends BaseApi {
             missingParameters.add("percent");
         }
 
-        handleMissingParameters();
+        handleMissingParametersAndValidate(postData);
         
 
         ActionStatus result = new ActionStatus();
@@ -122,7 +122,7 @@ public class TaxApi extends BaseApi {
             missingParameters.add("percent");
         }
 
-        handleMissingParameters();
+        handleMissingParametersAndValidate(postData);
         
 
         ActionStatus result = new ActionStatus();

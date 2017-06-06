@@ -79,7 +79,7 @@ public class CustomerApi extends AccountApi {
             missingParameters.add("name.lastName");
         }
 
-        handleMissingParameters();
+        handleMissingParametersAndValidate(postData);
 
         // check if customer already exists
         if (customerService.findByCode(postData.getCode()) != null) {
@@ -165,7 +165,7 @@ public class CustomerApi extends AccountApi {
             missingParameters.add("name.lastName");
         }
 
-        handleMissingParameters();
+        handleMissingParametersAndValidate(postData);
 
         // check if customer exists
         Customer customer = customerService.findByCode(postData.getCode());
@@ -332,7 +332,7 @@ public class CustomerApi extends AccountApi {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-            handleMissingParameters();
+            handleMissingParametersAndValidate(postData);
         }
 
         if (customerBrandService.findByCode(postData.getCode()) != null) {
@@ -350,7 +350,7 @@ public class CustomerApi extends AccountApi {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-            handleMissingParameters();
+            handleMissingParametersAndValidate(postData);
         }
 
         CustomerBrand customerBrand = customerBrandService.findByCode(postData.getCode());
@@ -368,7 +368,7 @@ public class CustomerApi extends AccountApi {
     public void createCategory(CustomerCategoryDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-            handleMissingParameters();
+            handleMissingParametersAndValidate(postData);
         }
 
         if (customerCategoryService.findByCode(postData.getCode()) != null) {
@@ -389,7 +389,7 @@ public class CustomerApi extends AccountApi {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-            handleMissingParameters();
+            handleMissingParametersAndValidate(postData);
         }
 
         CustomerCategory customerCategory = customerCategoryService.findByCode(postData.getCode());
@@ -409,7 +409,7 @@ public class CustomerApi extends AccountApi {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-            handleMissingParameters();
+            handleMissingParametersAndValidate(postData);
         }
 
         if (customerCategoryService.findByCode(postData.getCode()) == null) {
@@ -479,7 +479,7 @@ public class CustomerApi extends AccountApi {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-            handleMissingParameters();
+            handleMissingParametersAndValidate(postData);
         }
 
         if (customerBrandService.findByCode(postData.getCode()) == null) {

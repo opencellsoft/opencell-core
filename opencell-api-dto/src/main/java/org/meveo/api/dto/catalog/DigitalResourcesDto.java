@@ -2,7 +2,6 @@ package org.meveo.api.dto.catalog;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BusinessDto;
@@ -14,12 +13,6 @@ public class DigitalResourcesDto extends BusinessDto {
 
 	private static final long serialVersionUID = 5517448250177253851L;
 
-	@XmlAttribute(required = true)
-	private String code;
-
-	@XmlAttribute()
-	private String description;
-
 	private String uri;
 
 	private String mimeType;
@@ -30,29 +23,12 @@ public class DigitalResourcesDto extends BusinessDto {
 	}
 
 	public DigitalResourcesDto(DigitalResource resource) {
-		this.setCode(resource.getCode());
-		this.setDescription(resource.getDescription());
+		super(resource);
 		this.setUri(resource.getUri());
 		this.setMimeType(resource.getMimeType());
 		this.setDisabled(resource.isDisabled());
 	}
-
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
+	
 	public String getUri() {
 		return uri;
 	}
