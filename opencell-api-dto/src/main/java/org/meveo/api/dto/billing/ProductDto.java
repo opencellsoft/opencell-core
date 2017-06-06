@@ -44,6 +44,7 @@ public class ProductDto extends BaseDto {
         code = e.getCode();
         description = e.getDescription();
         chargeDate = e.getChargeDate();
+        quantity = e.getQuantity();
         customFields = customFieldInstances;
     }
 

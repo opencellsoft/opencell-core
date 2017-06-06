@@ -2,7 +2,6 @@ package org.tmf.dsmapi.catalog.resource.product;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,26 +29,25 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * 
  * @author pierregauthier
  * 
- *         { "id": "42", "version": "3.43", "href": "http://serverlocation:port/catalogManagement/productOffering/42", "name": "Virtual Storage Medium", "description":
- *         "Virtual Storage Medium", "lastUpdate": "2013-04-19T16:42:23-04:00", "lifecycleStatus": "Active", "validFor": { "startDateTime": "2013-04-19T16:42:23-04:00",
- *         "endDateTime": "2013-06-19T00:00:00-04:00" }, "isBundle": "true", "category": [ { "id": "12", "version": "2.0", "href":
- *         "http://serverlocation:port/catalogManagement/category/12", "name": "Cloud offerings" } ], "channel": [ { "id": "13", "href":
- *         "http://serverlocation:port/marketSales/channel/13", "name": "Online Channel" } ], "place": [ { "id": "12", "href": "http://serverlocation:port/marketSales/place/12",
- *         "name": "France" } ], "bundledProductOffering": [ { "id": "15", "href": "http://serverlocation:port/catalogManagement/productOffering/15", "lifecycleStatus": "Active",
- *         "name": "Offering 15" }, { "id": "64", "href": "http://serverlocation:port/catalogManagement/productOffering/64", "lifecycleStatus": "Active", "name": "Offering 64" } ],
- *         "serviceLevelAgreement": { "id": "28", "href": "http://serverlocation:port/slaManagement/serviceLevelAgreement/28", "name": "Standard SLA" }, "productSpecification": {
- *         "id": "13", "href": "http://serverlocation:port/catalogManagement/productSpecification/13", "version": "2.0", "name": "specification product 1" }, "serviceCandidate": [
- *         { "id": "13", "href": "http://serverlocation:port/catalogManagement/serviceCandidate/13", "version": "2.0", "name": "specification service 1" } ], "resourceCandidate": [
- *         { "id": "13", "href": "http://serverlocation:port/catalogManagement/resourceCandidate/13", "version": "2.0", "name": "specification resource 1" } ],
- *         "productOfferingTerm": [ { "name": "12 Month", "description": "12 month contract", "duration": "12", "validFor": { "startDateTime": "2013-04-19T16:42:23-04:00",
- *         "endDateTime": "2013-06-19T00:00:00-04:00" } } ], "productOfferingPrice": [ { "name": "Monthly Price", "description": "monthlyprice", "validFor": { "startDateTime":
- *         "2013-04-19T16:42:23-04:00", "endDateTime": "2013-06-19T00:00:00-04:00" }, "priceType": "recurring", "unitOfMeasure": "", "price": { "taxIncludedAmount": "12.00",
- *         "dutyFreeAmount": "10.00", "taxRate": "20.00", "currencyCode": "EUR", "percentage": 0 }, "recurringChargePeriod": "monthly" }, { "name": "Usage Price", "description":
- *         "usageprice", "validFor": { "startDateTime": "2013-04-19T16:42:23-04:00", "endDateTime": "2013-06-19T00:00:00-04:00" }, "priceType": "usage", "unitOfMeasure": "second",
- *         "price": { "taxIncludedAmount": "12.00", "dutyFreeAmount": "10.00", "taxRate": "20.00", "currencyCode": "EUR", "percentage": 0 }, "recurringChargePeriod": "",
- *         "productOfferPriceAlteration": { "name": "Shipping Discount", "description": "One time shipping discount", "validFor": { "startDateTime": "2013-04-19T16:42:23.0Z" },
- *         "priceType": "One Time discount", "unitOfMeasure": "", "price": { "percentage": 100 }, "recurringChargePeriod": "", "priceCondition":
- *         "apply if total amount of the  order is greater than 300.00" } } ] }
+ *         { "id": "42", "version": "3.43", "href": "http://serverlocation:port/catalogManagement/productOffering/42", "name": "Virtual Storage Medium", "description": "Virtual
+ *         Storage Medium", "lastUpdate": "2013-04-19T16:42:23-04:00", "lifecycleStatus": "Active", "validFor": { "startDateTime": "2013-04-19T16:42:23-04:00", "endDateTime":
+ *         "2013-06-19T00:00:00-04:00" }, "isBundle": "true", "category": [ { "id": "12", "version": "2.0", "href": "http://serverlocation:port/catalogManagement/category/12",
+ *         "name": "Cloud offerings" } ], "channel": [ { "id": "13", "href": "http://serverlocation:port/marketSales/channel/13", "name": "Online Channel" } ], "place": [ { "id":
+ *         "12", "href": "http://serverlocation:port/marketSales/place/12", "name": "France" } ], "bundledProductOffering": [ { "id": "15", "href":
+ *         "http://serverlocation:port/catalogManagement/productOffering/15", "lifecycleStatus": "Active", "name": "Offering 15" }, { "id": "64", "href":
+ *         "http://serverlocation:port/catalogManagement/productOffering/64", "lifecycleStatus": "Active", "name": "Offering 64" } ], "serviceLevelAgreement": { "id": "28", "href":
+ *         "http://serverlocation:port/slaManagement/serviceLevelAgreement/28", "name": "Standard SLA" }, "productSpecification": { "id": "13", "href":
+ *         "http://serverlocation:port/catalogManagement/productSpecification/13", "version": "2.0", "name": "specification product 1" }, "serviceCandidate": [ { "id": "13",
+ *         "href": "http://serverlocation:port/catalogManagement/serviceCandidate/13", "version": "2.0", "name": "specification service 1" } ], "resourceCandidate": [ { "id": "13",
+ *         "href": "http://serverlocation:port/catalogManagement/resourceCandidate/13", "version": "2.0", "name": "specification resource 1" } ], "productOfferingTerm": [ { "name":
+ *         "12 Month", "description": "12 month contract", "duration": "12", "validFor": { "startDateTime": "2013-04-19T16:42:23-04:00", "endDateTime": "2013-06-19T00:00:00-04:00"
+ *         } } ], "productOfferingPrice": [ { "name": "Monthly Price", "description": "monthlyprice", "validFor": { "startDateTime": "2013-04-19T16:42:23-04:00", "endDateTime":
+ *         "2013-06-19T00:00:00-04:00" }, "priceType": "recurring", "unitOfMeasure": "", "price": { "taxIncludedAmount": "12.00", "dutyFreeAmount": "10.00", "taxRate": "20.00",
+ *         "currencyCode": "EUR", "percentage": 0 }, "recurringChargePeriod": "monthly" }, { "name": "Usage Price", "description": "usageprice", "validFor": { "startDateTime":
+ *         "2013-04-19T16:42:23-04:00", "endDateTime": "2013-06-19T00:00:00-04:00" }, "priceType": "usage", "unitOfMeasure": "second", "price": { "taxIncludedAmount": "12.00",
+ *         "dutyFreeAmount": "10.00", "taxRate": "20.00", "currencyCode": "EUR", "percentage": 0 }, "recurringChargePeriod": "", "productOfferPriceAlteration": { "name": "Shipping
+ *         Discount", "description": "One time shipping discount", "validFor": { "startDateTime": "2013-04-19T16:42:23.0Z" }, "priceType": "One Time discount", "unitOfMeasure": "",
+ *         "price": { "percentage": 100 }, "recurringChargePeriod": "", "priceCondition": "apply if total amount of the order is greater than 300.00" } } ] }
  * 
  */
 @XmlRootElement
@@ -93,12 +91,10 @@ public class ProductOffering extends AbstractCatalogEntity implements Serializab
         this.setDescription(offer.getDescription());
         this.setLastUpdate(offer.getAuditable() != null ? offer.getAuditable().getLastModified() : null);
         this.setLifecycleStatus(offer.isActive() ? LifecycleStatus.ACTIVE : LifecycleStatus.OBSOLETE);
-        this.setValidFor(new TimeRange());
-        this.getValidFor().setStartDateTime(offer.getAuditable() != null ? offer.getAuditable().getCreated() : null);
-        if (!offer.isActive()) {
-            this.getValidFor().setEndDateTime(offer.getAuditable() != null ? offer.getAuditable().getUpdated() : null);
+        this.setValidFor(new TimeRange(offer.getValidity()));
+        if (!offer.isActive() && offer.getAuditable() != null && offer.getAuditable().getUpdated() != null) {
+            this.getValidFor().setEndDateTime(offer.getAuditable().getUpdated());
         }
-
         this.setCategory(new ArrayList<CatalogReference>());
         this.getCategory().add(category.getCatalogReference());
 
@@ -137,7 +133,6 @@ public class ProductOffering extends AbstractCatalogEntity implements Serializab
             bundledProductReference.setReferencedHref(String.format("%scatalogManagement/productOffering/%s", uriInfo.getBaseUri().toString(), productTemplate.getCode()));
             bundledProductReference.setReferencedName(productTemplate.getCode());
             bundledProductReference.setReferencedLifecycleStatus(productTemplate.isActive() ? LifecycleStatus.ACTIVE : LifecycleStatus.OBSOLETE);
-
             productOffering.getBundledProductOffering().add(bundledProductReference);
 
         }
@@ -340,8 +335,8 @@ public class ProductOffering extends AbstractCatalogEntity implements Serializab
     public String toString() {
         return "ProductOffering{<" + super.toString() + ">, isBundle=" + isBundle + ", category=" + category + ", channel=" + channel + ", place=" + place
                 + ", bundledProductOffering=" + bundledProductOffering + ", serviceLevelAgreement=" + serviceLevelAgreement + ", productSpecification=" + productSpecification
-                + ", serviceCandidate=" + serviceCandidate + ", resourceCandidate=" + resourceCandidate + ", productOfferingTerm=" + productOfferingTerm
-                + ", productOfferingPrice=" + productOfferingPrice + '}';
+                + ", serviceCandidate=" + serviceCandidate + ", resourceCandidate=" + resourceCandidate + ", productOfferingTerm=" + productOfferingTerm + ", productOfferingPrice="
+                + productOfferingPrice + '}';
     }
 
     @Override
@@ -434,45 +429,5 @@ public class ProductOffering extends AbstractCatalogEntity implements Serializab
         }
 
         return true;
-    }
-
-    public static ProductOffering createProto() {
-        ProductOffering productOffering = new ProductOffering();
-
-        productOffering.setId("id");
-        productOffering.setVersion("3.43");
-        productOffering.setHref("href");
-        productOffering.setName("name");
-        productOffering.setDescription("description");
-        productOffering.setLastUpdate(new Date());
-        productOffering.setLifecycleStatus(LifecycleStatus.ACTIVE);
-        productOffering.setValidFor(TimeRange.createProto());
-
-        productOffering.isBundle = true;
-
-        productOffering.category = new ArrayList<CatalogReference>();
-        productOffering.category.add(CatalogReference.createProto());
-
-        productOffering.channel = new ArrayList<Channel>();
-        productOffering.channel.add(Channel.createProto());
-
-        productOffering.place = new ArrayList<Place>();
-        productOffering.place.add(Place.createProto());
-
-        productOffering.bundledProductOffering = new ArrayList<BundledProductReference>();
-        productOffering.bundledProductOffering.add(BundledProductReference.createProto());
-
-        productOffering.serviceLevelAgreement = ServiceLevelAgreement.createProto();
-        productOffering.productSpecification = CatalogReference.createProto();
-        productOffering.serviceCandidate = CatalogReference.createProto();
-        productOffering.resourceCandidate = CatalogReference.createProto();
-
-        productOffering.productOfferingTerm = new ArrayList<ProductOfferingTerm>();
-        productOffering.productOfferingTerm.add(ProductOfferingTerm.createProto());
-
-        productOffering.productOfferingPrice = new ArrayList<ProductOfferingPrice>();
-        productOffering.productOfferingPrice.add(ProductOfferingPrice.createProto());
-
-        return productOffering;
     }
 }

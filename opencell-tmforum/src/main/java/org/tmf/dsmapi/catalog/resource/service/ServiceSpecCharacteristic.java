@@ -1,7 +1,6 @@
 package org.tmf.dsmapi.catalog.resource.service;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.tmf.dsmapi.catalog.resource.TimeRange;
@@ -212,24 +211,4 @@ public class ServiceSpecCharacteristic implements Serializable {
 
         return true;
     }
-
-    public static ServiceSpecCharacteristic createProto() {
-        ServiceSpecCharacteristic serviceSpecCharacteristic = new ServiceSpecCharacteristic();
-
-        serviceSpecCharacteristic.id = "id";
-        serviceSpecCharacteristic.name = "name";
-        serviceSpecCharacteristic.description = "description";
-        serviceSpecCharacteristic.valueType = CharacteristicValueType.NUMBER;
-        serviceSpecCharacteristic.configurable = true;
-        serviceSpecCharacteristic.validFor = TimeRange.createProto();
-
-        serviceSpecCharacteristic.serviceSpecCharRelationship = new ArrayList<SpecificationCharacteristicRelationship>();
-        serviceSpecCharacteristic.serviceSpecCharRelationship.add(SpecificationCharacteristicRelationship.createProto());
-
-        serviceSpecCharacteristic.serviceSpecCharacteristicValue = new ArrayList<SpecificationCharacteristicValue>();
-        serviceSpecCharacteristic.serviceSpecCharacteristicValue.add(SpecificationCharacteristicValue.createProto());
-
-        return serviceSpecCharacteristic;
-    }
-
 }

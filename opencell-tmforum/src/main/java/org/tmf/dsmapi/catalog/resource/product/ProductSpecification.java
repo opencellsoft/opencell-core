@@ -2,7 +2,6 @@ package org.tmf.dsmapi.catalog.resource.product;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -17,7 +16,6 @@ import org.tmf.dsmapi.catalog.resource.CatalogReference;
 import org.tmf.dsmapi.catalog.resource.LifecycleStatus;
 import org.tmf.dsmapi.catalog.resource.RelatedParty;
 import org.tmf.dsmapi.catalog.resource.TimeRange;
-import org.tmf.dsmapi.catalog.resource.specification.CharacteristicValueType;
 import org.tmf.dsmapi.catalog.resource.specification.SpecificationCharacteristicRelationship;
 import org.tmf.dsmapi.catalog.resource.specification.SpecificationCharacteristicValue;
 import org.tmf.dsmapi.catalog.resource.specification.SpecificationRelationship;
@@ -390,46 +388,6 @@ public class ProductSpecification extends AbstractCatalogEntity implements Seria
         return true;
     }
 
-    public static ProductSpecification createProto() {
-        ProductSpecification productSpecification = new ProductSpecification();
-
-        productSpecification.setId("id");
-        productSpecification.setVersion("1.72");
-        productSpecification.setHref("href");
-        productSpecification.setName("name");
-        productSpecification.setDescription("description");
-        productSpecification.setLastUpdate(new Date());
-        productSpecification.setLifecycleStatus(LifecycleStatus.ACTIVE);
-        productSpecification.setValidFor(TimeRange.createProto());
-
-        productSpecification.productNumber = "I42-340-DX";
-        productSpecification.isBundle = true;
-        productSpecification.brand = "brand";
-
-        productSpecification.attachment = new ArrayList<Attachment>();
-        productSpecification.attachment.add(Attachment.createProto());
-
-        productSpecification.relatedParty = new ArrayList<RelatedParty>();
-        productSpecification.relatedParty.add(RelatedParty.createProto());
-
-        productSpecification.bundledProductSpecification = new ArrayList<BundledProductReference>();
-        productSpecification.bundledProductSpecification.add(BundledProductReference.createProto());
-
-        productSpecification.productSpecificationRelationship = new ArrayList<SpecificationRelationship>();
-        productSpecification.productSpecificationRelationship.add(SpecificationRelationship.createProto());
-
-        productSpecification.serviceSpecification = new ArrayList<CatalogReference>();
-        productSpecification.serviceSpecification.add(CatalogReference.createProto());
-
-        productSpecification.resourceSpecification = new ArrayList<CatalogReference>();
-        productSpecification.resourceSpecification.add(CatalogReference.createProto());
-
-        productSpecification.productSpecCharacteristic = new ArrayList<ProductSpecCharacteristic>();
-        productSpecification.productSpecCharacteristic.add(ProductSpecCharacteristic.createProto());
-
-        return productSpecification;
-    }
-
     public static ProductSpecification parseFromOfferTemplate(OfferTemplate offer, UriInfo uriInfo) {
         ProductSpecification productSpecification = new ProductSpecification();
         try {
@@ -441,10 +399,9 @@ public class ProductSpecification extends AbstractCatalogEntity implements Seria
             productSpecification.setDescription(offer.getDescription());
             productSpecification.setLastUpdate(offer.getAuditable() != null ? offer.getAuditable().getLastModified() : null);
             productSpecification.setLifecycleStatus(offer.isActive() ? LifecycleStatus.ACTIVE : LifecycleStatus.OBSOLETE);
-            productSpecification.setValidFor(new TimeRange());
-            productSpecification.getValidFor().setStartDateTime(offer.getAuditable() != null ? offer.getAuditable().getCreated() : null);
-            if (!offer.isActive()) {
-                productSpecification.getValidFor().setEndDateTime(offer.getAuditable() != null ? offer.getAuditable().getUpdated() : null);
+            productSpecification.setValidFor(new TimeRange(offer.getValidity()));
+            if (!offer.isActive() && offer.getAuditable() != null && offer.getAuditable().getUpdated() != null) {
+                productSpecification.getValidFor().setEndDateTime(offer.getAuditable().getUpdated());
             }
 
             productSpecification.setProductNumber(offer.getCode());
@@ -475,24 +432,13 @@ public class ProductSpecification extends AbstractCatalogEntity implements Seria
             productSpecCharacteristic.setId(offer.getCode());
             productSpecCharacteristic.setName("service");
             productSpecCharacteristic.setDescription("offer's service");
-            productSpecCharacteristic.setValueType(CharacteristicValueType.STRING);
-            productSpecCharacteristic.setConfigurable(Boolean.TRUE);
-            productSpecCharacteristic.setValidFor(new TimeRange());
-            productSpecCharacteristic.getValidFor().setStartDateTime(offer.getAuditable() != null ? offer.getAuditable().getCreated() : null);
             productSpecCharacteristic.setProductSpecCharRelationship(new ArrayList<SpecificationCharacteristicRelationship>());// leav
             productSpecCharacteristic.setProductSpecCharacteristicValue(new ArrayList<SpecificationCharacteristicValue>());
 
             if (offer.getOfferServiceTemplates() != null) {
                 for (OfferServiceTemplate service : offer.getOfferServiceTemplates()) {
                     SpecificationCharacteristicValue specCharacteristicValue = new SpecificationCharacteristicValue();
-                    specCharacteristicValue.setValueType(CharacteristicValueType.STRING);
-                    specCharacteristicValue.setDefaultValue(Boolean.FALSE);
                     specCharacteristicValue.setValue(service.getServiceTemplate() == null ? null : service.getServiceTemplate().getCode());
-                    specCharacteristicValue.setUnitOfMeasure("unit");
-                    specCharacteristicValue.setValueFrom(offer.getAuditable() != null ? "" + offer.getAuditable().getCreated() : null);
-                    specCharacteristicValue.setValueTo("");
-                    specCharacteristicValue.setValidFor(new TimeRange());
-                    specCharacteristicValue.getValidFor().setStartDateTime(offer.getAuditable() != null ? offer.getAuditable().getCreated() : null);
                     productSpecCharacteristic.getProductSpecCharacteristicValue().add(specCharacteristicValue);
                 }
             }

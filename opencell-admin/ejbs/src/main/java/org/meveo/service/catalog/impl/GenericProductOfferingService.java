@@ -31,10 +31,10 @@ public class GenericProductOfferingService<T extends ProductOffering> extends Au
      * @param from Date period start date
      * @param to Date period end date
      * @param entityId Identifier of an entity to ignore (as not to match itself in case of update)
-     * @param ignoreOpenDates Should periods with open start or end dates be ignored for matching
+     * @param invalidOnly Should only periods that would be invalid for given start and end dates be selected
      * @return Matched product offerings
      */
-    public List<ProductOffering> getMatchingVersions(String code, Date from, Date to, Long entityId, boolean ignoreOpenDates) {
+    public List<ProductOffering> getMatchingVersions(String code, Date from, Date to, Long entityId, boolean invalidOnly) {
 
         List<ProductOffering> versions = getEntityManager().createNamedQuery("ProductOffering.findMatchingVersions", ProductOffering.class).setParameter("clazz", getEntityClass())
             .setParameter("code", code).setParameter("id", entityId == null ? -10000L : entityId).getResultList(); // Pass a non-existing entity id in case it is null
@@ -45,19 +45,11 @@ public class GenericProductOfferingService<T extends ProductOffering> extends Au
 
             DatePeriod datePeriod = version.getValidity();
 
-            // Periods with open start or end dates be ignored
-            if (ignoreOpenDates) {
-                if (datePeriod == null) {
-                    continue;
-
-                } else if (datePeriod.isCorrespondsToPeriod(from, to, false)) {
-
-                    if (datePeriod.getFrom() == null || datePeriod.getTo() == null) {
-                        continue;
-                    }
+            // Only periods with start and end dates that would be split into two parts are selected
+            if (invalidOnly) {
+                if (isMatchedPeriodInvalid(datePeriod, from, to)) {
                     matchedVersions.add(version);
                 }
-
                 // Any null or matching periods are selected
             } else {
                 if (datePeriod == null || datePeriod.isCorrespondsToPeriod(from, to, false)) {
@@ -67,6 +59,44 @@ public class GenericProductOfferingService<T extends ProductOffering> extends Au
         }
 
         return matchedVersions;
+
+    }
+
+    /**
+     * Check if matched period is invalid for given dates
+     * 
+     * @param matchedPeriod Matched date period
+     * @param from Date to check - from
+     * @param to Date to check - to
+     * @return True if matched period is invalid
+     */
+    protected boolean isMatchedPeriodInvalid(DatePeriod matchedPeriod, Date from, Date to) {
+
+        if (from == null && to == null) {
+            return true;
+
+        } else if (matchedPeriod.isEmpty()) {
+            return false;
+
+        } else if (matchedPeriod.isCorrespondsToPeriod(from, to, false)) {
+
+            // period with start and end dates in betwen a period with start and end dates
+            if (from != null && to != null && matchedPeriod.getFrom() != null && matchedPeriod.getTo() != null) {
+
+                if (matchedPeriod.getFrom().compareTo(from) >= 0 && matchedPeriod.getTo().compareTo(to) <= 0) {
+                    return true;
+                } else if (matchedPeriod.getFrom().before(from) && matchedPeriod.getTo().after(to)) {
+                    return true;
+                }
+
+            } else if (to == null && matchedPeriod.getFrom() != null && matchedPeriod.getFrom().compareTo(from) >= 0) {
+                return true;
+
+            } else if (from == null && matchedPeriod.getTo() != null && matchedPeriod.getTo().compareTo(to) <= 0) {
+                return true;
+            }
+        }
+        return false;
 
     }
 
@@ -85,70 +115,88 @@ public class GenericProductOfferingService<T extends ProductOffering> extends Au
 
         for (ProductOffering matchedVersion : matchedVersions) {
 
-            DatePeriod matchedValidity = matchedVersion.getValidity();
+            updateValidityOfVersion(matchedVersion, currentValidity);
 
-            log.error("AKK matched version {} {}", matchedVersion.getId(), matchedValidity);
+            super.update((T) matchedVersion);
+        }
+    }
 
-            // Latest version has no dates set, so invalidate other conflicting versions altogether
-            if (currentValidity.isEmpty()) {
+    /**
+     * Update validity dates of a matched product offering version
+     * 
+     * @param matchedVersion Matched product offering version
+     * @param offeringValidity Validity of a current product offering
+     */
+    protected void updateValidityOfVersion(ProductOffering matchedVersion, DatePeriod offeringValidity) {
+
+        DatePeriod matchedValidity = matchedVersion.getValidity();
+
+        log.error("AKK matched version {} {}", matchedVersion.getId(), matchedValidity);
+
+        // Latest version has no dates set, so invalidate other conflicting versions altogether
+        if (offeringValidity.isEmpty()) {
+            if (matchedValidity.getFrom() == null) {
+                matchedValidity.setFrom(new Date());
+            }
+            matchedValidity.setTo(matchedValidity.getFrom());
+
+            // Both dates are set
+        } else if (offeringValidity.getFrom() != null && offeringValidity.getTo() != null) {
+
+            // Invalidate previous version as dates fall in between current period
+            if (matchedValidity.getFrom() != null && matchedValidity.getTo() != null && matchedValidity.getFrom().before(offeringValidity.getFrom())
+                    && matchedValidity.getTo().after(offeringValidity.getTo())) {
+                matchedValidity.setTo(matchedValidity.getFrom());
+
+                // Set that other versions finish on a current From date
+            } else if ((matchedValidity.isEmpty() || matchedValidity.getFrom() == null || matchedValidity.getFrom().before(offeringValidity.getFrom()))
+                    && !(matchedValidity.getTo() != null && matchedValidity.getTo().after(offeringValidity.getTo()))) {
+                matchedValidity.setTo(offeringValidity.getFrom());
+
+                // Set that other versions start on a current To date
+            } else if (matchedValidity.getTo() == null || matchedValidity.getTo().after(offeringValidity.getTo())) {
+                matchedValidity.setFrom(offeringValidity.getTo());
+
+                // Invalidate previous version as dates fall in between current period
+            } else {
                 if (matchedValidity.getFrom() == null) {
                     matchedValidity.setFrom(new Date());
                 }
                 matchedValidity.setTo(matchedValidity.getFrom());
-
-                // Both dates are set
-            } else if (currentValidity.getFrom() != null && currentValidity.getTo() != null) {
-
-                // Set that other versions finish on a current From date
-                if (matchedValidity.isEmpty() || matchedValidity.getFrom() == null || matchedValidity.getFrom().before(currentValidity.getFrom())) {
-                    matchedValidity.setTo(currentValidity.getFrom());
-
-                    // Set that other versions start on a current To date
-                } else if (matchedValidity.getTo() == null || matchedValidity.getTo().after(currentValidity.getTo())) {
-                    matchedValidity.setFrom(currentValidity.getTo());
-
-                    // Invalidate previous version as dates fall in between current period
-                } else {
-                    if (matchedValidity.getFrom() == null) {
-                        matchedValidity.setFrom(new Date());
-                    }
-                    matchedValidity.setTo(matchedValidity.getFrom());
-                }
-
-                // Only start date is set
-            } else if (currentValidity.getFrom() != null) {
-
-                // Set that other versions finish on a current From date
-                if (matchedValidity.isEmpty() || matchedValidity.getFrom() == null || matchedValidity.getFrom().before(currentValidity.getFrom())) {
-                    matchedValidity.setTo(currentValidity.getFrom());
-
-                    // Invalidate previous version as dates fall in between current period
-                } else {
-                    if (matchedValidity.getFrom() == null) {
-                        matchedValidity.setFrom(new Date());
-                    }
-                    matchedValidity.setTo(matchedValidity.getFrom());
-                }
-
-                // Only end date is set
-            } else if (currentValidity.getTo() != null) {
-
-                // Set that other versions start on a current To date
-                if (matchedValidity.isEmpty() || matchedValidity.getTo() == null || matchedValidity.getTo().after(currentValidity.getTo())) {
-                    matchedValidity.setFrom(currentValidity.getTo());
-
-                    // Invalidate previous version as dates fall in between current period
-                } else {
-                    if (matchedValidity.getFrom() == null) {
-                        matchedValidity.setFrom(new Date());
-                    }
-                    matchedValidity.setTo(matchedValidity.getFrom());
-                }
             }
 
-            log.error("AKK updated version {} to {}", matchedVersion.getId(), matchedValidity);
-            super.update((T) matchedVersion);
+            // Only start date is set
+        } else if (offeringValidity.getFrom() != null) {
+
+            // Set that other versions finish on a current From date
+            if (matchedValidity.isEmpty() || matchedValidity.getFrom() == null || matchedValidity.getFrom().before(offeringValidity.getFrom())) {
+                matchedValidity.setTo(offeringValidity.getFrom());
+
+                // Invalidate previous version as dates fall in between current period
+            } else {
+                if (matchedValidity.getFrom() == null) {
+                    matchedValidity.setFrom(new Date());
+                }
+                matchedValidity.setTo(matchedValidity.getFrom());
+            }
+
+            // Only end date is set
+        } else if (offeringValidity.getTo() != null) {
+
+            // Set that other versions start on a current To date
+            if (matchedValidity.isEmpty() || matchedValidity.getTo() == null || matchedValidity.getTo().after(offeringValidity.getTo())) {
+                matchedValidity.setFrom(offeringValidity.getTo());
+
+                // Invalidate previous version as dates fall in between current period
+            } else {
+                if (matchedValidity.getFrom() == null) {
+                    matchedValidity.setFrom(new Date());
+                }
+                matchedValidity.setTo(matchedValidity.getFrom());
+            }
         }
+
+        log.error("AKK updated version {} to {}", matchedVersion.getId(), matchedValidity);
     }
 
     @Override
@@ -221,19 +269,16 @@ public class GenericProductOfferingService<T extends ProductOffering> extends Au
      */
     public T findByCodeBestValidityMatch(String code, Date from, Date to) {
         T offering = findByCode(code, from, to);
-        if (offering == null) {
+
+        // Do a strict check if only TO date is provided. Don't check by other dates - if FROM date is NULL, it will lookup by todays date
+        if (offering == null && (from != null || to == null)) {
             offering = findByCode(code, from);
-        }
-        if (offering == null) {
-            offering = findByCode(code);
+            if (offering == null) {
+                offering = findByCode(code);
+            }
         }
         return offering;
     }
-
-    // TODO remove me
-    // public T findByCode(String code) {
-    // throw new RuntimeException("Remove me");
-    // }
 
     /**
      * Find a particular product offering version with additional fields to fetch. A current date will be used to select a valid version.

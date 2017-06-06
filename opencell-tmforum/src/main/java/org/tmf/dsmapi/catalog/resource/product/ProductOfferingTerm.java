@@ -105,16 +105,4 @@ public class ProductOfferingTerm implements Serializable {
     public String toString() {
         return "ProductOfferingTerm{" + "name=" + name + ", description=" + description + ", duration=" + duration + ", validFor=" + validFor + '}';
     }
-
-    public static ProductOfferingTerm createProto() {
-        ProductOfferingTerm productOfferingTerm = new ProductOfferingTerm();
-
-        productOfferingTerm.name = "name";
-        productOfferingTerm.description = "description";
-        productOfferingTerm.duration = "12";
-        productOfferingTerm.validFor = TimeRange.createProto();
-
-        return productOfferingTerm;
-    }
-
 }

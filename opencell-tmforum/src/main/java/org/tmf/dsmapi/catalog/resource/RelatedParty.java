@@ -133,17 +133,4 @@ public class RelatedParty implements Serializable {
     public String toString() {
         return "RelatedParty{" + "id=" + id + ", href=" + href + ", name=" + name + ", validFor=" + validFor + ", partyRole=" + partyRole + '}';
     }
-
-    public static RelatedParty createProto() {
-        RelatedParty relatedParty = new RelatedParty();
-
-        relatedParty.id = "id";
-        relatedParty.href = "href";
-        relatedParty.name = "name";
-        relatedParty.validFor = TimeRange.createProto();
-        relatedParty.partyRole = "role";
-
-        return relatedParty;
-    }
-
 }

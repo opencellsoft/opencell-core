@@ -18,11 +18,13 @@ import org.meveo.api.exception.InvalidImageData;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.BundleProductTemplate;
 import org.meveo.model.catalog.BundleTemplate;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.service.catalog.impl.BundleTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
@@ -35,6 +37,8 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
 
     @Inject
     private ProductTemplateService productTemplateService;
+
+    private ParamBean paramBean = ParamBean.getInstance();
 
     /*
      * (non-Javadoc)
@@ -104,6 +108,12 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
 
         handleMissingParameters();
 
+        List<ProductOffering> matchedVersions = bundleTemplateService.getMatchingVersions(postData.getCode(), postData.getValidFrom(), postData.getValidTo(), null, true);
+        if (!matchedVersions.isEmpty()) {
+            throw new InvalidParameterException("A bundle, valid on " + new DatePeriod(postData.getValidFrom(), postData.getValidTo()).toString(paramBean.getDateFormat())
+                    + ", already exists. Please change the validity dates of an existing bundle first.");
+        }
+
         if (bundleTemplateService.findByCode(postData.getCode(), postData.getValidFrom(), postData.getValidTo()) != null) {
             throw new EntityAlreadyExistsException(ProductTemplate.class, postData.getCode() + " / " + postData.getValidFrom() + " / " + postData.getValidTo());
         }
@@ -156,6 +166,14 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
         if (bundleTemplate == null) {
             throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getCode() + " / " + postData.getValidFrom() + " / " + postData.getValidTo());
         }
+
+        List<ProductOffering> matchedVersions = bundleTemplateService.getMatchingVersions(postData.getCode(), postData.getValidFrom(), postData.getValidTo(),
+            bundleTemplate.getId(), true);
+        if (!matchedVersions.isEmpty()) {
+            throw new InvalidParameterException("A bundle, valid on " + new DatePeriod(postData.getValidFrom(), postData.getValidTo()).toString(paramBean.getDateFormat())
+                    + ", already exists. Please change the validity dates of an existing bundle first.");
+        }
+
         bundleTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         bundleTemplate.setDescription(postData.getDescription());
         bundleTemplate.setName(postData.getName());

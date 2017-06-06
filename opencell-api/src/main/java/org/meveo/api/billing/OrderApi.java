@@ -101,7 +101,7 @@ public class OrderApi extends BaseApi {
      * Register an order from TMForumApi
      * 
      * @param productOrder Product order
-
+     * 
      * @return Product order DTO updated
      * @throws BusinessException
      * @throws MeveoApiException
@@ -164,17 +164,21 @@ public class OrderApi extends BaseApi {
 
             // For modify and delete actions, product offering might not be specified
             if (productOrderItem.getProductOffering() != null) {
-                ProductOffering productOfferingInDB = productOfferingService.findByCode(productOrderItem.getProductOffering().getId());
+
+                Date subscriptionDate = ((Date) getProductCharacteristic(productOrderItem.getProduct(), OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(),
+                    Date.class, DateUtils.setTimeToZero(order.getOrderDate())));
+
+                ProductOffering productOfferingInDB = productOfferingService.findByCode(productOrderItem.getProductOffering().getId(), subscriptionDate);
                 if (productOfferingInDB == null) {
-                    throw new EntityDoesNotExistsException(ProductOffering.class, productOrderItem.getProductOffering().getId());
+                    throw new EntityDoesNotExistsException(ProductOffering.class, productOrderItem.getProductOffering().getId() + " / " + subscriptionDate);
                 }
                 productOfferings.add(new OrderItemProductOffering(orderItem, productOfferingInDB, productOfferings.size()));
 
                 if (productOrderItem.getProductOffering().getBundledProductOffering() != null) {
                     for (BundledProductReference bundledProductOffering : productOrderItem.getProductOffering().getBundledProductOffering()) {
-                        productOfferingInDB = productOfferingService.findByCode(bundledProductOffering.getReferencedId());
+                        productOfferingInDB = productOfferingService.findByCode(bundledProductOffering.getReferencedId(), subscriptionDate);
                         if (productOfferingInDB == null) {
-                            throw new EntityDoesNotExistsException(ProductOffering.class, bundledProductOffering.getReferencedId());
+                            throw new EntityDoesNotExistsException(ProductOffering.class, bundledProductOffering.getReferencedId() + " / " + subscriptionDate);
                         }
                         productOfferings.add(new OrderItemProductOffering(orderItem, productOfferingInDB, productOfferings.size()));
                     }
@@ -200,18 +204,18 @@ public class OrderApi extends BaseApi {
             } else {
                 orderItem.setStatus(OrderStatusEnum.ACKNOWLEDGED);
             }
-            
-    		if (productOrderItem.getProduct() != null && productOrderItem.getProduct().getPlace() != null && productOrderItem.getProduct().getPlace().getAddress() != null ) {
-    			Address shippingAddress = new Address(); 
-    			shippingAddress.setAddress1(productOrderItem.getProduct().getPlace().getAddress().getAddress1());
-    			shippingAddress.setAddress2(productOrderItem.getProduct().getPlace().getAddress().getAddress2());
-    			shippingAddress.setAddress3(productOrderItem.getProduct().getPlace().getAddress().getAddress3());
-    			shippingAddress.setCity(productOrderItem.getProduct().getPlace().getAddress().getCity());
-    			shippingAddress.setCountry(productOrderItem.getProduct().getPlace().getAddress().getCountry());
-    			shippingAddress.setZipCode(productOrderItem.getProduct().getPlace().getAddress().getZipCode());
-    			shippingAddress.setState(productOrderItem.getProduct().getPlace().getAddress().getState());
-    			orderItem.setShippingAddress(shippingAddress);
-    		}
+
+            if (productOrderItem.getProduct() != null && productOrderItem.getProduct().getPlace() != null && productOrderItem.getProduct().getPlace().getAddress() != null) {
+                Address shippingAddress = new Address();
+                shippingAddress.setAddress1(productOrderItem.getProduct().getPlace().getAddress().getAddress1());
+                shippingAddress.setAddress2(productOrderItem.getProduct().getPlace().getAddress().getAddress2());
+                shippingAddress.setAddress3(productOrderItem.getProduct().getPlace().getAddress().getAddress3());
+                shippingAddress.setCity(productOrderItem.getProduct().getPlace().getAddress().getCity());
+                shippingAddress.setCountry(productOrderItem.getProduct().getPlace().getAddress().getCountry());
+                shippingAddress.setZipCode(productOrderItem.getProduct().getPlace().getAddress().getZipCode());
+                shippingAddress.setState(productOrderItem.getProduct().getPlace().getAddress().getState());
+                orderItem.setShippingAddress(shippingAddress);
+            }
 
             // Extract products that are not services. For each product offering there must be a product. Products that exceed the number of product offerings are treated as
             // services.
@@ -232,7 +236,8 @@ public class OrderApi extends BaseApi {
 
             List<Product> products = new ArrayList<>();
             products.add(productOrderItem.getProduct());
-            if (productOfferings.size() > 1 && productOrderItem.getProduct().getProductRelationship() != null && !productOrderItem.getProduct().getProductRelationship().isEmpty()) {
+            if (productOfferings.size() > 1 && productOrderItem.getProduct().getProductRelationship() != null
+                    && !productOrderItem.getProduct().getProductRelationship().isEmpty()) {
                 for (ProductRelationship productRelationship : productOrderItem.getProduct().getProductRelationship()) {
                     products.add(productRelationship.getProduct());
                     if (productOfferings.size() >= products.size()) {
@@ -276,7 +281,7 @@ public class OrderApi extends BaseApi {
      * Initiate workflow on order. If workflow is enabled on Order class, then execute workflow. If workflow is not enabled - then process the order right away.
      * 
      * @param order
-
+     * 
      * @return
      * @throws BusinessException
      * @throws MeveoApiException
@@ -306,7 +311,7 @@ public class OrderApi extends BaseApi {
      * Process the order
      * 
      * @param order
-
+     * 
      * @throws BusinessException
      * @throws MeveoApiException
      */
@@ -499,8 +504,8 @@ public class OrderApi extends BaseApi {
             terminateSubscription.setSubscriptionCode(productOrderItem.getProduct().getId());
             terminateSubscription.setTerminationDate((Date) getProductCharacteristic(productOrderItem.getProduct(),
                 OrderProductCharacteristicEnum.TERMINATION_DATE.getCharacteristicName(), Date.class, DateUtils.setTimeToZero(orderItem.getOrder().getOrderDate())));
-            terminateSubscription.setTerminationReason((String) getProductCharacteristic(productOrderItem.getProduct(),
-                OrderProductCharacteristicEnum.TERMINATION_REASON.getCharacteristicName(), String.class, null));
+            terminateSubscription.setTerminationReason(
+                (String) getProductCharacteristic(productOrderItem.getProduct(), OrderProductCharacteristicEnum.TERMINATION_REASON.getCharacteristicName(), String.class, null));
 
             subscriptionApi.terminateSubscription(terminateSubscription, orderNumber);
 
@@ -530,8 +535,8 @@ public class OrderApi extends BaseApi {
         subscription.setOffer(offerTemplate);
         subscription.setSubscriptionDate((Date) getProductCharacteristic(productOrderItem.getProduct(), OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(),
             Date.class, DateUtils.setTimeToZero(orderItem.getOrder().getOrderDate())));
-        subscription.setEndAgreementDate((Date) getProductCharacteristic(productOrderItem.getProduct(),
-            OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(), Date.class, null));
+        subscription.setEndAgreementDate(
+            (Date) getProductCharacteristic(productOrderItem.getProduct(), OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(), Date.class, null));
 
         // Validate and populate customFields
         CustomFieldsDto customFields = extractCustomFields(productOrderItem.getProduct(), Subscription.class);
@@ -546,9 +551,8 @@ public class OrderApi extends BaseApi {
             throw new BusinessException("Failed to associate custom field instance to an entity", e);
         }
 
-
         subscriptionService.create(subscription);
-        
+
         // instantiate and activate services
         processServices(subscription, services, orderNumber);
 
@@ -563,10 +567,10 @@ public class OrderApi extends BaseApi {
         BigDecimal quantity = ((BigDecimal) getProductCharacteristic(product, OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY.getCharacteristicName(), BigDecimal.class,
             new BigDecimal(1)));
         Date chargeDate = ((Date) getProductCharacteristic(product, OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(), Date.class,
-            DateUtils.setTimeToZero(new Date())));
+            DateUtils.setTimeToZero(orderItem.getOrder().getOrderDate())));
 
-        String code = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.PRODUCT_INSTANCE_CODE.getCharacteristicName(), String.class, UUID.randomUUID()
-            .toString());
+        String code = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.PRODUCT_INSTANCE_CODE.getCharacteristicName(), String.class,
+            UUID.randomUUID().toString());
         ProductInstance productInstance = new ProductInstance(orderItem.getUserAccount(), subscription, productTemplate, quantity, chargeDate, code,
             productTemplate.getDescription(), orderNumber);
 
@@ -646,8 +650,8 @@ public class OrderApi extends BaseApi {
         return value;
     }
 
-    private void processServices(Subscription subscription, List<Product> services, String orderNumber) throws IncorrectSusbcriptionException,
-            IncorrectServiceInstanceException, BusinessException, MeveoApiException {
+    private void processServices(Subscription subscription, List<Product> services, String orderNumber)
+            throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException, MeveoApiException {
 
         ActivateServicesRequestDto activateServicesRequestDto = new ActivateServicesRequestDto();
         activateServicesRequestDto.setSubscription(subscription.getCode());
@@ -685,10 +689,10 @@ public class OrderApi extends BaseApi {
 
                 TerminateSubscriptionServicesRequestDto terminationDto = new TerminateSubscriptionServicesRequestDto();
                 terminationDto.setSubscriptionCode(subscription.getCode());
-                terminationDto.setTerminationDate((Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.TERMINATION_DATE.getCharacteristicName(),
-                    Date.class, null));
-                terminationDto.setTerminationReason((String) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.TERMINATION_REASON.getCharacteristicName(),
-                    String.class, null));
+                terminationDto
+                    .setTerminationDate((Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.TERMINATION_DATE.getCharacteristicName(), Date.class, null));
+                terminationDto.setTerminationReason(
+                    (String) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.TERMINATION_REASON.getCharacteristicName(), String.class, null));
                 terminationDto.getServices().add(serviceCode);
                 servicesToTerminate.add(terminationDto);
             }

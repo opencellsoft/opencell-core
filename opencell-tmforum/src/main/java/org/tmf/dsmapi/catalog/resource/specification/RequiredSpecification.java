@@ -107,16 +107,4 @@ public class RequiredSpecification implements Serializable {
 
         return true;
     }
-
-    public static RequiredSpecification createProto() {
-        RequiredSpecification requiredSpecification = new RequiredSpecification();
-
-        requiredSpecification.id = "id";
-        requiredSpecification.href = "href";
-        requiredSpecification.name = "name";
-        requiredSpecification.validFor = TimeRange.createProto();
-
-        return requiredSpecification;
-    }
-
 }

@@ -22,6 +22,7 @@ import org.meveo.api.exception.InvalidImageData;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.BusinessOfferModel;
@@ -29,6 +30,7 @@ import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OfferTemplateCategory;
+import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.service.catalog.impl.BusinessOfferModelService;
@@ -58,6 +60,8 @@ public class OfferTemplateApi extends BaseCrudVersionedApi<OfferTemplate, OfferT
     @Inject
     private ProductTemplateService productTemplateService;
 
+    private ParamBean paramBean = ParamBean.getInstance();
+
     public OfferTemplate create(OfferTemplateDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -66,7 +70,14 @@ public class OfferTemplateApi extends BaseCrudVersionedApi<OfferTemplate, OfferT
         if (StringUtils.isBlank(postData.getName())) {
             postData.setName(postData.getCode());
         }
+
         handleMissingParameters();
+
+        List<ProductOffering> matchedVersions = offerTemplateService.getMatchingVersions(postData.getCode(), postData.getValidFrom(), postData.getValidTo(), null, true);
+        if (!matchedVersions.isEmpty()) {
+            throw new InvalidParameterException("An offer, valid on " + new DatePeriod(postData.getValidFrom(), postData.getValidTo()).toString(paramBean.getDateFormat())
+                    + ", already exists. Please change the validity dates of an existing offer first.");
+        }
 
         if (offerTemplateService.findByCode(postData.getCode(), postData.getValidFrom(), postData.getValidTo()) != null) {
             throw new EntityAlreadyExistsException(OfferTemplate.class, postData.getCode() + " / " + postData.getValidFrom() + " / " + postData.getValidTo());
@@ -87,7 +98,7 @@ public class OfferTemplateApi extends BaseCrudVersionedApi<OfferTemplate, OfferT
         }
 
         offerTemplateService.create(offerTemplate);
-        
+
         return offerTemplate;
     }
 
@@ -106,6 +117,13 @@ public class OfferTemplateApi extends BaseCrudVersionedApi<OfferTemplate, OfferT
             throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getCode() + " / " + postData.getValidFrom() + " / " + postData.getValidTo());
         }
 
+        List<ProductOffering> matchedVersions = offerTemplateService.getMatchingVersions(postData.getCode(), postData.getValidFrom(), postData.getValidTo(), offerTemplate.getId(),
+            true);
+        if (!matchedVersions.isEmpty()) {
+            throw new InvalidParameterException("An offer, valid on " + new DatePeriod(postData.getValidFrom(), postData.getValidTo()).toString(paramBean.getDateFormat())
+                    + ", already exists. Please change the validity dates of an existing offer first.");
+        }
+
         populateFromDto(offerTemplate, postData);
         offerTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
 
@@ -120,7 +138,7 @@ public class OfferTemplateApi extends BaseCrudVersionedApi<OfferTemplate, OfferT
             throw e;
         }
 
-		offerTemplate = offerTemplateService.update(offerTemplate);
+        offerTemplate = offerTemplateService.update(offerTemplate);
 
         return offerTemplate;
     }
@@ -313,7 +331,8 @@ public class OfferTemplateApi extends BaseCrudVersionedApi<OfferTemplate, OfferT
      * @see org.meveo.api.ApiVersionedService#find(java.lang.String)
      */
     @Override
-    public OfferTemplateDto find(String code, Date validFrom, Date validTo) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException {
+    public OfferTemplateDto find(String code, Date validFrom, Date validTo)
+            throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("offerTemplateCode");

@@ -162,7 +162,7 @@ public class QuoteApi extends BaseApi {
         quote.setRequestedCompletionDate(productQuote.getQuoteCompletionDate());
         quote.setFulfillmentStartDate(productQuote.getFulfillmentStartDate());
         if (productQuote.getValidFor() != null) {
-            quote.setValidity(productQuote.getValidFor().toDatePeriod());;
+            quote.setValidity(productQuote.getValidFor().toDatePeriod());
         }
 
         if (productQuote.getState() != null) {
@@ -221,17 +221,20 @@ public class QuoteApi extends BaseApi {
 
             // For modify and delete actions, product offering might not be specified
             if (productQuoteItem.getProductOffering() != null) {
-                ProductOffering productOfferingInDB = productOfferingService.findByCode(productQuoteItem.getProductOffering().getId());
+                Date subscriptionDate = ((Date) getProductCharacteristic(productQuoteItem.getProduct(), OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(),
+                    Date.class, DateUtils.setTimeToZero(quote.getQuoteDate())));
+
+                ProductOffering productOfferingInDB = productOfferingService.findByCode(productQuoteItem.getProductOffering().getId(), subscriptionDate);
                 if (productOfferingInDB == null) {
-                    throw new EntityDoesNotExistsException(ProductOffering.class, productQuoteItem.getProductOffering().getId());
+                    throw new EntityDoesNotExistsException(ProductOffering.class, productQuoteItem.getProductOffering().getId() + " / " + subscriptionDate);
                 }
                 productOfferings.add(new QuoteItemProductOffering(quoteItem, productOfferingInDB, 0));
 
                 if (productQuoteItem.getProductOffering().getBundledProductOffering() != null) {
                     for (BundledProductReference bundledProductOffering : productQuoteItem.getProductOffering().getBundledProductOffering()) {
-                        productOfferingInDB = productOfferingService.findByCode(bundledProductOffering.getReferencedId());
+                        productOfferingInDB = productOfferingService.findByCode(bundledProductOffering.getReferencedId(), subscriptionDate);
                         if (productOfferingInDB == null) {
-                            throw new EntityDoesNotExistsException(ProductOffering.class, bundledProductOffering.getReferencedId());
+                            throw new EntityDoesNotExistsException(ProductOffering.class, bundledProductOffering.getReferencedId() + " / " + subscriptionDate);
                         }
                         productOfferings.add(new QuoteItemProductOffering(quoteItem, productOfferingInDB, productOfferings.size()));
                     }
@@ -660,9 +663,9 @@ public class QuoteApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw new BusinessException("Failed to associate custom field instance to an entity", e);
         }
-        
+
         productInstanceService.instantiateProductInstance(productInstance, null, null, null, true);
-   
+
         return productInstance;
     }
 

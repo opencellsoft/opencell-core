@@ -51,6 +51,16 @@ public class DatePeriod implements Comparable<DatePeriod> {
         this.to = to;
     }
 
+    public DatePeriod(String from, String to, String datePattern) {
+
+        if (from != null) {
+            this.from = DateUtils.parseDateWithPattern(from, datePattern);
+        }
+        if (to != null) {
+            this.to = DateUtils.parseDateWithPattern(to, datePattern);
+        }
+    }
+
     public Date getFrom() {
         return from;
     }
