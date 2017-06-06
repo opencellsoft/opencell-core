@@ -55,13 +55,7 @@ public class MeveoModuleDto extends BaseDataModelDto {
     private static final long serialVersionUID = 1L;
 
     @XmlAttribute(required = true)
-    private String code;
-
-    @XmlAttribute(required = true)
     private ModuleLicenseEnum license;
-
-    @XmlAttribute
-    private String description;
 
     private String logoPicture;
     private byte[] logoPictureFile;
@@ -108,30 +102,13 @@ public class MeveoModuleDto extends BaseDataModelDto {
     }
 
     public MeveoModuleDto(MeveoModule meveoModule) {
-        this.code = meveoModule.getCode();
-        this.description = meveoModule.getDescription();
+        super(meveoModule);
         this.license = meveoModule.getLicense();
         this.logoPicture = meveoModule.getLogoPicture();
         this.moduleItems = new ArrayList<BaseDto>();
         if (meveoModule.getScript() != null) {
             this.setScript(new ScriptInstanceDto(meveoModule.getScript()));
         }
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public ModuleLicenseEnum getLicense() {
@@ -160,7 +137,7 @@ public class MeveoModuleDto extends BaseDataModelDto {
 
     @Override
     public Serializable getId() {
-        return this.code.hashCode();
+        return getCode().hashCode();
     }
 
     @Override
@@ -198,12 +175,12 @@ public class MeveoModuleDto extends BaseDataModelDto {
     @Override
     public String toString() {
         final int maxLen = 10;
-        return String.format("ModuleDto [code=%s, license=%s, description=%s, logoPicture=%s, logoPictureFile=%s, moduleItems=%s, script=%s]", code, license, description,
+        return String.format("ModuleDto [code=%s, license=%s, description=%s, logoPicture=%s, logoPictureFile=%s, moduleItems=%s, script=%s]", getCode(), license, getDescription(),
             logoPicture, logoPictureFile, moduleItems != null ? moduleItems.subList(0, Math.min(moduleItems.size(), maxLen)) : null, script);
     }
 
     public boolean isCodeOnly() {
-        return StringUtils.isBlank(description) && license == null && StringUtils.isBlank(logoPicture) && logoPictureFile == null && script == null
+        return StringUtils.isBlank(getDescription()) && license == null && StringUtils.isBlank(logoPicture) && logoPictureFile == null && script == null
                 && (moduleItems == null || moduleItems.isEmpty());
     }
 }
