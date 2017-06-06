@@ -190,7 +190,7 @@
                                                 <ul class="list-inline">
                                                     <li><p:link id="viewLink"
                                                                 outcome="mm_offerTemplateDetail"
-                                                                styleClass="fa fa-search-plus no-text-decoration text-blue fa-2x">
+                                                                styleClass="fa fa-search-plus no-text-decoration text-blue fa-2x" title="#{messages['action.view']}">
                                                         <f:param name="cid" value="#{javax.enterprise.context.conversation.id}"/>
                                                         <f:param name="objectId" value="#{entity.id}"/>
                                                         <f:param name="edit" value="false"/>
@@ -199,7 +199,7 @@
                                                     </p:link></li>
                                                     <li><p:link id="editLink"
                                                                 styleClass="fa fa-edit no-text-decoration text-blue fa-2x"
-                                                                outcome="mm_offerTemplateDetail">
+                                                                outcome="mm_offerTemplateDetail" title="#{messages['action.edit']}">
                                                         <f:param name="cid" value="#{javax.enterprise.context.conversation.id}"/>
                                                         <f:param name="objectId" value="#{entity.id}"/>
                                                         <f:param name="edit" value="true"/>
@@ -209,7 +209,7 @@
                                                     <li><p:commandLink id="duplicateLink"
                                                                        action="#{offerTemplateListBean.duplicateCatalogHierarchy()}"
                                                                        update=":tabView"
-                                                                       styleClass="fa fa-copy fa-2x no-text-decoration text-blue">
+                                                                       styleClass="fa fa-copy fa-2x no-text-decoration text-blue" title="#{messages['action.duplicate']}">
                                                         <f:setPropertyActionListener value="#{entity}" target="#{offerTemplateListBean.entity}"/>
                                                         <f:param name="tab" value="0"/>
                                                         <p:confirm header="#{messages['commons.duplicate']}"
@@ -218,8 +218,9 @@
                                                     <li><p:commandLink id="addToExportLink"
                                                                        styleClass="fa fa-share-square-o text-blue fa-2x"
                                                                        update=":offerForExportPanel :dlgOfferExport"
-                                                                       action="#{offerTemplateListBean.addForExport(entity)}">
+                                                                       action="#{offerTemplateListBean.addForExport(entity)}" title="#{messages['action.export']}">
                                                     </p:commandLink></li>
+                                                    
                                                 </ul>
                                             </p:panel>
                                         </p:panel>
