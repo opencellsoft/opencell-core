@@ -157,7 +157,7 @@
                                                     <h:outputText value=", " rendered="#{not status.last}"/>
                                                 </ui:repeat>
                                             </p>
-                                            <p:panelGrid columns="2">
+                                            <p:panelGrid columns="3">
                                                 <p:panelGrid columns="1"
                                                              rendered="#{entity.validFrom ne null and entity.validFrom ne ''}">
                                                     <h:outputText value="#{messages['commons.validFrom']}: "/>
@@ -166,6 +166,7 @@
                                                                            pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy HH:mm')}"/>
                                                     </h:outputText>
                                                 </p:panelGrid>
+                                                <p:panel></p:panel>
                                                 <p:panelGrid columns="1"
                                                              rendered="#{entity.validTo ne null and entity.validTo ne ''}">
                                                     <h:outputText value="#{messages['commons.validTo']}: "/>
