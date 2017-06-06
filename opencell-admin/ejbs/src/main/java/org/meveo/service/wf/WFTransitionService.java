@@ -39,10 +39,7 @@ public class WFTransitionService extends PersistenceService<WFTransition> {
 	
 	@Inject
 	private WFActionService wfActionService;
-	
-	@Inject
-	private WFDecisionRuleService wfDecisionRuleService;
-	
+
 	public List<WFTransition> listByFromStatus(String fromStatus ,Workflow workflow){
 		if("*".equals(fromStatus)){
 			return workflow.getTransitions();

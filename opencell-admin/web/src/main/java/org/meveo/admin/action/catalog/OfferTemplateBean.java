@@ -20,6 +20,7 @@ package org.meveo.admin.action.catalog;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -181,6 +182,20 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
         return (getEntity() != null && !getEntity().isTransient() && (subscriptionService.findByOfferTemplate(getEntity()) != null)
                 && subscriptionService.findByOfferTemplate(getEntity()).size() > 0) ? true : false;
     }
+    
+    /**
+     * 
+     * @return sorted offer services templates
+     */
+    public List<OfferServiceTemplate> getSortedOfferServiceTemplates() {
+    	OfferTemplate givenEntity = this.getEntity();
+    	List<OfferServiceTemplate> sortedList = new ArrayList<>();
+    	if (givenEntity != null) {
+    		 sortedList.addAll(givenEntity.getOfferServiceTemplates());
+    	}
+    	Collections.sort(sortedList, new DescriptionComparator());
+    	return sortedList;
+    } 
 
     @Override
     @ActionMethod

@@ -12,6 +12,16 @@
 <tr><td rowspan="1" colspan="3">DeleteContactTestCase</td></tr>
 </thead><tbody>
 <tr>
+	<td>clickAndWait</td>
+	<td>${CreditCategories}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>assertText</td>
 	<td>//a[contains(text(),'${Code}')]</td>
 	<td>${Code}</td>
@@ -34,6 +44,11 @@
 <tr>
 	<td>click</td>
 	<td>${deleteYes}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>${CreditCategories}</td>
 	<td></td>
 </tr>
 </tbody></table>
