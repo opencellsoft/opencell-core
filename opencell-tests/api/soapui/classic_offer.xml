@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project activeEnvironment="Default" name="Classic offer" resourceRoot="${projectDir}" soapui-version="5.3.0" abortOnError="false" runType="SEQUENTIAL" id="2e379382-059f-42f2-a263-3971d606356b" xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project activeEnvironment="Default" name="Classic offer" resourceRoot="${projectDir}" soapui-version="5.2.1" abortOnError="false" runType="SEQUENTIAL" id="2e379382-059f-42f2-a263-3971d606356b" xmlns:con="http://eviware.com/soapui/config">
   <con:settings>
     <con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
@@ -36934,9 +36934,9 @@ AAAASUVORK5CYII=
          
          <offerTemplate code="OF_${#Project#templateCode}_TEMPLATE" description="${#Project#templateLabel} with multiple basic services">
          	  <name>${#Project#templateLabel} offer</name>
-            <disabled>true</disabled>
+            <disabled>false</disabled>
 		  <offerTemplateCategories>
-		    <offerTemplateCategory>${#Project#templateCode}_DEFAULT</offerTemplateCategory>
+		    <offerTemplateCategory code="${#Project#templateCode}_DEFAULT"/>
 		  </offerTemplateCategories>
 		  <customFields>
 		  	<customField code="CF_TEMPLATE_CODE">
@@ -37406,7 +37406,7 @@ MFBG0AAAAABJRU5ErkJggg==
          	  <name>Commissioning</name>
             <disabled>true</disabled>
 		  <offerTemplateCategories>
-		    <offerTemplateCategory>${#Project#templateCode}_DEFAULT</offerTemplateCategory>
+		    <offerTemplateCategory code="${#Project#templateCode}_DEFAULT"/>
 		  </offerTemplateCategories>
 		  <customFields>
 		  	<customField code="CF_TEMPLATE_CODE">
@@ -49359,6 +49359,13 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="b9cd4050-6061-4b63-a2b2-e64db292f1f0"/>
+            <con:assertion type="Simple Contains" id="fc869fb4-15b9-4756-91c9-ab8192d6d52e" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -49392,6 +49399,13 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="b9cd4050-6061-4b63-a2b2-e64db292f1f0"/>
+            <con:assertion type="Simple Contains" id="2d7b4e0f-a5a0-4b94-8a1a-b218cba883df" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -49463,6 +49477,13 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="b9cd4050-6061-4b63-a2b2-e64db292f1f0"/>
+            <con:assertion type="Simple Contains" id="16eef3d1-5ec0-4485-9fb7-555875c290fe" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -50021,6 +50042,13 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="b9cd4050-6061-4b63-a2b2-e64db292f1f0"/>
+            <con:assertion type="Simple Contains" id="2a68009e-b70a-446a-8f93-17180589aa8d" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -50054,6 +50082,13 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="b9cd4050-6061-4b63-a2b2-e64db292f1f0"/>
+            <con:assertion type="Simple Contains" id="b531fa81-401f-40a5-9cab-0549638b1784" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -50101,6 +50136,13 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="b9cd4050-6061-4b63-a2b2-e64db292f1f0"/>
+            <con:assertion type="Simple Contains" id="37e96a03-be7e-4297-947e-989edb3679f1" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
