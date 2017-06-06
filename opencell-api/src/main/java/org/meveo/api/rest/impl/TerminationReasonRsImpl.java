@@ -59,11 +59,11 @@ public class TerminationReasonRsImpl extends BaseRs implements TerminationReason
     }
 
     @Override
-    public ActionStatus remove(String code) {
+    public ActionStatus remove(String terminationReasonCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            terminationReasonApi.remove(code);
+            terminationReasonApi.remove(terminationReasonCode);
         } catch (Exception e) {
             processException(e, result);
         }
