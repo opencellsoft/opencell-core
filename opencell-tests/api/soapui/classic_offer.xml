@@ -39239,7 +39239,7 @@ public class CreateAccess extends OfferScript {
     <con:runType>SEQUENTIAL</con:runType>
     <con:testCase id="1de434da-9c25-436a-bc59-b8d075daf8b8" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create CustomerCare User" searchProperties="true">
       <con:settings/>
-      <con:testStep type="request" name="ForgotPasswordModule" id="8213ff34-8501-4c89-a10e-64ef0e8df7fc">
+      <con:testStep type="request" name="ForgotPasswordModule" id="8213ff34-8501-4c89-a10e-64ef0e8df7fc" disabled="true">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>ModuleWsSoapBinding</con:interface>
@@ -39357,7 +39357,7 @@ public class ForgotPassword extends ModuleScript{
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="Install Module" id="fa6d88dd-11c5-4b58-beb4-42c16990a04a">
+      <con:testStep type="request" name="Install Module" id="fa6d88dd-11c5-4b58-beb4-42c16990a04a" disabled="true">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>ModuleWsSoapBinding</con:interface>
