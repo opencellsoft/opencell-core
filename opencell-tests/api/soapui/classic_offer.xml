@@ -50664,7 +50664,7 @@ MFBG0AAAAABJRU5ErkJggg==
     <con:properties>
       <con:property>
         <con:name>CUST</con:name>
-        <con:value>${#Project#templateCode}</con:value>
+        <con:value>${#Project#SCUsername}</con:value>
       </con:property>
       <con:property>
         <con:name>SUBSCRIPTION_DATE</con:name>
@@ -55216,7 +55216,7 @@ rkJggg==
   <con:properties>
     <con:property>
       <con:name>opencell.url</con:name>
-      <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
+      <con:value>http://demo.i.opencellsoft.com/opencell</con:value>
     </con:property>
     <con:property>
       <con:name>provider</con:name>
@@ -55248,7 +55248,7 @@ rkJggg==
     </con:property>
     <con:property>
       <con:name>recOfferId</con:name>
-      <con:value>Service SE_REC_FLAT_REBATE_1 is not defined in the offer</con:value>
+      <con:value>6</con:value>
     </con:property>
     <con:property>
       <con:name>adminUsername</con:name>
