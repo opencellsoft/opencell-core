@@ -111,7 +111,8 @@ public class GenericProductOfferingService<T extends ProductOffering> extends Au
 
         DatePeriod currentValidity = offering.getValidityRaw();
 
-        List<ProductOffering> matchedVersions = getMatchingVersions(offering.getCode(), offering.getValidityRaw().getFrom(), offering.getValidityRaw().getTo(), offering.getId(), false);
+        List<ProductOffering> matchedVersions = getMatchingVersions(offering.getCode(), offering.getValidityRaw() != null ? offering.getValidityRaw().getFrom() : null,
+            offering.getValidityRaw() != null ? offering.getValidityRaw().getTo() : null, offering.getId(), false);
 
         for (ProductOffering matchedVersion : matchedVersions) {
 
