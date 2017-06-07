@@ -10,8 +10,8 @@
 	<ui:define name="metadata">
 		<f:metadata>
 			<f:event type="preRenderView"
-				listener="#{productTemplateListBean.preRenderView}" />
-			<f:viewParam name="tab" value="#{productTemplateListBean.activeTab}" />
+				listener="#{productAndBundleTemplateListBean.preRenderView}" />
+			<f:viewParam name="tab" value="#{productAndBundleTemplateListBean.activeTab}" />
 		</f:metadata>
 	</ui:define>
 
@@ -69,13 +69,13 @@
 						<p:panel id="top-details-container">
 							<ul class="list-unstyled">
 								<li><i class="fa fa-check-square-o text-blue"></i>
-									#{productTemplateListBean.activeCount}
+									#{productAndBundleTemplateListBean.activeCount}
 									#{messages['productTemplate.activeProductsNum']}</li>
 								<li><i class="fa fa-close text-blue"></i>
-									#{productTemplateListBean.inactiveCount}
+									#{productAndBundleTemplateListBean.inactiveCount}
 									#{messages['productTemplate.deactivatedProductsNum']}</li>
 								<li><i class="fa fa-exclamation-circle text-blue"></i>
-									#{productTemplateListBean.almostExpiredCount}
+									#{productAndBundleTemplateListBean.almostExpiredCount}
 									#{messages['productTemplate.expiringProductsNum']}</li>
 							</ul>
 						</p:panel>
@@ -91,7 +91,7 @@
 									styleClass="VAlignTop Wid100 ui-panelgrid-blank NoPadding"
 									columnClasses="Wid95, Wid5" columns="2">
 									<p:inputText placeholder="#{messages['action.search']}"
-										value="#{productTemplateListBean.filters['fullText']}" />
+										value="#{productAndBundleTemplateListBean.filters['fullText']}" />
 									<p:commandLink styleClass="Padding3 fa fa-search"
 										update=":#{p:component('productTemplateList')}"></p:commandLink>
 								</h:panelGrid>
@@ -106,7 +106,7 @@
 											onclick="PF('exportablePTs').show();">
 											<i class="fa fa-share-square-o" />
 											<h:outputText
-												value=" #{productTemplateListBean.ptToExport.size()} #{messages['productTemplate.selectedProductsfoExportNum']}" />
+												value=" #{productAndBundleTemplateListBean.ptToExport.size()} #{messages['productTemplate.selectedProductsfoExportNum']}" />
 										</p:commandLink></li>
 									<li class="text-left">
 										<div class="text-left">
@@ -117,10 +117,10 @@
 												<h:outputText value=" #{messages['page.catalog.exportTo']}" />
 												<f:setPropertyActionListener
 													target="#{entityExportImportBean.dataModelToExport}"
-													value="#{productTemplateListBean.getLazyDataModel()}" />
+													value="#{productAndBundleTemplateListBean.getLazyDataModel()}" />
 												<f:setPropertyActionListener
 													target="#{entityExportImportBean.selectedEntitiesToExport}"
-													value="#{productTemplateListBean.ptToExport}" />
+													value="#{productAndBundleTemplateListBean.ptToExport}" />
 											</p:commandLink>
 										</div>
 									</li>
@@ -132,12 +132,12 @@
 
 				<p:messages id="main_messages"></p:messages>
 				<p:tabView id="tabView" styleClass="no-border-radius offer-wrapper"
-					activeIndex="#{productTemplateListBean.activeTab}">
+					activeIndex="#{productAndBundleTemplateListBean.activeTab}">
 					<p:tab
 						title="#{messages['marketingManager.catalog.view.detailed']}">
 						<h:form id="productTemplateForm">
 							<p:dataGrid id="productTemplateList"
-								value="#{productTemplateListBean.getLazyDataModel()}" var="prod"
+								value="#{productAndBundleTemplateListBean.getLazyDataModel()}" var="prod"
 								paginator="true" rows="10" columns="1" layout="grid"
 								paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
 								lazy="true" styleClass="dataGrid custom-grid ui-datagrid-blank"
@@ -223,33 +223,54 @@
 															<f:param name="editMode" value="edit" />
 															<f:param name="backView" value="mm_productTemplates"></f:param>
 														</p:link></li>
-													<li><p:commandLink id="duplicateLinkProd"
-															rendered="#{not productTemplateBean.isBundleTemplate(prod)}"
-															styleClass="fa fa-copy fa-2x text-blue"
-															action="#{productTemplateBean.duplicate()}"
-															update=":tabView">
-															<f:param name="tab" value="0"></f:param>
-															<f:setPropertyActionListener value="#{prod}"
-																target="#{productTemplateBean.entity}"></f:setPropertyActionListener>
-															<f:param name="tab" value="0"></f:param>
-															<p:confirm header="#{messages['commons.duplicate']}"
-																message="#{messages['commons.confirmDuplicate']}" />
-														</p:commandLink><p:commandLink
-															id="duplicateLinkBndl"
-															rendered="#{productTemplateBean.isBundleTemplate(prod)}"
-															styleClass="fa fa-copy fa-2x text-blue"
-															action="#{bundleTemplateBean.duplicate()}"
-															update=":tabView">
-															<f:param name="tab" value="0"></f:param>
-															<f:setPropertyActionListener value="#{prod}"
-																target="#{bundleTemplateBean.entity}"></f:setPropertyActionListener>
-															<f:param name="tab" value="0"></f:param>
-															<p:confirm header="#{messages['commons.duplicate']}"
-																message="#{messages['commons.confirmDuplicate']}" />
-														</p:commandLink></li>
+                                                    <li><p:link id="newVersionLinkProd" title="#{messages['commons.newVersion']}"
+                                                                styleClass="fa fa-copy no-text-decoration text-blue fa-2x"
+                                                                outcome="mm_productTemplateDetail" rendered="#{not productTemplateBean.isBundleTemplate(prod)}">
+                                                        <f:param name="cid" value="#{javax.enterprise.context.conversation.id}"/>
+                                                        <f:param name="objectId" value="#{prod.id}"/>
+                                                        <f:param name="edit" value="true"/>
+                                                        <f:param name="backView" value="mm_productTemplates"/>
+                                                        <f:param name="tab" value="0"/>                                                        
+                                                        <f:param name="newVersion" value="true" />
+                                                        </p:link>
+                                                        <p:link id="newVersionLinkBndl" title="#{messages['commons.newVersion']}"
+                                                                styleClass="fa fa-copy no-text-decoration text-blue fa-2x"
+                                                                outcome="mm_bundleTemplateDetail" rendered="#{productTemplateBean.isBundleTemplate(prod)}">
+                                                        <f:param name="cid" value="#{javax.enterprise.context.conversation.id}"/>
+                                                        <f:param name="objectId" value="#{prod.id}"/>
+                                                        <f:param name="edit" value="true"/>
+                                                        <f:param name="backView" value="mm_productTemplates"/>
+                                                        <f:param name="tab" value="0"/>                                                        
+                                                        <f:param name="newVersion" value="true" />
+                                                        </p:link>
+                                                        </li>                                                                                                             
+<!-- 													<li><p:commandLink id="duplicateLinkProd" -->
+<!-- 															rendered="#{not productTemplateBean.isBundleTemplate(prod)}" -->
+<!-- 															styleClass="fa fa-copy fa-2x text-blue" -->
+<!-- 															action="#{productTemplateBean.duplicate()}" -->
+<!-- 															update=":tabView"> -->
+<!-- 															<f:param name="tab" value="0"></f:param> -->
+<!-- 															<f:setPropertyActionListener value="#{prod}" -->
+<!-- 																target="#{productTemplateBean.entity}"></f:setPropertyActionListener> -->
+<!-- 															<f:param name="tab" value="0"></f:param> -->
+<!-- 															<p:confirm header="#{messages['commons.duplicate']}" -->
+<!-- 																message="#{messages['commons.confirmDuplicate']}" /> -->
+<!-- 														</p:commandLink><p:commandLink -->
+<!-- 															id="duplicateLinkBndl" -->
+<!-- 															rendered="#{productTemplateBean.isBundleTemplate(prod)}" -->
+<!-- 															styleClass="fa fa-copy fa-2x text-blue" -->
+<!-- 															action="#{bundleTemplateBean.duplicate()}" -->
+<!-- 															update=":tabView"> -->
+<!-- 															<f:param name="tab" value="0"></f:param> -->
+<!-- 															<f:setPropertyActionListener value="#{prod}" -->
+<!-- 																target="#{bundleTemplateBean.entity}"></f:setPropertyActionListener> -->
+<!-- 															<f:param name="tab" value="0"></f:param> -->
+<!-- 															<p:confirm header="#{messages['commons.duplicate']}" -->
+<!-- 																message="#{messages['commons.confirmDuplicate']}" /> -->
+<!-- 														</p:commandLink></li> -->
 													<li><p:commandLink id="addToExportLink"
 															styleClass="fa fa-share-square-o fa-2x text-blue"
-															action="#{productTemplateListBean.addProductTemplateToExport(prod)}"
+															action="#{productAndBundleTemplateListBean.addProductTemplateToExport(prod)}"
 															update=":ptToExport :exportablePTs">
 														</p:commandLink></li>
 												</ul>
@@ -280,7 +301,7 @@
 						title="#{messages['marketingManager.catalog.view.condensed']}">
 						<hftl:dataList id="dataList"
 							backingBean="#{offerTemplateListBean}"
-							dataModel="#{productTemplateListBean.getLazyDataModel()}"
+							dataModel="#{productAndBundleTemplateListBean.getLazyDataModel()}"
 							checkMany="false" exportToCsv="false" exportToXml="false"
 							exportXlsxButton="false" sortOrder="DESCENDING"
 							styleClass="DataListCenter">
@@ -359,7 +380,7 @@
 										</p:commandLink></li>
 									<li><p:commandLink
 											styleClass="fa fa-share-square-o fa-2x no-text-decoration text-blue"
-											action="#{productTemplateListBean.addProductTemplateToExport(entity)}"
+											action="#{productAndBundleTemplateListBean.addProductTemplateToExport(entity)}"
 											update=":ptToExport :exportablePTs">
 										</p:commandLink></li>
 								</ul>
@@ -379,7 +400,7 @@
 			modal="true" appendTo="@(body)">
 			<h:form id="dlgPTExport">
 				<p:dataTable id="offers"
-					value="#{productTemplateListBean.ptToExport}" var="e">
+					value="#{productAndBundleTemplateListBean.ptToExport}" var="e">
 					<p:column headerText="#{messages['offerTemplate.name']}">#{e.name}</p:column>
 					<p:column headerText="#{messages['BusinessEntity.code']}">#{e.code}</p:column>
 					<p:column headerText="#{messages['BusinessEntity.description']}">#{e.description}</p:column>
@@ -387,7 +408,7 @@
 						<p:commandButton icon="fa fa-close"
 							title="#{messages['button.closeButton']}"
 							update="dlgPTExport :ptToExport"
-							action="#{productTemplateListBean.deleteForExport(e)}">
+							action="#{productAndBundleTemplateListBean.deleteForExport(e)}">
 						</p:commandButton>
 					</p:column>
 				</p:dataTable>

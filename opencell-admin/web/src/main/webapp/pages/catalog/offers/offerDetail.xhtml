@@ -123,7 +123,17 @@
                         </p:column>
                         <p:column headerText="#{messages['BusinessEntity.description']}">
                             <h:outputText value="#{entity.productTemplate.description}" />
-                        </p:column>
+                        </p:column>                        
+						<p:column headerText="#{messages['commons.validFrom']}">
+							<h:outputText value="#{entity.productTemplate.validity.from}">
+								<f:converter converterId="dateTimeConverter"></f:converter>
+							</h:outputText>
+						</p:column>
+						<p:column headerText="#{messages['commons.validTo']}">
+							<h:outputText value="#{entity.productTemplate.validity.to}">
+								<f:converter converterId="dateTimeConverter"></f:converter>
+							</h:outputText>
+						</p:column>
                         <p:column headerText="#{messages['commons.actions']}" rendered="#{offerTemplateBean.edit}">
                             <h:panelGroup layout="block" styleClass="form-panel-actions">
                                 <p:commandButton value="#{messages['offerTemplate.action.removeProduct']}" immediate="true"
@@ -227,7 +237,7 @@
         <p:dialog id="selectProduct" widgetVar="selectProduct" dynamic="true" modal="true" appendTo="@(body)">
             <h:form id="addOfferProductForm">
                 <p:panel id="headerPanel">
-                    <p:dataTable id="productTemplatesTable" var="entity" value="#{productTemplateListBean.listAll()}" paginator="true" rows="5" paginatorPosition="top"
+                    <p:dataTable id="productTemplatesTable" var="entity" value="#{productTemplateBean.listAll()}" paginator="true" rows="5" paginatorPosition="top"
                         paginatorAlwaysVisible="true" paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                         lazy="true" styleClass="ui-panelgrid-blank">
                         <p:column>

@@ -303,9 +303,15 @@ public class GenericProductOfferingService<T extends ProductOffering> extends Au
     @SuppressWarnings("unchecked")
     protected T findTheLatestVersion(String code) {
 
-        T latestVersion = (T) getEntityManager().createNamedQuery("ProductOffering.findLatestVersion").setParameter("clazz", getEntityClass()).setParameter("code", code)
-            .setMaxResults(1).getSingleResult();
-        return latestVersion;
+        List<T> latestVersions = (List<T>) getEntityManager().createNamedQuery("ProductOffering.findLatestVersion").setParameter("clazz", getEntityClass()).setParameter("code", code)
+            .setMaxResults(2).getResultList();
+
+        // This is to overcome a problem of sorting in descending order where null is before non-empty date
+        if (latestVersions.size() > 1 && latestVersions.get(0).getValidity().getFrom() == null) {
+            return latestVersions.get(1);
+        } else {
+            return latestVersions.get(0);
+        }
     }
 
     /**

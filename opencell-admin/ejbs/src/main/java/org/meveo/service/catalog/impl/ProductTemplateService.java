@@ -14,6 +14,7 @@ import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.DigitalResource;
 import org.meveo.model.catalog.OfferTemplateCategory;
+import org.meveo.model.catalog.ProductChargeTemplate;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
@@ -75,6 +76,7 @@ public class ProductTemplateService extends GenericProductOfferingService<Produc
         // Find the latest version of an offer for duplication and to calculate a validity start date for a new offer
         ProductTemplate latestVersion = findTheLatestVersion(product.getCode());
         String code = latestVersion.getCode();
+        Date startDate = latestVersion.getValidity().getFrom();
         Date endDate = latestVersion.getValidity().getTo();
 
         product = duplicate(latestVersion, false);
@@ -82,6 +84,9 @@ public class ProductTemplateService extends GenericProductOfferingService<Produc
         product.setCode(code);
 
         Date from = endDate != null ? endDate : new Date();
+        if (startDate!=null && from.before(startDate)){
+            from = startDate;
+        }
         product.setValidity(new DatePeriod(from, null));
 
         return product;
@@ -105,6 +110,7 @@ public class ProductTemplateService extends GenericProductOfferingService<Produc
         product.getAttachments().size();
         product.getChannels().size();
         product.getOfferTemplateCategories().size();
+        product.getProductChargeTemplates().size();
 
         String code = findDuplicateCode(product);
 
@@ -127,6 +133,9 @@ public class ProductTemplateService extends GenericProductOfferingService<Produc
 
         List<WalletTemplate> walletTemplates = product.getWalletTemplates();
         product.setWalletTemplates(new ArrayList<WalletTemplate>());
+        
+        List<ProductChargeTemplate> chargeTemplates = product.getProductChargeTemplates();
+        product.setProductChargeTemplates(new ArrayList<>());
 
         product.setCode(code);
 
@@ -157,6 +166,12 @@ public class ProductTemplateService extends GenericProductOfferingService<Produc
         if (walletTemplates != null) {
             for (WalletTemplate wt : walletTemplates) {
                 product.getWalletTemplates().add(wt);
+            }
+        }
+
+        if (chargeTemplates != null) {
+            for (ProductChargeTemplate chargeTemplate : chargeTemplates) {
+                product.getProductChargeTemplates().add(chargeTemplate);
             }
         }
 

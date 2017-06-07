@@ -18,6 +18,7 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.catalog.BundleProductTemplate;
 import org.meveo.model.catalog.BundleTemplate;
 import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.DigitalResource;
@@ -28,6 +29,7 @@ import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
+import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.WalletTemplateService;
 import org.meveo.service.catalog.impl.ChannelService;
@@ -37,6 +39,7 @@ import org.meveo.service.catalog.impl.ProductChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.crm.impl.BusinessAccountModelService;
 import org.primefaces.model.DualListModel;
+import org.primefaces.model.LazyDataModel;
 
 /**
  * @author Edward P. Legaspi
@@ -406,5 +409,26 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
     
     public List<ProductTemplate> listActiveByDate(Date date) {
         return productTemplateService.listActiveByDate(date);
+    }
+
+    public LazyDataModel<ProductTemplate> listProductsForBundle(BundleTemplate bt, List<BundleProductTemplate> bundleProductTemplates) {
+        filters.clear();
+        
+        List<Long> ids = new ArrayList<>();
+        for (BundleProductTemplate bpt : bundleProductTemplates) {
+            ids.add(bpt.getProductTemplate().getId());
+        }
+        filters.put("ne code", bt.getCode());
+        if (!ids.isEmpty()) {
+            filters.put("ne id", ids);
+        }
+        
+        @SuppressWarnings("rawtypes")
+        List<Class> types = new ArrayList<>();
+        types.add(ProductTemplate.class);
+        types.add(BundleTemplate.class);
+        filters.put(PersistenceService.SEARCH_ATTR_TYPE_CLASS, types);
+
+        return getLazyDataModel();
     }
 }

@@ -609,13 +609,17 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
                             // Search by an entity type
                         } else if (SEARCH_ATTR_TYPE_CLASS.equals(fieldName)) {
-                            if (filter instanceof Collection) {
+                            if (filter instanceof Collection && !((Collection) filter).isEmpty()) {
                                 List classes = new ArrayList<Class>();
-                                for (String className : (Collection<String>) filter) {
-                                    try {
-                                        classes.add(Class.forName(className));
-                                    } catch (ClassNotFoundException e) {
-                                        log.error("Search by a type will be ignored - unknown class {}", className);
+                                for (Object classNameOrClass : (Collection) filter) {
+                                    if (classNameOrClass instanceof Class) {
+                                        classes.add((Class) classNameOrClass);
+                                    } else {
+                                        try {
+                                            classes.add(Class.forName((String)classNameOrClass));
+                                        } catch (ClassNotFoundException e) {
+                                            log.error("Search by a type will be ignored - unknown class {}", (String)classNameOrClass);
+                                        }
                                     }
                                 }
 

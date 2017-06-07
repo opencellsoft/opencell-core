@@ -14,6 +14,7 @@ import org.meveo.model.catalog.BundleTemplate;
 import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.DigitalResource;
 import org.meveo.model.catalog.OfferTemplateCategory;
+import org.meveo.model.catalog.ProductChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.shared.DateUtils;
@@ -73,6 +74,7 @@ public class BundleTemplateService extends GenericProductOfferingService<BundleT
         // Find the latest version of an offer for duplication and to calculate a validity start date for a new offer
         BundleTemplate latestVersion = findTheLatestVersion(bundle.getCode());
         String code = latestVersion.getCode();
+        Date startDate = latestVersion.getValidity().getFrom();
         Date endDate = latestVersion.getValidity().getTo();
 
         bundle = duplicate(latestVersion, false);
@@ -80,6 +82,9 @@ public class BundleTemplateService extends GenericProductOfferingService<BundleT
         bundle.setCode(code);
 
         Date from = endDate != null ? endDate : new Date();
+        if (startDate!=null && from.before(startDate)){
+            from = startDate;
+        }
         bundle.setValidity(new DatePeriod(from, null));
 
         return bundle;
@@ -104,6 +109,7 @@ public class BundleTemplateService extends GenericProductOfferingService<BundleT
         bundle.getChannels().size();
         bundle.getOfferTemplateCategories().size();
         bundle.getBundleProducts().size();
+        bundle.getProductChargeTemplates().size();
 
         String code = findDuplicateCode(bundle);
 
@@ -130,6 +136,9 @@ public class BundleTemplateService extends GenericProductOfferingService<BundleT
         List<BundleProductTemplate> bundleProductTemplates = bundle.getBundleProducts();
         bundle.setBundleProducts(new ArrayList<BundleProductTemplate>());
 
+        List<ProductChargeTemplate> chargeTemplates = bundle.getProductChargeTemplates();
+        bundle.setProductChargeTemplates(new ArrayList<>());
+        
         bundle.setCode(code);
 
         if (businessAccountModels != null) {
@@ -170,6 +179,12 @@ public class BundleTemplateService extends GenericProductOfferingService<BundleT
             }
         }
 
+        if (chargeTemplates != null) {
+            for (ProductChargeTemplate chargeTemplate : chargeTemplates) {
+                bundle.getProductChargeTemplates().add(chargeTemplate);
+            }
+        }
+        
         customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, bundle);
 
         if (persist) {
