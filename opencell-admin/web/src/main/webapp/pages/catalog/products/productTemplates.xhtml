@@ -176,16 +176,15 @@
 													rendered="#{prod.businessProductModel != null}"></h:outputText>
 											</p>
 											<p:separator></p:separator>
-											<p:panelGrid columns="1">#{prod.validity==null}
-                                                <p:panelGrid columns="1"
-                                                             rendered="#{! prod.validity.isEmpty()}">
+											<p:panelGrid columns="1">
+                                                <p:panelGrid columns="1" rendered="#{prod.validityRaw !=null}">
 													<h:outputText value="#{messages['commons.valid']}: " />
 													<h:panelGroup>
-														<h:outputText value="#{prod.validity.from}">
+														<h:outputText value="#{prod.validityRaw.from}">
 															<f:convertDateTime type="date" pattern="#{paramBean.dateFormat}" />
 														</h:outputText>
 														<h:outputText value="-" style="padding:5px" />
-														<h:outputText value="#{prod.validity.to}">
+														<h:outputText value="#{prod.validityRaw.to}">
 															<f:convertDateTime type="date" pattern="#{paramBean.dateFormat}" />
 														</h:outputText>
 													</h:panelGroup>
@@ -243,7 +242,7 @@
                                                         <f:param name="tab" value="0"/>                                                        
                                                         <f:param name="newVersion" value="true" />
                                                         </p:link>
-                                                        </li>                                                                                                             
+                                                        </li>
 <!-- 													<li><p:commandLink id="duplicateLinkProd" -->
 <!-- 															rendered="#{not productTemplateBean.isBundleTemplate(prod)}" -->
 <!-- 															styleClass="fa fa-copy fa-2x text-blue" -->
@@ -300,7 +299,7 @@
 					<p:tab id="tab1"
 						title="#{messages['marketingManager.catalog.view.condensed']}">
 						<hftl:dataList id="dataList"
-							backingBean="#{offerTemplateListBean}"
+							backingBean="#{productAndBundleTemplateListBean}"
 							dataModel="#{productAndBundleTemplateListBean.getLazyDataModel()}"
 							checkMany="false" exportToCsv="false" exportToXml="false"
 							exportXlsxButton="false" sortOrder="DESCENDING"
@@ -313,10 +312,10 @@
 								valueLabelField="descriptionOrCode">
 							</hftl:column>
 							<hftl:column label="#{messages['commons.validFrom']}"
-								field="validity.from" isDate="true">
+								field="validityRaw.from" isDate="true">
 							</hftl:column>
 							<hftl:column label="#{messages['commons.validTo']}"
-								field="validity.to" isDate="true">
+								field="validityRaw.to" isDate="true">
 							</hftl:column>
 							<p:column>
 								<f:facet name="header">#{messages['commons.status']}</f:facet>

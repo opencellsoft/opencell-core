@@ -399,7 +399,7 @@ public class ProductSpecification extends AbstractCatalogEntity implements Seria
             productSpecification.setDescription(offer.getDescription());
             productSpecification.setLastUpdate(offer.getAuditable() != null ? offer.getAuditable().getLastModified() : null);
             productSpecification.setLifecycleStatus(offer.isActive() ? LifecycleStatus.ACTIVE : LifecycleStatus.OBSOLETE);
-            productSpecification.setValidFor(new TimeRange(offer.getValidity()));
+            productSpecification.setValidFor(new TimeRange(offer.getValidityRaw()));
             if (!offer.isActive() && offer.getAuditable() != null && offer.getAuditable().getUpdated() != null) {
                 productSpecification.getValidFor().setEndDateTime(offer.getAuditable().getUpdated());
             }

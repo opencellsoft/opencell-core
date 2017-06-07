@@ -137,11 +137,8 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
     public void setName(String name) {
         this.name = name;
     }
-
-    public DatePeriod getValidity() {
-        if (validity == null) {
-            validity = new DatePeriod();
-        }
+    
+    public DatePeriod getValidityRaw() {
         return validity;
     }
 
@@ -149,6 +146,20 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
         this.validity = validity;
     }
 
+    /**
+     * If validity is null (both dates are empty) then instantiate one. Note: Use it with care as it results in update calls to DB if validity was null before. Preferably use
+     * getValidityRaw() and check for null.
+     * 
+     * @return Existing or instantiated new validity
+     */
+    public DatePeriod getValidity() {
+
+        if (validity == null) {
+            validity = new DatePeriod();
+        }
+        return validity;
+    }
+    
     public LifeCycleStatusEnum getLifeCycleStatus() {
         return lifeCycleStatus;
     }
@@ -228,11 +239,13 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
         } else if (!code.equals(other.getCode())) {
             return false;
         }
-        
-        if (!getValidity().equals(other.getValidity())){
+
+        if (validity != null && !validity.equals(other.getValidityRaw())) {
+            return false;
+        } else if (validity == null && (other.getValidityRaw() != null && !other.getValidityRaw().isEmpty())) {
             return false;
         }
-        
+
         return true;
     }
 }

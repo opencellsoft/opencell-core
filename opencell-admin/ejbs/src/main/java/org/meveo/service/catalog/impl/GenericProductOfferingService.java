@@ -43,7 +43,7 @@ public class GenericProductOfferingService<T extends ProductOffering> extends Au
 
         for (ProductOffering version : versions) {
 
-            DatePeriod datePeriod = version.getValidity();
+            DatePeriod datePeriod = version.getValidityRaw();
 
             // Only periods with start and end dates that would be split into two parts are selected
             if (invalidOnly) {
@@ -75,7 +75,7 @@ public class GenericProductOfferingService<T extends ProductOffering> extends Au
         if (from == null && to == null) {
             return true;
 
-        } else if (matchedPeriod.isEmpty()) {
+        } else if (matchedPeriod == null || matchedPeriod.isEmpty()) {
             return false;
 
         } else if (matchedPeriod.isCorrespondsToPeriod(from, to, false)) {
@@ -109,9 +109,9 @@ public class GenericProductOfferingService<T extends ProductOffering> extends Au
     @SuppressWarnings("unchecked")
     private void updateValidityOfPreviousVersions(T offering) throws BusinessException {
 
-        DatePeriod currentValidity = offering.getValidity();
+        DatePeriod currentValidity = offering.getValidityRaw();
 
-        List<ProductOffering> matchedVersions = getMatchingVersions(offering.getCode(), offering.getValidity().getFrom(), offering.getValidity().getTo(), offering.getId(), false);
+        List<ProductOffering> matchedVersions = getMatchingVersions(offering.getCode(), offering.getValidityRaw().getFrom(), offering.getValidityRaw().getTo(), offering.getId(), false);
 
         for (ProductOffering matchedVersion : matchedVersions) {
 
@@ -131,10 +131,8 @@ public class GenericProductOfferingService<T extends ProductOffering> extends Au
 
         DatePeriod matchedValidity = matchedVersion.getValidity();
 
-        log.error("AKK matched version {} {}", matchedVersion.getId(), matchedValidity);
-
         // Latest version has no dates set, so invalidate other conflicting versions altogether
-        if (offeringValidity.isEmpty()) {
+        if (offeringValidity == null || offeringValidity.isEmpty()) {
             if (matchedValidity.getFrom() == null) {
                 matchedValidity.setFrom(new Date());
             }
@@ -303,11 +301,11 @@ public class GenericProductOfferingService<T extends ProductOffering> extends Au
     @SuppressWarnings("unchecked")
     protected T findTheLatestVersion(String code) {
 
-        List<T> latestVersions = (List<T>) getEntityManager().createNamedQuery("ProductOffering.findLatestVersion").setParameter("clazz", getEntityClass()).setParameter("code", code)
-            .setMaxResults(2).getResultList();
+        List<T> latestVersions = (List<T>) getEntityManager().createNamedQuery("ProductOffering.findLatestVersion").setParameter("clazz", getEntityClass())
+            .setParameter("code", code).setMaxResults(2).getResultList();
 
         // This is to overcome a problem of sorting in descending order where null is before non-empty date
-        if (latestVersions.size() > 1 && latestVersions.get(0).getValidity().getFrom() == null) {
+        if (latestVersions.size() > 1 && (latestVersions.get(0).getValidityRaw() == null || latestVersions.get(0).getValidityRaw().getFrom() == null)) {
             return latestVersions.get(1);
         } else {
             return latestVersions.get(0);

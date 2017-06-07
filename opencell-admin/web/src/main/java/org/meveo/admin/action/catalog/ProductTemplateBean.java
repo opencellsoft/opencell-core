@@ -134,7 +134,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
     }
 
     public String activateProduct() throws BusinessException {
-        if (entity.getValidity().isValid()) {
+        if (entity.getValidityRaw() == null || entity.getValidityRaw().isValid()) {
             entity.setActive(true);
             return saveOrUpdate(false);
         } else {
@@ -145,7 +145,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
     }
 
     public String saveAsDraft() throws BusinessException {
-        if (entity.getValidity().isValid()) {
+        if (entity.getValidityRaw() == null || entity.getValidityRaw().isValid()) {
             entity.setActive(false);
             return saveOrUpdate(false);
         } else {
@@ -325,7 +325,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
     public boolean displayStatus(ProductTemplate product) {
 
         if ((Arrays.asList(LifeCycleStatusEnum.ACTIVE, LifeCycleStatusEnum.LAUNCHED, LifeCycleStatusEnum.IN_TEST).contains(product.getLifeCycleStatus()))) {
-            return product.getValidity().isCorrespondsToPeriod(new Date());
+            return product.getValidityRaw() == null || product.getValidityRaw().isCorrespondsToPeriod(new Date());
         }
 
         return false;
@@ -400,7 +400,8 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
         List<ProductOffering> matchedVersions = productTemplateService.getMatchingVersions(code, from, to, entity.getId(), true);
 
         if (!matchedVersions.isEmpty()) {
-            messages.error(new BundleKey("messages", "productTemplate.version.exists"), matchedVersions.get(0).getValidity().toString(paramBean.getDateFormat()));
+            messages.error(new BundleKey("messages", "productTemplate.version.exists"),
+                matchedVersions.get(0).getValidityRaw() == null ? " / " : matchedVersions.get(0).getValidityRaw().toString(paramBean.getDateFormat()));
             return false;
         }
 

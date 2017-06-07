@@ -327,7 +327,8 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
         List<ProductOffering> matchedVersions = bundleTemplateService.getMatchingVersions(code, from, to, entity.getId(), true);
 
         if (!matchedVersions.isEmpty()) {
-            messages.error(new BundleKey("messages", "bundleTemplate.version.exists"), matchedVersions.get(0).getValidity().toString(paramBean.getDateFormat()));
+            messages.error(new BundleKey("messages", "bundleTemplate.version.exists"),
+                matchedVersions.get(0).getValidityRaw() == null ? " / " : matchedVersions.get(0).getValidityRaw().toString(paramBean.getDateFormat()));
             return false;
         }
 

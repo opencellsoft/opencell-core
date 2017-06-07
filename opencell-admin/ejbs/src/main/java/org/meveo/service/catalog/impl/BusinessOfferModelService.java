@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.catalog.ServiceConfigurationDto;
@@ -118,9 +119,10 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 		OfferTemplate newOfferTemplate = new OfferTemplate();
 
 		// check if offer already exists
-		if (offerTemplateService.findByCode(code, validFrom, validTo) != null) {
-			throw new BusinessException("Offer template with code " + code + " for dates " + validFrom + " / " + validTo + " already exists");
-		}
+        if (offerTemplateService.findByCode(code, validFrom, validTo) != null) {
+            throw new ValidationException(
+                "Offer template with code " + code + " for dates " + (validFrom == null ? "-" : validFrom) + " / " + (validTo == null ? "-" : validTo) + " already exists");
+        }
 
 		if (businessOfferModel != null && businessOfferModel.getScript() != null) {
 			try {
@@ -150,7 +152,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 			newOfferTemplate.setName(name);
 		}
 		
-		newOfferTemplate.setValidity(bomOffer.getValidity());
+		newOfferTemplate.setValidity(bomOffer.getValidityRaw());
 		if (validFrom != null) {
 			newOfferTemplate.getValidity().setFrom(validFrom);
 		}

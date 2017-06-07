@@ -51,7 +51,7 @@
                 <h:outputText value="#{mainBackingBean.entity.auditable.creator}"></h:outputText>
             </p:panel>
             <h:panelGrid columns="1" styleClass="ui-panelgrid-blank Wid100 Responsive100">
-                <hftl:formField label="#{messages['commons.valid']}" field="validity" />       
+               <hftl:formField label="#{messages['commons.valid']}" field="validity" time="true"/>       
                <hftl:formField label="#{messages['commons.status']}" field="lifeCycleStatus" displayOneLine="true" labelWidth="40" />         
             </h:panelGrid>
         </p:panel>
@@ -112,7 +112,17 @@
                     </p:column>
                     <p:column headerText="#{messages['BusinessEntity.description']}">
                         <h:outputText value="#{prod.productTemplate.description}" />
+                    </p:column>                      
+                    <p:column headerText="#{messages['commons.validFrom']}">
+                        <h:outputText value="#{prod.productTemplate.validityRaw.from}">
+                            <f:converter converterId="dateTimeConverter"></f:converter>
+                        </h:outputText>
                     </p:column>
+                    <p:column headerText="#{messages['commons.validTo']}">
+                        <h:outputText value="#{prod.productTemplate.validityRaw.to}">
+                            <f:converter converterId="dateTimeConverter"></f:converter>
+                        </h:outputText>
+                    </p:column>         
                     <p:column headerText="#{messages['commons.actions']}" rendered="#{mainBackingBean.edit}">
                         <h:panelGroup layout="block" styleClass="form-panel-actions">
                             <p:commandButton value="#{messages['bundleTemplate.removeProduct']}" action="#{mainBackingBean.removeProductTemplateFromBundle(prod)}"

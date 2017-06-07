@@ -235,8 +235,8 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
             OfferTemplate newOfferTemplate = businessOfferModelService.createOfferFromBOM(businessOfferModel, cfsDto != null ? cfsDto.getCustomField() : null, entity.getCode(),
                 entity.getName(), entity.getDescription(), servicesConfigurations, productsConfigurations, entity.getChannels(), entity.getBusinessAccountModels(),
-                entity.getOfferTemplateCategories(), entity.getLifeCycleStatus(), entity.getImagePath(), entity.getValidity().getFrom(), entity.getValidity().getTo(),
-                getLanguageMessagesMap());
+                entity.getOfferTemplateCategories(), entity.getLifeCycleStatus(), entity.getImagePath(), entity.getValidityRaw() != null ? entity.getValidityRaw().getFrom() : null,
+                entity.getValidityRaw() != null ? entity.getValidityRaw().getTo() : null, getLanguageMessagesMap());
 
             // populate service custom fields
             for (OfferServiceTemplate ost : entity.getOfferServiceTemplates()) {
@@ -514,7 +514,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
     public boolean displayStatus(OfferTemplate offer) {
 
         if ((Arrays.asList(LifeCycleStatusEnum.ACTIVE, LifeCycleStatusEnum.LAUNCHED, LifeCycleStatusEnum.IN_TEST).contains(offer.getLifeCycleStatus()))) {
-            return offer.getValidity().isCorrespondsToPeriod(new Date());
+            return offer.getValidityRaw() == null || offer.getValidityRaw().isCorrespondsToPeriod(new Date());
         }
 
         return false;
@@ -533,7 +533,8 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
         List<ProductOffering> matchedVersions = offerTemplateService.getMatchingVersions(code, from, to, entity.getId(), true);
 
         if (!matchedVersions.isEmpty()) {
-            messages.error(new BundleKey("messages", "offerTemplate.version.exists"), matchedVersions.get(0).getValidity().toString(paramBean.getDateFormat()));
+            messages.error(new BundleKey("messages", "offerTemplate.version.exists"),
+                matchedVersions.get(0).getValidityRaw() == null ? " / " : matchedVersions.get(0).getValidityRaw().toString(paramBean.getDateFormat()));
             return false;
         }
 

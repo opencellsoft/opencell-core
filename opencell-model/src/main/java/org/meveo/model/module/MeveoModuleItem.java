@@ -121,15 +121,25 @@ public class MeveoModuleItem extends BaseEntity {
         this.appliesTo = applyTo;
     }
 
-    public DatePeriod getValidity() {
-        if (validity == null) {
-            validity = new DatePeriod();
-        }
+    public DatePeriod getValidityRaw() {
         return validity;
     }
 
     public void setValidity(DatePeriod validity) {
         this.validity = validity;
+    }
+
+    /**
+     * If validity is null (both dates are empty) then instantiate one. Note: Use it with care as it results in update calls to DB if validity was null before. Preferably use
+     * getValidityRaw() and check for null.
+     * 
+     * @return Existing or instantiated new validity
+     */
+    public DatePeriod getValidity() {
+        if (validity == null) {
+            validity = new DatePeriod();
+        }
+        return validity;
     }
 
     @Override

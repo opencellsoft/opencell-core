@@ -138,15 +138,19 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         // Find the latest version of an offer for duplication and to calculate a validity start date for a new offer
         OfferTemplate latestVersion = findTheLatestVersion(offer.getCode());
         String code = latestVersion.getCode();
-        Date startDate = latestVersion.getValidity().getFrom();
-        Date endDate = latestVersion.getValidity().getTo();
+        Date startDate = null;
+        Date endDate = null;
+        if (latestVersion.getValidityRaw() != null) {
+            startDate = latestVersion.getValidityRaw().getFrom();
+            endDate = latestVersion.getValidityRaw().getTo();
+        }
 
         offer = duplicate(latestVersion, false, false);
 
         offer.setCode(code);
 
         Date from = endDate != null ? endDate : new Date();
-        if (startDate!=null && from.before(startDate)){
+        if (startDate != null && from.before(startDate)) {
             from = startDate;
         }
         offer.setValidity(new DatePeriod(from, null));

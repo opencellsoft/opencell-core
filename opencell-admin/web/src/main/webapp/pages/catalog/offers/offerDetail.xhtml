@@ -60,17 +60,19 @@
                             </hftl:decorateFormField>
                             <hftl:decorateFormField fieldId="family" label="#{messages['marketingManager.catalog.family']}">
                                 <h:outputText id="family" value="#{offerTemplateBean.businessOfferModel.code}" styleClass="field-value" />
-                            </hftl:decorateFormField>
+                            </hftl:decorateFormField>                            
                         </c:if>
                         <hftl:formLanguageFields entity="#{offerTemplateBean.entity}" backingBean="#{offerTemplateBean}" multiLang="true" />
 
                         <hftl:formField label="#{messages['commons.valid']}" field="validity" time="true" displayOneLine="true" labelWidth="100" />
-                        <o:validateMultiple components=":offerForm:code :offerForm:validity_date :offerForm:validity_date_toRange"
-									validator="#{offerTemplateBean.validateUniqueVersion}" message="#{messages['offerTemplate.version.exists.short']}" />
                         <hftl:formField label="#{messages['commons.status']}" field="lifeCycleStatus" displayOneLine="true" labelWidth="100" />
                         <hftl:formField label="#{messages['commons.lastEditor']}" entity="#{offerTemplateBean.entity.auditable}" field="creator" valueLabelField="nameOrUsername"
                             edit="false" />
 
+                        <c:if test="#{offerTemplateBean.bomId eq null}">
+                            <o:validateMultiple components=":offerForm:code :offerForm:validity_date :offerForm:validity_date_toRange"
+                                    validator="#{offerTemplateBean.validateUniqueVersion}" message="#{messages['offerTemplate.version.exists.short']}" />
+                        </c:if>
                     </h:panelGrid>
                 </p:panel>
                 <h:panelGrid columns="1" styleClass="ui-panelgrid-blank Wid100">
@@ -125,12 +127,12 @@
                             <h:outputText value="#{entity.productTemplate.description}" />
                         </p:column>                        
 						<p:column headerText="#{messages['commons.validFrom']}">
-							<h:outputText value="#{entity.productTemplate.validity.from}">
+							<h:outputText value="#{entity.productTemplate.validityRaw.from}">
 								<f:converter converterId="dateTimeConverter"></f:converter>
 							</h:outputText>
 						</p:column>
 						<p:column headerText="#{messages['commons.validTo']}">
-							<h:outputText value="#{entity.productTemplate.validity.to}">
+							<h:outputText value="#{entity.productTemplate.validityRaw.to}">
 								<f:converter converterId="dateTimeConverter"></f:converter>
 							</h:outputText>
 						</p:column>
@@ -252,8 +254,8 @@
 
                         <hftl:column label="#{messages['commons.name']}" field="name" />
                         <hftl:column label="#{messages['BusinessEntity.description']}" field="description" />
-                        <hftl:column label="#{messages['commons.validFrom']}" field="validity.from" isDate="true" />
-                        <hftl:column label="#{messages['commons.validTo']}" field="validity.to" isDate="true" />
+                        <hftl:column label="#{messages['commons.validFrom']}" field="validityRaw.from" isDate="true" />
+                        <hftl:column label="#{messages['commons.validTo']}" field="validityRaw.to" isDate="true" />
 
                         <p:column headerText="#{messages['commons.actions']}">
                             <p:commandButton value="#{messages['offerTemplate.action.addProduct']}" action="#{offerTemplateBean.addProductTemplateToOffer(entity)}"

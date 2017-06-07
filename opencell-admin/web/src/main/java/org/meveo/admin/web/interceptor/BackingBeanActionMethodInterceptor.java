@@ -84,7 +84,7 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
             // See if can get to the root of the exception cause
             String message = e.getMessage();
             boolean validation = false;
-            Throwable cause = e.getCause();
+            Throwable cause = e;
             while (cause != null) {
 
                 if (cause instanceof SQLException || cause instanceof BusinessException) {

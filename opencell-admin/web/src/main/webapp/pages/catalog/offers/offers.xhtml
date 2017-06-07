@@ -158,15 +158,14 @@
                                                 </ui:repeat>
                                             </p>
                                             <p:panelGrid columns="1">
-                                                <p:panelGrid columns="1"
-                                                             rendered="#{! entity.validity.isEmpty()}">
+                                                <p:panelGrid columns="1" rendered="#{entity.validityRaw != null}">
 													<h:outputText value="#{messages['commons.valid']}: " />
 													<h:panelGroup>
-														<h:outputText value="#{entity.validity.from}">
+														<h:outputText value="#{entity.validityRaw.from}">
 															<f:convertDateTime type="date" pattern="#{paramBean.dateFormat}" />
 														</h:outputText>
 														<h:outputText value="-" style="padding:5px" />
-														<h:outputText value="#{entity.validity.to}">
+														<h:outputText value="#{entity.validityRaw.to}">
 															<f:convertDateTime type="date" pattern="#{paramBean.dateFormat}" />
 														</h:outputText>
 													</h:panelGroup>
@@ -356,10 +355,10 @@
                                          valueLabelField="descriptionOrCode">
                             </hftl:column>
                             <hftl:column label="#{messages['commons.validFrom']}"
-                                         field="validity.from" isDate="true">
+                                         field="validityRaw.from" isDate="true">
                             </hftl:column>
                             <hftl:column label="#{messages['commons.validTo']}"
-                                         field="validity.to" isDate="true">
+                                         field="validityRaw.to" isDate="true">
                             </hftl:column>
                             <p:column>
                                 <f:facet name="header">#{messages['commons.status']}</f:facet>

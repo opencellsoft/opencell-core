@@ -171,7 +171,12 @@ public class DatePeriod implements Comparable<DatePeriod> {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return isCorrespondsToPeriod((DatePeriod) obj, true);
+    public boolean equals(Object other) {
+        if (isEmpty() && other == null) {
+            return true;
+        } else if (!isEmpty() && other == null) {
+            return false;
+        }
+        return isCorrespondsToPeriod((DatePeriod) other, true);
     }
 }

@@ -91,7 +91,7 @@ public class ProductOffering extends AbstractCatalogEntity implements Serializab
         this.setDescription(offer.getDescription());
         this.setLastUpdate(offer.getAuditable() != null ? offer.getAuditable().getLastModified() : null);
         this.setLifecycleStatus(offer.isActive() ? LifecycleStatus.ACTIVE : LifecycleStatus.OBSOLETE);
-        this.setValidFor(new TimeRange(offer.getValidity()));
+        this.setValidFor(new TimeRange(offer.getValidityRaw()));
         if (!offer.isActive() && offer.getAuditable() != null && offer.getAuditable().getUpdated() != null) {
             this.getValidFor().setEndDateTime(offer.getAuditable().getUpdated());
         }

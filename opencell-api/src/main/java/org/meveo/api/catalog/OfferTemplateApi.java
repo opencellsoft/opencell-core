@@ -387,8 +387,10 @@ public class OfferTemplateApi extends BaseCrudVersionedApi<OfferTemplate, OfferT
 
         OfferTemplateDto dto = new OfferTemplateDto();
         dto.setCode(offerTemplate.getCode());
-        dto.setValidFrom(offerTemplate.getValidity().getFrom());
-        dto.setValidTo(offerTemplate.getValidity().getTo());
+        if (offerTemplate.getValidityRaw() != null) {
+            dto.setValidFrom(offerTemplate.getValidityRaw().getFrom());
+            dto.setValidTo(offerTemplate.getValidityRaw().getTo());
+        }
         dto.setDescription(offerTemplate.getDescription());
         dto.setName(offerTemplate.getName());
         dto.setLongDescription(offerTemplate.getLongDescription());
