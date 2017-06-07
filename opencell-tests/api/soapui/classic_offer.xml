@@ -17348,8 +17348,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateTitle>
-         <title code="MR">
-            <description>Mr.</description>
+         <title code="MR" description="Mr.">
             <isCompany>false</isCompany>
          </title>
       </ws:createOrUpdateTitle>\r
@@ -17389,8 +17388,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateTitle>
-         <title code="MRS">
-            <description>Mrs.</description>
+         <title code="MRS" description="Mrs.">
             <isCompany>false</isCompany>
          </title>
       </ws:createOrUpdateTitle>\r
@@ -17430,8 +17428,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateTitle>
-         <title code="MS">
-            <description>Ms.</description>
+         <title code="MS" description="Ms.">
             <isCompany>false</isCompany>
          </title>
       </ws:createOrUpdateTitle>\r
@@ -17471,8 +17468,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateTitle>
-         <title code="DR">
-            <description>Dr.</description>
+         <title code="DR" description="Dr.">
             <isCompany>false</isCompany>
          </title>
       </ws:createOrUpdateTitle>\r
@@ -17512,8 +17508,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateTitle>
-         <title code="PROF">
-            <description>Prof.</description>
+         <title code="PROF" description="Prof.">
             <isCompany>false</isCompany>
          </title>
       </ws:createOrUpdateTitle>\r
@@ -17553,8 +17548,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateTitle>
-         <title code="CIE">
-            <description>Cie.</description>
+         <title code="CIE" description="Cie.">
             <isCompany>true</isCompany>
          </title>
       </ws:createOrUpdateTitle>\r
@@ -17594,8 +17588,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateTitle>
-         <title code="ASSOC">
-            <description>Assoc.</description>
+         <title code="ASSOC" description="Assoc.">
             <isCompany>true</isCompany>
          </title>
       </ws:createOrUpdateTitle>\r
@@ -17640,11 +17633,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>
       <ws:createOrUpdateCustomerCategory>
          
-         <customerCategory>
-            
-            <code>PARTNER</code>
-            
-            <description>Partner</description>
+         <customerCategory code="PARTNER" description="Partner">
             <exoneratedFromTaxes>false</exoneratedFromTaxes>
          </customerCategory>
       </ws:createOrUpdateCustomerCategory>
@@ -17678,11 +17667,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>
       <ws:createOrUpdateCustomerCategory>
          
-         <customerCategory>
-            
-            <code>CLIENT</code>
-            
-            <description>Client</description>
+         <customerCategory code="CLIENT" description="Client">
             <exoneratedFromTaxes>false</exoneratedFromTaxes>
          </customerCategory>
       </ws:createOrUpdateCustomerCategory>
@@ -17716,11 +17701,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>
       <ws:createOrUpdateCustomerCategory>
          
-         <customerCategory>
-            
-            <code>INDIVIDUAL</code>
-            
-            <description>Individual</description>
+         <customerCategory code="INDIVIDUAL" description="Individual">
             <exoneratedFromTaxes>false</exoneratedFromTaxes>
          </customerCategory>
       </ws:createOrUpdateCustomerCategory>
@@ -17754,11 +17735,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>
       <ws:createOrUpdateCustomerCategory>
          
-         <customerCategory>
-            
-            <code>GOVERNMENT</code>
-            
-            <description>Governement</description>
+         <customerCategory code="GOVERNMENT" description="Governement">
             <exoneratedFromTaxes>true</exoneratedFromTaxes>
          </customerCategory>
       </ws:createOrUpdateCustomerCategory>
@@ -17792,11 +17769,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>
       <ws:createOrUpdateCustomerCategory>
          
-         <customerCategory>
-            
-            <code>COMPANY</code>
-            
-            <description>Company</description>
+         <customerCategory code="COMPANY" description="Company">
             <exoneratedFromTaxes>false</exoneratedFromTaxes>
          </customerCategory>
       </ws:createOrUpdateCustomerCategory>
@@ -17830,11 +17803,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>
       <ws:createOrUpdateCustomerCategory>
          
-         <customerCategory>
-            
-            <code>SOHO</code>
-            
-            <description>Small Office - Home Office</description>
+         <customerCategory code="SOHO" description="Small Office - Home Office">
             <exoneratedFromTaxes>false</exoneratedFromTaxes>
          </customerCategory>
       </ws:createOrUpdateCustomerCategory>
@@ -17871,9 +17840,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateCreditCategory>
-         <creditCategory>
-            <code>SILVER</code>
-            <description>Silver</description>
+         <creditCategory code="SILVER" description="Silver">
          </creditCategory>
       </ws:createOrUpdateCreditCategory>
    </soapenv:Body>
@@ -17905,9 +17872,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateCreditCategory>
-         <creditCategory>
-            <code>BRONZE</code>
-            <description>Bronze</description>
+         <creditCategory code="BRONZE" description="Bronze">
          </creditCategory>
       </ws:createOrUpdateCreditCategory>
    </soapenv:Body>
@@ -17939,9 +17904,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateCreditCategory>
-         <creditCategory>
-            <code>GOLD</code>
-            <description>Gold</description>
+         <creditCategory code="GOLD" description="Gold">
          </creditCategory>
       </ws:createOrUpdateCreditCategory>
    </soapenv:Body>
@@ -17973,9 +17936,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateCreditCategory>
-         <creditCategory>
-            <code>PLATINIUM</code>
-            <description>Platinium</description>
+         <creditCategory code="PLATINIUM" description="Platinium">
          </creditCategory>
       </ws:createOrUpdateCreditCategory>
    </soapenv:Body>
@@ -18220,11 +18181,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>
       <ws:createOrUpdateCustomerBrand>
          
-         <customerBrand>
-            
-            <code>${#Project#templateCode}</code>
-            
-            <description>${#Project#templateLabel}</description>
+         <customerBrand code="${#Project#templateCode}" description="${#Project#templateLabel}">
          </customerBrand>
       </ws:createOrUpdateCustomerBrand>
    </soapenv:Body>
@@ -18511,9 +18468,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>
       <ws:createOrUpdateCalendar>
          
-         <calendar code="CAL_DEFAULT_MONTHLY_1ST">
-            
-            <description>Monthly calendar 1st of the month (default)</description>
+         <calendar code="CAL_DEFAULT_MONTHLY_1ST" description="Monthly calendar 1st of the month (default)">
             <calendarType>YEARLY</calendarType>
             <!--Zero or more repetitions:-->
             <days day="1" month="JANUARY"/>
@@ -18566,8 +18521,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateCalendar>
-       <calendar code="CAL_DEFAULT_DAILY">
-          <description>Daily calendar</description>
+       <calendar code="CAL_DEFAULT_DAILY" description="Daily calendar">
           <calendarType>PERIOD</calendarType>
           <periodLength>1</periodLength>
           <periodUnit>DAY_OF_MONTH</periodUnit>
@@ -18610,8 +18564,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateCalendar>
-       <calendar code="CAL_DEFAULT_MONTHLY">
-          <description>Monthly calendar</description>
+       <calendar code="CAL_DEFAULT_MONTHLY" description="Monthly calendar">
           <calendarType>PERIOD</calendarType>
           <periodLength>1</periodLength>
           <periodUnit>MONTH</periodUnit>
@@ -18654,8 +18607,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateCalendar>
-       <calendar code="CAL_DEFAULT_YEARLY">
-          <description>Yearly calendar</description>
+       <calendar code="CAL_DEFAULT_YEARLY" description="Yearly calendar">
           <calendarType>PERIOD</calendarType>
           <periodLength>12</periodLength>
           <periodUnit>MONTH</periodUnit>
@@ -18699,9 +18651,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>
       <ws:createOrUpdateCalendar>
          
-         <calendar code="CAL_${#Project#templateCode}_MONTHLY_1ST">
-            
-            <description>Monthly calendar 1st of the month</description>
+         <calendar code="CAL_${#Project#templateCode}_MONTHLY_1ST" description="Monthly calendar 1st of the month">
             <calendarType>YEARLY</calendarType>
             <!--Zero or more repetitions:-->
             <days day="1" month="JANUARY"/>
@@ -19169,9 +19119,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateInvoiceType>
-		<invoiceType>
-			<code>${#Project#templateCode}_COM</code>
-			<description>Invoice for ${#Project#templateLabel}</description>
+		<invoiceType code="${#Project#templateCode}_COM" description="Invoice for ${#Project#templateLabel}">
 			<occTemplateCode>AO_INV</occTemplateCode>
 			<occTemplateNegativeCode>AO_ADJ</occTemplateNegativeCode>
 			<sequenceDto>
@@ -19221,9 +19169,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateInvoiceType>
-		<invoiceType>
-			<code>${#Project#templateCode}_ADJ</code>
-			<description>Adjustement for ${#Project#templateLabel}</description>
+		<invoiceType code="${#Project#templateCode}_ADJ" description="Adjustement for ${#Project#templateLabel}">
 			<occTemplateCode>AO_ADJ</occTemplateCode>
 			<occTemplateNegativeCode>AO_INV</occTemplateNegativeCode>
 			<sequenceDto>
@@ -19271,9 +19217,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateInvoiceType>
-		<invoiceType>
-			<code>${#Project#templateCode}_CN</code>
-			<description>Credit Note for ${#Project#templatelabel}</description>
+		<invoiceType code="${#Project#templateCode}_CN" description="Credit Note for ${#Project#templatelabel}">
 			<occTemplateCode>AO_INV</occTemplateCode>
 			<occTemplateNegativeCode>AO_ADJ</occTemplateNegativeCode>
 			<sequenceDto>
@@ -26502,8 +26446,7 @@ public class CustWFAdvance extends org.meveo.service.script.Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateCalendar>
-       <calendar code="CAL_MONTHLY_DURATION_1">
-          <description>Monthly duration 1</description>
+       <calendar code="CAL_MONTHLY_DURATION_1" description="Monthly duration 1">
           <calendarType>PERIOD</calendarType>
           <periodLength>1</periodLength>
           <periodUnit>MONTH</periodUnit>
@@ -26546,8 +26489,7 @@ public class CustWFAdvance extends org.meveo.service.script.Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateCalendar>
-       <calendar code="CAL_MONTHLY_DURATION_2">
-          <description>Monthly duration 2</description>
+       <calendar code="CAL_MONTHLY_DURATION_2" description="Monthly duration 2">
           <calendarType>PERIOD</calendarType>
           <periodLength>1</periodLength>
           <periodUnit>MONTH</periodUnit>
@@ -26590,8 +26532,7 @@ public class CustWFAdvance extends org.meveo.service.script.Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateCalendar>
-       <calendar code="CAL_MONTHLY_DURATION_3">
-          <description>Monthly duration 3</description>
+       <calendar code="CAL_MONTHLY_DURATION_3" description="Monthly duration 3">
           <calendarType>PERIOD</calendarType>
           <periodLength>1</periodLength>
           <periodUnit>MONTH</periodUnit>
@@ -26634,8 +26575,7 @@ public class CustWFAdvance extends org.meveo.service.script.Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateCalendar>
-       <calendar code="CAL_MONTHLY_DURATION_6">
-          <description>Monthly duration 6</description>
+       <calendar code="CAL_MONTHLY_DURATION_6" description="Monthly duration 6">
           <calendarType>PERIOD</calendarType>
           <periodLength>1</periodLength>
           <periodUnit>MONTH</periodUnit>
@@ -31770,9 +31710,7 @@ RU5ErkJggg==
    <soapenv:Body>
       <ws:createOrUpdateDiscountPlan>
          
-      	<discountPlan>
-         		<code>DP_${#Project#templateCode}_100</code>
-         		<description>Full invoice discount for ${#Project#templateLabel} (100%)</description>
+      	<discountPlan code="DP_${#Project#templateCode}_100" description="Full invoice discount for ${#Project#templateLabel} (100%)">
          	</discountPlan>
       </ws:createOrUpdateDiscountPlan>
    </soapenv:Body>
@@ -31996,9 +31934,7 @@ RU5ErkJggg==
    <soapenv:Body>
       <ws:createOrUpdateDiscountPlan>
          
-      	<discountPlan>
-         		<code>DP_${#Project#templateCode}_10</code>
-         		<description>Full invoice discount for ${#Project#templateLabel} (10%)</description>
+      	<discountPlan code="DP_${#Project#templateCode}_10" description="Full invoice discount for ${#Project#templateLabel} (10%)">
          	</discountPlan>
       </ws:createOrUpdateDiscountPlan>
    </soapenv:Body>
@@ -36934,7 +36870,7 @@ AAAASUVORK5CYII=
          
          <offerTemplate code="OF_${#Project#templateCode}_TEMPLATE" description="${#Project#templateLabel} with multiple basic services">
          	  <name>${#Project#templateLabel} offer</name>
-            <disabled>true</disabled>
+            <disabled>false</disabled>
 		  <offerTemplateCategories>
 		    <offerTemplateCategory>${#Project#templateCode}_DEFAULT</offerTemplateCategory>
 		  </offerTemplateCategories>
@@ -55316,7 +55252,7 @@ rkJggg==
   <con:properties>
     <con:property>
       <con:name>opencell.url</con:name>
-      <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
+      <con:value>http://localhost:8080/opencell</con:value>
     </con:property>
     <con:property>
       <con:name>provider</con:name>
@@ -55348,7 +55284,7 @@ rkJggg==
     </con:property>
     <con:property>
       <con:name>recOfferId</con:name>
-      <con:value>Service SE_REC_FLAT_REBATE_1 is not defined in the offer</con:value>
+      <con:value>6</con:value>
     </con:property>
     <con:property>
       <con:name>adminUsername</con:name>
