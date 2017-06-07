@@ -1,4 +1,4 @@
-package org.meveo.audit.logging;
+package org.meveo.audit.logging.core;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -16,7 +16,6 @@ import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.audit.logging.dto.AnnotationAuditEvent;
 import org.meveo.audit.logging.dto.AuditEvent;
 import org.meveo.audit.logging.dto.MethodParameter;
-import org.meveo.audit.logging.writer.AuditEventDBWriter;
 
 /**
  * @author Edward P. Legaspi
@@ -28,7 +27,7 @@ public class AuditManagerService {
 	private MetadataHandler metadataHandler;
 
 	@Inject
-	private AuditEventDBWriter auditEventDBWriter;
+	private AuditEventProcessor auditEventProcessor;
 
 	private final static String ACTION = "action";
 
@@ -52,16 +51,23 @@ public class AuditManagerService {
 	public void audit(AnnotationAuditEvent event) throws BusinessException {
 		AuditEvent auditEvent = transformToEvent(event);
 		auditEvent = metadataHandler.addSignature(auditEvent);
-
-		auditEventDBWriter.write(auditEvent);
+		auditEventProcessor.process(auditEvent);
 	}
 
 	public AuditEvent transformToEvent(AnnotationAuditEvent annotationEvent) {
 		AuditEvent event = new AuditEvent();
 		event.setEntity(getEntityClass(annotationEvent.getClazz()).getName());
+		event.setAction(annotationEvent.getMethod().getName());
+		event.setFields(getParameterLines(annotationEvent.getMethod(), annotationEvent.getParamValues()));
+		return event;
+	}
+
+	public AuditEvent transformToEventExplicitAnnotated(AnnotationAuditEvent annotationEvent) {
+		AuditEvent event = new AuditEvent();
+		event.setEntity(getEntityClass(annotationEvent.getClazz()).getName());
 
 		if (annotationEvent.getClazz().isAnnotationPresent(MeveoAudit.class)
-				&& !annotationEvent.getMethod().isAnnotationPresent(IgnoreAudit.class)) {			
+				&& !annotationEvent.getMethod().isAnnotationPresent(IgnoreAudit.class)) {
 			MeveoAudit audit = annotationEvent.getClazz().getAnnotation(MeveoAudit.class);
 			event.setFields(getParameterLines(annotationEvent.getMethod(), annotationEvent.getParamValues()));
 

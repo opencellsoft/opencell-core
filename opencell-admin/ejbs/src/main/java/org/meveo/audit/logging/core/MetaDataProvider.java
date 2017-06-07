@@ -1,4 +1,4 @@
-package org.meveo.audit.logging;
+package org.meveo.audit.logging.core;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -8,6 +8,9 @@ import javax.ws.rs.core.Context;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 
+/**
+ * @author Edward P. Legaspi
+ **/
 @Stateless
 public class MetaDataProvider {
 

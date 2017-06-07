@@ -1,4 +1,4 @@
-package org.meveo.admin.audit.log;
+package org.meveo.admin.action.audit.logging;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Named;

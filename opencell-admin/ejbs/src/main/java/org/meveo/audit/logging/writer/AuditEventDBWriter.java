@@ -20,11 +20,12 @@ public class AuditEventDBWriter extends PersistenceService<AuditLog> {
 		AuditLog auditLog = new AuditLog();
 		auditLog.setAction(auditEvent.getAction());
 		auditLog.setActor(auditEvent.getActor());
-		//temp fix
-		if(StringUtils.isBlank(auditLog.getActor())){
+
+		// temp fix
+		if (StringUtils.isBlank(auditLog.getActor())) {
 			auditLog.setActor("opencell.admin.hardcoded");
 		}
-		//
+
 		auditLog.setCreated(new Date());
 		auditLog.setOrigin(auditEvent.getClientIp());
 		auditLog.setParameters(auditEvent.getMethodParametersAsString());

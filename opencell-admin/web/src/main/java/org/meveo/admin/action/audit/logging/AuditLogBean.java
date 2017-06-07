@@ -1,4 +1,4 @@
-package org.meveo.admin.audit.log;
+package org.meveo.admin.action.audit.logging;
 
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -28,6 +28,10 @@ public class AuditLogBean extends BaseBean<AuditLog> {
 	@Override
 	protected IPersistenceService<AuditLog> getPersistenceService() {
 		return auditLogService;
+	}
+
+	public void purge() {
+		auditLogService.purge();
 	}
 
 }

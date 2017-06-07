@@ -795,4 +795,20 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public void commit() {
         getEntityManager().flush();
     }
+    
+    /**
+     * 
+     * @param query
+     * @param params
+     * @return
+     */
+    public Object executeSelectQuery(String query,Map<String,Object> params){
+    	Query q = getEntityManager().createQuery(query);
+    	if(params != null){
+	    	for (Map.Entry<String, Object> entry : params.entrySet()) {    	    
+	    	    q.setParameter(entry.getKey(), entry.getValue());
+	    	}		
+    	}
+		return  q.getResultList();	
+    }
 }
