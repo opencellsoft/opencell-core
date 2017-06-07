@@ -546,41 +546,12 @@
 			<artifactId>arquillian-junit-container</artifactId>
 			<scope>test</scope>
 		</dependency>
-
-		<!-- <dependency> -->
-		<!-- <groupId>org.jboss.arquillian.protocol</groupId> -->
-		<!-- <artifactId>arquillian-protocol-servlet</artifactId> -->
-		<!-- <scope>test</scope> -->
-		<!-- </dependency> -->
-
-<!-- 		<dependency> -->
-<!-- 			<groupId>com.opencellsoft</groupId> -->
-<!-- 			<artifactId>opencell-audit-logging</artifactId> -->
-<!-- 			<version>${project.version}</version> -->
-<!-- 		</dependency> -->
 		
-		<!-- Audit4j Dependencies -->
-		<!-- <dependency> -->
-		<!-- <groupId>org.audit4j</groupId> -->
-		<!-- <artifactId>audit4j-core</artifactId> -->
-		<!-- <version>2.4.1</version> -->
-		<!-- <exclusions> -->
-		<!-- <exclusion> -->
-		<!-- <groupId>javax.ejb</groupId> -->
-		<!-- <artifactId>ejb-api</artifactId> -->
-		<!-- </exclusion> -->
-		<!-- <exclusion> -->
-		<!-- <groupId>javax.servlet</groupId> -->
-		<!-- <artifactId>servlet-api</artifactId> -->
-		<!-- </exclusion> -->
-		<!-- </exclusions> -->
-		<!-- </dependency> -->
-
-		<!-- <dependency> -->
-		<!-- <groupId>org.audit4j</groupId> -->
-		<!-- <artifactId>audit4j-db</artifactId> -->
-		<!-- <version>2.4.1</version> -->
-		<!-- </dependency> -->
+		<dependency>
+			<groupId>com.esotericsoftware.yamlbeans</groupId>
+			<artifactId>yamlbeans</artifactId>
+			<version>1.11</version>
+		</dependency>
 
 	</dependencies>
 
