@@ -13,12 +13,12 @@ import org.meveo.model.BusinessEntity;
  * @since Oct 4, 2013
  **/
 @XmlTransient
-@XmlAccessorType(XmlAccessType.FIELD) 
+@XmlAccessorType(XmlAccessType.FIELD)
 public abstract class BusinessDto extends BaseDto {
 
 	private static final long serialVersionUID = 4451119256601996946L;
-		
-	@Pattern(regexp="^[A-Za-z0-9_-]+$")
+
+	@Pattern(regexp = "^[A-Za-z0-9_\\.-]+$")
 	@XmlAttribute(required = true)
 	private String code;
 
@@ -28,9 +28,9 @@ public abstract class BusinessDto extends BaseDto {
 	private String updatedCode;
 
 	public BusinessDto() {
-		
+
 	}
-			
+
 	public BusinessDto(BusinessEntity e) {
 		if (e != null) {
 			code = e.getCode();
@@ -61,6 +61,5 @@ public abstract class BusinessDto extends BaseDto {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
-	
+
 }
