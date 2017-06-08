@@ -22,7 +22,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.security.RunAs;
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -38,34 +37,13 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
-@RunAs("jobRunner")
 public class JobExecutionService extends PersistenceService<JobExecutionResultImpl> {
 
     @Inject
     private JobInstanceService jobInstanceService;
-
-    @Inject
-    private CurrentUserProvider currentUserProvider;
-    
-    /**
-     * Initiate job in a JAAS secured fashion - see @RunAs annotation. To be run from a job schedule expiration.
-     * 
-     * @param jobInstance Job instance to run
-     * @param job Job implementation class
-     * @throws BusinessException
-     */
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public void executeInJaas(JobInstance jobInstance, Job job) throws BusinessException {
-        // Force authentication to a current job's user
-        currentUserProvider.forceAuthentication(jobInstance.getAuditable().getCreator());
-        
-//        log.error("AKK running {} as user {}", job.getClass(), currentUser);
-        job.execute(jobInstance, null);
-    }
 
     /**
      * Persist job execution results
@@ -121,6 +99,8 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void executeNextJob(Job job, JobInstance jobInstance, boolean continueSameJob) {
+
+        // log.error("AKK running next {} as user {}", job.getClass(), currentUser);
         try {
 
             if (continueSameJob) {
@@ -129,7 +109,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 
             } else if (jobInstance.getFollowingJob() != null) {
                 JobInstance nextJob = jobInstanceService.refreshOrRetrieve(jobInstance.getFollowingJob());
-                log.debug("Executing next job {}", jobInstance.getFollowingJob().getCode());
+                log.debug("Executing next job {}", nextJob.getCode());
                 executeJobWithParameters(nextJob, null);
             }
 

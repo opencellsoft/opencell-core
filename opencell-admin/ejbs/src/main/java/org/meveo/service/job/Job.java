@@ -51,6 +51,9 @@ public abstract class Job {
     @Inject
     protected JobExecutionService jobExecutionService;
 
+    @Inject
+    private JobExecutionInJaasService jobExecutionInJaasService;
+
     @EJB
     protected JobInstanceService jobInstanceService;
 
@@ -96,7 +99,7 @@ public abstract class Job {
 
         JobRunningStatusEnum isRunning = jobCacheContainerProvider.isJobRunning(jobInstance.getId());
         if (isRunning == JobRunningStatusEnum.NOT_RUNNING || (isRunning == JobRunningStatusEnum.RUNNING_OTHER && !jobInstance.isLimitToSingleNode())) {
-            log.debug("Starting Job {} of type {} with currentUser {} ", jobInstance.getCode(), jobInstance.getJobTemplate(), currentUser.getUserName());
+            log.debug("Starting Job {} of type {} with currentUser {} ", jobInstance.getCode(), jobInstance.getJobTemplate(), currentUser.toStringShort());
 
             try {
                 jobCacheContainerProvider.markJobAsRunning(jobInstance.getId());
@@ -171,7 +174,7 @@ public abstract class Job {
         JobInstance jobInstance = (JobInstance) timer.getInfo();
 
         try {
-            jobExecutionService.executeInJaas((JobInstance) timer.getInfo(), this);
+            jobExecutionInJaasService.executeInJaas((JobInstance) timer.getInfo(), this);
         } catch (Exception e) {
             log.error("Failed to execute a job {} of type {}", jobInstance.getCode(), jobInstance.getJobTemplate(), e);
         }
