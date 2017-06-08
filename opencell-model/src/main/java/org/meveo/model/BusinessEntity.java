@@ -30,7 +30,7 @@ import org.apache.commons.lang3.StringUtils;
 public class BusinessEntity extends EnableEntity {
 
     private static final long serialVersionUID = 1L;
-
+    
     @Column(name = "CODE", nullable = false, length = 255)
     // TODO : Create sql script to ad index. @Index(name = "CODE_IDX")
     @Size(max = 255, min = 1)
