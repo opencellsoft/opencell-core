@@ -24,8 +24,11 @@ import org.meveo.commons.utils.StringUtils;
 public class OfferTemplateDto extends BusinessDto {
 
     private static final long serialVersionUID = 9156372453581362595L;
+    
+    @XmlAttribute()
+    private Long id;
 
-    @XmlAttribute(required = true)
+	@XmlAttribute(required = true)
     private String code;
 
     @XmlAttribute()
@@ -67,6 +70,20 @@ public class OfferTemplateDto extends BusinessDto {
     public OfferTemplateDto() {
 
     }
+    
+    /**
+	 * @return the id
+	 */
+	public Long getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Long id) {
+		this.id = id;
+	}
 
     public String getCode() {
         return code;

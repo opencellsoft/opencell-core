@@ -375,6 +375,7 @@ public class OfferTemplateApi extends BaseCrudApi<OfferTemplate, OfferTemplateDt
     public OfferTemplateDto convertOfferTemplateToDto(OfferTemplate offerTemplate) {
 
         OfferTemplateDto dto = new OfferTemplateDto();
+        dto.setId(offerTemplate.getId());
         dto.setCode(offerTemplate.getCode());
         dto.setDescription(offerTemplate.getDescription());
         dto.setName(offerTemplate.getName());
