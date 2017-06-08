@@ -276,10 +276,8 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
 
         List<ScriptInstanceError> scriptErrors = compileScript(script.getCode(), script.getSourceTypeEnum(), script.getScript(), script.isActive(), testCompile);
 
-        if (!testCompile) {
-            script.setError(scriptErrors != null && !scriptErrors.isEmpty());
-            script.setScriptErrors(scriptErrors);
-        }
+        script.setError(scriptErrors != null && !scriptErrors.isEmpty());
+        script.setScriptErrors(scriptErrors);
     }
 
     /**
