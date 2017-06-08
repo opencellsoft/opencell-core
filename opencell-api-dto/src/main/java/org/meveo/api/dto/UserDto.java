@@ -175,7 +175,7 @@ public class UserDto extends BaseDto {
 
     @Override
 	public String toString() {
-		return "UserDto [username=" + username + ", password=" + password + ", email=" + email + ", firstName=" + firstName + ", lastName=" + lastName + ", roles=" + roles + ", role=" + role + ", userLevel=" + userLevel  + ", securedEntities=" + securedEntities + " ]";
+		return "UserDto [username=" + username + ", email=" + email + ", firstName=" + firstName + ", lastName=" + lastName + ", roles=" + roles + ", role=" + role + ", userLevel=" + userLevel  + ", securedEntities=" + securedEntities + " ]";
 	}
 
 }

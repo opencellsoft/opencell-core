@@ -79,10 +79,8 @@ import org.primefaces.model.TreeNode;
 import org.primefaces.model.UploadedFile;
 
 /**
- * Standard backing bean for {@link User} (extends {@link BaseBean} that
- * provides almost all common methods to handle entities filtering/sorting in
- * datatable, their create, edit, view, delete operations). It works with Manaty
- * custom JSF components.
+ * Standard backing bean for {@link User} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create, edit,
+ * view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
 @ViewScoped
@@ -101,26 +99,15 @@ public class UserBean extends CustomFieldBean<User> {
     private UserHierarchyLevelService userHierarchyLevelService;
 
     @Inject
-	private SecuredBusinessEntityService securedBusinessEntityService;
+    private SecuredBusinessEntityService securedBusinessEntityService;
 
-	@Inject
-	@Any
-	private Instance<AccountBean<?>> accountBeans;
+    @Inject
+    @Any
+    private Instance<AccountBean<?>> accountBeans;
 
-	@Inject
-	@Named
-	private SellerBean sellerBean;
-
-    /**
-	 * Password set by user which is later encoded and set to user before saving
-	 * to db.
-     */
-    private String password;
-
-    /**
-     * For showing change password panel
-     */ 
-    private boolean show = false;
+    @Inject
+    @Named
+    private SellerBean sellerBean;
 
     private DualListModel<Role> rolesDM;
 
@@ -128,13 +115,7 @@ public class UserBean extends CustomFieldBean<User> {
 
     private TreeNode userGroupSelectedNode;
 
-    /**
-	 * Repeated password to check if it matches another entered password and
-	 * user did not make a mistake.
-     */
-    private String repeatedPassword;
-
-    ParamBean param = ParamBean.getInstance();
+    private ParamBean param = ParamBean.getInstance();
     private String providerFilePath = param.getProperty("providers.rootDir", "./opencelldata/");
     private String selectedFolder;
     private boolean currentDirEmpty;
@@ -143,19 +124,18 @@ public class UserBean extends CustomFieldBean<User> {
     private String directoryName;
     private List<File> fileList;
     private UploadedFile file;
-	private String securedEntityType;
-	private Map<String, String> securedEntityTypes;
-	private Map<String, BaseBean<? extends BusinessEntity>> accountBeanMap;
-	private BusinessEntity selectedEntity;
-	private BaseBean<?> selectedAccountBean;
+    private String securedEntityType;
+    private Map<String, String> securedEntityTypes;
+    private Map<String, BaseBean<? extends BusinessEntity>> accountBeanMap;
+    private BusinessEntity selectedEntity;
+    private BaseBean<?> selectedAccountBean;
 
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
-    
+
     private boolean autoUnzipped;
 
     /**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
     public UserBean() {
         super(User.class);
@@ -168,14 +148,14 @@ public class UserBean extends CustomFieldBean<User> {
             createMissingDirectories();
             setSelectedFolder(null);
         }
-		initSelectionOptions();
+        initSelectionOptions();
     }
-    
+
     @Override
     public User initEntity() {
         super.initEntity();
         if (entity.getName() == null) {
-             entity.setName(new Name());
+            entity.setName(new Name());
         }
         return entity;
     }
@@ -209,20 +189,15 @@ public class UserBean extends CustomFieldBean<User> {
     }
 
     /*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
-	 */
+     * (non-Javadoc)
+     * 
+     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
+     */
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
         log.debug("saving new user={}", entity.getUserName());
-        boolean passwordsDoNotMatch = password != null && !password.equals(repeatedPassword);
 
-        if (passwordsDoNotMatch) {
-            messages.error(new BundleKey("messages", "save.passwordsDoNotMatch"));
-            return null;
-        }
         if (getObjectId() != null) {
             if (userService.isUsernameExists(entity.getUserName(), entity.getId())) {
                 messages.error(new BundleKey("messages", "exception.UsernameAlreadyExistsException"));
@@ -289,34 +264,6 @@ public class UserBean extends CustomFieldBean<User> {
         this.rolesDM = rolesDM;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getRepeatedPassword() {
-        return repeatedPassword;
-    }
-
-    public void setRepeatedPassword(String repeatedPassword) {
-        this.repeatedPassword = repeatedPassword;
-    }
-
-    public boolean isShow() {
-        return show;
-    }
-
-    public void setShow(boolean show) {
-        this.show = show;
-    }
-
-    public void showHidePassword() {
-        this.show = !this.show;
-    }
-
     @Override
     protected String getDefaultSort() {
         return null;// "userName";
@@ -366,8 +313,8 @@ public class UserBean extends CustomFieldBean<User> {
         String invoiceXmlDir = getFilePath() + File.separator + "invoices" + File.separator + "xml";
         String jasperDir = getFilePath() + File.separator + "jasper";
         List<String> filePaths = Arrays.asList("", customerDirIN, customerDirOUT, customerDirERR, customerDirWARN, customerDirKO, accountDirIN, accountDirOUT, accountDirERR,
-				accountDirWARN, accountDirKO, subDirIN, subDirOUT, subDirERR, subDirWARN, catDirIN, catDirOUT, catDirKO, subDirKO, meterDirIN, meterDirOUT, meterDirKO,
-				invoicePdfDir, invoiceXmlDir, jasperDir);
+            accountDirWARN, accountDirKO, subDirIN, subDirOUT, subDirERR, subDirWARN, catDirIN, catDirOUT, catDirKO, subDirKO, meterDirIN, meterDirOUT, meterDirKO, invoicePdfDir,
+            invoiceXmlDir, jasperDir);
         for (String custDirs : filePaths) {
             File subDir = new File(custDirs);
             if (!subDir.exists()) {
@@ -495,19 +442,19 @@ public class UserBean extends CustomFieldBean<User> {
     }
 
     public void handleFileUpload(FileUploadEvent event) {
-        log.debug("upload file={},autoUnziped {}", event.getFile().getFileName(),autoUnzipped);
+        log.debug("upload file={},autoUnziped {}", event.getFile().getFileName(), autoUnzipped);
         // FIXME: use resource bundle
         try {
-        	String filename=event.getFile().getFileName();
-        	if(this.isAutoUnzipped()){
-        		if(!filename.endsWith(".zip")){
-        			messages.info(filename+" isn't a valid zip file!");
-        		}else{
-        			copyUnZippedFile(event.getFile().getInputstream());
-        		}
-        	}else{
-        		copyFile(event.getFile().getFileName(), event.getFile().getInputstream());
-        	}
+            String filename = event.getFile().getFileName();
+            if (this.isAutoUnzipped()) {
+                if (!filename.endsWith(".zip")) {
+                    messages.info(filename + " isn't a valid zip file!");
+                } else {
+                    copyUnZippedFile(event.getFile().getInputstream());
+                }
+            } else {
+                copyFile(event.getFile().getFileName(), event.getFile().getInputstream());
+            }
 
             messages.info(event.getFile().getFileName() + " is uploaded to " + ((selectedFolder != null) ? selectedFolder : "Home"));
         } catch (IOException e) {
@@ -576,28 +523,30 @@ public class UserBean extends CustomFieldBean<User> {
             }
         }
     }
-	public StreamedContent getDownloadZipFile(){
-    	String filename=selectedFolder==null?"meveo-fileexplore":selectedFolder.substring(selectedFolder.lastIndexOf(File.separator)+1);
-    	String sourceFolder=getFilePath()+(selectedFolder==null?"":selectedFolder);
-		try {
-			byte[] filedata=FileUtils.createZipFile(sourceFolder);
-			InputStream is=new ByteArrayInputStream(filedata);
-			return new DefaultStreamedContent(is,"application/octet-stream",filename+".zip");
-		} catch (Exception e) {
-			log.debug("error when zipped ui file - {}",e.getMessage());
-		}
-		return null;
+
+    public StreamedContent getDownloadZipFile() {
+        String filename = selectedFolder == null ? "meveo-fileexplore" : selectedFolder.substring(selectedFolder.lastIndexOf(File.separator) + 1);
+        String sourceFolder = getFilePath() + (selectedFolder == null ? "" : selectedFolder);
+        try {
+            byte[] filedata = FileUtils.createZipFile(sourceFolder);
+            InputStream is = new ByteArrayInputStream(filedata);
+            return new DefaultStreamedContent(is, "application/octet-stream", filename + ".zip");
+        } catch (Exception e) {
+            log.debug("error when zipped ui file - {}", e.getMessage());
+        }
+        return null;
     }
-	
+
     private void copyUnZippedFile(InputStream in) {
-    	try{
-    		String folder=getFilePath("");
-    		FileUtils.unzipFile(folder, in);
-    		buildFileList();
-    	}catch(Exception e){
-    		log.debug("error when upload zip file for new UI {}",e.getMessage());
-    	}
+        try {
+            String folder = getFilePath("");
+            FileUtils.unzipFile(folder, in);
+            buildFileList();
+        } catch (Exception e) {
+            log.debug("error when upload zip file for new UI {}", e.getMessage());
+        }
     }
+
     public void copyFile(String fileName, InputStream in) {
         try {
 
@@ -641,140 +590,133 @@ public class UserBean extends CustomFieldBean<User> {
         return newNode;
     }
 
-	public boolean isAutoUnzipped() {
-		return autoUnzipped;
-	}
+    public boolean isAutoUnzipped() {
+        return autoUnzipped;
+    }
 
-	public void setAutoUnzipped(boolean autoUnzipped) {
-		this.autoUnzipped = autoUnzipped;
-	}
-    
+    public void setAutoUnzipped(boolean autoUnzipped) {
+        this.autoUnzipped = autoUnzipped;
+    }
 
-	public String getSecuredEntityType() {
-		return this.securedEntityType;
-	}
+    public String getSecuredEntityType() {
+        return this.securedEntityType;
+    }
 
-	public void setSecuredEntityType(String securedEntityType) {
-		this.securedEntityType = securedEntityType;
-	}
+    public void setSecuredEntityType(String securedEntityType) {
+        this.securedEntityType = securedEntityType;
+    }
 
-	public BusinessEntity getSelectedEntity() {
-		return selectedEntity;
-	}
+    public BusinessEntity getSelectedEntity() {
+        return selectedEntity;
+    }
 
-	public void setSelectedEntity(BusinessEntity selectedEntity) {
-		this.selectedEntity = selectedEntity;
-	}
+    public void setSelectedEntity(BusinessEntity selectedEntity) {
+        this.selectedEntity = selectedEntity;
+    }
 
-	public BaseBean<?> getSelectedAccountBean() {
-		return selectedAccountBean;
-	}
+    public BaseBean<?> getSelectedAccountBean() {
+        return selectedAccountBean;
+    }
 
-	public void setSelectedAccountBean(BaseBean<?> selectedAccountBean) {
-		this.selectedAccountBean = selectedAccountBean;
-	}
+    public void setSelectedAccountBean(BaseBean<?> selectedAccountBean) {
+        this.selectedAccountBean = selectedAccountBean;
+    }
 
-	public Map<String, String> getSecuredEntityTypes() {
-		return this.securedEntityTypes;
-	}
+    public Map<String, String> getSecuredEntityTypes() {
+        return this.securedEntityTypes;
+    }
 
-	public void setSecuredEntityTypes(Map<String, String> securedEntityTypes) {
-		this.securedEntityTypes = securedEntityTypes;
-	}
+    public void setSecuredEntityTypes(Map<String, String> securedEntityTypes) {
+        this.securedEntityTypes = securedEntityTypes;
+    }
 
-	public List<DetailedSecuredEntity> getSelectedSecuredEntities() {
-		List<DetailedSecuredEntity> detailedSecuredEntities = new ArrayList<>();
-		DetailedSecuredEntity detailedSecuredEntity = null;
-		BusinessEntity businessEntity = null;
-		if (entity != null && entity.getSecuredEntities() != null) {
-			for (SecuredEntity securedEntity : entity.getSecuredEntities()) {
-				detailedSecuredEntity = new DetailedSecuredEntity(securedEntity);
-				businessEntity = securedBusinessEntityService.getEntityByCode(securedEntity.getEntityClass(), securedEntity.getCode());
-				detailedSecuredEntity.setDescription(businessEntity.getDescription());
-				detailedSecuredEntities.add(detailedSecuredEntity);
-			}
-		}
-		return detailedSecuredEntities;
-	}
+    public List<DetailedSecuredEntity> getSelectedSecuredEntities() {
+        List<DetailedSecuredEntity> detailedSecuredEntities = new ArrayList<>();
+        DetailedSecuredEntity detailedSecuredEntity = null;
+        BusinessEntity businessEntity = null;
+        if (entity != null && entity.getSecuredEntities() != null) {
+            for (SecuredEntity securedEntity : entity.getSecuredEntities()) {
+                detailedSecuredEntity = new DetailedSecuredEntity(securedEntity);
+                businessEntity = securedBusinessEntityService.getEntityByCode(securedEntity.getEntityClass(), securedEntity.getCode());
+                detailedSecuredEntity.setDescription(businessEntity.getDescription());
+                detailedSecuredEntities.add(detailedSecuredEntity);
+            }
+        }
+        return detailedSecuredEntities;
+    }
 
-	/**
-	 * This will allow the chosen secured entity to be removed from the user's
-	 * securedEntities list.
-	 * 
-	 * @param selectedSecuredEntity
-	 *            The chosen securedEntity
-	 * @throws BusinessException
-	 */
-	@ActionMethod
-	public void deleteSecuredEntity(SecuredEntity selectedSecuredEntity) throws BusinessException {
-		for (SecuredEntity securedEntity : entity.getSecuredEntities()) {
-			if (securedEntity.equals(selectedSecuredEntity)) {
-				entity.getSecuredEntities().remove(selectedSecuredEntity);
-				break;
-			}
-		}
-		super.saveOrUpdate(false);
-	}
+    /**
+     * This will allow the chosen secured entity to be removed from the user's securedEntities list.
+     * 
+     * @param selectedSecuredEntity The chosen securedEntity
+     * @throws BusinessException
+     */
+    @ActionMethod
+    public void deleteSecuredEntity(SecuredEntity selectedSecuredEntity) throws BusinessException {
+        for (SecuredEntity securedEntity : entity.getSecuredEntities()) {
+            if (securedEntity.equals(selectedSecuredEntity)) {
+                entity.getSecuredEntities().remove(selectedSecuredEntity);
+                break;
+            }
+        }
+        super.saveOrUpdate(false);
+    }
 
-	/**
-	 * This will set the correct account bean based on the selected type(Seller,
-	 * Customer, etc.)
-	 */
-	public void updateSelectedAccountBean() {
-		if (!StringUtils.isBlank(getSecuredEntityType())) {
-			setSelectedAccountBean(accountBeanMap.get(getSecuredEntityType()));
-		}
-	}
+    /**
+     * This will set the correct account bean based on the selected type(Seller, Customer, etc.)
+     */
+    public void updateSelectedAccountBean() {
+        if (!StringUtils.isBlank(getSecuredEntityType())) {
+            setSelectedAccountBean(accountBeanMap.get(getSecuredEntityType()));
+        }
+    }
 
-	/**
-	 * This will add the selected business entity to the user's securedEntities
-	 * list.
-	 * 
-	 * @param event
-	 * @throws BusinessException
-	 */
-	@ActionMethod
-	public void saveSecuredEntity(SelectEvent event) throws BusinessException {
-		log.debug("saveSecuredEntity: {}", this.selectedEntity);
-		if (this.selectedEntity != null) {
-			List<SecuredEntity> securedEntities = getEntity().getSecuredEntities();
-			for (SecuredEntity securedEntity : securedEntities) {
-				if (securedEntity.equals(this.selectedEntity)) {
-					messages.info(new BundleKey("messages", "commons.uniqueField.code"));
-					return;
-				}
-			}
-			getEntity().getSecuredEntities().add(new SecuredEntity(this.selectedEntity));
-			super.saveOrUpdate(false);
-		}
-	}
+    /**
+     * This will add the selected business entity to the user's securedEntities list.
+     * 
+     * @param event
+     * @throws BusinessException
+     */
+    @ActionMethod
+    public void saveSecuredEntity(SelectEvent event) throws BusinessException {
+        log.debug("saveSecuredEntity: {}", this.selectedEntity);
+        if (this.selectedEntity != null) {
+            List<SecuredEntity> securedEntities = getEntity().getSecuredEntities();
+            for (SecuredEntity securedEntity : securedEntities) {
+                if (securedEntity.equals(this.selectedEntity)) {
+                    messages.info(new BundleKey("messages", "commons.uniqueField.code"));
+                    return;
+                }
+            }
+            getEntity().getSecuredEntities().add(new SecuredEntity(this.selectedEntity));
+            super.saveOrUpdate(false);
+        }
+    }
 
-	/**
-	 * This will initialize the dropdown values for selecting the entity types
-	 * (Seller, Customer, etc) and the map of managed beans associated to each
-	 * entity type.
-	 */
-	private void initSelectionOptions() {
-		log.debug("initSelectionOptions...");
-		log.debug("this.securedEntityTypes: {}", this.securedEntityTypes);
-		log.debug("this.accountBeanMap.", this.accountBeanMap);
+    /**
+     * This will initialize the dropdown values for selecting the entity types (Seller, Customer, etc) and the map of managed beans associated to each entity type.
+     */
+    private void initSelectionOptions() {
+        log.debug("initSelectionOptions...");
+        log.debug("this.securedEntityTypes: {}", this.securedEntityTypes);
+        log.debug("this.accountBeanMap.", this.accountBeanMap);
 
-		if (accountBeanMap == null || accountBeanMap.isEmpty()) {
-			accountBeanMap = new HashMap<>();
-			securedEntityTypes = new HashMap<>();
-			String key = ReflectionUtils.getHumanClassName(sellerBean.getClazz().getSimpleName());
-			String value = ReflectionUtils.getCleanClassName(sellerBean.getClazz().getName());
-			securedEntityTypes.put(key, value);
-			accountBeanMap.put(value, sellerBean);
-			for (AccountBean<?> accountBean : accountBeans) {
-				key = ReflectionUtils.getHumanClassName(accountBean.getClazz().getSimpleName());
-				value = ReflectionUtils.getCleanClassName(accountBean.getClazz().getName());
-				securedEntityTypes.put(key, value);
-				accountBeanMap.put(value, accountBean);
-			}
-		}
-		log.debug("this.securedEntityTypes: {}", this.securedEntityTypes);
-		log.debug("this.accountBeanMap: {}", this.accountBeanMap);
-		log.debug("initSelectionOptions done.");
-	}
+        if (accountBeanMap == null || accountBeanMap.isEmpty()) {
+            accountBeanMap = new HashMap<>();
+            securedEntityTypes = new HashMap<>();
+            String key = ReflectionUtils.getHumanClassName(sellerBean.getClazz().getSimpleName());
+            String value = ReflectionUtils.getCleanClassName(sellerBean.getClazz().getName());
+            securedEntityTypes.put(key, value);
+            accountBeanMap.put(value, sellerBean);
+            for (AccountBean<?> accountBean : accountBeans) {
+                key = ReflectionUtils.getHumanClassName(accountBean.getClazz().getSimpleName());
+                value = ReflectionUtils.getCleanClassName(accountBean.getClazz().getName());
+                securedEntityTypes.put(key, value);
+                accountBeanMap.put(value, accountBean);
+            }
+        }
+        log.debug("this.securedEntityTypes: {}", this.securedEntityTypes);
+        log.debug("this.accountBeanMap: {}", this.accountBeanMap);
+        log.debug("initSelectionOptions done.");
+    }
 }

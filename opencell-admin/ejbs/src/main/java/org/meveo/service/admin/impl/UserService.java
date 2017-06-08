@@ -26,13 +26,11 @@ import java.util.List;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.UsernameAlreadyExistsException;
-import org.meveo.admin.util.security.Sha1Encrypt;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
@@ -107,30 +105,6 @@ public class UserService extends PersistenceService<User> {
         query.setParameter("userName", username.toUpperCase());
         query.setHint("org.hibernate.flushMode", "NEVER");
         return ((Long) query.getSingleResult()).intValue() != 0;
-    }
-
-    public User findByUsernameAndPassword(String username, String password) {
-        return findByUsernameAndPassword(getEntityManager(), username, password);
-    }
-
-    public User findByUsernameAndPassword(EntityManager em, String username, String password) {
-        return findByUsernameAndPassword(em, username, password, Arrays.asList("roles"));
-    }
-
-    public User findByUsernameAndPassword(EntityManager em, String username, String password, List<String> fetchFields) {
-
-        password = Sha1Encrypt.encodePassword(password);
-
-        QueryBuilder qb = new QueryBuilder(User.class, "u", fetchFields);
-
-        qb.addCriterion("userName", "=", username.toUpperCase(), true);
-        qb.addCriterion("password", "=", password, true);
-
-        try {
-            return (User) qb.getQuery(em).getSingleResult();
-        } catch (NoResultException ex) {
-            return null;
-        }
     }
 
     public User findByUsername(String username) {
