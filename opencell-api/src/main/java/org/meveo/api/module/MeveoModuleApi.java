@@ -42,6 +42,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
@@ -57,6 +58,7 @@ import org.meveo.model.crm.custom.EntityCustomAction;
 import org.meveo.model.module.MeveoModule;
 import org.meveo.model.module.MeveoModuleItem;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.MeveoModuleService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
@@ -376,8 +378,10 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
         OfferTemplate offerTemplate = offerTemplateService.findByCode(bomDto.getOfferTemplate().getCode(), bomDto.getOfferTemplate().getValidFrom(),
             bomDto.getOfferTemplate().getValidTo());
         if (offerTemplate == null) {
+            String datePattern = ParamBean.getInstance().getDateTimeFormat();
             throw new EntityDoesNotExistsException(OfferTemplate.class,
-                bomDto.getOfferTemplate().getCode() + " / " + bomDto.getOfferTemplate().getValidFrom() + " / " + bomDto.getOfferTemplate().getValidTo());
+                bomDto.getOfferTemplate().getCode() + " / " + DateUtils.formatDateWithPattern(bomDto.getOfferTemplate().getValidFrom(), datePattern) + " / "
+                        + DateUtils.formatDateWithPattern(bomDto.getOfferTemplate().getValidTo(), datePattern));
         }
 
         bom.setOfferTemplate(offerTemplate);

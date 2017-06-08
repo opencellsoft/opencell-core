@@ -51,7 +51,7 @@ public class DateUtils {
 
     public static String formatDateWithPattern(Date value, String pattern) {
         if (value == null) {
-            return null;
+            return "";
         }
         String result = null;
         SimpleDateFormat sdf = new SimpleDateFormat(pattern);

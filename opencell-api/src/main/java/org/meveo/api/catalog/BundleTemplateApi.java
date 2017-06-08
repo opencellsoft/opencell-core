@@ -26,6 +26,7 @@ import org.meveo.model.catalog.BundleTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.catalog.impl.BundleTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 
@@ -56,7 +57,8 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
 
         BundleTemplate bundleTemplate = bundleTemplateService.findByCodeBestValidityMatch(code, validFrom, validTo);
         if (bundleTemplate == null) {
-            throw new EntityDoesNotExistsException(BundleTemplate.class, code + " / " + validFrom + " / " + validTo);
+            String datePattern = paramBean.getDateTimeFormat();
+            throw new EntityDoesNotExistsException(BundleTemplate.class, code + " / " + DateUtils.formatDateWithPattern(validFrom, datePattern) + " / " + DateUtils.formatDateWithPattern(validTo, datePattern));
         }
 
         BundleTemplateDto bundleTemplateDto = new BundleTemplateDto(bundleTemplate, entityToDtoConverter.getCustomFieldsDTO(bundleTemplate), false);
@@ -164,7 +166,9 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
 
         BundleTemplate bundleTemplate = bundleTemplateService.findByCode(postData.getCode(), postData.getValidFrom(), postData.getValidTo());
         if (bundleTemplate == null) {
-            throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getCode() + " / " + postData.getValidFrom() + " / " + postData.getValidTo());
+            String datePattern = paramBean.getDateTimeFormat();
+            throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getCode() + " / " + DateUtils.formatDateWithPattern(postData.getValidFrom(), datePattern) + " / "
+                    + DateUtils.formatDateWithPattern(postData.getValidTo(), datePattern));
         }
 
         List<ProductOffering> matchedVersions = bundleTemplateService.getMatchingVersions(postData.getCode(), postData.getValidFrom(), postData.getValidTo(),
@@ -208,7 +212,8 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
 
         BundleTemplate bundleTemplate = bundleTemplateService.findByCodeBestValidityMatch(code, validFrom, validTo);
         if (bundleTemplate == null) {
-            throw new EntityDoesNotExistsException(BundleTemplate.class, code + " / " + validFrom + " / " + validTo);
+            String datePattern = paramBean.getDateTimeFormat();
+            throw new EntityDoesNotExistsException(BundleTemplate.class, code + " / " + DateUtils.formatDateWithPattern(validFrom, datePattern) + " / " + DateUtils.formatDateWithPattern(validTo, datePattern));
         }
 
         deleteImage(bundleTemplate);

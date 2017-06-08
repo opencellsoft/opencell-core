@@ -41,6 +41,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -58,6 +59,7 @@ import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.mediation.Access;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.ChargeInstanceService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 import org.meveo.service.billing.impl.ProductInstanceService;
@@ -142,9 +144,10 @@ public class SubscriptionApi extends BaseApi {
 
         OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getOfferTemplate(), postData.getSubscriptionDate());
         if (offerTemplate == null) {
-            throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getOfferTemplate() + " / " + postData.getSubscriptionDate());
+            throw new EntityDoesNotExistsException(OfferTemplate.class,
+                postData.getOfferTemplate() + " / " + DateUtils.formatDateWithPattern(postData.getSubscriptionDate(), ParamBean.getInstance().getDateTimeFormat()));
         }
-        
+
         if(offerTemplate.isDisabled()) {
 			throw new MeveoApiException("Cannot subscribe to disabled offer");
 		}
@@ -222,7 +225,8 @@ public class SubscriptionApi extends BaseApi {
         
         OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getOfferTemplate(), postData.getSubscriptionDate());
         if (offerTemplate == null) {
-            throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getOfferTemplate() + " / " + postData.getSubscriptionDate());
+            throw new EntityDoesNotExistsException(OfferTemplate.class,
+                postData.getOfferTemplate() + " / " + DateUtils.formatDateWithPattern(postData.getSubscriptionDate(), ParamBean.getInstance().getDateTimeFormat()));
         }
         
         if(offerTemplate.isDisabled()) {
@@ -461,8 +465,6 @@ public class SubscriptionApi extends BaseApi {
 
         handleMissingParameters();
 
-        
-
         Subscription subscription = subscriptionService.findByCode(postData.getSubscription());
         if (subscription == null) {
             throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription());
@@ -617,7 +619,7 @@ public class SubscriptionApi extends BaseApi {
 
         ProductTemplate productTemplate = productTemplateService.findByCode(postData.getProduct(), postData.getOperationDate());
         if (productTemplate == null) {
-            throw new EntityDoesNotExistsException(ProductTemplate.class, postData.getProduct() + "/" + postData.getOperationDate());
+            throw new EntityDoesNotExistsException(ProductTemplate.class, postData.getProduct() + "/" + DateUtils.formatDateWithPattern(postData.getOperationDate(), ParamBean.getInstance().getDateTimeFormat()));
         }
 
 		Subscription subscription = subscriptionService.findByCode(postData.getSubscription());
@@ -1085,8 +1087,8 @@ public class SubscriptionApi extends BaseApi {
 
 		handleMissingParameters();
 
-		Subscription subscription = subscriptionService.findByCode(postData.getSubscriptionCode());
-		if (subscription == null) {
+        Subscription subscription = subscriptionService.findByCode(postData.getSubscriptionCode());
+        if (subscription == null) {
 			throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscriptionCode());
 		}
 

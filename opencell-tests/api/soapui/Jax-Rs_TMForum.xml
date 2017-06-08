@@ -19444,7 +19444,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="92d198c1-a25f-4b5c-adaf-8d12f493dd38" name="Contains 1">
               <con:configuration>
-                <token>"message":"ProductOffering with code=${#Project#baseEntityPrefix}_PRODUCT3 / Sat Oct 15 00:00:00 ART 2016 does not exists."</token>
+                <token>"message":"ProductOffering with code=${#Project#baseEntityPrefix}_PRODUCT3 / 15/10/2016 00:00 does not exists."</token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -19519,7 +19519,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="36418728-765e-4dbe-90fe-8102cad21147" name="Contains 1">
               <con:configuration>
-                <token>"message":"ProductOffering with code=${#Project#baseEntityPrefix}_PRODUCT3 / Tue Oct 25 00:00:00 ART 2016 does not exists."</token>
+                <token>"message":"ProductOffering with code=${#Project#baseEntityPrefix}_PRODUCT3 / 25/10/2016 00:00 does not exists."</token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -22392,7 +22392,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="b5dd6480-439b-4232-a0fc-adab378d992c" name="Contains 1">
               <con:configuration>
-                <token>"message":"ProductOffering with code=${#Project#baseEntityPrefix}_PRODUCT3 / Tue Sep 27 00:00:00 ART 2016 does not exists."</token>
+                <token>"message":"ProductOffering with code=${#Project#baseEntityPrefix}_PRODUCT3 / 27/09/2016 00:00 does not exists."</token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -22470,7 +22470,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="fb78ea22-25ab-42f6-bbc5-06d8d7751a82" name="Contains 1">
               <con:configuration>
-                <token>"message":"ProductOffering with code=${#Project#baseEntityPrefix}_PRODUCT3 / Tue Jan 12 00:00:00 ART 2016 does not exists."</token>
+                <token>"message":"ProductOffering with code=${#Project#baseEntityPrefix}_PRODUCT3 / 12/01/2016 00:00 does not exists."</token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>

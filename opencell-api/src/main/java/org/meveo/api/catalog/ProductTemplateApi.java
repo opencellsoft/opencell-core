@@ -23,6 +23,7 @@ import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 
 @Stateless
@@ -49,7 +50,8 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 
         ProductTemplate productTemplate = productTemplateService.findByCodeBestValidityMatch(code, validFrom, validTo);
         if (productTemplate == null) {
-            throw new EntityDoesNotExistsException(ProductTemplate.class, code + " / " + validFrom + " / " + validTo);
+            String datePattern = paramBean.getDateTimeFormat();
+            throw new EntityDoesNotExistsException(ProductTemplate.class, code + " / " + DateUtils.formatDateWithPattern(validFrom, datePattern) + " / " + DateUtils.formatDateWithPattern(validTo, datePattern));
         }
 
         ProductTemplateDto productTemplateDto = new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsDTO(productTemplate), false);
@@ -156,7 +158,9 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 
         ProductTemplate productTemplate = productTemplateService.findByCode(postData.getCode(), postData.getValidFrom(), postData.getValidTo());
         if (productTemplate == null) {
-            throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getCode() + " / " + postData.getValidFrom() + " / " + postData.getValidTo());
+            String datePattern = paramBean.getDateTimeFormat();
+            throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getCode() + " / " + DateUtils.formatDateWithPattern(postData.getValidFrom(), datePattern) + " / "
+                    + DateUtils.formatDateWithPattern(postData.getValidTo(), datePattern));
         }
 
         List<ProductOffering> matchedVersions = productTemplateService.getMatchingVersions(postData.getCode(), postData.getValidFrom(), postData.getValidTo(),
@@ -213,7 +217,8 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 
         ProductTemplate productTemplate = productTemplateService.findByCodeBestValidityMatch(code, validFrom, validTo);
         if (productTemplate == null) {
-            throw new EntityDoesNotExistsException(ProductTemplate.class, code + " / " + validFrom + " / " + validTo);
+            String datePattern = paramBean.getDateTimeFormat();
+            throw new EntityDoesNotExistsException(ProductTemplate.class, code + " / " + DateUtils.formatDateWithPattern(validFrom, datePattern) + " / " + DateUtils.formatDateWithPattern(validTo, datePattern));
         }
 
         // deleteImage(productTemplate);

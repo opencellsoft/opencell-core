@@ -194,8 +194,6 @@ public class GenericProductOfferingService<T extends ProductOffering> extends Mu
                 matchedValidity.setTo(matchedValidity.getFrom());
             }
         }
-
-        log.error("AKK updated version {} to {}", matchedVersion.getId(), matchedValidity);
     }
 
     @Override

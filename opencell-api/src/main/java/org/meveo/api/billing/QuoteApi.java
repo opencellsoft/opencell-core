@@ -26,6 +26,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.invoice.InvoiceApi;
 import org.meveo.api.order.OrderProductCharacteristicEnum;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.ServiceInstance;
@@ -226,7 +227,7 @@ public class QuoteApi extends BaseApi {
 
                 ProductOffering productOfferingInDB = productOfferingService.findByCode(productQuoteItem.getProductOffering().getId(), subscriptionDate);
                 if (productOfferingInDB == null) {
-                    throw new EntityDoesNotExistsException(ProductOffering.class, productQuoteItem.getProductOffering().getId() + " / " + subscriptionDate);
+                    throw new EntityDoesNotExistsException(ProductOffering.class, productQuoteItem.getProductOffering().getId() + " / " + DateUtils.formatDateWithPattern(subscriptionDate, ParamBean.getInstance().getDateTimeFormat()));
                 }
                 productOfferings.add(new QuoteItemProductOffering(quoteItem, productOfferingInDB, 0));
 
@@ -234,7 +235,7 @@ public class QuoteApi extends BaseApi {
                     for (BundledProductReference bundledProductOffering : productQuoteItem.getProductOffering().getBundledProductOffering()) {
                         productOfferingInDB = productOfferingService.findByCode(bundledProductOffering.getReferencedId(), subscriptionDate);
                         if (productOfferingInDB == null) {
-                            throw new EntityDoesNotExistsException(ProductOffering.class, bundledProductOffering.getReferencedId() + " / " + subscriptionDate);
+                            throw new EntityDoesNotExistsException(ProductOffering.class, bundledProductOffering.getReferencedId() + " / " + DateUtils.formatDateWithPattern(subscriptionDate, ParamBean.getInstance().getDateTimeFormat()));
                         }
                         productOfferings.add(new QuoteItemProductOffering(quoteItem, productOfferingInDB, productOfferings.size()));
                     }

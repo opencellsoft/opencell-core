@@ -14,6 +14,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.TradingCountry;
@@ -23,6 +24,7 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.TradingCountryService;
@@ -117,8 +119,10 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
             OfferTemplate offerTemplate = offerTemplateService.findByCodeBestValidityMatch(postData.getOfferTemplateVersion().getCode(),
                 postData.getOfferTemplateVersion().getValidFrom(), postData.getOfferTemplateVersion().getValidTo());
             if (offerTemplate == null) {
-                throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getOfferTemplateVersion().getCode() + " / " + postData.getOfferTemplateVersion().getValidFrom()
-                        + " / " + postData.getOfferTemplateVersion().getValidTo());
+                String dateFormat = ParamBean.getInstance().getDateTimeFormat();
+                throw new EntityDoesNotExistsException(OfferTemplate.class,
+                    postData.getOfferTemplateVersion().getCode() + " / " + DateUtils.formatDateWithPattern(postData.getOfferTemplateVersion().getValidFrom(), dateFormat) + " / "
+                            + DateUtils.formatDateWithPattern(postData.getOfferTemplateVersion().getValidTo(), dateFormat));
             }
             pricePlanMatrix.setOfferTemplate(offerTemplate);
         
@@ -234,9 +238,11 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
             OfferTemplate offerTemplate = offerTemplateService.findByCodeBestValidityMatch(postData.getOfferTemplateVersion().getCode(), postData.getOfferTemplateVersion().getValidFrom(),
                 postData.getOfferTemplateVersion().getValidTo());
             if (offerTemplate == null) {
+                String dateFormat = ParamBean.getInstance().getDateTimeFormat();
                 throw new EntityDoesNotExistsException(OfferTemplate.class,
-                    postData.getOfferTemplateVersion().getCode() + " / " + postData.getOfferTemplateVersion().getValidFrom() + " / " + postData.getOfferTemplateVersion().getValidTo());
-            }
+                    postData.getOfferTemplateVersion().getCode() + " / " + DateUtils.formatDateWithPattern(postData.getOfferTemplateVersion().getValidFrom(), dateFormat) + " / "
+                            + DateUtils.formatDateWithPattern(postData.getOfferTemplateVersion().getValidTo(), dateFormat));
+            }            
             pricePlanMatrix.setOfferTemplate(offerTemplate);
 
         } else if (!StringUtils.isBlank(postData.getOfferTemplate())) {

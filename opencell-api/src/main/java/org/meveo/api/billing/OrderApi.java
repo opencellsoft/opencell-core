@@ -27,6 +27,7 @@ import org.meveo.api.exception.InvalidEnumValueException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.order.OrderProductCharacteristicEnum;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
@@ -170,7 +171,7 @@ public class OrderApi extends BaseApi {
 
                 ProductOffering productOfferingInDB = productOfferingService.findByCode(productOrderItem.getProductOffering().getId(), subscriptionDate);
                 if (productOfferingInDB == null) {
-                    throw new EntityDoesNotExistsException(ProductOffering.class, productOrderItem.getProductOffering().getId() + " / " + subscriptionDate);
+                    throw new EntityDoesNotExistsException(ProductOffering.class, productOrderItem.getProductOffering().getId() + " / " + DateUtils.formatDateWithPattern(subscriptionDate, ParamBean.getInstance().getDateTimeFormat()));
                 }
                 productOfferings.add(new OrderItemProductOffering(orderItem, productOfferingInDB, productOfferings.size()));
 
@@ -178,7 +179,7 @@ public class OrderApi extends BaseApi {
                     for (BundledProductReference bundledProductOffering : productOrderItem.getProductOffering().getBundledProductOffering()) {
                         productOfferingInDB = productOfferingService.findByCode(bundledProductOffering.getReferencedId(), subscriptionDate);
                         if (productOfferingInDB == null) {
-                            throw new EntityDoesNotExistsException(ProductOffering.class, bundledProductOffering.getReferencedId() + " / " + subscriptionDate);
+                            throw new EntityDoesNotExistsException(ProductOffering.class, bundledProductOffering.getReferencedId() + " / " + DateUtils.formatDateWithPattern(subscriptionDate, ParamBean.getInstance().getDateTimeFormat()));
                         }
                         productOfferings.add(new OrderItemProductOffering(orderItem, productOfferingInDB, productOfferings.size()));
                     }

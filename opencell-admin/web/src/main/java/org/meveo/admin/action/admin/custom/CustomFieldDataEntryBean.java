@@ -381,15 +381,15 @@ public class CustomFieldDataEntryBean implements Serializable {
                 // For a strict match need to edit an existing period
                 if (strictMatch) {
                     messages.error(new BundleKey("messages", "customFieldTemplate.matchingPeriodFound.noNew"),
-                        period.getPeriod().getFrom() == null ? "" : DateUtils.formatDateWithPattern(period.getPeriod().getFrom(), datePattern),
-                        period.getPeriod().getTo() == null ? "" : DateUtils.formatDateWithPattern(period.getPeriod().getTo(), datePattern));
+                        period.getPeriod() == null ? "" : DateUtils.formatDateWithPattern(period.getPeriod().getFrom(), datePattern),
+                        period.getPeriod() == null ? "" : DateUtils.formatDateWithPattern(period.getPeriod().getTo(), datePattern));
                     entityValueHolder.setValuePeriodMatched(false);
 
                     // For a non-strict match user has an option to create a period with a higher priority
                 } else {
                     messages.warn(new BundleKey("messages", "customFieldTemplate.matchingPeriodFound"),
-                        period.getPeriod().getFrom() == null ? "" : DateUtils.formatDateWithPattern(period.getPeriod().getFrom(), datePattern),
-                        period.getPeriod().getTo() == null ? "" : DateUtils.formatDateWithPattern(period.getPeriod().getTo(), datePattern));
+                        period.getPeriod() == null ? "" : DateUtils.formatDateWithPattern(period.getPeriod().getFrom(), datePattern),
+                        period.getPeriod() == null ? "" : DateUtils.formatDateWithPattern(period.getPeriod().getTo(), datePattern));
                     entityValueHolder.setValuePeriodMatched(true);
                 }
                 FacesContext.getCurrentInstance().validationFailed();

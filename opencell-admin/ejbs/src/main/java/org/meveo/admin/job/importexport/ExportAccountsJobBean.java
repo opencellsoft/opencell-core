@@ -130,7 +130,7 @@ public class ExportAccountsJobBean {
     private UserAccount userAccountToDto(org.meveo.model.billing.UserAccount ua, String dateFormat) {
         UserAccount dto = new UserAccount();
         if (ua != null) {
-            dto.setSubscriptionDate(ua.getSubscriptionDate() == null ? "" : DateUtils.formatDateWithPattern(ua.getSubscriptionDate(), dateFormat));
+            dto.setSubscriptionDate(DateUtils.formatDateWithPattern(ua.getSubscriptionDate(), dateFormat));
             dto.setDescription(ua.getDescription());
             dto.setExternalRef1(ua.getExternalRef1());
             dto.setExternalRef2(ua.getExternalRef2());
