@@ -191,7 +191,7 @@ public class Catalog4_1WsImpl extends BaseWs implements Catalog4_1Ws {
         GetOfferTemplateResponseDto result = new GetOfferTemplateResponseDto();
 
         try {
-            result.setOfferTemplate(offerTemplateApi.find(offerTemplateCode));
+            result.setOfferTemplate(offerTemplateApi.find(offerTemplateCode, null, null));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -204,7 +204,7 @@ public class Catalog4_1WsImpl extends BaseWs implements Catalog4_1Ws {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            offerTemplateApi.remove(offerTemplateCode);
+            offerTemplateApi.remove(offerTemplateCode, null,  null);
         } catch (Exception e) {
             processException(e, result);
         }

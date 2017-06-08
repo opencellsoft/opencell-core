@@ -195,10 +195,10 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
             
             try {
                 oneShotChargeTemplateService.duplicate(entity);
-                messages.info(new BundleKey("messages", "save.successful"));
+                messages.info(new BundleKey("messages", "duplicate.successfull"));
             } catch (BusinessException e) {
-                log.error("Error encountered persisting one shot charge template entity: #{0}:#{1}", entity.getCode(), e);
-                messages.error(new BundleKey("messages", "save.unsuccessful"));
+                log.error("Error encountered duplicating one shot charge template entity: {}", entity.getCode(), e);
+                messages.error(new BundleKey("messages", "error.duplicate.unexpected"));
             }
 		}
 	}

@@ -1,7 +1,6 @@
 package org.tmf.dsmapi.catalog.resource.product;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.tmf.dsmapi.catalog.resource.TimeRange;
@@ -212,24 +211,4 @@ public class ProductSpecCharacteristic implements Serializable {
 
         return true;
     }
-
-    public static ProductSpecCharacteristic createProto() {
-        ProductSpecCharacteristic productSpecCharacteristic = new ProductSpecCharacteristic();
-
-        productSpecCharacteristic.id = "id";
-        productSpecCharacteristic.name = "name";
-        productSpecCharacteristic.description = "description";
-        productSpecCharacteristic.valueType = CharacteristicValueType.NUMBER;
-        productSpecCharacteristic.configurable = true;
-        productSpecCharacteristic.validFor = TimeRange.createProto();
-
-        productSpecCharacteristic.productSpecCharRelationship = new ArrayList<SpecificationCharacteristicRelationship>();
-        productSpecCharacteristic.productSpecCharRelationship.add(SpecificationCharacteristicRelationship.createProto());
-
-        productSpecCharacteristic.productSpecCharacteristicValue = new ArrayList<SpecificationCharacteristicValue>();
-        productSpecCharacteristic.productSpecCharacteristicValue.add(SpecificationCharacteristicValue.createProto());
-
-        return productSpecCharacteristic;
-    }
-
 }

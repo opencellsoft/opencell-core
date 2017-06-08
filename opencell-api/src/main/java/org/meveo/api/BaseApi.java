@@ -87,11 +87,11 @@ public abstract class BaseApi {
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
-    
+
     @Inject
     @ApplicationProvider
     protected Provider appProvider;
-    
+
     protected List<String> missingParameters = new ArrayList<String>();
 
     /**
@@ -132,7 +132,7 @@ public abstract class BaseApi {
      * @param customFieldsDto Custom field values
      * @param entity Entity
      * @param isNewEntity Is entity a newly saved entity
-
+     * 
      * @throws MeveoApiException
      */
     protected void populateCustomFields(CustomFieldsDto customFieldsDto, ICustomFieldEntity entity, boolean isNewEntity) throws MeveoApiException {
@@ -145,12 +145,11 @@ public abstract class BaseApi {
      * @param customFieldsDto Custom field values
      * @param entity Entity
      * @param isNewEntity Is entity a newly saved entity
-
+     * 
      * @param checkCustomField Should a check be made if CF field is required
      * @throws MeveoApiException
      */
-    protected void populateCustomFields(CustomFieldsDto customFieldsDto, ICustomFieldEntity entity, boolean isNewEntity, boolean checkCustomField)
-            throws MeveoApiException {
+    protected void populateCustomFields(CustomFieldsDto customFieldsDto, ICustomFieldEntity entity, boolean isNewEntity, boolean checkCustomField) throws MeveoApiException {
 
         Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(entity);
 
@@ -171,7 +170,7 @@ public abstract class BaseApi {
      * @param customFieldDtos Custom field values
      * @param entity Entity
      * @param isNewEntity Is entity a newly saved entity
-
+     * 
      * @param checkCustomFields Should a check be made if CF field is required
      * @throws IllegalArgumentException
      * @throws IllegalAccessException
@@ -347,9 +346,8 @@ public abstract class BaseApi {
 
             // Validate that value is valid (min/max, regexp). When
             // value is a list or a map, check separately each value
-            if (!isEmpty
-                    && (cft.getFieldType() == CustomFieldTypeEnum.STRING || cft.getFieldType() == CustomFieldTypeEnum.DOUBLE || cft.getFieldType() == CustomFieldTypeEnum.LONG || cft
-                        .getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY)) {
+            if (!isEmpty && (cft.getFieldType() == CustomFieldTypeEnum.STRING || cft.getFieldType() == CustomFieldTypeEnum.DOUBLE || cft.getFieldType() == CustomFieldTypeEnum.LONG
+                    || cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY)) {
 
                 List valuesToCheck = new ArrayList<>();
 
@@ -386,8 +384,8 @@ public abstract class BaseApi {
                         }
                         // Validate String length
                         if (stringValue.length() > cft.getMaxValue()) {
-                            throw new InvalidParameterException("Custom field " + cft.getCode() + " value " + stringValue + " length is longer then " + cft.getMaxValue()
-                                    + " symbols");
+                            throw new InvalidParameterException(
+                                "Custom field " + cft.getCode() + " value " + stringValue + " length is longer then " + cft.getMaxValue() + " symbols");
 
                             // Validate String regExp
                         } else if (cft.getRegExp() != null) {
@@ -395,8 +393,8 @@ public abstract class BaseApi {
                                 Pattern pattern = Pattern.compile(cft.getRegExp());
                                 Matcher matcher = pattern.matcher(stringValue);
                                 if (!matcher.matches()) {
-                                    throw new InvalidParameterException("Custom field " + cft.getCode() + " value " + stringValue + " does not match regular expression "
-                                            + cft.getRegExp());
+                                    throw new InvalidParameterException(
+                                        "Custom field " + cft.getCode() + " value " + stringValue + " does not match regular expression " + cft.getRegExp());
                                 }
                             } catch (PatternSyntaxException pse) {
                                 throw new InvalidParameterException("Custom field " + cft.getCode() + " definition specifies an invalid regular expression " + cft.getRegExp());
@@ -454,8 +452,8 @@ public abstract class BaseApi {
                     throw new MissingParameterException("Custom field " + cft.getCode() + " is versionable by calendar. Missing valueDate parameter.");
 
                 } else if (cft.getCalendar() == null && (cfDto.getValuePeriodStartDate() == null || cfDto.getValuePeriodEndDate() == null)) {
-                    throw new MissingParameterException("Custom field " + cft.getCode()
-                            + " is versionable by periods. Missing valuePeriodStartDate and/or valuePeriodEndDate parameters.");
+                    throw new MissingParameterException(
+                        "Custom field " + cft.getCode() + " is versionable by periods. Missing valuePeriodStartDate and/or valuePeriodEndDate parameters.");
                 }
             }
 
@@ -538,7 +536,7 @@ public abstract class BaseApi {
      * @param entityToPopulate JPA Entity to populate with data from DTO object
      * @param dto DTO object
      * @param partialUpdate Is this a partial update - fields with null values will be ignored
-
+     * 
      * @throws MeveoApiException
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -722,21 +720,13 @@ public abstract class BaseApi {
      * @param throwException Should exception be thrown if API service is not found
      * @return Api service
      * @throws MeveoApiException
+     * @throws ClassNotFoundException
      */
     @SuppressWarnings("rawtypes")
-    protected ApiService getApiService(BaseDto dto, boolean throwException) throws MeveoApiException {
+    protected ApiService getApiService(BaseDto dto, boolean throwException) throws MeveoApiException, ClassNotFoundException {
         String entityClassName = dto.getClass().getSimpleName().substring(0, dto.getClass().getSimpleName().lastIndexOf("Dto"));
 
-        ApiService apiService = (ApiService) EjbUtils.getServiceInterface(entityClassName + "Api");
-        if (apiService == null) {
-            String entitySuperClassName = dto.getClass().getSuperclass().getSimpleName().substring(0, dto.getClass().getSuperclass().getSimpleName().lastIndexOf("Dto"));
-            apiService = (ApiService) EjbUtils.getServiceInterface(entitySuperClassName + "Api");
-        }
-        if (apiService == null && throwException) {
-            throw new MeveoApiException("Failed to find implementation of API service for class " + dto.getClass());
-        }
-
-        return apiService;
+        return getApiService(entityClassName, throwException);
     }
 
     /**
@@ -768,6 +758,43 @@ public abstract class BaseApi {
         ApiService apiService = (ApiService) EjbUtils.getServiceInterface(entityClass.getSimpleName() + "Api");
         if (apiService == null) {
             apiService = (ApiService) EjbUtils.getServiceInterface(entityClass.getSuperclass().getSimpleName() + "Api");
+        }
+        if (apiService == null && throwException) {
+            throw new RuntimeException("Failed to find implementation of API service for class " + entityClass.getName());
+        }
+
+        return apiService;
+    }
+
+    /**
+     * Find API versioned service class first trying with JPA entity's classname and then with its super class (a simplified version instead of trying various class superclasses)
+     * 
+     * @param classname JPA entity classname
+     * @param throwException Should exception be thrown if API service is not found
+     * @return Api service
+     * @throws ClassNotFoundException
+     */
+    @SuppressWarnings("rawtypes")
+    protected ApiVersionedService getApiVersionedService(String classname, boolean throwException) throws ClassNotFoundException {
+
+        Class clazz = Class.forName(classname);
+        return getApiVersionedService(clazz, throwException);
+    }
+
+    /**
+     * Find API versioned service class first trying with JPA entity's classname and then with its super class (a simplified version instead of trying various class superclasses)
+     * 
+     * @param entityClass JPA entity class
+     * @param throwException Should exception be thrown if API service is not found
+     * @return Api service
+     * @throws ClassNotFoundException
+     */
+    @SuppressWarnings("rawtypes")
+    protected ApiVersionedService getApiVersionedService(Class entityClass, boolean throwException) {
+
+        ApiVersionedService apiService = (ApiVersionedService) EjbUtils.getServiceInterface(entityClass.getSimpleName() + "Api");
+        if (apiService == null) {
+            apiService = (ApiVersionedService) EjbUtils.getServiceInterface(entityClass.getSuperclass().getSimpleName() + "Api");
         }
         if (apiService == null && throwException) {
             throw new RuntimeException("Failed to find implementation of API service for class " + entityClass.getName());

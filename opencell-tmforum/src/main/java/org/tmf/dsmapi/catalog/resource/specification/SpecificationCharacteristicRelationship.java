@@ -101,15 +101,4 @@ public class SpecificationCharacteristicRelationship implements Serializable {
     public boolean isValid() {
         return true;
     }
-
-    public static SpecificationCharacteristicRelationship createProto() {
-        SpecificationCharacteristicRelationship specificationCharacteristicRelationship = new SpecificationCharacteristicRelationship();
-
-        specificationCharacteristicRelationship.id = "id";
-        specificationCharacteristicRelationship.validFor = TimeRange.createProto();
-        specificationCharacteristicRelationship.type = SpecificationCharacteristicRelationshipType.DEPENDENCY;
-
-        return specificationCharacteristicRelationship;
-    }
-
 }

@@ -26,6 +26,7 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.parameter.SecureMethodParameter;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
@@ -36,6 +37,7 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.ProductInstanceService;
 import org.meveo.service.billing.impl.UserAccountService;
@@ -44,7 +46,7 @@ import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
 
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
-public class UserAccountApi extends AccountApi {
+public class UserAccountApi extends AccountEntityApi {
 
 	@Inject
 	private SubscriptionTerminationReasonService subscriptionTerminationReasonService;
@@ -197,8 +199,8 @@ public class UserAccountApi extends AccountApi {
 			handleMissingParameters();
 		}
 
-		UserAccount userAccount = userAccountService.findByCode(userAccountCode);
-		if (userAccount == null) {
+        UserAccount userAccount = userAccountService.findByCode(userAccountCode);
+        if (userAccount == null) {
 			throw new EntityDoesNotExistsException(UserAccount.class, userAccountCode);
 		}
 
@@ -234,10 +236,10 @@ public class UserAccountApi extends AccountApi {
 			handleMissingParameters();
 		}
 
-		BillingAccount billingAccount = billingAccountService.findByCode(billingAccountCode);
-		if (billingAccount == null) {
-			throw new EntityDoesNotExistsException(BillingAccount.class, billingAccountCode);
-		}
+        BillingAccount billingAccount = billingAccountService.findByCode(billingAccountCode);
+        if (billingAccount == null) {
+            throw new EntityDoesNotExistsException(BillingAccount.class, billingAccountCode);
+        }
 
 		UserAccountsDto result = new UserAccountsDto();
 		List<UserAccount> userAccounts = userAccountService.listByBillingAccount(billingAccount);
@@ -293,12 +295,12 @@ public class UserAccountApi extends AccountApi {
 	
 	public List<CounterInstance> filterCountersByPeriod(String userAccountCode, Date date) 
 			throws MeveoApiException, BusinessException {
-		
-		UserAccount userAccount = userAccountService.findByCode(userAccountCode);
-		
-		if (userAccount == null) {
-			throw new EntityDoesNotExistsException(UserAccount.class, userAccountCode);
-		}
+
+        UserAccount userAccount = userAccountService.findByCode(userAccountCode);
+
+        if (userAccount == null) {
+            throw new EntityDoesNotExistsException(UserAccount.class, userAccountCode);
+        }
 		
 		if(StringUtils.isBlank(date)) {
 			throw new MeveoApiException("date is null");
@@ -364,10 +366,10 @@ public class UserAccountApi extends AccountApi {
 
 		
 
-		ProductTemplate productTemplate = productTemplateService.findByCode(postData.getProduct());
-		if (productTemplate == null) {
-			throw new EntityDoesNotExistsException(ProductTemplate.class, postData.getProduct());
-		}
+        ProductTemplate productTemplate = productTemplateService.findByCode(postData.getProduct(), postData.getOperationDate());
+        if (productTemplate == null) {
+            throw new EntityDoesNotExistsException(ProductTemplate.class, postData.getProduct() + "/" + DateUtils.formatDateWithPattern(postData.getOperationDate(), ParamBean.getInstance().getDateTimeFormat()));
+        }
 
 		UserAccount userAccount = userAccountService.findByCode(postData.getUserAccount());
 		if (userAccount == null) {

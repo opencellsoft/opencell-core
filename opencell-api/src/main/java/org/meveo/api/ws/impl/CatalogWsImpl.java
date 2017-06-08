@@ -1,5 +1,6 @@
 package org.meveo.api.ws.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -218,11 +219,11 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
     }
 
     @Override
-    public GetOfferTemplateResponseDto findOfferTemplate(String offerTemplateCode) {
+    public GetOfferTemplateResponseDto findOfferTemplate(String offerTemplateCode, Date validFrom, Date validTo) {
         GetOfferTemplateResponseDto result = new GetOfferTemplateResponseDto();
 
         try {
-            result.setOfferTemplate(offerTemplateApi.find(offerTemplateCode));
+            result.setOfferTemplate(offerTemplateApi.find(offerTemplateCode, validFrom, validTo));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -231,11 +232,11 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
     }
 
     @Override
-    public ActionStatus removeOfferTemplate(String offerTemplateCode) {
+    public ActionStatus removeOfferTemplate(String offerTemplateCode, Date validFrom, Date validTo) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            offerTemplateApi.remove(offerTemplateCode);
+            offerTemplateApi.remove(offerTemplateCode, validFrom, validTo);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -1165,13 +1166,13 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
     }
 
     @Override
-    public GetProductTemplateResponseDto findProductTemplate(String code) {
+    public GetProductTemplateResponseDto findProductTemplate(String code, Date validFrom, Date validTo) {
         GetProductTemplateResponseDto result = new GetProductTemplateResponseDto();
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
         result.getActionStatus().setMessage("");
 
         try {
-            ProductTemplateDto productTemplateDto = productTemplateApi.find(code);
+            ProductTemplateDto productTemplateDto = productTemplateApi.find(code, validFrom, validTo);
             result.setProductTemplate(productTemplateDto);
         } catch (Exception e) {
             processException(e, result.getActionStatus());
@@ -1181,11 +1182,11 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
     }
 
     @Override
-    public ActionStatus removeProductTemplate(String code) {
+    public ActionStatus removeProductTemplate(String code, Date validFrom, Date validTo) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            productTemplateApi.remove(code);
+            productTemplateApi.remove(code, validFrom, validTo);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -1366,13 +1367,13 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
     }
 
     @Override
-    public GetBundleTemplateResponseDto findBundleTemplate(String code) {
+    public GetBundleTemplateResponseDto findBundleTemplate(String code, Date validFrom, Date validTo) {
         GetBundleTemplateResponseDto result = new GetBundleTemplateResponseDto();
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
         result.getActionStatus().setMessage("");
 
         try {
-            BundleTemplateDto bundleTemplateDto = bundleTemplateApi.find(code);
+            BundleTemplateDto bundleTemplateDto = bundleTemplateApi.find(code, validFrom, validTo);
             result.setBundleTemplate(bundleTemplateDto);
         } catch (Exception e) {
             processException(e, result.getActionStatus());
@@ -1382,11 +1383,11 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
     }
 
     @Override
-    public ActionStatus removeBundleTemplate(String code) {
+    public ActionStatus removeBundleTemplate(String code, Date validFrom, Date validTo) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            bundleTemplateApi.remove(code);
+            bundleTemplateApi.remove(code, validFrom, validTo);
         } catch (Exception e) {
             processException(e, result);
         }

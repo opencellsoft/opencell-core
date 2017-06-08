@@ -328,7 +328,7 @@ public class EntityExportImportBean implements Serializable {
     }
 
     public String getDatePattern() {
-        return param.getProperty("meveo.dateFormat", "dd/MM/yyyy");
+        return param.getDateFormat();
     }
 
     protected void beginConversation() {

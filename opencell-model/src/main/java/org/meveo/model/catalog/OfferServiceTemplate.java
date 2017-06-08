@@ -1,11 +1,12 @@
 package org.meveo.model.catalog;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,53 +19,49 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
 
 @Entity
 @ExportIdentifier({ "offerTemplate.code", "serviceTemplate.code" })
 @Table(name = "CAT_OFFER_SERV_TEMPLATES")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CAT_OFFER_SERV_TEMPLT_SEQ"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "CAT_OFFER_SERV_TEMPLT_SEQ"), })
 public class OfferServiceTemplate implements IEntity {
-    
+
     @Id
-	@GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)
-	@Column(name = "ID")
-	@Access(AccessType.PROPERTY)
-	protected Long id;
+    @GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)
+    @Column(name = "ID")
+    @Access(AccessType.PROPERTY)
+    protected Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "OFFER_TEMPLATE_ID")
     @NotNull
     private OfferTemplate offerTemplate;
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE }, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE }, optional = false)
     @JoinColumn(name = "SERVICE_TEMPLATE_ID")
     @NotNull
     private ServiceTemplate serviceTemplate;
 
-    @Type(type="numeric_boolean")
+    @Type(type = "numeric_boolean")
     @Column(name = "MANDATORY")
     private boolean mandatory;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "CAT_OFFER_SERV_INCOMP", joinColumns = @JoinColumn(name = "OFFER_SERVICE_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "SERVICE_TEMPLATE_ID"))
     private List<ServiceTemplate> incompatibleServices = new ArrayList<>();
-    
-    @Column(name="VALID_FROM")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date validFrom;
-	
-	@Column(name="VALID_TO")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date validTo;
+
+    @AttributeOverrides({ @AttributeOverride(name = "from", column = @Column(name = "VALID_FROM")),
+            @AttributeOverride(name = "to", column = @Column(name = "VALID_TO")) })
+    private DatePeriod validity = new DatePeriod();
 
     public OfferTemplate getOfferTemplate() {
         return offerTemplate;
@@ -150,34 +147,29 @@ public class OfferServiceTemplate implements IEntity {
         return true;
     }
 
-	public Date getValidFrom() {
-		return validFrom;
-	}
+    public DatePeriod getValidity() {
+        if (validity == null) {
+            validity = new DatePeriod();
+        }
+        return validity;
+    }
 
-	public void setValidFrom(Date validFrom) {
-		this.validFrom = validFrom;
-	}
+    public void setValidity(DatePeriod validity) {
+        this.validity = validity;
+    }
 
-	public Date getValidTo() {
-		return validTo;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setValidTo(Date validTo) {
-		this.validTo = validTo;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	@Override
-	public boolean isTransient() {
-		return id == null;
-	}
+    @Override
+    public boolean isTransient() {
+        return id == null;
+    }
 
     /**
      * Update OfferServiceTemplate properties with properties of another OfferServiceTemplate
@@ -187,8 +179,7 @@ public class OfferServiceTemplate implements IEntity {
     public void update(OfferServiceTemplate otherOst) {
 
         setMandatory(otherOst.isMandatory());
-        setValidFrom(otherOst.getValidFrom());
-        setValidTo(otherOst.getValidTo());
+        setValidity(otherOst.getValidity());
         setIncompatibleServices(otherOst.getIncompatibleServices());
     }
 }

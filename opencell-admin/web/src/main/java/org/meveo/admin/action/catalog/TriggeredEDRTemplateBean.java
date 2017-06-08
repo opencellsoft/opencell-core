@@ -104,10 +104,10 @@ public class TriggeredEDRTemplateBean extends BaseBean<TriggeredEDRTemplate> {
 		}
 		try {
 			triggeredEdrService.duplicate(entity);
-			messages.info(new BundleKey("messages", "save.successful"));
+			messages.info(new BundleKey("messages", "duplicate.successfull"));
 		} catch (BusinessException e) {
-			log.error("Error encountered persisting triggered EDR template entity: {}: {}", entity.getCode(), e);
-			messages.error(new BundleKey("messages", "save.unsuccessful"));
+			log.error("Error encountered duplicating triggered EDR template entity: {}", entity.getCode(), e);
+			messages.error(new BundleKey("messages", "error.duplicate.unexpected"));
 		}
 	}
 

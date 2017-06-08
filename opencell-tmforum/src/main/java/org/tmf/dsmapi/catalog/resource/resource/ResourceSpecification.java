@@ -1,8 +1,6 @@
 package org.tmf.dsmapi.catalog.resource.resource;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -11,9 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.tmf.dsmapi.catalog.resource.AbstractCatalogEntity;
 import org.tmf.dsmapi.catalog.resource.Attachment;
-import org.tmf.dsmapi.catalog.resource.LifecycleStatus;
 import org.tmf.dsmapi.catalog.resource.RelatedParty;
-import org.tmf.dsmapi.catalog.resource.TimeRange;
 import org.tmf.dsmapi.catalog.resource.specification.SpecificationRelationship;
 import org.tmf.dsmapi.commons.Utilities;
 
@@ -236,34 +232,4 @@ public class ResourceSpecification extends AbstractCatalogEntity implements Seri
 
         return true;
     }
-
-    public static ResourceSpecification createProto() {
-        ResourceSpecification resourceSpecification = new ResourceSpecification();
-
-        resourceSpecification.setId("id");
-        resourceSpecification.setVersion("2.9");
-        resourceSpecification.setHref("href");
-        resourceSpecification.setName("name");
-        resourceSpecification.setDescription("description");
-        resourceSpecification.setLastUpdate(new Date());
-        resourceSpecification.setLifecycleStatus(LifecycleStatus.ACTIVE);
-        resourceSpecification.setValidFor(TimeRange.createProto());
-
-        resourceSpecification.brand = "brand";
-
-        resourceSpecification.attachment = new ArrayList<Attachment>();
-        resourceSpecification.attachment.add(Attachment.createProto());
-
-        resourceSpecification.relatedParty = new ArrayList<RelatedParty>();
-        resourceSpecification.relatedParty.add(RelatedParty.createProto());
-
-        resourceSpecification.resourceSpecificationRelationship = new ArrayList<SpecificationRelationship>();
-        resourceSpecification.resourceSpecificationRelationship.add(SpecificationRelationship.createProto());
-
-        resourceSpecification.resourceSpecCharacteristic = new ArrayList<ResourceSpecCharacteristic>();
-        resourceSpecification.resourceSpecCharacteristic.add(ResourceSpecCharacteristic.createProto());
-
-        return resourceSpecification;
-    }
-
 }

@@ -126,9 +126,9 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
      */
     public String getDatePattern() {
         if (BOOLEAN_TRUE_STRING.equals(getAttributes().get("time"))) {
-            return paramBean.getProperty("meveo.dateTimeFormat", "dd/MM/yyyy HH:mm");
+            return paramBean.getDateTimeFormat();
         } else {
-            return paramBean.getProperty("meveo.dateFormat", "dd/MM/yyyy");
+            return paramBean.getDateFormat();
         }
     }
 

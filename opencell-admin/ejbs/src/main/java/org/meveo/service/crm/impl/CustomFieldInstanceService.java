@@ -616,6 +616,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
      * @return A map of Custom field instances with CF code as a key
      */
     public Map<String, List<CustomFieldInstance>> getCustomFieldInstances(ICustomFieldEntity entity) {
+        // No longer checking for isTransient as for offer new version creation, CFs are duplicated, but entity is not persisted, ofering to review it in GUI before saving it.
         // if (((IEntity) entity).isTransient()) {
         // return new HashMap<String, List<CustomFieldInstance>>();
         // }
@@ -1271,7 +1272,10 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
      * @throws BusinessException
      */
     public void duplicateCfValues(String sourceAppliesToEntity, ICustomFieldEntity entity) throws BusinessException {
+        log.debug("Duplicating CF values from entity with UUID {} to {}", sourceAppliesToEntity, entity.getUuid());
+
         TypedQuery<CustomFieldInstance> query = getEntityManager().createNamedQuery("CustomFieldInstance.getCfiByEntity", CustomFieldInstance.class);
+
         query.setParameter("appliesToEntity", sourceAppliesToEntity);
 
         List<CustomFieldInstance> cfis = query.getResultList();
@@ -1290,6 +1294,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
             cfi.setAuditable(null);
             create(cfi, cft, entity);
         }
+        log.trace("Finished duplicating CF values from entity with UUID {} to {}", sourceAppliesToEntity, entity.getUuid());
     }
 
     /**
@@ -1317,12 +1322,12 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
      */
     private void triggerEndPeriodEvent(CustomFieldInstance cfi) {
 
-        if (cfi.getPeriodEndDate() != null && cfi.getPeriodEndDate().before(new Date())) {
+        if (cfi.getPeriod().getTo() != null && cfi.getPeriod().getTo().before(new Date())) {
             CFEndPeriodEvent event = new CFEndPeriodEvent();
             event.setCustomFieldInstance(cfi);
             cFEndPeriodEvent.fire(event);
 
-        } else if (cfi.getPeriodEndDate() != null) {
+        } else if (cfi.getPeriod().getTo() != null) {
 
             TimerConfig timerConfig = new TimerConfig();
             timerConfig.setInfo(cfi);
@@ -1331,9 +1336,9 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
             // expiration = new Date();
             // expiration = DateUtils.addMinutes(expiration, 1);
 
-            log.debug("Creating timer for triggerEndPeriodEvent for Custom field value {} with expiration={}", cfi, cfi.getPeriodEndDate());
+            log.debug("Creating timer for triggerEndPeriodEvent for Custom field value {} with expiration={}", cfi, cfi.getPeriod().getTo());
 
-            timerService.createSingleActionTimer(cfi.getPeriodEndDate(), timerConfig);
+            timerService.createSingleActionTimer(cfi.getPeriod().getTo(), timerConfig);
         }
     }
 

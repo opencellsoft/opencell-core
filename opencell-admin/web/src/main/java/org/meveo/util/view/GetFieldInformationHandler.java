@@ -29,6 +29,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.IEntity;
 import org.meveo.model.annotation.ImageType;
 import org.meveo.util.view.FieldInformation.FieldNumberTypeEnum;
@@ -198,13 +199,8 @@ public class GetFieldInformationHandler extends TagHandler {
             fieldInfo.fieldType = FieldTypeEnum.Map;
             fieldInfo.fieldGenericsType = getFieldGenericsType(field);
 
-        } else if (fieldClassType == Integer.class
-                || fieldClassType == Long.class
-                || fieldClassType == Byte.class
-                || fieldClassType == Short.class
-                || fieldClassType == Double.class
-                || fieldClassType == Float.class
-                || fieldClassType == BigDecimal.class
+        } else if (fieldClassType == Integer.class || fieldClassType == Long.class || fieldClassType == Byte.class || fieldClassType == Short.class
+                || fieldClassType == Double.class || fieldClassType == Float.class || fieldClassType == BigDecimal.class
                 || (fieldClassType.isPrimitive() && (fieldClassType.getName().equals("int") || fieldClassType.getName().equals("long") || fieldClassType.getName().equals("byte")
                         || fieldClassType.getName().equals("short") || fieldClassType.getName().equals("double") || fieldClassType.getName().equals("float")))) {
 
@@ -233,6 +229,9 @@ public class GetFieldInformationHandler extends TagHandler {
 
             fieldInfo.fieldType = FieldTypeEnum.Number;
 
+        } else if (fieldClassType == DatePeriod.class) {
+         
+            fieldInfo.fieldType = FieldTypeEnum.DatePeriod;
         }
 
         context.setAttribute(varName, fieldInfo);

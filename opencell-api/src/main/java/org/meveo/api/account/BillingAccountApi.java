@@ -52,7 +52,7 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
-public class BillingAccountApi extends AccountApi {
+public class BillingAccountApi extends AccountEntityApi {
 
 	@Inject
 	private SubscriptionTerminationReasonService subscriptionTerminationReasonService;

@@ -177,31 +177,68 @@ public class QueryBuilder {
 	 * @return
 	 */
 	public QueryBuilder addSqlCriterion(String sql, String param, Object value) {
-		if (param != null && StringUtils.isBlank(value))
-			return this;
+        if (param != null && StringUtils.isBlank(value)) {
+            return this;
+        }
 
-		if (hasOneOrMoreCriteria) {
-			if (inOrClause && nbCriteriaInOrClause != 0)
-				q.append(" or ");
-			else
-				q.append(" and ");
-		} else
-			q.append(" where ");
+        if (hasOneOrMoreCriteria) {
+            if (inOrClause && nbCriteriaInOrClause != 0) {
+                q.append(" or ");
+            } else {
+                q.append(" and ");
+            }
+        } else {
+            q.append(" where ");
+        }
+        if (inOrClause && nbCriteriaInOrClause == 0) {
+            q.append("(");
+        }
 
-		if (inOrClause && nbCriteriaInOrClause == 0)
-			q.append("(");
+        q.append(sql);
 
-		q.append(sql);
+        if (param != null) {
+            params.put(param, value);
+        }
 
-		if (param != null)
-			params.put(param, value);
-
-		hasOneOrMoreCriteria = true;
-		if (inOrClause)
-			nbCriteriaInOrClause++;
+        hasOneOrMoreCriteria = true;
+        if (inOrClause) {
+            nbCriteriaInOrClause++;
+        }
 
 		return this;
 	}
+
+    public QueryBuilder addSqlCriterionMultiple(String sql, Object... multiParams) {
+        if (multiParams.length == 0) {
+            return this;
+        }
+
+        if (hasOneOrMoreCriteria) {
+            if (inOrClause && nbCriteriaInOrClause != 0) {
+                q.append(" or ");
+            } else {
+                q.append(" and ");
+            }
+        } else {
+            q.append(" where ");
+        }
+        if (inOrClause && nbCriteriaInOrClause == 0) {
+            q.append("(");
+        }
+
+        q.append(sql);
+
+        for (int i = 0; i < multiParams.length - 1; i = i + 2) {
+            params.put((String)multiParams[i], multiParams[i + 1]);
+        }
+
+        hasOneOrMoreCriteria = true;
+        if (inOrClause) {
+            nbCriteriaInOrClause++;
+        }
+
+        return this;
+    }
 
 	/**
 	 * @param field

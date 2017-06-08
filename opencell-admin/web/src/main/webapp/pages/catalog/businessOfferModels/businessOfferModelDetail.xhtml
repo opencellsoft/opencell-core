@@ -10,12 +10,14 @@
     <ui:define name="body">
 
         <hftl:entityPopup id="offerTemplatePopup" header="#{messages['offerTemplate.title']}" updateField=":moduleForm:offerSelectId_entity :businessServiceTemplates"
-            selection="#{businessOfferModelBean.entity.offerTemplate}" backingBean="#{offerTemplateListBean}" dataModel="#{offerTemplateListBean.lazyDataModelNoBSM}"
-            searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
-            column2Label="#{messages['businessEntity.description']}" column2="description">
+            selection="#{businessOfferModelBean.entity.offerTemplate}" backingBean="#{offerTemplateListBean}" dataModel="#{offerTemplateListBean.lazyDataModelNoBSM}" width="1000"
+            searchField1Label="#{messages['businessEntity.code']}" searchField1="code" searchField2Label="#{messages['businessEntity.description']}" searchField2="description"
+            searchField3Label="#{messages['commons.validFrom']}" searchField3="validity.from" searchField4Label="#{messages['commons.validTo']}" searchField4="validity.to"
+            column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['businessEntity.description']}" column2="description"
+            column3Label="#{messages['commons.validFrom']}" column3="validity" column3Child="from" column4Label="#{messages['commons.validTo']}" column4="validity" column4Child="to">
         </hftl:entityPopup>
 
-		<h:form id="crumbmenuForm">
+        <h:form id="crumbmenuForm">
 			<p:breadCrumb homeDisplay="text" id="crumbmenu">
 				<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
 				<p:menuitem outcome="businessOfferModels"

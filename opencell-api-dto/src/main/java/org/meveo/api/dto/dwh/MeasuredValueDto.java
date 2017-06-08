@@ -28,9 +28,9 @@ public class MeasuredValueDto {
 	public MeasuredValueDto(MeasuredValue e) {
 		measurableQuantityCode = e.getMeasurableQuantity().getCode();
 		code = e.getCode();
-		measurementPeriod = e.getMeasurementPeriod();
-		date = DateUtils.formatDateWithPattern(e.getDate(), "yyyy-MM-dd'T'HH:mm:ss");
-		dimension1 = e.getDimension1();
+        measurementPeriod = e.getMeasurementPeriod();
+        date = e.getDate() != null ? DateUtils.formatDateWithPattern(e.getDate(), "yyyy-MM-dd'T'HH:mm:ss") : null;
+        dimension1 = e.getDimension1();
 		dimension2 = e.getDimension2();
 		dimension3 = e.getDimension3();
 		dimension4 = e.getDimension4();

@@ -1,5 +1,7 @@
 package org.meveo.api.rest.catalog;
 
+import java.util.Date;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -48,24 +50,28 @@ public interface OfferTemplateRs extends IBaseRs {
     ActionStatus update(OfferTemplateDto postData);
 
     /**
-     * Search offer template with a given code.
+     * Search offer template with a given code and validity dates. If no validity dates are provided, an offer template valid on a current date will be returned.
      * 
      * @param offerTemplateCode The offer template's code
+     * @param validFrom Offer template validity range - from date
+     * @param validTo Offer template validity range - to date
      * @return Return offerTemplateDto containing offerTemplate
      */
     @Path("/")
     @GET
-    GetOfferTemplateResponseDto find(@QueryParam("offerTemplateCode") String offerTemplateCode);
+    GetOfferTemplateResponseDto find(@QueryParam("offerTemplateCode") String offerTemplateCode, @QueryParam("validFrom") Date validFrom, @QueryParam("validTo") Date validTo);
 
     /**
-     * Remove offer template with a given code.
+     * Remove offer template with a given code and validity dates. If no validity dates are provided, an offer template valid on a current date will be deleted.
      * 
      * @param offerTemplateCode The offer template's code
+     * @param validFrom Offer template validity range - from date
+     * @param validTo Offer template validity range - to date
      * @return Request processing status
      */
     @Path("/{offerTemplateCode}")
     @DELETE
-    ActionStatus remove(@PathParam("offerTemplateCode") String offerTemplateCode);
+    ActionStatus remove(@PathParam("offerTemplateCode") String offerTemplateCode, @QueryParam("validFrom") Date validFrom, @QueryParam("validTo") Date validTo);
 
     /**
      * Create or update offer template based on a given code.

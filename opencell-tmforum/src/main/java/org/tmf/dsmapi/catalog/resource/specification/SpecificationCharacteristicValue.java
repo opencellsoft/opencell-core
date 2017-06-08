@@ -158,19 +158,4 @@ public class SpecificationCharacteristicValue implements Serializable {
         return "SpecificationCharacteristicValue{" + "valueType=" + valueType + ", defaultValue=" + defaultValue + ", value=" + value + ", unitOfMeasure=" + unitOfMeasure
                 + ", valueFrom=" + valueFrom + ", valueTo=" + valueTo + ", validFor=" + validFor + '}';
     }
-
-    public static SpecificationCharacteristicValue createProto() {
-        SpecificationCharacteristicValue specificationCharacteristicValue = new SpecificationCharacteristicValue();
-
-        specificationCharacteristicValue.valueType = CharacteristicValueType.STRING;
-        specificationCharacteristicValue.defaultValue = false;
-        specificationCharacteristicValue.value = "value";
-        specificationCharacteristicValue.unitOfMeasure = "kilo";
-        specificationCharacteristicValue.valueFrom = "value from";
-        specificationCharacteristicValue.valueTo = "value to";
-        specificationCharacteristicValue.validFor = TimeRange.createProto();
-
-        return specificationCharacteristicValue;
-    }
-
 }

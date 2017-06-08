@@ -4334,7 +4334,7 @@
 	</changeSet>
 
 	<changeSet id="#2504_20170407" author="AndriusKarpavicius">
-		<dropColumn tableName="CRM_PROVIDER" columnName="LOGO" />
+		<dropColumn tableName="CRM_PROVIDER" columnName="LOGO"/>
 	</changeSet>
 	
 	<changeSet id="#2455_20170417" author="AndriusKarpavicius">
@@ -4349,7 +4349,7 @@
 			<column name="description" type="VARCHAR(256)" />
 		</addColumn>
 	</changeSet>
-
+	
 	<changeSet id="#20171123" author="smichea">
         <addColumn tableName="CAT_DISCOUNT_PLAN_ITEM">
             <column name="DISCOUNT_PERCENT_EL" type="VARCHAR(2000)"/>        
@@ -4373,7 +4373,7 @@
     		<column name="product_template_id" type="BIGINT"></column>
     	</addColumn>
     </changeSet>
-    
+	
     <changeSet id="#2448_20170428 - Create audit table" author="EdwardPLegaspi">
 		<createTable tableName="audit_log">
 			<column name="id" type="BIGINT" autoIncrement="${id.auto}">
@@ -4398,4 +4398,21 @@
 		<createSequence sequenceName="audit_log_seq" />
 	</changeSet>
 	
+    
+    <changeSet id="#2470_20170511" author="AndriusKarpavicius">
+        <dropUniqueConstraint tableName="cat_offer_template" constraintName="uk_j2krifijlux8tsm1w5hoqyxqq" />
+        <addUniqueConstraint columnNames="code, valid_from, valid_to" constraintName="cat_offer_template_uk" deferrable="false" disabled="false"
+            initiallyDeferred="false" tableName="cat_offer_template" />
+    </changeSet>
+        
+    <changeSet id="#2470_20170518" author="AndriusKarpavicius">
+        <addColumn tableName="meveo_module_item">        
+            <column name="valid_from" type="DATETIME"/>
+            <column name="valid_to" type="DATETIME"/>
+        </addColumn>
+    </changeSet>
+    <changeSet id="#2639_20170607" author="AndriusKarpavicius">
+        <dropColumn tableName="adm_user" columnName="password"/>
+        <dropColumn tableName="adm_user" columnName="last_password_modification"/>
+    </changeSet>
 </databaseChangeLog> 

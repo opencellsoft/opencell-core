@@ -44,7 +44,8 @@ public class UserDto extends BaseDto {
 	@XmlElement(required = true)
 	private String username;
 
-	@XmlElement(required = true)
+	@Deprecated
+	@XmlElement()
 	private String password;
 
 	@XmlElement(required = true)
@@ -134,14 +135,6 @@ public class UserDto extends BaseDto {
 		this.username = username;
 	}
 
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
 	public List<String> getRoles() {
 		return roles;
 	}
@@ -182,7 +175,7 @@ public class UserDto extends BaseDto {
 
     @Override
 	public String toString() {
-		return "UserDto [username=" + username + ", password=" + password + ", email=" + email + ", firstName=" + firstName + ", lastName=" + lastName + ", roles=" + roles + ", role=" + role + ", userLevel=" + userLevel  + ", securedEntities=" + securedEntities + " ]";
+		return "UserDto [username=" + username + ", email=" + email + ", firstName=" + firstName + ", lastName=" + lastName + ", roles=" + roles + ", role=" + role + ", userLevel=" + userLevel  + ", securedEntities=" + securedEntities + " ]";
 	}
 
 }

@@ -27,6 +27,10 @@
 				field="code" />
 			<hftl:searchField label="#{messages['BusinessEntity.description']}"
 				id="description" field="description" />
+            <hftl:searchField label="#{messages['commons.validFrom']}"
+                field="validity.from" rangeSearch="true"/>
+            <hftl:searchField label="#{messages['commons.validTo']}"
+                field="validity.to" rangeSearch="true"/>    
 			<hftl:searchField label="#{messages['enableEntity.disabled']}"
 				field="disabled" />
 		</hftl:searchPanel>
@@ -36,9 +40,24 @@
 			<hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['BusinessEntity.description']}"
 				field="description" />
+			<hftl:column label="#{messages['commons.validFrom']}" field="validityRaw.from" isDate="true"/>
+            <hftl:column label="#{messages['commons.validTo']}" field="validityRaw.to" isDate="true"/>
 			<hftl:column label="#{messages['commons.name']}" field="name" />
 			<hftl:column label="#{messages['enableEntity.active']}"
 				field="active" isMessage="true" />
+			<hftl:actionsColumn
+				permission="#{currentUser.hasRole('catalogManagement')}"
+				renderEnableLink="#{bundleTemplateListBean.canUserUpdateEntity()}" 
+				renderDuplicateLink="true" width="10%">
+
+				<p:tooltip for="newVersionLink" value="#{messages['commons.newVersion']}" showEffect="slide" hideEffect="slide" />
+				<p:button id="newVersionLink" outcome="#{bundleTemplateListBean.editViewName}" icon="ui-icon-copy">
+					<f:param name="objectId" value="#{entity.id}" />
+					<f:param name="edit" value="true" />
+					<f:param name="newVersion" value="true" />
+					<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+				</p:button>
+			</hftl:actionsColumn>					
 		</hftl:dataList>
 
 	</ui:define>

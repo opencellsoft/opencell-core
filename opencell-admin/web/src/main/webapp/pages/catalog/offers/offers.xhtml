@@ -157,24 +157,19 @@
                                                     <h:outputText value=", " rendered="#{not status.last}"/>
                                                 </ui:repeat>
                                             </p>
-                                            <p:panelGrid columns="3">
-                                                <p:panelGrid columns="1"
-                                                             rendered="#{entity.validFrom ne null and entity.validFrom ne ''}">
-                                                    <h:outputText value="#{messages['commons.validFrom']}: "/>
-                                                    <h:outputText value="#{entity.validFrom}">
-                                                        <f:convertDateTime type="date"
-                                                                           pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy HH:mm')}"/>
-                                                    </h:outputText>
-                                                </p:panelGrid>
-                                                <p:panel></p:panel>
-                                                <p:panelGrid columns="1"
-                                                             rendered="#{entity.validTo ne null and entity.validTo ne ''}">
-                                                    <h:outputText value="#{messages['commons.validTo']}: "/>
-                                                    <h:outputText value="#{entity.validTo}">
-                                                        <f:convertDateTime type="date"
-                                                                           pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy HH:mm')}"/>
-                                                    </h:outputText>
-                                                </p:panelGrid>
+                                            <p:panelGrid columns="1">
+                                                <p:panelGrid columns="1" rendered="#{entity.validityRaw != null}">
+													<h:outputText value="#{messages['commons.valid']}: " />
+													<h:panelGroup>
+														<h:outputText value="#{entity.validityRaw.from}">
+															<f:convertDateTime type="date" pattern="#{paramBean.dateFormat}" />
+														</h:outputText>
+														<h:outputText value="-" style="padding:5px" />
+														<h:outputText value="#{entity.validityRaw.to}">
+															<f:convertDateTime type="date" pattern="#{paramBean.dateFormat}" />
+														</h:outputText>
+													</h:panelGroup>
+												</p:panelGrid>
                                             </p:panelGrid>
                                         </p:panel>
 
@@ -207,15 +202,25 @@
                                                         <f:param name="backView" value="mm_offers"/>
                                                         <f:param name="tab" value="0"/>
                                                     </p:link></li>
-                                                    <li><p:commandLink id="duplicateLink"
-                                                                       action="#{offerTemplateListBean.duplicateCatalogHierarchy()}"
-                                                                       update=":tabView"
-                                                                       styleClass="fa fa-copy fa-2x no-text-decoration text-blue" title="#{messages['action.duplicate']}">
-                                                        <f:setPropertyActionListener value="#{entity}" target="#{offerTemplateListBean.entity}"/>
-                                                        <f:param name="tab" value="0"/>
-                                                        <p:confirm header="#{messages['commons.duplicate']}"
-                                                                   message="#{messages['commons.confirmDuplicate']}"/>
-                                                    </p:commandLink></li>
+<!--                                                     <li><p:commandLink id="duplicateLink" -->
+<!--                                                                        action="#{offerTemplateListBean.duplicateCatalogHierarchy()}" -->
+<!--                                                                        update=":tabView" -->
+<!--                                                                        styleClass="fa fa-copy fa-2x no-text-decoration text-blue"> -->
+<!--                                                         <f:setPropertyActionListener value="#{entity}" target="#{offerTemplateListBean.entity}"/> -->
+<!--                                                         <f:param name="tab" value="0"/> -->
+<!--                                                         <p:confirm header="#{messages['commons.duplicate']}" -->
+<!--                                                                    message="#{messages['commons.confirmDuplicate']}"/> -->
+<!--                                                     </p:commandLink></li> -->
+                                                    <li><p:link id="newVersionLink" title="#{messages['commons.newVersion']}"
+                                                                styleClass="fa fa-copy no-text-decoration text-blue fa-2x"
+                                                                outcome="mm_offerTemplateDetail">
+                                                        <f:param name="cid" value="#{javax.enterprise.context.conversation.id}"/>
+                                                        <f:param name="objectId" value="#{entity.id}"/>
+                                                        <f:param name="edit" value="true"/>
+                                                        <f:param name="backView" value="mm_offers"/>
+                                                        <f:param name="tab" value="0"/>                                                        
+                                                        <f:param name="newVersion" value="true" />
+														</p:link></li>
                                                     <li><p:commandLink id="addToExportLink"
                                                                        styleClass="fa fa-share-square-o text-blue fa-2x"
                                                                        update=":offerForExportPanel :dlgOfferExport"
@@ -351,10 +356,10 @@
                                          valueLabelField="descriptionOrCode">
                             </hftl:column>
                             <hftl:column label="#{messages['commons.validFrom']}"
-                                         field="validFrom" isDate="true">
+                                         field="validityRaw.from" isDate="true">
                             </hftl:column>
                             <hftl:column label="#{messages['commons.validTo']}"
-                                         field="validTo" isDate="true">
+                                         field="validityRaw.to" isDate="true">
                             </hftl:column>
                             <p:column>
                                 <f:facet name="header">#{messages['commons.status']}</f:facet>

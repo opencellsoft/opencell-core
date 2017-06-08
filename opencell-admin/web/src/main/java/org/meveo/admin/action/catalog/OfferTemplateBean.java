@@ -25,6 +25,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.faces.component.UIInput;
+import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -34,7 +36,6 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.catalog.ServiceConfigurationDto;
@@ -45,6 +46,7 @@ import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.CustomFieldInstance;
@@ -95,6 +97,8 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
     private Long bomId;
 
+    private boolean newVersion;
+
     private DualListModel<ServiceTemplate> incompatibleServices;
     private OfferServiceTemplate offerServiceTemplate;
     private OfferProductTemplate offerProductTemplate;
@@ -109,13 +113,19 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
     @Override
     public OfferTemplate initEntity() {
-        OfferTemplate result = super.initEntity();
+        super.initEntity();
 
         if (bomId != null) {
             businessOfferModel = businessOfferModelService.findById(bomId);
         }
 
-        return result;
+        if (newVersion) {
+            instantiateNewVersion();
+            setObjectId(entity.getId());
+            newVersion = false;
+        }
+
+        return entity;
     }
 
     /**
@@ -133,12 +143,8 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
         return Arrays.asList("offerTemplateCategories", "channels", "businessAccountModels");
     }
 
-    public List<OfferTemplate> listActive() {
-        Map<String, Object> filters = getFilters();
-        filters.put("disabled", false);
-        PaginationConfiguration config = new PaginationConfiguration(filters);
-
-        return offerTemplateService.list(config);
+    public List<OfferTemplate> listActiveByDate(Date date) {
+        return offerTemplateService.listActiveByDate(date);
     }
 
     @Override
@@ -151,30 +157,30 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
         if (entity != null && entity.getId() != null) {
             try {
                 offerTemplateService.duplicate(entity);
-                messages.info(new BundleKey("messages", "save.successful"));
+                messages.info(new BundleKey("messages", "duplicate.successfull"));
             } catch (BusinessException e) {
-                log.error("Error encountered persisting offer template entity: {}: {}", entity.getCode(), e);
-                messages.error(new BundleKey("messages", "save.unsuccessful"));
+                log.error("Error encountered duplicating offer template entity: {}", entity.getCode(), e);
+                messages.error(new BundleKey("messages", "error.duplicate.unexpected"));
             }
         }
     }
-    
+
     @ActionMethod
-    public void duplicateCatalogHierarchy() {
+    public void instantiateNewVersion() {
         if (entity != null && entity.getId() != null) {
             try {
-                offerTemplateService.duplicate(entity, true);
-                messages.info(new BundleKey("messages", "save.successful"));
+                entity = offerTemplateService.instantiateNewVersion(entity);
+                messages.info(new BundleKey("messages", "newVersion.successful"));
             } catch (BusinessException e) {
-                log.error("Error encountered persisting offer template entity: {}: {}", entity.getCode(), e);
-                messages.error(new BundleKey("messages", "save.unsuccessful"));
+                log.error("Error encountered instantiating new offer template entity version: {}", entity.getCode(), e);
+                messages.error(new BundleKey("messages", "error.newVersion.unsuccessful"));
             }
         }
     }
 
     public boolean isUsedInSubscription() {
-        return (getEntity() != null && !getEntity().isTransient() && (subscriptionService.findByOfferTemplate(getEntity()) != null) && subscriptionService.findByOfferTemplate(
-            getEntity()).size() > 0) ? true : false;
+        return (getEntity() != null && !getEntity().isTransient() && (subscriptionService.findByOfferTemplate(getEntity()) != null)
+                && subscriptionService.findByOfferTemplate(getEntity()).size() > 0) ? true : false;
     }
     
     /**
@@ -209,27 +215,28 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
                     ServiceConfigurationDto serviceConfigurationDto = new ServiceConfigurationDto();
                     serviceConfigurationDto.setCode(st.getCode());
                     serviceConfigurationDto.setDescription(st.getDescription());
-					serviceConfigurationDto.setMandatory(ost.isMandatory());
+                    serviceConfigurationDto.setMandatory(ost.isMandatory());
                     servicesConfigurations.add(serviceConfigurationDto);
                     if (stCfsDto != null) {
                         serviceConfigurationDto.setCustomFields(stCfsDto.getCustomField());
                     }
                 }
             }
-            
-            List<ServiceConfigurationDto> productsConfigurations = new ArrayList<>();
-			// process products
-			for (OfferProductTemplate opt : entity.getOfferProductTemplates()) {
-				ProductTemplate pt = opt.getProductTemplate();
-				ServiceConfigurationDto serviceConfigurationDto = new ServiceConfigurationDto();
-				serviceConfigurationDto.setCode(pt.getCode());
-				serviceConfigurationDto.setDescription(pt.getDescription());
-				productsConfigurations.add(serviceConfigurationDto);
-			}
 
-			OfferTemplate newOfferTemplate = businessOfferModelService.createOfferFromBOM(businessOfferModel, cfsDto != null ? cfsDto.getCustomField() : null, entity.getCode(),
-					entity.getName(), entity.getDescription(), servicesConfigurations, productsConfigurations, entity.getChannels(), entity.getBusinessAccountModels(),
-					entity.getOfferTemplateCategories(), entity.getLifeCycleStatus(), entity.getImagePath(), entity.getValidFrom(), entity.getValidTo(), getLanguageMessagesMap());
+            List<ServiceConfigurationDto> productsConfigurations = new ArrayList<>();
+            // process products
+            for (OfferProductTemplate opt : entity.getOfferProductTemplates()) {
+                ProductTemplate pt = opt.getProductTemplate();
+                ServiceConfigurationDto serviceConfigurationDto = new ServiceConfigurationDto();
+                serviceConfigurationDto.setCode(pt.getCode());
+                serviceConfigurationDto.setDescription(pt.getDescription());
+                productsConfigurations.add(serviceConfigurationDto);
+            }
+
+            OfferTemplate newOfferTemplate = businessOfferModelService.createOfferFromBOM(businessOfferModel, cfsDto != null ? cfsDto.getCustomField() : null, entity.getCode(),
+                entity.getName(), entity.getDescription(), servicesConfigurations, productsConfigurations, entity.getChannels(), entity.getBusinessAccountModels(),
+                entity.getOfferTemplateCategories(), entity.getLifeCycleStatus(), entity.getImagePath(), entity.getValidityRaw() != null ? entity.getValidityRaw().getFrom() : null,
+                entity.getValidityRaw() != null ? entity.getValidityRaw().getTo() : null, getLanguageMessagesMap());
 
             // populate service custom fields
             for (OfferServiceTemplate ost : entity.getOfferServiceTemplates()) {
@@ -254,13 +261,13 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
             // populate offer cf
             customFieldDataEntryBean.saveCustomFieldsToEntity(newOfferTemplate, entity.getUuid(), true, false);
 
-			// detach
+            // detach
             offerTemplateService.detach(entity);
-    		entity.setId(null);
-            
+            entity.setId(null);
+
             return back();
         } else {
-            boolean newEntity = (entity.getId() == null);
+            boolean isNewEntity = (entity.getId() == null);
 
             String outcome = super.saveOrUpdate(killConversation);
 
@@ -278,7 +285,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
                     }
                 }
 
-                return (newEntity && !outcome.equals("mm_offers")) ? getEditViewName() : outcome;
+                return (isNewEntity && !outcome.equals("mm_offers")) ? getEditViewName() : outcome;
             }
         }
 
@@ -455,6 +462,14 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
         this.bomId = bomId;
     }
 
+    public void setNewVersion(boolean newVersion) {
+        this.newVersion = newVersion;
+    }
+
+    public boolean isNewVersion() {
+        return newVersion;
+    }
+
     public ExportTemplate getMarketingCatalogExportTemplate() {
         return entityExportImportService.getExportImportTemplate("Offers");
     }
@@ -495,22 +510,34 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
         messages.info(new BundleKey("messages", "offerTemplate.productTemplate.create.successful"));
     }
-    
-    public boolean displayStatus(OfferTemplate e) {
-		Date now = new Date();
 
-		if ((Arrays.asList(LifeCycleStatusEnum.ACTIVE, LifeCycleStatusEnum.LAUNCHED, LifeCycleStatusEnum.IN_TEST).contains(e.getLifeCycleStatus()))) {
-			if (e.getValidFrom() == null && e.getValidTo() == null) {
-				return true;
-			} else if (e.getValidFrom() != null && e.getValidTo() != null && (now.compareTo(e.getValidFrom()) >= 0 && now.compareTo(e.getValidTo()) <= 0)) {
-				return true;
-			} else if ((e.getValidFrom() != null && e.getValidTo() == null) && now.compareTo(e.getValidFrom()) > 0) {
-				return true;
-			} else if ((e.getValidFrom() == null && e.getValidTo() != null) && now.compareTo(e.getValidTo()) < 0) {
-				return true;
-			}
-		}
+    public boolean displayStatus(OfferTemplate offer) {
 
-		return false;
-	}
+        if ((Arrays.asList(LifeCycleStatusEnum.ACTIVE, LifeCycleStatusEnum.LAUNCHED, LifeCycleStatusEnum.IN_TEST).contains(offer.getLifeCycleStatus()))) {
+            return offer.getValidityRaw() == null || offer.getValidityRaw().isCorrespondsToPeriod(new Date());
+        }
+
+        return false;
+    }
+
+    public boolean validateUniqueVersion(FacesContext context, List<UIInput> components, List<Object> values) {
+
+        if (values.size() != 3) {
+            throw new RuntimeException("Please bind validator to two components in the following order: offer/product/bundle template code, dateFrom, dateTo");
+        }
+
+        String code = (String) values.get(0);
+        Date from = (Date) values.get(1);
+        Date to = (Date) values.get(2);
+
+        List<ProductOffering> matchedVersions = offerTemplateService.getMatchingVersions(code, from, to, entity.getId(), true);
+
+        if (!matchedVersions.isEmpty()) {
+            messages.error(new BundleKey("messages", "offerTemplate.version.exists"),
+                matchedVersions.get(0).getValidityRaw() == null ? " / " : matchedVersions.get(0).getValidityRaw().toString(paramBean.getDateFormat()));
+            return false;
+        }
+
+        return true;
+    }
 }

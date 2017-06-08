@@ -1,5 +1,7 @@
 package org.meveo.api.rest.tmforum;
 
+import java.util.Date;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -8,6 +10,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -60,15 +63,17 @@ public interface CatalogRs {
     public Response findProductOfferings(@Context UriInfo info);
 
     /**
-     * Get details of a single product offering
+     * Get details of a single Offer template and validity dates. If no validity dates are provided, an offer template valid on a current date will be returned.
      * 
      * @param id Product offering code
+     * @param validFrom Offer template validity range - from date
+     * @param validTo Offer template validity range - to date
      * @param info Http request context
      * @return Single product offering
      */
     @GET
     @Path("/productOffering/{id}")
-    public Response getProductOffering(@PathParam("id") String id, @Context UriInfo info);
+    public Response getProductOffering(@PathParam("id") String id, @QueryParam("validFrom") Date validFrom, @QueryParam("validTo") Date validTo, @Context UriInfo info);
 
     /**
      * Get a list of product specifications optionally filtering by some criteria
@@ -84,12 +89,14 @@ public interface CatalogRs {
      * Get details of a single product
      * 
      * @param id Product code
+     * @param validFrom Product template validity range - from date
+     * @param validTo Product template validity range - to date
      * @param info Http request context
      * @return A single product specification
      */
     @GET
     @Path("/productSpecification/{id}")
-    public Response getProductSpecification(@PathParam("id") String id, @Context UriInfo info);
+    public Response getProductSpecification(@PathParam("id") String id, @QueryParam("validFrom") Date validFrom, @QueryParam("validTo") Date validTo, @Context UriInfo info);
 
     /**
      * Create offer from BOM definition
@@ -100,16 +107,18 @@ public interface CatalogRs {
     @POST
     @Path("/createOfferFromBOM")
     public Response createOfferFromBOM(BomOfferDto postData);
-    
+
     /**
-     * Get a single productTemplate by its code
+     * Get a single productTemplate by its code and validity dates. If no validity dates are provided, a product template valid on a current date will be deleted.
      * 
      * @param code productTemplate code
+     * @param validFrom Product template validity range - from date
+     * @param validTo Procuct template validity range - to date
      * @return Single productTemplate information
      */
     @GET
     @Path("/productTemplate/{code}")
-    public Response getProductTemplate(@PathParam("code") String code);
+    public Response getProductTemplate(@PathParam("code") String code, @QueryParam("validFrom") Date validFrom, @QueryParam("validTo") Date validTo);
 
     /**
      * Create product template
@@ -120,7 +129,7 @@ public interface CatalogRs {
     @POST
     @Path("/productTemplate")
     public Response createProductTemplate(ProductTemplateDto postData);
-    
+
     /**
      * Create or update product template
      * 
@@ -130,7 +139,7 @@ public interface CatalogRs {
     @POST
     @Path("/productTemplate/createOrUpdate")
     public Response createOrUpdateProductTemplate(ProductTemplateDto postData);
-    
+
     /**
      * Update product template
      * 
@@ -139,27 +148,29 @@ public interface CatalogRs {
      */
     @PUT
     @Path("/productTemplate")
-    public Response updateProductTemplate(ProductTemplateDto postData);    
-    
+    public Response updateProductTemplate(ProductTemplateDto postData);
+
     /**
-     * Delete a single productTemplate by its code
+     * Delete a single productTemplate by its code and validity dates. If no validity dates are provided, a product template valid on a current date will be deleted.
      * 
      * @param code productTemplate code
-     * @return 
+     * @param validFrom Product template validity range - from date
+     * @param validTo Procuct template validity range - to date
+     * @return
      */
     @DELETE
     @Path("/productTemplate/{code}")
-    public Response removeProductTemplate(@PathParam("code") String code);
-    
-    
+    public Response removeProductTemplate(@PathParam("code") String code, @QueryParam("validFrom") Date validFrom, @QueryParam("validTo") Date validTo);
+
     /**
-     * List all  productTemplates
-     * @return 
+     * List all productTemplates
+     * 
+     * @return
      */
     @GET
     @Path("/productTemplate/list")
-    public Response listProductTemplate();    
-    
+    public Response listProductTemplate();
+
     /**
      * Get a single productChargeTemplate by its code
      * 
@@ -179,7 +190,7 @@ public interface CatalogRs {
     @POST
     @Path("/productChargeTemplate")
     public Response createProductChargeTemplate(ProductChargeTemplateDto postData);
-    
+
     /**
      * Create or update product charge template
      * 
@@ -189,7 +200,7 @@ public interface CatalogRs {
     @POST
     @Path("/productChargeTemplate/createOrUpdate")
     public Response createOrUpdateProductChargeTemplate(ProductChargeTemplateDto postData);
-    
+
     /**
      * Update product charge template
      * 
@@ -198,25 +209,25 @@ public interface CatalogRs {
      */
     @PUT
     @Path("/productChargeTemplate")
-    public Response updateProductChargeTemplate(ProductChargeTemplateDto postData);    
-    
+    public Response updateProductChargeTemplate(ProductChargeTemplateDto postData);
+
     /**
      * Delete a single productChargeTemplate by its code
      * 
      * @param code productChargeTemplate code
-     * @return 
+     * @return
      */
     @DELETE
     @Path("/productChargeTemplate/{code}")
     public Response removeProductChargeTemplate(@PathParam("code") String code);
-    
-    
+
     /**
-     * List all  productChargeTemplates
-     * @return 
+     * List all productChargeTemplates
+     * 
+     * @return
      */
     @GET
     @Path("/productChargeTemplate/list")
-    public Response listProductChargeTemplate();  
+    public Response listProductChargeTemplate();
 
 }

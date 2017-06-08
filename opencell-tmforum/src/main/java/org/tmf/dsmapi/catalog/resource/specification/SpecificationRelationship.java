@@ -117,16 +117,4 @@ public class SpecificationRelationship implements Serializable {
     public boolean isValid() {
         return true;
     }
-
-    public static SpecificationRelationship createProto() {
-        SpecificationRelationship specificationRelationship = new SpecificationRelationship();
-
-        specificationRelationship.id = "id";
-        specificationRelationship.href = "href";
-        specificationRelationship.validFor = TimeRange.createProto();
-        specificationRelationship.type = SpecificationRelationshipType.DEPENDENCY;
-
-        return specificationRelationship;
-    }
-
 }

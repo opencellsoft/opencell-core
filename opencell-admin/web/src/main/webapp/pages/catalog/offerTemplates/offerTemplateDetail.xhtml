@@ -10,6 +10,7 @@
 		<f:metadata>
 			<f:viewParam name="objectId" value="#{offerTemplateBean.objectId}" />
 			<f:viewParam name="tab" value="#{offerTemplateBean.activeTab}" />
+			<f:viewParam name="newVersion" value="#{offerTemplateBean.newVersion}" />
 		</f:metadata>		
 	</ui:define>
 
@@ -58,12 +59,17 @@
 								<hftl:formField label="#{messages['commons.image']}"
 									field="imagePath" required="false" pictureGroupName="offer" />
 								<hftl:formField label="#{messages['offerTemplate.code']}"
-									field="code" required="true" validateUnique="true"
+									field="code" required="true"
 									actionListenerBean="#{offerTemplateBean}"
 									actionListenerMethod="onCodeChange" listenerUpdate="name" />
 								<hftl:formField id="name"
 									label="#{messages['offerTemplate.name']}" field="name"
 									required="true" />
+								<hftl:formField label="#{messages['commons.valid']}" field="validity" />
+
+								<o:validateMultiple components=":offerForm:tabView:offerInfo:code_txt :offerForm:tabView:offerInfo:validity_date :offerForm:tabView:offerInfo:validity_date_toRange"
+									validator="#{offerTemplateBean.validateUniqueVersion}" message="#{messages['offerTemplate.version.exists.short']}" />
+
 								<!--                                 <hftl:formField label="#{messages['offerTemplate.description']}" field="description" useConverter="false" id="description" /> -->
                                 <hftl:formLanguageFields backingBean="#{offerTemplateBean}" entity="#{offerTemplateBean.entity}" multiLang="true" />
                                 <hftl:formField
@@ -85,10 +91,6 @@
 									valueLabelField="descriptionOrCode"
 									listBean="#{businessAccountModelListBean}" componentWidth="30" />
 
-								<hftl:formField label="#{messages['commons.validFrom']}"
-									field="validFrom" />
-								<hftl:formField label="#{messages['commons.validTo']}"
-									field="validTo" />
 
 								<hftl:formField label="#{messages['enableEntity.disabled']}"
 									doNotShowOnNew="true" allowEdit="false" field="disabled"
@@ -158,7 +160,7 @@
 									label="#{messages['offerServiceTemplate.serviceTemplate']}"
 									id="serviceTemplateCode" field="serviceTemplate"
 									valueLabelField="code" popup="true"
-									popupId="searchServiceTemplatePopup" clearButton="true"
+									popupId="searchServiceTemplatePopup"
 									required="true"
 									disabled="#{!offerTemplateBean.offerServiceTemplate.transient}" />
 								<hftl:formField
@@ -175,10 +177,10 @@
 									newLine="true" />
 								<hftl:formField
 									entity="#{offerTemplateBean.offerServiceTemplate}"
-									label="#{messages['commons.validFrom']}" field="validFrom" />
+									label="#{messages['commons.validFrom']}" field="validity" childField="from" />
 								<hftl:formField
 									entity="#{offerTemplateBean.offerServiceTemplate}"
-									label="#{messages['commons.validTo']}" field="validTo" />
+									label="#{messages['commons.validTo']}" field="validity" childField="to"  />
 
 								<h:panelGroup layout="block" styleClass="form-panel-actions">
 									<p:commandButton

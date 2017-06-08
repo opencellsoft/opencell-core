@@ -20,7 +20,7 @@ import org.meveo.service.catalog.impl.TitleService;
  * @author Edward P. Legaspi
  **/
 @Stateless
-public class AccountApi extends BaseApi {
+public class AccountEntityApi extends BaseApi {
 
 
     @Inject

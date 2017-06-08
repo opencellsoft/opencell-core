@@ -115,18 +115,6 @@ public class TimerEntityApi extends BaseCrudApi<TimerEntity, TimerEntityDto> {
         return result;
     }
     
-    /* (non-Javadoc)
-     * @see org.meveo.api.ApiService#findIgnoreNotFound(java.lang.String)
-     */
-    @Override
-    public TimerEntityDto findIgnoreNotFound(String code) throws MissingParameterException, InvalidParameterException, MeveoApiException {
-        try {
-            return find(code);
-        } catch (EntityDoesNotExistsException e) {
-            return null;
-        }
-    }
-
     public void remove(String timerEntityCode) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(timerEntityCode)) {
             missingParameters.add("code");

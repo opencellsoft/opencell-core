@@ -3,6 +3,7 @@ package org.tmf.dsmapi.catalog.resource;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.meveo.model.DatePeriod;
 import org.tmf.dsmapi.serialize.CustomDateSerializer;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -24,6 +25,17 @@ public class TimeRange implements Serializable {
 
     @JsonSerialize(using = CustomDateSerializer.class)
     private Date endDateTime;
+
+    public TimeRange() {
+    }
+
+    public TimeRange(DatePeriod datePeriod) {
+
+        if (datePeriod != null) {
+            startDateTime = datePeriod.getFrom();
+            endDateTime = datePeriod.getTo();
+        }
+    }
 
     public Date getStartDateTime() {
         return startDateTime;
@@ -71,5 +83,9 @@ public class TimeRange implements Serializable {
         timeRange.setEndDateTime(new Date());
 
         return timeRange;
+    }
+
+    public DatePeriod toDatePeriod() {
+        return new DatePeriod(startDateTime, endDateTime);
     }
 }

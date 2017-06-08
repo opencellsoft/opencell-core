@@ -24,7 +24,7 @@ package org.meveo.model;
  * @author Andrius Karpavicius
  * 
  */
-public interface IVersionedEntity {
+public interface IJPAVersionedEntity {
 
     public Integer getVersion();
 

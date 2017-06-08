@@ -26,6 +26,7 @@ import javax.persistence.TypedQuery;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.EjbUtils;
+import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.BusinessProductModel;
@@ -59,10 +60,11 @@ public class GenericModuleService<T extends MeveoModule> extends BusinessService
 
     @Inject
     private OfferTemplateService offerTemplateService;
-    
+
     @Inject
     private ProductTemplateService productTemplateService;
 
+    @SuppressWarnings("rawtypes")
     public void loadModuleItem(MeveoModuleItem item) {
 
         BusinessEntity entity = null;
@@ -72,8 +74,38 @@ public class GenericModuleService<T extends MeveoModule> extends BusinessService
         } else {
 
             String sql = "select mi from " + item.getItemClass() + " mi where mi.code=:code ";
+
+            Class itemClazz;
+            try {
+                itemClazz = Class.forName(item.getItemClass());
+            } catch (ClassNotFoundException e1) {
+                log.error("Failed to find a module item {}. Module item class {} unknown", item, item.getItemClass());
+                return;
+            }
+            boolean addFromParam = false;
+            boolean addToParam = false;
+            if (ReflectionUtils.isClassHasField(itemClazz, "validity")) {
+                if (item.getValidity().getFrom() != null) {
+                    sql = sql + " and mi.validity.from = :from";
+                    addFromParam = true;
+                } else {
+                    sql = sql + " and mi.validity.from IS NULL";
+                }
+                if (item.getValidity().getTo() != null) {
+                    sql = sql + " and mi.validity.to = :to";
+                    addToParam = true;
+                } else {
+                    sql = sql + " and mi.validity.to IS NULL";
+                }
+            }
             TypedQuery<BusinessEntity> query = getEntityManager().createQuery(sql, BusinessEntity.class);
             query.setParameter("code", item.getItemCode());
+            if (addFromParam) {
+                query.setParameter("from", item.getValidity().getFrom());
+            }
+            if (addToParam) {
+                query.setParameter("to", item.getValidity().getTo());
+            }
             try {
                 entity = query.getSingleResult();
 
@@ -111,7 +143,7 @@ public class GenericModuleService<T extends MeveoModule> extends BusinessService
         } else if (module instanceof BusinessOfferModel) {
             offerTemplateService.disable(((BusinessOfferModel) module).getOfferTemplate());
         } else if (module instanceof BusinessProductModel) {
-        	productTemplateService.disable(((BusinessProductModel) module).getProductTemplate());
+            productTemplateService.disable(((BusinessProductModel) module).getProductTemplate());
         }
 
         for (MeveoModuleItem item : module.getModuleItems()) {

@@ -51,7 +51,7 @@
             <hftl:formField label="#{messages['entity.emailNotification.body']}" field="body" textArea="true" maxlength="20000" componentWidth="100" />
             <hftl:formField label="#{messages['entity.emailNotification.htmlBody']}" field="htmlBody" textArea="true" maxlength="20000" componentWidth="100" />
             <hftl:formField id="counterTemplateSelectedId" label="#{messages['counterTemplate.title']}" field="counterTemplate" valueLabelField="code" popup="true"
-                popupId="searchCounterTemplatePopup" clearButton="true" required="false" />
+                popupId="searchCounterTemplatePopup" showResetButton="true" required="false" />
 
             <hftl:formField label="#{messages['enableEntity.disabled']}" allowEdit="false" doNotShowOnNew="true" field="disabled" isMessage="true" />
             <hftl:decorateFormField label="#{messages['meveoModule.partOfModules']}" rendered="#{!emailNotificationBean.entity.transient}">

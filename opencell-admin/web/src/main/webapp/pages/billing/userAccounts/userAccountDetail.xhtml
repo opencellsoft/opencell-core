@@ -35,8 +35,13 @@
             updateField=":parentTab:userAccountFormId:userAccountTab:billingAccountSelectId :parentTab:userAccountFormId:userAccountTab:billingAccountSelectId_text">
         </hftl:entityPopup>
         <hftl:entityPopup id="productTemplatePopup" header="#{messages['productTemplate.title']}" backingBean="#{productTemplateBean}"
-            searchField1Label="#{messages['BusinessEntity.code']}" searchField1="code" column1Label="#{messages['BusinessEntity.code']}" column1="code"
-            selection="#{userAccountBean.productInstance.productTemplate}"
+            searchField1Label="#{messages['BusinessEntity.code']}" searchField1="code"
+            searchField2Label="#{messages['BusinessEntity.description']}" searchField2="description" searchField3Label="#{messages['commons.validFrom']}" searchField3="validity.from"
+            searchField4Label="#{messages['commons.validTo']}" searchField4="validity.to" column1Label="#{messages['BusinessEntity.code']}" column1="code"
+            column2Label="#{messages['BusinessEntity.description']}" column2="description" column3Label="#{messages['commons.validFrom']}" column3="validity" column3Child="from"
+            column4Label="#{messages['commons.validTo']}" column4="validity" column4Child="to" 
+            dataModel="#{productTemplateBean.listActiveByDate(userAccountBean.productInstance.applicationDate)}"
+            selection="#{userAccountBean.productInstance.productTemplate}" width="1000"
             selectionListenerBean="#{userAccountBean}" selectionListenerMethod="updateProductInstanceCode" 
             updateField=":#{p:component('productTemplateSelectedId')} :#{p:component('productTemplateSelectedId_text')}">
         </hftl:entityPopup>
@@ -244,15 +249,11 @@
 									field="quantity" required="true" />
 								<hftl:formField
 									label="#{messages['chargeApplication.applicationDate']}"
-									field="applicationDate" />
+									field="applicationDate" required="true" listenerUpdate="productTemplatePopup" componentWidth="30" />
 								<hftl:formField id="productTemplateSelectedId"
 									label="#{messages['productTemplate.title']}"
 									field="productTemplate" popup="true" required="true"
 									popupId="productTemplatePopup" valueLabelField="code" />
-								<hftl:formField label="#{messages['offerTemplate.title']}"
-									field="offerTemplate" listBean="#{offerTemplateBean}"
-									entity="#{userAccountBean.productChargeInstance}"
-									valueLabelField="code" />
 
 								<h:panelGroup id="productCF">
 									<hftl:customFields backingBean="#{productInstanceBean}"

@@ -67,14 +67,14 @@
                 <hftl:decorateFormField fieldId="invoiceDate" label="#{messages['billingRun.invoiceDate']}" 
                 	rendered="#{billingAccountBean.canUserUpdateEntity()}">
                     <p:calendar id="invoiceDate" value="#{billingAccountBean.exceptionalInvoicingDate}" 
-                    	pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}"
+                    	pattern="#{paramBean.dateFormat}"
                         required="true" />
                 </hftl:decorateFormField>
     			<hftl:decorateFormField fieldId="lastTransactionDate" label="#{messages['billingRun.lastTransactionDate']}" 
     				rendered="#{billingAccountBean.canUserUpdateEntity()}">
     				<p:calendar id="lastTransactionDate"
     				value="#{billingAccountBean.exceptionalLastTransactionDate}"
-    				 pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}"
+    				 pattern="#{paramBean.dateFormat}"
     				required="true" />
     			</hftl:decorateFormField>
                 <h:panelGroup layout="block" styleClass="form-panel-actions">               

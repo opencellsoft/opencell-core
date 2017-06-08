@@ -85,7 +85,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 
 		// #1 Check the credit limit (servicesSum + getCurrentAmount) & return
 		// error if KO.
-		OfferTemplate offerTemplate = offerTemplateService.findByCode(offerCode);
+		OfferTemplate offerTemplate = offerTemplateService.findByCode(offerCode, subscriptionDate);
 
 		UserAccount userAccount = userAccountService.findByCode(userAccountCode);
 		if (userAccount == null) {
@@ -103,7 +103,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 		}
 
 		if (offerTemplate == null) {
-			throw new BusinessException("OfferTemplate with code=" + offerCode + " does not exists.");
+			throw new BusinessException("OfferTemplate with code=" + offerCode + " for date " + subscriptionDate + " does not exists.");
 		}
 
 		if (offerTemplate.getOfferServiceTemplates() == null || offerTemplate.getOfferServiceTemplates().size() < 1) {
@@ -184,7 +184,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 	
 		// #1 Check the credit limit (servicesSum + getCurrentAmount) & return
 		// error if KO.
-		OfferTemplate offerTemplate = offerTemplateService.findByCode(offerCode);
+		OfferTemplate offerTemplate = offerTemplateService.findByCode(offerCode, subscriptionDate);
 
 		UserAccount userAccount = userAccountService.findByCode(userAccountCode);
 		if (userAccount == null) {
@@ -202,7 +202,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 		}
 
 		if (offerTemplate == null) {
-			throw new BusinessException("OfferTemplate with code=" + offerCode + " does not exists.");
+			throw new BusinessException("OfferTemplate with code=" + offerCode + " for date " + subscriptionDate + " does not exists.");
 		}
 
 		if (offerTemplate.getOfferServiceTemplates() == null || offerTemplate.getOfferServiceTemplates().size() < 1) {
@@ -323,10 +323,10 @@ public class ReservationService extends PersistenceService<Reservation> {
 			throw new BusinessException("Reservation with id=" + reservationId + " does not exists.");
 		}
 
-		OfferTemplate offerTemplate = offerTemplateService.findByCode(offerCode);
-		if (offerTemplate == null) {
-			throw new BusinessException("OfferTemplate with id=" + offerCode + " does not exists.");
-		}
+        OfferTemplate offerTemplate = offerTemplateService.findByCode(offerCode, subscriptionDate);
+        if (offerTemplate == null) {
+            throw new BusinessException("OfferTemplate with code " + offerCode + " for date " + subscriptionDate + " does not exists.");
+        }
 
 		// #1 Check that the reservation is OPEN, else KO.
 		if (reservation.getStatus() != ReservationStatus.OPEN) {

@@ -133,7 +133,7 @@
 														rendered="#{true or !customerAccountBean.edit}"
 														value="#{customerAccountBean.entity.getDateDunningLevel()}"
 														style="font-weight:bold;" >
-														<f:convertDateTime  pattern="#{paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy HH:mm')}"/>
+														<f:convertDateTime  pattern="#{paramBean.dateTimeFormat}"/>
 													</h:outputText>
     												</hftl:decorateFormField>
     												<hftl:decorateFormField fieldId="balance_text" label="#{messages['customerAccount.balanceDue']}">

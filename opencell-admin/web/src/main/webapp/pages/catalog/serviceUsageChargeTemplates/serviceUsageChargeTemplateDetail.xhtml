@@ -57,13 +57,13 @@
             backingBean="#{serviceUsageChargeTemplateBean}">
 			
 			 <hftl:formField id="serviceTemplateSelectedId" label="#{messages['serviceTemplate.title']}" field="serviceTemplate" valueLabelField="code"
-				popup="true" popupId="searchServiceTemplatePopup" clearButton="true" required="true" />
+				popup="true" popupId="searchServiceTemplatePopup" required="true" />
 				
 			<hftl:formField id="chargeTemplateSelectedId" label="#{messages['menu.usageChargeTemplates']}" field="chargeTemplate" valueLabelField="code"
-				popup="true" popupId="searchChargeTemplatePopup" clearButton="true" required="true" />
+				popup="true" popupId="searchChargeTemplatePopup" required="true" />
 				
 		<hftl:formField id="counterTemplateSelectedId" label="#{messages['counterTemplate.title']}" field="counterTemplate" valueLabelField="code"
-				popup="true" popupId="searchCounterTemplatePopup" clearButton="true" required="false" />
+				popup="true" popupId="searchCounterTemplatePopup" showResetButton="true" required="false" />
 
            
         </hftl:formPanel>

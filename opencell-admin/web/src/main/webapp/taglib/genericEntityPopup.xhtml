@@ -2,8 +2,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:p="http://primefaces.org/ui" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:o="http://omnifaces.org/ui" xmlns:hftl="http://hftl.org"
-    xmlns:s="http://jboss.org/seam/faces">
+    xmlns:p="http://primefaces.org/ui" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:o="http://omnifaces.org/ui" xmlns:hftl="http://hftl.org" xmlns:s="http://jboss.org/seam/faces">
 
 <!-- 
 
@@ -29,13 +28,13 @@
         <c:set var="id" value="popup" />
     </c:if>
     <c:if test="${empty width}">
-        <c:set var="width" value="700" />
+        <c:set var="width" value="1000" />
     </c:if>
 
     <o:importFunctions type="org.meveo.commons.utils.ReflectionUtils" var="ref" />
 
-    <p:dialog id="#{id}" header="#{header}" widgetVar="dlg_#{id}" dynamic="true" modal="true" styleClass="form-dialog" closeOnEscape="true" width="#{width}" appendTo="@(body)"
-        fitViewport="true" responsive="true" position="top">
+    <p:dialog id="#{id}" header="#{header}" widgetVar="dlg_#{id}" dynamic="true" modal="true" styleClass="form-dialog" closeOnEscape="true" width="#{width}" appendTo="@(body)" fitViewport="true"
+        responsive="true" position="top">
         <h:form id="#{id}popupForm">
             <h:panelGroup layout="block" styleClass="search-panel">
                 <p:messages />
@@ -44,8 +43,7 @@
                     <hftl:decorateFormField fieldId="searchEntityClass" label="#{messages['BusinessEntity.type']}">
                         <p:selectOneMenu id="searchEntityClass" value="#{genericEntityPickerBean.selectedEntityClass}" required="true">
                             <f:selectItem itemLabel="" itemValue="" />
-                            <f:selectItems value="#{genericEntityPickerBean.getEntityClasses(annotation)}" var="elem" itemLabel="#{ref:getHumanClassName(elem.simpleName)}"
-                                itemValue="#{elem}" />
+                            <f:selectItems value="#{genericEntityPickerBean.getEntityClasses(annotation)}" var="elem" itemLabel="#{ref:getHumanClassName(elem.simpleName)}" itemValue="#{elem}" />
                             <hftl:objectConverter />
                             <p:ajax update="searchFields #{id}datatable" event="change" />
                         </p:selectOneMenu>
@@ -56,8 +54,8 @@
                             <hftl:searchField id="searchCode" label="#{messages['businessEntity.code']}" backingBean="#{genericEntityPickerBean}" field="code" />
                             <hftl:searchField id="searchDescription" label="#{messages['businessEntity.description']}" backingBean="#{genericEntityPickerBean}" field="description" />
                             <hftl:searchField id="searchFieldAppliesTo" label="#{messages['meveoModuleItem.appliesTo']}" backingBean="#{genericEntityPickerBean}" field="appliesTo"
-                                isAutocomplete="true" autocompleteBean="#{customFieldTemplateBean}" autocompleteMethod="autocompleteClassNamesHuman"
-                                converter="customFieldAppliesToConverter" rendered="#{ref:isClassHasField(genericEntityPickerBean.selectedEntityClass, 'appliesTo')}" />
+                                isAutocomplete="true" autocompleteBean="#{customFieldTemplateBean}" autocompleteMethod="autocompleteClassNamesHuman" converter="customFieldAppliesToConverter"
+                                rendered="#{ref:isClassHasField(genericEntityPickerBean.selectedEntityClass, 'appliesTo')}" />
                         </c:if>
                         <!--                     <hftl:entityPopup id="searchCustomField" width="750" header="#{messages['customField.popup.header']}" backingBean="#{customFieldTemplateListBean}" -->
                         <!--                         searchField1Label="#{messages['businessEntity.code']}" searchField1="code" searchField2Label="#{messages['meveoModuleItem.appliesTo']}" -->
@@ -75,8 +73,8 @@
                 </p:outputPanel>
             </h:panelGroup>
 
-            <p:dataTable id="#{id}datatable" var="e" paginator="true" resizableColumns="true" value="#{genericEntityPickerBean.lazyDataModel}" rows="10" selection="#{selection}"
-                selectionMode="single" rowKey="#{e.id}" lazy="true">
+            <p:dataTable id="#{id}datatable" var="e" paginator="true" resizableColumns="true" value="#{genericEntityPickerBean.lazyDataModel}" rows="10" selection="#{selection}" selectionMode="single"
+                rowKey="#{e.id}" lazy="true">
                 <c:if test="#{empty selectionListenerBean}">
                     <p:ajax event="rowSelect" oncomplete="PF('dlg_#{id}').hide()" update="#{updateField}" />
                 </c:if>
@@ -92,6 +90,16 @@
                 <p:column headerText="#{messages['meveoModuleItem.appliesTo']}" rendered="#{ref:isClassHasField(genericEntityPickerBean.selectedEntityClass, 'appliesTo')}">
                     <c:set var="converter2" value="#{getConverter.forType(e['appliesTo'], 'customFieldAppliesTo')}"></c:set>
                     <h:outputText value="#{e['appliesTo']}" converter="#{converter2}" />
+                </p:column>
+                <p:column headerText="#{messages['commons.validFrom']}" rendered="#{ref:isClassHasField(genericEntityPickerBean.selectedEntityClass, 'validity')}" width="15%">
+                    <h:outputText value="#{e.validityRaw.from}">
+                        <f:convertDateTime pattern="#{paramBean.dateFormat}" />
+                    </h:outputText>
+                </p:column>
+                <p:column headerText="#{messages['commons.validTo']}" rendered="#{ref:isClassHasField(genericEntityPickerBean.selectedEntityClass, 'validity')}" width="15%">
+                    <h:outputText value="#{e.validityRaw.to}">
+                        <f:convertDateTime pattern="#{paramBean.dateFormat}" />
+                    </h:outputText>
                 </p:column>
             </p:dataTable>
         </h:form>

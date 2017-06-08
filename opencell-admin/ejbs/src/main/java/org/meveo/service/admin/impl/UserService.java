@@ -26,24 +26,15 @@ import java.util.List;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.InactiveUserException;
-import org.meveo.admin.exception.LoginException;
-import org.meveo.admin.exception.NoRoleException;
-import org.meveo.admin.exception.PasswordExpiredException;
-import org.meveo.admin.exception.UnknownUserException;
 import org.meveo.admin.exception.UsernameAlreadyExistsException;
-import org.meveo.admin.util.security.Sha1Encrypt;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.security.Role;
-import org.meveo.model.shared.DateUtils;
 import org.meveo.model.shared.Title;
 import org.meveo.service.base.PersistenceService;
 
@@ -67,8 +58,6 @@ public class UserService extends PersistenceService<User> {
 		}
 
 		user.setUserName(user.getUserName().toUpperCase());
-        //user.setPassword(Sha1Encrypt.encodePassword(user.getPassword()));
-		user.setLastPasswordModification(new Date());
 
 		super.create(user);
 	}
@@ -82,10 +71,6 @@ public class UserService extends PersistenceService<User> {
 		}
 
 		user.setUserName(user.getUserName().toUpperCase());
-		if (!StringUtils.isBlank(user.getNewPassword())) {
-			String encryptedPassword = Sha1Encrypt.encodePassword(user.getNewPassword());
-			user.setPassword(encryptedPassword);
-		}
 
 		return super.update(user);
 	}
@@ -122,30 +107,6 @@ public class UserService extends PersistenceService<User> {
 		return ((Long) query.getSingleResult()).intValue() != 0;
 	}
 
-	public User findByUsernameAndPassword(String username, String password) {
-		return findByUsernameAndPassword(getEntityManager(), username, password);
-	}
-
-	public User findByUsernameAndPassword(EntityManager em, String username, String password) {
-		return findByUsernameAndPassword(em, username, password, Arrays.asList("roles"));
-	}
-
-	public User findByUsernameAndPassword(EntityManager em, String username, String password, List<String> fetchFields) {
-
-		password = Sha1Encrypt.encodePassword(password);
-
-		QueryBuilder qb = new QueryBuilder(User.class, "u", fetchFields);
-
-		qb.addCriterion("userName", "=", username.toUpperCase(), true);
-		qb.addCriterion("password", "=", password, true);
-
-		try {
-			return (User) qb.getQuery(em).getSingleResult();
-		} catch (NoResultException ex) {
-			return null;
-		}
-	}
-
 	public User findByUsername(String username) {
 		QueryBuilder qb = new QueryBuilder(User.class, "u");
 
@@ -160,96 +121,20 @@ public class UserService extends PersistenceService<User> {
 
 	public User findByEmail(String email) {
 		try {
-			return (User) getEntityManager().createQuery("from User where email = :email").setParameter("email", email)
-					.getSingleResult();
+            return (User) getEntityManager().createQuery("from User where email = :email").setParameter("email", email).getSingleResult();
 		} catch (NoResultException ex) {
 			return null;
 		}
 	}
 
-	public User changePassword(User user, String newPassword) throws BusinessException {
-		getEntityManager().refresh(user);
-		user.setLastPasswordModification(new Date());
-		user.setPassword(Sha1Encrypt.encodePassword(newPassword));
-		super.update(user);
-		return user;
-	}
-
 	@SuppressWarnings("unchecked")
 	public List<Role> getAllRolesExcept(String rolename1, String rolename2) {
-		return getEntityManager().createQuery("from MeveoRole as r where r.name<>:name1 and r.name<>:name2")
-				.setParameter("name1", rolename1).setParameter("name2", rolename2).getResultList();
+        return getEntityManager().createQuery("from MeveoRole as r where r.name<>:name1 and r.name<>:name2").setParameter("name1", rolename1).setParameter("name2", rolename2)
+            .getResultList();
 	}
 
 	public Role getRoleByName(String name) {
-		return (Role) getEntityManager().createQuery("from MeveoRole as r where r.name=:name")
-				.setParameter("name", name).getSingleResult();
-	}
-
-	public User loginChecks(String username, String password) throws LoginException {
-		return loginChecks(username, password, false);
-	}
-
-	public User loginChecks(EntityManager em, String username, String password, boolean skipPasswordExpiracy)
-			throws UnknownUserException, PasswordExpiredException, LoginException {
-		User user = findByUsernameAndPassword(em, username, password);
-
-		// check if the user exists
-		if (user == null) {
-			throw new UnknownUserException(username);
-		}
-
-		return loginChecks(user, skipPasswordExpiracy);
-	}
-
-	public User loginChecks(String username, String password, boolean skipPasswordExpiracy) throws LoginException {
-
-		User user = findByUsernameAndPassword(username, password);
-		if (skipPasswordExpiracy) {
-			// log.debug("[UserService] Skipping expiry check asked");
-		} else {
-			// log.debug("[UserService] Checking expiry asked");
-		}
-
-		// check if the user exists
-		if (user == null) {
-			throw new UnknownUserException(username);
-		}
-
-		return loginChecks(user, skipPasswordExpiracy);
-	}
-
-	public User loginChecks(User user, boolean skipPasswordExpiracy) throws LoginException {
-
-		// Check if the user is active
-		if (!user.isActive()) {
-			log.info("The user " + user.getId() + " is not active.");
-			throw new InactiveUserException("The user " + user.getId() + " is not active.");
-		}
-
-		// Check if the user password has expired
-		String passwordExpiracy = paramBean.getProperty("password.Expiracy", "180");
-
-		if (!skipPasswordExpiracy && user.isPasswordExpired(Integer.parseInt(passwordExpiracy))) {
-			log.info("The password of user with id=" + user.getId() + " has expired.");
-			throw new PasswordExpiredException("The password of user with id=" + user.getId() + " has expired.");
-		}
-		// Check the roles
-		if (user.getRoles() == null || user.getRoles().isEmpty()) {
-			log.info("The user with id=" + user.getId() + " has no role!");
-			throw new NoRoleException("The user with id=" + user.getId() + " has no role!");
-		}
-
-		// TODO needed to overcome lazy loading issue. Remove once solved
-		for (Role role : user.getRoles()) {
-			for (org.meveo.model.security.Permission permission : role.getPermissions()) {
-				permission.getName();
-			}
-		}
-
-		// End lazy loading issue
-
-		return user;
+        return (Role) getEntityManager().createQuery("from MeveoRole as r where r.name=:name").setParameter("name", name).getSingleResult();
 	}
 
 	public User duplicate(User user) {
@@ -307,61 +192,12 @@ public class UserService extends PersistenceService<User> {
 		}
 	}
 
-	/**
-	 * check and calculate number of days before password expiration
-     *
-	 * @param user
-	 * @return number of days before password expiration
-     * @author mhammam
-	 */
-	public long checkPasswordExpirationNotification(User user) {
-
-		// Check if the user password has expired
-		String passwordExpiracy = paramBean.getProperty("password.Expiracy", "180");
-
-		// check if the system should send password expiration notification before :
-		String pwdNotifExpiracy = paramBean.getProperty("password.expiration.Notification", "7");
-
-        if (isPasswordExpirationNotification(user, Integer.parseInt(passwordExpiracy), Integer.parseInt(pwdNotifExpiracy)) == true) {
-
-            Date daysToExpiration = DateUtils.addDaysToDate(user.getLastPasswordModification(), Integer.parseInt(passwordExpiracy));
-
-            long diff = (daysToExpiration.getTime() - System.currentTimeMillis()) / 1000 / 60 / 60 / 24;
-
-	        return diff;
-        } else {
-			return -1;
-		}
-	}
-
-    /**
-     * Is the system should notify the user of the expiration of his password x day before the expiration date.
-     *
-     * @param user
-     * @param expirationDelay
-     * @param notificationDelai
-     * @return true/false
-     */
-
-    public boolean isPasswordExpirationNotification(User user, int expirationDelay, int notificationDelai) {
-		boolean result = false;
-
-        if (user.getLastPasswordModification() != null) {
-            Date startNotif = DateUtils.addDaysToDate(user.getLastPasswordModification(), (expirationDelay - notificationDelai));
-            if (System.currentTimeMillis() >= startNotif.getTime()) {
-				result = true;
-			}
-		}
-		return result;
-	}
-
 	@SuppressWarnings("unchecked")
 	public List<User> listUsersInMM(List<String> roleNames) {
 		List<User> users = null;
 
 		try {
-			users = getEntityManager().createNamedQuery("User.listUsersInMM").setParameter("roleNames", roleNames)
-					.getResultList();
+            users = getEntityManager().createNamedQuery("User.listUsersInMM").setParameter("roleNames", roleNames).getResultList();
 		} catch (Exception e) {
 			log.error("listUserByPermissionResources error ", e.getMessage());
 		}
