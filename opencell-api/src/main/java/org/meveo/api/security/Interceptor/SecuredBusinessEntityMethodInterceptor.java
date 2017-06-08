@@ -72,7 +72,7 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 //	    log.error("AKK checking secured entities currentUser is {}", currentUser);
 	    
 		// check if secured entities should be saved.
-		String secureSetting = paramBean.getProperty("secured.entities.enabled", "true");
+		String secureSetting = paramBean.getProperty("secured.entities.enabled", "false");
 		boolean secureEntitesEnabled = Boolean.parseBoolean(secureSetting);
 
 		// if not, immediately return.
