@@ -47,7 +47,6 @@ import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.parameter.CRMAccountHierarchyDtoParser;
 import org.meveo.api.security.parameter.SecureMethodParameter;
-import org.meveo.api.security.parameter.UserParser;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
@@ -75,6 +74,7 @@ import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.crm.impl.AccountModelScriptService;
 import org.meveo.service.crm.impl.BusinessAccountModelService;
@@ -168,6 +168,9 @@ public class AccountHierarchyApi extends BaseApi {
 
 	@Inject
 	private BusinessAccountModelService businessAccountModelService;
+	
+	@Inject
+	private DiscountPlanService discountPlanService;
 
 	@Inject
 	@MeveoParamBean

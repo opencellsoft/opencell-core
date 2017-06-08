@@ -156,6 +156,9 @@ public class BillingAccountApi extends AccountEntityApi {
 		billingAccount.setInvoicingThreshold(postData.getInvoicingThreshold());
 		if(!StringUtils.isBlank(postData.getDiscountPlan())){
 			DiscountPlan discountPlan = discountPlanService.findByCode(postData.getDiscountPlan());
+			if(discountPlan == null){
+				throw new EntityDoesNotExistsException(DiscountPlan.class, postData.getDiscountPlan());
+			}
 			billingAccount.setDiscountPlan(discountPlan);
 		} else {
 			billingAccount.setDiscountPlan(null);
@@ -310,6 +313,9 @@ public class BillingAccountApi extends AccountEntityApi {
 		}
 		if(!StringUtils.isBlank(postData.getDiscountPlan())){
 			DiscountPlan discountPlan = discountPlanService.findByCode(postData.getDiscountPlan());
+			if(discountPlan == null){
+				throw new EntityDoesNotExistsException(DiscountPlan.class, postData.getDiscountPlan());
+			}
 			billingAccount.setDiscountPlan(discountPlan);
 		} else if(postData.getDiscountPlan()!=null){
 			billingAccount.setDiscountPlan(null);
