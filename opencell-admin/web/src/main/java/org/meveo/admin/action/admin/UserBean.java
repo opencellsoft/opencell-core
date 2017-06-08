@@ -234,11 +234,6 @@ public class UserBean extends CustomFieldBean<User> {
                 return null;
             }
         }
-        if (!StringUtils.isBlank(password)) {
-            entity.setLastPasswordModification(new Date());
-            entity.setNewPassword(password);
-            entity.setPassword(password);
-        }
 
         if (this.getUserGroupSelectedNode() != null) {
             UserHierarchyLevel userHierarchyLevel = (UserHierarchyLevel) this.getUserGroupSelectedNode().getData();

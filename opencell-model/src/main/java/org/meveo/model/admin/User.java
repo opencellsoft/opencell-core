@@ -19,7 +19,6 @@
 package org.meveo.model.admin;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -42,8 +41,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -82,10 +79,6 @@ public class User extends EnableEntity implements ICustomFieldEntity {
     @Size(max = 50)
     private String userName;
 
-    @Column(name = "PASSWORD", length = 50)
-    @Size(max = 50)
-    private String password;
-
     @Column(name = "EMAIL", length = 100)
     @Size(max = 100)
     private String email;
@@ -104,20 +97,10 @@ public class User extends EnableEntity implements ICustomFieldEntity {
             @AttributeOverride(name = "entityClass", column = @Column(name = "ENTITY_CLASS", nullable = false, length = 255)) })
     private List<SecuredEntity> securedEntities = new ArrayList<>();
 
-    @Temporal(TemporalType.DATE)
-    @Column(name = "LAST_PASSWORD_MODIFICATION")
-    private Date lastPasswordModification;
-    
 	@Column(name = "UUID", nullable = false, updatable = false, length = 60)
 	@Size(max = 60)
 	@NotNull
 	private String uuid = UUID.randomUUID().toString();
-
-    @Transient
-    private String newPassword;
-
-    @Transient
-    private String newPasswordConfirmation;
 
     @Transient
     private Map<Class<?>, Set<SecuredEntity>> securedEntitiesMap;
@@ -141,33 +124,6 @@ public class User extends EnableEntity implements ICustomFieldEntity {
         this.userName = userName;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Date getLastPasswordModification() {
-        return lastPasswordModification;
-    }
-
-    public void setLastPasswordModification(Date lastPasswordModification) {
-        this.lastPasswordModification = lastPasswordModification;
-    }
-
-    public boolean isPasswordExpired(int expiracyInDays) {
-        boolean result = true;
-
-        if (lastPasswordModification != null) {
-            long diffMilliseconds = System.currentTimeMillis() - lastPasswordModification.getTime();
-            result = (expiracyInDays - diffMilliseconds / (24 * 3600 * 1000L)) < 0;
-        }
-
-        return result;
-    }
-
     public Name getName() {
         return name;
     }
@@ -175,23 +131,7 @@ public class User extends EnableEntity implements ICustomFieldEntity {
     public void setName(Name name) {
         this.name = name;
     }
-
-    public String getNewPassword() {
-        return newPassword;
-    }
-
-    public void setNewPassword(String newPassword) {
-        this.newPassword = newPassword;
-    }
-
-    public String getNewPasswordConfirmation() {
-        return newPasswordConfirmation;
-    }
-
-    public void setNewPasswordConfirmation(String newPasswordConfirmation) {
-        this.newPasswordConfirmation = newPasswordConfirmation;
-    }
-
+ 
     public String getRolesLabel() {
         StringBuffer sb = new StringBuffer();
         if (roles != null)

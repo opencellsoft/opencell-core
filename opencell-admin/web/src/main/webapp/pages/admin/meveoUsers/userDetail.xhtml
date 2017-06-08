@@ -28,20 +28,6 @@
 						<hftl:formField label="#{messages['name.firstName']}" field="name" childField="firstName" />
 						<hftl:formField label="#{messages['name.lastName']}" field="name" childField="lastName" />
 					</p:outputPanel>
-					<!-- 					<p:commandLink value="#{messages['menutop.changePassword']}" action="#{userBean.showHidePassword}" update="passwordPanel" -->
-					<!-- 						rendered="#{!(userBean.entity.id==null) and userBean.edit and userBean.canUserUpdateEntity()}" partialSubmit="true" process="@this" style="text-align:right;" /> -->
-
-
-					<!-- 					<p:outputPanel id="passwordPanel" styleClass="clearLeft"> -->
-					<!-- 						<h:panelGroup rendered="#{(userBean.show or userBean.entity.id==null) and userBean.edit}"> -->
-					<!-- 							<hftl:decorateFormField fieldId="password" label="#{messages['user.password']}"> -->
-					<!-- 								<p:password autocomplete="off" id="password" feedback="true" value="#{userBean.password}" required="true" match="repeatedPassword" /> -->
-					<!-- 							</hftl:decorateFormField> -->
-					<!-- 							<hftl:decorateFormField id="repeatedPassword" fieldId="repeatedPassword" label="#{messages['user.repeatedPassword']}"> -->
-					<!-- 								<p:password id="repeatedPassword" value="#{userBean.repeatedPassword}" autocomplete="off" /> -->
-					<!-- 							</hftl:decorateFormField> -->
-					<!-- 						</h:panelGroup> -->
-					<!-- 					</p:outputPanel> -->
 
 					<hftl:decorateFormField fieldId=":userFormId:tabView:userGroupLevel" label="#{messages['user.userGroupLevel']}" newLine="true">
 						<p:tree id="userGroupLevel" value="#{userBean.userGroupRootNode}" var="groupLevel" propagateSelectionUp="false" propagateSelectionDown="false" selectionMode="single"

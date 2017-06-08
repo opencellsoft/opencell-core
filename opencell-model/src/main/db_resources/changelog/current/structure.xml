@@ -4411,4 +4411,8 @@
             <column name="valid_to" type="DATETIME"/>
         </addColumn>
     </changeSet>
+    <changeSet id="#2639_20170607" author="AndriusKarpavicius">
+        <dropColumn tableName="adm_user" columnName="password"/>
+        <dropColumn tableName="adm_user" columnName="last_password_modification"/>
+    </changeSet>
 </databaseChangeLog> 

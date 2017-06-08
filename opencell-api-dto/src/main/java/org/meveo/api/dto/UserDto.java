@@ -44,7 +44,8 @@ public class UserDto extends BaseDto {
 	@XmlElement(required = true)
 	private String username;
 
-	@XmlElement(required = true)
+	@Deprecated
+	@XmlElement()
 	private String password;
 
 	@XmlElement(required = true)
@@ -132,14 +133,6 @@ public class UserDto extends BaseDto {
 
 	public void setUsername(String username) {
 		this.username = username;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
 	}
 
 	public List<String> getRoles() {
