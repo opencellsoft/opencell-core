@@ -7926,7 +7926,7 @@
             <column name="trading_country_id" />
             <column name="trading_currency_id" valueNumeric="-1" />
             <column name="trading_language_id" valueNumeric="-1" />
-            <column name="UUID" value="MAIN_SELLER"/>
+            <column name="uuid" value="MAIN_SELLER"/>
         </insert>
         <insert tableName="crm_seller">
             <column name="id" valueNumeric="-2" />
@@ -7947,7 +7947,7 @@
             <column name="trading_country_id" />
             <column name="trading_currency_id" valueNumeric="-1" />
             <column name="trading_language_id" valueNumeric="-1" />
-            <column name="UUID" value="SELLER_US"/>
+            <column name="uuid" value="SELLER_US"/>
         </insert>
         <insert tableName="crm_seller">
             <column name="id" valueNumeric="-3" />
@@ -7968,7 +7968,7 @@
             <column name="trading_country_id" />
             <column name="trading_currency_id" valueNumeric="-2" />
             <column name="trading_language_id" valueNumeric="-2" />
-            <column name="UUID" value="SELLER_FR"/>
+            <column name="uuid" value="SELLER_FR"/>
         </insert>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-data-timerDEMO">
@@ -8014,7 +8014,7 @@
             <column name="provider_id" valueNumeric="1" />
             <column name="creator_id" valueNumeric="-1" />
             <column name="timerentity_id" valueNumeric="-1" />
-            <column name="UUID" value="Rerate_Job"/>
+            <column name="uuid" value="Rerate_Job"/>
         </insert>
 
         <insert tableName="meveo_job_instance">
@@ -8028,7 +8028,7 @@
             <column name="provider_id" valueNumeric="1" />
             <column name="creator_id" valueNumeric="-1" />
             <column name="timerentity_id" valueNumeric="-1" />
-            <column name="UUID" value="Cust_Job"/>
+            <column name="uuid" value="Cust_Job"/>
         </insert>
         <insert tableName="meveo_job_instance">
             <column name="id" valueNumeric="-3" />
@@ -8041,7 +8041,7 @@
             <column name="provider_id" valueNumeric="1" />
             <column name="creator_id" valueNumeric="-1" />
             <column name="timerentity_id" valueNumeric="-1" />
-            <column name="UUID" value="M_Job"/>
+            <column name="uuid" value="M_Job"/>
         </insert>
         <insert tableName="meveo_job_instance">
             <column name="id" valueNumeric="-4" />
@@ -8054,7 +8054,7 @@
             <column name="provider_id" valueNumeric="1" />
             <column name="creator_id" valueNumeric="-1" />
             <column name="timerentity_id" valueNumeric="-1" />
-            <column name="UUID" value="U_Job"/>
+            <column name="uuid" value="U_Job"/>
         </insert>
         <insert tableName="meveo_job_instance">
             <column name="id" valueNumeric="-5" />
@@ -8067,7 +8067,7 @@
             <column name="provider_id" valueNumeric="1" />
             <column name="creator_id" valueNumeric="-1" />
             <column name="timerentity_id" valueNumeric="-1" />
-            <column name="UUID" value="RR_Job"/>
+            <column name="uuid" value="RR_Job"/>
         </insert>
         <insert tableName="meveo_job_instance">
             <column name="id" valueNumeric="-6" />
@@ -8080,7 +8080,7 @@
             <column name="provider_id" valueNumeric="1" />
             <column name="creator_id" valueNumeric="-1" />
             <column name="timerentity_id" valueNumeric="-1" />
-            <column name="UUID" value="RT_Job"/>
+            <column name="uuid" value="RT_Job"/>
         </insert>
         <insert tableName="meveo_job_instance">
             <column name="id" valueNumeric="-7" />
@@ -8093,7 +8093,7 @@
             <column name="provider_id" valueNumeric="1" />
             <column name="creator_id" valueNumeric="-1" />
             <column name="timerentity_id" valueNumeric="-1" />
-            <column name="UUID" value="XML_Job"/>
+            <column name="uuid" value="XML_Job"/>
         </insert>
         <insert tableName="meveo_job_instance">
             <column name="id" valueNumeric="-8" />
@@ -8106,7 +8106,7 @@
             <column name="provider_id" valueNumeric="1" />
             <column name="creator_id" valueNumeric="-1" />
             <column name="timerentity_id" valueNumeric="-1" />
-            <column name="UUID" value="PDF_Job"/>
+            <column name="uuid" value="PDF_Job"/>
         </insert>
         <insert tableName="meveo_job_instance">
             <column name="id" valueNumeric="-9" />
@@ -8119,7 +8119,7 @@
             <column name="provider_id" valueNumeric="1" />
             <column name="creator_id" valueNumeric="-1" />
             <column name="timerentity_id" valueNumeric="-1" />
-            <column name="UUID" value="Acco_Job"/>
+            <column name="uuid" value="Acco_Job"/>
         </insert>
         <insert tableName="meveo_job_instance">
             <column name="id" valueNumeric="-10" />
@@ -8132,7 +8132,7 @@
             <column name="provider_id" valueNumeric="1" />
             <column name="creator_id" valueNumeric="-1" />
             <column name="timerentity_id" valueNumeric="-1" />
-            <column name="UUID" value="Subs_Job"/>
+            <column name="uuid" value="Subs_Job"/>
         </insert>
         <insert tableName="meveo_job_instance">
             <column name="id" valueNumeric="-11" />
@@ -8145,7 +8145,7 @@
             <column name="provider_id" valueNumeric="1" />
             <column name="creator_id" valueNumeric="-1" />
             <column name="timerentity_id" valueNumeric="-1" />
-            <column name="UUID" value="Inv_Job"/>
+            <column name="uuid" value="Inv_Job"/>
         </insert>
         <insert tableName="meveo_job_instance">
 			<column name="id" valueNumeric="-12" />
@@ -8158,7 +8158,7 @@
 			<column name="provider_id" valueNumeric="1" />
 			<column name="creator_id" valueNumeric="-1" />
 			<column name="timerentity_id" valueNumeric="-2" />
-			<column name="UUID" value="DWH_Job_MRR" />
+			<column name="uuid" value="DWH_Job_MRR" />
 			<column name="parametres" value="MRR"/>
 		</insert>
 		<insert tableName="meveo_job_instance">
@@ -8172,7 +8172,7 @@
 			<column name="provider_id" valueNumeric="1" />
 			<column name="creator_id" valueNumeric="-1" />
 			<column name="timerentity_id" valueNumeric="-2" />
-			<column name="UUID" value="DWH_Job_CHURN" />
+			<column name="uuid" value="DWH_Job_CHURN" />
 			<column name="parametres" value="CHURN"/>
 		</insert>
     </changeSet>
@@ -8200,7 +8200,7 @@
 			<column name="creator_id" valueNumeric="-1" />
 			<column name="sequence_size" valueNumeric="9" />
 			<column name="occ_template_id" value="-25" />	
-			<column name="MATCHING_AUTO" valueNumeric="0" />		
+			<column name="matching_auto" valueNumeric="0" />		
 		</insert>
 		<insert tableName="billing_invoice_type">
 			<column name="id" valueNumeric="-2" />
@@ -8213,7 +8213,7 @@
 			<column name="creator_id" valueNumeric="-1" />
 			<column name="sequence_size" valueNumeric="9" />
 			<column name="occ_template_id" value="-11" />			
-			<column name="MATCHING_AUTO" valueNumeric="0" />
+			<column name="matching_auto" valueNumeric="0" />
 		</insert>		
         <insert tableName="billing_invoice_type">
             <column name="id" valueNumeric="-3" />
@@ -8226,7 +8226,7 @@
             <column name="creator_id" valueNumeric="-1" />
             <column name="sequence_size" valueNumeric="9" />
             <column name="occ_template_id" value="-25" />    
-            <column name="MATCHING_AUTO" valueNumeric="0" />        
+            <column name="matching_auto" valueNumeric="0" />        
         </insert>
 		<insert tableName="billing_invoice_type_applies_to">
 			<column name="invoice_type_id" value="-1" />			

@@ -39,7 +39,7 @@ public class AuditLog extends BaseEntity {
 	@Column(name = "ENTITY")
 	private String entity;
 
-	@Column(name = "PARAMETERS", length = 200)
+	@Column(name = "PARAMETERS", length = 2000, columnDefinition="TEXT")
 	private String parameters;
 
 	public Date getCreated() {
