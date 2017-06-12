@@ -2010,7 +2010,7 @@
             <column name="do_not_trigger_invoicing" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
-            <column name="offer_code" type="varchar(35)" />
+            <column name="offer_code" type="varchar(255)" />
             <column name="parameter_1" type="varchar(255)" />
             <column name="parameter_2" type="varchar(255)" />
             <column name="parameter_3" type="varchar(255)" />
@@ -2390,7 +2390,7 @@
             <column name="amount_with_tax" type="numeric(23, 12)" />
             <column name="amount_without_tax" type="numeric(23, 12)" />
             <column name="end_date" type="datetime" />
-            <column name="offer_code" type="varchar(35)" />
+            <column name="offer_code" type="varchar(255)" />
             <column name="operation_date" type="datetime" />
             <column name="parameter_1" type="varchar(255)" />
             <column name="parameter_2" type="varchar(255)" />

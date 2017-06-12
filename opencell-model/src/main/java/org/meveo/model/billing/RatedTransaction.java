@@ -207,8 +207,8 @@ public class RatedTransaction extends BaseEntity {
 	@JoinColumn(name = "PRICEPLAN_ID")
 	private PricePlanMatrix priceplan;
 
-	@Column(name = "OFFER_CODE", length = 35)
-	@Size(max = 35, min = 1)
+	@Column(name = "OFFER_CODE", length = 255)
+	@Size(max = 255, min = 1)
 	protected String offerCode;
 
 	@ManyToOne(fetch = FetchType.LAZY)

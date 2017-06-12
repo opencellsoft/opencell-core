@@ -196,8 +196,8 @@ public class WalletOperation extends BusinessEntity {
 	@Column(name = "SUBSCRIPTION_DATE")
 	private Date subscriptionDate;
 
-	@Column(name = "OFFER_CODE", length = 35)
-	@Size(max = 35, min = 1)
+	@Column(name = "OFFER_CODE", length = 255)
+	@Size(max = 255, min = 1)
 	protected String offerCode;
 
 	@Enumerated(EnumType.STRING)

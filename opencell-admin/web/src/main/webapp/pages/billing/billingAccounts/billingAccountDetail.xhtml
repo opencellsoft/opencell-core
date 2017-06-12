@@ -289,10 +289,9 @@
 																	pattern="([^.@]+)(\.[^.@]+)*@([^.@]+\.)+([^.@]+)"
 																	message="#{messages['validator.email.invalid']}" />
 															</p:inputText>
-<!-- 															<h:outputText rendered="#{!billingAccountBean.edit}" -->
-<!-- 																id="emailText" -->
-<!-- 																value="#{billingAccountBean.entity.email}" -->
-<!-- 																required="#{billingAccountBean.entity.electronicBilling}" /> -->
+ 															<h:outputText rendered="#{!billingAccountBean.edit}"
+ 																id="emailText"
+ 																value="#{billingAccountBean.entity.email}" />
                                                             </hftl:decorateFormField>
 														</h:panelGroup>
 													<h:panelGroup id="bankCoordinatesPanel" >

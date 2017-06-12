@@ -25,6 +25,7 @@
         dateTimePattern - date time pattern for period date display
         messagesId - an ID of messages component for validation messages
         cft - custom field template
+        cfValueHolder - contains the set of custom field values for a given entity uuid
         
 -->
 
@@ -41,17 +42,19 @@
 			</c:if>
 		</c:if>
 		<c:if test="#{cfFieldOrFg.type == 'fieldGroup'}">
-			<p:fieldset legend="#{cfFieldOrFg.data}">
-				<c:forEach items="${cfFieldOrFg.children}" var="cfField">
-					<c:set var="cft" value="#{cfField.data}" />
-					<c:if
-						test="#{((not cft.disabled) or (cft.disabled and not cfValueHolder.isAnyFieldEmptyForGui(cft))) and (!newEntity or (newEntity and !cft.hideOnNew)) and exp:evaluateToBoolean(cft.applicableOnEl,'entity',entity)}">
-						<hf:customField entity="#{entity}" cft="#{cft}" edit="#{edit}"
-							messagesId="#{messagesId}" datePattern="#{datePattern}"
-							dateTimePattern="#{dateTimePattern}" prefix="#{prefix}" />
-					</c:if>
-				</c:forEach>
-			</p:fieldset>
+			<c:if test="${cfFieldOrFg.hasVisibleCustomFields(entity, cfValueHolder)}">
+				<p:fieldset legend="#{cfFieldOrFg.data}">
+					<c:forEach items="${cfFieldOrFg.children}" var="cfField">
+						<c:set var="cft" value="#{cfField.data}" />
+						<c:if
+							test="#{((not cft.disabled) or (cft.disabled and not cfValueHolder.isAnyFieldEmptyForGui(cft))) and (!newEntity or (newEntity and !cft.hideOnNew)) and exp:evaluateToBoolean(cft.applicableOnEl,'entity',entity)}">
+							<hf:customField entity="#{entity}" cft="#{cft}" edit="#{edit}"
+								messagesId="#{messagesId}" datePattern="#{datePattern}"
+								dateTimePattern="#{dateTimePattern}" prefix="#{prefix}" />
+						</c:if>
+					</c:forEach>
+				</p:fieldset>
+			</c:if>
 		</c:if>
 	</c:forEach>
 
