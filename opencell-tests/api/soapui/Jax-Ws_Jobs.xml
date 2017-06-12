@@ -2949,9 +2949,7 @@ File Format=SEPA</con:description>
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateInvoiceType>
-         <invoiceType>
-            <code>${#TestSuite#ticket}_Invoice_TEST-Type</code>
-            <description>Invoice Test Type</description>
+         <invoiceType code="${#TestSuite#ticket}_Invoice_TEST-Type" description="Invoice Test Type">
             <occTemplateCode>FA_FACT</occTemplateCode>            
             <sequenceDto>
                <prefixEL>Fact_</prefixEL>

@@ -32929,8 +32929,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
 <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateCalendar>
-         <calendar code="${#Project#entityPrefix}_${#TestSuite#index}_CALENDAR_WEEK">
-             <description>WEEK Calendar</description>
+         <calendar code="${#Project#entityPrefix}_${#TestSuite#index}_CALENDAR_WEEK" description="WEEK Calendar">
              <calendarType>YEARLY</calendarType>
              <days day="1" month="APRIL"/>
              <days day="8" month="APRIL"/>
@@ -33393,9 +33392,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateInvoiceType>\r
-         <invoiceType>\r
-            <code>${#Project#entityPrefix}_${#TestSuite#index}_IT1</code>\r
-            <description>${#Project#entityPrefix}_${#TestSuite#index}_IT-desc</description>\r
+         <invoiceType code="${#Project#entityPrefix}_${#TestSuite#index}_IT1"\r description="${#Project#entityPrefix}_${#TestSuite#index}_IT-desc">
             <occTemplateCode>${#Project#entityPrefix}_${#TestSuite#index}_OCC</occTemplateCode>\r
             <sequenceDto>\r
                <prefixEL>pel</prefixEL>\r

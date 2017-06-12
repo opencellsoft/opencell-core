@@ -110,7 +110,7 @@ public class UserService extends PersistenceService<User> {
 	public User findByUsername(String username) {
 		QueryBuilder qb = new QueryBuilder(User.class, "u");
 
-		qb.addCriterion("userName", "=", username, false);
+		qb.addCriterion("userName", "=", username, true);
 
 		try {
 			return (User) qb.getQuery(getEntityManager()).getSingleResult();

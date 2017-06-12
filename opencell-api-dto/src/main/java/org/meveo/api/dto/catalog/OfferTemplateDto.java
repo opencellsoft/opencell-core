@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.commons.utils.StringUtils;
@@ -22,10 +22,9 @@ public class OfferTemplateDto extends ProductOfferingDto {
 
     private static final long serialVersionUID = 9156372453581362595L;
 
-    @XmlAttribute()
+    @XmlTransient
+    // @XmlAttribute()
     private Long id;
-	@XmlElement(required = true)
-    private String name;
 
     private String longDescription;
 
@@ -43,24 +42,22 @@ public class OfferTemplateDto extends ProductOfferingDto {
     private List<OfferProductTemplateDto> offerProductTemplates;
 
     public OfferTemplateDto() {
-    
+
     }
-    
+
     /**
-	 * @return the id
+     * @return the id
      */
-	public Long getId() {
-		return id;
-	}
-
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(Long id) {
-		this.id = id;
+    public Long getId() {
+        return id;
     }
 
-
+    /**
+     * @param id the id to set
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     /**
      * Constructor
@@ -71,6 +68,12 @@ public class OfferTemplateDto extends ProductOfferingDto {
      */
     public OfferTemplateDto(OfferTemplate offerTemplate, CustomFieldsDto customFieldsDto, boolean asLink) {
         super(offerTemplate, customFieldsDto, asLink);
+        id = offerTemplate.getId();
+        setLongDescription(offerTemplate.getLongDescription());
+
+        if (offerTemplate.getBusinessOfferModel() != null) {
+            setBomCode(offerTemplate.getBusinessOfferModel().getCode());
+        }
     }
 
     public boolean isDisabled() {
@@ -83,8 +86,9 @@ public class OfferTemplateDto extends ProductOfferingDto {
 
     @Override
     public String toString() {
-        return "OfferTemplateDto [code=" + getCode() + ", description=" + getDescription() + ", longDescription=" + longDescription + ", disabled=" + disabled + ", bomCode=" + bomCode
-                + ", offerTemplateCategoryCode=" + offerTemplateCategoryCode + ", offerServiceTemplates=" + offerServiceTemplates + ", customFields=" + customFields + ", validFrom="+validFrom+", validTo="+validTo+"]";
+        return "OfferTemplateDto [code=" + getCode() + ", description=" + getDescription() + ", longDescription=" + longDescription + ", disabled=" + disabled + ", bomCode="
+                + bomCode + ", offerTemplateCategoryCode=" + offerTemplateCategoryCode + ", offerServiceTemplates=" + offerServiceTemplates + ", customFields=" + customFields
+                + ", validFrom=" + validFrom + ", validTo=" + validTo + "]";
     }
 
     public CustomFieldsDto getCustomFields() {

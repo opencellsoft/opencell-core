@@ -30,6 +30,7 @@ public class ProductOfferingDto extends BusinessDto {
     @XmlAttribute()
     protected Date validTo;
 
+    @XmlElement(required = true)
     protected String name;
 
 	@XmlElementWrapper(name = "offerTemplateCategories")
@@ -66,6 +67,7 @@ public class ProductOfferingDto extends BusinessDto {
      */
     public ProductOfferingDto(ProductOffering productOffering, CustomFieldsDto customFieldsDto, boolean asLink) {
         super(productOffering);
+        
         if (productOffering.getValidityRaw() != null) {
             this.setValidFrom(productOffering.getValidityRaw().getFrom());
             this.setValidTo(productOffering.getValidityRaw().getTo());
@@ -79,6 +81,7 @@ public class ProductOfferingDto extends BusinessDto {
         this.setName(productOffering.getName());
         this.setLifeCycleStatus(productOffering.getLifeCycleStatus());
         this.imagePath = productOffering.getImagePath();
+        this.disabled = productOffering.isDisabled();
 
         List<OfferTemplateCategory> offerTemplateCategories = productOffering.getOfferTemplateCategories();
 		if (offerTemplateCategories != null && !offerTemplateCategories.isEmpty()) {
