@@ -14,6 +14,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.TradingCountry;
@@ -23,6 +24,7 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.TradingCountryService;
@@ -76,8 +78,6 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
 
         handleMissingParametersAndValidate(postData);
 
-        
-
         // search for eventCode
         if (chargeTemplateServiceAll.findByCode(postData.getEventCode()) == null) {
             throw new EntityDoesNotExistsException(ChargeTemplate.class, postData.getEventCode());
@@ -113,12 +113,23 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
                 throw new EntityDoesNotExistsException(TradingCurrency.class, postData.getCurrency());
             }
             pricePlanMatrix.setTradingCurrency(tradingCurrency);
-        }
-
-        if (!StringUtils.isBlank(postData.getOfferTemplate())) {
+        }       
+        
+        if (postData.getOfferTemplateVersion() != null && !StringUtils.isBlank(postData.getOfferTemplateVersion().getCode())) {
+            OfferTemplate offerTemplate = offerTemplateService.findByCodeBestValidityMatch(postData.getOfferTemplateVersion().getCode(),
+                postData.getOfferTemplateVersion().getValidFrom(), postData.getOfferTemplateVersion().getValidTo());
+            if (offerTemplate == null) {
+                String dateFormat = ParamBean.getInstance().getDateTimeFormat();
+                throw new EntityDoesNotExistsException(OfferTemplate.class,
+                    postData.getOfferTemplateVersion().getCode() + " / " + DateUtils.formatDateWithPattern(postData.getOfferTemplateVersion().getValidFrom(), dateFormat) + " / "
+                            + DateUtils.formatDateWithPattern(postData.getOfferTemplateVersion().getValidTo(), dateFormat));
+            }
+            pricePlanMatrix.setOfferTemplate(offerTemplate);
+        
+        } else if (!StringUtils.isBlank(postData.getOfferTemplate())){
             OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getOfferTemplate());
             if (offerTemplate == null) {
-                throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getOfferTemplate());
+                throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getOfferTemplateVersion().getCode() + " / Current date");
             }
             pricePlanMatrix.setOfferTemplate(offerTemplate);
         }
@@ -187,8 +198,6 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
 
         handleMissingParametersAndValidate(postData);
 
-        
-
         // search for eventCode
         if (chargeTemplateServiceAll.findByCode(postData.getEventCode()) == null) {
             throw new EntityDoesNotExistsException(ChargeTemplate.class, postData.getEventCode());
@@ -225,10 +234,21 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
             pricePlanMatrix.setTradingCurrency(tradingCurrency);
         }
 
-        if (!StringUtils.isBlank(postData.getOfferTemplate())) {
+        if (postData.getOfferTemplateVersion() != null && !StringUtils.isBlank(postData.getOfferTemplateVersion().getCode())) {
+            OfferTemplate offerTemplate = offerTemplateService.findByCodeBestValidityMatch(postData.getOfferTemplateVersion().getCode(), postData.getOfferTemplateVersion().getValidFrom(),
+                postData.getOfferTemplateVersion().getValidTo());
+            if (offerTemplate == null) {
+                String dateFormat = ParamBean.getInstance().getDateTimeFormat();
+                throw new EntityDoesNotExistsException(OfferTemplate.class,
+                    postData.getOfferTemplateVersion().getCode() + " / " + DateUtils.formatDateWithPattern(postData.getOfferTemplateVersion().getValidFrom(), dateFormat) + " / "
+                            + DateUtils.formatDateWithPattern(postData.getOfferTemplateVersion().getValidTo(), dateFormat));
+            }            
+            pricePlanMatrix.setOfferTemplate(offerTemplate);
+
+        } else if (!StringUtils.isBlank(postData.getOfferTemplate())) {
             OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getOfferTemplate());
             if (offerTemplate == null) {
-                throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getOfferTemplate());
+                throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getOfferTemplateVersion().getCode() + " / Current date");
             }
             pricePlanMatrix.setOfferTemplate(offerTemplate);
         }
@@ -301,18 +321,6 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         }
 
         return new PricePlanMatrixDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsDTO(pricePlanMatrix));
-    }
-
-    /* (non-Javadoc)
-     * @see org.meveo.api.ApiService#findIgnoreNotFound(java.lang.String)
-     */
-    @Override
-    public PricePlanMatrixDto findIgnoreNotFound(String code) throws MissingParameterException, InvalidParameterException, MeveoApiException {
-        try {
-            return find(code);
-        } catch (EntityDoesNotExistsException e) {
-            return null;
-        }
     }
 
     public void remove(String pricePlanCode) throws MeveoApiException, BusinessException {

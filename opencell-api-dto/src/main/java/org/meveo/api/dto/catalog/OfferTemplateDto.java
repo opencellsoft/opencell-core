@@ -1,6 +1,5 @@
 package org.meveo.api.dto.catalog;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -8,36 +7,32 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAttribute;
 
-import org.meveo.api.dto.BusinessDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.catalog.OfferTemplate;
 
 /**
  * @author Edward P. Legaspi
  **/
 @XmlRootElement(name = "OfferTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OfferTemplateDto extends BusinessDto {
+public class OfferTemplateDto extends ProductOfferingDto {
 
     private static final long serialVersionUID = 9156372453581362595L;
 
+    @XmlAttribute()
+    private Long id;
 	@XmlElement(required = true)
     private String name;
 
     private String longDescription;
 
-    private boolean disabled = false;
     private String bomCode;
-    private Date validFrom;
-    private Date validTo;
 
     @Deprecated
     private String offerTemplateCategoryCode;
-
-    @XmlElementWrapper(name = "offerTemplateCategories")
-    @XmlElement(name = "offerTemplateCategory")
-    private List<String> offerTemplateCategories;
 
     @XmlElementWrapper(name = "offerServiceTemplates")
     @XmlElement(name = "offerServiceTemplate")
@@ -47,16 +42,35 @@ public class OfferTemplateDto extends BusinessDto {
     @XmlElement(name = "offerProductTemplate")
     private List<OfferProductTemplateDto> offerProductTemplates;
 
-    private CustomFieldsDto customFields = new CustomFieldsDto();
+    public OfferTemplateDto() {
+    
+    }
     
     /**
-     * This field is populated on find and list. Use to pull the image from a servlet later on.
+	 * @return the id
      */
-    private String imagePath;
-    private String imageBase64;
+	public Long getId() {
+		return id;
+	}
 
-    public OfferTemplateDto() {
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Long id) {
+		this.id = id;
+    }
 
+
+
+    /**
+     * Constructor
+     * 
+     * @param offerTemplate Offer template entity
+     * @param customFieldsDto Custom fields DTO
+     * @param asLink Convert to DTO with minimal information only - code and validity dates
+     */
+    public OfferTemplateDto(OfferTemplate offerTemplate, CustomFieldsDto customFieldsDto, boolean asLink) {
+        super(offerTemplate, customFieldsDto, asLink);
     }
 
     public boolean isDisabled() {
@@ -125,55 +139,4 @@ public class OfferTemplateDto extends BusinessDto {
     public void setLongDescription(String longDescription) {
         this.longDescription = longDescription;
     }
-
-    public List<String> getOfferTemplateCategories() {
-        return offerTemplateCategories;
-    }
-
-    public void setOfferTemplateCategories(List<String> offerTemplateCategories) {
-        this.offerTemplateCategories = offerTemplateCategories;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-	public String getImagePath() {
-		return imagePath;
-	}
-
-	public void setImagePath(String imagePath) {
-		this.imagePath = imagePath;
-	}
-
-	public String getImageBase64() {
-		return imageBase64;
-	}
-
-	public void setImageBase64(String imageBase64) {
-		this.imageBase64 = imageBase64;
-	}
-
-	public Date getValidFrom() {
-		return validFrom;
-	}
-
-	public void setValidFrom(Date validFrom) {
-		this.validFrom = validFrom;
-	}
-
-	public Date getValidTo() {
-		return validTo;
-	}
-
-	public void setValidTo(Date validTo) {
-		this.validTo = validTo;
-	}
-	
-	
-
 }

@@ -41,7 +41,7 @@
                 <hftl:formField label="#{messages['offerTemplate.name']}" required="true" field="name" rendered="#{mainBackingBean.edit}" actionListenerBean="#{mainBackingBean}"
                     actionListenerMethod="onNameChange" listenerUpdate="code" />
 
-                <hftl:formField id="code" label="#{messages['offerTemplate.code']}" field="code" required="true" validateUnique="true" />
+                <hftl:formField id="code" label="#{messages['offerTemplate.code']}" field="code" required="true" />
                 <hftl:formField label="#{messages['productTemplate.family']}" field="businessProductModel" id="businessProductModel" valueLabelField="code"
                     listElements="#{businessProductModelBean.listAll()}" rendered="#{!mainBackingBean.edit and mainBackingBean.entity.businessProductModel != null}" />
                 <hftl:formLanguageFields entity="#{mainBackingBean.entity}" backingBean="#{mainBackingBean}" multiLang="true" />
@@ -51,12 +51,14 @@
                 <h:outputText value="#{mainBackingBean.entity.auditable.creator}"></h:outputText>
             </p:panel>
             <h:panelGrid columns="1" styleClass="ui-panelgrid-blank Wid100 Responsive100">
-                <hftl:formField label="#{messages['commons.validFrom']}" field="validFrom" time="true" displayOneLine="true" labelWidth="40" />
-                <hftl:formField label="#{messages['commons.validTo']}" field="validTo" time="true" displayOneLine="true" labelWidth="40" />
-                <hftl:formField label="#{messages['commons.status']}" field="lifeCycleStatus" displayOneLine="true" labelWidth="40" />
-            </h:panelGrid>			
+               <hftl:formField label="#{messages['commons.valid']}" field="validity" time="true"/>       
+               <hftl:formField label="#{messages['commons.status']}" field="lifeCycleStatus" displayOneLine="true" labelWidth="40" />         
+            </h:panelGrid>
         </p:panel>
-
+        
+        <o:validateMultiple components="#{idPath}:code #{idPath}:validity_date #{idPath}:validity_date_toRange"
+			validator="#{backingBean.validateUniqueVersion}" message="#{messages[mode eq 'BUNDLE'?'bundleTemplate.version.exists.short':'productTemplate.version.exists.short']}" />
+ 
         <h:panelGrid columns="1" styleClass="ui-panelgrid-blank Wid100">
             <hftl:formField id="offerTemplateCategories" label="#{messages['offerTemplate.category']}" field="offerTemplateCategories" listType="selectCheckbox" valueLabelField="descriptionOrCode"
                 listBean="#{offerTemplateCategoryListBean}" componentWidth="100"  />
@@ -68,18 +70,7 @@
 
     </p:panelGrid>
 
-	<p:panel rendered="#{!mainBackingBean.entity.transient}">
-		<f:facet name="header">#{messages['productTemplate.productCharges']}</f:facet>
-		<hftl:dataList backingBean="#{productTemplateBean}"
-			dataModel="#{mainBackingBean.entity.productChargeTemplates}">
-			<hftl:column label="#{messages['BusinessEntity.code']}" field="code"
-				editView="productChargeTemplateDetail" valueIdField="id"
-				backView="productTemplates" />
-			<hftl:column field="description"
-				label="#{messages['BusinessEntity.description']}" />
-		</hftl:dataList>
-	</p:panel>
-
+	
 	<!-- Product Templates -->
     <c:if test="#{mode eq 'BUNDLE'}">
         <p:panel id="bundleProductPanel" header="#{messages['menu.productTemplates']}">
@@ -110,7 +101,17 @@
                     </p:column>
                     <p:column headerText="#{messages['BusinessEntity.description']}">
                         <h:outputText value="#{prod.productTemplate.description}" />
+                    </p:column>                      
+                    <p:column headerText="#{messages['commons.validFrom']}">
+                        <h:outputText value="#{prod.productTemplate.validityRaw.from}">
+                            <f:converter converterId="dateTimeConverter"></f:converter>
+                        </h:outputText>
                     </p:column>
+                    <p:column headerText="#{messages['commons.validTo']}">
+                        <h:outputText value="#{prod.productTemplate.validityRaw.to}">
+                            <f:converter converterId="dateTimeConverter"></f:converter>
+                        </h:outputText>
+                    </p:column>         
                     <p:column headerText="#{messages['commons.actions']}" rendered="#{mainBackingBean.edit}">
                         <h:panelGroup layout="block" styleClass="form-panel-actions">
                             <p:commandButton value="#{messages['bundleTemplate.removeProduct']}" action="#{mainBackingBean.removeProductTemplateFromBundle(prod)}"
@@ -123,25 +124,8 @@
         </p:panel>
     </c:if>
 
-    <p:panel id="customFieldsWrappPanel" styleClass="ui-panel-blank">
-        <f:facet name="header">
-            <h:outputText value="#{messages['productTemplate.attributes']}" styleClass="SubHeader" />
-            <p:commandLink action="#{customEntityTemplateBean.initCustomization(mainBackingBean.entity.class.name)}" process="@this customFieldsWrappPanel"
-                oncomplete="PF('entityCustomizationDialog').show()" update="entityCustomizationDialogPanel" styleClass="fa fa-edit no-text-decoration" style="margin-left: 10px;"
-                rendered="#{mainBackingBean.edit}" />
-        </f:facet>
-
-        <!-- custom fields -->
-        <c:if test="#{customFieldDataEntryBean.getGroupedFieldTemplates(mainBackingBean.entity).children.size() == 1}">
-            <hftl:customFields backingBean="#{mainBackingBean}" messagesId=":formId:messages" defaultTabLabel="#{messages['commons.parameters']}" />
-        </c:if>
-        <c:if test="#{customFieldDataEntryBean.getGroupedFieldTemplates(mainBackingBean.entity).children.size() > 1}">
-            <p:tabView>
-                <hftl:customFields backingBean="#{mainBackingBean}" messagesId=":formId:messages" defaultTabLabel="#{messages['commons.parameters']}" />
-            </p:tabView>
-        </c:if>
-    </p:panel>
-
+<p:panel id="customFieldsWrappPanel" styleClass="ui-panel-blank">
+ </p:panel>
 </ui:composition>
 
 </html>

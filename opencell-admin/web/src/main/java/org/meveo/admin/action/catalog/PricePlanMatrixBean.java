@@ -291,10 +291,10 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
 			if (entity != null && entity.getId() != null) {
 				try {
 					pricePlanMatrixService.duplicate(entity);
-					messages.info(new BundleKey("messages", "save.successful"));
+					messages.info(new BundleKey("messages", "duplicate.successfull"));
 	            } catch (BusinessException e) {
-	                log.error("Error encountered persisting price plan matrix entity: #{0}:#{1}", entity.getCode(), e);
-	                messages.error(new BundleKey("messages", "save.unsuccessful"));
+	                log.error("Error encountered duplicating price plan matrix entity: {}", entity.getCode(), e);
+	                messages.error(new BundleKey("messages", "error.duplicate.unexpected"));
 	            }
 			}
 		}

@@ -120,4 +120,7 @@ public abstract class MeveoUser implements Serializable {
                 + ", provider=" + providerCode + " roles " + roles + "]";
     }
 
+    public Object toStringShort() {
+        return "MeveoUser [forced=" + forcedAuthentication + ", sub=" + subject + ", userName=" + userName + "]";
+    }
 }

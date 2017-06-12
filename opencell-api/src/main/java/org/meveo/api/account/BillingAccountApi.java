@@ -52,7 +52,7 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
-public class BillingAccountApi extends AccountApi {
+public class BillingAccountApi extends AccountEntityApi {
 
 	@Inject
 	private SubscriptionTerminationReasonService subscriptionTerminationReasonService;
@@ -156,6 +156,9 @@ public class BillingAccountApi extends AccountApi {
 		billingAccount.setInvoicingThreshold(postData.getInvoicingThreshold());
 		if(!StringUtils.isBlank(postData.getDiscountPlan())){
 			DiscountPlan discountPlan = discountPlanService.findByCode(postData.getDiscountPlan());
+			if(discountPlan == null){
+				throw new EntityDoesNotExistsException(DiscountPlan.class, postData.getDiscountPlan());
+			}
 			billingAccount.setDiscountPlan(discountPlan);
 		} else {
 			billingAccount.setDiscountPlan(null);
@@ -310,6 +313,9 @@ public class BillingAccountApi extends AccountApi {
 		}
 		if(!StringUtils.isBlank(postData.getDiscountPlan())){
 			DiscountPlan discountPlan = discountPlanService.findByCode(postData.getDiscountPlan());
+			if(discountPlan == null){
+				throw new EntityDoesNotExistsException(DiscountPlan.class, postData.getDiscountPlan());
+			}
 			billingAccount.setDiscountPlan(discountPlan);
 		} else if(postData.getDiscountPlan()!=null){
 			billingAccount.setDiscountPlan(null);

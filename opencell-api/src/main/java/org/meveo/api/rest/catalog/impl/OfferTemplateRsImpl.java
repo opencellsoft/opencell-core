@@ -1,5 +1,7 @@
 package org.meveo.api.rest.catalog.impl;
 
+import java.util.Date;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -50,11 +52,11 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
     }
 
     @Override
-    public GetOfferTemplateResponseDto find(String offerTemplateCode) {
+    public GetOfferTemplateResponseDto find(String offerTemplateCode, Date validFrom, Date validTo) {
         GetOfferTemplateResponseDto result = new GetOfferTemplateResponseDto();
 
         try {
-            result.setOfferTemplate(offerTemplateApi.find(offerTemplateCode));
+            result.setOfferTemplate(offerTemplateApi.find(offerTemplateCode, validFrom, validTo));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -63,11 +65,11 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
     }
 
     @Override
-    public ActionStatus remove(String offerTemplateCode) {
+    public ActionStatus remove(String offerTemplateCode, Date validFrom, Date validTo) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            offerTemplateApi.remove(offerTemplateCode);
+            offerTemplateApi.remove(offerTemplateCode, validFrom, validTo);
         } catch (Exception e) {
             processException(e, result);
         }

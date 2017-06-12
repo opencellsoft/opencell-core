@@ -143,7 +143,7 @@ public class CustomFieldValueHolder implements Serializable {
     public CustomFieldInstance getValuePeriod(CustomFieldTemplate cft, Date date, Boolean createIfNotFound) {
         CustomFieldInstance periodFound = null;
         for (CustomFieldInstance period : values.get(cft.getCode())) {
-            if (period.isCorrespondsToPeriod(date)) {
+            if (period.getPeriod().isCorrespondsToPeriod(date)) {
                 // If calendar is used for versioning, then no periods can overlap
                 if (cft.getCalendar() != null) {
                     periodFound = period;
@@ -176,7 +176,7 @@ public class CustomFieldValueHolder implements Serializable {
     public CustomFieldInstance getValuePeriod(CustomFieldTemplate cft, Date startDate, Date endDate, boolean strictMatch, Boolean createIfNotFound) {
         CustomFieldInstance periodFound = null;
         for (CustomFieldInstance period : values.get(cft.getCode())) {
-            if (period.isCorrespondsToPeriod(startDate, endDate, strictMatch)) {
+            if (period.getPeriod().isCorrespondsToPeriod(startDate, endDate, strictMatch)) {
                 if (periodFound == null || periodFound.getPriority() < period.getPriority()) {
                     periodFound = period;
                 }

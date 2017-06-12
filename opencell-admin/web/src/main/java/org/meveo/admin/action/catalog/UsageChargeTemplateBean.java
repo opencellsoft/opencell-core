@@ -159,10 +159,10 @@ public class UsageChargeTemplateBean extends CustomFieldBean<UsageChargeTemplate
         if (entity != null && entity.getId() != null) {
         	try {
                 usageChargeTemplateService.duplicate(entity);
-                messages.info(new BundleKey("messages", "save.successful"));
+                messages.info(new BundleKey("messages", "duplicate.successfull"));
             } catch (BusinessException e) {
-                log.error("Error encountered persisting usage charge template entity: #{0}:#{1}", entity.getCode(), e);
-                messages.error(new BundleKey("messages", "save.unsuccessful"));
+                log.error("Error encountered duplicaing usage charge template entity: {}", entity.getCode(), e);
+                messages.error(new BundleKey("messages", "error.duplicate.unexpected"));
             }
 		}
 	}

@@ -1,8 +1,6 @@
 package org.tmf.dsmapi.catalog.resource.service;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -11,9 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.tmf.dsmapi.catalog.resource.AbstractCatalogEntity;
 import org.tmf.dsmapi.catalog.resource.Attachment;
-import org.tmf.dsmapi.catalog.resource.LifecycleStatus;
 import org.tmf.dsmapi.catalog.resource.RelatedParty;
-import org.tmf.dsmapi.catalog.resource.TimeRange;
 import org.tmf.dsmapi.catalog.resource.specification.RequiredSpecification;
 import org.tmf.dsmapi.catalog.resource.specification.SpecificationRelationship;
 import org.tmf.dsmapi.commons.Utilities;
@@ -290,40 +286,4 @@ public class ServiceSpecification extends AbstractCatalogEntity implements Seria
 
         return true;
     }
-
-    public static ServiceSpecification createProto() {
-        ServiceSpecification serviceSpecification = new ServiceSpecification();
-
-        serviceSpecification.setId("id");
-        serviceSpecification.setVersion("7.3");
-        serviceSpecification.setHref("href");
-        serviceSpecification.setName("name");
-        serviceSpecification.setDescription("description");
-        serviceSpecification.setLastUpdate(new Date());
-        serviceSpecification.setLifecycleStatus(LifecycleStatus.ACTIVE);
-        serviceSpecification.setValidFor(TimeRange.createProto());
-
-        serviceSpecification.brand = "brand";
-
-        serviceSpecification.attachment = new ArrayList<Attachment>();
-        serviceSpecification.attachment.add(Attachment.createProto());
-
-        serviceSpecification.relatedParty = new ArrayList<RelatedParty>();
-        serviceSpecification.relatedParty.add(RelatedParty.createProto());
-
-        serviceSpecification.serviceSpecificationRelationship = new ArrayList<SpecificationRelationship>();
-        serviceSpecification.serviceSpecificationRelationship.add(SpecificationRelationship.createProto());
-
-        serviceSpecification.requiredServiceSpecification = new ArrayList<RequiredSpecification>();
-        serviceSpecification.requiredServiceSpecification.add(RequiredSpecification.createProto());
-
-        serviceSpecification.requiredResourceSpecification = new ArrayList<RequiredSpecification>();
-        serviceSpecification.requiredResourceSpecification.add(RequiredSpecification.createProto());
-
-        serviceSpecification.serviceSpecCharacteristic = new ArrayList<ServiceSpecCharacteristic>();
-        serviceSpecification.serviceSpecCharacteristic.add(ServiceSpecCharacteristic.createProto());
-
-        return serviceSpecification;
-    }
-
 }

@@ -92,7 +92,7 @@ public class CatalogHierarchyBuilderService {
 	@Inject
 	private ProductChargeTemplateService productChargeTemplateService;
 
-	public void buildOfferServiceTemplate(OfferTemplate entity, List<OfferServiceTemplate> offerServiceTemplates, String prefix)
+	public void duplicateOfferServiceTemplate(OfferTemplate entity, List<OfferServiceTemplate> offerServiceTemplates, String prefix)
 			throws BusinessException {
 		List<OfferServiceTemplate> newOfferServiceTemplates = new ArrayList<>();
 		List<PricePlanMatrix> pricePlansInMemory = new ArrayList<>();
@@ -110,7 +110,7 @@ public class CatalogHierarchyBuilderService {
 		}
 	}
 
-	public void buildOfferProductTemplate(OfferTemplate entity, List<OfferProductTemplate> offerProductTemplates, String prefix)
+	public void duplicateOfferProductTemplate(OfferTemplate entity, List<OfferProductTemplate> offerProductTemplates, String prefix)
 			throws BusinessException {
 		List<OfferProductTemplate> newOfferProductTemplates = new ArrayList<>();
 		List<PricePlanMatrix> pricePlansInMemory = new ArrayList<>();
@@ -136,26 +136,26 @@ public class CatalogHierarchyBuilderService {
 	}
 
 	/**
-	 * Duplicate product, product charge template and prices.
-	 * 
-	 * @param offerProductTemplate
-	 * @param chargeTemplateInMemory
-	 * @param pricePlansInMemory
-	 * @param prefix
-	 * @throws BusinessException
-	 */
-	public OfferProductTemplate duplicateProduct(OfferProductTemplate offerProductTemplate, String prefix,
-			ServiceConfigurationDto serviceConfiguration, List<PricePlanMatrix> pricePlansInMemory,
-			List<ChargeTemplate> chargeTemplateInMemory) throws BusinessException {
-		OfferProductTemplate newOfferProductTemplate = new OfferProductTemplate();
-		
-		if (serviceConfiguration != null) {
-			newOfferProductTemplate.setMandatory(serviceConfiguration.isMandatory());
+     * Duplicate product, product charge template and prices.
+     * 
+     * @param offerProductTemplate
+     * @param chargeTemplateInMemory
+     * @param pricePlansInMemory
+     * @param prefix
+     * @throws BusinessException
+     */
+    public OfferProductTemplate duplicateProduct(OfferProductTemplate offerProductTemplate, String prefix, ServiceConfigurationDto serviceConfiguration,
+            List<PricePlanMatrix> pricePlansInMemory, List<ChargeTemplate> chargeTemplateInMemory) throws BusinessException {
+
+        OfferProductTemplate newOfferProductTemplate = new OfferProductTemplate();
+
+        if (serviceConfiguration != null) {
+            newOfferProductTemplate.setMandatory(serviceConfiguration.isMandatory());
 		} else {
 			newOfferProductTemplate.setMandatory(offerProductTemplate.isMandatory());
 		}
 
-		ProductTemplate productTemplate = productTemplateService.findByCode(offerProductTemplate.getProductTemplate().getCode());
+		ProductTemplate productTemplate = productTemplateService.findById(offerProductTemplate.getProductTemplate().getId());
 
 		ProductTemplate newProductTemplate = new ProductTemplate();
 		String sourceAppliesToEntity = productTemplate.getUuid();
@@ -323,8 +323,7 @@ public class CatalogHierarchyBuilderService {
 		if (offerServiceTemplate.getIncompatibleServices() != null) {
 			newOfferServiceTemplate.getIncompatibleServices().addAll(offerServiceTemplate.getIncompatibleServices());
 		}
-		newOfferServiceTemplate.setValidFrom(offerServiceTemplate.getValidFrom());
-		newOfferServiceTemplate.setValidTo(offerServiceTemplate.getValidTo());
+		newOfferServiceTemplate.setValidity(offerServiceTemplate.getValidity());
 
 		ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(offerServiceTemplate.getServiceTemplate().getCode());
 		serviceTemplate.getServiceRecurringCharges().size();

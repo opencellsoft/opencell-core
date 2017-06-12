@@ -818,7 +818,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
             return new Date();
         }
         if (dateFormatPattern == null) {
-            dateFormatPattern = ParamBean.getInstance().getProperty("meveo.dateFormat", "dd/MM/yyyy");
+            dateFormatPattern = ParamBean.getInstance().getDateFormat();
         }
         return DateUtils.parseDateWithPattern(dateString, dateFormatPattern);
     }

@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -12,37 +14,35 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.PostLoad;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.EnableEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
-import org.meveo.model.shared.DateUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
 @Entity
-@ExportIdentifier({ "appliesToEntity", "code", "periodStartDate", "periodEndDate"})
+@ExportIdentifier({ "appliesToEntity", "code", "period.from", "period.to" })
 @Table(name = "CRM_CUSTOM_FIELD_INST", uniqueConstraints = @UniqueConstraint(columnNames = { "APPLIES_TO_UUID", "CODE", "PERIOD_START_DATE", "PERIOD_END_DATE" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CRM_CUSTOM_FIELD_INST_SEQ"), })
 @NamedQueries({
         @NamedQuery(name = "CustomFieldInstance.getCfiForCache", query = "select cfi from CustomFieldInstance cfi where cfi.disabled=false order by cfi.appliesToEntity"),
         @NamedQuery(name = "CustomFieldInstance.getCfiByCode", query = "select cfi from CustomFieldInstance cfi where cfi.appliesToEntity=:appliesToEntity and cfi.code=:code "),
-        @NamedQuery(name = "CustomFieldInstance.getCfiByCodeAndDate", query = "select cfi from CustomFieldInstance cfi where cfi.appliesToEntity=:appliesToEntity and cfi.code=:code  and ((cfi.periodStartDate<=:date and :date<cfi.periodEndDate) or (cfi.periodStartDate<=:date and cfi.periodEndDate IS NULL) or (cfi.periodStartDate IS NULL and :date<cfi.periodEndDate)) order by cfi.priority desc "),
-        @NamedQuery(name = "CustomFieldInstance.getCfiByCodeAndDateRange", query = "select cfi from CustomFieldInstance cfi where cfi.appliesToEntity=:appliesToEntity and cfi.code=:code  and (cfi.periodStartDate=:dateFrom and cfi.periodEndDate=:dateTo)  order by cfi.priority desc "),
+        @NamedQuery(name = "CustomFieldInstance.getCfiByCodeAndDate", query = "select cfi from CustomFieldInstance cfi where cfi.appliesToEntity=:appliesToEntity and cfi.code=:code  and ((cfi.period.from<=:date and :date<cfi.period.to) or (cfi.period.from<=:date and cfi.period.to IS NULL) or (cfi.period.from IS NULL and :date<cfi.period.to)) order by cfi.priority desc "),
+        @NamedQuery(name = "CustomFieldInstance.getCfiByCodeAndDateRange", query = "select cfi from CustomFieldInstance cfi where cfi.appliesToEntity=:appliesToEntity and cfi.code=:code  and (cfi.period.from=:dateFrom and cfi.period.to=:dateTo)  order by cfi.priority desc "),
         @NamedQuery(name = "CustomFieldInstance.getCfiByEntity", query = "select cfi from CustomFieldInstance cfi where cfi.appliesToEntity=:appliesToEntity "),
         @NamedQuery(name = "CustomFieldInstance.getCfiByEntityListForIndex", query = "select cfi from CustomFieldInstance cfi where cfi.appliesToEntity in :appliesToEntityList and cfi.code in (select cft.code from CustomFieldTemplate cft where cft.indexType is not null )"),
         @NamedQuery(name = "CustomFieldInstance.getCfiValueByCode", query = "select cfi.cfValue from CustomFieldInstance cfi where cfi.appliesToEntity=:appliesToEntity and cfi.code=:code "),
-        @NamedQuery(name = "CustomFieldInstance.getCfiValueByCodeAndDate", query = "select cfi.cfValue from CustomFieldInstance cfi where cfi.appliesToEntity=:appliesToEntity and cfi.code=:code  and ((cfi.periodStartDate<=:date and :date<cfi.periodEndDate) or (cfi.periodStartDate<=:date and cfi.periodEndDate IS NULL) or (cfi.periodStartDate IS NULL and :date<cfi.periodEndDate)) order by cfi.priority desc ") })
+        @NamedQuery(name = "CustomFieldInstance.getCfiValueByCodeAndDate", query = "select cfi.cfValue from CustomFieldInstance cfi where cfi.appliesToEntity=:appliesToEntity and cfi.code=:code  and ((cfi.period.from<=:date and :date<cfi.period.to) or (cfi.period.from<=:date and cfi.period.to IS NULL) or (cfi.period.from IS NULL and :date<cfi.period.to)) order by cfi.priority desc ") })
 public class CustomFieldInstance extends EnableEntity {
 
     private static final long serialVersionUID = 8691447585410651639L;
@@ -60,17 +60,13 @@ public class CustomFieldInstance extends EnableEntity {
     @NotNull
     private String appliesToEntity;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "PERIOD_START_DATE")
-    private Date periodStartDate;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "PERIOD_END_DATE")
-    private Date periodEndDate;
+    @AttributeOverrides({ @AttributeOverride(name = "from", column = @Column(name = "PERIOD_START_DATE")),
+            @AttributeOverride(name = "to", column = @Column(name = "PERIOD_END_DATE")) })
+    private DatePeriod period = new DatePeriod();
 
     @Column(name = "PRIORITY")
     private int priority;
-    
+
     @Column(name = "DESCRIPTION")
     private String description;
 
@@ -101,20 +97,15 @@ public class CustomFieldInstance extends EnableEntity {
         this.cfValue = cfValue;
     }
 
-    public Date getPeriodStartDate() {
-        return periodStartDate;
+    public DatePeriod getPeriod() {
+        if (period == null) {
+            period = new DatePeriod();
+        }
+        return period;
     }
 
-    public void setPeriodStartDate(Date periodStartDate) {
-        this.periodStartDate = periodStartDate;
-    }
-
-    public Date getPeriodEndDate() {
-        return periodEndDate;
-    }
-
-    public void setPeriodEndDate(Date periodEndDate) {
-        this.periodEndDate = periodEndDate;
+    public void setPeriod(DatePeriod period) {
+        this.period = period;
     }
 
     public int getPriority() {
@@ -214,20 +205,18 @@ public class CustomFieldInstance extends EnableEntity {
     public String getValueAsString() {
         return getCfValue().getValueAsString(sdf);
     }
-    
-    
 
     public String getDescription() {
-		return description;
-	}
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	@Override
+    @Override
     public boolean equals(Object obj) {
-        
+
         if (this == obj) {
             return true;
         } else if (obj == null) {
@@ -252,7 +241,7 @@ public class CustomFieldInstance extends EnableEntity {
             return false;
         }
 
-        return isCorrespondsToPeriod(other.getPeriodStartDate(), other.getPeriodEndDate(), true);
+        return getPeriod().isCorrespondsToPeriod(other.getPeriod(), true);
     }
 
     /**
@@ -287,8 +276,7 @@ public class CustomFieldInstance extends EnableEntity {
     public static CustomFieldInstance fromTemplate(CustomFieldTemplate cft, ICustomFieldEntity entity, Date valueDate) {
         CustomFieldInstance cfi = CustomFieldInstance.fromTemplate(cft, entity);
         if (cft.isVersionable() && cft.getCalendar() != null) {
-            cfi.setPeriodEndDate(cft.getCalendar().nextCalendarDate(valueDate));
-            cfi.setPeriodStartDate(cft.getCalendar().previousCalendarDate(valueDate));
+            cfi.setPeriod(new DatePeriod(cft.getCalendar().previousCalendarDate(valueDate), cft.getCalendar().nextCalendarDate(valueDate)));
         } else if (cft.isVersionable() && cft.getCalendar() != null) {
             cfi = CustomFieldInstance.fromTemplate(cft, entity, valueDate, null, null);
         }
@@ -309,8 +297,7 @@ public class CustomFieldInstance extends EnableEntity {
     public static CustomFieldInstance fromTemplate(CustomFieldTemplate cft, ICustomFieldEntity entity, Date valueDateFrom, Date valueDateTo, Integer valuePriority) {
         CustomFieldInstance cfi = CustomFieldInstance.fromTemplate(cft, entity);
         if (cft.isVersionable() && cft.getCalendar() == null) {
-            cfi.setPeriodEndDate(valueDateTo);
-            cfi.setPeriodStartDate(valueDateFrom);
+            cfi.setPeriod(new DatePeriod(valueDateFrom, valueDateTo));
             cfi.setPriority(valuePriority == null ? 0 : valuePriority);
         }
         return cfi;
@@ -332,35 +319,6 @@ public class CustomFieldInstance extends EnableEntity {
      */
     public boolean isValueEmpty() {
         return getCfValue().isValueEmpty();
-    }
-
-    /**
-     * Check if date falls within period start and end dates
-     * 
-     * @param date Date to check
-     * @return True/false
-     */
-    public boolean isCorrespondsToPeriod(Date date) {
-        return (periodStartDate == null || date.compareTo(periodStartDate) >= 0) && (periodEndDate == null || date.before(periodEndDate));
-    }
-
-    /**
-     * Check if dates match period start and end dates (strict match) or overlap period start and end dates (non-strict match)
-     * 
-     * @param startDate Period start date to check
-     * @param endDate Period end date to check
-     * @param strictMatch True If dates match period start and end dates (strict match) or False when overlap period start and end dates (non-strict match)
-     * @return True if current period object corresponds to give dates and strict matching type
-     */
-    public boolean isCorrespondsToPeriod(Date startDate, Date endDate, boolean strictMatch) {
-
-        if (strictMatch) {
-            boolean match = (startDate == null && periodStartDate == null) || (startDate != null && periodStartDate != null && startDate.equals(periodStartDate));
-            match = match && ((endDate == null && periodEndDate == null) || (endDate != null && periodEndDate != null && endDate.equals(periodEndDate)));
-            return match;
-        }
-        // Check non-strict match case when dates overlap
-        return DateUtils.isPeriodsOverlap(periodStartDate, periodEndDate, startDate, endDate);
     }
 
     // /**
@@ -388,14 +346,14 @@ public class CustomFieldInstance extends EnableEntity {
 
     @Override
     public String toString() {
-        return String.format("CustomFieldInstance [code=%s, description=%s, appliesToEntity=%s, periodStartDate=%s, periodEndDate=%s, priority=%s, cfValue=%s, disabled=%s]", code,
-            description,appliesToEntity, periodStartDate, periodEndDate, priority, cfValue, isDisabled());
+        return String.format("CustomFieldInstance [code=%s, description=%s, appliesToEntity=%s, period=%s, priority=%s, cfValue=%s, disabled=%s]", code, description,
+            appliesToEntity, period, priority, cfValue, isDisabled());
     }
 
     public String toJson() {
         String result = code + ":";
         result += getCfValue().toJson(sdf);
-        result+=",description:"+description;
+        result += ",description:" + description;
         return result;
     }
 
@@ -403,11 +361,11 @@ public class CustomFieldInstance extends EnableEntity {
         Element customFieldTag = doc.createElement("customField");
         customFieldTag.setAttribute("code", code);
         customFieldTag.setAttribute("description", description);
-        if (periodStartDate != null) {
-            customFieldTag.setAttribute("periodStartDate", xmlsdf.format(periodStartDate));
+        if (period != null && period.getFrom() != null) {
+            customFieldTag.setAttribute("periodStartDate", xmlsdf.format(period.getFrom()));
         }
-        if (periodEndDate != null) {
-            customFieldTag.setAttribute("periodEndDate", xmlsdf.format(periodEndDate));
+        if (period != null && period.getTo() != null) {
+            customFieldTag.setAttribute("periodEndDate", xmlsdf.format(period.getTo()));
         }
 
         Text customFieldText = doc.createTextNode(getCfValue().toXmlText(xmlsdf));

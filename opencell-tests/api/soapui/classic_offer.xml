@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project activeEnvironment="Default" name="Classic offer" resourceRoot="${projectDir}" soapui-version="5.3.0" abortOnError="false" runType="SEQUENTIAL" id="2e379382-059f-42f2-a263-3971d606356b" xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project activeEnvironment="Default" name="Classic offer" resourceRoot="${projectDir}" soapui-version="5.2.1" abortOnError="false" runType="SEQUENTIAL" id="2e379382-059f-42f2-a263-3971d606356b" xmlns:con="http://eviware.com/soapui/config">
   <con:settings>
     <con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
@@ -36872,7 +36872,7 @@ AAAASUVORK5CYII=
          	  <name>${#Project#templateLabel} offer</name>
             <disabled>false</disabled>
 		  <offerTemplateCategories>
-		    <offerTemplateCategory>${#Project#templateCode}_DEFAULT</offerTemplateCategory>
+		    <offerTemplateCategory code="${#Project#templateCode}_DEFAULT"/>
 		  </offerTemplateCategories>
 		  <customFields>
 		  	<customField code="CF_TEMPLATE_CODE">
@@ -37340,9 +37340,9 @@ MFBG0AAAAABJRU5ErkJggg==
          
          <offerTemplate code="OF_${#Project#templateCode}_COMMISSION" description="Commissioning for ${#Project#templateLabel}">
          	  <name>Commissioning</name>
-            <disabled>true</disabled>
+            <disabled>false</disabled>
 		  <offerTemplateCategories>
-		    <offerTemplateCategory>${#Project#templateCode}_DEFAULT</offerTemplateCategory>
+		    <offerTemplateCategory code="${#Project#templateCode}_DEFAULT"/>
 		  </offerTemplateCategories>
 		  <customFields>
 		  	<customField code="CF_TEMPLATE_CODE">
@@ -38413,429 +38413,6 @@ tirh0OKtnFVvbFV3cYq5+2KuXpiru+Kv/9k=
     <con:properties/>
     <con:setupScript/>
   </con:testSuite>
-  <con:testSuite id="9b232d69-e254-4bf6-9b87-c80b0fad0da6" name="Customer Care">
-    <con:settings/>
-    <con:runType>SEQUENTIAL</con:runType>
-    <con:testCase id="1de434da-9c25-436a-bc59-b8d075daf8b8" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create CustomerCare User" searchProperties="true">
-      <con:settings/>
-      <con:testStep type="request" name="ForgotPasswordModule" id="8213ff34-8501-4c89-a10e-64ef0e8df7fc">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>ModuleWsSoapBinding</con:interface>
-          <con:operation>createOrUpdate</con:operation>
-          <con:request name="ForgotPasswordModule" id="5d0a2b39-396c-4504-9039-0f33da90177c">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#opencell.url}/ModuleWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdate>
-         <module code="ForgotPasswordModule" license="GPL" description="Rest password">
-            <script code="org.meveo.service.script.selfcare.ForgotPassword" description="ForgotPassword">
-               
-               <type>JAVA</type>
-               <script><![CDATA[
-package org.meveo.service.script.selfcare;
-
-import java.util.Map;
-import java.util.UUID;
-
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.admin.User;
-import org.meveo.service.admin.impl.UserService;
-import org.meveo.service.script.module.ModuleScript;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-public class ForgotPassword extends ModuleScript{
-	private static final Logger log = LoggerFactory.getLogger(ForgotPassword.class);
-	public void execute(Map<String, Object> initContext) throws BusinessException {
-		log.debug("Execute...");
-		UserService userService = (UserService) getServiceInterface("UserService");
-		String emailRequest = (String) initContext.get("email");
-		String emailValue = null;
-		JSONParser parser = new JSONParser();
-	    try {
-			Object obj = parser.parse(emailRequest);
-			JSONObject jsonObject = (JSONObject)obj;
-			emailValue = (String) jsonObject.get("email");
-
-		} catch (ParseException e) {
-			throw new BusinessException("Cant parse request :"+e.getMessage());
-		}
-		log.debug("emailValue:" + emailValue);
-		User userThatManyForget = userService.findByEmail(emailValue);
-		if(userThatManyForget == null){
-			throw new BusinessException("Cant find user "+emailValue);
-		}
-		String newPasswd = UUID.randomUUID().toString().substring(0, 7);
-		log.debug("newPasswd:" + newPasswd);
-		userThatManyForget.setNewPassword(newPasswd);
-		userService.update(userThatManyForget);
-	}
-}
-               ]]]]>><![CDATA[</script>
-               <!--Zero or more repetitions:-->
-            </script>
-            
-            <moduleItems>
-               <!--You have a CHOICE of the next 19 items at this level-->
-         <notification code="ForgotPasswordInReqNotif">
-            <classNameFilter>org.meveo.model.notification.InboundRequest</classNameFilter>
-            <eventTypeFilter>INBOUND_REQ</eventTypeFilter>
-            <elFilter>#{event.pathInfo.startsWith("/${#Project#provider}/forgotPassword")}</elFilter>
-            <scriptInstanceCode>org.meveo.service.script.selfcare.ForgotPassword</scriptInstanceCode>
-            <scriptParams>
-               <entry>
-                  <key>email</key>
-                  <value>#{event.getBody()}</value>
-               </entry>
-            </scriptParams>
-         </notification>
-			<emailNotif code="ForgotPasswordEmailNotif">
-				<classNameFilter>org.meveo.model.admin.User</classNameFilter>
-				<eventTypeFilter>UPDATED</eventTypeFilter>
-				<emailFrom>bot@opencellsoft.com</emailFrom>
-				<subject>Password reset</subject>
-				<emailToEl>#{event.email}</emailToEl>
-				<elFilter>#{event.newPassword ne null}</elFilter>
-				<body>Bonjour,
-				Text modifiable
-				user name  :  #{event.userName}
-				password   :  #{event.newPassword}
-				access url :  http://i.meveo.info/meveo/frontend/DEMO/index.html
-				</body>
-				</emailNotif>
-            </moduleItems>
-         </module>
-      </ws:createOrUpdate>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="SOAP Response" id="832fb1d0-b553-426c-98d4-7a8ef12582a9"/>
-            <con:assertion type="Simple Contains" id="fc959b9c-19ce-4011-ac97-d9290bd038dd" name="Contains">
-              <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:credentials>
-              <con:preemptive>true</con:preemptive>
-              <con:authType>No Authorization</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
-        </con:config>
-      </con:testStep>
-      <con:testStep type="request" name="Install Module" id="fa6d88dd-11c5-4b58-beb4-42c16990a04a">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>ModuleWsSoapBinding</con:interface>
-          <con:operation>installModule</con:operation>
-          <con:request name="Install Module" id="ae71f5ba-1494-4691-99b6-9c8c742f05b9">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#opencell.url}/ModuleWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:installModule>
-         <module code="ForgotPasswordModule">   
-         </module>
-      </ws:installModule>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="SOAP Response" id="a6b29958-f25b-4ddb-8432-0ef3f0f03ea4"/>
-            <con:assertion type="Simple Contains" id="38ade4c0-249c-4969-89dc-f6b4d5e79352" name="Contains">
-              <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:credentials>
-              <con:preemptive>true</con:preemptive>
-              <con:authType>No Authorization</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
-        </con:config>
-      </con:testStep>
-      <con:testStep type="request" name="Create CC User Role" id="96fa7b83-a4f2-4ea9-87db-6d7162e106cb">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>SettingsWsSoapBinding</con:interface>
-          <con:operation>createOrUpdateRole</con:operation>
-          <con:request name="Create CC User Role" id="bd3a6001-b766-4873-bd66-cfabe4265f66">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdateRole>
-         <role name="CUSTOMER_CARE_USER">
-            
-            <description>Customer Care User</description>
-            <permissions>
-            	<permission permission="apiAccess" name="API User" resource="user" />
-            	<permission permission="administrationVisualization" name="Administration visualization" resource="administration" />
-		  </permissions>
-            <roles>
-               <role name="ModifyAllCE">
-               	<description>Modify all CE</description>
-               </role>
-            </roles>
-         </role>
-      </ws:createOrUpdateRole>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="SOAP Response" id="0582d6f1-bcdf-4793-863e-097319a2fc48"/>
-            <con:assertion type="Simple Contains" id="665d61b2-4263-4c5f-bad6-cba03d34ee4c" name="Contains">
-              <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:credentials>
-              <con:preemptive>true</con:preemptive>
-              <con:authType>No Authorization</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
-        </con:config>
-      </con:testStep>
-      <con:testStep type="request" name="Create User provider.customercare.api" id="1582ac5e-6a95-4b2e-b553-f322f2c081a0">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>SettingsWsSoapBinding</con:interface>
-          <con:operation>createUser</con:operation>
-          <con:request name="Create User provider.customercare.api" id="2d7c5c5f-ab8a-46d7-8db9-f81834a652cf">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdateUser>
-         <user>
-            <username>${#Project#CCUsername}.api</username>
-            <password>${#Project#CCPassword}.api</password>
-            <email>${#Project#CCUsername}.api@opencellsoft.com</email>
-            <firstName>customercare.api</firstName>
-            <lastName>${#Project#provider}</lastName>
-            <userRoles>
-               <userRole>CUSTOMER_CARE_USER</userRole>
-            </userRoles>
-         </user>
-      </ws:createOrUpdateUser>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="SOAP Response" id="a427c4ca-342e-4fba-812c-5c56034291c8"/>
-            <con:assertion type="Simple Contains" id="ffb0a71a-c828-4d7d-b171-a6267f4336e5" name="Contains">
-              <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:credentials>
-              <con:username>meveo.superadmin</con:username>
-              <con:password>meveo.superadmin</con:password>
-              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
-              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
-              <con:preemptive>true</con:preemptive>
-              <con:authType>Preemptive</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
-        </con:config>
-      </con:testStep>
-      <con:testStep type="request" name="Create User adminUsername.customercare" id="de0c4db6-0179-46d7-beac-7934eae2db24">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>SettingsWsSoapBinding</con:interface>
-          <con:operation>createUser</con:operation>
-          <con:request name="Create User adminUsername.customercare" id="2d7c5c5f-ab8a-46d7-8db9-f81834a652cf">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdateUser>
-         <user>
-            <username>${#Project#adminUsername}.customercare</username>
-            <password>${#Project#adminPassword}</password>
-            <email>${#Project#adminEmail}</email>
-            <firstName></firstName>
-            <lastName>${#Project#adminUsername}</lastName>
-            <userRoles>
-               <userRole>CUSTOMER_CARE_USER</userRole>
-            </userRoles>
-         </user>
-      </ws:createOrUpdateUser>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="SOAP Response" id="a427c4ca-342e-4fba-812c-5c56034291c8"/>
-            <con:assertion type="Simple Contains" id="ffb0a71a-c828-4d7d-b171-a6267f4336e5" name="Contains">
-              <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:credentials>
-              <con:username>meveo.superadmin</con:username>
-              <con:password>meveo.superadmin</con:password>
-              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
-              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
-              <con:preemptive>true</con:preemptive>
-              <con:authType>Preemptive</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
-        </con:config>
-      </con:testStep>
-      <con:testStep type="request" name="Create User provider.customercare" id="78efe52d-73b0-429f-8d2f-3284f2e65c6b">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>SettingsWsSoapBinding</con:interface>
-          <con:operation>createUser</con:operation>
-          <con:request name="Create User provider.customercare" id="2d7c5c5f-ab8a-46d7-8db9-f81834a652cf">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdateUser>
-         <user>
-            <username>${#Project#CCUsername}</username>
-            <password>${#Project#CCPassword}</password>
-            <email>${#Project#CCUsername}@opencellsoft.com</email>
-            <firstName>customercare</firstName>
-            <lastName>${#Project#provider}</lastName>
-            <userRoles>
-               <userRole>CUSTOMER_CARE_USER</userRole>
-            </userRoles>
-         </user>
-      </ws:createOrUpdateUser>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="SOAP Response" id="a427c4ca-342e-4fba-812c-5c56034291c8"/>
-            <con:assertion type="Simple Contains" id="ffb0a71a-c828-4d7d-b171-a6267f4336e5" name="Contains">
-              <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:credentials>
-              <con:username>meveo.superadmin</con:username>
-              <con:password>meveo.superadmin</con:password>
-              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
-              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
-              <con:preemptive>true</con:preemptive>
-              <con:authType>Preemptive</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
-        </con:config>
-      </con:testStep>
-      <con:testStep type="request" name="Create Rebate Charge" id="4e1be420-f453-4a3d-bfe6-44fd97f8cf19">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>CatalogWsSoapBinding</con:interface>
-          <con:operation>createOrUpdateOneShotChargeTemplate</con:operation>
-          <con:request name="Create Rebate Charge" id="51765fb4-8e9c-4741-89f6-5befe809d58a">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdateOneShotChargeTemplate>
-         <oneShotChargeTemplate code="CC_REBATE" description="Rebate through Customer Care.">
-            <invoiceSubCategory>${#Project#templateCode}_ONESHOT</invoiceSubCategory>
-            <disabled>false</disabled>
-            <amountEditable>true</amountEditable>
-            <inputUnitDescription>1</inputUnitDescription>
-            <ratingUnitDescription>1</ratingUnitDescription>
-            <unitMultiplicator>1</unitMultiplicator>
-            <unitNbDecimal>2</unitNbDecimal>
-            <oneShotChargeTemplateType>OTHER</oneShotChargeTemplateType>
-            <immediateInvoicing>true</immediateInvoicing>
-            <roundingModeDtoEnum>NEAREST</roundingModeDtoEnum>
-         </oneShotChargeTemplate>
-      </ws:createOrUpdateOneShotChargeTemplate>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="SOAP Response" id="0f5be196-98dd-4979-b82b-3bc82866f554"/>
-            <con:assertion type="Simple Contains" id="284f6f83-ae8d-4185-8de5-d91e9138cbe3" name="Contains">
-              <con:configuration>
-                <token>SUCCESS</token>
-                <ignoreCase>true</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:credentials>
-              <con:username>meveo.admin</con:username>
-              <con:password>meveo.admin</con:password>
-              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
-              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
-              <con:preemptive>true</con:preemptive>
-              <con:authType>Preemptive</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
-        </con:config>
-      </con:testStep>
-      <con:setupScript/>
-      <con:properties/>
-    </con:testCase>
-    <con:properties/>
-  </con:testSuite>
   <con:testSuite id="7b7e8d8d-fd45-47d4-aeb9-733dafc2665d" name="Self Care">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
@@ -38896,9 +38473,8 @@ public class ForgotPassword extends ModuleScript{
    <soapenv:Body>
       <ws:createOrUpdateUser>
          <user>
-            <username>${#Project#SCUsername}.api</username>
-            <password>${#Project#SCPassword}.api</password>
-            <email>${#Project#SCUsername}.api@opencellsoft.com</email>
+            <username>${#Project#provider}.selfcare.api</username>
+            <email>${#Project#provider}.selfcare.api@opencellsoft.com</email>
             <firstName>selfcare.api</firstName>
             <lastName>${#Project#provider}</lastName>
             <role>selfcareDefault</role>
@@ -38927,7 +38503,7 @@ public class ForgotPassword extends ModuleScript{
     </con:testCase>
     <con:testCase id="41c3a6a7-24ff-475a-8504-22b99cd1ecb6" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Selfcare Modules" searchProperties="true">
       <con:settings/>
-      <con:testStep type="request" name="ForgotPasswordModule" id="850a02ab-e5f3-4ba0-9065-b8bbfb0b1c0a">
+      <con:testStep type="request" name="ForgotPasswordModule" id="850a02ab-e5f3-4ba0-9065-b8bbfb0b1c0a" disabled="true">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>ModuleWsSoapBinding</con:interface>
@@ -39038,7 +38614,7 @@ public class ForgotPassword extends ModuleScript{
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="installModule" id="46747eae-72f4-4715-a623-215df1ecb384">
+      <con:testStep type="request" name="installModule" id="46747eae-72f4-4715-a623-215df1ecb384" disabled="true">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>ModuleWsSoapBinding</con:interface>
@@ -39430,6 +39006,7 @@ public class SelfcareAccountScript extends AccountScript {
 		}
 		user.setUsername(accountDto.getCode());
 
+		/*
 		String password =(String) customFieldInstanceService.getCFValue(customer, "password");
 		if( password != null )
 		{
@@ -39440,12 +39017,12 @@ public class SelfcareAccountScript extends AccountScript {
 			log.warn("password CF is null, using username");
 			user.setPassword(user.getUsername());
 		}
+		*/    
 		    
-
 		List<String> roles = new ArrayList<String>();
 		roles.add("selfcareDefault");
 		user.setRoles(roles);
-		log.debug("lastName :"+user.getLastName() + " firstName : "+user.getFirstName() + " email : "+user.getEmail() + " password : "+user.getPassword());
+		log.debug("lastName :"+user.getLastName() + " firstName : "+user.getFirstName() + " email : "+user.getEmail());
 		try{
 			userApi.createOrUpdate(user);
 		}
@@ -39590,6 +39167,326 @@ public class CreateAccess extends OfferScript {
           <con:value>794</con:value>
         </con:property>
       </con:properties>
+    </con:testCase>
+    <con:properties/>
+  </con:testSuite>
+  <con:testSuite id="9b232d69-e254-4bf6-9b87-c80b0fad0da6" name="Customer Care">
+    <con:settings/>
+    <con:runType>SEQUENTIAL</con:runType>
+    <con:testCase id="1de434da-9c25-436a-bc59-b8d075daf8b8" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create CustomerCare User" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="request" name="ForgotPasswordModule" id="8213ff34-8501-4c89-a10e-64ef0e8df7fc" disabled="true">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>ModuleWsSoapBinding</con:interface>
+          <con:operation>createOrUpdate</con:operation>
+          <con:request name="ForgotPasswordModule" id="5d0a2b39-396c-4504-9039-0f33da90177c">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/ModuleWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdate>
+         <module code="ForgotPasswordModule" license="GPL" description="Rest password">
+            <script code="org.meveo.service.script.selfcare.ForgotPassword" description="ForgotPassword">
+               
+               <type>JAVA</type>
+               <script><![CDATA[
+package org.meveo.service.script.selfcare;
+
+import java.util.Map;
+import java.util.UUID;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.admin.User;
+import org.meveo.service.admin.impl.UserService;
+import org.meveo.service.script.module.ModuleScript;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class ForgotPassword extends ModuleScript{
+	private static final Logger log = LoggerFactory.getLogger(ForgotPassword.class);
+	public void execute(Map<String, Object> initContext) throws BusinessException {
+		log.debug("Execute...");
+		UserService userService = (UserService) getServiceInterface("UserService");
+		String emailRequest = (String) initContext.get("email");
+		String emailValue = null;
+		JSONParser parser = new JSONParser();
+	    try {
+			Object obj = parser.parse(emailRequest);
+			JSONObject jsonObject = (JSONObject)obj;
+			emailValue = (String) jsonObject.get("email");
+
+		} catch (ParseException e) {
+			throw new BusinessException("Cant parse request :"+e.getMessage());
+		}
+		log.debug("emailValue:" + emailValue);
+		User userThatManyForget = userService.findByEmail(emailValue);
+		if(userThatManyForget == null){
+			throw new BusinessException("Cant find user "+emailValue);
+		}
+		String newPasswd = UUID.randomUUID().toString().substring(0, 7);
+		log.debug("newPasswd:" + newPasswd);
+		userThatManyForget.setNewPassword(newPasswd);
+		userService.update(userThatManyForget);
+	}
+}
+               ]]]]>><![CDATA[</script>
+               <!--Zero or more repetitions:-->
+            </script>
+            
+            <moduleItems>
+               <!--You have a CHOICE of the next 19 items at this level-->
+         <notification code="ForgotPasswordInReqNotif">
+            <classNameFilter>org.meveo.model.notification.InboundRequest</classNameFilter>
+            <eventTypeFilter>INBOUND_REQ</eventTypeFilter>
+            <elFilter>#{event.pathInfo.startsWith("/${#Project#provider}/forgotPassword")}</elFilter>
+            <scriptInstanceCode>org.meveo.service.script.selfcare.ForgotPassword</scriptInstanceCode>
+            <scriptParams>
+               <entry>
+                  <key>email</key>
+                  <value>#{event.getBody()}</value>
+               </entry>
+            </scriptParams>
+         </notification>
+			<emailNotif code="ForgotPasswordEmailNotif">
+				<classNameFilter>org.meveo.model.admin.User</classNameFilter>
+				<eventTypeFilter>UPDATED</eventTypeFilter>
+				<emailFrom>bot@opencellsoft.com</emailFrom>
+				<subject>Password reset</subject>
+				<emailToEl>#{event.email}</emailToEl>
+				<elFilter>#{event.newPassword ne null}</elFilter>
+				<body>Bonjour,
+				Text modifiable
+				user name  :  #{event.userName}
+				password   :  #{event.newPassword}
+				access url :  http://i.meveo.info/meveo/frontend/DEMO/index.html
+				</body>
+				</emailNotif>
+            </moduleItems>
+         </module>
+      </ws:createOrUpdate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="832fb1d0-b553-426c-98d4-7a8ef12582a9"/>
+            <con:assertion type="Simple Contains" id="fc959b9c-19ce-4011-ac97-d9290bd038dd" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Install Module" id="fa6d88dd-11c5-4b58-beb4-42c16990a04a" disabled="true">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>ModuleWsSoapBinding</con:interface>
+          <con:operation>installModule</con:operation>
+          <con:request name="Install Module" id="ae71f5ba-1494-4691-99b6-9c8c742f05b9">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/ModuleWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:installModule>
+         <module code="ForgotPasswordModule">   
+         </module>
+      </ws:installModule>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="a6b29958-f25b-4ddb-8432-0ef3f0f03ea4"/>
+            <con:assertion type="Simple Contains" id="38ade4c0-249c-4969-89dc-f6b4d5e79352" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create CC User Role" id="96fa7b83-a4f2-4ea9-87db-6d7162e106cb">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createOrUpdateRole</con:operation>
+          <con:request name="Create CC User Role" id="bd3a6001-b766-4873-bd66-cfabe4265f66">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateRole>
+         <role name="CUSTOMER_CARE_USER">
+            
+            <description>Customer Care User</description>
+            <permissions>
+            	<permission permission="apiAccess" name="API User" resource="user" />
+            	<permission permission="administrationVisualization" name="Administration visualization" resource="administration" />
+		  </permissions>
+            <roles>
+               <role name="ModifyAllCE">
+               	<description>Modify all CE</description>
+               </role>
+            </roles>
+         </role>
+      </ws:createOrUpdateRole>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="0582d6f1-bcdf-4793-863e-097319a2fc48"/>
+            <con:assertion type="Simple Contains" id="665d61b2-4263-4c5f-bad6-cba03d34ee4c" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create User provider.customercare" id="78efe52d-73b0-429f-8d2f-3284f2e65c6b">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createUser</con:operation>
+          <con:request name="Create User provider.customercare" id="2d7c5c5f-ab8a-46d7-8db9-f81834a652cf">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateUser>
+         <user>
+            <username>${#Project#CCUsername}</username>
+            <email>${#Project#CCUsername}@opencellsoft.com</email>
+            <firstName>${#Project#CCFirstname}</firstName>
+            <lastName>${#Project#CCLastname}</lastName>
+            <userRoles>
+               <userRole>CUSTOMER_CARE_USER</userRole>
+            </userRoles>
+         </user>
+      </ws:createOrUpdateUser>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="a427c4ca-342e-4fba-812c-5c56034291c8"/>
+            <con:assertion type="Simple Contains" id="ffb0a71a-c828-4d7d-b171-a6267f4336e5" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.superadmin</con:username>
+              <con:password>meveo.superadmin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create Rebate Charge" id="4e1be420-f453-4a3d-bfe6-44fd97f8cf19">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>CatalogWsSoapBinding</con:interface>
+          <con:operation>createOrUpdateOneShotChargeTemplate</con:operation>
+          <con:request name="Create Rebate Charge" id="51765fb4-8e9c-4741-89f6-5befe809d58a">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateOneShotChargeTemplate>
+         <oneShotChargeTemplate code="CC_REBATE" description="Rebate through Customer Care.">
+            <invoiceSubCategory>${#Project#templateCode}_ONESHOT</invoiceSubCategory>
+            <disabled>false</disabled>
+            <amountEditable>true</amountEditable>
+            <inputUnitDescription>1</inputUnitDescription>
+            <ratingUnitDescription>1</ratingUnitDescription>
+            <unitMultiplicator>1</unitMultiplicator>
+            <unitNbDecimal>2</unitNbDecimal>
+            <oneShotChargeTemplateType>OTHER</oneShotChargeTemplateType>
+            <immediateInvoicing>true</immediateInvoicing>
+            <roundingModeDtoEnum>NEAREST</roundingModeDtoEnum>
+         </oneShotChargeTemplate>
+      </ws:createOrUpdateOneShotChargeTemplate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="0f5be196-98dd-4979-b82b-3bc82866f554"/>
+            <con:assertion type="Simple Contains" id="284f6f83-ae8d-4185-8de5-d91e9138cbe3" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>true</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.admin</con:username>
+              <con:password>meveo.admin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:setupScript/>
+      <con:properties/>
     </con:testCase>
     <con:properties/>
   </con:testSuite>
@@ -48131,12 +48028,12 @@ MFBG0AAAAABJRU5ErkJggg==
          <crmAccountHierarchy>\r
             <crmAccountType>Client</crmAccountType>\r
             <crmParentCode>${#Project#templateCode}</crmParentCode>\r
-            <code>${#TestSuite#CUST}</code>\r
-            <description>${#TestSuite#firstname} ${#TestSuite#lastname}</description>\r
+            <code>${#Project#SCUsername}</code>\r
+            <description>${#Project#SCFirstname} ${#Project#SCLastname}</description>\r
             <name>\r
                <title>MR</title>\r
-               <firstName>${#TestSuite#firstname}</firstName>\r
-               <lastName>${#TestSuite#lastname}</lastName>\r
+               <firstName>${#Project#SCFirstname}</firstName>\r
+               <lastName>${#Project#SCLastname}</lastName>\r
             </name>\r
             <address>\r
                <address1>14 rue Crespin du Gast</address1>\r
@@ -48145,7 +48042,7 @@ MFBG0AAAAABJRU5ErkJggg==
                <state>Paris Area</state>
                <country>FR</country>\r
             </address>\r
-            <email>${#TestSuite#CUST}@opencellsoft.com</email>
+            <email>${#Project#SCUsername}@opencellsoft.com</email>
             <language>FRA</language>\r
             <paymentMethod>CHECK</paymentMethod>\r
             <customerCategory>CLIENT</customerCategory>\r
@@ -48156,7 +48053,7 @@ MFBG0AAAAABJRU5ErkJggg==
             <electronicBilling>true</electronicBilling>\r
             <externalRef1>FR 28552046955</externalRef1>
             <contactInformation>
-            	<email>${#TestSuite#CUST}@opencellsoft.com</email>
+            	<email>${#Project#SCUsername}@opencellsoft.com</email>
             </contactInformation>
             <customFields>
               <customField code="password">
@@ -49295,6 +49192,13 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="b9cd4050-6061-4b63-a2b2-e64db292f1f0"/>
+            <con:assertion type="Simple Contains" id="fc869fb4-15b9-4756-91c9-ab8192d6d52e" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -49328,6 +49232,13 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="b9cd4050-6061-4b63-a2b2-e64db292f1f0"/>
+            <con:assertion type="Simple Contains" id="2d7b4e0f-a5a0-4b94-8a1a-b218cba883df" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -49399,6 +49310,13 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="b9cd4050-6061-4b63-a2b2-e64db292f1f0"/>
+            <con:assertion type="Simple Contains" id="16eef3d1-5ec0-4485-9fb7-555875c290fe" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -49957,6 +49875,13 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="b9cd4050-6061-4b63-a2b2-e64db292f1f0"/>
+            <con:assertion type="Simple Contains" id="2a68009e-b70a-446a-8f93-17180589aa8d" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -49990,6 +49915,13 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="b9cd4050-6061-4b63-a2b2-e64db292f1f0"/>
+            <con:assertion type="Simple Contains" id="b531fa81-401f-40a5-9cab-0549638b1784" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -50037,6 +49969,13 @@ MFBG0AAAAABJRU5ErkJggg==
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="b9cd4050-6061-4b63-a2b2-e64db292f1f0"/>
+            <con:assertion type="Simple Contains" id="37e96a03-be7e-4297-947e-989edb3679f1" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -50700,7 +50639,7 @@ MFBG0AAAAABJRU5ErkJggg==
     <con:properties>
       <con:property>
         <con:name>CUST</con:name>
-        <con:value>${#Project#templateCode}</con:value>
+        <con:value>${#Project#SCUsername}</con:value>
       </con:property>
       <con:property>
         <con:name>SUBSCRIPTION_DATE</con:name>
@@ -55246,13 +55185,73 @@ rkJggg==
       </con:property>
     </con:properties>
   </con:testSuite>
+  <con:testSuite id="5f19c98a-0e69-480f-964a-4c998147f68e" name="Appsource fix">
+    <con:settings/>
+    <con:runType>SEQUENTIAL</con:runType>
+    <con:testCase id="f609fc52-dca9-466b-862e-637fbdc432c4" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Role fix" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="request" name="RoleFix" id="dbcf842b-f257-4ac4-8031-bf4f971562e8">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createUser</con:operation>
+          <con:request name="RoleFix" id="2d7c5c5f-ab8a-46d7-8db9-f81834a652cf">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateUser>
+         <user>
+            <username>${#Project#CCUsername}</username>
+            <email>${#Project#CCUsername}@opencellsoft.com</email>
+            <firstName>${#Project#CCFirstname}</firstName>
+            <lastName>${#Project#CCLastname}</lastName>
+            <userRoles>
+               <userRole>CUSTOMER_CARE_USER</userRole>
+            </userRoles>
+         </user>
+      </ws:createOrUpdateUser>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="a427c4ca-342e-4fba-812c-5c56034291c8"/>
+            <con:assertion type="Simple Contains" id="ffb0a71a-c828-4d7d-b171-a6267f4336e5" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.superadmin</con:username>
+              <con:password>meveo.superadmin</con:password>
+              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>Preemptive</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:setupScript/>
+      <con:properties/>
+    </con:testCase>
+    <con:properties/>
+  </con:testSuite>
   <con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">http://localhost:8080/meveo/CatalogWs</con:endpoint>
   </con:endpointStrategy>
   <con:properties>
     <con:property>
       <con:name>opencell.url</con:name>
-      <con:value>http://localhost:8080/opencell</con:value>
+      <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
     </con:property>
     <con:property>
       <con:name>provider</con:name>
@@ -55268,7 +55267,7 @@ rkJggg==
     </con:property>
     <con:property>
       <con:name>mainOfferId</con:name>
-      <con:value>5</con:value>
+      <con:value>47</con:value>
     </con:property>
     <con:property>
       <con:name>templateCode</con:name>
@@ -55328,27 +55327,43 @@ rkJggg==
     </con:property>
     <con:property>
       <con:name>MMUsername</con:name>
-      <con:value>${#Project#provider}.marketingmanager</con:value>
+      <con:value>opencell.marketingmanager</con:value>
     </con:property>
     <con:property>
       <con:name>MMPassword</con:name>
-      <con:value>${#Project#provider}.marketingmanager</con:value>
+      <con:value>opencell.marketingmanager</con:value>
     </con:property>
     <con:property>
       <con:name>CCUsername</con:name>
-      <con:value>${#Project#provider}.customercare</con:value>
+      <con:value>DEMO.customercare</con:value>
     </con:property>
     <con:property>
       <con:name>CCPassword</con:name>
-      <con:value>${#Project#provider}.customercare</con:value>
+      <con:value>DEMO.customercare</con:value>
     </con:property>
     <con:property>
       <con:name>SCUsername</con:name>
-      <con:value>${#Project#provider}.selfcare</con:value>
+      <con:value>DEMO.CLASSIC</con:value>
     </con:property>
     <con:property>
       <con:name>SCPassword</con:name>
-      <con:value>${#Project#provider}.selfcare</con:value>
+      <con:value>DEMO.CLASSIC</con:value>
+    </con:property>
+    <con:property>
+      <con:name>CCLastname</con:name>
+      <con:value>CC Lastname</con:value>
+    </con:property>
+    <con:property>
+      <con:name>CCFirstname</con:name>
+      <con:value>CC Firstname</con:value>
+    </con:property>
+    <con:property>
+      <con:name>SCLastname</con:name>
+      <con:value>SC Lastname</con:value>
+    </con:property>
+    <con:property>
+      <con:name>SCFirstname</con:name>
+      <con:value>SC Firstname</con:value>
     </con:property>
   </con:properties>
   <con:wssContainer/>

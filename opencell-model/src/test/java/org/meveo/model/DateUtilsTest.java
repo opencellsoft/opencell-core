@@ -125,5 +125,18 @@ public class DateUtilsTest {
             Assert.assertTrue("Days " + from + "-" + to + " are incorrect", matched == shouldMatch);
         }
 
+        // Check with no period start and end dates
+        days = new Integer[] { 10, 15, 1, 15, null, 1, null, 15, 1, null, null, 1 };
+
+        for (int i = 0; i < days.length; i = i + 3) {
+            Integer from = days[i];
+            Integer to = days[i + 1];
+            boolean shouldMatch = days[i + 2] == 1;
+            boolean matched = DateUtils.isPeriodsOverlap(null, null, from != null ? DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, from, 0, 0, 0) : null,
+                to != null ? DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, to, 0, 0, 0) : null);
+
+            Assert.assertTrue("Days " + from + "-" + to + " are incorrect", matched == shouldMatch);
+        }
+
     }
 }

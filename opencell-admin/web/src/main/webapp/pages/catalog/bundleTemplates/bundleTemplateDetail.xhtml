@@ -8,6 +8,7 @@
 	<ui:define name="metadata">
 		<f:metadata>
             <f:viewParam name="objectId" value="#{bundleTemplateBean.objectId}" />
+			<f:viewParam name="newVersion" value="#{bundleTemplateBean.newVersion}" />
         </f:metadata>
 	</ui:define>
 
@@ -31,16 +32,17 @@
 			<ui:include src="../productTemplates/productTemplateDetailCommon.xhtml">
 				<ui:param name="backingBean" value="#{bundleTemplateBean}" />
 				<ui:param name="mode" value="BUNDLE" />
+				<ui:param name="idPath" value=":formId" />
 			</ui:include>
 			
 		</hftl:formPanel>
 
 		<p:dialog id="selectProduct" widgetVar="selectProduct" dynamic="true"
-			modal="true" appendTo="@(body)">
+			modal="true" appendTo="@(body)" closeOnEscape="true">
 			<h:form id="addBundleProductForm">
 				<p:panel id="headerPanel">
 					<p:dataTable id="productTemplatesTable" var="prodT"
-						value="#{productTemplateListBean.listAll(bundleTemplateBean.entity, bundleTemplateBean.entity.bundleProducts)}"
+						value="#{productTemplateBean.listProductsForBundle(bundleTemplateBean.entity, bundleTemplateBean.entity.bundleProducts)}"
 						paginator="true" rows="5" paginatorPosition="top"
 						paginatorAlwaysVisible="true"
 						paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
@@ -55,22 +57,11 @@
 								<f:param name="pictureGroupName" value="product"></f:param>
 							</p:graphicImage>
 						</p:column>
-						<p:column headerText="#{messages['commons.name']}">
-							<h:outputText value="#{prodT.name}"></h:outputText>
-						</p:column>
-						<p:column headerText="#{messages['BusinessEntity.description']}">
-							<h:outputText value="#{prodT.description}" />
-						</p:column>
-						<p:column headerText="#{messages['commons.validFrom']}">
-							<h:outputText value="#{prodT.validFrom}">
-								<f:converter converterId="dateTimeConverter"></f:converter>
-							</h:outputText>
-						</p:column>
-						<p:column headerText="#{messages['commons.validTo']}">
-							<h:outputText value="#{prodT.validTo}">
-								<f:converter converterId="dateTimeConverter"></f:converter>
-							</h:outputText>
-						</p:column>
+						<hftl:column label="#{messages['commons.name']}" entity="#{prodT}" field="name" />
+						<hftl:column label="#{messages['BusinessEntity.description']}" entity="#{prodT}" field="description" />
+
+			            <hftl:column label="#{messages['offerTemplate.validity']}" entity="#{prodT}" field="validity" isDatePeriod="true" width="11%"/>    						
+						
 						<p:column headerText="#{messages['commons.actions']}">
 							<p:commandButton value="#{messages['bundleTemplate.addProduct']}"
 								action="#{bundleTemplateBean.addProductTemplateToBundle(prodT)}"

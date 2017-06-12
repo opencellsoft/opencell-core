@@ -146,7 +146,7 @@
 		<p:menuitem id="charts" value="#{messages['menu.charts']}" outcome="charts" />
 	</p:submenu>
 	
-	<p:submenu id="customEntites" label="#{messages['menu.customEntities']}" rendered="#{!empty(customEntityTemplateBean.listAll()) and identity.hasPermission('administration','administrationVisualization')}">
+	<p:submenu id="customEntites" label="#{messages['menu.customEntities']}" rendered="#{!empty(customEntityTemplateBean.listAll()) and currentUser.hasRole('administrationVisualization')}">
 		<c:set var="cetIndex" value="0" />
 		<c:forEach items="#{customEntityTemplateBean.listAll()}" var="cet">
 			<c:if
@@ -195,7 +195,10 @@
 			<p:menuitem id="export" outcome="export" value="#{messages['menu.export']}" />
 		</p:submenu>
 		<p:menuitem id="fileExplorerMenu" rendered="#{currentUser.hasRole('administrationVisualization')}" outcome="fileExplorer" value="#{messages['menu.fileExplorer']}" />
-		<!-- <p:menuitem id="auditLogMenu" rendered="#{currentUser.hasRole('administrationVisualization')}" outcome="auditLog" value="#{messages['menu.auditLog']}" /> -->
+		<p:submenu id="auditLogSubMenu" label="#{messages['menu.auditLog']}" rendered="#{currentUser.hasRole('administrationVisualization')}">
+			<p:menuitem id="auditConfiguration" outcome="auditConfiguration" value="#{messages['menu.auditConfiguration']}" />
+			<p:menuitem id="auditLog" outcome="auditLog" value="#{messages['menu.auditLogs']}" />
+		</p:submenu>
 		<p:menuitem id="cache" rendered="#{currentUser.hasRole('superAdminManagement')}" outcome="caches" value="#{messages['menu.cacheInfo']}" />
 		<p:menuitem id="indexing" rendered="#{currentUser.hasRole('superAdminManagement')}" outcome="indexing" value="#{messages['menu.indexing']}" />
 	</p:submenu>						

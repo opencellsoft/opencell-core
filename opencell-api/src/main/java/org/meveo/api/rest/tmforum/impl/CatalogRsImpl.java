@@ -1,6 +1,7 @@
 package org.meveo.api.rest.tmforum.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
@@ -186,21 +187,21 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
     }
 
     @Override
-    public Response getProductOffering(String id, UriInfo info) {
+    public Response getProductOffering(String id, Date validFrom, Date validTo, UriInfo info) {
         log.debug("find productOffering by id {}", id);
 
         Response.ResponseBuilder responseBuilder = null;
 
         try {
-            ProductOffering productOffering = catalogApi.findProductOffering(id,  uriInfo, Category.createProto(uriInfo));
+            ProductOffering productOffering = catalogApi.findProductOffering(id, validFrom, validTo, uriInfo, Category.createProto(uriInfo));
             responseBuilder = Response.ok().entity(productOffering);
 
         } catch (EntityDoesNotExistsException e) {
             responseBuilder = Response.status(Response.Status.NOT_FOUND);
             responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
-        } catch (MeveoApiException e) {
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
+//        } catch (MeveoApiException e) {
+//            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+//            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
             log.error("Failed to execute API", e);
             responseBuilder = Response.status(Response.Status.BAD_REQUEST);
@@ -237,20 +238,20 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
     }
 
     @Override
-    public Response getProductSpecification(String id, UriInfo info) {
+    public Response getProductSpecification(String id, Date validFrom, Date validTo, UriInfo info) {
         log.debug("find productSpecification by id {}", id);
 
         Response.ResponseBuilder responseBuilder = null;
         try {
-            ProductSpecification productSpecification = catalogApi.findProductSpecification(id,  uriInfo);           
+            ProductSpecification productSpecification = catalogApi.findProductSpecification(id, validFrom, validTo,  uriInfo);           
             responseBuilder = Response.ok().entity(productSpecification);
 
         } catch (EntityDoesNotExistsException e) {
             responseBuilder = Response.status(Response.Status.NOT_FOUND);
             responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
-        } catch (MeveoApiException e) {
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
+//        } catch (MeveoApiException e) {
+//            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+//            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
             log.error("Failed to execute API", e);
             responseBuilder = Response.status(Response.Status.BAD_REQUEST);
@@ -288,11 +289,11 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
     }
 
 	@Override
-	public Response getProductTemplate(String code) {
+	public Response getProductTemplate(String code, Date validFrom, Date validTo) {
         log.debug("getProductTemplate by code {}", code);
         Response.ResponseBuilder responseBuilder = null;
         try {
-        	ProductTemplateDto productTemplateDto = productTemplateApi.find(code);
+        	ProductTemplateDto productTemplateDto = productTemplateApi.find(code, validFrom, validTo);
             responseBuilder = Response.ok().entity(productTemplateDto);
 
         } catch (EntityDoesNotExistsException e) {
@@ -382,10 +383,10 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
     }
 
 	@Override
-	public Response removeProductTemplate(String code) {
+	public Response removeProductTemplate(String code, Date validFrom, Date validTo) {
 		Response.ResponseBuilder responseBuilder = null;
         try {
-        	 productTemplateApi.remove(code);
+        	productTemplateApi.remove(code, validFrom, validTo);
             responseBuilder = Response.ok();
 
         } catch (ConstraintViolationException e) {

@@ -488,10 +488,10 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
         if (entity != null && entity.getId() != null) {
            try{
         	   serviceTemplateService.duplicate(entity);
-               messages.info(new BundleKey("messages", "save.successful"));
+               messages.info(new BundleKey("messages", "duplicate.successfull"));
             } catch (BusinessException e) {
-                log.error("Error encountered persisting service template entity: #{0}:#{1}", entity.getCode(), e);
-                messages.error(new BundleKey("messages", "save.unsuccessful"));
+                log.error("Error encountered duplicating service template entity: {}", entity.getCode(), e);
+                messages.error(new BundleKey("messages", "error.duplicate.unexpected"));
             }
 		}
 	}

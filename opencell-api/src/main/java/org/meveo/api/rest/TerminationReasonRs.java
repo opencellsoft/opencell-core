@@ -6,6 +6,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -56,9 +57,9 @@ public interface TerminationReasonRs extends IBaseRs {
      * @param terminationReasonCode The termination reason's code
      * @return Request processing status
      */
-    @Path("/")
+    @Path("/{terminationReasonCode}")
     @DELETE
-    ActionStatus remove(@QueryParam("terminationReasonCode") String code);
+    ActionStatus remove(@PathParam("terminationReasonCode") String terminationReasonCode);
 
     /**
      * Find a termination reason with a given code 

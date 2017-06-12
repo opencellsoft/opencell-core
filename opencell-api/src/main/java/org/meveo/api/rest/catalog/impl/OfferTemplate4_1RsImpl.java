@@ -64,7 +64,7 @@ public class OfferTemplate4_1RsImpl extends BaseRs implements OfferTemplate4_1Rs
         GetOfferTemplateResponseDto result = new GetOfferTemplateResponseDto();
 
         try {
-            result.setOfferTemplate(offerTemplateApi.find(offerTemplateCode));
+            result.setOfferTemplate(offerTemplateApi.find(offerTemplateCode, null, null));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -77,7 +77,7 @@ public class OfferTemplate4_1RsImpl extends BaseRs implements OfferTemplate4_1Rs
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            offerTemplateApi.remove(offerTemplateCode);
+            offerTemplateApi.remove(offerTemplateCode, null, null);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -100,8 +100,13 @@ public class OfferTemplate4_1RsImpl extends BaseRs implements OfferTemplate4_1Rs
         return result;
     }
 
+    /**
+     * @param postData instance of OfferTemplate4_1Dto which contains posted infos.
+     * @return
+     */
     private OfferTemplateDto convertOfferTemplateDto(OfferTemplate4_1Dto postData) {
         OfferTemplateDto offerTemplateDto = new OfferTemplateDto();
+        offerTemplateDto.setId(postData.getId());
         offerTemplateDto.setCode(postData.getCode());
         offerTemplateDto.setDescription(postData.getDescription());
         offerTemplateDto.setDisabled(postData.isDisabled());

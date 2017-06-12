@@ -51,7 +51,7 @@ public class DateUtils {
 
     public static String formatDateWithPattern(Date value, String pattern) {
         if (value == null) {
-            return null;
+            return "";
         }
         String result = null;
         SimpleDateFormat sdf = new SimpleDateFormat(pattern);
@@ -514,7 +514,7 @@ public class DateUtils {
     public static boolean isPeriodsOverlap(Date periodStart, Date periodEnd, Date checkStart, Date checkEnd) {
 
         // Logger log = LoggerFactory.getLogger(DateUtils.class);
-        if (checkStart == null && checkEnd == null) {
+        if ((checkStart == null && checkEnd == null) || (periodStart == null && periodEnd == null)) {
             return true;
         }
 

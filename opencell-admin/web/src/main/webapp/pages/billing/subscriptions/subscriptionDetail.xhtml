@@ -25,6 +25,8 @@
 	</ui:define>
 
 	<ui:define name="body">
+        <p:importEnum type="org.meveo.model.billing.SubscriptionStatusEnum" var="SubscriptionStatusEnum"></p:importEnum>
+    
 		<h:form id="crumbmenuForm1">
 			<p:breadCrumb homeDisplay="text" id="crumbmenu1">
 				<p:menuitem value="#{messages['menu.customers']}" disabled="true" />
@@ -52,15 +54,18 @@
 			}			
 		}	
 		</script>
-		
-		<hftl:entityPopup id="productTemplatePopup" header="#{messages['productTemplate.title']}" backingBean="#{productTemplateBean}" dataModel="#{subscriptionBean.offerProductTemplates}"
-            searchField1Label="#{messages['BusinessEntity.code']}" searchField1="code" column1Label="#{messages['BusinessEntity.code']}" column1="code"
-            selection="#{subscriptionBean.productInstance.productTemplate}"
-            selectionListenerBean="#{subscriptionBean}" selectionListenerMethod="updateProductInstanceCode" 
+
+        <hftl:entityPopup id="productTemplatePopup" header="#{messages['productTemplate.title']}" backingBean="#{productTemplateBean}"
+            dataModel="#{subscriptionBean.getOfferProductTemplatesByDate(subscriptionBean.productInstance.applicationDate)}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
+            searchField2Label="#{messages['businessEntity.description']}" searchField2="description" searchField3Label="#{messages['commons.validFrom']}" searchField3="validity.from"
+            searchField4Label="#{messages['commons.validTo']}" searchField4="validity.to" column1Label="#{messages['businessEntity.code']}" column1="code"
+            column2Label="#{messages['businessEntity.description']}" column2="description" column3Label="#{messages['commons.validFrom']}" column3="validity" column3Child="from"
+            column4Label="#{messages['commons.validTo']}" column4="validity" column4Child="to" selection="#{subscriptionBean.productInstance.productTemplate}"
+            selectionListenerBean="#{subscriptionBean}" selectionListenerMethod="updateProductInstanceCode"
             updateField=":subscriptionTab:applyProductForm:productTemplateSelectedId :subscriptionTab:applyProductForm:productTemplateSelectedId_text :#{p:component('productCF')}">
         </hftl:entityPopup>
 
-		<hftl:entityPopup id="userAccountPopup"
+        <hftl:entityPopup id="userAccountPopup"
 			header="#{messages['userAccount.popup.header']}"
 			backingBean="#{userAccountBean}"
 			searchField1Label="#{messages['userAccount.code']}"
@@ -72,19 +77,25 @@
 			updateField=":subscriptionTab:subscriptionFormId:informationTab:userSelectId :subscriptionTab:subscriptionFormId:informationTab:userSelectId_text">
 		</hftl:entityPopup>
 
-<!-- 		<hftl:entityPopup id="offerPopup" -->
-<!-- 			header="#{messages['offer.popup.header']}" -->
-<!-- 			backingBean="#{offerTemplateBean}" -->
-<!-- 			searchField1Label="#{messages['offerTemplate.code']}" -->
-<!-- 			searchField1="code" -->
-<!-- 			searchField2Label="#{messages['offerTemplate.description']}" -->
-<!-- 			searchField2="description" -->
-<!-- 			column1Label="#{messages['offerTemplate.code']}" column1="code" -->
-<!-- 			column2Label="#{messages['offerTemplate.description']}" -->
-<!-- 			column2="description" selection="#{subscriptionBean.entity.offer}" -->
-<!-- 			lazy="false" dataModel="#{offerTemplateBean.listActive}" -->
-<!-- 			updateField=":subscriptionTab:subscriptionFormId:offerSelectId"> -->
-<!-- 		</hftl:entityPopup> -->
+		<hftl:entityPopup id="offerPopup"
+			header="#{messages['offer.popup.header']}"
+			backingBean="#{offerTemplateBean}"
+			searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="code"
+			searchField2Label="#{messages['businessEntity.description']}"
+			searchField2="description"
+			searchField3Label="#{messages['commons.validFrom']}"
+			searchField3="validity.from"
+			searchField4Label="#{messages['commons.validTo']}"
+			searchField4="validity.to"
+			column1Label="#{messages['businessEntity.code']}" column1="code"
+			column2Label="#{messages['businessEntity.description']}" column2="description"			
+			column3Label="#{messages['commons.validFrom']}" column3="validity" column3Child="from"
+			column4Label="#{messages['commons.validTo']}" column4="validity" column4Child="to"
+			selection="#{subscriptionBean.entity.offer}" width="1000"
+			lazy="false" dataModel="#{offerTemplateBean.listActiveByDate(subscriptionBean.entity.subscriptionDate)}"
+			updateField=":subscriptionTab:subscriptionFormId:informationTab:offerSelectId :subscriptionTab:subscriptionFormId:informationTab:offerSelectId_text">
+		</hftl:entityPopup>
 
 <!-- 		<hftl:entityPopup id="chargeTemplatePopup" -->
 <!-- 			header="#{messages['chargeTemplate.popup.header']}" -->
@@ -149,7 +160,7 @@
 							<p:commandButton action="#{subscriptionBean.terminateService()}"
 								value="#{messages['button.terminateButton']}"
 								oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_serviceTerminationPopup').hide()"
-								update=":subscriptionTab:headerInfo1 :subscriptionTab:ST_results2_form:instantiatePanelActions :#{p:component('srvInstansFrm')} :subscriptionTab:headerInfo1:messages :subscriptionTab:ST_results2_form terminationMessages" />
+								update=":subscriptionTab:headerInfo1 :subscriptionTab:ST_results2_form:instantiatePanelActions :#{p:component('srvInstansFrm')} :subscriptionTab:headerInfo1:messages :subscriptionTab:ST_results2_form terminationMessages :subscriptionTab:subscriptionFormId:informationTab" />
 							<p:commandButton immediate="true"
 								onclick="PF('dlg_serviceTerminationPopup').hide()" type="button"
 								value="#{messages['management.close']}" />
@@ -173,7 +184,7 @@
 							field="code" size="50" edit="false" /> 
 						<hftl:formField
 							label="#{messages['serviceInstance.terminationDate']}"
-							field="terminationDate" required="true" edit="true"  pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}"/>
+							field="terminationDate" required="true" edit="true"  pattern="#{paramBean.dateFormat}"/>
 							
 						<hftl:formField label="#{messages['menu.terminationReason']}"
 							field="subscriptionTerminationReason" valueLabelField="descriptionOrCode"
@@ -185,7 +196,7 @@
 							<p:commandButton action="#{subscriptionBean.terminateSubscription()}"
 								value="#{messages['button.terminateButton']}"
 								oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_subscriptionTerminationPopup').hide()"
-								update=":subscriptionTab:subscriptionInfosTab"/>
+								update=":subscriptionTab:subscriptionFormId"/>
 							<p:commandButton immediate="true"
 								onclick="PF('dlg_subscriptionTerminationPopup').hide()" type="button"
 								value="#{messages['management.close']}" />
@@ -284,7 +295,7 @@
 								<p:panel styleClass="action-buttons">
 									<p:commandButton action="#{subscriptionBean.activateService}"
 										value="#{messages['button.activateButton']}"
-										update=":subscriptionTab:srvInstansFrm :subscriptionTab:headerInfo1:messages"
+										update=":subscriptionTab:srvInstansFrm :subscriptionTab:headerInfo1:messages :subscriptionTab:subscriptionFormId"
 										disabled="#{subscriptionBean.selectedServiceInstance==null || subscriptionBean.selectedServiceInstance.status!='INACTIVE'}">
 										<p:confirm header="#{messages['commons.confirmationHeader']}"
 											message="#{messages['confirmationMessage.confirmActivation']}"
@@ -342,12 +353,11 @@
 										<hftl:formField id="userSelectId"
 											label="#{messages['subscription.userAccount']}"
 											field="userAccount" valueLabelField="code" required="true"
-												popup="true" popupId="userAccountPopup" allowEdit="false" />
+											popup="true" popupId="userAccountPopup" allowEdit="false" componentWidth="30"/>
 										<hftl:formField id="offerSelectId"
 											label="#{messages['subscription.offer']}" field="offer"
-											valueLabelField="code" listElements="#{offerTemplateBean.listActive()}"
-											required="true" modifyOnCreate="true" />
-										<!-- popup="true" popupId="offerPopup" -->
+											valueLabelField="code" componentWidth="30" allowEdit="#{! subscriptionBean.entity.anyServiceActive}"
+											required="true" popup="true" popupId="offerPopup"/>
 										<hftl:formField label="#{messages['businessEntity.code']}"
 											field="code" required="true" validateUnique="true"/>
 										<hftl:formField
@@ -355,7 +365,7 @@
 											field="description" size="80" />
 										<hftl:formField
 											label="#{messages['billingAccount.subscriptionDate']}"
-											field="subscriptionDate" required="true" />
+											field="subscriptionDate" required="true" newLine="true" listenerUpdate="offerPopup" />
 										<hftl:formField
 											label="#{messages[subscriptionBean.entity.status=='SUSPENDED'?'billingAccount.suspensionDate': 'billingAccount.terminationDate']}"
 											field="terminationDate"
@@ -371,12 +381,12 @@
 								</p:tabView>
 								<ui:param name="buttons" value="true" />
 				                <ui:define name="buttons">
-								<p:commandButton value="#{messages['button.terminateButton']}" id="subTerminationButton"
+								    <p:commandButton value="#{messages['button.terminateButton']}" id="subTerminationButton"
 										onclick="PF('dlg_subscriptionTerminationPopup').show();"
-										rendered="#{subscriptionBean.canUserUpdateEntity()}"
+										rendered="#{ (subscriptionBean.entity.status == SubscriptionStatusEnum.ACTIVE or subscriptionBean.entity.status == SubscriptionStatusEnum.SUSPENDED) and subscriptionBean.canUserUpdateEntity()}"
 										type="button"
 										disabled="#{not empty subscriptionBean.entity.terminationDate}" /> 
-										</ui:define>
+								</ui:define>
 						</hftl:formPanel>
 					</p:tab>
 
@@ -489,7 +499,7 @@
 														<hftl:column label="#{messages['chargeInstance.code']}"
 															field="code" />
 														<hftl:column
-															label="#{messages['BusinessEntity.description']}"
+															label="#{messages['businessEntity.description']}"
 															field="description" isMessage="false" />
 														<hftl:column
 															label="#{messages['serviceInstance.status']}"

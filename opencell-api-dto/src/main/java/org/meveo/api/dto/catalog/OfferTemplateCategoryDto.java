@@ -38,6 +38,10 @@ public class OfferTemplateCategoryDto extends BusinessDto {
 		
 	}
 	
+    public OfferTemplateCategoryDto(String code) {
+        this.code = code;
+    }
+
 	public OfferTemplateCategoryDto (OfferTemplateCategory offerTemplateCategory) {
 		super(offerTemplateCategory);
 		

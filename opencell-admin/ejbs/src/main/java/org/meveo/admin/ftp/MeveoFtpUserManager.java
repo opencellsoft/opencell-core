@@ -11,13 +11,11 @@ import org.apache.ftpserver.ftplet.Authority;
 import org.apache.ftpserver.ftplet.FtpException;
 import org.apache.ftpserver.ftplet.User;
 import org.apache.ftpserver.usermanager.PasswordEncryptor;
-import org.apache.ftpserver.usermanager.UsernamePasswordAuthentication;
 import org.apache.ftpserver.usermanager.impl.AbstractUserManager;
 import org.apache.ftpserver.usermanager.impl.BaseUser;
 import org.apache.ftpserver.usermanager.impl.ConcurrentLoginPermission;
 import org.apache.ftpserver.usermanager.impl.TransferRatePermission;
 import org.apache.ftpserver.usermanager.impl.WritePermission;
-import org.meveo.admin.exception.LoginException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.security.Permission;
 import org.meveo.model.security.Role;
@@ -43,33 +41,27 @@ public class MeveoFtpUserManager extends AbstractUserManager {
 
 	@Override
 	public User authenticate(Authentication authentication) throws AuthenticationFailedException {
-		if (authentication instanceof UsernamePasswordAuthentication) {
-			UsernamePasswordAuthentication upauth = (UsernamePasswordAuthentication) authentication;
-
-			String user = upauth.getUsername();
-			String password = upauth.getPassword();
-			log.debug("authenticate ..." + user);
-
-			if (user == null) {
-				throw new AuthenticationFailedException("Authentication failed");
-			}
-
-			if (password == null) {
-				throw new IllegalArgumentException("Authentication failed because null password!");
-			}
-
-			org.meveo.model.admin.User meveoUser = null;
-			try {
-				meveoUser = userService.loginChecks(user, password);
-				return getUserFromMeveoUser(meveoUser);
-			} catch (LoginException |FtpException e) {
-				log.error("Ftp user {} failed login into FTP server", user, e);
-				throw new AuthenticationFailedException("Authentication failed");
-			}
-
-		} else {
+//		if (authentication instanceof UsernamePasswordAuthentication) {
+//			UsernamePasswordAuthentication upauth = (UsernamePasswordAuthentication) authentication;
+//
+//			String user = upauth.getUsername();
+//			String password = upauth.getPassword();
+//			log.debug("authenticate ..." + user);
+//
+//			if (user == null) {
+//				throw new AuthenticationFailedException("Authentication failed");
+//			}
+//
+//			if (password == null) {
+//				throw new IllegalArgumentException("Authentication failed because null password!");
+//			}
+//
+//            log.error("Ftp user {} failed login into FTP server - NOT SUPPORTED", user);
+//            throw new AuthenticationFailedException("Authentication failed");
+//
+//		} else {
 			throw new IllegalArgumentException("Authentication not supported by this user manager");
-		}
+//		}
 	}
 
 	@Override

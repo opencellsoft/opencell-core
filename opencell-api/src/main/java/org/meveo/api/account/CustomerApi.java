@@ -39,7 +39,7 @@ import org.meveo.service.crm.impl.CustomerService;
  **/
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
-public class CustomerApi extends AccountApi {
+public class CustomerApi extends AccountEntityApi {
 
     @Inject
     private CustomerService customerService;

@@ -448,8 +448,8 @@ public class WorkflowBean extends BaseBean<Workflow> {
     }
 
     public boolean checkAndPopulateDecisionRules(List<GroupedDecisionRule> groupedDecisionRules, List<WFDecisionRule> wfDecisionRules) {
-        ParamBean paramBean = ParamBean.getInstance();
-        String datePattern = paramBean.getProperty("meveo.dateFormat", "dd/MM/yyyy");
+
+        String datePattern = ParamBean.getInstance().getDateFormat();
         List<RuleNameValue> uniqueNameValues = new ArrayList<>();
         for (GroupedDecisionRule groupedDecisionRule : groupedDecisionRules) {
             if (groupedDecisionRule.getValue() != null && groupedDecisionRule.getValue().getModel()) {
@@ -639,10 +639,10 @@ public class WorkflowBean extends BaseBean<Workflow> {
         if (entity != null && entity.getId() != null) {
             try {
                 workflowService.duplicate(entity);
-                messages.info(new BundleKey("messages", "save.successful"));
+                messages.info(new BundleKey("messages", "duplicate.successfull"));
             } catch (BusinessException e) {
-                log.error("Error encountered persisting {} entity: {}: {}", new Object[] { entity.getClass().getSimpleName(), entity.getCode(), e });
-                messages.error(new BundleKey("messages", "save.unsuccessful"));
+                log.error("Error encountered duplicating {} entity: {}", new Object[] { entity.getClass().getSimpleName(), entity.getCode(), e });
+                messages.error(new BundleKey("messages", "error.duplicate.unexpected"));
             }
         }
     }

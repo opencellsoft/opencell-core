@@ -12,7 +12,6 @@ import org.meveo.api.dto.BusinessDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.catalog.PricePlanMatrix;
 
-
 @XmlRootElement(name = "PricePlan")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PricePlanMatrixDto extends BusinessDto {
@@ -28,6 +27,7 @@ public class PricePlanMatrixDto extends BusinessDto {
     private BigDecimal minQuantity;
     private BigDecimal maxQuantity;
     private String offerTemplate;
+    private OfferTemplateDto offerTemplateVersion;
 
     private Date startSubscriptionDate;
     private Date endSubscriptionDate;
@@ -59,44 +59,46 @@ public class PricePlanMatrixDto extends BusinessDto {
 
     }
 
-    public PricePlanMatrixDto(PricePlanMatrix e, CustomFieldsDto customFieldInstances) {
-    	super(e);
+    public PricePlanMatrixDto(PricePlanMatrix pricePlan, CustomFieldsDto customFieldInstances) {
+    	super(pricePlan);
         
-        eventCode = e.getEventCode();
-        if (e.getSeller() != null) {
-            seller = e.getSeller().getCode();
+        eventCode = pricePlan.getEventCode();
+        if (pricePlan.getSeller() != null) {
+            seller = pricePlan.getSeller().getCode();
         }
-        if (e.getTradingCountry() != null) {
-            country = e.getTradingCountry().getCountryCode();
+        if (pricePlan.getTradingCountry() != null) {
+            country = pricePlan.getTradingCountry().getCountryCode();
         }
-        if (e.getTradingCurrency() != null) {
-            currency = e.getTradingCurrency().getCurrencyCode();
+        if (pricePlan.getTradingCurrency() != null) {
+            currency = pricePlan.getTradingCurrency().getCurrencyCode();
         }
-        if (e.getOfferTemplate() != null) {
-            offerTemplate = e.getOfferTemplate().getCode();
+        if (pricePlan.getOfferTemplate() != null) {
+            offerTemplateVersion = new OfferTemplateDto(pricePlan.getOfferTemplate(), null, true);
+            offerTemplate = pricePlan.getOfferTemplate().getCode();
         }
-        minQuantity = e.getMinQuantity();
-        maxQuantity = e.getMaxQuantity();
-        startSubscriptionDate = e.getStartRatingDate();
-        endSubscriptionDate = e.getEndSubscriptionDate();
-        startRatingDate = e.getStartRatingDate();
-        endRatingDate = e.getEndRatingDate();
-        minSubscriptionAgeInMonth = e.getMinSubscriptionAgeInMonth();
-        maxSubscriptionAgeInMonth = e.getMaxSubscriptionAgeInMonth();
-        amountWithoutTax = e.getAmountWithoutTax();
-        amountWithTax = e.getAmountWithTax();
-        amountWithoutTaxEL = e.getAmountWithoutTaxEL();
-        amountWithTaxEL = e.getAmountWithTaxEL();
-        priority = e.getPriority();
-        criteria1 = e.getCriteria1Value();
-        criteria2 = e.getCriteria2Value();
-        criteria3 = e.getCriteria3Value();
-        if (e.getValidityCalendar() != null) {
-            validityCalendarCode = e.getValidityCalendar().getCode();
+        minQuantity = pricePlan.getMinQuantity();
+        maxQuantity = pricePlan.getMaxQuantity();
+        startSubscriptionDate = pricePlan.getStartRatingDate();
+        endSubscriptionDate = pricePlan.getEndSubscriptionDate();
+        startRatingDate = pricePlan.getStartRatingDate();
+        endRatingDate = pricePlan.getEndRatingDate();
+        minSubscriptionAgeInMonth = pricePlan.getMinSubscriptionAgeInMonth();
+        maxSubscriptionAgeInMonth = pricePlan.getMaxSubscriptionAgeInMonth();
+        amountWithoutTax = pricePlan.getAmountWithoutTax();
+        amountWithTax = pricePlan.getAmountWithTax();
+        amountWithoutTaxEL = pricePlan.getAmountWithoutTaxEL();
+        amountWithTaxEL = pricePlan.getAmountWithTaxEL();
+        priority = pricePlan.getPriority();
+        criteria1 = pricePlan.getCriteria1Value();
+        criteria2 = pricePlan.getCriteria2Value();
+        criteria3 = pricePlan.getCriteria3Value();
+        if (pricePlan.getValidityCalendar() != null) {
+            validityCalendarCode = pricePlan.getValidityCalendar().getCode();
         }
-        criteriaEL = e.getCriteriaEL();
-        if(e.getScriptInstance() != null){
-        	scriptInstance = e.getScriptInstance().getCode();
+
+        criteriaEL = pricePlan.getCriteriaEL();
+        if (pricePlan.getScriptInstance() != null) {
+            scriptInstance = pricePlan.getScriptInstance().getCode();
         }
         customFields = customFieldInstances;
     }
@@ -147,6 +149,14 @@ public class PricePlanMatrixDto extends BusinessDto {
 
     public void setMaxQuantity(BigDecimal maxQuantity) {
         this.maxQuantity = maxQuantity;
+    }
+
+    public OfferTemplateDto getOfferTemplateVersion() {
+        return offerTemplateVersion;
+    }
+
+    public void setOfferTemplateVersion(OfferTemplateDto offerTemplateVersion) {
+        this.offerTemplateVersion = offerTemplateVersion;
     }
 
     public String getOfferTemplate() {
@@ -271,13 +281,12 @@ public class PricePlanMatrixDto extends BusinessDto {
 
     @Override
     public String toString() {
-        return "PricePlanDto [code=" + getCode() + ", eventCode=" + eventCode + ", description=" + getDescription() + ", seller=" + seller + ", country=" + country + ", currency="
-                + currency + ", minQuantity=" + minQuantity + ", maxQuantity=" + maxQuantity + ", offerTemplate=" + offerTemplate + ", startSubscriptionDate="
-                + startSubscriptionDate + ", endSubscriptionDate=" + endSubscriptionDate + ", startRatingDate=" + startRatingDate + ", endRatingDate=" + endRatingDate
-                + ", minSubscriptionAgeInMonth=" + minSubscriptionAgeInMonth + ", maxSubscriptionAgeInMonth=" + maxSubscriptionAgeInMonth + ", amountWithoutTax="
-                + amountWithoutTax + ", amountWithTax=" + amountWithTax + ", amountWithoutTaxEL=" + amountWithoutTaxEL + ", amountWithTaxEL=" + amountWithTaxEL + ", priority="
-                + priority + ", criteria1=" + criteria1 + ", criteria2=" + criteria2 + ", criteria3=" + criteria3 + ", validityCalendarCode=" + validityCalendarCode 
-                + ", scriptInstance="+scriptInstance+"]";
+        return "PricePlanDto [code=" + code + ", eventCode=" + eventCode + ", description=" + description + ", seller=" + seller + ", country=" + country + ", currency=" + currency
+                + ", minQuantity=" + minQuantity + ", maxQuantity=" + maxQuantity + ", offerTemplate=" + offerTemplateVersion + ", startSubscriptionDate=" + startSubscriptionDate
+                + ", endSubscriptionDate=" + endSubscriptionDate + ", startRatingDate=" + startRatingDate + ", endRatingDate=" + endRatingDate + ", minSubscriptionAgeInMonth="
+                + minSubscriptionAgeInMonth + ", maxSubscriptionAgeInMonth=" + maxSubscriptionAgeInMonth + ", amountWithoutTax=" + amountWithoutTax + ", amountWithTax="
+                + amountWithTax + ", amountWithoutTaxEL=" + amountWithoutTaxEL + ", amountWithTaxEL=" + amountWithTaxEL + ", priority=" + priority + ", criteria1=" + criteria1
+                + ", criteria2=" + criteria2 + ", criteria3=" + criteria3 + ", validityCalendarCode=" + validityCalendarCode + ", scriptInstance=" + scriptInstance + "]";
     }
     
     public String getValidityCalendarCode() {

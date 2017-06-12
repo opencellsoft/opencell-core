@@ -2,7 +2,6 @@ package org.meveo.api;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -122,8 +121,6 @@ public class UserApi extends BaseApi {
             name.setLastName(postData.getLastName());
             name.setFirstName(postData.getFirstName());
             user.setName(name);
-            user.setPassword(postData.getPassword());
-            user.setLastPasswordModification(new Date());
             user.setRoles(roles);
             user.setSecuredEntities(securedEntities);
             user.setUserLevel(userHierarchyLevel);
@@ -197,9 +194,6 @@ public class UserApi extends BaseApi {
         user.setUserName(postData.getUsername());
         if (!StringUtils.isBlank(postData.getEmail())) {
             user.setEmail(postData.getEmail());
-        }
-        if (!StringUtils.isBlank(postData.getPassword())) {
-            user.setNewPassword(postData.getPassword());
         }
         Name name = new Name();
         if (!StringUtils.isBlank(postData.getLastName())) {

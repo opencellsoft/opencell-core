@@ -191,7 +191,7 @@ public class Catalog4_1WsImpl extends BaseWs implements Catalog4_1Ws {
         GetOfferTemplateResponseDto result = new GetOfferTemplateResponseDto();
 
         try {
-            result.setOfferTemplate(offerTemplateApi.find(offerTemplateCode));
+            result.setOfferTemplate(offerTemplateApi.find(offerTemplateCode, null, null));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -204,7 +204,7 @@ public class Catalog4_1WsImpl extends BaseWs implements Catalog4_1Ws {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            offerTemplateApi.remove(offerTemplateCode);
+            offerTemplateApi.remove(offerTemplateCode, null,  null);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -227,8 +227,13 @@ public class Catalog4_1WsImpl extends BaseWs implements Catalog4_1Ws {
         return result;
     }
 
+    /**
+     * @param postData instance of OfferTemplate4_1Dto which contains posted infos.
+     * @return instance of OfferTemplateDto 
+     */
     private OfferTemplateDto convertOfferTemplateDto(OfferTemplate4_1Dto postData) {
         OfferTemplateDto offerTemplateDto = new OfferTemplateDto();
+        offerTemplateDto.setId(postData.getId());
         offerTemplateDto.setCode(postData.getCode());
         offerTemplateDto.setDescription(postData.getDescription());
         offerTemplateDto.setDisabled(postData.isDisabled());

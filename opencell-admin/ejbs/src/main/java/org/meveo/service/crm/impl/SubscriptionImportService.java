@@ -67,12 +67,13 @@ public class SubscriptionImportService extends ImportService{
 			org.meveo.model.jaxb.subscription.Subscription jaxbSubscription, String fileName, int i)
 			throws BusinessException, SubscriptionServiceException, ImportIgnoredException {
 
-		OfferTemplate offerTemplate = null;
-		try {
-			offerTemplate = offerTemplateService.findByCode(jaxbSubscription.getOfferCode().toUpperCase());
-		} catch (Exception e) {
-			log.warn("failed to find offerTemplate ",e);
-		}
+        OfferTemplate offerTemplate = null;
+        try {
+            offerTemplate = offerTemplateService.findByCode(jaxbSubscription.getOfferCode().toUpperCase(),
+                DateUtils.parseDateWithPattern(jaxbSubscription.getSubscriptionDate(), paramBean.getProperty("connectorCRM.dateFormat", "dd/MM/yyyy")));
+        } catch (Exception e) {
+            log.warn("failed to find offerTemplate ", e);
+        }
 		checkSubscription.offerTemplate = offerTemplate;
 
 		UserAccount userAccount = null;
@@ -197,10 +198,8 @@ public class SubscriptionImportService extends ImportService{
 			org.meveo.model.mediation.Access access = new org.meveo.model.mediation.Access();
 			access.setSubscription(subscription);
 			access.setAccessUserId(jaxbAccessPoint.getAccessUserId());
-			access.setStartDate(DateUtils.parseDateWithPattern(jaxbAccessPoint.getStartDate(),
-					paramBean.getProperty("meveo.dateFormat", "dd/MM/yyyy")));
-			access.setEndDate(DateUtils.parseDateWithPattern(jaxbAccessPoint.getEndDate(),
-					paramBean.getProperty("meveo.dateFormat", "dd/MM/yyyy")));
+            access.setStartDate(DateUtils.parseDateWithPattern(jaxbAccessPoint.getStartDate(), paramBean.getDateFormat()));
+            access.setEndDate(DateUtils.parseDateWithPattern(jaxbAccessPoint.getEndDate(), paramBean.getDateFormat()));
 			
 //	        if (jaxbAccessPoint.getCustomFields() != null) {
 //	            populateCustomFields(AccountLevelEnum.ACC, jaxbAccessPoint.getCustomFields().getCustomField(), subscription, "access");

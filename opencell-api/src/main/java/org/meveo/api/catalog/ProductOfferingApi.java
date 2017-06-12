@@ -7,7 +7,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.BaseCrudApi;
+import org.meveo.api.BaseCrudVersionedApi;
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.catalog.DigitalResourcesDto;
 import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
@@ -24,7 +24,7 @@ import org.meveo.service.catalog.impl.DigitalResourceService;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 import org.meveo.service.catalog.impl.ProductChargeTemplateService;
 
-public abstract class ProductOfferingApi<E extends IEntity, T extends BaseDto> extends BaseCrudApi<E, T> {
+public abstract class ProductOfferingApi<E extends IEntity, T extends BaseDto> extends BaseCrudVersionedApi<E, T> {
 
 	@Inject
 	private OfferTemplateCategoryService offerTemplateCategoryService;

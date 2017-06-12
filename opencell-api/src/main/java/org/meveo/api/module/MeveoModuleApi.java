@@ -3,6 +3,7 @@ package org.meveo.api.module;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -19,6 +20,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ModuleUtil;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.ApiService;
+import org.meveo.api.ApiVersionedService;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.CustomFieldTemplateApi;
 import org.meveo.api.EntityCustomActionApi;
@@ -40,9 +42,12 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.ModuleItem;
+import org.meveo.model.VersionedEntity;
 import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.BusinessServiceModel;
 import org.meveo.model.catalog.OfferTemplate;
@@ -53,6 +58,7 @@ import org.meveo.model.crm.custom.EntityCustomAction;
 import org.meveo.model.module.MeveoModule;
 import org.meveo.model.module.MeveoModuleItem;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.MeveoModuleService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
@@ -113,8 +119,8 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
                 && (((BusinessOfferModelDto) moduleDto).getOfferTemplate() == null || StringUtils.isBlank(((BusinessOfferModelDto) moduleDto).getOfferTemplate().getCode()))) {
             missingParameters.add("offerTemplate.code");
 
-        } else if (moduleDto instanceof BusinessServiceModelDto
-                && (((BusinessServiceModelDto) moduleDto).getServiceTemplate() == null || StringUtils.isBlank(((BusinessServiceModelDto) moduleDto).getServiceTemplate().getCode()))) {
+        } else if (moduleDto instanceof BusinessServiceModelDto && (((BusinessServiceModelDto) moduleDto).getServiceTemplate() == null
+                || StringUtils.isBlank(((BusinessServiceModelDto) moduleDto).getServiceTemplate().getCode()))) {
             missingParameters.add("serviceTemplate.code");
 
         } else if (moduleDto instanceof BusinessAccountModelDto && ((BusinessAccountModelDto) moduleDto).getHierarchyType() == null) {
@@ -138,7 +144,6 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
 
         handleMissingParameters();
 
-        
         if (meveoModuleService.findByCode(moduleDto.getCode()) != null) {
             throw new EntityAlreadyExistsException(MeveoModule.class, moduleDto.getCode());
         }
@@ -174,8 +179,8 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
                 && (((BusinessOfferModelDto) moduleDto).getOfferTemplate() == null || StringUtils.isBlank(((BusinessOfferModelDto) moduleDto).getOfferTemplate().getCode()))) {
             missingParameters.add("offerTemplate.code");
 
-        } else if (moduleDto instanceof BusinessServiceModelDto
-                && (((BusinessServiceModelDto) moduleDto).getServiceTemplate() == null || StringUtils.isBlank(((BusinessServiceModelDto) moduleDto).getServiceTemplate().getCode()))) {
+        } else if (moduleDto instanceof BusinessServiceModelDto && (((BusinessServiceModelDto) moduleDto).getServiceTemplate() == null
+                || StringUtils.isBlank(((BusinessServiceModelDto) moduleDto).getServiceTemplate().getCode()))) {
             missingParameters.add("serviceTemplate.code");
 
         } else if (moduleDto instanceof BusinessAccountModelDto && ((BusinessAccountModelDto) moduleDto).getHierarchyType() == null) {
@@ -199,7 +204,6 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
 
         handleMissingParameters();
 
-        
         MeveoModule meveoModule = meveoModuleService.findByCode(moduleDto.getCode());
         if (meveoModule == null) {
             throw new EntityDoesNotExistsException(MeveoModule.class, moduleDto.getCode());
@@ -224,7 +228,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
     }
 
     public void delete(String code) throws EntityDoesNotExistsException, BusinessException {
-        
+
         MeveoModule meveoModule = meveoModuleService.findByCode(code);
         if (meveoModule == null) {
             throw new EntityDoesNotExistsException(MeveoModule.class, code);
@@ -236,7 +240,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
     }
 
     public List<MeveoModuleDto> list(Class<? extends MeveoModule> clazz) throws MeveoApiException, BusinessException {
-        
+
         List<MeveoModule> meveoModules = null;
         if (clazz == null) {
             meveoModules = meveoModuleService.list();
@@ -261,7 +265,9 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
         return result;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.meveo.api.ApiService#find(java.lang.String)
      */
     @Override
@@ -272,8 +278,6 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
             handleMissingParameters();
         }
 
-        
-
         MeveoModule meveoModule = meveoModuleService.findByCode(code);
         if (meveoModule == null) {
             throw new EntityDoesNotExistsException(MeveoModule.class, code);
@@ -281,18 +285,6 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
         MeveoModuleDto moduleDto = moduleToDto(meveoModule);
         return moduleDto;
     }
-    
-    /* (non-Javadoc)
-     * @see org.meveo.api.ApiService#findIgnoreNotFound(java.lang.String)
-     */
-    @Override
-    public MeveoModuleDto findIgnoreNotFound(String code) throws MissingParameterException, InvalidParameterException, MeveoApiException {
-        try {
-            return find(code);
-        } catch (EntityDoesNotExistsException e) {
-            return null;
-        }
-    }    
 
     public MeveoModule createOrUpdate(MeveoModuleDto postData) throws MeveoApiException, BusinessException {
         MeveoModule meveoModule = meveoModuleService.findByCode(postData.getCode());
@@ -358,8 +350,6 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
             handleMissingParameters();
         }
 
-        
-
         if (moduleClass == null) {
             moduleClass = MeveoModule.class;
         }
@@ -385,9 +375,13 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
         if (!bomDto.getOfferTemplate().isCodeOnly()) {
             offerTemplateApi.createOrUpdate(bomDto.getOfferTemplate());
         }
-        OfferTemplate offerTemplate = offerTemplateService.findByCode(bomDto.getOfferTemplate().getCode());
+        OfferTemplate offerTemplate = offerTemplateService.findByCode(bomDto.getOfferTemplate().getCode(), bomDto.getOfferTemplate().getValidFrom(),
+            bomDto.getOfferTemplate().getValidTo());
         if (offerTemplate == null) {
-            throw new EntityDoesNotExistsException(OfferTemplate.class, bomDto.getOfferTemplate().getCode());
+            String datePattern = ParamBean.getInstance().getDateTimeFormat();
+            throw new EntityDoesNotExistsException(OfferTemplate.class,
+                bomDto.getOfferTemplate().getCode() + " / " + DateUtils.formatDateWithPattern(bomDto.getOfferTemplate().getValidFrom(), datePattern) + " / "
+                        + DateUtils.formatDateWithPattern(bomDto.getOfferTemplate().getValidTo(), datePattern));
         }
 
         bom.setOfferTemplate(offerTemplate);
@@ -495,17 +489,17 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
                         } else if (dto instanceof BusinessAccountModelDto) {
                             moduleClazz = BusinessAccountModel.class;
                         }
-                        meveoModule.addModuleItem(new MeveoModuleItem(((MeveoModuleDto) dto).getCode(), moduleClazz.getName(), null));
+                        meveoModule.addModuleItem(new MeveoModuleItem(((MeveoModuleDto) dto).getCode(), moduleClazz.getName(), null, null));
 
                     } else if (dto instanceof CustomFieldTemplateDto) {
                         customFieldTemplateApi.createOrUpdate((CustomFieldTemplateDto) dto, null);
-                        meveoModule.addModuleItem(new MeveoModuleItem(((CustomFieldTemplateDto) dto).getCode(), CustomFieldTemplate.class.getName(), ((CustomFieldTemplateDto) dto)
-                            .getAppliesTo()));
+                        meveoModule.addModuleItem(new MeveoModuleItem(((CustomFieldTemplateDto) dto).getCode(), CustomFieldTemplate.class.getName(),
+                            ((CustomFieldTemplateDto) dto).getAppliesTo(), null));
 
                     } else if (dto instanceof EntityCustomActionDto) {
                         entityCustomActionApi.createOrUpdate((EntityCustomActionDto) dto, null);
-                        meveoModule.addModuleItem(new MeveoModuleItem(((EntityCustomActionDto) dto).getCode(), EntityCustomAction.class.getName(), ((EntityCustomActionDto) dto)
-                            .getAppliesTo()));
+                        meveoModule.addModuleItem(
+                            new MeveoModuleItem(((EntityCustomActionDto) dto).getCode(), EntityCustomAction.class.getName(), ((EntityCustomActionDto) dto).getAppliesTo(), null));
 
                     } else {
 
@@ -515,14 +509,24 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
                             throw new RuntimeException("No entity class or @ModuleItem annotation found for " + entityClassName);
                         }
 
-                        ApiService apiService = getApiService(dto, true);
-                        apiService.createOrUpdate(dto);
+                        if (entityClass.isAnnotationPresent(VersionedEntity.class)) {
+                            ApiVersionedService apiService = getApiVersionedService(entityClass, true);
+                            apiService.createOrUpdate(dto);
+                        } else {
+                            ApiService apiService = getApiService(entityClass, true);
+                            apiService.createOrUpdate(dto);
+                        }
+
+                        DatePeriod validity = null;
+                        if (ReflectionUtils.hasField(dto, "validFrom")) {
+                            validity = new DatePeriod((Date) FieldUtils.readField(dto, "validFrom", true), (Date) FieldUtils.readField(dto, "validTo", true));
+                        }
 
                         if (ReflectionUtils.hasField(dto, "appliesTo")) {
-                            meveoModule.addModuleItem(new MeveoModuleItem((String) FieldUtils.readField(dto, "code", true), entityClass.getName(), (String) FieldUtils.readField(
-                                dto, "appliesTo", true)));
+                            meveoModule.addModuleItem(new MeveoModuleItem((String) FieldUtils.readField(dto, "code", true), entityClass.getName(),
+                                (String) FieldUtils.readField(dto, "appliesTo", true), validity));
                         } else {
-                            meveoModule.addModuleItem(new MeveoModuleItem((String) FieldUtils.readField(dto, "code", true), entityClass.getName(), null));
+                            meveoModule.addModuleItem(new MeveoModuleItem((String) FieldUtils.readField(dto, "code", true), entityClass.getName(), null, validity));
                         }
                     }
 
@@ -562,8 +566,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
         try {
             ModuleUtil.removeModulePicture(appProvider.getCode(), filename);
         } catch (Exception e) {
-            log.error("error when delete module picture {}, info {}", filename, (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()),
-                e);
+            log.error("error when delete module picture {}, info {}", filename, (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()), e);
         }
     }
 
@@ -573,8 +576,6 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
             missingParameters.add("code");
             handleMissingParameters();
         }
-
-        
 
         if (moduleClass == null) {
             moduleClass = MeveoModule.class;
@@ -597,8 +598,6 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
             missingParameters.add("code");
             handleMissingParameters();
         }
-
-        
 
         if (moduleClass == null) {
             moduleClass = MeveoModule.class;
@@ -623,7 +622,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
      * @param provider Provider
      * @return MeveoModuleDto object
      */
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public MeveoModuleDto moduleToDto(MeveoModule module) throws MeveoApiException {
 
         if (module.isDownloaded() && !module.isInstalled()) {
@@ -674,10 +673,15 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
                         itemDto = entityCustomActionApi.findIgnoreNotFound(item.getItemCode(), item.getAppliesTo());
 
                     } else {
+                        Class clazz = Class.forName(item.getItemClass());
+                        if (clazz.isAnnotationPresent(VersionedEntity.class)) {
+                            ApiVersionedService apiService = getApiVersionedService(item.getItemClass(), true);
+                            itemDto = apiService.findIgnoreNotFound(item.getItemCode(), item.getValidity().getFrom(), item.getValidity().getTo());
 
-                        ApiService apiService = getApiService(item.getItemClass(), true);
-                        itemDto = apiService.findIgnoreNotFound(item.getItemCode());
-
+                        } else {
+                            ApiService apiService = getApiService(clazz, true);
+                            itemDto = apiService.findIgnoreNotFound(item.getItemCode());
+                        }
                     }
                     if (itemDto != null) {
                         moduleDto.addModuleItem(itemDto);

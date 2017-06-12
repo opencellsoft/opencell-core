@@ -1,8 +1,6 @@
 package org.tmf.dsmapi.catalog.resource.service;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -11,9 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.tmf.dsmapi.catalog.resource.AbstractCatalogEntity;
 import org.tmf.dsmapi.catalog.resource.CatalogReference;
-import org.tmf.dsmapi.catalog.resource.LifecycleStatus;
 import org.tmf.dsmapi.catalog.resource.ServiceLevelAgreement;
-import org.tmf.dsmapi.catalog.resource.TimeRange;
 import org.tmf.dsmapi.commons.Utilities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -155,26 +151,4 @@ public class ServiceCandidate extends AbstractCatalogEntity implements Serializa
 
         return true;
     }
-
-    public static ServiceCandidate createProto() {
-        ServiceCandidate serviceCandidate = new ServiceCandidate();
-
-        serviceCandidate.setId("id");
-        serviceCandidate.setVersion("1.3");
-        serviceCandidate.setHref("href");
-        serviceCandidate.setName("name");
-        serviceCandidate.setDescription("description");
-        serviceCandidate.setLastUpdate(new Date());
-        serviceCandidate.setLifecycleStatus(LifecycleStatus.ACTIVE);
-        serviceCandidate.setValidFor(TimeRange.createProto());
-
-        serviceCandidate.category = new ArrayList<CatalogReference>();
-        serviceCandidate.category.add(CatalogReference.createProto());
-
-        serviceCandidate.serviceLevelAgreement = ServiceLevelAgreement.createProto();
-        serviceCandidate.serviceSpecification = CatalogReference.createProto();
-
-        return serviceCandidate;
-    }
-
 }

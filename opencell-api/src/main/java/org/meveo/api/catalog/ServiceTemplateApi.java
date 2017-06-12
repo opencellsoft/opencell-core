@@ -388,18 +388,6 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         return result;
     }
     
-    /* (non-Javadoc)
-     * @see org.meveo.api.ApiService#findIgnoreNotFound(java.lang.String)
-     */
-    @Override
-    public ServiceTemplateDto findIgnoreNotFound(String code) throws MissingParameterException, InvalidParameterException, MeveoApiException {
-        try {
-            return find(code);
-        } catch (EntityDoesNotExistsException e) {
-            return null;
-        }
-    }
-
     private void setAllWalletTemplatesToNull(ServiceTemplate serviceTemplate) {
         List<ServiceChargeTemplateRecurring> listRec = new ArrayList<ServiceChargeTemplateRecurring>();
         for (ServiceChargeTemplateRecurring recurring : serviceTemplate.getServiceRecurringCharges()) {

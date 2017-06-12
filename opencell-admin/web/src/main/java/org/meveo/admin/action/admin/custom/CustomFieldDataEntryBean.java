@@ -4,9 +4,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -140,14 +144,14 @@ public class CustomFieldDataEntryBean implements Serializable {
      * @return Custom field information
      */
     public GroupedCustomField getGroupedFieldTemplates(ICustomFieldEntity entity) {
-        
+
         if (entity == null) {
             return null;
         }
         if (!groupedFieldTemplates.containsKey(entity.getUuid())) {
             initFields(entity);
         }
-        
+
         return groupedFieldTemplates.get(entity.getUuid());
     }
 
@@ -192,6 +196,25 @@ public class CustomFieldDataEntryBean implements Serializable {
         customActions.put(entity.getUuid(), actionList);
     }
 
+	private static <K, V> Map<K, V> sortByValue(Map<K, V> map) {
+		List<Entry<K, V>> list = new LinkedList<>(map.entrySet());
+		Collections.sort(list, new Comparator<Object>() {
+			@SuppressWarnings("unchecked")
+			public int compare(Object o1, Object o2) {
+				return ((Comparable<V>) ((Map.Entry<K, V>) (o1)).getValue())
+						.compareTo(((Map.Entry<K, V>) (o2)).getValue());
+			}
+		});
+
+		Map<K, V> result = new LinkedHashMap<>();
+		for (Iterator<Entry<K, V>> it = list.iterator(); it.hasNext();) {
+			Map.Entry<K, V> entry = (Map.Entry<K, V>) it.next();
+			result.put(entry.getKey(), entry.getValue());
+		}
+
+		return result;
+	}
+
     /**
      * Load available custom fields (templates) and their values for a given entity
      * 
@@ -201,14 +224,18 @@ public class CustomFieldDataEntryBean implements Serializable {
 
         Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(entity);
         log.trace("Found {} custom field templates for entity {}", customFieldTemplates.size(), entity.getClass());
-
+        
+        customFieldTemplates = sortByValue(customFieldTemplates);
+        
         GroupedCustomField groupedCustomField = new GroupedCustomField(customFieldTemplates.values(), "Custom fields", false);
         groupedFieldTemplates.put(entity.getUuid(), groupedCustomField);
 
         Map<String, List<CustomFieldInstance>> cfisAsMap = null;
 
         // Get custom field instances mapped by a CFT code if entity has any field defined
-        if (!((IEntity) entity).isTransient() && customFieldTemplates != null && customFieldTemplates.size() > 0) {
+        // if (!((IEntity) entity).isTransient() && customFieldTemplates != null && customFieldTemplates.size() > 0) {
+        // No longer checking for isTransient as for offer new version creation, CFs are duplicated, but entity is not persisted, offering to review it in GUI before saving it.
+        if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
             cfisAsMap = customFieldInstanceService.getCustomFieldInstances((ICustomFieldEntity) entity);
         }
 
@@ -349,7 +376,7 @@ public class CustomFieldDataEntryBean implements Serializable {
             FacesContext.getCurrentInstance().validationFailed();
             return;
         }
-        
+
         CustomFieldInstance period = null;
         // First check if any period matches the dates
         if (entityValueHolder.getValuePeriodMatched() == null || !entityValueHolder.getValuePeriodMatched()) {
@@ -367,27 +394,27 @@ public class CustomFieldDataEntryBean implements Serializable {
             } else {
                 period = entityValueHolder.getValuePeriod(cft, periodStartDate, periodEndDate, false, false);
                 if (period != null) {
-                    strictMatch = period.isCorrespondsToPeriod(periodStartDate, periodEndDate, true);
+                    strictMatch = period.getPeriod().isCorrespondsToPeriod(periodStartDate, periodEndDate, true);
                 }
             }
 
             if (period != null) {
                 entityValueHolder.setValuePeriodMatched(true);
                 ParamBean paramBean = ParamBean.getInstance();
-                String datePattern = paramBean.getProperty("meveo.dateFormat", "dd/MM/yyyy");
+                String datePattern = paramBean.getDateFormat();
 
                 // For a strict match need to edit an existing period
                 if (strictMatch) {
                     messages.error(new BundleKey("messages", "customFieldTemplate.matchingPeriodFound.noNew"),
-                        period.getPeriodStartDate() == null ? "" : DateUtils.formatDateWithPattern(period.getPeriodStartDate(), datePattern),
-                        period.getPeriodEndDate() == null ? "" : DateUtils.formatDateWithPattern(period.getPeriodEndDate(), datePattern));
+                        period.getPeriod() == null ? "" : DateUtils.formatDateWithPattern(period.getPeriod().getFrom(), datePattern),
+                        period.getPeriod() == null ? "" : DateUtils.formatDateWithPattern(period.getPeriod().getTo(), datePattern));
                     entityValueHolder.setValuePeriodMatched(false);
 
                     // For a non-strict match user has an option to create a period with a higher priority
                 } else {
                     messages.warn(new BundleKey("messages", "customFieldTemplate.matchingPeriodFound"),
-                        period.getPeriodStartDate() == null ? "" : DateUtils.formatDateWithPattern(period.getPeriodStartDate(), datePattern),
-                        period.getPeriodEndDate() == null ? "" : DateUtils.formatDateWithPattern(period.getPeriodEndDate(), datePattern));
+                        period.getPeriod() == null ? "" : DateUtils.formatDateWithPattern(period.getPeriod().getFrom(), datePattern),
+                        period.getPeriod() == null ? "" : DateUtils.formatDateWithPattern(period.getPeriod().getTo(), datePattern));
                     entityValueHolder.setValuePeriodMatched(true);
                 }
                 FacesContext.getCurrentInstance().validationFailed();
@@ -769,27 +796,21 @@ public class CustomFieldDataEntryBean implements Serializable {
         String uuid = entity.getUuid();
         saveCustomFieldsToEntity(entity, uuid, false, isNewEntity);
     }
-    
+
     public void saveCustomFieldsToEntity(ICustomFieldEntity entity, String uuid, boolean duplicateCFI, boolean isNewEntity) throws BusinessException {
-    	saveCustomFieldsToEntity(entity, uuid, duplicateCFI, isNewEntity, false);
+        saveCustomFieldsToEntity(entity, uuid, duplicateCFI, isNewEntity, false);
     }
 
-	/**
-	 * Save custom fields for a given entity
-	 * 
-	 * @param entity
-	 *            Entity, the fields relate to
-	 * @param isNewEntity
-	 *            Is it a new entity
-	 * @param removedOriginalCFI
-	 *            - When duplicating a CFI, this boolean is true when we want to
-	 *            remove the original CFI. Use specially in offer instantiation
-	 *            where we assigned CFT values on entity a but then save it on
-	 *            entity b. Entity a is then reverted. This flag is needed
-	 *            because on some part CFI is duplicated first, but is not
-	 *            updated, instead we duplicate again.
-	 * @throws BusinessException
-	 */
+    /**
+     * Save custom fields for a given entity
+     * 
+     * @param entity Entity, the fields relate to
+     * @param isNewEntity Is it a new entity
+     * @param removedOriginalCFI - When duplicating a CFI, this boolean is true when we want to remove the original CFI. Use specially in offer instantiation where we assigned CFT
+     *        values on entity a but then save it on entity b. Entity a is then reverted. This flag is needed because on some part CFI is duplicated first, but is not updated,
+     *        instead we duplicate again.
+     * @throws BusinessException
+     */
     public void saveCustomFieldsToEntity(ICustomFieldEntity entity, String uuid, boolean duplicateCFI, boolean isNewEntity, boolean removedOriginalCFI) throws BusinessException {
 
         CustomFieldValueHolder entityFieldsValues = getFieldValueHolderByUUID(uuid);
@@ -797,21 +818,20 @@ public class CustomFieldDataEntryBean implements Serializable {
         if (groupedCustomFields != null) {
             for (CustomFieldTemplate cft : groupedCustomFields.getFields()) {
                 for (CustomFieldInstance cfi : entityFieldsValues.getValues(cft)) {
-					if (duplicateCFI) {
-						if (removedOriginalCFI) {
-							List<CustomFieldInstance> cfisToBeRemove = customFieldInstanceService
-									.getCustomFieldInstances(entity, cfi.getCode());
-							if (cfisToBeRemove != null) {
-								for (CustomFieldInstance cfiToBeRemove : cfisToBeRemove) {
-									customFieldInstanceService.remove(cfiToBeRemove);
-								}
-							}
-						}
+                    if (duplicateCFI) {
+                        if (removedOriginalCFI) {
+                            List<CustomFieldInstance> cfisToBeRemove = customFieldInstanceService.getCustomFieldInstances(entity, cfi.getCode());
+                            if (cfisToBeRemove != null) {
+                                for (CustomFieldInstance cfiToBeRemove : cfisToBeRemove) {
+                                    customFieldInstanceService.remove(cfiToBeRemove);
+                                }
+                            }
+                        }
 
-						customFieldInstanceService.detach(cfi);
-						cfi.setId(null);
-						cfi.setAppliesToEntity(entity.getUuid());
-					}
+                        customFieldInstanceService.detach(cfi);
+                        cfi.setId(null);
+                        cfi.setAppliesToEntity(entity.getUuid());
+                    }
                     // Not saving empty values unless template has a default value or is versionable (to prevent that for SINGLE type CFT with a default value, value is
                     // instantiates automatically)
                     // Also don't save if CFT does not apply in a given entity lifecycle or because cft.applicableOnEL evaluates to false
@@ -1048,8 +1068,8 @@ public class CustomFieldDataEntryBean implements Serializable {
         }
 
         // Find current child entities, so the ones no longer referenced shall be removed
-        List<CustomEntityInstance> previousChildEntities = customEntityInstanceService.findChildEntities(
-            CustomFieldTemplate.retrieveCetCode(childEntityFieldDefinition.getEntityClazz()), mainEntity.getUuid());
+        List<CustomEntityInstance> previousChildEntities = customEntityInstanceService
+            .findChildEntities(CustomFieldTemplate.retrieveCetCode(childEntityFieldDefinition.getEntityClazz()), mainEntity.getUuid());
 
         for (CustomFieldValueHolder childEntityValueHolder : customFieldValue.getChildEntityValuesForGUI()) {
 

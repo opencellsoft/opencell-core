@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * @author Edward P`. Legaspi
  **/
-public class AuditEvent {
+public class AuditEvent extends Event {
 
 	private String actor;
 	private String clientIp;
@@ -101,6 +101,12 @@ public class AuditEvent {
 
 	public void setClientIp(String clientIp) {
 		this.clientIp = clientIp;
+	}
+
+	@Override
+	public String toString() {
+		return "AuditEvent [actor=" + actor + ", clientIp=" + clientIp + ", entity=" + entity + ", action=" + action
+				+ ", fields=" + fields + "]";
 	}
 
 }

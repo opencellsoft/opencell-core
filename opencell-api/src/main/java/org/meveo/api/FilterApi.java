@@ -110,16 +110,4 @@ public class FilterApi extends BaseCrudApi<Filter, FilterDto> {
 
         return FilterDto.toDto(filter);
     }
-    
-    /* (non-Javadoc)
-     * @see org.meveo.api.ApiService#findIgnoreNotFound(java.lang.String)
-     */
-    @Override
-    public FilterDto findIgnoreNotFound(String code) throws MissingParameterException, InvalidParameterException, MeveoApiException {
-        try {
-            return find(code);
-        } catch (EntityDoesNotExistsException e) {
-            return null;
-        }
-    }
 }

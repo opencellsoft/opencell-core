@@ -167,11 +167,13 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public List<Notification> getApplicableNotifications(NotificationEventTypeEnum eventType, Object entityOrEvent) {
 
-        IEntity entity = null;
+        Object entity = null;
         if (entityOrEvent instanceof IEntity) {
             entity = (IEntity) entityOrEvent;
         } else if (entityOrEvent instanceof IEvent) {
             entity = (IEntity) ((IEvent) entityOrEvent).getEntity();
+        } else {
+            entity = entityOrEvent;
         }
 
         List<Notification> notifications = new ArrayList<Notification>();

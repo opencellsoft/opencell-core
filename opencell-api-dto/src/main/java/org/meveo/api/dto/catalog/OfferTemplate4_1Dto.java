@@ -19,6 +19,9 @@ import org.meveo.model.catalog.OfferTemplate;
 public class OfferTemplate4_1Dto implements Serializable {
 
 	private static final long serialVersionUID = 9156372453581362595L;
+	
+	@XmlAttribute()
+	private Long id;
 
 	@XmlAttribute(required = true)
 	private String code;
@@ -40,6 +43,7 @@ public class OfferTemplate4_1Dto implements Serializable {
 	}
 
 	public OfferTemplate4_1Dto(OfferTemplate e, CustomFieldsDto customFieldInstances) {
+		id = e.getId();
 		code = e.getCode();
 		description = e.getDescription();
 		disabled = e.isDisabled();
@@ -58,6 +62,20 @@ public class OfferTemplate4_1Dto implements Serializable {
 		}
 
 		customFields = customFieldInstances;
+	}
+
+	/**
+	 * @return the id
+	 */
+	public Long getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getCode() {

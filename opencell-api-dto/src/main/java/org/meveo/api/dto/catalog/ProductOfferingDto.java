@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -23,49 +24,70 @@ public class ProductOfferingDto extends BusinessDto {
 
 	private static final long serialVersionUID = 4599063410509766484L;
 
-	private String name;
+    @XmlAttribute()
+    protected Date validFrom;
+
+    @XmlAttribute()
+    protected Date validTo;
+
+    protected String name;
 
 	@XmlElementWrapper(name = "offerTemplateCategories")
 	@XmlElement(name = "offerTemplateCategory")
-	private List<OfferTemplateCategoryDto> offerTemplateCategories;
+    protected List<OfferTemplateCategoryDto> offerTemplateCategories;
 
 	@XmlElementWrapper(name = "digitalResources")
 	@XmlElement(name = "digitalResource")
-	private List<DigitalResourcesDto> attachments;
+    protected List<DigitalResourcesDto> attachments;
 
-	private String modelCode;
+    protected String modelCode;
 
-	private Date validFrom;
+    protected LifeCycleStatusEnum lifeCycleStatus;
 
-	private Date validTo;
+    protected CustomFieldsDto customFields = new CustomFieldsDto();
 
-	private LifeCycleStatusEnum lifeCycleStatus;
+    /**
+     * This field is populated on find and list. Use to pull the image from a servlet later on.
+     */
+    protected String imagePath;
+    protected String imageBase64;
 
-	private CustomFieldsDto customFields = new CustomFieldsDto();
+    protected boolean disabled = false;
 	
-	private String imagePath;
-	private String imageBase64;
-
 	public ProductOfferingDto() {
 	}
 
-	public ProductOfferingDto(ProductOffering product, CustomFieldsDto customFieldsDto) {
-		super(product);
+    /**
+     * Constructor
+     * 
+     * @param productOffering Product offering entity
+     * @param customFieldsDto Custom fields DTO
+     * @param asLink Convert to DTO with minimal information only - code and validity dates
+     */
+    public ProductOfferingDto(ProductOffering productOffering, CustomFieldsDto customFieldsDto, boolean asLink) {
+        super(productOffering);
+        if (productOffering.getValidityRaw() != null) {
+            this.setValidFrom(productOffering.getValidityRaw().getFrom());
+            this.setValidTo(productOffering.getValidityRaw().getTo());
+        }
 		
-		this.setName(product.getName());
-		this.setValidFrom(product.getValidFrom());
-		this.setValidTo(product.getValidTo());
-		this.setLifeCycleStatus(product.getLifeCycleStatus());
-		this.imagePath = product.getImagePath();
-		
-		List<OfferTemplateCategory> offerTemplateCategories = product.getOfferTemplateCategories();
+        if (asLink) {
+            this.setDescription(null);
+            return;
+        }
+        this.setDescription(productOffering.getDescription());
+        this.setName(productOffering.getName());
+        this.setLifeCycleStatus(productOffering.getLifeCycleStatus());
+        this.imagePath = productOffering.getImagePath();
+
+        List<OfferTemplateCategory> offerTemplateCategories = productOffering.getOfferTemplateCategories();
 		if (offerTemplateCategories != null && !offerTemplateCategories.isEmpty()) {
 			this.setOfferTemplateCategories(new ArrayList<OfferTemplateCategoryDto>());
 			for (OfferTemplateCategory offerTemplateCategory : offerTemplateCategories) {
 				this.getOfferTemplateCategories().add(new OfferTemplateCategoryDto(offerTemplateCategory));
 			}
 		}
-		List<DigitalResource> attachments = product.getAttachments();
+        List<DigitalResource> attachments = productOffering.getAttachments();
 		if (attachments != null && !attachments.isEmpty()) {
 			this.setAttachments(new ArrayList<DigitalResourcesDto>());
 			for (DigitalResource digitalResource : attachments) {
@@ -155,4 +177,11 @@ public class ProductOfferingDto extends BusinessDto {
 		this.imageBase64 = imageBase64;
 	}
 
+    public boolean isDisabled() {
+        return disabled;
+}
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
+    }
 }

@@ -44,7 +44,6 @@ public class GenerateImportXml {
 	private static String customersFile = "/tmp/CUSTOMER.xml";
 	private static String accountsFile = "/tmp/ACCOUNT.xml";
 	private static String subscriptionsFile = "/tmp/SUB.xml";
-	private static String providerCode = "DEMO";
 	private static String customerBrand = "OBS";
 	private static String customerCategory = "CLIENT";
 	private static String serviceCode = "FCAV1_ORGA";
@@ -197,8 +196,7 @@ public class GenerateImportXml {
 				// the default
 				Access access1 = new Access();
 				access1.setAccessUserId("MSISDN" + i);
-				access1.setStartDate(DateUtils.formatDateWithPattern(
-						new Date(), "dd/MM/yyyy"));
+                access1.setStartDate(DateUtils.formatDateWithPattern(new Date(), "dd/MM/yyyy"));
 				access1.setEndDate(DateUtils.formatDateWithPattern(
 						DateUtils.addDaysToDate(new Date(), 7), "dd/MM/yyyy"));
 				accessPoints.getAccess().add(access1);

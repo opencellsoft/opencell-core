@@ -19,6 +19,7 @@
         isList - is field value is a collection - supports both List and Set type fields.
         isMap - is field value a map - prints a map's values
         isDate - is entity field or a list value item field is a date
+        isDateRange - is entity field a range of dates
         sort - is column sortable
         rendered - should a column be rendered
         exportable - is value exportable
@@ -34,7 +35,7 @@
         valueLabelField - used along with isList="true". Specifies a name of a field in list value item.
         
                 
-    Additional attributes for date type values
+    Additional attributes for date and date period type values
         datePattern - date pattern to apply in date value output. If not provided, time attribute is consulted whether to add time part to a date 
         time - should a date selection be time specific.  
         
@@ -73,17 +74,21 @@
     <c:if test="${empty isDate}">
         <c:set var="isDate" value="false" />
     </c:if>
+    
+    <c:if test="${empty isDateRange}">
+        <c:set var="isDateRange" value="false" />
+    </c:if>
 
     <c:if test="${empty time}">
         <c:set var="time" value="false" />
     </c:if>
 
     <c:if test="${time}">
-        <c:set var="datePattern" value="#{paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy HH:mm')}" />
+        <c:set var="datePattern" value="#{paramBean.dateTimeFormat}" />
     </c:if>
 
     <c:if test="${!time}">
-        <c:set var="datePattern" value="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
+        <c:set var="datePattern" value="#{paramBean.dateFormat}" />
     </c:if>
 
     <c:if test="${empty isList}">
@@ -189,13 +194,13 @@
 		    	 If isDate is not set then it basically means it is not a date. Also if time is not set it basically means that time=true
 		    	 -->
                     <c:set var="converter" value="#{getConverter.forType(valueField, converterParam)}" />
-                    <c:if test="${!isDate and not time}">
+                    <c:if test="${!isDate and !isDatePeriod and not time}">
                         <c:if test="${!showTruncated}">
                             <h:outputText value="#{valueField}" rendered="#{show}" converter="#{converter}" />
                         </c:if>
                         <c:if test="${showTruncated}">
 
-                            <h:outputText value="#{valueField}" rendered="#{show and valueField.length()&lt;=50}" converter="#{converter}" />
+                            <h:outputText value="#{valueField}" rendered="#{show and valueField.length() &lt;=50}" converter="#{converter}" />
                             <p:lightBox rendered="#{show and valueField.length()>50}">
                                 <h:outputLink value="#">
                                     <h:outputText value="#{fn:substring(valueField,0,50)} ..." rendered="#{show}" converter="#{converter}" />
@@ -223,6 +228,15 @@
                     </c:if>
                     <c:if test="${isDate or time}">
                         <h:outputText value="#{valueField}">
+                            <f:convertDateTime pattern="#{datePattern}" />
+                        </h:outputText>
+                    </c:if>
+                    <c:if test="${isDatePeriod and !valueField.isEmpty()}">
+                        <h:outputText value="#{valueField.from}">
+                            <f:convertDateTime pattern="#{datePattern}" />
+                        </h:outputText>
+                        <h:outputText value="-" style="padding:5px" />
+                        <h:outputText value="#{valueField.to}">
                             <f:convertDateTime pattern="#{datePattern}" />
                         </h:outputText>
                     </c:if>

@@ -1,8 +1,6 @@
 package org.tmf.dsmapi.catalog.resource.catalog;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -12,9 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.tmf.dsmapi.catalog.resource.AbstractEntity;
 import org.tmf.dsmapi.catalog.resource.CatalogReference;
-import org.tmf.dsmapi.catalog.resource.LifecycleStatus;
 import org.tmf.dsmapi.catalog.resource.RelatedParty;
-import org.tmf.dsmapi.catalog.resource.TimeRange;
 import org.tmf.dsmapi.commons.ParsedVersion;
 import org.tmf.dsmapi.commons.Utilities;
 
@@ -27,8 +23,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * 
  * @author bahman.barzideh
  * 
- *         { "id": "10", "version": "1.1", "href": "http://serverlocation:port/catalogManagement/catalog/10", "name": "Catalog Wholesale Business", "description":
- *         "A catalog to hold categories, products, services, and resources", "lastUpdate": "2013-04-19T16:42:23-04:00", "lifecycleStatus": "Active", "validFor": { "startDateTime":
+ *         { "id": "10", "version": "1.1", "href": "http://serverlocation:port/catalogManagement/catalog/10", "name": "Catalog Wholesale Business", "description": "A catalog to
+ *         hold categories, products, services, and resources", "lastUpdate": "2013-04-19T16:42:23-04:00", "lifecycleStatus": "Active", "validFor": { "startDateTime":
  *         "2013-04-19T16:42:23-04:00", "endDateTime": "2013-06-19T00:00:00-04:00" }, "type": "Product Catalog", "category": [ { "id": "12", "version": "1.2", "href":
  *         "http://serverlocation:port/catalogManagement/category/12", "name": "Cloud offerings", "description": " A category to hold all available cloud service offers " } ],
  *         "relatedParty": [ { "role": "Owner", "id": "1234", "href": "http://serverLocation:port/partyManagement/partyRole/1234" }, { "role": "Reviser", "name": "Roger Collins" }
@@ -193,28 +189,4 @@ public class Catalog extends AbstractEntity implements Serializable {
 
         super.setVersion(getVersion());
     }
-
-    public static Catalog createProto() {
-        Catalog catalog = new Catalog();
-
-        catalog.setId("id");
-        catalog.setVersion("1.1");
-        catalog.setHref("href");
-        catalog.setName("name");
-        catalog.setDescription("description");
-        catalog.setLastUpdate(new Date());
-        catalog.setLifecycleStatus(LifecycleStatus.ACTIVE);
-        catalog.setValidFor(TimeRange.createProto());
-
-        catalog.type = CatalogType.PRODUCT_CATALOG;
-
-        catalog.category = new ArrayList<CatalogReference>();
-        catalog.category.add(CatalogReference.createProto());
-
-        catalog.relatedParty = new ArrayList<RelatedParty>();
-        catalog.relatedParty.add(RelatedParty.createProto());
-
-        return catalog;
-    }
-
 }

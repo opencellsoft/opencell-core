@@ -6,6 +6,7 @@
         <f:metadata>
             <f:viewParam name="editMode" value="#{bundleTemplateBean.editMode}" />
             <f:viewParam name="objectId" value="#{bundleTemplateBean.objectId}" />
+            <f:viewParam name="newVersion" value="#{bundleTemplateBean.newVersion}" />
         </f:metadata>
     </ui:define>
 
@@ -23,6 +24,7 @@
             <ui:include src="productTemplateDetailCommon.xhtml">
                 <ui:param name="backingBean" value="#{bundleTemplateBean}" />
                 <ui:param name="mode" value="BUNDLE" />
+                <ui:param name="idPath" value=":formId" />
             </ui:include>
         </hftl:formPanel>
 
@@ -30,7 +32,7 @@
             <h:form id="addBundleProductForm">
                 <p:panel id="headerPanel">
 					<p:dataTable id="productTemplatesTable" var="prodT"
-						value="#{productTemplateListBean.listAll(bundleTemplateBean.entity, bundleTemplateBean.entity.bundleProducts)}"
+						value="#{productTemplateBean.listProductsForBundle(bundleTemplateBean.entity, bundleTemplateBean.entity.bundleProducts)}"
 						paginator="true" rows="5" paginatorPosition="top"
 						paginatorAlwaysVisible="true"
 						paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
@@ -52,12 +54,12 @@
 							<h:outputText value="#{prodT.description}" />
 						</p:column>
 						<p:column headerText="#{messages['commons.validFrom']}">
-							<h:outputText value="#{prodT.validFrom}">
+							<h:outputText value="#{prodT.validityRaw.from}">
 								<f:converter converterId="dateTimeConverter"></f:converter>
 							</h:outputText>
 						</p:column>
 						<p:column headerText="#{messages['commons.validTo']}">
-							<h:outputText value="#{prodT.validTo}">
+							<h:outputText value="#{prodT.validityRaw.to}">
 								<f:converter converterId="dateTimeConverter"></f:converter>
 							</h:outputText>
 						</p:column>

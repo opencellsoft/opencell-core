@@ -2,45 +2,42 @@ package org.meveo.service.catalog.impl;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.DigitalResource;
 import org.meveo.model.catalog.OfferTemplateCategory;
+import org.meveo.model.catalog.ProductChargeTemplate;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
-import org.meveo.service.base.MultilanguageEntityService;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
 
 @Stateless
-public class ProductTemplateService extends MultilanguageEntityService<ProductTemplate> {
+public class ProductTemplateService extends GenericProductOfferingService<ProductTemplate> {
 
-	@Inject
-	private CustomFieldInstanceService customFieldInstanceService;
+    public long countProductTemplateActive(boolean status) {
+        long result = 0;
 
-	public long countProductTemplateActive(boolean status) {
-		long result = 0;
+        Query query;
 
-		Query query;
+        if (status) {
+            query = getEntityManager().createNamedQuery("ProductTemplate.countActive");
+        } else {
+            query = getEntityManager().createNamedQuery("ProductTemplate.countDisabled");
+        }
 
-		if (status) {
-			query = getEntityManager().createNamedQuery("ProductTemplate.countActive");
-		} else {
-			query = getEntityManager().createNamedQuery("ProductTemplate.countDisabled");
-		}
+        result = (long) query.getSingleResult();
+        return result;
+    }
 
-		result = (long) query.getSingleResult();
-		return result;
-	}
-
-	public long countProductTemplateExpiring() {	
+    public long countProductTemplateExpiring() {
         Long result = 0L;
         Query query = getEntityManager().createNamedQuery("ProductTemplate.countExpiring");
         Calendar c = Calendar.getInstance();
@@ -52,76 +49,142 @@ public class ProductTemplateService extends MultilanguageEntityService<ProductTe
         } catch (NoResultException e) {
 
         }
-        return result;		
-	}
+        return result;
+    }
 
-	public synchronized void duplicate(ProductTemplate entity) throws BusinessException {
-		entity = refreshOrRetrieve(entity);
+    /**
+     * Create a shallow duplicate of an Product template (main Product template information and custom fields). A new Product template will have a code with suffix "- Copy"
+     * 
+     * @param product Product template to duplicate
+     * @return A persisted duplicated Bundle template
+     * @throws BusinessException
+     */
+    public synchronized void duplicate(ProductTemplate product) throws BusinessException {
+        duplicate(product, true);
+    }
 
-		// Lazy load related values first
-		entity.getWalletTemplates().size();
-		entity.getBusinessAccountModels().size();
-		entity.getAttachments().size();
-		entity.getChannels().size();
-		entity.getOfferTemplateCategories().size();
+    /**
+     * Create a new version of an Product template. It is a shallow copy of an Product template (main Product template information and custom fields) with identical code and
+     * validity start date matching latest version's validity end date or current date.
+     * 
+     * @param product Product template to create new version for
+     * @return A not-persisted copy of Product template
+     * @throws BusinessException
+     */
+    public synchronized ProductTemplate instantiateNewVersion(ProductTemplate product) throws BusinessException {
 
-		String code = findDuplicateCode(entity);
+        // Find the latest version of an offer for duplication and to calculate a validity start date for a new offer
+        ProductTemplate latestVersion = findTheLatestVersion(product.getCode());
+        String code = latestVersion.getCode();
+        Date startDate = null;
+        Date endDate = null;
+        if (latestVersion.getValidityRaw() != null) {
+            startDate = latestVersion.getValidityRaw().getFrom();
+            endDate = latestVersion.getValidityRaw().getTo();
+        }
 
-		// Detach and clear ids of entity and related entities
-		detach(entity);
-		entity.setId(null);
-		String sourceAppliesToEntity = entity.clearUuid();
+        product = duplicate(latestVersion, false);
 
-		List<BusinessAccountModel> businessAccountModels = entity.getBusinessAccountModels();
-		entity.setBusinessAccountModels(new ArrayList<BusinessAccountModel>());
+        product.setCode(code);
 
-		List<DigitalResource> attachments = entity.getAttachments();
-		entity.setAttachments(new ArrayList<DigitalResource>());
+        Date from = endDate != null ? endDate : new Date();
+        if (startDate != null && from.before(startDate)) {
+            from = startDate;
+        }
+        product.setValidity(new DatePeriod(from, null));
 
-		List<Channel> channels = entity.getChannels();
-		entity.setChannels(new ArrayList<Channel>());
+        return product;
+    }
 
-		List<OfferTemplateCategory> offerTemplateCategories = entity.getOfferTemplateCategories();
-		entity.setOfferTemplateCategories(new ArrayList<OfferTemplateCategory>());
+    /**
+     * Create a duplicate of a given Product template. It is a shallow copy of an Product template (main Product template information and custom fields)
+     * 
+     * @param product Product template to duplicate
+     * @param persist Shall new entity be persisted
+     * @return A copy of Product template
+     * @throws BusinessException
+     */
+    private synchronized ProductTemplate duplicate(ProductTemplate product, boolean persist) throws BusinessException {
 
-		List<WalletTemplate> walletTemplates = entity.getWalletTemplates();
-		entity.setWalletTemplates(new ArrayList<WalletTemplate>());
+        product = refreshOrRetrieve(product);
 
-		entity.setCode(code);
-		create(entity);
+        // Lazy load related values first
+        product.getWalletTemplates().size();
+        product.getBusinessAccountModels().size();
+        product.getAttachments().size();
+        product.getChannels().size();
+        product.getOfferTemplateCategories().size();
+        product.getProductChargeTemplates().size();
 
-		if (businessAccountModels != null) {
-			for (BusinessAccountModel bam : businessAccountModels) {
-				entity.getBusinessAccountModels().add(bam);
-			}
-		}
+        String code = findDuplicateCode(product);
 
-		if (attachments != null) {
-			for (DigitalResource attachment : attachments) {
-				entity.addAttachment(attachment);
-			}
-		}
+        // Detach and clear ids of entity and related entities
+        detach(product);
+        product.setId(null);
+        String sourceAppliesToEntity = product.clearUuid();
 
-		if (channels != null) {
-			for (Channel channel : channels) {
-				entity.getChannels().add(channel);
-			}
-		}
+        List<BusinessAccountModel> businessAccountModels = product.getBusinessAccountModels();
+        product.setBusinessAccountModels(new ArrayList<BusinessAccountModel>());
 
-		if (offerTemplateCategories != null) {
-			for (OfferTemplateCategory offerTemplateCategory : offerTemplateCategories) {
-				entity.getOfferTemplateCategories().add(offerTemplateCategory);
-			}
-		}
+        List<DigitalResource> attachments = product.getAttachments();
+        product.setAttachments(new ArrayList<DigitalResource>());
 
-		if (walletTemplates != null) {
-			for (WalletTemplate wt : walletTemplates) {
-				entity.getWalletTemplates().add(wt);
-			}
-		}
+        List<Channel> channels = product.getChannels();
+        product.setChannels(new ArrayList<Channel>());
 
-		update(entity);
-		customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity);
-	}
+        List<OfferTemplateCategory> offerTemplateCategories = product.getOfferTemplateCategories();
+        product.setOfferTemplateCategories(new ArrayList<OfferTemplateCategory>());
 
+        List<WalletTemplate> walletTemplates = product.getWalletTemplates();
+        product.setWalletTemplates(new ArrayList<WalletTemplate>());
+        
+        List<ProductChargeTemplate> chargeTemplates = product.getProductChargeTemplates();
+        product.setProductChargeTemplates(new ArrayList<>());
+
+        product.setCode(code);
+
+        if (businessAccountModels != null) {
+            for (BusinessAccountModel bam : businessAccountModels) {
+                product.getBusinessAccountModels().add(bam);
+            }
+        }
+
+        if (attachments != null) {
+            for (DigitalResource attachment : attachments) {
+                product.addAttachment(attachment);
+            }
+        }
+
+        if (channels != null) {
+            for (Channel channel : channels) {
+                product.getChannels().add(channel);
+            }
+        }
+
+        if (offerTemplateCategories != null) {
+            for (OfferTemplateCategory offerTemplateCategory : offerTemplateCategories) {
+                product.getOfferTemplateCategories().add(offerTemplateCategory);
+            }
+        }
+
+        if (walletTemplates != null) {
+            for (WalletTemplate wt : walletTemplates) {
+                product.getWalletTemplates().add(wt);
+            }
+        }
+
+        if (chargeTemplates != null) {
+            for (ProductChargeTemplate chargeTemplate : chargeTemplates) {
+                product.getProductChargeTemplates().add(chargeTemplate);
+            }
+        }
+
+        customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, product);
+
+        if (persist) {
+            create(product);
+        }
+
+        return product;
+    }
 }

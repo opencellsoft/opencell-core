@@ -42,7 +42,7 @@
 					<p:outputLabel for="filterFrom" value="#{messages['commons.date']}" />
 
 					<p:calendar id="filterFrom" value="#{cc.attrs.model.minDate}"
-						pattern="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}">
+						pattern="#{paramBean.dateFormat}">
 						<p:ajax event="dateSelect" update="@form"
 							listener="#{chartBean.setModel(cc.attrs.index)}" />
 					</p:calendar>

@@ -727,6 +727,12 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			previousapplicationDate = DateUtils.setTimeToZero(previousapplicationDate);
 		}
 		log.debug("applicationDate={}, nextapplicationDate={},previousapplicationDate={}", applicationDate, nextapplicationDate, previousapplicationDate);
+		
+		if (!isChargeMatch(chargeInstance, chargeInstance.getRecurringChargeTemplate().getFilterExpression())) {
+			log.debug("IPIEL: not rating chargeInstance with code={}, filter expression not evaluated to true", chargeInstance.getCode());
+			chargeInstance.setNextChargeDate(nextapplicationDate);
+			return;
+		}
 
 		Date periodStart = applicationDate;
 		if (recurringChargeTemplate.getTerminationProrata()) {
@@ -1189,6 +1195,13 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			}
 			String param2 = sdf.format(applicationDate) + " - " + sdf.format(endDate);
 			log.debug("applyReccuringCharge : nextapplicationDate={}, param2={}", nextapplicationDate, param2);
+			
+			if (!isChargeMatch(chargeInstance, chargeInstance.getRecurringChargeTemplate().getFilterExpression())) {
+				log.debug("IPIEL: not rating chargeInstance with code={}, filter expression not evaluated to true", chargeInstance.getCode());
+				chargeInstance.setChargeDate(applicationDate);
+				applicationDate = nextapplicationDate;
+				continue;
+			}
 
 			WalletOperation chargeApplication = chargeApplicationRatingService.rateChargeApplication( 
 					 chargeInstance, type, applicationDate, chargeInstance.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), inputQuantity, quantity,

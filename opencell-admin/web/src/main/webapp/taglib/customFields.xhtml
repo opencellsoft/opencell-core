@@ -32,10 +32,10 @@
         <c:set var="edit" value="#{formLevelEdit}" />
     </c:if>
     <c:if test="${empty(datePattern)}">
-        <c:set var="datePattern" value="#{paramBean.getProperty('meveo.dateFormat','dd/MM/yyyy')}" />
+        <c:set var="datePattern" value="#{paramBean.dateFormat}" />
     </c:if>
     <c:if test="${empty(dateTimePattern)}">
-        <c:set var="dateTimePattern" value="#{paramBean.getProperty('meveo.dateTimeFormat','dd/MM/yyyy HH:mm')}" />
+        <c:set var="dateTimePattern" value="#{paramBean.dateTimeFormat}" />
     </c:if>
     <c:if test="${empty(messagesId)}">
         <c:set var="messagesId" value=":formPanel:formId:messages" />

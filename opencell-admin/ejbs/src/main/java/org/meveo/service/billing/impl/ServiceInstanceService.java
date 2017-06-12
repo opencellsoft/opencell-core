@@ -254,8 +254,10 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             serviceEngAgreementDate = DateUtils.addMonthsToDate(subscription.getSubscriptionDate(), agreementMonthTerm);
         }
 
-        if ((serviceEngAgreementDate == null)) {
-            serviceInstance.setEndAgreementDate(subscription.getEndAgreementDate());
+		if (serviceEngAgreementDate == null) {
+			if (serviceInstance.getEndAgreementDate() == null) {
+				serviceInstance.setEndAgreementDate(subscription.getEndAgreementDate());
+			}
         } else {
             serviceInstance.setEndAgreementDate(serviceEngAgreementDate);
         }

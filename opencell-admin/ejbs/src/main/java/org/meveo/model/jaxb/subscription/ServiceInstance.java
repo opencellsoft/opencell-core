@@ -95,8 +95,7 @@ public class ServiceInstance {
 
     public ServiceInstance(org.meveo.model.billing.ServiceInstance serv,String dateFormat) {
     	if(serv!=null){
-			subscriptionDate=serv.getSubscriptionDate()==null?null:
-	    		DateUtils.formatDateWithPattern(serv.getSubscriptionDate(), dateFormat);
+            subscriptionDate = serv.getSubscriptionDate() == null ? null : DateUtils.formatDateWithPattern(serv.getSubscriptionDate(), dateFormat);
 			status = new Status(serv,dateFormat);
 			quantity= serv.getQuantity()==null?null:(""+serv.getQuantity());
 			code = serv.getCode();

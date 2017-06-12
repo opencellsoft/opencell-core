@@ -146,24 +146,6 @@ public class Category extends AbstractCatalogEntity implements Serializable {
         return true;
     }
 
-    public static Category createProto() {
-        Category category = new Category();
-
-        category.setId("id");
-        category.setVersion("1.2");
-        category.setHref("href");
-        category.setName("name");
-        category.setDescription("description");
-        category.setLastUpdate(new Date());
-        category.setLifecycleStatus(LifecycleStatus.ACTIVE);
-        category.setValidFor(TimeRange.createProto());
-
-        category.parentId = "parent id";
-        category.isRoot = false;
-
-        return category;
-    }
-
     public static Category createProto(UriInfo uriInfo) {
         Category category = new Category();
 

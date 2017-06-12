@@ -173,20 +173,4 @@ public class ProductOfferPriceAlteration implements Serializable {
         return "ProductOfferPriceAlteration{" + "name=" + name + ", description=" + description + ", validFor=" + validFor + ", priceType=" + priceType + ", unitOfMeasure="
                 + unitOfMeasure + ", price=" + price + ", recurringChargePeriod=" + recurringChargePeriod + ", priceCondition=" + priceCondition + '}';
     }
-
-    public static ProductOfferPriceAlteration createProto() {
-        ProductOfferPriceAlteration productOfferPriceAlteration = new ProductOfferPriceAlteration();
-
-        productOfferPriceAlteration.name = "name";
-        productOfferPriceAlteration.description = "description";
-        productOfferPriceAlteration.validFor = TimeRange.createProto();
-        productOfferPriceAlteration.priceType = ProductOfferPriceAlterationType.RECURRING;
-        productOfferPriceAlteration.unitOfMeasure = "unit of measure";
-        productOfferPriceAlteration.price = AlterationPrice.createProto();
-        productOfferPriceAlteration.recurringChargePeriod = "recurring charge period";
-        productOfferPriceAlteration.priceCondition = "price condition";
-
-        return productOfferPriceAlteration;
-    }
-
 }

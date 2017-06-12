@@ -152,18 +152,6 @@ public class ChartApi extends BaseCrudApi<Chart, ChartDto> {
         return result;
     }
     
-    /* (non-Javadoc)
-     * @see org.meveo.api.ApiService#findIgnoreNotFound(java.lang.String)
-     */
-    @Override
-    public ChartDto findIgnoreNotFound(String code) throws MissingParameterException, InvalidParameterException, MeveoApiException {
-        try {
-            return find(code);
-        } catch (EntityDoesNotExistsException e) {
-            return null;
-        }
-    }  
-
     public void remove(String chartCode) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(chartCode)) {

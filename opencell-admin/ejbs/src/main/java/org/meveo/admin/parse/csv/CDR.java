@@ -214,7 +214,7 @@ public class CDR  implements Serializable{
 	/**
 	 * @return the dateParam1
 	 */
-	public long getDateParam1() {
+	public Long getDateParam1() {
 		return dateParam1;
 	}
 
@@ -228,7 +228,7 @@ public class CDR  implements Serializable{
 	/**
 	 * @return the dateParam2
 	 */
-	public long getDateParam2() {
+	public Long getDateParam2() {
 		return dateParam2;
 	}
 
@@ -242,7 +242,7 @@ public class CDR  implements Serializable{
 	/**
 	 * @return the dateParam3
 	 */
-	public long getDateParam3() {
+	public Long getDateParam3() {
 		return dateParam3;
 	}
 
@@ -256,7 +256,7 @@ public class CDR  implements Serializable{
 	/**
 	 * @return the dateParam4
 	 */
-	public long getDateParam4() {
+	public Long getDateParam4() {
 		return dateParam4;
 	}
 
@@ -270,7 +270,7 @@ public class CDR  implements Serializable{
 	/**
 	 * @return the dateParam5
 	 */
-	public long getDateParam5() {
+	public Long getDateParam5() {
 		return dateParam5;
 	}
 

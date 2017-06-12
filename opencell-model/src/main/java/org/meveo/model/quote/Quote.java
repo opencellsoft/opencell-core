@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,16 +28,18 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 
 @Entity
-@ExportIdentifier({ "code"})
+@ExportIdentifier({ "code" })
 @CustomFieldEntity(cftCodePrefix = "QUOTE")
-@Table(name = "ORD_QUOTE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ORD_QUOTE_SEQ"), })
+@Table(name = "ORD_QUOTE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "ORD_QUOTE_SEQ"), })
 public class Quote extends BusinessCFEntity {
 
     private static final long serialVersionUID = -9060067698650286828L;
@@ -72,18 +76,11 @@ public class Quote extends BusinessCFEntity {
     private Date quoteDate = new Date();
 
     /**
-     * Quote validity date - from
+     * Quote validity dates
      */
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "VALID_FROM")
-    private Date validFrom = new Date();
-
-    /**
-     * Quote validity date - from
-     */
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "VALID_TO")
-    private Date validTo;
+    @AttributeOverrides({ @AttributeOverride(name = "from", column = @Column(name = "VALID_FROM")),
+            @AttributeOverride(name = "to", column = @Column(name = "VALID_TO")) })
+    private DatePeriod validity = new DatePeriod();
 
     /**
      * Initial quote required by date from the requestor perspective
@@ -146,7 +143,7 @@ public class Quote extends BusinessCFEntity {
     /**
      * Associated invoices
      */
-    @OneToMany(fetch = FetchType.LAZY,mappedBy = "quote",cascade = CascadeType.ALL, orphanRemoval = true) 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "quote", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Invoice> invoices = new ArrayList<Invoice>();
 
     public String getExternalId() {
@@ -181,20 +178,15 @@ public class Quote extends BusinessCFEntity {
         this.quoteDate = quoteDate;
     }
 
-    public Date getValidFrom() {
-        return validFrom;
+    public DatePeriod getValidity() {
+        if (validity == null) {
+            validity = new DatePeriod();
+        }
+        return validity;
     }
 
-    public void setValidFrom(Date validFrom) {
-        this.validFrom = validFrom;
-    }
-
-    public Date getValidTo() {
-        return validTo;
-    }
-
-    public void setValidTo(Date validTo) {
-        this.validTo = validTo;
+    public void setValidity(DatePeriod validity) {
+        this.validity = validity;
     }
 
     public Date getRequestedCompletionDate() {
@@ -296,19 +288,18 @@ public class Quote extends BusinessCFEntity {
         return userAccounts;
     }
 
-	/**
-	 * @return the invoices
-	 */
-	public List<Invoice> getInvoices() {
-		return invoices;
-	}
+    /**
+     * @return the invoices
+     */
+    public List<Invoice> getInvoices() {
+        return invoices;
+    }
 
-	/**
-	 * @param invoices the invoices to set
-	 */
-	public void setInvoices(List<Invoice> invoices) {
-		this.invoices = invoices;
-	}
+    /**
+     * @param invoices the invoices to set
+     */
+    public void setInvoices(List<Invoice> invoices) {
+        this.invoices = invoices;
+    }
 
-   
 }

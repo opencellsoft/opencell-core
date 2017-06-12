@@ -199,22 +199,29 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     private void constructClassPath() throws IOException {
 
         if (classpath.length() == 0) {
-            String jbossHome = System.getProperty("jboss.home.dir");
-            File deploymentLibDirs = new File(jbossHome + "/standalone/tmp/vfs/deployment");
-            if (!deploymentLibDirs.exists()) {
-                log.error("cannot find " + jbossHome + "/standalone/tmp/vfs/deployment .. are you deploying on jboss ?");
-                return;
-            } else {
-                File deploymentDir = null;
-                for (File deployment : deploymentLibDirs.listFiles()) {
-                    if (deploymentDir == null) {
-                        deploymentDir = deployment;
-                    } else {
-                        if (deployment.lastModified() > deploymentDir.lastModified()) {
-                            deploymentDir = deployment;
-                        }
+
+            // Check if deploying an exploded archive or a compressed file
+            String thisClassfile = this.getClass().getProtectionDomain().getCodeSource().getLocation().getFile();
+
+            File realFile = new File(thisClassfile);
+
+            // Was deployed as exploded archive
+            if (realFile.exists()) {
+                File deploymentDir = realFile.getParentFile();
+                for (File file : deploymentDir.listFiles()) {
+                    if (file.getName().endsWith(".jar")) {
+                        classpath += file.getCanonicalPath() + File.pathSeparator;
                     }
                 }
+
+                // War was deployed as compressed archive
+            } else {
+
+                org.jboss.vfs.VirtualFile vFile = org.jboss.vfs.VFS.getChild(thisClassfile);
+                realFile = new File(org.jboss.vfs.VFSUtils.getPhysicalURI(vFile).getPath());
+
+                File deploymentDir = realFile.getParentFile().getParentFile();
+
                 for (File physicalLibDir : deploymentDir.listFiles()) {
                     if (physicalLibDir.isDirectory()) {
                         for (File f : FileUtils.getFilesToProcess(physicalLibDir, "*", "jar")) {
@@ -269,10 +276,8 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
 
         List<ScriptInstanceError> scriptErrors = compileScript(script.getCode(), script.getSourceTypeEnum(), script.getScript(), script.isActive(), testCompile);
 
-        if (!testCompile) {
-            script.setError(scriptErrors != null && !scriptErrors.isEmpty());
-            script.setScriptErrors(scriptErrors);
-        }
+        script.setError(scriptErrors != null && !scriptErrors.isEmpty());
+        script.setScriptErrors(scriptErrors);
     }
 
     /**
@@ -378,7 +383,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         while (matcher.find()) {
             String className = matcher.group(1);
             try {
-                if (!className.startsWith("java") && !className.startsWith("org.meveo")) {
+                if ((!className.startsWith("java") || className.startsWith("javax.persistence")) && !className.startsWith("org.meveo")) {
                     Class clazz = Class.forName(className);
                     try {
                         String location = clazz.getProtectionDomain().getCodeSource().getLocation().getFile();

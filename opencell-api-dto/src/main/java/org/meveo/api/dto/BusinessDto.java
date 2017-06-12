@@ -20,12 +20,12 @@ public abstract class BusinessDto extends BaseDto {
 
 	@Pattern(regexp = "^[A-Za-z0-9_\\.-]+$")
 	@XmlAttribute(required = true)
-	private String code;
+	protected String code;
 
 	@XmlAttribute()
-	private String description;
+	protected String description;
 
-	private String updatedCode;
+	protected String updatedCode;
 
 	public BusinessDto() {
 

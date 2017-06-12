@@ -37,7 +37,7 @@ public class DateTimeConverter implements Converter {
 
 	@Override
 	public Object getAsObject(FacesContext facesContext, UIComponent uIComponent, String str) {
-		String dateFormat = paramBean.getProperty("meveo.dateTimeFormat", "dd/MM/yyyy HH:mm");
+		String dateFormat = paramBean.getDateTimeFormat();
 		DateFormat df = new SimpleDateFormat(dateFormat, FacesContext.getCurrentInstance()
 				.getViewRoot().getLocale());
 
@@ -50,7 +50,7 @@ public class DateTimeConverter implements Converter {
 
 	@Override
 	public String getAsString(FacesContext facesContext, UIComponent uIComponent, Object obj) {
-		String dateFormat = paramBean.getProperty("meveo.dateTimeFormat", "dd/MM/yyyy HH:mm");
+		String dateFormat = paramBean.getDateTimeFormat();
 		DateFormat df = new SimpleDateFormat(dateFormat, FacesContext.getCurrentInstance()
 				.getViewRoot().getLocale());
 

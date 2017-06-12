@@ -1,7 +1,6 @@
 package org.tmf.dsmapi.catalog.resource.resource;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.tmf.dsmapi.catalog.resource.TimeRange;
@@ -212,24 +211,4 @@ public class ResourceSpecCharacteristic implements Serializable {
 
         return true;
     }
-
-    public static ResourceSpecCharacteristic createProto() {
-        ResourceSpecCharacteristic resourceSpecCharacteristic = new ResourceSpecCharacteristic();
-
-        resourceSpecCharacteristic.id = "id";
-        resourceSpecCharacteristic.name = "name";
-        resourceSpecCharacteristic.description = "description";
-        resourceSpecCharacteristic.valueType = CharacteristicValueType.NUMBER;
-        resourceSpecCharacteristic.configurable = true;
-        resourceSpecCharacteristic.validFor = TimeRange.createProto();
-
-        resourceSpecCharacteristic.resourceSpecCharRelationship = new ArrayList<SpecificationCharacteristicRelationship>();
-        resourceSpecCharacteristic.resourceSpecCharRelationship.add(SpecificationCharacteristicRelationship.createProto());
-
-        resourceSpecCharacteristic.resourceSpecCharacteristicValue = new ArrayList<SpecificationCharacteristicValue>();
-        resourceSpecCharacteristic.resourceSpecCharacteristicValue.add(SpecificationCharacteristicValue.createProto());
-
-        return resourceSpecCharacteristic;
-    }
-
 }

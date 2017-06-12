@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.enterprise.inject.Produces;
 import javax.faces.application.FacesMessage;
+import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -17,15 +18,18 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.catalog.BundleProductTemplate;
 import org.meveo.model.catalog.BundleTemplate;
 import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.DigitalResource;
 import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ProductChargeTemplate;
+import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
+import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.WalletTemplateService;
 import org.meveo.service.catalog.impl.ChannelService;
@@ -35,6 +39,7 @@ import org.meveo.service.catalog.impl.ProductChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.crm.impl.BusinessAccountModelService;
 import org.primefaces.model.DualListModel;
+import org.primefaces.model.LazyDataModel;
 
 /**
  * @author Edward P. Legaspi
@@ -43,325 +48,388 @@ import org.primefaces.model.DualListModel;
 @ViewScoped
 public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 
-	private static final long serialVersionUID = -7002455215420815747L;
+    private static final long serialVersionUID = -7002455215420815747L;
 
-	@Inject
-	protected ProductTemplateService productTemplateService;
+    @Inject
+    protected ProductTemplateService productTemplateService;
 
-	@Inject
-	private OfferTemplateCategoryService offerTemplateCategoryService;
+    @Inject
+    private OfferTemplateCategoryService offerTemplateCategoryService;
 
-	@Inject
-	private DigitalResourceService digitalResourceService;
+    @Inject
+    private DigitalResourceService digitalResourceService;
 
-	@Inject
-	private WalletTemplateService walletTemplateService;
+    @Inject
+    private WalletTemplateService walletTemplateService;
 
-	@Inject
-	private BusinessAccountModelService businessAccountModelService;
+    @Inject
+    private BusinessAccountModelService businessAccountModelService;
 
-	@Inject
-	private ChannelService channelService;
-	
-	@Inject
-	private ProductChargeTemplateService productChargeTemplateService;
+    @Inject
+    private ChannelService channelService;
 
-	private DualListModel<OfferTemplateCategory> offerTemplateCategoriesDM;
-	private DualListModel<DigitalResource> attachmentsDM;
-	private DualListModel<WalletTemplate> walletTemplatesDM;
-	private DualListModel<BusinessAccountModel> bamDM;
-	private DualListModel<Channel> channelDM;
+    @Inject
+    private ProductChargeTemplateService productChargeTemplateService;
 
-	private String editMode;
+    private DualListModel<OfferTemplateCategory> offerTemplateCategoriesDM;
+    private DualListModel<DigitalResource> attachmentsDM;
+    private DualListModel<WalletTemplate> walletTemplatesDM;
+    private DualListModel<BusinessAccountModel> bamDM;
+    private DualListModel<Channel> channelDM;
 
-	@Produces
-	@Named
-	private ProductChargeTemplate productChargeTemplate = new ProductChargeTemplate();
-	
-	
-	public ProductTemplateBean() {
-		super(ProductTemplate.class);
-	}
+    private String editMode;
 
-	@Override
-	public ProductTemplate initEntity() {
-		ProductTemplate result = super.initEntity();
+    private boolean newVersion;
 
-		return result;
-	}	
+    @Produces
+    @Named
+    private ProductChargeTemplate productChargeTemplate = new ProductChargeTemplate();
 
-	@Override
-	protected IPersistenceService<ProductTemplate> getPersistenceService() {
-		return productTemplateService;
-	}
+    public ProductTemplateBean() {
+        super(ProductTemplate.class);
+    }
 
-	@ActionMethod
-	public void duplicate() {
-		if (entity != null && entity.getId() != null) {
-			try {
-				productTemplateService.duplicate(entity);
-				messages.info(new BundleKey("messages", "save.successful"));
-			} catch (BusinessException e) {
-				log.error("Error encountered persisting product template entity: {}: {}", entity.getCode(), e);
-				messages.error(new BundleKey("messages", "save.unsuccessful"));
-			}
-		}
-	}
+    @Override
+    public ProductTemplate initEntity() {
+        super.initEntity();
 
-	public String activateProduct() throws BusinessException {
-		if (entity.getValidFrom().before(entity.getValidTo())) {
-			entity.setActive(true);
-			return saveOrUpdate(false);
-		} else {
-			FacesContext.getCurrentInstance().addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_ERROR, "Valid From cannot be greater than Valid To.", "Valid From cannot be greater than Valid To."));
-		}
-		return "";
-	}
+        if (newVersion) {
+            instantiateNewVersion();
+            setObjectId(entity.getId());
+            newVersion = false;
+        }
 
-	public String saveAsDraft() throws BusinessException {
-		if (entity.getValidFrom().before(entity.getValidTo())) {
-			entity.setActive(false);
-			return saveOrUpdate(false);
-		} else {
-			FacesContext.getCurrentInstance().addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_ERROR, "Valid From cannot be greater than Valid To.", "Valid From cannot be greater than Valid To."));
-		}
-		return "";
-	}
+        return entity;
+    }
 
-	public String discardChanges() {
-		return "mm_productTemplates";
-	}
+    @Override
+    protected IPersistenceService<ProductTemplate> getPersistenceService() {
+        return productTemplateService;
+    }
 
-	@Override
-	@ActionMethod
-	public String saveOrUpdate(boolean killConversation) throws BusinessException {
-		if(!entity.isTransient()){
-			productTemplateService.refreshOrRetrieve(entity);
-		}		
-		if (offerTemplateCategoriesDM != null && (offerTemplateCategoriesDM.getSource() != null || offerTemplateCategoriesDM.getTarget() != null)) {
-			entity.getOfferTemplateCategories().clear();
-			entity.getOfferTemplateCategories().addAll(offerTemplateCategoryService.refreshOrRetrieve(offerTemplateCategoriesDM.getTarget()));
-		}
+    @ActionMethod
+    public void duplicate() {
+        if (entity != null && entity.getId() != null) {
+            try {
+                productTemplateService.duplicate(entity);
+                messages.info(new BundleKey("messages", "duplicate.successfull"));
+            } catch (BusinessException e) {
+                log.error("Error encountered duplicating product template entity: {}", entity.getCode(), e);
+                messages.error(new BundleKey("messages", "error.duplicate.unexpected"));
+            }
+        }
+    }
 
-		if (attachmentsDM != null && (attachmentsDM.getSource() != null || attachmentsDM.getTarget() != null)) {
-			entity.getAttachments().clear();
-			entity.getAttachments().addAll(digitalResourceService.refreshOrRetrieve(attachmentsDM.getTarget()));
-		}
+    @ActionMethod
+    public void instantiateNewVersion() {
+        if (entity != null && entity.getId() != null) {
+            try {
+                entity = productTemplateService.instantiateNewVersion(entity);
+                messages.info(new BundleKey("messages", "newVersion.successful"));
+            } catch (BusinessException e) {
+                log.error("Error encountered instantiating new offer template entity version: {}", entity.getCode(), e);
+                messages.error(new BundleKey("messages", "error.newVersion.unsuccessful"));
+            }
+        }
+    }
 
-		if (walletTemplatesDM != null && (walletTemplatesDM.getSource() != null || walletTemplatesDM.getTarget() != null)) {
-			entity.getWalletTemplates().clear();
-			entity.getWalletTemplates().addAll(walletTemplateService.refreshOrRetrieve(walletTemplatesDM.getTarget()));
-		}
+    public String activateProduct() throws BusinessException {
+        if (entity.getValidityRaw() == null || entity.getValidityRaw().isValid()) {
+            entity.setActive(true);
+            return saveOrUpdate(false);
+        } else {
+            FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Valid From cannot be greater than Valid To.", "Valid From cannot be greater than Valid To."));
+        }
+        return "";
+    }
 
-		if (bamDM != null && (bamDM.getSource() != null || bamDM.getTarget() != null)) {
-			entity.getBusinessAccountModels().clear();
-			entity.getBusinessAccountModels().addAll(businessAccountModelService.refreshOrRetrieve(bamDM.getTarget()));
-		}
+    public String saveAsDraft() throws BusinessException {
+        if (entity.getValidityRaw() == null || entity.getValidityRaw().isValid()) {
+            entity.setActive(false);
+            return saveOrUpdate(false);
+        } else {
+            FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Valid From cannot be greater than Valid To.", "Valid From cannot be greater than Valid To."));
+        }
+        return "";
+    }
 
-		if (channelDM != null && (channelDM.getSource() != null || channelDM.getTarget() != null)) {
-			entity.getChannels().clear();
-			entity.getChannels().addAll(channelService.refreshOrRetrieve(channelDM.getTarget()));
-		}
+    public String discardChanges() {
+        return "mm_productTemplates";
+    }
 
-		String outcome = super.saveOrUpdate(killConversation);
+    @Override
+    @ActionMethod
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
+        if (!entity.isTransient()) {
+            productTemplateService.refreshOrRetrieve(entity);
+        }
+        if (offerTemplateCategoriesDM != null && (offerTemplateCategoriesDM.getSource() != null || offerTemplateCategoriesDM.getTarget() != null)) {
+            entity.getOfferTemplateCategories().clear();
+            entity.getOfferTemplateCategories().addAll(offerTemplateCategoryService.refreshOrRetrieve(offerTemplateCategoriesDM.getTarget()));
+        }
 
-		if (editMode != null && editMode.length() > 0) {
-			outcome = "mm_productTemplates";
-		}
+        if (attachmentsDM != null && (attachmentsDM.getSource() != null || attachmentsDM.getTarget() != null)) {
+            entity.getAttachments().clear();
+            entity.getAttachments().addAll(digitalResourceService.refreshOrRetrieve(attachmentsDM.getTarget()));
+        }
 
-		return outcome;
-	}
+        if (walletTemplatesDM != null && (walletTemplatesDM.getSource() != null || walletTemplatesDM.getTarget() != null)) {
+            entity.getWalletTemplates().clear();
+            entity.getWalletTemplates().addAll(walletTemplateService.refreshOrRetrieve(walletTemplatesDM.getTarget()));
+        }
 
-	public DualListModel<OfferTemplateCategory> getOfferTemplateCategoriesDM() {
-		if (offerTemplateCategoriesDM == null) {
-			List<OfferTemplateCategory> perksSource = offerTemplateCategoryService.listActive();
+        if (bamDM != null && (bamDM.getSource() != null || bamDM.getTarget() != null)) {
+            entity.getBusinessAccountModels().clear();
+            entity.getBusinessAccountModels().addAll(businessAccountModelService.refreshOrRetrieve(bamDM.getTarget()));
+        }
 
-			List<OfferTemplateCategory> perksTarget = new ArrayList<OfferTemplateCategory>();
-			if (entity.getOfferTemplateCategories() != null) {
-				perksTarget.addAll(entity.getOfferTemplateCategories());
-			}
-			perksSource.removeAll(perksTarget);
+        if (channelDM != null && (channelDM.getSource() != null || channelDM.getTarget() != null)) {
+            entity.getChannels().clear();
+            entity.getChannels().addAll(channelService.refreshOrRetrieve(channelDM.getTarget()));
+        }
 
-			offerTemplateCategoriesDM = new DualListModel<OfferTemplateCategory>(perksSource, perksTarget);
-		}
+        String outcome = super.saveOrUpdate(killConversation);
 
-		return offerTemplateCategoriesDM;
-	}
+        if (editMode != null && editMode.length() > 0) {
+            outcome = "mm_productTemplates";
+        }
 
-	public void setOfferTemplateCategoriesDM(DualListModel<OfferTemplateCategory> offerTemplateCategoriesDM) {
-		this.offerTemplateCategoriesDM = offerTemplateCategoriesDM;
-	}
+        return outcome;
+    }
 
-	public DualListModel<DigitalResource> getAttachmentsDM() {
-		if (attachmentsDM == null) {
-			List<DigitalResource> perksSource = digitalResourceService.listActive();
+    public DualListModel<OfferTemplateCategory> getOfferTemplateCategoriesDM() {
+        if (offerTemplateCategoriesDM == null) {
+            List<OfferTemplateCategory> perksSource = offerTemplateCategoryService.listActive();
 
-			List<DigitalResource> perksTarget = new ArrayList<DigitalResource>();
-			if (entity.getAttachments() != null) {
-				perksTarget.addAll(entity.getAttachments());
-			}
-			perksSource.removeAll(perksTarget);
+            List<OfferTemplateCategory> perksTarget = new ArrayList<OfferTemplateCategory>();
+            if (entity.getOfferTemplateCategories() != null) {
+                perksTarget.addAll(entity.getOfferTemplateCategories());
+            }
+            perksSource.removeAll(perksTarget);
 
-			attachmentsDM = new DualListModel<DigitalResource>(perksSource, perksTarget);
-		}
+            offerTemplateCategoriesDM = new DualListModel<OfferTemplateCategory>(perksSource, perksTarget);
+        }
 
-		return attachmentsDM;
-	}
+        return offerTemplateCategoriesDM;
+    }
 
-	public void setAttachmentsDM(DualListModel<DigitalResource> attachmentsDM) {
-		this.attachmentsDM = attachmentsDM;
-	}
+    public void setOfferTemplateCategoriesDM(DualListModel<OfferTemplateCategory> offerTemplateCategoriesDM) {
+        this.offerTemplateCategoriesDM = offerTemplateCategoriesDM;
+    }
 
-	public DualListModel<WalletTemplate> getWalletTemplatesDM() {
-		if (walletTemplatesDM == null) {
-			List<WalletTemplate> perksSource = walletTemplateService.listActive();
+    public DualListModel<DigitalResource> getAttachmentsDM() {
+        if (attachmentsDM == null) {
+            List<DigitalResource> perksSource = digitalResourceService.listActive();
 
-			List<WalletTemplate> perksTarget = new ArrayList<WalletTemplate>();
-			if (entity.getWalletTemplates() != null) {
-				perksTarget.addAll(entity.getWalletTemplates());
-			}
-			perksSource.removeAll(perksTarget);
+            List<DigitalResource> perksTarget = new ArrayList<DigitalResource>();
+            if (entity.getAttachments() != null) {
+                perksTarget.addAll(entity.getAttachments());
+            }
+            perksSource.removeAll(perksTarget);
 
-			walletTemplatesDM = new DualListModel<WalletTemplate>(perksSource, perksTarget);
-		}
+            attachmentsDM = new DualListModel<DigitalResource>(perksSource, perksTarget);
+        }
 
-		return walletTemplatesDM;
-	}
+        return attachmentsDM;
+    }
 
-	public void setWalletTemplatesDM(DualListModel<WalletTemplate> walletTemplatesDM) {
-		this.walletTemplatesDM = walletTemplatesDM;
-	}
+    public void setAttachmentsDM(DualListModel<DigitalResource> attachmentsDM) {
+        this.attachmentsDM = attachmentsDM;
+    }
 
-	public DualListModel<BusinessAccountModel> getBamDM() {
-		if (bamDM == null) {
-			List<BusinessAccountModel> perksSource = businessAccountModelService.listActive();
+    public DualListModel<WalletTemplate> getWalletTemplatesDM() {
+        if (walletTemplatesDM == null) {
+            List<WalletTemplate> perksSource = walletTemplateService.listActive();
 
-			List<BusinessAccountModel> perksTarget = new ArrayList<BusinessAccountModel>();
-			if (entity.getBusinessAccountModels() != null) {
-				perksTarget.addAll(entity.getBusinessAccountModels());
-			}
-			perksSource.removeAll(perksTarget);
+            List<WalletTemplate> perksTarget = new ArrayList<WalletTemplate>();
+            if (entity.getWalletTemplates() != null) {
+                perksTarget.addAll(entity.getWalletTemplates());
+            }
+            perksSource.removeAll(perksTarget);
 
-			bamDM = new DualListModel<BusinessAccountModel>(perksSource, perksTarget);
-		}
+            walletTemplatesDM = new DualListModel<WalletTemplate>(perksSource, perksTarget);
+        }
 
-		return bamDM;
-	}
+        return walletTemplatesDM;
+    }
 
-	public void setBamDM(DualListModel<BusinessAccountModel> bamDM) {
-		this.bamDM = bamDM;
-	}
+    public void setWalletTemplatesDM(DualListModel<WalletTemplate> walletTemplatesDM) {
+        this.walletTemplatesDM = walletTemplatesDM;
+    }
 
-	public DualListModel<Channel> getChannelDM() {
-		if (channelDM == null) {
-			List<Channel> perksSource = channelService.listActive();
+    public DualListModel<BusinessAccountModel> getBamDM() {
+        if (bamDM == null) {
+            List<BusinessAccountModel> perksSource = businessAccountModelService.listActive();
 
-			List<Channel> perksTarget = new ArrayList<Channel>();
-			if (entity.getBusinessAccountModels() != null) {
-				perksTarget.addAll(entity.getChannels());
-			}
-			perksSource.removeAll(perksTarget);
+            List<BusinessAccountModel> perksTarget = new ArrayList<BusinessAccountModel>();
+            if (entity.getBusinessAccountModels() != null) {
+                perksTarget.addAll(entity.getBusinessAccountModels());
+            }
+            perksSource.removeAll(perksTarget);
 
-			channelDM = new DualListModel<Channel>(perksSource, perksTarget);
-		}
+            bamDM = new DualListModel<BusinessAccountModel>(perksSource, perksTarget);
+        }
 
-		return channelDM;
-	}
+        return bamDM;
+    }
 
-	public void onNameChange() {
-		if (StringUtils.isBlank(entity.getCode())) {
-			entity.setCode(entity.getName());
-		}
-	}
+    public void setBamDM(DualListModel<BusinessAccountModel> bamDM) {
+        this.bamDM = bamDM;
+    }
 
-	public void setChannelDM(DualListModel<Channel> channelDM) {
-		this.channelDM = channelDM;
-	}
+    public DualListModel<Channel> getChannelDM() {
+        if (channelDM == null) {
+            List<Channel> perksSource = channelService.listActive();
 
-	public boolean isBundleTemplate(ProductTemplate pt) {
-		return pt instanceof BundleTemplate;
-	}
+            List<Channel> perksTarget = new ArrayList<Channel>();
+            if (entity.getBusinessAccountModels() != null) {
+                perksTarget.addAll(entity.getChannels());
+            }
+            perksSource.removeAll(perksTarget);
 
-	public String getEditMode() {
-		return editMode;
-	}
+            channelDM = new DualListModel<Channel>(perksSource, perksTarget);
+        }
 
-	public void setEditMode(String editMode) {
-		this.editMode = editMode;
-	}
+        return channelDM;
+    }
 
-	@Override
-	protected String getDefaultSort() {
-		return "code";
-	}
-	
-	public boolean displayStatus(ProductTemplate e) {
-		Date now = new Date();
+    public void onNameChange() {
+        if (StringUtils.isBlank(entity.getCode())) {
+            entity.setCode(entity.getName());
+        }
+    }
 
-		if ((Arrays.asList(LifeCycleStatusEnum.ACTIVE, LifeCycleStatusEnum.LAUNCHED, LifeCycleStatusEnum.IN_TEST).contains(e.getLifeCycleStatus()))) {
-			if (e.getValidFrom() == null && e.getValidTo() == null) {
-				return true;
-			} else if (e.getValidFrom() != null && e.getValidTo() != null && (now.compareTo(e.getValidFrom()) >= 0 && now.compareTo(e.getValidTo()) <= 0)) {
-				return true;
-			} else if ((e.getValidFrom() != null && e.getValidTo() == null) && now.compareTo(e.getValidFrom()) > 0) {
-				return true;
-			} else if ((e.getValidFrom() == null && e.getValidTo() != null) && now.compareTo(e.getValidTo()) < 0) {
-				return true;
-			}
-		}
+    public void setChannelDM(DualListModel<Channel> channelDM) {
+        this.channelDM = channelDM;
+    }
 
-		return false;
-	}
+    public boolean isBundleTemplate(ProductTemplate pt) {
+        return pt instanceof BundleTemplate;
+    }
 
-	public void newProductChargeTemplate(){
-		productChargeTemplate=new ProductChargeTemplate();
-	}
-	
-	public void editProductChargeTemplate(ProductChargeTemplate productChargeTemplate) {
-		this.productChargeTemplate = productChargeTemplate;
-	}
-	
-	public void deleteProductChargeTemplate(Long id) throws BusinessException {
-		ProductChargeTemplate productCharge=productChargeTemplateService.findById(id);
-		entity.getProductChargeTemplates().remove(productCharge);
-		productCharge.getProductTemplates().remove(entity);
-		entity=getPersistenceService().update(entity);
-		messages.info(new BundleKey("messages", "delete.successful"));
-	}
-	
-	public void saveProductChargeTemplate() {
-		log.info("saveProductChargeTemplate getObjectId=" + getObjectId());
+    public String getEditMode() {
+        return editMode;
+    }
 
-		try {
-			if (productChargeTemplate == null) {
-				return;
-			}
-			// TODO this line might cause an issue when after update of charge
-			// template service template can not be saved
-			entity = productTemplateService.refreshOrRetrieve(entity);
-			productChargeTemplate = productChargeTemplateService.refreshOrRetrieve(productChargeTemplate);
-			if (!productChargeTemplate.getProductTemplates().contains(entity)) {
-				productChargeTemplate.getProductTemplates().add(entity);
-				entity.getProductChargeTemplates().add(productChargeTemplate);
-				productChargeTemplateService.update(productChargeTemplate);
-			}			
-			messages.info(new BundleKey("messages", "save.successful"));
-			newProductChargeTemplate();
-		} catch (Exception e) {
-			log.error("error when saving productCharge", e);
-			messages.error("error when creating product charge:" + e.getMessage());
-		}
-	}
+    public void setEditMode(String editMode) {
+        this.editMode = editMode;
+    }
 
-	public ProductChargeTemplate getProductChargeTemplate() {
-		return productChargeTemplate;
-	}
+    @Override
+    protected String getDefaultSort() {
+        return "code";
+    }
 
-	public void setProductChargeTemplate(ProductChargeTemplate productChargeTemplate) {
-		this.productChargeTemplate = productChargeTemplate;
-	}
-	
-	
+    public boolean displayStatus(ProductTemplate product) {
+
+        if ((Arrays.asList(LifeCycleStatusEnum.ACTIVE, LifeCycleStatusEnum.LAUNCHED, LifeCycleStatusEnum.IN_TEST).contains(product.getLifeCycleStatus()))) {
+            return product.getValidityRaw() == null || product.getValidityRaw().isCorrespondsToPeriod(new Date());
+        }
+
+        return false;
+    }
+
+    public void newProductChargeTemplate() {
+        productChargeTemplate = new ProductChargeTemplate();
+    }
+
+    public void editProductChargeTemplate(ProductChargeTemplate productChargeTemplate) {
+        this.productChargeTemplate = productChargeTemplate;
+    }
+
+    public void deleteProductChargeTemplate(Long id) throws BusinessException {
+        ProductChargeTemplate productCharge = productChargeTemplateService.findById(id);
+        entity.getProductChargeTemplates().remove(productCharge);
+        productCharge.getProductTemplates().remove(entity);
+        entity = getPersistenceService().update(entity);
+        messages.info(new BundleKey("messages", "delete.successful"));
+    }
+
+    public void saveProductChargeTemplate() {
+        log.info("saveProductChargeTemplate getObjectId=" + getObjectId());
+
+        try {
+            if (productChargeTemplate == null) {
+                return;
+            }
+            // TODO this line might cause an issue when after update of charge
+            // template service template can not be saved
+            entity = productTemplateService.refreshOrRetrieve(entity);
+            productChargeTemplate = productChargeTemplateService.refreshOrRetrieve(productChargeTemplate);
+            if (!productChargeTemplate.getProductTemplates().contains(entity)) {
+                productChargeTemplate.getProductTemplates().add(entity);
+                entity.getProductChargeTemplates().add(productChargeTemplate);
+                productChargeTemplateService.update(productChargeTemplate);
+            }
+            messages.info(new BundleKey("messages", "save.successful"));
+            newProductChargeTemplate();
+        } catch (Exception e) {
+            log.error("error when saving productCharge", e);
+            messages.error("error when creating product charge:" + e.getMessage());
+        }
+    }
+
+    public ProductChargeTemplate getProductChargeTemplate() {
+        return productChargeTemplate;
+    }
+
+    public void setProductChargeTemplate(ProductChargeTemplate productChargeTemplate) {
+        this.productChargeTemplate = productChargeTemplate;
+    }
+
+    public void setNewVersion(boolean newVersion) {
+        this.newVersion = newVersion;
+    }
+
+    public boolean isNewVersion() {
+        return newVersion;
+    }
+
+    public boolean validateUniqueVersion(FacesContext context, List<UIInput> components, List<Object> values) {
+
+        if (values.size() != 3) {
+            throw new RuntimeException("Please bind validator to two components in the following order: offer/product/bundle template code, dateFrom, dateTo");
+        }
+
+        String code = (String) values.get(0);
+        Date from = (Date) values.get(1);
+        Date to = (Date) values.get(2);
+
+        List<ProductOffering> matchedVersions = productTemplateService.getMatchingVersions(code, from, to, entity.getId(), true);
+
+        if (!matchedVersions.isEmpty()) {
+            messages.error(new BundleKey("messages", "productTemplate.version.exists"),
+                matchedVersions.get(0).getValidityRaw() == null ? " / " : matchedVersions.get(0).getValidityRaw().toString(paramBean.getDateFormat()));
+            return false;
+        }
+
+        return true;
+    }
+    
+    public List<ProductTemplate> listActiveByDate(Date date) {
+        return productTemplateService.listActiveByDate(date);
+    }
+
+    public LazyDataModel<ProductTemplate> listProductsForBundle(BundleTemplate bt, List<BundleProductTemplate> bundleProductTemplates) {
+        filters.clear();
+        
+        List<Long> ids = new ArrayList<>();
+        for (BundleProductTemplate bpt : bundleProductTemplates) {
+            ids.add(bpt.getProductTemplate().getId());
+        }
+        filters.put("ne code", bt.getCode());
+        if (!ids.isEmpty()) {
+            filters.put("ne id", ids);
+        }
+        
+        @SuppressWarnings("rawtypes")
+        List<Class> types = new ArrayList<>();
+        types.add(ProductTemplate.class);
+        types.add(BundleTemplate.class);
+        filters.put(PersistenceService.SEARCH_ATTR_TYPE_CLASS, types);
+
+        return getLazyDataModel();
+    }
 }

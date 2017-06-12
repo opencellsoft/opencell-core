@@ -172,18 +172,6 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
         return offerTemplateCategoryDto;
 
     }
-
-    /* (non-Javadoc)
-     * @see org.meveo.api.ApiService#findIgnoreNotFound(java.lang.String)
-     */
-    @Override
-    public OfferTemplateCategoryDto findIgnoreNotFound(String code) throws MissingParameterException, InvalidParameterException, MeveoApiException {
-        try {
-            return find(code);
-        } catch (EntityDoesNotExistsException e) {
-            return null;
-        }
-    }
     
     /**
      * 

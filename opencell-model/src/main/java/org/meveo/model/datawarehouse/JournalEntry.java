@@ -41,13 +41,13 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.IEntity;
-import org.meveo.model.IVersionedEntity;
+import org.meveo.model.IJPAVersionedEntity;
 
 @Entity
 @Table(name = "DWH_JOURNAL_ENTRIES", uniqueConstraints = @UniqueConstraint(columnNames = {
 		"ORIGIN_ID", "INVOICE_NUMBER", "ACCOUNTING_CODE" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "DWH_JOURNAL_ENTRIES_SEQ"), })
-public class JournalEntry implements IEntity, IVersionedEntity {
+public class JournalEntry implements IEntity, IJPAVersionedEntity {
 	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 1L;
 
