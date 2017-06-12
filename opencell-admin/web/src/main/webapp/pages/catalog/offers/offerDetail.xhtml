@@ -199,11 +199,11 @@
                                     </hftl:decorateFormField>
 
                                     <!-- custom fields -->
-                                    <c:if test="#{customFieldDataEntryBean.getGroupedFieldTemplates(ost.serviceTemplate).children.size() == 1}">
+                                    <c:if test="#{customFieldDataEntryBean.getActiveGroupedFieldTemplatesCount(ost.serviceTemplate) == 1}">
                                         <hftl:customFields backingBean="#{serviceTemplateBean}" entity="#{ost.serviceTemplate}" messagesId=":offerForm:messages"
                                             defaultTabLabel="#{messages['commons.parameters']}" prefix="cf_#{loopStatus.index}" />
                                     </c:if>
-                                    <c:if test="#{customFieldDataEntryBean.getGroupedFieldTemplates(ost.serviceTemplate).children.size() > 1}">
+                                    <c:if test="#{customFieldDataEntryBean.getActiveGroupedFieldTemplatesCount(ost.serviceTemplate) > 1}">
                                         <p:tabView>
                                             <hftl:customFields backingBean="#{serviceTemplateBean}" entity="#{ost.serviceTemplate}" messagesId=":offerForm:messages"
                                                 defaultTabLabel="#{messages['commons.parameters']}" prefix="cf_#{loopStatus.index}" />

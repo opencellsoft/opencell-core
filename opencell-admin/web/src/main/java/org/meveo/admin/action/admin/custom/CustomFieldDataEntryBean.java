@@ -1121,7 +1121,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
             // Populate mapValuesForGUI field
         } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.LIST) {
-
+        	
             List<Map<String, Object>> listOfMapValues = new ArrayList<Map<String, Object>>();
             if (customFieldValue.getListValue() != null) {
                 for (Object listItem : customFieldValue.getListValue()) {
@@ -1365,4 +1365,25 @@ public class CustomFieldDataEntryBean implements Serializable {
 
         return sb.deleteCharAt(sb.length() - 1).toString();
     }
+    
+	public int getActiveGroupedFieldTemplatesCount(ICustomFieldEntity entity) {
+
+		if (entity == null) {
+			return 0;
+		}
+		if (!groupedFieldTemplates.containsKey(entity.getUuid())) {
+			initFields(entity);
+		}
+
+		GroupedCustomField groupCF = groupedFieldTemplates.get(entity.getUuid());
+		CustomFieldValueHolder cfValueHolder = getFieldValueHolderByUUID(entity.getUuid());
+		int ctr = 0;
+		for (GroupedCustomField groupCFChild : groupCF.getChildren()) {
+			if (groupCFChild.hasVisibleCustomFields(entity, cfValueHolder)) {
+				ctr++;
+			}
+		}
+
+		return ctr;
+	}
 }
