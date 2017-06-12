@@ -49,7 +49,7 @@ import org.meveo.model.shared.DateUtils;
 @NamedQueries({
         @NamedQuery(name = "CustomFieldTemplate.getCFTForCache", query = "SELECT cft from CustomFieldTemplate cft left join fetch cft.calendar where cft.disabled=false order by cft.appliesTo"),
         @NamedQuery(name = "CustomFieldTemplate.getCFTForIndex", query = "SELECT cft from CustomFieldTemplate cft where cft.disabled=false and cft.indexType is not null ") })
-public class CustomFieldTemplate extends BusinessEntity {
+public class CustomFieldTemplate extends BusinessEntity implements Comparable<CustomFieldTemplate> {
 
     private static final long serialVersionUID = -1403961759495272885L;
 
@@ -539,4 +539,9 @@ public class CustomFieldTemplate extends BusinessEntity {
     public String toString() {
         return String.format("CustomFieldTemplate [id=%s, appliesTo=%s, code=%s]", id, appliesTo, code);
     }
+
+	@Override
+	public int compareTo(CustomFieldTemplate o) {
+		return o.getCode().compareTo(getCode());
+	}
 }
