@@ -4,9 +4,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -192,6 +196,25 @@ public class CustomFieldDataEntryBean implements Serializable {
         customActions.put(entity.getUuid(), actionList);
     }
 
+	private static <K, V> Map<K, V> sortByValue(Map<K, V> map) {
+		List<Entry<K, V>> list = new LinkedList<>(map.entrySet());
+		Collections.sort(list, new Comparator<Object>() {
+			@SuppressWarnings("unchecked")
+			public int compare(Object o1, Object o2) {
+				return ((Comparable<V>) ((Map.Entry<K, V>) (o1)).getValue())
+						.compareTo(((Map.Entry<K, V>) (o2)).getValue());
+			}
+		});
+
+		Map<K, V> result = new LinkedHashMap<>();
+		for (Iterator<Entry<K, V>> it = list.iterator(); it.hasNext();) {
+			Map.Entry<K, V> entry = (Map.Entry<K, V>) it.next();
+			result.put(entry.getKey(), entry.getValue());
+		}
+
+		return result;
+	}
+
     /**
      * Load available custom fields (templates) and their values for a given entity
      * 
@@ -201,7 +224,9 @@ public class CustomFieldDataEntryBean implements Serializable {
 
         Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(entity);
         log.trace("Found {} custom field templates for entity {}", customFieldTemplates.size(), entity.getClass());
-
+        
+        customFieldTemplates = sortByValue(customFieldTemplates);
+        
         GroupedCustomField groupedCustomField = new GroupedCustomField(customFieldTemplates.values(), "Custom fields", false);
         groupedFieldTemplates.put(entity.getUuid(), groupedCustomField);
 
