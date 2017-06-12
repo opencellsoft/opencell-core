@@ -106,7 +106,6 @@ public class OfferTemplate4_1RsImpl extends BaseRs implements OfferTemplate4_1Rs
      */
     private OfferTemplateDto convertOfferTemplateDto(OfferTemplate4_1Dto postData) {
         OfferTemplateDto offerTemplateDto = new OfferTemplateDto();
-        offerTemplateDto.setId(postData.getId());
         offerTemplateDto.setCode(postData.getCode());
         offerTemplateDto.setDescription(postData.getDescription());
         offerTemplateDto.setDisabled(postData.isDisabled());

@@ -233,7 +233,6 @@ public class Catalog4_1WsImpl extends BaseWs implements Catalog4_1Ws {
      */
     private OfferTemplateDto convertOfferTemplateDto(OfferTemplate4_1Dto postData) {
         OfferTemplateDto offerTemplateDto = new OfferTemplateDto();
-        offerTemplateDto.setId(postData.getId());
         offerTemplateDto.setCode(postData.getCode());
         offerTemplateDto.setDescription(postData.getDescription());
         offerTemplateDto.setDisabled(postData.isDisabled());
