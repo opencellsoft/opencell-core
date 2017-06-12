@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project activeEnvironment="Default" name="Classic offer" resourceRoot="${projectDir}" soapui-version="5.2.1" abortOnError="false" runType="SEQUENTIAL" id="2e379382-059f-42f2-a263-3971d606356b" xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project activeEnvironment="Default" name="Classic offer" resourceRoot="${projectDir}" soapui-version="5.3.0" abortOnError="false" runType="SEQUENTIAL" id="2e379382-059f-42f2-a263-3971d606356b" xmlns:con="http://eviware.com/soapui/config">
   <con:settings>
     <con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
@@ -17348,7 +17348,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateTitle>
-         <title code="MR" description="Mr.">
+         <title code="MR" description="Mr">
             <isCompany>false</isCompany>
          </title>
       </ws:createOrUpdateTitle>\r
@@ -17388,7 +17388,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateTitle>
-         <title code="MRS" description="Mrs.">
+         <title code="MRS" description="Mrs">
             <isCompany>false</isCompany>
          </title>
       </ws:createOrUpdateTitle>\r
@@ -17468,7 +17468,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateTitle>
-         <title code="DR" description="Dr.">
+         <title code="DR" description="Dr">
             <isCompany>false</isCompany>
          </title>
       </ws:createOrUpdateTitle>\r
@@ -17872,7 +17872,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateCreditCategory>
-         <creditCategory code="BRONZE" description="Bronze">
+         <creditCategory code>BRONZE" description>Bronze">
          </creditCategory>
       </ws:createOrUpdateCreditCategory>
    </soapenv:Body>
@@ -18187,6 +18187,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="34b6b172-bd3d-42a9-83db-320532523f17"/>
+            <con:assertion type="Simple Contains" id="f295bec9-e3d5-407d-a18d-e6d4e87ea230" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -39018,7 +39025,7 @@ public class SelfcareAccountScript extends AccountScript {
 			user.setPassword(user.getUsername());
 		}
 		*/    
-		    
+
 		List<String> roles = new ArrayList<String>();
 		roles.add("selfcareDefault");
 		user.setRoles(roles);
@@ -55185,66 +55192,6 @@ rkJggg==
       </con:property>
     </con:properties>
   </con:testSuite>
-  <con:testSuite id="5f19c98a-0e69-480f-964a-4c998147f68e" name="Appsource fix">
-    <con:settings/>
-    <con:runType>SEQUENTIAL</con:runType>
-    <con:testCase id="f609fc52-dca9-466b-862e-637fbdc432c4" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Role fix" searchProperties="true">
-      <con:settings/>
-      <con:testStep type="request" name="RoleFix" id="dbcf842b-f257-4ac4-8031-bf4f971562e8">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>SettingsWsSoapBinding</con:interface>
-          <con:operation>createUser</con:operation>
-          <con:request name="RoleFix" id="2d7c5c5f-ab8a-46d7-8db9-f81834a652cf">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createOrUpdateUser>
-         <user>
-            <username>${#Project#CCUsername}</username>
-            <email>${#Project#CCUsername}@opencellsoft.com</email>
-            <firstName>${#Project#CCFirstname}</firstName>
-            <lastName>${#Project#CCLastname}</lastName>
-            <userRoles>
-               <userRole>CUSTOMER_CARE_USER</userRole>
-            </userRoles>
-         </user>
-      </ws:createOrUpdateUser>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="SOAP Response" id="a427c4ca-342e-4fba-812c-5c56034291c8"/>
-            <con:assertion type="Simple Contains" id="ffb0a71a-c828-4d7d-b171-a6267f4336e5" name="Contains">
-              <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:credentials>
-              <con:username>meveo.superadmin</con:username>
-              <con:password>meveo.superadmin</con:password>
-              <con:selectedAuthProfile>Basic</con:selectedAuthProfile>
-              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
-              <con:preemptive>true</con:preemptive>
-              <con:authType>Preemptive</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
-        </con:config>
-      </con:testStep>
-      <con:setupScript/>
-      <con:properties/>
-    </con:testCase>
-    <con:properties/>
-  </con:testSuite>
   <con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">http://localhost:8080/meveo/CatalogWs</con:endpoint>
   </con:endpointStrategy>
@@ -55267,7 +55214,7 @@ rkJggg==
     </con:property>
     <con:property>
       <con:name>mainOfferId</con:name>
-      <con:value>47</con:value>
+      <con:value>5</con:value>
     </con:property>
     <con:property>
       <con:name>templateCode</con:name>
