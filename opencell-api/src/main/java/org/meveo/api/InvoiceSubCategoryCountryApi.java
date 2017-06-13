@@ -45,6 +45,7 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
         if (StringUtils.isBlank(postData.getCountry())) {
             missingParameters.add("country");
         }
+        
         if (StringUtils.isBlank(postData.getTax()) && StringUtils.isBlank(postData.getTaxCodeEL())) {
             missingParameters.add("tax");
         }
@@ -113,11 +114,13 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
             throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getInvoiceSubCategory());
         }
 
-        Tax tax = taxService.findByCode(postData.getTax());
-        if (tax == null) {
-            throw new EntityDoesNotExistsException(Tax.class, postData.getTax());
+        Tax tax = null;
+        if(!StringUtils.isBlank(postData.getTax())){
+	        tax = taxService.findByCode(postData.getTax());
+	        if (tax == null) {
+	            throw new EntityDoesNotExistsException(Tax.class, postData.getTax());
+	        }
         }
-
         InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountry(invoiceSubCategory, tradingCountry);
         if (invoiceSubcategoryCountry == null) {
             throw new EntityDoesNotExistsException("InvoiceSubCategoryCountry with invoiceSubCategory=" + postData.getInvoiceSubCategory() + ", tradingCountry="
@@ -125,6 +128,7 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
         }
 
         invoiceSubcategoryCountry.setTax(tax);
+        invoiceSubcategoryCountry.setTaxCodeEL(postData.getTaxCodeEL());
 
         invoiceSubCategoryCountryService.update(invoiceSubcategoryCountry);
     }
