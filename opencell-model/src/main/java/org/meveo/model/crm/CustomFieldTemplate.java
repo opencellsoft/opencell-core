@@ -205,20 +205,24 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
     }
 
 	public Map<String, String> getListValues() {
-		Comparator<String> dropdownListComparator = new Comparator<String>() {
-			@Override
-			public int compare(String s1, String s2) {
-				try {
-					return Integer.valueOf(s1).compareTo(Integer.valueOf(s2));
-				} catch (NumberFormatException e) {
-					return s1.compareTo(s2);
+		if (listValues != null && !listValues.isEmpty()) {
+			Comparator<String> dropdownListComparator = new Comparator<String>() {
+				@Override
+				public int compare(String s1, String s2) {
+					try {
+						return Integer.valueOf(s1).compareTo(Integer.valueOf(s2));
+					} catch (NumberFormatException e) {
+						return s1.compareTo(s2);
+					}
 				}
-			}
-		};
-		
-		Map<String, String> newList = new TreeMap<>(dropdownListComparator);
-		newList.putAll(listValues);
-		return newList;
+			};
+
+			Map<String, String> newList = new TreeMap<>(dropdownListComparator);
+			newList.putAll(listValues);
+			return newList;
+		}
+
+		return listValues;
 	}
 
     public void setListValues(Map<String, String> listValues) {
