@@ -3039,4 +3039,8 @@
         <dropColumn tableName="adm_user" columnName="password" />
         <dropColumn tableName="adm_user" columnName="last_password_modification" />
     </changeSet>
+    <changeSet id="#2676_20170612" author="TienLanPHUNG">
+       <modifyDataType tableName="billing_wallet_operation" columnName="offer_code" newDataType="varchar(255)" />
+       <modifyDataType tableName="billing_rated_transaction" columnName="offer_code" newDataType="varchar(255)" />
+    </changeSet>
 </databaseChangeLog> 
