@@ -2,9 +2,11 @@ package org.meveo.model.crm;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -203,8 +205,20 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
     }
 
 	public Map<String, String> getListValues() {
-
-		return listValues;
+		Comparator<String> dropdownListComparator = new Comparator<String>() {
+			@Override
+			public int compare(String s1, String s2) {
+				try {
+					return Integer.valueOf(s1).compareTo(Integer.valueOf(s2));
+				} catch (NumberFormatException e) {
+					return s1.compareTo(s2);
+				}
+			}
+		};
+		
+		Map<String, String> newList = new TreeMap<>(dropdownListComparator);
+		newList.putAll(listValues);
+		return newList;
 	}
 
     public void setListValues(Map<String, String> listValues) {
