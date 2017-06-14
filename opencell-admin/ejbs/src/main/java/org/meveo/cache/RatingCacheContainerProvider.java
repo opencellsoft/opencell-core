@@ -25,6 +25,7 @@ import org.infinispan.context.Flag;
 import org.meveo.model.CounterValueChangeInfo;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.CounterPeriod;
+import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.PricePlanMatrix;
@@ -368,7 +369,10 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
             cachedSubscriptionCharges.add(cachedCharge);
             Collections.sort(cachedSubscriptionCharges);
         }
-
+        //ANA : There no reasons to keep terminated charge instance in cache 
+        if(!usageChargeInstance.getStatus().name().equals(InstanceStatusEnum.ACTIVE.name()) ){
+        	 cachedSubscriptionCharges.remove(cachedCharge);
+        }
         usageChargeInstanceCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(subscriptionId, cachedSubscriptionCharges);
 
         log.debug("UsageChargeInstance " + (!cachedSubscriptionContainsCharge ? "added" : "updated") + " in usageChargeInstanceCache: subscription id {}, charge id {}",

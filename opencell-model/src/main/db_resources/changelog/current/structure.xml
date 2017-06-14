@@ -3039,6 +3039,17 @@
         <dropColumn tableName="adm_user" columnName="password" />
         <dropColumn tableName="adm_user" columnName="last_password_modification" />
     </changeSet>
+   
+    <changeSet id="#2676_20170612" author="TienLanPHUNG">
+       <modifyDataType tableName="billing_wallet_operation" columnName="offer_code" newDataType="varchar(255)" />
+       <modifyDataType tableName="billing_rated_transaction" columnName="offer_code" newDataType="varchar(255)" />
+    </changeSet>
+
+    <changeSet id="#2694_20170614" author="anasseh">
+       <modifyDataType tableName="com_message_template" columnName="htmlcontent" newDataType="text" />
+       <modifyDataType tableName="com_message_template" columnName="textcontent" newDataType="text" />
+    </changeSet>    
+
         
     <changeSet id="#2591_20170612" author="AndriusKarpavicius">
         <sql>insert into crm_custom_field_tmpl ( id, version, disabled, created, updated, code, description, field_type, value_required, versionable, calendar_id, default_value, entity_clazz, storage_type, trigger_end_period_event, cache_value_for, applies_to, gui_position, allow_edit, hide_on_new, max_value, min_value, reg_exp, cache_value, mapkey_type, applicable_on_el, che_fields, index_type, creator, updater, tags) 
