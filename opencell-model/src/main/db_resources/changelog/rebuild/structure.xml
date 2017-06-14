@@ -8195,7 +8195,7 @@
 
     <!-- keep this always as the last changeSet to remove all rebuild logs -->
     <changeSet id="rebuild-4.4-struct-complete" author="AndriusKarpavicius">
-        <delete tableName="databasechangelog" />
+        <delete tableName="DATABASECHANGELOG" />
     </changeSet>
 
 </databaseChangeLog>
