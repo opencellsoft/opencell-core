@@ -2553,7 +2553,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="com_msg_var_val_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into com_msg_var_val_seq (select IFNULL(max(id),0)+1 from com_msg_var_variable)</sql>
+        <sql>insert into com_msg_var_val_seq (select IFNULL(max(id),0)+1 from com_msg_var_value)</sql>
         <createTable tableName="com_prov_pol_seq">
 			<column name="next_val" type="BIGINT" >
                 <constraints nullable="false" primaryKey="true" primaryKeyName="com_prov_pol_seq_pk" />
