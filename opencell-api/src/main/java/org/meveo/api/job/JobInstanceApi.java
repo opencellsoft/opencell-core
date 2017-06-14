@@ -259,7 +259,7 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
             dto.setTimerCode(jobInstance.getTimerEntity().getCode());
         }
 
-        dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(jobInstance));
+        dto.setCustomFields(entityToDtoConverter.getCustomFieldsWithInheritedDTO(jobInstance, true));
 
         if (jobInstance.getFollowingJob() != null) {
             dto.setFollowingJob(jobInstance.getFollowingJob().getCode());

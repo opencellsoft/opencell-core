@@ -74,7 +74,6 @@ import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.billing.impl.UserAccountService;
-import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.crm.impl.AccountModelScriptService;
 import org.meveo.service.crm.impl.BusinessAccountModelService;
@@ -168,9 +167,6 @@ public class AccountHierarchyApi extends BaseApi {
 
 	@Inject
 	private BusinessAccountModelService businessAccountModelService;
-	
-	@Inject
-	private DiscountPlanService discountPlanService;
 
 	@Inject
 	@MeveoParamBean
@@ -1639,7 +1635,7 @@ public class AccountHierarchyApi extends BaseApi {
 			for (CustomerDto customerDto : result.getCustomers().getCustomer()) {
 				if (customerDto.getCode().equals(customer.getCode())) {
 					if (!customerDto.isLoaded()) {
-                        customerDto.initFromEntity(customer, entityToDtoConverter.getCustomFieldsDTO(customer));
+                        customerDto.initFromEntity(customer, entityToDtoConverter.getCustomFieldsWithInheritedDTO(customer, true));
 					}
 
 					found = true;
@@ -1667,7 +1663,7 @@ public class AccountHierarchyApi extends BaseApi {
 			dto.setBusinessAccountModel(new BusinessEntityDto(businessAccountModel));
 		}
 
-		dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(account));
+		dto.setCustomFields(entityToDtoConverter.getCustomFieldsWithInheritedDTO(account, true));
 	}
 
 	public CustomerDto customerToDto(Customer customer) {

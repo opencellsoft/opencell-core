@@ -832,7 +832,7 @@ public class SubscriptionApi extends BaseApi {
 
         if (subscription.getAccessPoints() != null) {
             for (Access ac : subscription.getAccessPoints()) {
-                dto.getAccesses().getAccess().add(new AccessDto(ac, entityToDtoConverter.getCustomFieldsDTO(ac)));
+                dto.getAccesses().getAccess().add(new AccessDto(ac, entityToDtoConverter.getCustomFieldsWithInheritedDTO(ac, true)));
             }
         }
 

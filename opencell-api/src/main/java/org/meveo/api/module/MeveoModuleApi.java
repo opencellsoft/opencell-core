@@ -737,7 +737,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
     private void businessServiceModelToDto(BusinessServiceModel bsm, BusinessServiceModelDto dto) {
 
         if (bsm.getServiceTemplate() != null) {
-            dto.setServiceTemplate(new ServiceTemplateDto(bsm.getServiceTemplate(), entityToDtoConverter.getCustomFieldsDTO(bsm.getServiceTemplate())));
+            dto.setServiceTemplate(new ServiceTemplateDto(bsm.getServiceTemplate(), entityToDtoConverter.getCustomFieldsWithInheritedDTO(bsm.getServiceTemplate(), true)));
         }
         dto.setDuplicateService(bsm.isDuplicateService());
         dto.setDuplicatePricePlan(bsm.isDuplicatePricePlan());

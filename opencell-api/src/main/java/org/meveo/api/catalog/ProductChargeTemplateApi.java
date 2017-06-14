@@ -309,7 +309,7 @@ public class ProductChargeTemplateApi extends BaseCrudApi<ProductChargeTemplate,
 			throw new EntityDoesNotExistsException(UsageChargeTemplateDto.class, code);
 		}
 
-		ProductChargeTemplateDto result = new ProductChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate));
+		ProductChargeTemplateDto result = new ProductChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsWithInheritedDTO(chargeTemplate, true));
 
 		List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
 		for (CatMessages msg : catMessagesService.getCatMessagesList(chargeTemplate)) {
