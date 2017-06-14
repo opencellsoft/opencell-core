@@ -3043,4 +3043,8 @@
        <modifyDataType tableName="billing_wallet_operation" columnName="offer_code" newDataType="varchar(255)" />
        <modifyDataType tableName="billing_rated_transaction" columnName="offer_code" newDataType="varchar(255)" />
     </changeSet>
+    <changeSet id="#2694_20170614" author="anasseh">
+       <modifyDataType tableName="com_message_template" columnName="htmlcontent" newDataType="text" />
+       <modifyDataType tableName="com_message_template" columnName="textcontent" newDataType="text" />
+    </changeSet>    
 </databaseChangeLog> 

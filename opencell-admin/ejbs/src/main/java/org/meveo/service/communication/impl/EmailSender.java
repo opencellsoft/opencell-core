@@ -30,6 +30,9 @@ public class EmailSender {
 	@Resource(lookup = "java:/MeveoMail")
 	private Session mailSession;
 
+	public void sent(String from, List<String> replyTo, List<String> to,List<String> cc,List<String> bcc, String subject, String textContent, String htmlContent) throws BusinessException{
+		sent(from, replyTo, to, cc, bcc, subject, textContent, htmlContent, null, null);
+	}
 	public void sent(String from, List<String> replyTo, List<String> to, String subject, String textContent, String htmlContent) throws BusinessException{
 		sent(from, replyTo, to, null, null, subject, textContent, htmlContent, null, null);
 	}

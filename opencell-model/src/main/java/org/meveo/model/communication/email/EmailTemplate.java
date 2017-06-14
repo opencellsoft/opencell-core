@@ -34,12 +34,10 @@ public class EmailTemplate extends MessageTemplate {
     @Size(max = 255)
 	private String subject;
 	
-	@Column(name = "HTMLCONTENT", length = 4000)
-	@Size(max = 4000)
+	@Column(name = "HTMLCONTENT", columnDefinition = "TEXT")	
 	private String htmlContent;
 	
-	@Column(name = "TEXTCONTENT", length = 4000)
-    @Size(max = 4000)
+	@Column(name = "TEXTCONTENT", columnDefinition = "TEXT")
 	private String textContent;
 
 	public String getSubject() {
