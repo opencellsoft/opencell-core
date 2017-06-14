@@ -3061,4 +3061,13 @@
         <sql>insert into crm_custom_field_tmpl_mcols (cft_id, position, code, label, key_type) select cft_id * (-1), position, code, label, key_type from crm_custom_field_tmpl_mcols where cft_id in (select id from crm_custom_field_tmpl where applies_to = 'PRODUCT')</sql>
         <sql>insert into crm_custom_field_tmpl_val (customfieldtemplate_id, listvalues, listvalues_key) select customfieldtemplate_id * (-1), listvalues, listvalues_key from crm_custom_field_tmpl_val where customfieldtemplate_id in (select id from crm_custom_field_tmpl where applies_to = 'PRODUCT')</sql>        
     </changeSet>    
+
+    <changeSet id="#2686_20170612" author="AndriusKarpavicius">
+        <addColumn tableName="crm_custom_field_tmpl">
+            <column name="inh_as_def_value" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog> 

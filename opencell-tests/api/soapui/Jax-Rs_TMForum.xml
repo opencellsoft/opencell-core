@@ -14819,6 +14819,45 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="request" name="Clear ProductInstance customizations" id="5ff6640e-6551-4de0-809a-e1e49c73c293">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>customizeEntity</con:operation>
+          <con:request name="Clear ProductInstance customizations" id="6842687e-27ab-4237-a8ba-27f9b1233c87">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:customizeEntity>\r
+         <entityCustomization classname="org.meveo.model.billing.ProductInstance">\r
+         </entityCustomization>\r
+      </ws:customizeEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="bd83b478-e30a-4024-b531-d5c7e12945b7"/>
+            <con:assertion type="Simple Contains" id="1ad5fe0b-f837-4a65-ab29-f8d2929dc6e8" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
       <con:testStep type="request" name="Clear ServiceTemplate customizations" id="cf49cc80-3ba8-455f-a7c6-b9bbd8f69476">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -14835,6 +14874,45 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>\r
       <ws:customizeEntity>\r
          <entityCustomization classname="org.meveo.model.catalog.ServiceTemplate">\r
+         </entityCustomization>\r
+      </ws:customizeEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="bd83b478-e30a-4024-b531-d5c7e12945b7"/>
+            <con:assertion type="Simple Contains" id="1ad5fe0b-f837-4a65-ab29-f8d2929dc6e8" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Clear ServiceInstance customizations" id="d3fa8722-237e-4a42-97f4-d79c70ee2870">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>customizeEntity</con:operation>
+          <con:request name="Clear ServiceInstance customizations" id="6842687e-27ab-4237-a8ba-27f9b1233c87">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:customizeEntity>\r
+         <entityCustomization classname="org.meveo.model.billing.ServiceInstance">\r
          </entityCustomization>\r
       </ws:customizeEntity>\r
    </soapenv:Body>\r
@@ -16499,12 +16577,12 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="Create CF for Service - SERVICE_CF_STRING" id="979f4bdf-20c8-4686-9bf4-70d7809ea6dc">
+      <con:testStep type="request" name="Create CF for ServiceInstance - SERVICE_CF_STRING" id="979f4bdf-20c8-4686-9bf4-70d7809ea6dc">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>EntityCustomizationWsSoapBinding</con:interface>
           <con:operation>createField</con:operation>
-          <con:request name="Create CF for Service - SERVICE_CF_STRING" id="9798ac67-4169-4229-a85b-0ca78ce2cc41">
+          <con:request name="Create CF for ServiceInstance - SERVICE_CF_STRING" id="9798ac67-4169-4229-a85b-0ca78ce2cc41">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -16516,7 +16594,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateField>
          <customField code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING" description="String value">
             <fieldType>STRING</fieldType>
-            <appliesTo>SERVICE</appliesTo>
+            <appliesTo>SERVICE_INSTANCE</appliesTo>
             <storageType>SINGLE</storageType>
             <valueRequired>false</valueRequired>
             <versionable>false</versionable>
@@ -16537,12 +16615,12 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="Create CF for Subscription - SERVICE_CF_LONG_MATRIX" id="ca32a99a-fd52-45b1-bdd6-3f7361143ec3">
+      <con:testStep type="request" name="Create CF for ServiceInstance - SERVICE_CF_LONG_MATRIX" id="ca32a99a-fd52-45b1-bdd6-3f7361143ec3">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>EntityCustomizationWsSoapBinding</con:interface>
           <con:operation>createField</con:operation>
-          <con:request name="Create CF for Subscription - SERVICE_CF_LONG_MATRIX" id="9798ac67-4169-4229-a85b-0ca78ce2cc41">
+          <con:request name="Create CF for ServiceInstance - SERVICE_CF_LONG_MATRIX" id="9798ac67-4169-4229-a85b-0ca78ce2cc41">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -16554,7 +16632,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateField>
          <customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" description="Long matrix value">
             <fieldType>STRING</fieldType>
-            <appliesTo>SERVICE</appliesTo>
+            <appliesTo>SERVICE_INSTANCE</appliesTo>
             <storageType>MATRIX</storageType>
             <valueRequired>false</valueRequired>
             <versionable>false</versionable>
@@ -16596,7 +16674,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateField>
          <customField code="${#Project#baseEntityPrefix}_PROD_CF_STRING" description="String value">
             <fieldType>STRING</fieldType>
-            <appliesTo>PRODUCT</appliesTo>
+            <appliesTo>PRODUCT_INSTANCE</appliesTo>
             <storageType>SINGLE</storageType>
             <valueRequired>true</valueRequired>
             <versionable>false</versionable>
@@ -16635,7 +16713,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateField>
          <customField code="${#Project#baseEntityPrefix}_PROD_CF_LONG_MAP" description="Long map value">
             <fieldType>LONG</fieldType>
-            <appliesTo>PRODUCT</appliesTo>
+            <appliesTo>PRODUCT_INSTANE</appliesTo>
             <storageType>MAP</storageType>
             <mapKeyType>STRING</mapKeyType>
             <valueRequired>false</valueRequired>
@@ -16657,12 +16735,12 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="Create CF for Service - SERVICE_CF_PRICE" id="d20125ee-c2a5-470d-badf-affa2c338c0a">
+      <con:testStep type="request" name="Create CF for ServiceInstance - SERVICE_CF_PRICE" id="d20125ee-c2a5-470d-badf-affa2c338c0a">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>EntityCustomizationWsSoapBinding</con:interface>
           <con:operation>createOrUpdateField</con:operation>
-          <con:request name="Create CF for Service - SERVICE_CF_PRICE" id="9798ac67-4169-4229-a85b-0ca78ce2cc41">
+          <con:request name="Create CF for ServiceInstance - SERVICE_CF_PRICE" id="9798ac67-4169-4229-a85b-0ca78ce2cc41">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -16674,11 +16752,10 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_SERVICE_CF_PRICE" description="Service price">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>SERVICE</appliesTo>\r
+            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>\r
             <defaultValue>20</defaultValue>\r
-            <applicableOnEl>#{entity.class.simpleName.contains('Instance')}</applicableOnEl>
          </customField>\r
       </ws:createOrUpdateField>\r
    </soapenv:Body>\r
@@ -16695,12 +16772,12 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="Create CF for Product - PROD_CF_PRICE" id="5178552d-2857-41e9-9ccb-1a9f3c1c14b6">
+      <con:testStep type="request" name="Create CF for ProductInstance - PROD_CF_PRICE" id="5178552d-2857-41e9-9ccb-1a9f3c1c14b6">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>EntityCustomizationWsSoapBinding</con:interface>
           <con:operation>createOrUpdateField</con:operation>
-          <con:request name="Create CF for Product - PROD_CF_PRICE" id="9798ac67-4169-4229-a85b-0ca78ce2cc41">
+          <con:request name="Create CF for ProductInstance - PROD_CF_PRICE" id="9798ac67-4169-4229-a85b-0ca78ce2cc41">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -16712,11 +16789,10 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_PROD_CF_PRICE" description="Product price">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>PRODUCT</appliesTo>\r
+            <appliesTo>PRODUCT_INSTANCE</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>\r
             <defaultValue>1000</defaultValue>\r
-            <applicableOnEl>#{entity.class.simpleName.contains('Instance')}</applicableOnEl>
          </customField>\r
       </ws:createOrUpdateField>\r
    </soapenv:Body>\r
@@ -24767,7 +24843,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateField>
          <customField code="${#Project#baseEntityPrefix}_PROD_CF_STRING" description="String value">
             <fieldType>STRING</fieldType>
-            <appliesTo>PRODUCT</appliesTo>
+            <appliesTo>PRODUCT_INSTANCE</appliesTo>
             <storageType>SINGLE</storageType>
             <valueRequired>false</valueRequired>
             <versionable>false</versionable>
@@ -24788,12 +24864,12 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="Update CF for Service - SERVICE_CF_PRICE" id="f5a66d9b-c514-445c-9b49-877806a0199a">
+      <con:testStep type="request" name="Update CF for ServiceInstance - SERVICE_CF_PRICE" id="f5a66d9b-c514-445c-9b49-877806a0199a">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>EntityCustomizationWsSoapBinding</con:interface>
           <con:operation>createOrUpdateField</con:operation>
-          <con:request name="Update CF for Service - SERVICE_CF_PRICE" id="9798ac67-4169-4229-a85b-0ca78ce2cc41">
+          <con:request name="Update CF for ServiceInstance - SERVICE_CF_PRICE" id="9798ac67-4169-4229-a85b-0ca78ce2cc41">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -24805,7 +24881,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_SERVICE_CF_PRICE" description="Service price">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>SERVICE</appliesTo>\r
+            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>false</valueRequired>\r
             <defaultValue>20</defaultValue>\r
@@ -24825,12 +24901,12 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="Update CF for Product - PROD_CF_PRICE" id="665f143a-a977-4fbb-aa10-e3fd66d36c31">
+      <con:testStep type="request" name="Update CF for ProductInstance - PROD_CF_PRICE" id="665f143a-a977-4fbb-aa10-e3fd66d36c31">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>EntityCustomizationWsSoapBinding</con:interface>
           <con:operation>createOrUpdateField</con:operation>
-          <con:request name="Update CF for Product - PROD_CF_PRICE" id="9798ac67-4169-4229-a85b-0ca78ce2cc41">
+          <con:request name="Update CF for ProductInstance - PROD_CF_PRICE" id="9798ac67-4169-4229-a85b-0ca78ce2cc41">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -24842,7 +24918,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateField>\r
          <customField code="${#Project#baseEntityPrefix}_PROD_CF_PRICE" description="Product price">\r
             <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>PRODUCT</appliesTo>\r
+            <appliesTo>PRODUCT_INSTANCE</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>false</valueRequired>\r
             <defaultValue>1000</defaultValue>\r
