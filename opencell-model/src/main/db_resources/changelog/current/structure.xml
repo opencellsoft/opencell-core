@@ -1901,7 +1901,7 @@
     <!-- tableName="cat_bundle_product_template" /> -->
     <!-- </changeSet> -->
     <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-505">
-        <addUniqueConstraint columnNames="entity_code,entity_class,language_code" tableName="ADM_MESSAGES" constraintName="uk_6clw4f7dfrs63yijhrwc87vnq" deferrable="false" disabled="false"
+        <addUniqueConstraint columnNames="entity_code,entity_class,language_code" tableName="adm_messages" constraintName="uk_6clw4f7dfrs63yijhrwc87vnq" deferrable="false" disabled="false"
             initiallyDeferred="false" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-uk-506">
@@ -2541,31 +2541,31 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="com_msg_tmpl_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into com_msg_tmpl_seq (select IFNULL(max(id),0)+1 from COM_MESSAGE_TEMPLATE)</sql>
+        <sql>insert into com_msg_tmpl_seq (select IFNULL(max(id),0)+1 from com_message_template)</sql>
         <createTable tableName="com_msg_tmpl_var_seq">
 			<column name="next_val" type="BIGINT" >
                 <constraints nullable="false" primaryKey="true" primaryKeyName="com_msg_tmpl_var_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into com_msg_tmpl_var_seq (select IFNULL(max(id),0)+1 from COM_MSG_TMPL_VARIABLE)</sql>
+        <sql>insert into com_msg_tmpl_var_seq (select IFNULL(max(id),0)+1 from com_msg_tmpl_variable)</sql>
         <createTable tableName="com_msg_var_val_seq">
 			<column name="next_val" type="BIGINT" >
                 <constraints nullable="false" primaryKey="true" primaryKeyName="com_msg_var_val_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into com_msg_var_val_seq (select IFNULL(max(id),0)+1 from COM_MSG_VAR_VALUE)</sql>
+        <sql>insert into com_msg_var_val_seq (select IFNULL(max(id),0)+1 from com_msg_var_value)</sql>
         <createTable tableName="com_prov_pol_seq">
 			<column name="next_val" type="BIGINT" >
                 <constraints nullable="false" primaryKey="true" primaryKeyName="com_prov_pol_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into com_prov_pol_seq (select IFNULL(max(id),0)+1 from COM_PROVIDER_POLICY)</sql>
+        <sql>insert into com_prov_pol_seq (select IFNULL(max(id),0)+1 from com_provider_policy)</sql>
         <createTable tableName="com_sndr_conf_seq">
 			<column name="next_val" type="BIGINT" >
                 <constraints nullable="false" primaryKey="true" primaryKeyName="com_sndr_conf_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into com_sndr_conf_seq (select IFNULL(max(id),0)+1 from COM_SENDER_CONFIG)</sql>
+        <sql>insert into com_sndr_conf_seq (select IFNULL(max(id),0)+1 from com_sender_config)</sql>
         <createTable tableName="crm_custom_field_inst_seq">
 			<column name="next_val" type="BIGINT" >
                 <constraints nullable="false" primaryKey="true" primaryKeyName="crm_custom_field_inst_seq_pk" />
@@ -2577,7 +2577,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="crm_custom_fld_tmp_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into crm_custom_fld_tmp_seq (select IFNULL(max(id),0)+1 from CRM_CUSTOM_FIELD_TMPL)</sql>
+        <sql>insert into crm_custom_fld_tmp_seq (select IFNULL(max(id),0)+1 from crm_custom_field_tmpl)</sql>
         <createTable tableName="crm_customer_brand_seq">
 			<column name="next_val" type="BIGINT" >
                 <constraints nullable="false" primaryKey="true" primaryKeyName="crm_customer_brand_seq_pk" />
@@ -2775,7 +2775,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_offer_serv_templt_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into cat_offer_serv_templt_seq (select IFNULL(max(id),0)+1 from CAT_OFFER_SERV_TEMPLATES)</sql>
+        <sql>insert into cat_offer_serv_templt_seq (select IFNULL(max(id),0)+1 from cat_offer_serv_templates)</sql>
         <createTable tableName="ar_revenue_recog_rule_seq">
 			<column name="next_val" type="BIGINT" >
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ar_revenue_recog_rule_seq_pk" />
@@ -2811,7 +2811,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_product_chrg_inst_seq_pk" />
             </column>
         </createTable>
-		<sql>insert into billing_product_chrg_inst_seq (select IFNULL(max(id),0)+1 from BILLING_PRODUCT_CHARGE_INST)</sql>
+		<sql>insert into billing_product_chrg_inst_seq (select IFNULL(max(id),0)+1 from billing_product_charge_inst)</sql>
         <createTable tableName="billing_product_instance_seq">
 			<column name="next_val" type="BIGINT" >
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_product_instance_seq_pk" />
@@ -3039,12 +3039,15 @@
         <dropColumn tableName="adm_user" columnName="password" />
         <dropColumn tableName="adm_user" columnName="last_password_modification" />
     </changeSet>
+   
     <changeSet id="#2676_20170612" author="TienLanPHUNG">
        <modifyDataType tableName="billing_wallet_operation" columnName="offer_code" newDataType="varchar(255)" />
        <modifyDataType tableName="billing_rated_transaction" columnName="offer_code" newDataType="varchar(255)" />
     </changeSet>
+
     <changeSet id="#2694_20170614" author="anasseh">
        <modifyDataType tableName="com_message_template" columnName="htmlcontent" newDataType="text" />
        <modifyDataType tableName="com_message_template" columnName="textcontent" newDataType="text" />
     </changeSet>    
+
 </databaseChangeLog> 
