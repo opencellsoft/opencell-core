@@ -15761,20 +15761,19 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateCustomFieldTemplate>\r
-         \r
          <customField code="CF_${#Project#templateCode}_PRICE_OS" description="One-off price">\r
             <fieldType>DOUBLE</fieldType>\r
             <appliesTo>SERVICE</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>\r
-		  <defaultValue>30</defaultValue>
+            <defaultValue>30</defaultValue>\r
             <versionable>false</versionable>\r
             <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
-            <allowEdit>true</allowEdit>
-            <hideOnNew>false</hideOnNew>
-            <cacheValue>false</cacheValue>
-		  <guiPosition>tab:Prices:0;field:0</guiPosition>
-		  <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_OS') &amp;&amp; !entity.code.contains('SE_${#Project#templateCode}_OSS_VOLUME')}</applicableOnEl>
+            <allowEdit>true</allowEdit>\r
+            <hideOnNew>false</hideOnNew>\r
+            <cacheValue>false</cacheValue>\r
+            <guiPosition>tab:Prices:0;field:0</guiPosition>\r
+            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_OS') &amp;&amp; !entity.code.contains('SE_${#Project#templateCode}_OSS_VOLUME')}</applicableOnEl>\r
          </customField>\r
       </ws:createOrUpdateCustomFieldTemplate>\r
    </soapenv:Body>\r
@@ -15813,22 +15812,20 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateCustomFieldTemplate>\r
-         \r
-            <customField code="CF_${#Project#templateCode}_VOLUME_PRICE_OS" description="Volume based pricing">
-                <fieldType>DOUBLE</fieldType>
-               <accountLevel>SERVICE</accountLevel>
-               <appliesTo>SERVICE</appliesTo>
-               <storageType>MAP</storageType>
-               <valueRequired>false</valueRequired>
-               <versionable>false</versionable>
-               <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
-               <allowEdit>true</allowEdit>
-               <hideOnNew>false</hideOnNew>
-               <cacheValue>false</cacheValue>
-               <guiPosition>tab:Prices:0;field:4</guiPosition>
-               <mapKeyType>RON</mapKeyType>
-		     <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_OSS_VOLUME')}</applicableOnEl>
-            </customField>
+         <customField code="CF_${#Project#templateCode}_VOLUME_PRICE_OS" description="Volume based pricing">\r
+            <fieldType>DOUBLE</fieldType>\r
+            <appliesTo>SERVICE</appliesTo>\r
+            <storageType>MAP</storageType>\r
+            <valueRequired>false</valueRequired>\r
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <allowEdit>true</allowEdit>\r
+            <hideOnNew>false</hideOnNew>\r
+            <cacheValue>false</cacheValue>\r
+            <guiPosition>tab:Prices:0;field:4</guiPosition>\r
+            <mapKeyType>RON</mapKeyType>\r
+            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_OSS_VOLUME')}</applicableOnEl>\r
+         </customField>\r
       </ws:createOrUpdateCustomFieldTemplate>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -15866,20 +15863,19 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateCustomFieldTemplate>\r
-         \r
          <customField code="CF_${#Project#templateCode}_PRICE_REC" description="Recurring price">\r
             <fieldType>DOUBLE</fieldType>\r
             <appliesTo>SERVICE</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>\r
-		  <defaultValue>10</defaultValue>
+            <defaultValue>10</defaultValue>\r
             <versionable>false</versionable>\r
             <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
-            <allowEdit>true</allowEdit>
-            <hideOnNew>false</hideOnNew>
-            <cacheValue>false</cacheValue>
-		  <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_REC') &amp;&amp; !entity.code.contains('SE_${#Project#templateCode}_REC_VOLUME')}</applicableOnEl>
-		  <guiPosition>tab:Prices:0;field:0</guiPosition>
+            <allowEdit>true</allowEdit>\r
+            <hideOnNew>false</hideOnNew>\r
+            <cacheValue>false</cacheValue>\r
+            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_REC') &amp;&amp; !entity.code.contains('SE_${#Project#templateCode}_REC_VOLUME')}</applicableOnEl>\r
+            <guiPosition>tab:Prices:0;field:0</guiPosition>\r
          </customField>\r
       </ws:createOrUpdateCustomFieldTemplate>\r
    </soapenv:Body>\r
@@ -15918,22 +15914,20 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateCustomFieldTemplate>\r
-         \r
-            <customField code="CF_${#Project#templateCode}_VOLUME_PRICE_REC" description="Volume based pricing">
-               <fieldType>DOUBLE</fieldType>
-               <accountLevel>SERVICE</accountLevel>
-               <appliesTo>SERVICE</appliesTo>
-               <storageType>MAP</storageType>
-               <valueRequired>false</valueRequired>
-               <versionable>false</versionable>
-               <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
-               <allowEdit>true</allowEdit>
-               <hideOnNew>false</hideOnNew>
-               <cacheValue>false</cacheValue>
-               <guiPosition>tab:Prices:0;field:3</guiPosition>
-               <mapKeyType>RON</mapKeyType>
-		     <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_REC_VOLUME')}</applicableOnEl>
-            </customField>
+         <customField code="CF_${#Project#templateCode}_VOLUME_PRICE_REC" description="Volume based pricing">\r
+            <fieldType>DOUBLE</fieldType>\r
+            <appliesTo>SERVICE</appliesTo>\r
+            <storageType>MAP</storageType>\r
+            <valueRequired>false</valueRequired>\r
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <allowEdit>true</allowEdit>\r
+            <hideOnNew>false</hideOnNew>\r
+            <cacheValue>false</cacheValue>\r
+            <guiPosition>tab:Prices:0;field:3</guiPosition>\r
+            <mapKeyType>RON</mapKeyType>\r
+            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_REC_VOLUME')}</applicableOnEl>\r
+         </customField>\r
       </ws:createOrUpdateCustomFieldTemplate>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -16023,22 +16017,20 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateCustomFieldTemplate>\r
-         \r
-            <customField code="CF_${#Project#templateCode}_VOLUME_PRICE_USG" description="Volume based pricing">
-                <fieldType>DOUBLE</fieldType>
-               <accountLevel>SERVICE</accountLevel>
-               <appliesTo>SERVICE</appliesTo>
-               <storageType>MAP</storageType>
-               <valueRequired>false</valueRequired>
-               <versionable>false</versionable>
-               <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
-               <allowEdit>true</allowEdit>
-               <hideOnNew>false</hideOnNew>
-               <cacheValue>false</cacheValue>
-               <guiPosition>tab:Prices:0;field:4</guiPosition>
-               <mapKeyType>RON</mapKeyType>
-		     <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_USG_VOLUME')}</applicableOnEl>
-            </customField>
+         <customField code="CF_${#Project#templateCode}_VOLUME_PRICE_USG" description="Volume based pricing">\r
+            <fieldType>DOUBLE</fieldType>\r
+            <appliesTo>SERVICE</appliesTo>\r
+            <storageType>MAP</storageType>\r
+            <valueRequired>false</valueRequired>\r
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <allowEdit>true</allowEdit>\r
+            <hideOnNew>false</hideOnNew>\r
+            <cacheValue>false</cacheValue>\r
+            <guiPosition>tab:Prices:0;field:4</guiPosition>\r
+            <mapKeyType>RON</mapKeyType>\r
+            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_USG_VOLUME')}</applicableOnEl>\r
+         </customField>\r
       </ws:createOrUpdateCustomFieldTemplate>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -16076,20 +16068,19 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateCustomFieldTemplate>\r
-         \r
          <customField code="CF_${#Project#templateCode}_PRICE_PRD" description="Product price">\r
             <fieldType>DOUBLE</fieldType>\r
             <appliesTo>PRODUCT</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>\r
-		  <defaultValue>20</defaultValue>
+            <defaultValue>20</defaultValue>\r
             <versionable>false</versionable>\r
             <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
-            <allowEdit>true</allowEdit>
-            <hideOnNew>false</hideOnNew>
-            <cacheValue>false</cacheValue>
-	       <applicableOnEl>#{entity.code.contains('PR_${#Project#templateCode}_')}</applicableOnEl>
-		  <guiPosition>tab:Prices:0;field:0</guiPosition>
+            <allowEdit>true</allowEdit>\r
+            <hideOnNew>false</hideOnNew>\r
+            <cacheValue>false</cacheValue>\r
+            <applicableOnEl>#{entity.code.contains('PR_${#Project#templateCode}_')}</applicableOnEl>\r
+            <guiPosition>tab:Prices:0;field:0</guiPosition>\r
          </customField>\r
       </ws:createOrUpdateCustomFieldTemplate>\r
    </soapenv:Body>\r
@@ -16128,21 +16119,20 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateCustomFieldTemplate>\r
-         \r
-            <customField code="CF_${#Project#templateCode}_PLAN_QUANTITY_USG" description="Quantity included in plan">
-            <fieldType>DOUBLE</fieldType>
-            <appliesTo>SERVICE</appliesTo>
-            <storageType>SINGLE</storageType>
-            <valueRequired>true</valueRequired>
-		  <defaultValue>100</defaultValue>
-            <versionable>false</versionable>
-            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
-            <allowEdit>true</allowEdit>
-            <hideOnNew>false</hideOnNew>
-            <cacheValue>false</cacheValue>
-		  <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_USG_PLAN')}</applicableOnEl>
-		  <guiPosition>tab:Prices:0;field:0</guiPosition>
-            </customField>
+         <customField code="CF_${#Project#templateCode}_PLAN_QUANTITY_USG" description="Quantity included in plan">\r
+            <fieldType>DOUBLE</fieldType>\r
+            <appliesTo>SERVICE</appliesTo>\r
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>true</valueRequired>\r
+            <defaultValue>100</defaultValue>\r
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <allowEdit>true</allowEdit>\r
+            <hideOnNew>false</hideOnNew>\r
+            <cacheValue>false</cacheValue>\r
+            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_USG_PLAN')}</applicableOnEl>\r
+            <guiPosition>tab:Prices:0;field:0</guiPosition>\r
+         </customField>\r
       </ws:createOrUpdateCustomFieldTemplate>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -16180,22 +16170,20 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateCustomFieldTemplate>\r
-         \r
-            <customField code="CF_${#Project#templateCode}_10TIERS_QUANTITY_USG" description="Thresholds for 10TIERS">
-                <fieldType>DOUBLE</fieldType>
-               <accountLevel>SERVICE</accountLevel>
-               <appliesTo>SERVICE</appliesTo>
-               <storageType>MAP</storageType>
-               <valueRequired>false</valueRequired>
-               <versionable>false</versionable>
-               <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
-               <allowEdit>true</allowEdit>
-               <hideOnNew>false</hideOnNew>
-               <cacheValue>false</cacheValue>
-               <guiPosition>tab:Prices:0;field:4</guiPosition>
-               <mapKeyType>STRING</mapKeyType>
-		     <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_USG_10TIERS')}</applicableOnEl>
-            </customField>
+         <customField code="CF_${#Project#templateCode}_10TIERS_QUANTITY_USG" description="Thresholds for 10TIERS">\r
+            <fieldType>DOUBLE</fieldType>\r
+            <appliesTo>SERVICE</appliesTo>\r
+            <storageType>MAP</storageType>\r
+            <valueRequired>false</valueRequired>\r
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <allowEdit>true</allowEdit>\r
+            <hideOnNew>false</hideOnNew>\r
+            <cacheValue>false</cacheValue>\r
+            <guiPosition>tab:Prices:0;field:4</guiPosition>\r
+            <mapKeyType>STRING</mapKeyType>\r
+            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_USG_10TIERS')}</applicableOnEl>\r
+         </customField>\r
       </ws:createOrUpdateCustomFieldTemplate>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -16233,22 +16221,530 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateCustomFieldTemplate>\r
-         \r
-            <customField code="CF_${#Project#templateCode}_10TIERS_PRICE_USG" description="Prices for 10TIERS">
-                <fieldType>DOUBLE</fieldType>
-               <accountLevel>SERVICE</accountLevel>
-               <appliesTo>SERVICE</appliesTo>
-               <storageType>MAP</storageType>
-               <valueRequired>false</valueRequired>
-               <versionable>false</versionable>
-               <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
-               <allowEdit>true</allowEdit>
-               <hideOnNew>false</hideOnNew>
-               <cacheValue>false</cacheValue>
-               <guiPosition>tab:Prices:0;field:4</guiPosition>
-               <mapKeyType>STRING</mapKeyType>
-		     <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_USG_10TIERS')}</applicableOnEl>
-            </customField>
+         <customField code="CF_${#Project#templateCode}_10TIERS_PRICE_USG" description="Prices for 10TIERS">\r
+            <fieldType>DOUBLE</fieldType>\r
+            <appliesTo>SERVICE</appliesTo>\r
+            <storageType>MAP</storageType>\r
+            <valueRequired>false</valueRequired>\r
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <allowEdit>true</allowEdit>\r
+            <hideOnNew>false</hideOnNew>\r
+            <cacheValue>false</cacheValue>\r
+            <guiPosition>tab:Prices:0;field:4</guiPosition>\r
+            <mapKeyType>STRING</mapKeyType>\r
+            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_USG_10TIERS')}</applicableOnEl>\r
+         </customField>\r
+      </ws:createOrUpdateCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
+            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="CF_PRICE_OS - Instance" id="987c4344-6354-42f2-a377-3dba1f6a4ab4">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createCustomFieldTemplate</con:operation>
+          <con:request name="CF_PRICE_OS - Instance" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomFieldTemplate>\r
+         <customField code="CF_${#Project#templateCode}_PRICE_OS" description="One-off price">\r
+            <fieldType>DOUBLE</fieldType>\r
+            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>true</valueRequired>\r
+            <defaultValue>30</defaultValue>\r
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <allowEdit>true</allowEdit>\r
+            <hideOnNew>false</hideOnNew>\r
+            <cacheValue>false</cacheValue>\r
+            <guiPosition>tab:Prices:0;field:0</guiPosition>\r
+            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_OS') &amp;&amp; !entity.code.contains('SE_${#Project#templateCode}_OSS_VOLUME')}</applicableOnEl>\r
+         </customField>\r
+      </ws:createOrUpdateCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
+            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="CF_VOLUME_PRICE_OS - Instance" id="343897fb-12fd-46ed-b9d2-4708ae3634ed">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createCustomFieldTemplate</con:operation>
+          <con:request name="CF_VOLUME_PRICE_OS - Instance" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomFieldTemplate>\r
+         <customField code="CF_${#Project#templateCode}_VOLUME_PRICE_OS" description="Volume based pricing">\r
+            <fieldType>DOUBLE</fieldType>\r
+            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
+            <storageType>MAP</storageType>\r
+            <valueRequired>false</valueRequired>\r
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <allowEdit>true</allowEdit>\r
+            <hideOnNew>false</hideOnNew>\r
+            <cacheValue>false</cacheValue>\r
+            <guiPosition>tab:Prices:0;field:4</guiPosition>\r
+            <mapKeyType>RON</mapKeyType>\r
+            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_OSS_VOLUME')}</applicableOnEl>\r
+         </customField>\r
+      </ws:createOrUpdateCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
+            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="CF_PRICE_REC - Instance" id="4ab94237-1c46-4c49-8871-c509c5d96859">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createCustomFieldTemplate</con:operation>
+          <con:request name="CF_PRICE_REC - Instance" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomFieldTemplate>\r
+         <customField code="CF_${#Project#templateCode}_PRICE_REC" description="Recurring price">\r
+            <fieldType>DOUBLE</fieldType>\r
+            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>true</valueRequired>\r
+            <defaultValue>10</defaultValue>\r
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <allowEdit>true</allowEdit>\r
+            <hideOnNew>false</hideOnNew>\r
+            <cacheValue>false</cacheValue>\r
+            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_REC') &amp;&amp; !entity.code.contains('SE_${#Project#templateCode}_REC_VOLUME')}</applicableOnEl>\r
+            <guiPosition>tab:Prices:0;field:0</guiPosition>\r
+         </customField>\r
+      </ws:createOrUpdateCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
+            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="CF_VOLUME_PRICE_REC - Instance" id="d45fdf2a-2fa2-4ba7-b436-66dfacc660d2">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createCustomFieldTemplate</con:operation>
+          <con:request name="CF_VOLUME_PRICE_REC - Instance" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomFieldTemplate>\r
+         <customField code="CF_${#Project#templateCode}_VOLUME_PRICE_REC" description="Volume based pricing">\r
+            <fieldType>DOUBLE</fieldType>\r
+            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
+            <storageType>MAP</storageType>\r
+            <valueRequired>false</valueRequired>\r
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <allowEdit>true</allowEdit>\r
+            <hideOnNew>false</hideOnNew>\r
+            <cacheValue>false</cacheValue>\r
+            <guiPosition>tab:Prices:0;field:3</guiPosition>\r
+            <mapKeyType>RON</mapKeyType>\r
+            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_REC_VOLUME')}</applicableOnEl>\r
+         </customField>\r
+      </ws:createOrUpdateCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
+            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="CF_PRICE_USG - Instance" id="e12adb6d-03aa-45ac-a693-dffd89d52b7e">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createCustomFieldTemplate</con:operation>
+          <con:request name="CF_PRICE_USG - Instance" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomFieldTemplate>\r
+         <customField code="CF_${#Project#templateCode}_PRICE_USG" description="Usage price per unit">\r
+            <fieldType>DOUBLE</fieldType>\r
+            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>true</valueRequired>\r
+            <defaultValue>0.1</defaultValue>\r
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <allowEdit>true</allowEdit>\r
+            <hideOnNew>false</hideOnNew>\r
+            <cacheValue>false</cacheValue>\r
+            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_USG') &amp;&amp; !(entity.code.contains('VOLUME')||entity.code.contains('TIERS')||entity.code.contains('COMMISSION'))}</applicableOnEl>\r
+            <guiPosition>tab:Prices:0;field:0</guiPosition>\r
+         </customField>\r
+      </ws:createOrUpdateCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
+            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="CF_VOLUME_PRICE_USG - Instance" id="e6cebc49-89cb-4abc-b983-b820d4061da7">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createCustomFieldTemplate</con:operation>
+          <con:request name="CF_VOLUME_PRICE_USG - Instance" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomFieldTemplate>\r
+         <customField code="CF_${#Project#templateCode}_VOLUME_PRICE_USG" description="Volume based pricing">\r
+            <fieldType>DOUBLE</fieldType>\r
+            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
+            <storageType>MAP</storageType>\r
+            <valueRequired>false</valueRequired>\r
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <allowEdit>true</allowEdit>\r
+            <hideOnNew>false</hideOnNew>\r
+            <cacheValue>false</cacheValue>\r
+            <guiPosition>tab:Prices:0;field:4</guiPosition>\r
+            <mapKeyType>RON</mapKeyType>\r
+            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_USG_VOLUME')}</applicableOnEl>\r
+         </customField>\r
+      </ws:createOrUpdateCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
+            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="CF_PRICE_PRD - Instance" id="a905471a-df58-486d-bbd5-578304e051ac">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createCustomFieldTemplate</con:operation>
+          <con:request name="CF_PRICE_PRD - Instance" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomFieldTemplate>\r
+         <customField code="CF_${#Project#templateCode}_PRICE_PRD" description="Product price">\r
+            <fieldType>DOUBLE</fieldType>\r
+            <appliesTo>PRODUCT_INSTANCE</appliesTo>\r
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>true</valueRequired>\r
+            <defaultValue>20</defaultValue>\r
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <allowEdit>true</allowEdit>\r
+            <hideOnNew>false</hideOnNew>\r
+            <cacheValue>false</cacheValue>\r
+            <applicableOnEl>#{entity.code.contains('PR_${#Project#templateCode}_')}</applicableOnEl>\r
+            <guiPosition>tab:Prices:0;field:0</guiPosition>\r
+         </customField>\r
+      </ws:createOrUpdateCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
+            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="CF_PLAN_QUANTITY_USG - Instance" id="8df096f5-6c59-4ec3-888d-53e308ddfb17">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createCustomFieldTemplate</con:operation>
+          <con:request name="CF_PLAN_QUANTITY_USG - Instance" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomFieldTemplate>\r
+         <customField code="CF_${#Project#templateCode}_PLAN_QUANTITY_USG" description="Quantity included in plan">\r
+            <fieldType>DOUBLE</fieldType>\r
+            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>true</valueRequired>\r
+            <defaultValue>100</defaultValue>\r
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <allowEdit>true</allowEdit>\r
+            <hideOnNew>false</hideOnNew>\r
+            <cacheValue>false</cacheValue>\r
+            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_USG_PLAN')}</applicableOnEl>\r
+            <guiPosition>tab:Prices:0;field:0</guiPosition>\r
+         </customField>\r
+      </ws:createOrUpdateCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
+            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="CF_10TIERS_QUANTITY_USG - Instance" id="3c40004d-5363-431c-b361-1a4d610131e7">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createCustomFieldTemplate</con:operation>
+          <con:request name="CF_10TIERS_QUANTITY_USG - Instance" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomFieldTemplate>\r
+         <customField code="CF_${#Project#templateCode}_10TIERS_QUANTITY_USG" description="Thresholds for 10TIERS">\r
+            <fieldType>DOUBLE</fieldType>\r
+            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
+            <storageType>MAP</storageType>\r
+            <valueRequired>false</valueRequired>\r
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <allowEdit>true</allowEdit>\r
+            <hideOnNew>false</hideOnNew>\r
+            <cacheValue>false</cacheValue>\r
+            <guiPosition>tab:Prices:0;field:4</guiPosition>\r
+            <mapKeyType>STRING</mapKeyType>\r
+            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_USG_10TIERS')}</applicableOnEl>\r
+         </customField>\r
+      </ws:createOrUpdateCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
+            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="CF_10TIERS_PRICE_USG - Instance" id="c4d1557b-7bbc-4c7c-b5bb-ec7af99215c8">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createCustomFieldTemplate</con:operation>
+          <con:request name="CF_10TIERS_PRICE_USG - Instance" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomFieldTemplate>\r
+         <customField code="CF_${#Project#templateCode}_10TIERS_PRICE_USG" description="Prices for 10TIERS">\r
+            <fieldType>DOUBLE</fieldType>\r
+            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
+            <storageType>MAP</storageType>\r
+            <valueRequired>false</valueRequired>\r
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <allowEdit>true</allowEdit>\r
+            <hideOnNew>false</hideOnNew>\r
+            <cacheValue>false</cacheValue>\r
+            <guiPosition>tab:Prices:0;field:4</guiPosition>\r
+            <mapKeyType>STRING</mapKeyType>\r
+            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_USG_10TIERS')}</applicableOnEl>\r
+         </customField>\r
       </ws:createOrUpdateCustomFieldTemplate>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -16290,33 +16786,31 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateCustomFieldTemplate>\r
-         \r
          <customField code="CF_${#Project#templateCode}_SELECTOR_TRIGGER_COMMISSION" description="Trigger commissioning">\r
-               <fieldType>LIST</fieldType>
-               <accountLevel>SERVICE</accountLevel>
-               <appliesTo>SERVICE</appliesTo>
-               <storageType>SINGLE</storageType>
-               <valueRequired>true</valueRequired>
-               <versionable>false</versionable>
-               <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
-               <defaultValue>no</defaultValue>
-               <listValues>
-                  <entry>
-                     <key>yes</key>
-                     <value>Yes</value>
-                  </entry>
-                  <entry>
-                     <key>no</key>
-                     <value>No</value>
-                  </entry>
-               </listValues>
-               <allowEdit>true</allowEdit>
-               <hideOnNew>false</hideOnNew>
-               <cacheValue>false</cacheValue>
-               <guiPosition>tab:Commission:1;field:0</guiPosition>
-               <mapKeyType>STRING</mapKeyType>
-		  <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_')&amp;&amp;!(entity.code.contains('_COMMISSION')||entity.code.contains('_REBATE'))}</applicableOnEl>
-            </customField>
+            <fieldType>LIST</fieldType>\r
+            <appliesTo>SERVICE</appliesTo>\r
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>true</valueRequired>\r
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <defaultValue>no</defaultValue>\r
+            <listValues>\r
+               <entry>\r
+                  <key>yes</key>\r
+                  <value>Yes</value>\r
+               </entry>\r
+               <entry>\r
+                  <key>no</key>\r
+                  <value>No</value>\r
+               </entry>\r
+            </listValues>\r
+            <allowEdit>true</allowEdit>\r
+            <hideOnNew>false</hideOnNew>\r
+            <cacheValue>false</cacheValue>\r
+            <guiPosition>tab:Commission:1;field:0</guiPosition>\r
+            <mapKeyType>STRING</mapKeyType>\r
+            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_')&amp;&amp;!(entity.code.contains('_COMMISSION')||entity.code.contains('_REBATE'))}</applicableOnEl>\r
+         </customField>\r
       </ws:createOrUpdateCustomFieldTemplate>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -16354,20 +16848,19 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateCustomFieldTemplate>\r
-         \r
          <customField code="CF_${#Project#templateCode}_COMMISSION_PARTNER" description="Commissioned partner account code">\r
             <fieldType>STRING</fieldType>\r
             <appliesTo>SERVICE</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>false</valueRequired>\r
-		  <defaultValue>${#Project#provider}.partner.${#Project#templateCode}</defaultValue>
+            <defaultValue>${#Project#provider}.partner.${#Project#templateCode}</defaultValue>\r
             <versionable>false</versionable>\r
             <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
-            <allowEdit>true</allowEdit>
-            <hideOnNew>false</hideOnNew>
-            <cacheValue>false</cacheValue>
-		  <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_')&amp;&amp;!(entity.code.contains('_COMMISSION')||entity.code.contains('_REBATE'))}</applicableOnEl>
-		  <guiPosition>tab:Commission:1;field:1</guiPosition>
+            <allowEdit>true</allowEdit>\r
+            <hideOnNew>false</hideOnNew>\r
+            <cacheValue>false</cacheValue>\r
+            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_')&amp;&amp;!(entity.code.contains('_COMMISSION')||entity.code.contains('_REBATE'))}</applicableOnEl>\r
+            <guiPosition>tab:Commission:1;field:1</guiPosition>\r
          </customField>\r
       </ws:createOrUpdateCustomFieldTemplate>\r
    </soapenv:Body>\r
@@ -16406,20 +16899,183 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateCustomFieldTemplate>\r
-         \r
          <customField code="CF_${#Project#templateCode}_COMMISSION_RATE" description="Commission rate (%)">\r
             <fieldType>DOUBLE</fieldType>\r
             <appliesTo>SERVICE</appliesTo>\r
             <storageType>SINGLE</storageType>\r
             <valueRequired>false</valueRequired>\r
-		  <defaultValue>10</defaultValue>
+            <defaultValue>10</defaultValue>\r
             <versionable>false</versionable>\r
             <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
-            <allowEdit>true</allowEdit>
-            <hideOnNew>false</hideOnNew>
-            <cacheValue>false</cacheValue>
-		  <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_')&amp;&amp;!(entity.code.contains('_COMMISSION')||entity.code.contains('_REBATE'))}</applicableOnEl>
-		  <guiPosition>tab:Commission:1;field:2</guiPosition>
+            <allowEdit>true</allowEdit>\r
+            <hideOnNew>false</hideOnNew>\r
+            <cacheValue>false</cacheValue>\r
+            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_')&amp;&amp;!(entity.code.contains('_COMMISSION')||entity.code.contains('_REBATE'))}</applicableOnEl>\r
+            <guiPosition>tab:Commission:1;field:2</guiPosition>\r
+         </customField>\r
+      </ws:createOrUpdateCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
+            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="CF_SELECTOR_TRIGGER_COMMISSION - Instance" id="9a00892f-1026-4bff-9555-eaff5ad0e385">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createCustomFieldTemplate</con:operation>
+          <con:request name="CF_SELECTOR_TRIGGER_COMMISSION - Instance" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomFieldTemplate>\r
+         <customField code="CF_${#Project#templateCode}_SELECTOR_TRIGGER_COMMISSION" description="Trigger commissioning">\r
+            <fieldType>LIST</fieldType>\r
+            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>true</valueRequired>\r
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <defaultValue>no</defaultValue>\r
+            <listValues>\r
+               <entry>\r
+                  <key>yes</key>\r
+                  <value>Yes</value>\r
+               </entry>\r
+               <entry>\r
+                  <key>no</key>\r
+                  <value>No</value>\r
+               </entry>\r
+            </listValues>\r
+            <allowEdit>true</allowEdit>\r
+            <hideOnNew>false</hideOnNew>\r
+            <cacheValue>false</cacheValue>\r
+            <guiPosition>tab:Commission:1;field:0</guiPosition>\r
+            <mapKeyType>STRING</mapKeyType>\r
+            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_')&amp;&amp;!(entity.code.contains('_COMMISSION')||entity.code.contains('_REBATE'))}</applicableOnEl>\r
+         </customField>\r
+      </ws:createOrUpdateCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
+            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="CF_COMMISSION_PARTNER - Instance" id="cc123e65-3bf0-4422-ab64-c3bb0ce6e32e">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createCustomFieldTemplate</con:operation>
+          <con:request name="CF_COMMISSION_PARTNER - Instance" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomFieldTemplate>\r
+         <customField code="CF_${#Project#templateCode}_COMMISSION_PARTNER" description="Commissioned partner account code">\r
+            <fieldType>STRING</fieldType>\r
+            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>false</valueRequired>\r
+            <defaultValue>${#Project#provider}.partner.${#Project#templateCode}</defaultValue>\r
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <allowEdit>true</allowEdit>\r
+            <hideOnNew>false</hideOnNew>\r
+            <cacheValue>false</cacheValue>\r
+            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_')&amp;&amp;!(entity.code.contains('_COMMISSION')||entity.code.contains('_REBATE'))}</applicableOnEl>\r
+            <guiPosition>tab:Commission:1;field:1</guiPosition>\r
+         </customField>\r
+      </ws:createOrUpdateCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
+            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="CF_COMMISSION_RATE - Instance" id="9595aa7a-fd3b-4289-8691-897fe8d2aa35">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createCustomFieldTemplate</con:operation>
+          <con:request name="CF_COMMISSION_RATE - Instance" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomFieldTemplate>\r
+         <customField code="CF_${#Project#templateCode}_COMMISSION_RATE" description="Commission rate (%)">\r
+            <fieldType>DOUBLE</fieldType>\r
+            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>false</valueRequired>\r
+            <defaultValue>10</defaultValue>\r
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <allowEdit>true</allowEdit>\r
+            <hideOnNew>false</hideOnNew>\r
+            <cacheValue>false</cacheValue>\r
+            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_')&amp;&amp;!(entity.code.contains('_COMMISSION')||entity.code.contains('_REBATE'))}</applicableOnEl>\r
+            <guiPosition>tab:Commission:1;field:2</guiPosition>\r
          </customField>\r
       </ws:createOrUpdateCustomFieldTemplate>\r
    </soapenv:Body>\r

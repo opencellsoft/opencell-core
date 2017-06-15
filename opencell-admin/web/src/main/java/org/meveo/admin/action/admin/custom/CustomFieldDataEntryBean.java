@@ -298,7 +298,17 @@ public class CustomFieldDataEntryBean implements Serializable {
 
             // Instantiate with a default value if no value found
             if (cfisByTemplate.isEmpty() && !cft.isVersionable()) {
-                cfisByTemplate.add(CustomFieldInstance.fromTemplate(cft, (ICustomFieldEntity) entity));
+                CustomFieldInstance cfi = CustomFieldInstance.fromTemplate(cft, (ICustomFieldEntity) entity);
+                
+                // Overwrite with inherited value if needed
+                if (cft.isUseInheritedAsDefaultValue()) {
+                    Object inheritedValue = customFieldInstanceService.getInheritedOnlyCFValue(entity, cfi.getCode());
+                    if (inheritedValue != null) {
+                        cfi.setValue(inheritedValue);
+                    }
+                }
+                
+                cfisByTemplate.add(cfi);
             }
 
             // Deserialize values if applicable
