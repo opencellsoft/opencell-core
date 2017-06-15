@@ -251,7 +251,7 @@ public class DefaultObserver {
     private boolean checkEvent(NotificationEventTypeEnum type, Object entityOrEvent) throws BusinessException {
         boolean result = false;
         for (Notification notif : notificationCacheContainerProvider.getApplicableNotifications(type, entityOrEvent)) {
-            result = result || fireNotification(notif, entityOrEvent);
+            result = fireNotification(notif, entityOrEvent) || result;
         }
         return result;
     }

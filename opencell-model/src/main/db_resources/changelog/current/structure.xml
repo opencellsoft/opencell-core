@@ -3048,6 +3048,12 @@
     <changeSet id="#2694_20170614" author="anasseh">
        <modifyDataType tableName="com_message_template" columnName="htmlcontent" newDataType="text" />
        <modifyDataType tableName="com_message_template" columnName="textcontent" newDataType="text" />
-    </changeSet>    
+    </changeSet>
+    
+    <changeSet id="#2637_20170615" author="EdwardLegaspi">
+    	<addColumn tableName="adm_notification">
+    		<column defaultValueNumeric="1" name="priority" type="int4" />
+    	</addColumn>
+    </changeSet>
 
 </databaseChangeLog> 

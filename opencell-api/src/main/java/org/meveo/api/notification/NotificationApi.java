@@ -97,6 +97,7 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
         notif.setParams(postData.getScriptParams());
         notif.setElFilter(postData.getElFilter());
         notif.setCounterTemplate(counterTemplate);
+        notif.setPriority(postData.getPriority());
 
         notificationService.create(notif);
 
@@ -173,6 +174,7 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
         notif.setElFilter(postData.getElFilter());
         notif.setCounterTemplate(counterTemplate);
         notif.setParams(postData.getScriptParams());
+        notif.setPriority(postData.getPriority());
 
         notif = notificationService.update(notif);
 

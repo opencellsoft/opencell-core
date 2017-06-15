@@ -35,7 +35,7 @@ public class NotificationDto extends BusinessDto {
 	private String scriptInstanceCode;
     private Map<String,String> scriptParams = new HashMap<String,String>();
 	private String counterTemplate;
-	
+	private int priority;
 
 	public NotificationDto() {
 
@@ -53,6 +53,7 @@ public class NotificationDto extends BusinessDto {
 		if(e.getParams()!=null){
 			scriptParams.putAll(e.getParams());
 		}
+		priority = e.getPriority();
 //		scriptParams = e.getParams();
 	}	
 
@@ -78,9 +79,7 @@ public class NotificationDto extends BusinessDto {
 
 	public void setElFilter(String elFilter) {
 		this.elFilter = elFilter;
-	}
-
-	
+	}	
 
 	/**
 	 * @return the scriptParams
@@ -112,8 +111,9 @@ public class NotificationDto extends BusinessDto {
 
 	@Override
 	public String toString() {
-		return "NotificationDto [code=" + getCode() + ", classNameFilter=" + classNameFilter + ", eventTypeFilter=" + eventTypeFilter + ", elFilter=" + elFilter + ", scriptInstanceCode="
-				+ scriptInstanceCode + ", counterTemplate=" + counterTemplate + "]";
+		return "NotificationDto [classNameFilter=" + classNameFilter + ", eventTypeFilter=" + eventTypeFilter
+				+ ", elFilter=" + elFilter + ", scriptInstanceCode=" + scriptInstanceCode + ", scriptParams="
+				+ scriptParams + ", counterTemplate=" + counterTemplate + ", priority=" + priority + "]";
 	}
 
 	public String getCounterTemplate() {
@@ -122,6 +122,14 @@ public class NotificationDto extends BusinessDto {
 
 	public void setCounterTemplate(String counterTemplate) {
 		this.counterTemplate = counterTemplate;
+	}
+
+	public int getPriority() {
+		return priority;
+	}
+
+	public void setPriority(int priority) {
+		this.priority = priority;
 	}
 
 }

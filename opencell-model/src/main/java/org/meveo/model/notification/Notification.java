@@ -82,6 +82,9 @@ public class Notification extends BusinessEntity {
 
     @OneToMany(mappedBy = "notification", cascade = CascadeType.REMOVE)
     protected List<NotificationHistory> notificationHistories;
+    
+    @Column(name = "PRIORITY", columnDefinition = "int DEFAULT 1")
+    private int priority = 1;
 
     public String getClassNameFilter() {
         return classNameFilter;
@@ -165,4 +168,12 @@ public class Notification extends BusinessEntity {
     public void setNotificationHistories(List<NotificationHistory> notificationHistories) {
         this.notificationHistories = notificationHistories;
     }
+
+	public int getPriority() {
+		return priority;
+	}
+
+	public void setPriority(int priority) {
+		this.priority = priority;
+	}
 }
