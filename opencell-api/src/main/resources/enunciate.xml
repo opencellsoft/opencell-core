@@ -1,4 +1,4 @@
-<enunciate xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" slug="meveoApi" xsi:noNamespaceSchemaLocation="http://enunciate.webcohesion.com/schemas/enunciate-2.2.0.xsd">
+<enunciate xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" slug="meveoApi" xsi:noNamespaceSchemaLocation="http://enunciate.webcohesion.com/schemas/enunciate-2.9.0.xsd">
     <title>opencell REST and WS API</title>
     <description>opencell API</description>
 
@@ -7,7 +7,7 @@
     </api-classes>
 
     <modules>
-        <jackson disabled="false" honorJaxb="true" />
+        <jackson disabled="false" honorJaxb="true" disableExamples="true"  />
         <jackson1 disabled="true" />
         <spring-web disabled="true" />
         <c-xml-client disabled="true" />
@@ -22,6 +22,6 @@
         <idl disabled="true" />
         <jaxrs groupBy="path" />
         <docs docsSubdir="api" />
-        <swagger host="i.meveo.info" basePath="/meveo/api/rest" docsSubdir="swagger" />
+        <swagger host="integration.i.opencellsoft.com" basePath="/opencell/api/rest" docsSubdir="swagger"  />
     </modules>
 </enunciate>

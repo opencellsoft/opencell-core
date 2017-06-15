@@ -30,6 +30,9 @@ public class EmailSender {
 	@Resource(lookup = "java:/MeveoMail")
 	private Session mailSession;
 
+	public void sent(String from, List<String> replyTo, List<String> to,List<String> cc,List<String> bcc, String subject, String textContent, String htmlContent) throws BusinessException{
+		sent(from, replyTo, to, cc, bcc, subject, textContent, htmlContent, null, null);
+	}
 	public void sent(String from, List<String> replyTo, List<String> to, String subject, String textContent, String htmlContent) throws BusinessException{
 		sent(from, replyTo, to, null, null, subject, textContent, htmlContent, null, null);
 	}
@@ -70,11 +73,11 @@ public class EmailSender {
 				msg.setRecipients(RecipientType.BCC, bccAddress.toArray(new InternetAddress[bccAddress.size()]));
 			}
 			msg.setSentDate(sendDate == null ? new Date() : sendDate);
-			msg.setSubject(subject);
+			msg.setSubject(subject,"UTF-8");
 			if (!StringUtils.isBlank(htmlContent)) {
-				msg.setContent(htmlContent, "text/html");
+				msg.setContent(htmlContent, "text/html; charset=UTF-8");
 			} else {
-				msg.setContent(textContent, "text/plain");
+				msg.setContent(textContent, "text/plain; charset=UTF-8");
 			}
 			if(attachments != null && !attachments.isEmpty()){
 				MimeBodyPart messageBodyPart = new MimeBodyPart();

@@ -64,7 +64,7 @@ public interface BusinessAccountModelRs extends IBaseRs {
      * @return Request processing status
      */
     @DELETE
-    @Path("/{bamCode}")
+    @Path("/{businessAccountModelCode}")
     public ActionStatus remove(@PathParam("businessAccountModelCode") String bamCode);
 
     /**
