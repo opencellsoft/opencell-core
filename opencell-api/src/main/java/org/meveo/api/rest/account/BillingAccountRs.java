@@ -1,5 +1,7 @@
 package org.meveo.api.rest.account;
 
+import java.util.Date;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -17,6 +19,7 @@ import org.meveo.api.dto.response.account.BillingAccountsResponseDto;
 import org.meveo.api.dto.response.account.GetBillingAccountResponseDto;
 import org.meveo.api.dto.response.billing.GetCountersInstancesResponseDto;
 import org.meveo.api.rest.IBaseRs;
+import org.meveo.api.serialize.RestDateParam;
 
 /**
  * @author Edward P. Legaspi
@@ -97,5 +100,5 @@ public interface BillingAccountRs extends IBaseRs {
     @GET
     @Path("/filterCountersByPeriod")
 	GetCountersInstancesResponseDto filterBillingAccountCountersByPeriod(@QueryParam("billingAccountCode") String billingAccountCode, 
-			@QueryParam("date") String date);
+			@QueryParam("date") @RestDateParam Date date);
 }

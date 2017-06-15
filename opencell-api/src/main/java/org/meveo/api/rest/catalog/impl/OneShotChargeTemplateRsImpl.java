@@ -1,10 +1,11 @@
 package org.meveo.api.rest.catalog.impl;
 
+import java.util.Date;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.ws.rs.POST;
-import javax.ws.rs.QueryParam;
 
 import org.meveo.api.catalog.OneShotChargeTemplateApi;
 import org.meveo.api.dto.ActionStatus;
@@ -15,7 +16,6 @@ import org.meveo.api.dto.response.catalog.GetOneShotChargeTemplateResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.catalog.OneShotChargeTemplateRs;
 import org.meveo.api.rest.impl.BaseRs;
-import org.meveo.model.shared.DateUtils;
 
 /**
  * @author Edward P. Legaspi
@@ -54,14 +54,14 @@ public class OneShotChargeTemplateRsImpl extends BaseRs implements OneShotCharge
     }
 
     @Override
-    public OneShotChargeTemplateWithPriceListDto listOneShotChargeTemplates(@QueryParam("languageCode") String languageCode, @QueryParam("countryCode") String countryCode,
-            @QueryParam("currencyCode") String currencyCode, @QueryParam("sellerCode") String sellerCode, @QueryParam("date") String date) {
+    public OneShotChargeTemplateWithPriceListDto listOneShotChargeTemplates(String languageCode, String countryCode,
+            String currencyCode, String sellerCode, Date date) {
 
         OneShotChargeTemplateWithPriceListDto result = new OneShotChargeTemplateWithPriceListDto();
 
         try {
             result.setOneShotChargeTemplateDtos(
-                oneShotChargeTemplateApi.listWithPrice(languageCode, countryCode, currencyCode, sellerCode, DateUtils.parseDateWithPattern(date, "yyyy-MM-dd")));
+                oneShotChargeTemplateApi.listWithPrice(languageCode, countryCode, currencyCode, sellerCode, date));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

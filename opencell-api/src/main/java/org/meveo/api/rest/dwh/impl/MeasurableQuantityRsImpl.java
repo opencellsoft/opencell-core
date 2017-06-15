@@ -20,9 +20,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.dwh.MeasurableQuantityRs;
 import org.meveo.api.rest.impl.BaseRs;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.dwh.MeasurementPeriodEnum;
-import org.meveo.model.shared.DateUtils;
 
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -69,20 +67,12 @@ public class MeasurableQuantityRsImpl extends BaseRs implements MeasurableQuanti
 	 * @return
 	 */
 	@Override
-	public Response findMVByDateAndPeriod(String code, String fromDate, String toDate, MeasurementPeriodEnum period, String mqCode) {
+	public Response findMVByDateAndPeriod(String code, Date fromDate, Date toDate, MeasurementPeriodEnum period, String mqCode) {
 		Response.ResponseBuilder responseBuilder = null;
 		List<MeasuredValueDto> result = new ArrayList<>();
 
 		try {
-			Date from = null, to = null;
-			if (!StringUtils.isBlank(fromDate)) {
-				from = DateUtils.guessDate(fromDate, "yyyy-MM-dd", "yyyy-MM-dd'T'HH:mm:ss");
-			}
-			if (!StringUtils.isBlank(toDate)) {
-				to = DateUtils.guessDate(toDate, "yyyy-MM-dd", "yyyy-MM-dd'T'HH:mm:ss");
-			}
-
-			result = measurableQuantityApi.findMVByDateAndPeriod(code, from, to, period, mqCode);
+			result = measurableQuantityApi.findMVByDateAndPeriod(code, fromDate, toDate, period, mqCode);
 			responseBuilder = Response.ok();
 			responseBuilder.entity(result);
 		} catch (MeveoApiException e) {

@@ -19,6 +19,7 @@ import javax.ws.rs.core.UriInfo;
 import org.meveo.api.dto.catalog.BomOfferDto;
 import org.meveo.api.dto.catalog.ProductChargeTemplateDto;
 import org.meveo.api.dto.catalog.ProductTemplateDto;
+import org.meveo.api.serialize.RestDateParam;
 
 /**
  * TMForum Product catalog API specification implementation. Note: only READ type methods are implemented.
@@ -73,7 +74,8 @@ public interface CatalogRs {
      */
     @GET
     @Path("/productOffering/{id}")
-    public Response getProductOffering(@PathParam("id") String id, @QueryParam("validFrom") Date validFrom, @QueryParam("validTo") Date validTo, @Context UriInfo info);
+    public Response getProductOffering(@PathParam("id") String id, @QueryParam("validFrom") @RestDateParam Date validFrom, @QueryParam("validTo") @RestDateParam Date validTo,
+            @Context UriInfo info);
 
     /**
      * Get a list of product specifications optionally filtering by some criteria
@@ -96,7 +98,8 @@ public interface CatalogRs {
      */
     @GET
     @Path("/productSpecification/{id}")
-    public Response getProductSpecification(@PathParam("id") String id, @QueryParam("validFrom") Date validFrom, @QueryParam("validTo") Date validTo, @Context UriInfo info);
+    public Response getProductSpecification(@PathParam("id") String id, @QueryParam("validFrom") @RestDateParam Date validFrom, @QueryParam("validTo") @RestDateParam Date validTo,
+            @Context UriInfo info);
 
     /**
      * Create offer from BOM definition
@@ -118,7 +121,7 @@ public interface CatalogRs {
      */
     @GET
     @Path("/productTemplate/{code}")
-    public Response getProductTemplate(@PathParam("code") String code, @QueryParam("validFrom") Date validFrom, @QueryParam("validTo") Date validTo);
+    public Response getProductTemplate(@PathParam("code") String code, @QueryParam("validFrom") @RestDateParam Date validFrom, @QueryParam("validTo") @RestDateParam Date validTo);
 
     /**
      * Create product template
@@ -160,7 +163,7 @@ public interface CatalogRs {
      */
     @DELETE
     @Path("/productTemplate/{code}")
-    public Response removeProductTemplate(@PathParam("code") String code, @QueryParam("validFrom") Date validFrom, @QueryParam("validTo") Date validTo);
+    public Response removeProductTemplate(@PathParam("code") String code, @QueryParam("validFrom") @RestDateParam Date validFrom, @QueryParam("validTo") @RestDateParam Date validTo);
 
     /**
      * List all productTemplates

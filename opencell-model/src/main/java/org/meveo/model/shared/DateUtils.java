@@ -458,9 +458,34 @@ public class DateUtils {
     final static Pattern dayPattern = Pattern.compile("(?<!\\d)\\d{2}(?!\\d)");
     final static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
+    /**
+     * Guess a date
+     * 
+     * @param stringDate Date as a string or a timestamp number
+     * @param hints Date formats to consider
+     * @return A date object
+     */
     public static Date guessDate(String stringDate, String... hints) {
+
+        if (stringDate == null) {
+            return null;
+        }
+
         Date result = null;
         stringDate = stringDate.trim();
+
+        // First check if it is not a timestamp number
+        try {
+
+            long timeStamp = Long.parseLong(stringDate);
+            if (stringDate.equals(timeStamp + "")) {
+                return new Date(timeStamp);
+            }
+        } catch (Exception e) {
+            // ignore any exception
+        }
+
+        // Try different formats
         for (String hint : hints) {
             SimpleDateFormat sdf = new SimpleDateFormat(hint);
             try {

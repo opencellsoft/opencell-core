@@ -244,7 +244,7 @@ public class GenericProductOfferingService<T extends ProductOffering> extends Mu
             return super.findByCode(code, null, "be.validity.from=:from and be.validity.to=:to", "from", from, "to", to);
 
         } else if (from == null && to == null) {
-            return super.findByCode(code, null, "be.validity.from is null and be.validity.to is null");
+            return super.findByCode(code, null, "be.validity.from is null and be.validity.to is null", "ignore me");
 
         } else if (from != null) {
             return super.findByCode(code, null, "be.validity.from=:from and be.validity.to is null", "from", from);
