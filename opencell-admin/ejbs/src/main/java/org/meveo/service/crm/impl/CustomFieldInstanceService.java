@@ -633,7 +633,6 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
 
         Map<String, List<CustomFieldInstance>> cfisAsMap = new HashMap<String, List<CustomFieldInstance>>();
 
-        
         for (CustomFieldInstance cfi : cfis) {
             log.error("AKK values retrieved are {}", cfi.getCode());
             cfisAsMap.putIfAbsent(cfi.getCode(), new ArrayList<CustomFieldInstance>());
@@ -1324,12 +1323,12 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
      */
     private void triggerEndPeriodEvent(CustomFieldInstance cfi) {
 
-        if (cfi.getPeriod().getTo() != null && cfi.getPeriod().getTo().before(new Date())) {
+        if (cfi.getPeriodRaw() != null && cfi.getPeriod().getTo() != null && cfi.getPeriod().getTo().before(new Date())) {
             CFEndPeriodEvent event = new CFEndPeriodEvent();
             event.setCustomFieldInstance(cfi);
             cFEndPeriodEvent.fire(event);
 
-        } else if (cfi.getPeriod().getTo() != null) {
+        } else if (cfi.getPeriodRaw() != null && cfi.getPeriod().getTo() != null) {
 
             TimerConfig timerConfig = new TimerConfig();
             timerConfig.setInfo(cfi);
