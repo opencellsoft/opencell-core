@@ -13,31 +13,23 @@ import org.meveo.api.dto.response.BaseResponse;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetListProductTemplateResponseDto extends BaseResponse {
 
-	private static final long serialVersionUID = 6452175083213220603L;
+    private static final long serialVersionUID = 6452175083213220603L;
 
-	private List<ProductTemplateDto> listProductTemplate;
-	
-	public GetListProductTemplateResponseDto(){
-		
-	}
+    private List<ProductTemplateDto> listProductTemplate;
 
-	/**
-	 * @return the listProductTemplate
-	 */
-	public List<ProductTemplateDto> getListProductTemplate() {
-		return listProductTemplate;
-	}
+    public GetListProductTemplateResponseDto() {
+    }
 
-	/**
-	 * @param listProductTemplate the listProductTemplate to set
-	 */
-	public void setListProductTemplate(List<ProductTemplateDto> listProductTemplate) {
-		this.listProductTemplate = listProductTemplate;
-	}
+    public List<ProductTemplateDto> getListProductTemplate() {
+        return listProductTemplate;
+    }
 
-	@Override
-	public String toString() {
-		return "GetListProductTemplateResponseDto [listProductTemplate=" + listProductTemplate + "]";
-	}
-	
+    public void setListProductTemplate(List<ProductTemplateDto> listProductTemplate) {
+        this.listProductTemplate = listProductTemplate;
+    }
+
+    @Override
+    public String toString() {
+        return "GetListProductTemplateResponseDto [listProductTemplate=" + listProductTemplate + "]";
+    }
 }

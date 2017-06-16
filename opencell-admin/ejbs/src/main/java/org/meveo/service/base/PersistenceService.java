@@ -22,6 +22,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.TypeVariable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -76,6 +77,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public static String SEARCH_IS_NULL = "IS_NULL";
     public static String SEARCH_IS_NOT_NULL = "IS_NOT_NULL";
     public static String SEARCH_FIELD1_OR_FIELD2 = "FIELD1_OR_FIELD2";
+    public static String SEARCH_SQL="SQL";
 
     @Inject
     @MeveoJpa
@@ -567,175 +569,214 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
                 for (String key : filters.keySet()) {
                     
-                    // condition field1 field2
-                    // example1 ne code, condition=code, fieldName=code,
-                    // fieldName2=null
+                    // Key fomat is: condition field1 field2
+                    // example: "ne code", condition=code, fieldName=code, fieldName2=null
                     String[] fieldInfo = key.split(" ");
                     String condition = fieldInfo.length == 1 ? null : fieldInfo[0];
                     String fieldName = fieldInfo.length == 1 ? fieldInfo[0] : fieldInfo[1];
                     String fieldName2 = fieldInfo.length == 3 ? fieldInfo[2] : null;
 
-                    Object filter = filters.get(key);
-                    if (filter != null) {
-                        // if ranged search (from - to fields)
-                        if (key.contains("fromRange-")) {
-                            String parsedKey = key.substring(10);
-                            if (filter instanceof Double) {
-                                BigDecimal rationalNumber = new BigDecimal((Double) filter);
-                                queryBuilder.addCriterion("a." + parsedKey, " >= ", rationalNumber, true);
-                            } else if (filter instanceof Number) {
-                                queryBuilder.addCriterion("a." + parsedKey, " >= ", filter, true);
-                            } else if (filter instanceof Date) {
-                                queryBuilder.addCriterionDateRangeFromTruncatedToDay("a." + parsedKey, (Date) filter);
-                            }
-                        } else if (key.contains("toRange-")) {
-                            String parsedKey = key.substring(8);
-                            if (filter instanceof Double) {
-                                BigDecimal rationalNumber = new BigDecimal((Double) filter);
-                                queryBuilder.addCriterion("a." + parsedKey, " <= ", rationalNumber, true);
-                            } else if (filter instanceof Number) {
-                                queryBuilder.addCriterion("a." + parsedKey, " <= ", filter, true);
-                            } else if (filter instanceof Date) {
-                                queryBuilder.addCriterionDateRangeToTruncatedToDay("a." + parsedKey, (Date) filter);
-                            }
-                        } else if (key.contains("list-")) {
-                            // if searching elements from list
-                            String parsedKey = key.substring(5);
-                            queryBuilder.addSqlCriterion(":" + parsedKey + " in elements(a." + parsedKey + ")", parsedKey, filter);
-                        } else if (key.contains("inList-")) {
-                            // if searching elements from list
-                            String parsedKey = key.substring(7);
-                            queryBuilder.addSql("a." + parsedKey + " in (" + filter + ")");
+                    Object filterValue = filters.get(key);
+                    if (filterValue == null) {
+                        continue;
+                    }
+                    
+                    // if ranged search - field value in between from - to values
+                    if (key.contains("fromRange-")) {
+                        String parsedKey = key.substring(10);
+                        if (filterValue instanceof Double) {
+                            BigDecimal rationalNumber = new BigDecimal((Double) filterValue);
+                            queryBuilder.addCriterion("a." + parsedKey, " >= ", rationalNumber, true);
+                        } else if (filterValue instanceof Number) {
+                            queryBuilder.addCriterion("a." + parsedKey, " >= ", filterValue, true);
+                        } else if (filterValue instanceof Date) {
+                            queryBuilder.addCriterionDateRangeFromTruncatedToDay("a." + parsedKey, (Date) filterValue);
+                        }
+                    } else if (key.contains("toRange-")) {
+                        String parsedKey = key.substring(8);
+                        if (filterValue instanceof Double) {
+                            BigDecimal rationalNumber = new BigDecimal((Double) filterValue);
+                            queryBuilder.addCriterion("a." + parsedKey, " <= ", rationalNumber, true);
+                        } else if (filterValue instanceof Number) {
+                            queryBuilder.addCriterion("a." + parsedKey, " <= ", filterValue, true);
+                        } else if (filterValue instanceof Date) {
+                            queryBuilder.addCriterionDateRangeToTruncatedToDay("a." + parsedKey, (Date) filterValue);
+                        }
+                        
+                        // Value is in field value (list)
+                    } else if (key.contains("list-")) {
+                        String parsedKey = key.substring(5);
+                        queryBuilder.addSqlCriterion(":" + parsedKey + " in elements(a." + parsedKey + ")", parsedKey, filterValue);
+                    
+                    // Field value is in value (list)
+                    } else if (key.contains("inList-")) {
+                        String parsedKey = key.substring(7);
+                        queryBuilder.addSql("a." + parsedKey + " in (" + filterValue + ")");
 
-                            // Search by an entity type
-                        } else if (SEARCH_ATTR_TYPE_CLASS.equals(fieldName)) {
-                            if (filter instanceof Collection && !((Collection) filter).isEmpty()) {
-                                List classes = new ArrayList<Class>();
-                                for (Object classNameOrClass : (Collection) filter) {
-                                    if (classNameOrClass instanceof Class) {
-                                        classes.add((Class) classNameOrClass);
-                                    } else {
-                                        try {
-                                            classes.add(Class.forName((String)classNameOrClass));
-                                        } catch (ClassNotFoundException e) {
-                                            log.error("Search by a type will be ignored - unknown class {}", (String)classNameOrClass);
-                                        }
+                        // Search by an entity type
+                    } else if (SEARCH_ATTR_TYPE_CLASS.equals(fieldName)) {
+                        if (filterValue instanceof Collection && !((Collection) filterValue).isEmpty()) {
+                            List classes = new ArrayList<Class>();
+                            for (Object classNameOrClass : (Collection) filterValue) {
+                                if (classNameOrClass instanceof Class) {
+                                    classes.add((Class) classNameOrClass);
+                                } else {
+                                    try {
+                                        classes.add(Class.forName((String)classNameOrClass));
+                                    } catch (ClassNotFoundException e) {
+                                        log.error("Search by a type will be ignored - unknown class {}", (String)classNameOrClass);
                                     }
                                 }
+                            }
 
+                            if (condition == null) {
+                                queryBuilder.addSqlCriterion("type(a) in (:typeClass)", "typeClass", classes);
+                            } else if ("ne".equalsIgnoreCase(condition)) {
+                                queryBuilder.addSqlCriterion("type(a) not in (:typeClass)", "typeClass", classes);
+                            }
+
+                        } else if (filterValue instanceof Class) {
+                            if (condition == null) {
+                                queryBuilder.addSqlCriterion("type(a) = :typeClass", "typeClass", filterValue);
+                            } else if ("ne".equalsIgnoreCase(condition)) {
+                                queryBuilder.addSqlCriterion("type(a) != :typeClass", "typeClass", filterValue);
+                            }
+
+                        } else if (filterValue instanceof String) {
+                            try {
                                 if (condition == null) {
-                                    queryBuilder.addSqlCriterion("type(a) in (:typeClass)", "typeClass", classes);
+                                    queryBuilder.addSqlCriterion("type(a) = :typeClass", "typeClass", Class.forName((String) filterValue));
                                 } else if ("ne".equalsIgnoreCase(condition)) {
-                                    queryBuilder.addSqlCriterion("type(a) not in (:typeClass)", "typeClass", classes);
+                                    queryBuilder.addSqlCriterion("type(a) != :typeClass", "typeClass", Class.forName((String) filterValue));
                                 }
-
-                            } else if (filter instanceof Class) {
-                                if (condition == null) {
-                                    queryBuilder.addSqlCriterion("type(a) = :typeClass", "typeClass", filter);
-                                } else if ("ne".equalsIgnoreCase(condition)) {
-                                    queryBuilder.addSqlCriterion("type(a) != :typeClass", "typeClass", filter);
-                                }
-
-                            } else if (filter instanceof String) {
-                                try {
-                                    if (condition == null) {
-                                        queryBuilder.addSqlCriterion("type(a) = :typeClass", "typeClass", Class.forName((String) filter));
-                                    } else if ("ne".equalsIgnoreCase(condition)) {
-                                        queryBuilder.addSqlCriterion("type(a) != :typeClass", "typeClass", Class.forName((String) filter));
-                                    }
-                                } catch (ClassNotFoundException e) {
-                                    log.error("Search by a type will be ignored - unknown class {}", filter);
-                                }
+                            } catch (ClassNotFoundException e) {
+                                log.error("Search by a type will be ignored - unknown class {}", filterValue);
                             }
-                        } else if (key.contains("minmaxRange-")) {
-                            // if searching elements from list
-                            String parsedKey = key.substring(12);
-                            String[] kss = parsedKey.split("-");
-                            if (kss.length == 2) {
-                                if (filter instanceof Double) {
-                                    BigDecimal rationalNumber = new BigDecimal((Double) filter);
-                                    queryBuilder.addCriterion("a." + kss[0], " <= ", rationalNumber, false);
-                                    queryBuilder.addCriterion("a." + kss[1], " >= ", rationalNumber, false);
-                                } else if (filter instanceof Number) {
-                                    queryBuilder.addCriterion("a." + kss[0], " <= ", filter, false);
-                                    queryBuilder.addCriterion("a." + kss[1], " >= ", filter, false);
-                                }
-                                if (filter instanceof Date) {
-                                    Date value = (Date) filter;
-                                    Calendar c = Calendar.getInstance();
-                                    c.setTime(value);
-                                    int year = c.get(Calendar.YEAR);
-                                    int month = c.get(Calendar.MONTH);
-                                    int date = c.get(Calendar.DATE);
-                                    c.set(year, month, date, 0, 0, 0);
-                                    value = c.getTime();
-                                    queryBuilder.addCriterion("a." + kss[0], "<=", value, false);
-                                    queryBuilder.addCriterion("a." + kss[1], ">=", value, false);
-                                }
+                        }
+                        
+                        // The value is in between two field values
+                    } else if (key.contains("minmaxRange-")) {
+                        String parsedKey = key.substring(12);
+                        String[] minmaxFieldNames = parsedKey.split("-");
+                        if (minmaxFieldNames.length == 2) {
+                            if (filterValue instanceof Double) {
+                                BigDecimal rationalNumber = new BigDecimal((Double) filterValue);
+                                queryBuilder.addCriterion("a." + minmaxFieldNames[0], " <= ", rationalNumber, false);
+                                queryBuilder.addCriterion("a." + minmaxFieldNames[1], " >= ", rationalNumber, false);
+                            } else if (filterValue instanceof Number) {
+                                queryBuilder.addCriterion("a." + minmaxFieldNames[0], " <= ", filterValue, false);
+                                queryBuilder.addCriterion("a." + minmaxFieldNames[1], " >= ", filterValue, false);
                             }
-                        } else if (key.contains("likeCriterias-")) {
-                            // if searching elements from list
-                            String parsedKey = key.substring(14);
-                            String[] fields = parsedKey.split("-");
-                            queryBuilder.startOrClause();
-                            for (String field : fields) {
-                                if (filter instanceof String) {
-                                    String filterString = (String) filter;
-                                    queryBuilder.addCriterionWildcard("a." + field, filterString, true);
-                                }
+                            if (filterValue instanceof Date) {
+                                Date value = (Date) filterValue;
+                                Calendar c = Calendar.getInstance();
+                                c.setTime(value);
+                                int year = c.get(Calendar.YEAR);
+                                int month = c.get(Calendar.MONTH);
+                                int date = c.get(Calendar.DATE);
+                                c.set(year, month, date, 0, 0, 0);
+                                value = c.getTime();
+                                queryBuilder.addCriterion("a." + minmaxFieldNames[0], "<=", value, false);
+                                queryBuilder.addCriterion("a." + minmaxFieldNames[1], ">=", value, false);
                             }
-                            queryBuilder.endOrClause();
+                        }
 
-                            // if not ranged search
-                        } else if (key.contains(SEARCH_FIELD1_OR_FIELD2)) {
-                            queryBuilder.startOrClause();
-                            queryBuilder.addSql("a." + fieldName + " like '%" + filter + "%'");
-                            queryBuilder.addSql("a." + fieldName2 + " like '%" + filter + "%'");
-                            queryBuilder.endOrClause();
-                        } else {
-                            if (filter instanceof String && SEARCH_IS_NULL.equals(filter)) {
-                                queryBuilder.addSql("a." + fieldName + " is null ");
+                        // The value is in between two field values with either them being optional
+                    } else if (key.contains("minmaxOptionalRange-")) {
 
-                            } else if (filter instanceof String && SEARCH_IS_NOT_NULL.equals(filter)) {
-                                queryBuilder.addSql("a." + fieldName + " is not null ");
+                        String parsedKey = key.substring(20);
+                        String[] minmaxFieldNames = parsedKey.split("-");
+                        String paramName = queryBuilder.convertFieldToParam(minmaxFieldNames[0]);
 
-                            } else if (filter instanceof String) {
+                        String sql = "((a." + minmaxFieldNames[0] + " IS NULL and a." + minmaxFieldNames[1] + " IS NULL) or (a." + minmaxFieldNames[0] + "<=:" + paramName
+                                + " and :" + paramName + "<a." + minmaxFieldNames[1] + ") or (a." + minmaxFieldNames[0] + "<=:" + paramName + " and a." + minmaxFieldNames[1]
+                                + " IS NULL) or (a." + minmaxFieldNames[0] + " IS NULL and :" + paramName + "<a." + minmaxFieldNames[1] + "))";
+                        queryBuilder.addSqlCriterionMultiple(sql, paramName, filterValue);
 
-                                // if contains dot, that means join is needed
-                                String filterString = (String) filter;
-                                boolean wildcard = (filterString.indexOf("*") != -1);
-                                if (wildcard) {
-                                    queryBuilder.addCriterionWildcard("a." + fieldName, filterString, true, "ne".equals(condition));
-                                } else {
-                                    queryBuilder.addCriterion("a." + fieldName, "ne".equals(condition) ? " != " : " = ", filterString, true);
-                                }
+                        // The value range is overlapping two field values with either them being optional
+                    } else if (key.contains("overlapOptionalRange-")) {
 
-                            } else if (filter instanceof Date) {
-                                queryBuilder.addCriterionDateTruncatedToDay("a." + fieldName, (Date) filter);
+                        String parsedKey = key.substring(21);
+                        String[] minmaxFieldNames = parsedKey.split("-");
+                        String paramNameFrom = queryBuilder.convertFieldToParam(minmaxFieldNames[0]);
+                        String paramNameTo = queryBuilder.convertFieldToParam(minmaxFieldNames[1]);
 
-                            } else if (filter instanceof Number) {
-                                queryBuilder.addCriterion("a." + fieldName, "ne".equals(condition) ? " != " : " = ", filter, true);
+                        String sql = "(( a." + minmaxFieldNames[0] + " IS NULL and a." + minmaxFieldNames[1] + " IS NULL) or  ( a." + minmaxFieldNames[0] + " IS NULL and a." + minmaxFieldNames[1] + ">:" + paramNameFrom + ") or (a." + minmaxFieldNames[1]
+                                + " IS NULL and a." + minmaxFieldNames[0] + "<:" + paramNameTo + ") or (a." + minmaxFieldNames[0] + " IS NOT NULL and a." + minmaxFieldNames[1]
+                                + " IS NOT NULL and ((a." + minmaxFieldNames[0] + "<=:" + paramNameFrom + " and :" + paramNameFrom + "<a." + minmaxFieldNames[1] + ") or (:"
+                                + paramNameFrom + "<=a." + minmaxFieldNames[0] + " and a." + minmaxFieldNames[0] + "<:" + paramNameTo + "))))";
+                        queryBuilder.addSqlCriterionMultiple(sql, paramNameFrom, ((Object[]) filterValue)[0], paramNameTo, ((Object[]) filterValue)[1]);
 
-                            } else if (filter instanceof Boolean) {
-                                queryBuilder.addCriterion("a." + fieldName, "ne".equals(condition) ? " not is" : " is ", filter, true);
-
-                            } else if (filter instanceof Enum) {
-                                if (filter instanceof IdentifiableEnum) {
-                                    String enumIdKey = new StringBuilder(fieldName).append("Id").toString();
-                                    queryBuilder.addCriterion("a." + enumIdKey, "ne".equals(condition) ? " != " : " = ", ((IdentifiableEnum) filter).getId(), true);
-                                } else {
-                                    queryBuilder.addCriterionEnum("a." + fieldName, (Enum) filter, "ne".equals(condition) ? " != " : " = ");
-                                }
-
-                            } else if (BaseEntity.class.isAssignableFrom(filter.getClass())) {
-                                queryBuilder.addCriterionEntity("a." + fieldName, filter, "ne".equals(condition) ? " != " : " = ");
-
-                            } else if (filter instanceof UniqueEntity || filter instanceof IEntity) {
-                                queryBuilder.addCriterionEntity("a." + fieldName, filter, "ne".equals(condition) ? " != " : " = ");
-
-                            } else if (filter instanceof List) {
-                                queryBuilder.addSqlCriterion("a." + fieldName + ("ne".equals(condition) ? " not in  " : " in ") + ":" + fieldName, fieldName, filter);
+                    } else if (key.contains("likeCriterias-")) {
+                        // if searching elements from list
+                        String parsedKey = key.substring(14);
+                        String[] fields = parsedKey.split("-");
+                        queryBuilder.startOrClause();
+                        for (String field : fields) {
+                            if (filterValue instanceof String) {
+                                String filterString = (String) filterValue;
+                                queryBuilder.addCriterionWildcard("a." + field, filterString, true);
                             }
+                        }
+                        queryBuilder.endOrClause();
+
+                        // if not ranged search
+                    } else if (key.contains(SEARCH_FIELD1_OR_FIELD2)) {
+                        queryBuilder.startOrClause();
+                        queryBuilder.addSql("a." + fieldName + " like '%" + filterValue + "%'");
+                        queryBuilder.addSql("a." + fieldName2 + " like '%" + filterValue + "%'");
+                        queryBuilder.endOrClause();
+                    
+                        // Search by additional Sql clause with specified parameters
+                    } else if (key.startsWith(SEARCH_SQL)){
+                        String additionalSql = (String) ((Object[] )filterValue)[0] ;
+                        Object[] additionalParameters =  Arrays.copyOfRange(((Object[] )filterValue), 1, ((Object[] )filterValue).length);
+                        queryBuilder.addSqlCriterionMultiple(additionalSql, additionalParameters);
+                        
+                        
+                    } else {
+                        if (filterValue instanceof String && SEARCH_IS_NULL.equals(filterValue)) {
+                            queryBuilder.addSql("a." + fieldName + " is null ");
+
+                        } else if (filterValue instanceof String && SEARCH_IS_NOT_NULL.equals(filterValue)) {
+                            queryBuilder.addSql("a." + fieldName + " is not null ");
+
+                        } else if (filterValue instanceof String) {
+
+                            // if contains dot, that means join is needed
+                            String filterString = (String) filterValue;
+                            boolean wildcard = (filterString.indexOf("*") != -1);
+                            if (wildcard) {
+                                queryBuilder.addCriterionWildcard("a." + fieldName, filterString, true, "ne".equals(condition));
+                            } else {
+                                queryBuilder.addCriterion("a." + fieldName, "ne".equals(condition) ? " != " : " = ", filterString, true);
+                            }
+
+                        } else if (filterValue instanceof Date) {
+                            queryBuilder.addCriterionDateTruncatedToDay("a." + fieldName, (Date) filterValue);
+
+                        } else if (filterValue instanceof Number) {
+                            queryBuilder.addCriterion("a." + fieldName, "ne".equals(condition) ? " != " : " = ", filterValue, true);
+
+                        } else if (filterValue instanceof Boolean) {
+                            queryBuilder.addCriterion("a." + fieldName, "ne".equals(condition) ? " not is" : " is ", filterValue, true);
+
+                        } else if (filterValue instanceof Enum) {
+                            if (filterValue instanceof IdentifiableEnum) {
+                                String enumIdKey = new StringBuilder(fieldName).append("Id").toString();
+                                queryBuilder.addCriterion("a." + enumIdKey, "ne".equals(condition) ? " != " : " = ", ((IdentifiableEnum) filterValue).getId(), true);
+                            } else {
+                                queryBuilder.addCriterionEnum("a." + fieldName, (Enum) filterValue, "ne".equals(condition) ? " != " : " = ");
+                            }
+
+                        } else if (BaseEntity.class.isAssignableFrom(filterValue.getClass())) {
+                            queryBuilder.addCriterionEntity("a." + fieldName, filterValue, "ne".equals(condition) ? " != " : " = ");
+
+                        } else if (filterValue instanceof UniqueEntity || filterValue instanceof IEntity) {
+                            queryBuilder.addCriterionEntity("a." + fieldName, filterValue, "ne".equals(condition) ? " != " : " = ");
+
+                        } else if (filterValue instanceof List) {
+                            queryBuilder.addSqlCriterion("a." + fieldName + ("ne".equals(condition) ? " not in  " : " in ") + ":" + fieldName, fieldName, filterValue);
                         }
                     }
                 }

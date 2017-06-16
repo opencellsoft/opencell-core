@@ -15,6 +15,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
+import org.meveo.api.dto.response.catalog.GetListOfferTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.serialize.RestDateParam;
@@ -62,6 +63,19 @@ public interface OfferTemplateRs extends IBaseRs {
     @GET
     GetOfferTemplateResponseDto find(@QueryParam("offerTemplateCode") String offerTemplateCode, @QueryParam("validFrom") @RestDateParam Date validFrom,
             @QueryParam("validTo") @RestDateParam Date validTo);
+
+    /**
+     * List all offer templates optionally filtering by code and validity dates. If neither date is provided, validity dates will not be considered. If only validFrom is provided,
+     * a search will return offers valid on a given date. If only validTo date is provided, a search will return offers valid from today to a given date.
+     *
+     * @param code Offer template code for optional filtering
+     * @param validFrom Validity range from date.
+     * @param validTo Validity range to date.
+     * @return A list of offer templates
+     */
+    @GET
+    @Path("/list")
+    public GetListOfferTemplateResponseDto list(@QueryParam("code") String code, @QueryParam("validFrom") @RestDateParam Date validFrom, @QueryParam("validTo") @RestDateParam Date validTo);
 
     /**
      * Remove offer template with a given code and validity dates. If no validity dates are provided, an offer template valid on a current date will be deleted.

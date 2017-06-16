@@ -3,12 +3,15 @@ package org.meveo.api.catalog;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.catalog.BundleProductTemplateDto;
 import org.meveo.api.dto.catalog.BundleTemplateDto;
 import org.meveo.api.dto.catalog.ProductTemplateDto;
@@ -27,6 +30,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.BundleTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 
@@ -58,9 +62,14 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
         BundleTemplate bundleTemplate = bundleTemplateService.findByCodeBestValidityMatch(code, validFrom, validTo);
         if (bundleTemplate == null) {
             String datePattern = paramBean.getDateTimeFormat();
-            throw new EntityDoesNotExistsException(BundleTemplate.class, code + " / " + DateUtils.formatDateWithPattern(validFrom, datePattern) + " / " + DateUtils.formatDateWithPattern(validTo, datePattern));
+            throw new EntityDoesNotExistsException(BundleTemplate.class,
+                code + " / " + DateUtils.formatDateWithPattern(validFrom, datePattern) + " / " + DateUtils.formatDateWithPattern(validTo, datePattern));
         }
 
+        return convertBundleTemplateToDto(bundleTemplate);
+    }
+
+    private BundleTemplateDto convertBundleTemplateToDto(BundleTemplate bundleTemplate) {
         BundleTemplateDto bundleTemplateDto = new BundleTemplateDto(bundleTemplate, entityToDtoConverter.getCustomFieldsDTO(bundleTemplate), false);
 
         processProductChargeTemplateToDto(bundleTemplate, bundleTemplateDto);
@@ -213,7 +222,8 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
         BundleTemplate bundleTemplate = bundleTemplateService.findByCodeBestValidityMatch(code, validFrom, validTo);
         if (bundleTemplate == null) {
             String datePattern = paramBean.getDateTimeFormat();
-            throw new EntityDoesNotExistsException(BundleTemplate.class, code + " / " + DateUtils.formatDateWithPattern(validFrom, datePattern) + " / " + DateUtils.formatDateWithPattern(validTo, datePattern));
+            throw new EntityDoesNotExistsException(BundleTemplate.class,
+                code + " / " + DateUtils.formatDateWithPattern(validFrom, datePattern) + " / " + DateUtils.formatDateWithPattern(validTo, datePattern));
         }
 
         deleteImage(bundleTemplate);
@@ -278,4 +288,51 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
         return bundleProductTemplate;
     }
 
+    /**
+     * List all product bundle templates optionally filtering by code and validity dates. If neither date is provided, validity dates will not be considered.If only validFrom is
+     * provided, a search will return product bundles valid on a given date. If only valdTo date is provided, a search will return product bundles valid from today to a given date.
+     * 
+     * @param code Product template code for optional filtering
+     * @param validFrom Validity range from date.
+     * @param validTo Validity range to date.
+     * @return A list of product templates
+     */
+    public List<BundleTemplateDto> list(String code, Date validFrom, Date validTo) {
+
+        Map<String, Object> filters = new HashMap<String, Object>();
+        filters.put(PersistenceService.SEARCH_ATTR_TYPE_CLASS, BundleTemplate.class);
+
+        if (!StringUtils.isBlank(code) || validFrom != null || validTo != null) {
+
+            if (!StringUtils.isBlank(code)) {
+                filters.put("code", code);
+            }
+
+            // If only validTo date is provided, a search will return products valid from today to a given date.
+            if (validFrom == null && validTo != null) {
+                validFrom = new Date();
+            }
+
+            // search by a single date
+            if (validFrom != null && validTo == null) {
+
+                filters.put("minmaxOptionalRange-validity.from-validity.to", validFrom);
+
+                // search by date range
+            } else if (validFrom != null && validTo != null) {
+                filters.put("overlapOptionalRange-validity.from-validity.to", new Date[] { validFrom, validTo });
+            }
+        }
+
+        PaginationConfiguration config = new PaginationConfiguration(filters);
+        List<BundleTemplate> bundleTemplates = bundleTemplateService.list(config);
+
+        List<BundleTemplateDto> dtos = new ArrayList<BundleTemplateDto>();
+        if (bundleTemplates != null) {
+            for (BundleTemplate bundleTemplate : bundleTemplates) {
+                dtos.add(convertBundleTemplateToDto(bundleTemplate));
+            }
+        }
+        return dtos;
+    }
 }

@@ -7,7 +7,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 
 /**
- * All the MEVEO API web service response must extend this class.
+ * All the Opencell API web service response must extend this class.
  * 
  * @author Edward P. Legaspi
  **/
@@ -40,5 +40,4 @@ public abstract class BaseResponse implements Serializable {
     public String toString() {
         return "BaseResponse [actionStatus=" + actionStatus + "]";
     }
-
 }

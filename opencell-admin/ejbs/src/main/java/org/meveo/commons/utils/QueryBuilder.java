@@ -629,7 +629,7 @@ public class QueryBuilder {
 	 * @param field
 	 * @return
 	 */
-	private String convertFieldToParam(String field) {
+	public String convertFieldToParam(String field) {
 		field = field.replace(".", "_").replace("(", "_").replace(")", "_");
 		StringBuilder newField = new StringBuilder(field);
 		while (params.containsKey(newField.toString()))

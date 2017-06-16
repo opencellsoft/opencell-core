@@ -17926,7 +17926,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <con:testStep type="restrequest" name="Get Product offering versioned - any date" id="6a1d068e-30a1-4228-84e3-59eeb25254d7">
         <con:settings/>
         <con:config service="MEVEO JAX-WS API Documentation" methodName="GET - getProductOffering" resourcePath="/api/rest/catalogManagement/productOffering/{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:restRequest name="Get Product offering versioned - any start date" id="0f511b63-0c66-4a45-a5a2-526a997bdd79" mediaType="application/json">
+          <con:restRequest name="Get Product offering versioned - any date" id="0f511b63-0c66-4a45-a5a2-526a997bdd79" mediaType="application/json">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
