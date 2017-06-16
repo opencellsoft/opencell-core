@@ -116,8 +116,7 @@ public class EntityToDtoConverter {
         if (cfi.getPeriodRaw() != null) {
         	dto.setValuePeriodStartDate(cfi.getPeriod().getFrom());
         	dto.setValuePeriodEndDate(cfi.getPeriod().getTo());
-        }
-        
+        }        
         
         if (cfi.getPriority() > 0) {
             dto.setValuePeriodPriority(cfi.getPriority());

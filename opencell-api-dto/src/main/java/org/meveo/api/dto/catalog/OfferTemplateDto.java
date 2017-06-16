@@ -23,8 +23,8 @@ public class OfferTemplateDto extends ProductOfferingDto {
 
     private static final long serialVersionUID = 9156372453581362595L;
 
-    @XmlTransient
-    //@XmlAttribute()
+    //@XmlTransient
+    @XmlAttribute()
     private Long id;
 
     private String longDescription;
