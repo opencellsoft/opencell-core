@@ -11,6 +11,7 @@ import javax.activation.DataSource;
 import javax.activation.FileDataSource;
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
+import javax.mail.BodyPart;
 import javax.mail.Multipart;
 import javax.mail.Session;
 import javax.mail.Transport;
@@ -74,25 +75,30 @@ public class EmailSender {
 			}
 			msg.setSentDate(sendDate == null ? new Date() : sendDate);
 			msg.setSubject(subject,"UTF-8");
+			
+			BodyPart messageBodyPart = new MimeBodyPart();
 			if (!StringUtils.isBlank(htmlContent)) {
-				msg.setContent(htmlContent, "text/html; charset=UTF-8");
+				messageBodyPart.setContent(htmlContent, "text/html; charset=UTF-8");
 			} else {
-				msg.setContent(textContent, "text/plain; charset=UTF-8");
+				messageBodyPart.setContent(textContent, "text/plain; charset=UTF-8");
 			}
+			
+			Multipart multipart = new MimeMultipart();
+			multipart.addBodyPart(messageBodyPart);
 			if(attachments != null && !attachments.isEmpty()){
-				MimeBodyPart messageBodyPart = new MimeBodyPart();
-				Multipart multipart = new MimeMultipart();
+				MimeBodyPart mimeBodyPart = new MimeBodyPart();				
 				for(File file : attachments ){
 					if(file != null){
-						messageBodyPart = new MimeBodyPart();
+						mimeBodyPart = new MimeBodyPart();
 						DataSource source = new FileDataSource(file);
-						messageBodyPart.setDataHandler(new DataHandler(source));
-						messageBodyPart.setFileName(file.getName());
-						multipart.addBodyPart(messageBodyPart);
+						mimeBodyPart.setDataHandler(new DataHandler(source));
+						mimeBodyPart.setFileName(file.getName());
+						multipart.addBodyPart(mimeBodyPart);
 					}
 				}
-				msg.setContent(multipart);
+				
 			}
+			msg.setContent(multipart);
 			Transport.send(msg);
 		}catch(Exception e){
 			throw new BusinessException(e.getMessage());
