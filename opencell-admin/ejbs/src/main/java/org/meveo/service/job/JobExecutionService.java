@@ -100,7 +100,6 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void executeNextJob(Job job, JobInstance jobInstance, boolean continueSameJob) {
 
-        // log.error("AKK running next {} as user {}", job.getClass(), currentUser);
         try {
 
             if (continueSameJob) {

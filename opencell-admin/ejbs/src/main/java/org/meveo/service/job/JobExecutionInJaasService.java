@@ -52,7 +52,7 @@ public class JobExecutionInJaasService extends BaseService implements Serializab
         // Force authentication to a current job's user
         currentUserProvider.forceAuthentication(jobInstance.getAuditable().getCreator());
 
-        // log.error("AKK running {} as user {}", job.getClass(), currentUser);
+        // log.trace("Running {} as user {}", job.getClass(), currentUser);
         job.execute(jobInstance, null);
     }
 }

@@ -635,7 +635,6 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
 
         
         for (CustomFieldInstance cfi : cfis) {
-            log.error("AKK values retrieved are {}", cfi.getCode());
             cfisAsMap.putIfAbsent(cfi.getCode(), new ArrayList<CustomFieldInstance>());
             cfisAsMap.get(cfi.getCode()).add(cfi);
         }
@@ -1925,7 +1924,6 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         }
 
         Object value = cft.getDefaultValueConverted();
-        log.error("AKK instantiating with default vaulue versioned {} code {}", value, code);
         try {
             setCFValue(entity, code, value, date);
         } catch (BusinessException e) {

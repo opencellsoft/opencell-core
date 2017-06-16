@@ -297,7 +297,6 @@ public abstract class BaseApi {
                 // Need to instantiate default value either from inherited value or from a default value when cft.isInheritedAsDefaultValue()==true
                 if (isNewEntity && cft.isUseInheritedAsDefaultValue()) {
                     Object value = customFieldInstanceService.instantiateCFWithInheritedOrDefaultValue(entity, cft);
-                    log.error("AKK instantiated with inherited value {} for code {}", value, cft.getCode());
                     hasValue = value != null;
 
                     // If no value was created, then check if there is any inherited value, as in case of versioned values, value could be set in some other period, and required
@@ -316,7 +315,6 @@ public abstract class BaseApi {
 
                     if (!hasValue && isNewEntity && cft.getDefaultValue() != null) { // No need to check for !cft.isInheritedAsDefaultValue() as it was checked above
                         Object value = customFieldInstanceService.instantiateCFWithDefaultValue(entity, cft.getCode());
-                        log.error("AKK instantiated with inherited or default value {} for code {}", value, cft.getCode());
                         hasValue = value != null;
                     }
                 }
@@ -345,7 +343,6 @@ public abstract class BaseApi {
 
                     if (isNewEntity && !emptyValue && ((value == null && cft.getDefaultValue() != null) || cft.isUseInheritedAsDefaultValue())) {
                         value = customFieldInstanceService.instantiateCFWithInheritedOrDefaultValue(entity, cft);
-                        log.error("AKK instantiated with inherited 2 or default value {} for code {}", value, cft.getCode());
                     }
                     if (value == null && cft.isValueRequired()) {
                         missingParameters.add(cft.getCode());
