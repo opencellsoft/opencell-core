@@ -3073,7 +3073,7 @@
     
     <changeSet id="#2691_20170616" author="TienLanPHUNG">
        <modifyDataType tableName="account_entity" columnName="external_ref_1" newDataType="varchar(255)" />
-       <modifyDataType tableName="account_entity" columnName="external_ref_1" newDataType="varchar(255)" />
+       <modifyDataType tableName="account_entity" columnName="external_ref_2" newDataType="varchar(255)" />
     </changeSet>
 
 </databaseChangeLog> 
