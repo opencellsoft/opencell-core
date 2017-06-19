@@ -634,6 +634,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         Map<String, List<CustomFieldInstance>> cfisAsMap = new HashMap<String, List<CustomFieldInstance>>();
 
         for (CustomFieldInstance cfi : cfis) {
+            log.error("AKK values retrieved are {}", cfi.getCode());
             cfisAsMap.putIfAbsent(cfi.getCode(), new ArrayList<CustomFieldInstance>());
             cfisAsMap.get(cfi.getCode()).add(cfi);
         }
@@ -1322,12 +1323,12 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
      */
     private void triggerEndPeriodEvent(CustomFieldInstance cfi) {
 
-        if (cfi.getPeriod().getTo() != null && cfi.getPeriod().getTo().before(new Date())) {
+        if (cfi.getPeriodRaw() != null && cfi.getPeriod().getTo() != null && cfi.getPeriod().getTo().before(new Date())) {
             CFEndPeriodEvent event = new CFEndPeriodEvent();
             event.setCustomFieldInstance(cfi);
             cFEndPeriodEvent.fire(event);
 
-        } else if (cfi.getPeriod().getTo() != null) {
+        } else if (cfi.getPeriodRaw() != null && cfi.getPeriod().getTo() != null) {
 
             TimerConfig timerConfig = new TimerConfig();
             timerConfig.setInfo(cfi);
@@ -1874,6 +1875,34 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
     }
 
     /**
+     * Instantiate a custom field value with default or inherited value for a given entity. If custom field is versionable, a current date will be used to access the value.
+     * 
+     * @param entity Entity
+     * @param cft Custom field definition
+     * @return Custom field value
+     */
+    public Object instantiateCFWithInheritedOrDefaultValue(ICustomFieldEntity entity, CustomFieldTemplate cft) {
+
+        if (cft.isUseInheritedAsDefaultValue()) {
+            Object value = getInheritedOnlyCFValue(entity, cft.getCode());
+            if (value != null) {
+                try {
+                    if (cft.isVersionable()) {
+                        setCFValue(entity, cft.getCode(), value, new Date());
+                    } else {
+                        setCFValue(entity, cft.getCode(), value);
+                    }
+                    return value;
+                } catch (BusinessException e) {
+                    log.error("Failed to instantiate field with inherited value as default value {}/{}", entity.getClass().getSimpleName(), cft.getCode(), e);
+                }
+            }
+        }
+
+        return instantiateCFWithDefaultValue(entity, cft.getCode());
+    }
+
+    /**
      * Instantiate a custom field value with default value for a given entity and a date
      * 
      * @param entity Entity
@@ -1881,7 +1910,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
      * @param date Date
      * @return Custom field value
      */
-    public Object instantiateCFWithDefaultValue(ICustomFieldEntity entity, String code, Date date) {
+    private Object instantiateCFWithDefaultValue(ICustomFieldEntity entity, String code, Date date) {
 
         // If field is not versionable - get the value without the date
         CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(code, entity);
@@ -1895,6 +1924,7 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         }
 
         Object value = cft.getDefaultValueConverted();
+        log.error("AKK instantiating with default vaulue versioned {} code {}", value, code);
         try {
             setCFValue(entity, code, value, date);
         } catch (BusinessException e) {

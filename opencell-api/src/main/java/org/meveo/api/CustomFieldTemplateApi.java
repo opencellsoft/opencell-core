@@ -307,6 +307,7 @@ public class CustomFieldTemplateApi extends BaseApi {
         cft.setAppliesTo(appliesTo);
         cft.setFieldType(dto.getFieldType());
         cft.setDefaultValue(dto.getDefaultValue());
+        cft.setUseInheritedAsDefaultValue(dto.isUseInheritedAsDefaultValue());
         cft.setStorageType(dto.getStorageType());
         cft.setValueRequired(dto.isValueRequired());
         cft.setVersionable(dto.isVersionable());
@@ -356,7 +357,11 @@ public class CustomFieldTemplateApi extends BaseApi {
             Calendar calendar = calendarService.findByCode(dto.getCalendar());
             if (calendar != null) {
                 cft.setCalendar(calendar);
+            } else {
+                cft.setCalendar(null);
             }
+        } else {
+            cft.setCalendar(null);
         }
         return cft;
     }

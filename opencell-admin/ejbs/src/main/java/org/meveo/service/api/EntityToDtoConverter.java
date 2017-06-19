@@ -112,8 +112,11 @@ public class EntityToDtoConverter {
 
         CustomFieldDto dto = new CustomFieldDto();
         dto.setCode(cfi.getCode());
-        dto.setValuePeriodStartDate(cfi.getPeriod().getFrom());
-        dto.setValuePeriodEndDate(cfi.getPeriod().getTo());
+        if (cfi.getPeriodRaw() != null) {
+        	dto.setValuePeriodStartDate(cfi.getPeriod().getFrom());
+        	dto.setValuePeriodEndDate(cfi.getPeriod().getTo());
+        }        
+        
         if (cfi.getPriority() > 0) {
             dto.setValuePeriodPriority(cfi.getPriority());
         }

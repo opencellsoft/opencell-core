@@ -52,12 +52,12 @@ public abstract class AccountEntity extends BusinessCFEntity {
 
 	private static final long serialVersionUID = 1L;
     
-	@Column(name = "EXTERNAL_REF_1", length = 50)
-	@Size(max = 50)
+	@Column(name = "EXTERNAL_REF_1", length = 255)
+	@Size(max = 255)
 	protected String externalRef1;
 
-	@Column(name = "EXTERNAL_REF_2", length = 50)
-	@Size(max = 50)
+	@Column(name = "EXTERNAL_REF_2", length = 255)
+	@Size(max = 255)
 	protected String externalRef2;
 
 	@Embedded

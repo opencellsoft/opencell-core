@@ -598,7 +598,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
 
     private CachedCFPeriodValue convertFromCFI(CustomFieldInstance cfi, Date cutoffDate) {
 
-        if (cutoffDate == null || cfi.getPeriod().getTo() == null || (cfi.getPeriod().getTo() != null && cutoffDate.before(cfi.getPeriod().getTo()))) {
+        if (cutoffDate == null || cfi.getPeriodRaw() == null || (cfi.getPeriodRaw() != null && (cfi.getPeriod().getTo() == null || (cfi.getPeriod().getTo() != null && cutoffDate.before(cfi.getPeriod().getTo()))))) {
             cfi.deserializeValue();
             CachedCFPeriodValue value = new CachedCFPeriodValue(cfi.getCfValue().getValue(), cfi.getPriority(), cfi.getPeriod().getFrom(), cfi.getPeriod().getTo());
             return value;
