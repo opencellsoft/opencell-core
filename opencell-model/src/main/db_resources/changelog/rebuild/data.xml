@@ -8175,6 +8175,20 @@
 			<column name="uuid" value="DWH_Job_CHURN" />
 			<column name="parametres" value="CHURN"/>
 		</insert>
+		
+		<insert tableName="meveo_job_instance">
+			<column name="id" valueNumeric="-14" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="2017-06-19 00:00:00.000" />
+			<column name="job_category" value="ACCOUNT_RECEIVABLES" />
+			<column name="job_template" value="AccountOperationsGenerationJob" />
+			<column name="code" value="AO_Job" />
+			<column name="provider_id" valueNumeric="1" />
+			<column name="creator_id" valueNumeric="-1" />
+			<column name="timerentity_id" valueNumeric="-1" />
+			<column name="uuid" value="ACC_REC_Job" />
+		</insert>
     </changeSet>
 
     <changeSet author="AndriusKarpavicius" id="rebuild-data-invoiceConfig">
