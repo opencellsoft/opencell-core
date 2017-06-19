@@ -1582,6 +1582,45 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="request" name="Clear ProductInstance customizations" id="0b999481-e17a-45ea-adc9-d9c4f6970e88">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>customizeEntity</con:operation>
+          <con:request name="Clear ProductInstance customizations" id="6842687e-27ab-4237-a8ba-27f9b1233c87">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:customizeEntity>\r
+         <entityCustomization classname="org.meveo.model.billing.ProductInstance">\r
+         </entityCustomization>\r
+      </ws:customizeEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="bd83b478-e30a-4024-b531-d5c7e12945b7"/>
+            <con:assertion type="Simple Contains" id="1ad5fe0b-f837-4a65-ab29-f8d2929dc6e8" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
       <con:testStep type="request" name="Clear ServiceTemplate customizations" id="b780dd28-8cbd-43d2-b479-deb27bcbc980">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -1598,6 +1637,45 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>\r
       <ws:customizeEntity>\r
          <entityCustomization classname="org.meveo.model.catalog.ServiceTemplate">\r
+         </entityCustomization>\r
+      </ws:customizeEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="bd83b478-e30a-4024-b531-d5c7e12945b7"/>
+            <con:assertion type="Simple Contains" id="1ad5fe0b-f837-4a65-ab29-f8d2929dc6e8" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Clear ServiceInstance customizations" id="2465b643-4428-4d4b-a27c-5bce7d479456">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>customizeEntity</con:operation>
+          <con:request name="Clear ServiceInstance customizations" id="6842687e-27ab-4237-a8ba-27f9b1233c87">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:customizeEntity>\r
+         <entityCustomization classname="org.meveo.model.billing.ServiceInstance">\r
          </entityCustomization>\r
       </ws:customizeEntity>\r
    </soapenv:Body>\r
@@ -2299,6 +2377,24 @@ public class Action1 extends Script {
           <con:runMode>PARALLELL</con:runMode>
         </con:config>
       </con:testStep>
+      <con:testStep type="calltestcase" name="Create CFT for product instance" id="f1bc84c3-19e9-46fe-852b-417e5a18f620">
+        <con:settings/>
+        <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase>
+          <con:properties>
+            <con:property>
+              <con:name>cfType</con:name>
+              <con:value>PRODUCT_INSTANCE</con:value>
+            </con:property>
+            <con:property>
+              <con:name>entityClass</con:name>
+              <con:value>org.meveo.model.billing.ProductInstance</con:value>
+            </con:property>
+          </con:properties>
+          <con:returnProperties/>
+          <con:runMode>PARALLELL</con:runMode>
+        </con:config>
+      </con:testStep>
       <con:testStep type="calltestcase" name="Create CFT for service template" id="5346204a-1592-412f-b66c-7c2f5cfeb5fb">
         <con:settings/>
         <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -2311,6 +2407,24 @@ public class Action1 extends Script {
             <con:property>
               <con:name>entityClass</con:name>
               <con:value>org.meveo.model.catalog.ServiceTemplate</con:value>
+            </con:property>
+          </con:properties>
+          <con:returnProperties/>
+          <con:runMode>PARALLELL</con:runMode>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="calltestcase" name="Create CFT for service instance" id="3919a5c1-828e-4297-899f-c98b4ff1ef0c">
+        <con:settings/>
+        <con:config xsi:type="con:RunTestCaseStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:targetTestCase>b8c4b3e5-8b23-46fb-b102-34234cef0663</con:targetTestCase>
+          <con:properties>
+            <con:property>
+              <con:name>cfType</con:name>
+              <con:value>SERVICE_INSTANCE</con:value>
+            </con:property>
+            <con:property>
+              <con:name>entityClass</con:name>
+              <con:value>org.meveo.model.billing.ServiceInstance</con:value>
             </con:property>
           </con:properties>
           <con:returnProperties/>
@@ -10793,10 +10907,10 @@ public class Action1 extends Script {
                   <quantity>2</quantity>\r
                   <subscriptionDate>2015-06-01</subscriptionDate>\r
                   <customFields>\r
-                     <customField code="${#Project#baseEntityPrefix}_SERVICE_LONG_SINGLE_NV">\r
+                     <customField code="${#Project#baseEntityPrefix}_SERVICE_INSTANCE_LONG_SINGLE_NV">\r
                         <longValue>154</longValue>\r
                      </customField>\r
-                     <customField code="${#Project#baseEntityPrefix}_SERVICE_DATE_SINGLE_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">\r
+                     <customField code="${#Project#baseEntityPrefix}_SERVICE_INSTANCE_DATE_SINGLE_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">\r
                         <dateValue>2015-09-24</dateValue>
                      </customField>\r
                   </customFields>\r
@@ -10894,7 +11008,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="294cb757-6e2c-403d-8c6e-fa3424ee5c36" name="Contains 4">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_LONG_SINGLE_NV">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_INSTANCE_LONG_SINGLE_NV">
                            &lt;longValue>154&lt;/longValue>
                         &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -10903,7 +11017,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="5e487e70-a3d1-47c7-a123-f407806937f2" name="Contains 5">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_DATE_SINGLE_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone2}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone2}" valuePeriodPriority="2">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_INSTANCE_DATE_SINGLE_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone2}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone2}" valuePeriodPriority="2">
                            &lt;dateValue>2015-09-24T00:00:00${#Project#timezone2}&lt;/dateValue>
                         &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -10961,10 +11075,10 @@ public class Action1 extends Script {
                   <quantity>3</quantity>\r
                   <subscriptionDate>2016-04-08</subscriptionDate>\r
                   <customFields>\r
-                     <customField code="${#Project#baseEntityPrefix}_SERVICE_DOUBLE_SINGLE_NV">\r
+                     <customField code="${#Project#baseEntityPrefix}_SERVICE_INSTANCE_DOUBLE_SINGLE_NV">\r
                         <doubleValue>15.78</doubleValue>\r
                      </customField>\r
-                     <customField code="${#Project#baseEntityPrefix}_SERVICE_STRING_SINGLE_V" valuePeriodStartDate="2016-09-08" valuePeriodEndDate="2016-09-24" valuePeriodPriority="3">\r
+                     <customField code="${#Project#baseEntityPrefix}_SERVICE_INSTANCE_STRING_SINGLE_V" valuePeriodStartDate="2016-09-08" valuePeriodEndDate="2016-09-24" valuePeriodPriority="3">\r
                         <stringValue>Service2 activated</stringValue>\r
                      </customField>\r
                   </customFields>\r
@@ -11070,7 +11184,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="9d489887-7ea8-4ca2-b9b1-c962e25b2022" name="Contains 5">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_LONG_SINGLE_NV">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_INSTANCE_LONG_SINGLE_NV">
                            &lt;longValue>154&lt;/longValue>
                         &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -11079,7 +11193,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="d9032aeb-be94-430f-b52a-d2f28d7e0f8b" name="Contains 6">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_DATE_SINGLE_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone2}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone2}" valuePeriodPriority="2">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_INSTANCE_DATE_SINGLE_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone2}" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone2}" valuePeriodPriority="2">
                            &lt;dateValue>2015-09-24T00:00:00${#Project#timezone2}&lt;/dateValue>
                         &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -11088,7 +11202,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="34924310-dce2-4b9a-9dff-14e7aac109a6" name="Contains 7">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_DOUBLE_SINGLE_NV">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_INSTANCE_DOUBLE_SINGLE_NV">
                            &lt;doubleValue>15.78&lt;/doubleValue>
                         &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -11097,7 +11211,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="a33a48d9-bebb-45a7-9d34-fdafcc40e7e2" name="Contains 8">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_STRING_SINGLE_V" valuePeriodStartDate="2016-09-08T00:00:00${#Project#timezone2}" valuePeriodEndDate="2016-09-24T00:00:00${#Project#timezone2}" valuePeriodPriority="3">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_INSTANCE_STRING_SINGLE_V" valuePeriodStartDate="2016-09-08T00:00:00${#Project#timezone2}" valuePeriodEndDate="2016-09-24T00:00:00${#Project#timezone2}" valuePeriodPriority="3">
                            &lt;stringValue>Service2 activated&lt;/stringValue>
                         &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -11399,10 +11513,10 @@ public class Action1 extends Script {
                                                       <status>CREATED</status>\r
                                                       <quantity>15</quantity>\r
                                                       <customFields>\r
-                                                         <customField code="${#Project#baseEntityPrefix}_SERVICE_LONG_SINGLE_V" valuePeriodStartDate="2016-07-08" valuePeriodEndDate="2016-09-24" valuePeriodPriority="1">\r
+                                                         <customField code="${#Project#baseEntityPrefix}_SERVICE_INSTANCE_LONG_SINGLE_V" valuePeriodStartDate="2016-07-08" valuePeriodEndDate="2016-09-24" valuePeriodPriority="1">\r
                                                             <longValue>154</longValue>\r
                                                          </customField>\r
-                                                         <customField code="${#Project#baseEntityPrefix}_SERVICE_DATE_SINGLE_V" valuePeriodStartDate="2015-12-08" valuePeriodEndDate="2015-12-24" valuePeriodPriority="2">\r
+                                                         <customField code="${#Project#baseEntityPrefix}_SERVICE_INSTANCE_DATE_SINGLE_V" valuePeriodStartDate="2015-12-08" valuePeriodEndDate="2015-12-24" valuePeriodPriority="2">\r
                                                             <dateValue>2015-09-24</dateValue>\r
                                                          </customField>\r
                                                       </customFields>\r
@@ -11412,10 +11526,10 @@ public class Action1 extends Script {
                                                       <subscriptionDate>2016-01-09</subscriptionDate>\r
                                                       <quantity>1</quantity>\r
                                                       <customFields>\r
-                                                         <customField code="${#Project#baseEntityPrefix}_SERVICE_STRING_SINGLE_NV">\r
+                                                         <customField code="${#Project#baseEntityPrefix}_SERVICE_INSTANCE_STRING_SINGLE_NV">\r
                                                             <stringValue>NV value</stringValue>\r
                                                          </customField>\r
-                                                         <customField code="${#Project#baseEntityPrefix}_SERVICE_DATE_SINGLE_NV">\r
+                                                         <customField code="${#Project#baseEntityPrefix}_SERVICE_INSTANCE_DATE_SINGLE_NV">\r
                                                             <dateValue>2015-12-24</dateValue>\r
                                                          </customField>\r
                                                       </customFields>\r
@@ -11822,7 +11936,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="87b76f4b-23f4-4ca8-a070-08bc0f3e5879" name="Contains 4">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_LONG_SINGLE_V" valuePeriodStartDate="2016-07-08T00:00:00${#Project#timezone2}" valuePeriodEndDate="2016-09-24T00:00:00${#Project#timezone2}" valuePeriodPriority="1">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_INSTANCE_LONG_SINGLE_V" valuePeriodStartDate="2016-07-08T00:00:00${#Project#timezone2}" valuePeriodEndDate="2016-09-24T00:00:00${#Project#timezone2}" valuePeriodPriority="1">
                            &lt;longValue>154&lt;/longValue>
                         &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -11831,7 +11945,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="342ecf78-6b58-468a-95a9-697720aa6b65" name="Contains 5">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_DATE_SINGLE_V" valuePeriodStartDate="2015-12-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-12-24T00:00:00${#Project#timezone}" valuePeriodPriority="2">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_INSTANCE_DATE_SINGLE_V" valuePeriodStartDate="2015-12-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-12-24T00:00:00${#Project#timezone}" valuePeriodPriority="2">
                            &lt;dateValue>2015-09-24T00:00:00${#Project#timezone2}&lt;/dateValue>
                         &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -11848,7 +11962,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="3f1c878b-dd7b-4756-b311-5c58f1263ddc" name="Contains 7">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_DATE_SINGLE_NV">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_INSTANCE_DATE_SINGLE_NV">
                            &lt;dateValue>2015-12-24T00:00:00${#Project#timezone}&lt;/dateValue>
                         &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -11857,7 +11971,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="0bef5428-8189-48d0-b0e0-de3b528d3a1f" name="Contains 8">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_STRING_SINGLE_NV">
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_INSTANCE_STRING_SINGLE_NV">
                            &lt;stringValue>NV value&lt;/stringValue>
                         &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
@@ -12078,6 +12192,7 @@ public class Action1 extends Script {
                      <accountLevel>CE_${#Project#entityPrefix}_${#TestSuite#index}_CET</accountLevel>
                      <appliesTo>CE_${#Project#entityPrefix}_${#TestSuite#index}_CET</appliesTo>
                      <defaultValue>Hello</defaultValue>
+                     <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
                      <storageType>SINGLE</storageType>
                      <valueRequired>true</valueRequired>
                      <versionable>false</versionable>
@@ -12098,6 +12213,7 @@ public class Action1 extends Script {
                      <accountLevel>CE_${#Project#entityPrefix}_${#TestSuite#index}_CET</accountLevel>
                      <appliesTo>CE_${#Project#entityPrefix}_${#TestSuite#index}_CET</appliesTo>
                      <defaultValue>15</defaultValue>
+                     <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
                      <storageType>SINGLE</storageType>
                      <valueRequired>false</valueRequired>
                      <versionable>false</versionable>
@@ -12478,6 +12594,7 @@ public class Action1 extends Script {
                      <accountLevel>CE_${#Project#entityPrefix}_${#TestSuite#index}_CET</accountLevel>
                      <appliesTo>CE_${#Project#entityPrefix}_${#TestSuite#index}_CET</appliesTo>
                      <defaultValue>Help</defaultValue>
+                     <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
                      <storageType>SINGLE</storageType>
                      <valueRequired>false</valueRequired>
                      <versionable>false</versionable>
@@ -12498,6 +12615,7 @@ public class Action1 extends Script {
                      <accountLevel>CE_${#Project#entityPrefix}_${#TestSuite#index}_CET</accountLevel>
                      <appliesTo>CE_${#Project#entityPrefix}_${#TestSuite#index}_CET</appliesTo>
                      <defaultValue>17</defaultValue>
+                     <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
                      <storageType>SINGLE</storageType>
                      <valueRequired>false</valueRequired>
                      <versionable>false</versionable>
@@ -19524,6 +19642,52 @@ public class Action1 extends Script {
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>\r
             <versionable>true</versionable>
+            <calendar>MONTHLY</calendar>
+         </customField>\r
+      </ws:createOrUpdateField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/>
+            <con:assertion type="Simple Contains" id="d66b73c0-4bea-4ff4-ab95-469cc8c65a36" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create CFT String List versioned required - Customer" id="3975aaa5-8bc3-4af0-8688-d3b4ecfc4d83">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createField</con:operation>
+          <con:request name="Create CFT String List versioned required - Customer" id="3753bce2-3fec-40e6-a41f-454620694710">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateField>\r
+         <customField code="${#Project#baseEntityPrefix}_STRING_LIST_V_PI_REQUIRED" description="String List versionable parent inheritance required">\r
+            <fieldType>STRING</fieldType>\r
+            <appliesTo>CUST</appliesTo>\r
+            <storageType>LIST</storageType>\r
+            <valueRequired>true</valueRequired>\r
+            <versionable>true</versionable>
+            <calendar>MONTHLY</calendar>
          </customField>\r
       </ws:createOrUpdateField>\r
    </soapenv:Body>\r
@@ -19568,6 +19732,56 @@ public class Action1 extends Script {
             <storageType>MAP</storageType>\r
             <valueRequired>true</valueRequired>\r
             <versionable>true</versionable>
+            <calendar>MONTHLY</calendar>
+         </customField>\r
+      </ws:createOrUpdateField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/>
+            <con:assertion type="Simple Contains" id="d66b73c0-4bea-4ff4-ab95-469cc8c65a36" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create CFT String Matrix Versioned required - Customer" id="79b4fc20-704c-4016-b85e-30098255e8b2">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createField</con:operation>
+          <con:request name="Create CFT String Matrix Versioned required - Customer" id="3753bce2-3fec-40e6-a41f-454620694710">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateField>\r
+         <customField code="${#Project#baseEntityPrefix}_STRING_MATRIX_V_PI_REQUIRED" description="String matrix valueRequired parent inheritance required">\r
+            <fieldType>STRING</fieldType>\r
+            <appliesTo>CUST</appliesTo>\r
+            <storageType>MATRIX</storageType>\r
+            <valueRequired>true</valueRequired>\r
+            <versionable>true</versionable>
+            <calendar>MONTHLY</calendar>
+            <matrixColumns>\r
+               <matrixColumn code="MAT_1" position="1" label="One" keyType="STRING"/>\r
+               <matrixColumn code="MAT_2" position="2" label="Two" keyType="RON"/>\r
+            </matrixColumns>\r
          </customField>\r
       </ws:createOrUpdateField>\r
    </soapenv:Body>\r
@@ -19811,6 +20025,50 @@ public class Action1 extends Script {
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="request" name="Create CFT String List Versioned required - Seller" id="e0eb4993-4712-427f-a3bd-b3003045fa46">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createField</con:operation>
+          <con:request name="Create CFT String List Versioned required - Seller" id="3753bce2-3fec-40e6-a41f-454620694710">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateField>\r
+         <customField code="${#Project#baseEntityPrefix}_STRING_LIST_V_PI_REQUIRED" description="String List versionable parent inheritance required">\r
+            <fieldType>STRING</fieldType>\r
+            <appliesTo>SELLER</appliesTo>\r
+            <storageType>LIST</storageType>\r
+            <valueRequired>true</valueRequired>\r
+            <versionable>true</versionable>
+         </customField>\r
+      </ws:createOrUpdateField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/>
+            <con:assertion type="Simple Contains" id="d66b73c0-4bea-4ff4-ab95-469cc8c65a36" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
       <con:testStep type="request" name="Create CFT String Map Versioned required - Seller" id="a8aef7c7-1a0b-46d9-9655-89529251a327">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -19832,6 +20090,54 @@ public class Action1 extends Script {
             <storageType>MAP</storageType>\r
             <valueRequired>true</valueRequired>\r
             <versionable>true</versionable>
+         </customField>\r
+      </ws:createOrUpdateField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/>
+            <con:assertion type="Simple Contains" id="d66b73c0-4bea-4ff4-ab95-469cc8c65a36" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create CFT String Matrix Versioned required - Seller" id="82bdc4c6-b534-4728-bce9-14bf361f9b4f">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createField</con:operation>
+          <con:request name="Create CFT String Matrix Versioned required - Seller" id="3753bce2-3fec-40e6-a41f-454620694710">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateField>\r
+         <customField code="${#Project#baseEntityPrefix}_STRING_MATRIX_V_PI_REQUIRED" description="String matrix versionable parent inheritance required">\r
+            <fieldType>STRING</fieldType>\r
+            <appliesTo>SELLER</appliesTo>\r
+            <storageType>MATRIX</storageType>\r
+            <valueRequired>true</valueRequired>\r
+            <versionable>true</versionable>
+            <matrixColumns>\r
+               <matrixColumn code="MAT_1" position="1" label="One" keyType="STRING"/>\r
+               <matrixColumn code="MAT_2" position="2" label="Two" keyType="RON"/>\r
+            </matrixColumns>\r
          </customField>\r
       </ws:createOrUpdateField>\r
    </soapenv:Body>\r
@@ -19927,12 +20233,52 @@ public class Action1 extends Script {
                      </entry>\r
                   </mapValue>\r
                </customField>\r
+               <customField code="${#Project#baseEntityPrefix}_STRING_MAP_V_PI_REQUIRED" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2025-09-30">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>xe</key>\r
+                        <value>\r
+                           <stringValue>a</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#Project#baseEntityPrefix}_STRING_MAP_V_PI_REQUIRED" valuePeriodStartDate="2015-09-01" valuePeriodEndDate="2015-09-04">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>one</key>\r
+                        <value>\r
+                           <stringValue>should not be used for current date inheritance</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#Project#baseEntityPrefix}_STRING_MAP_V_PI_REQUIRED" valuePeriodStartDate="2025-09-30" valuePeriodEndDate="2025-10-30">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>two</key>\r
+                        <value>\r
+                           <stringValue>should not be used for current date inheritance</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
                <customField code="${#Project#baseEntityPrefix}_STRING_MATRIX_PI_REQUIRED">\r
                   <mapValue>\r
                      <entry>\r
                         <key>a|1&lt;8</key>\r
                         <value>\r
                            <stringValue>SELLER_STRING_VALUE_15</stringValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+               </customField>\r
+               <customField code="${#Project#baseEntityPrefix}_STRING_MATRIX_V_PI_REQUIRED" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30">\r
+                  <mapValue>\r
+                     <entry>\r
+                        <key>n|2&lt;9</key>\r
+                        <value>\r
+                           <stringValue>SELLER_STRING_VALUE_16</stringValue>\r
                         </value>\r
                      </entry>\r
                   </mapValue>\r
@@ -19944,21 +20290,24 @@ public class Action1 extends Script {
                      </value>\r
                   </listValue>\r
                </customField>\r
+               <customField code="${#Project#baseEntityPrefix}_STRING_LIST_V_PI_REQUIRED" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30">\r
+                  <listValue>\r
+                     <value>\r
+                        <stringValue>SELLER_STRING_VALUE_6</stringValue>\r
+                     </value>\r
+                  </listValue>\r
+               </customField>\r
                <customField code="${#Project#baseEntityPrefix}_STRING_PI_REQUIRED">\r
                   <stringValue>a</stringValue>\r
                </customField>\r
-               <customField code="${#Project#baseEntityPrefix}_STRING_V_PI_REQUIRED" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30">\r
+               <customField code="${#Project#baseEntityPrefix}_STRING_V_PI_REQUIRED" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2025-09-30">\r
                   <stringValue>b</stringValue>\r
                </customField>\r
-               <customField code="${#Project#baseEntityPrefix}_STRING_MAP_V_PI_REQUIRED" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30">\r
-                  <mapValue>\r
-                     <entry>\r
-                        <key>xe</key>\r
-                        <value>\r
-                           <stringValue>a</stringValue>\r
-                        </value>\r
-                     </entry>\r
-                  </mapValue>\r
+               <customField code="${#Project#baseEntityPrefix}_STRING_V_PI_REQUIRED" valuePeriodStartDate="2015-08-04" valuePeriodEndDate="2015-09-04">\r
+                  <stringValue>should not be used for current date inheritance</stringValue>\r
+               </customField>\r
+               <customField code="${#Project#baseEntityPrefix}_STRING_V_PI_REQUIRED" valuePeriodStartDate="2025-09-30" valuePeriodEndDate="2025-11-04">\r
+                  <stringValue>should not be used for current date inheritance</stringValue>\r
                </customField>\r
             </customFields>\r
          </seller>\r
@@ -19984,12 +20333,12 @@ public class Action1 extends Script {
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="Create customer - fail" id="347ce39a-502d-4c35-939f-c920803eb36a">
+      <con:testStep type="request" name="Create customer - fail as no inherited values found" id="347ce39a-502d-4c35-939f-c920803eb36a">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>AccountWsSoapBinding</con:interface>
           <con:operation>createCustomer</con:operation>
-          <con:request name="Create customer - fail" id="588c1141-f660-4afe-a599-13d7214b8e79">
+          <con:request name="Create customer - fail as no inherited values found" id="588c1141-f660-4afe-a599-13d7214b8e79">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -20017,7 +20366,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="cfdc5ee4-56b3-4e32-80e9-fbc78d7f2f13" name="Contains 1">
               <con:configuration>
-                <token>The following parameters are required or contain invalid values: ${#Project#baseEntityPrefix}_STRING_LIST_PI_REQUIRED, ${#Project#baseEntityPrefix}_STRING_MAP_PI_REQUIRED, ${#Project#baseEntityPrefix}_STRING_MAP_V_PI_REQUIRED, ${#Project#baseEntityPrefix}_STRING_MATRIX_PI_REQUIRED, ${#Project#baseEntityPrefix}_STRING_PI_REQUIRED, ${#Project#baseEntityPrefix}_STRING_V_PI_REQUIRED.</token>
+                <token>The following parameters are required or contain invalid values: ${#Project#baseEntityPrefix}_STRING_LIST_PI_REQUIRED, ${#Project#baseEntityPrefix}_STRING_LIST_V_PI_REQUIRED, ${#Project#baseEntityPrefix}_STRING_MAP_PI_REQUIRED, ${#Project#baseEntityPrefix}_STRING_MAP_V_PI_REQUIRED, ${#Project#baseEntityPrefix}_STRING_MATRIX_PI_REQUIRED, ${#Project#baseEntityPrefix}_STRING_MATRIX_V_PI_REQUIRED, ${#Project#baseEntityPrefix}_STRING_PI_REQUIRED, ${#Project#baseEntityPrefix}_STRING_V_PI_REQUIRED.</token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -20033,12 +20382,12 @@ public class Action1 extends Script {
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="Create customer - ok" id="b7e1fd05-bb17-4d8f-b582-2aec540d5b51">
+      <con:testStep type="request" name="Create customer - ok as inherited values found" id="b7e1fd05-bb17-4d8f-b582-2aec540d5b51">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>AccountWsSoapBinding</con:interface>
           <con:operation>createCustomer</con:operation>
-          <con:request name="Create customer - ok" id="588c1141-f660-4afe-a599-13d7214b8e79">
+          <con:request name="Create customer - ok as inherited values found" id="588c1141-f660-4afe-a599-13d7214b8e79">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -20806,6 +21155,850 @@ public class Action1 extends Script {
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="request" name="Update CFT String required with not required and inherited default value - Customer" id="0f5609d5-bce7-4c87-b1ea-22f7fca56a41">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createField</con:operation>
+          <con:request name="Update CFT String required with not required and inherited default value - Customer" id="3753bce2-3fec-40e6-a41f-454620694710">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateField>\r
+         <customField code="${#Project#baseEntityPrefix}_STRING_PI_REQUIRED" description="String parent inheritance required">\r
+            <fieldType>STRING</fieldType>\r
+            <appliesTo>CUST</appliesTo>\r
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>false</valueRequired>\r
+            <defaultValue>def value from customer</defaultValue>
+            <useInheritedAsDefaultValue>true</useInheritedAsDefaultValue>
+         </customField>\r
+      </ws:createOrUpdateField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/>
+            <con:assertion type="Simple Contains" id="d66b73c0-4bea-4ff4-ab95-469cc8c65a36" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Update CFT String List required  with not required and inherited default value - Customer" id="97d1895e-e1c4-455c-a556-1a8f34da3d2c">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createField</con:operation>
+          <con:request name="Update CFT String List required  with not required and inherited default value - Customer" id="3753bce2-3fec-40e6-a41f-454620694710">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateField>\r
+         <customField code="${#Project#baseEntityPrefix}_STRING_LIST_PI_REQUIRED" description="String List parent inheritance required">\r
+            <fieldType>STRING</fieldType>\r
+            <appliesTo>CUST</appliesTo>\r
+            <storageType>LIST</storageType>\r
+            <valueRequired>false</valueRequired>
+            <useInheritedAsDefaultValue>true</useInheritedAsDefaultValue>
+         </customField>\r
+      </ws:createOrUpdateField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/>
+            <con:assertion type="Simple Contains" id="d66b73c0-4bea-4ff4-ab95-469cc8c65a36" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Update CFT String Map required with not required and inherited default value - Customer" id="360a6013-b72f-4a4c-a3f1-d6493d5b3871">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createField</con:operation>
+          <con:request name="Update CFT String Map required with not required and inherited default value - Customer" id="3753bce2-3fec-40e6-a41f-454620694710">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateField>\r
+         <customField code="${#Project#baseEntityPrefix}_STRING_MAP_PI_REQUIRED" description="String map parent inheritance required">\r
+            <fieldType>STRING</fieldType>\r
+            <appliesTo>CUST</appliesTo>\r
+            <storageType>MAP</storageType>\r
+            <valueRequired>false</valueRequired>
+            <useInheritedAsDefaultValue>true</useInheritedAsDefaultValue>
+         </customField>\r
+      </ws:createOrUpdateField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/>
+            <con:assertion type="Simple Contains" id="d66b73c0-4bea-4ff4-ab95-469cc8c65a36" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Update CFT String Matrix required with not required and inherited default value - Customer" id="a02ae456-2e9e-4328-9486-35d462afd657">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createField</con:operation>
+          <con:request name="Update CFT String Matrix required with not required and inherited default value - Customer" id="3753bce2-3fec-40e6-a41f-454620694710">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateField>\r
+         <customField code="${#Project#baseEntityPrefix}_STRING_MATRIX_PI_REQUIRED" description="String matrix parent inheritance required">\r
+            <fieldType>STRING</fieldType>\r
+            <appliesTo>CUST</appliesTo>\r
+            <storageType>MATRIX</storageType>\r
+            <valueRequired>false</valueRequired>
+            <useInheritedAsDefaultValue>true</useInheritedAsDefaultValue>
+            <matrixColumns>\r
+               <matrixColumn code="MAT_1" position="1" label="One" keyType="STRING"/>\r
+               <matrixColumn code="MAT_2" position="2" label="Two" keyType="RON"/>\r
+            </matrixColumns>\r
+         </customField>\r
+      </ws:createOrUpdateField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/>
+            <con:assertion type="Simple Contains" id="d66b73c0-4bea-4ff4-ab95-469cc8c65a36" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Update CFT String Versioned required with not required and inherited default value - Customer" id="ce000023-d9c4-46b8-a7c5-4cb8f9d917d0">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createField</con:operation>
+          <con:request name="Update CFT String Versioned required with not required and inherited default value - Customer" id="3753bce2-3fec-40e6-a41f-454620694710">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateField>\r
+         <customField code="${#Project#baseEntityPrefix}_STRING_V_PI_REQUIRED" description="String Versionable parent inheritance required">\r
+            <fieldType>STRING</fieldType>\r
+            <appliesTo>CUST</appliesTo>\r
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>false</valueRequired>
+            <defaultValue>def value versioned from customer</defaultValue>
+            <useInheritedAsDefaultValue>true</useInheritedAsDefaultValue>
+            <versionable>true</versionable>
+            <calendar>MONTHLY</calendar>
+         </customField>\r
+      </ws:createOrUpdateField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/>
+            <con:assertion type="Simple Contains" id="d66b73c0-4bea-4ff4-ab95-469cc8c65a36" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Update CFT String List versioned required with not required and inherited default value - Customer" id="e9f4f2bb-2e59-40b9-8f7e-1eb196bc9e2d">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createField</con:operation>
+          <con:request name="Update CFT String List versioned required with not required and inherited default value - Customer" id="3753bce2-3fec-40e6-a41f-454620694710">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateField>\r
+         <customField code="${#Project#baseEntityPrefix}_STRING_LIST_V_PI_REQUIRED" description="String List versionable parent inheritance required">\r
+            <fieldType>STRING</fieldType>\r
+            <appliesTo>CUST</appliesTo>\r
+            <storageType>LIST</storageType>\r
+            <valueRequired>false</valueRequired>
+            <useInheritedAsDefaultValue>true</useInheritedAsDefaultValue>
+            <versionable>true</versionable>
+            <calendar>MONTHLY</calendar>
+         </customField>\r
+      </ws:createOrUpdateField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/>
+            <con:assertion type="Simple Contains" id="d66b73c0-4bea-4ff4-ab95-469cc8c65a36" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Update CFT String Map Versioned required with not required and inherited default value - Customer" id="bf14cda2-f6da-4a5c-b9d9-1e3e7e87e4f9">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createField</con:operation>
+          <con:request name="Update CFT String Map Versioned required with not required and inherited default value - Customer" id="3753bce2-3fec-40e6-a41f-454620694710">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateField>\r
+         <customField code="${#Project#baseEntityPrefix}_STRING_MAP_V_PI_REQUIRED" description="String map versionable parent inheritance required">\r
+            <fieldType>STRING</fieldType>\r
+            <appliesTo>CUST</appliesTo>\r
+            <storageType>MAP</storageType>\r
+            <valueRequired>false</valueRequired>
+            <useInheritedAsDefaultValue>true</useInheritedAsDefaultValue>
+            <versionable>true</versionable>
+            <calendar>MONTHLY</calendar>
+         </customField>\r
+      </ws:createOrUpdateField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/>
+            <con:assertion type="Simple Contains" id="d66b73c0-4bea-4ff4-ab95-469cc8c65a36" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Update CFT String Matrix Versioned required with not required and inherited default value - Customer" id="53e239ac-5e4b-4ed5-9e04-697af5cc151c">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createField</con:operation>
+          <con:request name="Update CFT String Matrix Versioned required with not required and inherited default value - Customer" id="3753bce2-3fec-40e6-a41f-454620694710">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateField>\r
+         <customField code="${#Project#baseEntityPrefix}_STRING_MATRIX_V_PI_REQUIRED" description="String matrix valueRequired parent inheritance required">\r
+            <fieldType>STRING</fieldType>\r
+            <appliesTo>CUST</appliesTo>\r
+            <storageType>MATRIX</storageType>\r
+            <valueRequired>false</valueRequired>
+            <useInheritedAsDefaultValue>true</useInheritedAsDefaultValue>
+            <versionable>true</versionable>
+            <calendar>MONTHLY</calendar>
+            <matrixColumns>\r
+               <matrixColumn code="MAT_1" position="1" label="One" keyType="STRING"/>\r
+               <matrixColumn code="MAT_2" position="2" label="Two" keyType="RON"/>\r
+            </matrixColumns>\r
+         </customField>\r
+      </ws:createOrUpdateField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/>
+            <con:assertion type="Simple Contains" id="d66b73c0-4bea-4ff4-ab95-469cc8c65a36" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create customer with default values from customer" id="038d7c8a-9f7e-4410-bd18-fd993b7b6342">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>createCustomer</con:operation>
+          <con:request name="Create customer with default values from customer" id="588c1141-f660-4afe-a599-13d7214b8e79">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomer>
+         <customer code="${#Project#entityPrefix}_${#TestSuite#index}_CUST_PI_DEFAULT_VALUES" description="CUST">
+            <customerCategory>CLIENT</customerCategory>
+            <customerBrand>DEFAULT</customerBrand>
+            <seller>SELLER_FR</seller>
+         </customer>
+      </ws:createCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/>
+            <con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Find customer with default values from customer" id="ec32f126-ef2f-45c7-a2a6-04409cc59889">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>findCustomer</con:operation>
+          <con:request name="Find customer with default values from customer" id="c86136db-6ca0-4125-9817-87936ab06776">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findCustomer>
+         <customerCode>${#Project#entityPrefix}_${#TestSuite#index}_CUST_PI_DEFAULT_VALUES</customerCode>
+      </ws:findCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="1257bb61-c05a-443b-a3fa-b547b368f2ee"/>
+            <con:assertion type="Simple Contains" id="3cebc373-1422-4d73-9656-de58655a5968" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="85cd32b1-9f2b-4203-baae-72d7290d3006" name="XPath Match">
+              <con:configuration>
+                <path>//customField[@code="CF_BASE_STRING_V_PI_REQUIRED"]</path>
+                <content>&lt;customField code="CF_BASE_STRING_V_PI_REQUIRED" valuePeriodStartDate="*" valuePeriodEndDate="*">
+  &lt;stringValue>def value versioned from customer&lt;/stringValue>
+&lt;/customField></content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="c10d524b-85cd-4b0b-b225-b70523ab7f91" name="XPath Match 1">
+              <con:configuration>
+                <path>//customField[@code="CF_BASE_STRING_PI_REQUIRED"]</path>
+                <content>&lt;customField code="CF_BASE_STRING_PI_REQUIRED">
+  &lt;stringValue>def value from customer&lt;/stringValue>
+&lt;/customField></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create customer with default values inherited from seller" id="20023941-2abd-4872-bd7e-1b6647bab343">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>createCustomer</con:operation>
+          <con:request name="Create customer with default values inherited from seller" id="588c1141-f660-4afe-a599-13d7214b8e79">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomer>
+         <customer code="${#Project#entityPrefix}_${#TestSuite#index}_CUST_PI_DEFAULT_VALUES_FROM_SELLER" description="CUST">
+            <customerCategory>CLIENT</customerCategory>
+            <customerBrand>DEFAULT</customerBrand>
+            <seller>${#Project#entityPrefix}_${#TestSuite#index}_SELLER_PI</seller>
+         </customer>
+      </ws:createCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/>
+            <con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Find customer with default values inherited from seller" id="0e690280-dada-4b88-8d5a-b5bf2e683bf5">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>findCustomer</con:operation>
+          <con:request name="Find customer with default values inherited from seller" id="c86136db-6ca0-4125-9817-87936ab06776">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findCustomer>
+         <customerCode>${#Project#entityPrefix}_${#TestSuite#index}_CUST_PI_DEFAULT_VALUES_FROM_SELLER</customerCode>
+      </ws:findCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="1257bb61-c05a-443b-a3fa-b547b368f2ee"/>
+            <con:assertion type="Simple Contains" id="3cebc373-1422-4d73-9656-de58655a5968" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" name="Contains 1" id="8d13b5a3-4ec9-402f-bc41-1ab247547472">
+              <con:configuration>
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_STRING_MATRIX_PI_REQUIRED">
+                     <mapValue>
+                        <entry>
+                           <key>a|1&lt;8</key>
+                           <value>
+                              <stringValue>SELLER_STRING_VALUE_15</stringValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>key</key>
+                           <value>
+                              <stringValue>MAT_1/MAT_2</stringValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple NotContains" id="ee55cc75-c0c5-4c00-971d-c0aef0347e4e" name="Not Contains">
+              <con:configuration>
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_STRING_MATRIX_V_PI_REQUIRED"</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="33ee3e37-e93e-49b3-9cfc-b791c4616ac1" name="Contains 2">
+              <con:configuration>
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_STRING_LIST_PI_REQUIRED">
+                     <listValue>
+                        <value>
+                           <stringValue>SELLER_STRING_VALUE_5</stringValue>
+                        </value>
+                     </listValue>
+                  </customField>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="a30c72ca-8bb7-4cb4-bcae-b75c727a9fde" name="Contains 3">
+              <con:configuration>
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_STRING_MAP_PI_REQUIRED">
+                     <mapValue>
+                        <entry>
+                           <key>xe</key>
+                           <value>
+                              <stringValue>a</stringValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="07ba6fcb-453b-4adf-8c6f-44b6331402f9" name="Contains 4">
+              <con:configuration>
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_STRING_PI_REQUIRED">
+                     &lt;stringValue>a&lt;/stringValue>
+                  &lt;/customField></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="e74a27a2-2a15-4ea1-8570-709bafa2af97" name="XPath Match">
+              <con:configuration>
+                <path>//customField[@code="${#Project#baseEntityPrefix}_STRING_V_PI_REQUIRED"]</path>
+                <content>&lt;customField code="${#Project#baseEntityPrefix}_STRING_V_PI_REQUIRED" valuePeriodStartDate="*" valuePeriodEndDate="*">
+  &lt;stringValue>b&lt;/stringValue>
+&lt;/customField></content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="c553c910-997b-4dcb-839c-93a45ac2e714" name="XPath Match 1">
+              <con:configuration>
+                <path>//customField[@code="${#Project#baseEntityPrefix}_STRING_MAP_V_PI_REQUIRED"]</path>
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_STRING_MAP_V_PI_REQUIRED" valuePeriodStartDate="*" valuePeriodEndDate="*">
+  <mapValue>
+    <entry>
+      <key>xe</key>
+      <value>
+        <stringValue>a</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</customField>]]></content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple NotContains" id="ebcbf854-c9f6-450b-a37f-c5510eae7392" name="Not Contains 1">
+              <con:configuration>
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_STRING_LIST_V_PI_REQUIRED"</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Update CFT String List versioned required with inherited default value - Customer" id="5709756c-99ec-4761-afd7-fd890be9afa4">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createField</con:operation>
+          <con:request name="Update CFT String List versioned required with inherited default value - Customer" id="3753bce2-3fec-40e6-a41f-454620694710">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateField>\r
+         <customField code="${#Project#baseEntityPrefix}_STRING_LIST_V_PI_REQUIRED" description="String List versionable parent inheritance required">\r
+            <fieldType>STRING</fieldType>\r
+            <appliesTo>CUST</appliesTo>\r
+            <storageType>LIST</storageType>\r
+            <valueRequired>true</valueRequired>
+            <useInheritedAsDefaultValue>true</useInheritedAsDefaultValue>
+            <versionable>true</versionable>
+            <calendar>MONTHLY</calendar>
+         </customField>\r
+      </ws:createOrUpdateField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/>
+            <con:assertion type="Simple Contains" id="d66b73c0-4bea-4ff4-ab95-469cc8c65a36" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Update CFT String Matrix Versioned required with inherited default value - Customer" id="81f4c424-195b-4f54-9550-d2645068870b">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createField</con:operation>
+          <con:request name="Update CFT String Matrix Versioned required with inherited default value - Customer" id="3753bce2-3fec-40e6-a41f-454620694710">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateField>\r
+         <customField code="${#Project#baseEntityPrefix}_STRING_MATRIX_V_PI_REQUIRED" description="String matrix valueRequired parent inheritance required">\r
+            <fieldType>STRING</fieldType>\r
+            <appliesTo>CUST</appliesTo>\r
+            <storageType>MATRIX</storageType>\r
+            <valueRequired>true</valueRequired>
+            <useInheritedAsDefaultValue>true</useInheritedAsDefaultValue>
+            <versionable>true</versionable>
+            <calendar>MONTHLY</calendar>
+            <matrixColumns>\r
+               <matrixColumn code="MAT_1" position="1" label="One" keyType="STRING"/>\r
+               <matrixColumn code="MAT_2" position="2" label="Two" keyType="RON"/>\r
+            </matrixColumns>\r
+         </customField>\r
+      </ws:createOrUpdateField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/>
+            <con:assertion type="Simple Contains" id="d66b73c0-4bea-4ff4-ab95-469cc8c65a36" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create CFT String No PI value required with inherited default value - Customer" id="181a9c8c-56d6-494e-8001-fd73c3e49e4f">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createField</con:operation>
+          <con:request name="Create CFT String No PI value required with inherited default value - Customer" id="3753bce2-3fec-40e6-a41f-454620694710">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateField>\r
+         <customField code="${#Project#baseEntityPrefix}_STRING_PI_NO_PI_REQUIRED" description="String parent inheritance required, but not available">\r
+            <fieldType>STRING</fieldType>\r
+            <appliesTo>CUST</appliesTo>\r
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>true</valueRequired>\r
+            <useInheritedAsDefaultValue>true</useInheritedAsDefaultValue>
+         </customField>\r
+      </ws:createOrUpdateField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/>
+            <con:assertion type="Simple Contains" id="d66b73c0-4bea-4ff4-ab95-469cc8c65a36" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create customer with default values inherited from seller - fail" id="3055c7a9-d9c7-40ae-b74f-b9ef6cdb9cc1">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>createCustomer</con:operation>
+          <con:request name="Create customer with default values inherited from seller - fail" id="588c1141-f660-4afe-a599-13d7214b8e79">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createCustomer>
+         <customer code="${#Project#entityPrefix}_${#TestSuite#index}_CUST_PI_DEFAULT_VALUES_FAIL" description="CUST">
+            <customerCategory>CLIENT</customerCategory>
+            <customerBrand>DEFAULT</customerBrand>
+            <seller>${#Project#entityPrefix}_${#TestSuite#index}_SELLER_PI</seller>
+         </customer>
+      </ws:createCustomer>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="539e68de-5f49-4406-8677-7b8b371121a4"/>
+            <con:assertion type="Simple Contains" name="Contains" id="f89810f4-3472-46ad-9912-5db71e368516">
+              <con:configuration>
+                <token>&lt;status>FAIL&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="54cf6f92-fe4a-4473-a107-75a757bd20fe" name="Contains 1">
+              <con:configuration>
+                <token>&lt;message>The following parameters are required or contain invalid values: CF_BASE_STRING_PI_NO_PI_REQUIRED.&lt;/message></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
       <con:testStep type="request" name="Delete CFT String required - Customer" id="51c702da-3a07-43d5-98fc-ec5dee7c52a0">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -21001,6 +22194,45 @@ public class Action1 extends Script {
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="request" name="Delete CFT String List Versioned required - Customer" id="b7ccdb3a-218b-42e1-b972-702bde12f790">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>removeField</con:operation>
+          <con:request name="Delete CFT String List Versioned required - Customer" id="4d7824f9-b675-4361-a1a7-a642a78a7cad">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeField>\r
+         <customFieldTemplateCode>${#Project#baseEntityPrefix}_STRING_LIST_V_PI_REQUIRED</customFieldTemplateCode>\r
+         <appliesTo>CUST</appliesTo>\r
+      </ws:removeField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="12d7ad7e-2f9f-4641-aa04-274d56a892ea"/>
+            <con:assertion type="Simple Contains" id="73cbc090-aee1-4b05-a099-b685d497d6da" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
       <con:testStep type="request" name="Delete CFT String Map Versioned required - Customer" id="96b11b7c-c0c3-4a78-86e8-07999c386265">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -21017,6 +22249,45 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_STRING_MAP_V_PI_REQUIRED</customFieldTemplateCode>\r
+         <appliesTo>CUST</appliesTo>\r
+      </ws:removeField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="12d7ad7e-2f9f-4641-aa04-274d56a892ea"/>
+            <con:assertion type="Simple Contains" id="73cbc090-aee1-4b05-a099-b685d497d6da" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Delete CFT String Matrix Versioned required - Customer" id="5031153d-2ff1-45c4-8cc9-f4eb5f5d6eec">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>removeField</con:operation>
+          <con:request name="Delete CFT String Matrix Versioned required - Customer" id="4d7824f9-b675-4361-a1a7-a642a78a7cad">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeField>\r
+         <customFieldTemplateCode>${#Project#baseEntityPrefix}_STRING_MATRIX_V_PI_REQUIRED</customFieldTemplateCode>\r
          <appliesTo>CUST</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
@@ -21274,6 +22545,45 @@ public class Action1 extends Script {
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="request" name="Delete CFT String List Versioned required - Seller" id="965c40e5-462e-4f15-8889-d7c912ed1a54">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>removeField</con:operation>
+          <con:request name="Delete CFT String List Versioned required - Seller" id="4d7824f9-b675-4361-a1a7-a642a78a7cad">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeField>\r
+         <customFieldTemplateCode>${#Project#baseEntityPrefix}_STRING_LIST_V_PI_REQUIRED</customFieldTemplateCode>\r
+         <appliesTo>SELLER</appliesTo>\r
+      </ws:removeField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="12d7ad7e-2f9f-4641-aa04-274d56a892ea"/>
+            <con:assertion type="Simple Contains" id="73cbc090-aee1-4b05-a099-b685d497d6da" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
       <con:testStep type="request" name="Delete CFT String Map Versioned required - Seller" id="b04ecb65-c4ff-4732-8d29-e13d3cc0a768">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -21291,6 +22601,84 @@ public class Action1 extends Script {
       <ws:removeField>\r
          <customFieldTemplateCode>${#Project#baseEntityPrefix}_STRING_MAP_V_PI_REQUIRED</customFieldTemplateCode>\r
          <appliesTo>SELLER</appliesTo>\r
+      </ws:removeField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="12d7ad7e-2f9f-4641-aa04-274d56a892ea"/>
+            <con:assertion type="Simple Contains" id="73cbc090-aee1-4b05-a099-b685d497d6da" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Delete CFT String Matrix Versioned required - Seller" id="35842d03-ab5e-4198-b73e-ae03621299d0">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>removeField</con:operation>
+          <con:request name="Delete CFT String Matrix Versioned required - Seller" id="4d7824f9-b675-4361-a1a7-a642a78a7cad">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeField>\r
+         <customFieldTemplateCode>${#Project#baseEntityPrefix}_STRING_MATRIX_V_PI_REQUIRED</customFieldTemplateCode>\r
+         <appliesTo>SELLER</appliesTo>\r
+      </ws:removeField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="12d7ad7e-2f9f-4641-aa04-274d56a892ea"/>
+            <con:assertion type="Simple Contains" id="73cbc090-aee1-4b05-a099-b685d497d6da" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Delete CFT String No PI value - Customer" id="c809e75b-8b95-4e4f-953a-65c5f11d53e9">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>removeField</con:operation>
+          <con:request name="Delete CFT String No PI value - Customer" id="4d7824f9-b675-4361-a1a7-a642a78a7cad">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeField>\r
+         <customFieldTemplateCode>${#Project#baseEntityPrefix}_STRING_PI_NO_PI_REQUIRED</customFieldTemplateCode>\r
+         <appliesTo>CUST</appliesTo>\r
       </ws:removeField>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -21405,6 +22793,82 @@ public class Action1 extends Script {
    <soapenv:Body>\r
       <ws:removeCustomer>\r
          <customerCode>${#Project#entityPrefix}_${#TestSuite#index}_CUST_DEF_NULL</customerCode>\r
+      </ws:removeCustomer>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="ef79b773-8596-4bd4-95ff-8183275d8480"/>
+            <con:assertion type="Simple Contains" name="Contains" id="896129d6-7d9e-47df-8bd7-87c4e762bc89">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Delete Customer with default values from customer" id="e09a8bd2-24cf-45c7-b98e-8e39c502ba58">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>removeCustomer</con:operation>
+          <con:request name="Delete Customer with default values from customer" id="fb387227-0662-4bad-a170-6a7f59ccbbc3">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeCustomer>\r
+         <customerCode>${#Project#entityPrefix}_${#TestSuite#index}_CUST_PI_DEFAULT_VALUES</customerCode>\r
+      </ws:removeCustomer>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="ef79b773-8596-4bd4-95ff-8183275d8480"/>
+            <con:assertion type="Simple Contains" name="Contains" id="896129d6-7d9e-47df-8bd7-87c4e762bc89">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Delete Customer with default values from seller" id="72efbd46-d2e6-4015-8cac-50a20609a8a2">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>removeCustomer</con:operation>
+          <con:request name="Delete Customer with default values from seller" id="fb387227-0662-4bad-a170-6a7f59ccbbc3">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeCustomer>\r
+         <customerCode>${#Project#entityPrefix}_${#TestSuite#index}_CUST_PI_DEFAULT_VALUES_FROM_SELLER</customerCode>\r
       </ws:removeCustomer>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
@@ -27677,6 +29141,7 @@ public class Action1 extends Script {
                      <accountLevel>JOB_PurgeJob</accountLevel>
                      <appliesTo>JOB_PurgeJob</appliesTo>
                      <defaultValue>Hello</defaultValue>
+                     <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
                      <storageType>SINGLE</storageType>
                      <valueRequired>true</valueRequired>
                      <versionable>false</versionable>
@@ -27698,6 +29163,7 @@ public class Action1 extends Script {
                      <accountLevel>JOB_PurgeJob</accountLevel>
                      <appliesTo>JOB_PurgeJob</appliesTo>
                      <defaultValue>15</defaultValue>
+                     <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
                      <storageType>SINGLE</storageType>
                      <valueRequired>false</valueRequired>
                      <versionable>false</versionable>
@@ -27772,6 +29238,7 @@ public class Action1 extends Script {
                <field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT3" description="Custom field 1">\r
                   <fieldType>STRING</fieldType>\r
                   <defaultValue>Help</defaultValue>\r
+                  <useInheritedAsDefaultValue>true</useInheritedAsDefaultValue>\r
                   <storageType>SINGLE</storageType>\r
                   <valueRequired>false</valueRequired>\r
                   <versionable>false</versionable>\r
@@ -27786,20 +29253,20 @@ public class Action1 extends Script {
             </fields>\r
             <actions>\r
                <action code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION1" description="Action 1">\r
-                  <script>
-                     <type>JAVA</type>
+                  <script>\r
+                     <type>JAVA</type>\r
                      <script>import org.meveo.service.script.Script;
-                  public class Action1 extends Script {}</script>
-                  </script>
+                  public class Action1 extends Script {}</script>\r
+                  </script>\r
                   <applicableOnEl>#{entity.active and entity.code!='test'}</applicableOnEl>\r
                   <label>Action 1</label>\r
                </action>\r
                <action code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION3" description="Action 3">\r
-                  <script>
-                     <type>JAVA</type>
+                  <script>\r
+                     <type>JAVA</type>\r
                      <script>import org.meveo.service.script.Script;
-                  public class Action3 extends Script {}</script>
-                  </script>
+                  public class Action3 extends Script {}</script>\r
+                  </script>\r
                   <applicableOnEl>#{entity.active}</applicableOnEl>\r
                   <label>Action 3</label>\r
                </action>\r
@@ -27870,6 +29337,7 @@ public class Action1 extends Script {
                      <accountLevel>JOB_PurgeJob</accountLevel>
                      <appliesTo>JOB_PurgeJob</appliesTo>
                      <defaultValue>Help</defaultValue>
+                     <useInheritedAsDefaultValue>true</useInheritedAsDefaultValue>
                      <storageType>SINGLE</storageType>
                      <valueRequired>false</valueRequired>
                      <versionable>false</versionable>
@@ -27890,6 +29358,7 @@ public class Action1 extends Script {
                      <accountLevel>JOB_PurgeJob</accountLevel>
                      <appliesTo>JOB_PurgeJob</appliesTo>
                      <defaultValue>17</defaultValue>
+                     <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
                      <storageType>SINGLE</storageType>
                      <valueRequired>false</valueRequired>
                      <versionable>false</versionable>
@@ -29793,6 +31262,10 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
           </con:request>
         </con:config>
       </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:testCase id="898f65bf-e69c-4a26-aa39-d0953a986440" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CF Validtion - parent inherited value and value instantiation" searchProperties="true">
+      <con:settings/>
       <con:properties/>
     </con:testCase>
     <con:properties>

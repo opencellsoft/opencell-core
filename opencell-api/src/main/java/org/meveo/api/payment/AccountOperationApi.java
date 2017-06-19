@@ -208,7 +208,7 @@ public class AccountOperationApi extends BaseApi {
             accountOperationDto.setMatchingStatus(accountOp.getMatchingStatus());
             accountOperationDto.setOccCode(accountOp.getOccCode());
             accountOperationDto.setOccDescription(accountOp.getOccDescription());
-            accountOperationDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(accountOp));
+            accountOperationDto.setCustomFields(entityToDtoConverter.getCustomFieldsWithInheritedDTO(accountOp, true));
             accountOperationDto.setBankLot(accountOp.getBankLot());
             accountOperationDto.setBankReference(accountOp.getBankReference());
             accountOperationDto.setDepositDate(accountOp.getDepositDate());

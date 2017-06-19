@@ -47,7 +47,8 @@ import org.meveo.model.shared.DateUtils;
 @ModuleItem
 @ExportIdentifier({ "code", "appliesTo" })
 @Table(name = "CRM_CUSTOM_FIELD_TMPL", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "APPLIES_TO" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CRM_CUSTOM_FLD_TMP_SEQ"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "CRM_CUSTOM_FLD_TMP_SEQ"), })
 @NamedQueries({
         @NamedQuery(name = "CustomFieldTemplate.getCFTForCache", query = "SELECT cft from CustomFieldTemplate cft left join fetch cft.calendar where cft.disabled=false order by cft.appliesTo"),
         @NamedQuery(name = "CustomFieldTemplate.getCFTForIndex", query = "SELECT cft from CustomFieldTemplate cft where cft.disabled=false and cft.indexType is not null ") })
@@ -105,6 +106,10 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
     @Column(name = "DEFAULT_VALUE", length = 250)
     @Size(max = 250)
     private String defaultValue;
+
+    @Type(type = "numeric_boolean")
+    @Column(name = "INH_AS_DEF_VALUE")
+    private boolean useInheritedAsDefaultValue;
 
     /**
      * Reference to an entity. A classname. In case of CustomEntityTemplate, classname consist of "CustomEntityTemplate - <CustomEntityTemplate code>"
@@ -319,6 +324,14 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
         this.defaultValue = defaultValue;
     }
 
+    public boolean isUseInheritedAsDefaultValue() {
+        return useInheritedAsDefaultValue;
+    }
+    
+    public void setUseInheritedAsDefaultValue(boolean useInheritedAsDefaultValue) {
+        this.useInheritedAsDefaultValue = useInheritedAsDefaultValue;
+    }
+    
     public String getEntityClazz() {
         return entityClazz;
     }

@@ -295,13 +295,15 @@
 				<h:panelGroup id="mapKeyTypeField">
 					<hftl:formField label="#{messages['customFieldTemplate.mapKeyType']}" field="mapKeyType" required="true" componentWidth="10" rendered="#{customFieldTemplateBean.entity.storageType == 'MAP'}" />
 				</h:panelGroup>
-				<h:panelGroup id="defaultValueField">
-					<hftl:formField label="#{messages['customFieldTemplate.defaultValue']}" field="defaultValue" componentWidth="20"
-						rendered="#{customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.DATE and customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.ENTITY and customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.CHILD_ENTITY and customFieldTemplateBean.entity.storageType == 'SINGLE'}"
-						newLine="true" />
-				</h:panelGroup>
+                <h:panelGroup id="defaultValueField">
+                    <hftl:formField label="#{messages['customFieldTemplate.defaultValue']}" field="defaultValue" componentWidth="20"
+                        rendered="#{customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.DATE and customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.ENTITY and customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.CHILD_ENTITY and customFieldTemplateBean.entity.storageType == 'SINGLE'}"
+                        newLine="true" />
+                    <hftl:formField label="#{messages['customFieldTemplate.useInheritedAsDefaultValue']}" field="useInheritedAsDefaultValue" componentWidth="20"
+                        rendered="#{customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.DATE and customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.ENTITY and customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.CHILD_ENTITY and customFieldTemplateBean.entity.storageType == 'SINGLE'}" />
+                </h:panelGroup>
 
-				<hftl:formField label="#{messages['customFieldTemplate.tags']}" field="tags" componentWidth="40" textArea="true" maxlength="2000" rows="1" />
+                <hftl:formField label="#{messages['customFieldTemplate.tags']}" field="tags" componentWidth="40" textArea="true" maxlength="2000" rows="1" />
 
 				<h:panelGroup id="entityClazzField">
 					<hftl:formField label="#{messages['entity.notification.classNameFilter']}" field="entityClazz" required="true" size="90" maxlength="255" autocompleteBean="#{customFieldTemplateBean}"

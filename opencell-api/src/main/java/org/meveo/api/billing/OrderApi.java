@@ -800,7 +800,7 @@ public class OrderApi extends BaseApi {
             productOrderItems.add(orderItemToDto(orderItem));
         }
 
-        productOrder.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(order));
+        productOrder.setCustomFields(entityToDtoConverter.getCustomFieldsWithInheritedDTO(order, true));
 
         return productOrder;
     }

@@ -15,7 +15,6 @@ import org.meveo.api.dto.CustomFieldValueDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EntityReferenceDto;
 import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.billing.Subscription;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
@@ -113,8 +112,11 @@ public class EntityToDtoConverter {
 
         CustomFieldDto dto = new CustomFieldDto();
         dto.setCode(cfi.getCode());
-        dto.setValuePeriodStartDate(cfi.getPeriod().getFrom());
-        dto.setValuePeriodEndDate(cfi.getPeriod().getTo());
+        if (cfi.getPeriodRaw() != null) {
+        	dto.setValuePeriodStartDate(cfi.getPeriod().getFrom());
+        	dto.setValuePeriodEndDate(cfi.getPeriod().getTo());
+        }        
+        
         if (cfi.getPriority() > 0) {
             dto.setValuePeriodPriority(cfi.getPriority());
         }
@@ -180,12 +182,12 @@ public class EntityToDtoConverter {
         return dtos;
     }
 
-	public CustomFieldsDto getCustomFieldsWithInheritedDTO(Subscription entity, boolean includeInheritedCF) {
+	public CustomFieldsDto getCustomFieldsWithInheritedDTO(ICustomFieldEntity entity, boolean includeInheritedCF) {
 		CustomFieldsDto customFieldsDto = getCustomFieldsDTO(entity);
 		if (customFieldsDto == null) {
 			customFieldsDto = new CustomFieldsDto();
 		}
-		
+
 		if (!customFieldsDto.isEmpty() && includeInheritedCF) {
 			ICustomFieldEntity[] parentEntities = entity.getParentCFEntities();
 			if (parentEntities != null) {
@@ -204,6 +206,10 @@ public class EntityToDtoConverter {
 				}
 			}
 		}
+		if (customFieldsDto.isEmpty()) {
+			return null;
+		}
+
 		return customFieldsDto;
 	}
 }

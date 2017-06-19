@@ -66,6 +66,12 @@ public class CustomFieldTemplateDto extends BaseDto {
     protected String defaultValue;
 
     /**
+     * Shall inherited value be used as default value instead if available
+     */
+    @XmlElement
+    protected boolean useInheritedAsDefaultValue;
+
+    /**
      * Value storage type
      */
     @XmlElement(required = true)
@@ -205,6 +211,7 @@ public class CustomFieldTemplateDto extends BaseDto {
         accountLevel = cf.getAppliesTo();
         appliesTo = cf.getAppliesTo();
         defaultValue = cf.getDefaultValue();
+        useInheritedAsDefaultValue = cf.isUseInheritedAsDefaultValue();
         storageType = cf.getStorageType();
         valueRequired = cf.isValueRequired();
         versionable = cf.isVersionable();
@@ -288,6 +295,14 @@ public class CustomFieldTemplateDto extends BaseDto {
 
     public void setDefaultValue(String defaultValue) {
         this.defaultValue = defaultValue;
+    }
+
+    public boolean isUseInheritedAsDefaultValue() {
+        return useInheritedAsDefaultValue;
+    }
+
+    public void setUseInheritedAsDefaultValue(boolean useInheritedAsDefaultValue) {
+        this.useInheritedAsDefaultValue = useInheritedAsDefaultValue;
     }
 
     public CustomFieldStorageTypeEnum getStorageType() {

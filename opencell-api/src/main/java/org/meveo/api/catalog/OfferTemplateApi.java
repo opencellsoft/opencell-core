@@ -392,12 +392,12 @@ public class OfferTemplateApi extends BaseCrudVersionedApi<OfferTemplate, OfferT
 
     public OfferTemplateDto convertOfferTemplateToDto(OfferTemplate offerTemplate) {
 
-        OfferTemplateDto dto = new OfferTemplateDto(offerTemplate, entityToDtoConverter.getCustomFieldsDTO(offerTemplate), false);
+        OfferTemplateDto dto = new OfferTemplateDto(offerTemplate, entityToDtoConverter.getCustomFieldsWithInheritedDTO(offerTemplate, true), false);
 
         if (offerTemplate.getOfferServiceTemplates() != null && offerTemplate.getOfferServiceTemplates().size() > 0) {
             List<OfferServiceTemplateDto> offerTemplateServiceDtos = new ArrayList<OfferServiceTemplateDto>();
             for (OfferServiceTemplate st : offerTemplate.getOfferServiceTemplates()) {
-                offerTemplateServiceDtos.add(new OfferServiceTemplateDto(st, entityToDtoConverter.getCustomFieldsDTO(st.getServiceTemplate())));
+                offerTemplateServiceDtos.add(new OfferServiceTemplateDto(st, entityToDtoConverter.getCustomFieldsWithInheritedDTO(st.getServiceTemplate(), true)));
             }
             dto.setOfferServiceTemplates(offerTemplateServiceDtos);
         }
@@ -412,7 +412,7 @@ public class OfferTemplateApi extends BaseCrudVersionedApi<OfferTemplate, OfferT
                 offerProductTemplateDto = new OfferProductTemplateDto();
                 offerProductTemplateDto.setMandatory(offerProductTemplate.isMandatory());
                 if (productTemplate != null) {
-                    offerProductTemplateDto.setProductTemplate(new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsDTO(productTemplate), false));
+                    offerProductTemplateDto.setProductTemplate(new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsWithInheritedDTO(productTemplate, true), false));
                 }
                 offerProductTemplates.add(offerProductTemplateDto);
             }

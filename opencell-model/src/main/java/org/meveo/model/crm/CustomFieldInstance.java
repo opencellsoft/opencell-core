@@ -85,7 +85,7 @@ public class CustomFieldInstance extends EnableEntity {
     public void setCode(String code) {
         this.code = code;
     }
-
+    
     public CustomFieldValue getCfValue() {
         if (cfValue == null) {
             cfValue = new CustomFieldValue();
@@ -101,6 +101,10 @@ public class CustomFieldInstance extends EnableEntity {
         if (period == null) {
             period = new DatePeriod();
         }
+        return period;
+    }
+    
+    public DatePeriod getPeriodRaw() {
         return period;
     }
 
@@ -240,8 +244,15 @@ public class CustomFieldInstance extends EnableEntity {
         } else if (!appliesToEntity.equals(other.getAppliesToEntity())) {
             return false;
         }
+        
+        if (getPeriodRaw() != null && !getPeriodRaw().isCorrespondsToPeriod(other.getPeriodRaw(),true)) {
+            return false;
+        } else if (getPeriodRaw() == null && (other.getPeriodRaw() != null && !other.getPeriodRaw().isEmpty())) {
+            return false;
+        }
 
-        return getPeriod().isCorrespondsToPeriod(other.getPeriod(), true);
+
+        return true;//iod().isCorrespondsToPeriod(other.getPeriod(), true);
     }
 
     /**

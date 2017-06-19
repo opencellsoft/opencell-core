@@ -203,7 +203,7 @@ public class TaxApi extends BaseApi {
             throw new EntityDoesNotExistsException(Tax.class, taxCode);
         }
 
-        result = new TaxDto(tax,entityToDtoConverter.getCustomFieldsDTO(tax));
+        result = new TaxDto(tax,entityToDtoConverter.getCustomFieldsWithInheritedDTO(tax, true));
 
         List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
         for (CatMessages msg : catMessagesService.getCatMessagesList(Tax.class.getSimpleName() , tax.getCode())) {
@@ -249,7 +249,7 @@ public class TaxApi extends BaseApi {
         List<Tax> taxes = taxService.list();
         if (taxes != null && !taxes.isEmpty()) {
             for (Tax tax : taxes) {
-                TaxDto taxDto = new TaxDto(tax,entityToDtoConverter.getCustomFieldsDTO(tax));
+                TaxDto taxDto = new TaxDto(tax,entityToDtoConverter.getCustomFieldsWithInheritedDTO(tax, true));
                 taxesDto.getTax().add(taxDto);
             }
         }

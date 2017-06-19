@@ -298,7 +298,17 @@ public class CustomFieldDataEntryBean implements Serializable {
 
             // Instantiate with a default value if no value found
             if (cfisByTemplate.isEmpty() && !cft.isVersionable()) {
-                cfisByTemplate.add(CustomFieldInstance.fromTemplate(cft, (ICustomFieldEntity) entity));
+                CustomFieldInstance cfi = CustomFieldInstance.fromTemplate(cft, (ICustomFieldEntity) entity);
+                
+                // Overwrite with inherited value if needed
+                if (cft.isUseInheritedAsDefaultValue()) {
+                    Object inheritedValue = customFieldInstanceService.getInheritedOnlyCFValue(entity, cfi.getCode());
+                    if (inheritedValue != null) {
+                        cfi.setValue(inheritedValue);
+                    }
+                }
+                
+                cfisByTemplate.add(cfi);
             }
 
             // Deserialize values if applicable
@@ -393,7 +403,7 @@ public class CustomFieldDataEntryBean implements Serializable {
                 strictMatch = true;
             } else {
                 period = entityValueHolder.getValuePeriod(cft, periodStartDate, periodEndDate, false, false);
-                if (period != null) {
+                if (period != null && period.getPeriodRaw() != null) {
                     strictMatch = period.getPeriod().isCorrespondsToPeriod(periodStartDate, periodEndDate, true);
                 }
             }
@@ -406,15 +416,15 @@ public class CustomFieldDataEntryBean implements Serializable {
                 // For a strict match need to edit an existing period
                 if (strictMatch) {
                     messages.error(new BundleKey("messages", "customFieldTemplate.matchingPeriodFound.noNew"),
-                        period.getPeriod() == null ? "" : DateUtils.formatDateWithPattern(period.getPeriod().getFrom(), datePattern),
-                        period.getPeriod() == null ? "" : DateUtils.formatDateWithPattern(period.getPeriod().getTo(), datePattern));
+                        period.getPeriodRaw() == null ? "" : DateUtils.formatDateWithPattern(period.getPeriod().getFrom(), datePattern),
+                        period.getPeriodRaw() == null ? "" : DateUtils.formatDateWithPattern(period.getPeriod().getTo(), datePattern));
                     entityValueHolder.setValuePeriodMatched(false);
 
                     // For a non-strict match user has an option to create a period with a higher priority
                 } else {
                     messages.warn(new BundleKey("messages", "customFieldTemplate.matchingPeriodFound"),
-                        period.getPeriod() == null ? "" : DateUtils.formatDateWithPattern(period.getPeriod().getFrom(), datePattern),
-                        period.getPeriod() == null ? "" : DateUtils.formatDateWithPattern(period.getPeriod().getTo(), datePattern));
+                        period.getPeriodRaw() == null ? "" : DateUtils.formatDateWithPattern(period.getPeriod().getFrom(), datePattern),
+                        period.getPeriodRaw() == null ? "" : DateUtils.formatDateWithPattern(period.getPeriod().getTo(), datePattern));
                     entityValueHolder.setValuePeriodMatched(true);
                 }
                 FacesContext.getCurrentInstance().validationFailed();

@@ -54,7 +54,7 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
             throw new EntityDoesNotExistsException(ProductTemplate.class, code + " / " + DateUtils.formatDateWithPattern(validFrom, datePattern) + " / " + DateUtils.formatDateWithPattern(validTo, datePattern));
         }
 
-        ProductTemplateDto productTemplateDto = new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsDTO(productTemplate), false);
+        ProductTemplateDto productTemplateDto = new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsWithInheritedDTO(productTemplate, true), false);
 
         processProductChargeTemplateToDto(productTemplate, productTemplateDto);
 

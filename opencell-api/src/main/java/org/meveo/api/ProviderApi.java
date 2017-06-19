@@ -165,7 +165,7 @@ public class ProviderApi extends BaseApi {
 
         Provider provider = providerService.findById(appProvider.getId(), Arrays.asList("currency", "country", "language"));
         if (currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationVisualization"))) {
-            return new ProviderDto(provider, entityToDtoConverter.getCustomFieldsDTO(provider));
+            return new ProviderDto(provider, entityToDtoConverter.getCustomFieldsWithInheritedDTO(provider, true));
         } else {
             throw new ActionForbiddenException("User has no permission to access provider");
         }
@@ -265,7 +265,7 @@ public class ProviderApi extends BaseApi {
         List<Tax> taxes = taxService.list();
         if (taxes != null) {
             for (Tax tax : taxes) {
-                result.getTaxes().getTax().add(new TaxDto(tax,entityToDtoConverter.getCustomFieldsDTO(tax)));
+                result.getTaxes().getTax().add(new TaxDto(tax,entityToDtoConverter.getCustomFieldsWithInheritedDTO(tax, true)));
             }
         }
 
@@ -273,7 +273,7 @@ public class ProviderApi extends BaseApi {
         List<InvoiceCategory> invoiceCategories = invoiceCategoryService.list();
         if (invoiceCategories != null) {
             for (InvoiceCategory invoiceCategory : invoiceCategories) {
-                result.getInvoiceCategories().getInvoiceCategory().add(new InvoiceCategoryDto(invoiceCategory, entityToDtoConverter.getCustomFieldsDTO(invoiceCategory)));
+                result.getInvoiceCategories().getInvoiceCategory().add(new InvoiceCategoryDto(invoiceCategory, entityToDtoConverter.getCustomFieldsWithInheritedDTO(invoiceCategory, true)));
             }
         }
 
@@ -282,7 +282,7 @@ public class ProviderApi extends BaseApi {
         if (invoiceSubCategories != null) {
             for (InvoiceSubCategory invoiceSubCategory : invoiceSubCategories) {
                 result.getInvoiceSubCategories().getInvoiceSubCategory()
-                    .add(new InvoiceSubCategoryDto(invoiceSubCategory, entityToDtoConverter.getCustomFieldsDTO(invoiceSubCategory)));
+                    .add(new InvoiceSubCategoryDto(invoiceSubCategory, entityToDtoConverter.getCustomFieldsWithInheritedDTO(invoiceSubCategory, true)));
             }
         }
 
@@ -290,7 +290,7 @@ public class ProviderApi extends BaseApi {
         List<BillingCycle> billingCycles = billingCycleService.list();
         if (billingCycles != null) {
             for (BillingCycle billingCycle : billingCycles) {
-                result.getBillingCycles().getBillingCycle().add(new BillingCycleDto(billingCycle,entityToDtoConverter.getCustomFieldsDTO(billingCycle)));
+                result.getBillingCycles().getBillingCycle().add(new BillingCycleDto(billingCycle,entityToDtoConverter.getCustomFieldsWithInheritedDTO(billingCycle, true)));
             }
         }
 
@@ -373,7 +373,7 @@ public class ProviderApi extends BaseApi {
         Provider provider = providerService.findById(appProvider.getId());
         if (currentUser.hasRole("superAdminManagement")
                 || (currentUser.hasRole("administrationVisualization"))) {
-            return new ProviderDto(provider, entityToDtoConverter.getCustomFieldsDTO(provider), false);
+            return new ProviderDto(provider, entityToDtoConverter.getCustomFieldsWithInheritedDTO(provider, true), false);
         } else {
             throw new ActionForbiddenException("User has no permission to access provider");
         }

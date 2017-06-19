@@ -23,7 +23,7 @@
 		</h:form>
 
 		<hftl:searchPanel label="#{messages['auditLog.search']}" columns="3"
-			backingBean="#{auditLogListBean}">
+			backingBean="#{auditLogListBean}" renderNewButton="false">
 			<hftl:searchField label="#{messages['auditLog.actor']}" field="actor" />
 			<hftl:searchField label="#{messages['auditLog.action']}"
 				field="action" />

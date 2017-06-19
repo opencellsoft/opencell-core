@@ -460,8 +460,8 @@
             <column name="address_state" type="varchar(50)" />
             <column name="address_zipcode" type="varchar(10)" />
             <column name="default_level" type="${type.boolean}" defaultValueNumeric="1" />
-            <column name="external_ref_1" type="varchar(50)" />
-            <column name="external_ref_2" type="varchar(50)" />
+            <column name="external_ref_1" type="varchar(255)" />
+            <column name="external_ref_2" type="varchar(255)" />
             <column name="firstname" type="varchar(50)" />
             <column name="lastname" type="varchar(50)" />
             <column name="provider_contact" type="varchar(255)" />
