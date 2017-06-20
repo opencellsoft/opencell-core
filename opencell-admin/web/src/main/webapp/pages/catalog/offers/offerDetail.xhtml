@@ -239,7 +239,7 @@
         <p:dialog id="selectProduct" widgetVar="selectProduct" dynamic="true" modal="true" appendTo="@(body)">
             <h:form id="addOfferProductForm">
                 <p:panel id="headerPanel">
-                    <p:dataTable id="productTemplatesTable" var="entity" value="#{productTemplateBean.listAll()}" paginator="true" rows="5" paginatorPosition="top"
+                    <p:dataTable id="productTemplatesTable" var="entity" value="#{offerTemplateBean.productTemplatesLookup}" paginator="true" rows="5" paginatorPosition="top"
                         paginatorAlwaysVisible="true" paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                         lazy="true" styleClass="ui-panelgrid-blank">
                         <p:column>

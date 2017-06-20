@@ -103,6 +103,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
     private OfferServiceTemplate offerServiceTemplate;
     private OfferProductTemplate offerProductTemplate;
     private BusinessOfferModel businessOfferModel;
+    private List<ProductTemplate> productTemplatesLookup;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -115,9 +116,16 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
     public OfferTemplate initEntity() {
         super.initEntity();
 
-        if (bomId != null) {
-            businessOfferModel = businessOfferModelService.findById(bomId);
-        }
+		if (bomId != null) {
+			businessOfferModel = businessOfferModelService.findById(bomId);
+			productTemplatesLookup = new ArrayList<>();
+			if (entity.getOfferProductTemplates() != null && !entity.getOfferProductTemplates().isEmpty()) {
+				for (OfferProductTemplate opt : entity.getOfferProductTemplates()) {
+					productTemplatesLookup.add(opt.getProductTemplate());
+				}
+			}
+			setOverrideImageOnUpload(false);
+		}
 
         if (newVersion) {
             instantiateNewVersion();
@@ -540,4 +548,12 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
         return true;
     }
+
+	public List<ProductTemplate> getProductTemplatesLookup() {
+		return productTemplatesLookup;
+	}
+
+	public void setProductTemplatesLookup(List<ProductTemplate> productTemplatesLookup) {
+		this.productTemplatesLookup = productTemplatesLookup;
+	}
 }
