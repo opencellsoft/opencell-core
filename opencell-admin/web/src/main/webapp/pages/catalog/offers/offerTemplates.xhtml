@@ -87,7 +87,7 @@
 
 						<p:panel styleClass="Wid50 Responsive100 VAlignTop Padding10">
 							<p:panel
-								styleClass="Wid30 Responsive100 VAlignTop border-left no-border-radius">
+								styleClass="Wid20 Responsive100 VAlignTop border-left no-border-radius">
 								<f:facet name="header">
 									<h:outputText
 										value="#{messages['marketingManager.catalog.OneTimeFee']}"
@@ -113,7 +113,7 @@
 								</p:dataList>
 							</p:panel>
 							<p:panel
-								styleClass="Wid30 Responsive100 VAlignTop border-left no-border-radius">
+								styleClass="Wid20 Responsive100 VAlignTop border-left no-border-radius">
 								<f:facet name="header">
 									<h:outputText
 										value="#{messages['marketingManager.catalog.recurringFee']}"
@@ -138,7 +138,7 @@
 								</p:dataList>
 							</p:panel>
 							<p:panel
-								styleClass="Wid30 Responsive100 VAlignTop border-left no-border-radius">
+								styleClass="Wid20 Responsive100 VAlignTop border-left no-border-radius">
 								<f:facet name="header">
 									<h:outputText
 										value="#{messages['marketingManager.catalog.usageFee']}"
@@ -157,6 +157,28 @@
 												value="#{service.serviceUsageCharges}">
 												<li><h:outputText
 														value="#{charge.chargeTemplate.descriptionOrCode}" /></li>
+											</ui:repeat>
+										</ul>
+									</h:panelGroup>
+								</p:dataList>
+							</p:panel>
+							<p:panel
+								styleClass="Wid20 Responsive100 VAlignTop border-left no-border-radius">
+								<f:facet name="header">
+									<h:outputText value="#{messages['menu.productTemplates']}"
+										rendered="#{entity.offerTemplate.productTemplates!=null and entity.offerTemplate.productTemplates.size()!=0}" />
+								</f:facet>
+								<p:dataList styleClass="dataList" paginatorPosition="bottom"
+									paginatorAlwaysVisible="false"
+									value="#{entity.offerTemplate.productTemplates}" var="prod" type="ordered"
+									rendered="#{entity.offerTemplate.productTemplates!=null and entity.offerTemplate.productTemplates.size()!=0}">
+									<h:outputText value="#{prod.descriptionOrCode}"
+										styleClass="text-bold" />
+									<h:panelGroup layout="block">
+										<ul class="no-list-style">
+											<ui:repeat var="charge"
+												value="#{prod.productChargeTemplates}">
+												<li><h:outputText value="#{charge.descriptionOrCode}" /></li>
 											</ui:repeat>
 										</ul>
 									</h:panelGroup>

@@ -199,7 +199,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     protected ParamBean paramBean = ParamBean.getInstance();
     protected String providerFilePath = paramBean.getProperty("providers.rootDir", "./opencelldata/");
     
-    private UploadedFile uploadedFile;    
+    private UploadedFile uploadedFile;
+    private boolean overrideImageOnUpload = true;
 
     /**
      * Constructor
@@ -1276,6 +1277,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 	public void hfHandleFileUpload(FileUploadEvent event) throws BusinessException {
 		uploadedFile = event.getFile();
 		String code = ((BusinessEntity) entity).getCode();
+		if (!overrideImageOnUpload) {
+			code = null;
+		}
 
 		try {
 			ImageUploadEventHandler<T> uploadHandler = new ImageUploadEventHandler<T>(appProvider);
@@ -1303,6 +1307,14 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 		}
 		return null;
 		
+	}
+
+	public boolean isOverrideImageOnUpload() {
+		return overrideImageOnUpload;
+	}
+
+	public void setOverrideImageOnUpload(boolean overrideImageOnUpload) {
+		this.overrideImageOnUpload = overrideImageOnUpload;
 	}
 
 }

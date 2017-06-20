@@ -367,7 +367,7 @@
                                         value="#{entity.lifeCycleStatus ne null ? messages[of:concat('enum.LifeCycleStatusEnum.', entity.lifeCycleStatus)] : ''}"
                                         styleClass="field-value #{offerTemplateBean.displayStatus(entity) ? 'GreenDark' : 'GrayDark'}"/>
                             </p:column>
-                            <p:column>
+                            <p:column headerText="#{messages['commons.actions']}">
                                 <p:link outcome="mm_offerTemplateDetail"
                                         styleClass="Padding5 fa fa-search-plus no-text-decoration fa-2x text-blue">
                                     <f:param name="cid"
@@ -389,17 +389,19 @@
                                 </p:link>
                                 <p:commandLink action="#{offerTemplateListBean.duplicateCatalogHierarchy()}"
                                                update=":tabView"
-                                               styleClass="Padding5 fa fa-copy no-text-decoration text-blue fa-2x">
-                                    <f:setPropertyActionListener
+                                               styleClass="Padding5">
+									<i class="fa fa-copy no-text-decoration text-blue fa-2x" />
+									<f:setPropertyActionListener
                                             target="#{offerTemplateListBean.entity}" value="#{entity}"/>
                                     <f:param name="tab" value="1"></f:param>
                                     <p:confirm header="#{messages['commons.duplicate']}"
                                                message="#{messages['commons.confirmDuplicate']}"/>
                                 </p:commandLink>
                                 <p:commandLink
-                                        styleClass="Padding5 fa fa-share-square-o no-text-decoration fa-2x text-blue"
+                                        styleClass="Padding5"
                                         update=":offerForExportPanel :dlgOfferExport"
                                         action="#{offerTemplateListBean.addForExport(entity)}">
+                                        <i class="fa fa-share-square-o no-text-decoration fa-2x text-blue" />
                                 </p:commandLink>
                             </p:column>
                         </hftl:dataList>
