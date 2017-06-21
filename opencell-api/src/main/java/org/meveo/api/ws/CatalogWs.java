@@ -38,6 +38,8 @@ import org.meveo.api.dto.response.catalog.GetCounterTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetDigitalResourceResponseDto;
 import org.meveo.api.dto.response.catalog.GetDiscountPlanResponseDto;
 import org.meveo.api.dto.response.catalog.GetDiscountPlansResponseDto;
+import org.meveo.api.dto.response.catalog.GetListBundleTemplateResponseDto;
+import org.meveo.api.dto.response.catalog.GetListOfferTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetListProductTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateCategoryResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
@@ -163,7 +165,11 @@ public interface CatalogWs extends IBaseWs {
 
     @WebMethod
     ActionStatus createOrUpdateOfferTemplate(@WebParam(name = "offerTemplate") OfferTemplateDto postData);
+    
+    @WebMethod
+    GetListOfferTemplateResponseDto listOfferTemplate(@WebParam(name = "offerTemplateCode") String code, @WebParam(name = "validFrom") Date validFrom, @WebParam(name = "validTo") Date validTo);
 
+    
     // price plan
 
     @WebMethod
@@ -316,7 +322,7 @@ public interface CatalogWs extends IBaseWs {
     ActionStatus removeProductTemplate(@WebParam(name = "productTemplateCode") String code, @WebParam(name = "validFrom") Date validFrom, @WebParam(name = "validTo") Date validTo);
     
     @WebMethod
-    GetListProductTemplateResponseDto listProductTemplate();
+    GetListProductTemplateResponseDto listProductTemplate(@WebParam(name = "productTemplateCode") String code, @WebParam(name = "validFrom") Date validFrom, @WebParam(name = "validTo") Date validTo);
 
     @WebMethod
     GetProductTemplateResponseDto findProductTemplate(@WebParam(name = "productTemplateCode") String code, @WebParam(name = "validFrom") Date validFrom, @WebParam(name = "validTo") Date validTo);
@@ -365,6 +371,9 @@ public interface CatalogWs extends IBaseWs {
 
     @WebMethod
     GetBundleTemplateResponseDto findBundleTemplate(@WebParam(name = "bundleTemplateCode") String code, @WebParam(name = "validFrom") Date validFrom, @WebParam(name = "validTo") Date validTo);
+    
+    @WebMethod
+    GetListBundleTemplateResponseDto listBundleTemplate(@WebParam(name = "bundleTemplateCode") String code, @WebParam(name = "validFrom") Date validFrom, @WebParam(name = "validTo") Date validTo);
 
 
     @WebMethod

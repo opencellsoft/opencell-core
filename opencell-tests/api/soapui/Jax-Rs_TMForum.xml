@@ -6421,6 +6421,18 @@
             <con:style>TEMPLATE</con:style>
             <con:default xsi:nil="true"/>
           </con:parameter>
+          <con:parameter>
+            <con:name>validFrom</con:name>
+            <con:value/>
+            <con:style>QUERY</con:style>
+            <con:default/>
+          </con:parameter>
+          <con:parameter>
+            <con:name>validTo</con:name>
+            <con:value/>
+            <con:style>QUERY</con:style>
+            <con:default/>
+          </con:parameter>
         </con:parameters>
         <con:method name="GET - getProductOffering" id="097374dc-5dbb-4b00-8eac-7940e35da1d3" method="GET">
           <con:settings/>
@@ -6441,8 +6453,17 @@
             <con:settings/>
             <con:endpoint>http://i.meveo.info</con:endpoint>
             <con:request/>
+            <con:credentials>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
             <con:parameters/>
+            <con:parameterOrder>
+              <con:entry>id</con:entry>
+              <con:entry>validFrom</con:entry>
+              <con:entry>validTo</con:entry>
+            </con:parameterOrder>
           </con:request>
         </con:method>
       </con:resource>
@@ -6548,6 +6569,18 @@
             <con:style>TEMPLATE</con:style>
             <con:default xsi:nil="true"/>
           </con:parameter>
+          <con:parameter>
+            <con:name>validFrom</con:name>
+            <con:value/>
+            <con:style>QUERY</con:style>
+            <con:default/>
+          </con:parameter>
+          <con:parameter>
+            <con:name>validTo</con:name>
+            <con:value/>
+            <con:style>QUERY</con:style>
+            <con:default/>
+          </con:parameter>
         </con:parameters>
         <con:method name="GET - getProductSpecification" id="2938c2f2-9fde-42f5-bd94-d3e892505d0f" method="GET">
           <con:settings/>
@@ -6570,6 +6603,11 @@
             <con:request/>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:parameters/>
+            <con:parameterOrder>
+              <con:entry>id</con:entry>
+              <con:entry>validFrom</con:entry>
+              <con:entry>validTo</con:entry>
+            </con:parameterOrder>
           </con:request>
         </con:method>
       </con:resource>
@@ -17657,6 +17695,59 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:parameters>
               <entry key="id" value="${#Project#baseEntityPrefix}_OFFER1" xmlns="http://eviware.com/soapui/config"/>
             </con:parameters>
+            <con:parameterOrder>
+              <con:entry>id</con:entry>
+              <con:entry/>
+              <con:entry>validFrom</con:entry>
+            </con:parameterOrder>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Get Product specification versioned" id="d27986ef-9471-4d97-bd64-8330894eb7fe">
+        <con:settings/>
+        <con:config service="MEVEO JAX-WS API Documentation" methodName="GET - getProductSpecification" resourcePath="/api/rest/catalogManagement/productSpecification/{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Get Product specification versioned" id="fe3a5cc0-e85f-4165-950f-5ac2c951c84e" mediaType="application/json">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
+            <con:request/>
+            <con:originalUri>http://localhost/opencell/api/rest/catalogManagement/productSpecification/TM_2_OFFER1</con:originalUri>
+            <con:assertion type="JsonPath Match" id="00e77ec1-ca96-43cf-bb3a-e978a7963f44" name="JsonPath Match">
+              <con:configuration>
+                <path>$validFor.startDateTime</path>
+                <content>2017-02-01T00:00:00${#Project#timezone}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="00e77ec1-ca96-43cf-bb3a-e978a7963f44" name="JsonPath Match2">
+              <con:configuration>
+                <path>$validFor.endDateTime</path>
+                <content>2017-03-01T00:00:00${#Project#timezone}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters>
+              <con:entry key="id" value="${#Project#baseEntityPrefix}_OFFER4"/>
+              <con:entry key="validFrom" value="2017-02-01"/>
+              <con:entry key="validTo" value="2017-03-01"/>
+            </con:parameters>
+            <con:parameterOrder>
+              <con:entry>id</con:entry>
+              <con:entry/>
+              <con:entry>validFrom</con:entry>
+            </con:parameterOrder>
           </con:restRequest>
         </con:config>
       </con:testStep>
@@ -17701,6 +17792,181 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:parameters>
               <entry key="id" value="${#Project#baseEntityPrefix}_OFFER1" xmlns="http://eviware.com/soapui/config"/>
             </con:parameters>
+            <con:parameterOrder>
+              <con:entry>id</con:entry>
+              <con:entry>validFrom</con:entry>
+              <con:entry>validTo</con:entry>
+            </con:parameterOrder>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Get Product offering versioned - current date" id="7da75cb4-463c-4291-ad9c-c357fa63d180">
+        <con:settings/>
+        <con:config service="MEVEO JAX-WS API Documentation" methodName="GET - getProductOffering" resourcePath="/api/rest/catalogManagement/productOffering/{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Get Product offering versioned - current date" id="0f511b63-0c66-4a45-a5a2-526a997bdd79" mediaType="application/json">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
+            <con:request/>
+            <con:originalUri>http://localhost/opencell/api/rest/catalogManagement/productOffering/TM_2_OFFER1</con:originalUri>
+            <con:assertion type="JsonPath Match" id="c2fd3c07-cb57-479a-ad1d-89e56b0a28c3" name="JsonPath Match">
+              <con:configuration>
+                <path>$.validFor.startDateTime</path>
+                <content>2017-04-01T00:00:00${#Project#timezone}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters>
+              <entry key="id" value="${#Project#baseEntityPrefix}_OFFER4" xmlns="http://eviware.com/soapui/config"/>
+            </con:parameters>
+            <con:parameterOrder>
+              <con:entry>id</con:entry>
+              <con:entry>validFrom</con:entry>
+              <con:entry>validTo</con:entry>
+            </con:parameterOrder>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Get Product offering versioned - no end date" id="42c1de5b-b414-422d-83e8-64b5d20b9e1f">
+        <con:settings/>
+        <con:config service="MEVEO JAX-WS API Documentation" methodName="GET - getProductOffering" resourcePath="/api/rest/catalogManagement/productOffering/{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Get Product offering versioned - no end date" id="0f511b63-0c66-4a45-a5a2-526a997bdd79" mediaType="application/json">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
+            <con:request/>
+            <con:originalUri>http://localhost/opencell/api/rest/catalogManagement/productOffering/TM_2_OFFER1</con:originalUri>
+            <con:assertion type="JsonPath Match" id="c2fd3c07-cb57-479a-ad1d-89e56b0a28c3" name="JsonPath Match">
+              <con:configuration>
+                <path>$.validFor.endDateTime</path>
+                <content>2017-02-01T00:00:00${#Project#timezone}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters>
+              <con:entry key="id" value="${#Project#baseEntityPrefix}_OFFER4"/>
+              <con:entry key="validTo" value="2017-02-01"/>
+            </con:parameters>
+            <con:parameterOrder>
+              <con:entry>id</con:entry>
+              <con:entry>validFrom</con:entry>
+              <con:entry>validTo</con:entry>
+            </con:parameterOrder>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Get Product offering versioned - start and end date" id="a482530b-f5d4-4e71-adf5-f08984011a6f">
+        <con:settings/>
+        <con:config service="MEVEO JAX-WS API Documentation" methodName="GET - getProductOffering" resourcePath="/api/rest/catalogManagement/productOffering/{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Get Product offering versioned - start and end date" id="0f511b63-0c66-4a45-a5a2-526a997bdd79" mediaType="application/json">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
+            <con:request/>
+            <con:originalUri>http://localhost/opencell/api/rest/catalogManagement/productOffering/TM_2_OFFER1</con:originalUri>
+            <con:assertion type="JsonPath Match" id="c2fd3c07-cb57-479a-ad1d-89e56b0a28c3" name="JsonPath Match">
+              <con:configuration>
+                <path>$.validFor.startDateTime</path>
+                <content>2017-02-01T00:00:00${#Project#timezone}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="c2fd3c07-cb57-479a-ad1d-89e56b0a28c3" name="JsonPath Match2">
+              <con:configuration>
+                <path>$.validFor.endDateTime</path>
+                <content>2017-03-01T00:00:00${#Project#timezone}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters>
+              <con:entry key="id" value="${#Project#baseEntityPrefix}_OFFER4"/>
+              <con:entry key="validFrom" value="2017-02-01"/>
+              <con:entry key="validTo" value="2017-03-01"/>
+            </con:parameters>
+            <con:parameterOrder>
+              <con:entry>id</con:entry>
+              <con:entry>validFrom</con:entry>
+              <con:entry>validTo</con:entry>
+            </con:parameterOrder>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Get Product offering versioned - any date" id="6a1d068e-30a1-4228-84e3-59eeb25254d7">
+        <con:settings/>
+        <con:config service="MEVEO JAX-WS API Documentation" methodName="GET - getProductOffering" resourcePath="/api/rest/catalogManagement/productOffering/{id}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Get Product offering versioned - any date" id="0f511b63-0c66-4a45-a5a2-526a997bdd79" mediaType="application/json">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
+            <con:request/>
+            <con:originalUri>http://localhost/opencell/api/rest/catalogManagement/productOffering/TM_2_OFFER1</con:originalUri>
+            <con:assertion type="JsonPath Match" id="c2fd3c07-cb57-479a-ad1d-89e56b0a28c3" name="JsonPath Match">
+              <con:configuration>
+                <path>$.validFor.startDateTime</path>
+                <content>2017-02-01T00:00:00${#Project#timezone}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="c2fd3c07-cb57-479a-ad1d-89e56b0a28c3" name="JsonPath Match2">
+              <con:configuration>
+                <path>$.validFor.endDateTime</path>
+                <content>2017-03-01T00:00:00${#Project#timezone}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters>
+              <con:entry key="id" value="${#Project#baseEntityPrefix}_OFFER4"/>
+              <con:entry key="validFrom" value="2017-02-15"/>
+            </con:parameters>
+            <con:parameterOrder>
+              <con:entry>id</con:entry>
+              <con:entry>validFrom</con:entry>
+              <con:entry>validTo</con:entry>
+            </con:parameterOrder>
           </con:restRequest>
         </con:config>
       </con:testStep>

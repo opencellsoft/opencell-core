@@ -59,6 +59,8 @@ import org.meveo.api.dto.response.catalog.GetCounterTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetDigitalResourceResponseDto;
 import org.meveo.api.dto.response.catalog.GetDiscountPlanResponseDto;
 import org.meveo.api.dto.response.catalog.GetDiscountPlansResponseDto;
+import org.meveo.api.dto.response.catalog.GetListBundleTemplateResponseDto;
+import org.meveo.api.dto.response.catalog.GetListOfferTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetListProductTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateCategoryResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
@@ -244,6 +246,21 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
         return result;
     }
 
+    @Override
+    public GetListOfferTemplateResponseDto listOfferTemplate(String code, Date validFrom, Date validTo) {
+        GetListOfferTemplateResponseDto result = new GetListOfferTemplateResponseDto();
+        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+        result.getActionStatus().setMessage("");
+
+        try {
+            result.setOfferTemplates(offerTemplateApi.list(code, validFrom, validTo));
+
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+        return result;
+    }
+    
     @Override
     public ActionStatus createOneShotChargeTemplate(OneShotChargeTemplateDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -1396,6 +1413,21 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
     }
 
     @Override
+    public GetListBundleTemplateResponseDto listBundleTemplate(String code, Date validFrom, Date validTo) {
+        GetListBundleTemplateResponseDto result = new GetListBundleTemplateResponseDto();
+        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+        result.getActionStatus().setMessage("");
+
+        try {
+            result.setBundleTemplates(bundleTemplateApi.list(code, validFrom, validTo));
+
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+        return result;
+    }
+
+    @Override
     public ActionStatus createChannel(ChannelDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -1463,13 +1495,13 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
     }
 
     @Override
-    public GetListProductTemplateResponseDto listProductTemplate() {
+    public GetListProductTemplateResponseDto listProductTemplate(String code, Date validFrom, Date validTo) {
         GetListProductTemplateResponseDto result = new GetListProductTemplateResponseDto();
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
         result.getActionStatus().setMessage("");
 
         try {
-            result.setListProductTemplate(productTemplateApi.list());
+            result.setListProductTemplate(productTemplateApi.list(code, validFrom, validTo));
 
         } catch (Exception e) {
             processException(e, result.getActionStatus());

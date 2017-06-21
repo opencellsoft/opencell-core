@@ -1,5 +1,6 @@
 package org.meveo.api.rest.account.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
@@ -18,7 +19,6 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.account.BillingAccountRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.model.billing.CounterInstance;
-import org.meveo.model.shared.DateUtils;
 
 /**
  * @author Edward P. Legaspi
@@ -108,11 +108,11 @@ public class BillingAccountRsImpl extends BaseRs implements BillingAccountRs {
     }
 
     @Override
-    public GetCountersInstancesResponseDto filterBillingAccountCountersByPeriod(String billingAccountCode, String date) {
+    public GetCountersInstancesResponseDto filterBillingAccountCountersByPeriod(String billingAccountCode, Date date) {
         GetCountersInstancesResponseDto result = new GetCountersInstancesResponseDto();
 
         try {
-            List<CounterInstance> counters = billingAccountApi.filterCountersByPeriod(billingAccountCode, DateUtils.parseDateWithPattern(date, "yyyy-MM-dd"));
+            List<CounterInstance> counters = billingAccountApi.filterCountersByPeriod(billingAccountCode, date);
             for (CounterInstance ci : counters) {
                 result.getCountersInstances().getCounterInstance().add(new CounterInstanceDto(ci));
             }

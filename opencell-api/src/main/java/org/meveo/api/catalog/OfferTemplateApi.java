@@ -3,12 +3,15 @@ package org.meveo.api.catalog;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseCrudVersionedApi;
 import org.meveo.api.dto.catalog.OfferProductTemplateDto;
 import org.meveo.api.dto.catalog.OfferServiceTemplateDto;
@@ -420,5 +423,54 @@ public class OfferTemplateApi extends BaseCrudVersionedApi<OfferTemplate, OfferT
         }
 
         return dto;
+    }
+
+    /**
+     * List all offer templates optionally filtering by code and validity dates. If neither date is provided, validity dates will not be considered.If only validFrom is provided, a
+     * search will return offers valid on a given date. If only validTo date is provided, a search will return offers valid from today to a given date.
+     * 
+     * @param code Offer template code for optional filtering
+     * @param validFrom Validity range from date.
+     * @param validTo Validity range to date.
+     * @return A list of offer templates
+     */
+    public List<OfferTemplateDto> list(String code, Date validFrom, Date validTo) {
+        List<OfferTemplate> listOfferTemplates = null;
+
+        if (StringUtils.isBlank(code) && validFrom == null && validTo == null) {
+            listOfferTemplates = offerTemplateService.list();
+        } else {
+
+            Map<String, Object> filters = new HashMap<String, Object>();
+            if (!StringUtils.isBlank(code)) {
+                filters.put("code", code);
+            }
+
+            // If only validTo date is provided, a search will return products valid from today to a given date.
+            if (validFrom == null && validTo != null) {
+                validFrom = new Date();
+            }
+
+            // search by a single date
+            if (validFrom != null && validTo == null) {
+
+                filters.put("minmaxOptionalRange-validity.from-validity.to", validFrom);
+
+                // search by date range
+            } else if (validFrom != null && validTo != null) {
+                filters.put("overlapOptionalRange-validity.from-validity.to", new Date[] { validFrom, validTo });
+            }
+
+            PaginationConfiguration config = new PaginationConfiguration(filters);
+            listOfferTemplates = offerTemplateService.list(config);
+        }
+
+        List<OfferTemplateDto> dtos = new ArrayList<OfferTemplateDto>();
+        if (listOfferTemplates != null) {
+            for (OfferTemplate offerTemplate : listOfferTemplates) {
+                dtos.add(convertOfferTemplateToDto(offerTemplate));
+            }
+        }
+        return dtos;
     }
 }

@@ -230,7 +230,7 @@ public class GenericProductOfferingService<T extends ProductOffering> extends Mu
     }
 
     /**
-     * Find a particular product offering version, matching validity start and end dates
+     * Find a particular product offering version, STRICTLY matching validity start and end dates
      * 
      * @param code Product offering code
      * @param from Validity date range start date
@@ -244,7 +244,7 @@ public class GenericProductOfferingService<T extends ProductOffering> extends Mu
             return super.findByCode(code, null, "be.validity.from=:from and be.validity.to=:to", "from", from, "to", to);
 
         } else if (from == null && to == null) {
-            return super.findByCode(code, null, "be.validity.from is null and be.validity.to is null");
+            return super.findByCode(code, null, "be.validity.from is null and be.validity.to is null", "ignore me");
 
         } else if (from != null) {
             return super.findByCode(code, null, "be.validity.from=:from and be.validity.to is null", "from", from);
@@ -265,9 +265,11 @@ public class GenericProductOfferingService<T extends ProductOffering> extends Mu
      * @return Product offering
      */
     public T findByCodeBestValidityMatch(String code, Date from, Date to) {
+        
+        // Strict match by noth dates
         T offering = findByCode(code, from, to);
 
-        // Do a strict check if only TO date is provided. Don't check by other dates - if FROM date is NULL, it will lookup by todays date
+        // If only TO date is provided, only a strict check should be done. This is to solve a problem - if FROM date is NULL, it will lookup by todays date
         if (offering == null && (from != null || to == null)) {
             offering = findByCode(code, from);
             if (offering == null) {

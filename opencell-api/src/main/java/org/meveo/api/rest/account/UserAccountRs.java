@@ -1,5 +1,7 @@
 package org.meveo.api.rest.account;
 
+import java.util.Date;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -18,6 +20,7 @@ import org.meveo.api.dto.response.account.GetUserAccountResponseDto;
 import org.meveo.api.dto.response.account.UserAccountsResponseDto;
 import org.meveo.api.dto.response.billing.GetCountersInstancesResponseDto;
 import org.meveo.api.rest.IBaseRs;
+import org.meveo.api.serialize.RestDateParam;
 
 /**
  * @author Edward P. Legaspi
@@ -98,7 +101,7 @@ public interface UserAccountRs extends IBaseRs {
     @GET
     @Path("/filterCountersByPeriod")
 	GetCountersInstancesResponseDto filterUserAccountCountersByPeriod(@QueryParam("userAccountCode") String userAccountCode, 
-			@QueryParam("date") String date);
+			@QueryParam("date") @RestDateParam Date date);
 
     /**
      * Apply a product on a user account.

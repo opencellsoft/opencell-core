@@ -11,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.usage.UsageChargeAggregateResponseDto;
 import org.meveo.api.dto.usage.UsageResponseDto;
+import org.meveo.api.serialize.RestDateParam;
 
 
 @Path("/usage")
@@ -29,11 +30,11 @@ public interface UsageRs extends IBaseRs {
      */
     @Path("/")
     @GET
-    public UsageResponseDto find(@QueryParam("userAccountCode") String userAccountCode,@QueryParam("fromDate") Date fromDate,@QueryParam("toDate") Date toDate);
+    public UsageResponseDto find(@QueryParam("userAccountCode") String userAccountCode,@QueryParam("fromDate") @RestDateParam Date fromDate, @QueryParam("toDate") @RestDateParam Date toDate);
 
     
     @Path("/chargeAggregate")
     @GET
-    public UsageChargeAggregateResponseDto chargeAggregate(@QueryParam("userAccountCode") String userAccountCode,@QueryParam("fromDate") Date fromDate,@QueryParam("toDate") Date toDate);
+    public UsageChargeAggregateResponseDto chargeAggregate(@QueryParam("userAccountCode") String userAccountCode, @QueryParam("fromDate") @RestDateParam Date fromDate, @QueryParam("toDate") @RestDateParam Date toDate);
 
 }

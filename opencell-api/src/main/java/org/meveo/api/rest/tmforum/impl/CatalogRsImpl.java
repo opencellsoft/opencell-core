@@ -406,10 +406,10 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
     }
 
 	@Override
-	public Response listProductTemplate() {
+	public Response listProductTemplate(String code, Date validFrom, Date validTo) {
 		Response.ResponseBuilder responseBuilder = null;
         try {
-        	List<ProductTemplateDto> listProductTemplate = productTemplateApi.list();
+        	List<ProductTemplateDto> listProductTemplate = productTemplateApi.list(code, validFrom, validTo);
             responseBuilder = Response.ok().entity(listProductTemplate);
 
         } catch (ConstraintViolationException e) {

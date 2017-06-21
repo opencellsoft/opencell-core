@@ -1,5 +1,7 @@
 package org.meveo.api.rest.payment.impl;
 
+import java.util.Date;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -14,7 +16,6 @@ import org.meveo.api.payment.DDRequestLotOpApi;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.payment.DDRequestLotOpRs;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
-import org.meveo.model.shared.DateUtils;
 
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -42,11 +43,11 @@ public class DDRequestLotOpRsImpl extends BaseRs implements DDRequestLotOpRs {
       return result;	}
 
 	@Override
-	public DDRequestLotOpsResponseDto list(String fromDueDate,String toDueDate,DDRequestOpStatusEnum status) {
+	public DDRequestLotOpsResponseDto list(Date fromDueDate, Date toDueDate, DDRequestOpStatusEnum status) {
       DDRequestLotOpsResponseDto result = new DDRequestLotOpsResponseDto();
 
       try {
-          result.setDdrequestLotOps(ddrequestLotOpApi.listDDRequestLotOps(DateUtils.parseDateWithPattern(fromDueDate, "yyyy-MM-dd"),DateUtils.parseDateWithPattern(toDueDate, "yyyy-MM-dd"),status));
+          result.setDdrequestLotOps(ddrequestLotOpApi.listDDRequestLotOps(fromDueDate, toDueDate, status));
 //      } catch (MeveoApiException e) {
 //          result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
 //          result.getActionStatus().setMessage(e.getMessage());

@@ -40,7 +40,7 @@ public class CatalogApi extends BaseApi {
     private PricePlanMatrixService pricePlanMatrixService;
 
     public ProductOffering findProductOffering(String code, Date validFrom, Date validTo, UriInfo uriInfo, Category category) throws EntityDoesNotExistsException {
-        OfferTemplate offerTemplate = offerTemplateService.findByCode(code, validFrom, validTo);
+        OfferTemplate offerTemplate = offerTemplateService.findByCodeBestValidityMatch(code, validFrom, validTo);
         if (offerTemplate == null) {
             throw new EntityDoesNotExistsException(OfferTemplate.class, code);
         }
@@ -247,7 +247,7 @@ public class CatalogApi extends BaseApi {
     }
 
     public ProductSpecification findProductSpecification(String code, Date validFrom, Date validTo, UriInfo uriInfo) throws EntityDoesNotExistsException {
-        OfferTemplate offerTemplate = offerTemplateService.findByCode(code, validFrom, validTo);
+        OfferTemplate offerTemplate = offerTemplateService.findByCodeBestValidityMatch(code, validFrom, validTo);
         if (offerTemplate != null) {
             return ProductSpecification.parseFromOfferTemplate(offerTemplate, uriInfo);
         } else {
