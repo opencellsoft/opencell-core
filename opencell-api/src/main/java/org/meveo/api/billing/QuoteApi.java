@@ -653,7 +653,7 @@ public class QuoteApi extends BaseApi {
             UUID.randomUUID().toString());
         ProductInstance productInstance = new ProductInstance(quoteItem.getUserAccount(), subscription, productTemplate, quantity, chargeDate, code,
             productTemplate.getDescription(), null);
-
+        productInstance.setOrderNumber(quoteItem.getQuote().getCode());
         try {
             CustomFieldsDto customFields = extractCustomFields(product, ProductInstance.class);
             populateCustomFields(customFields, productInstance, true, true);
