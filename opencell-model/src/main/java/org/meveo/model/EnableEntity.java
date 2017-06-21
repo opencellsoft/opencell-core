@@ -30,7 +30,7 @@ public class EnableEntity extends AuditableEntity implements IEnable {
 	private static final long serialVersionUID = 1L;
 
 	@Type(type="numeric_boolean")
-	@Column(name = "DISABLED", nullable = false)	
+	@Column(name = "disabled", nullable = false)	
 	@NotNull
 	private boolean disabled;
 

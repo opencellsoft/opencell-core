@@ -38,29 +38,29 @@ import org.meveo.model.admin.Currency;
 
 @Entity
 @ExportIdentifier("countryCode")
-@Table(name = "ADM_COUNTRY")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ADM_COUNTRY_SEQ"), })
+@Table(name = "adm_country")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "adm_country_seq"), })
 public class Country extends AuditableEntity {
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "COUNTRY_CODE", length = 10)
+	@Column(name = "country_code", length = 10)
 	@Size(max = 10)
 	private String countryCode;
 
-	@Column(name = "DESCRIPTION_EN", length = 100)
+	@Column(name = "description_en", length = 100)
 	@Size(max = 100)
 	private String descriptionEn;
 	
-	@Column(name = "DESCRIPTION_FR", length = 100)
+	@Column(name = "description_fr", length = 100)
 	@Size(max = 100)
 	private String descriptionFr;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "CURRENCY_ID")
+	@JoinColumn(name = "currency_id")
 	private Currency currency;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "LANGUAGE_ID")
+	@JoinColumn(name = "language_id")
 	private Language language;
 
 	public String getCountryCode() {

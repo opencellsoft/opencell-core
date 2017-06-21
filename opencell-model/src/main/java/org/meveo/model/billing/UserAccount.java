@@ -50,7 +50,7 @@ import org.meveo.model.ICustomFieldEntity;
 @CustomFieldEntity(cftCodePrefix = "UA")
 @ExportIdentifier({ "code"})
 @DiscriminatorValue(value = "ACCT_UA")
-@Table(name = "BILLING_USER_ACCOUNT")
+@Table(name = "billing_user_account")
 public class UserAccount extends AccountEntity {
 
     public static final String ACCOUNT_TYPE = ((DiscriminatorValue) UserAccount.class.getAnnotation(DiscriminatorValue.class)).value();
@@ -59,23 +59,23 @@ public class UserAccount extends AccountEntity {
 	private static final long serialVersionUID = 1L;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "STATUS", length = 10)
+	@Column(name = "status", length = 10)
 	private AccountStatusEnum status = AccountStatusEnum.ACTIVE;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "STATUS_DATE")
+	@Column(name = "status_date")
 	private Date statusDate = new Date();
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "SUBSCRIPTION_DATE")
+	@Column(name = "subscription_date")
 	private Date subscriptionDate = new Date();
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "TERMINATION_DATE")
+	@Column(name = "termination_date")
 	private Date terminationDate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "BILLING_ACCOUNT_ID")
+	@JoinColumn(name = "billing_account_id")
 	private BillingAccount billingAccount;
 
 	@OneToMany(mappedBy = "userAccount", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
@@ -89,7 +89,7 @@ public class UserAccount extends AccountEntity {
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	// TODO : Add orphanRemoval annotation.
 	// @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-	@JoinColumn(name = "WALLET_ID")
+	@JoinColumn(name = "wallet_id")
 	private WalletInstance wallet;
 
 	@OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY)
@@ -106,7 +106,7 @@ public class UserAccount extends AccountEntity {
 	Map<String, CounterInstance> counters = new HashMap<String, CounterInstance>();
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TERMIN_REASON_ID")
+	@JoinColumn(name = "termin_reason_id")
 	private SubscriptionTerminationReason terminationReason;
 
 	public UserAccount() {

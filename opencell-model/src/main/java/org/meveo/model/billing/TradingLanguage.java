@@ -40,8 +40,8 @@ import org.meveo.model.ObservableEntity;
 @ObservableEntity
 @ExportIdentifier({ "language.languageCode"})
 @Cacheable
-@Table(name = "BILLING_TRADING_LANGUAGE")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_TRADING_LANGUAGE_SEQ"), })
+@Table(name = "billing_trading_language")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_trading_language_seq"), })
 @NamedQueries({			
 @NamedQuery(name = "tradingLanguage.getNbLanguageNotAssociated", 
 	           query = "select count(*) from TradingLanguage tr where tr.id not in (select s.tradingLanguage.id from Seller s where s.tradingLanguage.id is not null) "),
@@ -54,10 +54,10 @@ public class TradingLanguage extends EnableEntity {
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "LANGUAGE_ID")
+	@JoinColumn(name = "language_id")
 	private Language language;
 
-	@Column(name = "PR_DESCRIPTION", length = 255)
+	@Column(name = "pr_description", length = 255)
     @Size(max = 255)
 	private String prDescription;
 

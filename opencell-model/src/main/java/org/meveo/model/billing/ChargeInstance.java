@@ -62,9 +62,9 @@ import org.slf4j.LoggerFactory;
 
 @Entity
 @ObservableEntity
-@Table(name = "BILLING_CHARGE_INSTANCE")
+@Table(name = "billing_charge_instance")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "BILLING_CHARGE_INSTANCE_SEQ"), })
+        @Parameter(name = "sequence_name", value = "billing_charge_instance_seq"), })
 @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "code", unique = false)) })
 @Inheritance(strategy = InheritanceType.JOINED)
 public class ChargeInstance extends BusinessEntity {
@@ -77,44 +77,44 @@ public class ChargeInstance extends BusinessEntity {
 	public static String NO_ORDER_NUMBER ="none";
     
 	@Enumerated(EnumType.STRING)
-	@Column(name = "STATUS")
+	@Column(name = "status")
 	protected InstanceStatusEnum status = InstanceStatusEnum.ACTIVE;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "STATUS_DATE")
+	@Column(name = "status_date")
 	protected Date statusDate;
 
 	@Temporal(TemporalType.DATE)
-	@Column(name = "TERMINATION_DATE")
+	@Column(name = "termination_date")
 	protected Date terminationDate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "CHARGE_TEMPLATE_ID")
+	@JoinColumn(name = "charge_template_id")
 	protected ChargeTemplate chargeTemplate;
 
 	@ManyToOne
-	@JoinColumn(name = "INVOICING_CALENDAR_ID")
+	@JoinColumn(name = "invoicing_calendar_id")
 	private Calendar invoicingCalendar;
 	
 	@Temporal(TemporalType.DATE)
-	@Column(name = "CHARGE_DATE")
+	@Column(name = "charge_date")
 	protected Date chargeDate;
 
-	@Column(name = "AMOUNT_WITHOUT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
 	protected BigDecimal amountWithoutTax;
 
-	@Column(name = "AMOUNT_WITH_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
 	protected BigDecimal amountWithTax;
 
-	@Column(name = "CRITERIA_1", length = 255)
+	@Column(name = "criteria_1", length = 255)
 	@Size(max = 255)
 	protected String criteria1;
 
-	@Column(name = "CRITERIA_2", length = 255)
+	@Column(name = "criteria_2", length = 255)
     @Size(max = 255)
 	protected String criteria2;
 
-	@Column(name = "CRITERIA_3", length = 255)
+	@Column(name = "criteria_3", length = 255)
     @Size(max = 255)
 	protected String criteria3;
 
@@ -122,32 +122,32 @@ public class ChargeInstance extends BusinessEntity {
 	protected Set<WalletOperation> walletOperations = new HashSet<WalletOperation>();
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "SELLER_ID")
+	@JoinColumn(name = "seller_id")
 	private Seller seller;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "USER_ACCOUNT_ID")
+	@JoinColumn(name = "user_account_id")
 	protected UserAccount userAccount;
 	
 	///Might be null, for productCharges for instance
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "SUBSCRIPTION_ID")
+	@JoinColumn(name = "subscription_id")
 	protected Subscription subscription;
 
-	@Column(name = "PR_DESCRIPTION", length = 255)
+	@Column(name = "pr_description", length = 255)
 	@Size(max = 255)
 	protected String prDescription;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TRADING_CURRENCY")
+	@JoinColumn(name = "trading_currency")
 	private TradingCurrency currency;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TRADING_COUNTRY")
+	@JoinColumn(name = "trading_country")
 	private TradingCountry country;
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "BILLING_CHRGINST_WALLET", joinColumns = @JoinColumn(name = "CHRG_INSTANCE_ID"), inverseJoinColumns = @JoinColumn(name = "WALLET_INSTANCE_ID"))
+	@JoinTable(name = "billing_chrginst_wallet", joinColumns = @JoinColumn(name = "chrg_instance_id"), inverseJoinColumns = @JoinColumn(name = "wallet_instance_id"))
 	@OrderColumn(name = "INDX")
 	private List<WalletInstance> walletInstances = new ArrayList<WalletInstance>();
 	
@@ -155,10 +155,10 @@ public class ChargeInstance extends BusinessEntity {
 	private List<WalletOperation> sortedWalletOperations;
 
 	@Type(type="numeric_boolean")
-    @Column(name = "IS_PREPAID")
+    @Column(name = "is_prepaid")
 	protected Boolean prepaid=Boolean.FALSE;
 
-    @Column(name = "ORDER_NUMBER", length = 100)
+    @Column(name = "order_number", length = 100)
     @Size(max = 100)
     private String orderNumber;
 	

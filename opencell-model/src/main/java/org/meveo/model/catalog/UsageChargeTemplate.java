@@ -31,8 +31,8 @@ import org.meveo.model.MultilanguageEntity;
 
 @Entity
 @MultilanguageEntity(key = "menu.charges", group = "ChargeTemplate")
-@Table(name = "CAT_USAGE_CHARGE_TEMPLATE")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CAT_USAGE_CHARGE_TEMPLATE_SEQ"), })
+@Table(name = "cat_usage_charge_template")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_usage_charge_template_seq"), })
 @NamedQueries({ @NamedQuery(name = "UsageChargeTemplate.getWithTemplateEDR", query = "SELECT u FROM UsageChargeTemplate u join u.edrTemplates t WHERE :edrTemplate=t"
 		+ " and u.disabled=false"),		
 @NamedQuery(name = "usageChargeTemplate.getNbrUsagesChrgWithNotPricePlan", 
@@ -55,27 +55,27 @@ public class UsageChargeTemplate extends ChargeTemplate {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "FILTER_PARAM_1", length = 255)
+	@Column(name = "filter_param_1", length = 255)
 	@Size(max = 255)
 	private String filterParam1 = WILCARD;
 
-	@Column(name = "FILTER_PARAM_2", length = 255)
+	@Column(name = "filter_param_2", length = 255)
     @Size(max = 255)
 	private String filterParam2 = WILCARD;
 
-	@Column(name = "FILTER_PARAM_3", length = 255)
+	@Column(name = "filter_param_3", length = 255)
     @Size(max = 255)
 	private String filterParam3 = WILCARD;
 
-	@Column(name = "FILTER_PARAM_4", length = 255)
+	@Column(name = "filter_param_4", length = 255)
     @Size(max = 255)
 	private String filterParam4 = WILCARD;
 
-	@Column(name = "FILTER_EXPRESSION", length=2000)
+	@Column(name = "filter_expression", length=2000)
     @Size(max = 2000)
 	private String filterExpression = null;
 
-	@Column(name = "PRIORITY", columnDefinition = "int default 1")
+	@Column(name = "priority", columnDefinition = "int default 1")
 	private int priority = 1;
 
 	public String getFilterParam1() {

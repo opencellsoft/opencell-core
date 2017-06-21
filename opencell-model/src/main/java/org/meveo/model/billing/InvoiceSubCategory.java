@@ -45,8 +45,8 @@ import org.meveo.model.MultilanguageEntity;
 @Entity
 @MultilanguageEntity(key = "menu.invoiceSubCategories", group = "InvoiceSubCategory")
 @ExportIdentifier({ "code"})
-@Table(name = "BILLING_INVOICE_SUB_CAT", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_INVOICE_SUB_CAT_SEQ"), })
+@Table(name = "billing_invoice_sub_cat", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_invoice_sub_cat_seq"), })
 @CustomFieldEntity(cftCodePrefix = "INV_SUB_CAT")
 @NamedQueries({
 		@NamedQuery(name = "invoiceSubCategory.getNbrInvoiceSubCatNotAssociated", query = "select count(*) from InvoiceSubCategory v where v.id not in (select c.invoiceSubCategory.id from ChargeTemplate c where c.invoiceSubCategory.id is not null)"
@@ -58,18 +58,18 @@ public class InvoiceSubCategory extends BusinessCFEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "ACCOUNTING_CODE", length = 255)
+	@Column(name = "accounting_code", length = 255)
 	@Size(max = 255)
 	private String accountingCode;
 
-	@Column(name = "DISCOUNT")
+	@Column(name = "discount")
 	private BigDecimal discount;
 
 	@OneToMany(mappedBy = "invoiceSubCategory", fetch = FetchType.LAZY)
 	private List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries = new ArrayList<InvoiceSubcategoryCountry>();
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "INVOICE_CATEGORY_ID")
+	@JoinColumn(name = "invoice_category_id")
 	private InvoiceCategory invoiceCategory;
 
 	public List<InvoiceSubcategoryCountry> getInvoiceSubcategoryCountries() {

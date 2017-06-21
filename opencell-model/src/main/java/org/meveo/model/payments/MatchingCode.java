@@ -41,31 +41,31 @@ import org.meveo.model.ExportIdentifier;
 
 @Entity
 @ExportIdentifier({ "code"})
-@Table(name = "AR_MATCHING_CODE")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "AR_MATCHING_CODE_SEQ"), })
+@Table(name = "ar_matching_code")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ar_matching_code_seq"), })
 public class MatchingCode extends EnableEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "CODE", length = 255)
+	@Column(name = "code", length = 255)
     @Size(max = 255)
 	private String code;
 
-	@Column(name = "MATCHING_TYPE")
+	@Column(name = "matching_type")
 	@Enumerated(EnumType.STRING)
 	private MatchingTypeEnum matchingType;
 
-	@Column(name = "MATCHING_DATE")
+	@Column(name = "matching_date")
 	@Temporal(TemporalType.DATE)
 	private Date matchingDate;
 
 	@OneToMany(mappedBy = "matchingCode", cascade = CascadeType.ALL)
 	private List<MatchingAmount> matchingAmounts = new ArrayList<MatchingAmount>();
 
-	@Column(name = "MATCHING_AMOUNT_CREDIT", precision = 23, scale = 12)
+	@Column(name = "matching_amount_credit", precision = 23, scale = 12)
 	private BigDecimal matchingAmountCredit;
 
-	@Column(name = "MATCHING_AMOUNT_DEBIT", precision = 23, scale = 12)
+	@Column(name = "matching_amount_debit", precision = 23, scale = 12)
 	private BigDecimal matchingAmountDebit;
 
 	public String getCode() {

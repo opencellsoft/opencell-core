@@ -32,21 +32,21 @@ import org.meveo.model.ExportIdentifier;
 
 @Entity
 @ExportIdentifier({ "code"})
-@Table(name = "CRM_CUSTOMER_CATEGORY", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CRM_CUSTOMER_CATEGORY_SEQ"), })
+@Table(name = "crm_customer_category", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "crm_customer_category_seq"), })
 public class CustomerCategory extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
 
 	@Type(type="numeric_boolean")
-    @Column(name = "EXONERATED_FROM_TAXES")
+    @Column(name = "exonerated_from_taxes")
 	private boolean exoneratedFromTaxes=false ;
 	
-	@Column(name = "EXONERATION_TAX_EL", length = 2000)
+	@Column(name = "exoneration_tax_el", length = 2000)
 	@Size(max = 2000)
 	private String exonerationTaxEl;
 	
-	@Column(name = "EXONERATION_REASON", length = 255)
+	@Column(name = "exoneration_reason", length = 255)
     @Size(max = 255)
 	private String exonerationReason;
 

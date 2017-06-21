@@ -24,29 +24,29 @@ import org.meveo.model.ExportIdentifier;
 
 @Entity
 @ExportIdentifier({ "name"})
-@Table(name = "ADM_ROLE")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ADM_ROLE_SEQ"), })
+@Table(name = "adm_role")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "adm_role_seq"), })
 @NamedQueries({ @NamedQuery(name = "Role.getAllRoles", query = "select r from org.meveo.model.security.Role r LEFT JOIN r.permissions p")})
 public class Role extends BaseEntity {
 
     private static final long serialVersionUID = -2309961042891712685L;
 
-    @Column(name = "ROLE_NAME", nullable = false, length = 255)
+    @Column(name = "role_name", nullable = false, length = 255)
     @Size(max = 255)
     @NotNull
     private String name;
 
-    @Column(name = "ROLE_DESCRIPTION", nullable = false, length = 255)
+    @Column(name = "role_description", nullable = false, length = 255)
     @Size(max = 255)
     @NotNull
     private String description;
 
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
-    @JoinTable(name = "ADM_ROLE_PERMISSION", joinColumns = @JoinColumn(name = "ROLE_ID"), inverseJoinColumns = @JoinColumn(name = "PERMISSION_ID"))
+    @JoinTable(name = "adm_role_permission", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "permission_id"))
     private Set<Permission> permissions = new HashSet<Permission>();
 
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
-    @JoinTable(name = "ADM_ROLE_ROLE", joinColumns = @JoinColumn(name = "ROLE_ID"), inverseJoinColumns = @JoinColumn(name = "CHILD_ROLE_ID"))
+    @JoinTable(name = "adm_role_role", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "child_role_id"))
     private Set<Role> roles = new HashSet<Role>();
 
     public Role() {

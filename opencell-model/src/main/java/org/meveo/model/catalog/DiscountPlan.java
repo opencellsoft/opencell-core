@@ -21,16 +21,16 @@ import org.meveo.model.ObservableEntity;
 @Entity
 @ObservableEntity
 @ExportIdentifier({ "code"})
-@Table(name = "CAT_DISCOUNT_PLAN", uniqueConstraints = { @UniqueConstraint(columnNames = { "CODE"}) })
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CAT_DISCOUNT_PLAN_SEQ"), })
+@Table(name = "cat_discount_plan", uniqueConstraints = { @UniqueConstraint(columnNames = { "code"}) })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_discount_plan_seq"), })
 public class DiscountPlan extends BusinessEntity {
 
     private static final long serialVersionUID = -2762453947446654646L;
 
-    @Column(name = "MIN_DURATION")
+    @Column(name = "min_duration")
     private int minDuration = 0;
 
-    @Column(name = "MAX_DURATION")
+    @Column(name = "max_duration")
     private int maxDuration = 99999;
 
     @OneToMany(mappedBy = "discountPlan")

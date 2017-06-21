@@ -11,13 +11,13 @@ import org.meveo.model.module.MeveoModule;
  * @author Edward P. Legaspi
  */
 @Entity
-@Table(name = "CAT_BUSINESS_PRODUCT_MODEL")
+@Table(name = "cat_business_product_model")
 public class BusinessProductModel extends MeveoModule {
 
 	private static final long serialVersionUID = 4010282288751376225L;
 	
 	@ManyToOne
-    @JoinColumn(name = "PRODUCT_TEMPLATE_ID")
+    @JoinColumn(name = "product_template_id")
     private ProductTemplate productTemplate;
 
 	public ProductTemplate getProductTemplate() {

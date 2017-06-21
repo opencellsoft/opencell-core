@@ -16,9 +16,9 @@ import org.meveo.model.BusinessEntity;
  * @author Edward P. Legaspi
  **/
 // @Entity
-// @Table(name = "MEVEO_PROJECTOR")
+// @Table(name = "meveo_projector")
 // @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value =
-// "MEVEO_PROJECTOR_SEQ"), })
+// "meveo_projector_seq"), })
 public class Projector extends BusinessEntity {
 
 	private static final long serialVersionUID = -6179228494065206254L;
@@ -27,21 +27,21 @@ public class Projector extends BusinessEntity {
 	 * List of field names to display or export.
 	 */
 	@ElementCollection(fetch = FetchType.LAZY)
-	@CollectionTable(name = "MEVEO_PROJECTOR_DISPLAY_FIELDS", joinColumns = @JoinColumn(name = "PROJECTOR_ID"))
-	@Column(name = "DISPLAY_FIELD")
+	@CollectionTable(name = "meveo_projector_display_fields", joinColumns = @JoinColumn(name = "projector_id"))
+	@Column(name = "display_field")
 	private List<String> displayFields = new ArrayList<String>();
 
 	@ElementCollection(fetch = FetchType.LAZY)
-	@CollectionTable(name = "MEVEO_PROJECTOR_EXPORT_FIELDS", joinColumns = @JoinColumn(name = "PROJECTOR_ID"))
-	@Column(name = "EXPORT_FIELD")
+	@CollectionTable(name = "meveo_projector_export_fields", joinColumns = @JoinColumn(name = "projector_id"))
+	@Column(name = "export_field")
 	private List<String> exportFields = new ArrayList<String>();
 
 	/**
 	 * List of fields to ignore if foreign key not found.
 	 */
 	@ElementCollection(fetch = FetchType.LAZY)
-	@CollectionTable(name = "MEVEO_PROJECTOR_IGNORE_FIELDS", joinColumns = @JoinColumn(name = "PROJECTOR_ID"))
-	@Column(name = "IGNORED_FIELD")
+	@CollectionTable(name = "meveo_projector_ignore_fields", joinColumns = @JoinColumn(name = "projector_id"))
+	@Column(name = "ignored_field")
 	private List<String> ignoreIfNotFoundForeignKeys = new ArrayList<String>();
 
 	@OneToOne(mappedBy = "projector")

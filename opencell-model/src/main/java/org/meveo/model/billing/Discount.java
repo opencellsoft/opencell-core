@@ -35,20 +35,20 @@ import org.meveo.model.ExportIdentifier;
  */
 @Entity
 @ExportIdentifier({ "discountCode"})
-@Table(name = "BILLING_DISCOUNT")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_DISCOUNT_SEQ"), })
+@Table(name = "billing_discount")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_discount_seq"), })
 public class Discount extends EnableEntity {
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "DISCOUNT_CODE", length = 20)
+	@Column(name = "discount_code", length = 20)
 	@Size(max = 20)
 	private String discountCode;
 
-	@Column(name = "PR_DESCRIPTION", length = 255)
+	@Column(name = "pr_description", length = 255)
 	@Size(max = 255)
 	private String prDescription;
 
-	@Column(name = "POURCENT")
+	@Column(name = "pourcent")
 	private BigDecimal pourcent;
 
 	public String getDiscountCode() {

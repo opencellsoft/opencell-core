@@ -29,20 +29,20 @@ public class ContactInformation implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "EMAIL", length = 100)
+	@Column(name = "email", length = 100)
 	// @Pattern(regexp = ".+@.+\\..{2,4}")
 	@Size(max = 100)
 	protected String email;
 
-	@Column(name = "PHONE", length = 15)
+	@Column(name = "phone", length = 15)
 	@Size(max = 15)
 	protected String phone;
 
-	@Column(name = "MOBILE", length = 15)
+	@Column(name = "mobile", length = 15)
 	@Size(max = 15)
 	protected String mobile;
 
-	@Column(name = "FAX", length = 15)
+	@Column(name = "fax", length = 15)
 	@Size(max = 15)
 	protected String fax;
 

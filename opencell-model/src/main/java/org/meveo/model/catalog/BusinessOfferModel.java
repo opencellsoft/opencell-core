@@ -8,13 +8,13 @@ import javax.persistence.Table;
 import org.meveo.model.module.MeveoModule;
 
 @Entity
-@Table(name = "CAT_BUSINESS_OFFER_MODEL")
+@Table(name = "cat_business_offer_model")
 public class BusinessOfferModel extends MeveoModule {
 
     private static final long serialVersionUID = 683873220792653929L;
 
     @ManyToOne
-    @JoinColumn(name = "OFFER_TEMPLATE_ID")
+    @JoinColumn(name = "offer_template_id")
     private OfferTemplate offerTemplate;
 
     public OfferTemplate getOfferTemplate() {

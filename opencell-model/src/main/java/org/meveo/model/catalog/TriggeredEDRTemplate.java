@@ -18,40 +18,40 @@ import org.meveo.model.communication.MeveoInstance;
 @Entity
 @ObservableEntity
 @ExportIdentifier({ "code"})
-@Table(name = "CAT_TRIGGERED_EDR", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CAT_TRIGGERED_EDR_SEQ"), })
+@Table(name = "cat_triggered_edr", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_triggered_edr_seq"), })
 public class TriggeredEDRTemplate extends BusinessEntity {
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "SUBSCRIPTION_EL", length = 2000)
+	@Column(name = "subscription_el", length = 2000)
 	@Size(max = 2000)
 	private String subscriptionEl;
 	
 	@ManyToOne
-	@JoinColumn(name = "MEVEO_INSTANCE_ID")
+	@JoinColumn(name = "meveo_instance_id")
 	MeveoInstance meveoInstance;
 
-	@Column(name = "CONDITION_EL", length = 2000)
+	@Column(name = "condition_el", length = 2000)
 	@Size(max = 2000)
 	private String conditionEl;
 
-	@Column(name = "QUANTITY_EL", length = 2000)
+	@Column(name = "quantity_el", length = 2000)
 	@Size(max = 2000)
 	private String quantityEl;
 
-	@Column(name = "PARAM_1_EL", length = 2000)
+	@Column(name = "param_1_el", length = 2000)
 	@Size(max = 2000)
 	private String param1El;
 
-	@Column(name = "PARAM_2_EL", length = 2000)
+	@Column(name = "param_2_el", length = 2000)
 	@Size(max = 2000)
 	private String param2El;
 
-	@Column(name = "PARAM_3_EL", length = 2000)
+	@Column(name = "param_3_el", length = 2000)
 	@Size(max = 2000)
 	private String param3El;
 
-	@Column(name = "PARAM_4_EL", length = 2000)
+	@Column(name = "param_4_el", length = 2000)
 	@Size(max = 2000)
 	private String param4El;
 

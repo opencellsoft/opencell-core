@@ -45,73 +45,73 @@ import org.meveo.model.crm.Email;
  */
 @Entity
 @ExportIdentifier({ "name"})
-@Table(name = "BI_REPORT")
+@Table(name = "bi_report")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "BI_REPORT_SEQ"), })
+        @Parameter(name = "sequence_name", value = "bi_report_seq"), })
 public class Report extends BaseEntity {
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "NAME", length = 50)
+	@Column(name = "name", length = 50)
     @Size(max = 50)
 	private String name;
 
-	@Column(name = "DESCRIPTION", nullable = true, length = 255)
+	@Column(name = "description", nullable = true, length = 255)
 	@Size(max = 255)
 	protected String description;
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "BI_REPORT_EMAILS", joinColumns = @JoinColumn(name = "REPORT_ID"), inverseJoinColumns = @JoinColumn(name = "EMAIL_ID"))
+	@JoinTable(name = "bi_report_emails", joinColumns = @JoinColumn(name = "report_id"), inverseJoinColumns = @JoinColumn(name = "email_id"))
 	private List<Email> emails;
 
-	@Column(name = "SCHEDULE")
+	@Column(name = "schedule")
 	private Date schedule;
 
-	@Column(name = "START_DATE")
+	@Column(name = "start_date")
 	private Date startDate;
 
-	@Column(name = "END_DATE")
+	@Column(name = "end_date")
 	private Date endDate;
 
-	@Column(name = "REPORT_FILE_NAME", length = 255)
+	@Column(name = "report_file_name", length = 255)
     @Size(max = 255)
 	private String fileName;
 
-	@Column(name = "PRODUCER_CLASS_NAME", length = 255)
+	@Column(name = "producer_class_name", length = 255)
     @Size(max = 255)
 	private String producerClassName;
 
-	@Column(name = "DS_RECORD_PATH", length = 255)
+	@Column(name = "ds_record_path", length = 255)
     @Size(max = 255)
 	private String recordPath;
 
-	@Column(name = "REPORT_FREQUENCY", nullable = false)
+	@Column(name = "report_frequency", nullable = false)
 	@Enumerated(EnumType.STRING)
 	@NotNull
 	private ExecutionFrequencyEnum frequency;
 
-	@Column(name = "EXECUTION_HOUR")
+	@Column(name = "execution_hour")
 	private Integer executionHour;
 
-	@Column(name = "EXECUTION_MINUTES")
+	@Column(name = "execution_minutes")
 	private Integer executionMinutes;
 
-	@Column(name = "EXECUTION_INTERVAL_MINUTES")
+	@Column(name = "execution_interval_minutes")
 	private Integer executionIntervalMinutes;
 
-	@Column(name = "EXECUTION_INTERVAL_SECONDS")
+	@Column(name = "execution_interval_seconds")
 	private Integer executionIntervalSeconds;
 
-	@Column(name = "EXECUTION_DAY_OF_WEEK")
+	@Column(name = "execution_day_of_week")
 	private Integer executionDayOfWeek;
 
-	@Column(name = "EXECUTION_DAY_OF_MONTH")
+	@Column(name = "execution_day_of_month")
 	private Integer executionDayOfMonth;
 
 	@Enumerated(value = EnumType.STRING)
-	@Column(name = "ACTION_NAME")
+	@Column(name = "action_name")
 	private JobNameEnum actionName;
 
-	@Column(name = "OUTPUT_FORMAT", nullable = false)
+	@Column(name = "output_format", nullable = false)
 	@Enumerated(EnumType.STRING)
 	@NotNull
 	private OutputFormatEnum outputFormat;

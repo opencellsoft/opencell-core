@@ -31,7 +31,7 @@ public class PostalMailTemplate extends MessageTemplate {
 
 	private static final long serialVersionUID = 6264421465934474507L;
 
-	@Column(name = "JASPER_FILENAME", length = 255)
+	@Column(name = "jasper_filename", length = 255)
     @Size(max = 255)
 	private String jasperFileName;
 

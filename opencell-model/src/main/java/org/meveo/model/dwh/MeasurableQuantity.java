@@ -25,53 +25,53 @@ import org.meveo.model.ModuleItem;
 @Entity
 @ModuleItem
 @ExportIdentifier({ "code"})
-@Table(name = "DWH_MEASURABLE_QUANT", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "DWH_MEASURABLE_QUANT_SEQ"), })
+@Table(name = "dwh_measurable_quant", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "dwh_measurable_quant_seq"), })
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MeasurableQuantity extends BusinessEntity {
 
 	private static final long serialVersionUID = -4864192159320969937L;
 
-	@Column(name = "THEME", length = 255)
+	@Column(name = "theme", length = 255)
 	@Size(max = 255)
 	private String theme;
 
-	@Column(name = "DIMENSION_1", length = 255)
+	@Column(name = "dimension_1", length = 255)
     @Size(max = 255)
 	private String dimension1;
 
-	@Column(name = "DIMENSION_2", length = 255)
+	@Column(name = "dimension_2", length = 255)
     @Size(max = 255)
 	private String dimension2;
 
-	@Column(name = "DIMENSION_3", length = 255)
+	@Column(name = "dimension_3", length = 255)
     @Size(max = 255)
 	private String dimension3;
 
-	@Column(name = "DIMENSION_4", length = 255)
+	@Column(name = "dimension_4", length = 255)
     @Size(max = 255)
 	private String dimension4;
 
 	@Type(type="numeric_boolean")
-    @Column(name = "EDITABLE")
+    @Column(name = "editable")
 	private boolean editable;
 
 	@Type(type="numeric_boolean")
-    @Column(name = "ADDITIVE")
+    @Column(name = "additive")
 	private boolean additive;
 	/**
 	 * expect to return a list of (Date measureDate, Long value) that will be
 	 * used to create measuredValue. 
 	 */
-	@Column(name = "SQL_QUERY", length = 2000)
+	@Column(name = "sql_query", length = 2000)
     @Size(max = 2000)
 	private String sqlQuery;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "MEASUREMENT_PERIOD")
+	@Column(name = "measurement_period")
 	private MeasurementPeriodEnum measurementPeriod;
 	
-	@Column(name = "LAST_MEASURE_DATE")
+	@Column(name = "last_measure_date")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastMeasureDate;
 

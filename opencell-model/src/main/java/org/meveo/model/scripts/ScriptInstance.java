@@ -38,8 +38,8 @@ import org.meveo.model.security.Role;
 
 @Entity
 @ModuleItem
-@Table(name = "MEVEO_SCRIPT_INSTANCE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "MEVEO_SCRIPT_INSTANCE_SEQ"), })
+@Table(name = "meveo_script_instance", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "meveo_script_instance_seq"), })
 @NamedQueries({ @NamedQuery(name = "CustomScript.countScriptInstanceOnError", query = "select count (*) from ScriptInstance o where o.error=:isError "),
     @NamedQuery(name = "CustomScript.getScriptInstanceOnError", query = "from ScriptInstance o where o.error=:isError "),
     @NamedQuery(name = "CustomScript.getScriptInstanceByTypeActive", query = "from ScriptInstance o where o.sourceTypeEnum=:sourceTypeEnum and o.disabled = false")})
@@ -48,11 +48,11 @@ public class ScriptInstance extends CustomScript {
     private static final long serialVersionUID = -7691357496569390167L;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "ADM_SCRIPT_EXEC_ROLE", joinColumns = @JoinColumn(name = "SCRIPT_INSTANCE_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
+    @JoinTable(name = "adm_script_exec_role", joinColumns = @JoinColumn(name = "script_instance_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> executionRoles = new HashSet<Role>();
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "ADM_SCRIPT_SOURC_ROLE", joinColumns = @JoinColumn(name = "SCRIPT_INSTANCE_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
+    @JoinTable(name = "adm_script_sourc_role", joinColumns = @JoinColumn(name = "script_instance_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> sourcingRoles = new HashSet<Role>();
 
     public ScriptInstance() {

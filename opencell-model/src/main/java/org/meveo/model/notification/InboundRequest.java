@@ -28,8 +28,8 @@ import org.meveo.model.ObservableEntity;
 @Entity
 @ObservableEntity
 @ExportIdentifier({ "code"})
-@Table(name = "ADM_INBOUND_REQUEST", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ADM_INBOUND_REQUEST_SEQ"), })
+@Table(name = "adm_inbound_request", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "adm_inbound_request_seq"), })
 @Inheritance(strategy = InheritanceType.JOINED)
 public class InboundRequest extends BusinessEntity {
 
@@ -61,7 +61,7 @@ public class InboundRequest extends BusinessEntity {
 	@Column(name="REMOTE_PORT")
 	private int remotePort;
 		
-	@Column(name = "BODY", columnDefinition = "TEXT")
+	@Column(name = "body", columnDefinition = "TEXT")
 	private String body;
 	
 	@Column(name="METHOD",length=10)

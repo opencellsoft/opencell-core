@@ -26,7 +26,7 @@ public class JobTrigger extends Notification {
 	private Map<String, String> jobParams = new HashMap<String, String>();
 	
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "JOB_INSTANCE_ID")
+    @JoinColumn(name = "job_instance_id")
     private JobInstance jobInstance;
  
    public  JobTrigger(){

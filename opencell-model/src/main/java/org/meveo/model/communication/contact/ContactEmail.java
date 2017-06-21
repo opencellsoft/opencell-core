@@ -30,7 +30,7 @@ public class ContactEmail extends ContactCoordinates {
 
     private static final long serialVersionUID = -1945441703405654584L;
 
-    @Column(name = "EMAIL", length = 255)
+    @Column(name = "email", length = 255)
     @Pattern(regexp = ".+@.+\\..{2,4}")
     @Size(max = 255)
     private String email;

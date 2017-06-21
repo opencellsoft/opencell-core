@@ -34,14 +34,14 @@ import org.meveo.model.ExportIdentifier;
 
 @Entity
 @ExportIdentifier({ "chargeTemplate.code", "serviceTemplate.code"})
-@Table(name = "CAT_SERV_SUB_CHARGE_TEMPLATE")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CAT_SERV_SUBCHRG_TEMPLT_SEQ"), })
+@Table(name = "cat_serv_sub_charge_template")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_serv_subchrg_templt_seq"), })
 public class ServiceChargeTemplateSubscription extends ServiceChargeTemplate<OneShotChargeTemplate> {
 
 	private static final long serialVersionUID = 7811269692204342428L;
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "CAT_SERV_SUB_WALLET_TEMPLATE", joinColumns = @JoinColumn(name = "SERVICE_SUB_TEMPLT_ID"), inverseJoinColumns = @JoinColumn(name = "WALLET_TEMPLATE_ID"))
+	@JoinTable(name = "cat_serv_sub_wallet_template", joinColumns = @JoinColumn(name = "service_sub_templt_id"), inverseJoinColumns = @JoinColumn(name = "wallet_template_id"))
 	@OrderColumn(name = "INDX")
 	private List<WalletTemplate> walletTemplates;
 

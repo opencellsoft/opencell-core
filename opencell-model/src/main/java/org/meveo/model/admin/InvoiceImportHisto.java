@@ -30,7 +30,7 @@ public class InvoiceImportHisto extends JobHistory {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "NB_INVOICES_IGNORED")
+	@Column(name = "nb_invoices_ignored")
 	private Integer nbInvoicesIgnored;
 
 	public InvoiceImportHisto() {

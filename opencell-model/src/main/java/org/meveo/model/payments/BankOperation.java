@@ -34,59 +34,59 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.EnableEntity;
 
 @Entity
-@Table(name = "AR_BANK_OPERATION")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "AR_BANK_OPERATION_SEQ"), })
+@Table(name = "ar_bank_operation")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ar_bank_operation_seq"), })
 public class BankOperation extends EnableEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "CODE_OP", length = 255)
+	@Column(name = "code_op", length = 255)
     @Size(max = 255)
 	private String codeOp;
 
-	@Column(name = "DATE_OP")
+	@Column(name = "date_op")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateOp;
 
-	@Column(name = "DATE_VAL")
+	@Column(name = "date_val")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateVal;
 
-	@Column(name = "LABEL_1", length = 255)
+	@Column(name = "label_1", length = 255)
     @Size(max = 255)
 	private String lebel1;
 
-	@Column(name = "LABEL_2", length = 255)
+	@Column(name = "label_2", length = 255)
     @Size(max = 255)
 	private String lebel2;
 
-	@Column(name = "LABEL_3", length = 255)
+	@Column(name = "label_3", length = 255)
     @Size(max = 255)
 	private String lebel3;
 
-	@Column(name = "INVOICE_ID", length = 255)
+	@Column(name = "invoice_id", length = 255)
     @Size(max = 255)
 	private String invocieId;
 
-	@Column(name = "REFERENCE", length = 255)
+	@Column(name = "reference", length = 255)
     @Size(max = 255)
 	private String refrence;
 
-	@Column(name = "DEBIT")
+	@Column(name = "debit")
 	private BigDecimal debit;
 
-	@Column(name = "CREDIT")
+	@Column(name = "credit")
 	private BigDecimal credit;
 
 	@Type(type="numeric_boolean")
-    @Column(name = "IS_VALID")
+    @Column(name = "is_valid")
 	private boolean isValid;
 
-	@Column(name = "ERROR_CAUSE", length = 255)
+	@Column(name = "error_cause", length = 255)
     @Size(max = 255)
 	private String errorMessage;
 
-	@Column(name = "FILE_NAME", length = 255)
+	@Column(name = "file_name", length = 255)
     @Size(max = 255)
 	private String fileName;
 

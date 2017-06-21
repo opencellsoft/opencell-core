@@ -50,27 +50,27 @@ import org.meveo.model.catalog.ProductTemplate;
 @ObservableEntity
 @CustomFieldEntity(cftCodePrefix = "PRODUCT_INSTANCE")
 @ExportIdentifier({ "code"})
-@Table(name = "BILLING_PRODUCT_INSTANCE")
+@Table(name = "billing_product_instance")
 @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "code", unique = false)) })
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_PRODUCT_INSTANCE_SEQ"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_product_instance_seq"), })
 public class ProductInstance extends BusinessCFEntity {
 
     private static final long serialVersionUID = 1L;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_ACCOUNT_ID")
+    @JoinColumn(name = "user_account_id")
     private UserAccount userAccount;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SUBSCRIPTION_ID")
+    @JoinColumn(name = "subscription_id")
     private Subscription subscription;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "PRODUCT_TEMPLATE_ID")
+    @JoinColumn(name = "product_template_id")
     private ProductTemplate productTemplate;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "APPLICATION_DATE")
+    @Column(name = "application_date")
     private Date applicationDate = new Date();
 
     @OneToMany(mappedBy = "productInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -78,10 +78,10 @@ public class ProductInstance extends BusinessCFEntity {
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     private List<ProductChargeInstance> productChargeInstances = new ArrayList<ProductChargeInstance>();
 
-    @Column(name = "QUANTITY", precision = NB_PRECISION, scale = NB_DECIMALS)
+    @Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS)
     protected BigDecimal quantity = BigDecimal.ONE;
 
-    @Column(name = "ORDER_NUMBER", length = 100)
+    @Column(name = "order_number", length = 100)
     @Size(max = 100)
     private String orderNumber;
     

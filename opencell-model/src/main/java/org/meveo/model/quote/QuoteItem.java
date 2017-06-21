@@ -27,21 +27,21 @@ import org.meveo.model.catalog.ProductOffering;
 
 @Entity
 @ExportIdentifier({ "quote.code", "itemId"})
-@Table(name = "ORD_QUOTE_ITEM")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ORD_QUOTE_ITEM_SEQ"), })
+@Table(name = "ord_quote_item")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ord_quote_item_seq"), })
 public class QuoteItem extends BaseEntity {
 
     private static final long serialVersionUID = -6831399734977276174L;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "QUOTE_ID", nullable = false, updatable = false)
+    @JoinColumn(name = "quote_id", nullable = false, updatable = false)
     @NotNull
     private Quote quote;
 
     /**
      * Item id in the quote
      */
-    @Column(name = "ITEM_ID", length = 10, nullable = false)
+    @Column(name = "item_id", length = 10, nullable = false)
     @NotNull
     private String itemId;
 
@@ -55,7 +55,7 @@ public class QuoteItem extends BaseEntity {
     /**
      * Serialized quoteItem dto.
      */
-    @Column(name = "SOURCE", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "source", nullable = false, columnDefinition = "TEXT")
     private String source;
 
     /**
@@ -70,7 +70,7 @@ public class QuoteItem extends BaseEntity {
      * Associated user account
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_ACCOUNT_ID", nullable = false)
+    @JoinColumn(name = "user_account_id", nullable = false)
     @NotNull
     private UserAccount userAccount;
 

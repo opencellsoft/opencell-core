@@ -39,8 +39,8 @@ import org.meveo.model.MultilanguageEntity;
 @Entity
 @MultilanguageEntity(key = "menu.invoiceCategories", group="InvoiceCategory")
 @ExportIdentifier({ "code"})
-@Table(name = "BILLING_INVOICE_CAT", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_INVOICE_CAT_SEQ"), })
+@Table(name = "billing_invoice_cat", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_invoice_cat_seq"), })
 @CustomFieldEntity(cftCodePrefix = "INV_CAT")
 @NamedQueries({			
 @NamedQuery(name = "invoiceCategory.getNbrInvoiceCatNotAssociated", 
@@ -57,7 +57,7 @@ public class InvoiceCategory extends BusinessCFEntity {
 	@OneToMany(mappedBy = "invoiceCategory", fetch = FetchType.LAZY)
 	private List<InvoiceSubCategory> invoiceSubCategories;
 
-	@Column(name = "SORT_INDEX")
+	@Column(name = "sort_index")
 	private Integer sortIndex;
 
 	public List<InvoiceSubCategory> getInvoiceSubCategories() {

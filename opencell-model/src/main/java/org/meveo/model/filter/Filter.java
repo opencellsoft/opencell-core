@@ -27,34 +27,34 @@ import org.meveo.model.ModuleItem;
 @ModuleItem
 @ExportIdentifier({ "code"})
 @CustomFieldEntity(cftCodePrefix = "FILTER", cftCodeFields = "code", isManuallyManaged = false)
-@Table(name = "MEVEO_FILTER")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "MEVEO_FILTER_SEQ"), })
+@Table(name = "meveo_filter")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "meveo_filter_seq"), })
 public class Filter extends BusinessCFEntity {
 
 	private static final long serialVersionUID = -6150352877726034654L;
 	private static final String FILTER_CODE_PREFIX = "FILTER_";
 
 	@OneToOne(orphanRemoval = true, cascade = CascadeType.ALL, fetch=FetchType.EAGER)
-	@JoinColumn(name = "FILTER_CONDITION_ID")
+	@JoinColumn(name = "filter_condition_id")
 	private FilterCondition filterCondition;
 
 	@OneToOne(orphanRemoval = true, cascade = CascadeType.ALL)
-	@JoinColumn(name = "ORDER_CONDITION_ID")
+	@JoinColumn(name = "order_condition_id")
 	private OrderCondition orderCondition;
 
 	@OneToOne(orphanRemoval = true, cascade = CascadeType.ALL)
-	@JoinColumn(name = "PRIMARY_SELECTOR_ID")
+	@JoinColumn(name = "primary_selector_id")
 	private FilterSelector primarySelector;
 
 	@OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch=FetchType.EAGER)
-	@JoinColumn(name = "FILTER_ID")
+	@JoinColumn(name = "filter_id")
 	private List<FilterSelector> secondarySelectors=new ArrayList<FilterSelector>();
 
-	@Column(name = "INPUT_XML", columnDefinition = "TEXT")
+	@Column(name = "input_xml", columnDefinition = "TEXT")
 	private String inputXml;
 
 	@Type(type="numeric_boolean")
-    @Column(name = "SHARED")
+    @Column(name = "shared")
 	private Boolean shared = false;
 
 	public FilterCondition getFilterCondition() {

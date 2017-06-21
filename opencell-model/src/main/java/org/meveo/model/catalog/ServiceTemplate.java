@@ -50,8 +50,8 @@ import org.meveo.model.annotation.ImageType;
 @ImageType
 @CustomFieldEntity(cftCodePrefix = "SERVICE")
 @ExportIdentifier({ "code"})
-@Table(name = "CAT_SERVICE_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CAT_SERVICE_TEMPLATE_SEQ"), })
+@Table(name = "cat_service_template", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_service_template_seq"), })
 @NamedQueries({			
 @NamedQuery(name = "serviceTemplate.getNbServiceWithNotOffer", 
 	           query = "select count(*) from ServiceTemplate s where s.id not in (select serv.serviceTemplate.id from OfferTemplate o join o.offerServiceTemplates serv)"),
@@ -83,19 +83,19 @@ public class ServiceTemplate extends BusinessCFEntity implements IImageUpload {
 	private List<ServiceChargeTemplateUsage> serviceUsageCharges = new ArrayList<ServiceChargeTemplateUsage>();
 
 	@ManyToOne
-	@JoinColumn(name = "INVOICING_CALENDAR_ID")
+	@JoinColumn(name = "invoicing_calendar_id")
 	private Calendar invoicingCalendar;
 	
 	@ManyToOne
-	@JoinColumn(name = "BUSINESS_SERVICE_MODEL_ID")
+	@JoinColumn(name = "business_service_model_id")
 	private BusinessServiceModel businessServiceModel;
 
 	@Size(max = 2000)
-	@Column(name = "LONG_DESCRIPTION", columnDefinition = "TEXT")
+	@Column(name = "long_description", columnDefinition = "TEXT")
 	private String longDescription;
 	
 	@ImageType
-	@Column(name = "IMAGE_PATH", length = 100)
+	@Column(name = "image_path", length = 100)
 	@Size(max = 100)
     private String imagePath;
 	

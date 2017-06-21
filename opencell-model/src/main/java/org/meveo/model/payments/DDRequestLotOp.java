@@ -37,37 +37,37 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.EnableEntity;
 
 @Entity
-@Table(name = "AR_DDREQUEST_LOT_OP")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "AR_DDREQUEST_LOT_OP_SEQ"), })
+@Table(name = "ar_ddrequest_lot_op")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ar_ddrequest_lot_op_seq"), })
 public class DDRequestLotOp extends EnableEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "FROM_DUE_DATE")
+	@Column(name = "from_due_date")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date fromDueDate;
 
-	@Column(name = "TO_DUE_DATE")
+	@Column(name = "to_due_date")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date toDueDate;
 
-	@Column(name = "DDREQUEST_OP")
+	@Column(name = "ddrequest_op")
 	@Enumerated(EnumType.STRING)
 	private DDRequestOpEnum ddrequestOp;
 
-	@Column(name = "DDREQUEST_OP_STATUS")
+	@Column(name = "ddrequest_op_status")
 	@Enumerated(EnumType.STRING)
 	private DDRequestOpStatusEnum status;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "DDREQUEST_LOT_ID")
+	@JoinColumn(name = "ddrequest_lot_id")
 	private DDRequestLOT ddrequestLOT;
 
-	@Column(name = "ERROR_CAUSE", length = 255)
+	@Column(name = "error_cause", length = 255)
     @Size(max = 255)
 	private String errorCause;
 	
-	@Column(name = "FILE_FORMAT")
+	@Column(name = "file_format")
 	@Enumerated(EnumType.STRING)
 	private DDRequestFileFormatEnum fileFormat;
 

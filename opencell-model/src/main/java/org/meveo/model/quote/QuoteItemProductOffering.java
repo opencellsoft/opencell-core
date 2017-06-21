@@ -23,8 +23,8 @@ import org.meveo.model.catalog.ProductOffering;
 
 @Entity
 @ExportIdentifier({ "quoteItem.code", "productOffering.code" })
-@Table(name = "ORD_QUOT_ITEM_OFFERINGS")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ORD_QUOT_ITEM_OFFERINGS_SEQ"), })
+@Table(name = "ord_quot_item_offerings")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ord_quot_item_offerings_seq"), })
 public class QuoteItemProductOffering implements IEntity {
 
     public QuoteItemProductOffering() {
@@ -39,21 +39,21 @@ public class QuoteItemProductOffering implements IEntity {
 
     @Id
     @GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)
-    @Column(name = "ID")
+    @Column(name = "id")
     @Access(AccessType.PROPERTY)
     protected Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "QUOTE_ITEM_ID")
+    @JoinColumn(name = "quote_item_id")
     @NotNull
     private QuoteItem quoteItem;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "PRD_OFFERING_ID")
+    @JoinColumn(name = "prd_offering_id")
     @NotNull
     private ProductOffering productOffering;
 
-    @Column(name = "ITEM_ORDER", nullable = false)
+    @Column(name = "item_order", nullable = false)
     @NotNull
     private int itemOrder;
 

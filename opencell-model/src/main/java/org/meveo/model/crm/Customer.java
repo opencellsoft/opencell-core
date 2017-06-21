@@ -49,7 +49,7 @@ import org.meveo.model.shared.ContactInformation;
 @CustomFieldEntity(cftCodePrefix = "CUST")
 @ExportIdentifier({ "code"})
 @DiscriminatorValue(value = "ACCT_CUST")
-@Table(name = "CRM_CUSTOMER")
+@Table(name = "crm_customer")
 public class Customer extends AccountEntity{
 
     public static final String ACCOUNT_TYPE = ((DiscriminatorValue) Customer.class.getAnnotation(DiscriminatorValue.class)).value();
@@ -57,11 +57,11 @@ public class Customer extends AccountEntity{
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne
-	@JoinColumn(name = "CUSTOMER_CATEGORY_ID")
+	@JoinColumn(name = "customer_category_id")
 	private CustomerCategory customerCategory;
 
 	@ManyToOne
-	@JoinColumn(name = "CUSTOMER_BRAND_ID")
+	@JoinColumn(name = "customer_brand_id")
 	private CustomerBrand customerBrand;
 
 	@OneToMany(mappedBy = "customer", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
@@ -71,14 +71,14 @@ public class Customer extends AccountEntity{
 	private ContactInformation contactInformation = new ContactInformation();
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "SELLER_ID")
+	@JoinColumn(name = "seller_id")
 	private Seller seller;
 
-	@Column(name = "MANDATE_IDENTIFICATION", length = 35)
+	@Column(name = "mandate_identification", length = 35)
 	@Size(max = 35)
 	private String mandateIdentification = "";
 
-	@Column(name = "MANDATE_DATE")
+	@Column(name = "mandate_date")
 	@Temporal(TemporalType.DATE)
 	private Date mandateDate;
 	 

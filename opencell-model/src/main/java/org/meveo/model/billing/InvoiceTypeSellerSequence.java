@@ -25,23 +25,23 @@ import org.meveo.model.catalog.OfferServiceTemplate;
 
 @Entity
 @ExportIdentifier({ "invoiceType.code", "seller.code" })
-@Table(name = "BILLING_SEQ_INVTYP_SELL")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILL_SEQ_IT_SELL_SEQ"), })
+@Table(name = "billing_seq_invtyp_sell")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "bill_seq_it_sell_seq"), })
 public class InvoiceTypeSellerSequence implements IEntity {
 
     @Id
     @GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)
-    @Column(name = "ID")
+    @Column(name = "id")
     @Access(AccessType.PROPERTY)
     protected Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "INVOICETYPE_ID")
+    @JoinColumn(name = "invoicetype_id")
     @NotNull
     private InvoiceType invoiceType;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "SELLER_ID")
+    @JoinColumn(name = "seller_id")
     @NotNull
     private Seller seller;
 

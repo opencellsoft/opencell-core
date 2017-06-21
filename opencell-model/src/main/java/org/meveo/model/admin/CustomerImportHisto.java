@@ -31,53 +31,53 @@ public class CustomerImportHisto extends JobHistory {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "FILE_NAME", length = 255)
+	@Column(name = "file_name", length = 255)
 	@Size(max = 255)
 	private String fileName;
 
-	@Column(name = "NB_SELLERS")
+	@Column(name = "nb_sellers")
 	private Integer nbSellers;
 
-	@Column(name = "NB_SELLERS_ERROR")
+	@Column(name = "nb_sellers_error")
 	private Integer nbSellersError;
 
-	@Column(name = "NB_SELLERS_WARNING")
+	@Column(name = "nb_sellers_warning")
 	private Integer nbSellersWarning;
 
-	@Column(name = "NB_SELLERS_IGNORED")
+	@Column(name = "nb_sellers_ignored")
 	private Integer nbSellersIgnored;
 
-	@Column(name = "NB_SELLERS_CREATED")
+	@Column(name = "nb_sellers_created")
 	private Integer nbSellersCreated;
 
-	@Column(name = "NB_CUSTOMERS")
+	@Column(name = "nb_customers")
 	private Integer nbCustomers;
 
-	@Column(name = "NB_CUSTOMERS_ERROR")
+	@Column(name = "nb_customers_error")
 	private Integer nbCustomersError;
 
-	@Column(name = "NB_CUSTOMERS_WARNING")
+	@Column(name = "nb_customers_warning")
 	private Integer nbCustomersWarning;
 
-	@Column(name = "NB_CUSTOMERS_IGNORED")
+	@Column(name = "nb_customers_ignored")
 	private Integer nbCustomersIgnored;
 
-	@Column(name = "NB_CUSTOMERS_CREATED")
+	@Column(name = "nb_customers_created")
 	private Integer nbCustomersCreated;
 
-	@Column(name = "NB_CUSTOMER_ACCOUNTS")
+	@Column(name = "nb_customer_accounts")
 	private Integer nbCustomerAccounts;
 
-	@Column(name = "NB_CUSTOMER_ACCOUNTS_ERROR")
+	@Column(name = "nb_customer_accounts_error")
 	private Integer nbCustomerAccountsError;
 
-	@Column(name = "NB_CUSTOMER_ACOUNTS_WARNING")
+	@Column(name = "nb_customer_acounts_warning")
 	private Integer nbCustomerAccountsWarning;
 
-	@Column(name = "NB_CUSTOMER_ACOUNTS_IGNORED")
+	@Column(name = "nb_customer_acounts_ignored")
 	private Integer nbCustomerAccountsIgnored;
 
-	@Column(name = "NB_CUSTOMER_ACCOUNTS_CREATED")
+	@Column(name = "nb_customer_accounts_created")
 	private Integer nbCustomerAccountsCreated;
 
 	public CustomerImportHisto() {

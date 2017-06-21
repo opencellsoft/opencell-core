@@ -24,26 +24,26 @@ import org.meveo.model.IEntity;
  */
 @Entity
 @ExportIdentifier({ "offerTemplate.code", "productTemplate.code"})
-@Table(name = "CAT_OFFER_PRODUCT_TEMPLATE")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CAT_OFFER_PRODUCT_TEMPLATE_SEQ"), })
+@Table(name = "cat_offer_product_template")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_offer_product_template_seq"), })
 public class OfferProductTemplate implements IEntity {
 
 	@Id
 	@GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)
-	@Column(name = "ID")
+	@Column(name = "id")
 	@Access(AccessType.PROPERTY)
 	protected Long id;
 
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "OFFER_TEMPLATE_ID")
+	@JoinColumn(name = "offer_template_id")
 	private OfferTemplate offerTemplate;
 
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "PRODUCT_TEMPLATE_ID")
+	@JoinColumn(name = "product_template_id")
 	private ProductTemplate productTemplate;
 
 	@Type(type="numeric_boolean")
-    @Column(name = "MANDATORY")
+    @Column(name = "mandatory")
 	private boolean mandatory;
 
 	@Override

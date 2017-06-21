@@ -13,14 +13,14 @@ import org.meveo.model.module.MeveoModule;
  * @author Edward P. Legaspi
  **/
 @Entity
-@Table(name = "CRM_BUSINESS_ACCOUNT_MODEL")
+@Table(name = "crm_business_account_model")
 public class BusinessAccountModel extends MeveoModule {
 
     private static final long serialVersionUID = 8664266331861722097L;
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "HIERARCHY_TYPE", length = 20)
+    @Column(name = "hierarchy_type", length = 20)
     private AccountHierarchyTypeEnum hierarchyType;
 
 	public AccountHierarchyTypeEnum getHierarchyType() {

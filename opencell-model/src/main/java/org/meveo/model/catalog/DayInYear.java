@@ -32,17 +32,17 @@ import org.meveo.model.ExportIdentifier;
 
 @Entity
 @ExportIdentifier({ "day", "month" })
-@Table(name = "CAT_DAY_IN_YEAR", uniqueConstraints = @UniqueConstraint(columnNames = { "DAY", "MONTH" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CAT_DAY_IN_YEAR_SEQ"), })
+@Table(name = "cat_day_in_year", uniqueConstraints = @UniqueConstraint(columnNames = { "day", "month" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_day_in_year_seq"), })
 public class DayInYear extends AuditableEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "DAY")
+	@Column(name = "day")
 	private Integer day;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "MONTH", length = 20)
+	@Column(name = "month", length = 20)
 	private MonthEnum month;
 
 	public Integer getDay() {

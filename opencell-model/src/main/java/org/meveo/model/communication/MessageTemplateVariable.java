@@ -33,18 +33,18 @@ import org.meveo.model.ExportIdentifier;
 
 @Entity
 @ExportIdentifier({ "code"})
-@Table(name = "COM_MSG_TMPL_VARIABLE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "COM_MSG_TMPL_VAR_SEQ"), })
+@Table(name = "com_msg_tmpl_variable", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "com_msg_tmpl_var_seq"), })
 public class MessageTemplateVariable extends BusinessEntity {
 
 	private static final long serialVersionUID = -8541728044647573746L;
 
 	@ManyToOne
-	@JoinColumn(name = "TEMPLATE_ID")
+	@JoinColumn(name = "template_id")
 	private MessageTemplate messageTemplate;
 
 	@Type(type="numeric_boolean")
-    @Column(name = "MANDATORY")
+    @Column(name = "mandatory")
 	private boolean mandatory;
 
 	public MessageTemplate getMessageTemplate() {

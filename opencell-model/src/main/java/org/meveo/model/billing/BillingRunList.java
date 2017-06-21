@@ -33,35 +33,35 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.EnableEntity;
 
 @Entity
-@Table(name = "BILLING_BILLING_RUN_LIST")
+@Table(name = "billing_billing_run_list")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "BILLING_BILLING_RUN_LIST_SEQ"), })
+        @Parameter(name = "sequence_name", value = "billing_billing_run_list_seq"), })
 public class BillingRunList extends EnableEntity {
 
 	private static final long serialVersionUID = 1L;
 
 	@Type(type="numeric_boolean")
-    @Column(name = "INVOICE")
+    @Column(name = "invoice")
 	private Boolean invoice;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "BILLING_RUN_ID")
+	@JoinColumn(name = "billing_run_id")
 	private BillingRun billingRun;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "BILLING_ACCOUNT_ID")
+	@JoinColumn(name = "billing_account_id")
 	private BillingAccount billingAccount;
 
-	@Column(name = "RATED_AMOUNT_WITHOUT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "rated_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal RatedAmountWithoutTax = BigDecimal.ZERO;
 
-	@Column(name = "RATED_AMOUNT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "rated_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal RatedAmountTax = BigDecimal.ZERO;
 
-	@Column(name = "RATED_AMOUNT_WITH_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "rated_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal RatedAmountWithTax = BigDecimal.ZERO;
 
-	@Column(name = "RATED_AMOUNT2_WITHOUT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "rated_amount2_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal RatedAmount2WithoutTax = BigDecimal.ZERO;
 
 	public Boolean getInvoice() {

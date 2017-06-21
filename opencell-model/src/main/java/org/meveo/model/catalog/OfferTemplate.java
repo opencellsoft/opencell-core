@@ -51,11 +51,11 @@ public class OfferTemplate extends ProductOffering {
 	private static final long serialVersionUID = 1L;
 
 //	@ManyToOne
-//	@JoinColumn(name = "CAT_OFFER_TEMPLATE_CAT_ID")
+//	@JoinColumn(name = "cat_offer_template_cat_id")
 //	private OfferTemplateCategory offerTemplateCategory;
 
 	@ManyToOne
-	@JoinColumn(name = "BUSINESS_OFFER_MODEL_ID")
+	@JoinColumn(name = "business_offer_model_id")
 	private BusinessOfferModel businessOfferModel;
 
 	@OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade=CascadeType.ALL, orphanRemoval=true)
@@ -65,7 +65,7 @@ public class OfferTemplate extends ProductOffering {
 	private List<OfferProductTemplate> offerProductTemplates = new ArrayList<OfferProductTemplate>();
 
 	@Size(max = 2000)
-	@Column(name = "LONG_DESCRIPTION", columnDefinition = "TEXT")
+	@Column(name = "long_description", columnDefinition = "TEXT")
 	private String longDescription;
 
 	@Transient

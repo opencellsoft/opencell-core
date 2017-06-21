@@ -33,16 +33,16 @@ import org.meveo.model.ExportIdentifier;
  */
 @Entity
 @ExportIdentifier("languageCode")
-@Table(name = "ADM_LANGUAGE")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ADM_LANGUAGE_SEQ"), })
+@Table(name = "adm_language")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "adm_language_seq"), })
 public class Language extends AuditableEntity {
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "LANGUAGE_CODE", length = 3)
+	@Column(name = "language_code", length = 3)
 	@Size(max = 3)
 	private String languageCode;
 
-	@Column(name = "DESCRIPTION_EN", length = 100)
+	@Column(name = "description_en", length = 100)
 	@Size(max = 100)
 	private String descriptionEn;
 

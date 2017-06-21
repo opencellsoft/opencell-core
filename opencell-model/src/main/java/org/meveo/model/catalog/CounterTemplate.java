@@ -46,8 +46,8 @@ import org.meveo.model.ObservableEntity;
 @ModuleItem
 @ObservableEntity
 @ExportIdentifier({ "code"})
-@Table(name = "CAT_COUNTER_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CAT_COUNTER_TEMPLATE_SEQ"), })
+@Table(name = "cat_counter_template", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_counter_template_seq"), })
 @NamedQueries({
 @NamedQuery(name = "counterTemplate.getNbrCounterWithNotService", 
 	           query = "select count(*) from CounterTemplate c where c.id not in (select serv.counterTemplate from ServiceChargeTemplateUsage serv)"),
@@ -60,32 +60,32 @@ public class CounterTemplate extends BusinessEntity {
     private static final long serialVersionUID = -1246995971618884001L;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "COUNTER_TYPE", nullable = false)
+    @Column(name = "counter_type", nullable = false)
     @NotNull
     private CounterTypeEnum counterType = CounterTypeEnum.USAGE;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CALENDAR_ID")
+    @JoinColumn(name = "calendar_id")
     private Calendar calendar;
 
-    @Column(name = "LEVEL_NUM", precision = NB_PRECISION, scale = NB_DECIMALS)
+    @Column(name = "level_num", precision = NB_PRECISION, scale = NB_DECIMALS)
     @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
     private BigDecimal ceiling;
 
-    @Column(name = "UNITY_DESCRIPTION", length = 20)
+    @Column(name = "unity_description", length = 20)
     @Size(max = 20)
     private String unityDescription;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "COUNTER_LEVEL", nullable = false)
+    @Column(name = "counter_level", nullable = false)
     @NotNull
     private CounterTemplateLevel counterLevel = CounterTemplateLevel.UA;
 
-    @Column(name = "CEILING_EXPRESSION_EL", length = 2000)
+    @Column(name = "ceiling_expression_el", length = 2000)
     @Size(max = 2000)
     private String ceilingExpressionEl;
 
-    @Column(name = "NOTIFICATION_LEVELS", length = 70)
+    @Column(name = "notification_levels", length = 70)
     @Size(max = 70)
     private String notificationLevels;
 
