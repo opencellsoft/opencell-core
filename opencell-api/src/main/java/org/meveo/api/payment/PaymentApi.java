@@ -12,14 +12,19 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.payment.CardTokenRequestDto;
+import org.meveo.api.dto.payment.DoPaymentRequestDto;
+import org.meveo.api.dto.payment.DoPaymentResponseDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AutomatedPayment;
+import org.meveo.model.payments.CardToken;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.MatchingTypeEnum;
@@ -27,9 +32,8 @@ import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OtherCreditAndCharge;
 import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.RecordedInvoice;
-import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.service.payments.impl.CardTokenService;
 import org.meveo.service.payments.impl.CustomerAccountService;
-import org.meveo.service.payments.impl.MatchingAmountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.PaymentService;
@@ -39,27 +43,22 @@ import org.meveo.service.payments.impl.RecordedInvoiceService;
 public class PaymentApi extends BaseApi {
 
 	@Inject
-	PaymentService paymentService;
+	private PaymentService paymentService;
 
 	@Inject
-	RecordedInvoiceService recordedInvoiceService;
+	private RecordedInvoiceService recordedInvoiceService;
 
 	@Inject
-	MatchingCodeService matchingCodeService;
+	private MatchingCodeService matchingCodeService;
 
 	@Inject
-	ProviderService providerService;
+	private CustomerAccountService customerAccountService;
 
 	@Inject
-	CustomerAccountService customerAccountService;
+	private OCCTemplateService oCCTemplateService;
 
 	@Inject
-	OCCTemplateService oCCTemplateService;
-	
-	@Inject
-	MatchingAmountService matchingAmountService;
-	
-	
+	private CardTokenService cardTokenService;
 
 	public void createPayment(PaymentDto paymentDto) throws  NoAllOperationUnmatchedException, UnbalanceAmountException, BusinessException, MeveoApiException {
 		log.info("create payment for amount:" + paymentDto.getAmount() + " paymentMethodEnum:" + paymentDto.getPaymentMethod() + " isToMatching:" + paymentDto.isToMatching() + "  customerAccount:" + paymentDto.getCustomerAccountCode() + "...");
@@ -79,10 +78,7 @@ public class PaymentApi extends BaseApi {
 		if (StringUtils.isBlank(paymentDto.getPaymentMethod())) {
 			missingParameters.add("paymentMethod");
 		}
-
 		handleMissingParameters();
-
-		
 		CustomerAccount customerAccount = customerAccountService.findByCode(paymentDto.getCustomerAccountCode());
 		if (customerAccount == null) {
 			throw new BusinessException("Cannot find customer account with code=" + paymentDto.getCustomerAccountCode());
@@ -198,10 +194,104 @@ public class PaymentApi extends BaseApi {
 	}
 
 	public double getBalance(String customerAccountCode) throws BusinessException {
-		
+
 		CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
 
 		return customerAccountService.customerAccountBalanceDue(customerAccount, new Date()).doubleValue();
 	}
+
+	public String createCardToken(CardTokenRequestDto cardTokenRequestDto) throws InvalidParameterException, MissingParameterException, EntityDoesNotExistsException, BusinessException{
+		if(cardTokenRequestDto == null){
+			throw new InvalidParameterException("CardTokenRequestDto","cardTokenRequestDto");
+		}
+		if(StringUtils.isBlank(cardTokenRequestDto.getCardNumber())){
+			missingParameters.add("CardNumber");
+		}
+		if(StringUtils.isBlank(cardTokenRequestDto.getOwner())){
+			missingParameters.add("Owner");
+		}
+		if(StringUtils.isBlank(cardTokenRequestDto.getMonthExpiration()) || StringUtils.isBlank(cardTokenRequestDto.getYearExpiration())){
+			missingParameters.add("ExpiryDate");
+		}
+
+		if(StringUtils.isBlank(cardTokenRequestDto.getCustomerAccountCode())){
+			missingParameters.add("CustomerAccountCode");
+		}
+		handleMissingParameters();
+		CustomerAccount customerAccount = customerAccountService.findByCode(cardTokenRequestDto.getCustomerAccountCode());
+		if(customerAccount == null){
+			throw new EntityDoesNotExistsException(CustomerAccount.class, cardTokenRequestDto.getCustomerAccountCode());
+		}
+
+		CardToken cardToken = new CardToken();
+		cardToken.setCustomerAccount(customerAccount);
+		cardToken.setAlias(cardTokenRequestDto.getAlias());
+		cardToken.setCardNumber(cardTokenRequestDto.getCardNumber());
+		cardToken.setOwner(cardTokenRequestDto.getOwner());
+		cardToken.setCardType(cardTokenRequestDto.getCardType());
+		cardToken.setIsDefault(cardTokenRequestDto.getIsDefault());
+		cardToken.setIssueNumber(cardTokenRequestDto.getIssueNumber());
+		cardToken.setYearExpiration(cardTokenRequestDto.getYearExpiration());
+		cardToken.setMonthExpiration(cardTokenRequestDto.getMonthExpiration());		
+		cardToken.setHiddenCardNumber(StringUtils.hideCardNumber(cardTokenRequestDto.getCardNumber()) );
+		cardTokenService.create(cardToken);
+		return cardToken.getTokenId();
+	}
+
+	public DoPaymentResponseDto doPayment(DoPaymentRequestDto doPaymentRequestDto) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException, MeveoApiException{
+		if(doPaymentRequestDto == null){
+			throw new InvalidParameterException("DoPaymentRequestDto","doPaymentRequestDto");
+		}
+
+		if(StringUtils.isBlank(doPaymentRequestDto.getCtsAmount())){
+			missingParameters.add("CtsAmount");
+		}		
+
+		if(StringUtils.isBlank(doPaymentRequestDto.getCustomerAccountCode())){
+			missingParameters.add("CustomerAccountCode");
+		}
+		boolean useCard = false;
+        //case card payment
+		if(!StringUtils.isBlank(doPaymentRequestDto.getCardNumber())){
+			useCard = true;
+			if(StringUtils.isBlank(doPaymentRequestDto.getCvv())){
+				missingParameters.add("Cvv");
+			}
+			if( StringUtils.isBlank(doPaymentRequestDto.getExpirayDate()) ||
+			    doPaymentRequestDto.getExpirayDate().length() != 4   ||
+			    !org.apache.commons.lang3.StringUtils.isNumeric(doPaymentRequestDto.getExpirayDate()) ){
+				
+					missingParameters.add("ExpirayDate");			
+			}
+			if(StringUtils.isBlank(doPaymentRequestDto.getOwnerName())){
+				missingParameters.add("OwnerName");
+			}
+			if(StringUtils.isBlank(doPaymentRequestDto.getCardType())){
+				missingParameters.add("CardType");
+			}			
+		}
+		if(doPaymentRequestDto.isToMatching()){
+			if(doPaymentRequestDto.getAoToPay() == null || doPaymentRequestDto.getAoToPay().isEmpty() ){
+				missingParameters.add("AoToPay");
+			}	
+		}
+		handleMissingParameters();
+		
+		CustomerAccount customerAccount = customerAccountService.findByCode(doPaymentRequestDto.getCustomerAccountCode());
+		if(customerAccount == null){
+			throw new EntityDoesNotExistsException(CustomerAccount.class, doPaymentRequestDto.getCustomerAccountCode());
+		}
+		DoPaymentResponseDto doPaymentResponseDto = null;
+		if(useCard){
+			doPaymentResponseDto = paymentService.doPaymentCard(customerAccount, doPaymentRequestDto.getCtsAmount(), doPaymentRequestDto.getCardNumber(), doPaymentRequestDto.getOwnerName(),
+					doPaymentRequestDto.getCvv(), doPaymentRequestDto.getExpirayDate(), doPaymentRequestDto.getCardType(), doPaymentRequestDto.getAoToPay(), doPaymentRequestDto.isCreateAO(), doPaymentRequestDto.isToMatching());
+		}else{
+			doPaymentResponseDto = paymentService.doPaymentCardToken(customerAccount,  doPaymentRequestDto.getCtsAmount(), doPaymentRequestDto.getAoToPay(), doPaymentRequestDto.isCreateAO(), doPaymentRequestDto.isToMatching());
+		}
+		
+	
+		return doPaymentResponseDto;
+	}
+
 
 }
