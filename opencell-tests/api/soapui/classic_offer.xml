@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project activeEnvironment="Default" name="Classic offer" resourceRoot="${projectDir}" soapui-version="5.2.1" abortOnError="false" runType="SEQUENTIAL" id="2e379382-059f-42f2-a263-3971d606356b" xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project activeEnvironment="Default" name="Classic offer" resourceRoot="${projectDir}" soapui-version="5.3.0" abortOnError="false" runType="SEQUENTIAL" id="2e379382-059f-42f2-a263-3971d606356b" xmlns:con="http://eviware.com/soapui/config">
   <con:settings>
     <con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
@@ -35,7 +35,6 @@
   </con:settings>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/CatalogWs?wsdl" id="21c1fb0e-ed84-4133-9d3e-82094b378947" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/>
     <con:endpoints>
       <con:endpoint>http://demo.meveo.info/meveo/CatalogWs</con:endpoint>
       <con:endpoint>http://i.meveo.info/meveo/CatalogWs</con:endpoint>
@@ -348,7 +347,6 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/AccountWs?wsdl" id="8af58aca-6143-49ed-952e-8ab3b34bf0d4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/>
     <con:endpoints>
       <con:endpoint>http://demo.meveo.info/meveo/AccountWs</con:endpoint>
       <con:endpoint>http://i.meveo.info/meveo/AccountWs</con:endpoint>
@@ -589,7 +587,6 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/SubscriptionWs?wsdl" id="9b2cc058-9937-4389-9d45-dcf284fa0358" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/>
     <con:endpoints>
       <con:endpoint>http://i.meveo.info/meveo/SubscriptionWs</con:endpoint>
       <con:endpoint>http://jpv2.I.opencellsoft.com/meveo/SubscriptionWs</con:endpoint>
@@ -631,7 +628,6 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="WalletWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}WalletWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/WalletWs?wsdl" id="f799ad81-8b34-4625-831f-f4f653bea480" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/>
     <con:endpoints>
       <con:endpoint>http://i.meveo.info/meveo/WalletWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/WalletWs</con:endpoint>
@@ -684,7 +680,6 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="MediationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}MediationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/MediationWs?wsdl" id="6bd4d161-6e4d-493f-9d33-8b526e6c16a5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/>
     <con:endpoints>
       <con:endpoint>http://demo.meveo.info/meveo/MediationWs</con:endpoint>
       <con:endpoint>http://i.meveo.info/meveo/MediationWs</con:endpoint>
@@ -711,7 +706,6 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SettingsWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SettingsWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/SettingsWs?wsdl" id="0f234374-b4df-4d6a-94fc-bcb97691a681" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/>
     <con:endpoints>
       <con:endpoint>http://demo.meveo.info/meveo/SettingsWs</con:endpoint>
       <con:endpoint>http://i.meveo.info/meveo/SettingsWs</con:endpoint>
@@ -1103,7 +1097,6 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="JobWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}JobWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/JobWs?wsdl" id="0eb58c11-ce7f-44a5-bd1e-0a6aec7a9961" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/>
     <con:endpoints>
       <con:endpoint>http://demo.meveo.info/meveo/JobWs</con:endpoint>
       <con:endpoint>http://i.meveo.info/meveo/JobWs</con:endpoint>
@@ -1143,7 +1136,6 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="NotificationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}NotificationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/NotificationWs?wsdl" id="f0f7e27e-a1df-4dc1-a0fd-16ad7ef97f79" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/>
     <con:endpoints>
       <con:endpoint>http://demo.meveo.info/meveo/NotificationWs</con:endpoint>
       <con:endpoint>http://i.meveo.info/meveo/NotificationWs</con:endpoint>
@@ -1206,7 +1198,6 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="38c203bc-70bb-4e60-b187-baa76b3b8359" wsaVersion="NONE" name="InvoiceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}InvoiceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/InvoiceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/>
     <con:endpoints>
       <con:endpoint>http://i.meveo.info/meveo/InvoiceWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/InvoiceWs</con:endpoint>
@@ -1238,7 +1229,6 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="5e672655-5f83-45bd-a4ef-544fb2f1e1c1" wsaVersion="NONE" name="ScriptInstanceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}ScriptInstanceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/ScriptInstanceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/>
     <con:endpoints>
       <con:endpoint>http://demo.meveo.info/meveo/ScriptInstanceWs</con:endpoint>
     </con:endpoints>
@@ -1263,7 +1253,6 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="7ea337bf-5239-40f7-8296-1545c8dc3097" wsaVersion="NONE" name="InvoicingWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}InvoicingWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/InvoicingWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/>
     <con:endpoints>
       <con:endpoint>http://localhost:8080/meveo/InvoicingWs</con:endpoint>
     </con:endpoints>
@@ -1294,7 +1283,6 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="ba5f98f2-b753-4f34-baf7-764ad91bb527" wsaVersion="NONE" name="SuperAdminSettingsWsSoapBinding" type="wsdl" bindingName="{http://superAdmin.ws.api.meveo.org/}SuperAdminSettingsWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/SuperAdminSettingsWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/>
     <con:endpoints>
       <con:endpoint>http://localhost:8080/meveo/SuperAdminSettingsWs</con:endpoint>
     </con:endpoints>
@@ -1361,7 +1349,6 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="0da7e377-c1a0-48f7-99a9-e1e9247de8ba" wsaVersion="NONE" name="EntityCustomizationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}EntityCustomizationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/EntityCustomizationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/>
     <con:endpoints>
       <con:endpoint>http://keepcool.i.opencellsoft.com/meveo/EntityCustomizationWs</con:endpoint>
     </con:endpoints>
@@ -1437,7 +1424,6 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="46c7a3e2-1f7a-4eba-82d6-658a290b9a92" wsaVersion="NONE" name="ModuleWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}ModuleWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/ModuleWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/>
     <con:endpoints>
       <con:endpoint>http://127.0.0.1:8080/meveo/ModuleWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/ModuleWs</con:endpoint>
@@ -1478,12 +1464,10 @@
   </con:interface>
   <con:interface xsi:type="con:RestService" id="cbea8ecf-a6c3-4d0d-a813-222e3d4af5ee" wadlVersion="http://wadl.dev.java.net/2009/02" name="Classic offer" type="rest" definitionUrl="hierar" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/>
     <con:endpoints/>
   </con:interface>
   <con:interface xsi:type="con:RestService" id="7959a799-a204-4db3-a820-bb959de54cab" wadlVersion="http://wadl.dev.java.net/2009/02" name="MEVEO JAX-WS API Documentation" type="rest" basePath="/api/rest" definitionUrl="" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/>
     <con:endpoints>
       <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
     </con:endpoints>
@@ -15702,7 +15686,543 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     </con:testCase>
     <con:properties/>
   </con:testSuite>
-  <con:testSuite id="c5281793-519c-4dde-bfe4-5e47fd35cf59" name="Create CFs">
+  <con:testSuite id="7320e016-8154-4d49-bd9f-0c1532c5ac32" name="Create Offer/Provider CFs">
+    <con:settings/>
+    <con:runType>SEQUENTIAL</con:runType>
+    <con:testCase id="2f27bdf6-bd93-4c48-806b-2debb1ae6a72" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Configuration" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="request" name="CF_TEMPLATE_CODE" id="21e4f81f-7024-4895-879d-cdb0cce8f2d7">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createCustomFieldTemplate</con:operation>
+          <con:request name="CF_TEMPLATE_CODE" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomFieldTemplate>\r
+         \r
+         <customField code="CF_TEMPLATE_CODE" description="Template code">\r
+            <fieldType>STRING</fieldType>\r
+            <appliesTo>OFFER</appliesTo>\r
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>false</valueRequired>\r
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+            <cacheValue>false</cacheValue>
+		  <guiPosition>tab:Configuration:0;field:0</guiPosition>
+         </customField>\r
+      </ws:createOrUpdateCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
+            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="CF_TEMPLATE_LABEL" id="7944d0ba-883a-490f-ab89-c465da70148f">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createCustomFieldTemplate</con:operation>
+          <con:request name="CF_TEMPLATE_LABEL" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomFieldTemplate>\r
+         \r
+         <customField code="CF_TEMPLATE_LABEL" description="Template label">\r
+            <fieldType>STRING</fieldType>\r
+            <appliesTo>OFFER</appliesTo>\r
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>false</valueRequired>\r
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+            <cacheValue>false</cacheValue>
+		  <guiPosition>tab:Configuration:0;field:1</guiPosition>
+         </customField>\r
+      </ws:createOrUpdateCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
+            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:testCase id="4d064b4a-23d8-4ea0-b7ba-b78093fa334a" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Provider" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="request" name="CF_PROVIDER_ADDR_NAME" id="f2002010-4c72-4a87-9704-fe198d8e49d0">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createCustomFieldTemplate</con:operation>
+          <con:request name="CF_PROVIDER_ADDR_NAME" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomFieldTemplate>\r
+         \r
+         <customField code="CF_PROVIDER_ADDR_NAME" description="Provider Address Name">\r
+            <fieldType>STRING</fieldType>\r
+            <appliesTo>PROVIDER</appliesTo>\r
+            <defaultValue>${#Project#providerAddrName}</defaultValue>
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>false</valueRequired>\r
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+            <cacheValue>false</cacheValue>
+		  <guiPosition>tab:Address:0;field:0</guiPosition>
+         </customField>\r
+      </ws:createOrUpdateCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
+            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="CF_PROVIDER_ADDR_LINE1" id="6d413973-aa9b-4f4f-92c8-ba6e785dee37">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createCustomFieldTemplate</con:operation>
+          <con:request name="CF_PROVIDER_ADDR_LINE1" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomFieldTemplate>\r
+         \r
+         <customField code="CF_PROVIDER_ADDR_LINE1" description="Provider Address line 1">\r
+            <fieldType>STRING</fieldType>\r
+            <appliesTo>PROVIDER</appliesTo>\r
+            <defaultValue>${#Project#providerAddrLine1}</defaultValue>
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>false</valueRequired>\r
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+            <cacheValue>false</cacheValue>
+		  <guiPosition>tab:Address:0;field:1</guiPosition>
+         </customField>\r
+      </ws:createOrUpdateCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
+            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="CF_PROVIDER_ADDR_LINE2" id="e6f6fe28-1229-4392-81f3-d8efbd90b878">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createCustomFieldTemplate</con:operation>
+          <con:request name="CF_PROVIDER_ADDR_LINE2" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomFieldTemplate>\r
+         \r
+         <customField code="CF_PROVIDER_ADDR_LINE2" description="Provider Address line 2">\r
+            <fieldType>STRING</fieldType>\r
+            <appliesTo>PROVIDER</appliesTo>\r
+            <defaultValue>${#Project#providerAddrLine2}</defaultValue>
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>false</valueRequired>\r
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+            <cacheValue>false</cacheValue>
+		  <guiPosition>tab:Address:0;field:2</guiPosition>
+         </customField>\r
+      </ws:createOrUpdateCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
+            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="CF_PROVIDER_ADDR_ZIP" id="f7537b24-35aa-4910-bebc-b0563047774a">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createCustomFieldTemplate</con:operation>
+          <con:request name="CF_PROVIDER_ADDR_ZIP" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomFieldTemplate>\r
+         \r
+         <customField code="CF_PROVIDER_ADDR_ZIP" description="Provider Address Zip code">\r
+            <fieldType>STRING</fieldType>\r
+            <appliesTo>PROVIDER</appliesTo>\r
+            <defaultValue>${#Project#providerAddrZip}</defaultValue>
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>false</valueRequired>\r
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+            <cacheValue>false</cacheValue>
+		  <guiPosition>tab:Address:0;field:3</guiPosition>
+         </customField>\r
+      </ws:createOrUpdateCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
+            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="CF_PROVIDER_ADDR_CITY" id="d4983adf-8414-4df6-9fa4-04d168df66a6">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createCustomFieldTemplate</con:operation>
+          <con:request name="CF_PROVIDER_ADDR_CITY" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomFieldTemplate>\r
+         \r
+         <customField code="CF_PROVIDER_ADDR_CITY" description="Provider Address City">\r
+            <fieldType>STRING</fieldType>\r
+            <appliesTo>PROVIDER</appliesTo>\r
+            <defaultValue>${#Project#providerAddrCity}</defaultValue>
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>false</valueRequired>\r
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+            <cacheValue>false</cacheValue>
+		  <guiPosition>tab:Address:0;field:4</guiPosition>
+         </customField>\r
+      </ws:createOrUpdateCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
+            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="CF_PROVIDER_ADDR_PHONE" id="1dfefe4f-a6a8-4bc4-960a-4818fcce96c1">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createCustomFieldTemplate</con:operation>
+          <con:request name="CF_PROVIDER_ADDR_PHONE" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomFieldTemplate>\r
+         \r
+         <customField code="CF_PROVIDER_ADDR_PHONE" description="Provider Address Phone">\r
+            <fieldType>STRING</fieldType>\r
+            <appliesTo>PROVIDER</appliesTo>\r
+            <defaultValue>${#Project#providerAddrPhone}</defaultValue>
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>false</valueRequired>\r
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+            <cacheValue>false</cacheValue>
+		  <guiPosition>tab:Address:0;field:5</guiPosition>
+         </customField>\r
+      </ws:createOrUpdateCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
+            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="CF_PROVIDER_ADDR_EMAIL" id="a54bd240-d194-4fe0-aeb1-3b027f7e6c7d">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createCustomFieldTemplate</con:operation>
+          <con:request name="CF_PROVIDER_ADDR_EMAIL" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomFieldTemplate>\r
+         \r
+         <customField code="CF_PROVIDER_ADDR_EMAIL" description="Provider Address Email">\r
+            <fieldType>STRING</fieldType>\r
+            <appliesTo>PROVIDER</appliesTo>\r
+            <defaultValue>${#Project#providerAddrEmail}</defaultValue>
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>false</valueRequired>\r
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+            <cacheValue>false</cacheValue>
+		  <guiPosition>tab:Address:0;field:6</guiPosition>
+         </customField>\r
+      </ws:createOrUpdateCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
+            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Update Provider CF" id="b4fb4acd-30c7-472d-9388-399dd2b1d34a">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SuperAdminSettingsWsSoapBinding</con:interface>
+          <con:operation>createProvider</con:operation>
+          <con:request name="Update Provider CF" id="5fe54926-c495-4c0b-9a75-bf4b2e24d787">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:updateProviderCF>
+         <provider code="${#Project#provider}">
+         	<customFields>
+         		<customField code="CF_PROVIDER_ADDR_NAME">
+         			<stringValue>${#Project#providerAddrName}</stringValue>
+         		</customField>
+         		<customField code="CF_PROVIDER_ADDR_LINE1">
+         			<stringValue>${#Project#providerAddrLine1}</stringValue>
+         		</customField>
+         		<customField code="CF_PROVIDER_ADDR_LINE2">
+         			<stringValue>${#Project#providerAddrLine2}</stringValue>
+         		</customField>
+         		<customField code="CF_PROVIDER_ADDR_ZIP">
+         			<stringValue>${#Project#providerAddrZip}</stringValue>
+         		</customField>
+         		<customField code="CF_PROVIDER_ADDR_CITY">
+         			<stringValue>${#Project#providerAddrCity}</stringValue>
+         		</customField>
+         		<customField code="CF_PROVIDER_ADDR_PHONE">
+         			<stringValue>${#Project#providerAddrPhone}</stringValue>
+         		</customField>
+         		<customField code="CF_PROVIDER_ADDR_EMAIL">
+         			<stringValue>${#Project#providerAddrEmail}</stringValue>
+         		</customField>
+         	</customFields>
+         </provider>
+      </ws:updateProviderCF>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="672fcfee-e9c9-4797-a7e0-10ddc9f464f0"/>
+            <con:assertion type="Simple Contains" id="edabc20e-68fe-476f-8075-6249992738ef" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.superadmin</con:username>
+              <con:password>meveo.superadmin</con:password>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:properties/>
+  </con:testSuite>
+  <con:testSuite id="c5281793-519c-4dde-bfe4-5e47fd35cf59" name="Create Service CFs">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
     <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Pricing" searchProperties="true" id="c3d02a1a-32fe-4f5e-a80e-e6a27210fcc7">
@@ -16257,516 +16777,6 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="CF_PRICE_OS - Instance" id="987c4344-6354-42f2-a377-3dba1f6a4ab4">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>SettingsWsSoapBinding</con:interface>
-          <con:operation>createCustomFieldTemplate</con:operation>
-          <con:request name="CF_PRICE_OS - Instance" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:createOrUpdateCustomFieldTemplate>\r
-         <customField code="CF_${#Project#templateCode}_PRICE_OS" description="One-off price">\r
-            <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
-            <storageType>SINGLE</storageType>\r
-            <valueRequired>true</valueRequired>\r
-            <defaultValue>30</defaultValue>\r
-            <versionable>false</versionable>\r
-            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
-            <allowEdit>true</allowEdit>\r
-            <hideOnNew>false</hideOnNew>\r
-            <cacheValue>false</cacheValue>\r
-            <guiPosition>tab:Prices:0;field:0</guiPosition>\r
-            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_OS') &amp;&amp; !entity.code.contains('SE_${#Project#templateCode}_OSS_VOLUME')}</applicableOnEl>\r
-         </customField>\r
-      </ws:createOrUpdateCustomFieldTemplate>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
-            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
-              <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:credentials>
-              <con:preemptive>true</con:preemptive>
-              <con:authType>No Authorization</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
-        </con:config>
-      </con:testStep>
-      <con:testStep type="request" name="CF_VOLUME_PRICE_OS - Instance" id="343897fb-12fd-46ed-b9d2-4708ae3634ed">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>SettingsWsSoapBinding</con:interface>
-          <con:operation>createCustomFieldTemplate</con:operation>
-          <con:request name="CF_VOLUME_PRICE_OS - Instance" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:createOrUpdateCustomFieldTemplate>\r
-         <customField code="CF_${#Project#templateCode}_VOLUME_PRICE_OS" description="Volume based pricing">\r
-            <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
-            <storageType>MAP</storageType>\r
-            <valueRequired>false</valueRequired>\r
-            <versionable>false</versionable>\r
-            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
-            <allowEdit>true</allowEdit>\r
-            <hideOnNew>false</hideOnNew>\r
-            <cacheValue>false</cacheValue>\r
-            <guiPosition>tab:Prices:0;field:4</guiPosition>\r
-            <mapKeyType>RON</mapKeyType>\r
-            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_OSS_VOLUME')}</applicableOnEl>\r
-         </customField>\r
-      </ws:createOrUpdateCustomFieldTemplate>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
-            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
-              <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:credentials>
-              <con:preemptive>true</con:preemptive>
-              <con:authType>No Authorization</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
-        </con:config>
-      </con:testStep>
-      <con:testStep type="request" name="CF_PRICE_REC - Instance" id="4ab94237-1c46-4c49-8871-c509c5d96859">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>SettingsWsSoapBinding</con:interface>
-          <con:operation>createCustomFieldTemplate</con:operation>
-          <con:request name="CF_PRICE_REC - Instance" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:createOrUpdateCustomFieldTemplate>\r
-         <customField code="CF_${#Project#templateCode}_PRICE_REC" description="Recurring price">\r
-            <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
-            <storageType>SINGLE</storageType>\r
-            <valueRequired>true</valueRequired>\r
-            <defaultValue>10</defaultValue>\r
-            <versionable>false</versionable>\r
-            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
-            <allowEdit>true</allowEdit>\r
-            <hideOnNew>false</hideOnNew>\r
-            <cacheValue>false</cacheValue>\r
-            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_REC') &amp;&amp; !entity.code.contains('SE_${#Project#templateCode}_REC_VOLUME')}</applicableOnEl>\r
-            <guiPosition>tab:Prices:0;field:0</guiPosition>\r
-         </customField>\r
-      </ws:createOrUpdateCustomFieldTemplate>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
-            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
-              <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:credentials>
-              <con:preemptive>true</con:preemptive>
-              <con:authType>No Authorization</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
-        </con:config>
-      </con:testStep>
-      <con:testStep type="request" name="CF_VOLUME_PRICE_REC - Instance" id="d45fdf2a-2fa2-4ba7-b436-66dfacc660d2">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>SettingsWsSoapBinding</con:interface>
-          <con:operation>createCustomFieldTemplate</con:operation>
-          <con:request name="CF_VOLUME_PRICE_REC - Instance" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:createOrUpdateCustomFieldTemplate>\r
-         <customField code="CF_${#Project#templateCode}_VOLUME_PRICE_REC" description="Volume based pricing">\r
-            <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
-            <storageType>MAP</storageType>\r
-            <valueRequired>false</valueRequired>\r
-            <versionable>false</versionable>\r
-            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
-            <allowEdit>true</allowEdit>\r
-            <hideOnNew>false</hideOnNew>\r
-            <cacheValue>false</cacheValue>\r
-            <guiPosition>tab:Prices:0;field:3</guiPosition>\r
-            <mapKeyType>RON</mapKeyType>\r
-            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_REC_VOLUME')}</applicableOnEl>\r
-         </customField>\r
-      </ws:createOrUpdateCustomFieldTemplate>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
-            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
-              <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:credentials>
-              <con:preemptive>true</con:preemptive>
-              <con:authType>No Authorization</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
-        </con:config>
-      </con:testStep>
-      <con:testStep type="request" name="CF_PRICE_USG - Instance" id="e12adb6d-03aa-45ac-a693-dffd89d52b7e">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>SettingsWsSoapBinding</con:interface>
-          <con:operation>createCustomFieldTemplate</con:operation>
-          <con:request name="CF_PRICE_USG - Instance" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:createOrUpdateCustomFieldTemplate>\r
-         <customField code="CF_${#Project#templateCode}_PRICE_USG" description="Usage price per unit">\r
-            <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
-            <storageType>SINGLE</storageType>\r
-            <valueRequired>true</valueRequired>\r
-            <defaultValue>0.1</defaultValue>\r
-            <versionable>false</versionable>\r
-            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
-            <allowEdit>true</allowEdit>\r
-            <hideOnNew>false</hideOnNew>\r
-            <cacheValue>false</cacheValue>\r
-            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_USG') &amp;&amp; !(entity.code.contains('VOLUME')||entity.code.contains('TIERS')||entity.code.contains('COMMISSION'))}</applicableOnEl>\r
-            <guiPosition>tab:Prices:0;field:0</guiPosition>\r
-         </customField>\r
-      </ws:createOrUpdateCustomFieldTemplate>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
-            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
-              <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:credentials>
-              <con:preemptive>true</con:preemptive>
-              <con:authType>No Authorization</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
-        </con:config>
-      </con:testStep>
-      <con:testStep type="request" name="CF_VOLUME_PRICE_USG - Instance" id="e6cebc49-89cb-4abc-b983-b820d4061da7">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>SettingsWsSoapBinding</con:interface>
-          <con:operation>createCustomFieldTemplate</con:operation>
-          <con:request name="CF_VOLUME_PRICE_USG - Instance" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:createOrUpdateCustomFieldTemplate>\r
-         <customField code="CF_${#Project#templateCode}_VOLUME_PRICE_USG" description="Volume based pricing">\r
-            <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
-            <storageType>MAP</storageType>\r
-            <valueRequired>false</valueRequired>\r
-            <versionable>false</versionable>\r
-            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
-            <allowEdit>true</allowEdit>\r
-            <hideOnNew>false</hideOnNew>\r
-            <cacheValue>false</cacheValue>\r
-            <guiPosition>tab:Prices:0;field:4</guiPosition>\r
-            <mapKeyType>RON</mapKeyType>\r
-            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_USG_VOLUME')}</applicableOnEl>\r
-         </customField>\r
-      </ws:createOrUpdateCustomFieldTemplate>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
-            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
-              <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:credentials>
-              <con:preemptive>true</con:preemptive>
-              <con:authType>No Authorization</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
-        </con:config>
-      </con:testStep>
-      <con:testStep type="request" name="CF_PRICE_PRD - Instance" id="a905471a-df58-486d-bbd5-578304e051ac">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>SettingsWsSoapBinding</con:interface>
-          <con:operation>createCustomFieldTemplate</con:operation>
-          <con:request name="CF_PRICE_PRD - Instance" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:createOrUpdateCustomFieldTemplate>\r
-         <customField code="CF_${#Project#templateCode}_PRICE_PRD" description="Product price">\r
-            <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>PRODUCT_INSTANCE</appliesTo>\r
-            <storageType>SINGLE</storageType>\r
-            <valueRequired>true</valueRequired>\r
-            <defaultValue>20</defaultValue>\r
-            <versionable>false</versionable>\r
-            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
-            <allowEdit>true</allowEdit>\r
-            <hideOnNew>false</hideOnNew>\r
-            <cacheValue>false</cacheValue>\r
-            <applicableOnEl>#{entity.code.contains('PR_${#Project#templateCode}_')}</applicableOnEl>\r
-            <guiPosition>tab:Prices:0;field:0</guiPosition>\r
-         </customField>\r
-      </ws:createOrUpdateCustomFieldTemplate>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
-            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
-              <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:credentials>
-              <con:preemptive>true</con:preemptive>
-              <con:authType>No Authorization</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
-        </con:config>
-      </con:testStep>
-      <con:testStep type="request" name="CF_PLAN_QUANTITY_USG - Instance" id="8df096f5-6c59-4ec3-888d-53e308ddfb17">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>SettingsWsSoapBinding</con:interface>
-          <con:operation>createCustomFieldTemplate</con:operation>
-          <con:request name="CF_PLAN_QUANTITY_USG - Instance" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:createOrUpdateCustomFieldTemplate>\r
-         <customField code="CF_${#Project#templateCode}_PLAN_QUANTITY_USG" description="Quantity included in plan">\r
-            <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
-            <storageType>SINGLE</storageType>\r
-            <valueRequired>true</valueRequired>\r
-            <defaultValue>100</defaultValue>\r
-            <versionable>false</versionable>\r
-            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
-            <allowEdit>true</allowEdit>\r
-            <hideOnNew>false</hideOnNew>\r
-            <cacheValue>false</cacheValue>\r
-            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_USG_PLAN')}</applicableOnEl>\r
-            <guiPosition>tab:Prices:0;field:0</guiPosition>\r
-         </customField>\r
-      </ws:createOrUpdateCustomFieldTemplate>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
-            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
-              <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:credentials>
-              <con:preemptive>true</con:preemptive>
-              <con:authType>No Authorization</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
-        </con:config>
-      </con:testStep>
-      <con:testStep type="request" name="CF_10TIERS_QUANTITY_USG - Instance" id="3c40004d-5363-431c-b361-1a4d610131e7">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>SettingsWsSoapBinding</con:interface>
-          <con:operation>createCustomFieldTemplate</con:operation>
-          <con:request name="CF_10TIERS_QUANTITY_USG - Instance" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:createOrUpdateCustomFieldTemplate>\r
-         <customField code="CF_${#Project#templateCode}_10TIERS_QUANTITY_USG" description="Thresholds for 10TIERS">\r
-            <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
-            <storageType>MAP</storageType>\r
-            <valueRequired>false</valueRequired>\r
-            <versionable>false</versionable>\r
-            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
-            <allowEdit>true</allowEdit>\r
-            <hideOnNew>false</hideOnNew>\r
-            <cacheValue>false</cacheValue>\r
-            <guiPosition>tab:Prices:0;field:4</guiPosition>\r
-            <mapKeyType>STRING</mapKeyType>\r
-            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_USG_10TIERS')}</applicableOnEl>\r
-         </customField>\r
-      </ws:createOrUpdateCustomFieldTemplate>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
-            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
-              <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:credentials>
-              <con:preemptive>true</con:preemptive>
-              <con:authType>No Authorization</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
-        </con:config>
-      </con:testStep>
-      <con:testStep type="request" name="CF_10TIERS_PRICE_USG - Instance" id="c4d1557b-7bbc-4c7c-b5bb-ec7af99215c8">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>SettingsWsSoapBinding</con:interface>
-          <con:operation>createCustomFieldTemplate</con:operation>
-          <con:request name="CF_10TIERS_PRICE_USG - Instance" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:createOrUpdateCustomFieldTemplate>\r
-         <customField code="CF_${#Project#templateCode}_10TIERS_PRICE_USG" description="Prices for 10TIERS">\r
-            <fieldType>DOUBLE</fieldType>\r
-            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
-            <storageType>MAP</storageType>\r
-            <valueRequired>false</valueRequired>\r
-            <versionable>false</versionable>\r
-            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
-            <allowEdit>true</allowEdit>\r
-            <hideOnNew>false</hideOnNew>\r
-            <cacheValue>false</cacheValue>\r
-            <guiPosition>tab:Prices:0;field:4</guiPosition>\r
-            <mapKeyType>STRING</mapKeyType>\r
-            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_USG_10TIERS')}</applicableOnEl>\r
-         </customField>\r
-      </ws:createOrUpdateCustomFieldTemplate>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
-            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
-              <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:credentials>
-              <con:preemptive>true</con:preemptive>
-              <con:authType>No Authorization</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
-        </con:config>
-      </con:testStep>
       <con:properties/>
     </con:testCase>
     <con:testCase id="781aa0c9-4597-4a84-8fd0-e715ef922e79" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Commissioning" searchProperties="true">
@@ -16935,7 +16945,530 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="CF_SELECTOR_TRIGGER_COMMISSION - Instance" id="9a00892f-1026-4bff-9555-eaff5ad0e385">
+      <con:properties/>
+    </con:testCase>
+    <con:properties/>
+  </con:testSuite>
+  <con:testSuite id="6f70e4a0-dd9a-41b5-9c8c-d8f0330f2c47" name="Create Service Instance CFs">
+    <con:settings/>
+    <con:runType>SEQUENTIAL</con:runType>
+    <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Pricing" searchProperties="true" id="3d1d2a8c-a416-4b1b-a589-20dd02feb650">
+      <con:settings/>
+      <con:testStep type="request" name="CF_PRICE_OS - Instance" id="1557fb0c-4677-4455-8a5c-e079ec2bd9ea">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createCustomFieldTemplate</con:operation>
+          <con:request name="CF_PRICE_OS - Instance" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomFieldTemplate>\r
+         <customField code="CF_${#Project#templateCode}_PRICE_OS" description="One-off price">\r
+            <fieldType>DOUBLE</fieldType>\r
+            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>true</valueRequired>\r
+            <defaultValue>30</defaultValue>\r
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <allowEdit>true</allowEdit>\r
+            <hideOnNew>false</hideOnNew>\r
+            <cacheValue>false</cacheValue>\r
+            <guiPosition>tab:Prices:0;field:0</guiPosition>\r
+            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_OS') &amp;&amp; !entity.code.contains('SE_${#Project#templateCode}_OSS_VOLUME')}</applicableOnEl>\r
+         </customField>\r
+      </ws:createOrUpdateCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
+            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="CF_VOLUME_PRICE_OS - Instance" id="e7bd3921-e7f6-4fbb-87b7-8cf07bd0c7bd">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createCustomFieldTemplate</con:operation>
+          <con:request name="CF_VOLUME_PRICE_OS - Instance" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomFieldTemplate>\r
+         <customField code="CF_${#Project#templateCode}_VOLUME_PRICE_OS" description="Volume based pricing">\r
+            <fieldType>DOUBLE</fieldType>\r
+            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
+            <storageType>MAP</storageType>\r
+            <valueRequired>false</valueRequired>\r
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <allowEdit>true</allowEdit>\r
+            <hideOnNew>false</hideOnNew>\r
+            <cacheValue>false</cacheValue>\r
+            <guiPosition>tab:Prices:0;field:4</guiPosition>\r
+            <mapKeyType>RON</mapKeyType>\r
+            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_OSS_VOLUME')}</applicableOnEl>\r
+         </customField>\r
+      </ws:createOrUpdateCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
+            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="CF_PRICE_REC - Instance" id="60481111-6bf3-4121-9cf6-264262cab450">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createCustomFieldTemplate</con:operation>
+          <con:request name="CF_PRICE_REC - Instance" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomFieldTemplate>\r
+         <customField code="CF_${#Project#templateCode}_PRICE_REC" description="Recurring price">\r
+            <fieldType>DOUBLE</fieldType>\r
+            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>true</valueRequired>\r
+            <defaultValue>10</defaultValue>\r
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <allowEdit>true</allowEdit>\r
+            <hideOnNew>false</hideOnNew>\r
+            <cacheValue>false</cacheValue>\r
+            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_REC') &amp;&amp; !entity.code.contains('SE_${#Project#templateCode}_REC_VOLUME')}</applicableOnEl>\r
+            <guiPosition>tab:Prices:0;field:0</guiPosition>\r
+         </customField>\r
+      </ws:createOrUpdateCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
+            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="CF_VOLUME_PRICE_REC - Instance" id="259f6b2e-36f6-4f1b-baee-0fe1a79b3fb9">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createCustomFieldTemplate</con:operation>
+          <con:request name="CF_VOLUME_PRICE_REC - Instance" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomFieldTemplate>\r
+         <customField code="CF_${#Project#templateCode}_VOLUME_PRICE_REC" description="Volume based pricing">\r
+            <fieldType>DOUBLE</fieldType>\r
+            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
+            <storageType>MAP</storageType>\r
+            <valueRequired>false</valueRequired>\r
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <allowEdit>true</allowEdit>\r
+            <hideOnNew>false</hideOnNew>\r
+            <cacheValue>false</cacheValue>\r
+            <guiPosition>tab:Prices:0;field:3</guiPosition>\r
+            <mapKeyType>RON</mapKeyType>\r
+            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_REC_VOLUME')}</applicableOnEl>\r
+         </customField>\r
+      </ws:createOrUpdateCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
+            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="CF_PRICE_USG - Instance" id="e163daf9-963d-425d-89b1-80bb8c2fe132">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createCustomFieldTemplate</con:operation>
+          <con:request name="CF_PRICE_USG - Instance" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomFieldTemplate>\r
+         <customField code="CF_${#Project#templateCode}_PRICE_USG" description="Usage price per unit">\r
+            <fieldType>DOUBLE</fieldType>\r
+            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>true</valueRequired>\r
+            <defaultValue>0.1</defaultValue>\r
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <allowEdit>true</allowEdit>\r
+            <hideOnNew>false</hideOnNew>\r
+            <cacheValue>false</cacheValue>\r
+            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_USG') &amp;&amp; !(entity.code.contains('VOLUME')||entity.code.contains('TIERS')||entity.code.contains('COMMISSION'))}</applicableOnEl>\r
+            <guiPosition>tab:Prices:0;field:0</guiPosition>\r
+         </customField>\r
+      </ws:createOrUpdateCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
+            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="CF_VOLUME_PRICE_USG - Instance" id="5f440a8f-6ff3-47b1-b856-7b8603caba69">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createCustomFieldTemplate</con:operation>
+          <con:request name="CF_VOLUME_PRICE_USG - Instance" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomFieldTemplate>\r
+         <customField code="CF_${#Project#templateCode}_VOLUME_PRICE_USG" description="Volume based pricing">\r
+            <fieldType>DOUBLE</fieldType>\r
+            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
+            <storageType>MAP</storageType>\r
+            <valueRequired>false</valueRequired>\r
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <allowEdit>true</allowEdit>\r
+            <hideOnNew>false</hideOnNew>\r
+            <cacheValue>false</cacheValue>\r
+            <guiPosition>tab:Prices:0;field:4</guiPosition>\r
+            <mapKeyType>RON</mapKeyType>\r
+            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_USG_VOLUME')}</applicableOnEl>\r
+         </customField>\r
+      </ws:createOrUpdateCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
+            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="CF_PRICE_PRD - Instance" id="4d2f82bf-61c4-4c34-84cf-fea84fa2c768">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createCustomFieldTemplate</con:operation>
+          <con:request name="CF_PRICE_PRD - Instance" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomFieldTemplate>\r
+         <customField code="CF_${#Project#templateCode}_PRICE_PRD" description="Product price">\r
+            <fieldType>DOUBLE</fieldType>\r
+            <appliesTo>PRODUCT_INSTANCE</appliesTo>\r
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>true</valueRequired>\r
+            <defaultValue>20</defaultValue>\r
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <allowEdit>true</allowEdit>\r
+            <hideOnNew>false</hideOnNew>\r
+            <cacheValue>false</cacheValue>\r
+            <applicableOnEl>#{entity.code.contains('PR_${#Project#templateCode}_')}</applicableOnEl>\r
+            <guiPosition>tab:Prices:0;field:0</guiPosition>\r
+         </customField>\r
+      </ws:createOrUpdateCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
+            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="CF_PLAN_QUANTITY_USG - Instance" id="17545a2c-3eef-4e4c-8195-644292078a4d">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createCustomFieldTemplate</con:operation>
+          <con:request name="CF_PLAN_QUANTITY_USG - Instance" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomFieldTemplate>\r
+         <customField code="CF_${#Project#templateCode}_PLAN_QUANTITY_USG" description="Quantity included in plan">\r
+            <fieldType>DOUBLE</fieldType>\r
+            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>true</valueRequired>\r
+            <defaultValue>100</defaultValue>\r
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <allowEdit>true</allowEdit>\r
+            <hideOnNew>false</hideOnNew>\r
+            <cacheValue>false</cacheValue>\r
+            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_USG_PLAN')}</applicableOnEl>\r
+            <guiPosition>tab:Prices:0;field:0</guiPosition>\r
+         </customField>\r
+      </ws:createOrUpdateCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
+            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="CF_10TIERS_QUANTITY_USG - Instance" id="7a636caf-3900-4cd2-a0c1-ce2200f4118d">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createCustomFieldTemplate</con:operation>
+          <con:request name="CF_10TIERS_QUANTITY_USG - Instance" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomFieldTemplate>\r
+         <customField code="CF_${#Project#templateCode}_10TIERS_QUANTITY_USG" description="Thresholds for 10TIERS">\r
+            <fieldType>DOUBLE</fieldType>\r
+            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
+            <storageType>MAP</storageType>\r
+            <valueRequired>false</valueRequired>\r
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <allowEdit>true</allowEdit>\r
+            <hideOnNew>false</hideOnNew>\r
+            <cacheValue>false</cacheValue>\r
+            <guiPosition>tab:Prices:0;field:4</guiPosition>\r
+            <mapKeyType>STRING</mapKeyType>\r
+            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_USG_10TIERS')}</applicableOnEl>\r
+         </customField>\r
+      </ws:createOrUpdateCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
+            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="CF_10TIERS_PRICE_USG - Instance" id="60174178-7e84-416a-8384-ffdb17bfa20e">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createCustomFieldTemplate</con:operation>
+          <con:request name="CF_10TIERS_PRICE_USG - Instance" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomFieldTemplate>\r
+         <customField code="CF_${#Project#templateCode}_10TIERS_PRICE_USG" description="Prices for 10TIERS">\r
+            <fieldType>DOUBLE</fieldType>\r
+            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
+            <storageType>MAP</storageType>\r
+            <valueRequired>false</valueRequired>\r
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <allowEdit>true</allowEdit>\r
+            <hideOnNew>false</hideOnNew>\r
+            <cacheValue>false</cacheValue>\r
+            <guiPosition>tab:Prices:0;field:4</guiPosition>\r
+            <mapKeyType>STRING</mapKeyType>\r
+            <applicableOnEl>#{entity.code.contains('SE_${#Project#templateCode}_USG_10TIERS')}</applicableOnEl>\r
+         </customField>\r
+      </ws:createOrUpdateCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
+            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:testCase id="83eaa754-9743-47b3-a61c-f9fd8a829878" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Commissioning" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="request" name="CF_SELECTOR_TRIGGER_COMMISSION - Instance" id="628a4728-c535-4171-a7d9-27537009f1b0">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>SettingsWsSoapBinding</con:interface>
@@ -16997,7 +17530,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="CF_COMMISSION_PARTNER - Instance" id="cc123e65-3bf0-4422-ab64-c3bb0ce6e32e">
+      <con:testStep type="request" name="CF_COMMISSION_PARTNER - Instance" id="b051cd0f-ca52-442e-aca4-64ad37c50ea4">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>SettingsWsSoapBinding</con:interface>
@@ -17048,7 +17581,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="CF_COMMISSION_RATE - Instance" id="9595aa7a-fd3b-4289-8691-897fe8d2aa35">
+      <con:testStep type="request" name="CF_COMMISSION_RATE - Instance" id="4ef135b6-47cb-45a8-8fe4-38d8e5cfe9f4">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <con:interface>SettingsWsSoapBinding</con:interface>
@@ -17089,537 +17622,6 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:credentials>
-              <con:preemptive>true</con:preemptive>
-              <con:authType>No Authorization</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
-        </con:config>
-      </con:testStep>
-      <con:properties/>
-    </con:testCase>
-    <con:testCase id="18a27a09-2a26-49d7-9235-a12922fb1c95" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Configuration" searchProperties="true">
-      <con:settings/>
-      <con:testStep type="request" name="CF_TEMPLATE_CODE" id="558a5045-ee5b-49e8-aa5c-5da67a3f1f4f">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>SettingsWsSoapBinding</con:interface>
-          <con:operation>createCustomFieldTemplate</con:operation>
-          <con:request name="CF_TEMPLATE_CODE" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:createOrUpdateCustomFieldTemplate>\r
-         \r
-         <customField code="CF_TEMPLATE_CODE" description="Template code">\r
-            <fieldType>STRING</fieldType>\r
-            <appliesTo>OFFER</appliesTo>\r
-            <storageType>SINGLE</storageType>\r
-            <valueRequired>false</valueRequired>\r
-            <versionable>false</versionable>\r
-            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
-            <allowEdit>true</allowEdit>
-            <hideOnNew>false</hideOnNew>
-            <cacheValue>false</cacheValue>
-		  <guiPosition>tab:Configuration:0;field:0</guiPosition>
-         </customField>\r
-      </ws:createOrUpdateCustomFieldTemplate>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
-            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
-              <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:credentials>
-              <con:preemptive>true</con:preemptive>
-              <con:authType>No Authorization</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
-        </con:config>
-      </con:testStep>
-      <con:testStep type="request" name="CF_TEMPLATE_LABEL" id="00ca64cb-9880-4acf-8df6-39a5f830aa06">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>SettingsWsSoapBinding</con:interface>
-          <con:operation>createCustomFieldTemplate</con:operation>
-          <con:request name="CF_TEMPLATE_LABEL" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:createOrUpdateCustomFieldTemplate>\r
-         \r
-         <customField code="CF_TEMPLATE_LABEL" description="Template label">\r
-            <fieldType>STRING</fieldType>\r
-            <appliesTo>OFFER</appliesTo>\r
-            <storageType>SINGLE</storageType>\r
-            <valueRequired>false</valueRequired>\r
-            <versionable>false</versionable>\r
-            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
-            <allowEdit>true</allowEdit>
-            <hideOnNew>false</hideOnNew>
-            <cacheValue>false</cacheValue>
-		  <guiPosition>tab:Configuration:0;field:1</guiPosition>
-         </customField>\r
-      </ws:createOrUpdateCustomFieldTemplate>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
-            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
-              <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:credentials>
-              <con:preemptive>true</con:preemptive>
-              <con:authType>No Authorization</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
-        </con:config>
-      </con:testStep>
-      <con:properties/>
-    </con:testCase>
-    <con:testCase id="5e5ea30b-de72-4813-9ce2-5f39ea371ad3" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Provider" searchProperties="true">
-      <con:settings/>
-      <con:testStep type="request" name="CF_PROVIDER_ADDR_NAME" id="2d53f896-33b0-40fe-9f7b-8fc0e530e729">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>SettingsWsSoapBinding</con:interface>
-          <con:operation>createCustomFieldTemplate</con:operation>
-          <con:request name="CF_PROVIDER_ADDR_NAME" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:createOrUpdateCustomFieldTemplate>\r
-         \r
-         <customField code="CF_PROVIDER_ADDR_NAME" description="Provider Address Name">\r
-            <fieldType>STRING</fieldType>\r
-            <appliesTo>PROVIDER</appliesTo>\r
-            <defaultValue>${#Project#providerAddrName}</defaultValue>
-            <storageType>SINGLE</storageType>\r
-            <valueRequired>false</valueRequired>\r
-            <versionable>false</versionable>\r
-            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
-            <allowEdit>true</allowEdit>
-            <hideOnNew>false</hideOnNew>
-            <cacheValue>false</cacheValue>
-		  <guiPosition>tab:Address:0;field:0</guiPosition>
-         </customField>\r
-      </ws:createOrUpdateCustomFieldTemplate>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
-            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
-              <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:credentials>
-              <con:preemptive>true</con:preemptive>
-              <con:authType>No Authorization</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
-        </con:config>
-      </con:testStep>
-      <con:testStep type="request" name="CF_PROVIDER_ADDR_LINE1" id="d0686a63-2986-4769-bec6-2c15358760f7">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>SettingsWsSoapBinding</con:interface>
-          <con:operation>createCustomFieldTemplate</con:operation>
-          <con:request name="CF_PROVIDER_ADDR_LINE1" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:createOrUpdateCustomFieldTemplate>\r
-         \r
-         <customField code="CF_PROVIDER_ADDR_LINE1" description="Provider Address line 1">\r
-            <fieldType>STRING</fieldType>\r
-            <appliesTo>PROVIDER</appliesTo>\r
-            <defaultValue>${#Project#providerAddrLine1}</defaultValue>
-            <storageType>SINGLE</storageType>\r
-            <valueRequired>false</valueRequired>\r
-            <versionable>false</versionable>\r
-            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
-            <allowEdit>true</allowEdit>
-            <hideOnNew>false</hideOnNew>
-            <cacheValue>false</cacheValue>
-		  <guiPosition>tab:Address:0;field:1</guiPosition>
-         </customField>\r
-      </ws:createOrUpdateCustomFieldTemplate>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
-            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
-              <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:credentials>
-              <con:preemptive>true</con:preemptive>
-              <con:authType>No Authorization</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
-        </con:config>
-      </con:testStep>
-      <con:testStep type="request" name="CF_PROVIDER_ADDR_LINE2" id="7c0c482b-c9d1-47e7-8e36-7dc9a7167d4f">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>SettingsWsSoapBinding</con:interface>
-          <con:operation>createCustomFieldTemplate</con:operation>
-          <con:request name="CF_PROVIDER_ADDR_LINE2" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:createOrUpdateCustomFieldTemplate>\r
-         \r
-         <customField code="CF_PROVIDER_ADDR_LINE2" description="Provider Address line 2">\r
-            <fieldType>STRING</fieldType>\r
-            <appliesTo>PROVIDER</appliesTo>\r
-            <defaultValue>${#Project#providerAddrLine2}</defaultValue>
-            <storageType>SINGLE</storageType>\r
-            <valueRequired>false</valueRequired>\r
-            <versionable>false</versionable>\r
-            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
-            <allowEdit>true</allowEdit>
-            <hideOnNew>false</hideOnNew>
-            <cacheValue>false</cacheValue>
-		  <guiPosition>tab:Address:0;field:2</guiPosition>
-         </customField>\r
-      </ws:createOrUpdateCustomFieldTemplate>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
-            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
-              <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:credentials>
-              <con:preemptive>true</con:preemptive>
-              <con:authType>No Authorization</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
-        </con:config>
-      </con:testStep>
-      <con:testStep type="request" name="CF_PROVIDER_ADDR_ZIP" id="457b4040-ea4d-49ca-9e4b-26c4e1c630d3">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>SettingsWsSoapBinding</con:interface>
-          <con:operation>createCustomFieldTemplate</con:operation>
-          <con:request name="CF_PROVIDER_ADDR_ZIP" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:createOrUpdateCustomFieldTemplate>\r
-         \r
-         <customField code="CF_PROVIDER_ADDR_ZIP" description="Provider Address Zip code">\r
-            <fieldType>STRING</fieldType>\r
-            <appliesTo>PROVIDER</appliesTo>\r
-            <defaultValue>${#Project#providerAddrZip}</defaultValue>
-            <storageType>SINGLE</storageType>\r
-            <valueRequired>false</valueRequired>\r
-            <versionable>false</versionable>\r
-            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
-            <allowEdit>true</allowEdit>
-            <hideOnNew>false</hideOnNew>
-            <cacheValue>false</cacheValue>
-		  <guiPosition>tab:Address:0;field:3</guiPosition>
-         </customField>\r
-      </ws:createOrUpdateCustomFieldTemplate>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
-            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
-              <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:credentials>
-              <con:preemptive>true</con:preemptive>
-              <con:authType>No Authorization</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
-        </con:config>
-      </con:testStep>
-      <con:testStep type="request" name="CF_PROVIDER_ADDR_CITY" id="c3262519-089e-4d3a-a7be-e35bbf0c7f89">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>SettingsWsSoapBinding</con:interface>
-          <con:operation>createCustomFieldTemplate</con:operation>
-          <con:request name="CF_PROVIDER_ADDR_CITY" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:createOrUpdateCustomFieldTemplate>\r
-         \r
-         <customField code="CF_PROVIDER_ADDR_CITY" description="Provider Address City">\r
-            <fieldType>STRING</fieldType>\r
-            <appliesTo>PROVIDER</appliesTo>\r
-            <defaultValue>${#Project#providerAddrCity}</defaultValue>
-            <storageType>SINGLE</storageType>\r
-            <valueRequired>false</valueRequired>\r
-            <versionable>false</versionable>\r
-            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
-            <allowEdit>true</allowEdit>
-            <hideOnNew>false</hideOnNew>
-            <cacheValue>false</cacheValue>
-		  <guiPosition>tab:Address:0;field:4</guiPosition>
-         </customField>\r
-      </ws:createOrUpdateCustomFieldTemplate>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
-            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
-              <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:credentials>
-              <con:preemptive>true</con:preemptive>
-              <con:authType>No Authorization</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
-        </con:config>
-      </con:testStep>
-      <con:testStep type="request" name="CF_PROVIDER_ADDR_PHONE" id="830c248f-9d8b-4aba-949e-bd4819407c01">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>SettingsWsSoapBinding</con:interface>
-          <con:operation>createCustomFieldTemplate</con:operation>
-          <con:request name="CF_PROVIDER_ADDR_PHONE" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:createOrUpdateCustomFieldTemplate>\r
-         \r
-         <customField code="CF_PROVIDER_ADDR_PHONE" description="Provider Address Phone">\r
-            <fieldType>STRING</fieldType>\r
-            <appliesTo>PROVIDER</appliesTo>\r
-            <defaultValue>${#Project#providerAddrPhone}</defaultValue>
-            <storageType>SINGLE</storageType>\r
-            <valueRequired>false</valueRequired>\r
-            <versionable>false</versionable>\r
-            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
-            <allowEdit>true</allowEdit>
-            <hideOnNew>false</hideOnNew>
-            <cacheValue>false</cacheValue>
-		  <guiPosition>tab:Address:0;field:5</guiPosition>
-         </customField>\r
-      </ws:createOrUpdateCustomFieldTemplate>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
-            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
-              <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:credentials>
-              <con:preemptive>true</con:preemptive>
-              <con:authType>No Authorization</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
-        </con:config>
-      </con:testStep>
-      <con:testStep type="request" name="CF_PROVIDER_ADDR_EMAIL" id="42e32eb5-04e4-4634-9a4d-f8a0daf11b9b">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>SettingsWsSoapBinding</con:interface>
-          <con:operation>createCustomFieldTemplate</con:operation>
-          <con:request name="CF_PROVIDER_ADDR_EMAIL" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:createOrUpdateCustomFieldTemplate>\r
-         \r
-         <customField code="CF_PROVIDER_ADDR_EMAIL" description="Provider Address Email">\r
-            <fieldType>STRING</fieldType>\r
-            <appliesTo>PROVIDER</appliesTo>\r
-            <defaultValue>${#Project#providerAddrEmail}</defaultValue>
-            <storageType>SINGLE</storageType>\r
-            <valueRequired>false</valueRequired>\r
-            <versionable>false</versionable>\r
-            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
-            <allowEdit>true</allowEdit>
-            <hideOnNew>false</hideOnNew>
-            <cacheValue>false</cacheValue>
-		  <guiPosition>tab:Address:0;field:6</guiPosition>
-         </customField>\r
-      </ws:createOrUpdateCustomFieldTemplate>\r
-   </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
-            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
-              <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:credentials>
-              <con:preemptive>true</con:preemptive>
-              <con:authType>No Authorization</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
-        </con:config>
-      </con:testStep>
-      <con:testStep type="request" name="Update Provider CF" id="bdfe2f94-9fde-4e50-8af2-2857a2d58aa8">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>SuperAdminSettingsWsSoapBinding</con:interface>
-          <con:operation>createProvider</con:operation>
-          <con:request name="Update Provider CF" id="5fe54926-c495-4c0b-9a75-bf4b2e24d787">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:updateProviderCF>
-         <provider code="${#Project#provider}">
-         	<customFields>
-         		<customField code="CF_PROVIDER_ADDR_NAME">
-         			<stringValue>${#Project#providerAddrName}</stringValue>
-         		</customField>
-         		<customField code="CF_PROVIDER_ADDR_LINE1">
-         			<stringValue>${#Project#providerAddrLine1}</stringValue>
-         		</customField>
-         		<customField code="CF_PROVIDER_ADDR_LINE2">
-         			<stringValue>${#Project#providerAddrLine2}</stringValue>
-         		</customField>
-         		<customField code="CF_PROVIDER_ADDR_ZIP">
-         			<stringValue>${#Project#providerAddrZip}</stringValue>
-         		</customField>
-         		<customField code="CF_PROVIDER_ADDR_CITY">
-         			<stringValue>${#Project#providerAddrCity}</stringValue>
-         		</customField>
-         		<customField code="CF_PROVIDER_ADDR_PHONE">
-         			<stringValue>${#Project#providerAddrPhone}</stringValue>
-         		</customField>
-         		<customField code="CF_PROVIDER_ADDR_EMAIL">
-         			<stringValue>${#Project#providerAddrEmail}</stringValue>
-         		</customField>
-         	</customFields>
-         </provider>
-      </ws:updateProviderCF>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="SOAP Response" id="672fcfee-e9c9-4797-a7e0-10ddc9f464f0"/>
-            <con:assertion type="Simple Contains" id="edabc20e-68fe-476f-8075-6249992738ef" name="Contains">
-              <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:credentials>
-              <con:username>meveo.superadmin</con:username>
-              <con:password>meveo.superadmin</con:password>
-              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
-              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -26829,6 +26831,129 @@ public class CustWFAdvance extends org.meveo.service.script.Script {
             <fieldType>LIST</fieldType>
             <accountLevel>SERVICE</accountLevel>
             <appliesTo>SERVICE</appliesTo>
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>true</valueRequired>\r
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+            <cacheValue>false</cacheValue>
+		  <defaultValue>1</defaultValue>
+	       <listValues>
+	          <entry>
+	             <key>1</key>
+	             <value>1 month</value>
+	          </entry>
+	          <entry>
+	             <key>2</key>
+	             <value>2 months</value>
+	          </entry>
+	          <entry>
+	             <key>3</key>
+	             <value>3 months</value>
+	          </entry>
+	          <entry>
+	             <key>6</key>
+	             <value>6 months</value>
+	          </entry>
+	       </listValues>
+		  <guiPosition>tab:Rebate:0;field:0</guiPosition>
+		  <applicableOnEl>#{entity.code.contains('SE_REC_FLAT_REBATE')}</applicableOnEl>
+         </customField>\r
+      </ws:createOrUpdateCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
+            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="CF_REBATE_PRICE_REC- Instance" id="28565361-eaa4-42a1-9a42-8b52763c48e4">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createCustomFieldTemplate</con:operation>
+          <con:request name="CF_REBATE_PRICE_REC- Instance" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomFieldTemplate>\r
+         \r
+         <customField code="CF_REBATE_PRICE_REC" description="Rebate amount">\r
+            <fieldType>DOUBLE</fieldType>\r
+            <appliesTo>SERVICE_INSTANCE</appliesTo>\r
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>true</valueRequired>\r
+		  <defaultValue>20</defaultValue>
+            <versionable>false</versionable>\r
+            <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
+            <allowEdit>true</allowEdit>
+            <hideOnNew>false</hideOnNew>
+            <cacheValue>false</cacheValue>
+		  <guiPosition>tab:Rebate:0;field:1</guiPosition>
+		  <applicableOnEl>#{entity.code.contains('SE_REC_FLAT_REBATE')}</applicableOnEl>
+         </customField>\r
+      </ws:createOrUpdateCustomFieldTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6f4e7894-962e-47b9-82cc-b2520ca6a93a"/>
+            <con:assertion type="Simple Contains" id="065bdca6-e5bb-40a1-a519-526ffff7ce0b" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="CF_REBATE_DURATION_SELECT - Instance" id="d913ae57-fc2f-4ef9-b772-07c746979eda">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SettingsWsSoapBinding</con:interface>
+          <con:operation>createCustomFieldTemplate</con:operation>
+          <con:request name="CF_REBATE_DURATION_SELECT - Instance" id="767a27d6-8d53-4b08-b0ce-c05b64d28617">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateCustomFieldTemplate>\r
+         \r
+         <customField code="CF_REBATE_DURATION_SELECT" description="Rebate duration (months)">\r
+            <fieldType>LIST</fieldType>
+            <accountLevel>SERVICE</accountLevel>
+            <appliesTo>SERVICE_INSTANCE</appliesTo>
             <storageType>SINGLE</storageType>\r
             <valueRequired>true</valueRequired>\r
             <versionable>false</versionable>\r

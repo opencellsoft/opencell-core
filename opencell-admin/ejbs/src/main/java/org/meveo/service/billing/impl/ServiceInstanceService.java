@@ -267,7 +267,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             log.debug("serviceActivation:serviceInstance.getSubscriptionChargeInstances.size={}", serviceInstance.getSubscriptionChargeInstances().size());
             for (OneShotChargeInstance oneShotChargeInstance : serviceInstance.getSubscriptionChargeInstances()) {
                 oneShotChargeInstanceService.oneShotChargeApplication(subscription, oneShotChargeInstance, serviceInstance.getSubscriptionDate(), serviceInstance.getQuantity(),
-                    null);
+                		serviceInstance.getOrderNumber());
                 oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
                 oneShotChargeInstanceService.update(oneShotChargeInstance);
             }
