@@ -12,7 +12,7 @@ import org.meveo.model.payments.CustomerAccount;
 /**
  * @author Edward P. Legaspi
  **/
-@XmlRootElement()
+@XmlRootElement(name="Customer")
 @XmlAccessorType(XmlAccessType.FIELD)
 @FilterResults(property = "customerAccounts.customerAccount", entityClass = CustomerAccount.class)
 public class CustomerDto extends AccountDto {

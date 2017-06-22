@@ -6,7 +6,7 @@
         <include pattern="org.meveo.api.rest.**" />
         <include pattern="org.meveo.api.ws.**" />
         <include pattern="org.meveo.api.dto.**" />
-        <exclude pattern="org.meveo.model.**" />
+<!--         <exclude pattern="org.meveo.model.**" /> -->
     </api-classes>
 
     <modules>

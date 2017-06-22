@@ -15,7 +15,7 @@ import org.meveo.model.mediation.Access;
 /**
  * @author Edward P. Legaspi
  **/
-@XmlRootElement()
+@XmlRootElement(name="Access")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AccessDto extends BaseDto {
 
