@@ -49,6 +49,7 @@ public class SubscriptionDto extends BusinessDto {
     private ProductsDto products = new ProductsDto();
 
     private String terminationReason;
+    private String orderNumber;
 
     public SubscriptionDto() {
 
@@ -98,7 +99,7 @@ public class SubscriptionDto extends BusinessDto {
     public String toString() {
         return "SubscriptionDto [code=" + getCode() + ", description=" + getDescription() + ", userAccount=" + userAccount + ", offerTemplate=" + offerTemplate + ", subscriptionDate="
                 + subscriptionDate + ", terminationDate=" + terminationDate + ", status=" + status + ",statusDate="+statusDate+", customFields=" + customFields + ", accesses=" + accesses + ", services="
-                + services + ", terminationReason=" + terminationReason + "]";
+                + services + ", terminationReason=" + terminationReason + ", orderNumber="+orderNumber+"]";
     }
 
     public SubscriptionStatusEnum getStatus() {
@@ -156,5 +157,13 @@ public class SubscriptionDto extends BusinessDto {
     public void setTerminationReason(String terminationReason) {
         this.terminationReason = terminationReason;
     }
+
+	public String getOrderNumber() {
+		return orderNumber;
+	}
+
+	public void setOrderNumber(String orderNumber) {
+		this.orderNumber = orderNumber;
+	}
 
 }
