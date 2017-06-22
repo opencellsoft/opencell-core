@@ -58,7 +58,8 @@ public class MediationApi extends BaseApi {
 
 	public void registerCdrList(CdrListDto postData) throws MeveoApiException, BusinessException {
 
-		if (postData.getCdr() != null && postData.getCdr().size() > 0) {
+		List<String> cdr = postData.getCdr();
+		if (cdr != null && cdr.size() > 0) {
 			try {
 				cdrParsingService.initByApi(currentUser.getUserName(), postData.getIpAddress());
 			} catch (BusinessException e1) {
@@ -67,7 +68,7 @@ public class MediationApi extends BaseApi {
 			}
 
 			try {
-				for (String line : postData.getCdr()) {
+				for (String line : cdr) {
 					List<EDR> edrs = cdrParsingService.getEDRList(line, CDRParsingService.CDR_ORIGIN_API);
 					for (EDR edr : edrs) {
 						log.debug("edr={}", edr);
@@ -79,7 +80,7 @@ public class MediationApi extends BaseApi {
 				throw new MeveoApiException(e.getMessage());
 			}
 		} else {
-			if (postData.getCdr() == null || postData.getCdr().size() == 0) {
+			if (cdr == null || cdr.size() == 0) {
 				missingParameters.add("cdr");
 			}
 

@@ -177,6 +177,9 @@ public class EDR extends BaseEntity {
 	@ManyToOne()
 	private EDR headerEDR;
 	
+	@Column(name = "EXTRA_PARAMETER")
+	private String extraParameter;
+	
 	public Subscription getSubscription() {
 		return subscription;
 	}
@@ -417,6 +420,14 @@ public class EDR extends BaseEntity {
 		this.headerEDR = headerEDR;
 	}
 	
+	public String getExtraParameter() {
+		return extraParameter;
+	}
+
+	public void setExtraParameter(String extraParameter) {
+		this.extraParameter = extraParameter;
+	}
+
 	@Override
 	public String toString() {
 		return "EDR [id="+id+", subscription=" + (subscription!=null?subscription.getId():null) + ", originBatch="
@@ -431,7 +442,7 @@ public class EDR extends BaseEntity {
 				+ ", dateParam3=" + dateParam3+ ", dateParam4=" + dateParam4
 				+ ", dateParam5=" + dateParam5+ ", decimalParam1=" + decimalParam1
 				+ ", dateParam2=" + dateParam2+ ", decimalParam3=" + decimalParam3
-				+ ", dateParam4=" + dateParam4+ ", decimalParam5=" + decimalParam5
+				+ ", dateParam4=" + dateParam4+ ", decimalParam5=" + decimalParam5 + ", extraParameter=" + extraParameter
 				+ ", headerEDR=" + ((headerEDR==null)?"null":headerEDR.getId())
 				+ ", status=" + status + ", rejectReason=" + rejectReason
 				+ ", created=" + created + ", lastUpdate=" + lastUpdate + "]";
