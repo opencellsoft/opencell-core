@@ -20,8 +20,13 @@
             </p:breadCrumb>
         </h:form>
 		                
-        <hftl:searchPanel backingBean="#{userListBean}">
+        <hftl:searchPanel backingBean="#{userListBean}" renderNewButton="false">
 			<hftl:searchField label="#{messages['user.userName']}" field="userName" />
+
+			<ui:define name="buttons">
+				<p:button href="#{authenticationProvider.getAccountUrl()}"
+					value="#{messages['commons.new']}" target="_blank" />
+			</ui:define>
 		</hftl:searchPanel>
 
 		<hftl:dataList label="#{messages['user.title']}"
