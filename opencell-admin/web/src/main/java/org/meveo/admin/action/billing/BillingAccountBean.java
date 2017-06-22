@@ -184,9 +184,6 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
             
 		} catch (DuplicateDefaultAccountException e1) {
 			messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
-		} catch (Exception e) {
-			log.error("failed to save or update billing account",e);
-			messages.error(new BundleKey("messages", "javax.el.ELException"));
 		}
 		return null;
 	}

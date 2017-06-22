@@ -16,13 +16,13 @@ import org.meveo.model.jobs.JobInstance;
 
 @Entity
 @ModuleItem
-@Table(name="ADM_NOTIF_JOB")
+@Table(name="adm_notif_job")
 public class JobTrigger extends Notification {
 	
 	private static final long serialVersionUID = -8948201462950547554L;
 
 	@ElementCollection(fetch = FetchType.EAGER)
-	@CollectionTable(name = "ADM_NOTIF_JOB_PARAMS") 
+	@CollectionTable(name = "adm_notif_job_params") 
 	private Map<String, String> jobParams = new HashMap<String, String>();
 	
     @ManyToOne(fetch = FetchType.LAZY)

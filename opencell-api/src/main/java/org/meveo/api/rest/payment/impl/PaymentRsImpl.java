@@ -7,6 +7,8 @@ import javax.ws.rs.QueryParam;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.payment.CardTokenRequestDto;
+import org.meveo.api.dto.payment.CardTokenResponseDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
 import org.meveo.api.logging.WsRestApiInterceptor;
@@ -34,7 +36,6 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
         } catch (Exception e) {
             processException(e, result);
         }
-
         return result;
     }
 
@@ -49,8 +50,20 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
-
         return result;
     }
+
+	@Override
+	public CardTokenResponseDto createCardToken(CardTokenRequestDto cardTokenRequestDto) {
+		CardTokenResponseDto response = new CardTokenResponseDto();
+		response.setActionStatus(new ActionStatus(ActionStatusEnum.SUCCESS, ""));
+		try{
+			response.setTokenID(paymentApi.createCardToken(cardTokenRequestDto));
+		}catch(Exception e){
+			processException(e, response.getActionStatus());
+		}
+		
+		return response;
+	}
 
 }

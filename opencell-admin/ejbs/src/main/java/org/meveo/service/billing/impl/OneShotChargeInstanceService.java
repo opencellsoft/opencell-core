@@ -207,7 +207,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 		create(oneShotChargeInstance);
 
 		if(applyCharge){
-			walletOperationService.oneShotWalletOperation(subscription, oneShotChargeInstance, inputQuantity, quantity, effetDate, false, null);
+			walletOperationService.oneShotWalletOperation(subscription, oneShotChargeInstance, inputQuantity, quantity, effetDate, false, subscription.getOrderNumber());
 		}
 		return oneShotChargeInstance;
 	}
@@ -240,7 +240,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
         BigDecimal inputQuantity = quantity;
         quantity = NumberUtil.getInChargeUnit(quantity, oneShotChargeInstance.getChargeTemplate().getUnitMultiplicator(), oneShotChargeInstance.getChargeTemplate()
             .getUnitNbDecimal(), oneShotChargeInstance.getChargeTemplate().getRoundingMode());
-        return walletOperationService.oneShotWalletOperation(subscription, oneShotChargeInstance, inputQuantity, quantity, effectiveDate, true, null);
+        return walletOperationService.oneShotWalletOperation(subscription, oneShotChargeInstance, inputQuantity, quantity, effectiveDate, true, subscription.getOrderNumber());
 
     }
 
@@ -291,7 +291,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 		BigDecimal inputQuantity = BigDecimal.ONE;
 		BigDecimal quantity = NumberUtil.getInChargeUnit(inputQuantity, oneShotChargeTemplate.getUnitMultiplicator(), oneShotChargeTemplate.getUnitNbDecimal(),oneShotChargeTemplate.getRoundingMode());
 		
-		WalletOperation op = walletOperationService.oneShotWalletOperation(subscription, matchingCharge, inputQuantity, quantity, new Date(), false, null);
+		WalletOperation op = walletOperationService.oneShotWalletOperation(subscription, matchingCharge, inputQuantity, quantity, new Date(), false, subscription.getOrderNumber());
 		op.setStatus(WalletOperationStatusEnum.TREATED);
 		OneShotChargeInstance compensationCharge=oneShotChargeApplication(subscription,
 				(OneShotChargeTemplate) oneShotChargeTemplate,

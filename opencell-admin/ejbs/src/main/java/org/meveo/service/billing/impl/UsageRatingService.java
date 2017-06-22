@@ -184,6 +184,7 @@ public class UsageRatingService {
         walletOperation.setParameter2(edr.getParameter2());
         walletOperation.setParameter3(edr.getParameter3());
         walletOperation.setInputQuantity(edr.getQuantity());
+        walletOperation.setOrderNumber(chargeInstance.getServiceInstance().getOrderNumber());
         walletOperation.setEdr(edr);
 
         // FIXME: copy those info in chargeInstance instead of performing multiple queries

@@ -73,7 +73,7 @@ public class InvoiceConfiguration extends BaseEntity implements Serializable, IE
     private Boolean displayOrders = false;
 
     @OneToOne
-    @JoinColumn(name="PROVIDER_ID")
+    @JoinColumn(name="provider_id")
     private Provider provider;
 
     public Boolean getDisplaySubscriptions() {

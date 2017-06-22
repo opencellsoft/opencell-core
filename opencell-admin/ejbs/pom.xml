@@ -554,6 +554,13 @@
 			<version>1.11</version>
 		</dependency>
 
+
+		<dependency>
+   			 <groupId>com.ingenico.connect.gateway</groupId>
+  			<artifactId>connect-sdk-java</artifactId>
+  			<version>5.5.1</version>
+		</dependency>
+
 	</dependencies>
 
 	<profiles>

@@ -30,11 +30,11 @@ public class InstantMessagingNotification extends Notification {
     private String idEl;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "ADM_NOTIF_IM_LIST")
+    @CollectionTable(name = "adm_notif_im_list")
     private Set<String> ids;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "ADM_NOTIF_IM_USER")
+    @CollectionTable(name = "adm_notif_im_user")
     private Set<User> users;
 
     @Column(name = "message", length = 2000)

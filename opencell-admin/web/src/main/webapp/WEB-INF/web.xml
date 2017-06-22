@@ -12,7 +12,7 @@
 	</context-param>
 	<context-param>
 		<param-name>javax.faces.FACELETS_REFRESH_PERIOD</param-name>
-		<param-value>2</param-value>
+		<param-value>-1</param-value>
 	</context-param>
 	<context-param>
 		<param-name>javax.faces.FACELETS_LIBRARIES</param-name>
@@ -276,8 +276,21 @@
 		<error-code>404</error-code>
 		<location>/errors/404.xhtml</location>
 	</error-page>
-	<error-page>
-		<error-code>500</error-code>
-		<location>/errors/500.xhtml</location>
-	</error-page>
+<!-- 	<error-page> -->
+<!-- 		<error-code>500</error-code> -->
+<!-- 		<location>/errors/500.xhtml</location> -->
+<!-- 	</error-page> -->
+    <error-page>
+        <exception-type>javax.faces.application.ViewExpiredException</exception-type>
+        <location>/errors/expired.xhtml</location>
+    </error-page>     
+    <error-page>
+        <exception-type>org.jboss.weld.context.NonexistentConversationException</exception-type>
+        <location>/errors/expired.xhtml</location>
+    </error-page> 
+    <error-page>
+        <exception-type>java.lang.Exception</exception-type>
+        <location>/errors/500.xhtml</location>
+    </error-page>    
+           
 </web-app>

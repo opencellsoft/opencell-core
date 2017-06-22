@@ -60,11 +60,11 @@ public class WebHook extends Notification {
 	private String bodyEL = null;
     
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "ADM_NOTIF_WEBHOOK_HEADER")
+    @CollectionTable(name = "adm_notif_webhook_header")
     private Map<String, String> headers = new HashMap<String, String>();
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "ADM_NOTIF_WEBHOOK_PARAM")
+    @CollectionTable(name = "adm_notif_webhook_param")
     private Map<String, String> webhookParams = new HashMap<String, String>();
     
     @Transient

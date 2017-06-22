@@ -79,7 +79,7 @@ public class RecurringChargeTemplate extends ChargeTemplate {
 	private Boolean applyInAdvance;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name= "SHARE_LEVEL",length=20)
+	@Column(name= "share_level",length=20)
 	private LevelEnum shareLevel;
 	
 	@Column(name = "filter_expression", length = 2000)

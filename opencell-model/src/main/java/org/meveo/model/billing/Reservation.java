@@ -70,7 +70,7 @@ public class Reservation extends EnableEntity {
 	private BigDecimal amountWithTax = BigDecimal.ZERO;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "BILLING_RESRV_COUNTID")
+    @CollectionTable(name = "billing_resrv_countid")
 	private Map<Long,BigDecimal> counterPeriodValues = new HashMap<Long, BigDecimal>(); 
 
     @ManyToOne(fetch = FetchType.LAZY)

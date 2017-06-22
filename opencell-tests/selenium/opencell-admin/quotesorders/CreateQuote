@@ -38,17 +38,17 @@
 </tr>
 <tr>
 	<td>type</td>
-	<td>id=quoteForm:tabView:quoteInfo:validFrom_date_input</td>
+	<td>id=quoteForm:tabView:quoteInfo:validity_from_date_input</td>
 	<td>01/01/2000</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>id=quoteForm:tabView:quoteInfo:validTo_date_input</td>
+	<td>id=quoteForm:tabView:quoteInfo:validity_to_date_input</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>id=quoteForm:tabView:quoteInfo:validTo_date_input</td>
+	<td>id=quoteForm:tabView:quoteInfo:validity_to_date_input</td>
 	<td>31/12/2020</td>
 </tr>
 <tr>

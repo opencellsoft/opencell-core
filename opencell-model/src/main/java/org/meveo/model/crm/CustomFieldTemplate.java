@@ -79,7 +79,7 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
     private boolean valueRequired;
 
     @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "CRM_CUSTOM_FIELD_TMPL_VAL")
+    @CollectionTable(name = "crm_custom_field_tmpl_val")
     private Map<String, String> listValues;
 
     @ElementCollection(fetch = FetchType.EAGER)

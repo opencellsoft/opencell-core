@@ -228,4 +228,22 @@ public class Subscription extends BusinessCFEntity {
         }
         return false;
     }
+    
+    /**
+     * get orderNumber linked to subscription
+     * 
+     * @return orderNumber
+     */
+    public String getOrderNumber(){
+    	String orderNumber = null;
+    	if(serviceInstances != null && !serviceInstances.isEmpty()){
+    		orderNumber = serviceInstances.get(0).getOrderNumber();
+    	}
+    	if(orderNumber == null){
+        	if(productInstances != null && !productInstances.isEmpty()){
+        		orderNumber = productInstances.get(0).getOrderNumber();
+        	}
+    	}
+    	return orderNumber;
+    }
 }

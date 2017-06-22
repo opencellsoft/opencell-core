@@ -48,7 +48,7 @@ public class Email extends BaseEntity {
 	private String address;
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "REPORT_EMAILS", joinColumns = @JoinColumn(name = "email_id"), inverseJoinColumns = @JoinColumn(name = "report_id"))
+	@JoinTable(name = "report_emails", joinColumns = @JoinColumn(name = "email_id"), inverseJoinColumns = @JoinColumn(name = "report_id"))
 	private List<Report> reports;
 
 	public String getAddress() {

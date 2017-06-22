@@ -77,7 +77,7 @@ public class Notification extends BusinessEntity {
     private ScriptInstance scriptInstance;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "ADM_NOTIFICATION_PARAMS")
+    @CollectionTable(name = "adm_notification_params")
     private Map<String, String> params = new HashMap<String, String>();
 
     @OneToMany(mappedBy = "notification", cascade = CascadeType.REMOVE)

@@ -63,6 +63,8 @@ public class ServiceInstanceDto extends BaseDto {
 	@XmlElementWrapper(name = "usageChargeInstances")
 	@XmlElement(name = "usageChargeInstance")
 	private List<ChargeInstanceDto> usageChargeInstances;
+	
+	private String orderNumber;
 
 	public ServiceInstanceDto() {
 
@@ -76,6 +78,7 @@ public class ServiceInstanceDto extends BaseDto {
 		subscriptionDate = e.getSubscriptionDate();
 		terminationDate = e.getTerminationDate();
 		quantity = e.getQuantity();
+		orderNumber = e.getOrderNumber();
 		if (e.getSubscriptionTerminationReason() != null) {
 			terminationReason = e.getSubscriptionTerminationReason().getCode();
 		}
@@ -171,7 +174,7 @@ public class ServiceInstanceDto extends BaseDto {
 	@Override
 	public String toString() {
 		return "ServiceInstanceDto [code=" + code + ", description=" + description + ", status=" + status + ", subscriptionDate=" + subscriptionDate + ", terminationDate="
-				+ terminationDate + ", quantity=" + quantity + ", terminationReason=" + terminationReason + "]";
+				+ terminationDate + ", quantity=" + quantity + ", terminationReason=" + terminationReason + ", orderNumber="+orderNumber+"]";
 	}
 
 	public String getTerminationReason() {
@@ -205,4 +208,13 @@ public class ServiceInstanceDto extends BaseDto {
 	public void setCustomFields(CustomFieldsDto customFields) {
 		this.customFields = customFields;
 	}
+
+	public String getOrderNumber() {
+		return orderNumber;
+	}
+
+	public void setOrderNumber(String orderNumber) {
+		this.orderNumber = orderNumber;
+	}
+	
 }
