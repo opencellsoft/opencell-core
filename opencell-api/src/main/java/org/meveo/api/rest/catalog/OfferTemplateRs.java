@@ -75,7 +75,7 @@ public interface OfferTemplateRs extends IBaseRs {
      */
     @GET
     @Path("/list")
-    public GetListOfferTemplateResponseDto list(@QueryParam("code") String code, @QueryParam("validFrom") @RestDateParam Date validFrom, @QueryParam("validTo") @RestDateParam Date validTo);
+    public GetListOfferTemplateResponseDto list(@QueryParam("offerTemplateCode") String code, @QueryParam("validFrom") @RestDateParam Date validFrom, @QueryParam("validTo") @RestDateParam Date validTo);
 
     /**
      * Remove offer template with a given code and validity dates. If no validity dates are provided, an offer template valid on a current date will be deleted.
