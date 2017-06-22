@@ -1,9 +1,6 @@
 package org.meveo.api.rest.communication.impl;
 
 import javax.inject.Inject;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.communication.MeveoInstanceApi;
 import org.meveo.api.dto.ActionStatus;
@@ -20,8 +17,6 @@ import org.meveo.api.rest.impl.BaseRs;
  * @date Jun 4, 2016 4:08:58 AM
  *
  */
-@XmlRootElement(name = "GetAccessResponse")
-@XmlAccessorType(XmlAccessType.FIELD)
 public class MeveoInstanceRsImpl extends BaseRs implements MeveoInstanceRs {
 
     @Inject

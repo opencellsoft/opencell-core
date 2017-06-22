@@ -2,6 +2,8 @@ package org.tmf.dsmapi.catalog.resource;
 
 import java.io.Serializable;
 
+import javax.xml.bind.annotation.XmlType;
+
 import org.tmf.dsmapi.commons.Utilities;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -15,6 +17,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
  *         }
  * 
  */
+@XmlType(name = "Attachment")
 @JsonInclude(value = Include.NON_NULL)
 public class Attachment implements Serializable {
     public final static long serialVersionUID = 1L;

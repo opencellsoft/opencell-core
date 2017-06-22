@@ -6,7 +6,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.BaseDto;
 import org.meveo.model.billing.BillingWalletTypeEnum;
@@ -15,8 +14,7 @@ import org.meveo.model.catalog.WalletTemplate;
 /**
  * @author Edward P. Legaspi
  **/
-@XmlRootElement(name = "WalletTemplate")
-@XmlType(name = "WalletTemplate")
+@XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WalletTemplateDto extends BaseDto {
 

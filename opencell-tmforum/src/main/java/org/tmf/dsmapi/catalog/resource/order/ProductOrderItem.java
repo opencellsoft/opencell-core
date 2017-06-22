@@ -18,7 +18,7 @@ import org.tmf.dsmapi.catalog.resource.product.ProductOffering;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-@XmlRootElement
+@XmlRootElement(name="OrderItem")
 @XmlType(name="OrderItem")
 @JsonInclude(value = Include.NON_NULL)
 public class ProductOrderItem implements Serializable {

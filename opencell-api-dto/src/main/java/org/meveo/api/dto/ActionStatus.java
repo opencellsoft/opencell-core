@@ -4,7 +4,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.MeveoApiErrorCodeEnum;
 
@@ -13,8 +12,7 @@ import org.meveo.api.MeveoApiErrorCodeEnum;
  * 
  * @author Edward P. Legaspi
  **/
-@XmlRootElement(name = "ActionStatus")
-@XmlType(name = "ActionStatus")
+@XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ActionStatus {
 

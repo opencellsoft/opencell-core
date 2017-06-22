@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.CustomFieldsDto;
 import org.tmf.dsmapi.catalog.resource.RelatedParty;
@@ -16,6 +17,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @XmlRootElement
 @JsonInclude(value = Include.NON_NULL)
+@XmlType(namespace="http://www.tmforum.org")
 public class ProductOrder implements Serializable {
 
     private static final long serialVersionUID = -4883520016795545598L;

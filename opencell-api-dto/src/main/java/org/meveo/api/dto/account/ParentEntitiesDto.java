@@ -6,12 +6,10 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
 
 /**
  * @author Tony Alejandro.
  */
-@XmlType(name = "ParentEntities")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ParentEntitiesDto implements Serializable {
 

@@ -4,12 +4,10 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
 
 /**
  * @author Edward P. Legaspi
  **/
-@XmlType(name = "ServiceChargeTemplateRecurring")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ServiceChargeTemplateRecurringDto extends BaseServiceChargeTemplateDto implements Serializable {
 

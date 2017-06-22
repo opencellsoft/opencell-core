@@ -7,15 +7,13 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.payments.DunningLevelEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
 
-@XmlRootElement(name = "CustomerAccount")
-@XmlType(name = "CustomerAccount")
+@XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
 @FilterResults(property = "billingAccounts.billingAccount", entityClass = BillingAccount.class)
 public class CustomerAccountDto extends AccountDto {

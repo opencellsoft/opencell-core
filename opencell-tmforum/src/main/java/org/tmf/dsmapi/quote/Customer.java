@@ -40,7 +40,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "TMFCustomer", propOrder = { "id", "href", "name" })
+@XmlType(propOrder = { "id", "href", "name" })
 @JsonInclude(value = Include.NON_NULL)
 public class Customer implements Serializable {
 

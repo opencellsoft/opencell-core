@@ -21,12 +21,10 @@ package org.meveo.api.dto.payment;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.BaseDto;
 import org.meveo.model.wf.WFDecisionRule;
 
-@XmlType(name = "WFDecisionRule")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WFDecisionRuleDto extends BaseDto {
 	private static final long serialVersionUID = 8309866046667741458L;

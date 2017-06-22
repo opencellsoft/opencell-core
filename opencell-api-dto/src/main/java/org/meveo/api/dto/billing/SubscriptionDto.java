@@ -6,15 +6,13 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.BusinessDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.account.AccessesDto;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 
-@XmlRootElement(name = "Subscription")
-@XmlType(name = "Subscription")
+@XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SubscriptionDto extends BusinessDto {
 

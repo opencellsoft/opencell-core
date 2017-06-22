@@ -9,7 +9,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.model.billing.AccountStatusEnum;
@@ -20,8 +19,7 @@ import org.meveo.model.payments.PaymentTermEnum;
 /**
  * @author Edward P. Legaspi
  **/
-@XmlType(name = "BillingAccount")
-@XmlRootElement(name = "BillingAccount")
+@XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
 @FilterResults(property = "userAccounts.userAccount", entityClass = UserAccount.class)
 public class BillingAccountDto extends AccountDto {

@@ -3,7 +3,10 @@
     <description>opencell API</description>
 
     <api-classes>
-        <include pattern="org.meveo.api.**" />
+        <include pattern="org.meveo.api.rest.**" />
+        <include pattern="org.meveo.api.ws.**" />
+        <include pattern="org.meveo.api.dto.**" />
+        <exclude pattern="org.meveo.model.**" />
     </api-classes>
 
     <modules>
@@ -20,7 +23,7 @@
         <php-json-client disabled="true" />
         <ruby-json-client disabled="true" />
         <idl disabled="true" />
-        <jaxrs groupBy="path" />
+        <jaxrs groupBy="path"  />
         <docs docsSubdir="api" />
         <swagger host="integration.i.opencellsoft.com" basePath="/opencell/api/rest" docsSubdir="swagger"  />
     </modules>

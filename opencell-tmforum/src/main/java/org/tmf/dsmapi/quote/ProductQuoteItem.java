@@ -61,7 +61,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  * 
  * 
  */
-@XmlRootElement
+@XmlRootElement(name="QuoteItem")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "QuoteItem")
 @JsonInclude(JsonInclude.Include.NON_NULL)
