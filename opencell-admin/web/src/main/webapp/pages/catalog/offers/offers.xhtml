@@ -227,6 +227,15 @@
                                                                        action="#{offerTemplateListBean.addForExport(entity)}" title="#{messages['action.export']}">
                                                     </p:commandLink></li>
                                                     
+                                                     <li><p:commandLink id="deleteLink"
+                                                                       styleClass="fa fa-trash-o text-blue fa-2x"
+                                                                       update=":tabView"
+                                                                       action="#{offerTemplateListBean.deleteCatalogHierarchy(entity)}" title="#{messages['action.delete']}" rendered="#{!offerTemplateListBean.isUsedInSubscription(entity)}">
+                                                        <f:param name="tab" value="0"/>
+                                                        <p:confirm header="#{messages['commons.delete']}"
+                                                                   message="#{messages['commons.confirmDelete']}"/>
+                                                    </p:commandLink></li>
+                                                    
                                                 </ul>
                                             </p:panel>
                                         </p:panel>
