@@ -734,7 +734,6 @@ public class CatalogHierarchyBuilderService {
 	
 	/**
 	 * @param serviceTemplate service template.
-	 * @param serviceCharges serviceCharges list of service's charge
 	 * @throws BusinessException
 	 */
 	private void deleteServiceAndCharge(ServiceTemplate serviceTemplate) throws BusinessException {
@@ -779,63 +778,54 @@ public class CatalogHierarchyBuilderService {
 			if (chargeTemplateCode == null) {
 				continue;
 			}
-			List<PricePlanMatrix> pricePlanMatrixes = this.pricePlanMatrixService.listByEventCode(chargeTemplateCode);
-			if (pricePlanMatrixes != null) {
-				for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
-					if (pricePlanMatrix == null){
-						continue;
-					}
-					//TODO check to see if we can delete.
-					this.pricePlanMatrixService.remove(pricePlanMatrix);
-				}
+			
 
-			}
-
-
-			// Delete Counter
-			if (serviceChargeTemplateUsage instanceof ServiceChargeTemplateUsage) {
-				CounterTemplate counterTemplate = ((ServiceChargeTemplateUsage) serviceChargeTemplateUsage).getCounterTemplate();
-				if (counterTemplate != null) {
-					List<ServiceChargeTemplateUsage> serviceChargeTemplateList = counterChargeMap.get(counterTemplate.getCode());
-					if (serviceChargeTemplateList != null && serviceChargeTemplateList.size() == 1 && chargeTemplateCode.equals(serviceChargeTemplateList.get(0).getChargeTemplate().getCode()) ) {
-						this.counterTemplateService.remove(counterTemplate);
-					}
-
-				}
-			}
 			List<Long> linkedServiceIds = null;
 			Long chargeId = serviceChargeTemplateUsage.getChargeTemplate().getId();
 			if (serviceChargeTemplateUsage instanceof ServiceChargeTemplateUsage) {
 				linkedServiceIds = this.oneShotChargeTemplateService.getServiceIdsLinkedToChargeUsage(chargeId);
-				if (!(linkedServiceIds != null && linkedServiceIds.size() > 1)) {
-					//this.oneShotChargeTemplateService.removeServiceLinkChargeUsage(chargeId);
-					this.oneShotChargeTemplateService.removeRelatedChargeUsage(chargeId);
-					this.oneShotChargeTemplateService.deleteCharge(chargeId);
+				if (!(linkedServiceIds != null && linkedServiceIds.size() > 0)) {
+					this.usageChargeTemplateService.remove(chargeId);
+					//Delete counter.
+					CounterTemplate counterTemplate = ((ServiceChargeTemplateUsage) serviceChargeTemplateUsage)
+							.getCounterTemplate();
+					if (counterTemplate != null) {
+						List<ServiceChargeTemplateUsage> serviceChargeTemplateList = counterChargeMap
+								.get(counterTemplate.getCode());
+						if (serviceChargeTemplateList != null && serviceChargeTemplateList.size() == 1 && chargeTemplateCode
+								.equals(serviceChargeTemplateList.get(0).getChargeTemplate().getCode())) {
+							// It means this counter is related to only current charge
+							this.counterTemplateService.remove(counterTemplate);
+						}
+					}
+					
+					List<PricePlanMatrix> pricePlanMatrixes = this.pricePlanMatrixService.listByEventCode(chargeTemplateCode);
+					if (pricePlanMatrixes != null) {
+						for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
+							if (pricePlanMatrix == null) {
+								continue;
+							}
+							this.pricePlanMatrixService.remove(pricePlanMatrix);
+						}
+
+					}
 				}
 			} else if (serviceChargeTemplateUsage instanceof ServiceChargeTemplateRecurring) {
 				linkedServiceIds = this.oneShotChargeTemplateService.getServiceIdsLinkedToChargeRecurring(chargeId);
-				if (!(linkedServiceIds != null && linkedServiceIds.size() > 1)) {
-					//this.oneShotChargeTemplateService.removeServiceLinkChargeRecurring(chargeId);
-					this.recurringChargeTemplateService.removeRelatedChargeRecurring(chargeId);
-					this.oneShotChargeTemplateService.deleteCharge(chargeId);
+				if (!(linkedServiceIds != null && linkedServiceIds.size() > 0)) {
+					this.recurringChargeTemplateService.remove(chargeId);
 				}
 			} else if (serviceChargeTemplateUsage instanceof ServiceChargeTemplateSubscription) {
 				linkedServiceIds = this.oneShotChargeTemplateService.getServiceIdsLinkedToChargeSubscription(chargeId);
-				if (!(linkedServiceIds != null && linkedServiceIds.size() > 1)) {
-					//this.oneShotChargeTemplateService.removeServiceLinkChargeSubscription(chargeId);
-					this.oneShotChargeTemplateService.removeRelatedChargeOneshot(chargeId);
-					this.oneShotChargeTemplateService.deleteCharge(chargeId);
+				if (!(linkedServiceIds != null && linkedServiceIds.size() > 0)) {
+					this.oneShotChargeTemplateService.remove(chargeId);
 				}
 			} else if (serviceChargeTemplateUsage instanceof ServiceChargeTemplateTermination) {
 				linkedServiceIds = this.oneShotChargeTemplateService.getServiceIdsLinkedToChargeTermination(chargeId);
-				if (!(linkedServiceIds != null && linkedServiceIds.size() > 1)) {
-					//this.oneShotChargeTemplateService.removeServiceLinkChargeTermination(chargeId);
-					this.oneShotChargeTemplateService.removeRelatedChargeOneshot(chargeId);
-					this.oneShotChargeTemplateService.deleteCharge(chargeId);
+				if (!(linkedServiceIds != null && linkedServiceIds.size() > 0)) {
+					this.oneShotChargeTemplateService.remove(chargeId);
 				}
 			}
-
-
 
 		}
 
