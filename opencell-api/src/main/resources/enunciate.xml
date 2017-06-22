@@ -10,7 +10,7 @@
     </api-classes>
 
     <modules>
-        <jackson disabled="false" honorJaxb="true" disableExamples="true"  />
+        <jackson disabled="false" honorJaxb="true" disableExamples="true" collapse-type-hierarchy="true" />
         <jackson1 disabled="true" />
         <spring-web disabled="true" />
         <c-xml-client disabled="true" />
@@ -23,8 +23,10 @@
         <php-json-client disabled="true" />
         <ruby-json-client disabled="true" />
         <idl disabled="true" />
-        <jaxrs groupBy="path"  />
-        <docs docsSubdir="api" />
-        <swagger host="integration.i.opencellsoft.com" basePath="/opencell/api/rest" docsSubdir="swagger"  />
+        <jaxrs groupBy="path"   />
+        <jaxb />
+        <jaxws />
+        <docs docsSubdir="api"  />
+        <swagger host="integration.i.opencellsoft.com" basePath="/opencell/api/rest" docsSubdir="swagger" disabled="true" />
     </modules>
 </enunciate>
