@@ -314,4 +314,13 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
 
         return result;
     }
+
+	/**
+	 * Used for create or update template.
+	 * @see org.meveo.api.rest.custom.EntityCustomizationRs#createOrUpdateCustumizedEntityTemplate(org.meveo.api.dto.CustomEntityTemplateDto)
+	 */
+	@Override
+	public ActionStatus createOrUpdateCustumizedEntityTemplate(CustomEntityTemplateDto dto) {
+		return this.createOrUpdateEntityTemplate(dto);
+	}
 }
