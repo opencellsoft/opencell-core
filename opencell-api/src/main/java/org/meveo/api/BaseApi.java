@@ -446,6 +446,8 @@ public abstract class BaseApi {
                         Long longValue = null;
                         if (valueToCheck instanceof Integer) {
                             longValue = ((Integer) valueToCheck).longValue();
+                        } else if (valueToCheck instanceof Double) {
+                            longValue = ((Double) valueToCheck).longValue();
                         } else {
                             longValue = (Long) valueToCheck;
                         }
@@ -464,6 +466,8 @@ public abstract class BaseApi {
                         Double doubleValue = null;
                         if (valueToCheck instanceof Integer) {
                             doubleValue = ((Integer) valueToCheck).doubleValue();
+                        } else if (valueToCheck instanceof Long) {
+                            doubleValue = ((Long) valueToCheck).doubleValue();
                         } else {
                             doubleValue = (Double) valueToCheck;
                         }

@@ -124,18 +124,12 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 	    
 	    entity.setCustomer(customerService.refreshOrRetrieve(entity.getCustomer()));
 	    
-		try {
-
-            String outcome = super.saveOrUpdate(killConversation);
-            
-            if (outcome != null) {
-                return getEditViewName();// "/pages/payments/customerAccounts/customerAccountDetail.xhtml?edit=true&customerAccountId=" + entity.getId() +
-                                         // "&faces-redirect=true&includeViewParams=true";
-            }
-		} catch (Exception e) {
-			log.error("failed to save or update customer account",e);
-			messages.error(new BundleKey("messages", "javax.el.ELException"));
-		}
+        String outcome = super.saveOrUpdate(killConversation);
+        
+        if (outcome != null) {
+            return getEditViewName();// "/pages/payments/customerAccounts/customerAccountDetail.xhtml?edit=true&customerAccountId=" + entity.getId() +
+                                     // "&faces-redirect=true&includeViewParams=true";
+        }
 
 		return null;
 	}

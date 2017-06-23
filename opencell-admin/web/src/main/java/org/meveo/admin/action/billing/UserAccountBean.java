@@ -191,10 +191,6 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
 		} catch (DuplicateDefaultAccountException e1) {
 			messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
-		} catch (Exception e) {
-			log.error("failed to save or update user account ",e);
-			messages.error(new BundleKey("messages", "javax.el.ELException"));
-
 		}
 
 		return null;
