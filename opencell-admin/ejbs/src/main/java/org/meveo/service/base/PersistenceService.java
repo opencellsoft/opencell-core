@@ -337,9 +337,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             ((IAuditable) entity).updateAudit(currentUser);
         }
 
+        if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(ObservableEntity.class)) {
+            entityUpdatedEventProducer.fire((BaseEntity)entity);
+        }
+        
         entity = getEntityManager().merge(entity);
-
-        log.trace("updated class {}, is BusinessEntity {}", entity.getClass(), BusinessEntity.class.isAssignableFrom(entity.getClass()));
 
         // Update entity in Elastic Search. ICustomFieldEntity is updated
         // partially, as entity itself does not have Custom field values
@@ -348,10 +350,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         } else if (entity instanceof BusinessEntity) {
             elasticClient.createOrFullUpdate((BusinessEntity) entity);
-        }
-
-        if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(ObservableEntity.class)) {
-            entityUpdatedEventProducer.fire((BaseEntity)entity);
         }
 
         log.trace("end of update {} entity (id={}).", entity.getClass().getSimpleName(), entity.getId());
@@ -370,6 +368,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             ((IAuditable) entity).updateAudit(currentUser);
         }
 
+        if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(ObservableEntity.class)) {
+            entityCreatedEventProducer.fire((BaseEntity)entity);
+        }
+        
         getEntityManager().persist(entity);
 
         // Add entity to Elastic Search
@@ -377,9 +379,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             elasticClient.createOrFullUpdate((BusinessEntity) entity);
         }
 
-        if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(ObservableEntity.class)) {
-            entityCreatedEventProducer.fire((BaseEntity)entity);
-        }
 
         log.trace("end of create {}. entity id={}.", entity.getClass().getSimpleName(), entity.getId());
 
