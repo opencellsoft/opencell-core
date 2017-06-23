@@ -19,7 +19,7 @@ import org.meveo.model.admin.User;
 
 @Entity
 @ModuleItem
-@Table(name="ADM_NOTIF_EMAIL")
+@Table(name="adm_notif_email")
 public class EmailNotification extends Notification {
 	
 	private static final long serialVersionUID = -8948201462950547554L;
