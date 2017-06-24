@@ -3,6 +3,8 @@ package org.tmf.dsmapi.catalog.resource.product;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import javax.xml.bind.annotation.XmlType;
+
 import org.tmf.dsmapi.commons.OutputUtilities;
 import org.tmf.dsmapi.commons.Utilities;
 
@@ -17,6 +19,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *         { "taxIncludedAmount": "12.00", "dutyFreeAmount": "10.00", "taxRate": "20.00", "currencyCode": "EUR", "percentage": 0 }
  * 
  */
+@XmlType(name = "Price", namespace="http://www.tmforum.org")
 @JsonInclude(value = Include.NON_NULL)
 public class Price implements Serializable {
     private final static long serialVersionUID = 1L;

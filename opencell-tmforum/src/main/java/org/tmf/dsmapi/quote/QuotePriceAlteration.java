@@ -41,7 +41,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "QuotePriceAlteration", propOrder = { "name", "description", "validFor" })
+@XmlType(name = "QuotePriceAlteration", propOrder = { "name", "description", "validFor" }, namespace="http://www.tmforum.org")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class QuotePriceAlteration implements Serializable {
 

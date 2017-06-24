@@ -51,9 +51,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *         "price": { "percentage": 100 }, "recurringChargePeriod": "", "priceCondition": "apply if total amount of the order is greater than 300.00" } } ] }
  * 
  */
-@XmlRootElement
+@XmlRootElement(name="ProductOffering", namespace="http://www.tmforum.org")
+@XmlType(name="ProductOffering", namespace="http://www.tmforum.org")
 @JsonInclude(value = Include.NON_NULL)
-@XmlType(namespace="http://www.tmforum.org")
 public class ProductOffering extends AbstractCatalogEntity implements Serializable {
     private final static long serialVersionUID = 1L;
 

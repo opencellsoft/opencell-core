@@ -15,9 +15,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-@XmlRootElement
+@XmlRootElement(name="ProductOrder", namespace="http://www.tmforum.org")
+@XmlType(name="ProductOrder", namespace="http://www.tmforum.org")
 @JsonInclude(value = Include.NON_NULL)
-@XmlType(namespace="http://www.tmforum.org")
 public class ProductOrder implements Serializable {
 
     private static final long serialVersionUID = -4883520016795545598L;

@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *         { "role": "Owner", "id": "1234", "href": "http ://serverLocation:port/partyManagement/partyRole/1234" }
  * 
  */
-@XmlType(name = "RelatedParty") 
+@XmlType(name = "RelatedParty", namespace="http://www.tmforum.org") 
 @JsonInclude(value = Include.NON_NULL)
 public class RelatedParty implements Serializable {
     private final static long serialVersionUID = 1L;

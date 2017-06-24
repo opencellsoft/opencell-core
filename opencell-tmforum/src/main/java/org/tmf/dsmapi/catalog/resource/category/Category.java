@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 
 import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.tmf.dsmapi.catalog.resource.AbstractCatalogEntity;
 import org.tmf.dsmapi.catalog.resource.CatalogReference;
@@ -27,7 +28,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
  *         "2013-04-19T16:42:23-04:00", "endDateTime": "" }, "parentId": "41", "isRoot": "false" }
  * 
  */
-@XmlRootElement
+@XmlRootElement(name="Category", namespace="http://www.tmforum.org")
+@XmlType(name="Category", namespace="http://www.tmforum.org")
 @JsonInclude(value = Include.NON_NULL)
 public class Category extends AbstractCatalogEntity implements Serializable {
     private final static long serialVersionUID = 1L;

@@ -13,9 +13,9 @@ import org.tmf.dsmapi.catalog.resource.product.Place;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-@XmlRootElement()
+@XmlRootElement(name="Product", namespace="http://www.tmforum.org")
+@XmlType(name="Product", namespace="http://www.tmforum.org")
 @JsonInclude(value = Include.NON_NULL)
-@XmlType(namespace="http://www.tmforum.org")
 public class Product implements Serializable {
 
     private static final long serialVersionUID = 5933865642305663840L;
