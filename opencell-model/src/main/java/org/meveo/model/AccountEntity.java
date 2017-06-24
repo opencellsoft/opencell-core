@@ -43,10 +43,10 @@ import org.meveo.model.shared.Name;
 
 @Entity
 @ObservableEntity
-@Table(name = "account_entity", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "ACCOUNT_TYPE"}))
+@Table(name = "account_entity", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "account_type"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "account_entity_seq"), })
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "ACCOUNT_TYPE") // Hibernate does not support of discriminator column with Joined strategy, so need to set it manually
+@DiscriminatorColumn(name = "account_type") // Hibernate does not support of discriminator column with Joined strategy, so need to set it manually
 @EntityListeners({ AccountCodeGenerationListener.class })
 public abstract class AccountEntity extends BusinessCFEntity {
 

@@ -39,7 +39,7 @@ import org.meveo.model.ExportIdentifier;
 @Entity
 @ExportIdentifier({ "code"})
 @Table(name = "com_sender_config", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
-@DiscriminatorColumn(name = "MEDIA")
+@DiscriminatorColumn(name = "media")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "com_sndr_conf_seq"), })
 public abstract class MessageSenderConfig extends BusinessEntity {

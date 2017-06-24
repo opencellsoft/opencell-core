@@ -48,7 +48,7 @@ import org.meveo.model.catalog.WalletTemplate;
 @Entity
 @ObservableEntity
 @ExportIdentifier({ "code", "userAccount.code"})
-@Table(name = "billing_wallet", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "USER_ACCOUNT_ID" }))
+@Table(name = "billing_wallet", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "user_account_id" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_wallet_seq"), })
 @NamedQueries({
 	@NamedQuery(name = "WalletInstance.listPrepaidActiveWalletIds", 

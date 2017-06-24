@@ -45,7 +45,7 @@ import org.meveo.model.IJPAVersionedEntity;
 
 @Entity
 @Table(name = "dwh_journal_entries", uniqueConstraints = @UniqueConstraint(columnNames = {
-		"ORIGIN_ID", "INVOICE_NUMBER", "ACCOUNTING_CODE" }))
+		"origin_id", "invoice_number", "accounting_code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "dwh_journal_entries_seq"), })
 public class JournalEntry implements IEntity, IJPAVersionedEntity {
 	@SuppressWarnings("unused")

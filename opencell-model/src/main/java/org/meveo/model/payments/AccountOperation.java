@@ -56,7 +56,7 @@ import org.meveo.model.ObservableEntity;
 @ObservableEntity
 @Table(name = "ar_account_operation")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "TRANSACTION_TYPE")
+@DiscriminatorColumn(name = "transaction_type")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ar_account_operation_seq"), })
 @CustomFieldEntity(cftCodePrefix = "ACC_OP")
 public class AccountOperation extends EnableEntity implements ICustomFieldEntity{

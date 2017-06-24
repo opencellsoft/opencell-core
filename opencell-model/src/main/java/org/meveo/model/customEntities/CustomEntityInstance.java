@@ -16,7 +16,7 @@ import org.meveo.model.ExportIdentifier;
 @Entity
 @CustomFieldEntity(cftCodePrefix = "CE", cftCodeFields = "cetCode")
 @ExportIdentifier({ "code", "cetCode"})
-@Table(name = "cust_cei", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "CET_CODE"}))
+@Table(name = "cust_cei", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "cet_code"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cust_cei_seq"), })
 public class CustomEntityInstance extends BusinessCFEntity {
 

@@ -19,7 +19,7 @@ import org.meveo.model.scripts.ScriptInstance;
 @Entity
 @ModuleItem
 @ExportIdentifier({ "code", "appliesTo"})
-@Table(name = "crm_custom_action", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "APPLIES_TO" }))
+@Table(name = "crm_custom_action", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "applies_to" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "crm_custom_action_seq"), })
 public class EntityCustomAction extends BusinessEntity {
 

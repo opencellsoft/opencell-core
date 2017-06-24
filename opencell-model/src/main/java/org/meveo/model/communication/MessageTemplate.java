@@ -43,7 +43,7 @@ import org.meveo.model.ObservableEntity;
 @ObservableEntity
 @ExportIdentifier({ "code"})
 @Table(name = "com_message_template", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
-@DiscriminatorColumn(name = "MEDIA")
+@DiscriminatorColumn(name = "media")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "com_msg_tmpl_seq"), })
 public abstract class MessageTemplate extends BusinessEntity {

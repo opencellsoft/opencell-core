@@ -48,7 +48,7 @@ import org.meveo.model.BaseEntity;
 @Entity
 @Table(name = "adm_input_history")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "INPUT_TYPE", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorColumn(name = "input_type", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("NOT_SPECIFIED")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "adm_input_history_seq"), })

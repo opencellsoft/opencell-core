@@ -19,7 +19,7 @@ import org.meveo.model.EnableEntity;
 @Entity
 @Table(name = "ar_payment_token")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "TOKEN_TYPE")
+@DiscriminatorColumn(name = "token_type")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ar_payment_token_seq"), })
 public class PaymentToken extends EnableEntity {
 

@@ -37,7 +37,7 @@ import org.meveo.model.communication.MediaEnum;
 @Entity
 @ExportIdentifier({ "code"})
 @Table(name = "com_contact_coords", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
-@DiscriminatorColumn(name = "MEDIA")
+@DiscriminatorColumn(name = "media")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "com_contact_coords_seq"), })
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class ContactCoordinates extends BusinessEntity {

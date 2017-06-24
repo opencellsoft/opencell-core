@@ -43,10 +43,10 @@ import org.meveo.model.ObservableEntity;
 @Entity
 @ObservableEntity
 @ExportIdentifier({ "code", "hierarchyType"})
-@Table(name = "hierarchy_entity", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "HIERARCHY_TYPE" }))
+@Table(name = "hierarchy_entity", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "hierarchy_type" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "hierarchy_entity_seq"), })
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "HIERARCHY_TYPE")
+@DiscriminatorColumn(name = "hierarchy_type")
 public abstract class HierarchyLevel<T> extends BusinessEntity implements Comparable<HierarchyLevel<T>>{
 
 	private static final long serialVersionUID = 1L;

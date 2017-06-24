@@ -17,7 +17,7 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.EnableEntity;
 
 @Entity
-@Table(name="ADM_NOTIF_HISTORY")
+@Table(name="adm_notif_history")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "adm_notif_history_seq"), })
 public class NotificationHistory extends EnableEntity {
 	

@@ -40,7 +40,7 @@ import org.meveo.model.EnableEntity;
 @Entity
 @Table(name = "billing_invoice_agregate")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "TYPE")
+@DiscriminatorColumn(name = "type")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_invoice_agregate_seq"), })
 public abstract class InvoiceAgregate extends EnableEntity {
 

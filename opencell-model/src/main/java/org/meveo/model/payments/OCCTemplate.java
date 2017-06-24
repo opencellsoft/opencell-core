@@ -33,7 +33,7 @@ import org.meveo.model.ExportIdentifier;
 
 @Entity
 @ExportIdentifier({ "code"})
-@Table(name = "ar_occ_template", uniqueConstraints = @UniqueConstraint(columnNames = {"CODE" }))
+@Table(name = "ar_occ_template", uniqueConstraints = @UniqueConstraint(columnNames = {"code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ar_occ_template_seq"), })
 public class OCCTemplate extends BusinessEntity {
 

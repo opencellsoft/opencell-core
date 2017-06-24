@@ -35,7 +35,7 @@ import org.meveo.model.BaseEntity;
 @Entity
 @Table(name = "bi_job_history")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "HISTORY_TYPE")
+@DiscriminatorColumn(name = "history_type")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "bi_job_history_seq"), })
 public class JobHistory extends BaseEntity {

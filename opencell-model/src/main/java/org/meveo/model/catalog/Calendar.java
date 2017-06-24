@@ -41,7 +41,7 @@ import org.meveo.model.ObservableEntity;
 @ExportIdentifier({ "code"})
 @Table(name = "cat_calendar", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "CAL_TYPE")
+@DiscriminatorColumn(name = "cal_type")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_calendar_seq"), })
 public abstract class Calendar extends BusinessEntity {
 

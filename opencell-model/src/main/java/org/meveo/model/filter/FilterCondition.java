@@ -23,7 +23,7 @@ import org.meveo.model.BaseEntity;
 @Table(name = "meveo_filter_condition")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "meveo_filter_condition_seq"), })
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "FILTER_CONDITION_TYPE")
+@DiscriminatorColumn(name = "filter_condition_type")
 public class FilterCondition extends BaseEntity {
 
 	private static final long serialVersionUID = -4620739918936998431L;

@@ -45,11 +45,11 @@ import org.meveo.model.crm.BusinessAccountModel;
 @VersionedEntity
 @MultilanguageEntity(key = "menu.catalog.offersAndProducts", group = "ProductOffering")
 @ExportIdentifier({ "code", "validity.startDate", "validity.endDate" })
-@Table(name = "cat_offer_template", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "VALID_FROM", "VALID_TO" }))
+@Table(name = "cat_offer_template", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "valid_from", "valid_to" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cat_offer_template_seq"), })
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 @NamedQueries({
         @NamedQuery(name = "ProductOffering.findLatestVersion", query = "select e from ProductOffering e where type(e)= :clazz and e.code = :code order by e.validity.from desc, e.validity.to desc"),
         @NamedQuery(name = "ProductOffering.findMatchingVersions", query = "select e from ProductOffering e where type(e)= :clazz and e.code = :code and e.id !=:id order by id"),
