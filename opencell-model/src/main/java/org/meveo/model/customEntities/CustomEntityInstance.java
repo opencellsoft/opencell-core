@@ -22,8 +22,8 @@ public class CustomEntityInstance extends BusinessCFEntity {
 
     private static final long serialVersionUID = 8281478284763353310L;
 
-    @Column(name = "CET_CODE", length = 50, nullable = false)
-    @Size(max = 50)
+    @Column(name = "CET_CODE", length = 255, nullable = false)
+    @Size(max = 255)
     @NotNull
     public String cetCode;
 
