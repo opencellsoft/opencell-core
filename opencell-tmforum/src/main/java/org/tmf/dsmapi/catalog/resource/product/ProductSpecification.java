@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 
 import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
@@ -51,7 +52,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *         "2013-04-19T16:42:23-04:00", "endDateTime": "" } } ] } ] }
  * 
  */
-@XmlRootElement
+@XmlRootElement(name="ProductSpecification", namespace="http://www.tmforum.org")
+@XmlType(name="ProductSpecification", namespace="http://www.tmforum.org")
 @JsonInclude(value = Include.NON_NULL)
 public class ProductSpecification extends AbstractCatalogEntity implements Serializable {
     private static final long serialVersionUID = 1L;

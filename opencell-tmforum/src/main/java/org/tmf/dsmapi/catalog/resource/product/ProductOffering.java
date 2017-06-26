@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferTemplate;
@@ -50,7 +51,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *         "price": { "percentage": 100 }, "recurringChargePeriod": "", "priceCondition": "apply if total amount of the order is greater than 300.00" } } ] }
  * 
  */
-@XmlRootElement
+@XmlRootElement(name="ProductOffering", namespace="http://www.tmforum.org")
+@XmlType(name="ProductOffering", namespace="http://www.tmforum.org")
 @JsonInclude(value = Include.NON_NULL)
 public class ProductOffering extends AbstractCatalogEntity implements Serializable {
     private final static long serialVersionUID = 1L;

@@ -2,6 +2,9 @@ package org.tmf.dsmapi.catalog.resource.product;
 
 import java.io.Serializable;
 
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
 //import org.tmf.dsmapi.catalog.client.CatalogClient;
 import org.tmf.dsmapi.catalog.resource.AbstractEntity;
 import org.tmf.dsmapi.catalog.resource.LifecycleStatus;
@@ -23,6 +26,8 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
  *         issue while making this class a bit uglier than it needs to be.
  * 
  */
+@XmlRootElement(name="BundledProductReference", namespace="http://www.tmforum.org")
+@XmlType(name="BundledProductReference", namespace="http://www.tmforum.org")
 @JsonInclude(value = Include.NON_NULL)
 public class BundledProductReference extends AbstractEntityReference implements Serializable {
     public final static long serialVersionUID = 1L;

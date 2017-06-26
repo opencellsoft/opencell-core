@@ -6,6 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.tmf.dsmapi.catalog.resource.AbstractCatalogEntity;
 import org.tmf.dsmapi.catalog.resource.CatalogReference;
@@ -28,7 +29,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *         "serviceSpecification": { "id": "13", "version": "1.2", "href": "http://serverlocation:port/catalogManagement/serviceSpecification/13", "name": "specification 1" } }
  * 
  */
-@XmlRootElement
+@XmlRootElement(name="ServiceCandidate", namespace="http://www.tmforum.org")
+@XmlType(name="ServiceCandidate", namespace="http://www.tmforum.org")
 @JsonInclude(value = Include.NON_NULL)
 public class ServiceCandidate extends AbstractCatalogEntity implements Serializable {
     private static final long serialVersionUID = 1L;

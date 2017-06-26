@@ -6,13 +6,11 @@ import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.billing.ProductChargeInstance;
 
-@XmlType(name = "Product")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProductDto extends BaseDto {
 

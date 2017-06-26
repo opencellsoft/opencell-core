@@ -6,12 +6,10 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.BaseDto;
 
-@XmlRootElement(name = "PrepaidReservation")
-@XmlType(name = "PrepaidReservation")
+@XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PrepaidReservationDto extends BaseDto {
 

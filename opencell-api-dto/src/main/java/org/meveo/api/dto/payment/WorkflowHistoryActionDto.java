@@ -21,15 +21,11 @@ package org.meveo.api.dto.payment;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.BaseDto;
 import org.meveo.model.wf.WorkflowHistoryAction;
 
-
-
-@XmlType(name = "WorkflowHistoryAction")
-@XmlRootElement(name = "WorkflowHistoryAction")
+@XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WorkflowHistoryActionDto extends BaseDto {
 

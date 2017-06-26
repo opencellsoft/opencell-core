@@ -3,6 +3,9 @@ package org.tmf.dsmapi.catalog.resource.product;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
 import org.tmf.dsmapi.catalog.resource.TimeRange;
 import org.tmf.dsmapi.catalog.resource.specification.CharacteristicValueType;
 import org.tmf.dsmapi.catalog.resource.specification.SpecificationCharacteristicRelationship;
@@ -24,6 +27,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *         "inches", "valueFrom": "", "valueTo": "", "validFor": { "startDateTime": "2013-04-19T16:42:23-04:00", "endDateTime": "" } } ] }
  * 
  */
+@XmlRootElement(name="ProductSpecCharacteristic", namespace="http://www.tmforum.org")
+@XmlType(name="ProductSpecCharacteristic", namespace="http://www.tmforum.org")
 @JsonInclude(value = Include.NON_NULL)
 public class ProductSpecCharacteristic implements Serializable {
     public final static long serialVersionUID = 1L;

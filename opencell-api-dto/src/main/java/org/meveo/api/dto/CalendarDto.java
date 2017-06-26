@@ -7,7 +7,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.CalendarDaily;
@@ -24,8 +23,7 @@ import org.meveo.model.catalog.HourInDay;
 /**
  * @author Edward P. Legaspi
  **/
-@XmlRootElement(name = "Calendar")
-@XmlType(name = "Calendar")
+@XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CalendarDto extends BusinessDto {
 

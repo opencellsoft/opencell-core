@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.tmf.dsmapi.catalog.resource.RelatedParty;
 import org.tmf.dsmapi.catalog.resource.product.Place;
@@ -12,7 +13,8 @@ import org.tmf.dsmapi.catalog.resource.product.Place;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-@XmlRootElement
+@XmlRootElement(name="Product", namespace="http://www.tmforum.org")
+@XmlType(name="Product", namespace="http://www.tmforum.org")
 @JsonInclude(value = Include.NON_NULL)
 public class Product implements Serializable {
 

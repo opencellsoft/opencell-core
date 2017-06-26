@@ -7,7 +7,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomFieldsDto;
@@ -16,8 +15,7 @@ import org.meveo.model.mediation.Access;
 /**
  * @author Edward P. Legaspi
  **/
-@XmlType(name = "Access")
-@XmlRootElement(name = "Access")
+@XmlRootElement(name="Access")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AccessDto extends BaseDto {
 

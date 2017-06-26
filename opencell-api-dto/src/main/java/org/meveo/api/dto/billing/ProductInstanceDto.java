@@ -10,7 +10,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomFieldsDto;
@@ -20,7 +19,6 @@ import org.meveo.model.billing.ProductInstance;
 /**
  * @author Edward P. Legaspi
  **/
-@XmlType(name = "ProductInstance")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProductInstanceDto extends BaseDto {
 

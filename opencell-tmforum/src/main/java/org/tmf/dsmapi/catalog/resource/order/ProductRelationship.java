@@ -3,11 +3,13 @@ package org.tmf.dsmapi.catalog.resource.order;
 import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-@XmlRootElement
+@XmlRootElement(name="ProductRelationship", namespace="http://www.tmforum.org")
+@XmlType(name="ProductRelationship", namespace="http://www.tmforum.org")
 @JsonInclude(value = Include.NON_NULL)
 public class ProductRelationship implements Serializable {
 
