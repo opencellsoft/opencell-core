@@ -1,6 +1,7 @@
 package org.meveo.api;
 
 import java.util.Arrays;
+import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -51,8 +52,6 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
         }
 
         handleMissingParameters();
-
-        
         
         InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategory());
         if (invoiceSubCategory == null) {
@@ -65,10 +64,12 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
 	        if (tradingCountry == null) {
 	            throw new EntityDoesNotExistsException(TradingCountry.class, postData.getCountry());
 	        }
-	        if (invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountry(invoiceSubCategory, tradingCountry) != null) {
-	            throw new EntityAlreadyExistsException("InvoiceSubCategoryCountry with invoiceSubCategory=" + postData.getInvoiceSubCategory() + ", tradingCountry="
-	                    + postData.getCountry() + " already exists.");
-	        }	        
+			if (invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountryWithValidityDates(invoiceSubCategory,
+					tradingCountry, postData.getStartValidityDate(), postData.getEndValidityDate()) != null) {
+				throw new EntityAlreadyExistsException(
+						"InvoiceSubCategoryCountry with invoiceSubCategory=" + postData.getInvoiceSubCategory()
+								+ ", tradingCountry=" + postData.getCountry() + " already exists.");
+			}
         }
         
         Tax tax = null;
@@ -85,6 +86,10 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
         invoiceSubcategoryCountry.setTradingCountry(tradingCountry);
         invoiceSubcategoryCountry.setFilterEL(postData.getFilterEL());
         invoiceSubcategoryCountry.setTaxCodeEL(postData.getTaxCodeEL());
+        invoiceSubcategoryCountry.setStartValidityDate(postData.getStartValidityDate());
+        invoiceSubcategoryCountry.setEndValidityDate(postData.getEndValidityDate());
+        invoiceSubcategoryCountry.setPriority(postData.getPriority());
+        
         invoiceSubCategoryCountryService.create(invoiceSubcategoryCountry);
     }
 
@@ -100,9 +105,7 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
             missingParameters.add("tax");
         }
 
-        handleMissingParameters();
-
-        
+        handleMissingParameters();        
 
         TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountry());
         if (tradingCountry == null) {
@@ -121,10 +124,24 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
 	            throw new EntityDoesNotExistsException(Tax.class, postData.getTax());
 	        }
         }
-        InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountry(invoiceSubCategory, tradingCountry);
+
+		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
+				.findByInvoiceSubCategoryAndCountryWithValidityDates(invoiceSubCategory, tradingCountry, postData.getStartValidityDate(),
+						postData.getEndValidityDate());
+
         if (invoiceSubcategoryCountry == null) {
             throw new EntityDoesNotExistsException("InvoiceSubCategoryCountry with invoiceSubCategory=" + postData.getInvoiceSubCategory() + ", tradingCountry="
                     + postData.getCountry() + " does not exists.");
+        }
+        
+        if(postData.getStartValidityDate() != null) {
+        	invoiceSubcategoryCountry.setStartValidityDate(postData.getStartValidityDate());
+        }
+        if(postData.getEndValidityDate() != null) {
+        	invoiceSubcategoryCountry.setEndValidityDate(postData.getEndValidityDate());
+        }
+        if(postData.getPriority() != 0) {
+        	invoiceSubcategoryCountry.setPriority(postData.getPriority());
         }
 
         invoiceSubcategoryCountry.setTax(tax);
@@ -154,8 +171,8 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
             throw new EntityDoesNotExistsException(InvoiceSubCategory.class, invoiceSubCategoryCode);
         }
 
-        InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountry(invoiceSubCategory, tradingCountry,
-            Arrays.asList("invoiceSubCategory", "tradingCountry", "tax"));
+        InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountryWithValidityDates(invoiceSubCategory, tradingCountry,
+            Arrays.asList("invoiceSubCategory", "tradingCountry", "tax"), null, null);
         if (invoiceSubcategoryCountry == null) {
             throw new EntityDoesNotExistsException("InvoiceSubCategoryCountry with invoiceSubCategory=" + invoiceSubCategoryCode + ", tradingCountry=" + countryCode
                     + " already exists.");
@@ -185,14 +202,16 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
             throw new EntityDoesNotExistsException(InvoiceSubCategory.class, invoiceSubCategoryCode);
         }
 
-        InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountry(invoiceSubCategory, tradingCountry,
-            Arrays.asList("invoiceSubCategory", "tradingCountry", "tax"));
-        if (invoiceSubcategoryCountry == null) {
-            throw new EntityDoesNotExistsException("InvoiceSubCategoryCountry with invoiceSubCategory=" + invoiceSubCategoryCode + ", tradingCountry=" + countryCode
-                    + " already exists.");
-        }
-
-        invoiceSubCategoryCountryService.remove(invoiceSubcategoryCountry);
+        List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries = invoiceSubCategoryCountryService.listByInvoiceSubCategoryAndCountryWithValidityDates(invoiceSubCategory, tradingCountry,
+            Arrays.asList("invoiceSubCategory", "tradingCountry", "tax"), null, null);
+		if (invoiceSubcategoryCountries == null) {
+			throw new EntityDoesNotExistsException("InvoiceSubCategoryCountry with invoiceSubCategory="
+					+ invoiceSubCategoryCode + ", tradingCountry=" + countryCode + " does not exists.");
+		} else {
+			for (InvoiceSubcategoryCountry invoiceSubcategoryCountry : invoiceSubcategoryCountries) {
+				invoiceSubCategoryCountryService.remove(invoiceSubcategoryCountry);
+			}
+		}
     }
 
     /**
@@ -205,13 +224,13 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
      */
     public void createOrUpdate(InvoiceSubCategoryCountryDto postData) throws MeveoApiException, BusinessException {
 
-        
-
         TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountry());
 
         InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategory());
 
-        InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountry(invoiceSubCategory, tradingCountry);
+		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
+				.findByInvoiceSubCategoryAndCountryWithValidityDates(invoiceSubCategory, tradingCountry, postData.getStartValidityDate(),
+						postData.getEndValidityDate());
 
         if (invoiceSubcategoryCountry == null) {
             create(postData);

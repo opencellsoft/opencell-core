@@ -18,25 +18,32 @@
  */
 package org.meveo.model.billing;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.EnableEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.shared.DateUtils;
 
 /**
  * InvoiceSubcategoryCountry entity.
  */
 @Entity
 @ExportIdentifier({ "invoiceSubCategory.code", "tradingCountry.country.countryCode", "tax.code"})
-@Table(name = "BILLING_INV_SUB_CAT_COUNTRY")
+@Table(name = "BILLING_INV_SUB_CAT_COUNTRY", uniqueConstraints = @UniqueConstraint(columnNames = {"INVOICE_SUB_CATEGORY_ID", "SELLING_COUNTRY_ID", "TRADING_COUNTRY_ID", "START_VALIDITY_DATE", "END_VALIDITY_DATE"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_INV_SUB_CAT_COUNTRY_SEQ"), })
 public class InvoiceSubcategoryCountry extends EnableEntity {
 	private static final long serialVersionUID = 1L;
@@ -64,10 +71,29 @@ public class InvoiceSubcategoryCountry extends EnableEntity {
 	@Column(name = "TAX_CODE_EL", length = 2000)
 	@Size(max = 2000)
 	private String taxCodeEL;
+	
+	@Column(name = "START_VALIDITY_DATE")
+	@Temporal(TemporalType.DATE)
+	private Date startValidityDate;
+
+	@Column(name = "END_VALIDITY_DATE")
+	@Temporal(TemporalType.DATE)
+	private Date endValidityDate;
+	
+	@Column(name = "PRIORITY")
+    private int priority;
+	
+	@Transient
+	private Boolean strictMatch;
+	
+	@Transient
+	private Date startValidityDateMatch;
+	
+	@Transient
+	private Date endValidityDateMatch;
 
 	public InvoiceSubCategory getInvoiceSubCategory() {
 		return invoiceSubCategory;
-
 	}
 
 	public void setInvoiceSubCategory(InvoiceSubCategory invoiceSubCategory) {
@@ -142,4 +168,65 @@ public class InvoiceSubcategoryCountry extends EnableEntity {
         }
         return true;
     }
+
+	public Date getStartValidityDate() {
+		return startValidityDate;
+	}
+
+	public void setStartValidityDate(Date startValidityDate) {
+		this.startValidityDate = startValidityDate;
+	}
+
+	public Date getEndValidityDate() {
+		return endValidityDate;
+	}
+
+	public void setEndValidityDate(Date endValidityDate) {
+		this.endValidityDate = endValidityDate;
+	}
+
+	public int getPriority() {
+		return priority;
+	}
+
+	public void setPriority(int priority) {
+		this.priority = priority;
+	}
+
+	public boolean isCorrespondsToValidityDate(Date startValidityDate, Date endValidityDate, boolean strictMatch) {
+		if (strictMatch) {
+			boolean match = (startValidityDate == null && this.startValidityDate == null) || (startValidityDate != null
+					&& this.startValidityDate != null && startValidityDate.equals(this.startValidityDate));
+			match = match && ((endValidityDate == null && this.endValidityDate == null) || (endValidityDate != null
+					&& this.endValidityDate != null && endValidityDate.equals(this.endValidityDate)));
+			return match;
+		}
+		
+		return DateUtils.isPeriodsOverlap(this.startValidityDate, this.endValidityDate, startValidityDate,
+				endValidityDate);
+	}
+
+	public Date getStartValidityDateMatch() {
+		return startValidityDateMatch;
+	}
+
+	public void setStartValidityDateMatch(Date startValidityDateMatch) {
+		this.startValidityDateMatch = startValidityDateMatch;
+	}
+
+	public Date getEndValidityDateMatch() {
+		return endValidityDateMatch;
+	}
+
+	public void setEndValidityDateMatch(Date endValidityDateMatch) {
+		this.endValidityDateMatch = endValidityDateMatch;
+	}
+
+	public Boolean isStrictMatch() {
+		return strictMatch;
+	}
+
+	public void setStrictMatch(Boolean strictMatch) {
+		this.strictMatch = strictMatch;
+	}
 }

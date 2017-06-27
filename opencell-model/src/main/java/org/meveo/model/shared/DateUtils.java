@@ -544,19 +544,19 @@ public class DateUtils {
         }
 
         // Period is not after dates being checked
-        if (checkStart == null && (periodStart == null || periodStart.compareTo(checkEnd) < 0)) {
+        if (checkStart == null && (periodStart == null || (checkEnd != null && periodStart.compareTo(checkEnd) < 0))) {
             return true;
 
             // Period is not before dates being checked
-        } else if (checkEnd == null && (periodEnd == null || periodEnd.compareTo(checkStart) > 0)) {
+        } else if (checkEnd == null && (periodEnd == null || (checkStart != null && periodEnd.compareTo(checkStart) > 0))) {
             return true;
 
             // Dates are not after period
-        } else if (periodStart == null && (checkStart == null || checkStart.compareTo(periodEnd) < 0)) {
+        } else if (periodStart == null && (checkStart == null || (periodEnd != null && checkStart.compareTo(periodEnd) < 0))) {
             return true;
 
             // Dates are not before period
-        } else if (periodEnd == null && (checkEnd == null || checkEnd.compareTo(periodStart) > 0)) {
+        } else if (periodEnd == null && (checkEnd == null || (periodStart != null && checkEnd.compareTo(periodStart) > 0))) {
             return true;
 
         } else if (checkStart != null && checkEnd != null && periodStart != null && periodEnd != null) {

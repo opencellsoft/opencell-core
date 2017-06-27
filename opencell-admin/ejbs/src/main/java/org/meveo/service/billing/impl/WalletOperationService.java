@@ -359,7 +359,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		}
 
 		Long countryId = country.getId();
-		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), countryId);
+		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), countryId, applicationDate);
 
 		if (invoiceSubcategoryCountry == null) {
 			throw new IncorrectChargeTemplateException("No invoiceSubcategoryCountry exists for invoiceSubCategory code=" + invoiceSubCategory.getCode() + " and trading country="
@@ -457,7 +457,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		}
 
 		Long countryId = country.getId();
-		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), countryId);
+		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), countryId, chargeInstance.getChargeDate());
 
 		if (invoiceSubcategoryCountry == null) {
 			throw new IncorrectChargeTemplateException("No invoiceSubcategoryCountry exists for invoiceSubCategory code=" + invoiceSubCategory.getCode() + " and trading country="
@@ -617,7 +617,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		}
 
 		Long countryId = country.getId();
-		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), countryId);
+		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), countryId, applicationDate);
 		if (invoiceSubcategoryCountry == null) {
 			throw new IncorrectChargeTemplateException("no invoiceSubcategoryCountry exists for invoiceSubCategory code=" + invoiceSubCategory.getCode() + " and trading country="
 					+ country.getCountryCode());
@@ -770,7 +770,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			}
 			Long countryId = country.getId();
 
-			InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), countryId);
+			InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), countryId, applicationDate);
 			if (invoiceSubcategoryCountry == null) {
 				throw new IncorrectChargeTemplateException("no invoiceSubcategoryCountry exists for invoiceSubCategory code=" + invoiceSubCategory.getCode()
 						+ " and trading country=" + country.getCountryCode());
@@ -861,7 +861,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		}
 		Long countryId = country.getId();
 
-		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), countryId);
+		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), countryId, applicationDate);
 		if (invoiceSubcategoryCountry == null) {
 			throw new IncorrectChargeTemplateException("No invoiceSubcategoryCountry exists for invoiceSubCategory code=" + invoiceSubCategory.getCode() + " and trading country="
 					+ country.getCountryCode());
@@ -960,7 +960,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
         }
         Long countryId = country.getId();
 
-        InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), countryId);
+        InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), countryId, applicationDate);
         if (invoiceSubcategoryCountry == null) {
             throw new IncorrectChargeTemplateException("No invoiceSubcategoryCountry exists for invoiceSubCategory code=" + invoiceSubCategory.getCode() + " and trading country="
                     + country.getCountryCode());
@@ -1027,7 +1027,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		}
 		Long countryId = country.getId();
 
-		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), countryId);
+		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), countryId, applicationDate);
 		if (invoiceSubcategoryCountry == null) {
 			throw new IncorrectChargeTemplateException("No invoiceSubcategoryCountry exists for invoiceSubCategory code=" + invoiceSubCategory.getCode() + " and trading country="
 					+ country.getCountryCode());
@@ -1150,7 +1150,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		}
 		Long countryId = country.getId();
 
-		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), countryId);
+		InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), countryId, applicationDate);
 		if (invoiceSubcategoryCountry == null) {
 			throw new IncorrectChargeTemplateException("no invoiceSubcategoryCountry exists for invoiceSubCategory code=" + invoiceSubCategory.getCode() + " and trading country="
 					+ country.getCountryCode());

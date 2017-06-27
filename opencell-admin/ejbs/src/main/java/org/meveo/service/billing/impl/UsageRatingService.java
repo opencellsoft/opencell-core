@@ -190,8 +190,8 @@ public class UsageRatingService {
         // FIXME: copy those info in chargeInstance instead of performing multiple queries
         TradingCountry country = userAccount.getBillingAccount().getTradingCountry();
         Long countryId = country.getId();
-        
-        InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(chargeTemplate.getInvoiceSubCategoryCode(), countryId);
+
+        InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(chargeTemplate.getInvoiceSubCategoryCode(), countryId, edr.getEventDate());
 
         if (invoiceSubcategoryCountry == null) {
             throw new BusinessException("No tax defined for countryId=" + countryId + " in invoice Sub-Category="

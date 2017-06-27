@@ -498,6 +498,23 @@ public class QueryBuilder {
 		return addSqlCriterion(field + "<=:" + endDateParameterName, endDateParameterName, end);
 	}
 
+	public QueryBuilder addCriterionDateInRange(String startField, String endField, Date value) {
+		if (StringUtils.isBlank(value))
+			return this;
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(value);
+		int year = cal.get(Calendar.YEAR);
+		int month = cal.get(Calendar.MONTH);
+		int date = cal.get(Calendar.DATE);
+		cal.set(year, month, date, 0, 0, 0);
+		value = cal.getTime();
+		
+		String sql = "((PARAM_START_DATE<='PARAM_VALUE' AND 'PARAM_VALUE'<=PARAM_END_DATE) OR (PARAM_START_DATE IS NULL AND PARAM_END_DATE IS NULL) OR (PARAM_START_DATE IS NULL AND 'PARAM_VALUE'<=PARAM_END_DATE) OR (PARAM_END_DATE IS NULL AND PARAM_START_DATE<='PARAM_VALUE'))";
+		sql = sql.replaceAll("PARAM_START_DATE", startField).replaceAll("PARAM_END_DATE", endField).replaceAll("PARAM_VALUE", value.toString());
+		
+		return addSql(sql);
+	}
+
 	/**
 	 * @param orderColumn
 	 * @param ascending
