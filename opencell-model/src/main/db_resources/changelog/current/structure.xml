@@ -12,5 +12,9 @@
 			constraintName="uk_billing_inv_sub_cat_country" deferrable="false"
 			disabled="false" initiallyDeferred="false" tableName="billing_inv_sub_cat_country" />
 	</changeSet>
+	
+	 <changeSet id="#2716_20170627" author="TienLanPHUNG">
+       <modifyDataType tableName="com_meveo_instance" columnName="url" newDataType="varchar(255)" />
+      </changeSet>
 
 </databaseChangeLog> 

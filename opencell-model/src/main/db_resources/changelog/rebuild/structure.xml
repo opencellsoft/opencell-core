@@ -4730,7 +4730,7 @@
             <column name="updater" type="varchar(100)" />
             <column name="user_id" type="bigint" />
             <column name="customer_id" type="bigint" />
-            <column name="url" type="varchar(60)" defaultValue="http://">
+            <column name="url" type="varchar(255)" defaultValue="http://">
                 <constraints nullable="false" />
             </column>
             <column name="auth_username" type="varchar(60)" />
