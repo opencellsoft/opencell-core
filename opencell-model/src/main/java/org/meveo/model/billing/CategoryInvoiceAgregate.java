@@ -36,7 +36,7 @@ public class CategoryInvoiceAgregate extends InvoiceAgregate {
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "invoiceCategory")
+	@JoinColumn(name = "invoicecategory")
 	private InvoiceCategory invoiceCategory;
 
 	@OneToMany(mappedBy = "categoryInvoiceAgregate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)

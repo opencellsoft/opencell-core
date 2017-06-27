@@ -22,8 +22,8 @@ import org.meveo.model.ExportIdentifier;
  */
 @Entity
 @ExportIdentifier({  "calendar.code", "intervalBegin", "intervalEnd" })
-@Table(name = "CAT_CALENDAR_INTERVAL")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CAT_CALENDAR_INTERVAL_SEQ"), })
+@Table(name = "cat_calendar_interval")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_calendar_interval_seq"), })
 public class CalendarDateInterval extends BaseEntity implements Comparable<CalendarDateInterval> {
 
     private static final long serialVersionUID = -8419267880869260329L;
@@ -35,7 +35,7 @@ public class CalendarDateInterval extends BaseEntity implements Comparable<Calen
      * a month (january = 1, december = 12) and day as 3 or 4 digits in a format <month without leading zero><day with leading zero>, <br/>
      * a hour and minute as 3 or 4 digits in a format <hour without leading zero><minute with leading zero>
      */
-    @Column(name = "INTERVAL_BEGIN", nullable = false)
+    @Column(name = "interval_begin", nullable = false)
     @NotNull
     private int intervalBegin;
 
@@ -46,12 +46,12 @@ public class CalendarDateInterval extends BaseEntity implements Comparable<Calen
      * a month (january = 1, december = 12) and day as 3 or 4 digits in a format <month without leading zero><day with leading zero>, <br/>
      * a hour and minute as 3 or 4 digits in a format <hour without leading zero><minute with leading zero if hour specified>
      */
-    @Column(name = "INTERVAL_END", nullable = false)
+    @Column(name = "interval_end", nullable = false)
     @NotNull
     private int intervalEnd;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "CALENDAR_ID")
+    @JoinColumn(name = "calendar_id")
     @NotNull
     private CalendarInterval calendar;
 

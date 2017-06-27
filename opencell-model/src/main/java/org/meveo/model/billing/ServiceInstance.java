@@ -52,43 +52,43 @@ import org.meveo.model.catalog.ServiceTemplate;
 @Entity
 @ObservableEntity
 @CustomFieldEntity(cftCodePrefix = "SERVICE_INSTANCE")
-@Table(name = "BILLING_SERVICE_INSTANCE")
+@Table(name = "billing_service_instance")
 @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "code", unique = false)) })
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_SERVICE_INSTANCE_SEQ"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_service_instance_seq"), })
 public class ServiceInstance extends BusinessCFEntity {
 
     private static final long serialVersionUID = 1L;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SUBSCRIPTION_ID")
+    @JoinColumn(name = "subscription_id")
     private Subscription subscription;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SERVICE_TEMPLATE_ID")
+    @JoinColumn(name = "service_template_id")
     private ServiceTemplate serviceTemplate;
 
     @ManyToOne
-    @JoinColumn(name = "INVOICING_CALENDAR_ID")
+    @JoinColumn(name = "invoicing_calendar_id")
     private Calendar invoicingCalendar;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "STATUS")
+    @Column(name = "status")
     private InstanceStatusEnum status;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "STATUS_DATE")
+    @Column(name = "status_date")
     private Date statusDate;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "SUBSCRIPTION_DATE")
+    @Column(name = "subscription_date")
     private Date subscriptionDate;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "TERMINATION_DATE")
+    @Column(name = "termination_date")
     private Date terminationDate;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "END_AGREMENT_DATE")
+    @Column(name = "end_agrement_date")
     private Date endAgreementDate;
 
     @OneToMany(mappedBy = "serviceInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -112,13 +112,13 @@ public class ServiceInstance extends BusinessCFEntity {
     private List<UsageChargeInstance> usageChargeInstances = new ArrayList<UsageChargeInstance>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SUB_TERMIN_REASON_ID")
+    @JoinColumn(name = "sub_termin_reason_id")
     private SubscriptionTerminationReason subscriptionTerminationReason;
 
-    @Column(name = "QUANTITY", precision = NB_PRECISION, scale = NB_DECIMALS)
+    @Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS)
     protected BigDecimal quantity = BigDecimal.ONE;
 
-    @Column(name = "ORDER_NUMBER", length = 100)
+    @Column(name = "order_number", length = 100)
     @Size(max = 100)
     private String orderNumber;
 	

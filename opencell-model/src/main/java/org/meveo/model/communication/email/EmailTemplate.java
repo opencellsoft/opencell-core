@@ -30,14 +30,14 @@ import org.meveo.model.communication.MessageTemplate;
 public class EmailTemplate extends MessageTemplate {
 	private static final long serialVersionUID = 7634125312706917352L;
 	
-	@Column(name = "SUBJECT", length = 255)
+	@Column(name = "subject", length = 255)
     @Size(max = 255)
 	private String subject;
 	
-	@Column(name = "HTMLCONTENT", columnDefinition = "TEXT")	
+	@Column(name = "htmlcontent", columnDefinition = "TEXT")	
 	private String htmlContent;
 	
-	@Column(name = "TEXTCONTENT", columnDefinition = "TEXT")
+	@Column(name = "textcontent", columnDefinition = "TEXT")
 	private String textContent;
 
 	public String getSubject() {

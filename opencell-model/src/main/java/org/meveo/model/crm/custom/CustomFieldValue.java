@@ -64,19 +64,19 @@ public class CustomFieldValue implements Serializable {
 
     private static String SERIALIZATION_SEPARATOR = "|";
 
-    @Column(name = "STRING_VALUE", columnDefinition = "TEXT")
+    @Column(name = "string_value", columnDefinition = "TEXT")
     private String stringValue;
 
-    @Column(name = "DATE_VALUE")
+    @Column(name = "date_value")
     private Date dateValue;
 
-    @Column(name = "LONG_VALUE")
+    @Column(name = "long_value")
     private Long longValue;
 
-    @Column(name = "DOUBLE_VALUE")
+    @Column(name = "double_value")
     private Double doubleValue;
 
-    @Column(name = "SERIALIZED_VALUE", columnDefinition = "LONGTEXT")
+    @Column(name = "serialized_value", columnDefinition = "LONGTEXT")
     private String serializedValue;
 
     /**

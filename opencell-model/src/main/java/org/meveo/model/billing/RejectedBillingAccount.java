@@ -34,8 +34,8 @@ import org.meveo.model.EnableEntity;
  * RejectedBillingAccount.
  */
 @Entity
-@Table(name = "BILLING_REJECTED_BILLING_ACCOUNTS")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_REJECTED_BA_SEQ"), })
+@Table(name = "billing_rejected_billing_accounts")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_rejected_ba_seq"), })
 public class RejectedBillingAccount extends EnableEntity {
 
 	private static final long serialVersionUID = 1L;
@@ -43,14 +43,14 @@ public class RejectedBillingAccount extends EnableEntity {
 	
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "BILLING_ACCOUNT")
+	@JoinColumn(name = "billing_account")
 	private BillingAccount billingAccount;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "BILLING_RUN")
+	@JoinColumn(name = "billing_run")
 	private BillingRun billingRun;
 	
-	@Column(name = "REJECT_CAUSE", length=3000)
+	@Column(name = "reject_cause", length=3000)
 	@Size(max = 3000)
 	private String rejectCause;
 	

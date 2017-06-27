@@ -36,19 +36,19 @@ import org.meveo.model.annotation.ImageType;
 @ModuleItem
 @CustomFieldEntity(cftCodePrefix = "OFFER_CATEGORY")
 @ExportIdentifier({ "code"})
-@Table(name = "CAT_OFFER_TEMPLATE_CATEGORY", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CAT_OFFER_TEMPLATE_CATEGORY_SEQ"), })
+@Table(name = "cat_offer_template_category", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_offer_template_category_seq"), })
 public class OfferTemplateCategory extends BusinessCFEntity implements Comparable<OfferTemplateCategory>, IImageUpload {
 
     private static final long serialVersionUID = -5088201294684394309L;
 
-    @Column(name = "NAME", nullable = false, length = 100)
+    @Column(name = "name", nullable = false, length = 100)
     @Size(max = 100)
     @NotNull
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "OFFER_TEMPLATE_CATEGORY_ID")
+    @JoinColumn(name = "offer_template_category_id")
     private OfferTemplateCategory offerTemplateCategory;
 
     @OneToMany(mappedBy = "offerTemplateCategory", cascade = CascadeType.REMOVE)
@@ -57,11 +57,11 @@ public class OfferTemplateCategory extends BusinessCFEntity implements Comparabl
     @ManyToMany(mappedBy = "offerTemplateCategories")
     private List<ProductOffering> productOffering;
 
-    @Column(name = "LEVEL")
+    @Column(name = "level")
     private int orderLevel = 1;
     
     @ImageType
-	@Column(name = "IMAGE_PATH", length = 100)
+	@Column(name = "image_path", length = 100)
 	@Size(max = 100)
     private String imagePath;
     

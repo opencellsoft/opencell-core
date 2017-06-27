@@ -46,23 +46,23 @@ import org.meveo.model.payments.OCCTemplate;
 
 @Entity
 @ExportIdentifier({ "code"})
-@Table(name = "BILLING_INVOICE_TYPE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "OCC_TEMPLATE_ID" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_INVOICE_TYPE_SEQ"), })
+@Table(name = "billing_invoice_type", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "occ_template_id" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_invoice_type_seq"), })
 @NamedQueries({ @NamedQuery(name = "InvoiceType.currentInvoiceNb", query = "select max(sequence.currentInvoiceNb) from InvoiceType i where i.code=:invoiceTypeCode") })
 public class InvoiceType extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "OCC_TEMPLATE_ID")
+	@JoinColumn(name = "occ_template_id")
 	private OCCTemplate occTemplate;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "OCC_TEMPL_NEGATIVE_ID")
+	@JoinColumn(name = "occ_templ_negative_id")
 	private OCCTemplate occTemplateNegative;	
 		
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "BILLING_INVOICE_TYPE_APPLIES_TO", joinColumns = @JoinColumn(name = "INVOICE_TYPE_ID"), inverseJoinColumns = @JoinColumn(name = "APPLIES_TO_ID"))
+	@JoinTable(name = "billing_invoice_type_applies_to", joinColumns = @JoinColumn(name = "invoice_type_id"), inverseJoinColumns = @JoinColumn(name = "applies_to_id"))
 	private List<InvoiceType> appliesTo = new ArrayList<InvoiceType>();
 	
 	@Embedded
@@ -72,7 +72,7 @@ public class InvoiceType extends BusinessEntity {
     private List<InvoiceTypeSellerSequence> sellerSequence = new ArrayList<InvoiceTypeSellerSequence>();
 
 	@Type(type="numeric_boolean")
-    @Column(name = "MATCHING_AUTO")
+    @Column(name = "matching_auto")
 	private boolean matchingAuto = false;
 	
 	 

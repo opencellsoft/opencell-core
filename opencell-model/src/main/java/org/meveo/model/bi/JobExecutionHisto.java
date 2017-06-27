@@ -30,7 +30,7 @@ public class JobExecutionHisto extends JobHistory {
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "JOB_ID")
+	@JoinColumn(name = "job_id")
 	private Job job;
 
 	public Job getJob() {

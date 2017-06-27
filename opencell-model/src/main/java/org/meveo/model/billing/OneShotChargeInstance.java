@@ -32,18 +32,18 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 
 @Entity
-@Table(name = "BILLING_ONE_SHOT_CHARGE_INST")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_ONE_SHOT_CHRG_INST_SEQ"), })
+@Table(name = "billing_one_shot_charge_inst")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_one_shot_chrg_inst_seq"), })
 public class OneShotChargeInstance extends ChargeInstance {
 
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "SUBS_SERV_INST_ID")
+	@JoinColumn(name = "subs_serv_inst_id")
 	private ServiceInstance subscriptionServiceInstance;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TERM_SERV_INST_ID")
+	@JoinColumn(name = "term_serv_inst_id")
 	private ServiceInstance terminationServiceInstance;
 
 	public OneShotChargeInstance(String code, String description, Date chargeDate,

@@ -48,8 +48,8 @@ import org.meveo.model.catalog.WalletTemplate;
 @Entity
 @ObservableEntity
 @ExportIdentifier({ "code", "userAccount.code"})
-@Table(name = "BILLING_WALLET", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "USER_ACCOUNT_ID" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_WALLET_SEQ"), })
+@Table(name = "billing_wallet", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "user_account_id" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_wallet_seq"), })
 @NamedQueries({
 	@NamedQuery(name = "WalletInstance.listPrepaidActiveWalletIds", 
 			query = "SELECT c.id FROM WalletInstance c where c.walletTemplate.walletType=org.meveo.model.billing.BillingWalletTypeEnum.PREPAID and "
@@ -64,22 +64,22 @@ public class WalletInstance extends BusinessEntity {
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "CAT_WALLET_TEMPLATE_ID")
+	@JoinColumn(name = "cat_wallet_template_id")
 	private WalletTemplate walletTemplate;
 
 	@ManyToOne
-	@JoinColumn(name = "USER_ACCOUNT_ID")
+	@JoinColumn(name = "user_account_id")
 	private UserAccount userAccount;
 
-	@Column(name = "EXPIRY_DATE")
+	@Column(name = "expiry_date")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date creditExpiryDate;
 
-	@Column(name = "NEXT_MATCHING_DATE")
+	@Column(name = "next_matching_date")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date nextMatchingDate;
 
-    @Column(name = "LOW_BALANCE_LEVEL", precision = NB_PRECISION, scale = NB_DECIMALS)
+    @Column(name = "low_balance_level", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal lowBalanceLevel;
 	
 	@OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

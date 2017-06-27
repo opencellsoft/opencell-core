@@ -38,17 +38,17 @@ import org.meveo.model.bi.Report;
  * Email entity.
  */
 @Entity
-@Table(name = "CRM_EMAIL")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CRM_EMAIL_SEQ"), })
+@Table(name = "crm_email")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "crm_email_seq"), })
 public class Email extends BaseEntity {
 
 	private static final long serialVersionUID = 1L;
-	@Column(name = "EMAIL", length = 255)
+	@Column(name = "email", length = 255)
 	@Size(max = 255)
 	private String address;
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "REPORT_EMAILS", joinColumns = @JoinColumn(name = "EMAIL_ID"), inverseJoinColumns = @JoinColumn(name = "REPORT_ID"))
+	@JoinTable(name = "report_emails", joinColumns = @JoinColumn(name = "email_id"), inverseJoinColumns = @JoinColumn(name = "report_id"))
 	private List<Report> reports;
 
 	public String getAddress() {

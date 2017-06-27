@@ -7,47 +7,44 @@ import javax.persistence.Enumerated;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
 @Entity
-@Table(name = "DWH_CHART_PIE")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "DWH_CHART_PIE_SEQ"), })
+@Table(name = "dwh_chart_pie")
 public class PieChart extends Chart {
 
     private static final long serialVersionUID = -3549868233998052477L;
 
     @Type(type="numeric_boolean")
-    @Column(name = "FILLED")
+    @Column(name = "filled")
     private boolean filled;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "LEGEND_POSITION")
+    @Column(name = "legend_position")
     private LegendPositionEnum legendPosition;
 
-    @Column(name = "SERIES_COLORS", length = 1000)
+    @Column(name = "series_colors", length = 1000)
     @Size(max = 1000)
     private String seriesColors = "1b788f";
 
-    @Column(name = "DIAMETER")
+    @Column(name = "diameter")
     private Integer diameter;
 
-    @Column(name = "SLICE_MARGIN")
+    @Column(name = "slice_margin")
     private int sliceMargin;
 
     @Type(type="numeric_boolean")
-    @Column(name = "SHADOW")
+    @Column(name = "shadow")
     private boolean shadow = true;
 
     @Type(type="numeric_boolean")
-    @Column(name = "SHOW_DATA_LABELS")
+    @Column(name = "show_data_labels")
     private boolean showDataLabels;
 
-    @Column(name = "LEGEND_COLS")
+    @Column(name = "legend_cols")
     private int legendCols;
 
-    @Column(name = "LEGEND_ROWS")
+    @Column(name = "legend_rows")
     private int legendRows;
 
     public boolean isFilled() {

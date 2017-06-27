@@ -41,50 +41,50 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.EnableEntity;
 
 @Entity
-@Table(name = "AR_DDREQUEST_LOT")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "AR_DDREQUEST_LOT_SEQ"), })
+@Table(name = "ar_ddrequest_lot")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ar_ddrequest_lot_seq"), })
 public class DDRequestLOT extends EnableEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "FILE_NAME", length = 255)
+	@Column(name = "file_name", length = 255)
     @Size(max = 255)
 	private String fileName;
 	
-	@Column(name = "RETURN_FILE_NAME", length = 255)
+	@Column(name = "return_file_name", length = 255)
     @Size(max = 255)
 	private String returnFileName;
 
-	@Column(name = "SEND_DATE")
+	@Column(name = "send_date")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date sendDate;
 
-	@Column(name = "INVOICE_NUMBER")
+	@Column(name = "invoice_number")
 	private Integer invoicesNumber;
 
 	
 	@Type(type="numeric_boolean")
-    @Column(name = "IS_PAYMENT_CREATED")
+    @Column(name = "is_payment_created")
 	private boolean paymentCreated;
 
-	@Column(name = "INVOICE_AMOUNT", precision = 23, scale = 12)
+	@Column(name = "invoice_amount", precision = 23, scale = 12)
 	private BigDecimal invoicesAmount;
 
 	@OneToMany(mappedBy = "ddRequestLOT", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<DDRequestItem> ddrequestItems = new ArrayList<DDRequestItem>();
 	
-	@Column(name = "RETURN_STATUS_CODE", length = 255)
+	@Column(name = "return_status_code", length = 255)
     @Size(max = 255)
 	private String returnStatusCode;
 
-	@Column(name = "REJECTED_CAUSE", length = 255)
+	@Column(name = "rejected_cause", length = 255)
     @Size(max = 255)
 	private String rejectedCause;
 	
-	@Column(name = "REJECTED_INVOICES")
+	@Column(name = "rejected_invoices")
 	private Integer rejectedInvoices;
 	
-	@Column(name = "FILE_FORMAT")
+	@Column(name = "file_format")
 	@Enumerated(EnumType.STRING)
 	private DDRequestFileFormatEnum fileFormat;
 	

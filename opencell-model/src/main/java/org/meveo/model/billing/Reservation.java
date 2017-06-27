@@ -26,55 +26,55 @@ import org.meveo.model.EnableEntity;
 import org.meveo.model.rating.EDR;
 
 @Entity
-@Table(name = "BILLING_RESERVATION")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_RESERVATION_SEQ"), })
+@Table(name = "billing_reservation")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_reservation_seq"), })
 public class Reservation extends EnableEntity {
 
 	private static final long serialVersionUID = 4110616902439820101L;
 
-	@Column(name = "INPUT_MESSAGE")
+	@Column(name = "input_message")
 	@Size(max = 255)
 	private String inputMessage;
 	
 	@Temporal(TemporalType.DATE)
-	@Column(name = "RESERVATION_DATE")
+	@Column(name = "reservation_date")
 	private Date reservationDate;
 
 	@Temporal(TemporalType.DATE)
-	@Column(name = "EXPIRY_DATE")
+	@Column(name = "expiry_date")
 	private Date expiryDate;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "STATUS")
+	@Column(name = "status")
 	private ReservationStatus status;
 
 	@ManyToOne
-	@JoinColumn(name = "USER_ACCOUNT_ID")
+	@JoinColumn(name = "user_account_id")
 	private UserAccount userAccount;
 
 	@OneToOne
-	@JoinColumn(name = "SUBSCRIPTION_ID")
+	@JoinColumn(name = "subscription_id")
 	private Subscription subscription;
 
 	@ManyToOne
-	@JoinColumn(name = "WALLET_ID")
+	@JoinColumn(name = "wallet_id")
 	private WalletInstance wallet;
 	
-	@Column(name = "QUANTITY", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal quantity;
 	
-	@Column(name = "AMOUNT_WITHOUT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal amountWithoutTax = BigDecimal.ZERO;
 
-	@Column(name = "AMOUNT_WITH_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal amountWithTax = BigDecimal.ZERO;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "BILLING_RESRV_COUNTID")
+    @CollectionTable(name = "billing_resrv_countid")
 	private Map<Long,BigDecimal> counterPeriodValues = new HashMap<Long, BigDecimal>(); 
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ORIGIN_EDR_ID")
+    @JoinColumn(name = "origin_edr_id")
     private EDR originEdr;
     
 	public String getInputMessage() {

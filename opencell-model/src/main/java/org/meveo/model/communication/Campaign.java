@@ -40,45 +40,45 @@ import org.meveo.model.ExportIdentifier;
 
 @Entity
 @ExportIdentifier({ "code"})
-@Table(name = "COM_CAMPAIGN", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "COM_CAMPAIGN_SEQ"), })
+@Table(name = "com_campaign", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "com_campaign_seq"), })
 public class Campaign extends BusinessEntity {
 
 	private static final long serialVersionUID = -5865150907978275819L;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "SCHEDULE_DATE")
+	@Column(name = "schedule_date")
 	private Date scheduleDate;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "START_DATE")
+	@Column(name = "start_date")
 	private Date startDate;
 
-	@Column(name = "THREAD_ID")
+	@Column(name = "thread_id")
 	private Integer processingThreadId;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "END_DATE")
+	@Column(name = "end_date")
 	private Date endDate;
 
 	@Enumerated(EnumType.ORDINAL)
-	@Column(name = "PRIORITY")
+	@Column(name = "priority")
 	private PriorityEnum priority;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "MEDIA")
+	@Column(name = "media")
 	private MediaEnum media;
 
-	@Column(name = "SUB_MEDIA", length = 255)
+	@Column(name = "sub_media", length = 255)
 	@Size(max = 255)
 	private String subMedia;
 
 	@Type(type="numeric_boolean")
-    @Column(name = "USE_ANY_MEDIA")
+    @Column(name = "use_any_media")
 	private Boolean useAnyMedia;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "STATUS")
+	@Column(name = "status")
 	private CampaignStatusEnum status;
 
 	@OneToMany(mappedBy = "campaign")

@@ -26,45 +26,45 @@ import org.meveo.model.billing.InvoiceSubCategory;
  **/
 @Entity
 @ExportIdentifier({ "code"})
-@Table(name = "CAT_DISCOUNT_PLAN_ITEM", uniqueConstraints = { @UniqueConstraint(columnNames = { "CODE"}) })
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CAT_DISCOUNT_PLAN_ITEM_SEQ"), })
+@Table(name = "cat_discount_plan_item", uniqueConstraints = { @UniqueConstraint(columnNames = { "code"}) })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_discount_plan_item_seq"), })
 public class DiscountPlanItem extends EnableEntity {
 
 	private static final long serialVersionUID = 4543503736567841084L;
 
-	@Column(name = "CODE", length = 255, nullable = false)
+	@Column(name = "code", length = 255, nullable = false)
 	@Size(max = 255, min = 1)
 	@NotNull
 	private String code;
 
 	@ManyToOne
-	@JoinColumn(name = "DISCOUNT_PLAN_ID", nullable = false)
+	@JoinColumn(name = "discount_plan_id", nullable = false)
     @NotNull
 	private DiscountPlan discountPlan;
 
 	@ManyToOne
-	@JoinColumn(name = "INVOICE_CATEGORY_ID")
+	@JoinColumn(name = "invoice_category_id")
 	private InvoiceCategory invoiceCategory;
 
 	@ManyToOne
-	@JoinColumn(name = "INVOICE_SUB_CATEGORY_ID")
+	@JoinColumn(name = "invoice_sub_category_id")
 	private InvoiceSubCategory invoiceSubCategory;
 
-	@Column(name = "DISCOUNT_PERCENT", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "discount_percent", precision = NB_PRECISION, scale = NB_DECIMALS)
 	@Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
 	@Min(0)
 	@Max(100)
 	private BigDecimal percent = new BigDecimal(0);
 
-	@Column(name = "ACCOUNTING_CODE", length = 255)
+	@Column(name = "accounting_code", length = 255)
 	@Size(max = 255)
 	private String accountingCode;
 	
-	@Column(name = "EXPRESSION_EL", length = 2000)
+	@Column(name = "expression_el", length = 2000)
    	@Size(max = 2000)
    	private String expressionEl;
 	
-	@Column(name = "DISCOUNT_PERCENT_EL", length = 2000)
+	@Column(name = "discount_percent_el", length = 2000)
    	@Size(max = 2000)
    	private String discountPercentEl;
 

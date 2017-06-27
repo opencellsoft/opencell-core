@@ -53,16 +53,16 @@ public class CalendarJoin extends Calendar {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "JOIN_TYPE")
+    @Column(name = "join_type")
     @Enumerated(EnumType.STRING)
     private CalendarJoinTypeEnum joinType;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "JOIN_CAL_1_ID")
+    @JoinColumn(name = "join_cal_1_id")
     private Calendar joinCalendar1;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "JOIN_CAL_2_ID")
+    @JoinColumn(name = "join_cal_2_id")
     private Calendar joinCalendar2;
 
     public CalendarJoinTypeEnum getJoinType() {

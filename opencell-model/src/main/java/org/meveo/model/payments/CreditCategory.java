@@ -14,8 +14,8 @@ import org.meveo.model.ExportIdentifier;
  **/
 @Entity
 @ExportIdentifier({ "code"})
-@Table(name = "AR_CREDIT_CATEGORY", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "AR_CREDIT_CATEGORY_SEQ"), })
+@Table(name = "ar_credit_category", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ar_credit_category_seq"), })
 public class CreditCategory extends BusinessEntity {
 
 	private static final long serialVersionUID = 3517517101499066805L;

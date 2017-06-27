@@ -17,8 +17,8 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.ChargeInstance;
 
 @Entity
-@Table(name = "AR_REVENUE_SCHEDULE", uniqueConstraints = @UniqueConstraint(columnNames = { "CHARGE_INSTANCE_ID", "REVENUE_DATE" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "AR_REVENUE_SCHEDULE_SEQ"), })
+@Table(name = "ar_revenue_schedule", uniqueConstraints = @UniqueConstraint(columnNames = { "charge_instance_id", "revenue_date" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ar_revenue_schedule_seq"), })
 public class RevenueSchedule extends BaseEntity {
 
 	/**
@@ -27,24 +27,24 @@ public class RevenueSchedule extends BaseEntity {
 	private static final long serialVersionUID = 7793758853731725829L;
 
 	@ManyToOne(optional=false)
-	@JoinColumn(name = "CHARGE_INSTANCE_ID")
+	@JoinColumn(name = "charge_instance_id")
 	@NotNull
 	private ChargeInstance chargeInstance;
 	
-	@Column(name="REVENUE_DATE",nullable=false)
+	@Column(name="revenue_date",nullable=false)
 	@NotNull
 	private Date revenueDate;
 	
-	@Column(name="RECOGNIZED_REVENUE")
+	@Column(name="recognized_revenue")
 	private BigDecimal recognizedRevenue=BigDecimal.ZERO;
 
-	@Column(name="INVOICED_REVENUE")
+	@Column(name="invoiced_revenue")
 	private BigDecimal invoicedRevenue=BigDecimal.ZERO;
 
-	@Column(name="ACCRUED_REVENUE")
+	@Column(name="accrued_revenue")
 	private BigDecimal accruedRevenue=BigDecimal.ZERO;
 
-	@Column(name="DEFFERED_REVENUE")
+	@Column(name="deffered_revenue")
 	private BigDecimal defferedRevenue=BigDecimal.ZERO;
 
 	public ChargeInstance getChargeInstance() {

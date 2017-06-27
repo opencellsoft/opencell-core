@@ -34,37 +34,37 @@ import org.meveo.model.catalog.CounterTypeEnum;
 
 @Entity
 @ObservableEntity
-@Table(name = "BILLING_COUNTER_PERIOD", uniqueConstraints = @UniqueConstraint(columnNames = { "COUNTER_INSTANCE_ID", "PERIOD_START_DATE" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_COUNTER_PERIOD_SEQ"), })
+@Table(name = "billing_counter_period", uniqueConstraints = @UniqueConstraint(columnNames = { "counter_instance_id", "period_start_date" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_counter_period_seq"), })
 @NamedQueries({ @NamedQuery(name = "CounterPeriod.findByPeriodDate", query = "SELECT cp FROM CounterPeriod cp WHERE cp.counterInstance=:counterInstance AND cp.periodStartDate<=:date AND cp.periodEndDate>:date"), })
 public class CounterPeriod extends BusinessEntity {
     private static final long serialVersionUID = -4924601467998738157L;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "COUNTER_INSTANCE_ID")
+    @JoinColumn(name = "counter_instance_id")
     private CounterInstance counterInstance;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "COUNTER_TYPE")
+    @Column(name = "counter_type")
     private CounterTypeEnum counterType;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "PERIOD_START_DATE")
+    @Column(name = "period_start_date")
     private Date periodStartDate;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "PERIOD_END_DATE")
+    @Column(name = "period_end_date")
     private Date periodEndDate;
 
-    @Column(name = "LEVEL_NUM", precision = NB_PRECISION, scale = NB_DECIMALS)
+    @Column(name = "level_num", precision = NB_PRECISION, scale = NB_DECIMALS)
     @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
     private BigDecimal level;
 
-    @Column(name = "VALUE", precision = NB_PRECISION, scale = NB_DECIMALS)
+    @Column(name = "value", precision = NB_PRECISION, scale = NB_DECIMALS)
     @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
     private BigDecimal value;
 
-    @Column(name = "NOTIFICATION_LEVELS", length = 100)
+    @Column(name = "notification_levels", length = 100)
     @Size(max = 100)
     private String notificationLevels;
 

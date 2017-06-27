@@ -22,8 +22,8 @@ import org.meveo.validation.constraint.ClassName;
  * @author Edward P. Legaspi
  **/
 @Entity
-@Table(name = "MEVEO_FILTER_SELECTOR")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "MEVEO_FILTER_SELECTOR_SEQ"), })
+@Table(name = "meveo_filter_selector")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "meveo_filter_selector_seq"), })
 public class FilterSelector extends BaseEntity {
 
 	private static final long serialVersionUID = -7068163052219180546L;
@@ -31,10 +31,10 @@ public class FilterSelector extends BaseEntity {
 	@ClassName
 	@Size(max = 100)
 	@NotNull
-	@Column(name = "TARGET_ENTITY", length = 100, nullable = false)
+	@Column(name = "target_entity", length = 100, nullable = false)
 	private String targetEntity;
 
-	@Column(name = "ALIAS", length = 50)
+	@Column(name = "alias", length = 50)
 	@Size(max = 50)
 	private String alias;
 
@@ -42,21 +42,21 @@ public class FilterSelector extends BaseEntity {
 	 * List of field names to display or export.
 	 */
 	@ElementCollection(fetch = FetchType.LAZY)
-	@CollectionTable(name = "MEVEO_FILTER_SELECTOR_DISPLAY_FIELDS", joinColumns = @JoinColumn(name = "FILTER_SELECTOR_ID"))
-	@Column(name = "DISPLAY_FIELD")
+	@CollectionTable(name = "meveo_filter_selector_display_fields", joinColumns = @JoinColumn(name = "filter_selector_id"))
+	@Column(name = "display_field")
 	private List<String> displayFields = new ArrayList<String>();
 
 	@ElementCollection(fetch = FetchType.LAZY)
-	@CollectionTable(name = "MEVEO_FILTER_SELECTOR_EXPORT_FIELDS", joinColumns = @JoinColumn(name = "FILTER_SELECTOR_ID"))
-	@Column(name = "EXPORT_FIELD")
+	@CollectionTable(name = "meveo_filter_selector_export_fields", joinColumns = @JoinColumn(name = "filter_selector_id"))
+	@Column(name = "export_field")
 	private List<String> exportFields = new ArrayList<String>();
 
 	/**
 	 * List of fields to ignore if foreign key not found.
 	 */
 	@ElementCollection(fetch = FetchType.LAZY)
-	@CollectionTable(name = "MEVEO_FILTER_SELECTOR_IGNORE_FIELDS", joinColumns = @JoinColumn(name = "FILTER_SELECTOR_ID"))
-	@Column(name = "IGNORED_FIELD")
+	@CollectionTable(name = "meveo_filter_selector_ignore_fields", joinColumns = @JoinColumn(name = "filter_selector_id"))
+	@Column(name = "ignored_field")
 	private List<String> ignoreIfNotFoundForeignKeys = new ArrayList<String>();
 
 	public String getTargetEntity() {

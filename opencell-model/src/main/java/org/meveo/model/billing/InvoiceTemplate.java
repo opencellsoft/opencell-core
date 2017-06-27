@@ -36,35 +36,35 @@ import org.meveo.model.ExportIdentifier;
 
 @Entity
 @ExportIdentifier({ "code"})
-@Table(name = "BILLING_INVOICE_TEMPLATE", uniqueConstraints = {
-		@UniqueConstraint(columnNames = { "CODE"}),
-		@UniqueConstraint(columnNames = { "FILE_NAME" }) })
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_INVOICE_TEMPLATE_SEQ"), })
+@Table(name = "billing_invoice_template", uniqueConstraints = {
+		@UniqueConstraint(columnNames = { "code"}),
+		@UniqueConstraint(columnNames = { "file_name" }) })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_invoice_template_seq"), })
 public class InvoiceTemplate extends BaseEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "CODE", nullable = false, length = 255)
+	@Column(name = "code", nullable = false, length = 255)
 	@Size(max = 255)
 	@NotNull
 	private String code;
 
-	@Column(name = "TEMPLATE_VERSION", nullable = false, length = 255)
+	@Column(name = "template_version", nullable = false, length = 255)
 	@Size(max = 255)
     @NotNull
 	private String templateVersion;
 
-	@Column(name = "VALIDITY_START_DATE", nullable = false)
+	@Column(name = "validity_start_date", nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	@NotNull
 	private Date validityStartDate;
 
-	@Column(name = "VALIDITY_END_DATE", nullable = false)
+	@Column(name = "validity_end_date", nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	@NotNull
 	private Date validityEndDate;
 
-	@Column(name = "FILE_NAME", nullable = false, length = 255)
+	@Column(name = "file_name", nullable = false, length = 255)
     @Size(max = 255)
 	@NotNull
 	private String fileName;

@@ -19,18 +19,18 @@ import org.meveo.model.scripts.ScriptInstance;
 @Entity
 @ModuleItem
 @ExportIdentifier({ "code", "appliesTo"})
-@Table(name = "CRM_CUSTOM_ACTION", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "APPLIES_TO" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CRM_CUSTOM_ACTION_SEQ"), })
+@Table(name = "crm_custom_action", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "applies_to" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "crm_custom_action_seq"), })
 public class EntityCustomAction extends BusinessEntity {
 
     private static final long serialVersionUID = -1640429569087958881L;
 
-    @Column(name = "APPLIES_TO", nullable = false, length = 100)
+    @Column(name = "applies_to", nullable = false, length = 100)
     @Size(max = 100)
     @NotNull
     private String appliesTo;
 
-    @Column(name = "APPLICABLE_ON_EL", length = 2000)
+    @Column(name = "applicable_on_el", length = 2000)
     @Size(max = 2000)
     private String applicableOnEl;
 
@@ -39,7 +39,7 @@ public class EntityCustomAction extends BusinessEntity {
     private String label;
 
     @ManyToOne()
-    @JoinColumn(name = "SCRIPT_INSTANCE_ID")
+    @JoinColumn(name = "script_instance_id")
     private ScriptInstance script;
 
       public String getAppliesTo() {

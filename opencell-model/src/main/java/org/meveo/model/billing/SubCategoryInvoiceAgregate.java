@@ -44,33 +44,33 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "invoiceSubCategory")
+	@JoinColumn(name = "invoicesubcategory")
 	private InvoiceSubCategory invoiceSubCategory;
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "BILLING_INVOICE_AGREGATE_TAXES", joinColumns = @JoinColumn(name = "SUB_CAT_INVOICE_AGGREGAT_ID"), inverseJoinColumns = @JoinColumn(name = "TAX_ID"))
+	@JoinTable(name = "billing_invoice_agregate_taxes", joinColumns = @JoinColumn(name = "sub_cat_invoice_aggregat_id"), inverseJoinColumns = @JoinColumn(name = "tax_id"))
 	private Set<Tax> subCategoryTaxes = new HashSet<Tax>();
 
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "CATEGORY_INVOICE_AGREGATE")
+	@JoinColumn(name = "category_invoice_agregate")
 	private CategoryInvoiceAgregate categoryInvoiceAgregate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "WALLET_ID")
+	@JoinColumn(name = "wallet_id")
 	private WalletInstance wallet;
 
 	@OneToMany(mappedBy = "invoiceAgregateF", fetch = FetchType.LAZY)
 	private List<RatedTransaction> ratedtransactions = new ArrayList<RatedTransaction>();
 
-	@Column(name = "DISCOUNT_PLAN_CODE", length = 50)
+	@Column(name = "discount_plan_code", length = 50)
 	@Size(max = 50)
 	private String discountPlanCode;
 
-	@Column(name = "DISCOUNT_PLAN_ITEM_CODE", length = 50)
+	@Column(name = "discount_plan_item_code", length = 50)
     @Size(max = 50)
 	private String discountPlanItemCode;
 
-	@Column(name = "DISCOUNT_PERCENT", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "discount_percent", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal discountPercent;
 	
 	@Transient

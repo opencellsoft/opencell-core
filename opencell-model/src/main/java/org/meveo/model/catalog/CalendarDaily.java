@@ -38,7 +38,7 @@ public class CalendarDaily extends Calendar {
     private static final long serialVersionUID = 1L;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-    @JoinTable(name = "CAT_CALENDAR_HOURS", joinColumns = @JoinColumn(name = "CALENDAR_ID"), inverseJoinColumns = @JoinColumn(name = "HOUR_ID"))
+    @JoinTable(name = "cat_calendar_hours", joinColumns = @JoinColumn(name = "calendar_id"), inverseJoinColumns = @JoinColumn(name = "hour_id"))
     @OrderBy("hour, minute")
     private List<HourInDay> hours;
 

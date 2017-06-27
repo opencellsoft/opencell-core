@@ -24,43 +24,43 @@ import org.meveo.model.security.Role;
 @Entity
 @ModuleItem
 @ExportIdentifier({ "code"})
-@Table(name = "DWH_CHART", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
+@Table(name = "dwh_chart", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
 @Inheritance(strategy = InheritanceType.JOINED)
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_BILLING_RUN_SEQ"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "dwh_chart_seq"), })
 public class Chart extends BusinessEntity {
 
     private static final long serialVersionUID = 7127515648757614672L;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ROLE_ID")
+    @JoinColumn(name = "role_id")
     private Role role;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "MSR_QTY_ID")
+    @JoinColumn(name = "msr_qty_id")
     private MeasurableQuantity measurableQuantity;
 
-    @Column(name = "WIDTH", length = 10)
+    @Column(name = "width", length = 10)
     @Size(max = 10)
     private String width = "500px";
 
-    @Column(name = "HEIGHT", length = 10)
+    @Column(name = "height", length = 10)
     @Size(max = 10)
     private String height = "300px";
 
-    @Column(name = "CSS_STYLE", length = 1000)
+    @Column(name = "css_style", length = 1000)
     @Size(max = 1000)
     private String style;
 
-    @Column(name = "CSS_STYLE_CLASS", length = 255)
+    @Column(name = "css_style_class", length = 255)
     @Size(max = 255)
     private String styleClass;
 
-    @Column(name = "EXTENDER", length = 255)
+    @Column(name = "extender", length = 255)
     @Size(max = 255)
     private String extender;
 
     @Type(type="numeric_boolean")
-    @Column(name = "VISIBLE")
+    @Column(name = "visible")
     private Boolean visible = false;
 
     @Transient

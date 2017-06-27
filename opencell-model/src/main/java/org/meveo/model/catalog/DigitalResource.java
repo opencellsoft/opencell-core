@@ -19,16 +19,16 @@ import org.meveo.model.ExportIdentifier;
  */
 @Entity
 @ExportIdentifier({ "code"})
-@Table(name = "CAT_DIGITAL_RESOURCE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CAT_DIGITAL_RESOURCE_SEQ"), })
+@Table(name = "cat_digital_resource", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_digital_resource_seq"), })
 public class DigitalResource extends BusinessEntity {
 
 	private static final long serialVersionUID = -7528761006943581984L;
 
-	@Column(name = "URI", length = 255)
+	@Column(name = "uri", length = 255)
 	private String uri;
 
-	@Column(name = "MIME_TYPE", length = 50)
+	@Column(name = "mime_type", length = 50)
 	@Size(max = 50)
 	private String mimeType;
 

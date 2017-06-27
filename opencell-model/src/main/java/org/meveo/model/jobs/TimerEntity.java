@@ -42,53 +42,53 @@ import org.meveo.model.ModuleItem;
 @Entity
 @ModuleItem
 @ExportIdentifier({ "code"})
-@Table(name = "MEVEO_TIMER", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "MEVEO_TIMER_SEQ"), })
+@Table(name = "meveo_timer", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "meveo_timer_seq"), })
 public class TimerEntity extends BusinessEntity{
 
 	private static final long serialVersionUID = -3764934334462355788L;
 
-	@Column(name = "SC_YEAR", nullable = false, length = 255)
+	@Column(name = "sc_year", nullable = false, length = 255)
 	@Size(max = 255)
 	@NotNull
 	private String year = "*";
 
-	@Column(name = "SC_MONTH", nullable = false, length = 255)
+	@Column(name = "sc_month", nullable = false, length = 255)
     @Size(max = 255)
     @NotNull
 	private String month = "*";
 
-	@Column(name = "SC_D_O_MONTH", nullable = false, length = 255)
+	@Column(name = "sc_d_o_month", nullable = false, length = 255)
     @Size(max = 255)
     @NotNull
 	private String dayOfMonth = "*";
 
-	@Column(name = "SC_D_O_WEEK", nullable = false, length = 255)
+	@Column(name = "sc_d_o_week", nullable = false, length = 255)
     @Size(max = 255)
     @NotNull
 	private String dayOfWeek = "*";
 
-	@Column(name = "SC_HOUR", nullable = false, length = 255)
+	@Column(name = "sc_hour", nullable = false, length = 255)
     @Size(max = 255)
     @NotNull
 	private String hour = "*";
 
-	@Column(name = "SC_MIN", nullable = false, length = 255)
+	@Column(name = "sc_min", nullable = false, length = 255)
     @Size(max = 255)
     @NotNull
 	private String minute = "0";
 
-	@Column(name = "SC_SEC", nullable = false, length = 255)
+	@Column(name = "sc_sec", nullable = false, length = 255)
     @Size(max = 255)
     @NotNull
 	private String second = "0";
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "SC_START", nullable = true)
+	@Column(name = "sc_start", nullable = true)
 	private Date start;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "SC_END", nullable = true)
+	@Column(name = "sc_end", nullable = true)
 	private Date end;
 	
 	@OneToMany(mappedBy = "timerEntity", fetch = FetchType.LAZY)

@@ -60,127 +60,127 @@ import org.meveo.model.shared.InterBankTitle;
 @ObservableEntity
 @CustomFieldEntity(cftCodePrefix = "PROVIDER")
 @ExportIdentifier("code")
-@Table(name = "CRM_PROVIDER", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE" }))
+@Table(name = "crm_provider", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "CRM_PROVIDER_SEQ"), })
+        @Parameter(name = "sequence_name", value = "crm_provider_seq"), })
 public class Provider extends AuditableEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "CODE", nullable = false, length = 60)
+    @Column(name = "code", nullable = false, length = 60)
     @Size(max = 60, min = 1)
     @NotNull
     protected String code;
 
-    @Column(name = "DESCRIPTION", length = 255)
+    @Column(name = "description", length = 255)
     @Size(max = 255)
     protected String description;
 
     @Type(type = "numeric_boolean")
-    @Column(name = "DISABLED", nullable = false)
+    @Column(name = "disabled", nullable = false)
     @NotNull
     private boolean disabled;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CURRENCY_ID")
+    @JoinColumn(name = "currency_id")
     private Currency currency;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "COUNTRY_ID")
+    @JoinColumn(name = "country_id")
     private Country country;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "LANGUAGE_ID")
+    @JoinColumn(name = "language_id")
     private Language language;
 
     @Type(type = "numeric_boolean")
-    @Column(name = "MULTICOUNTRY_FLAG")
+    @Column(name = "multicountry_flag")
     private boolean multicountryFlag;
 
     @Type(type = "numeric_boolean")
-    @Column(name = "MULTICURRENCY_FLAG")
+    @Column(name = "multicurrency_flag")
     private boolean multicurrencyFlag;
 
     @Type(type = "numeric_boolean")
-    @Column(name = "MULTILANGUAGE_FLAG")
+    @Column(name = "multilanguage_flag")
     private boolean multilanguageFlag;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CUSTOMER_ID")
+    @JoinColumn(name = "customer_id")
     private Customer customer;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CUSTOMER_ACCOUNT_ID")
+    @JoinColumn(name = "customer_account_id")
     private CustomerAccount customerAccount;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "BILLING_ACCOUNT_ID")
+    @JoinColumn(name = "billing_account_id")
     private BillingAccount billingAccount;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_ACCOUNT_ID")
+    @JoinColumn(name = "user_account_id")
     private UserAccount userAccount;
 
     private static final String PM_SEP = ",";
 
-    @Column(name = "PAYMENT_METHODS", length = 255)
+    @Column(name = "payment_methods", length = 255)
     @Size(max = 255)
     private String serializedPaymentMethods;
 
     @Transient
     private List<PaymentMethodEnum> paymentMethods;
 
-    @Column(name = "RATING_ROUNDING", columnDefinition = "int DEFAULT 2")
+    @Column(name = "rating_rounding", columnDefinition = "int DEFAULT 2")
     private Integer rounding = 2;
 
     @Embedded
     private BankCoordinates bankCoordinates = new BankCoordinates();
 
     @Type(type = "numeric_boolean")
-    @Column(name = "ENTREPRISE")
+    @Column(name = "entreprise")
     private boolean entreprise = false;
 
     @Type(type = "numeric_boolean")
-    @Column(name = "AUTOMATIC_INVOICING")
+    @Column(name = "automatic_invoicing")
     private boolean automaticInvoicing = false;
 
     @Embedded
     private InterBankTitle interBankTitle = new InterBankTitle();
 
     @Type(type = "numeric_boolean")
-    @Column(name = "AMOUNT_VALIDATION")
+    @Column(name = "amount_validation")
     private boolean amountValidation = false;
 
     @Type(type = "numeric_boolean")
-    @Column(name = "LEVEL_DUPLICATION")
+    @Column(name = "level_duplication")
     private boolean levelDuplication = false;
 
-    @Column(name = "EMAIL", length = 100)
+    @Column(name = "email", length = 100)
     @Pattern(regexp = ".+@.+\\..{2,4}")
     @Size(max = 100)
     protected String email;
 
     @Type(type = "numeric_boolean")
-    @Column(name = "DISPLAY_FREE_TX_IN_INVOICE")
+    @Column(name = "display_free_tx_in_invoice")
     private boolean displayFreeTransacInInvoice = false;
 
-    @Column(name = "UUID", nullable = false, updatable = false, length = 60)
+    @Column(name = "uuid", nullable = false, updatable = false, length = 60)
     @Size(max = 60)
     @NotNull
     private String uuid = UUID.randomUUID().toString();
 
-    @Column(name = "DISCOUNT_ACCOUNTING_CODE", length = 255)
+    @Column(name = "discount_accounting_code", length = 255)
     @Size(max = 255)
     private String discountAccountingCode;
 
-    @Column(name = "PREPAID_RESRV_DELAY_MS")
+    @Column(name = "prepaid_resrv_delay_ms")
     private Long prepaidReservationExpirationDelayinMillisec = Long.valueOf(60000);
 
     @OneToOne(mappedBy = "provider", cascade = CascadeType.ALL, targetEntity = org.meveo.model.billing.InvoiceConfiguration.class, orphanRemoval = true)
     private InvoiceConfiguration invoiceConfiguration = new InvoiceConfiguration();
 
     @Type(type = "numeric_boolean")
-    @Column(name = "RECOGNIZE_REVENUE")
+    @Column(name = "recognize_revenue")
     private boolean recognizeRevenue;
 
     public String getCode() {

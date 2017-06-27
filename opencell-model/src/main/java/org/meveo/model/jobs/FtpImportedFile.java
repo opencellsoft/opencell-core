@@ -15,25 +15,25 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 
 @Entity
-@Table(name = "FTP_IMPORTED_FILE")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "FTP_IMPORTED_FILE_SEQ"), })
+@Table(name = "ftp_imported_file")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ftp_imported_file_seq"), })
 public class FtpImportedFile extends BusinessEntity {
     private static final long serialVersionUID = 430457580612075457L;
 
-    @Column(name = "URI", length = 2000, nullable = false)
+    @Column(name = "uri", length = 2000, nullable = false)
     @Size(max = 2000)
     @NotNull
     private String uri;
 
-    @Column(name = "SIZE")
+    @Column(name = "size")
     private Long size;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "IMPORT_DATE")
+    @Column(name = "import_date")
     private Date importDate = new Date();
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "LAST_MODIFICATION")
+    @Column(name = "last_modification")
     private Date lastModification;
 
 

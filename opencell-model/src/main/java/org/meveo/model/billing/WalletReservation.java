@@ -20,7 +20,7 @@ public class WalletReservation extends WalletOperation {
 	private static final long serialVersionUID = 2757123710864061091L;
 
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-	@JoinColumn(name = "RESERVATION_ID")
+	@JoinColumn(name = "reservation_id")
 	private Reservation reservation;
 
 	public Reservation getReservation() {

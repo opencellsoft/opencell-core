@@ -45,11 +45,11 @@ import org.meveo.model.crm.BusinessAccountModel;
 @VersionedEntity
 @MultilanguageEntity(key = "menu.catalog.offersAndProducts", group = "ProductOffering")
 @ExportIdentifier({ "code", "validity.startDate", "validity.endDate" })
-@Table(name = "CAT_OFFER_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "VALID_FROM", "VALID_TO" }))
+@Table(name = "cat_offer_template", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "valid_from", "valid_to" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "CAT_OFFER_TEMPLATE_SEQ"), })
+        @Parameter(name = "sequence_name", value = "cat_offer_template_seq"), })
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 @NamedQueries({
         @NamedQuery(name = "ProductOffering.findLatestVersion", query = "select e from ProductOffering e where type(e)= :clazz and e.code = :code order by e.validity.from desc, e.validity.to desc"),
         @NamedQuery(name = "ProductOffering.findMatchingVersions", query = "select e from ProductOffering e where type(e)= :clazz and e.code = :code and e.id !=:id order by id"),
@@ -58,39 +58,39 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
 
     private static final long serialVersionUID = 6877386866687396135L;
 
-    @Column(name = "NAME", length = 100)
+    @Column(name = "name", length = 100)
     @Size(max = 100)
     private String name;
 
     @ManyToMany
-    @JoinTable(name = "CAT_PRODUCT_OFFER_TMPL_CAT", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_TEMPLATE_CAT_ID"))
+    @JoinTable(name = "cat_product_offer_tmpl_cat", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "offer_template_cat_id"))
     @OrderColumn(name = "INDX")
     private List<OfferTemplateCategory> offerTemplateCategories = new ArrayList<>();
 
-    @AttributeOverrides({ @AttributeOverride(name = "from", column = @Column(name = "VALID_FROM")), @AttributeOverride(name = "to", column = @Column(name = "VALID_TO")) })
+    @AttributeOverrides({ @AttributeOverride(name = "from", column = @Column(name = "valid_from")), @AttributeOverride(name = "to", column = @Column(name = "valid_to")) })
     private DatePeriod validity = new DatePeriod();
 
     @ImageType
-    @Column(name = "IMAGE_PATH", length = 100)
+    @Column(name = "image_path", length = 100)
     @Size(max = 100)
     private String imagePath;
 
     @ManyToMany
-    @JoinTable(name = "CAT_PRODUCT_OFFER_DIGITAL_RES", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "DIGITAL_RESOURCE_ID"))
+    @JoinTable(name = "cat_product_offer_digital_res", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "digital_resource_id"))
     @OrderColumn(name = "INDX")
     private List<DigitalResource> attachments = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "LIFE_CYCLE_STATUS")
+    @Column(name = "life_cycle_status")
     private LifeCycleStatusEnum lifeCycleStatus;
 
     @ManyToMany
-    @JoinTable(name = "CAT_PRODUCT_OFFER_BAM", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "BAM_ID"))
+    @JoinTable(name = "cat_product_offer_bam", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "bam_id"))
     @OrderColumn(name = "INDX")
     private List<BusinessAccountModel> businessAccountModels = new ArrayList<>();
 
     @ManyToMany
-    @JoinTable(name = "CAT_PRODUCT_OFFER_CHANNELS", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "CHANNEL_ID"))
+    @JoinTable(name = "cat_product_offer_channels", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "channel_id"))
     @OrderColumn(name = "INDX")
     private List<Channel> channels = new ArrayList<Channel>();;
 

@@ -38,35 +38,35 @@ import org.meveo.model.ExportIdentifier;
 
 @Entity
 @ExportIdentifier({ "code"})
-@Table(name = "COM_SENDER_CONFIG", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@DiscriminatorColumn(name = "MEDIA")
+@Table(name = "com_sender_config", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
+@DiscriminatorColumn(name = "media")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "COM_SNDR_CONF_SEQ"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "com_sndr_conf_seq"), })
 public abstract class MessageSenderConfig extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "MEDIA", insertable = false, updatable = false)
+	@Column(name = "media", insertable = false, updatable = false)
 	private MediaEnum media;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "PRIORITY")
+	@Column(name = "priority")
 	private PriorityEnum defaultPriority;
 
 	@Type(type="numeric_boolean")
-    @Column(name = "MANAGE_NON_DISTRIB")
+    @Column(name = "manage_non_distrib")
 	private Boolean manageNonDistributedMessage;
 
-	@Column(name = "NON_DISTRIB_EMAIL", length = 255)
+	@Column(name = "non_distrib_email", length = 255)
     @Size(max = 255)
 	private String NonDistributedEmail;
 
 	@Type(type="numeric_boolean")
-    @Column(name = "USE_ACK")
+    @Column(name = "use_ack")
 	private Boolean useAcknoledgement;
 
-	@Column(name = "ACK_EMAIL", length = 255)
+	@Column(name = "ack_email", length = 255)
     @Size(max = 255)
 	private String ackEmail;
 

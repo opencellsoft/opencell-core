@@ -46,38 +46,38 @@ import org.meveo.model.BaseEntity;
  * information it extends this entity.
  */
 @Entity
-@Table(name = "ADM_INPUT_HISTORY")
+@Table(name = "adm_input_history")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "INPUT_TYPE", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorColumn(name = "input_type", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("NOT_SPECIFIED")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "ADM_INPUT_HISTORY_SEQ"), })
+        @Parameter(name = "sequence_name", value = "adm_input_history_seq"), })
 public class InputHistory extends BaseEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "NAME", length = 255)
+	@Column(name = "name", length = 255)
 	@Size(max = 255)
 	private String name;
 
-	@Column(name = "START_DATE")
+	@Column(name = "start_date")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date analysisStartDate;
 
-	@Column(name = "END_DATE")
+	@Column(name = "end_date")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date analysisEndDate;
 
-	@Column(name = "PARSED_TICKETS")
+	@Column(name = "parsed_tickets")
 	private Integer parsedTickets;
 
-	@Column(name = "SUCCEEDED_TICKETS")
+	@Column(name = "succeeded_tickets")
 	private Integer succeededTickets;
 
-	@Column(name = "IGNORED_TICKETS")
+	@Column(name = "ignored_tickets")
 	private Integer ignoredTickets;
 
-	@Column(name = "REJECTED_TICKETS")
+	@Column(name = "rejected_tickets")
 	private Integer rejectedTickets;
 
 	public String getName() {

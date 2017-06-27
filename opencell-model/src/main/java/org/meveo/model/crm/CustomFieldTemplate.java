@@ -46,9 +46,9 @@ import org.meveo.model.shared.DateUtils;
 @Entity
 @ModuleItem
 @ExportIdentifier({ "code", "appliesTo" })
-@Table(name = "CRM_CUSTOM_FIELD_TMPL", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "APPLIES_TO" }))
+@Table(name = "crm_custom_field_tmpl", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "applies_to" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "CRM_CUSTOM_FLD_TMP_SEQ"), })
+        @Parameter(name = "sequence_name", value = "crm_custom_fld_tmp_seq"), })
 @NamedQueries({
         @NamedQuery(name = "CustomFieldTemplate.getCFTForCache", query = "SELECT cft from CustomFieldTemplate cft left join fetch cft.calendar where cft.disabled=false order by cft.appliesTo"),
         @NamedQuery(name = "CustomFieldTemplate.getCFTForIndex", query = "SELECT cft from CustomFieldTemplate cft where cft.disabled=false and cft.indexType is not null ") })
@@ -64,124 +64,124 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
 
     public static String ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR = " - ";
 
-    @Column(name = "FIELD_TYPE", nullable = false)
+    @Column(name = "field_type", nullable = false)
     @Enumerated(EnumType.STRING)
     @NotNull
     private CustomFieldTypeEnum fieldType;
 
-    @Column(name = "APPLIES_TO", nullable = false, length = 100)
+    @Column(name = "applies_to", nullable = false, length = 100)
     @Size(max = 100)
     @NotNull
     private String appliesTo;
 
     @Type(type = "numeric_boolean")
-    @Column(name = "VALUE_REQUIRED")
+    @Column(name = "value_required")
     private boolean valueRequired;
 
     @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "CRM_CUSTOM_FIELD_TMPL_VAL")
+    @CollectionTable(name = "crm_custom_field_tmpl_val")
     private Map<String, String> listValues;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "CRM_CUSTOM_FIELD_TMPL_MCOLS", joinColumns = { @JoinColumn(name = "CFT_ID") })
-    @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "CODE", nullable = false, length = 20)),
-            @AttributeOverride(name = "label", column = @Column(name = "LABEL", nullable = false, length = 50)),
-            @AttributeOverride(name = "keyType", column = @Column(name = "KEY_TYPE", nullable = false, length = 10)) })
+    @CollectionTable(name = "crm_custom_field_tmpl_mcols", joinColumns = { @JoinColumn(name = "cft_id") })
+    @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "code", nullable = false, length = 20)),
+            @AttributeOverride(name = "label", column = @Column(name = "label", nullable = false, length = 50)),
+            @AttributeOverride(name = "keyType", column = @Column(name = "key_type", nullable = false, length = 10)) })
     private List<CustomFieldMatrixColumn> matrixColumns = new ArrayList<CustomFieldMatrixColumn>();
 
     @Transient
     private boolean matrixColumnsSorted;
 
     @Type(type = "numeric_boolean")
-    @Column(name = "VERSIONABLE")
+    @Column(name = "versionable")
     private boolean versionable;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CALENDAR_ID")
+    @JoinColumn(name = "calendar_id")
     private Calendar calendar;
 
-    @Column(name = "CACHE_VALUE_FOR")
+    @Column(name = "cache_value_for")
     private Integer cacheValueTimeperiod;
 
-    @Column(name = "DEFAULT_VALUE", length = 250)
+    @Column(name = "default_value", length = 250)
     @Size(max = 250)
     private String defaultValue;
 
     @Type(type = "numeric_boolean")
-    @Column(name = "INH_AS_DEF_VALUE")
+    @Column(name = "inh_as_def_value")
     private boolean useInheritedAsDefaultValue;
 
     /**
      * Reference to an entity. A classname. In case of CustomEntityTemplate, classname consist of "CustomEntityTemplate - <CustomEntityTemplate code>"
      */
-    @Column(name = "ENTITY_CLAZZ", length = 255)
+    @Column(name = "entity_clazz", length = 255)
     @Size(max = 255)
     private String entityClazz;
 
-    @Column(name = "STORAGE_TYPE", nullable = false)
+    @Column(name = "storage_type", nullable = false)
     @Enumerated(EnumType.STRING)
     @NotNull
     private CustomFieldStorageTypeEnum storageType = CustomFieldStorageTypeEnum.SINGLE;
 
-    @Column(name = "MAPKEY_TYPE")
+    @Column(name = "mapkey_type")
     @Enumerated(EnumType.STRING)
     private CustomFieldMapKeyEnum mapKeyType;
 
     @Type(type = "numeric_boolean")
-    @Column(name = "TRIGGER_END_PERIOD_EVENT", nullable = false)
+    @Column(name = "trigger_end_period_event", nullable = false)
     private boolean triggerEndPeriodEvent;
 
-    @Column(name = "GUI_POSITION", length = 100)
+    @Column(name = "gui_position", length = 100)
     @Size(max = 100)
     private String guiPosition;
 
     @Type(type = "numeric_boolean")
-    @Column(name = "ALLOW_EDIT")
+    @Column(name = "allow_edit")
     @NotNull
     private boolean allowEdit = true;
 
     @Type(type = "numeric_boolean")
-    @Column(name = "HIDE_ON_NEW")
+    @Column(name = "hide_on_new")
     @NotNull
     private boolean hideOnNew;
 
-    @Column(name = "MAX_VALUE")
+    @Column(name = "max_value")
     private Long maxValue;
 
-    @Column(name = "MIN_VALUE")
+    @Column(name = "min_value")
     private Long minValue;
 
-    @Column(name = "REG_EXP", length = 80)
+    @Column(name = "reg_exp", length = 80)
     @Size(max = 80)
     private String regExp;
 
-    @Column(name = "APPLICABLE_ON_EL", length = 2000)
+    @Column(name = "applicable_on_el", length = 2000)
     @Size(max = 2000)
     private String applicableOnEl;
 
     @Type(type = "numeric_boolean")
-    @Column(name = "CACHE_VALUE")
+    @Column(name = "cache_value")
     @NotNull
     private boolean cacheValue;
 
     /**
      * Child entity fields to display as summary. Field names are separated by a comma.
      */
-    @Column(name = "CHE_FIELDS", length = 500)
+    @Column(name = "che_fields", length = 500)
     @Size(max = 500)
     private String childEntityFields;
 
     /**
      * If and how custom field value should be indexed in Elastic Search
      */
-    @Column(name = "INDEX_TYPE", length = 10)
+    @Column(name = "index_type", length = 10)
     @Enumerated(EnumType.STRING)
     private CustomFieldIndexTypeEnum indexType;
 
     /**
      * Tags assigned to custom field template
      */
-    @Column(name = "TAGS", length = 2000)
+    @Column(name = "tags", length = 2000)
     @Size(max = 2000)
     private String tags;
 

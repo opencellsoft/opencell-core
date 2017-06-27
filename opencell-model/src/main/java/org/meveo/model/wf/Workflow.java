@@ -42,13 +42,13 @@ import org.meveo.model.ModuleItem;
 @Entity
 @ModuleItem
 @ExportIdentifier({ "code"})
-@Table(name = "WF_WORKFLOW", uniqueConstraints = @UniqueConstraint(columnNames = {"CODE" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "WF_WORKFLOW_SEQ"), })
+@Table(name = "wf_workflow", uniqueConstraints = @UniqueConstraint(columnNames = {"code" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "wf_workflow_seq"), })
 public class Workflow extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "WF_TYPE", length = 255)
+	@Column(name = "wf_type", length = 255)
 	@NotNull
     @Size(max = 255)
 	String wfType = null;
@@ -59,7 +59,7 @@ public class Workflow extends BusinessEntity {
 	
 	
 	@Type(type="numeric_boolean")
-    @Column(name = "ENABLE_HOSTORY")
+    @Column(name = "enable_hostory")
 	private boolean enableHistory;
 
 	/**

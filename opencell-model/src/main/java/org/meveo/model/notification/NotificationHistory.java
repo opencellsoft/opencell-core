@@ -17,42 +17,42 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.EnableEntity;
 
 @Entity
-@Table(name="ADM_NOTIF_HISTORY")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ADM_NOTIF_HISTORY_SEQ"), })
+@Table(name="adm_notif_history")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "adm_notif_history_seq"), })
 public class NotificationHistory extends EnableEntity {
 	
 	private static final long serialVersionUID = -6882236977852466160L;
 
 	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="INBOUND_REQUEST_ID")
+	@JoinColumn(name="inbound_request_id")
 	private InboundRequest inboundRequest;
 	
 	@ManyToOne(fetch=FetchType.LAZY, optional= false)
 	@NotNull
-	@JoinColumn(name="NOTIFICATION_ID")
+	@JoinColumn(name="notification_id")
 	private Notification notification;
 	
-	@Column(name="ENTITY_CLASSNAME",length=255, nullable = false)
+	@Column(name="entity_classname",length=255, nullable = false)
 	@Size(max = 255)
 	@NotNull
 	private String entityClassName;
 	
-	@Column(name="ENTITY_CODE",length=35)
+	@Column(name="entity_code",length=35)
 	@Size(max = 35)
 	private String entityCode;
 
-	@Column(name="SERIALIZED_ENTITY", columnDefinition="TEXT") 
+	@Column(name="serialized_entity", columnDefinition="TEXT") 
 	private String serializedEntity;
 
-	@Column(name="NB_RETRY")
+	@Column(name="nb_retry")
 	@Max(10)
 	private int nbRetry;
 
-	@Column(name="RESULT",length=1000)
+	@Column(name="result",length=1000)
 	@Size(max=1000)
 	private String result;
 	
-	@Column(name="STATUS")
+	@Column(name="status")
 	@Enumerated(EnumType.STRING)
 	private NotificationHistoryStatusEnum status;
 

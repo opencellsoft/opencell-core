@@ -32,7 +32,7 @@ import org.meveo.model.MultilanguageEntity;
 
 @Entity
 @MultilanguageEntity(key = "menu.charges", group = "ChargeTemplate")
-@Table(name = "CAT_PRODUCT_CHARGE_TEMPL")
+@Table(name = "cat_product_charge_templ")
 @NamedQueries({
 		@NamedQuery(name = "productChargeTemplate.getNbrProductWithNotPricePlan", query = "select count (*) from ProductChargeTemplate o where o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) "),
 		@NamedQuery(name = "productChargeTemplate.getProductWithNotPricePlan", query = "from ProductChargeTemplate o where o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) "), })

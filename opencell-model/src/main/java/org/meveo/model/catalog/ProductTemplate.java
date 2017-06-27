@@ -39,20 +39,20 @@ public class ProductTemplate extends ProductOffering {
 
 	
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "CAT_PRODUCT_TEMPL_CHARGE_TEMPL", joinColumns = @JoinColumn(name = "PRODUCT_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "PRODUCT_CHARGE_TEMPLATE_ID"))	
+	@JoinTable(name = "cat_product_templ_charge_templ", joinColumns = @JoinColumn(name = "product_template_id"), inverseJoinColumns = @JoinColumn(name = "product_charge_template_id"))	
 	private List<ProductChargeTemplate> productChargeTemplates = new ArrayList<>();
 
 	@ManyToOne
-	@JoinColumn(name = "BUSINESS_PRODUCT_MODEL_ID")
+	@JoinColumn(name = "business_product_model_id")
 	private BusinessProductModel businessProductModel;
 
 	@ManyToOne
-	@JoinColumn(name = "INVOICING_CALENDAR_ID")
+	@JoinColumn(name = "invoicing_calendar_id")
 	private Calendar invoicingCalendar;
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "CAT_PRODUCT_WALLET_TEMPLATE", joinColumns = @JoinColumn(name = "PRODUCT_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "WALLET_TEMPLATE_ID"))
-	@OrderColumn(name = "INDX")
+	@JoinTable(name = "cat_product_wallet_template", joinColumns = @JoinColumn(name = "product_template_id"), inverseJoinColumns = @JoinColumn(name = "wallet_template_id"))
+	@OrderColumn(name = "indx")
 	private List<WalletTemplate> walletTemplates = new ArrayList<WalletTemplate>();
 	
 	public void addProductChargeTemplate(ProductChargeTemplate productChargeTemplate) {

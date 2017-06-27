@@ -23,23 +23,23 @@ public class CardToken extends PaymentToken {
 	private static final long serialVersionUID = 8726571628074346184L;
 	
 	@Enumerated(EnumType.STRING)
-	@Column(name = "CARD_TYPE")
+	@Column(name = "card_type")
 	@NotNull
 	private CreditCardTypeEnum cardType;
 	
-	@Column(name = "OWNER")
+	@Column(name = "owner")
 	@NotNull
 	private String owner;
 	
-	@Column(name = "MONTH_EXPIRATION")
+	@Column(name = "month_expiration")
 	@NotNull
 	private Integer monthExpiration;
 	
-	@Column(name = "YEAR_EXPIRATION")
+	@Column(name = "year_expiration")
 	@NotNull
 	private Integer yearExpiration;
 	
-	@Column(name = "CARD_NUMBER")
+	@Column(name = "card_number")
 	@NotNull
 	private String hiddenCardNumber;
 		

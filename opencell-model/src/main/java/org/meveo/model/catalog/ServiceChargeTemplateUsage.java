@@ -35,18 +35,18 @@ import org.meveo.model.ExportIdentifier;
 
 @Entity
 @ExportIdentifier({ "chargeTemplate.code", "serviceTemplate.code"})
-@Table(name = "CAT_SERV_USAGE_CHARGE_TEMPLATE")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CAT_SERV_USAGECHRG_TEMPLT_SEQ"), })
+@Table(name = "cat_serv_usage_charge_template")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_serv_usagechrg_templt_seq"), })
 public class ServiceChargeTemplateUsage extends ServiceChargeTemplate<UsageChargeTemplate> {
 
 	private static final long serialVersionUID = -6881449392209666474L;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "COUNTER_TEMPLATE_ID")
+	@JoinColumn(name = "counter_template_id")
 	private CounterTemplate counterTemplate;
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "CAT_SERV_USAGE_WALLET_TEMPLATE", joinColumns = @JoinColumn(name = "SERVICE_USAGE_TEMPLT_ID"), inverseJoinColumns = @JoinColumn(name = "WALLET_TEMPLATE_ID"))
+	@JoinTable(name = "cat_serv_usage_wallet_template", joinColumns = @JoinColumn(name = "service_usage_templt_id"), inverseJoinColumns = @JoinColumn(name = "wallet_template_id"))
 	@OrderColumn(name = "INDX")
 	private List<WalletTemplate> walletTemplates;
 

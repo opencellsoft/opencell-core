@@ -22,58 +22,58 @@ import org.meveo.model.crm.Provider;
  **/
 @Entity
 @ExportIdentifier({ "provider" })
-@Table(name = "BILLING_INVOICE_CONFIGURATION", uniqueConstraints = @UniqueConstraint(columnNames = { "PROVIDER_ID" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_INVOICE_CONFIGURATION_SEQ"), })
+@Table(name = "billing_invoice_configuration", uniqueConstraints = @UniqueConstraint(columnNames = { "provider_id" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_invoice_configuration_seq"), })
 public class InvoiceConfiguration extends BaseEntity implements Serializable, IEntity {
 
     private static final long serialVersionUID = -735961368678724497L;
     
     @Type(type="numeric_boolean")
-    @Column(name = "DISPLAY_SUBSCRIPTIONS")
+    @Column(name = "display_subscriptions")
     private Boolean displaySubscriptions = false;
 
     @Type(type="numeric_boolean")
-    @Column(name = "DISPLAY_SERVICES")
+    @Column(name = "display_services")
     private Boolean displayServices = false;
 
     @Type(type="numeric_boolean")
-    @Column(name = "DISPLAY_OFFERS")
+    @Column(name = "display_offers")
     private Boolean displayOffers = false;
     
     @Type(type="numeric_boolean")
-    @Column(name = "DISPLAY_PRICEPLANS")
+    @Column(name = "display_priceplans")
     private Boolean displayPricePlans = false;
 
     @Type(type="numeric_boolean")
-    @Column(name = "DISPLAY_EDRS")
+    @Column(name = "display_edrs")
     private Boolean displayEdrs = false;
 
     @Type(type="numeric_boolean")
-    @Column(name = "DISPLAY_PROVIDER")
+    @Column(name = "display_provider")
     private Boolean displayProvider = false;
 
     @Type(type="numeric_boolean")
-    @Column(name = "DISPLAY_DETAIL")
+    @Column(name = "display_detail")
     private Boolean displayDetail = true;
 
     @Type(type="numeric_boolean")
-    @Column(name = "DISPLAY_CF_AS_XML")
+    @Column(name = "display_cf_as_xml")
     private Boolean displayCfAsXML = false;
     
     @Type(type="numeric_boolean")
-    @Column(name = "DISPLAY_CHARGES_PERIODS")
+    @Column(name = "display_charges_periods")
     private Boolean displayChargesPeriods = false;
     
     @Type(type="numeric_boolean")
-    @Column(name = "DISPLAY_BILLING_CYCLE")
+    @Column(name = "display_billing_cycle")
     private Boolean displayBillingCycle = false;
     
     @Type(type="numeric_boolean")
-    @Column(name = "DISPLAY_ORDERS")
+    @Column(name = "display_orders")
     private Boolean displayOrders = false;
 
     @OneToOne
-    @JoinColumn(name="PROVIDER_ID")
+    @JoinColumn(name="provider_id")
     private Provider provider;
 
     public Boolean getDisplaySubscriptions() {

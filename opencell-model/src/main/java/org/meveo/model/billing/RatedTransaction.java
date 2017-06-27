@@ -46,8 +46,8 @@ import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.rating.EDR;
 
 @Entity
-@Table(name = "BILLING_RATED_TRANSACTION")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_RATED_TRANSACTION_SEQ"), })
+@Table(name = "billing_rated_transaction")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_rated_transaction_seq"), })
 @NamedQueries({
 		@NamedQuery(name = "RatedTransaction.listByWalletOperationId", query = "SELECT r FROM RatedTransaction r where r.walletOperationId=:walletOperationId"),
 		@NamedQuery(name = "RatedTransaction.listInvoiced", query = "SELECT r FROM RatedTransaction r where r.wallet=:wallet and invoice is not null order by usageDate desc "),
@@ -103,120 +103,120 @@ public class RatedTransaction extends BaseEntity {
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "WALLET_ID")
+	@JoinColumn(name = "wallet_id")
 	private WalletInstance wallet;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "BILLING_ACCOUNT__ID")
+	@JoinColumn(name = "billing_account__id")
 	private BillingAccount billingAccount;
 
-	@Column(name = "WALLET_OPERATION_ID")
+	@Column(name = "wallet_operation_id")
 	private Long walletOperationId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "BILLING_RUN_ID")
+	@JoinColumn(name = "billing_run_id")
 	private BillingRun billingRun;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "USAGE_DATE")
+	@Column(name = "usage_date")
 	private Date usageDate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "INVOICE_SUB_CATEGORY_ID")
+	@JoinColumn(name = "invoice_sub_category_id")
 	private InvoiceSubCategory invoiceSubCategory;
 
-	@Column(name = "CODE", length = 255)
+	@Column(name = "code", length = 255)
 	@Size(max = 255)
 	private String code;
 
-	@Column(name = "DESCRIPTION", length = 255)
+	@Column(name = "description", length = 255)
     @Size(max = 255)
 	private String description;
 
-	@Column(name = "UNITY_DESCRIPTION", length = 20)
+	@Column(name = "unity_description", length = 20)
 	@Size(max = 20)
 	private String unityDescription;
 	
-	@Column(name = "RATING_UNIT_DESCRIPTION", length = 20)
+	@Column(name = "rating_unit_description", length = 20)
     @Size(max = 20)
 	private String ratingUnitDescription;
 
-	@Column(name = "UNIT_AMOUNT_WITHOUT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "unit_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal unitAmountWithoutTax;
 
-	@Column(name = "UNIT_AMOUNT_WITH_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "unit_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal unitAmountWithTax;
 
-	@Column(name = "UNIT_AMOUNT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "unit_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal unitAmountTax;
 
-	@Column(name = "QUANTITY", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal quantity;
 
-	@Column(name = "AMOUNT_WITHOUT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal amountWithoutTax;
 
-	@Column(name = "AMOUNT_WITH_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal amountWithTax;
 
-	@Column(name = "AMOUNT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal amountTax;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "INVOICE_ID")
+	@JoinColumn(name = "invoice_id")
 	private Invoice invoice;
 
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "AGGREGATE_ID_F")
+	@JoinColumn(name = "aggregate_id_f")
 	private SubCategoryInvoiceAgregate invoiceAgregateF;
 
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "AGGREGATE_ID_R")
+	@JoinColumn(name = "aggregate_id_r")
 	private CategoryInvoiceAgregate invoiceAgregateR;
 
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "AGGREGATE_ID_T")
+	@JoinColumn(name = "aggregate_id_t")
 	private TaxInvoiceAgregate invoiceAgregateT;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "STATUS")
+	@Column(name = "status")
 	private RatedTransactionStatusEnum status;
 
 	@Type(type="numeric_boolean")
-    @Column(name = "DO_NOT_TRIGGER_INVOICING")
+    @Column(name = "do_not_trigger_invoicing")
 	private boolean doNotTriggerInvoicing = false;
 
-	@Column(name = "PARAMETER_1", length = 255)
+	@Column(name = "parameter_1", length = 255)
     @Size(max = 255)
 	private String parameter1;
 
-	@Column(name = "PARAMETER_2", length = 255)
+	@Column(name = "parameter_2", length = 255)
     @Size(max = 255)
 	private String parameter2;
 
-	@Column(name = "PARAMETER_3", length = 255)
+	@Column(name = "parameter_3", length = 255)
     @Size(max = 255)
 	private String parameter3;
 
-    @Column(name = "ORDER_NUMBER", length = 100)
+    @Column(name = "order_number", length = 100)
     @Size(max = 100)
     private String orderNumber;
 	
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "PRICEPLAN_ID")
+	@JoinColumn(name = "priceplan_id")
 	private PricePlanMatrix priceplan;
 
-	@Column(name = "OFFER_CODE", length = 255)
+	@Column(name = "offer_code", length = 255)
 	@Size(max = 255, min = 1)
 	protected String offerCode;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "EDR_ID")
+	@JoinColumn(name = "edr_id")
 	private EDR edr;
 
 	@ManyToOne
-	@JoinColumn(name = "ADJUSTED_RATED_TX")
+	@JoinColumn(name = "adjusted_rated_tx")
 	private RatedTransaction adjustedRatedTx;
 
 

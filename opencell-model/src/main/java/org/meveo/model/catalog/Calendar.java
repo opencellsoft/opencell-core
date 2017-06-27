@@ -39,15 +39,15 @@ import org.meveo.model.ObservableEntity;
 @Entity
 @ObservableEntity
 @ExportIdentifier({ "code"})
-@Table(name = "CAT_CALENDAR", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
+@Table(name = "cat_calendar", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "CAL_TYPE")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CAT_CALENDAR_SEQ"), })
+@DiscriminatorColumn(name = "cal_type")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_calendar_seq"), })
 public abstract class Calendar extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "CAL_TYPE", insertable = false, updatable = false)
+    @Column(name = "cal_type", insertable = false, updatable = false)
     @Size(max = 31)
     private String calendarType;
 

@@ -57,125 +57,125 @@ import org.meveo.model.quote.Quote;
 
 @Entity
 @ObservableEntity
-@Table(name = "BILLING_INVOICE", uniqueConstraints = @UniqueConstraint(columnNames = { "INVOICE_NUMBER", "INVOICE_TYPE_ID" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_INVOICE_SEQ"), })
+@Table(name = "billing_invoice", uniqueConstraints = @UniqueConstraint(columnNames = { "invoice_number", "invoice_type_id" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_invoice_seq"), })
 @CustomFieldEntity(cftCodePrefix = "INVOICE")
 public class Invoice extends EnableEntity implements ICustomFieldEntity {
 
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "BILLING_ACCOUNT_ID")
+	@JoinColumn(name = "billing_account_id")
 	private BillingAccount billingAccount;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "BILLING_RUN_ID")
+	@JoinColumn(name = "billing_run_id")
 	private BillingRun billingRun;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "RECORDED_INVOICE_ID")
+	@JoinColumn(name = "recorded_invoice_id")
 	private RecordedInvoice recordedInvoice;
 
 	@OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<InvoiceAgregate> invoiceAgregates = new ArrayList<InvoiceAgregate>();
 
-	@Column(name = "INVOICE_NUMBER", length = 50)
+	@Column(name = "invoice_number", length = 50)
 	@Size(max = 50)
 	private String invoiceNumber;
 
-	@Column(name = "TEMPORARY_INVOICE_NUMBER", length = 60, unique = true)
+	@Column(name = "temporary_invoice_number", length = 60, unique = true)
 	@Size(max = 60)
 	private String temporaryInvoiceNumber;
 
-	@Column(name = "PRODUCT_DATE")
+	@Column(name = "product_date")
 	private Date productDate;
 
-	@Column(name = "INVOICE_DATE")
+	@Column(name = "invoice_date")
 	private Date invoiceDate;
 
-	@Column(name = "DUE_DATE")
+	@Column(name = "due_date")
 	private Date dueDate;
 
-	@Column(name = "AMOUNT", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "amount", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal amount;
 
-	@Column(name = "DISCOUNT", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "discount", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal discount;
 
-	@Column(name = "AMOUNT_WITHOUT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal amountWithoutTax;
 
-	@Column(name = "AMOUNT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal amountTax;
 
-	@Column(name = "AMOUNT_WITH_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal amountWithTax;
 
-	@Column(name = "NET_TO_PAY", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "net_to_pay", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal netToPay;
 
-	@Column(name = "PAYMENT_METHOD")
+	@Column(name = "payment_method")
 	@Enumerated(EnumType.STRING)
 	private PaymentMethodEnum paymentMethod;
 
-	@Column(name = "IBAN", length = 255)
+	@Column(name = "iban", length = 255)
 	@Size(max = 255)
 	private String iban;
 
-	@Column(name = "ALIAS", length = 255)
+	@Column(name = "alias", length = 255)
 	@Size(max = 255)
 	private String alias;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TRADING_CURRENCY_ID")
+	@JoinColumn(name = "trading_currency_id")
 	private TradingCurrency tradingCurrency;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TRADING_COUNTRY_ID")
+	@JoinColumn(name = "trading_country_id")
 	private TradingCountry tradingCountry;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TRADING_LANGUAGE_ID")
+	@JoinColumn(name = "trading_language_id")
 	private TradingLanguage tradingLanguage;
 
 	@OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
 	private List<RatedTransaction> ratedTransactions = new ArrayList<RatedTransaction>();
 
-	@Column(name = "COMMENT", length = 1200)
+	@Column(name = "comment", length = 1200)
 	@Size(max = 1200)
 	private String comment;
 
 	@Type(type="numeric_boolean")
-    @Column(name = "DETAILED_INVOICE")
+    @Column(name = "detailed_invoice")
 	private boolean isDetailedInvoice = true;
 
 	@ManyToOne
-	@JoinColumn(name = "INVOICE_ID")
+	@JoinColumn(name = "invoice_id")
 	private Invoice adjustedInvoice;
 
 	@ManyToOne
-	@JoinColumn(name = "INVOICE_TYPE_ID")
+	@JoinColumn(name = "invoice_type_id")
 	private InvoiceType invoiceType;
 
-	@Column(name = "UUID", nullable = false, updatable = false, length = 60)
+	@Column(name = "uuid", nullable = false, updatable = false, length = 60)
 	@Size(max = 60)
 	@NotNull
 	private String uuid = UUID.randomUUID().toString();
 
 	@ManyToMany
-	@JoinTable(name = "BILLING_LINKED_INVOICES", joinColumns = { @JoinColumn(name = "ID") }, inverseJoinColumns = { @JoinColumn(name = "LINKED_INVOICE_ID") })
+	@JoinTable(name = "billing_linked_invoices", joinColumns = { @JoinColumn(name = "id") }, inverseJoinColumns = { @JoinColumn(name = "linked_invoice_id") })
 	private Set<Invoice> linkedInvoices = new HashSet<>();
 	
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "BILLING_INVOICES_ORDERS", joinColumns = @JoinColumn(name = "INVOICE_ID"), inverseJoinColumns = @JoinColumn(name = "ORDER_ID"))	
+	@JoinTable(name = "billing_invoices_orders", joinColumns = @JoinColumn(name = "invoice_id"), inverseJoinColumns = @JoinColumn(name = "order_id"))	
 	private List<Order> orders = new ArrayList<Order>();	
 	
     @ManyToOne
-    @JoinColumn(name = "QUOTE_ID")
+    @JoinColumn(name = "quote_id")
     private Quote quote;
     
 	@Type(type="numeric_boolean")
-    @Column(name = "PDF_GENERATED")
+    @Column(name = "pdf_generated")
 	private boolean isPdfGenerated = false;
     
 

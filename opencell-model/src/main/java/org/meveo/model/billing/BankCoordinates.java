@@ -29,51 +29,51 @@ public class BankCoordinates implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "BANK_CODE", length = 5)
+	@Column(name = "bank_code", length = 5)
 	@Size(max = 5)
 	private String bankCode;
 
-	@Column(name = "BRANCH_CODE", length = 5)
+	@Column(name = "branch_code", length = 5)
 	@Size(max = 5)
 	private String branchCode;
 
-	@Column(name = "ACCOUNT_NUMBER", length = 11)
+	@Column(name = "account_number", length = 11)
 	@Size(max = 11)
 	private String accountNumber;
 
-	@Column(name = "HASH_KEY", length = 2)
+	@Column(name = "hash_key", length = 2)
 	@Size(max = 2)
 	private String key;
 
-	@Column(name = "IBAN", length = 34)
+	@Column(name = "iban", length = 34)
 	@Size(max = 34)
 	private String iban;
 
-	@Column(name = "BIC", length = 11)
+	@Column(name = "bic", length = 11)
 	@Size(max = 11)
 	private String bic;
 
-	@Column(name = "ACCOUNT_OWNER", length = 50)
+	@Column(name = "account_owner", length = 50)
 	@Size(max = 50)
 	private String accountOwner;
 
-	@Column(name = "BANK_NAME", length = 50)
+	@Column(name = "bank_name", length = 50)
 	@Size(max = 50)
 	private String bankName;
 
-	@Column(name = "BANK_ID", length = 50)
+	@Column(name = "bank_id", length = 50)
 	@Size(max = 50)
 	private String bankId;
 
-	@Column(name = "ISSUER_NUMBER", length = 50)
+	@Column(name = "issuer_number", length = 50)
 	@Size(max = 50)
 	private String issuerNumber;
 
-	@Column(name = "ISSUER_NAME", length = 50)
+	@Column(name = "issuer_name", length = 50)
 	@Size(max = 50)
 	private String issuerName;
 	
-	@Column(name = "ICS", length = 35)
+	@Column(name = "ics", length = 35)
 	@Size(max = 35)
 	private String ics; //L'identifiant Créancier Sepa
 	

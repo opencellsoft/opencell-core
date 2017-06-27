@@ -20,19 +20,19 @@ import org.meveo.model.BaseEntity;
  * @author Edward P. Legaspi
  **/
 @Entity
-@Table(name = "MEVEO_FILTER_ORDER_CONDITION")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "MEVEO_FILTER_ORDER_CONDITION_SEQ"), })
+@Table(name = "meveo_filter_order_condition")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "meveo_filter_order_condition_seq"), })
 public class OrderCondition extends BaseEntity {
 
 	private static final long serialVersionUID = 1523437333405252113L;
 
 	@ElementCollection
-	@CollectionTable(name = "MEVEO_FILTER_OC_FIELD_NAMES", joinColumns = @JoinColumn(name = "ORDER_CONDITION_ID"))
-	@Column(name = "FIELD_NAME")
+	@CollectionTable(name = "meveo_filter_oc_field_names", joinColumns = @JoinColumn(name = "order_condition_id"))
+	@Column(name = "field_name")
 	private List<String> fieldNames = new ArrayList<String>();
 
 	@Type(type="numeric_boolean")
-    @Column(name = "ASCENDING")
+    @Column(name = "ascending")
 	private boolean ascending;
 
 	@OneToOne(mappedBy = "orderCondition")

@@ -54,31 +54,31 @@ import org.meveo.model.mediation.Access;
 @ObservableEntity
 @CustomFieldEntity(cftCodePrefix = "SUB")
 @ExportIdentifier({ "code" })
-@Table(name = "BILLING_SUBSCRIPTION", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE" }))
+@Table(name = "billing_subscription", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "BILLING_SUBSCRIPTION_SEQ"), })
+        @Parameter(name = "sequence_name", value = "billing_subscription_seq"), })
 public class Subscription extends BusinessCFEntity {
 
     private static final long serialVersionUID = 1L;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "OFFER_ID")
+    @JoinColumn(name = "offer_id")
     private OfferTemplate offer;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "STATUS")
+    @Column(name = "status")
     private SubscriptionStatusEnum status = SubscriptionStatusEnum.CREATED;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "STATUS_DATE")
+    @Column(name = "status_date")
     private Date statusDate = new Date();;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "SUBSCRIPTION_DATE")
+    @Column(name = "subscription_date")
     private Date subscriptionDate = new Date();
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "TERMINATION_DATE")
+    @Column(name = "termination_date")
     private Date terminationDate;
 
     @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
@@ -95,20 +95,20 @@ public class Subscription extends BusinessCFEntity {
     private List<Access> accessPoints = new ArrayList<Access>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_ACCOUNT_ID", nullable = false)
+    @JoinColumn(name = "user_account_id", nullable = false)
     @NotNull
     private UserAccount userAccount;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "END_AGREMENT_DATE")
+    @Column(name = "end_agrement_date")
     private Date endAgreementDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SUB_TERMIN_REASON_ID")
+    @JoinColumn(name = "sub_termin_reason_id")
     private SubscriptionTerminationReason subscriptionTerminationReason;
 
     @Type(type = "numeric_boolean")
-    @Column(name = "DEFAULT_LEVEL")
+    @Column(name = "default_level")
     private Boolean defaultLevel = true;
 
     public Date getEndAgreementDate() {

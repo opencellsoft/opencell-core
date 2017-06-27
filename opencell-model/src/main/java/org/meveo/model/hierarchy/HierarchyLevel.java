@@ -43,28 +43,28 @@ import org.meveo.model.ObservableEntity;
 @Entity
 @ObservableEntity
 @ExportIdentifier({ "code", "hierarchyType"})
-@Table(name = "HIERARCHY_ENTITY", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "HIERARCHY_TYPE" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "HIERARCHY_ENTITY_SEQ"), })
+@Table(name = "hierarchy_entity", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "hierarchy_type" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "hierarchy_entity_seq"), })
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "HIERARCHY_TYPE")
+@DiscriminatorColumn(name = "hierarchy_type")
 public abstract class HierarchyLevel<T> extends BusinessEntity implements Comparable<HierarchyLevel<T>>{
 
 	private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("rawtypes")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "PARENT_ID")
+    @JoinColumn(name = "parent_id")
     private HierarchyLevel parentLevel;
 
     @SuppressWarnings("rawtypes")
     @OneToMany(mappedBy = "parentLevel", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private Set<HierarchyLevel> childLevels;
 
-    @Column(name = "HIERARCHY_TYPE", insertable = false, updatable = false, length = 10)
+    @Column(name = "hierarchy_type", insertable = false, updatable = false, length = 10)
     @Size(max = 10)
     private String hierarchyType;
 
-    @Column(name = "ORDER_LEVEL")
+    @Column(name = "order_level")
     protected Long orderLevel = 0L;
 
     @SuppressWarnings("rawtypes")

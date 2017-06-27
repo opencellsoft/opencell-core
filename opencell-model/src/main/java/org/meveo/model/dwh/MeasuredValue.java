@@ -23,48 +23,48 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 
 @Entity
-@Table(name = "DWH_MEASURED_VALUE")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "DWH_MEASURED_VALUE_SEQ"), })
+@Table(name = "dwh_measured_value")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "dwh_measured_value_seq"), })
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MeasuredValue extends BaseEntity {
 
 	private static final long serialVersionUID = -3343485468990186936L;
 
 	@ManyToOne
-	@JoinColumn(name = "MEASURABLE_QUANTITY", nullable = true, unique = false, updatable = true)
+	@JoinColumn(name = "measurable_quantity", nullable = true, unique = false, updatable = true)
 	private MeasurableQuantity measurableQuantity;
 	
-	@Column(name = "CODE", nullable = false, length = 60)
+	@Column(name = "code", nullable = false, length = 60)
 	@Size(max = 60, min = 1)
 	@NotNull
 	protected String code;
 	
 	@Enumerated(EnumType.STRING)
-	@Column(name = "MEASUREMENT_PERIOD")
+	@Column(name = "measurement_period")
 	private MeasurementPeriodEnum measurementPeriod;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "DATE")
+	@Column(name = "date")
 	@XmlTransient
 	private Date date;
 
-	@Column(name = "DIMENSION_1", length = 255)
+	@Column(name = "dimension_1", length = 255)
     @Size(max = 255)
 	private String dimension1;
 
-	@Column(name = "DIMENSION_2", length = 255)
+	@Column(name = "dimension_2", length = 255)
     @Size(max = 255)
 	private String dimension2;
 
-	@Column(name = "DIMENSION_3", length = 255)
+	@Column(name = "dimension_3", length = 255)
     @Size(max = 255)
 	private String dimension3;
 
-	@Column(name = "DIMENSION_4", length = 255)
+	@Column(name = "dimension_4", length = 255)
     @Size(max = 255)
 	private String dimension4;
 
-	@Column(name = "VALUE", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "value", precision = NB_PRECISION, scale = NB_DECIMALS)
 	@XmlTransient
 	private BigDecimal value;
 

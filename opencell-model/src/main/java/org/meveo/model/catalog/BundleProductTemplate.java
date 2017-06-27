@@ -25,27 +25,27 @@ import org.meveo.model.IEntity;
  */
 @Entity
 @ExportIdentifier({ "bundleTemplate.code", "productTemplate.code"})
-@Table(name = "CAT_BUNDLE_PRODUCT_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "PRODUCT_TEMPLATE_ID", "BUNDLE_TEMPLATE_ID" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CAT_BUNDLE_PRODUCT_TEMPLATE_SEQ"), })
+@Table(name = "cat_bundle_product_template", uniqueConstraints = @UniqueConstraint(columnNames = { "product_template_id", "bundle_template_id" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_bundle_product_template_seq"), })
 public class BundleProductTemplate implements IEntity {
 
 	@Id
 	@GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)
-	@Column(name = "ID")
+	@Column(name = "id")
 	@Access(AccessType.PROPERTY)
 	protected Long id;
 
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "PRODUCT_TEMPLATE_ID")
+	@JoinColumn(name = "product_template_id")
 	@NotNull
 	private ProductTemplate productTemplate;
 
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "BUNDLE_TEMPLATE_ID")
+	@JoinColumn(name = "bundle_template_id")
 	@NotNull
 	private BundleTemplate bundleTemplate;
 
-	@Column(name = "QUANTITY")
+	@Column(name = "quantity")
 	private int quantity;
 
 	@Override

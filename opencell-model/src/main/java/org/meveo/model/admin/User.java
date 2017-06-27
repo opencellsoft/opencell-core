@@ -63,9 +63,9 @@ import org.meveo.model.shared.Name;
 @ObservableEntity
 @CustomFieldEntity(cftCodePrefix = "USER")
 @ExportIdentifier({ "userName"})
-@Table(name = "ADM_USER")
+@Table(name = "adm_user")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "ADM_USER_SEQ"), })
+        @Parameter(name = "sequence_name", value = "adm_user_seq"), })
 @NamedQueries({ @NamedQuery(name = "User.listUsersInMM", query = "SELECT u FROM User u LEFT JOIN u.roles as role WHERE role.name IN (:roleNames)"),
         @NamedQuery(name = "User.getByUsername", query = "SELECT u FROM User u LEFT JOIN u.roles WHERE lower(u.userName)=:username") })
 public class User extends EnableEntity implements ICustomFieldEntity {
@@ -75,29 +75,29 @@ public class User extends EnableEntity implements ICustomFieldEntity {
     @Embedded
     private Name name = new Name();
 
-    @Column(name = "USERNAME", length = 50, unique = true)
+    @Column(name = "username", length = 50, unique = true)
     @Size(max = 50)
     private String userName;
 
-    @Column(name = "EMAIL", length = 100)
+    @Column(name = "email", length = 100)
     @Size(max = 100)
     private String email;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "ADM_USER_ROLE", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
+    @JoinTable(name = "adm_user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<Role>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "HIERARCHY_LEVEL_ID")
+    @JoinColumn(name = "hierarchy_level_id")
     private UserHierarchyLevel userLevel;
 
     @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "ADM_SECURED_ENTITY", joinColumns = { @JoinColumn(name = "USER_ID") })
-    @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "CODE", nullable = false, length = 255)),
-            @AttributeOverride(name = "entityClass", column = @Column(name = "ENTITY_CLASS", nullable = false, length = 255)) })
+    @CollectionTable(name = "adm_secured_entity", joinColumns = { @JoinColumn(name = "user_id") })
+    @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "code", nullable = false, length = 255)),
+            @AttributeOverride(name = "entityClass", column = @Column(name = "entity_class", nullable = false, length = 255)) })
     private List<SecuredEntity> securedEntities = new ArrayList<>();
 
-	@Column(name = "UUID", nullable = false, updatable = false, length = 60)
+	@Column(name = "uuid", nullable = false, updatable = false, length = 60)
 	@Size(max = 60)
 	@NotNull
 	private String uuid = UUID.randomUUID().toString();

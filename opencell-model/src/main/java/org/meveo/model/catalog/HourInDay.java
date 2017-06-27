@@ -30,8 +30,8 @@ import org.meveo.model.ExportIdentifier;
 
 @Entity
 @ExportIdentifier({ "hour", "minute" })
-@Table(name = "CAT_HOUR_IN_DAY", uniqueConstraints = @UniqueConstraint(columnNames = { "HOUR", "MIN" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CAT_HOUR_IN_DAY_SEQ"), })
+@Table(name = "cat_hour_in_day", uniqueConstraints = @UniqueConstraint(columnNames = { "hour", "min" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_hour_in_day_seq"), })
 public class HourInDay extends BaseEntity implements Comparable<HourInDay> {
 
     private static final long serialVersionUID = 1L;
@@ -46,10 +46,10 @@ public class HourInDay extends BaseEntity implements Comparable<HourInDay> {
         this.minute = minute;
     }
 
-    @Column(name = "HOUR")
+    @Column(name = "hour")
     private Integer hour = 0;
 
-    @Column(name = "MIN")
+    @Column(name = "min")
     private Integer minute = 0;
 
     public Integer getHour() {

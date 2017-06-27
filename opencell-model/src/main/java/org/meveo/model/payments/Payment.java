@@ -32,26 +32,26 @@ public class Payment extends AccountOperation {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "PAYMENT_METHOD")
+    @Column(name = "payment_method")
     @Enumerated(EnumType.STRING)
     private PaymentMethodEnum paymentMethod;
    
     /**
      * Number assigned by the Operator bank
      */
-    @Column(name = "PAYMENT_ORDER")
+    @Column(name = "payment_order")
     private String paymentOrder;
     
    /**
     *  Amount of financial expenses exluded in the amount
     */
-    @Column(name = "PAYMENT_FEES")
+    @Column(name = "payment_fees")
     private BigDecimal fees = BigDecimal.ZERO; 
 
     /**
      * Comments Text free if litigation or special conditions
      */
-    @Column(name = "COMMENT", columnDefinition = "LONGTEXT")
+    @Column(name = "comment", columnDefinition = "LONGTEXT")
     private String comment;
     
     public PaymentMethodEnum getPaymentMethod() {

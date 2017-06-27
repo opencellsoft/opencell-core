@@ -33,29 +33,29 @@ import org.meveo.model.ExportIdentifier;
 
 @Entity
 @ExportIdentifier({ "code"})
-@Table(name = "BILLING_SUBSCRIP_TERMIN_REASON", uniqueConstraints = @UniqueConstraint(columnNames = {"CODE" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_SUB_TERM_REASON_SEQ"), })
+@Table(name = "billing_subscrip_termin_reason", uniqueConstraints = @UniqueConstraint(columnNames = {"code" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_sub_term_reason_seq"), })
 public class SubscriptionTerminationReason extends BaseEntity {
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "CODE", length = 255)
+	@Column(name = "code", length = 255)
 	@Size(max = 255)
 	private String code;
 
-	@Column(name = "DESCRIPTION", length = 255)
+	@Column(name = "description", length = 255)
     @Size(max = 255)
 	private String description;
 
 	@Type(type="numeric_boolean")
-    @Column(name = "APPLY_AGREEMENT")
+    @Column(name = "apply_agreement")
 	private boolean applyAgreement;
 
 	@Type(type="numeric_boolean")
-    @Column(name = "APPLY_REIMBURSMENT")
+    @Column(name = "apply_reimbursment")
 	private boolean applyReimbursment;
 
 	@Type(type="numeric_boolean")
-    @Column(name = "APPLY_TERMINATION_CHARGES")
+    @Column(name = "apply_termination_charges")
 	private boolean applyTerminationCharges;
 
 	public String getCode() {
