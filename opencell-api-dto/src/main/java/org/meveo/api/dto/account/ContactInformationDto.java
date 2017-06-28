@@ -4,14 +4,12 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.model.shared.ContactInformation;
 
 /**
  * @author Edward P. Legaspi
  **/
-@XmlType(name = "ContactInformation")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ContactInformationDto implements Serializable {
 

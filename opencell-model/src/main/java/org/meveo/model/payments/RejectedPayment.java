@@ -35,19 +35,19 @@ public class RejectedPayment extends AccountOperation {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "REJECTED_TYPE")
+    @Column(name = "rejected_type")
     @Enumerated(EnumType.STRING)
     private RejectedType rejectedType;
 
-    @Column(name = "REJECTED_DATE")
+    @Column(name = "rejected_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date rejectedDate;
 
-    @Column(name = "REJECTED_DESCRIPTION", length = 255)
+    @Column(name = "rejected_description", length = 255)
     @Size(max = 255)
     private String rejectedDescription;
 
-    @Column(name = "REJECTED_CODE", length = 255)
+    @Column(name = "rejected_code", length = 255)
     @Size(max = 255)
     private String rejectedCode;
 

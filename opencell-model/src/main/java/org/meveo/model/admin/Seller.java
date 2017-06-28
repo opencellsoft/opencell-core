@@ -52,22 +52,22 @@ import org.meveo.model.shared.Address;
 @ObservableEntity
 @CustomFieldEntity(cftCodePrefix = "SELLER")
 @ExportIdentifier({ "code"})
-@Table(name = "CRM_SELLER", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CRM_SELLER_SEQ"), })
+@Table(name = "crm_seller", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "crm_seller_seq"), })
 public class Seller extends BusinessCFEntity {
 
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TRADING_CURRENCY_ID")
+	@JoinColumn(name = "trading_currency_id")
 	private TradingCurrency tradingCurrency;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TRADING_COUNTRY_ID")
+	@JoinColumn(name = "trading_country_id")
 	private TradingCountry tradingCountry;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TRADING_LANGUAGE_ID")
+	@JoinColumn(name = "trading_language_id")
 	private TradingLanguage tradingLanguage;
 
 	
@@ -75,14 +75,14 @@ public class Seller extends BusinessCFEntity {
 	private Address address = new Address();
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "PARENT_SELLER_ID")
+	@JoinColumn(name = "parent_seller_id")
 	private Seller seller;
 
 	@OneToMany(mappedBy = "seller", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<InvoiceTypeSellerSequence> invoiceTypeSequence = new ArrayList<InvoiceTypeSellerSequence>();
 	
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "BAM_ID")
+	@JoinColumn(name = "bam_id")
 	private BusinessAccountModel businessAccountModel;
 	
 	

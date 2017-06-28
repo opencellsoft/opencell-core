@@ -39,33 +39,33 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.EnableEntity;
 
 @Entity
-@Table(name = "WF_HISTORY")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "WF_HISTORY_SEQ"), })
+@Table(name = "wf_history")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "wf_history_seq"), })
 public class WorkflowHistory extends EnableEntity {
 
 	private static final long serialVersionUID = 1L;
 	
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "ACTION_DATE")
+	@Column(name = "action_date")
 	private Date actionDate;
 	
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "WORKFLOW_ID")   
+    @JoinColumn(name = "workflow_id")   
 	private Workflow workflow;
     
-	@Column(name = "ENTITY_INSTANCE_CODE")
+	@Column(name = "entity_instance_code")
 	@NotNull 
     private String entityInstanceCode;
 
-	@Column(name = "FROM_STATUS")
+	@Column(name = "from_status")
 	@NotNull    
 	String fromStatus = null;
 	
-	@Column(name = "TO_STATUS")
+	@Column(name = "to_status")
 	@NotNull    
 	String toStatus = null;	
 
-	@Column(name = "TRANSITION_NAME")
+	@Column(name = "transition_name")
 	@NotNull    
 	String transitionName = null;	
 	

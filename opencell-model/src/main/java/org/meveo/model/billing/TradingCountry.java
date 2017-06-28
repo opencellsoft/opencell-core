@@ -41,8 +41,8 @@ import org.meveo.model.ObservableEntity;
 @ObservableEntity
 @ExportIdentifier({ "country.countryCode"})
 @Cacheable
-@Table(name = "BILLING_TRADING_COUNTRY")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_TRADING_COUNTRY_SEQ"), })
+@Table(name = "billing_trading_country")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_trading_country_seq"), })
 public class TradingCountry extends EnableEntity {
 
 	private static final long serialVersionUID = 1L;
@@ -51,10 +51,10 @@ public class TradingCountry extends EnableEntity {
 	private List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "COUNTRY_ID")
+	@JoinColumn(name = "country_id")
 	private Country country;
 
-	@Column(name = "PR_DESCRIPTION", length = 255)
+	@Column(name = "pr_description", length = 255)
 	@Size(max = 255)
 	private String prDescription;
 

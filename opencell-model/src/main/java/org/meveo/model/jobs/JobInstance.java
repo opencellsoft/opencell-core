@@ -47,43 +47,43 @@ import org.meveo.model.ModuleItem;
 @ModuleItem
 @CustomFieldEntity(cftCodePrefix = "JOB", cftCodeFields = "jobTemplate")
 @ExportIdentifier({ "code" })
-@Table(name = "MEVEO_JOB_INSTANCE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE" }))
+@Table(name = "meveo_job_instance", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "MEVEO_JOB_INSTANCE_SEQ"), })
+        @Parameter(name = "sequence_name", value = "meveo_job_instance_seq"), })
 public class JobInstance extends BusinessCFEntity {
 
     private static final long serialVersionUID = -5517252645289726288L;
 
-    @Column(name = "JOB_TEMPLATE", nullable = false, length = 255)
+    @Column(name = "job_template", nullable = false, length = 255)
     @Size(max = 255)
     @NotNull
     private String jobTemplate;
 
-    @Column(name = "PARAMETRES", length = 255)
+    @Column(name = "parametres", length = 255)
     @Size(max = 255)
     private String parametres;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "JOB_CATEGORY")
+    @Column(name = "job_category")
     private JobCategoryEnum jobCategoryEnum;
 
     @OneToMany(mappedBy = "jobInstance", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<JobExecutionResultImpl> executionResults = new ArrayList<JobExecutionResultImpl>();
 
-    @JoinColumn(name = "TIMERENTITY_ID")
+    @JoinColumn(name = "timerentity_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private TimerEntity timerEntity;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "FOLLOWING_JOB_ID")
+    @JoinColumn(name = "following_job_id")
     private JobInstance followingJob;
 
-    @Column(name = "RUN_ON_NODES", length = 255)
+    @Column(name = "run_on_nodes", length = 255)
     @Size(max = 255)
     private String runOnNodes;
 
     @Type(type = "numeric_boolean")
-    @Column(name = "SINGLE_NODE", nullable = false)
+    @Column(name = "single_node", nullable = false)
     @NotNull
     private boolean limitToSingleNode = true;
 

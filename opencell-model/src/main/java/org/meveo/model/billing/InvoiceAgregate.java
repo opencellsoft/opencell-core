@@ -38,80 +38,80 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.EnableEntity;
 
 @Entity
-@Table(name = "BILLING_INVOICE_AGREGATE")
+@Table(name = "billing_invoice_agregate")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "TYPE")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_INVOICE_AGREGATE_SEQ"), })
+@DiscriminatorColumn(name = "type")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_invoice_agregate_seq"), })
 public abstract class InvoiceAgregate extends EnableEntity {
 
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "BILLING_ACCOUNT_ID")
+	@JoinColumn(name = "billing_account_id")
 	private BillingAccount billingAccount;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "INVOICE_ID")
+	@JoinColumn(name = "invoice_id")
 	private Invoice invoice;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "BILLING_RUN_ID")
+	@JoinColumn(name = "billing_run_id")
 	private BillingRun billingRun;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "USER_ACCOUNT_ID")
+	@JoinColumn(name = "user_account_id")
 	private UserAccount userAccount;
 
-	@Column(name = "ITEM_NUMBER")
+	@Column(name = "item_number")
 	private Integer itemNumber;
 
-	@Column(name = "ACCOUNTING_CODE", length = 255)
+	@Column(name = "accounting_code", length = 255)
 	@Size(max = 255)
 	private String accountingCode;
 
-	@Column(name = "DESCRIPTION", length = 255)
+	@Column(name = "description", length = 255)
     @Size(max = 255)
 	private String description;
 
-	@Column(name = "TAX_PERCENT", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "tax_percent", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal taxPercent;
 
-	@Column(name = "QUANTITY")
+	@Column(name = "quantity")
 	private BigDecimal quantity;
 
-	@Column(name = "AMOUNT", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "amount", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal amount;
 
-	@Column(name = "DISCOUNT", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "discount", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal discount;
 
-	@Column(name = "AMOUNT_WITHOUT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal amountWithoutTax;
 
-	@Column(name = "AMOUNT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal amountTax;
 
-	@Column(name = "AMOUNT_WITH_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal amountWithTax;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TRADING_CURRENCY_ID")
+	@JoinColumn(name = "trading_currency_id")
 	private TradingCurrency tradingCurrency;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TRADING_COUNTRY_ID")
+	@JoinColumn(name = "trading_country_id")
 	private TradingCountry tradingCountry;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TRADING_LANGUAGE_ID")
+	@JoinColumn(name = "trading_language_id")
 	private TradingLanguage tradingLanguage;
 
-	@Column(name = "PR_DESCRIPTION", length = 255)
+	@Column(name = "pr_description", length = 255)
 	@Size(max = 255)
 	private String prDescription;
 
 	@Type(type="numeric_boolean")
-    @Column(name = "DISCOUNT_AGGREGATE", nullable = false)
+    @Column(name = "discount_aggregate", nullable = false)
 	@NotNull
 	private boolean discountAggregate;
 	

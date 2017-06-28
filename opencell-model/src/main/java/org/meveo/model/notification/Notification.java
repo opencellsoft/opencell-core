@@ -39,9 +39,9 @@ import org.meveo.validation.constraint.ClassName;
 @Entity
 @ModuleItem
 @ExportIdentifier({ "code" })
-@Table(name = "ADM_NOTIFICATION", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE" }))
+@Table(name = "adm_notification", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "ADM_NOTIFICATION_SEQ"), })
+        @Parameter(name = "sequence_name", value = "adm_notification_seq"), })
 @Inheritance(strategy = InheritanceType.JOINED)
 @NamedQueries({ @NamedQuery(name = "Notification.getNotificationsForCache", query = "SELECT n from Notification n where n.disabled=false", hints = {
         @QueryHint(name = "org.hibernate.readOnly", value = "true") }) })
@@ -49,41 +49,41 @@ public class Notification extends BusinessEntity {
 
     private static final long serialVersionUID = 2634877161620665288L;
 
-    @Column(name = "CLASS_NAME_FILTER", length = 255, nullable = false)
+    @Column(name = "class_name_filter", length = 255, nullable = false)
     @NotNull
     @Size(max = 255)
     @ClassName
     private String classNameFilter;
 
-    @Column(name = "EVENT_TYPE_FILTER", length = 20, nullable = false)
+    @Column(name = "event_type_filter", length = 20, nullable = false)
     @NotNull
     @Enumerated(EnumType.STRING)
     private NotificationEventTypeEnum eventTypeFilter;
 
-    @Column(name = "EVENT_EXPRESSION_FILTER", length = 2000)
+    @Column(name = "event_expression_filter", length = 2000)
     @Size(max = 2000)
     private String elFilter;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "COUNTER_TEMPLATE_ID")
+    @JoinColumn(name = "counter_template_id")
     private CounterTemplate counterTemplate;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST })
-    @JoinColumn(name = "COUNTER_INSTANCE_ID")
+    @JoinColumn(name = "counter_instance_id")
     private CounterInstance counterInstance;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SCRIPT_INSTANCE_ID")
+    @JoinColumn(name = "script_instance_id")
     private ScriptInstance scriptInstance;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "ADM_NOTIFICATION_PARAMS")
+    @CollectionTable(name = "adm_notification_params")
     private Map<String, String> params = new HashMap<String, String>();
 
     @OneToMany(mappedBy = "notification", cascade = CascadeType.REMOVE)
     protected List<NotificationHistory> notificationHistories;
     
-    @Column(name = "PRIORITY", columnDefinition = "int DEFAULT 1")
+    @Column(name = "priority", columnDefinition = "int DEFAULT 1")
     private int priority = 1;
 
     public String getClassNameFilter() {

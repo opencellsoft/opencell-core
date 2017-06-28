@@ -30,8 +30,8 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 
 @Entity
-@Table(name = "WF_HISTORY_ACTION")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "WF_HISTORY_ACTION_SEQ"), })
+@Table(name = "wf_history_action")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "wf_history_action_seq"), })
 public class WorkflowHistoryAction extends BaseEntity{
 
     /**
@@ -40,13 +40,13 @@ public class WorkflowHistoryAction extends BaseEntity{
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "WF_HISTORY_ID")   
+    @JoinColumn(name = "wf_history_id")   
 	private WorkflowHistory workflowHistory;
     
-	@Column(name = "ACTION")
+	@Column(name = "action")
     private String action = null;
 
-	@Column(name = "RESULT")  
+	@Column(name = "result")  
 	private String result = null;
 	
 

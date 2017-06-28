@@ -58,8 +58,8 @@ import org.meveo.model.finance.RevenueRecognitionRule;
 @ObservableEntity
 @CustomFieldEntity(cftCodePrefix = "CHARGE")
 @ExportIdentifier({ "code"})
-@Table(name = "CAT_CHARGE_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CAT_CHARGE_TEMPLATE_SEQ"), })
+@Table(name = "cat_charge_template", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_charge_template_seq"), })
 @Inheritance(strategy = InheritanceType.JOINED)
 public class ChargeTemplate extends BusinessCFEntity {
 
@@ -69,15 +69,15 @@ public class ChargeTemplate extends BusinessCFEntity {
         RECURRING, USAGE, SUBSCRIPTION, TERMINATION
     }
 
-	@Column(name = "CREDIT_DEBIT_FLAG")
+	@Column(name = "credit_debit_flag")
 	private OperationTypeEnum type;
 
 	@Type(type="numeric_boolean")
-    @Column(name = "AMOUNT_EDITABLE")
+    @Column(name = "amount_editable")
 	private Boolean amountEditable;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "INVOICE_SUB_CATEGORY", nullable = false)
+	@JoinColumn(name = "invoice_sub_category", nullable = false)
 	@NotNull
 	private InvoiceSubCategory invoiceSubCategory;
 
@@ -85,29 +85,29 @@ public class ChargeTemplate extends BusinessCFEntity {
 	private List<ChargeInstance> chargeInstances = new ArrayList<ChargeInstance>();
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "CAT_CHRG_EDR", joinColumns = @JoinColumn(name = "CHARGE_TMPL_ID"), inverseJoinColumns = @JoinColumn(name = "TRIGG_EDR_ID"))
+	@JoinTable(name = "cat_chrg_edr", joinColumns = @JoinColumn(name = "charge_tmpl_id"), inverseJoinColumns = @JoinColumn(name = "trigg_edr_id"))
 	private List<TriggeredEDRTemplate> edrTemplates = new ArrayList<TriggeredEDRTemplate>();
 
-	@Column(name = "INPUT_UNIT_DESCRIPTION", length = 20)
+	@Column(name = "input_unit_description", length = 20)
     @Size(max = 20)
 	private String inputUnitDescription;
 	
-	@Column(name = "RATING_UNIT_DESCRIPTION", length = 20)
+	@Column(name = "rating_unit_description", length = 20)
     @Size(max = 20)
 	private String ratingUnitDescription;
 	
-	@Column(name = "UNIT_MULTIPLICATOR", precision = BaseEntity.NB_PRECISION, scale = BaseEntity.NB_DECIMALS)
+	@Column(name = "unit_multiplicator", precision = BaseEntity.NB_PRECISION, scale = BaseEntity.NB_DECIMALS)
 	private BigDecimal unitMultiplicator;
 	
-	@Column(name = "UNIT_NB_DECIMAL")
+	@Column(name = "unit_nb_decimal")
 	private int unitNbDecimal = BaseEntity.NB_DECIMALS;
 	
 	@Enumerated(EnumType.STRING)
-	@Column(name = "ROUNDING_MODE")
+	@Column(name = "rounding_mode")
 	private RoundingModeEnum roundingMode = RoundingModeEnum.NEAREST; 
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "REVENUE_RECOG_RULE_ID")
+	@JoinColumn(name = "revenue_recog_rule_id")
 	private RevenueRecognitionRule revenueRecognitionRule;
 
 	public OperationTypeEnum getType() {

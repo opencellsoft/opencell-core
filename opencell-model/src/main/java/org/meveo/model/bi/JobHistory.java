@@ -33,29 +33,29 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 
 @Entity
-@Table(name = "BI_JOB_HISTORY")
+@Table(name = "bi_job_history")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "HISTORY_TYPE")
+@DiscriminatorColumn(name = "history_type")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "BI_JOB_HISTORY_SEQ"), })
+        @Parameter(name = "sequence_name", value = "bi_job_history_seq"), })
 public class JobHistory extends BaseEntity {
 
 	private static final long serialVersionUID = 1L;
 
-    @Column(name = "HISTORY_TYPE", insertable = false, updatable = false, length = 31)
+    @Column(name = "history_type", insertable = false, updatable = false, length = 31)
     @Size(max = 31)
 	private String type;
 
-	@Column(name = "EXECUTION_DATE")
+	@Column(name = "execution_date")
 	private Date executionDate;
 
-	@Column(name = "LINES_READ")
+	@Column(name = "lines_read")
 	private Integer linesRead;
 
-	@Column(name = "LINES_INSERTED")
+	@Column(name = "lines_inserted")
 	private Integer linesInserted;
 
-	@Column(name = "LINES_REJECTED")
+	@Column(name = "lines_rejected")
 	private Integer linesRejected;
 
 	public Date getExecutionDate() {

@@ -35,11 +35,11 @@ import org.meveo.model.shared.DateUtils;
 public class DatePeriod implements Comparable<DatePeriod> {
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "START_DATE")
+    @Column(name = "start_date")
     private Date from;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "END_DATE")
+    @Column(name = "end_date")
     private Date to;
 
     public DatePeriod() {

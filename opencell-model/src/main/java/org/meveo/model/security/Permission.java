@@ -41,19 +41,19 @@ import org.meveo.model.IEntity;
  */
 @Entity
 @ExportIdentifier("name")
-@Table(name = "ADM_PERMISSION")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ADM_PERMISSION_SEQ"), })
+@Table(name = "adm_permission")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "adm_permission_seq"), })
 @NamedQueries({ @NamedQuery(name = "Permission.getPermission", query = "select p from Permission p where p.permission=:permission") })
 public class Permission implements IEntity, Serializable {
     private static final long serialVersionUID = 2884657784984355718L;
 
     @Id
     @GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)
-    @Column(name = "ID")
+    @Column(name = "id")
     @Access(AccessType.PROPERTY)
     private Long id;
 
-    @Column(name = "PERMISSION", nullable = false, length = 255)
+    @Column(name = "permission", nullable = false, length = 255)
     @Size(max = 255)
     @NotNull
     private String permission;

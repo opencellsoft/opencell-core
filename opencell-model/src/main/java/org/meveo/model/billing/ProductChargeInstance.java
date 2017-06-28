@@ -32,21 +32,21 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.catalog.ProductChargeTemplate;
 
 @Entity
-@Table(name = "BILLING_PRODUCT_CHARGE_INST")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_PRODUCT_CHRG_INST_SEQ"), })
+@Table(name = "billing_product_charge_inst")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_product_chrg_inst_seq"), })
 public class ProductChargeInstance extends ChargeInstance {
 
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "PRODUCT_CHRG_TMPL_ID")
+	@JoinColumn(name = "product_chrg_tmpl_id")
 	private ProductChargeTemplate productChargeTemplate;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "PRODUCT_INSTANCE_ID")
+	@JoinColumn(name = "product_instance_id")
 	private ProductInstance productInstance;
 
-    @Column(name = "QUANTITY", precision = NB_PRECISION, scale = NB_DECIMALS)
+    @Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS)
     protected BigDecimal quantity = BigDecimal.ONE;
 
 	public ProductChargeInstance(ProductInstance productInstance, ProductChargeTemplate productChargeTemplate){

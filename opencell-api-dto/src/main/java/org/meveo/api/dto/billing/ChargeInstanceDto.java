@@ -5,12 +5,10 @@ import java.math.BigDecimal;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlType;
 
 /**
  * @author Edward P. Legaspi
  **/
-@XmlType(name = "ChargeInstance")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ChargeInstanceDto {
 

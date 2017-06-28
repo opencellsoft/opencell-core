@@ -37,32 +37,32 @@ import org.meveo.model.EnableEntity;
  * DiscountplanInstanciation entity.
  */
 @Entity
-@Table(name = "BILLING_DISCPLAN_INST")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_DISC_INST_SEQ"), })
+@Table(name = "billing_discplan_inst")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_disc_inst_seq"), })
 public class DiscountplanInstanciation extends EnableEntity {
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "BILLING_ACCOUNT_ID")
+	@JoinColumn(name = "billing_account_id")
 	private BillingAccount billingAccount;
 
-	@Column(name = "USAGE_TYPE")
+	@Column(name = "usage_type")
 	private EventTypeEnum usageType;
 
-	@Column(name = "CHARGE_CODE", length = 255)
+	@Column(name = "charge_code", length = 255)
 	@Size(max = 255)
 	private String chargeCode;
 
-	@Column(name = "START_SUBSCRIPTION_DATE")
+	@Column(name = "start_subscription_date")
 	private Date startSubscriptionDate;
 
-	@Column(name = "END_SUBSCRIPTION_DATE")
+	@Column(name = "end_subscription_date")
 	private Date endSubscriptionDate;
 
-	@Column(name = "NB_PERIOD")
+	@Column(name = "nb_period")
 	private Integer nbPeriod;
 
-	@Column(name = "POURCENT")
+	@Column(name = "pourcent")
 	private BigDecimal pourcent;
 
 	public BillingAccount getBillingAccount() {

@@ -45,8 +45,8 @@ import org.meveo.model.billing.Subscription;
  * Bean for EDR data.
  */
 @Entity
-@Table(name = "RATING_EDR")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "RATING_EDR_SEQ"), })
+@Table(name = "rating_edr")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "rating_edr_seq"), })
 //@NamedQueries({ @NamedQuery(name = "EDR.getEdrsForCache", query = "select openedr.cacheKey from (select CONCAT(e.originBatch,'_',e.originRecord) as cacheKey, e.eventDate from EDR e where e.status= org.meveo.model.rating.EDRStatusEnum.OPEN ORDER BY e.eventDate DESC limit 100000) openedr order by openedr.eventDate ASC") })
 @NamedQueries({ @NamedQuery(name = "EDR.getEdrsForCache", query = "select CONCAT(e.originBatch,'_',e.originRecord) as cacheKey  from EDR e where e.status= org.meveo.model.rating.EDRStatusEnum.OPEN ORDER BY e.eventDate DESC") })
 
@@ -57,123 +57,123 @@ public class EDR extends BaseEntity {
 	public static String EDR_TABLE_ORIGIN = "EDR_TABLE";
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "SUBSCRIPTION_ID")
+	@JoinColumn(name = "subscription_id")
 	@NotNull
 	private Subscription subscription;
 
 	/**
 	 * the origin batch the EDR comes from (like a CDR file name or EDR table)
 	 */
-	@Column(name = "ORIGIN_BATCH", length = 255)
+	@Column(name = "origin_batch", length = 255)
     @Size(max = 255)
 	private String originBatch;
 
 	/**
 	 * the origin record the EDR comes from (like a CDR magic number)
 	 */
-	@Column(name = "ORIGIN_RECORD", length = 255)
+	@Column(name = "origin_record", length = 255)
     @Size(max = 255)
 	private String originRecord;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "EVENT_DATE")
+	@Column(name = "event_date")
 	private Date eventDate;
 
-	@Column(name = "QUANTITY", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal quantity;
 
-	@Column(name = "PARAMETER_1", length = 255)
+	@Column(name = "parameter_1", length = 255)
     @Size(max = 255)
 	private String parameter1;
 
-	@Column(name = "PARAMETER_2", length = 255)
+	@Column(name = "parameter_2", length = 255)
     @Size(max = 255)
 	private String parameter2;
 
-	@Column(name = "PARAMETER_3", length = 255)
+	@Column(name = "parameter_3", length = 255)
     @Size(max = 255)
 	private String parameter3;
 	
-	@Column(name = "PARAMETER_4", length = 255)
+	@Column(name = "parameter_4", length = 255)
     @Size(max = 255)
 	private String parameter4;
 
-	@Column(name = "PARAMETER_5", length = 255)
+	@Column(name = "parameter_5", length = 255)
     @Size(max = 255)
 	private String parameter5;
 	
-	@Column(name = "PARAMETER_6", length = 255)
+	@Column(name = "parameter_6", length = 255)
     @Size(max = 255)
 	private String parameter6;
 	
-	@Column(name = "PARAMETER_7", length = 255)
+	@Column(name = "parameter_7", length = 255)
     @Size(max = 255)
 	private String parameter7;
 	
-	@Column(name = "PARAMETER_8", length = 255)
+	@Column(name = "parameter_8", length = 255)
     @Size(max = 255)
 	private String parameter8;
 	
-	@Column(name = "PARAMETER_9", length = 255)
+	@Column(name = "parameter_9", length = 255)
     @Size(max = 255)
 	private String parameter9;
 	
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "DATE_PARAMETER_1")
+	@Column(name = "date_parameter_1")
 	private Date dateParam1;
 	
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "DATE_PARAMETER_2")
+	@Column(name = "date_parameter_2")
 	private Date dateParam2;
 	
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "DATE_PARAMETER_3")
+	@Column(name = "date_parameter_3")
 	private Date dateParam3;
 	
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "DATE_PARAMETER_4")
+	@Column(name = "date_parameter_4")
 	private Date dateParam4;
 	
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "DATE_PARAMETER_5")
+	@Column(name = "date_parameter_5")
 	private Date dateParam5;
 	
-	@Column(name = "DECIMAL_PARAMETER_1", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "decimal_parameter_1", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal decimalParam1;
 	
-	@Column(name = "DECIMAL_PARAMETER_2", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "decimal_parameter_2", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal decimalParam2;
 	
-	@Column(name = "DECIMAL_PARAMETER_3", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "decimal_parameter_3", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal decimalParam3;
 	
-	@Column(name = "DECIMAL_PARAMETER_4", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "decimal_parameter_4", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal decimalParam4;
 	
-	@Column(name = "DECIMAL_PARAMETER_5", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "decimal_parameter_5", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal decimalParam5;
 	 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "STATUS")
+	@Column(name = "status")
 	private EDRStatusEnum status;
 
-	@Column(name = "REJECT_REASON", length = 255)
+	@Column(name = "reject_reason", length = 255)
     @Size(max = 255)
 	private String rejectReason;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "CREATED")
+	@Column(name = "created")
 	private Date created;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "LAST_UPDATED")
+	@Column(name = "last_updated")
 	private Date lastUpdate;
 	
-	@Column(name = "ACCESS_CODE", length = 255)
+	@Column(name = "access_code", length = 255)
     @Size(max = 255)
 	private String accessCode;
 	
-	@JoinColumn(name = "HEADER_EDR_ID")
+	@JoinColumn(name = "header_edr_id")
 	@ManyToOne()
 	private EDR headerEDR;
 	

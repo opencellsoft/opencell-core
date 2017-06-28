@@ -43,44 +43,44 @@ import org.meveo.model.shared.DateUtils;
  */
 @Entity
 @ExportIdentifier({ "invoiceSubCategory.code", "tradingCountry.country.countryCode", "tax.code"})
-@Table(name = "BILLING_INV_SUB_CAT_COUNTRY", uniqueConstraints = @UniqueConstraint(columnNames = {"INVOICE_SUB_CATEGORY_ID", "SELLING_COUNTRY_ID", "TRADING_COUNTRY_ID", "START_VALIDITY_DATE", "END_VALIDITY_DATE"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_INV_SUB_CAT_COUNTRY_SEQ"), })
+@Table(name = "billing_inv_sub_cat_country", uniqueConstraints = @UniqueConstraint(columnNames = {"invoice_sub_category_id", "selling_country_id", "trading_country_id", "start_validity_date", "end_validity_date"}))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_inv_sub_cat_country_seq"), })
 public class InvoiceSubcategoryCountry extends EnableEntity {
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "INVOICE_SUB_CATEGORY_ID")
+	@JoinColumn(name = "invoice_sub_category_id")
 	private InvoiceSubCategory invoiceSubCategory;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "SELLING_COUNTRY_ID")
+	@JoinColumn(name = "selling_country_id")
 	private TradingCountry sellingCountry;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TRADING_COUNTRY_ID")
+	@JoinColumn(name = "trading_country_id")
 	private TradingCountry tradingCountry;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TAX_ID")
+	@JoinColumn(name = "tax_id")
 	private Tax tax;
 
-	@Column(name = "FILTER_EL", length = 2000)
+	@Column(name = "filter_el", length = 2000)
 	@Size(max = 2000)
 	private String filterEL;
 
-	@Column(name = "TAX_CODE_EL", length = 2000)
+	@Column(name = "tax_code_el", length = 2000)
 	@Size(max = 2000)
 	private String taxCodeEL;
 	
-	@Column(name = "START_VALIDITY_DATE")
+	@Column(name = "start_validity_date")
 	@Temporal(TemporalType.DATE)
 	private Date startValidityDate;
 
-	@Column(name = "END_VALIDITY_DATE")
+	@Column(name = "end_validity_date")
 	@Temporal(TemporalType.DATE)
 	private Date endValidityDate;
 	
-	@Column(name = "PRIORITY")
+	@Column(name = "priority")
     private int priority;
 	
 	@Transient

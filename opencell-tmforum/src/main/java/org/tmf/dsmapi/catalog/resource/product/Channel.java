@@ -2,6 +2,8 @@ package org.tmf.dsmapi.catalog.resource.product;
 
 import java.io.Serializable;
 
+import javax.xml.bind.annotation.XmlType;
+
 import org.tmf.dsmapi.commons.Utilities;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -14,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
  *         { "id": "13", "href": "http://serverlocation:port/marketSales/channel/13", "name": "Online Channel" }
  * 
  */
+@XmlType(namespace="http://www.tmforum.org")
 @JsonInclude(value = Include.NON_NULL)
 public class Channel implements Serializable {
     public final static long serialVersionUID = 1L;

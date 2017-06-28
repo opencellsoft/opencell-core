@@ -37,7 +37,7 @@ public class CalendarYearly extends Calendar {
 	private static final long serialVersionUID = 1L;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "CAT_CALENDAR_DAYS", joinColumns = @JoinColumn(name = "CALENDAR_ID"), inverseJoinColumns = @JoinColumn(name = "DAY_ID"))
+	@JoinTable(name = "cat_calendar_days", joinColumns = @JoinColumn(name = "calendar_id"), inverseJoinColumns = @JoinColumn(name = "day_id"))
 	private List<DayInYear> days;
 
 	

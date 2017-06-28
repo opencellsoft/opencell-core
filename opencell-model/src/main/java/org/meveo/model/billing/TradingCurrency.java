@@ -41,20 +41,20 @@ import org.meveo.model.admin.Currency;
 @ObservableEntity
 @ExportIdentifier({ "currency.currencyCode"})
 @Cacheable
-@Table(name = "BILLING_TRADING_CURRENCY")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_TRADING_CURRENCY_SEQ"), })
+@Table(name = "billing_trading_currency")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_trading_currency_seq"), })
 public class TradingCurrency extends EnableEntity {
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "CURRENCY_ID")
+	@JoinColumn(name = "currency_id")
 	private Currency currency;
 
-	@Column(name = "PR_DESCRIPTION", length = 255)
+	@Column(name = "pr_description", length = 255)
 	@Size(max = 255)
 	private String prDescription;
 
-	@Column(name = "PR_CURRENCY_TO_THIS", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "pr_currency_to_this", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal prCurrencyToThis;
 
 	@Transient

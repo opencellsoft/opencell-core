@@ -38,22 +38,22 @@ import org.meveo.model.EnableEntity;
 import org.meveo.model.admin.DunningHistory;
 
 @Entity
-@Table(name = "AR_DUNNING_LOT")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "AR_DUNNING_LOT_SEQ"), })
+@Table(name = "ar_dunning_lot")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ar_dunning_lot_seq"), })
 public class DunningLOT extends EnableEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "FILE_NAME", length = 255)
+	@Column(name = "file_name", length = 255)
     @Size(max = 255)
 	private String fileName;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "ACTION_TYPE")
+	@Column(name = "action_type")
 	private DunningActionTypeEnum actionType;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "DUNNING_HISTORY_ID")
+	@JoinColumn(name = "dunning_history_id")
 	private DunningHistory dunningHistory;
 
 	@OneToMany(mappedBy = "dunningLOT", fetch = FetchType.LAZY)

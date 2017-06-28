@@ -36,8 +36,8 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 @Entity
-@Table(name = "BILLING_USAGE_CHARGE_INST")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_USAGE_CHARGE_INST_SEQ"), })
+@Table(name = "billing_usage_charge_inst")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_usage_charge_inst_seq"), })
 @NamedQueries({
         @NamedQuery(name = "UsageChargeInstance.listPrepaid", query = "SELECT c FROM UsageChargeInstance c where c.prepaid=true and  c.status='ACTIVE'"),
         @NamedQuery(name = "UsageChargeInstance.list", query = "SELECT c FROM UsageChargeInstance c where c.status='ACTIVE'") })
@@ -46,19 +46,19 @@ public class UsageChargeInstance extends ChargeInstance {
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "SERVICE_INSTANCE_ID")
+	@JoinColumn(name = "service_instance_id")
 	private ServiceInstance serviceInstance;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "COUNTER_ID")
+	@JoinColumn(name = "counter_id")
 	private CounterInstance counter;
 
-	@Column(name = "RATING_UNIT_DESCRIPTION", length = 20)
+	@Column(name = "rating_unit_description", length = 20)
 	@Size(max = 20)
 	private String ratingUnitDescription;
 	
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "LAST_UPDATE")
+	@Column(name = "last_update")
 	private Date lastUpdate;
 
 	public ServiceInstance getServiceInstance() {

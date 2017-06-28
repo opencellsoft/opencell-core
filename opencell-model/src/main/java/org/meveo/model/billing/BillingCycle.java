@@ -46,46 +46,46 @@ import org.meveo.model.catalog.Calendar;
 @Entity
 @ExportIdentifier({ "code"})
 @CustomFieldEntity(cftCodePrefix = "BILLING_CYCLE")
-@Table(name = "BILLING_CYCLE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
+@Table(name = "billing_cycle", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "BILLING_CYCLE_SEQ"), })
+        @Parameter(name = "sequence_name", value = "billing_cycle_seq"), })
 public class BillingCycle extends BusinessCFEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "BILLING_TEMPLATE_NAME")
+	@Column(name = "billing_template_name")
 	@Size(max = 50)
 	private String billingTemplateName;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "CALENDAR")
+	@JoinColumn(name = "calendar")
 	private Calendar calendar;
 
-    @Column(name = "TRANSACTION_DATE_DELAY")
+    @Column(name = "transaction_date_delay")
     private Integer transactionDateDelay;
     
     //used to compute the invoice date from date of billing run
-    @Column(name = "INVOICE_DATE_PRODUCTION_DELAY")
+    @Column(name = "invoice_date_production_delay")
     private Integer invoiceDateProductionDelay;
     
     //used for immediate invoicing by oneshot charge
-	@Column(name = "INVOICE_DATE_DELAY")
+	@Column(name = "invoice_date_delay")
 	private Integer invoiceDateDelay;
 
-	@Column(name = "DUE_DATE_DELAY")
+	@Column(name = "due_date_delay")
 	private Integer dueDateDelay;
 
 	@OneToMany(mappedBy = "billingCycle", fetch = FetchType.LAZY)
 	private List<BillingAccount> billingAccounts = new ArrayList<BillingAccount>();
 	
-	@Column(name = "INVOICING_THRESHOLD")
+	@Column(name = "invoicing_threshold")
 	private BigDecimal invoicingThreshold; 
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "INVOICE_TYPE_ID")
+	@JoinColumn(name = "invoice_type_id")
 	private InvoiceType invoiceType;
 	
-	@Column(name = "DUE_DATE_DELAY_EL", length = 2000)
+	@Column(name = "due_date_delay_el", length = 2000)
 	@Size(max = 2000)
 	private String dueDateDelayEL;
 

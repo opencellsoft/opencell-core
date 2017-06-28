@@ -31,38 +31,38 @@ public class AccountImportHisto extends JobHistory {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "FILE_NAME", length = 255)
+    @Column(name = "file_name", length = 255)
     @Size(max = 255)
     private String fileName;
 
-    @Column(name = "NB_BILLING_ACCOUNTS")
+    @Column(name = "nb_billing_accounts")
     private Integer nbBillingAccounts;
 
-    @Column(name = "NB_BILLING_ACCOUNTS_ERROR")
+    @Column(name = "nb_billing_accounts_error")
     private Integer nbBillingAccountsError;
 
-    @Column(name = "NB_BILLING_ACCOUNTS_WARNING")
+    @Column(name = "nb_billing_accounts_warning")
     private Integer nbBillingAccountsWarning;
 
-    @Column(name = "NB_BILLING_ACCOUNTS_IGNORED")
+    @Column(name = "nb_billing_accounts_ignored")
     private Integer nbBillingAccountsIgnored;
 
-    @Column(name = "NB_BILLING_ACCOUNTS_CREATED")
+    @Column(name = "nb_billing_accounts_created")
     private Integer nbBillingAccountsCreated;
 
-    @Column(name = "NB_USER_ACCOUNTS")
+    @Column(name = "nb_user_accounts")
     private Integer nbUserAccounts;
 
-    @Column(name = "NB_USER_ACCOUNTS_ERROR")
+    @Column(name = "nb_user_accounts_error")
     private Integer nbUserAccountsError;
 
-    @Column(name = "NB_USER_ACOUNTS_WARNING")
+    @Column(name = "nb_user_acounts_warning")
     private Integer nbUserAccountsWarning;
 
-    @Column(name = "NB_USER_ACOUNTS_IGNORED")
+    @Column(name = "nb_user_acounts_ignored")
     private Integer nbUserAccountsIgnored;
 
-    @Column(name = "NB_USER_ACCOUNTS_CREATED")
+    @Column(name = "nb_user_accounts_created")
     private Integer nbUserAccountsCreated;
 
     public AccountImportHisto() {

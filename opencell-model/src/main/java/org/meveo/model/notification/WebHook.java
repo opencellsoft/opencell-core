@@ -23,48 +23,48 @@ import org.meveo.model.ModuleItem;
 
 @Entity
 @ModuleItem
-@Table(name = "ADM_NOTIF_WEBHOOKS")
+@Table(name = "adm_notif_webhooks")
 public class WebHook extends Notification {
 
     private static final long serialVersionUID = -2527123286118840886L;
 
-    @Column(name = "HTTP_HOST", length = 255, nullable = false)
+    @Column(name = "http_host", length = 255, nullable = false)
     @NotNull
     @Size(max = 255)
     private String host;
 
-    @Column(name = "HTTP_PORT")
+    @Column(name = "http_port")
     @Max(65535)
     private Integer port;
 
-    @Column(name = "HTTP_PAGE", length = 255, nullable = false)
+    @Column(name = "http_page", length = 255, nullable = false)
     @NotNull
     @Size(max = 255)
     private String page;
 
-    @Column(name = "HTTP_METHOD", nullable = false)
+    @Column(name = "http_method", nullable = false)
     @NotNull
     @Enumerated(EnumType.STRING)
     private WebHookMethodEnum httpMethod;
 
-    @Column(name = "USERNAME", length = 255)
+    @Column(name = "username", length = 255)
     @Size(max = 255)
     private String username;
 
-    @Column(name = "PASSWORD", length = 255)
+    @Column(name = "password", length = 255)
     @Size(max = 255)
     private String password;
 
-    @Column(name = "BODY_EL",  length = 2000)
+    @Column(name = "body_el",  length = 2000)
     @Size(max = 2000)
 	private String bodyEL = null;
     
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "ADM_NOTIF_WEBHOOK_HEADER")
+    @CollectionTable(name = "adm_notif_webhook_header")
     private Map<String, String> headers = new HashMap<String, String>();
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "ADM_NOTIF_WEBHOOK_PARAM")
+    @CollectionTable(name = "adm_notif_webhook_param")
     private Map<String, String> webhookParams = new HashMap<String, String>();
     
     @Transient

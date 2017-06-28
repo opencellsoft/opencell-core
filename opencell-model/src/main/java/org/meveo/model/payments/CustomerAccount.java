@@ -56,7 +56,7 @@ import org.meveo.model.shared.ContactInformation;
 @CustomFieldEntity(cftCodePrefix = "CA")
 @ExportIdentifier({ "code"})
 @DiscriminatorValue(value = "ACCT_CA")
-@Table(name = "AR_CUSTOMER_ACCOUNT")
+@Table(name = "ar_customer_account")
 public class CustomerAccount extends AccountEntity {
 
 	public static final String ACCOUNT_TYPE = ((DiscriminatorValue) CustomerAccount.class.getAnnotation(DiscriminatorValue.class)).value();
@@ -64,19 +64,19 @@ public class CustomerAccount extends AccountEntity {
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TRADING_CURRENCY_ID")
+	@JoinColumn(name = "trading_currency_id")
 	private TradingCurrency tradingCurrency;
 
-	@Column(name = "STATUS", length = 10)
+	@Column(name = "status", length = 10)
 	@Enumerated(EnumType.STRING)
 	private CustomerAccountStatusEnum status = CustomerAccountStatusEnum.ACTIVE;
 
-	@Column(name = "PAYMENT_METHOD", length = 20)
+	@Column(name = "payment_method", length = 20)
 	@Enumerated(EnumType.STRING)
 	private PaymentMethodEnum paymentMethod;
 
 	@ManyToOne
-	@JoinColumn(name = "CREDIT_CATEGORY_ID")
+	@JoinColumn(name = "credit_category_id")
 	private CreditCategory creditCategory;
 
 	@OneToMany(mappedBy = "customerAccount", cascade = CascadeType.REMOVE)
@@ -94,11 +94,11 @@ public class CustomerAccount extends AccountEntity {
 	// @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	private List<ActionDunning> actionDunnings = new ArrayList<ActionDunning>();
 
-	@Column(name = "DATE_STATUS")
+	@Column(name = "date_status")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateStatus = new Date();
 
-	@Column(name = "DATE_DUNNING_LEVEL")
+	@Column(name = "date_dunning_level")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateDunningLevel;
 
@@ -106,26 +106,26 @@ public class CustomerAccount extends AccountEntity {
 	private ContactInformation contactInformation = new ContactInformation();
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "CUSTOMER_ID")
+	@JoinColumn(name = "customer_id")
 	private Customer customer;
 
-	@Column(name = "DUNNING_LEVEL")
+	@Column(name = "dunning_level")
 	@Enumerated(EnumType.STRING)
 	private DunningLevelEnum dunningLevel = DunningLevelEnum.R0;
 
-	@Column(name = "PASSWORD", length = 10)
+	@Column(name = "password", length = 10)
 	@Size(max = 10)
 	private String password = "";
 
-	@Column(name = "MANDATE_IDENTIFICATION", length = 256)
+	@Column(name = "mandate_identification", length = 256)
 	@Size(max = 256)
 	private String mandateIdentification = "";
 
-	@Column(name = "MANDATE_DATE")
+	@Column(name = "mandate_date")
 	@Temporal(TemporalType.DATE)
 	private Date mandateDate;
 	
-	@Column(name = "DUE_DATE_DELAY_EL", length = 2000)
+	@Column(name = "due_date_delay_el", length = 2000)
 	@Size(max = 2000)
 	private String dueDateDelayEL;
 
@@ -134,7 +134,7 @@ public class CustomerAccount extends AccountEntity {
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TRADING_LANGUAGE_ID")
+	@JoinColumn(name = "trading_language_id")
 	private TradingLanguage tradingLanguage;
 	
 	@OneToMany(mappedBy = "customerAccount", cascade = CascadeType.ALL)

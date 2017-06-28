@@ -33,19 +33,19 @@ public class CalendarPeriod extends Calendar {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "PERIOD_LENGTH")
+    @Column(name = "period_length")
     private Integer periodLength = 30;
 
     /**
      * java.util.Calendar.MONTH = 2 java.util.Calendar.DAY_OF_MONTH = 5 java.util.Calendar.HOUR_OF_DAY = 11 java.util.Calendar.MINUTE = 12 java.util.Calendar.SECOND = 13
      */
-    @Column(name = "PERIOD_UNIT")
+    @Column(name = "period_unit")
     private Integer periodUnit = java.util.Calendar.DAY_OF_MONTH;
 
     public static List<Integer> VALID_PERIOD_UNITS = Arrays.asList(java.util.Calendar.MONTH, java.util.Calendar.DAY_OF_MONTH, java.util.Calendar.HOUR_OF_DAY,
         java.util.Calendar.MINUTE, java.util.Calendar.SECOND);
 
-    @Column(name = "NB_PERIODS")
+    @Column(name = "nb_periods")
     private Integer nbPeriods = 0;
 
     public Integer getPeriodLength() {

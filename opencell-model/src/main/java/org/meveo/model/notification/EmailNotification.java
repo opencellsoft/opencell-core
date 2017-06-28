@@ -19,40 +19,40 @@ import org.meveo.model.admin.User;
 
 @Entity
 @ModuleItem
-@Table(name="ADM_NOTIF_EMAIL")
+@Table(name="adm_notif_email")
 public class EmailNotification extends Notification {
 	
 	private static final long serialVersionUID = -8948201462950547554L;
 
-	@Column(name="EMAIL_FROM",length=1000)
+	@Column(name="email_from",length=1000)
 	@Size(max=1000)
 	private String emailFrom;
 	
-	@Column(name="EMAIL_TO_EL",length=2000)
+	@Column(name="email_to_el",length=2000)
 	@Size(max=2000)
 	private String emailToEl;
 	
 	@ElementCollection(fetch=FetchType.EAGER)
-	@CollectionTable(name="ADM_NOTIF_EMAIL_LIST")
+	@CollectionTable(name="adm_notif_email_list")
 	private Set<String> emails = new HashSet<String>();
 	
 	@ElementCollection(fetch=FetchType.EAGER)
-	@CollectionTable(name="ADM_NOTIF_EMAIL_USER")
+	@CollectionTable(name="adm_notif_email_user")
 	private Set<User> users;
 	
-	@Column(name="EMAIL_SUBJECT",length=500,nullable=false)
+	@Column(name="email_subject",length=500,nullable=false)
 	@NotNull
 	@Size(max=500)
 	private String subject;
 
-	@Column(name="EMAIL_BODY", columnDefinition = "TEXT")
+	@Column(name="email_body", columnDefinition = "TEXT")
 	private String body;
 
-	@Column(name="EMAIL_HTML_BODY", columnDefinition = "TEXT")
+	@Column(name="email_html_body", columnDefinition = "TEXT")
 	private String htmlBody;
 
 	@ElementCollection(fetch=FetchType.EAGER)
-	@CollectionTable(name="ADM_NOTIF_EMAIL_ATTACH")
+	@CollectionTable(name="adm_notif_email_attach")
     private Set<String> attachmentExpressions = new HashSet<String>();
 
 

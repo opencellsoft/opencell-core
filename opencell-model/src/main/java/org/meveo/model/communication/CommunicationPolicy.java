@@ -24,16 +24,16 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class CommunicationPolicy {
 
-	@Column(name="DELAY_MIN")
+	@Column(name="delay_min")
 	private Long delayMinBetween2messages;
 	
-	@Column(name="NB_MAX_DAY")
+	@Column(name="nb_max_day")
 	private Long NbMaxMessagePerDay;
 	
-	@Column(name="NB_MAX_WEEK")
+	@Column(name="nb_max_week")
 	private Long NbMaxMessagePerWeek;
 	
-	@Column(name="NB_MAX_MONTH")
+	@Column(name="nb_max_month")
 	private Long NbMaxMessagePerMonth;
 
 	public Long getDelayMinBetween2messages() {
