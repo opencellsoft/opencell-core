@@ -34,6 +34,12 @@ import org.meveo.util.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
+
+import javax.ws.rs.NotAuthorizedException;
+import javax.ws.rs.WebApplicationException;
+
+
 /**
  * @author Edward P. Legaspi
  **/
@@ -164,5 +170,8 @@ public abstract class BaseRs implements IBaseRs {
             status.setStatus(ActionStatusEnum.FAIL);
             status.setMessage(message);
         }
+        
+        throw new NotAuthorizedException("Do not exist");
+
     }
 }
