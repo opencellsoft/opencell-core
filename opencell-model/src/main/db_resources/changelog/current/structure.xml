@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
-	<changeSet id="#450_20170420" author="EdwardPLegaspi">
-		<addColumn tableName="BILLING_INV_SUB_CAT_COUNTRY">
-			<column name="start_validity_date" type="DATE" />
-			<column name="end_validity_date" type="DATE" />
-			<column defaultValueNumeric="0" name="priority" type="INT4" />
-		</addColumn>
-		<addUniqueConstraint
-			columnNames="invoice_sub_category_id, selling_country_id, trading_country_id, start_validity_date, end_validity_date"
-			constraintName="uk_billing_inv_sub_cat_country" deferrable="false"
-			disabled="false" initiallyDeferred="false" tableName="billing_inv_sub_cat_country" />
-	</changeSet>
-	
-	 <changeSet id="#2716_20170627" author="TienLanPHUNG">
-       <modifyDataType tableName="com_meveo_instance" columnName="url" newDataType="varchar(255)" />
-      </changeSet>
+    <changeSet id="#450_20170420" author="EdwardPLegaspi">
+        <addColumn tableName="BILLING_INV_SUB_CAT_COUNTRY">
+            <column name="start_validity_date" type="DATE" />
+            <column name="end_validity_date" type="DATE" />
+            <column defaultValueNumeric="0" name="priority" type="INT4" />
+        </addColumn>
+        <addUniqueConstraint columnNames="invoice_sub_category_id, selling_country_id, trading_country_id, start_validity_date, end_validity_date" constraintName="uk_billing_inv_sub_cat_country"
+            deferrable="false" disabled="false" initiallyDeferred="false" tableName="billing_inv_sub_cat_country" />
+    </changeSet>
 
+    <changeSet id="#2716_20170627" author="TienLanPHUNG">
+        <modifyDataType tableName="com_meveo_instance" columnName="url" newDataType="varchar(255)" />
+    </changeSet>
+    
+    <changeSet id="#2433_20170627" author="AndriusKarpavicius">
+        <addColumn tableName="BILLING_INVOICE_TYPE">
+            <column name="billing_template_name" type="varchar(50)" />
+        </addColumn>
+    </changeSet>
 </databaseChangeLog> 

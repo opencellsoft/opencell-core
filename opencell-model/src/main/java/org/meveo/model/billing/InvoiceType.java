@@ -35,6 +35,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -45,96 +46,76 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.payments.OCCTemplate;
 
 @Entity
-@ExportIdentifier({ "code"})
+@ExportIdentifier({ "code" })
 @Table(name = "BILLING_INVOICE_TYPE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "OCC_TEMPLATE_ID" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_INVOICE_TYPE_SEQ"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "BILLING_INVOICE_TYPE_SEQ"), })
 @NamedQueries({ @NamedQuery(name = "InvoiceType.currentInvoiceNb", query = "select max(sequence.currentInvoiceNb) from InvoiceType i where i.code=:invoiceTypeCode") })
 public class InvoiceType extends BusinessEntity {
 
-	private static final long serialVersionUID = 1L;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "OCC_TEMPLATE_ID")
-	private OCCTemplate occTemplate;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "OCC_TEMPL_NEGATIVE_ID")
-	private OCCTemplate occTemplateNegative;	
-		
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "BILLING_INVOICE_TYPE_APPLIES_TO", joinColumns = @JoinColumn(name = "INVOICE_TYPE_ID"), inverseJoinColumns = @JoinColumn(name = "APPLIES_TO_ID"))
-	private List<InvoiceType> appliesTo = new ArrayList<InvoiceType>();
-	
-	@Embedded
-	private Sequence sequence = new Sequence();
+    private static final long serialVersionUID = 1L;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "OCC_TEMPLATE_ID")
+    private OCCTemplate occTemplate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "OCC_TEMPL_NEGATIVE_ID")
+    private OCCTemplate occTemplateNegative;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "BILLING_INVOICE_TYPE_APPLIES_TO", joinColumns = @JoinColumn(name = "INVOICE_TYPE_ID"), inverseJoinColumns = @JoinColumn(name = "APPLIES_TO_ID"))
+    private List<InvoiceType> appliesTo = new ArrayList<InvoiceType>();
+
+    @Embedded
+    private Sequence sequence = new Sequence();
 
     @OneToMany(mappedBy = "invoiceType", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<InvoiceTypeSellerSequence> sellerSequence = new ArrayList<InvoiceTypeSellerSequence>();
 
-	@Type(type="numeric_boolean")
+    @Type(type = "numeric_boolean")
     @Column(name = "MATCHING_AUTO")
-	private boolean matchingAuto = false;
-	
-	 
-	public InvoiceType(){
-		
-	}
+    private boolean matchingAuto = false;
 
-	/**
-	 * @return the occTemplate
-	 */
-	public OCCTemplate getOccTemplate() {
-		return occTemplate;
-	}
+    @Column(name = "BILLING_TEMPLATE_NAME")
+    @Size(max = 50)
+    private String billingTemplateName;
 
-	/**
-	 * @param occTemplate the occTemplate to set
-	 */
-	public void setOccTemplate(OCCTemplate occTemplate) {
-		this.occTemplate = occTemplate;
-	}
+    public InvoiceType() {
 
-	/**
-	 * @return the appliesTo
-	 */
-	public List<InvoiceType> getAppliesTo() {
-		return appliesTo;
-	}
+    }
 
-	/**
-	 * @param appliesTo the appliesTo to set
-	 */
-	public void setAppliesTo(List<InvoiceType> appliesTo) {
-		this.appliesTo = appliesTo;
-	}
+    public OCCTemplate getOccTemplate() {
+        return occTemplate;
+    }
 
-	/**
-	 * @return the matchingAuto
-	 */
-	public boolean isMatchingAuto() {
-		return matchingAuto;
-	}
+    public void setOccTemplate(OCCTemplate occTemplate) {
+        this.occTemplate = occTemplate;
+    }
 
-	/**
-	 * @param matchingAuto the matchingAuto to set
-	 */
-	public void setMatchingAuto(boolean matchingAuto) {
-		this.matchingAuto = matchingAuto;
-	}
+    public List<InvoiceType> getAppliesTo() {
+        return appliesTo;
+    }
 
-	/**
-	 * @return the sequence
-	 */
-	public Sequence getSequence() {		
-		return sequence;
-	}
+    public void setAppliesTo(List<InvoiceType> appliesTo) {
+        this.appliesTo = appliesTo;
+    }
 
-	/**
-	 * @param sequence the sequence to set
-	 */
-	public void setSequence(Sequence sequence) {
-		this.sequence = sequence;
-	}
+    public boolean isMatchingAuto() {
+        return matchingAuto;
+    }
+
+    public void setMatchingAuto(boolean matchingAuto) {
+        this.matchingAuto = matchingAuto;
+    }
+
+    public Sequence getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(Sequence sequence) {
+        this.sequence = sequence;
+    }
 
     public List<InvoiceTypeSellerSequence> getSellerSequence() {
         return sellerSequence;
@@ -144,24 +125,18 @@ public class InvoiceType extends BusinessEntity {
         this.sellerSequence = sellerSequence;
     }
 
-	/**
-	 * @return the occTemplateNegative
-	 */
-	public OCCTemplate getOccTemplateNegative() {
-		return occTemplateNegative;
-	}
+    public OCCTemplate getOccTemplateNegative() {
+        return occTemplateNegative;
+    }
 
-	/**
-	 * @param occTemplateNegative the occTemplateNegative to set
-	 */
-	public void setOccTemplateNegative(OCCTemplate occTemplateNegative) {
-		this.occTemplateNegative = occTemplateNegative;
-	}
-	
-	@Override
-	public int hashCode() { 
-	  return id!=null?id.intValue():0;
-	}
+    public void setOccTemplateNegative(OCCTemplate occTemplateNegative) {
+        this.occTemplateNegative = occTemplateNegative;
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.intValue() : 0;
+    }
 
     public InvoiceTypeSellerSequence getSellerSequenceByType(Seller seller) {
         for (InvoiceTypeSellerSequence seq : sellerSequence) {
@@ -171,9 +146,17 @@ public class InvoiceType extends BusinessEntity {
         }
         return null;
     }
-    
-    public boolean isContainsSellerSequence(Seller seller) {        
+
+    public boolean isContainsSellerSequence(Seller seller) {
         InvoiceTypeSellerSequence seq = getSellerSequenceByType(seller);
         return seq != null;
+    }
+
+    public String getBillingTemplateName() {
+        return billingTemplateName;
+    }
+
+    public void setBillingTemplateName(String billingTemplateName) {
+        this.billingTemplateName = billingTemplateName;
     }
 }

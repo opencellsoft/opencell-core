@@ -270,9 +270,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			}
 		}
 
-		invoiceTag.setAttribute("templateName", billingCycle != null
-				&& billingCycle.getBillingTemplateName() != null ? billingCycle.getBillingTemplateName()
-						: "default");
+        String billingTemplateName = InvoiceService.getInvoiceTemplateName(billingCycle, invoice.getInvoiceType());
+
+		invoiceTag.setAttribute("templateName", billingTemplateName);
 		doc.appendChild(invoiceTag);
 		invoiceTag.appendChild(header);
 		// log.debug("creating provider");
