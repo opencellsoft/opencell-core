@@ -77,7 +77,7 @@ public class InvoiceType extends BusinessEntity {
     @Column(name = "MATCHING_AUTO")
     private boolean matchingAuto = false;
 
-    @Column(name = "BILLING_TEMPLATE_NAME")
+    @Column(name = "billing_template_name")
     @Size(max = 50)
     private String billingTemplateName;
 

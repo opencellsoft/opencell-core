@@ -2,7 +2,7 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
     <changeSet id="#450_20170420" author="EdwardPLegaspi">
-        <addColumn tableName="BILLING_INV_SUB_CAT_COUNTRY">
+        <addColumn tableName="billing_inv_sub_cat_country">
             <column name="start_validity_date" type="DATE" />
             <column name="end_validity_date" type="DATE" />
             <column defaultValueNumeric="0" name="priority" type="INT4" />
@@ -16,7 +16,7 @@
     </changeSet>
     
     <changeSet id="#2433_20170627" author="AndriusKarpavicius">
-        <addColumn tableName="BILLING_INVOICE_TYPE">
+        <addColumn tableName="billing_invoice_type">
             <column name="billing_template_name" type="varchar(50)" />
         </addColumn>
     </changeSet>
