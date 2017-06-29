@@ -69,9 +69,7 @@ public abstract class BaseRs implements IBaseRs {
     protected final String RESPONSE_DELIMITER = " - ";
 
     public ActionStatus index() {
-    	
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "Opencell Rest API version " + Version.appVersion);
-        
         return result;
     }
 
