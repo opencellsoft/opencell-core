@@ -1,12 +1,18 @@
 package org.meveo.api;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ElementNotFoundException;
+import org.meveo.admin.exception.InvalidPermissionException;
+import org.meveo.admin.exception.InvalidScriptException;
 import org.meveo.api.dto.EntityCustomActionDto;
 import org.meveo.api.dto.ScriptInstanceErrorDto;
 import org.meveo.api.exception.BusinessApiException;
@@ -14,11 +20,16 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IEntity;
 import org.meveo.model.crm.custom.EntityCustomAction;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.scripts.ScriptInstanceError;
 import org.meveo.service.custom.EntityCustomActionService;
+import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 
 /**
@@ -36,6 +47,8 @@ public class EntityCustomActionApi extends BaseApi {
 
     @Inject
     private EntityCustomActionService entityCustomActionService;
+    
+    
 
     public List<ScriptInstanceErrorDto> create(EntityCustomActionDto actionDto, String appliesTo) throws MissingParameterException, EntityAlreadyExistsException,
             MeveoApiException {
@@ -239,4 +252,34 @@ public class EntityCustomActionApi extends BaseApi {
         action.setScript(scriptInstance);
 
     }
+    
+	public String execute(String actionCode, String appliesTo, String entityCode) throws MeveoApiException, InvalidScriptException, ElementNotFoundException, InvalidPermissionException, BusinessException {
+		EntityCustomAction action = entityCustomActionService.findByCodeAndAppliesTo(actionCode, appliesTo);
+		if (action == null) {
+			throw new EntityDoesNotExistsException(EntityCustomAction.class, actionCode + "/" + appliesTo);
+		}
+
+		Set<Class<?>> cfClasses = ReflectionUtils.getClassesAnnotatedWith(CustomFieldEntity.class);
+		Class entityClass = null;
+		for (Class<?> clazz : cfClasses) {
+			if (appliesTo.startsWith(clazz.getAnnotation(CustomFieldEntity.class).cftCodePrefix())) {
+				entityClass = clazz;
+			}
+		}
+
+		IEntity entity = (IEntity) entityCustomActionService.findByEntityClassAndCode(entityClass,
+				entityCode);
+
+		Map<String, Object> context = new HashMap<String, Object>();
+
+		Map<String, Object> result = scriptInstanceService.execute(entity, action.getScript().getCode(),
+				context);
+		
+		if (result.containsKey(Script.RESULT_GUI_OUTCOME)) {
+            return (String) result.get(Script.RESULT_GUI_OUTCOME);
+        }
+		
+		return null;
+	}
+    
 }

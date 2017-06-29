@@ -314,4 +314,17 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
 
         return result;
     }
+
+	@Override
+	public ActionStatus execute(String actionCode, String appliesTo, String entityCode) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			result.setMessage(entityCustomActionApi.execute(actionCode, appliesTo, entityCode));
+		} catch (Exception e) {
+			processException(e, result);
+		}
+
+		return result;
+	}
 }

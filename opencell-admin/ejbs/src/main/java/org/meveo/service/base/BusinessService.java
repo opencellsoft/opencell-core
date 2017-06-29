@@ -118,5 +118,20 @@ public abstract class BusinessService<P extends BusinessEntity> extends Persiste
         }
         return criteria;
     }
+    
+    public BusinessEntity findByEntityClassAndCode(Class clazz, String code) {
+		QueryBuilder qb = new QueryBuilder(clazz, "be", null);
+		qb.addCriterion("be.code", "=", code, true);
+
+		try {
+			return (BusinessEntity) qb.getQuery(getEntityManager()).getSingleResult();
+		} catch (NoResultException e) {
+			log.debug("No {} of code {} found", getEntityClass().getSimpleName(), code);
+			return null;
+		} catch (NonUniqueResultException e) {
+			log.error("More than one entity of type {} with code {} found", entityClass, code);
+			return null;
+		}
+	}
 
 }
