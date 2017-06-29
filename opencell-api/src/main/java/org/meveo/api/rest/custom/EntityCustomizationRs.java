@@ -245,4 +245,9 @@ public interface EntityCustomizationRs extends IBaseRs {
     @Path("/entity/listELFiltered")
     public EntityCustomizationResponseDto listELFiltered(@QueryParam("appliesTo") String appliesTo, @QueryParam("entityCode") String entityCode);
 
+    @POST
+    @Path("/entity/action/execute/{actionCode}/{appliesTo}/{entityCode}")
+	ActionStatus execute(@PathParam("actionCode") String actionCode, @PathParam("appliesTo") String appliesTo,
+			@PathParam("entityCode") String entityCode);
+
 }
