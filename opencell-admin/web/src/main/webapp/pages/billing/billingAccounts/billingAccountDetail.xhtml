@@ -138,7 +138,7 @@
 												<hftl:formField
 														label="#{messages['billingAccount.invoicingThreshold']}"
 														field="invoicingThreshold" required="false" size="20" />														
-													
+													<!-- 
 													<h:panelGroup id="invoicePrefixBoxPanel">
                                                         <hftl:decorateFormField fieldId="returnToAgency_select" label="#{messages['billingAccount.returnToAgency']}" >
     														<c:set var="fieldValueRA"
@@ -172,13 +172,14 @@
 													</h:panelGroup>
 													 
 													<h:panelGroup id="invoicePrefixPanel">
-													<!--                                                        
+                                                       
 														<hftl:decorateFormField fieldId="invoicePrefix" label="#{messages['billingAccount.invoicePrefix']}" rendered="#{billingAccountBean.returnToAgency}">
     														<h:outputText id="invoicePrefix"
     															value="#{billingAccountBean.entity.invoicePrefix}" style="font-weight:bold;" />
                                                         </hftl:decorateFormField>
-                                                        -->
+                                                        
 													</h:panelGroup>
+													 -->
 													 
 													<hftl:formField
 														label="#{messages['billingAccount.externalRef1']}"
@@ -189,7 +190,9 @@
 															value="#{billingAccountBean.entity.externalRef2}"
 															rendered="#{billingAccountBean.edit}"
 															valueChangeListener="#{billingAccountBean.processValueChange}">
+															<!-- 
 															<p:ajax event="valueChange" update="invoicePrefixPanel" />
+															 -->
 														</p:inputText>
 <!-- 														<h:outputText -->
 <!-- 															value="#{billingAccountBean.entity.externalRef2}" -->
