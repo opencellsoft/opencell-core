@@ -172,9 +172,9 @@ public class PaymentService extends PersistenceService<Payment> {
  * @throws BusinessException
  */
 	public Long createPaymentAO(CustomerAccount customerAccount,Long ctsAmount,String paymentReference) throws BusinessException {
-		OCCTemplate occTemplate = oCCTemplateService.findByCode(ParamBean.getInstance().getProperty("occ.payment.card", "RG_TIP"));
+		OCCTemplate occTemplate = oCCTemplateService.findByCode(ParamBean.getInstance().getProperty("occ.payment.card", "RG_CARD"));
 		if (occTemplate == null) {
-			throw new BusinessException("Cannot find OCC Template with code=" + (ParamBean.getInstance().getProperty("occ.payment.card", "RG_TIP")));
+			throw new BusinessException("Cannot find OCC Template with code=" + (ParamBean.getInstance().getProperty("occ.payment.card", "RG_CARD")));
 		}
 		Payment payment = new Payment();
 		payment.setPaymentMethod(customerAccount.getPaymentMethod());
