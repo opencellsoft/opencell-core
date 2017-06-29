@@ -170,12 +170,16 @@
 																style="font-weight:bold;" />
 														</hftl:decorateFormField>
 													</h:panelGroup>
-													<h:panelGroup id="invoicePrefixPanel">                                                        
+													 
+													<h:panelGroup id="invoicePrefixPanel">
+													<!--                                                        
 														<hftl:decorateFormField fieldId="invoicePrefix" label="#{messages['billingAccount.invoicePrefix']}" rendered="#{billingAccountBean.returnToAgency}">
     														<h:outputText id="invoicePrefix"
     															value="#{billingAccountBean.entity.invoicePrefix}" style="font-weight:bold;" />
                                                         </hftl:decorateFormField>
+                                                        -->
 													</h:panelGroup>
+													 
 													<hftl:formField
 														label="#{messages['billingAccount.externalRef1']}"
 														field="externalRef1" useConverter="false" newLine="true"/>
