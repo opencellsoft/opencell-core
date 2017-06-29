@@ -69,7 +69,7 @@ public abstract class BaseRs implements IBaseRs {
     protected final String RESPONSE_DELIMITER = " - ";
 
     public ActionStatus index() {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "MEVEO API Rest Web Service V" + Version.appVersion);
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "Opencell Rest API version " + Version.appVersion);
         return result;
     }
 
