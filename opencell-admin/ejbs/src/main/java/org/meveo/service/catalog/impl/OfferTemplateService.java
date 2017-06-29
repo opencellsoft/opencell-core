@@ -34,6 +34,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.model.Auditable;
 import org.meveo.model.DatePeriod;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.DigitalResource;
 import org.meveo.model.catalog.OfferProductTemplate;
@@ -42,6 +43,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
+import org.meveo.service.billing.impl.SubscriptionService;
 
 /**
  * Offer Template service implementation.
@@ -52,6 +54,9 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
 
     @Inject
     private CatalogHierarchyBuilderService catalogHierarchyBuilderService;
+    
+    @Inject
+    private SubscriptionService subscriptionService;
 
     @SuppressWarnings("unchecked")
     public List<OfferTemplate> findByServiceTemplate(EntityManager em, ServiceTemplate serviceTemplate) {
@@ -157,6 +162,22 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
 
         return offer;
     }
+    
+    
+    /**
+	 * @param entity instance of OfferTemplate
+	 * @throws BusinessException exception when error happens
+	 */
+	public synchronized void delete(OfferTemplate entity) throws BusinessException {
+		entity = refreshOrRetrieve(entity);
+		List<Subscription> subscriptionList = this.subscriptionService.findByOfferTemplate(entity);
+		if (entity != null && !entity.isTransient() && (subscriptionList == null || subscriptionList.size() == 0)) {
+			this.remove(entity);
+			this.catalogHierarchyBuilderService.delete(entity);
+		}
+		
+
+	}
 
     /**
      * Create a duplicate of a given Offer template with an option to duplicate superficial data (Offer and CFs) or all hierarchy deep - services, charges, price plans

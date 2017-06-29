@@ -172,6 +172,36 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
             }
         }
     }
+    
+    /**
+     * @param givenEntity entity to check
+     * @return true/false
+     */
+    public boolean isUsedInSubscription(OfferTemplate givenEntity) {
+        return (givenEntity != null && !givenEntity.isTransient() && (subscriptionService.findByOfferTemplate(givenEntity) != null)
+                && subscriptionService.findByOfferTemplate(givenEntity).size() > 0) ? true : false;
+    }
+    
+    /**
+     * delete all entities related to Offer( used only for Marketing Manager)
+     */
+    @ActionMethod
+    public void deleteCatalogHierarchy(OfferTemplate entity) {
+    	if (!this.isUsedInSubscription(entity)) {
+    		if (entity != null && entity.getId() != null) {
+    			try {
+    				offerTemplateService.delete(entity);
+    				messages.info(new BundleKey("messages", "delete.successful"));
+    			} catch (BusinessException e) {
+    				log.error("Error encountered while deleting offer template entity: {}: {}", entity.getCode(), e);
+    				messages.error(new BundleKey("messages", "error.delete.unexpected"));
+    			}
+    		}
+    	} else {
+    		log.error("This entity is already in subscription: {}", entity.getCode());
+			messages.error(new BundleKey("messages", "error.delete.entityUsed "));
+    	}
+    }
 
     @ActionMethod
     public void instantiateNewVersion() {
