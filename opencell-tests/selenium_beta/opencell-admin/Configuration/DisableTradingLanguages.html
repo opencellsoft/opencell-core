@@ -4,32 +4,32 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://integration.i.opencellsoft.com/opencell/" />
-<title>Delete Brand</title>
+<title>New Test</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">DeleteContact</td></tr>
+<tr><td rowspan="1" colspan="3">Disable Trading Langauges</td></tr>
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
-	<td>${brands}</td>
+	<td>${tradingLanguages}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${codeField}</td>
+	<td>${tradingLanguageSearchField}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${codeField}</td>
+	<td>${tradingLanguageSearchField}</td>
 	<td>${code}</td>
 </tr>
 <tr>
 	<td>click</td>
 	<td>${searchButton}</td>
-	<td></td>
+	<td>${code}</td>
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
@@ -42,33 +42,23 @@
 	<td></td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
-	<td>link=${code}</td>
+	<td>assertElementPresent</td>
+	<td>${disableButton}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${deleteButton}</td>
+	<td>${disableButton}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForElementPresent</td>
-	<td>${confirmationYes}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>clickAndWait</td>
+	<td>click</td>
 	<td>${confirmationYes}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForPageToLoad</td>
 	<td>${defaultTimeout}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForElementPresent</td>
-	<td>${infoSummary}</td>
 	<td></td>
 </tr>
 <tr>
