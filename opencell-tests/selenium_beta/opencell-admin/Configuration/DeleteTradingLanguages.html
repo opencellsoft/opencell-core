@@ -4,7 +4,7 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://integration.i.opencellsoft.com/opencell/" />
-<title>Delete Brand</title>
+<title>Delete Trading Languages</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
@@ -13,23 +13,23 @@
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
-	<td>${brands}</td>
+	<td>${tradingLanguages}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${codeField}</td>
+	<td>${tradingLanguageSearchField}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${codeField}</td>
+	<td>${tradingLanguageSearchField}</td>
 	<td>${code}</td>
 </tr>
 <tr>
 	<td>click</td>
 	<td>${searchButton}</td>
-	<td></td>
+	<td>${code}</td>
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
