@@ -428,18 +428,29 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoice.setBillingRun(em.getReference(BillingRun.class, billingRun.getId()));
             }
 			invoice.setInvoiceDate(invoiceDate);
+			
+			Order order = orderService.findByCodeOrExternalId(orderNumber);
 
 			PaymentMethodEnum paymentMethod = billingAccount.getPaymentMethod();
-			if (paymentMethod == null) {
-				paymentMethod = billingAccount.getCustomerAccount().getPaymentMethod();
+			if (order != null && order.getPaymentMethod() != null) {
+				paymentMethod = order.getPaymentMethod();
+			} else {
+				if (paymentMethod == null) {
+					paymentMethod = billingAccount.getCustomerAccount().getPaymentMethod();
+				}
 			}
 			invoice.setPaymentMethod(paymentMethod);
 			
-			Integer delay = billingCycle.getDueDateDelay();			
-			if (!StringUtils.isBlank(billingAccount.getCustomerAccount().getDueDateDelayEL())) {
-				delay = evaluateIntegerExpression(billingAccount.getCustomerAccount().getDueDateDelayEL(), billingAccount, invoice);
-			} else if (!StringUtils.isBlank(billingCycle.getDueDateDelayEL())) {
-				delay = evaluateIntegerExpression(billingCycle.getDueDateDelayEL(), billingAccount, invoice);
+			Integer delay = billingCycle.getDueDateDelay();	
+			if (order != null && !StringUtils.isBlank(order.getDueDateDelayEL())) {
+				delay = evaluateIntegerExpression(order.getDueDateDelayEL(), billingAccount, invoice);
+			} else {
+				if (!StringUtils.isBlank(billingAccount.getCustomerAccount().getDueDateDelayEL())) {
+					delay = evaluateIntegerExpression(billingAccount.getCustomerAccount().getDueDateDelayEL(),
+							billingAccount, invoice);
+				} else if (!StringUtils.isBlank(billingCycle.getDueDateDelayEL())) {
+					delay = evaluateIntegerExpression(billingCycle.getDueDateDelayEL(), billingAccount, invoice);
+				}
 			}
 			
 			Date dueDate = invoiceDate;
