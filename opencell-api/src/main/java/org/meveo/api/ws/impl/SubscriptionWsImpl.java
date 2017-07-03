@@ -19,6 +19,7 @@ import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.billing.UpdateServicesRequestDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsResponseDto;
+import org.meveo.api.dto.response.catalog.GetServiceInstanceResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.SubscriptionWs;
 import org.meveo.model.billing.ChargeInstance;
@@ -227,6 +228,19 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
         }
 
         return result;
+	}
+
+	@Override
+	public GetServiceInstanceResponseDto findServiceInstance(String subscriptionCode, String serviceInstanceCode) {
+		GetServiceInstanceResponseDto result = new GetServiceInstanceResponseDto();
+
+		try {
+			result.setServiceInstance(subscriptionApi.findServiceInstance(subscriptionCode, serviceInstanceCode));
+		} catch (Exception e) {
+			processException(e, result.getActionStatus());
+		}
+
+		return result;
 	}
 	
 }

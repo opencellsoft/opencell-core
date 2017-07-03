@@ -17,6 +17,7 @@ import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.billing.UpdateServicesRequestDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsResponseDto;
+import org.meveo.api.dto.response.catalog.GetServiceInstanceResponseDto;
 
 @WebService
 public interface SubscriptionWs extends IBaseWs {
@@ -69,4 +70,8 @@ public interface SubscriptionWs extends IBaseWs {
 	@WebMethod
 	ActionStatus updateServices(@WebParam(name = "updateServicesRequest") UpdateServicesRequestDto postData);
 
+	@WebMethod
+	GetServiceInstanceResponseDto findServiceInstance(@WebParam(name = "subscriptionCode") String subscriptionCode,
+			@WebParam(name = "serviceInstanceCode") String serviceInstanceCode);
+	
 }
