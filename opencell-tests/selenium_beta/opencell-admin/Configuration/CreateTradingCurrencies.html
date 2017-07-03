@@ -13,7 +13,7 @@
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
-	<td>${brands}</td>
+	<td>${tradingCurrencies}</td>
 	<td></td>
 </tr>
 <tr>
@@ -23,32 +23,97 @@
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${codeField}</td>
+	<td>${currenciesCodeField}</td>
 	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${codeField}</td>
-	<td>${code}</td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${descriptionField}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${descriptionField}</td>
-	<td>${description}</td>
 </tr>
 <tr>
 	<td>click</td>
+	<td>${currenciesCodeField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>${currenciesPopup}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>${currenciesCodeSearchField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${currenciesCodeSearchField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${currenciesCodeSearchField}</td>
+	<td>${code}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${searchButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>${currenciesPopup}/div/div/table/tbody/tr/td[text()[contains(.,${code})]]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${currenciesPopup}/div/div/table/tbody/tr/td[text()[contains(.,${code})]]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${currenciesPopup}/div/div/table/tbody/tr/td[text()[contains(.,${code})]]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${tradingCurrenciesDescriptionField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${tradingCurrenciesDescriptionField}</td>
+	<td>${description}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${exchangeRateField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${exchangeRateField}</td>
+	<td>${exchangeRate}</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
 	<td>${saveButtonWhenCreate}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPageToLoad</td>
-	<td>${defaultTimeout}</td>
+	<td>waitForElementPresent</td>
+	<td>${infoSummary}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>${infoSummary}</td>
 	<td></td>
 </tr>
 <tr>
