@@ -9,7 +9,7 @@
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">CreateContact</td></tr>
+<tr><td rowspan="1" colspan="3">Update Trading Languages</td></tr>
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
@@ -18,12 +18,12 @@
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${tradingLanguageSearchField}</td>
+	<td>${searchField}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${tradingLanguageSearchField}</td>
+	<td>${searchField}</td>
 	<td>${code}</td>
 </tr>
 <tr>
@@ -67,8 +67,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPageToLoad</td>
-	<td>${defaultTimeout}</td>
+	<td>waitForElementPresent</td>
+	<td>${infoSummary}</td>
 	<td></td>
 </tr>
 <tr>

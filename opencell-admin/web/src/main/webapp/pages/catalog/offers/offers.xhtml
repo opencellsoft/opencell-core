@@ -347,28 +347,29 @@
                             </p:dataGrid>
                         </h:form>
                     </p:tab>
+                    
 
                     <p:tab id="tab1"
                            title="#{messages['marketingManager.catalog.view.condensed']}">
-
                         <hftl:dataList id="dataList"
                                        backingBean="#{offerTemplateListBean}"
                                        dataModel="#{offerTemplateListBean.listFromBOM()}"
                                        checkMany="false" exportToCsv="false" exportToXml="false"
                                        exportXlsxButton="false" sortOrder="DESCENDING"
                                        styleClass="DataListCenter">
-                            <hftl:column label="#{messages['commons.nameOrCode']}"
-                                         field="nameOrCode">
-                            </hftl:column>
+ 							
+  							<hftl:column label="#{messages['commons.nameOrCode']}"
+                                         field="name">
+  							 </hftl:column>
                             <hftl:column label="#{messages['commons.category']}"
                                          field="offerTemplateCategories" isList="true"
-                                         valueLabelField="descriptionOrCode">
+                                         valueLabelField="description">
                             </hftl:column>
                             <hftl:column label="#{messages['commons.validFrom']}"
-                                         field="validityRaw.from" isDate="true">
+                                         field="validity.from" isDate="true">
                             </hftl:column>
                             <hftl:column label="#{messages['commons.validTo']}"
-                                         field="validityRaw.to" isDate="true">
+                                         field="validity.to" isDate="true">
                             </hftl:column>
                             <p:column>
                                 <f:facet name="header">#{messages['commons.status']}</f:facet>
