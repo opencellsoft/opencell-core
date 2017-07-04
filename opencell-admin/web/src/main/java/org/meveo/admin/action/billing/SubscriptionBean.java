@@ -38,7 +38,6 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.EntityListDataModelPF;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.ProductChargeInstance;
@@ -650,6 +649,15 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
     public void terminateSubscription() {
         try {
+            
+            SubscriptionTerminationReason reason = entity.getSubscriptionTerminationReason();
+            Date terminationDate =  entity.getTerminationDate();
+            
+            entity = subscriptionService.refreshOrRetrieve(entity);
+            
+            entity.setSubscriptionTerminationReason(reason);
+            entity.setTerminationDate(terminationDate);
+            
             log.debug("selected subscriptionTerminationReason={},terminationDate={},subscriptionId={},status={}",
                 new Object[] { entity.getSubscriptionTerminationReason(), entity.getTerminationDate(), entity.getCode(), entity.getStatus() });
             subscriptionService.terminateSubscription(entity, entity.getTerminationDate(), entity.getSubscriptionTerminationReason(), entity.getOrderNumber());
@@ -985,12 +993,18 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     public void setAndRefreshProductInstance(ProductInstance prodInstance) {
         this.productInstance = productInstanceService.refreshOrRetrieve(prodInstance);
     }
-	
-	public void onOfferSelected() {
-		if(entity.getOffer().isDisabled()) {
-			messages.error(new BundleKey("messages", "message.subscription.offerIsDisabled"));
-			return;
-}
-	}
-	
+
+    public void onOfferSelected() {
+        if (entity.getOffer().isDisabled()) {
+            messages.error(new BundleKey("messages", "message.subscription.offerIsDisabled"));
+            return;
+        }
+    }
+
+    /**
+     * Update subscribedTillDate field in subscription
+     */
+    public void updateSubscribedTillDate() {
+        entity.updateSubscribedTillAndRenewalNotifyDates();
+    }
 }

@@ -40,5 +40,46 @@
         </createTable>
         <sql>insert into dwh_chart_seq (select IFNULL(max(id),0)+1 from dwh_chart)</sql>
      </changeSet>
-        
+
+    <changeSet id="#2361_20170628" author="AndriusKarpavicius">
+        <addColumn tableName="billing_subscription">
+            <column name="subscribed_till_date" type="datetime" />
+            <column name="auto_renew" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="days_notify_renew" type="INT4" />
+            <column name="end_of_term_action" type="varchar(10)" />
+            <column name="auto_termin_reason_id" type="bigint" />
+            <column name="init_active_unit" type="varchar(5)" />
+            <column name="init_active" type="INT4" />
+            <column name="match_end_aggr_date" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="renew_for_unit" type="varchar(5)" />
+            <column name="renew_for" type="INT4" />            
+            <column name="renewed" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="notify_of_renewal_date" type="datetime" /> 
+            <column name="renewal_notified_date" type="datetime" />            
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="auto_termin_reason_id" baseTableName="billing_subscription" constraintName="fk_sub_auto_tr_id" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscrip_termin_reason" />
+    </changeSet>    
+
+    <changeSet id="#2361_20170701" author="AndriusKarpavicius">
+        <addColumn tableName="billing_subscrip_termin_reason">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="datetime">
+<!--                 <constraints nullable="false" /> -->
+            </column>
+            <column name="updated" type="datetime" />            
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+        </addColumn>
+        <sql>update billing_subscrip_termin_reason set created=now()</sql>
+        <addNotNullConstraint tableName="billing_subscrip_termin_reason" columnName="created"/>
+    </changeSet>        
 </databaseChangeLog> 

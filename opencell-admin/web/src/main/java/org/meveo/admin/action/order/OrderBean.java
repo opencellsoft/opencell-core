@@ -42,6 +42,7 @@ import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.api.billing.OrderApi;
 import org.meveo.api.order.OrderProductCharacteristicEnum;
 import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.ServiceInstance;
@@ -111,7 +112,7 @@ public class OrderBean extends CustomFieldBean<Order> {
 
     @Inject
     private UserHierarchyLevelService userHierarchyLevelService;
-    
+
     @Inject
     private UserService userService;
 
@@ -172,12 +173,13 @@ public class OrderBean extends CustomFieldBean<Order> {
             this.selectedOrderItem = cloneOrderItem(this.selectedOrderItem);
 
             if (this.selectedOrderItem.getOrderItemDto() != null) {
-                offersTree = constructOfferItemsTreeAndConfiguration(this.entity.getStatus() == OrderStatusEnum.IN_CREATION
-                        && selectedOrderItem.getAction() != OrderItemActionEnum.DELETE, this.entity.getStatus() == OrderStatusEnum.IN_CREATION
-                        && selectedOrderItem.getAction() != OrderItemActionEnum.DELETE, null, null);
+                offersTree = constructOfferItemsTreeAndConfiguration(
+                    this.entity.getStatus() == OrderStatusEnum.IN_CREATION && selectedOrderItem.getAction() != OrderItemActionEnum.DELETE,
+                    this.entity.getStatus() == OrderStatusEnum.IN_CREATION && selectedOrderItem.getAction() != OrderItemActionEnum.DELETE, null, null);
             }
 
         } catch (Exception e) {
+            log.error("Failed to load order item for edit", e);
             messages.error(new BundleKey("messages", "order.orderItemEdit.ko"), e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
             FacesContext.getCurrentInstance().validationFailed();
         }
@@ -219,7 +221,11 @@ public class OrderBean extends CustomFieldBean<Order> {
 
             List<BillingAccount> billingAccountDtos = new ArrayList<>();
             BillingAccount billingAccountDto = new BillingAccount();
-            billingAccountDto.setId(selectedOrderItem.getUserAccount().getCode());
+            if (selectedOrderItem.getAction() != OrderItemActionEnum.ADD) {
+                billingAccountDto.setId(selectedOrderItem.getSubscription().getUserAccount().getCode());
+            } else if (selectedOrderItem.getUserAccount() != null) {
+                billingAccountDto.setId(selectedOrderItem.getUserAccount().getCode());
+            }
             billingAccountDtos.add(billingAccountDto);
             orderItemDto.setBillingAccount(billingAccountDtos);
             orderItemDto.setProductOffering(new org.tmf.dsmapi.catalog.resource.product.ProductOffering());
@@ -282,8 +288,8 @@ public class OrderBean extends CustomFieldBean<Order> {
                     int index = 0;
                     for (ProductTemplate productTemplate : productTemplates) {
 
-                        selectedOrderItem.getOrderItemProductOfferings().add(
-                            new OrderItemProductOffering(selectedOrderItem, productTemplate, selectedOrderItem.getOrderItemProductOfferings().size()));
+                        selectedOrderItem.getOrderItemProductOfferings()
+                            .add(new OrderItemProductOffering(selectedOrderItem, productTemplate, selectedOrderItem.getOrderItemProductOfferings().size()));
 
                         BundledProductReference productOffering = new BundledProductReference();
                         productOffering.setReferencedId(productTemplate.getCode());
@@ -310,8 +316,8 @@ public class OrderBean extends CustomFieldBean<Order> {
                         relatedProduct.setType("bundled");
                         Product productDto = new Product();
                         productDto.setProductCharacteristic(serviceCharacteristics.get(index));
-                        productDto.getProductCharacteristic().add(
-                            new ProductCharacteristic(OrderProductCharacteristicEnum.SERVICE_CODE.getCharacteristicName(), serviceTemplate.getCode()));
+                        productDto.getProductCharacteristic()
+                            .add(new ProductCharacteristic(OrderProductCharacteristicEnum.SERVICE_CODE.getCharacteristicName(), serviceTemplate.getCode()));
                         relatedProduct.setProduct(productDto);
                         orderItemDto.getProduct().getProductRelationship().add(relatedProduct);
 
@@ -506,7 +512,8 @@ public class OrderBean extends CustomFieldBean<Order> {
             }
 
             // Show products - all or only the ones ordered
-            if ((showAvailableProducts || this.selectedOrderItem.getOrderItemProductOfferings().size() > 1) && !((OfferTemplate) mainOffering).getOfferProductTemplates().isEmpty()) {
+            if ((showAvailableProducts || this.selectedOrderItem.getOrderItemProductOfferings().size() > 1)
+                    && !((OfferTemplate) mainOffering).getOfferProductTemplates().isEmpty()) {
                 TreeNode productsNode = null;
                 productsNode = new DefaultTreeNode("ProductList", "Product", mainOfferingNode);
                 productsNode.setSelectable(false);
@@ -552,8 +559,8 @@ public class OrderBean extends CustomFieldBean<Order> {
                             productCharacteristics.put(OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY, 1);
                         }
 
-                        offerItemInfo = new OfferItemInfo(offerProductTemplate.getProductTemplate(), productCharacteristics, false, productProductMatched != null
-                                || offerProductTemplate.isMandatory(), offerProductTemplate.isMandatory(), productInstanceEntity);
+                        offerItemInfo = new OfferItemInfo(offerProductTemplate.getProductTemplate(), productCharacteristics, false,
+                            productProductMatched != null || offerProductTemplate.isMandatory(), offerProductTemplate.isMandatory(), productInstanceEntity);
                         new DefaultTreeNode(ProductTemplate.class.getSimpleName(), offerItemInfo, productsNode);
 
                         if (offerItemInfo.isSelected()) {
@@ -600,6 +607,24 @@ public class OrderBean extends CustomFieldBean<Order> {
             Subscription subscription = selectedOrderItem.getSubscription();
             offerConfiguration.put(OrderProductCharacteristicEnum.SUBSCRIPTION_DATE, subscription.getSubscriptionDate());
             offerConfiguration.put(OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE, subscription.getEndAgreementDate());
+
+            if (selectedOrderItem.getAction() == OrderItemActionEnum.MODIFY) {
+
+                offerConfiguration.put(OrderProductCharacteristicEnum.SUBSCRIPTION_INITIALLY_ACTIVE_FOR, subscription.getSubscriptionRenewal().getInitialyActiveFor());
+                offerConfiguration.put(OrderProductCharacteristicEnum.SUBSCRIPTION_INITIALLY_ACTIVE_FOR_UNIT, subscription.getSubscriptionRenewal().getInitialyActiveForUnit());
+                offerConfiguration.put(OrderProductCharacteristicEnum.SUBSCRIPTION_AUTO_RENEW, subscription.getSubscriptionRenewal().isAutoRenew());
+                offerConfiguration.put(OrderProductCharacteristicEnum.SUBSCRIPTION_DAYS_NOTIFY_RENEWAL, subscription.getSubscriptionRenewal().getDaysNotifyRenewal());
+                offerConfiguration.put(OrderProductCharacteristicEnum.SUBSCRIPTION_END_OF_TERM_ACTION, subscription.getSubscriptionRenewal().getEndOfTermAction());
+                offerConfiguration.put(OrderProductCharacteristicEnum.SUBSCRIPTION_EXTEND_AGREEMENT_PERIOD,
+                    subscription.getSubscriptionRenewal().isExtendAgreementPeriodToSubscribedTillDate());
+                offerConfiguration.put(OrderProductCharacteristicEnum.SUBSCRIPTION_RENEW_FOR, subscription.getSubscriptionRenewal().getRenewFor());
+                offerConfiguration.put(OrderProductCharacteristicEnum.SUBSCRIPTION_RENEW_FOR_UNIT, subscription.getSubscriptionRenewal().getRenewForUnit());
+                if (subscription.getSubscriptionRenewal().getTerminationReason() != null) {
+                    offerConfiguration.put(OrderProductCharacteristicEnum.SUBSCRIPTION_RENEW_TERMINATION_REASON,
+                        subscription.getSubscriptionRenewal().getTerminationReason().getCode());
+                }
+            }
+
             subscriptionConfiguration.put(subscription.getOffer().getCode(), offerConfiguration);
             subscriptionEntities.put(subscription.getOffer().getCode(), subscription);
 
@@ -645,8 +670,8 @@ public class OrderBean extends CustomFieldBean<Order> {
             return;
         }
 
-        OrderProductCharacteristicEnum characteristicEnum = OrderProductCharacteristicEnum.getByCharacteristicName((String) event.getComponent().getAttributes()
-            .get("characteristic"));
+        OrderProductCharacteristicEnum characteristicEnum = OrderProductCharacteristicEnum
+            .getByCharacteristicName((String) event.getComponent().getAttributes().get("characteristic"));
         for (OfferItemInfo offerItemInfo : offerConfigurations) {
             if (offerItemInfo.getCharacteristics().get(characteristicEnum) == null) {
                 offerItemInfo.getCharacteristics().put(characteristicEnum, event.getObject());
@@ -660,23 +685,36 @@ public class OrderBean extends CustomFieldBean<Order> {
      * @param characteristics Product characteristics to check
      * @return A map of values
      */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private Map<OrderProductCharacteristicEnum, Object> productCharacteristicsToMap(List<ProductCharacteristic> characteristics) {
         Map<OrderProductCharacteristicEnum, Object> values = new HashMap<>();
 
         for (ProductCharacteristic productCharacteristic : characteristics) {
+            if (productCharacteristic.getValue() == null) {
+                continue;
+            }
 
             OrderProductCharacteristicEnum characteristicEnum = OrderProductCharacteristicEnum.getByCharacteristicName(productCharacteristic.getName());
             // No matching characteristic found
             if (characteristicEnum == null) {
                 continue;
             }
-            Class<?> valueClazz = characteristicEnum.getClazz();
+            Class valueClazz = characteristicEnum.getClazz();
+
             if (valueClazz == String.class) {
                 values.put(characteristicEnum, productCharacteristic.getValue());
             } else if (valueClazz == BigDecimal.class) {
                 values.put(characteristicEnum, new BigDecimal(productCharacteristic.getValue()));
             } else if (valueClazz == Date.class) {
                 values.put(characteristicEnum, DateUtils.parseDateWithPattern(productCharacteristic.getValue(), DateUtils.DATE_PATTERN));
+            } else if (valueClazz == Integer.class) {
+                values.put(characteristicEnum, new Integer(productCharacteristic.getValue()));
+            } else if (valueClazz == Boolean.class) {
+                values.put(characteristicEnum, new Boolean(productCharacteristic.getValue()));
+            } else if (valueClazz.isEnum()) {
+                values.put(characteristicEnum, Enum.valueOf(valueClazz, productCharacteristic.getValue()));
+            } else if (BusinessEntity.class.isAssignableFrom(valueClazz)) {
+                values.put(characteristicEnum, productCharacteristic.getValue()); // Right now a code is shown as value element in GUI.
             }
         }
         return values;
@@ -694,16 +732,22 @@ public class OrderBean extends CustomFieldBean<Order> {
         List<ProductCharacteristic> characteristics = new ArrayList<>();
 
         for (Entry<OrderProductCharacteristicEnum, Object> valueInfo : values.entrySet()) {
+
             if (valueInfo.getValue() != null) {
                 ProductCharacteristic productCharacteristic = new ProductCharacteristic();
                 productCharacteristic.setName(valueInfo.getKey().getCharacteristicName());
                 characteristics.add(productCharacteristic);
 
                 Class valueClazz = valueInfo.getKey().getClazz();
-                if (valueClazz == String.class || valueClazz == BigDecimal.class) {
+
+                if (valueClazz == String.class || valueClazz == BigDecimal.class || valueClazz == Integer.class || valueClazz == Boolean.class) {
                     productCharacteristic.setValue(valueInfo.getValue().toString());
                 } else if (valueClazz == Date.class) {
                     productCharacteristic.setValue(DateUtils.formatDateWithPattern((Date) valueInfo.getValue(), DateUtils.DATE_PATTERN));
+                } else if (valueClazz.isEnum()) {
+                    productCharacteristic.setValue(((Enum) valueInfo.getValue()).name());
+                } else if (BusinessEntity.class.isAssignableFrom(valueClazz)) {
+                    productCharacteristic.setValue(valueInfo.getValue().toString());// Right now a code is shown as value element in GUI.
                 }
             }
         }
