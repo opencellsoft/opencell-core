@@ -114,7 +114,7 @@ public abstract class BusinessService<P extends BusinessEntity> extends Persiste
                 break;
             }
             id++;
-            criteria = code + " " + id;
+            criteria = code + "-" + id;
         }
         return criteria;
     }
