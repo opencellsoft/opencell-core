@@ -234,7 +234,8 @@
                                                                 required="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_INITIALLY_ACTIVE_FOR]!=null}"
                                                                 disabled="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_INITIALLY_ACTIVE_FOR]==null}"
                                                                 rendered="#{quoteBean.quoteEditable}">
-                                                                <f:selectItems value="#{RenewalPeriodUnitEnum.ALL_VALUES}" var="enumElement" itemValue="#{enumElement}" itemLabel="#{enumElement}" />
+                                                                <f:selectItems value="#{RenewalPeriodUnitEnum.ALL_VALUES}" var="enumElement" itemValue="#{enumElement}"
+                                                                    itemLabel="#{messages[enumElement.label]}" />
                                                                 <f:converter converterId="enumConverter" />
                                                                 <f:attribute name="GenericEnumConverter.enumType" value="org.meveo.model.billing.SubscriptionRenewal$RenewalPeriodUnitEnum" />
                                                             </p:selectOneMenu>
@@ -249,15 +250,13 @@
                                                         <h:panelGroup id="autoRenewPanel" rendered="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_INITIALLY_ACTIVE_FOR]!=null}">
                                                             <hftl:decorateFormField fieldId="autoRenew_#{itemStatus.index}" label="#{messages['subscription.autoRenew']}" componentWidth="10">
                                                                 <p:selectBooleanCheckbox id="autoRenew_#{itemStatus.index}"
-                                                                    value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_AUTO_RENEW]}"
-                                                                    rendered="#{quoteBean.quoteEditable}">
+                                                                    value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_AUTO_RENEW]}" rendered="#{quoteBean.quoteEditable}">
                                                                     <p:ajax update="autoRenewPanel" event="change" />
                                                                 </p:selectBooleanCheckbox>
 
                                                                 <h:outputText
                                                                     value="#{messages[itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_AUTO_RENEW].toString()=='true'?'commons.yes':'commons.no']}"
-                                                                    styleClass="field-value"
-                                                                    rendered="#{!(quoteBean.quoteEditable)}">
+                                                                    styleClass="field-value" rendered="#{!(quoteBean.quoteEditable)}">
                                                                 </h:outputText>
                                                             </hftl:decorateFormField>
 
@@ -297,8 +296,7 @@
                                                                         rendered="#{quoteBean.quoteEditable}">
                                                                     </p:spinner>
                                                                     <h:outputText value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_DAYS_NOTIFY_RENEWAL]}"
-                                                                        styleClass="field-value"
-                                                                        rendered="#{!(quoteBean.quoteEditable)}">
+                                                                        styleClass="field-value" rendered="#{!(quoteBean.quoteEditable)}">
                                                                     </h:outputText>
                                                                 </hftl:decorateFormField>
 
@@ -312,8 +310,7 @@
 
                                                                     <h:outputText
                                                                         value="#{messages[itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_EXTEND_AGREEMENT_PERIOD].toString()=='true'?'commons.yes':'commons.no']}"
-                                                                        styleClass="field-value"
-                                                                        rendered="#{!(quoteBean.quoteEditable)}">
+                                                                        styleClass="field-value" rendered="#{!(quoteBean.quoteEditable)}">
                                                                     </h:outputText>
                                                                 </hftl:decorateFormField>
 
@@ -336,7 +333,7 @@
                                                                     rendered="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_END_OF_TERM_ACTION]!=null and !(quoteBean.quoteEditable)}">
                                                                 </h:outputText>
                                                             </hftl:decorateFormField>
-                                                            
+
                                                             <h:panelGroup id="renewTerminationReasonPanel">
                                                                 <hftl:decorateFormField fieldId="endOfTermReason_#{itemStatus.index}" label="#{messages['subscription.endOfTermTerminationReason']}"
                                                                     componentWidth="15"

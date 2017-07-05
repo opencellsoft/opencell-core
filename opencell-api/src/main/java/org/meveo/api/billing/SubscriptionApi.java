@@ -1142,11 +1142,11 @@ public class SubscriptionApi extends BaseApi {
         if (!subscriptionRenewed) {
             renewalInfo.setInitialyActiveFor(renewalInfoDto.getInitialyActiveFor());
             renewalInfo.setInitialyActiveForUnit(renewalInfoDto.getInitialyActiveForUnit());
-            renewalInfo.setAutoRenew(renewalInfoDto.isAutoRenew());
             renewalInfo.setRenewFor(renewalInfoDto.getRenewFor());
             renewalInfo.setRenewForUnit(renewalInfoDto.getRenewForUnit());
         }
 
+        renewalInfo.setAutoRenew(renewalInfoDto.isAutoRenew());
         renewalInfo.setDaysNotifyRenewal(renewalInfoDto.getDaysNotifyRenewal());
         renewalInfo.setEndOfTermAction(renewalInfoDto.getEndOfTermAction());
         renewalInfo.setExtendAgreementPeriodToSubscribedTillDate(renewalInfoDto.isExtendAgreementPeriodToSubscribedTillDate());

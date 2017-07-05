@@ -246,7 +246,8 @@
                                                                 required="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_INITIALLY_ACTIVE_FOR]!=null}"
                                                                 disabled="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_INITIALLY_ACTIVE_FOR]==null}"
                                                                 rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION}">
-                                                                <f:selectItems value="#{RenewalPeriodUnitEnum.ALL_VALUES}" var="enumElement" itemValue="#{enumElement}" itemLabel="#{enumElement}" />
+                                                                <f:selectItems value="#{RenewalPeriodUnitEnum.ALL_VALUES}" var="enumElement" itemValue="#{enumElement}"
+                                                                    itemLabel="#{messages[enumElement.label]}" />
                                                                 <f:converter converterId="enumConverter" />
                                                                 <f:attribute name="GenericEnumConverter.enumType" value="org.meveo.model.billing.SubscriptionRenewal$RenewalPeriodUnitEnum" />
                                                             </p:selectOneMenu>
