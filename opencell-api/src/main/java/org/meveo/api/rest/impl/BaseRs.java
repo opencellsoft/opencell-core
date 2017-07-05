@@ -35,9 +35,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
+import org.meveo.api.exception.NotAuthorizedException;
+import org.meveo.api.exception.NotFoundException;
+import org.meveo.api.exception.BadRequestException;
+import org.meveo.api.exception.NotAcceptableException;
+import org.meveo.api.exception.NotAllowedException;
+import org.meveo.api.exception.InternalServerErrorException;
 
-import javax.ws.rs.NotAuthorizedException;
-import javax.ws.rs.WebApplicationException;
 
 
 /**
@@ -170,8 +174,29 @@ public abstract class BaseRs implements IBaseRs {
             status.setStatus(ActionStatusEnum.FAIL);
             status.setMessage(message);
         }
-        
-        throw new NotAuthorizedException("Do not exist");
-
+        handleErrorStatus(status);
+    }
+    
+    
+    private void handleErrorStatus(ActionStatus status){
+        String str = status.getErrorCode().toString();
+        if("ENTITY_DOES_NOT_EXISTS_EXCEPTION".equals(str)){
+            throw new NotFoundException(status.getjson());
+        }
+        else if("ENTITY_ALREADY_EXISTS_EXCEPTION".equals(str)
+                || "MISSING_PARAMETER".equals(str)
+                || "INVALID_PARAMETER".equals(str)
+                || "INVALID_ENUM_VALUE".equals(str)){
+            throw new BadRequestException(status.getjson());
+        }
+        else if("ACTION_FORBIDDEN".equals(str)){
+            throw new NotAllowedException(status.getjson());
+        }
+        else if("INSUFFICIENT_BALANCE".equals(str)
+                || "DUPLICATE_ACCESS".equals(str)){
+                throw new NotAcceptableException(status.getjson());
+        }else{
+            throw new InternalServerErrorException(status.getjson());    
+        }
     }
 }
