@@ -20,7 +20,7 @@ import org.meveo.admin.util.ResourceBundle;
 @FacesValidator("codeValidator")
 public class CodeValidator implements Validator {
 
-	private static final String CODE_REGEX = "^[A-Za-z0-9_\\.-]+$";
+	private static final String CODE_REGEX = "^[A-Za-z0-9_\\.-@]+$";
 
 	@Inject
 	private ResourceBundle resourceMessages;
