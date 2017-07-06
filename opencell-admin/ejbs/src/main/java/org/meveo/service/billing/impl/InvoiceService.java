@@ -443,13 +443,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			
 			Integer delay = billingCycle.getDueDateDelay();	
 			if (order != null && !StringUtils.isBlank(order.getDueDateDelayEL())) {
-				delay = evaluateIntegerExpression(order.getDueDateDelayEL(), billingAccount, invoice);
+				delay = evaluateIntegerExpression(order.getDueDateDelayEL(), billingAccount, invoice, order);
 			} else {
 				if (!StringUtils.isBlank(billingAccount.getCustomerAccount().getDueDateDelayEL())) {
 					delay = evaluateIntegerExpression(billingAccount.getCustomerAccount().getDueDateDelayEL(),
-							billingAccount, invoice);
+							billingAccount, invoice, null);
 				} else if (!StringUtils.isBlank(billingCycle.getDueDateDelayEL())) {
-					delay = evaluateIntegerExpression(billingCycle.getDueDateDelayEL(), billingAccount, invoice);
+					delay = evaluateIntegerExpression(billingCycle.getDueDateDelayEL(), billingAccount, invoice, null);
 				}
 			}
 			
@@ -1397,7 +1397,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		log.debug("cancel invoice:{} done",invoice.getTemporaryInvoiceNumber());
 	}
 	
-	private Integer evaluateIntegerExpression(String expression, BillingAccount billingAccount, Invoice invoice) throws BusinessException {
+	private Integer evaluateIntegerExpression(String expression, BillingAccount billingAccount, Invoice invoice, Order order) throws BusinessException {
 		Integer result = null;
 		if (StringUtils.isBlank(expression)) {
 			return result;
@@ -1408,6 +1408,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		}
 		if (expression.indexOf("invoice") >= 0) {
 			userMap.put("invoice", invoice);
+		}
+		if (expression.indexOf("order") >= 0) {
+			userMap.put("order", order);
 		}
 
 		Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Integer.class);
