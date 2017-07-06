@@ -52,7 +52,9 @@
                         <hftl:formField label="#{messages['order.orderDate']}" field="orderDate" doNotShowOnNew="true" allowEdit="false" />
                         <hftl:formField label="#{messages['order.priority']}" field="priority" allowEdit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
                         <hftl:formField label="#{messages['order.category']}" field="category" allowEdit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
-
+						<hftl:formField label="#{messages['order.paymentMethod']}" field="paymentMethod" allowEdit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
+                        <hftl:formField label="#{messages['order.dueDateDelayEL']}" field="dueDateDelayEL" allowEdit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
+                        
                         <hftl:formField label="#{messages['order.receivedFromApp']}" field="receivedFromApp" edit="false" rendered="#{orderBean.entity.receivedFromApp!=null}" />
                         <hftl:formField label="#{messages['order.externalId']}" field="externalId" edit="false" rendered="#{orderBean.entity.receivedFromApp!=null}" />
 

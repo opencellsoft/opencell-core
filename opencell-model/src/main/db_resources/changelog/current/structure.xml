@@ -40,5 +40,14 @@
         </createTable>
         <sql>insert into dwh_chart_seq (select IFNULL(max(id),0)+1 from dwh_chart)</sql>
      </changeSet>
+     
+     <changeSet
+		id="#2408_20170623-Override payment method and due date delay in order"
+		author="EdwardLegaspi">
+		<addColumn tableName="ord_order">
+			<column name="due_date_delay_el" type="varchar(2000)" />
+			<column name="payment_method" type="varchar(20)" />
+		</addColumn>
+	</changeSet>
         
 </databaseChangeLog> 

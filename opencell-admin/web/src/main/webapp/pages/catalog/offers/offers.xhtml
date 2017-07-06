@@ -1,498 +1,447 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-	xmlns:f="http://xmlns.jcp.org/jsf/core"
-	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
-	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
-	xmlns:p="http://primefaces.org/ui"
-	xmlns:of="http://omnifaces.org/functions"
-	xmlns:o="http://omnifaces.org/ui" xmlns:s="http://jboss.org/seam/faces"
-	template="/layout/template.xhtml">
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
+                xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:of="http://omnifaces.org/functions"
+                xmlns:o="http://omnifaces.org/ui" xmlns:s="http://jboss.org/seam/faces"
+                template="/layout/template.xhtml">
 
-	<ui:define name="metadata">
-		<f:metadata>
-			<f:event type="preRenderView"
-				listener="#{offerTemplateListBean.preRenderView}" />
-			<f:viewParam name="tab" value="#{offerTemplateListBean.activeTab}" />
-		</f:metadata>
-	</ui:define>
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView"
+                     listener="#{offerTemplateListBean.preRenderView}"/>
+            <f:viewParam name="tab" value="#{offerTemplateListBean.activeTab}"/>
+        </f:metadata>
+    </ui:define>
 
-	<ui:define name="body">
-		<o:importConstants
-			type="org.meveo.model.catalog.ChargeTemplate.ChargeTypeEnum" />
+    <ui:define name="body">
+        <o:importConstants type="org.meveo.model.catalog.ChargeTemplate.ChargeTypeEnum"/>
 
-		<h:form id="crumbmenuForm">
-			<p:breadCrumb homeDisplay="text" id="crumbmenu">
-				<p:menuitem value="#{messages['menu.catalog']}" disabled="true"
-					styleClass="no-text-decoration" />
-				<p:menuitem value="#{messages['menu.offers']}" outcome="mm_offers" />
-			</p:breadCrumb>
-		</h:form>
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.catalog']}" disabled="true"
+                            styleClass="no-text-decoration"/>
+                <p:menuitem value="#{messages['menu.offers']}" outcome="mm_offers"/>
+            </p:breadCrumb>
+        </h:form>
 
-		<div class="ui-fluid">
-			<p:panel styleClass="no-border-radius">
-				<p:panel styleClass="Wid55 Responsive100">
-					<p:panelGrid id="left-controls" columns="2"
-						styleClass="ui-panelgrid-blank">
-						<p:panel id="top-button-container">
-							<h:form>
-								<ul class="list-unstyled">
-									<li class="button-item">
-										<div class="btn-wrapper">
-											<i class="fa fa-plus text-blue" />
-											<p:link styleClass="no-text-decoration"
-												outcome="mm_offerTemplates"
-												value=" #{messages['action.offer.create']}">
-												<f:param name="backView" value="mm_offers" />
-											</p:link>
-										</div> <!-- / btn-wrapper -->
-									</li>
-								</ul>
-							</h:form>
-						</p:panel>
+        <div class="ui-fluid">
+            <p:panel styleClass="no-border-radius">
+                <p:panel styleClass="Wid55 Responsive100">
+                    <p:panelGrid id="left-controls" columns="2"
+                                 styleClass="ui-panelgrid-blank">
+                        <p:panel id="top-button-container">
+                            <h:form>
+                                <ul class="list-unstyled">
+                                    <li class="button-item">
+                                        <div class="btn-wrapper">
+                                            <i class="fa fa-plus text-blue"/>
+                                            <p:link styleClass="no-text-decoration"
+                                                    outcome="mm_offerTemplates"
+                                                    value=" #{messages['action.offer.create']}">
+                                                <f:param name="backView" value="mm_offers"/>
+                                            </p:link>
+                                        </div> <!-- / btn-wrapper -->
+                                    </li>
+                                </ul>
+                            </h:form>
+                        </p:panel>
 
-						<p:panel id="top-details-container">
-							<ul class="list-unstyled">
-								<li><i class="fa fa-check-square-o text-blue" />
-									#{offerTemplateListBean.activeCount}
-									#{messages['page.catalog.offersAreActive']}</li>
-								<li><i class="fa fa-close text-blue" />
-									#{offerTemplateListBean.inactiveCount}
-									#{messages['page.catalog.offersAreDeactivated']}</li>
-								<li><i class="fa fa-exclamation-circle text-blue" />
-									#{offerTemplateListBean.almostExpiredCount}
-									#{messages['page.catalog.offersWillExpireSoon']}</li>
-							</ul>
-						</p:panel>
-					</p:panelGrid>
-				</p:panel>
-				<p:panel styleClass="Wid45 Responsive100 VAlignTop">
-					<h:panelGrid columns="2"
-						columnClasses="Wid60 VAlignTop, Wid40 VAlignTop"
-						styleClass="Wid90 Responsive100 FRight VAlignTop">
-						<p:panel>
-							<h:form>
-								<h:panelGrid
-									styleClass="VAlignTop Wid100 ui-panelgrid-blank NoPadding"
-									columnClasses="Wid95, Wid5" columns="2">
-									<p:inputText placeholder="#{messages['action.search']}"
-										value="#{offerTemplateListBean.filters['fullText']}" />
-									<p:commandLink styleClass="Padding3 fa fa-search"
-										update=":tabView" />
-								</h:panelGrid>
-								<!-- / search-wrapper -->
-							</h:form>
-						</p:panel>
-						<p:panel>
-							<p:panel columns="1" styleClass="export-panel no-border-radius"
-								id="offerForExportPanel">
-								<ul class="list-unstyled">
-									<li class="text-left"><p:commandLink
-											onclick="PF('exportableOffers').show();">
-											<i class="fa fa-share-square-o" />
-											<h:outputText
-												value=" #{offerTemplateListBean.selectedOfferTemplates.size()} #{messages['page.catalog.offersForExport']}" />
-										</p:commandLink></li>
-									<li class="text-left">
-										<div class="text-left">
-											<p:commandLink
-												update=":#{p:component('exportParametersDialog')}"
-												oncomplete="PF('exportParametersDialog').show()">
-												<i class="fa fa-play" />
-												<h:outputText value=" #{messages['page.catalog.exportTo']}" />
-												<f:setPropertyActionListener
-													target="#{entityExportImportBean.selectedExportTemplate}"
-													value="#{offerTemplateBean.getMarketingCatalogExportTemplate()}" />
-												<f:setPropertyActionListener
-													target="#{entityExportImportBean.dataModelToExport}"
-													value="#{offerTemplateListBean.listFromBOM()}" />
-												<f:setPropertyActionListener
-													target="#{entityExportImportBean.selectedEntitiesToExport}"
-													value="#{offerTemplateListBean.selectedOfferTemplates}" />
-											</p:commandLink>
-										</div>
-									</li>
-								</ul>
-							</p:panel>
-						</p:panel>
-					</h:panelGrid>
-				</p:panel>
+                        <p:panel id="top-details-container">
+                            <ul class="list-unstyled">
+                                <li><i class="fa fa-check-square-o text-blue"/>
+                                    #{offerTemplateListBean.activeCount}
+                                    #{messages['page.catalog.offersAreActive']}</li>
+                                <li><i class="fa fa-close text-blue"/>
+                                    #{offerTemplateListBean.inactiveCount}
+                                    #{messages['page.catalog.offersAreDeactivated']}</li>
+                                <li><i class="fa fa-exclamation-circle text-blue"/>
+                                    #{offerTemplateListBean.almostExpiredCount}
+                                    #{messages['page.catalog.offersWillExpireSoon']}</li>
+                            </ul>
+                        </p:panel>
+                    </p:panelGrid>
+                </p:panel>
+                <p:panel styleClass="Wid45 Responsive100 VAlignTop">
+                    <h:panelGrid columns="2"
+                                 columnClasses="Wid60 VAlignTop, Wid40 VAlignTop"
+                                 styleClass="Wid90 Responsive100 FRight VAlignTop">
+                        <p:panel>
+                            <h:form>
+                                <h:panelGrid
+                                        styleClass="VAlignTop Wid100 ui-panelgrid-blank NoPadding"
+                                        columnClasses="Wid95, Wid5" columns="2">
+                                    <p:inputText placeholder="#{messages['action.search']}"
+                                                 value="#{offerTemplateListBean.filters['fullText']}"/>
+                                    <p:commandLink styleClass="Padding3 fa fa-search" update=":tabView"/>
+                                </h:panelGrid>
+                                <!-- / search-wrapper -->
+                            </h:form>
+                        </p:panel>
+                        <p:panel>
+                            <p:panel columns="1" styleClass="export-panel no-border-radius"
+                                     id="offerForExportPanel">
+                                <ul class="list-unstyled">
+                                    <li class="text-left"><p:commandLink onclick="PF('exportableOffers').show();">
+                                        <i class="fa fa-share-square-o"/>
+                                        <h:outputText
+                                                value=" #{offerTemplateListBean.selectedOfferTemplates.size()} #{messages['page.catalog.offersForExport']}"/>
+                                    </p:commandLink></li>
+                                    <li class="text-left">
+                                        <div class="text-left">
+                                            <p:commandLink
+                                                    update=":#{p:component('exportParametersDialog')}"
+                                                    oncomplete="PF('exportParametersDialog').show()">
+                                                <i class="fa fa-play"/>
+                                                <h:outputText value=" #{messages['page.catalog.exportTo']}"/>
+                                                <f:setPropertyActionListener
+                                                        target="#{entityExportImportBean.selectedExportTemplate}"
+                                                        value="#{offerTemplateBean.getMarketingCatalogExportTemplate()}"/>
+                                                <f:setPropertyActionListener
+                                                        target="#{entityExportImportBean.dataModelToExport}"
+                                                        value="#{offerTemplateListBean.listFromBOM()}"/>
+                                                <f:setPropertyActionListener
+                                                        target="#{entityExportImportBean.selectedEntitiesToExport}"
+                                                        value="#{offerTemplateListBean.selectedOfferTemplates}"/>
+                                            </p:commandLink>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </p:panel>
+                        </p:panel>
+                    </h:panelGrid>
+                </p:panel>
 
-				<p:messages id="main_messages"></p:messages>
-				<p:tabView id="tabView"
-					activeIndex="#{offerTemplateListBean.activeTab}"
-					styleClass="no-border-radius offer-wrapper">
-					<p:tab
-						title="#{messages['marketingManager.catalog.view.detailed']}">
-						<h:form id="mainForm" styleClass="ui-fluid">
-							<p:dataGrid id="dataGrid"
-								value="#{offerTemplateListBean.listFromBOM()}" var="entity"
-								paginator="true" rows="10" columns="1" layout="grid"
-								paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-								lazy="true" styleClass="dataGrid custom-grid ui-datagrid-blank"
-								rowsPerPageTemplate="10,15,20,50">
-								<p:panel styleClass="Wid40 Responsive100 VAlignTop">
-									<p:panelGrid id="offer-info" columns="3"
-										styleClass="panelGrid ui-panelgrid-blank"
-										columnClasses="Wid10 Responsive100, Wid60 Responsive100, Wid30 Responsive100">
+                <p:messages id="main_messages"></p:messages>
+                <p:tabView id="tabView"
+                           activeIndex="#{offerTemplateListBean.activeTab}"
+                           styleClass="no-border-radius offer-wrapper">
+                    <p:tab
+                            title="#{messages['marketingManager.catalog.view.detailed']}">
+                        <h:form id="mainForm" styleClass="ui-fluid">
+                            <p:dataGrid id="dataGrid"
+                                        value="#{offerTemplateListBean.listFromBOM()}" var="entity"
+                                        paginator="true" rows="10" columns="1" layout="grid"
+                                        paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                        lazy="true" styleClass="dataGrid custom-grid ui-datagrid-blank"
+                                        rowsPerPageTemplate="10,15,20,50">
+                                <p:panel styleClass="Wid40 Responsive100 VAlignTop">
+                                    <p:panelGrid id="offer-info" columns="3"
+                                                 styleClass="panelGrid ui-panelgrid-blank"
+                                                 columnClasses="Wid10 Responsive100, Wid60 Responsive100, Wid30 Responsive100">
 
-										<p:panel>
-											<p:graphicImage value="#{defaultImageStreamer.image}"
-												cache="false" width="100" height="100">
-												<f:param name="providerCode" value="#{appProvider.code}" />
-												<f:param name="fileName" value="#{entity.imagePath}" />
-												<f:param name="pictureGroupName" value="offer" />
-											</p:graphicImage>
-										</p:panel>
+                                        <p:panel>
+                                            <p:graphicImage value="#{defaultImageStreamer.image}"
+                                                            cache="false" width="100" height="100">
+                                                <f:param name="providerCode" value="#{appProvider.code}"/>
+                                                <f:param name="fileName" value="#{entity.imagePath}"/>
+                                                <f:param name="pictureGroupName" value="offer"/>
+                                            </p:graphicImage>
+                                        </p:panel>
 
-										<p:panel>
-											<p>
-												<h:outputText id="nameOrCode" styleClass="FontBold"
-													value="#{of:abbreviate(entity.nameOrCode, 25)}"
-													title="#{entity.nameOrCode}" />
-											</p>
-											<p>
-												<ui:repeat
-													value="#{entity.offerTemplateCategories.toArray()}" var="c"
-													varStatus="status">
-													<c:set var="valueLabel" value="#{c}" />
-													<c:set var="valueLabel"
-														value="#{valueLabel['descriptionOrCode']}" />
-													<h:outputText value="#{valueLabel}" />
-													<h:outputText value=", " rendered="#{not status.last}" />
-												</ui:repeat>
-											</p>
-											<p:panelGrid columns="1">
-												<p:panelGrid columns="1"
-													rendered="#{entity.validityRaw != null}">
+                                        <p:panel>
+                                            <p>
+                                                <h:outputText id="nameOrCode" styleClass="FontBold" value="#{of:abbreviate(entity.nameOrCode, 25)}" title="#{entity.nameOrCode}"/>
+                                            </p>
+                                            <p>
+                                                <ui:repeat
+                                                        value="#{entity.offerTemplateCategories.toArray()}" var="c"
+                                                        varStatus="status">
+                                                    <c:set var="valueLabel" value="#{c}"/>
+                                                    <c:set var="valueLabel"
+                                                           value="#{valueLabel['descriptionOrCode']}"/>
+                                                    <h:outputText value="#{valueLabel}"/>
+                                                    <h:outputText value=", " rendered="#{not status.last}"/>
+                                                </ui:repeat>
+                                            </p>
+                                            <p:panelGrid columns="1">
+                                                <p:panelGrid columns="1" rendered="#{entity.validityRaw != null}">
 													<h:outputText value="#{messages['commons.valid']}: " />
 													<h:panelGroup>
 														<h:outputText value="#{entity.validityRaw.from}">
-															<f:convertDateTime type="date"
-																pattern="#{paramBean.dateFormat}" />
+															<f:convertDateTime type="date" pattern="#{paramBean.dateFormat}" />
 														</h:outputText>
 														<h:outputText value="-" style="padding:5px" />
 														<h:outputText value="#{entity.validityRaw.to}">
-															<f:convertDateTime type="date"
-																pattern="#{paramBean.dateFormat}" />
+															<f:convertDateTime type="date" pattern="#{paramBean.dateFormat}" />
 														</h:outputText>
 													</h:panelGroup>
 												</p:panelGrid>
-											</p:panelGrid>
-										</p:panel>
+                                            </p:panelGrid>
+                                        </p:panel>
 
-										<p:panel>
-											<p:outputPanel>
-												<p:panel styleClass="switch-wrapper">
-													<h:outputText value="#{messages['commons.status']}: " />
-													<h:outputText
-														value="#{entity.lifeCycleStatus ne null ? messages[of:concat('enum.LifeCycleStatusEnum.', entity.lifeCycleStatus)] : ''}"
-														styleClass="field-value #{offerTemplateBean.displayStatus(entity) ? 'GreenDark' : 'GrayDark'}" />
-												</p:panel>
-											</p:outputPanel>
-											<p:panel style="width: 150px;">
-												<ul class="list-inline">
-													<li><p:link id="viewLink"
-															outcome="mm_offerTemplateDetail"
-															styleClass="fa fa-search-plus no-text-decoration text-blue fa-2x"
-															title="#{messages['action.view']}">
-															<f:param name="cid"
-																value="#{javax.enterprise.context.conversation.id}" />
-															<f:param name="objectId" value="#{entity.id}" />
-															<f:param name="edit" value="false" />
-															<f:param name="backView" value="mm_offers" />
-															<f:param name="tab" value="0" />
+                                        <p:panel>
+                                            <p:outputPanel>
+                                                <p:panel styleClass="switch-wrapper">
+                                                    <h:outputText value="#{messages['commons.status']}: "/>
+                                                    <h:outputText
+                                                            value="#{entity.lifeCycleStatus ne null ? messages[of:concat('enum.LifeCycleStatusEnum.', entity.lifeCycleStatus)] : ''}"
+                                                            styleClass="field-value #{offerTemplateBean.displayStatus(entity) ? 'GreenDark' : 'GrayDark'}"/>
+                                                </p:panel>
+                                            </p:outputPanel>
+                                            <p:panel style="width: 150px;">
+                                                <ul class="list-inline">
+                                                    <li><p:link id="viewLink"
+                                                                outcome="mm_offerTemplateDetail"
+                                                                styleClass="fa fa-search-plus no-text-decoration text-blue fa-2x" title="#{messages['action.view']}">
+                                                        <f:param name="cid" value="#{javax.enterprise.context.conversation.id}"/>
+                                                        <f:param name="objectId" value="#{entity.id}"/>
+                                                        <f:param name="edit" value="false"/>
+                                                        <f:param name="backView" value="mm_offers"/>
+                                                        <f:param name="tab" value="0"/>
+                                                    </p:link></li>
+                                                    <li><p:link id="editLink"
+                                                                styleClass="fa fa-edit no-text-decoration text-blue fa-2x"
+                                                                outcome="mm_offerTemplateDetail" title="#{messages['action.edit']}">
+                                                        <f:param name="cid" value="#{javax.enterprise.context.conversation.id}"/>
+                                                        <f:param name="objectId" value="#{entity.id}"/>
+                                                        <f:param name="edit" value="true"/>
+                                                        <f:param name="backView" value="mm_offers"/>
+                                                        <f:param name="tab" value="0"/>
+                                                    </p:link></li>
+<!--                                                     <li><p:commandLink id="duplicateLink" -->
+<!--                                                                        action="#{offerTemplateListBean.duplicateCatalogHierarchy()}" -->
+<!--                                                                        update=":tabView" -->
+<!--                                                                        styleClass="fa fa-copy fa-2x no-text-decoration text-blue"> -->
+<!--                                                         <f:setPropertyActionListener value="#{entity}" target="#{offerTemplateListBean.entity}"/> -->
+<!--                                                         <f:param name="tab" value="0"/> -->
+<!--                                                         <p:confirm header="#{messages['commons.duplicate']}" -->
+<!--                                                                    message="#{messages['commons.confirmDuplicate']}"/> -->
+<!--                                                     </p:commandLink></li> -->
+                                                    <li><p:link id="newVersionLink" title="#{messages['commons.newVersion']}"
+                                                                styleClass="fa fa-copy no-text-decoration text-blue fa-2x"
+                                                                outcome="mm_offerTemplateDetail">
+                                                        <f:param name="cid" value="#{javax.enterprise.context.conversation.id}"/>
+                                                        <f:param name="objectId" value="#{entity.id}"/>
+                                                        <f:param name="edit" value="true"/>
+                                                        <f:param name="backView" value="mm_offers"/>
+                                                        <f:param name="tab" value="0"/>                                                        
+                                                        <f:param name="newVersion" value="true" />
 														</p:link></li>
-													<li><p:link id="editLink"
-															styleClass="fa fa-edit no-text-decoration text-blue fa-2x"
-															outcome="mm_offerTemplateDetail"
-															title="#{messages['action.edit']}">
-															<f:param name="cid"
-																value="#{javax.enterprise.context.conversation.id}" />
-															<f:param name="objectId" value="#{entity.id}" />
-															<f:param name="edit" value="true" />
-															<f:param name="backView" value="mm_offers" />
-															<f:param name="tab" value="0" />
-														</p:link></li>
-													<!--                                                     <li><p:commandLink id="duplicateLink" -->
-													<!--                                                                        action="#{offerTemplateListBean.duplicateCatalogHierarchy()}" -->
-													<!--                                                                        update=":tabView" -->
-													<!--                                                                        styleClass="fa fa-copy fa-2x no-text-decoration text-blue"> -->
-													<!--                                                         <f:setPropertyActionListener value="#{entity}" target="#{offerTemplateListBean.entity}"/> -->
-													<!--                                                         <f:param name="tab" value="0"/> -->
-													<!--                                                         <p:confirm header="#{messages['commons.duplicate']}" -->
-													<!--                                                                    message="#{messages['commons.confirmDuplicate']}"/> -->
-													<!--                                                     </p:commandLink></li> -->
-													<li><p:link id="newVersionLink"
-															title="#{messages['commons.newVersion']}"
-															styleClass="fa fa-calendar no-text-decoration text-blue fa-2x"
-															outcome="mm_offerTemplateDetail">
-															<f:param name="cid"
-																value="#{javax.enterprise.context.conversation.id}" />
-															<f:param name="objectId" value="#{entity.id}" />
-															<f:param name="edit" value="true" />
-															<f:param name="backView" value="mm_offers" />
-															<f:param name="tab" value="0" />
-															<f:param name="newVersion" value="true" />
-														</p:link></li>
-													<li><p:link id="duplicate"
-															title="#{messages['commons.duplicate']}"
-															styleClass="fa fa-copy no-text-decoration text-blue fa-2x"
-															outcome="mm_offerTemplateDetail">
-															<f:param name="cid"
-																value="#{javax.enterprise.context.conversation.id}" />
-															<f:param name="objectId" value="#{entity.id}" />
-															<f:param name="edit" value="true" />
-															<f:param name="backView" value="mm_offers" />
-															<f:param name="tab" value="0" />
-															<f:param name="newVersion" value="false" />
-															<f:param name="duplicateOffer" value="true" />
-														</p:link></li>
-													<li><p:commandLink id="addToExportLink"
-															styleClass="fa fa-share-square-o text-blue fa-2x"
-															update=":offerForExportPanel :dlgOfferExport"
-															action="#{offerTemplateListBean.addForExport(entity)}"
-															title="#{messages['action.export']}">
-														</p:commandLink></li>
+                                                    <li><p:commandLink id="addToExportLink"
+                                                                       styleClass="fa fa-share-square-o text-blue fa-2x"
+                                                                       update=":offerForExportPanel :dlgOfferExport"
+                                                                       action="#{offerTemplateListBean.addForExport(entity)}" title="#{messages['action.export']}">
+                                                    </p:commandLink></li>
+                                                    
+                                                     <li><p:commandLink id="deleteLink"
+                                                                       styleClass="fa fa-trash-o text-blue fa-2x"
+                                                                       update=":tabView"
+                                                                       action="#{offerTemplateListBean.deleteCatalogHierarchy(entity)}" title="#{messages['action.delete']}" rendered="#{!offerTemplateListBean.isUsedInSubscription(entity)}">
+                                                        <f:param name="tab" value="0"/>
+                                                        <p:confirm header="#{messages['commons.delete']}"
+                                                                   message="#{messages['commons.confirmDelete']}"/>
+                                                    </p:commandLink></li>
+                                                    
+                                                </ul>
+                                            </p:panel>
+                                        </p:panel>
+                                    </p:panelGrid>
+                                </p:panel>
 
-													<li><p:commandLink id="deleteLink"
-															styleClass="fa fa-trash-o text-blue fa-2x"
-															update=":tabView"
-															action="#{offerTemplateListBean.deleteCatalogHierarchy(entity)}"
-															title="#{messages['action.delete']}"
-															rendered="#{!offerTemplateListBean.isUsedInSubscription(entity)}">
-															<f:param name="tab" value="0" />
-															<p:confirm header="#{messages['commons.delete']}"
-																message="#{messages['commons.confirmDelete']}" />
-														</p:commandLink></li>
+                                <p:panel styleClass="VAlignTop Wid60 Responsive100">
+                                    <p:panel
+                                            styleClass="Wid25 Responsive100 VAlignTop no-border-radius">
+                                        <f:facet name="header">
+                                            <h:outputText
+                                                    value="#{messages['marketingManager.catalog.OneTimeFee']}"
+                                                    rendered="#{entity.serviceTemplatesByChargeType[ChargeTypeEnum.SUBSCRIPTION]!=null}"/>
+                                        </f:facet>
 
-												</ul>
-											</p:panel>
-										</p:panel>
-									</p:panelGrid>
-								</p:panel>
+                                        <p:dataList styleClass="dataList" paginatorPosition="bottom"
+                                                    paginatorAlwaysVisible="false"
+                                                    value="#{entity.serviceTemplatesByChargeType[ChargeTypeEnum.SUBSCRIPTION]}"
+                                                    var="service" type="ordered"
+                                                    rendered="#{entity.serviceTemplatesByChargeType[ChargeTypeEnum.SUBSCRIPTION]!=null}">
+                                            <h:outputText value="#{service.descriptionOrCode}"
+                                                          styleClass="text-bold"/>
+                                            <h:panelGroup layout="block">
+                                                <ul class="no-list-style">
+                                                    <ui:repeat var="charge"
+                                                               value="#{service.serviceSubscriptionCharges}">
+                                                        <li><h:outputText
+                                                                value="#{charge.chargeTemplate.descriptionOrCode}"/></li>
+                                                    </ui:repeat>
+                                                </ul>
+                                            </h:panelGroup>
+                                        </p:dataList>
+                                    </p:panel>
+                                    <p:panel
+                                            styleClass="Wid25 Responsive100 VAlignTop no-border-radius">
+                                        <f:facet name="header">
+                                            <h:outputText
+                                                    value="#{messages['marketingManager.catalog.recurringFee']}"
+                                                    rendered="#{entity.serviceTemplatesByChargeType[ChargeTypeEnum.RECURRING]!=null}"/>
+                                        </f:facet>
+                                        <p:dataList styleClass="dataList" paginatorPosition="bottom"
+                                                    paginatorAlwaysVisible="false"
+                                                    value="#{entity.serviceTemplatesByChargeType[ChargeTypeEnum.RECURRING]}"
+                                                    var="service" type="ordered"
+                                                    rendered="#{entity.serviceTemplatesByChargeType[ChargeTypeEnum.RECURRING]!=null}">
+                                            <h:outputText value="#{service.descriptionOrCode}"
+                                                          styleClass="text-bold"/>
+                                            <h:panelGroup layout="block">
+                                                <ul class="no-list-style">
+                                                    <ui:repeat var="charge"
+                                                               value="#{service.serviceRecurringCharges}">
+                                                        <li><h:outputText
+                                                                value="#{charge.chargeTemplate.descriptionOrCode}"/></li>
+                                                    </ui:repeat>
+                                                </ul>
+                                            </h:panelGroup>
+                                        </p:dataList>
+                                    </p:panel>
+                                    <p:panel
+                                            styleClass="Wid25 Responsive100 VAlignTop no-border-radius">
+                                        <f:facet name="header">
+                                            <h:outputText
+                                                    value="#{messages['marketingManager.catalog.usageFee']}"
+                                                    rendered="#{entity.serviceTemplatesByChargeType[ChargeTypeEnum.USAGE]!=null}"/>
+                                        </f:facet>
+                                        <p:dataList styleClass="dataList" paginatorPosition="bottom"
+                                                    paginatorAlwaysVisible="false"
+                                                    value="#{entity.serviceTemplatesByChargeType[ChargeTypeEnum.USAGE]}"
+                                                    var="service" type="ordered"
+                                                    rendered="#{entity.serviceTemplatesByChargeType[ChargeTypeEnum.USAGE]!=null}">
+                                            <h:outputText value="#{service.descriptionOrCode}"
+                                                          styleClass="text-bold"/>
+                                            <h:panelGroup layout="block">
+                                                <ul class="no-list-style">
+                                                    <ui:repeat var="charge"
+                                                               value="#{service.serviceUsageCharges}">
+                                                        <li><h:outputText
+                                                                value="#{charge.chargeTemplate.descriptionOrCode}"/></li>
+                                                    </ui:repeat>
+                                                </ul>
+                                            </h:panelGroup>
+                                        </p:dataList>
+                                    </p:panel>
+                                    <p:panel
+                                            styleClass="Wid20 Responsive100 VAlignTop no-border-radius">
+                                        <f:facet name="header">
+                                            <h:outputText
+                                                    value="#{messages['menu.productTemplates']}"
+                                                    rendered="#{entity.productTemplates!=null and entity.productTemplates.size()!=0}"/>
+                                        </f:facet>
+                                        <p:dataList styleClass="dataList" paginatorPosition="bottom"
+                                                    paginatorAlwaysVisible="false"
+                                                    value="#{entity.productTemplates}"
+                                                    var="prod" type="ordered"
+                                                    rendered="#{entity.productTemplates!=null and entity.productTemplates.size()!=0}">
+                                            <h:outputText value="#{prod.descriptionOrCode}"
+                                                          styleClass="text-bold"/>
+                                            <h:panelGroup layout="block">
+                                                <ul class="no-list-style">
+                                                    <ui:repeat var="charge"
+                                                               value="#{prod.productChargeTemplates}">
+                                                        <li><h:outputText value="#{charge.descriptionOrCode}"/></li>
+                                                    </ui:repeat>
+                                                </ul>
+                                            </h:panelGroup>
+                                        </p:dataList>
+                                    </p:panel>
+                                </p:panel>
+                            </p:dataGrid>
+                        </h:form>
+                    </p:tab>
+                    
 
-								<p:panel styleClass="VAlignTop Wid60 Responsive100">
-									<p:panel
-										styleClass="Wid25 Responsive100 VAlignTop no-border-radius">
-										<f:facet name="header">
-											<h:outputText
-												value="#{messages['marketingManager.catalog.OneTimeFee']}"
-												rendered="#{entity.serviceTemplatesByChargeType[ChargeTypeEnum.SUBSCRIPTION]!=null}" />
-										</f:facet>
+                    <p:tab id="tab1"
+                           title="#{messages['marketingManager.catalog.view.condensed']}">
+                        <hftl:dataList id="dataList"
+                                       backingBean="#{offerTemplateListBean}"
+                                       dataModel="#{offerTemplateListBean.listFromBOM()}"
+                                       checkMany="false" exportToCsv="false" exportToXml="false"
+                                       exportXlsxButton="false" sortOrder="DESCENDING"
+                                       styleClass="DataListCenter">
+ 							
+  							<hftl:column label="#{messages['commons.nameOrCode']}"
+                                         field="name">
+  							 </hftl:column>
+                            <hftl:column label="#{messages['commons.category']}"
+                                         field="offerTemplateCategories" isList="true"
+                                         valueLabelField="description">
+                            </hftl:column>
+                            <hftl:column label="#{messages['commons.validFrom']}"
+                                         field="validity.from" isDate="true">
+                            </hftl:column>
+                            <hftl:column label="#{messages['commons.validTo']}"
+                                         field="validity.to" isDate="true">
+                            </hftl:column>
+                            <p:column>
+                                <f:facet name="header">#{messages['commons.status']}</f:facet>
+                                <h:outputText
+                                        value="#{entity.lifeCycleStatus ne null ? messages[of:concat('enum.LifeCycleStatusEnum.', entity.lifeCycleStatus)] : ''}"
+                                        styleClass="field-value #{offerTemplateBean.displayStatus(entity) ? 'GreenDark' : 'GrayDark'}"/>
+                            </p:column>
+                            <p:column headerText="#{messages['commons.actions']}">
+                                <p:link outcome="mm_offerTemplateDetail"
+                                        styleClass="Padding5 fa fa-search-plus no-text-decoration fa-2x text-blue">
+                                    <f:param name="cid"
+                                             value="#{javax.enterprise.context.conversation.id}"/>
+                                    <f:param name="objectId" value="#{entity.id}"></f:param>
+                                    <f:param name="edit" value="false"></f:param>
+                                    <f:param name="backView" value="mm_offers"></f:param>
+                                    <f:param name="tab" value="1"></f:param>
+                                </p:link>
+                                <p:link
+                                        styleClass="Padding5 fa fa-edit no-text-decoration fa-2x text-blue"
+                                        outcome="mm_offerTemplateDetail">
+                                    <f:param name="cid"
+                                             value="#{javax.enterprise.context.conversation.id}"/>
+                                    <f:param name="objectId" value="#{entity.id}"></f:param>
+                                    <f:param name="edit" value="true"></f:param>
+                                    <f:param name="backView" value="mm_offers"></f:param>
+                                    <f:param name="tab" value="1"></f:param>
+                                </p:link>
+                                <p:commandLink action="#{offerTemplateListBean.duplicateCatalogHierarchy()}"
+                                               update=":tabView"
+                                               styleClass="Padding5">
+									<i class="fa fa-copy no-text-decoration text-blue fa-2x" />
+									<f:setPropertyActionListener
+                                            target="#{offerTemplateListBean.entity}" value="#{entity}"/>
+                                    <f:param name="tab" value="1"></f:param>
+                                    <p:confirm header="#{messages['commons.duplicate']}"
+                                               message="#{messages['commons.confirmDuplicate']}"/>
+                                </p:commandLink>
+                                <p:commandLink
+                                        styleClass="Padding5"
+                                        update=":offerForExportPanel :dlgOfferExport"
+                                        action="#{offerTemplateListBean.addForExport(entity)}">
+                                        <i class="fa fa-share-square-o no-text-decoration fa-2x text-blue" />
+                                </p:commandLink>
+                            </p:column>
+                        </hftl:dataList>
+                    </p:tab>
+                </p:tabView>
 
-										<p:dataList styleClass="dataList" paginatorPosition="bottom"
-											paginatorAlwaysVisible="false"
-											value="#{entity.serviceTemplatesByChargeType[ChargeTypeEnum.SUBSCRIPTION]}"
-											var="service" type="ordered"
-											rendered="#{entity.serviceTemplatesByChargeType[ChargeTypeEnum.SUBSCRIPTION]!=null}">
-											<h:outputText value="#{service.descriptionOrCode}"
-												styleClass="text-bold" />
-											<h:panelGroup layout="block">
-												<ul class="no-list-style">
-													<ui:repeat var="charge"
-														value="#{service.serviceSubscriptionCharges}">
-														<li><h:outputText
-																value="#{charge.chargeTemplate.descriptionOrCode}" /></li>
-													</ui:repeat>
-												</ul>
-											</h:panelGroup>
-										</p:dataList>
-									</p:panel>
-									<p:panel
-										styleClass="Wid25 Responsive100 VAlignTop no-border-radius">
-										<f:facet name="header">
-											<h:outputText
-												value="#{messages['marketingManager.catalog.recurringFee']}"
-												rendered="#{entity.serviceTemplatesByChargeType[ChargeTypeEnum.RECURRING]!=null}" />
-										</f:facet>
-										<p:dataList styleClass="dataList" paginatorPosition="bottom"
-											paginatorAlwaysVisible="false"
-											value="#{entity.serviceTemplatesByChargeType[ChargeTypeEnum.RECURRING]}"
-											var="service" type="ordered"
-											rendered="#{entity.serviceTemplatesByChargeType[ChargeTypeEnum.RECURRING]!=null}">
-											<h:outputText value="#{service.descriptionOrCode}"
-												styleClass="text-bold" />
-											<h:panelGroup layout="block">
-												<ul class="no-list-style">
-													<ui:repeat var="charge"
-														value="#{service.serviceRecurringCharges}">
-														<li><h:outputText
-																value="#{charge.chargeTemplate.descriptionOrCode}" /></li>
-													</ui:repeat>
-												</ul>
-											</h:panelGroup>
-										</p:dataList>
-									</p:panel>
-									<p:panel
-										styleClass="Wid25 Responsive100 VAlignTop no-border-radius">
-										<f:facet name="header">
-											<h:outputText
-												value="#{messages['marketingManager.catalog.usageFee']}"
-												rendered="#{entity.serviceTemplatesByChargeType[ChargeTypeEnum.USAGE]!=null}" />
-										</f:facet>
-										<p:dataList styleClass="dataList" paginatorPosition="bottom"
-											paginatorAlwaysVisible="false"
-											value="#{entity.serviceTemplatesByChargeType[ChargeTypeEnum.USAGE]}"
-											var="service" type="ordered"
-											rendered="#{entity.serviceTemplatesByChargeType[ChargeTypeEnum.USAGE]!=null}">
-											<h:outputText value="#{service.descriptionOrCode}"
-												styleClass="text-bold" />
-											<h:panelGroup layout="block">
-												<ul class="no-list-style">
-													<ui:repeat var="charge"
-														value="#{service.serviceUsageCharges}">
-														<li><h:outputText
-																value="#{charge.chargeTemplate.descriptionOrCode}" /></li>
-													</ui:repeat>
-												</ul>
-											</h:panelGroup>
-										</p:dataList>
-									</p:panel>
-									<p:panel
-										styleClass="Wid20 Responsive100 VAlignTop no-border-radius">
-										<f:facet name="header">
-											<h:outputText value="#{messages['menu.productTemplates']}"
-												rendered="#{entity.productTemplates!=null and entity.productTemplates.size()!=0}" />
-										</f:facet>
-										<p:dataList styleClass="dataList" paginatorPosition="bottom"
-											paginatorAlwaysVisible="false"
-											value="#{entity.productTemplates}" var="prod" type="ordered"
-											rendered="#{entity.productTemplates!=null and entity.productTemplates.size()!=0}">
-											<h:outputText value="#{prod.descriptionOrCode}"
-												styleClass="text-bold" />
-											<h:panelGroup layout="block">
-												<ul class="no-list-style">
-													<ui:repeat var="charge"
-														value="#{prod.productChargeTemplates}">
-														<li><h:outputText value="#{charge.descriptionOrCode}" /></li>
-													</ui:repeat>
-												</ul>
-											</h:panelGroup>
-										</p:dataList>
-									</p:panel>
-								</p:panel>
-							</p:dataGrid>
-						</h:form>
-					</p:tab>
+            </p:panel>
+        </div>
 
-					<p:tab id="tab1"
-						title="#{messages['marketingManager.catalog.view.condensed']}">
+        <hftl:exportToXmlDialogs messagesId=":#{p:component('main_messages')}"/>
 
-						<hftl:dataList id="dataList"
-							backingBean="#{offerTemplateListBean}"
-							dataModel="#{offerTemplateListBean.listFromBOM()}"
-							checkMany="false" exportToCsv="false" exportToXml="false"
-							exportXlsxButton="false" sortOrder="DESCENDING"
-							styleClass="DataListCenter">
-							<hftl:column label="#{messages['commons.nameOrCode']}"
-								field="nameOrCode">
-							</hftl:column>
-							<hftl:column label="#{messages['commons.category']}"
-								field="offerTemplateCategories" isList="true"
-								valueLabelField="descriptionOrCode">
-							</hftl:column>
-							<hftl:column label="#{messages['commons.validFrom']}"
-								field="validityRaw.from" isDate="true">
-							</hftl:column>
-							<hftl:column label="#{messages['commons.validTo']}"
-								field="validityRaw.to" isDate="true">
-							</hftl:column>
-							<p:column>
-								<f:facet name="header">#{messages['commons.status']}</f:facet>
-								<h:outputText
-									value="#{entity.lifeCycleStatus ne null ? messages[of:concat('enum.LifeCycleStatusEnum.', entity.lifeCycleStatus)] : ''}"
-									styleClass="field-value #{offerTemplateBean.displayStatus(entity) ? 'GreenDark' : 'GrayDark'}" />
-							</p:column>
-							<p:column headerText="#{messages['commons.actions']}">
-								<p:link outcome="mm_offerTemplateDetail"
-									styleClass="Padding5 fa fa-search-plus no-text-decoration fa-2x text-blue">
-									<f:param name="cid"
-										value="#{javax.enterprise.context.conversation.id}" />
-									<f:param name="objectId" value="#{entity.id}"></f:param>
-									<f:param name="edit" value="false"></f:param>
-									<f:param name="backView" value="mm_offers"></f:param>
-									<f:param name="tab" value="1"></f:param>
-								</p:link>
-								<p:link
-									styleClass="Padding5 fa fa-edit no-text-decoration fa-2x text-blue"
-									outcome="mm_offerTemplateDetail">
-									<f:param name="cid"
-										value="#{javax.enterprise.context.conversation.id}" />
-									<f:param name="objectId" value="#{entity.id}"></f:param>
-									<f:param name="edit" value="true"></f:param>
-									<f:param name="backView" value="mm_offers"></f:param>
-									<f:param name="tab" value="1"></f:param>
-								</p:link>
-								<!--                                 <p:commandLink action="#{offerTemplateListBean.duplicateCatalogHierarchy()}" -->
-								<!--                                                update=":tabView" -->
-								<!--                                                styleClass="Padding5"> -->
-								<!-- 									<i class="fa fa-copy no-text-decoration text-blue fa-2x" /> -->
-								<!-- 									<f:setPropertyActionListener -->
-								<!--                                             target="#{offerTemplateListBean.entity}" value="#{entity}"/> -->
-								<!--                                     <f:param name="tab" value="1"></f:param> -->
-								<!--                                     <p:confirm header="#{messages['commons.duplicate']}" -->
-								<!--                                                message="#{messages['commons.confirmDuplicate']}"/> -->
-								<!--                                 </p:commandLink> -->
-								<p:link id="newVersionLink"
-									title="#{messages['commons.newVersion']}"
-									styleClass="fa fa-calendar no-text-decoration text-blue fa-2x"
-									outcome="mm_offerTemplateDetail">
-									<f:param name="cid"
-										value="#{javax.enterprise.context.conversation.id}" />
-									<f:param name="objectId" value="#{entity.id}" />
-									<f:param name="edit" value="true" />
-									<f:param name="backView" value="mm_offers" />
-									<f:param name="tab" value="0" />
-									<f:param name="newVersion" value="true" />
-								</p:link>
-								<p:link id="duplicate" title="#{messages['commons.duplicate']}"
-									styleClass="fa fa-copy no-text-decoration text-blue fa-2x Padding5"
-									outcome="mm_offerTemplateDetail">
-									<f:param name="cid"
-										value="#{javax.enterprise.context.conversation.id}" />
-									<f:param name="objectId" value="#{entity.id}" />
-									<f:param name="edit" value="true" />
-									<f:param name="backView" value="mm_offers" />
-									<f:param name="tab" value="0" />
-									<f:param name="newVersion" value="false" />
-									<f:param name="duplicateOffer" value="true" />
-								</p:link>
-								<p:commandLink styleClass="Padding5"
-									update=":offerForExportPanel :dlgOfferExport"
-									action="#{offerTemplateListBean.addForExport(entity)}">
-									<i
-										class="fa fa-share-square-o no-text-decoration fa-2x text-blue" />
-								</p:commandLink>
-							</p:column>
-						</hftl:dataList>
-					</p:tab>
-				</p:tabView>
+        <p:dialog header="#{messages['offerTemplates']}"
+                  widgetVar="exportableOffers" minHeight="40" width="800"
+                  dynamic="true" modal="true" appendTo="@(body)">
+            <h:form id="dlgOfferExport">
+                <p:dataTable id="offers" reflow="true"
+                             value="#{offerTemplateListBean.selectedOfferTemplates}" var="e">
+                    <p:column headerText="#{messages['offerTemplate.name']}">#{e.name}</p:column>
+                    <p:column headerText="#{messages['BusinessEntity.code']}">#{e.code}</p:column>
+                    <p:column headerText="#{messages['BusinessEntity.description']}">#{e.description}</p:column>
+                    <p:column>
+                        <p:commandButton icon="fa fa-close"
+                                         title="#{messages['button.closeButton']}"
+                                         update="dlgOfferExport :offerForExportPanel"
+                                         action="#{offerTemplateListBean.deleteForExport(e)}">
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </p:dialog>
 
-			</p:panel>
-		</div>
-
-		<hftl:exportToXmlDialogs messagesId=":#{p:component('main_messages')}" />
-
-		<p:dialog header="#{messages['offerTemplates']}"
-			widgetVar="exportableOffers" minHeight="40" width="800"
-			dynamic="true" modal="true" appendTo="@(body)">
-			<h:form id="dlgOfferExport">
-				<p:dataTable id="offers" reflow="true"
-					value="#{offerTemplateListBean.selectedOfferTemplates}" var="e">
-					<p:column headerText="#{messages['offerTemplate.name']}">#{e.name}</p:column>
-					<p:column headerText="#{messages['BusinessEntity.code']}">#{e.code}</p:column>
-					<p:column headerText="#{messages['BusinessEntity.description']}">#{e.description}</p:column>
-					<p:column>
-						<p:commandButton icon="fa fa-close"
-							title="#{messages['button.closeButton']}"
-							update="dlgOfferExport :offerForExportPanel"
-							action="#{offerTemplateListBean.deleteForExport(e)}">
-						</p:commandButton>
-					</p:column>
-				</p:dataTable>
-			</h:form>
-		</p:dialog>
-
-	</ui:define>
+    </ui:define>
 </ui:composition>

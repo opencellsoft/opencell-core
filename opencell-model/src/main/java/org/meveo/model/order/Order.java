@@ -32,6 +32,7 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.Address;
 
 @Entity
@@ -139,6 +140,14 @@ public class Order extends BusinessCFEntity {
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "orders")
     private List<Invoice> invoices = new ArrayList<Invoice>();
+    
+    @Column(name = "DUE_DATE_DELAY_EL", length = 2000)
+	@Size(max = 2000)
+	private String dueDateDelayEL;
+    
+    @Column(name = "PAYMENT_METHOD", length = 20)
+	@Enumerated(EnumType.STRING)
+	private PaymentMethodEnum paymentMethod;
 
     public String getExternalId() {
         return externalId;
@@ -300,5 +309,21 @@ public class Order extends BusinessCFEntity {
     	}
     	return null;
     }
+
+	public String getDueDateDelayEL() {
+		return dueDateDelayEL;
+	}
+
+	public void setDueDateDelayEL(String dueDateDelayEL) {
+		this.dueDateDelayEL = dueDateDelayEL;
+	}
+
+	public PaymentMethodEnum getPaymentMethod() {
+		return paymentMethod;
+	}
+
+	public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
+		this.paymentMethod = paymentMethod;
+	}
     
 }
