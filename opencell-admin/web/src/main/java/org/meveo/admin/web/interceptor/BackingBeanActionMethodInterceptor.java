@@ -13,6 +13,7 @@ import javax.persistence.TransactionRequiredException;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.exception.BusinessException;
@@ -99,6 +100,8 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
             if (validation && message != null) {
                 messages.error(message);
             } else {
+            	message = StringEscapeUtils.escapeJava(message);
+            	message = message.replace("$", "\\$");
                 messages.error(new BundleKey("messages", "error.action.failed"), message == null ? e.getClass().getSimpleName() : message);
             }
             FacesContext.getCurrentInstance().validationFailed();
