@@ -18,6 +18,7 @@
  */
 package org.meveo.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -32,9 +33,11 @@ import org.meveo.model.shared.DateUtils;
  * @created 2009.10.20
  */
 @Embeddable
-public class DatePeriod implements Comparable<DatePeriod> {
+public class DatePeriod implements Comparable<DatePeriod>, Serializable {
 
-    @Temporal(TemporalType.TIMESTAMP)
+	private static final long serialVersionUID = 1L;
+
+	@Temporal(TemporalType.TIMESTAMP)
     @Column(name = "start_date")
     private Date from;
 
