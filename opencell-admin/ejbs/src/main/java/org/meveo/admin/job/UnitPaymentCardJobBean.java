@@ -1,7 +1,8 @@
 package org.meveo.admin.job;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -45,7 +46,9 @@ public class UnitPaymentCardJobBean {
             if (recordedInvoice == null) {
                 return;
             }
-           DoPaymentResponseDto doPaymentResponseDto =  paymentService.doPaymentCardToken(recordedInvoice.getCustomerAccount(), recordedInvoice.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), Arrays.asList(aoId), createAO, matchingAO);
+            List<Long> listAOids = new ArrayList<>();
+            listAOids.add(aoId);
+           DoPaymentResponseDto doPaymentResponseDto =  paymentService.doPaymentCardToken(recordedInvoice.getCustomerAccount(), recordedInvoice.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO);
            if(!StringUtils.isBlank(doPaymentResponseDto.getPaymentID())){
         	   result.registerSucces();
             }

@@ -40,7 +40,7 @@ public class GatewayPaymentFactory implements Serializable{
 			gatewayPaymentInterface = new IngenicoGatewayPayment();
 		}
 		if(GatewayPaymentNamesEnum.CUSTOM_API.name().equals(gatewayPaymentName.name())){
-			EntityReferenceWrapper entityReferenceWrapper = (EntityReferenceWrapper) customFieldInstanceService.getCFValue(providerService.getProvider(), "");	
+			EntityReferenceWrapper entityReferenceWrapper = (EntityReferenceWrapper) customFieldInstanceService.getCFValue(providerService.getProvider(), "CF_PRV_GW_PAY_SCRIPT");	
 			if(entityReferenceWrapper != null){
 				gatewayPaymentInterface =  new CustomApiGatewayPayment((PaymentScriptInterface) scriptInstanceService.getScriptInstance(entityReferenceWrapper.getCode()));		
 			}
