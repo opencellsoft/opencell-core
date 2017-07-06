@@ -35,12 +35,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-import org.meveo.api.exception.NotAuthorizedException;
-import org.meveo.api.exception.NotFoundException;
-import org.meveo.api.exception.BadRequestException;
-import org.meveo.api.exception.NotAcceptableException;
-import org.meveo.api.exception.NotAllowedException;
-import org.meveo.api.exception.InternalServerErrorException;
+import org.meveo.api.rest.exception.NotAuthorizedException;
+import org.meveo.api.rest.exception.NotFoundException;
+import org.meveo.api.rest.exception.BadRequestException;
+import org.meveo.api.rest.exception.NotAcceptableException;
+import org.meveo.api.rest.exception.NotAllowedException;
+import org.meveo.api.rest.exception.InternalServerErrorException;
 
 
 
@@ -181,22 +181,22 @@ public abstract class BaseRs implements IBaseRs {
     private void handleErrorStatus(ActionStatus status){
         String str = status.getErrorCode().toString();
         if("ENTITY_DOES_NOT_EXISTS_EXCEPTION".equals(str)){
-            throw new NotFoundException(status.getjson());
+            throw new NotFoundException(status);
         }
         else if("ENTITY_ALREADY_EXISTS_EXCEPTION".equals(str)
                 || "MISSING_PARAMETER".equals(str)
                 || "INVALID_PARAMETER".equals(str)
                 || "INVALID_ENUM_VALUE".equals(str)){
-            throw new BadRequestException(status.getjson());
+            throw new BadRequestException(status);
         }
         else if("ACTION_FORBIDDEN".equals(str)){
-            throw new NotAllowedException(status.getjson());
+            throw new NotAllowedException(status);
         }
         else if("INSUFFICIENT_BALANCE".equals(str)
                 || "DUPLICATE_ACCESS".equals(str)){
-                throw new NotAcceptableException(status.getjson());
+                throw new NotAcceptableException(status);
         }else{
-            throw new InternalServerErrorException(status.getjson());    
+            throw new InternalServerErrorException(status);    
         }
     }
 }
