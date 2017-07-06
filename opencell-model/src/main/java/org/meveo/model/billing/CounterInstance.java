@@ -36,21 +36,21 @@ import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.shared.DateUtils;
 
 @Entity
-@Table(name = "BILLING_COUNTER")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_COUNTER_INSTANCE_SEQ"), })
+@Table(name = "billing_counter")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_counter_instance_seq"), })
 public class CounterInstance extends BusinessEntity {
 	private static final long serialVersionUID = -4924601467998738157L;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "COUNTER_TEMPLATE_ID")
+	@JoinColumn(name = "counter_template_id")
 	private CounterTemplate counterTemplate;
 
 	@ManyToOne
-	@JoinColumn(name = "USER_ACCOUNT_ID")
+	@JoinColumn(name = "user_account_id")
 	private UserAccount userAccount;
 
 	@ManyToOne
-	@JoinColumn(name = "BILLING_ACCOUNT_ID")
+	@JoinColumn(name = "billing_account_id")
 	private BillingAccount billingAccount;
 
 	@OneToMany(mappedBy = "counterInstance", fetch = FetchType.LAZY)

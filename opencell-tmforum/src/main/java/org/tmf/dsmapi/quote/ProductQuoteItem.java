@@ -61,9 +61,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  * 
  * 
  */
-@XmlRootElement
+@XmlRootElement(name="QuoteItem", namespace="http://www.tmforum.org")
+@XmlType(name="QuoteItem", namespace="http://www.tmforum.org")
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "QuoteItem")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProductQuoteItem implements Serializable {
 

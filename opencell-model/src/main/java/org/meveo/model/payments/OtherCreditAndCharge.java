@@ -32,7 +32,7 @@ public class OtherCreditAndCharge extends AccountOperation {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "OPERATION_DATE")
+	@Column(name = "operation_date")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date operationDate;
 

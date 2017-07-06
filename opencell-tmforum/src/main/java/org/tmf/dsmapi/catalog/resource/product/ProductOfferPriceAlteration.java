@@ -2,6 +2,9 @@ package org.tmf.dsmapi.catalog.resource.product;
 
 import java.io.Serializable;
 
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
 import org.tmf.dsmapi.catalog.resource.TimeRange;
 import org.tmf.dsmapi.commons.Utilities;
 
@@ -19,6 +22,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * 
  */
 @JsonInclude(value = Include.NON_NULL)
+@XmlRootElement(name="ProductOfferPriceAlteration", namespace="http://www.tmforum.org")
+@XmlType(name="ProductOfferPriceAlteration", namespace="http://www.tmforum.org")
 public class ProductOfferPriceAlteration implements Serializable {
     private final static long serialVersionUID = 1L;
 

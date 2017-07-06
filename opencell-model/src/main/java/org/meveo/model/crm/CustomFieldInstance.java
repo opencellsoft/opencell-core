@@ -32,8 +32,9 @@ import org.w3c.dom.Text;
 
 @Entity
 @ExportIdentifier({ "appliesToEntity", "code", "period.from", "period.to" })
-@Table(name = "CRM_CUSTOM_FIELD_INST", uniqueConstraints = @UniqueConstraint(columnNames = { "APPLIES_TO_UUID", "CODE", "PERIOD_START_DATE", "PERIOD_END_DATE" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CRM_CUSTOM_FIELD_INST_SEQ"), })
+@Table(name = "crm_custom_field_inst", uniqueConstraints = @UniqueConstraint(columnNames = { "applies_to_uuid", "code", "period_start_date", "period_end_date" }))
+
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "crm_custom_field_inst_seq"), })
 @NamedQueries({
         @NamedQuery(name = "CustomFieldInstance.getCfiForCache", query = "select cfi from CustomFieldInstance cfi where cfi.disabled=false order by cfi.appliesToEntity"),
         @NamedQuery(name = "CustomFieldInstance.getCfiByCode", query = "select cfi from CustomFieldInstance cfi where cfi.appliesToEntity=:appliesToEntity and cfi.code=:code "),
@@ -50,24 +51,24 @@ public class CustomFieldInstance extends EnableEntity {
     public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     public static SimpleDateFormat xmlsdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
-    @Column(name = "CODE", nullable = false, length = 255)
+    @Column(name = "code", nullable = false, length = 255)
     @Size(max = 255, min = 1)
     @NotNull
     private String code;
 
-    @Column(name = "APPLIES_TO_UUID", nullable = false, length = 60)
+    @Column(name = "applies_to_uuid", nullable = false, length = 60)
     @Size(max = 60)
     @NotNull
     private String appliesToEntity;
 
-    @AttributeOverrides({ @AttributeOverride(name = "from", column = @Column(name = "PERIOD_START_DATE")),
-            @AttributeOverride(name = "to", column = @Column(name = "PERIOD_END_DATE")) })
+    @AttributeOverrides({ @AttributeOverride(name = "from", column = @Column(name = "period_start_date")),
+            @AttributeOverride(name = "to", column = @Column(name = "period_end_date")) })
     private DatePeriod period = new DatePeriod();
 
-    @Column(name = "PRIORITY")
+    @Column(name = "priority")
     private int priority;
 
-    @Column(name = "DESCRIPTION")
+    @Column(name = "description")
     private String description;
 
     @Embedded

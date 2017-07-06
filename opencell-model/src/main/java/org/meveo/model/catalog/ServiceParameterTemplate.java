@@ -31,24 +31,24 @@ import org.meveo.model.ExportIdentifier;
 
 @Entity
 @ExportIdentifier({ "code"})
-@Table(name = "RM_SERVICE_PARAM_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "RM_SERVICE_PARAM_TEMPLATE_SEQ"), })
+@Table(name = "rm_service_param_template", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "rm_service_param_template_seq"), })
 public class ServiceParameterTemplate extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "VALUE", length = 255)
+	@Column(name = "value", length = 255)
     @Size(max = 255)
 	private String value;
 
-	@Column(name = "NAME", length = 255)
+	@Column(name = "name", length = 255)
 	@Size(max = 255)
 	private String name;
 
-	@Column(name = "CUMULATIVE_PERIODS")
+	@Column(name = "cumulative_periods")
 	private Integer cumulativePeriods;
 
-	@Column(name = "DEFAULT_VALUE", length = 255)
+	@Column(name = "default_value", length = 255)
     @Size(max = 255)
 	private String defaultValue;
 

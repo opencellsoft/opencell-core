@@ -33,21 +33,21 @@ import org.meveo.model.shared.Address;
 
 @Entity
 @ExportIdentifier({ "order.code", "itemId"})
-@Table(name = "ORD_ORDER_ITEM")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ORD_ORDER_ITEM_SEQ"), })
+@Table(name = "ord_order_item")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ord_order_item_seq"), })
 public class OrderItem extends BaseEntity {
 
     private static final long serialVersionUID = -6831399734977276174L;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ORDER_ID", nullable = false, updatable = false)
+    @JoinColumn(name = "order_id", nullable = false, updatable = false)
     @NotNull
     private Order order;
 
     /**
      * Item id in the order
      */
-    @Column(name = "ITEM_ID", length = 10, nullable = false)
+    @Column(name = "item_id", length = 10, nullable = false)
     @NotNull
     private String itemId;
 
@@ -55,7 +55,7 @@ public class OrderItem extends BaseEntity {
      * Action requested on a product or product offer
      */
     @Enumerated(EnumType.STRING)
-    @Column(name = "ACTION", length = 10, nullable = false)
+    @Column(name = "action", length = 10, nullable = false)
     @NotNull
     private OrderItemActionEnum action;
 
@@ -63,7 +63,7 @@ public class OrderItem extends BaseEntity {
      * Associated user account
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_ACCOUNT_ID", nullable = false)
+    @JoinColumn(name = "user_account_id", nullable = false)
     @NotNull
     private UserAccount userAccount;
 
@@ -77,7 +77,7 @@ public class OrderItem extends BaseEntity {
     /**
      * Serialized orderItem dto.
      */
-    @Column(name = "SOURCE", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "source", nullable = false, columnDefinition = "TEXT")
     private String source;
 
     /**
@@ -92,14 +92,14 @@ public class OrderItem extends BaseEntity {
      * Related product instances. Product instance(s) are created or updated by workflow while processing order item.
      */
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "ORD_ITEM_PRD_INSTANCE", joinColumns = @JoinColumn(name = "ORDER_ITEM_ID"), inverseJoinColumns = @JoinColumn(name = "PRD_INSTANCE_ID"))
+    @JoinTable(name = "ord_item_prd_instance", joinColumns = @JoinColumn(name = "order_item_id"), inverseJoinColumns = @JoinColumn(name = "prd_instance_id"))
     private List<ProductInstance> productInstances;
 
     /**
      * Related subscription. Subscription is created or updated by workflow while processing order item.
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SUBSCRIPTION_ID")
+    @JoinColumn(name = "subscription_id")
     private Subscription subscription;
     
 	@Embedded

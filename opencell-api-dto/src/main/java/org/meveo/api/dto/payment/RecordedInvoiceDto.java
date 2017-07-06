@@ -6,14 +6,12 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.model.payments.RecordedInvoice;
 
 /**
  * @author Edward P. Legaspi
  **/
-@XmlType(name = "RecordedInvoice")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RecordedInvoiceDto extends AccountOperationDto implements Serializable {
 

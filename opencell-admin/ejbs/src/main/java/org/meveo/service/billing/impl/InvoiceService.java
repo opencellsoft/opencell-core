@@ -428,18 +428,29 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoice.setBillingRun(em.getReference(BillingRun.class, billingRun.getId()));
             }
 			invoice.setInvoiceDate(invoiceDate);
+			
+			Order order = orderService.findByCodeOrExternalId(orderNumber);
 
 			PaymentMethodEnum paymentMethod = billingAccount.getPaymentMethod();
-			if (paymentMethod == null) {
-				paymentMethod = billingAccount.getCustomerAccount().getPaymentMethod();
+			if (order != null && order.getPaymentMethod() != null) {
+				paymentMethod = order.getPaymentMethod();
+			} else {
+				if (paymentMethod == null) {
+					paymentMethod = billingAccount.getCustomerAccount().getPaymentMethod();
+				}
 			}
 			invoice.setPaymentMethod(paymentMethod);
 			
-			Integer delay = billingCycle.getDueDateDelay();			
-			if (!StringUtils.isBlank(billingAccount.getCustomerAccount().getDueDateDelayEL())) {
-				delay = evaluateIntegerExpression(billingAccount.getCustomerAccount().getDueDateDelayEL(), billingAccount, invoice);
-			} else if (!StringUtils.isBlank(billingCycle.getDueDateDelayEL())) {
-				delay = evaluateIntegerExpression(billingCycle.getDueDateDelayEL(), billingAccount, invoice);
+			Integer delay = billingCycle.getDueDateDelay();	
+			if (order != null && !StringUtils.isBlank(order.getDueDateDelayEL())) {
+				delay = evaluateIntegerExpression(order.getDueDateDelayEL(), billingAccount, invoice, order);
+			} else {
+				if (!StringUtils.isBlank(billingAccount.getCustomerAccount().getDueDateDelayEL())) {
+					delay = evaluateIntegerExpression(billingAccount.getCustomerAccount().getDueDateDelayEL(),
+							billingAccount, invoice, null);
+				} else if (!StringUtils.isBlank(billingCycle.getDueDateDelayEL())) {
+					delay = evaluateIntegerExpression(billingCycle.getDueDateDelayEL(), billingAccount, invoice, null);
+				}
 			}
 			
 			Date dueDate = invoiceDate;
@@ -1388,7 +1399,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		log.debug("cancel invoice:{} done",invoice.getTemporaryInvoiceNumber());
 	}
 	
-	private Integer evaluateIntegerExpression(String expression, BillingAccount billingAccount, Invoice invoice) throws BusinessException {
+	private Integer evaluateIntegerExpression(String expression, BillingAccount billingAccount, Invoice invoice, Order order) throws BusinessException {
 		Integer result = null;
 		if (StringUtils.isBlank(expression)) {
 			return result;
@@ -1399,6 +1410,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		}
 		if (expression.indexOf("invoice") >= 0) {
 			userMap.put("invoice", invoice);
+		}
+		if (expression.indexOf("order") >= 0) {
+			userMap.put("order", order);
 		}
 
 		Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Integer.class);

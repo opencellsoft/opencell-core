@@ -50,45 +50,45 @@ import org.meveo.model.ExportIdentifier;
 
 @Entity
 @ExportIdentifier({ "uuid"})
-@Table(name = "WF_TRANSITION", uniqueConstraints = @UniqueConstraint(columnNames = { "UUID" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "WF_TRANSITION_SEQ"), })
+@Table(name = "wf_transition", uniqueConstraints = @UniqueConstraint(columnNames = { "uuid" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "wf_transition_seq"), })
 @NamedQueries({ @NamedQuery(name = "WFTransition.listByFromStatus", query = "SELECT wft FROM WFTransition wft where (wft.fromStatus=:fromStatusValue or wft.fromStatus='*') and workflow=:workflowValue order by priority ASC") })
 public class WFTransition extends EnableEntity implements Comparable<WFTransition> {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "UUID", nullable = false, updatable = false, length = 60)
+    @Column(name = "uuid", nullable = false, updatable = false, length = 60)
     @Size(max = 60)
     @NotNull
     private String uuid = UUID.randomUUID().toString();
 
-    @Column(name = "FROM_STATUS")
+    @Column(name = "from_status")
     private String fromStatus;
 
-    @Column(name = "TO_STATUS")
+    @Column(name = "to_status")
     private String toStatus;
 
-    @Column(name = "PRIORITY")
+    @Column(name = "priority")
     private int priority;
 
-    @Column(name = "DESCRIPTION", nullable = true, length = 255)
+    @Column(name = "description", nullable = true, length = 255)
     @Size(max = 255)
     @NotNull
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "WORKFLOW_ID")
+    @JoinColumn(name = "workflow_id")
     private Workflow workflow;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE })
-    @JoinTable(name = "WF_TRANSITION_DECISION_RULE", joinColumns = @JoinColumn(name = "TRANSITION_ID"), inverseJoinColumns = @JoinColumn(name = "DECISION_RULE_ID"))
+    @JoinTable(name = "wf_transition_decision_rule", joinColumns = @JoinColumn(name = "transition_id"), inverseJoinColumns = @JoinColumn(name = "decision_rule_id"))
     private Set<WFDecisionRule> wfDecisionRules = new HashSet<>();
 
     @OneToMany(mappedBy = "wfTransition", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @OrderBy("priority ASC")
     private List<WFAction> wfActions = new ArrayList<WFAction>();
 
-    @Column(name = "CONDITION_EL", length = 2000)
+    @Column(name = "condition_el", length = 2000)
     @Size(max = 2000)
     private String conditionEl;
 

@@ -25,42 +25,42 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.NotifiableEntity;
 
 @Entity
-@Table(name = "JOB_EXECUTION")
+@Table(name = "job_execution")
 @NotifiableEntity
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "JOB_EXECUTION_SEQ"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "job_execution_seq"), })
 public class JobExecutionResultImpl extends BaseEntity implements JobExecutionResult {
     private static final long serialVersionUID = 430457580612075457L;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "JOB_INSTANCE_ID")
+    @JoinColumn(name = "job_instance_id")
     private JobInstance jobInstance;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "START_DATE")
+    @Column(name = "start_date")
     private Date startDate = new Date();
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "END_DATE")
+    @Column(name = "end_date")
     private Date endDate;
 
-    @Column(name = "NB_TO_PROCESS")
+    @Column(name = "nb_to_process")
     private long nbItemsToProcess;
 
-    @Column(name = "NB_SUCCESS")
+    @Column(name = "nb_success")
     private long nbItemsCorrectlyProcessed;
 
-    @Column(name = "NB_WARNING")
+    @Column(name = "nb_warning")
     private long nbItemsProcessedWithWarning;
 
-    @Column(name = "NB_ERROR")
+    @Column(name = "nb_error")
     private long nbItemsProcessedWithError;
 
     @Type(type="numeric_boolean")
-    @Column(name = "JOB_DONE")
+    @Column(name = "job_done")
     private boolean done = true;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "JOB_LAUNCHER")
+    @Column(name = "job_launcher")
     private JobLauncherEnum jobLauncherEnum;
 
     @Transient
@@ -69,7 +69,7 @@ public class JobExecutionResultImpl extends BaseEntity implements JobExecutionRe
     @Transient
     private List<String> errors = new ArrayList<String>();
 
-    @Column(name = "REPORT", columnDefinition="LONGTEXT")
+    @Column(name = "report", columnDefinition="LONGTEXT")
     private String report;
 
     public synchronized void registerSucces() {

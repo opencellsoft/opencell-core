@@ -33,21 +33,21 @@ import org.meveo.model.ExportIdentifier;
 
 @Entity
 @ExportIdentifier({ "code"})
-@Table(name = "AR_OCC_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = {"CODE" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "AR_OCC_TEMPLATE_SEQ"), })
+@Table(name = "ar_occ_template", uniqueConstraints = @UniqueConstraint(columnNames = {"code" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ar_occ_template_seq"), })
 public class OCCTemplate extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "ACCOUNT_CODE", length = 255)
+	@Column(name = "account_code", length = 255)
     @Size(max = 255)
 	private String accountCode;
 
-	@Column(name = "ACCOUNT_CODE_CLIENT_SIDE", length = 255)
+	@Column(name = "account_code_client_side", length = 255)
     @Size(max = 255)
 	private String accountCodeClientSide;
 
-	@Column(name = "OCC_CATEGORY")
+	@Column(name = "occ_category")
 	@Enumerated(EnumType.STRING)
 	private OperationCategoryEnum occCategory;
 

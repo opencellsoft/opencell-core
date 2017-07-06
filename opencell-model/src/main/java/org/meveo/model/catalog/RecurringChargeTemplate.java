@@ -35,7 +35,7 @@ import org.meveo.model.MultilanguageEntity;
 
 @Entity
 @MultilanguageEntity(key = "menu.charges", group = "ChargeTemplate")
-@Table(name = "CAT_RECURRING_CHARGE_TEMPL")
+@Table(name = "cat_recurring_charge_templ")
 @NamedQueries({			
 @NamedQuery(name = "recurringChargeTemplate.getNbrRecurringChrgWithNotPricePlan", 
 	           query = "select count (*) from RecurringChargeTemplate r where r.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) "),
@@ -56,33 +56,33 @@ public class RecurringChargeTemplate extends ChargeTemplate {
 	private static final long serialVersionUID = 1L;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "RECURRENCE_TYPE")
+	@Column(name = "recurrence_type")
 	private RecurrenceTypeEnum recurrenceType = RecurrenceTypeEnum.CALENDAR;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "CALENDAR_ID")
+	@JoinColumn(name = "calendar_id")
 	private Calendar calendar;
 
-	@Column(name = "DURATION_TERM_IN_MONTH")
+	@Column(name = "duration_term_in_month")
 	private Integer durationTermInMonth;
 
 	@Type(type="numeric_boolean")
-    @Column(name = "SUBSCRIPTION_PRORATA")
+    @Column(name = "subscription_prorata")
 	private Boolean subscriptionProrata;
 
 	@Type(type="numeric_boolean")
-    @Column(name = "TERMINATION_PRORATA")
+    @Column(name = "termination_prorata")
 	private Boolean terminationProrata;
 
 	@Type(type="numeric_boolean")
-    @Column(name = "APPLY_IN_ADVANCE")
+    @Column(name = "apply_in_advance")
 	private Boolean applyInAdvance;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name= "SHARE_LEVEL",length=20)
+	@Column(name= "share_level",length=20)
 	private LevelEnum shareLevel;
 	
-	@Column(name = "FILTER_EXPRESSION", length = 2000)
+	@Column(name = "filter_expression", length = 2000)
 	@Size(max = 2000)
 	private String filterExpression = null;
 	

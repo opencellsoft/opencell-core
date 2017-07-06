@@ -41,8 +41,8 @@ import org.meveo.model.scripts.ScriptInstance;
 @ObservableEntity
 @ModuleItem
 @ExportIdentifier({ "code"})
-@Table(name = "MEVEO_MODULE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "MEVEO_MODULE_SEQ"), })
+@Table(name = "meveo_module", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "meveo_module_seq"), })
 @Inheritance(strategy = InheritanceType.JOINED)
 public class MeveoModule extends BusinessEntity implements Serializable {
 
@@ -52,23 +52,23 @@ public class MeveoModule extends BusinessEntity implements Serializable {
     private List<MeveoModuleItem> moduleItems = new ArrayList<MeveoModuleItem>();
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "MODULE_LICENSE", nullable = false)
+    @Column(name = "module_license", nullable = false)
     @NotNull
     private ModuleLicenseEnum license = ModuleLicenseEnum.GPL;
 
-    @Column(name = "LOGO_PICTURE", length = 255)
+    @Column(name = "logo_picture", length = 255)
     @Size(max = 255)
     private String logoPicture;
 
     @Type(type="numeric_boolean")
-    @Column(name = "INSTALLED")
+    @Column(name = "installed")
     private boolean installed;
 
-    @Column(name = "MODULE_SOURCE", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "module_source", nullable = false, columnDefinition = "TEXT")
     private String moduleSource;
 
     @ManyToOne()
-    @JoinColumn(name = "SCRIPT_INSTANCE_ID")
+    @JoinColumn(name = "script_instance_id")
     private ScriptInstance script;
 
     public List<MeveoModuleItem> getModuleItems() {

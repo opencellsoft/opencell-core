@@ -1,5 +1,5 @@
 package org.meveo.service.payments.impl;
 
 public enum GatewayPaymentNamesEnum {
-	INGENICO,STRIPE;
+	INGENICO_GC,CUSTOM_API;
 }

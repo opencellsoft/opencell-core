@@ -17,22 +17,22 @@ import org.meveo.model.BaseEntity;
  * @author Edward P. Legaspi
  **/
 @Entity
-@Table(name = "MEVEO_PRIMITIVE_FILTER_CONDITION")
+@Table(name = "meveo_primitive_filter_condition")
 @DiscriminatorValue(value = "PRIMITIVE")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "MEVEO_PRIMITIVE_FILTER_CONDITION_SEQ"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "meveo_primitive_filter_condition_seq"), })
 public class PrimitiveFilterCondition extends FilterCondition {
 
 	private static final long serialVersionUID = 5812098177203454113L;
 
-	@Column(name = "FIELD_NAME", length = 60)
+	@Column(name = "field_name", length = 60)
     @Size(max = 60)
 	private String fieldName;
 
-	@Column(name = "OPERATOR", length = 60)
+	@Column(name = "operator", length = 60)
     @Size(max = 60)
 	private String operator;
 
-	@Column(name = "OPERAND", length = 255)
+	@Column(name = "operand", length = 255)
     @Size(max = 255)
 	private String operand;
 

@@ -31,13 +31,13 @@ public class BusinessEntity extends EnableEntity {
 
     private static final long serialVersionUID = 1L;
     
-    @Column(name = "CODE", nullable = false, length = 255)
+    @Column(name = "code", nullable = false, length = 255)
     // TODO : Create sql script to ad index. @Index(name = "CODE_IDX")
     @Size(max = 255, min = 1)
     @NotNull
     protected String code;
 
-    @Column(name = "DESCRIPTION", nullable = true, length = 255)
+    @Column(name = "description", nullable = true, length = 255)
     @Size(max = 255)
     protected String description;
 

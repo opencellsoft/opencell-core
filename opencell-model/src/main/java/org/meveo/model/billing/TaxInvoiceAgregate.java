@@ -31,7 +31,7 @@ public class TaxInvoiceAgregate extends InvoiceAgregate {
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TAX_ID")
+	@JoinColumn(name = "tax_id")
 	private Tax tax;
 
 	public TaxInvoiceAgregate() {

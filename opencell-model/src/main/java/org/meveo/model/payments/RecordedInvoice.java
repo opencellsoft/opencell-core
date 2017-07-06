@@ -42,56 +42,56 @@ public class RecordedInvoice extends AccountOperation {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "PRODUCTION_DATE")
+	@Column(name = "production_date")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date productionDate;
 
-	@Column(name = "INVOICE_DATE")
+	@Column(name = "invoice_date")
 	@Temporal(TemporalType.DATE)
 	private Date invoiceDate;
 
-	@Column(name = "AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
+	@Column(name = "amount_without_tax", precision = 23, scale = 12)
 	private BigDecimal amountWithoutTax;
 
-	@Column(name = "TAX_AMOUNT", precision = 23, scale = 12)
+	@Column(name = "tax_amount", precision = 23, scale = 12)
 	private BigDecimal taxAmount;
 
-	@Column(name = "NET_TO_PAY", precision = 23, scale = 12)
+	@Column(name = "net_to_pay", precision = 23, scale = 12)
 	private BigDecimal netToPay;
 
-	@Column(name = "PAYMENT_METHOD")
+	@Column(name = "payment_method")
 	@Enumerated(EnumType.STRING)
 	private PaymentMethodEnum paymentMethod;
 
-	@Column(name = "PAYMENT_INFO", length = 255)
+	@Column(name = "payment_info", length = 255)
     @Size(max = 255)
 	private String paymentInfo;// IBAN for direct debit
 
-	@Column(name = "PAYMENT_INFO1", length = 255)
+	@Column(name = "payment_info1", length = 255)
     @Size(max = 255)
 	private String paymentInfo1;// bank code
 
-	@Column(name = "PAYMENT_INFO2", length = 255)
+	@Column(name = "payment_info2", length = 255)
     @Size(max = 255)
 	private String paymentInfo2;// code guichet
 
-	@Column(name = "PAYMENT_INFO3", length = 255)
+	@Column(name = "payment_info3", length = 255)
     @Size(max = 255)
 	private String paymentInfo3;// Num compte
 
-	@Column(name = "PAYMENT_INFO4", length = 255)
+	@Column(name = "payment_info4", length = 255)
     @Size(max = 255)
 	private String paymentInfo4;// RIB
 
-	@Column(name = "PAYMENT_INFO5", length = 255)
+	@Column(name = "payment_info5", length = 255)
     @Size(max = 255)
 	private String paymentInfo5;// bankName
 	
-	@Column(name = "PAYMENT_INFO6", length = 255)
+	@Column(name = "payment_info6", length = 255)
     @Size(max = 255)
 	private String paymentInfo6;// bic
 
-	@Column(name = "BILLING_ACCOUNT_NAME", length = 255)
+	@Column(name = "billing_account_name", length = 255)
     @Size(max = 255)
 	private String billingAccountName;
 	

@@ -35,26 +35,26 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 
 @Entity
-@Table(name = "BILLING_RECURRING_CHARGE_INST")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_RECURRING_CHRG_INST_SEQ"), })
+@Table(name = "billing_recurring_charge_inst")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_recurring_chrg_inst_seq"), })
 public class RecurringChargeInstance extends ChargeInstance {
 
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "RECURRING_CHRG_TMPL_ID")
+	@JoinColumn(name = "recurring_chrg_tmpl_id")
 	private RecurringChargeTemplate recurringChargeTemplate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "SERVICE_INSTANCE_ID")
+	@JoinColumn(name = "service_instance_id")
 	protected ServiceInstance serviceInstance;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "SUBSCRIPTION_DATE")
+	@Column(name = "subscription_date")
 	protected Date subscriptionDate;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "NEXT_CHARGE_DATE")
+	@Column(name = "next_charge_date")
 	protected Date nextChargeDate;
 
 	public RecurringChargeInstance(String code, String description, Date subscriptionDate,

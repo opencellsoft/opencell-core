@@ -16,18 +16,18 @@ import org.meveo.model.BaseEntity;
  * @author Edward P. Legaspi
  **/
 @Entity
-@Table(name = "MEVEO_NATIVE_FILTER_CONDITION")
+@Table(name = "meveo_native_filter_condition")
 @DiscriminatorValue(value = "NATIVE")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "MEVEO_NATIVE_FILTER_CONDITION_SEQ"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "meveo_native_filter_condition_seq"), })
 public class NativeFilterCondition extends FilterCondition {
 
 	private static final long serialVersionUID = 8649912992576398066L;
 
-	@Column(name = "EL", length = 2000)
+	@Column(name = "el", length = 2000)
 	@Size(max = 2000)
 	private String el;
 
-	@Column(name = "JPQL", length = 2000)
+	@Column(name = "jpql", length = 2000)
     @Size(max = 2000)
 	private String jpql;
 

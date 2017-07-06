@@ -13,17 +13,17 @@ public class CustomFieldMatrixColumn implements Serializable, Comparable<CustomF
 
     private int position;
 
-    // @Column(name = "CODE", nullable = false, length = 20)
+    // @Column(name = "code", nullable = false, length = 20)
     @Size(max = 20)
     @NotNull
     private String code;
 
-    // @Column(name = "LABEL", nullable = false, length = 50)
+    // @Column(name = "label", nullable = false, length = 50)
     @Size(max = 50)
     @NotNull
     private String label;
 
-    // @Column(name = "KEY_TYPE", nullable = false, length = 10)
+    // @Column(name = "key_type", nullable = false, length = 10)
     // @Enumerated(EnumType.STRING)
     @NotNull
     private CustomFieldMapKeyEnum keyType;

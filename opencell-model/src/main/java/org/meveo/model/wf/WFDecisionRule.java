@@ -39,35 +39,34 @@ import org.meveo.model.ExportIdentifier;
 
 @Entity
 @ExportIdentifier({ "name", "value"})
-@Table(name = "WF_DECISION_RULE", uniqueConstraints = @UniqueConstraint(columnNames = {
-		"NAME", "VALUE"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "WF_DECISION_RULE_SEQ"), })
+@Table(name = "wf_decision_rule", uniqueConstraints = @UniqueConstraint(columnNames = {"name", "value"}))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "wf_decision_rule_seq"), })
 public class WFDecisionRule extends EnableEntity implements Comparable<WFDecisionRule>{
 
 	private static final long serialVersionUID = 1L;
  
-	@Column(name = "NAME")
+	@Column(name = "name")
     @Size(max = 255)
     @NotNull
 	private String name;
 
     @Size(max = 255)
-	@Column(name = "VALUE")
+	@Column(name = "value")
     @NotNull
 	private String value;
 
-    @Column(name = "TYPE")
+    @Column(name = "type")
     @Enumerated(EnumType.STRING)
     @NotNull
     private DecisionRuleTypeEnum type;
 	
-	@Column(name = "CONDITION_EL", length = 2000)
+	@Column(name = "condition_el", length = 2000)
 	@Size(max = 2000)
     @NotNull
 	private String conditionEl;
 
 	@Type(type="numeric_boolean")
-    @Column(name = "MODEL")
+    @Column(name = "model")
     private boolean model = false;
 
     @ManyToMany(mappedBy="wfDecisionRules")

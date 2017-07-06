@@ -56,6 +56,7 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.AccountHierarchyTypeEnum;
@@ -1752,8 +1753,10 @@ public class AccountHierarchyApi extends BaseApi {
 		if (ba.getCustomerAccount() != null) {
 			dto.setCustomerAccount(ba.getCustomerAccount().getCode());
 		}
-		if (ba.getBillingCycle() != null) {
-			dto.setBillingCycle(ba.getBillingCycle().getCode());
+		BillingCycle billingCycle = ba.getBillingCycle();
+		if (billingCycle != null) {
+			dto.setBillingCycle(billingCycle.getCode());
+			dto.setInvoicingThreshold(billingCycle.getInvoicingThreshold());
 		}
 		if (ba.getTradingCountry() != null) {
 			dto.setCountry(ba.getTradingCountry().getCountryCode());
@@ -1789,6 +1792,8 @@ public class AccountHierarchyApi extends BaseApi {
 		if(ba.getDiscountPlan() != null){
 			dto.setDiscountPlan(ba.getDiscountPlan().getCode());
 		}
+		
+		
 
 		return dto;
 

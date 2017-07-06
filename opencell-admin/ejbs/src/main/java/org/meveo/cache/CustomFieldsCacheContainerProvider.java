@@ -145,8 +145,8 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
                     ((CalendarInterval) cft.getCalendar()).setIntervals(PersistenceUtils.initializeAndUnproxy(((CalendarInterval) cft.getCalendar()).getIntervals()));
                 }
             }
-            if (cft.getListValues() != null) {
-                cft.setListValues(PersistenceUtils.initializeAndUnproxy(cft.getListValues()));
+            if (cft.getListValues() != null) {                
+                cft.getListValues().get(0);
             }
 
             customFieldTemplateService.detach(cft);
@@ -679,7 +679,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
             }
         }
         if (cft.getListValues() != null) {
-            cft.setListValues(PersistenceUtils.initializeAndUnproxy(cft.getListValues()));
+            cft.getListValues().get(0);
         }
 
         cfts.put(cft.getCode(), cft);

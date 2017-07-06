@@ -40,32 +40,32 @@ import org.meveo.model.ExportIdentifier;
 
 @Entity
 @ExportIdentifier({ "uuid"})
-@Table(name = "WF_ACTION", uniqueConstraints = @UniqueConstraint(columnNames = {"UUID" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "WF_ACTION_SEQ"), })
+@Table(name = "wf_action", uniqueConstraints = @UniqueConstraint(columnNames = {"uuid" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "wf_action_seq"), })
 @NamedQueries({ @NamedQuery(name = "WFAction.listByTransition", query = "SELECT wfa FROM WFAction wfa where  wfa.wfTransition=:wfTransition order by priority ASC") })
 public class WFAction extends EnableEntity {
 
 	private static final long serialVersionUID = 1L;
 
-    @Column(name = "UUID", nullable = false, updatable = false, length = 60)
+    @Column(name = "uuid", nullable = false, updatable = false, length = 60)
     @Size(max = 60)
     @NotNull
     private String uuid = UUID.randomUUID().toString();
 
-	@Column(name = "ACTION_EL", length = 2000)
+	@Column(name = "action_el", length = 2000)
 	@Size(max = 2000)
     @NotNull
 	private String actionEl;
 
-	@Column(name = "PRIORITY")
+	@Column(name = "priority")
 	private int priority;
 	
-	@Column(name = "CONDITION_EL", length = 2000)
+	@Column(name = "condition_el", length = 2000)
 	@Size(max = 2000)
 	private String conditionEl;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "WF_TRANSITION_ID")
+	@JoinColumn(name = "wf_transition_id")
 	private WFTransition wfTransition;
 
     public String getUuid() {

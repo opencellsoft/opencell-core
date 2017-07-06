@@ -32,30 +32,30 @@ public class EmailSenderConfig extends MessageSenderConfig {
 
 	private static final long serialVersionUID = -7349972726209816384L;
 
-	@Column(name = "SMTP_HOST", length = 255)
+	@Column(name = "smtp_host", length = 255)
 	@Size(max = 255)
 	private String SMTPHost;
 
-	@Column(name = "SMTP_PORT")
+	@Column(name = "smtp_port")
 	private Integer SMTPPort;
 
-	@Column(name = "LOGIN", length = 50)
+	@Column(name = "login", length = 50)
     @Size(max = 50)
 	private String login;
 
-	@Column(name = "PASSWORD", length = 50)
+	@Column(name = "password", length = 50)
     @Size(max = 50)
 	private String password;
 
 	@Type(type="numeric_boolean")
-    @Column(name = "USE_SSL")
+    @Column(name = "use_ssl")
 	private Boolean useSSL;
 
-	@Column(name = "DEFAULT_FROM_EMAIL", length = 255)
+	@Column(name = "default_from_email", length = 255)
     @Size(max = 255)
 	private String defaultFromEmail;
 
-	@Column(name = "DEFAULT_REPLY_EMAIL", length = 255)
+	@Column(name = "default_reply_email", length = 255)
     @Size(max = 255)
 	private String defaultReplyEmail;
 

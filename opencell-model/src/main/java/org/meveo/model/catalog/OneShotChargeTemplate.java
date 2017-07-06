@@ -31,7 +31,7 @@ import org.meveo.model.MultilanguageEntity;
 
 @Entity
 @MultilanguageEntity(key = "menu.charges", group = "ChargeTemplate")
-@Table(name = "CAT_ONE_SHOT_CHARGE_TEMPL")
+@Table(name = "cat_one_shot_charge_templ")
 @NamedQueries({			
 @NamedQuery(name = "oneShotChargeTemplate.getNbrOneShotWithNotPricePlan", 
 	           query = "select count (*) from OneShotChargeTemplate o where o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null)"),
@@ -63,12 +63,12 @@ public class OneShotChargeTemplate extends ChargeTemplate {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "TYPE")
+    @Column(name = "type")
     @Enumerated(EnumType.STRING)
     private OneShotChargeTemplateTypeEnum oneShotChargeTemplateType;
     
     @Type(type="numeric_boolean")
-    @Column(name = "IMMEDIATE_INVOICING")
+    @Column(name = "immediate_invoicing")
     private Boolean immediateInvoicing = false;
 
     public OneShotChargeTemplateTypeEnum getOneShotChargeTemplateType() {

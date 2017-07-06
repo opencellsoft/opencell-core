@@ -18,8 +18,8 @@ import org.tmf.dsmapi.catalog.resource.product.ProductOffering;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-@XmlRootElement
-@XmlType(name="OrderItem")
+@XmlRootElement(name="OrderItem", namespace="http://www.tmforum.org")
+@XmlType(name = "OrderItem", namespace = "http://www.tmforum.org")
 @JsonInclude(value = Include.NON_NULL)
 public class ProductOrderItem implements Serializable {
 

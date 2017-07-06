@@ -27,16 +27,12 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.BaseDto;
 import org.meveo.model.wf.WFTransition;
 import org.meveo.model.wf.Workflow;
 
-
-
-@XmlType(name = "Workflow")
-@XmlRootElement(name = "Workflow")
+@XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WorkflowDto extends BaseDto {
 

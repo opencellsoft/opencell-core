@@ -82,56 +82,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>assertElementPresent</td>
-	<td>${accountOperationField}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${accountOperationField}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>id=formInvoiceType:occTemplateSelectedId_selectLink</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForElementPresent</td>
-	<td>//*[contains(@id, 'searchField1')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>//*[contains(@id, 'searchField1')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>//*[contains(@id, 'searchField1')]</td>
-	<td>${accountOperation}</td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${searchButton}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForText</td>
-	<td>//tbody[@id='searchOccTemplatePopuppopupForm:searchOccTemplatePopupdatatable_data']/tr/td</td>
-	<td>${accountOperation}</td>
-</tr>
-<tr>
-	<td>verifyTextPresent</td>
-	<td>${accountOperation}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>//tbody[@id='searchOccTemplatePopuppopupForm:searchOccTemplatePopupdatatable_data']/tr/td</td>
-	<td></td>
-</tr>
-<tr>
 	<td>waitForNotVisible</td>
 	<td>id=searchOccTemplatePopup</td>
 	<td></td>
@@ -192,13 +142,13 @@
 	<td></td>
 </tr>
 <tr>
-	<td>click</td>
+	<td>clickAndWait</td>
 	<td>${saveButtonWhenCreate}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPageToLoad</td>
-	<td>${defaultTimeout}</td>
+	<td>waitForElementPresent</td>
+	<td>${infoSummary}</td>
 	<td></td>
 </tr>
 <tr>

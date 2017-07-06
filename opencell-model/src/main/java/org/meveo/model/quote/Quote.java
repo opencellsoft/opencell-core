@@ -37,9 +37,9 @@ import org.meveo.model.hierarchy.UserHierarchyLevel;
 @Entity
 @ExportIdentifier({ "code" })
 @CustomFieldEntity(cftCodePrefix = "QUOTE")
-@Table(name = "ORD_QUOTE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE" }))
+@Table(name = "ord_quote", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "ORD_QUOTE_SEQ"), })
+        @Parameter(name = "sequence_name", value = "ord_quote_seq"), })
 public class Quote extends BusinessCFEntity {
 
     private static final long serialVersionUID = -9060067698650286828L;
@@ -49,21 +49,21 @@ public class Quote extends BusinessCFEntity {
     /**
      * External identifier
      */
-    @Column(name = "EXTERNAL_ID", length = 100)
+    @Column(name = "external_id", length = 100)
     @Size(max = 100)
     private String externalId;
 
     /**
      * Quote version because if the customer rejected the quote but negotiations still open a new version of the quote is managed
      */
-    @Column(name = "QUOTE_VERSION", length = 10)
+    @Column(name = "quote_version", length = 10)
     @Size(max = 10)
     private String quoteVersion;
 
     /**
      * Contact attached to the quote to send back information regarding this quote
      */
-    @Column(name = "CONTACT", length = 100)
+    @Column(name = "contact", length = 100)
     @Size(max = 100)
     private String notificationContact;
 
@@ -71,36 +71,36 @@ public class Quote extends BusinessCFEntity {
      * Date when quote was created
      */
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "QUOTE_DATE", nullable = false, updatable = false)
+    @Column(name = "quote_date", nullable = false, updatable = false)
     @NotNull
     private Date quoteDate = new Date();
 
     /**
      * Quote validity dates
      */
-    @AttributeOverrides({ @AttributeOverride(name = "from", column = @Column(name = "VALID_FROM")),
-            @AttributeOverride(name = "to", column = @Column(name = "VALID_TO")) })
+    @AttributeOverrides({ @AttributeOverride(name = "from", column = @Column(name = "valid_from")),
+            @AttributeOverride(name = "to", column = @Column(name = "valid_to")) })
     private DatePeriod validity = new DatePeriod();
 
     /**
      * Initial quote required by date from the requestor perspective
      */
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "REQ_COMPLETION_DATE")
+    @Column(name = "req_completion_date")
     private Date requestedCompletionDate;
 
     /**
      * Date when product in the quote should be available
      */
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "ORDER_START_DATE")
+    @Column(name = "order_start_date")
     private Date fulfillmentStartDate;
 
     /**
      * Date when the quoted was Cancelled or Rejected or Accepted
      */
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "COMPLETION_DATE")
+    @Column(name = "completion_date")
     private Date completionDate;
 
     /**
@@ -113,11 +113,11 @@ public class Quote extends BusinessCFEntity {
      * Order processing status as defined by the workflow.
      */
     @Enumerated(EnumType.STRING)
-    @Column(name = "STATUS", length = 20, nullable = false)
+    @Column(name = "status", length = 20, nullable = false)
     @NotNull
     private QuoteStatusEnum status = QuoteStatusEnum.IN_PROGRESS;
 
-    @Column(name = "STATUS_MESSAGE", length = 2000)
+    @Column(name = "status_message", length = 2000)
     private String statusMessage;
 
     /**
@@ -127,17 +127,17 @@ public class Quote extends BusinessCFEntity {
     private List<QuoteItem> quoteItems;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ROUTED_TO_USER_GROUP_ID")
+    @JoinColumn(name = "routed_to_user_group_id")
     private UserHierarchyLevel routedToUserGroup;
 
-    @Column(name = "RECEIVED_FROM", length = 50)
+    @Column(name = "received_from", length = 50)
     private String receivedFromApp;
 
     /**
      * Associated user account
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_ACCOUNT_ID")
+    @JoinColumn(name = "user_account_id")
     private UserAccount userAccount;
 
     /**

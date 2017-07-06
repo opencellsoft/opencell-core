@@ -17,29 +17,29 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.EnableEntity;
 
 @Entity
-@Table(name = "AR_PAYMENT_TOKEN")
+@Table(name = "ar_payment_token")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "TOKEN_TYPE")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "AR_PAYMENT_TOKEN_SEQ"), })
+@DiscriminatorColumn(name = "token_type")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ar_payment_token_seq"), })
 public class PaymentToken extends EnableEntity {
 
 	private static final long serialVersionUID = 8726571628074346184L;
 	
-	@Column(name = "TOKEN_ID")    
+	@Column(name = "token_id")    
 	@NotNull
 	private String tokenId;
 	
 	
-	@Column(name = "ALIAS")    
+	@Column(name = "alias")    
 	@NotNull
 	private String alias;
 		
 	@Type(type="numeric_boolean")
-	@Column(name = "IS_DEFAULT")
+	@Column(name = "is_default")
 	private boolean isDefault;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "CUSTOMER_ACCOUNT_ID")
+	@JoinColumn(name = "customer_account_id")
 	private CustomerAccount customerAccount;
 	
 	public PaymentToken(){		

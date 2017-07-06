@@ -30,37 +30,37 @@ import org.meveo.model.IEntity;
 
 @Entity
 @ExportIdentifier({ "offerTemplate.code", "serviceTemplate.code" })
-@Table(name = "CAT_OFFER_SERV_TEMPLATES")
+@Table(name = "cat_offer_serv_templates")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "CAT_OFFER_SERV_TEMPLT_SEQ"), })
+        @Parameter(name = "sequence_name", value = "cat_offer_serv_templt_seq"), })
 public class OfferServiceTemplate implements IEntity {
 
     @Id
     @GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)
-    @Column(name = "ID")
+    @Column(name = "id")
     @Access(AccessType.PROPERTY)
     protected Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "OFFER_TEMPLATE_ID")
+    @JoinColumn(name = "offer_template_id")
     @NotNull
     private OfferTemplate offerTemplate;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE }, optional = false)
-    @JoinColumn(name = "SERVICE_TEMPLATE_ID")
+    @JoinColumn(name = "service_template_id")
     @NotNull
     private ServiceTemplate serviceTemplate;
 
     @Type(type = "numeric_boolean")
-    @Column(name = "MANDATORY")
+    @Column(name = "mandatory")
     private boolean mandatory;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "CAT_OFFER_SERV_INCOMP", joinColumns = @JoinColumn(name = "OFFER_SERVICE_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "SERVICE_TEMPLATE_ID"))
+    @JoinTable(name = "cat_offer_serv_incomp", joinColumns = @JoinColumn(name = "offer_service_template_id"), inverseJoinColumns = @JoinColumn(name = "service_template_id"))
     private List<ServiceTemplate> incompatibleServices = new ArrayList<>();
 
-    @AttributeOverrides({ @AttributeOverride(name = "from", column = @Column(name = "VALID_FROM")),
-            @AttributeOverride(name = "to", column = @Column(name = "VALID_TO")) })
+    @AttributeOverrides({ @AttributeOverride(name = "from", column = @Column(name = "valid_from")),
+            @AttributeOverride(name = "to", column = @Column(name = "valid_to")) })
     private DatePeriod validity = new DatePeriod();
 
     public OfferTemplate getOfferTemplate() {

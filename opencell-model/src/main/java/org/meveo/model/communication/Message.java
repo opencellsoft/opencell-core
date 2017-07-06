@@ -36,13 +36,13 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.communication.contact.Contact;
 
 @Entity
-@Table(name = "COM_MESSAGE")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "COM_MESSAGE_SEQ"), })
+@Table(name = "com_message")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "com_message_seq"), })
 public class Message extends BaseEntity {
 
 	private static final long serialVersionUID = 2760596592135889373L;
 
-	@Column(name = "TEMPLATECODE", length = 255)
+	@Column(name = "templatecode", length = 255)
 	@Size(max = 255)
 	private String templateCode;
 
@@ -50,30 +50,30 @@ public class Message extends BaseEntity {
 	private List<MessageVariableValue> parameters;
 
 	@ManyToOne
-	@JoinColumn(name = "CAMPAIGN_ID")
+	@JoinColumn(name = "campaign_id")
 	private Campaign campaign;
 
 	@ManyToOne
-	@JoinColumn(name = "CONTACT_ID")
+	@JoinColumn(name = "contact_id")
 	private Contact contact;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "MEDIA")
+	@Column(name = "media")
 	private MediaEnum media;
 
-	@Column(name = "SUB_MEDIA", length = 255)
+	@Column(name = "sub_media", length = 255)
     @Size(max = 255)
 	private String subMedia;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "PRIORITY")
+	@Column(name = "priority")
 	private PriorityEnum priority;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "STATUS")
+	@Column(name = "status")
 	private MessageStatusEnum status;
 
-	@Column(name = "REJECTION_REASON", length = 255)
+	@Column(name = "rejection_reason", length = 255)
     @Size(max = 255)
 	private String rejectionReason;
 

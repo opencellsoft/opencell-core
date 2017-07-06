@@ -32,13 +32,14 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.Address;
 
 @Entity
 @ExportIdentifier({ "code"})
 @CustomFieldEntity(cftCodePrefix = "ORDER")
-@Table(name = "ORD_ORDER", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ORD_ORDER_SEQ"), })
+@Table(name = "ord_order", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ord_order_seq"), })
 public class Order extends BusinessCFEntity {
 
     private static final long serialVersionUID = -9060067698650286828L;
@@ -48,21 +49,21 @@ public class Order extends BusinessCFEntity {
     /**
      * External identifier
      */
-    @Column(name = "EXTERNAL_ID", length = 100)
+    @Column(name = "external_id", length = 100)
     @Size(max = 100)
     private String externalId;
 
     /**
      * Delivery instructions
      */
-    @Column(name = "DELIVERY_INSTRUCTIONS", columnDefinition = "TEXT")
+    @Column(name = "delivery_instructions", columnDefinition = "TEXT")
     private String deliveryInstructions;
 
     /**
      * Date when order was placed
      */
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "ORDER_DATE", nullable = false, updatable = false)
+    @Column(name = "order_date", nullable = false, updatable = false)
     @NotNull
     private Date orderDate = new Date();
 
@@ -70,35 +71,35 @@ public class Order extends BusinessCFEntity {
      * Order processing start date as requested by a customer
      */
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "REQ_START_DATE")
+    @Column(name = "req_start_date")
     private Date requestedStartDate;
 
     /**
      * Order processing start date
      */
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "START_DATE")
+    @Column(name = "start_date")
     private Date startDate;
 
     /**
      * Expected completion date as requested by a customer
      */
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "REQ_COMPLETION_DATE")
+    @Column(name = "req_completion_date")
     private Date requestedCompletionDate;
 
     /**
      * Expected completion date as set by provider
      */
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "EXP_COMPLETION_DATE")
+    @Column(name = "exp_completion_date")
     private Date expectedCompletionDate;
 
     /**
      * Date when order was fully completed
      */
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "COMPLETION_DATE")
+    @Column(name = "completion_date")
     private Date completionDate;
 
     /**
@@ -117,11 +118,11 @@ public class Order extends BusinessCFEntity {
      * Order processing status as defined by the workflow.
      */
     @Enumerated(EnumType.STRING)
-    @Column(name = "STATUS", length = 20, nullable = false)
+    @Column(name = "status", length = 20, nullable = false)
     @NotNull
     private OrderStatusEnum status = OrderStatusEnum.IN_CREATION;
 
-    @Column(name = "STATUS_MESSAGE", length = 2000)
+    @Column(name = "status_message", length = 2000)
     private String statusMessage;
 
     /**
@@ -131,14 +132,22 @@ public class Order extends BusinessCFEntity {
     private List<OrderItem> orderItems;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ROUTED_TO_USER_GROUP_ID")
+    @JoinColumn(name = "routed_to_user_group_id")
     private UserHierarchyLevel routedToUserGroup;
 
-    @Column(name = "RECEIVED_FROM", length = 50)
+    @Column(name = "received_from", length = 50)
     private String receivedFromApp;
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "orders")
     private List<Invoice> invoices = new ArrayList<Invoice>();
+    
+    @Column(name = "DUE_DATE_DELAY_EL", length = 2000)
+	@Size(max = 2000)
+	private String dueDateDelayEL;
+    
+    @Column(name = "PAYMENT_METHOD", length = 20)
+	@Enumerated(EnumType.STRING)
+	private PaymentMethodEnum paymentMethod;
 
     public String getExternalId() {
         return externalId;
@@ -300,5 +309,21 @@ public class Order extends BusinessCFEntity {
     	}
     	return null;
     }
+
+	public String getDueDateDelayEL() {
+		return dueDateDelayEL;
+	}
+
+	public void setDueDateDelayEL(String dueDateDelayEL) {
+		this.dueDateDelayEL = dueDateDelayEL;
+	}
+
+	public PaymentMethodEnum getPaymentMethod() {
+		return paymentMethod;
+	}
+
+	public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
+		this.paymentMethod = paymentMethod;
+	}
     
 }

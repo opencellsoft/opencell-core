@@ -41,6 +41,9 @@ public class CardTokenService extends PersistenceService<CardToken> {
 
 	@Inject
 	private CountryService countryService;
+	
+	@Inject
+	private GatewayPaymentFactory gatewayPaymentFactory;
 
 	@Override
 	public void create(CardToken cardToken) throws BusinessException{
@@ -51,7 +54,7 @@ public class CardTokenService extends PersistenceService<CardToken> {
 			if(country != null){
 				coutryCode = country.getCountryCode();
 			}	
-			GatewayPaymentInterface  gatewayPaymentInterface = GatewayPaymentFactory.getInstance(GatewayPaymentNamesEnum.valueOf(ParamBean.getInstance().getProperty("meveo.gatewayPayment", "INGENICO")));
+			GatewayPaymentInterface  gatewayPaymentInterface = gatewayPaymentFactory.getInstance(GatewayPaymentNamesEnum.valueOf(ParamBean.getInstance().getProperty("meveo.gatewayPayment", "CUSTOM_API")));
 			String tockenID = gatewayPaymentInterface.createCardToken(cardToken.getCustomerAccount(), cardToken.getAlias(), cardToken.getCardNumber(), cardToken.getOwner(),
 					StringUtils.getLongAsNChar(cardToken.getMonthExpiration(), 2)+StringUtils.getLongAsNChar(cardToken.getYearExpiration(),2), cardToken.getIssueNumber(),cardToken.getCardType().getId(),coutryCode);			
 			cardToken.setTokenId(tockenID);

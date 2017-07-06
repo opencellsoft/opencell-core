@@ -36,14 +36,14 @@ import org.meveo.model.MultilanguageEntity;
 @Cacheable
 @MultilanguageEntity(key = "menu.titles", group = "Title")
 @ExportIdentifier({ "code"})
-@Table(name = "ADM_TITLE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ADM_TITLE_SEQ"), })
+@Table(name = "adm_title", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "adm_title_seq"), })
 public class Title extends BusinessEntity {
 
 	private static final long serialVersionUID = -6827515878506806536L;
 
 	@Type(type="numeric_boolean")
-    @Column(name = "IS_COMPANY")
+    @Column(name = "is_company")
 	private Boolean isCompany = Boolean.FALSE;
 
 	public Title() {

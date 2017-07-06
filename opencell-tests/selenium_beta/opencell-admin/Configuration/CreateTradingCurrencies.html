@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://integration.i.opencellsoft.com/opencell/" />
+<title>Create Trading Currencies</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">New Test</td></tr>
+</thead><tbody>
+<tr>
+	<td>clickAndWait</td>
+	<td>${tradingCurrencies}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>${newButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${currenciesCodeField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${currenciesCodeField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>${currenciesPopup}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>${currenciesCodeSearchField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${currenciesCodeSearchField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${currenciesCodeSearchField}</td>
+	<td>${code}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${searchButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>${currenciesPopup}/div/div/table/tbody/tr/td[text()[contains(.,${code})]]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${currenciesPopup}/div/div/table/tbody/tr/td[text()[contains(.,${code})]]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${currenciesPopup}/div/div/table/tbody/tr/td[text()[contains(.,${code})]]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${tradingCurrenciesDescriptionField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${tradingCurrenciesDescriptionField}</td>
+	<td>${description}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${exchangeRateField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${exchangeRateField}</td>
+	<td>${exchangeRate}</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>${saveButtonWhenCreate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>${infoSummary}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>${infoSummary}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>${infoSummary}</td>
+	<td></td>
+</tr>
+</tbody></table>
+</body>
+</html>

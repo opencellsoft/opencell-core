@@ -35,38 +35,38 @@ import org.meveo.model.shared.Address;
 @Entity
 @ObservableEntity
 @ExportIdentifier({ "code"})
-@Table(name = "CRM_PROVIDER_CONTACT", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CRM_PROVIDER_CONTACT_SEQ"), })
+@Table(name = "crm_provider_contact", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "crm_provider_contact_seq"), })
 public class ProviderContact extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "FIRSTNAME", length = 50)
+	@Column(name = "firstname", length = 50)
 	@Size(max = 50)
 	protected String firstName;
 
-	@Column(name = "LASTNAME", length = 50)
+	@Column(name = "lastname", length = 50)
 	@Size(max = 50)
 	protected String lastName;
 
-	@Column(name = "EMAIL", length = 100)
+	@Column(name = "email", length = 100)
 	// @Pattern(regexp = ".+@.+\\..{2,4}")
 	@Size(max = 100)
 	protected String email;
 
-	@Column(name = "PHONE", length = 15)
+	@Column(name = "phone", length = 15)
 	@Size(max = 15)
 	protected String phone;
 
-	@Column(name = "MOBILE", length = 15)
+	@Column(name = "mobile", length = 15)
 	@Size(max = 15)
 	protected String mobile;
 
-	@Column(name = "FAX", length = 15)
+	@Column(name = "fax", length = 15)
 	@Size(max = 15)
 	protected String fax;
 
-	@Column(name = "GENERIC_MAIL", length = 100)
+	@Column(name = "generic_mail", length = 100)
 	// @Pattern(regexp = ".+@.+\\..{2,4}")
 	@Size(max = 100)
 	protected String genericMail;

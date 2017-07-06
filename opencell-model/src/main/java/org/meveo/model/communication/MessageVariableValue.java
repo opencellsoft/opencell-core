@@ -33,17 +33,17 @@ import org.meveo.model.ExportIdentifier;
 
 @Entity
 @ExportIdentifier({ "code"})
-@Table(name = "COM_MSG_VAR_VALUE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "COM_MSG_VAR_VAL_SEQ"), })
+@Table(name = "com_msg_var_value", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "com_msg_var_val_seq"), })
 public class MessageVariableValue extends BusinessEntity {
 
 	private static final long serialVersionUID = 3887656885680541231L;
 
 	@ManyToOne
-	@JoinColumn(name = "MESSAGE")
+	@JoinColumn(name = "message")
 	private Message message;
 
-	@Column(name = "VALUE", length = 255)
+	@Column(name = "value", length = 255)
     @Size(max = 255)
 	private String value;
 

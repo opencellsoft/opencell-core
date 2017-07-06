@@ -5,11 +5,9 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.model.billing.CounterInstance;
 
-@XmlType(name = "Counter")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CounterInstanceDto implements Serializable{
 

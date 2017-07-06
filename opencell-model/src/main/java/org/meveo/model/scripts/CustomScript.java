@@ -23,20 +23,20 @@ public abstract class CustomScript extends BusinessEntity {
 
     private static final long serialVersionUID = 8176170199770220430L;
 
-    @Column(name = "SCRIPT", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "script", nullable = false, columnDefinition = "TEXT")
     @NotNull
     @XStreamConverter(XStreamCDATAConverter.class)
     private String script;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "SRC_TYPE")
+    @Column(name = "src_type")
     private ScriptSourceTypeEnum sourceTypeEnum = ScriptSourceTypeEnum.JAVA;
 
     @Transient
     private List<ScriptInstanceError> scriptErrors = new ArrayList<ScriptInstanceError>();
 
     @Type(type="numeric_boolean")
-    @Column(name = "IS_ERROR")
+    @Column(name = "is_error")
     private Boolean error = false;
 
     /**

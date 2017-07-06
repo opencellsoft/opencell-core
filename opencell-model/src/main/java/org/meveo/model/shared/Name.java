@@ -32,14 +32,14 @@ public class Name implements Serializable, Cloneable {
     private static final long serialVersionUID = 1L;
 
     @ManyToOne()
-    @JoinColumn(name = "TITLE_ID")
+    @JoinColumn(name = "title_id")
     private Title title;
 
-    @Column(name = "FIRSTNAME", length = 50)
+    @Column(name = "firstname", length = 50)
     @Size(max = 50)
     protected String firstName;
 
-    @Column(name = "LASTNAME", length = 50)
+    @Column(name = "lastname", length = 50)
     @Size(max = 50)
     protected String lastName;
 
