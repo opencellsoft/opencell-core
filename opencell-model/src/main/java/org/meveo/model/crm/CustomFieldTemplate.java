@@ -209,26 +209,30 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
         this.valueRequired = valueRequired;
     }
 
-	public Map<String, String> getListValues() {
-		if (listValues != null && !listValues.isEmpty()) {
-			Comparator<String> dropdownListComparator = new Comparator<String>() {
-				@Override
-				public int compare(String s1, String s2) {
-					try {
-						return Integer.valueOf(s1).compareTo(Integer.valueOf(s2));
-					} catch (NumberFormatException e) {
-						return s1.compareTo(s2);
-					}
-				}
-			};
+    public Map<String, String> getListValues() {
+        return listValues;
+    }
 
-			Map<String, String> newList = new TreeMap<>(dropdownListComparator);
-			newList.putAll(listValues);
-			return newList;
-		}
+    public Map<String, String> getListValuesSorted() {
+        if (listValues != null && !listValues.isEmpty()) {
+            Comparator<String> dropdownListComparator = new Comparator<String>() {
+                @Override
+                public int compare(String s1, String s2) {
+                    try {
+                        return Integer.valueOf(s1).compareTo(Integer.valueOf(s2));
+                    } catch (NumberFormatException e) {
+                        return s1.compareTo(s2);
+                    }
+                }
+            };
 
-		return listValues;
-	}
+            Map<String, String> newList = new TreeMap<>(dropdownListComparator);
+            newList.putAll(listValues);
+            return newList;
+        }
+
+        return listValues;
+    }
 
     public void setListValues(Map<String, String> listValues) {
         this.listValues = listValues;
@@ -327,11 +331,11 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
     public boolean isUseInheritedAsDefaultValue() {
         return useInheritedAsDefaultValue;
     }
-    
+
     public void setUseInheritedAsDefaultValue(boolean useInheritedAsDefaultValue) {
         this.useInheritedAsDefaultValue = useInheritedAsDefaultValue;
     }
-    
+
     public String getEntityClazz() {
         return entityClazz;
     }
@@ -571,8 +575,8 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
         return String.format("CustomFieldTemplate [id=%s, appliesTo=%s, code=%s]", id, appliesTo, code);
     }
 
-	@Override
-	public int compareTo(CustomFieldTemplate o) {
-		return o.getCode().compareTo(getCode());
-	}
+    @Override
+    public int compareTo(CustomFieldTemplate o) {
+        return o.getCode().compareTo(getCode());
+    }
 }

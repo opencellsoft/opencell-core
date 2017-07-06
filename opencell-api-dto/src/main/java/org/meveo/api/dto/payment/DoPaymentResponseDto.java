@@ -5,6 +5,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.response.BaseResponse;
+import org.meveo.model.payments.PaymentStatusEnum;
 
 @XmlRootElement(name = "CardTokenResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -13,11 +14,16 @@ public class DoPaymentResponseDto extends BaseResponse{
 	private static final long serialVersionUID = 1L;
 	private String paymentID;
 	private String transactionId;
-	private String paymentStatus;
+	private PaymentStatusEnum paymentStatus;
 	private String tokenId;
+	private String errorMessage;
 	private boolean isNewToken;
 	private boolean isAoCreated = false;
 	private boolean isMatchingCreated = false;
+	private String codeClientSide;
+	private String paymentBrand;
+	private String bankRefenrence;
+	
 	
 	public DoPaymentResponseDto(){}
 
@@ -29,11 +35,11 @@ public class DoPaymentResponseDto extends BaseResponse{
 		this.transactionId = transactionId;
 	}
 
-	public String getPaymentStatus() {
+	public PaymentStatusEnum getPaymentStatus() {
 		return paymentStatus;
 	}
 
-	public void setPaymentStatus(String paymentStatus) {
+	public void setPaymentStatus(PaymentStatusEnum paymentStatus) {
 		this.paymentStatus = paymentStatus;
 	}
 
@@ -77,10 +83,49 @@ public class DoPaymentResponseDto extends BaseResponse{
 		this.isMatchingCreated = isMatchingCreated;
 	}
 
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
+	}
+	
+	
+
+	public String getCodeClientSide() {
+		return codeClientSide;
+	}
+
+	public void setCodeClientSide(String codeClientSide) {
+		this.codeClientSide = codeClientSide;
+	}
+
+	public String getPaymentBrand() {
+		return paymentBrand;
+	}
+
+	public void setPaymentBrand(String paymentBrand) {
+		this.paymentBrand = paymentBrand;
+	}
+
+	public String getBankRefenrence() {
+		return bankRefenrence;
+	}
+
+	public void setBankRefenrence(String bankRefenrence) {
+		this.bankRefenrence = bankRefenrence;
+	}
+
 	@Override
 	public String toString() {
 		return "DoPaymentResponseDto [paymentID=" + paymentID + ", transactionId=" + transactionId + ", paymentStatus="
-				+ paymentStatus + ", tokenId=" + tokenId + ", isNewToken=" + isNewToken + ", isAoCreated=" + isAoCreated
-				+ ", isMatchingCreated=" + isMatchingCreated + "]";
-	}	
+				+ paymentStatus + ", tokenId=" + tokenId + ", errorMessage=" + errorMessage + ", isNewToken="
+				+ isNewToken + ", isAoCreated=" + isAoCreated + ", isMatchingCreated=" + isMatchingCreated
+				+ ", codeClientSide=" + codeClientSide + ", paymentBrand=" + paymentBrand + ", bankRefenrence="
+				+ bankRefenrence + "]";
+	}
+
+	
+
 }

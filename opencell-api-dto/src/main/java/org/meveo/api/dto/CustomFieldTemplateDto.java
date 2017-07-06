@@ -229,7 +229,7 @@ public class CustomFieldTemplateDto extends BaseDto {
         cacheValueTimeperiod = cf.getCacheValueTimeperiod();
         guiPosition = cf.getGuiPosition();
         if (cf.getFieldType() == CustomFieldTypeEnum.LIST) {
-            listValues = cf.getListValues();
+            listValues = cf.getListValuesSorted();
         }
         applicableOnEl = cf.getApplicableOnEl();
         mapKeyType = cf.getMapKeyType();
