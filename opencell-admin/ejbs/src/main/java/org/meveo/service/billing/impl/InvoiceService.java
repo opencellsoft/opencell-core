@@ -1397,7 +1397,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		log.debug("cancel invoice:{} done",invoice.getTemporaryInvoiceNumber());
 	}
 	
-	private Integer evaluateIntegerExpression(String expression, BillingAccount billingAccount, Invoice invoice, Order order) throws BusinessException {
+	public Integer evaluateIntegerExpression(String expression, BillingAccount billingAccount, Invoice invoice, Order order) throws BusinessException {
 		Integer result = null;
 		if (StringUtils.isBlank(expression)) {
 			return result;
