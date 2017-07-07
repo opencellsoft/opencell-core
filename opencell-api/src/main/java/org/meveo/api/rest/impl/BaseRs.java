@@ -194,7 +194,7 @@ public abstract class BaseRs implements IBaseRs {
         }
         else if("INSUFFICIENT_BALANCE".equals(str)
                 || "DUPLICATE_ACCESS".equals(str)){
-                throw new NotAcceptableException(status);
+            throw new NotAcceptableException(status);
         }else{
             throw new InternalServerErrorException(status);    
         }
