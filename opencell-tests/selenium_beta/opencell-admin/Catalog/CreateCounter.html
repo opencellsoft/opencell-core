@@ -4,16 +4,16 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://integration.i.opencellsoft.com/opencell/" />
-<title>Create Invoice Type</title>
+<title>CreateCounter</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">New Test</td></tr>
+<tr><td rowspan="1" colspan="3">CreateCounter</td></tr>
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
-	<td>${invoice}</td>
+	<td>${counters}</td>
 	<td></td>
 </tr>
 <tr>
@@ -43,111 +43,76 @@
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${accountOperationField}</td>
+	<td>${unitField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${unitField}</td>
+	<td>${unit}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${typeField}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${accountOperationField}</td>
-	<td></td>
+	<td>${typeField}/div/ul/li[text()[contains(.,'${type}')]]</td>
+	<td>${type}</td>
 </tr>
 <tr>
-	<td>waitForElementPresent</td>
-	<td>//*[contains(@id, 'searchField1')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>//*[contains(@id, 'searchField1')]</td>
-	<td>${accountOperation}</td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${searchButton}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>pause</td>
-	<td>1000</td>
-	<td>${accountOperation}</td>
-</tr>
-<tr>
-	<td>waitForText</td>
-	<td>//tbody[@id='searchOccTemplatePopuppopupForm:searchOccTemplatePopupdatatable_data']/tr/td</td>
-	<td>${accountOperation}</td>
-</tr>
-<tr>
-	<td>verifyTextPresent</td>
-	<td>${accountOperation}</td>
+	<td>assertElementPresent</td>
+	<td>${counterLevelField}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//tbody[@id='searchOccTemplatePopuppopupForm:searchOccTemplatePopupdatatable_data']/tr/td</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForNotVisible</td>
-	<td>id=searchOccTemplatePopup</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForValue</td>
-	<td>id=formInvoiceType:occTemplateSelectedId_text</td>
-	<td>${accountOperation}</td>
+	<td>${counterLevelField}/div/ul/li[text()[contains(.,'${counterLevel}')]]</td>
+	<td>${type}</td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${prefixField}</td>
+	<td>${initialValueField}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${prefixField}</td>
-	<td>${prefix}</td>
+	<td>${initialValueField}</td>
+	<td>${initialValue}</td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${sequenceSizeField}</td>
+	<td>${calendarField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${calendarField}/div/ul/li[text()[contains(.,'${calendar}')]]</td>
+	<td>${type}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${initialValueElExpressionField}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${sequenceSizeField}</td>
-	<td>${sequenceSize}</td>
+	<td>${initialValueElExpressionField}</td>
+	<td>${initialValueElExpression}</td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${currentInvoiceNumberField}</td>
+	<td>${fireNotificationField}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${currentInvoiceNumberField}</td>
-	<td>${currentInvoiceNumber}</td>
+	<td>${fireNotificationField}</td>
+	<td>${fireNotification}</td>
 </tr>
 <tr>
-	<td>assertText</td>
-	<td>${invoiceTypeIn}</td>
-	<td>${invoiceType}</td>
-</tr>
-<tr>
-	<td>doubleClick</td>
-	<td>${invoiceTypeIn}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForElementPresent</td>
-	<td>${invoiceTypeOut}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>pause</td>
-	<td>1000</td>
-	<td></td>
-</tr>
-<tr>
-	<td>clickAndWait</td>
+	<td>click</td>
 	<td>${saveButtonWhenCreate}</td>
 	<td></td>
 </tr>
@@ -161,6 +126,7 @@
 	<td>${infoSummary}</td>
 	<td></td>
 </tr>
+
 </tbody></table>
 </body>
 </html>

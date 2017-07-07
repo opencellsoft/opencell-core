@@ -4,58 +4,69 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://integration.i.opencellsoft.com/opencell/" />
-<title>Login</title>
+<title>CreatePrepaidWallet</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">LoginTestCase</td></tr>
+<tr><td rowspan="1" colspan="3">CreatePrepaidWallet</td></tr>
 </thead><tbody>
 <tr>
-	<td>open</td>
-	<td>${url}</td>
+	<td>clickAndWait</td>
+	<td>${prepaidWallets}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPageToLoad</td>
-	<td>${defaultTimeout}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForElementPresent</td>
-	<td>link=English</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>link=English</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForElementPresent</td>
-	<td>${usernameField}</td>
+	<td>clickAndWait</td>
+	<td>${newButton}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${usernameField}</td>
+	<td>${codeField}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${usernameField}</td>
-	<td>${username}</td>
+	<td>${codeField}</td>
+	<td>${code}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${descriptionField}</td>
+	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${passwordField}</td>
-	<td>${password}</td>
+	<td>${descriptionField}</td>
+	<td>${description}</td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
-	<td>${connect}</td>
+	<td>assertElementPresent</td>
+	<td>${lowBalanceLevelField}</td>
 	<td></td>
 </tr>
+<tr>
+	<td>type</td>
+	<td>${lowBalanceLevelField}</td>
+	<td>${lowBalanceLevel}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${saveButtonWhenCreate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>${infoSummary}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>${infoSummary}</td>
+	<td></td>
+</tr>
+
 </tbody></table>
 </body>
 </html>
