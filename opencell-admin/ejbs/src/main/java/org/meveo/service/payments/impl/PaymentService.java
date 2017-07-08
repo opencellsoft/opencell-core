@@ -90,14 +90,16 @@ public class PaymentService extends PersistenceService<Payment> {
 					aoPaymentId = createPaymentAO(customerAccount, ctsAmount, doPaymentResponseDto);
 					doPaymentResponseDto.setAoCreated(true);
 				}catch (Exception e) {
-					log.warn("Cant create Account operation payment :"+e.getMessage());
+					log.warn("Cant create Account operation payment :",e);
 				}
 				if(matchingAO){
 					try{
-						createMatching(customerAccount, ctsAmount, aoPaymentId, aoIdsToPay);
+						 List<Long> aoIdsToMatch = aoIdsToPay;						 
+						 aoIdsToMatch.add(aoPaymentId);
+						 matchingCodeService.matchOperations(null, customerAccount.getCode(), aoIdsToMatch, null, MatchingTypeEnum.A);			
 						doPaymentResponseDto.setMatchingCreated(true);
 					}catch (Exception e) {
-						log.warn("Cant create matching :"+e.getMessage());
+						log.warn("Cant create matching :",e);
 					}
 				}
 			}
@@ -133,7 +135,7 @@ public class PaymentService extends PersistenceService<Payment> {
 		}	
 		DoPaymentResponseDto doPaymentResponseDto =  gatewayPaymentInterface.doPaymentCard(customerAccount, ctsAmount, cardNumber, ownerName,  cvv, expirayDate,cardType,coutryCode,null);		
 		
-		if(!StringUtils.isBlank(doPaymentResponseDto.getPaymentID())){
+		if(PaymentStatusEnum.ACCEPTED.name().equals(doPaymentResponseDto.getPaymentStatus().name())){
 			CardToken cardToken = new CardToken(); 
 			cardToken.setAlias("Card_"+cardNumber.substring(12, 16));
 			cardToken.setCardNumber(cardNumber);
@@ -156,7 +158,9 @@ public class PaymentService extends PersistenceService<Payment> {
 				}
 				if(matchingAO){
 					try{
-						createMatching(customerAccount, ctsAmount, aoPaymentId, aoIdsToPay);
+						 List<Long> aoIdsToMatch = aoIdsToPay;						 
+						 aoIdsToMatch.add(aoPaymentId);
+						matchingCodeService.matchOperations(null, customerAccount.getCode(), aoIdsToMatch, null, MatchingTypeEnum.A);							
 						doPaymentResponseDto.setMatchingCreated(true);
 					}catch (Exception e) {
 						log.warn("Cant create matching :"+e.getMessage());
@@ -201,22 +205,4 @@ public class PaymentService extends PersistenceService<Payment> {
 
 	}
 	
-	
-/**
- * Create matching for aoPaymentId and aoIdsToPay
- * @param customerAccount
- * @param ctsAmount
- * @param aoPaymentId
- * @param aoIdsToPay
- * @throws BusinessException
- * @throws NoAllOperationUnmatchedException
- * @throws UnbalanceAmountException
- */
-	public void createMatching(CustomerAccount customerAccount,Long ctsAmount,Long aoPaymentId,List<Long> aoIdsToPay) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
-		List<Long> listReferenceToMatch = aoIdsToPay;
-		if(listReferenceToMatch != null){							
-			listReferenceToMatch.add(aoPaymentId);
-			matchingCodeService.matchOperations(null, customerAccount.getCode(), listReferenceToMatch, null, MatchingTypeEnum.A);
-		}			
-	}
 }
