@@ -35,6 +35,7 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.communication.CommunicationPolicy;
 import org.meveo.model.communication.Message;
+import org.meveo.model.crm.Provider;
 
 @Entity
 @ExportIdentifier({ "contactCode"})
@@ -79,4 +80,30 @@ public class Contact extends BaseEntity {
 		this.messages = messages;
 	}
 
+    @Override
+    public boolean equals(Object obj) {
+
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof Provider)) {
+            return false;
+        }
+
+        Contact other = (Contact) obj;
+
+        if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
+             return true;
+        }
+
+        if (contactCode == null) {
+            if (other.getContactCode() != null) {
+                return false;
+            }
+        } else if (!contactCode.equals(other.getContactCode())) {
+            return false;
+        }
+        return true;
+    }
 }

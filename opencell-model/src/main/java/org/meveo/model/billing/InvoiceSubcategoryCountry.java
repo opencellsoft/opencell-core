@@ -42,7 +42,7 @@ import org.meveo.model.shared.DateUtils;
  * InvoiceSubcategoryCountry entity.
  */
 @Entity
-@ExportIdentifier({ "invoiceSubCategory.code", "tradingCountry.country.countryCode", "tax.code"})
+@ExportIdentifier({ "invoiceSubCategory.code", "tradingCountry.country.countryCode", "tax.code", "startValidityDate", "endValidityDate"})
 @Table(name = "billing_inv_sub_cat_country", uniqueConstraints = @UniqueConstraint(columnNames = {"invoice_sub_category_id", "selling_country_id", "trading_country_id", "start_validity_date", "end_validity_date"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_inv_sub_cat_country_seq"), })
 public class InvoiceSubcategoryCountry extends EnableEntity {
