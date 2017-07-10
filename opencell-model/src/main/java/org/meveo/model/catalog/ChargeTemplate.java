@@ -203,6 +203,9 @@ public class ChargeTemplate extends BusinessCFEntity {
 	public void setRevenueRecognitionRule(RevenueRecognitionRule revenueRecognitionRule) {
 		this.revenueRecognitionRule = revenueRecognitionRule;
 	}
-
+	
+	public String getChargeType() {
+		return null;
+	}
     
 }
