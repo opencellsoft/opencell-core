@@ -49,5 +49,11 @@
 			<column name="payment_method" type="varchar(20)" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="#2665_20170710-Add guiPosition to custom action" author="EdwardLegaspi">
+		<addColumn tableName="crm_custom_action">
+			<column name="gui_position" type="varchar(100)" />
+		</addColumn>
+	</changeSet>
         
 </databaseChangeLog> 
