@@ -432,6 +432,12 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			dueDate.appendChild(dueDateTxt);
 			header.appendChild(dueDate);
 		}
+		
+		if(invoice.getPaymentMethod() != null) {
+			Element paymentMethod = doc.createElement("paymentMethod");
+			paymentMethod.appendChild(doc.createTextNode(invoice.getPaymentMethod().name()));
+			header.appendChild(paymentMethod);
+		}
 
 		Element comment = doc.createElement("comment");
 		Comment commentText = doc.createComment(invoice.getComment() != null ? invoice.getComment() : "");

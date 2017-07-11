@@ -38,7 +38,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Characteristic", propOrder = { "name", "value" })
+@XmlType(name = "Characteristic", propOrder = { "name", "value" }, namespace="http://www.tmforum.org")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Characteristic implements Serializable {
 

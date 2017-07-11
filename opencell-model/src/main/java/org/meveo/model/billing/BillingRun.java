@@ -47,57 +47,57 @@ import org.meveo.model.EnableEntity;
 import org.meveo.model.admin.Currency;
 
 @Entity
-@Table(name = "BILLING_BILLING_RUN")
+@Table(name = "billing_billing_run")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "BILLING_BILLING_RUN_SEQ"), })
+        @Parameter(name = "sequence_name", value = "billing_billing_run_seq"), })
 public class BillingRun extends EnableEntity {
 
 	private static final long serialVersionUID = 1L;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "PROCESS_DATE")
+	@Column(name = "process_date")
 	private Date processDate;
 
 	@Enumerated(value = EnumType.STRING)
-	@Column(name = "STATUS")
+	@Column(name = "status")
 	private BillingRunStatusEnum status;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "STATUS_DATE")
+	@Column(name = "status_date")
 	private Date statusDate;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "BILLING_CYCLE_ID")
+	@JoinColumn(name = "billing_cycle_id")
 	private BillingCycle billingCycle;
 
-	@Column(name = "NB_BILLING_ACCOUNT")
+	@Column(name = "nb_billing_account")
 	private Integer billingAccountNumber;
 
-	@Column(name = "NB_BILLABLE_BILLING_ACCOUNT")
+	@Column(name = "nb_billable_billing_account")
 	private Integer billableBillingAcountNumber;
 
-	@Column(name = "NB_PRODUCIBLE_INVOICE")
+	@Column(name = "nb_producible_invoice")
 	private Integer producibleInvoiceNumber;
 
-	@Column(name = "PRODUCIBLE_AMOUNT_WITHOUT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "producible_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal producibleAmountWithoutTax;
 
-	@Column(name = "PRODUCIBLE_AMOUNT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "producible_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal producibleAmountTax;
 
-	@Column(name = "NB_INVOICE")
+	@Column(name = "nb_invoice")
 	private Integer InvoiceNumber;
 
-	@Column(name = "PRODUCIBLE_AMOUNT_WITH_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "producible_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal producibleAmountWithTax;
 
-	@Column(name = "PR_AMOUNT_WITHOUT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "pr_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal prAmountWithoutTax;
 
-	@Column(name = "PR_AMOUNT_WITH_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "pr_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal prAmountWithTax;
 
-	@Column(name = "PR_AMOUNT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "pr_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal prAmountTax;
 	
 	@OneToMany(mappedBy = "billingRun", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -113,46 +113,46 @@ public class BillingRun extends EnableEntity {
 	private Set<RatedTransaction> ratedTransactions = new HashSet<RatedTransaction>();
 
 	@Enumerated(value = EnumType.STRING)
-	@Column(name = "PROCESS_TYPE")
+	@Column(name = "process_type")
 	private BillingProcessTypesEnum processType;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "START_DATE")
+	@Column(name = "start_date")
 	private Date startDate;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "END_DATE")
+	@Column(name = "end_date")
 	private Date endDate;
 	
-    @Column(name = "INVOICE_DATE")
+    @Column(name = "invoice_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date invoiceDate;
 
-    @Column(name = "LAST_TRANSACTION_DATE")
+    @Column(name = "last_transaction_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastTransactionDate;
     
-	@Column(name = "REJECTION_REASON", length = 255)
+	@Column(name = "rejection_reason", length = 255)
     @Size(max = 255)
 	private String rejectionReason;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "PR_CURRENCY_ID")
+	@JoinColumn(name = "pr_currency_id")
 	private Currency currency;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "PR_COUNTRY_ID")
+	@JoinColumn(name = "pr_country_id")
 	private Country country;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "PR_LANGUAGE_ID")
+	@JoinColumn(name = "pr_language_id")
 	private Language language;
 
-	@Column(name = "SELECTED_BILLING_ACCOUNTS", columnDefinition="TEXT")
+	@Column(name = "selected_billing_accounts", columnDefinition="TEXT")
 	private String selectedBillingAccounts;
 
 	@Type(type="numeric_boolean")
-    @Column(name = "XML_INVOICE_GENERATED")
+    @Column(name = "xml_invoice_generated")
 	private Boolean xmlInvoiceGenerated = Boolean.FALSE;
 
 	@Transient

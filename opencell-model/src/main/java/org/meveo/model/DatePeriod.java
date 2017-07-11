@@ -18,6 +18,7 @@
  */
 package org.meveo.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -32,14 +33,16 @@ import org.meveo.model.shared.DateUtils;
  * @created 2009.10.20
  */
 @Embeddable
-public class DatePeriod implements Comparable<DatePeriod> {
+public class DatePeriod implements Comparable<DatePeriod>, Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "START_DATE")
+    @Column(name = "start_date")
     private Date from;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "END_DATE")
+    @Column(name = "end_date")
     private Date to;
 
     public DatePeriod() {
@@ -176,7 +179,10 @@ public class DatePeriod implements Comparable<DatePeriod> {
             return true;
         } else if (!isEmpty() && other == null) {
             return false;
+        } else if (!(other instanceof DatePeriod)) {
+            return false;
         }
+
         return isCorrespondsToPeriod((DatePeriod) other, true);
     }
 }

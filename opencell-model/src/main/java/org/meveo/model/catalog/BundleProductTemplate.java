@@ -24,84 +24,86 @@ import org.meveo.model.IEntity;
  * @author Edward P. Legaspi
  */
 @Entity
-@ExportIdentifier({ "bundleTemplate.code", "productTemplate.code"})
-@Table(name = "CAT_BUNDLE_PRODUCT_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "PRODUCT_TEMPLATE_ID", "BUNDLE_TEMPLATE_ID" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CAT_BUNDLE_PRODUCT_TEMPLATE_SEQ"), })
+@ExportIdentifier({ "bundleTemplate.code", "bundleTemplate.validity.from", "bundleTemplate.validity.to", "productTemplate.code", "productTemplate.validity.from",
+        "productTemplate.validity.to" })
+@Table(name = "cat_bundle_product_template", uniqueConstraints = @UniqueConstraint(columnNames = { "product_template_id", "bundle_template_id" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "cat_bundle_product_template_seq"), })
 public class BundleProductTemplate implements IEntity {
 
-	@Id
-	@GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)
-	@Column(name = "ID")
-	@Access(AccessType.PROPERTY)
-	protected Long id;
+    @Id
+    @GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)
+    @Column(name = "id")
+    @Access(AccessType.PROPERTY)
+    protected Long id;
 
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "PRODUCT_TEMPLATE_ID")
-	@NotNull
-	private ProductTemplate productTemplate;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "product_template_id")
+    @NotNull
+    private ProductTemplate productTemplate;
 
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "BUNDLE_TEMPLATE_ID")
-	@NotNull
-	private BundleTemplate bundleTemplate;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "bundle_template_id")
+    @NotNull
+    private BundleTemplate bundleTemplate;
 
-	@Column(name = "QUANTITY")
-	private int quantity;
+    @Column(name = "quantity")
+    private int quantity;
 
-	@Override
-	public Serializable getId() {
-		return id;
-	}
+    @Override
+    public Serializable getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	@Override
-	public boolean isTransient() {
-		return id == null;
-	}
+    @Override
+    public boolean isTransient() {
+        return id == null;
+    }
 
-	public ProductTemplate getProductTemplate() {
-		return productTemplate;
-	}
+    public ProductTemplate getProductTemplate() {
+        return productTemplate;
+    }
 
-	public void setProductTemplate(ProductTemplate productTemplate) {
-		this.productTemplate = productTemplate;
-	}
+    public void setProductTemplate(ProductTemplate productTemplate) {
+        this.productTemplate = productTemplate;
+    }
 
-	public BundleTemplate getBundleTemplate() {
-		return bundleTemplate;
-	}
+    public BundleTemplate getBundleTemplate() {
+        return bundleTemplate;
+    }
 
-	public void setBundleTemplate(BundleTemplate bundleTemplate) {
-		this.bundleTemplate = bundleTemplate;
-	}
+    public void setBundleTemplate(BundleTemplate bundleTemplate) {
+        this.bundleTemplate = bundleTemplate;
+    }
 
-	public int getQuantity() {
-		return quantity;
-	}
+    public int getQuantity() {
+        return quantity;
+    }
 
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
-	}
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
 
-	@Override
-	public int hashCode() {
-		if (id != null)
-			return id.intValue();
+    @Override
+    public int hashCode() {
+        if (id != null)
+            return id.intValue();
 
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((bundleTemplate == null) ? 0 : bundleTemplate.getId().hashCode());
-		result = prime * result + ((productTemplate == null) ? 0 : productTemplate.getId().hashCode());
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((bundleTemplate == null) ? 0 : bundleTemplate.getId().hashCode());
+        result = prime * result + ((productTemplate == null) ? 0 : productTemplate.getId().hashCode());
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
+    @Override
+    public boolean equals(Object obj) {
 
         if (this == obj) {
             return true;
@@ -111,26 +113,26 @@ public class BundleProductTemplate implements IEntity {
             return false;
         }
 
-		BundleProductTemplate that = (BundleProductTemplate) obj;
+        BundleProductTemplate that = (BundleProductTemplate) obj;
 
-		ProductTemplate thatProductTemplate = that.getProductTemplate();
-		if (productTemplate == null && thatProductTemplate != null) {
-			return false;
-		} else if (!productTemplate.equals(thatProductTemplate)) {
-			return false;
-		}
+        ProductTemplate thatProductTemplate = that.getProductTemplate();
+        if (productTemplate == null && thatProductTemplate != null) {
+            return false;
+        } else if (!productTemplate.equals(thatProductTemplate)) {
+            return false;
+        }
 
-		BundleTemplate thatBundleTemplate = that.getBundleTemplate();
-		if (bundleTemplate == null && thatBundleTemplate != null) {
-			return false;
-		} else if (!bundleTemplate.equals(thatBundleTemplate)) {
-			return false;
-		}
+        BundleTemplate thatBundleTemplate = that.getBundleTemplate();
+        if (bundleTemplate == null && thatBundleTemplate != null) {
+            return false;
+        } else if (!bundleTemplate.equals(thatBundleTemplate)) {
+            return false;
+        }
 
-		return true;
-	}
-	
-	@Override
+        return true;
+    }
+
+    @Override
     public String toString() {
         return "[BundleTemplate = " + this.bundleTemplate + ", ProductTemplate = " + this.productTemplate + "]";
     }

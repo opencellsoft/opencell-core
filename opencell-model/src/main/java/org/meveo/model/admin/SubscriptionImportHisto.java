@@ -31,23 +31,23 @@ public class SubscriptionImportHisto extends JobHistory {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "FILE_NAME", length = 255)
+    @Column(name = "file_name", length = 255)
     @Size(max = 255)
     private String fileName;
 
-    @Column(name = "NB_SUBSCRIPTIONS")
+    @Column(name = "nb_subscriptions")
     private Integer nbSubscriptions;
 
-    @Column(name = "NB_SUBSCRIPTIONS_ERROR")
+    @Column(name = "nb_subscriptions_error")
     private Integer nbSubscriptionsError;
 
-    @Column(name = "NB_SUBSCRIPTIONS_IGNORED")
+    @Column(name = "nb_subscriptions_ignored")
     private Integer nbSubscriptionsIgnored;
 
-    @Column(name = "NB_SUBSCRIPTIONS_CREATED")
+    @Column(name = "nb_subscriptions_created")
     private Integer nbSubscriptionsCreated;
 
-    @Column(name = "NB_SUBSCRIPTIONS_TERMINATED")
+    @Column(name = "nb_subscriptions_terminated")
     private Integer nbSubscriptionsTerminated;
 
     public SubscriptionImportHisto() {

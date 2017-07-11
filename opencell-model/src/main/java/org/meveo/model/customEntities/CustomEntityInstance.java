@@ -12,22 +12,24 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ObservableEntity;
 
 @Entity
+@ObservableEntity
 @CustomFieldEntity(cftCodePrefix = "CE", cftCodeFields = "cetCode")
 @ExportIdentifier({ "code", "cetCode"})
-@Table(name = "CUST_CEI", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "CET_CODE"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CUST_CEI_SEQ"), })
+@Table(name = "cust_cei", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "cet_code"}))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cust_cei_seq"), })
 public class CustomEntityInstance extends BusinessCFEntity {
 
     private static final long serialVersionUID = 8281478284763353310L;
 
-    @Column(name = "CET_CODE", length = 255, nullable = false)
+    @Column(name = "cet_code", length = 255, nullable = false)
     @Size(max = 255)
     @NotNull
     public String cetCode;
 
-    @Column(name = "PARENT_UUID", updatable = false, length = 60)
+    @Column(name = "parent_uuid", updatable = false, length = 60)
     @Size(max = 60)
     public String parentEntityUuid;
 

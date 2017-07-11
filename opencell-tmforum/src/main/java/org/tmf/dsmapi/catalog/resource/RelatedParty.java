@@ -6,6 +6,7 @@ import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
+import javax.xml.bind.annotation.XmlType;
 
 import org.tmf.dsmapi.commons.Utilities;
 
@@ -20,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *         { "role": "Owner", "id": "1234", "href": "http ://serverLocation:port/partyManagement/partyRole/1234" }
  * 
  */
+@XmlType(name = "RelatedParty", namespace="http://www.tmforum.org") 
 @JsonInclude(value = Include.NON_NULL)
 public class RelatedParty implements Serializable {
     private final static long serialVersionUID = 1L;

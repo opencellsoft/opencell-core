@@ -27,8 +27,8 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 
 @Entity
-@Table(name = "COM_PROVIDER_POLICY")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "COM_PROV_POL_SEQ"), })
+@Table(name = "com_provider_policy")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "com_prov_pol_seq"), })
 public class ProviderPolicy extends BaseEntity {
 
 	private static final long serialVersionUID = -1L;

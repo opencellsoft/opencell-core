@@ -15,13 +15,13 @@ import javax.persistence.Table;
  **/
 @Entity
 @DiscriminatorValue(value = "COMPOSITE_OR")
-@Table(name = "MEVEO_OR_COMPOSITE_FILTER_CONDITION")
+@Table(name = "meveo_or_composite_filter_condition")
 public class OrCompositeFilterCondition extends FilterCondition {
 
 	private static final long serialVersionUID = 8683573995597386129L;
 
 	@OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JoinColumn(name = "COMPOSITE_OR_FILTER_CONDITION_ID")
+	@JoinColumn(name = "composite_or_filter_condition_id")
 	private Set<FilterCondition> filterConditions;
 
 	public Set<FilterCondition> getFilterConditions() {

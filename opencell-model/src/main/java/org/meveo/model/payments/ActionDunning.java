@@ -38,53 +38,53 @@ import org.meveo.model.EnableEntity;
 import org.meveo.model.wf.WFAction;
 
 @Entity
-@Table(name = "AR_ACTION_DUNNING")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "AR_ACTION_DUNNING_SEQ"), })
+@Table(name = "ar_action_dunning")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ar_action_dunning_seq"), })
 public class ActionDunning extends EnableEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "CREATON_DATE")
+	@Column(name = "creaton_date")
 	@Temporal(TemporalType.DATE)
 	private Date creationDate;
 
-	@Column(name = "ACTION_TYPE")
+	@Column(name = "action_type")
 	@Enumerated(EnumType.STRING)
 	private DunningActionTypeEnum typeAction;
 
-	@Column(name = "STATUS")
+	@Column(name = "status")
 	@Enumerated(EnumType.STRING)
 	private DunningActionStatusEnum status;
 
-	@Column(name = "STATUS_DATE")
+	@Column(name = "status_date")
 	@Temporal(TemporalType.DATE)
 	private Date statusDate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "CUSTOMER_ACCOUNT_ID")
+	@JoinColumn(name = "customer_account_id")
 	private CustomerAccount customerAccount;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "RECORDED_INVOICE_ID")
+	@JoinColumn(name = "recorded_invoice_id")
 	private RecordedInvoice recordedInvoice;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "DUNNING_LOT_ID")
+	@JoinColumn(name = "dunning_lot_id")
 	private DunningLOT dunningLOT;
 
-	@Column(name = "FROM_LEVEL")
+	@Column(name = "from_level")
 	@Enumerated(EnumType.STRING)
 	private DunningLevelEnum fromLevel;
 
-	@Column(name = "TO_LEVEL")
+	@Column(name = "to_level")
 	@Enumerated(EnumType.STRING)
 	private DunningLevelEnum toLevel;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ACTION_PLAN_ITEM_ID")
+	@JoinColumn(name = "action_plan_item_id")
 	private WFAction actionPlanItem;
 
-	@Column(name = "AMOUNT_DUE")
+	@Column(name = "amount_due")
 	private BigDecimal amountDue;
 
 	public ActionDunning() {

@@ -60,7 +60,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
         CustomFieldTemplate customFieldTemplate = super.initEntity();
 
         if (customFieldTemplate != null) {
-            extractMapTypeFieldFromEntity(customFieldTemplate.getListValues(), "listValues");
+            extractMapTypeFieldFromEntity(customFieldTemplate.getListValuesSorted(), "listValues");
         }
 
         return customFieldTemplate;

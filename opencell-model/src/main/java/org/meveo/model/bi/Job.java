@@ -40,31 +40,31 @@ import org.meveo.model.ExportIdentifier;
  */
 @Entity
 @ExportIdentifier("name")
-@Table(name = "BI_JOB")
+@Table(name = "bi_job")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "BI_JOB_SEQ"), })
+        @Parameter(name = "sequence_name", value = "bi_job_seq"), })
 public class Job extends AuditableEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "NAME", unique = true, length = 50)
+	@Column(name = "name", unique = true, length = 50)
 	@Size(max = 50)
 	private String name;
 
-	@Column(name = "LAST_EXECUTION_DATE")
+	@Column(name = "last_execution_date")
 	private Date lastExecutionDate;
 
-	@Column(name = "NEXT_EXECUTION_DATE")
+	@Column(name = "next_execution_date")
 	private Date nextExecutionDate;
 
 	@Type(type="numeric_boolean")
-    @Column(name = "ACTIVE")
+    @Column(name = "active")
 	private boolean active;
 
-	@Column(name = "JOB_FREQUENCY")
+	@Column(name = "job_frequency")
 	private Integer jobFrequencyId;
 
-	@Column(name = "JOB_REPOSITORY_ID")
+	@Column(name = "job_repository_id")
 	private Integer jobRepositoryId;
 
 	@OneToMany(mappedBy = "job", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

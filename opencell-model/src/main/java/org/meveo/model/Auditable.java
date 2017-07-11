@@ -34,17 +34,17 @@ public class Auditable implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "CREATED", nullable = false, updatable = false)
+	@Column(name = "created", nullable = false, updatable = false)
 	private Date created;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "UPDATED")
+	@Column(name = "updated")
 	private Date updated;
 
-	@Column(name = "CREATOR", updatable = false, length = 100)
+	@Column(name = "creator", updatable = false, length = 100)
 	private String creator;
 
-	@Column(name = "UPDATER", length = 100)
+	@Column(name = "updater", length = 100)
 	private String updater;
 
 	public Auditable() {

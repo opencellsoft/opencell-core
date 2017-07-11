@@ -58,7 +58,7 @@ import org.meveo.model.payments.PaymentTermEnum;
 @Entity
 @CustomFieldEntity(cftCodePrefix = "BA")
 @ExportIdentifier({ "code"})
-@Table(name = "BILLING_BILLING_ACCOUNT")
+@Table(name = "billing_billing_account")
 @DiscriminatorValue(value = "ACCT_BA")
 @NamedQueries({ @NamedQuery(name = "BillingAccount.listByBillingRunId", query = "SELECT b FROM BillingAccount b where b.billingRun.id=:billingRunId") })
 public class BillingAccount extends AccountEntity {
@@ -68,46 +68,46 @@ public class BillingAccount extends AccountEntity {
 	private static final long serialVersionUID = 1L;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "STATUS", length = 10)
+	@Column(name = "status", length = 10)
 	private AccountStatusEnum status;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "STATUS_DATE")
+	@Column(name = "status_date")
 	private Date statusDate=new Date();
 
 	@Embedded
 	private BankCoordinates bankCoordinates = new BankCoordinates();
 
-	@Column(name = "EMAIL", length = 255)
+	@Column(name = "email", length = 255)
     @Size(max = 255)
 	// @Pattern(regexp = ".+@.+\\..{2,4}")
 	private String email;
 
 	@Type(type="numeric_boolean")
-    @Column(name = "ELECTRONIC_BILLING")
+    @Column(name = "electronic_billing")
 	private Boolean electronicBilling = false;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "NEXT_INVOICE_DATE")
+	@Column(name = "next_invoice_date")
 	private Date nextInvoiceDate;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "SUBSCRIPTION_DATE")
+	@Column(name = "subscription_date")
 	private Date subscriptionDate;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "TERMINATION_DATE")
+	@Column(name = "termination_date")
 	private Date terminationDate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "CUSTOMER_ACCOUNT_ID")
+	@JoinColumn(name = "customer_account_id")
 	private CustomerAccount customerAccount;
 
-	@Column(name = "PAYMENT_METHOD")
+	@Column(name = "payment_method")
 	@Enumerated(EnumType.STRING)
 	private PaymentMethodEnum paymentMethod = PaymentMethodEnum.CHECK;
 
-	@Column(name = "PAYMENT_TERM")
+	@Column(name = "payment_term")
 	@Enumerated(EnumType.STRING)
 	private PaymentTermEnum paymentTerm;
 
@@ -129,44 +129,44 @@ public class BillingAccount extends AccountEntity {
 	// @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	private List<InvoiceAgregate> invoiceAgregates = new ArrayList<InvoiceAgregate>();
 
-	@Column(name = "DISCOUNT_RATE", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "discount_rate", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal discountRate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "BILLING_CYCLE")
+	@JoinColumn(name = "billing_cycle")
 	private BillingCycle billingCycle;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TRADING_COUNTRY_ID")
+	@JoinColumn(name = "trading_country_id")
 	private TradingCountry tradingCountry;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TRADING_LANGUAGE_ID")
+	@JoinColumn(name = "trading_language_id")
 	private TradingLanguage tradingLanguage;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "BILLING_RUN")
+	@JoinColumn(name = "billing_run")
 	private BillingRun billingRun;
 
-	@Column(name = "BR_AMOUNT_WITHOUT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "br_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal brAmountWithoutTax;
 
-	@Column(name = "BR_AMOUNT_WITH_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "br_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal brAmountWithTax;
 
-	@Column(name = "INVOICE_PREFIX", length = 255)
+	@Column(name = "invoice_prefix", length = 255)
     @Size(max = 255)
 	private String invoicePrefix;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TERMIN_REASON_ID")
+	@JoinColumn(name = "termin_reason_id")
 	private SubscriptionTerminationReason terminationReason;
 
 	@OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY)
 	private List<RatedTransaction> ratedTransactions;
 
 	@ManyToOne
-	@JoinColumn(name = "DISCOUNT_PLAN_ID")
+	@JoinColumn(name = "discount_plan_id")
 	private DiscountPlan discountPlan;
 
 	@OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY)
@@ -176,7 +176,7 @@ public class BillingAccount extends AccountEntity {
 	// key is the counter template code
 	Map<String, CounterInstance> counters = new HashMap<String, CounterInstance>();
 	
-	@Column(name = "INVOICING_THRESHOLD")
+	@Column(name = "invoicing_threshold")
 	private BigDecimal invoicingThreshold; 
 
     public BillingAccount() {

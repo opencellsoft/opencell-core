@@ -34,24 +34,24 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.EnableEntity;
 
 @Entity
-@Table(name = "AR_DUE_DATE")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "AR_DUE_DATE_SEQ"), })
+@Table(name = "ar_due_date")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ar_due_date_seq"), })
 public class DueDate extends EnableEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "DUE_DATE")
+	@Column(name = "due_date")
 	@Temporal(TemporalType.DATE)
 	private Date dueDate;
 
-	@Column(name = "PAYMENT_METHOD")
+	@Column(name = "payment_method")
 	@Enumerated(EnumType.STRING)
 	private PaymentMethodEnum paymentMethod;
 
-	@Column(name = "INVOICE_NUMBER")
+	@Column(name = "invoice_number")
 	private Integer invoiceNumber;
 
-	@Column(name = "INVOICE_AMOUNT", precision = 23, scale = 12)
+	@Column(name = "invoice_amount", precision = 23, scale = 12)
 	private BigDecimal invoiceAmount;
 
 	public Date getDueDate() {

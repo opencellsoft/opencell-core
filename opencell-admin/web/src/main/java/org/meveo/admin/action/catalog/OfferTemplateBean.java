@@ -98,6 +98,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
     private Long bomId;
 
     private boolean newVersion;
+    private boolean duplicateOffer;
 
     private DualListModel<ServiceTemplate> incompatibleServices;
     private OfferServiceTemplate offerServiceTemplate;
@@ -132,6 +133,12 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
             setObjectId(entity.getId());
             newVersion = false;
         }
+        
+        if(duplicateOffer) {
+        	duplicateOfferOnly();
+        	setObjectId(entity.getId());
+        	duplicateOffer = false;
+        }
 
         return entity;
     }
@@ -159,6 +166,22 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
     protected String getDefaultSort() {
         return "code";
     }
+    
+    public List<ProductTemplate> getProductTemplatesLookup() {
+		return productTemplatesLookup;
+	}
+
+	public void setProductTemplatesLookup(List<ProductTemplate> productTemplatesLookup) {
+		this.productTemplatesLookup = productTemplatesLookup;
+	}
+
+	public boolean isDuplicateOffer() {
+		return duplicateOffer;
+	}
+
+	public void setDuplicateOffer(boolean duplicateOffer) {
+		this.duplicateOffer = duplicateOffer;
+	}
 
     @ActionMethod
     public void duplicate() {
@@ -171,6 +194,36 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
                 messages.error(new BundleKey("messages", "error.duplicate.unexpected"));
             }
         }
+    }
+    
+    /**
+     * @param givenEntity entity to check
+     * @return true/false
+     */
+    public boolean isUsedInSubscription(OfferTemplate givenEntity) {
+        return (givenEntity != null && !givenEntity.isTransient() && (subscriptionService.findByOfferTemplate(givenEntity) != null)
+                && subscriptionService.findByOfferTemplate(givenEntity).size() > 0) ? true : false;
+    }
+    
+    /**
+     * delete all entities related to Offer( used only for Marketing Manager)
+     */
+    @ActionMethod
+    public void deleteCatalogHierarchy(OfferTemplate entity) {
+    	if (!this.isUsedInSubscription(entity)) {
+    		if (entity != null && entity.getId() != null) {
+    			try {
+    				offerTemplateService.delete(entity);
+    				messages.info(new BundleKey("messages", "delete.successful"));
+    			} catch (BusinessException e) {
+    				log.error("Error encountered while deleting offer template entity: {}: {}", entity.getCode(), e);
+    				messages.error(new BundleKey("messages", "error.delete.unexpected"));
+    			}
+    		}
+    	} else {
+    		log.error("This entity is already in subscription: {}", entity.getCode());
+			messages.error(new BundleKey("messages", "error.delete.entityUsed "));
+    	}
     }
 
     @ActionMethod
@@ -549,11 +602,17 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
         return true;
     }
 
-	public List<ProductTemplate> getProductTemplatesLookup() {
-		return productTemplatesLookup;
-	}
-
-	public void setProductTemplatesLookup(List<ProductTemplate> productTemplatesLookup) {
-		this.productTemplatesLookup = productTemplatesLookup;
-	}
+    @ActionMethod
+    public void duplicateOfferOnly() {
+    	if (entity != null && entity.getId() != null) {
+            try {
+                entity = offerTemplateService.duplicateOfferOnly(entity);
+                messages.info(new BundleKey("messages", "message.duplicate.ok"));
+            } catch (BusinessException e) {
+                log.error("Error encountered instantiating new offer template entity version: {}", entity.getCode(), e);
+                messages.error(new BundleKey("messages", "message.duplicate.ok"));
+            }
+        }
+    }
+	
 }

@@ -47,7 +47,7 @@ public class CalendarInterval extends Calendar {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "INTERVAL_TYPE")
+    @Column(name = "interval_type")
     @Enumerated(EnumType.STRING)
     private CalendarIntervalTypeEnum intervalType = CalendarIntervalTypeEnum.DAY;
 

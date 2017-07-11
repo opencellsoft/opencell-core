@@ -2,7 +2,7 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
 	<changeSet id="#450_20170420" author="EdwardPLegaspi">
-		<addColumn tableName="BILLING_INV_SUB_CAT_COUNTRY">
+		<addColumn tableName="billing_inv_sub_cat_country">
 			<column name="start_validity_date" type="DATE" />
 			<column name="end_validity_date" type="DATE" />
 			<column defaultValueNumeric="0" name="priority" type="INT4" />
@@ -17,4 +17,43 @@
        <modifyDataType tableName="com_meveo_instance" columnName="url" newDataType="varchar(255)" />
       </changeSet>
 
+    
+    <changeSet id="#2416_20170307-1" author="AndriusKarpavicius" dbms="mysql">
+        <createTable tableName="ar_payment_token_seq">
+            <column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_payment_token_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ar_payment_token_seq values(1)</sql>
+     </changeSet>
+    
+    
+    <changeSet id="#2553_20170621" author="AndriusKarpavicius">
+        <createSequence sequenceName="dwh_chart_seq" startValue="1000" />
+    </changeSet>
+    
+    <changeSet id="#2553_20170621-1" author="AndriusKarpavicius" dbms="mysql">
+        <createTable tableName="dwh_chart_seq">
+            <column name="next_val" type="BIGINT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dwh_chart_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into dwh_chart_seq (select IFNULL(max(id),0)+1 from dwh_chart)</sql>
+     </changeSet>
+     
+     <changeSet
+		id="#2408_20170623-Override payment method and due date delay in order"
+		author="EdwardLegaspi">
+		<addColumn tableName="ord_order">
+			<column name="due_date_delay_el" type="varchar(2000)" />
+			<column name="payment_method" type="varchar(20)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="#2665_20170710-Add guiPosition to custom action" author="EdwardLegaspi">
+		<addColumn tableName="crm_custom_action">
+			<column name="gui_position" type="varchar(100)" />
+		</addColumn>
+	</changeSet>
+        
 </databaseChangeLog> 

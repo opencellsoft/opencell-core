@@ -32,19 +32,19 @@ import javax.validation.constraints.Size;
 public class AutomatedPayment extends Payment {
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "BANK_LOT", length = 255)
+    @Column(name = "bank_lot", length = 255)
     @Size(max = 255)
     private String bankLot;
 
-    @Column(name = "BANK_REFERENCE", length = 255)
+    @Column(name = "bank_reference", length = 255)
     @Size(max = 255)
     private String bankReference;
 
-    @Column(name = "DEPOSIT_DATE")
+    @Column(name = "deposit_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date depositDate;
 
-    @Column(name = "BANK_COLLECTION_DATE")
+    @Column(name = "bank_collection_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date bankCollectionDate;
 

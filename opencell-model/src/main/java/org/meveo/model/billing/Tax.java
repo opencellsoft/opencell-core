@@ -41,8 +41,8 @@ import org.meveo.model.ObservableEntity;
 @CustomFieldEntity(cftCodePrefix = "TAX")
 @MultilanguageEntity(key = "menu.taxes", group = "Tax")
 @ExportIdentifier({ "code"})
-@Table(name = "BILLING_TAX", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_TAX_SEQ"), })
+@Table(name = "billing_tax", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_tax_seq"), })
 @NamedQueries({
 		@NamedQuery(name = "tax.getNbTaxesNotAssociated", query = "select count(*) from Tax t where t.id not in (select l.tax.id from TaxLanguage l where l.tax.id is not null)"
 				+ " and t.id not in (select inv.tax.id from InvoiceSubcategoryCountry inv where inv.tax.id is not null)"),
@@ -53,11 +53,11 @@ import org.meveo.model.ObservableEntity;
 public class Tax extends BusinessCFEntity {
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "ACCOUNTING_CODE", length = 255)
+	@Column(name = "accounting_code", length = 255)
 	@Size(max = 255)
 	private String accountingCode;
 
-	@Column(name = "TAX_PERCENTAGE", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "tax_percentage", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal percent;
 
 	public Tax() {

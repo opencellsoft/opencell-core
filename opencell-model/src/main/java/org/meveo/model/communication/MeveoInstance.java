@@ -40,120 +40,120 @@ import org.meveo.model.crm.Customer;
 
 @Entity
 @ExportIdentifier({ "code"})
-@Table(name = "COM_MEVEO_INSTANCE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "COM_MEVEO_INSTANCE_SEQ"), })
+@Table(name = "com_meveo_instance", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "com_meveo_instance_seq"), })
 public class MeveoInstance extends BusinessEntity {
 
     private static final long serialVersionUID = 1733186433208397850L;
 
     @ManyToOne
-    @JoinColumn(name = "USER_ID")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "CUSTOMER_ID")
+    @JoinColumn(name = "customer_id")
     private Customer customer;
 
-    @Column(name = "PRODUCT_NAME", length = 255)
+    @Column(name = "product_name", length = 255)
     @Size(max = 255)
     private String productName;
 
-    @Column(name = "PRODUCT_VERSION", length = 255)
+    @Column(name = "product_version", length = 255)
     @Size(max = 255)
     private String productVersion;
 
-    @Column(name = "OWNER", length = 255)
+    @Column(name = "owner", length = 255)
     @Size(max = 255)
     private String owner;
 
-    @Column(name = "MD5", length = 255)
+    @Column(name = "md5", length = 255)
     @Size(max = 255)
     private String md5;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "STATUS")
+    @Column(name = "status")
     private MeveoInstanceStatusEnum status;
 
-    @Column(name = "CREATION_DATE")
+    @Column(name = "creation_date")
     private Date creationDate;
 
-    @Column(name = "UPDATE_DATE")
+    @Column(name = "update_date")
     private Date updateDate;
 
-    @Column(name = "KEY_ENTREPRISE", length = 255)
+    @Column(name = "key_entreprise", length = 255)
     @Size(max = 255)
     private String keyEntreprise;
 
-    @Column(name = "MAC_ADDRESS", length = 255)
+    @Column(name = "mac_address", length = 255)
     @Size(max = 255)
     private String macAddress;
 
-    @Column(name = "MACHINE_VENDOR", length = 255)
+    @Column(name = "machine_vendor", length = 255)
     @Size(max = 255)
     private String machineVendor;
 
-    @Column(name = "INSTALLATION_MODE", length = 255)
+    @Column(name = "installation_mode", length = 255)
     @Size(max = 255)
     private String installationMode;
 
-    @Column(name = "NB_CORES", length = 255)
+    @Column(name = "nb_cores", length = 255)
     @Size(max = 255)
     private String nbCores;
 
-    @Column(name = "MEMORY", length = 255)
+    @Column(name = "memory", length = 255)
     @Size(max = 255)
     private String memory;
 
-    @Column(name = "HD_SIZE", length = 255)
+    @Column(name = "hd_size", length = 255)
     @Size(max = 255)
     private String hdSize;
 
-    @Column(name = "OS_NAME", length = 255)
+    @Column(name = "os_name", length = 255)
     @Size(max = 255)
     private String osName;
 
-    @Column(name = "PS_VERSION", length = 255)
+    @Column(name = "ps_version", length = 255)
     @Size(max = 255)
     private String osVersion;
 
-    @Column(name = "OS_ARCH", length = 255)
+    @Column(name = "os_arch", length = 255)
     @Size(max = 255)
     private String osArch;
 
-    @Column(name = "JAVA_VM_VERSION", length = 255)
+    @Column(name = "java_vm_version", length = 255)
     @Size(max = 255)
     private String javaVmVersion;
 
-    @Column(name = "JAVA_VM_NAME", length = 255)
+    @Column(name = "java_vm_name", length = 255)
     @Size(max = 255)
     private String javaVmName;
 
-    @Column(name = "JAVA_VENDOR", length = 255)
+    @Column(name = "java_vendor", length = 255)
     @Size(max = 255)
     private String javaVendor;
 
-    @Column(name = "JAVA_VERSION", length = 255)
+    @Column(name = "java_version", length = 255)
     @Size(max = 255)
     private String javaVersion;
 
-    @Column(name = "AS_VENDOR", length = 255)
+    @Column(name = "as_vendor", length = 255)
     @Size(max = 255)
     private String asVendor;
 
-    @Column(name = "AS_VERSION", length = 255)
+    @Column(name = "as_version", length = 255)
     @Size(max = 255)
     private String asVersion;
 
-    @Column(name = "URL", nullable = false, length = 255)
+    @Column(name = "url", nullable = false, length = 255)
     @Size(max = 255)
     @NotNull
     private String url;
     
-    @Column(name = "AUTH_USERNAME", length = 60)
+    @Column(name = "auth_username", length = 60)
     @Size(max = 60)
     private String authUsername;
     
-    @Column(name = "AUTH_PASSWORD", length = 60)
+    @Column(name = "auth_password", length = 60)
     @Size(max = 60)
     private String authPassword;
     

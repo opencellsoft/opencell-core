@@ -23,32 +23,32 @@ import org.meveo.model.ExportIdentifier;
 
 @Entity
 @ExportIdentifier({ "meveoModule.code", "appliesTo", "itemClass", "itemCode" })
-@Table(name = "MEVEO_MODULE_ITEM")
+@Table(name = "meveo_module_item")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "MEVEO_MODULE_ITEM_SEQ"), })
+        @Parameter(name = "sequence_name", value = "meveo_module_item_seq"), })
 public class MeveoModuleItem extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
     @ManyToOne
-    @JoinColumn(name = "MODULE_ID")
+    @JoinColumn(name = "module_id")
     private MeveoModule meveoModule;
 
-    @Column(name = "APPLIES_TO", length = 100)
+    @Column(name = "applies_to", length = 100)
     @Size(max = 100)
     private String appliesTo;
 
-    @Column(name = "ITEM_TYPE", length = 100, nullable = false)
+    @Column(name = "item_type", length = 100, nullable = false)
     @Size(max = 100)
     @NotNull
     private String itemClass;
 
-    @Column(name = "ITEM_CODE", length = 60, nullable = false)
+    @Column(name = "item_code", length = 60, nullable = false)
     @Size(max = 60)
     @NotNull
     private String itemCode;
 
-    @AttributeOverrides({ @AttributeOverride(name = "from", column = @Column(name = "VALID_FROM")), @AttributeOverride(name = "to", column = @Column(name = "VALID_TO")) })
+    @AttributeOverrides({ @AttributeOverride(name = "from", column = @Column(name = "valid_from")), @AttributeOverride(name = "to", column = @Column(name = "valid_to")) })
     private DatePeriod validity = new DatePeriod();
 
     @Transient

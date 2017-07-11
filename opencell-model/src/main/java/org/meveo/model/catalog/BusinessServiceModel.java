@@ -10,21 +10,21 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.module.MeveoModule;
 
 @Entity
-@Table(name = "CAT_BUSINESS_SERV_MODEL")
+@Table(name = "cat_business_serv_model")
 public class BusinessServiceModel extends MeveoModule {
 
     private static final long serialVersionUID = 683873220792653929L;
 
     @ManyToOne
-    @JoinColumn(name = "SERVICE_TEMPLATE_ID")
+    @JoinColumn(name = "service_template_id")
     private ServiceTemplate serviceTemplate;
 
     @Type(type="numeric_boolean")
-    @Column(name = "DUPLICATE_SERVICE")
+    @Column(name = "duplicate_service")
     private boolean duplicateService;
 
     @Type(type="numeric_boolean")
-    @Column(name = "DUPLICATE_PRICE_PLAN")
+    @Column(name = "duplicate_price_plan")
     private boolean duplicatePricePlan;
 
     public ServiceTemplate getServiceTemplate() {

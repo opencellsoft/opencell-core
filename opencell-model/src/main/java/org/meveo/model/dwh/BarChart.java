@@ -8,92 +8,89 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
 @Entity
-@Table(name = "DWH_CHART_BAR")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "DWH_CHART_BAR_SEQ"), })
+@Table(name = "dwh_chart_bar")
 public class BarChart extends Chart {
 
 	private static final long serialVersionUID = -3247705449113663454L;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name="LEGEND_POSITION")
+	@Column(name="legend_position")
 	private LegendPositionEnum legendPosition;
 	
 
-	@Column(name="BARPADDING")
+	@Column(name="barpadding")
 	@NotNull
 	private int barPadding = 8;
 
-	@Column(name="BARMARGIN")
+	@Column(name="barmargin")
     @NotNull
 	private int barMargin = 10;
 
-	@Column(name="ORIENTATION")
+	@Column(name="orientation")
 	private OrientationEnum orientation;
 
 	//Enables stacked display of bars
 	@Type(type="numeric_boolean")
-    @Column(name="STACKED")
+    @Column(name="stacked")
 	private boolean stacked;
 	
 	//Minimum boundary value.
-	@Column(name="MIN")
+	@Column(name="min")
 	private Double min;
 	
 	//Minimum boundary value.
-	@Column(name="MAX")
+	@Column(name="max")
 	private Double max;
 
 	//Whether line segments should be broken at null
 	//value, fall will join point on either side of line.
 	@Type(type="numeric_boolean")
-    @Column(name="BREAK_ON_NULL")
+    @Column(name="break_on_null")
 	private boolean breakOnNull;
 
 
-	@Column(name="X_AXIS_LABEL", length = 255)
+	@Column(name="x_axis_label", length = 255)
 	@Size(max = 255)
 	private String xaxisLabel;
 
-	@Column(name="Y_AXIS_LABEL", length = 255)
+	@Column(name="y_axis_label", length = 255)
     @Size(max = 255)
 	private String yaxisLabel;
 	
 	//Angle of the x-axis ticks
-	@Column(name="X_AXIS_ANGLE")
+	@Column(name="x_axis_angle")
 	private Integer xaxisAngle;
 
-	@Column(name="Y_AXIS_ANGLE")
+	@Column(name="y_axis_angle")
 	private Integer yaxisAngle;
 	
 
-	@Column(name="LEGEND_COLS")
+	@Column(name="legend_cols")
 	private int legendCols;
 
-	@Column(name="LEGEND_ROWS")
+	@Column(name="legend_rows")
 	private int legendRows;
 
 	//Enables plot zooming.
 	@Type(type="numeric_boolean")
-    @Column(name="ZOOM")
+    @Column(name="zoom")
 	private boolean zoom;
 	
 	//Enables animation on plot rendering
 	@Type(type="numeric_boolean")
-    @Column(name="ANIMATE")
+    @Column(name="animate")
 	private boolean animate;
 	
 	//Defines visibility of datatip.
 	@Type(type="numeric_boolean")
-    @Column(name="SHOW_DATA_TIP")
+    @Column(name="show_data_tip")
 	private boolean showDataTip=true;
 	
 	//Template string for datatips.
-	@Column(name="DATA_TIP_FORMAT", length = 255)
+	@Column(name="data_tip_format", length = 255)
     @Size(max = 255)
 	private String datatipFormat;
 

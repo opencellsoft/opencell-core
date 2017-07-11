@@ -3,7 +3,9 @@ package org.meveo.service.catalog.impl;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -13,6 +15,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.api.dto.catalog.ServiceConfigurationDto;
 import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.CounterTemplate;
@@ -26,6 +29,7 @@ import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.ProductChargeTemplate;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
+import org.meveo.model.catalog.ServiceChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
@@ -36,6 +40,7 @@ import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Provider;
+import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
@@ -91,6 +96,9 @@ public class CatalogHierarchyBuilderService {
 
 	@Inject
 	private ProductChargeTemplateService productChargeTemplateService;
+	
+	@Inject
+    private SubscriptionService subscriptionService;
 
 	public void duplicateOfferServiceTemplate(OfferTemplate entity, List<OfferServiceTemplate> offerServiceTemplates, String prefix)
 			throws BusinessException {
@@ -682,6 +690,145 @@ public class CatalogHierarchyBuilderService {
 				targetChargeTemplate.getEdrTemplates().add(triggeredEDRTemplate);
 			}
 		}
+	}
+	
+	/**
+	 * we will delete offer with the following principles :
+	 * 1. offer/service/charges deletion when not subscribed
+	 * 2. offer deletion only if services are used in an other offer
+	 * 3. offer/services deletion only if charges are used in an other service
+	 * @param entity instance of Offer Template which contains entities to delete.
+	 * @throws BusinessException exception when deletion causes some errors
+	 */
+	public synchronized void delete(OfferTemplate entity) throws BusinessException {
+		List<Subscription> subscriptionList = this.subscriptionService.findByOfferTemplate(entity);
+		if (entity != null && !entity.isTransient() && (subscriptionList == null || subscriptionList.size() == 0)) {
+			List<OfferServiceTemplate> offerServiceTemplates = entity.getOfferServiceTemplates();
+			if (offerServiceTemplates != null) {
+				for (OfferServiceTemplate offerServiceTemplate : offerServiceTemplates) {
+					if (offerServiceTemplate != null) {
+						ServiceTemplate serviceTemplate = offerServiceTemplate.getServiceTemplate();
+						List<ServiceTemplate> servicesWithNotOffer = this.serviceTemplateService.getServicesWithNotOffer();
+						if (servicesWithNotOffer != null) {
+							for (ServiceTemplate serviceTemplateWithoutOffer : servicesWithNotOffer) {
+								if (serviceTemplateWithoutOffer == null) {
+									continue;
+								}
+								
+								String serviceCode = serviceTemplateWithoutOffer.getCode();
+								if (serviceCode != null && serviceCode.equals(serviceTemplate.getCode())) {
+									this.deleteServiceAndCharge(serviceTemplate);
+									break;
+								}
+							}
+							
+						}
+
+					}
+				}
+			}
+
+		}
+
+	}
+	
+	/**
+	 * @param serviceTemplate service template.
+	 * @throws BusinessException
+	 */
+	private void deleteServiceAndCharge(ServiceTemplate serviceTemplate) throws BusinessException {
+
+		List<ServiceChargeTemplateTermination> serviceTerminationCharges = serviceTemplate
+				.getServiceTerminationCharges();
+		List<ServiceChargeTemplateSubscription> serviceSubscriptionCharges = serviceTemplate
+				.getServiceSubscriptionCharges();
+		List<ServiceChargeTemplateRecurring> serviceRecurringCharges = serviceTemplate
+				.getServiceRecurringCharges();
+		List<ServiceChargeTemplateUsage> serviceUsageCharges = serviceTemplate.getServiceUsageCharges();
+		List<ServiceChargeTemplate> serviceCharges = new ArrayList<>();
+		serviceCharges.addAll(serviceSubscriptionCharges);
+		serviceCharges.addAll(serviceRecurringCharges);
+		serviceCharges.addAll(serviceUsageCharges);
+		serviceCharges.addAll(serviceTerminationCharges);
+		
+		Map<String, List<ServiceChargeTemplateUsage>> counterChargeMap = new HashMap<>();
+		
+		for (ServiceChargeTemplate serviceChargeTemplateUsage : serviceUsageCharges) {
+			CounterTemplate counterTemplate = ((ServiceChargeTemplateUsage) serviceChargeTemplateUsage).getCounterTemplate();
+			if (counterTemplate != null) {
+				List<ServiceChargeTemplateUsage> serviceChargeTemplateList = this.serviceChargeTemplateUsageService.findByCounterTemplate(counterTemplate);
+				counterChargeMap.put(counterTemplate.getCode(), serviceChargeTemplateList);
+			}
+		}
+
+		try {
+			this.serviceTemplateService.remove(serviceTemplate);
+		} catch (BusinessException exception) {
+			throw exception;
+		}
+
+
+		for (ServiceChargeTemplate serviceChargeTemplateUsage : serviceCharges) {
+			if (serviceChargeTemplateUsage == null) {
+				continue;
+			}
+
+			String chargeTemplateCode = serviceChargeTemplateUsage.getChargeTemplate().getCode();
+
+			if (chargeTemplateCode == null) {
+				continue;
+			}
+			
+
+			List<Long> linkedServiceIds = null;
+			Long chargeId = serviceChargeTemplateUsage.getChargeTemplate().getId();
+			if (serviceChargeTemplateUsage instanceof ServiceChargeTemplateUsage) {
+				linkedServiceIds = this.oneShotChargeTemplateService.getServiceIdsLinkedToChargeUsage(chargeId);
+				if (!(linkedServiceIds != null && linkedServiceIds.size() > 0)) {
+					this.usageChargeTemplateService.remove(chargeId);
+					//Delete counter.
+					CounterTemplate counterTemplate = ((ServiceChargeTemplateUsage) serviceChargeTemplateUsage)
+							.getCounterTemplate();
+					if (counterTemplate != null) {
+						List<ServiceChargeTemplateUsage> serviceChargeTemplateList = counterChargeMap
+								.get(counterTemplate.getCode());
+						if (serviceChargeTemplateList != null && serviceChargeTemplateList.size() == 1 && chargeTemplateCode
+								.equals(serviceChargeTemplateList.get(0).getChargeTemplate().getCode())) {
+							// It means this counter is related to only current charge
+							this.counterTemplateService.remove(counterTemplate);
+						}
+					}
+					
+					List<PricePlanMatrix> pricePlanMatrixes = this.pricePlanMatrixService.listByEventCode(chargeTemplateCode);
+					if (pricePlanMatrixes != null) {
+						for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
+							if (pricePlanMatrix == null) {
+								continue;
+							}
+							this.pricePlanMatrixService.remove(pricePlanMatrix);
+						}
+
+					}
+				}
+			} else if (serviceChargeTemplateUsage instanceof ServiceChargeTemplateRecurring) {
+				linkedServiceIds = this.oneShotChargeTemplateService.getServiceIdsLinkedToChargeRecurring(chargeId);
+				if (!(linkedServiceIds != null && linkedServiceIds.size() > 0)) {
+					this.recurringChargeTemplateService.remove(chargeId);
+				}
+			} else if (serviceChargeTemplateUsage instanceof ServiceChargeTemplateSubscription) {
+				linkedServiceIds = this.oneShotChargeTemplateService.getServiceIdsLinkedToChargeSubscription(chargeId);
+				if (!(linkedServiceIds != null && linkedServiceIds.size() > 0)) {
+					this.oneShotChargeTemplateService.remove(chargeId);
+				}
+			} else if (serviceChargeTemplateUsage instanceof ServiceChargeTemplateTermination) {
+				linkedServiceIds = this.oneShotChargeTemplateService.getServiceIdsLinkedToChargeTermination(chargeId);
+				if (!(linkedServiceIds != null && linkedServiceIds.size() > 0)) {
+					this.oneShotChargeTemplateService.remove(chargeId);
+				}
+			}
+
+		}
+
 	}
 
 }

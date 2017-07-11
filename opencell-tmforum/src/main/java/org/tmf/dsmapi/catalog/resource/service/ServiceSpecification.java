@@ -6,6 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.tmf.dsmapi.catalog.resource.AbstractCatalogEntity;
 import org.tmf.dsmapi.catalog.resource.Attachment;
@@ -43,7 +44,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *         "endDateTime": "" } } ] } ] }
  * 
  */
-@XmlRootElement
+@XmlRootElement(name="ServiceSpecification", namespace="http://www.tmforum.org")
+@XmlType(name="ServiceSpecification", namespace="http://www.tmforum.org")
 @JsonInclude(value = Include.NON_NULL)
 public class ServiceSpecification extends AbstractCatalogEntity implements Serializable {
     private final static long serialVersionUID = 1L;

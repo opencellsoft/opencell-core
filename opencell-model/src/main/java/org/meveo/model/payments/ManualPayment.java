@@ -22,9 +22,9 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "AR_MANUAL_PAYMENT")
+@Table(name = "ar_manual_payment")
 // @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value =
-// "AR_MANUAL_PAYMENT_SEQ"), })
+// "ar_manual_payment_seq"), })
 public class ManualPayment extends Payment {
 
 	private static final long serialVersionUID = 1L;

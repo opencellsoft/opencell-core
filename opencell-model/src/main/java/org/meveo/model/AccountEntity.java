@@ -43,20 +43,20 @@ import org.meveo.model.shared.Name;
 
 @Entity
 @ObservableEntity
-@Table(name = "ACCOUNT_ENTITY", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE", "ACCOUNT_TYPE"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ACCOUNT_ENTITY_SEQ"), })
+@Table(name = "account_entity", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "account_type"}))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "account_entity_seq"), })
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "ACCOUNT_TYPE") // Hibernate does not support of discriminator column with Joined strategy, so need to set it manually
+@DiscriminatorColumn(name = "account_type") // Hibernate does not support of discriminator column with Joined strategy, so need to set it manually
 @EntityListeners({ AccountCodeGenerationListener.class })
 public abstract class AccountEntity extends BusinessCFEntity {
 
 	private static final long serialVersionUID = 1L;
     
-	@Column(name = "EXTERNAL_REF_1", length = 255)
+	@Column(name = "external_ref_1", length = 255)
 	@Size(max = 255)
 	protected String externalRef1;
 
-	@Column(name = "EXTERNAL_REF_2", length = 255)
+	@Column(name = "external_ref_2", length = 255)
 	@Size(max = 255)
 	protected String externalRef2;
 
@@ -67,23 +67,23 @@ public abstract class AccountEntity extends BusinessCFEntity {
 	protected Address address = new Address();
 
 	@Type(type="numeric_boolean")
-    @Column(name = "DEFAULT_LEVEL")
+    @Column(name = "default_level")
 	protected Boolean defaultLevel = true;
 
-    @Column(name = "PROVIDER_CONTACT", length = 255)
+    @Column(name = "provider_contact", length = 255)
     @Size(max = 255)
     protected String providerContact;
 
 	@ManyToOne
-	@JoinColumn(name = "PRIMARY_CONTACT")
+	@JoinColumn(name = "primary_contact")
 	protected ProviderContact primaryContact;
 
-    @Column(name = "ACCOUNT_TYPE", insertable = true, updatable = false, length = 10)
+    @Column(name = "account_type", insertable = true, updatable = false, length = 10)
     @Size(max = 10)
     protected String accountType;
         
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "BAM_ID")
+	@JoinColumn(name = "bam_id")
 	protected BusinessAccountModel businessAccountModel;
         
     public String getExternalRef1() {

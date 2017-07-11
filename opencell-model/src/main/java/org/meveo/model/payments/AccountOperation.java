@@ -54,97 +54,97 @@ import org.meveo.model.ObservableEntity;
  */
 @Entity
 @ObservableEntity
-@Table(name = "AR_ACCOUNT_OPERATION")
+@Table(name = "ar_account_operation")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "TRANSACTION_TYPE")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "AR_ACCOUNT_OPERATION_SEQ"), })
+@DiscriminatorColumn(name = "transaction_type")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ar_account_operation_seq"), })
 @CustomFieldEntity(cftCodePrefix = "ACC_OP")
 public class AccountOperation extends EnableEntity implements ICustomFieldEntity{
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "DUE_DATE")
+	@Column(name = "due_date")
 	@Temporal(TemporalType.DATE)
 	private Date dueDate;
 
-	@Column(name = "TRANSACTION_TYPE", insertable = false, updatable = false, length = 31)
+	@Column(name = "transaction_type", insertable = false, updatable = false, length = 31)
 	@Size(max = 31)	
 	private String type;
 
-	@Column(name = "TRANSACTION_DATE")
+	@Column(name = "transaction_date")
 	@Temporal(TemporalType.DATE)
 	private Date transactionDate;
 
-	@Column(name = "TRANSACTION_CATEGORY")
+	@Column(name = "transaction_category")
 	@Enumerated(EnumType.STRING)
 	private OperationCategoryEnum transactionCategory;
 
-	@Column(name = "REFERENCE", length = 255)
+	@Column(name = "reference", length = 255)
 	@Size(max = 255)
 	private String reference;
 
-	@Column(name = "ACCOUNT_CODE", length = 255)
+	@Column(name = "account_code", length = 255)
     @Size(max = 255)
 	private String accountCode;
 
-	@Column(name = "ACCOUNT_CODE_CLIENT_SIDE", length = 255)
+	@Column(name = "account_code_client_side", length = 255)
     @Size(max = 255)
 	private String accountCodeClientSide;
 
-	@Column(name = "AMOUNT", precision = 23, scale = 12)
+	@Column(name = "amount", precision = 23, scale = 12)
 	private BigDecimal amount;
 
-	@Column(name = "MATCHING_AMOUNT", precision = 23, scale = 12)
+	@Column(name = "matching_amount", precision = 23, scale = 12)
 	private BigDecimal matchingAmount = BigDecimal.ZERO;
 
-	@Column(name = "UN_MATCHING_AMOUNT", precision = 23, scale = 12)
+	@Column(name = "un_matching_amount", precision = 23, scale = 12)
 	private BigDecimal unMatchingAmount = BigDecimal.ZERO;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "CUSTOMER_ACCOUNT_ID")
+	@JoinColumn(name = "customer_account_id")
 	private CustomerAccount customerAccount;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "MATCHING_STATUS")
+	@Column(name = "matching_status")
 	private MatchingStatusEnum matchingStatus;
 
 	@OneToMany(mappedBy = "accountOperation")
 	private List<MatchingAmount> matchingAmounts = new ArrayList<MatchingAmount>();
 
-	@Column(name = "OCC_CODE", length = 255)
+	@Column(name = "occ_code", length = 255)
     @Size(max = 255)
 	private String occCode;
 
-	@Column(name = "OCC_DESCRIPTION", length = 255)
+	@Column(name = "occ_description", length = 255)
     @Size(max = 255)
 	private String occDescription;
 	
 	
 	@Type(type="numeric_boolean")
-    @Column(name = "EXCLUDED_FROM_DUNNING")
+    @Column(name = "excluded_from_dunning")
 	private boolean excludedFromDunning;
 	
-	@Column(name = "ORDER_NUM")   
+	@Column(name = "order_num")   
 	private String orderNumber;// order number, '|' will be used as seperator if many orders
 	
-    @Column(name = "UUID", nullable = false, updatable = false, length = 60)
+    @Column(name = "uuid", nullable = false, updatable = false, length = 60)
     @Size(max = 60)
     @NotNull
     private String uuid = UUID.randomUUID().toString();
 
-	@Column(name = "BANK_LOT", length = 255)
+	@Column(name = "bank_lot", length = 255)
 	@Size(max = 255)
 	private String bankLot;
 
-	@Column(name = "BANK_REFERENCE", length = 255)
+	@Column(name = "bank_reference", length = 255)
 	@Size(max = 255)
 	private String bankReference;
 
-	@Column(name = "DEPOSIT_DATE")
+	@Column(name = "deposit_date")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date depositDate;
 
-	@Column(name = "BANK_COLLECTION_DATE")
+	@Column(name = "bank_collection_date")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date bankCollectionDate;
 

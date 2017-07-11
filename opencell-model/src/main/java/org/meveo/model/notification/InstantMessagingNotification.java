@@ -16,28 +16,28 @@ import javax.validation.constraints.Size;
 import org.meveo.model.admin.User;
 
 @Entity
-@Table(name = "ADM_NOTIF_IM")
+@Table(name = "adm_notif_im")
 public class InstantMessagingNotification extends Notification {
 
     private static final long serialVersionUID = 7841414559743010567L;
 
-    @Column(name = "IM_PROVIDER", length = 20)
+    @Column(name = "im_provider", length = 20)
     @NotNull
     private InstantMessagingProviderEnum imProvider;
 
-    @Column(name = "ID_EXPRESSION", length = 2000)
+    @Column(name = "id_expression", length = 2000)
     @Size(max = 2000)
     private String idEl;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "ADM_NOTIF_IM_LIST")
+    @CollectionTable(name = "adm_notif_im_list")
     private Set<String> ids;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "ADM_NOTIF_IM_USER")
+    @CollectionTable(name = "adm_notif_im_user")
     private Set<User> users;
 
-    @Column(name = "MESSAGE", length = 2000)
+    @Column(name = "message", length = 2000)
     @NotNull
     @Size(max = 2000)
     private String message;

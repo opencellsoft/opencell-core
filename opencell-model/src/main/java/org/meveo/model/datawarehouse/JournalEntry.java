@@ -44,68 +44,68 @@ import org.meveo.model.IEntity;
 import org.meveo.model.IJPAVersionedEntity;
 
 @Entity
-@Table(name = "DWH_JOURNAL_ENTRIES", uniqueConstraints = @UniqueConstraint(columnNames = {
-		"ORIGIN_ID", "INVOICE_NUMBER", "ACCOUNTING_CODE" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "DWH_JOURNAL_ENTRIES_SEQ"), })
+@Table(name = "dwh_journal_entries", uniqueConstraints = @UniqueConstraint(columnNames = {
+		"origin_id", "invoice_number", "accounting_code" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "dwh_journal_entries_seq"), })
 public class JournalEntry implements IEntity, IJPAVersionedEntity {
 	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)
-	@Column(name = "ID")
+	@Column(name = "id")
     @Access(AccessType.PROPERTY)
 	private Long id;
 
 	@Version
-	@Column(name = "VERSION")
+	@Column(name = "version")
 	private Integer version;
 
-	@Column(name = "TYPE")
+	@Column(name = "type")
 	@Enumerated(EnumType.STRING)
 	private JournalEntryTypeEnum type;
 
-	@Column(name = "ORIGIN_ID")
+	@Column(name = "origin_id")
 	private Long originId;
 
-	@Column(name = "INVOICE_NUMBER", length = 20)
+	@Column(name = "invoice_number", length = 20)
     @Size(max = 20)
 	private String invoiceNumber;
 
-	@Column(name = "ACCOUNTING_CODE", length = 255)
+	@Column(name = "accounting_code", length = 255)
     @Size(max = 255)
 	private String accountingCode;
 
-	@Column(name = "INVOICE_DATE")
+	@Column(name = "invoice_date")
 	@Temporal(TemporalType.DATE)
 	private Date invoiceDate;
 
-	@Column(name = "CUSTOMER_ACCOUNT_CODE", length = 20)
+	@Column(name = "customer_account_code", length = 20)
     @Size(max = 20)
 	private String customerAccountCode;
 
-	@Column(name = "TAX_CODE", length = 10)
+	@Column(name = "tax_code", length = 10)
     @Size(max = 10)
 	private String taxCode;
 
-	@Column(name = "TAX_DESCRIPTION", length = 20)
+	@Column(name = "tax_description", length = 20)
     @Size(max = 20)
 	private String taxDescription;
 
-	@Column(name = "TAX_PERCENT")
+	@Column(name = "tax_percent")
 	private BigDecimal taxPercent;
 
-	@Column(name = "SUB_CAT_DESC", length = 50)
+	@Column(name = "sub_cat_desc", length = 50)
     @Size(max = 50)
 	private String subCatDescription;
 
-	@Column(name = "AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
+	@Column(name = "amount_without_tax", precision = 23, scale = 12)
 	private BigDecimal amountWithoutTax;
 
-	@Column(name = "AMOUNT_TAX", precision = 23, scale = 12)
+	@Column(name = "amount_tax", precision = 23, scale = 12)
 	private BigDecimal amountTax;
 
-	@Column(name = "AMOUNT_WITH_TAX", precision = 23, scale = 12)
+	@Column(name = "amount_with_tax", precision = 23, scale = 12)
 	private BigDecimal amountWithTax;
 
 	public JournalEntryTypeEnum getType() {

@@ -38,26 +38,26 @@ import org.meveo.model.billing.BillingWalletTypeEnum;
 @Entity
 @ObservableEntity
 @ExportIdentifier({ "code"})
-@Table(name = "CAT_WALLET_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "CAT_WALLET_TEMPLATE_SEQ"), })
+@Table(name = "cat_wallet_template", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_wallet_template_seq"), })
 public class WalletTemplate extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
 
 	public static final String PRINCIPAL = "PRINCIPAL";
 
-	@Column(name = "WALLET_TYPE")
+	@Column(name = "wallet_type")
 	@Enumerated(EnumType.STRING)
 	private BillingWalletTypeEnum walletType;
 
 	@Type(type="numeric_boolean")
-    @Column(name = "CONSUMPTION_ALERT_SET")
+    @Column(name = "consumption_alert_set")
 	private boolean consumptionAlertSet;
 
-	@Column(name = "FAST_RATING_LEVEL")
+	@Column(name = "fast_rating_level")
 	private int fastRatingLevel;
 	
-    @Column(name = "LOW_BALANCE_LEVEL", precision = NB_PRECISION, scale = NB_DECIMALS)
+    @Column(name = "low_balance_level", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal lowBalanceLevel;
     
 

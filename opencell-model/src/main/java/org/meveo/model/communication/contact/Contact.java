@@ -35,17 +35,18 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.communication.CommunicationPolicy;
 import org.meveo.model.communication.Message;
+import org.meveo.model.crm.Provider;
 
 @Entity
 @ExportIdentifier({ "contactCode"})
-@Table(name = "COM_CONTACT", uniqueConstraints = @UniqueConstraint(columnNames = { "CONTACT_CODE" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "COM_CONTACT_SEQ"), })
+@Table(name = "com_contact", uniqueConstraints = @UniqueConstraint(columnNames = { "contact_code" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "com_contact_seq"), })
 public class Contact extends BaseEntity {
 
 	private static final long serialVersionUID = 3772773449495155646L;
 
 	// It is provider resposibility to create contacts with unique codes
-	@Column(name = "CONTACT_CODE", length = 50)
+	@Column(name = "contact_code", length = 50)
 	@Size(max = 50)
 	private String contactCode;
 
@@ -79,4 +80,30 @@ public class Contact extends BaseEntity {
 		this.messages = messages;
 	}
 
+    @Override
+    public boolean equals(Object obj) {
+
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof Provider)) {
+            return false;
+        }
+
+        Contact other = (Contact) obj;
+
+        if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
+             return true;
+        }
+
+        if (contactCode == null) {
+            if (other.getContactCode() != null) {
+                return false;
+            }
+        } else if (!contactCode.equals(other.getContactCode())) {
+            return false;
+        }
+        return true;
+    }
 }

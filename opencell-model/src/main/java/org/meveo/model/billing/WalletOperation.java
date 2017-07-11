@@ -55,10 +55,10 @@ import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.rating.EDR;
 
 @Entity
-@Table(name = "BILLING_WALLET_OPERATION")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_WALLET_OPERATION_SEQ"), })
+@Table(name = "billing_wallet_operation")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_wallet_operation_seq"), })
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "OPERATION_TYPE", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorColumn(name = "operation_type", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("W")
 @NamedQueries({
 	@NamedQuery(name = "WalletOperation.listToInvoice", 
@@ -112,125 +112,125 @@ public class WalletOperation extends BusinessEntity {
 	 * The wallet on which the account operation is applied.
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "WALLET_ID")
+	@JoinColumn(name = "wallet_id")
 	private WalletInstance wallet;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "OPERATION_DATE")
+	@Column(name = "operation_date")
 	private Date operationDate;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "INVOICING_DATE")
+	@Column(name = "invoicing_date")
 	private Date invoicingDate;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "CREDIT_DEBIT_FLAG")
+	@Column(name = "credit_debit_flag")
 	private OperationTypeEnum type;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "CHARGE_INSTANCE_ID",nullable=false)
+	@JoinColumn(name = "charge_instance_id",nullable=false)
 	@NotNull
 	private ChargeInstance chargeInstance;	
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "CURRENCY_ID")
+	@JoinColumn(name = "currency_id")
 	private Currency currency;
 
-	@Column(name = "TAX_PERCENT", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "tax_percent", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal taxPercent;
 
-	@Column(name = "UNIT_AMOUNT_WITHOUT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "unit_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal unitAmountWithoutTax;
 
-	@Column(name = "UNIT_AMOUNT_WITH_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "unit_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal unitAmountWithTax;
 
-	@Column(name = "UNIT_AMOUNT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "unit_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal unitAmountTax;
 
-	@Column(name = "QUANTITY", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal quantity;
 
-	@Column(name = "AMOUNT_WITHOUT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal amountWithoutTax;
 
-	@Column(name = "AMOUNT_WITH_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal amountWithTax;
 
-	@Column(name = "AMOUNT_TAX", precision = NB_PRECISION, scale = NB_DECIMALS)
+	@Column(name = "amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
 	private BigDecimal amountTax;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "COUNTER_ID")
+	@JoinColumn(name = "counter_id")
 	private CounterInstance counter;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "AGGREGATE_SERV_ID")
+	@JoinColumn(name = "aggregate_serv_id")
 	private ServiceInstance aggregatedServiceInstance;
 
 	// @ManyToOne(fetch = FetchType.LAZY)
-	// @JoinColumn(name = "EDR_ID")
+	// @JoinColumn(name = "edr_id")
 	// private EDR usageEdr;
 
-	@Column(name = "PARAMETER_1", length = 255)
+	@Column(name = "parameter_1", length = 255)
 	@Size(max = 255)
 	private String parameter1;
 
-	@Column(name = "PARAMETER_2", length = 255)
+	@Column(name = "parameter_2", length = 255)
     @Size(max = 255)
 	private String parameter2;
 
-	@Column(name = "PARAMETER_3", length = 255)
+	@Column(name = "parameter_3", length = 255)
     @Size(max = 255)
 	private String parameter3;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "START_DATE")
+	@Column(name = "start_date")
 	private Date startDate;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "END_DATE")
+	@Column(name = "end_date")
 	private Date endDate;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "SUBSCRIPTION_DATE")
+	@Column(name = "subscription_date")
 	private Date subscriptionDate;
 
-	@Column(name = "OFFER_CODE", length = 255)
+	@Column(name = "offer_code", length = 255)
 	@Size(max = 255, min = 1)
 	protected String offerCode;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "STATUS")
+	@Column(name = "status")
 	private WalletOperationStatusEnum status;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "SELLER_ID")
+	@JoinColumn(name = "seller_id")
 	private Seller seller;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "PRICEPLAN_ID")
+	@JoinColumn(name = "priceplan_id")
 	private PricePlanMatrix priceplan;
 	
 	@OneToOne(fetch = FetchType.LAZY,cascade={CascadeType.PERSIST})
 	private WalletOperation reratedWalletOperation;
 	
-	@Column(name = "INPUT_UNIT_DESCRIPTION", length = 20)
+	@Column(name = "input_unit_description", length = 20)
 	@Size(max = 20)
 	private String inputUnitDescription;
 	
-	@Column(name = "RATING_UNIT_DESCRIPTION", length = 20)
+	@Column(name = "rating_unit_description", length = 20)
     @Size(max = 20)
 	private String ratingUnitDescription;
 	
-	@Column(name = "INPUT_QUANTITY", precision = BaseEntity.NB_PRECISION, scale = BaseEntity.NB_DECIMALS)
+	@Column(name = "input_quantity", precision = BaseEntity.NB_PRECISION, scale = BaseEntity.NB_DECIMALS)
 	private BigDecimal inputQuantity;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "EDR_ID")
+	@JoinColumn(name = "edr_id")
 	private EDR edr;
 	
-    @Column(name = "ORDER_NUMBER", length = 100)
+    @Column(name = "order_number", length = 100)
     @Size(max = 100)
     private String orderNumber;
 	

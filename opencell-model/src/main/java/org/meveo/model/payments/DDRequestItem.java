@@ -38,70 +38,70 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.EnableEntity;
 
 @Entity
-@Table(name = "AR_DDREQUEST_ITEM")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "AR_DDREQUEST_ITEM_SEQ"), })
+@Table(name = "ar_ddrequest_item")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ar_ddrequest_item_seq"), })
 public class DDRequestItem extends EnableEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "AMOUNT")
+	@Column(name = "amount")
 	private BigDecimal amount;
 
 
-	@Column(name = "PAYMENT_INFO", length = 255)
+	@Column(name = "payment_info", length = 255)
     @Size(max = 255)
 	private String paymentInfo;// IBAN for direct debit
 
-	@Column(name = "PAYMENT_INFO1", length = 255)
+	@Column(name = "payment_info1", length = 255)
     @Size(max = 255)
 	private String paymentInfo1;// bank code
 
-	@Column(name = "PAYMENT_INFO2", length = 255)
+	@Column(name = "payment_info2", length = 255)
     @Size(max = 255)
 	private String paymentInfo2;// code guichet
 
-	@Column(name = "PAYMENT_INFO3", length = 255)
+	@Column(name = "payment_info3", length = 255)
     @Size(max = 255)
 	private String paymentInfo3;// Num compte
 
-	@Column(name = "PAYMENT_INFO4", length = 255)
+	@Column(name = "payment_info4", length = 255)
     @Size(max = 255)
 	private String paymentInfo4;// RIB
 
-	@Column(name = "PAYMENT_INFO5", length = 255)
+	@Column(name = "payment_info5", length = 255)
     @Size(max = 255)
 	private String paymentInfo5;// bankName
 	
-	@Column(name = "PAYMENT_INFO6", length = 255)
+	@Column(name = "payment_info6", length = 255)
     @Size(max = 255)
 	private String paymentInfo6;// bic
 
-	@Column(name = "DUE_DATE")
+	@Column(name = "due_date")
 	@Temporal(TemporalType.DATE)
 	private Date dueDate;
 
-	@Column(name = "BILLING_ACCOUNT_NAME", length = 255)
+	@Column(name = "billing_account_name", length = 255)
     @Size(max = 255)
 	private String billingAccountName;
 
-	@Column(name = "REFERENCE", length = 255)
+	@Column(name = "reference", length = 255)
     @Size(max = 255)
 	private String reference;
 
 	@ManyToOne(optional = true, cascade = CascadeType.ALL)
-	@JoinColumn(name = "DDREQUEST_LOT_ID")
+	@JoinColumn(name = "ddrequest_lot_id")
 	private DDRequestLOT ddRequestLOT;
 
 	@ManyToOne(optional = true, cascade = CascadeType.ALL)
-	@JoinColumn(name = "ACCOUNT_OPERATION_ID")
+	@JoinColumn(name = "account_operation_id")
 	private RecordedInvoice recordedInvoice;
 	
-	@Column(name = "ERROR_MSG", length = 1000)
+	@Column(name = "error_msg", length = 1000)
     @Size(max = 1000)
 	private String errorMsg;
 	
 	@OneToOne(optional = true)
-	@JoinColumn(name = "PAYMENT_ID")
+	@JoinColumn(name = "payment_id")
 	private AutomatedPayment automatedPayment;
 
 	public DDRequestItem() {

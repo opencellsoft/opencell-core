@@ -15,6 +15,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.billing.GenerateInvoiceResultDto;
@@ -69,7 +70,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  * 
  * 
  */
-@XmlRootElement(name = "Quote")
+@XmlRootElement(name = "Quote", namespace="http://www.tmforum.org")
+@XmlType(name = "Quote", namespace="http://www.tmforum.org")
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonInclude(value = Include.NON_NULL)
 public class ProductQuote implements Serializable {

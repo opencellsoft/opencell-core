@@ -43,12 +43,12 @@ public abstract class BaseEntity implements Serializable, IEntity, IJPAVersioned
 
     @Id
     @GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)
-	@Column(name = "ID")
+	@Column(name = "id")
 	@Access(AccessType.PROPERTY)
 	protected Long id;
 
 	@Version
-	@Column(name = "VERSION")
+	@Column(name = "version")
 	private Integer version;
 
 	public Long getId() {

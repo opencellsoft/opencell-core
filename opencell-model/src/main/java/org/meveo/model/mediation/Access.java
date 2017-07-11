@@ -52,9 +52,9 @@ import org.meveo.model.billing.Subscription;
 @ObservableEntity
 @CustomFieldEntity(cftCodePrefix = "ACC")
 @ExportIdentifier({ "accessUserId", "subscription.code" })
-@Table(name = "MEDINA_ACCESS", uniqueConstraints = { @UniqueConstraint(columnNames = { "ACCES_USER_ID", "SUBSCRIPTION_ID" }) })
+@Table(name = "medina_access", uniqueConstraints = { @UniqueConstraint(columnNames = { "acces_user_id", "subscription_id" }) })
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "MEDINA_ACCESS_SEQ"), })
+        @Parameter(name = "sequence_name", value = "medina_access_seq"), })
 @NamedQueries({
         @NamedQuery(name = "Access.getAccessesForCache", query = "SELECT a from Access a left join fetch a.subscription where a.disabled=false order by a.accessUserId", hints = {
                 @QueryHint(name = "org.hibernate.readOnly", value = "true") }) })
@@ -64,22 +64,22 @@ public class Access extends EnableEntity implements ICustomFieldEntity {
 
     // input
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "START_DATE")
+    @Column(name = "start_date")
     private Date startDate;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "END_DATE")
+    @Column(name = "end_date")
     private Date endDate;
 
-    @Column(name = "ACCES_USER_ID", length = 255)
+    @Column(name = "acces_user_id", length = 255)
     @Size(max = 255)
     private String accessUserId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SUBSCRIPTION_ID")
+    @JoinColumn(name = "subscription_id")
     private Subscription subscription;
 
-    @Column(name = "UUID", nullable = false, updatable = false, length = 60)
+    @Column(name = "uuid", nullable = false, updatable = false, length = 60)
     @Size(max = 60)
     @NotNull
     private String uuid = UUID.randomUUID().toString();

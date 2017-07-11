@@ -20,6 +20,7 @@ import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.billing.UpdateServicesRequestDto;
+import org.meveo.api.dto.response.billing.GetDueDateDelayResponseDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsResponseDto;
@@ -200,4 +201,20 @@ public interface SubscriptionRs extends IBaseRs {
     @PUT
 	@Path("updateServices")
 	ActionStatus updateServices(UpdateServicesRequestDto postData);
+    
+    /**
+     * Returns the due date delay information.
+     * 
+     * @param subscriptionCode - required
+     * @param invoiceNumber - invoice number, can be null
+     * @param invoiceTypeCode - can be null
+     * @param orderCode - can be null
+     * @return
+     */
+	@GET
+	@Path("/dueDateDelay")
+	GetDueDateDelayResponseDto findDueDateDelay(@QueryParam("subscriptionCode") String subscriptionCode,
+			@QueryParam("invoiceNumber") String invoiceNumber, @QueryParam("invoiceTypeCode") String invoiceTypeCode,
+			@QueryParam("orderCode") String orderCode);
+	
 }

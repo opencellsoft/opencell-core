@@ -16,30 +16,30 @@ import org.meveo.model.BaseEntity;
  * @author Edward P. Legaspi
  **/
 @Entity
-@Table(name = "AUDIT_LOG")
+@Table(name = "audit_log")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-		@Parameter(name = "sequence_name", value = "AUDIT_LOG_SEQ"), })
+		@Parameter(name = "sequence_name", value = "audit_log_seq"), })
 public class AuditLog extends BaseEntity {
 
 	private static final long serialVersionUID = -8920671560100707762L;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "CREATED")
+	@Column(name = "created")
 	private Date created;
 
-	@Column(name = "ACTOR", length = 200)
+	@Column(name = "actor", length = 200)
 	private String actor;
 
-	@Column(name = "ORIGIN", length = 200)
+	@Column(name = "origin", length = 200)
 	private String origin;
 
-	@Column(name = "ACTION")
+	@Column(name = "action")
 	private String action;
 
-	@Column(name = "ENTITY")
+	@Column(name = "entity")
 	private String entity;
 
-	@Column(name = "PARAMETERS", length = 2000, columnDefinition="TEXT")
+	@Column(name = "parameters", length = 2000, columnDefinition="TEXT")
 	private String parameters;
 
 	public Date getCreated() {

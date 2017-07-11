@@ -55,109 +55,109 @@ import org.meveo.model.scripts.ScriptInstance;
 @MultilanguageEntity(key = "menu.pricePlanMatrixes", group = "PricePlanMatrix")
 @CustomFieldEntity(cftCodePrefix = "PRICEPLAN")
 @ExportIdentifier({ "code" })
-@Table(name = "CAT_PRICE_PLAN_MATRIX", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE" }))
+@Table(name = "cat_price_plan_matrix", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "CAT_PRICE_PLAN_MATRIX_SEQ"), })
+        @Parameter(name = "sequence_name", value = "cat_price_plan_matrix_seq"), })
 @NamedQueries({
         @NamedQuery(name = "PricePlanMatrix.getPricePlansForCache", query = "SELECT ppm from PricePlanMatrix ppm left join ppm.offerTemplate ot left join ppm.validityCalendar vc where ppm.disabled is false order by ppm.eventCode, ppm.priority ASC") })
 public class PricePlanMatrix extends BusinessCFEntity implements Comparable<PricePlanMatrix> {
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "EVENT_CODE", length = 255, nullable = false)
+    @Column(name = "event_code", length = 255, nullable = false)
     @Size(min = 1, max = 255)
     @NotNull
     private String eventCode;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "OFFER_ID")
+    @JoinColumn(name = "offer_id")
     private OfferTemplate offerTemplate;
 
-    @Column(name = "START_SUBSCRIPTION_DATE")
+    @Column(name = "start_subscription_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date startSubscriptionDate;
 
-    @Column(name = "END_SUBSCRIPTION_DATE")
+    @Column(name = "end_subscription_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date endSubscriptionDate;
 
-    @Column(name = "START_RATING_DATE")
+    @Column(name = "start_rating_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date startRatingDate;
 
-    @Column(name = "END_RATING_DATE")
+    @Column(name = "end_rating_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date endRatingDate;
 
-    @Column(name = "MIN_QUANTITY")
+    @Column(name = "min_quantity")
     @Digits(integer = 23, fraction = 12)
     private BigDecimal minQuantity;
 
-    @Column(name = "MAX_QUANTITY")
+    @Column(name = "max_quantity")
     @Digits(integer = 23, fraction = 12)
     private BigDecimal maxQuantity;
 
-    @Column(name = "MIN_SUBSCR_AGE")
+    @Column(name = "min_subscr_age")
     private Long minSubscriptionAgeInMonth;
 
-    @Column(name = "MAX_SUBSCR_AGE")
+    @Column(name = "max_subscr_age")
     private Long maxSubscriptionAgeInMonth;
 
-    @Column(name = "CRITERIA_1", length = 255)
+    @Column(name = "criteria_1", length = 255)
     @Size(max = 255)
     private String criteria1Value;
 
-    @Column(name = "CRITERIA_2", length = 255)
+    @Column(name = "criteria_2", length = 255)
     @Size(max = 255)
     private String criteria2Value;
 
-    @Column(name = "CRITERIA_3", length = 255)
+    @Column(name = "criteria_3", length = 255)
     @Size(max = 255)
     private String criteria3Value;
 
-    @Column(name = "CRITERIA_EL", length = 2000)
+    @Column(name = "criteria_el", length = 2000)
     @Size(max = 2000)
     private String criteriaEL;
 
-    @Column(name = "AMOUNT_WITHOUT_TAX", precision = 23, scale = 12)
+    @Column(name = "amount_without_tax", precision = 23, scale = 12)
     @Digits(integer = 23, fraction = 12)
     private BigDecimal amountWithoutTax;
 
-    @Column(name = "AMOUNT_WITH_TAX", precision = 23, scale = 12)
+    @Column(name = "amount_with_tax", precision = 23, scale = 12)
     @Digits(integer = 23, fraction = 12)
     private BigDecimal amountWithTax;
 
-    @Column(name = "AMOUNT_WITHOUT_TAX_EL", length = 2000)
+    @Column(name = "amount_without_tax_el", length = 2000)
     @Size(max = 2000)
     private String amountWithoutTaxEL;
 
-    @Column(name = "AMOUNT_WITH_TAX_EL", length = 2000)
+    @Column(name = "amount_with_tax_el", length = 2000)
     @Size(max = 2000)
     private String amountWithTaxEL;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "TRADING_CURRENCY_ID")
+    @JoinColumn(name = "trading_currency_id")
     private TradingCurrency tradingCurrency;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "TRADING_COUNTRY_ID")
+    @JoinColumn(name = "trading_country_id")
     private TradingCountry tradingCountry;
 
-    @Column(name = "PRIORITY", columnDefinition = "int DEFAULT 1")
+    @Column(name = "priority", columnDefinition = "int DEFAULT 1")
     private int priority = 1;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SELLER_ID")
+    @JoinColumn(name = "seller_id")
     private Seller seller;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "VALID_CAL_ID")
+    @JoinColumn(name = "valid_cal_id")
     private Calendar validityCalendar;
 
-    @Column(name = "SEQUENCE")
+    @Column(name = "sequence")
     private Long sequence;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SCRIPT_INSTANCE_ID")
+    @JoinColumn(name = "script_instance_id")
     private ScriptInstance scriptInstance;
 
     public String getEventCode() {

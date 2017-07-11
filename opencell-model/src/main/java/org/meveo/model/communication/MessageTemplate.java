@@ -42,36 +42,36 @@ import org.meveo.model.ObservableEntity;
 @Entity
 @ObservableEntity
 @ExportIdentifier({ "code"})
-@Table(name = "COM_MESSAGE_TEMPLATE", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@DiscriminatorColumn(name = "MEDIA")
+@Table(name = "com_message_template", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
+@DiscriminatorColumn(name = "media")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "COM_MSG_TMPL_SEQ"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "com_msg_tmpl_seq"), })
 public abstract class MessageTemplate extends BusinessEntity {
 
 	private static final long serialVersionUID = 5835960109145222442L;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "MEDIA", insertable = false, updatable = false)
+	@Column(name = "media", insertable = false, updatable = false)
 	private MediaEnum media;
 
-	@Column(name = "TAG_START", length = 255)
+	@Column(name = "tag_start", length = 255)
     @Size(max = 255)
 	private String tagStartDelimiter = "#{";
 
-	@Column(name = "TAG_END", length = 255)
+	@Column(name = "tag_end", length = 255)
     @Size(max = 255)
 	private String tagEndDelimiter = "}";
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "START_DATE")
+	@Column(name = "start_date")
 	private Date startDate;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "END_DATE")
+	@Column(name = "end_date")
 	private Date endDate;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "TYPE")
+	@Column(name = "type")
 	private MessageTemplateTypeEnum type;
 
 	public MediaEnum getMedia() {

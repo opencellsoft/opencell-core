@@ -6,12 +6,10 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
 
 /**
  * @author Edward P. Legaspi
  **/
-@XmlType(name = "Accesses")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AccessesDto implements Serializable {
 

@@ -28,64 +28,64 @@ import org.meveo.model.ObservableEntity;
 @Entity
 @ObservableEntity
 @ExportIdentifier({ "code"})
-@Table(name = "ADM_INBOUND_REQUEST", uniqueConstraints = @UniqueConstraint(columnNames = { "CODE"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ADM_INBOUND_REQUEST_SEQ"), })
+@Table(name = "adm_inbound_request", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "adm_inbound_request_seq"), })
 @Inheritance(strategy = InheritanceType.JOINED)
 public class InboundRequest extends BusinessEntity {
 
 	private static final long serialVersionUID = 2634877161620665288L;
 
-	@Column(name="CONTENT_LENGTH")
+	@Column(name="content_length")
 	private int contentLength;
 
-	@Column(name="CONTENT_TYPE",length=255)
+	@Column(name="content_type",length=255)
 	@Size(max = 255)
 	private String contentType;
 
 	@ElementCollection(fetch=FetchType.LAZY)
-	@CollectionTable(name="ADM_INBOUND_REQ_PARAMS")
+	@CollectionTable(name="adm_inbound_req_params")
 	private Map<String,String> parameters = new HashMap<String, String>();
 
-	@Column(name="PROTOCOL",length=20)
+	@Column(name="protocol",length=20)
 	@Size(max = 20)
 	private String protocol;
 	
-	@Column(name="SCHEME",length=20)
+	@Column(name="scheme",length=20)
     @Size(max = 20)
 	private String scheme;
 	
-	@Column(name="REMOTE_ADRR",length=255)
+	@Column(name="remote_adrr",length=255)
     @Size(max = 255)
 	private String remoteAddr;
 
-	@Column(name="REMOTE_PORT")
+	@Column(name="remote_port")
 	private int remotePort;
 		
-	@Column(name = "BODY", columnDefinition = "TEXT")
+	@Column(name = "body", columnDefinition = "TEXT")
 	private String body;
 	
-	@Column(name="METHOD",length=10)
+	@Column(name="method",length=10)
     @Size(max = 10)
 	private String method;
 
-	@Column(name="AUTH_TYPE",length=11)
+	@Column(name="auth_type",length=11)
     @Size(max = 11)
 	private String authType;
 
 	@ElementCollection(fetch=FetchType.LAZY)
-	@CollectionTable(name="ADM_INBOUND_REQ_COOKIES")
+	@CollectionTable(name="adm_inbound_req_cookies")
 	private Map<String,String> coockies = new HashMap<String, String>();
 	
 	@ElementCollection(fetch=FetchType.LAZY)
-	@CollectionTable(name="ADM_INBOUND_REQ_HEADERS")
+	@CollectionTable(name="adm_inbound_req_headers")
     @Column(name = "headers", columnDefinition = "TEXT")
     private Map<String, String> headers = new HashMap<String, String>();
 
-	@Column(name="PATH_INFO",length=255)
+	@Column(name="path_info",length=255)
     @Size(max = 255)
 	private String pathInfo;
 	
-	@Column(name="REQUEST_URI",length=255)
+	@Column(name="request_uri",length=255)
     @Size(max = 255)
 	private String requestURI;
 	
@@ -96,22 +96,22 @@ public class InboundRequest extends BusinessEntity {
 	@OneToMany(mappedBy="inboundRequest")
 	private List<NotificationHistory> notificationHistories = new ArrayList<NotificationHistory>();
 
-	@Column(name="RESP_CONTENT_TYPE",length=255)
+	@Column(name="resp_content_type",length=255)
     @Size(max = 255)
 	private String responseContentType;
 
-	@Column(name="RESP_ENCODING",length=50)
+	@Column(name="resp_encoding",length=50)
     @Size(max = 50)
 	private String responseEncoding;
 
 	transient private String responseBody;
 	
 	@ElementCollection(fetch=FetchType.LAZY)
-	@CollectionTable(name="ADM_INBOUND_RESP_COOKIES")
+	@CollectionTable(name="adm_inbound_resp_cookies")
 	private Map<String,String> responseCoockies = new HashMap<String, String>();
 	
 	@ElementCollection(fetch=FetchType.LAZY)
-	@CollectionTable(name="ADM_INBOUND_RESP_HEADERS")
+	@CollectionTable(name="adm_inbound_resp_headers")
 	private Map<String,String> responseHeaders = new HashMap<String, String>();
 
 	

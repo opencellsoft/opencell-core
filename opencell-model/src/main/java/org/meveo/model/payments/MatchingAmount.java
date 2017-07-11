@@ -31,21 +31,21 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.EnableEntity;
 
 @Entity
-@Table(name = "AR_MATCHING_AMOUNT")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "AR_MATCHING_AMOUNT_SEQ"), })
+@Table(name = "ar_matching_amount")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ar_matching_amount_seq"), })
 public class MatchingAmount extends EnableEntity {
 
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne
-	@JoinColumn(name = "MATCHING_CODE_ID")
+	@JoinColumn(name = "matching_code_id")
 	private MatchingCode matchingCode;
 
 	@ManyToOne
-	@JoinColumn(name = "ACCOUNT_OPERATION_ID")
+	@JoinColumn(name = "account_operation_id")
 	private AccountOperation accountOperation;
 
-	@Column(name = "MATCHING_AMOUNT", precision = 23, scale = 12)
+	@Column(name = "matching_amount", precision = 23, scale = 12)
 	private BigDecimal matchingAmount;
 
 	public MatchingAmount() {

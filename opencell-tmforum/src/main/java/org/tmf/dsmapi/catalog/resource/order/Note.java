@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.tmf.dsmapi.serialize.CustomDateSerializer;
 
@@ -11,7 +12,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-@XmlRootElement
+@XmlRootElement(name="Note", namespace="http://www.tmforum.org")
+@XmlType(name="Note", namespace="http://www.tmforum.org")
 @JsonInclude(value = Include.NON_NULL)
 public class Note implements Serializable {
 

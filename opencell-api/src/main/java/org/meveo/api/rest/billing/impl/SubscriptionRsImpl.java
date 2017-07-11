@@ -18,6 +18,7 @@ import org.meveo.api.dto.billing.SubscriptionsListDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.billing.UpdateServicesRequestDto;
+import org.meveo.api.dto.response.billing.GetDueDateDelayResponseDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsResponseDto;
@@ -256,4 +257,20 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 
         return result;
     }
+
+	@Override
+	public GetDueDateDelayResponseDto findDueDateDelay(String subscriptionCode, String invoiceNumber,
+			String invoiceTypeCode, String orderCode) {
+		GetDueDateDelayResponseDto result = new GetDueDateDelayResponseDto();
+
+		try {
+			result.setDueDateDelay(
+					subscriptionApi.getDueDateDelay(subscriptionCode, invoiceNumber, invoiceTypeCode, orderCode));
+		} catch (Exception e) {
+			processException(e, result.getActionStatus());
+		}
+
+		return result;
+	}
+	
 }

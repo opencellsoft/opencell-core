@@ -34,26 +34,26 @@ import org.meveo.model.ExportIdentifier;
  */
 @Entity
 @ExportIdentifier("currencyCode")
-@Table(name = "ADM_CURRENCY")
+@Table(name = "adm_currency")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "ADM_CURRENCY_SEQ"), })
+        @Parameter(name = "sequence_name", value = "adm_currency_seq"), })
 public class Currency extends AuditableEntity {
 
 	private static final long serialVersionUID = 1L;
 
 	/** Currency code e.g. EUR for euros. */
-	@Column(name = "CURRENCY_CODE", length = 3, unique = true)
+	@Column(name = "currency_code", length = 3, unique = true)
 	@Size(max = 3)
 	private String currencyCode;
 
 	/** Currency name. */
-	@Column(name = "DESCRIPTION_EN", length = 255)
+	@Column(name = "description_en", length = 255)
 	@Size(max = 255)
 	private String descriptionEn;
 
 	/** Flag field that indicates if it is system currency. */
 	@Type(type="numeric_boolean")
-    @Column(name = "SYSTEM_CURRENCY")
+    @Column(name = "system_currency")
 	private Boolean systemCurrency;
 
 	public String getCurrencyCode() {

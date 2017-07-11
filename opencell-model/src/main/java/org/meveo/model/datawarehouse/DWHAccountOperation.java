@@ -33,61 +33,61 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 
 @Entity
-@Table(name = "DWH_ACCOUNT_OPERATION")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "DWH_ACCOUNT_OPERATION_SEQ"), })
+@Table(name = "dwh_account_operation")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "dwh_account_operation_seq"), })
 public class DWHAccountOperation extends BaseEntity {
 
 	private static final long serialVersionUID = 1L;
 	
-	@Column(name = "ACCOUNT_CODE", length = 50)
+	@Column(name = "account_code", length = 50)
 	@Size(max = 50)
 	private String accountCode;
 
-	@Column(name = "ACCOUNT_DESCRIPTION", length = 255)
+	@Column(name = "account_description", length = 255)
     @Size(max = 255)
 	private String accountDescription;
 
-	@Column(name = "ACCOUNTING_CODE", length = 255)
+	@Column(name = "accounting_code", length = 255)
     @Size(max = 255)
 	private String accountingCode;
 
-	@Column(name = "ACCOUNTING_CODE_CLIENT_SIDE", length = 255)
+	@Column(name = "accounting_code_client_side", length = 255)
     @Size(max = 255)
 	private String accountingCodeClientSide;
 
-	@Column(name = "TRANSACTION_DATE")
+	@Column(name = "transaction_date")
 	@Temporal(TemporalType.DATE)
 	private Date transactionDate;
 
-	@Column(name = "DUE_DATE")
+	@Column(name = "due_date")
 	@Temporal(TemporalType.DATE)
 	private Date dueDate;
 
-	@Column(name = "DUE_MONTH")
+	@Column(name = "due_month")
 	private Integer dueMonth;
 
-	@Column(name = "CATEGORY")
+	@Column(name = "category")
 	private int category;
 
-	@Column(name = "TYPE")
+	@Column(name = "type")
 	private int type;
 
-	@Column(name = "OCC_CODE", length = 10)
+	@Column(name = "occ_code", length = 10)
 	@Size(max = 10)
 	private String occCode;
 
-	@Column(name = "OCC_DESCRIPTION", length = 255)
+	@Column(name = "occ_description", length = 255)
     @Size(max = 255)
 	private String occDescription;
 
-	@Column(name = "REFERENCE", length = 50)
+	@Column(name = "reference", length = 50)
     @Size(max = 50)
 	private String reference;
 
-	@Column(name = "AMOUNT")
+	@Column(name = "amount")
 	private BigDecimal amount;
 
-	@Column(name = "STATUS")
+	@Column(name = "status")
 	private int status;
 
 	public String getAccountCode() {

@@ -37,31 +37,31 @@ import org.meveo.model.MultilanguageEntity;
 
 @Entity
 @Cacheable
-@Table(name = "ADM_MESSAGES", uniqueConstraints = @UniqueConstraint(columnNames = { "ENTITY_CODE", "ENTITY_CLASS","LANGUAGE_CODE" }))
+@Table(name = "adm_messages", uniqueConstraints = @UniqueConstraint(columnNames = { "entity_code", "entity_class","language_code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "ADM_MESSAGES_SEQ"), })
+        @Parameter(name = "sequence_name", value = "adm_messages_seq"), })
 public class CatMessages extends BaseEntity {
 
 	private static final long serialVersionUID = -2933410380534805846L;
 
-	@Column(name="ENTITY_CODE",length=255,nullable=false)
+	@Column(name="entity_code",length=255,nullable=false)
     @Size(max = 255, min = 1)
     @NotNull
 	private String entityCode;
 
-	@Column(name = "LANGUAGE_CODE", length = 3,nullable=false)
+	@Column(name = "language_code", length = 3,nullable=false)
 	@Size(max = 3)
     @NotNull
 	private String languageCode;
 
-	@Column(name = "DESCRIPTION", length = 255)
+	@Column(name = "description", length = 255)
 	@Size(max = 255)
 	private String description;
 	
 	@Transient
 	private String entityDescription;
 	
-	@Column(name="ENTITY_CLASS",length=60,nullable=false)
+	@Column(name="entity_class",length=60,nullable=false)
 	private String entityClass;
 	
 	@Transient

@@ -57,7 +57,7 @@ public class PostalMailSenderConfig extends MessageSenderConfig {
 	@Column()
 	private boolean addAddressFrontPage;
 
-	@Column(name = "STAMPTYPE", length = 255)
+	@Column(name = "stamptype", length = 255)
     @Size(max = 255)
 	private String STAMPtype;
 

@@ -5,12 +5,10 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
 
 /**
  * @author Edward P. Legaspi
  **/
-@XmlType(name = "OtherCreditAndCharge")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OtherCreditAndChargeDto extends AccountOperationDto implements Serializable {
 

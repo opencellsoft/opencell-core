@@ -33,6 +33,8 @@ public class EntityCustomActionDto extends BaseDto {
     private String label;
 
     private ScriptInstanceDto script;
+    
+    private String guiPosition;
 
     public EntityCustomActionDto() {
         super();
@@ -45,6 +47,7 @@ public class EntityCustomActionDto extends BaseDto {
         this.appliesTo = e.getAppliesTo();
         this.applicableOnEl = e.getApplicableOnEl();
         this.label = e.getLabel();
+        this.guiPosition = e.getGuiPosition();
 
         this.setScript(new ScriptInstanceDto(e.getScript()));
     }
@@ -102,4 +105,12 @@ public class EntityCustomActionDto extends BaseDto {
         return String.format("EntityCustomActionDto [code=%s, description=%s, appliesTo=%s, applicableOnEl=%s, label=%s, script=%s]", code, description, appliesTo, applicableOnEl,
             label, script);
     }
+
+	public String getGuiPosition() {
+		return guiPosition;
+	}
+
+	public void setGuiPosition(String guiPosition) {
+		this.guiPosition = guiPosition;
+	}
 }

@@ -36,20 +36,20 @@ import org.meveo.model.ExportIdentifier;
  */
 @Entity
 @ExportIdentifier({ "discount.discountCode", "tradingLanguage.language.languageCode"})
-@Table(name = "BILLING_DISCOUNT_LANGUAGE")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_DISCOUNT_LANGUAGE_SEQ"), })
+@Table(name = "billing_discount_language")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_discount_language_seq"), })
 public class DiscountLanguage extends EnableEntity {
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "DISCOUNT_ID")
+	@JoinColumn(name = "discount_id")
 	private Discount discount;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TRADING_LANGUAGE_ID")
+	@JoinColumn(name = "trading_language_id")
 	private TradingLanguage tradingLanguage;
 
-	@Column(name = "DESCRIPTION", length = 255)
+	@Column(name = "description", length = 255)
 	@Size(max = 255)
 	private String description;
 

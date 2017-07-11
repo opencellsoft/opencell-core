@@ -7,14 +7,14 @@ import javax.validation.constraints.Size;
 @Embeddable
 public class Sequence {
 	
-	@Column(name = "PREFIX_EL", length = 2000)
+	@Column(name = "prefix_el", length = 2000)
 	@Size(max = 2000)
 	private String prefixEL = "";
 	
-	@Column(name = "SEQUENCE_SIZE")
+	@Column(name = "sequence_size")
 	private Integer sequenceSize= 9;
 	
-    @Column(name = "CURRENT_INVOICE_NB")
+    @Column(name = "current_invoice_nb")
     private Long currentInvoiceNb = 0L;
 
 	public Sequence() {

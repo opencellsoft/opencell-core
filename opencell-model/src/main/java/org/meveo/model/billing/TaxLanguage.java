@@ -36,20 +36,20 @@ import org.meveo.model.ExportIdentifier;
  */
 @Entity
 @ExportIdentifier({ "tax.code", "tradingLanguage.language.languageCode"})
-@Table(name = "BILLING_TAX_LANGUAGE")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "BILLING_TAX_LANGUAGE_SEQ"), })
+@Table(name = "billing_tax_language")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_tax_language_seq"), })
 public class TaxLanguage extends EnableEntity {
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TAX_ID")
+	@JoinColumn(name = "tax_id")
 	private Tax tax;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TRADING_LANGUAGE_ID")
+	@JoinColumn(name = "trading_language_id")
 	private TradingLanguage tradingLanguage;
 
-	@Column(name = "DESCRIPTION", length = 255)
+	@Column(name = "description", length = 255)
 	@Size(max = 255)
 	private String description;
 

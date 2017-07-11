@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 
 import javax.persistence.PostLoad;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.tmf.dsmapi.catalog.resource.AbstractEntity;
 import org.tmf.dsmapi.catalog.resource.CatalogReference;
@@ -31,7 +32,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *         ] }
  * 
  */
-@XmlRootElement
+@XmlRootElement(name="Catalog", namespace="http://www.tmforum.org")
+@XmlType(name="Catalog", namespace="http://www.tmforum.org")
 @JsonInclude(value = Include.NON_NULL)
 public class Catalog extends AbstractEntity implements Serializable {
     private final static long serialVersionUID = 1L;
