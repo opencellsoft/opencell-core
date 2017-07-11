@@ -29,7 +29,7 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
 
 @Entity
-@ExportIdentifier({ "offerTemplate.code", "serviceTemplate.code" })
+@ExportIdentifier({ "offerTemplate.code", "offerTemplate.validity.from", "offerTemplate.validity.to", "serviceTemplate.code" })
 @Table(name = "cat_offer_serv_templates")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cat_offer_serv_templt_seq"), })
@@ -59,8 +59,7 @@ public class OfferServiceTemplate implements IEntity {
     @JoinTable(name = "cat_offer_serv_incomp", joinColumns = @JoinColumn(name = "offer_service_template_id"), inverseJoinColumns = @JoinColumn(name = "service_template_id"))
     private List<ServiceTemplate> incompatibleServices = new ArrayList<>();
 
-    @AttributeOverrides({ @AttributeOverride(name = "from", column = @Column(name = "valid_from")),
-            @AttributeOverride(name = "to", column = @Column(name = "valid_to")) })
+    @AttributeOverrides({ @AttributeOverride(name = "from", column = @Column(name = "valid_from")), @AttributeOverride(name = "to", column = @Column(name = "valid_to")) })
     private DatePeriod validity = new DatePeriod();
 
     public OfferTemplate getOfferTemplate() {

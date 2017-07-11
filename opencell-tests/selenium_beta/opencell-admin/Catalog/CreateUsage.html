@@ -4,16 +4,16 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://integration.i.opencellsoft.com/opencell/" />
-<title>Create Invoice Type</title>
+<title>CreateUsage</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">New Test</td></tr>
+<tr><td rowspan="1" colspan="3">CreateUsage</td></tr>
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
-	<td>${invoice}</td>
+	<td>${usages}</td>
 	<td></td>
 </tr>
 <tr>
@@ -43,102 +43,122 @@
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${accountOperationField}</td>
+	<td>${priorityField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${priorityField}</td>
+	<td>${priority}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${inputUnitDescriptionField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${inputUnitDescriptionField}</td>
+	<td>${inputUnitDescription}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${ratingUnitDescriptionField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${ratingUnitDescriptionField}</td>
+	<td>${ratingUnitDescription}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${unitMultiplicatorField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${unitMultiplicatorField}</td>
+	<td>${unitMultiplicator}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${unitNbDecimalField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${unitNbDecimalField}</td>
+	<td>${unitNbDecimal}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${param1Field}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${param1Field}</td>
+	<td>${param1}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${param2Field}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${param2Field}</td>
+	<td>${param2}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${param3Field}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${param3Field}</td>
+	<td>${param3}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${param4Field}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${param4Field}</td>
+	<td>${param4}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${filterExpressionField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${filterExpressionField}</td>
+	<td>${filterExpression}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${subCategoryField}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${accountOperationField}</td>
+	<td>${subCategoryField}/div/ul/li[text()[contains(.,'${subCategory}')]]</td>
 	<td></td>
-</tr>
-<tr>
-	<td>waitForElementPresent</td>
-	<td>//*[contains(@id, 'searchField1')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>//*[contains(@id, 'searchField1')]</td>
-	<td>${accountOperation}</td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${searchButton}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>pause</td>
-	<td>1000</td>
-	<td>${accountOperation}</td>
-</tr>
-<tr>
-	<td>waitForText</td>
-	<td>//tbody[@id='searchOccTemplatePopuppopupForm:searchOccTemplatePopupdatatable_data']/tr/td</td>
-	<td>${accountOperation}</td>
-</tr>
-<tr>
-	<td>verifyTextPresent</td>
-	<td>${accountOperation}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>//tbody[@id='searchOccTemplatePopuppopupForm:searchOccTemplatePopupdatatable_data']/tr/td</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForNotVisible</td>
-	<td>id=searchOccTemplatePopup</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForValue</td>
-	<td>id=formInvoiceType:occTemplateSelectedId_text</td>
-	<td>${accountOperation}</td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${prefixField}</td>
+	<td>${triggeredEDRLeft}/li[text()[contains(.,'${codeEDR}')]]</td>
 	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${prefixField}</td>
-	<td>${prefix}</td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${sequenceSizeField}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${sequenceSizeField}</td>
-	<td>${sequenceSize}</td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${currentInvoiceNumberField}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${currentInvoiceNumberField}</td>
-	<td>${currentInvoiceNumber}</td>
-</tr>
-<tr>
-	<td>assertText</td>
-	<td>${invoiceTypeIn}</td>
-	<td>${invoiceType}</td>
 </tr>
 <tr>
 	<td>doubleClick</td>
-	<td>${invoiceTypeIn}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForElementPresent</td>
-	<td>${invoiceTypeOut}</td>
+	<td>${triggeredEDRLeft}/li[text()[contains(.,'${codeEDR}')]]</td>
 	<td></td>
 </tr>
 <tr>
@@ -147,7 +167,7 @@
 	<td></td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
+	<td>click</td>
 	<td>${saveButtonWhenCreate}</td>
 	<td></td>
 </tr>
@@ -161,6 +181,7 @@
 	<td>${infoSummary}</td>
 	<td></td>
 </tr>
+
 </tbody></table>
 </body>
 </html>

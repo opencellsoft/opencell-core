@@ -44,7 +44,7 @@ import org.meveo.model.crm.BusinessAccountModel;
 @ObservableEntity
 @VersionedEntity
 @MultilanguageEntity(key = "menu.catalog.offersAndProducts", group = "ProductOffering")
-@ExportIdentifier({ "code", "validity.startDate", "validity.endDate" })
+@ExportIdentifier({ "code", "validity.from", "validity.to" })
 @Table(name = "cat_offer_template", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "valid_from", "valid_to" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cat_offer_template_seq"), })

@@ -93,7 +93,6 @@ import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.XStreamCDATAConverter;
-import org.meveo.model.Auditable;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
@@ -1773,8 +1772,8 @@ public class EntityExportImportService implements Serializable {
             log.trace("Will ommit {}.{} attribute from export", classFieldInfo[0], ((Field) classFieldInfo[1]).getName());
             xstream.omitField((Class) classFieldInfo[0], ((Field) classFieldInfo[1]).getName());
         }
-        xstream.omitField(Auditable.class, "creator");
-        xstream.omitField(Auditable.class, "updater");
+//        xstream.omitField(Auditable.class, "creator");
+//        xstream.omitField(Auditable.class, "updater");
     }
 
     /**
