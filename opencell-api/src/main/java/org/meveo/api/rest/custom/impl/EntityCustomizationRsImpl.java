@@ -327,6 +327,7 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
 		}
 
 		return result;
+	}
 
 	/**
 	 * Used for create or update template.

@@ -1194,6 +1194,7 @@ public class SubscriptionApi extends BaseApi {
 		result.setDelayOrigin(delayOrigin);
 		
 		return result;
+	}
 	
 	/**
 	 * @param type of one shot charge (SUBSCRIPTION, TERMINATION, OTHER)

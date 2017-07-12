@@ -300,7 +300,5 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         }
 
         return result;
-    	
     }
->>>>>>> ticket-138-oneshot-charge-other
 }
