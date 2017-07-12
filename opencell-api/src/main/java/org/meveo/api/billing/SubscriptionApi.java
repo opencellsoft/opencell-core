@@ -16,6 +16,7 @@ import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.account.AccessApi;
+import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
 import org.meveo.api.dto.account.ApplyProductRequestDto;
@@ -36,6 +37,7 @@ import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.billing.UpdateServicesRequestDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
+import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -46,6 +48,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.DueDateDelayEnum;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -61,6 +64,7 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
@@ -77,6 +81,7 @@ import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.TerminationReasonService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletTemplateService;
+import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
@@ -126,6 +131,7 @@ public class SubscriptionApi extends BaseApi {
 	private ProductInstanceService productInstanceService;
     
     @Inject
+
     private InvoiceService invoiceService;
     
     @Inject
@@ -133,6 +139,10 @@ public class SubscriptionApi extends BaseApi {
     
     @Inject
     private OrderService orderService;
+
+    private CatMessagesService catMessagesService;
+    
+
 
     public void create(SubscriptionDto postData) throws MeveoApiException, BusinessException {
 
@@ -1126,6 +1136,7 @@ public class SubscriptionApi extends BaseApi {
 		}
 	}
 	
+
 	public DueDateDelayDto getDueDateDelay(String subscriptionCode, String invoiceNumber, String invoiceTypeCode,
 			String orderCode) throws MeveoApiException, BusinessException {
 		if (StringUtils.isBlank(subscriptionCode)) {
@@ -1183,6 +1194,44 @@ public class SubscriptionApi extends BaseApi {
 		result.setDelayOrigin(delayOrigin);
 		
 		return result;
+	
+	/**
+	 * @param type of one shot charge (SUBSCRIPTION, TERMINATION, OTHER)
+	 * @return list of one shot charge template type other.s
+	 * 
+	 */
+	private List<OneShotChargeTemplateDto> getOneShotCharges(OneShotChargeTemplateTypeEnum type) {
+		List<OneShotChargeTemplateDto> results = new ArrayList<OneShotChargeTemplateDto>();
+		if (oneShotChargeTemplateService == null) {
+			return results;
+		}
+		
+		List<OneShotChargeTemplate> list = oneShotChargeTemplateService.list();
+		for (OneShotChargeTemplate chargeTemplate : list) {
+			if (chargeTemplate.getOneShotChargeTemplateType() == type) {
+				OneShotChargeTemplateDto oneshotChartTemplateDto = new OneShotChargeTemplateDto(chargeTemplate,
+						entityToDtoConverter.getCustomFieldsWithInheritedDTO(chargeTemplate, true));
+				List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
+				for (CatMessages msg : catMessagesService
+						.getCatMessagesList(OneShotChargeTemplate.class.getSimpleName(), chargeTemplate.getCode())) {
+					languageDescriptions.add(new LanguageDescriptionDto(msg.getLanguageCode(), msg.getDescription()));
+				}
+
+				oneshotChartTemplateDto.setLanguageDescriptions(languageDescriptions);
+
+				results.add(oneshotChartTemplateDto);
+			}
+		}
+
+		return results;
+	}
+	
+	
+	/**
+	 * @return list of one shot charge others.
+	 */
+	public  List<OneShotChargeTemplateDto> getOneShotChargeOthers() {
+		return this.getOneShotCharges(OneShotChargeTemplateTypeEnum.OTHER);
 	}
 	
 }
