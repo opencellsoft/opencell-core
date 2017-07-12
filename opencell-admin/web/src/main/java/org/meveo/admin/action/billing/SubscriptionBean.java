@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -213,6 +214,11 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         }
 
         return entity;
+    }
+    
+    @Override
+    protected List<String> getFormFieldsToFetch() {
+    	return Arrays.asList("productInstances");
     }
 
     private void initServiceTemplates() {
