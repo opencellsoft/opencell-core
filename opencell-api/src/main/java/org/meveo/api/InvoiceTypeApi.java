@@ -15,7 +15,6 @@ import org.meveo.api.dto.billing.InvoiceTypesDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.InvoiceType;
@@ -110,6 +109,7 @@ public class InvoiceTypeApi extends BaseApi {
 	        }
         }      
         invoiceType.setMatchingAuto(postData.isMatchingAuto());
+        invoiceType.setBillingTemplateName(postData.getBillingTemplateName());
         invoiceTypeService.create(invoiceType);
         return result;
     }
@@ -192,6 +192,9 @@ public class InvoiceTypeApi extends BaseApi {
                 }
 	        }
         }              
+        if (invoiceTypeDto.getBillingTemplateName() != null) {
+            invoiceType.setBillingTemplateName(invoiceTypeDto.getBillingTemplateName());
+        }
         invoiceTypeService.update(invoiceType);
         return result;
     }
