@@ -609,6 +609,10 @@ public class CustomFieldDataEntryBean implements Serializable {
     public Object getInheritedCFValue(ICustomFieldEntity entity, String code) {
         return customFieldInstanceService.getInheritedOnlyCFValue(entity, code);
     }
+    
+    public List<CustomFieldInstance> getInheritedVersionableCFValue(ICustomFieldEntity entity, String code) {
+        return customFieldInstanceService.getInheritedVersionableOnlyCFValue(entity, code);
+    }
 
     /**
      * Get inherited custom field value for a given entity. A cumulative custom field value is calculated for Map(Matrix) type fields

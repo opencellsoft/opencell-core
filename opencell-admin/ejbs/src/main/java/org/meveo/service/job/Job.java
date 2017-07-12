@@ -1,5 +1,6 @@
 package org.meveo.service.job;
 
+import java.util.Collection;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -152,6 +153,32 @@ public abstract class Job {
      */
     protected abstract void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException;
 
+    /**
+     * Canceling timers associated to this job implmenentation- solves and issue when server is restarted and wildlfy data directory contains previously active timers
+     */
+    public void cleanTimers() {
+
+        Collection<Timer> alltimers = timerService.getTimers();
+        log.info("Canceling job timers for job {}", this.getClass().getName());
+
+        for (Timer timer : alltimers) {
+            try {
+                if (timer.getInfo() instanceof JobInstance) {
+                    timer.cancel();
+                }
+            } catch (Exception e) {
+                log.error("Failed to cancel timer {} for job{}", timer.getHandle(), this.getClass().getName(), e);
+            }
+        }
+    }
+
+    /**
+     * Register/schedule a timer for a job instance
+     * 
+     * @param scheduleExpression Schedule expression
+     * @param jobInstance Job instance to execute
+     * @return Instantiated timer object
+     */
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public Timer createTimer(ScheduleExpression scheduleExpression, JobInstance jobInstance) {
 

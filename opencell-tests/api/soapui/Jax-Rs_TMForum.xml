@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="99e5aa84-c6f0-481f-ac30-865327111e19" activeEnvironment="Default" name="Meveo TMForum - API - wildfly" resourceRoot="" soapui-version="5.3.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project id="99e5aa84-c6f0-481f-ac30-865327111e19" activeEnvironment="Default" name="Meveo TMForum - API - wildfly" resourceRoot="" soapui-version="5.2.1" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
   <con:settings/>
   <con:interface xsi:type="con:WsdlInterface" id="862741d9-1cba-4f44-8645-23cbf90521aa" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/CatalogWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
@@ -13395,6 +13395,39 @@
           </con:request>
         </con:method>
       </con:resource>
+      <con:resource name="findDueDateDelayInOrder" path="dueDateDelay" id="eb876ea6-ff81-49d8-acdc-3fcd2210244e">
+        <con:settings/>
+        <con:parameters/>
+        <con:method name="Method 1" id="9817678d-d1f2-44c6-a469-285b1c31cefd" method="GET">
+          <con:settings/>
+          <con:parameters>
+            <con:parameter>
+              <con:name>subscriptionCode</con:name>
+              <con:value/>
+              <con:style>QUERY</con:style>
+              <con:default/>
+            </con:parameter>
+            <con:parameter>
+              <con:name>invoiceNumber</con:name>
+              <con:value/>
+              <con:style>QUERY</con:style>
+              <con:default/>
+            </con:parameter>
+            <con:parameter>
+              <con:name>invoiceTypeCode</con:name>
+              <con:value/>
+              <con:style>QUERY</con:style>
+              <con:default/>
+            </con:parameter>
+            <con:parameter>
+              <con:name>orderCode</con:name>
+              <con:value/>
+              <con:style>QUERY</con:style>
+              <con:default/>
+            </con:parameter>
+          </con:parameters>
+        </con:method>
+      </con:resource>
       <con:method name="POST - create" id="14bcc45d-69e1-4162-80e0-152e7fa023e2" method="POST">
         <con:settings/>
         <con:parameters/>
@@ -14344,38 +14377,671 @@
     <con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/SubscriptionWs</con:endpoint>
     </con:endpoints>
-    <con:operation id="b1e4b0c4-088e-4ba2-bf3d-ebc7b9466bac" isOneWay="false" action="" name="activateServices" bindingOperationName="activateServices" type="Request-Response" outputName="activateServicesResponse" inputName="activateServices" receivesAttachments="false" sendsAttachments="false">
+    <con:operation id="b1e4b0c4-088e-4ba2-bf3d-ebc7b9466bac" isOneWay="false" action="" name="activateServices" bindingOperationName="activateServices" type="Request-Response" outputName="activateServicesResponse" inputName="activateServices" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
       <con:settings/>
     </con:operation>
-    <con:operation id="1527308d-449e-4d64-948c-9b5517db6782" isOneWay="false" action="" name="applyOneShotChargeInstance" bindingOperationName="applyOneShotChargeInstance" type="Request-Response" outputName="applyOneShotChargeInstanceResponse" inputName="applyOneShotChargeInstance" receivesAttachments="false" sendsAttachments="false">
+    <con:operation id="1527308d-449e-4d64-948c-9b5517db6782" isOneWay="false" action="" name="applyOneShotChargeInstance" bindingOperationName="applyOneShotChargeInstance" type="Request-Response" outputName="applyOneShotChargeInstanceResponse" inputName="applyOneShotChargeInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
       <con:settings/>
     </con:operation>
-    <con:operation id="505c91bd-a895-4a10-b664-6f43ed92b56c" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false">
+    <con:operation id="505c91bd-a895-4a10-b664-6f43ed92b56c" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
       <con:settings/>
     </con:operation>
-    <con:operation id="31015b82-f7e8-4316-9377-ee0f2e1919ad" isOneWay="false" action="" name="createOrUpdateSubscription" bindingOperationName="createOrUpdateSubscription" type="Request-Response" outputName="createOrUpdateSubscriptionResponse" inputName="createOrUpdateSubscription" receivesAttachments="false" sendsAttachments="false">
+    <con:operation id="31015b82-f7e8-4316-9377-ee0f2e1919ad" isOneWay="false" action="" name="createOrUpdateSubscription" bindingOperationName="createOrUpdateSubscription" type="Request-Response" outputName="createOrUpdateSubscriptionResponse" inputName="createOrUpdateSubscription" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
       <con:settings/>
     </con:operation>
-    <con:operation id="1105fd21-ca85-4da0-83a0-f8a764f44116" isOneWay="false" action="" name="findSubscription" bindingOperationName="findSubscription" type="Request-Response" outputName="findSubscriptionResponse" inputName="findSubscription" receivesAttachments="false" sendsAttachments="false">
+    <con:operation id="1105fd21-ca85-4da0-83a0-f8a764f44116" isOneWay="false" action="" name="findSubscription" bindingOperationName="findSubscription" type="Request-Response" outputName="findSubscriptionResponse" inputName="findSubscription" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
       <con:settings/>
     </con:operation>
-    <con:operation id="6d0fa01f-4c5d-4610-8ff7-2ab2b803c099" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false">
+    <con:operation id="6d0fa01f-4c5d-4610-8ff7-2ab2b803c099" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
       <con:settings/>
     </con:operation>
-    <con:operation id="efe9b1c6-2f18-4afb-add1-97f195fe3e47" isOneWay="false" action="" name="instantiateServices" bindingOperationName="instantiateServices" type="Request-Response" outputName="instantiateServicesResponse" inputName="instantiateServices" receivesAttachments="false" sendsAttachments="false">
+    <con:operation id="efe9b1c6-2f18-4afb-add1-97f195fe3e47" isOneWay="false" action="" name="instantiateServices" bindingOperationName="instantiateServices" type="Request-Response" outputName="instantiateServicesResponse" inputName="instantiateServices" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
       <con:settings/>
     </con:operation>
-    <con:operation id="507a0b52-d6bb-4f2b-9a85-ed11f7d1abba" isOneWay="false" action="" name="listSubscriptionByUserAccount" bindingOperationName="listSubscriptionByUserAccount" type="Request-Response" outputName="listSubscriptionByUserAccountResponse" inputName="listSubscriptionByUserAccount" receivesAttachments="false" sendsAttachments="false">
+    <con:operation id="507a0b52-d6bb-4f2b-9a85-ed11f7d1abba" isOneWay="false" action="" name="listSubscriptionByUserAccount" bindingOperationName="listSubscriptionByUserAccount" type="Request-Response" outputName="listSubscriptionByUserAccountResponse" inputName="listSubscriptionByUserAccount" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
       <con:settings/>
     </con:operation>
-    <con:operation id="e029a3a6-86da-4b83-b040-c134d6eccdf3" isOneWay="false" action="" name="terminateServices" bindingOperationName="terminateServices" type="Request-Response" outputName="terminateServicesResponse" inputName="terminateServices" receivesAttachments="false" sendsAttachments="false">
+    <con:operation id="e029a3a6-86da-4b83-b040-c134d6eccdf3" isOneWay="false" action="" name="terminateServices" bindingOperationName="terminateServices" type="Request-Response" outputName="terminateServicesResponse" inputName="terminateServices" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
       <con:settings/>
     </con:operation>
-    <con:operation id="602ae6b4-99d6-4230-916a-bf34d4da7c69" isOneWay="false" action="" name="terminateSubscription" bindingOperationName="terminateSubscription" type="Request-Response" outputName="terminateSubscriptionResponse" inputName="terminateSubscription" receivesAttachments="false" sendsAttachments="false">
+    <con:operation id="602ae6b4-99d6-4230-916a-bf34d4da7c69" isOneWay="false" action="" name="terminateSubscription" bindingOperationName="terminateSubscription" type="Request-Response" outputName="terminateSubscriptionResponse" inputName="terminateSubscription" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
       <con:settings/>
     </con:operation>
-    <con:operation id="1d4260c1-a367-43a6-8a93-52084b6ae0cc" isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false">
+    <con:operation id="1d4260c1-a367-43a6-8a93-52084b6ae0cc" isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
       <con:settings/>
+    </con:operation>
+    <con:operation id="b2156d42-40e5-408d-b99a-881da1eb940a" isOneWay="false" action="" name="resumeSubscription" bindingOperationName="resumeSubscription" type="Request-Response" outputName="resumeSubscriptionResponse" inputName="resumeSubscription" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+      <con:call id="e615fb4c-312e-45b4-ab60-88bb3577c70f" name="Request 1">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>http://localhost:8080/opencell/SubscriptionWs</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:resumeSubscription>\r
+         <!--Optional:-->\r
+         <suspendSubscriptionRequestDto>\r
+            <subscriptionCode>?</subscriptionCode>\r
+            <!--Optional:-->\r
+            <actionDate>?</actionDate>\r
+         </suspendSubscriptionRequestDto>\r
+      </ws:resumeSubscription>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/resumeSubscription"/>
+      </con:call>
+    </con:operation>
+    <con:operation id="bfa15f1a-9e79-4de9-be7d-0025d20ad626" isOneWay="false" action="" name="suspendServices" bindingOperationName="suspendServices" type="Request-Response" outputName="suspendServicesResponse" inputName="suspendServices" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+      <con:call id="105ac9cf-d981-49d2-be63-2713cfcf20db" name="Request 1">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>http://localhost:8080/opencell/SubscriptionWs</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:suspendServices>\r
+         <!--Optional:-->\r
+         <operationServicesRequestDto>\r
+            <subscriptionCode>?</subscriptionCode>\r
+            <!--Optional:-->\r
+            <ListServiceToUpdate>\r
+               <!--Zero or more repetitions:-->\r
+               <serviceToUpdate code="?">\r
+                  <!--Optional:-->\r
+                  <actionDate>?</actionDate>\r
+                  <!--Optional:-->\r
+                  <endAgreementDate>?</endAgreementDate>\r
+                  <!--Optional:-->\r
+                  <customFields>\r
+                     <!--Zero or more repetitions:-->\r
+                     <customField code="?" valueDate="?" valuePeriodStartDate="?" valuePeriodEndDate="?" valuePeriodPriority="?">\r
+                        <!--Optional:-->\r
+                        <stringValue>?</stringValue>\r
+                        <!--Optional:-->\r
+                        <dateValue>?</dateValue>\r
+                        <!--Optional:-->\r
+                        <longValue>?</longValue>\r
+                        <!--Optional:-->\r
+                        <doubleValue>?</doubleValue>\r
+                        <!--Optional:-->\r
+                        <listValue>\r
+                           <!--Zero or more repetitions:-->\r
+                           <value>\r
+                              <!--You have a CHOICE of the next 6 items at this level-->\r
+                              <dateValue>?</dateValue>\r
+                              <doubleValue>?</doubleValue>\r
+                              <longValue>?</longValue>\r
+                              <stringValue>?</stringValue>\r
+                              <entityReferenceValue classname="?" classnameCode="?" code="?"/>\r
+                              <childEntityValue code="?" description="?" cetCode="?">\r
+                                 <disabled>?</disabled>\r
+                                 <!--Optional:-->\r
+                                 <customFields/>\r
+                              </childEntityValue>\r
+                           </value>\r
+                        </listValue>\r
+                        <mapValue>\r
+                           <!--Zero or more repetitions:-->\r
+                           <entry>\r
+                              <!--Optional:-->\r
+                              <key>?</key>\r
+                              <!--Optional:-->\r
+                              <value>\r
+                                 <!--You have a CHOICE of the next 6 items at this level-->\r
+                                 <dateValue>?</dateValue>\r
+                                 <doubleValue>?</doubleValue>\r
+                                 <longValue>?</longValue>\r
+                                 <stringValue>?</stringValue>\r
+                                 <entityReferenceValue classname="?" classnameCode="?" code="?"/>\r
+                                 <childEntityValue code="?" description="?" cetCode="?">\r
+                                    <disabled>?</disabled>\r
+                                    <!--Optional:-->\r
+                                    <customFields/>\r
+                                 </childEntityValue>\r
+                              </value>\r
+                           </entry>\r
+                        </mapValue>\r
+                        <!--Optional:-->\r
+                        <entityReferenceValue classname="?" classnameCode="?" code="?"/>\r
+                        <!--Optional:-->\r
+                        <indexType>?</indexType>\r
+                     </customField>\r
+                     <!--Zero or more repetitions:-->\r
+                     <inheritedCustomField code="?" valueDate="?" valuePeriodStartDate="?" valuePeriodEndDate="?" valuePeriodPriority="?">\r
+                        <!--Optional:-->\r
+                        <stringValue>?</stringValue>\r
+                        <!--Optional:-->\r
+                        <dateValue>?</dateValue>\r
+                        <!--Optional:-->\r
+                        <longValue>?</longValue>\r
+                        <!--Optional:-->\r
+                        <doubleValue>?</doubleValue>\r
+                        <!--Optional:-->\r
+                        <listValue>\r
+                           <!--Zero or more repetitions:-->\r
+                           <value>\r
+                              <!--You have a CHOICE of the next 6 items at this level-->\r
+                              <dateValue>?</dateValue>\r
+                              <doubleValue>?</doubleValue>\r
+                              <longValue>?</longValue>\r
+                              <stringValue>?</stringValue>\r
+                              <entityReferenceValue classname="?" classnameCode="?" code="?"/>\r
+                              <childEntityValue code="?" description="?" cetCode="?">\r
+                                 <disabled>?</disabled>\r
+                                 <!--Optional:-->\r
+                                 <customFields/>\r
+                              </childEntityValue>\r
+                           </value>\r
+                        </listValue>\r
+                        <mapValue>\r
+                           <!--Zero or more repetitions:-->\r
+                           <entry>\r
+                              <!--Optional:-->\r
+                              <key>?</key>\r
+                              <!--Optional:-->\r
+                              <value>\r
+                                 <!--You have a CHOICE of the next 6 items at this level-->\r
+                                 <dateValue>?</dateValue>\r
+                                 <doubleValue>?</doubleValue>\r
+                                 <longValue>?</longValue>\r
+                                 <stringValue>?</stringValue>\r
+                                 <entityReferenceValue classname="?" classnameCode="?" code="?"/>\r
+                                 <childEntityValue code="?" description="?" cetCode="?">\r
+                                    <disabled>?</disabled>\r
+                                    <!--Optional:-->\r
+                                    <customFields/>\r
+                                 </childEntityValue>\r
+                              </value>\r
+                           </entry>\r
+                        </mapValue>\r
+                        <!--Optional:-->\r
+                        <entityReferenceValue classname="?" classnameCode="?" code="?"/>\r
+                        <!--Optional:-->\r
+                        <indexType>?</indexType>\r
+                     </inheritedCustomField>\r
+                  </customFields>\r
+               </serviceToUpdate>\r
+            </ListServiceToUpdate>\r
+         </operationServicesRequestDto>\r
+      </ws:suspendServices>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/suspendServices"/>
+      </con:call>
+    </con:operation>
+    <con:operation id="f1bde514-1e73-44da-8f13-a965f611076e" isOneWay="false" action="" name="updateServices" bindingOperationName="updateServices" type="Request-Response" outputName="updateServicesResponse" inputName="updateServices" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+      <con:call id="bdd21041-34f0-478a-b357-766b5b9520b8" name="Request 1">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>http://localhost:8080/opencell/SubscriptionWs</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updateServices>\r
+         <!--Optional:-->\r
+         <updateServicesRequest>\r
+            <subscriptionCode>?</subscriptionCode>\r
+            <!--Optional:-->\r
+            <servicesToUpdate>\r
+               <!--Zero or more repetitions:-->\r
+               <serviceToUpdate code="?">\r
+                  <!--Optional:-->\r
+                  <actionDate>?</actionDate>\r
+                  <!--Optional:-->\r
+                  <endAgreementDate>?</endAgreementDate>\r
+                  <!--Optional:-->\r
+                  <customFields>\r
+                     <!--Zero or more repetitions:-->\r
+                     <customField code="?" valueDate="?" valuePeriodStartDate="?" valuePeriodEndDate="?" valuePeriodPriority="?">\r
+                        <!--Optional:-->\r
+                        <stringValue>?</stringValue>\r
+                        <!--Optional:-->\r
+                        <dateValue>?</dateValue>\r
+                        <!--Optional:-->\r
+                        <longValue>?</longValue>\r
+                        <!--Optional:-->\r
+                        <doubleValue>?</doubleValue>\r
+                        <!--Optional:-->\r
+                        <listValue>\r
+                           <!--Zero or more repetitions:-->\r
+                           <value>\r
+                              <!--You have a CHOICE of the next 6 items at this level-->\r
+                              <dateValue>?</dateValue>\r
+                              <doubleValue>?</doubleValue>\r
+                              <longValue>?</longValue>\r
+                              <stringValue>?</stringValue>\r
+                              <entityReferenceValue classname="?" classnameCode="?" code="?"/>\r
+                              <childEntityValue code="?" description="?" cetCode="?">\r
+                                 <disabled>?</disabled>\r
+                                 <!--Optional:-->\r
+                                 <customFields/>\r
+                              </childEntityValue>\r
+                           </value>\r
+                        </listValue>\r
+                        <mapValue>\r
+                           <!--Zero or more repetitions:-->\r
+                           <entry>\r
+                              <!--Optional:-->\r
+                              <key>?</key>\r
+                              <!--Optional:-->\r
+                              <value>\r
+                                 <!--You have a CHOICE of the next 6 items at this level-->\r
+                                 <dateValue>?</dateValue>\r
+                                 <doubleValue>?</doubleValue>\r
+                                 <longValue>?</longValue>\r
+                                 <stringValue>?</stringValue>\r
+                                 <entityReferenceValue classname="?" classnameCode="?" code="?"/>\r
+                                 <childEntityValue code="?" description="?" cetCode="?">\r
+                                    <disabled>?</disabled>\r
+                                    <!--Optional:-->\r
+                                    <customFields/>\r
+                                 </childEntityValue>\r
+                              </value>\r
+                           </entry>\r
+                        </mapValue>\r
+                        <!--Optional:-->\r
+                        <entityReferenceValue classname="?" classnameCode="?" code="?"/>\r
+                        <!--Optional:-->\r
+                        <indexType>?</indexType>\r
+                     </customField>\r
+                     <!--Zero or more repetitions:-->\r
+                     <inheritedCustomField code="?" valueDate="?" valuePeriodStartDate="?" valuePeriodEndDate="?" valuePeriodPriority="?">\r
+                        <!--Optional:-->\r
+                        <stringValue>?</stringValue>\r
+                        <!--Optional:-->\r
+                        <dateValue>?</dateValue>\r
+                        <!--Optional:-->\r
+                        <longValue>?</longValue>\r
+                        <!--Optional:-->\r
+                        <doubleValue>?</doubleValue>\r
+                        <!--Optional:-->\r
+                        <listValue>\r
+                           <!--Zero or more repetitions:-->\r
+                           <value>\r
+                              <!--You have a CHOICE of the next 6 items at this level-->\r
+                              <dateValue>?</dateValue>\r
+                              <doubleValue>?</doubleValue>\r
+                              <longValue>?</longValue>\r
+                              <stringValue>?</stringValue>\r
+                              <entityReferenceValue classname="?" classnameCode="?" code="?"/>\r
+                              <childEntityValue code="?" description="?" cetCode="?">\r
+                                 <disabled>?</disabled>\r
+                                 <!--Optional:-->\r
+                                 <customFields/>\r
+                              </childEntityValue>\r
+                           </value>\r
+                        </listValue>\r
+                        <mapValue>\r
+                           <!--Zero or more repetitions:-->\r
+                           <entry>\r
+                              <!--Optional:-->\r
+                              <key>?</key>\r
+                              <!--Optional:-->\r
+                              <value>\r
+                                 <!--You have a CHOICE of the next 6 items at this level-->\r
+                                 <dateValue>?</dateValue>\r
+                                 <doubleValue>?</doubleValue>\r
+                                 <longValue>?</longValue>\r
+                                 <stringValue>?</stringValue>\r
+                                 <entityReferenceValue classname="?" classnameCode="?" code="?"/>\r
+                                 <childEntityValue code="?" description="?" cetCode="?">\r
+                                    <disabled>?</disabled>\r
+                                    <!--Optional:-->\r
+                                    <customFields/>\r
+                                 </childEntityValue>\r
+                              </value>\r
+                           </entry>\r
+                        </mapValue>\r
+                        <!--Optional:-->\r
+                        <entityReferenceValue classname="?" classnameCode="?" code="?"/>\r
+                        <!--Optional:-->\r
+                        <indexType>?</indexType>\r
+                     </inheritedCustomField>\r
+                  </customFields>\r
+               </serviceToUpdate>\r
+            </servicesToUpdate>\r
+         </updateServicesRequest>\r
+      </ws:updateServices>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/updateServices"/>
+      </con:call>
+    </con:operation>
+    <con:operation id="52c10dc7-1b5c-45da-a2e9-4ef086b2e8f3" isOneWay="false" action="" name="resumeServices" bindingOperationName="resumeServices" type="Request-Response" outputName="resumeServicesResponse" inputName="resumeServices" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+      <con:call id="7138e095-ef53-453a-8dc9-a01a9e64bd95" name="Request 1">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>http://localhost:8080/opencell/SubscriptionWs</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:resumeServices>\r
+         <!--Optional:-->\r
+         <operationServicesRequestDto>\r
+            <subscriptionCode>?</subscriptionCode>\r
+            <!--Optional:-->\r
+            <ListServiceToUpdate>\r
+               <!--Zero or more repetitions:-->\r
+               <serviceToUpdate code="?">\r
+                  <!--Optional:-->\r
+                  <actionDate>?</actionDate>\r
+                  <!--Optional:-->\r
+                  <endAgreementDate>?</endAgreementDate>\r
+                  <!--Optional:-->\r
+                  <customFields>\r
+                     <!--Zero or more repetitions:-->\r
+                     <customField code="?" valueDate="?" valuePeriodStartDate="?" valuePeriodEndDate="?" valuePeriodPriority="?">\r
+                        <!--Optional:-->\r
+                        <stringValue>?</stringValue>\r
+                        <!--Optional:-->\r
+                        <dateValue>?</dateValue>\r
+                        <!--Optional:-->\r
+                        <longValue>?</longValue>\r
+                        <!--Optional:-->\r
+                        <doubleValue>?</doubleValue>\r
+                        <!--Optional:-->\r
+                        <listValue>\r
+                           <!--Zero or more repetitions:-->\r
+                           <value>\r
+                              <!--You have a CHOICE of the next 6 items at this level-->\r
+                              <dateValue>?</dateValue>\r
+                              <doubleValue>?</doubleValue>\r
+                              <longValue>?</longValue>\r
+                              <stringValue>?</stringValue>\r
+                              <entityReferenceValue classname="?" classnameCode="?" code="?"/>\r
+                              <childEntityValue code="?" description="?" cetCode="?">\r
+                                 <disabled>?</disabled>\r
+                                 <!--Optional:-->\r
+                                 <customFields/>\r
+                              </childEntityValue>\r
+                           </value>\r
+                        </listValue>\r
+                        <mapValue>\r
+                           <!--Zero or more repetitions:-->\r
+                           <entry>\r
+                              <!--Optional:-->\r
+                              <key>?</key>\r
+                              <!--Optional:-->\r
+                              <value>\r
+                                 <!--You have a CHOICE of the next 6 items at this level-->\r
+                                 <dateValue>?</dateValue>\r
+                                 <doubleValue>?</doubleValue>\r
+                                 <longValue>?</longValue>\r
+                                 <stringValue>?</stringValue>\r
+                                 <entityReferenceValue classname="?" classnameCode="?" code="?"/>\r
+                                 <childEntityValue code="?" description="?" cetCode="?">\r
+                                    <disabled>?</disabled>\r
+                                    <!--Optional:-->\r
+                                    <customFields/>\r
+                                 </childEntityValue>\r
+                              </value>\r
+                           </entry>\r
+                        </mapValue>\r
+                        <!--Optional:-->\r
+                        <entityReferenceValue classname="?" classnameCode="?" code="?"/>\r
+                        <!--Optional:-->\r
+                        <indexType>?</indexType>\r
+                     </customField>\r
+                     <!--Zero or more repetitions:-->\r
+                     <inheritedCustomField code="?" valueDate="?" valuePeriodStartDate="?" valuePeriodEndDate="?" valuePeriodPriority="?">\r
+                        <!--Optional:-->\r
+                        <stringValue>?</stringValue>\r
+                        <!--Optional:-->\r
+                        <dateValue>?</dateValue>\r
+                        <!--Optional:-->\r
+                        <longValue>?</longValue>\r
+                        <!--Optional:-->\r
+                        <doubleValue>?</doubleValue>\r
+                        <!--Optional:-->\r
+                        <listValue>\r
+                           <!--Zero or more repetitions:-->\r
+                           <value>\r
+                              <!--You have a CHOICE of the next 6 items at this level-->\r
+                              <dateValue>?</dateValue>\r
+                              <doubleValue>?</doubleValue>\r
+                              <longValue>?</longValue>\r
+                              <stringValue>?</stringValue>\r
+                              <entityReferenceValue classname="?" classnameCode="?" code="?"/>\r
+                              <childEntityValue code="?" description="?" cetCode="?">\r
+                                 <disabled>?</disabled>\r
+                                 <!--Optional:-->\r
+                                 <customFields/>\r
+                              </childEntityValue>\r
+                           </value>\r
+                        </listValue>\r
+                        <mapValue>\r
+                           <!--Zero or more repetitions:-->\r
+                           <entry>\r
+                              <!--Optional:-->\r
+                              <key>?</key>\r
+                              <!--Optional:-->\r
+                              <value>\r
+                                 <!--You have a CHOICE of the next 6 items at this level-->\r
+                                 <dateValue>?</dateValue>\r
+                                 <doubleValue>?</doubleValue>\r
+                                 <longValue>?</longValue>\r
+                                 <stringValue>?</stringValue>\r
+                                 <entityReferenceValue classname="?" classnameCode="?" code="?"/>\r
+                                 <childEntityValue code="?" description="?" cetCode="?">\r
+                                    <disabled>?</disabled>\r
+                                    <!--Optional:-->\r
+                                    <customFields/>\r
+                                 </childEntityValue>\r
+                              </value>\r
+                           </entry>\r
+                        </mapValue>\r
+                        <!--Optional:-->\r
+                        <entityReferenceValue classname="?" classnameCode="?" code="?"/>\r
+                        <!--Optional:-->\r
+                        <indexType>?</indexType>\r
+                     </inheritedCustomField>\r
+                  </customFields>\r
+               </serviceToUpdate>\r
+            </ListServiceToUpdate>\r
+         </operationServicesRequestDto>\r
+      </ws:resumeServices>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/resumeServices"/>
+      </con:call>
+    </con:operation>
+    <con:operation id="e0fa344f-c573-4b60-836a-2485e7b8764d" isOneWay="false" action="" name="applyProduct" bindingOperationName="applyProduct" type="Request-Response" outputName="applyProductResponse" inputName="applyProduct" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+      <con:call id="3ffa0487-7bd0-426c-8d39-55815a645b4f" name="Request 1">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>http://localhost:8080/opencell/SubscriptionWs</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:applyProduct>\r
+         <!--Optional:-->\r
+         <applyProduct>\r
+            <product>?</product>\r
+            <!--Optional:-->\r
+            <userAccount>?</userAccount>\r
+            <!--Optional:-->\r
+            <subscription>?</subscription>\r
+            <operationDate>?</operationDate>\r
+            <!--Optional:-->\r
+            <quantity>?</quantity>\r
+            <!--Optional:-->\r
+            <description>?</description>\r
+            <!--Optional:-->\r
+            <amountWithoutTax>?</amountWithoutTax>\r
+            <!--Optional:-->\r
+            <amountWithTax>?</amountWithTax>\r
+            <!--Optional:-->\r
+            <criteria1>?</criteria1>\r
+            <!--Optional:-->\r
+            <criteria2>?</criteria2>\r
+            <!--Optional:-->\r
+            <criteria3>?</criteria3>\r
+            <!--Optional:-->\r
+            <customFields>\r
+               <!--Zero or more repetitions:-->\r
+               <customField code="?" valueDate="?" valuePeriodStartDate="?" valuePeriodEndDate="?" valuePeriodPriority="?">\r
+                  <!--Optional:-->\r
+                  <stringValue>?</stringValue>\r
+                  <!--Optional:-->\r
+                  <dateValue>?</dateValue>\r
+                  <!--Optional:-->\r
+                  <longValue>?</longValue>\r
+                  <!--Optional:-->\r
+                  <doubleValue>?</doubleValue>\r
+                  <!--Optional:-->\r
+                  <listValue>\r
+                     <!--Zero or more repetitions:-->\r
+                     <value>\r
+                        <!--You have a CHOICE of the next 6 items at this level-->\r
+                        <dateValue>?</dateValue>\r
+                        <doubleValue>?</doubleValue>\r
+                        <longValue>?</longValue>\r
+                        <stringValue>?</stringValue>\r
+                        <entityReferenceValue classname="?" classnameCode="?" code="?"/>\r
+                        <childEntityValue code="?" description="?" cetCode="?">\r
+                           <disabled>?</disabled>\r
+                           <!--Optional:-->\r
+                           <customFields/>\r
+                        </childEntityValue>\r
+                     </value>\r
+                  </listValue>\r
+                  <mapValue>\r
+                     <!--Zero or more repetitions:-->\r
+                     <entry>\r
+                        <!--Optional:-->\r
+                        <key>?</key>\r
+                        <!--Optional:-->\r
+                        <value>\r
+                           <!--You have a CHOICE of the next 6 items at this level-->\r
+                           <dateValue>?</dateValue>\r
+                           <doubleValue>?</doubleValue>\r
+                           <longValue>?</longValue>\r
+                           <stringValue>?</stringValue>\r
+                           <entityReferenceValue classname="?" classnameCode="?" code="?"/>\r
+                           <childEntityValue code="?" description="?" cetCode="?">\r
+                              <disabled>?</disabled>\r
+                              <!--Optional:-->\r
+                              <customFields/>\r
+                           </childEntityValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+                  <!--Optional:-->\r
+                  <entityReferenceValue classname="?" classnameCode="?" code="?"/>\r
+                  <!--Optional:-->\r
+                  <indexType>?</indexType>\r
+               </customField>\r
+               <!--Zero or more repetitions:-->\r
+               <inheritedCustomField code="?" valueDate="?" valuePeriodStartDate="?" valuePeriodEndDate="?" valuePeriodPriority="?">\r
+                  <!--Optional:-->\r
+                  <stringValue>?</stringValue>\r
+                  <!--Optional:-->\r
+                  <dateValue>?</dateValue>\r
+                  <!--Optional:-->\r
+                  <longValue>?</longValue>\r
+                  <!--Optional:-->\r
+                  <doubleValue>?</doubleValue>\r
+                  <!--Optional:-->\r
+                  <listValue>\r
+                     <!--Zero or more repetitions:-->\r
+                     <value>\r
+                        <!--You have a CHOICE of the next 6 items at this level-->\r
+                        <dateValue>?</dateValue>\r
+                        <doubleValue>?</doubleValue>\r
+                        <longValue>?</longValue>\r
+                        <stringValue>?</stringValue>\r
+                        <entityReferenceValue classname="?" classnameCode="?" code="?"/>\r
+                        <childEntityValue code="?" description="?" cetCode="?">\r
+                           <disabled>?</disabled>\r
+                           <!--Optional:-->\r
+                           <customFields/>\r
+                        </childEntityValue>\r
+                     </value>\r
+                  </listValue>\r
+                  <mapValue>\r
+                     <!--Zero or more repetitions:-->\r
+                     <entry>\r
+                        <!--Optional:-->\r
+                        <key>?</key>\r
+                        <!--Optional:-->\r
+                        <value>\r
+                           <!--You have a CHOICE of the next 6 items at this level-->\r
+                           <dateValue>?</dateValue>\r
+                           <doubleValue>?</doubleValue>\r
+                           <longValue>?</longValue>\r
+                           <stringValue>?</stringValue>\r
+                           <entityReferenceValue classname="?" classnameCode="?" code="?"/>\r
+                           <childEntityValue code="?" description="?" cetCode="?">\r
+                              <disabled>?</disabled>\r
+                              <!--Optional:-->\r
+                              <customFields/>\r
+                           </childEntityValue>\r
+                        </value>\r
+                     </entry>\r
+                  </mapValue>\r
+                  <!--Optional:-->\r
+                  <entityReferenceValue classname="?" classnameCode="?" code="?"/>\r
+                  <!--Optional:-->\r
+                  <indexType>?</indexType>\r
+               </inheritedCustomField>\r
+            </customFields>\r
+         </applyProduct>\r
+      </ws:applyProduct>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/applyProduct"/>
+      </con:call>
+    </con:operation>
+    <con:operation id="59e9b529-435b-4f07-b28c-e570119e5a3c" isOneWay="false" action="" name="findDueDateDelay" bindingOperationName="findDueDateDelay" type="Request-Response" outputName="findDueDateDelayResponse" inputName="findDueDateDelay" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+      <con:call id="f1beac0f-352e-4fc2-8c14-c45b2d580a91" name="Request 1">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>http://localhost:8080/opencell/SubscriptionWs</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findDueDateDelay>\r
+         <!--Optional:-->\r
+         <subscriptionCode>?</subscriptionCode>\r
+         <!--Optional:-->\r
+         <invoiceNumber>?</invoiceNumber>\r
+         <!--Optional:-->\r
+         <invoiceTypeCode>?</invoiceTypeCode>\r
+         <!--Optional:-->\r
+         <orderCode>?</orderCode>\r
+      </ws:findDueDateDelay>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/findDueDateDelay"/>
+      </con:call>
+    </con:operation>
+    <con:operation id="5e95274b-742a-47b4-9796-b6dc1f9d7588" isOneWay="false" action="" name="suspendSubscription" bindingOperationName="suspendSubscription" type="Request-Response" outputName="suspendSubscriptionResponse" inputName="suspendSubscription" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+      <con:call id="e9b860d6-df50-41dc-bcd3-46106f134680" name="Request 1">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>http://localhost:8080/opencell/SubscriptionWs</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:suspendSubscription>\r
+         <!--Optional:-->\r
+         <suspendSubscriptionRequestDto>\r
+            <subscriptionCode>?</subscriptionCode>\r
+            <!--Optional:-->\r
+            <actionDate>?</actionDate>\r
+         </suspendSubscriptionRequestDto>\r
+      </ws:suspendSubscription>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/SubscriptionWs/suspendSubscription"/>
+      </con:call>
     </con:operation>
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="bd759564-3e2e-45ca-bab9-b79fbda5ea37" wsaVersion="NONE" name="InvoiceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}InvoiceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/InvoiceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -17985,6 +18651,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:request>{
    "description":"${#Project#entityPrefix}_${#TestSuite#index}_Product_Order",
    "orderDate":"2015-10-25T15:50:48+08",
+   "paymentMethod" : "DIRECTDEBIT",
+   "dueDateDelayEL" : "#{order.orderDate.date}",
    "orderItem":[
       {      	
          "id":"01",
@@ -18235,6 +18903,85 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
             <con:parameters/>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="properties" name="OrderProperties" id="4df28b30-81a7-4f6b-96b7-4e8054735cbd">
+        <con:settings/>
+        <con:config xsi:type="con:PropertiesStep" saveFirst="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:properties>
+            <con:property>
+              <con:name>orderCode</con:name>
+              <con:value>78b24d69-aa41-49ce-a9ba-2c627f20c5fd</con:value>
+            </con:property>
+          </con:properties>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="transfer" name="Copy Order Code" id="5184bdf5-d54f-496d-bbeb-08fe432f854b">
+        <con:settings/>
+        <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false" disabled="false">
+            <con:name>order.code</con:name>
+            <con:sourceType>Response</con:sourceType>
+            <con:sourceStep>Create Product order - 3 items</con:sourceStep>
+            <con:sourcePath>$.id</con:sourcePath>
+            <con:targetType>orderCode</con:targetType>
+            <con:targetStep>OrderProperties</con:targetStep>
+            <con:targetPath/>
+            <con:type>JSONPATH</con:type>
+            <con:upgraded>true</con:upgraded>
+          </con:transfers>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Find due date delay in Order" id="15562805-5fd9-4980-97e5-06184b6b9d21">
+        <con:settings/>
+        <con:config service="MEVEO JAX-WS API Documentation" methodName="Method 1" resourcePath="/api/rest/billing/subscription/dueDateDelay" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Find due date delay in Order" id="01422e37-698d-4e44-9b4d-ee65b6ef51a7" mediaType="application/json">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
+            <con:request/>
+            <con:originalUri>http://localhost/auth/realms/opencell/protocol/openid-connect/auth</con:originalUri>
+            <con:assertion type="Simple Contains" id="55e49aab-cff8-4aa9-8f4c-a93a78714bce" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>true</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="4ab34b4f-f308-4971-a8c7-d5449ca8fb40" name="Contains 1">
+              <con:configuration>
+                <token>ORDER</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="4b2b8551-2950-4cbc-b72d-40bf588c19ce" name="25">
+              <con:configuration>
+                <token>25</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="4c083d17-94ac-498e-a777-08989a18578c" name="#{order.orderDate.date}">
+              <con:configuration>
+                <token>#{order.orderDate.date}</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters>
+              <con:entry key="subscriptionCode" value="${#Project#entityPrefix}_${#TestSuite#index}_SUB1"/>
+              <con:entry key="orderCode" value="${OrderProperties#orderCode}"/>
+            </con:parameters>
           </con:restRequest>
         </con:config>
       </con:testStep>
@@ -21994,7 +22741,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
             <con:parameters>
-              <entry key="quoteId" value="6b638189-d16d-442f-b66a-6cf4c77a0f0e" xmlns="http://eviware.com/soapui/config"/>
+              <entry key="quoteId" value="c8f79be9-9b1b-4ab8-b072-df6f0032adf7" xmlns="http://eviware.com/soapui/config"/>
             </con:parameters>
           </con:restRequest>
         </con:config>
@@ -23105,7 +23852,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
             <con:parameters>
-              <entry key="quoteId" value="55569b6b-6721-4794-9b7a-f195f543539f" xmlns="http://eviware.com/soapui/config"/>
+              <entry key="quoteId" value="060a428a-0131-4518-8535-ec6c53f01e71" xmlns="http://eviware.com/soapui/config"/>
             </con:parameters>
           </con:restRequest>
         </con:config>
@@ -23656,7 +24403,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>25</con:value>
+        <con:value>6</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -23957,7 +24704,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-04-01T00:00:00</invoicingDate>
-            <orderNumber>bdf5d67c-c197-4ee5-870a-db2f2bed98f7</orderNumber>
+            <orderNumber>9107e491-09cf-4e2c-bdd7-f364319b33b6</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -24025,8 +24772,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findInvoiceByIdOrType>
-         	<invoiceNumber>000000002</invoiceNumber>
-         	<invoiceType>COM</invoiceType>
+         	<invoiceNumber>SellFact_000000015</invoiceNumber>
+         	<invoiceType>WS_BASE_TEST-Type</invoiceType>
          <includeTransations>true</includeTransations>
       </ws:findInvoiceByIdOrType>
    </soapenv:Body>
@@ -24127,7 +24874,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-04-01T00:00:00</invoicingDate>
-            <orderNumber>bdf5d67c-c197-4ee5-870a-db2f2bed98f7</orderNumber>
+            <orderNumber>9107e491-09cf-4e2c-bdd7-f364319b33b6</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -24318,7 +25065,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-04-01T00:00:00</invoicingDate>
-            <orderNumber>bdf5d67c-c197-4ee5-870a-db2f2bed98f7</orderNumber>
+            <orderNumber>9107e491-09cf-4e2c-bdd7-f364319b33b6</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -24386,8 +25133,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findInvoiceByIdOrType>
-         	<invoiceNumber>000000003</invoiceNumber>
-         	<invoiceType>COM</invoiceType>
+         	<invoiceNumber>SellFact_000000016</invoiceNumber>
+         	<invoiceType>WS_BASE_TEST-Type</invoiceType>
          <includeTransations>true</includeTransations>
       </ws:findInvoiceByIdOrType>
    </soapenv:Body>
@@ -24552,7 +25299,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-10-01T00:00:00</invoicingDate>
-            <orderNumber>1bc2c7af-3d23-4494-8170-55466c84a650</orderNumber>
+            <orderNumber>bf57f047-d886-47bc-aa06-aa07ffc798e7</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -24620,8 +25367,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findInvoiceByIdOrType>
-         	<invoiceNumber>000000004</invoiceNumber>
-         	<invoiceType>COM</invoiceType>
+         	<invoiceNumber>SellFact_000000017</invoiceNumber>
+         	<invoiceType>WS_BASE_TEST-Type</invoiceType>
          <includeTransations>true</includeTransations>
       </ws:findInvoiceByIdOrType>
    </soapenv:Body>
@@ -24767,7 +25514,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-10-01T00:00:00</invoicingDate>
-            <orderNumber>21c2e33f-04dc-4c92-a140-509eb0c690a8</orderNumber>
+            <orderNumber>ab9b27ff-0177-4568-b177-52fbfdd8ba91</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -24835,8 +25582,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findInvoiceByIdOrType>
-         	<invoiceNumber>000000005</invoiceNumber>
-         	<invoiceType>COM</invoiceType>
+         	<invoiceNumber>SellFact_000000018</invoiceNumber>
+         	<invoiceType>WS_BASE_TEST-Type</invoiceType>
          <includeTransations>true</includeTransations>
       </ws:findInvoiceByIdOrType>
    </soapenv:Body>
@@ -24971,7 +25718,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-10-01T00:00:00</invoicingDate>
-            <orderNumber>29658c82-098f-419e-a3c2-7a275d1ad825</orderNumber>
+            <orderNumber>9c5fd009-92df-4d5a-a767-eeb41a3221ea</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -25039,8 +25786,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findInvoiceByIdOrType>
-         	<invoiceNumber>000000006</invoiceNumber>
-         	<invoiceType>COM</invoiceType>
+         	<invoiceNumber>SellFact_000000019</invoiceNumber>
+         	<invoiceType>WS_BASE_TEST-Type</invoiceType>
          <includeTransations>true</includeTransations>
       </ws:findInvoiceByIdOrType>
    </soapenv:Body>
@@ -25082,7 +25829,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>10</con:value>
+        <con:value>12</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -25249,11 +25996,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
   <con:properties>
     <con:property>
       <con:name>meveoUrl</con:name>
-      <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
+      <con:value>http://localhost:8080/opencell</con:value>
     </con:property>
     <con:property>
       <con:name>meveoUrl2</con:name>
-      <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
+      <con:value>http://localhost:8080/opencell</con:value>
     </con:property>
     <con:property>
       <con:name>baseEntityPrefix</con:name>
@@ -25273,11 +26020,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     </con:property>
     <con:property>
       <con:name>timezone</con:name>
-      <con:value>Z</con:value>
+      <con:value>-03:00</con:value>
     </con:property>
     <con:property>
       <con:name>timezone2</con:name>
-      <con:value>Z</con:value>
+      <con:value>-03:00</con:value>
     </con:property>
   </con:properties>
   <con:wssContainer/>

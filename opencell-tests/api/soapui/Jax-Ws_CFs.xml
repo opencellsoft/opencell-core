@@ -2679,6 +2679,16 @@ public class Action1 extends Script {
                <customField code="${#Project#baseEntityPrefix}_SELLER_STRING_SINGLE_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">\r
                   <stringValue>SELLER_STRING_VALUE_4</stringValue>\r
                </customField>\r
+               <customField code="${#Project#baseEntityPrefix}_SELLER_STRING_SINGLE_V" valuePeriodStartDate="2015-09-08" valuePeriodPriority="3">
+                  <stringValue>SELLER_STRING_VALUE_5</stringValue>
+               </customField>
+               <customField code="${#Project#baseEntityPrefix}_SELLER_STRING_SINGLE_V" valuePeriodEndDate="2015-09-24" valuePeriodPriority="4">
+                  <stringValue>SELLER_STRING_VALUE_6</stringValue>
+               </customField>
+               <customField code="${#Project#baseEntityPrefix}_SELLER_STRING_SINGLE_V" valuePeriodPriority="5">
+                  <stringValue>SELLER_STRING_VALUE_7</stringValue>
+               </customField>
+
                <customField code="${#Project#baseEntityPrefix}_SELLER_LONG_SINGLE_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">\r
                   <longValue>24</longValue>\r
                </customField>\r
@@ -2876,6 +2886,37 @@ public class Action1 extends Script {
                      </value>\r
                   </listValue>\r
                </customField>\r
+               <customField code="${#Project#baseEntityPrefix}_SELLER_STRING_LIST_V" valuePeriodStartDate="2015-09-08" valuePeriodPriority="3">
+                  <listValue>
+                     <value>
+                        <stringValue>SELLER_STRING_VALUE_15</stringValue>
+                     </value>
+                     <value>
+                        <stringValue>SELLER_STRING_VALUE_16</stringValue>
+                     </value>
+                  </listValue>
+               </customField>
+               <customField code="${#Project#baseEntityPrefix}_SELLER_STRING_LIST_V" valuePeriodEndDate="2015-09-24" valuePeriodPriority="4">
+                  <listValue>
+                     <value>
+                        <stringValue>SELLER_STRING_VALUE_17</stringValue>
+                     </value>
+                     <value>
+                        <stringValue>SELLER_STRING_VALUE_18</stringValue>
+                     </value>
+                  </listValue>
+               </customField>
+               <customField code="${#Project#baseEntityPrefix}_SELLER_STRING_LIST_V" valuePeriodPriority="5">
+                  <listValue>
+                     <value>
+                        <stringValue>SELLER_STRING_VALUE_19</stringValue>
+                     </value>
+                     <value>
+                        <stringValue>SELLER_STRING_VALUE_20</stringValue>
+                     </value>
+                  </listValue>
+               </customField>
+
                <customField code="${#Project#baseEntityPrefix}_SELLER_LONG_LIST_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">\r
                   <listValue>\r
                      <value>\r
@@ -3231,6 +3272,57 @@ public class Action1 extends Script {
                      </entry>\r
                   </mapValue>\r
                </customField>\r
+
+
+               <customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MAP_V" valuePeriodStartDate="2015-09-08" valuePeriodPriority="3">
+                  <mapValue>
+                     <entry>
+                        <key>hh</key>
+                        <value>
+                           <stringValue>SELLER_STRING_VALUE_25</stringValue>
+                        </value>
+                     </entry>
+                     <entry>
+                        <key>ii</key>
+                        <value>
+                           <stringValue>SELLER_STRING_VALUE_26</stringValue>
+                        </value>
+                     </entry>
+                  </mapValue>
+               </customField>
+               <customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MAP_V" valuePeriodEndDate="2015-09-24" valuePeriodPriority="4">
+                  <mapValue>
+                     <entry>
+                        <key>hh</key>
+                        <value>
+                           <stringValue>SELLER_STRING_VALUE_27</stringValue>
+                        </value>
+                     </entry>
+                     <entry>
+                        <key>ii</key>
+                        <value>
+                           <stringValue>SELLER_STRING_VALUE_28</stringValue>
+                        </value>
+                     </entry>
+                  </mapValue>
+               </customField>
+               <customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MAP_V" valuePeriodPriority="5">
+                  <mapValue>
+                     <entry>
+                        <key>hh</key>
+                        <value>
+                           <stringValue>SELLER_STRING_VALUE_29</stringValue>
+                        </value>
+                     </entry>
+                     <entry>
+                        <key>ii</key>
+                        <value>
+                           <stringValue>SELLER_STRING_VALUE_30</stringValue>
+                        </value>
+                     </entry>
+                  </mapValue>
+               </customField>
+               
                <customField code="${#Project#baseEntityPrefix}_SELLER_LONG_MAP_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">\r
                   <mapValue>\r
                      <entry>\r
@@ -3730,6 +3822,73 @@ public class Action1 extends Script {
                      </entry>\r
                   </mapValue>\r
                </customField>\r
+               <customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MATRIX_V" valuePeriodStartDate="2015-09-08" valuePeriodPriority="3">
+                  <mapValue>
+                     <entry>
+                        <key>hh|13&lt;81</key>
+                        <value>
+                           <stringValue>SELLER_STRING_VALUE_23</stringValue>
+                        </value>
+                     </entry>
+                     <entry>
+                        <key>ii|14&lt;82</key>
+                        <value>
+                           <stringValue>SELLER_STRING_VALUE_24</stringValue>
+                        </value>
+                     </entry>
+                     <entry>
+                        <key>key</key>
+                        <value>
+                           <stringValue>MAT_1/MAT_2</stringValue>
+                        </value>
+                     </entry>
+                  </mapValue>
+               </customField>
+               <customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MATRIX_V" valuePeriodEndDate="2015-09-24" valuePeriodPriority="4">
+                  <mapValue>
+                     <entry>
+                        <key>hh|15&lt;81</key>
+                        <value>
+                           <stringValue>SELLER_STRING_VALUE_23</stringValue>
+                        </value>
+                     </entry>
+                     <entry>
+                        <key>ii|16&lt;82</key>
+                        <value>
+                           <stringValue>SELLER_STRING_VALUE_24</stringValue>
+                        </value>
+                     </entry>
+                     <entry>
+                        <key>key</key>
+                        <value>
+                           <stringValue>MAT_1/MAT_2</stringValue>
+                        </value>
+                     </entry>
+                  </mapValue>
+               </customField>
+               <customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MATRIX_V" valuePeriodPriority="5">
+                  <mapValue>
+                     <entry>
+                        <key>hh|17&lt;81</key>
+                        <value>
+                           <stringValue>SELLER_STRING_VALUE_23</stringValue>
+                        </value>
+                     </entry>
+                     <entry>
+                        <key>ii|18&lt;82</key>
+                        <value>
+                           <stringValue>SELLER_STRING_VALUE_24</stringValue>
+                        </value>
+                     </entry>
+                     <entry>
+                        <key>key</key>
+                        <value>
+                           <stringValue>MAT_1/MAT_2</stringValue>
+                        </value>
+                     </entry>
+                  </mapValue>
+               </customField>
+               
                <customField code="${#Project#baseEntityPrefix}_SELLER_LONG_MATRIX_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">\r
                   <mapValue>\r
                      <entry>\r
@@ -6023,6 +6182,231 @@ public class Action1 extends Script {
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="d5b0f4bc-4caf-4ac9-a2fd-0c963093baf2" name="Contains 102">
+              <con:configuration>
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_STRING_SINGLE_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone2}" valuePeriodPriority="3">
+                     &lt;stringValue>SELLER_STRING_VALUE_5&lt;/stringValue>
+                  &lt;/customField></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="ee85a85d-5bed-4c87-bd49-41e194ae343b" name="Contains 103">
+              <con:configuration>
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_STRING_SINGLE_V" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone2}" valuePeriodPriority="4">
+                     &lt;stringValue>SELLER_STRING_VALUE_6&lt;/stringValue>
+                  &lt;/customField></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="af5a6148-6dfa-43a6-b29f-13f0d0b0c3a6" name="Contains 104">
+              <con:configuration>
+                <token>&lt;customField code="${#Project#baseEntityPrefix}_SELLER_STRING_SINGLE_V" valuePeriodPriority="5">
+                     &lt;stringValue>SELLER_STRING_VALUE_7&lt;/stringValue>
+                  &lt;/customField></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="ed8257bf-0305-4f4b-ada6-2f4f4bc31ca8" name="Contains 105">
+              <con:configuration>
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_STRING_LIST_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone2}" valuePeriodPriority="3">
+                     <listValue>
+                        <value>
+                           <stringValue>SELLER_STRING_VALUE_15</stringValue>
+                        </value>
+                        <value>
+                           <stringValue>SELLER_STRING_VALUE_16</stringValue>
+                        </value>
+                     </listValue>
+                  </customField>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="0910e746-f2e7-43a9-8422-ed38ba9b5158" name="Contains 106">
+              <con:configuration>
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_STRING_LIST_V" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone2}" valuePeriodPriority="4">
+                     <listValue>
+                        <value>
+                           <stringValue>SELLER_STRING_VALUE_17</stringValue>
+                        </value>
+                        <value>
+                           <stringValue>SELLER_STRING_VALUE_18</stringValue>
+                        </value>
+                     </listValue>
+                  </customField>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="3a250b35-0707-48a9-b36b-0273d3635b7a" name="Contains 107">
+              <con:configuration>
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_STRING_LIST_V" valuePeriodPriority="5">
+                     <listValue>
+                        <value>
+                           <stringValue>SELLER_STRING_VALUE_19</stringValue>
+                        </value>
+                        <value>
+                           <stringValue>SELLER_STRING_VALUE_20</stringValue>
+                        </value>
+                     </listValue>
+                  </customField>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="e65ea01f-7d9d-432c-803f-5beee93abacb" name="Contains 108">
+              <con:configuration>
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MAP_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone2}" valuePeriodPriority="3">
+                     <mapValue>
+                        <entry>
+                           <key>hh</key>
+                           <value>
+                              <stringValue>SELLER_STRING_VALUE_25</stringValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>ii</key>
+                           <value>
+                              <stringValue>SELLER_STRING_VALUE_26</stringValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="610d7662-f56d-49ef-9e69-63a16fcd72f1" name="Contains 109">
+              <con:configuration>
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MAP_V" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone2}" valuePeriodPriority="4">
+                     <mapValue>
+                        <entry>
+                           <key>hh</key>
+                           <value>
+                              <stringValue>SELLER_STRING_VALUE_27</stringValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>ii</key>
+                           <value>
+                              <stringValue>SELLER_STRING_VALUE_28</stringValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="9fbcce62-0c4d-4113-9a40-ac8576db54f7" name="Contains 110">
+              <con:configuration>
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MAP_V" valuePeriodPriority="5">
+                     <mapValue>
+                        <entry>
+                           <key>hh</key>
+                           <value>
+                              <stringValue>SELLER_STRING_VALUE_29</stringValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>ii</key>
+                           <value>
+                              <stringValue>SELLER_STRING_VALUE_30</stringValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="b0c0362d-ad7f-4081-9f46-cbf41ff2da22" name="Contains 111">
+              <con:configuration>
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MATRIX_V" valuePeriodStartDate="2015-09-08T00:00:00${#Project#timezone2}" valuePeriodPriority="3">
+                     <mapValue>
+                        <entry>
+                           <key>hh|13&lt;81</key>
+                           <value>
+                              <stringValue>SELLER_STRING_VALUE_23</stringValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>ii|14&lt;82</key>
+                           <value>
+                              <stringValue>SELLER_STRING_VALUE_24</stringValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>key</key>
+                           <value>
+                              <stringValue>MAT_1/MAT_2</stringValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="c54e3621-bdb6-41cc-84dc-df95d301c6e0" name="Contains 112">
+              <con:configuration>
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MATRIX_V" valuePeriodEndDate="2015-09-24T00:00:00${#Project#timezone2}" valuePeriodPriority="4">
+                     <mapValue>
+                        <entry>
+                           <key>hh|15&lt;81</key>
+                           <value>
+                              <stringValue>SELLER_STRING_VALUE_23</stringValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>ii|16&lt;82</key>
+                           <value>
+                              <stringValue>SELLER_STRING_VALUE_24</stringValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>key</key>
+                           <value>
+                              <stringValue>MAT_1/MAT_2</stringValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="09f8e0ac-c93f-4895-ba7a-7ebf37681554" name="Contains 113">
+              <con:configuration>
+                <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MATRIX_V" valuePeriodPriority="5">
+                     <mapValue>
+                        <entry>
+                           <key>hh|17&lt;81</key>
+                           <value>
+                              <stringValue>SELLER_STRING_VALUE_23</stringValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>ii|18&lt;82</key>
+                           <value>
+                              <stringValue>SELLER_STRING_VALUE_24</stringValue>
+                           </value>
+                        </entry>
+                        <entry>
+                           <key>key</key>
+                           <value>
+                              <stringValue>MAT_1/MAT_2</stringValue>
+                           </value>
+                        </entry>
+                     </mapValue>
+                  </customField>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
             <con:credentials>
@@ -31262,10 +31646,6 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
           </con:request>
         </con:config>
       </con:testStep>
-      <con:properties/>
-    </con:testCase>
-    <con:testCase id="898f65bf-e69c-4a26-aa39-d0953a986440" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CF Validtion - parent inherited value and value instantiation" searchProperties="true">
-      <con:settings/>
       <con:properties/>
     </con:testCase>
     <con:properties>

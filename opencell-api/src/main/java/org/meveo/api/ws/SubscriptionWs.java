@@ -15,6 +15,7 @@ import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.billing.UpdateServicesRequestDto;
+import org.meveo.api.dto.response.billing.GetDueDateDelayResponseDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsResponseDto;
 
@@ -68,5 +69,19 @@ public interface SubscriptionWs extends IBaseWs {
 	
 	@WebMethod
 	ActionStatus updateServices(@WebParam(name = "updateServicesRequest") UpdateServicesRequestDto postData);
+	
+	/**
+     * Returns the due date delay information.
+     * 
+     * @param subscriptionCode - required
+     * @param invoiceNumber - invoice number, can be null
+     * @param invoiceTypeCode - can be null
+     * @param orderCode - can be null
+     * @return
+     */
+	@WebMethod
+	GetDueDateDelayResponseDto findDueDateDelay(@WebParam(name = "subscriptionCode") String subscriptionCode,
+			@WebParam(name = "invoiceNumber") String invoiceNumber,
+			@WebParam(name = "invoiceTypeCode") String invoiceTypeCode, @WebParam(name = "orderCode") String orderCode);
 
 }
