@@ -3967,7 +3967,6 @@
             <column name="header_edr_id" type="bigint">
                 <constraints nullable="true" />
             </column>
-            <column name="extra_parameter" type="text" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-272">
