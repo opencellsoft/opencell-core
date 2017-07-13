@@ -28088,11 +28088,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
   <con:properties>
     <con:property>
       <con:name>meveoUrl</con:name>
-      <con:value>http://localhost:8080/opencell</con:value>
+      <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
     </con:property>
     <con:property>
       <con:name>meveoUrl2</con:name>
-      <con:value>http://localhost:8080/opencell</con:value>
+      <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
     </con:property>
     <con:property>
       <con:name>baseEntityPrefix</con:name>
@@ -28112,11 +28112,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     </con:property>
     <con:property>
       <con:name>timezone</con:name>
-      <con:value>-03:00</con:value>
+      <con:value>Z</con:value>
     </con:property>
     <con:property>
       <con:name>timezone2</con:name>
-      <con:value>-03:00</con:value>
+      <con:value>Z</con:value>
     </con:property>
   </con:properties>
   <con:wssContainer/>
