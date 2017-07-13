@@ -15089,6 +15089,48 @@
       <con:settings/>
     </con:operation>
   </con:interface>
+  <con:interface xsi:type="con:WsdlInterface" id="42281280-a1aa-4328-a731-6528fdf162cd" wsaVersion="NONE" name="JobWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}JobWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/opencell/JobWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <con:settings/>
+    <con:endpoints>
+      <con:endpoint>http://localhost:8080/opencell/JobWs</con:endpoint>
+    </con:endpoints>
+    <con:operation id="9ac244b1-803a-4095-ae8f-dc679241da0d" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="31730408-18ed-4c9b-9a44-ee42fd575f3e" isOneWay="false" action="" name="createOrUpdateJobInstance" bindingOperationName="createOrUpdateJobInstance" type="Request-Response" outputName="createOrUpdateJobInstanceResponse" inputName="createOrUpdateJobInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="a8dd6138-e07b-4123-b0c6-9c3665fc2057" isOneWay="false" action="" name="createTimer" bindingOperationName="createTimer" type="Request-Response" outputName="createTimerResponse" inputName="createTimer" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="363d5765-8936-4f45-8602-97a0d7a2263d" isOneWay="false" action="" name="execute" bindingOperationName="execute" type="Request-Response" outputName="executeResponse" inputName="execute" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="977fdd27-93e1-4043-9f2a-a1ff75dcb7b1" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="02a8e076-c073-4ae4-9cbb-0920ace24db3" isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="4a278535-8807-4acb-beef-4166fdc6f3ff" isOneWay="false" action="" name="findJobInstance" bindingOperationName="findJobInstance" type="Request-Response" outputName="findJobInstanceResponse" inputName="findJobInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="4003c501-5486-4e89-8964-3a3d8eb6fe48" isOneWay="false" action="" name="createOrUpdateTimer" bindingOperationName="createOrUpdateTimer" type="Request-Response" outputName="createOrUpdateTimerResponse" inputName="createOrUpdateTimer" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="8e2ceaeb-0000-4231-afbb-273b30f5a07d" isOneWay="false" action="" name="updateTimer" bindingOperationName="updateTimer" type="Request-Response" outputName="updateTimerResponse" inputName="updateTimer" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="1d7eb1b9-1068-4258-9d27-b6b6701fe377" isOneWay="false" action="" name="findTimer" bindingOperationName="findTimer" type="Request-Response" outputName="findTimerResponse" inputName="findTimer" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="d76c11ec-1742-4c84-949c-78165ca8bcf6" isOneWay="false" action="" name="removeTimer" bindingOperationName="removeTimer" type="Request-Response" outputName="removeTimerResponse" inputName="removeTimer" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="13992d87-a9d9-4f5e-a1c3-949df5306ac4" isOneWay="false" action="" name="removeJobInstance" bindingOperationName="removeJobInstance" type="Request-Response" outputName="removeJobInstanceResponse" inputName="removeJobInstance" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+  </con:interface>
   <con:testSuite id="6ac7964a-a9d0-431e-b680-b0c3aa92daed" name="Setup Authorization">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
@@ -24396,6 +24438,2056 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:jmsPropertyConfig/>
             <con:parameters/>
           </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:testCase id="a3ee878e-c9f3-4118-8a57-8138a144a391" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Product quote, ordering  and subscription renewal" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="restrequest" name="Create quote with renewal - missing field fail" id="a1d28fa0-de95-4b10-b022-34eebdf41a51">
+        <con:settings/>
+        <con:config service="MEVEO JAX-WS API Documentation" resourcePath="/api/rest/quoteManagement/productQuote" methodName="createProductQuote" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Create quote with renewal - missing field fail" id="3e63d18c-0002-446a-940a-1e03685399a5" mediaType="application/json" postQueryString="false">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
+            <con:request>{
+   "description":"${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew",
+   "quoteDate":"2017-01-25T15:50:48+08",
+   "billingAccount":[
+       {
+          "id":"${#Project#baseEntityPrefix}_UA"
+       }
+    ],
+   "quoteItem":[
+      {      	
+         "id":"01", 
+         "productOffering":{
+            "id":"${#Project#baseEntityPrefix}_OFFER1"
+         },
+         "product":{
+            "productCharacteristic":[
+               {
+                  "name":"subscriptionCode",
+                  "value":"${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB"
+               },
+               {
+                  "name":"subscriptionDate",
+                  "value":"2017-01-25"
+               },
+               {
+                  "name":"initialyActiveFor",
+                  "value":"1"
+               },
+               {
+                  "name":"${#Project#baseEntityPrefix}_SUB_CF_STRING",
+                  "value":"Subscription CF value"
+               }
+            ],
+            "productRelationship":[
+               {       	
+                  "type":"bundled",
+                  "product":{           
+                     "productCharacteristic":[
+                        {
+                           "name":"serviceCode",
+                           "value":"${#Project#baseEntityPrefix}_SERVICE1"
+                        },
+                        {
+                           "name":"quantity",
+                           "value":"2"
+                        },
+                        {
+                           "name":"subscriptionDate",
+                           "value":"2016-01-27"
+                        },
+                        {
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_STRING",
+                           "value":"Service CF value"
+                        },
+                        {
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX",
+                           "value":"{'Fifth|Fourth':150,'Fifth|Second':100}"
+                        }
+                     ]
+                  }
+               }
+            ]
+         }
+      }     
+   ]
+}</con:request>
+            <con:originalUri>http://localhost/opencell/api/rest/orderManagement/productOrder</con:originalUri>
+            <con:assertion type="Valid HTTP Status Codes" id="d2019593-3a6b-431a-a279-ed2dca1a1662" name="Valid HTTP Status Codes">
+              <con:configuration>
+                <codes>400</codes>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="e60db5f6-1d88-4bf5-bab5-472e12ceb2af" name="Contains">
+              <con:configuration>
+                <token>The following parameters are required or contain invalid values: initialyActiveForUnit, endOfTermAction</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username/>
+              <con:password/>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters/>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Create quote with renewal - missing field 2 fail" id="95c68e6c-67f5-4937-9802-74178323e689">
+        <con:settings/>
+        <con:config service="MEVEO JAX-WS API Documentation" resourcePath="/api/rest/quoteManagement/productQuote" methodName="createProductQuote" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Create quote with renewal - missing field 2 fail" id="3e63d18c-0002-446a-940a-1e03685399a5" mediaType="application/json" postQueryString="false">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
+            <con:request>{
+   "description":"${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew",
+   "quoteDate":"2017-01-25T15:50:48+08",
+   "billingAccount":[
+       {
+          "id":"${#Project#baseEntityPrefix}_UA"
+       }
+    ],
+   "quoteItem":[
+      {      	
+         "id":"01", 
+         "productOffering":{
+            "id":"${#Project#baseEntityPrefix}_OFFER1"
+         },
+         "product":{
+            "productCharacteristic":[
+               {
+                  "name":"subscriptionCode",
+                  "value":"${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB"
+               },
+               {
+                  "name":"subscriptionDate",
+                  "value":"2017-01-25"
+               },
+               {
+                  "name":"initialyActiveFor",
+                  "value":"1"
+               },
+               {
+                  "name":"initialyActiveForUnit",
+                  "value":"MONTH"
+               },
+               {
+                  "name":"endOfTermAction",
+                  "value":"TERMINATE"
+               },
+               {
+                  "name":"renewTerminationReason",
+                  "value":"KUKU"
+               },
+               
+               {
+                  "name":"${#Project#baseEntityPrefix}_SUB_CF_STRING",
+                  "value":"Subscription CF value"
+               }
+            ],
+            "productRelationship":[
+               {       	
+                  "type":"bundled",
+                  "product":{           
+                     "productCharacteristic":[
+                        {
+                           "name":"serviceCode",
+                           "value":"${#Project#baseEntityPrefix}_SERVICE1"
+                        },
+                        {
+                           "name":"quantity",
+                           "value":"2"
+                        },
+                        {
+                           "name":"subscriptionDate",
+                           "value":"2016-01-27"
+                        },
+                        {
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_STRING",
+                           "value":"Service CF value"
+                        },
+                        {
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX",
+                           "value":"{'Fifth|Fourth':150,'Fifth|Second':100}"
+                        }
+                     ]
+                  }
+               }
+            ]
+         }
+      }     
+   ]
+}</con:request>
+            <con:originalUri>http://localhost/opencell/api/rest/orderManagement/productOrder</con:originalUri>
+            <con:assertion type="Valid HTTP Status Codes" id="d2019593-3a6b-431a-a279-ed2dca1a1662" name="Valid HTTP Status Codes">
+              <con:configuration>
+                <codes>400</codes>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="e60db5f6-1d88-4bf5-bab5-472e12ceb2af" name="Contains">
+              <con:configuration>
+                <token>Invalid value 'KUKU' for field renewTerminationReason</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username/>
+              <con:password/>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters/>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Create quote with renewal" id="f7f584f9-050a-4abb-ac9e-59ce22be6b5d">
+        <con:settings/>
+        <con:config service="MEVEO JAX-WS API Documentation" resourcePath="/api/rest/quoteManagement/productQuote" methodName="createProductQuote" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Create quote with renewal" id="3e63d18c-0002-446a-940a-1e03685399a5" mediaType="application/json" postQueryString="false">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
+            <con:request>{
+   "description":"${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew",
+   "quoteDate":"2016-01-25T15:50:48+08",
+   "billingAccount":[
+       {
+          "id":"${#Project#baseEntityPrefix}_UA"
+       }
+    ],
+   "quoteItem":[
+      {      	
+         "id":"01", 
+         "productOffering":{
+            "id":"${#Project#baseEntityPrefix}_OFFER1"
+         },
+         "product":{
+            "productCharacteristic":[
+               {
+                  "name":"subscriptionCode",
+                  "value":"${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB"
+               },
+               {
+                  "name":"subscriptionDate",
+                  "value":"2016-01-25"
+               },
+               {
+                  "name":"subscriptionEndDate",
+                  "value":"2016-02-22"
+               },
+               {
+                  "name":"initialyActiveFor",
+                  "value":"2"
+               },
+               {
+                  "name":"initialyActiveForUnit",
+                  "value":"MONTH"
+               },
+               {
+                  "name":"autoRenew",
+                  "value":"true"
+               },
+               {
+                  "name":"renewFor",
+                  "value":"1"
+               },
+               {
+                  "name":"renewForUnit",
+                  "value":"MONTH"
+               },
+               {
+                  "name":"endOfTermAction",
+                  "value":"TERMINATE"
+               },
+               {
+                  "name":"renewTerminationReason",
+                  "value":"TERM_REASON_1"
+               },
+               {
+                  "name":"extendAgreementPeriodToSubscribedTillDate",
+                  "value":"true"
+               },               
+               {
+                  "name":"${#Project#baseEntityPrefix}_SUB_CF_STRING",
+                  "value":"Subscription CF value"
+               }
+            ],
+            "productRelationship":[
+               {       	
+                  "type":"bundled",
+                  "product":{           
+                     "productCharacteristic":[
+                        {
+                           "name":"serviceCode",
+                           "value":"${#Project#baseEntityPrefix}_SERVICE1"
+                        },
+                        {
+                           "name":"quantity",
+                           "value":"2"
+                        },
+                        {
+                           "name":"subscriptionDate",
+                           "value":"2016-01-27"
+                        },
+                        {
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_STRING",
+                           "value":"Service CF value"
+                        },
+                        {
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX",
+                           "value":"{'Fifth|Fourth':150,'Fifth|Second':100}"
+                        }
+                     ]
+                  }
+               }
+            ]
+         }
+      }     
+   ]
+}</con:request>
+            <con:originalUri>http://localhost/opencell/api/rest/orderManagement/productOrder</con:originalUri>
+            <con:assertion type="Valid HTTP Status Codes" id="d2019593-3a6b-431a-a279-ed2dca1a1662" name="Valid HTTP Status Codes">
+              <con:configuration>
+                <codes>201</codes>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Count" id="93cf6ae4-e69f-4791-8077-528caaeac58b" name="JsonPath Count">
+              <con:configuration>
+                <path>$.invoices</path>
+                <content>1</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="81d62b39-a7e6-42e7-8d20-928c19e112ff" name="JsonPath Match">
+              <con:configuration>
+                <path>$.invoices[0].amountWithoutTax</path>
+                <content>60.0</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username/>
+              <con:password/>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters/>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="transfer" name="Set quote code" id="286bdb85-462a-4786-be66-242c2a5cab00">
+        <con:settings/>
+        <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+            <con:name>Set product quote code - 3 items</con:name>
+            <con:sourceType>Response</con:sourceType>
+            <con:sourceStep>Create quote with renewal</con:sourceStep>
+            <con:sourcePath>$.id</con:sourcePath>
+            <con:targetType>quoteId</con:targetType>
+            <con:targetStep>Place order with renewal</con:targetStep>
+            <con:type>JSONPATH</con:type>
+            <con:upgraded>true</con:upgraded>
+          </con:transfers>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Place order with renewal" id="5ef1d957-34f5-46cd-9a77-c966ef10cdf4">
+        <con:settings/>
+        <con:config service="MEVEO JAX-WS API Documentation" methodName="Method 1" resourcePath="/api/rest/quoteManagement/productQuote/placeOrder/{quoteId}" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Place order with renewal" id="a4674823-90bd-4861-8459-e955dea23e38" mediaType="application/json" postQueryString="false">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
+            <con:request/>
+            <con:originalUri>http://localhost/opencell/api/rest/quoteManagement/productQuote/placeOrder/cddba703-f378-4989-86f0-aaf0171dea05</con:originalUri>
+            <con:assertion type="Valid HTTP Status Codes" id="b24a6562-440a-4d17-9096-9751283272dc" name="Valid HTTP Status Codes">
+              <con:configuration>
+                <codes>200</codes>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="c2bd3102-979d-4fb9-b750-98e5e0065a7c" name="JsonPath Match">
+              <con:configuration>
+                <path>$..productCharacteristic[?(@.name=='initialyActiveFor')].value</path>
+                <content>[2]</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="c2bd3102-979d-4fb9-b750-98e5e0065a7c" name="JsonPath Match 1">
+              <con:configuration>
+                <path>$..productCharacteristic[?(@.name=='initialyActiveForUnit')].value</path>
+                <content>[MONTH]</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="c2bd3102-979d-4fb9-b750-98e5e0065a7c" name="JsonPath Match 2">
+              <con:configuration>
+                <path>$..productCharacteristic[?(@.name=='autoRenew')].value</path>
+                <content>[true]</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="c2bd3102-979d-4fb9-b750-98e5e0065a7c" name="JsonPath Match 3">
+              <con:configuration>
+                <path>$..productCharacteristic[?(@.name=='renewFor')].value</path>
+                <content>[1]</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="c2bd3102-979d-4fb9-b750-98e5e0065a7c" name="JsonPath Match 4">
+              <con:configuration>
+                <path>$..productCharacteristic[?(@.name=='renewForUnit')].value</path>
+                <content>[MONTH]</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="c2bd3102-979d-4fb9-b750-98e5e0065a7c" name="JsonPath Match 5">
+              <con:configuration>
+                <path>$..productCharacteristic[?(@.name=='endOfTermAction')].value</path>
+                <content>[TERMINATE]</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="c2bd3102-979d-4fb9-b750-98e5e0065a7c" name="JsonPath Match 6">
+              <con:configuration>
+                <path>$..productCharacteristic[?(@.name=='renewTerminationReason')].value</path>
+                <content>[TERM_REASON_1]</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="c2bd3102-979d-4fb9-b750-98e5e0065a7c" name="JsonPath Match 7">
+              <con:configuration>
+                <path>$..productCharacteristic[?(@.name=='extendAgreementPeriodToSubscribedTillDate')].value</path>
+                <content>[true]</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters>
+              <entry key="quoteId" value="9c276962-e4b7-4c33-bec1-1ea48e28ceb8" xmlns="http://eviware.com/soapui/config"/>
+            </con:parameters>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Find Subscription" id="44289de4-cd86-4e06-b0c4-2e62e84ebc71">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SubscriptionWsSoapBinding</con:interface>
+          <con:operation>findSubscription</con:operation>
+          <con:request name="Find Subscription" id="03614745-d791-4187-a28a-da9833308ae7">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SubscriptionWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findSubscription>\r
+         <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB</subscriptionCode>\r
+      </ws:findSubscription>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="46d17b43-2c05-48f5-a669-e1233de7d27a"/>
+            <con:assertion type="Simple Contains" id="b86be349-406a-41f7-ad57-8d656075c08f" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
+              <con:configuration>
+                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB">
+               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+               <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
+               <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>
+               <endAgreementDate>2016-02-22T00:00:00${#Project#timezone}</endAgreementDate>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="ab81d456-9f84-4c28-b48c-dace4a2e6856" name="Contains 2">
+              <con:configuration>
+                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE1" description="Service 1">
+                     &lt;status>ACTIVE&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="fe07d4f5-51a6-4005-96e9-53a7f4e9fb2f" name="XPath Match 1">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING"]/stringValue</path>
+                <content>Service CF value</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="dcc1e1d1-7ca1-4ab3-93af-dc2cb066bc55" name="XPath Match 2">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <mapValue>
+    <entry>
+      <key>Fifth|Fourth</key>
+      <value>
+        <stringValue>150</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>Fifth|Second</key>
+      <value>
+        <stringValue>100</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>key</key>
+      <value>
+        <stringValue>MAT_1/MAT_2</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</customField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="703fdac6-6e44-4163-8caa-71c4066a55d1" name="XPath Match 5">
+              <con:configuration>
+                <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE1']/subscriptionDate</path>
+                <content>2016-01-27T00:00:00${#Project#timezone}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="537c0b5d-5e54-47eb-88d5-f3d3d00abd64" name="XPath Match 6">
+              <con:configuration>
+                <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE1']/quantity</path>
+                <content>2.000000000000</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="1c793df2-a3cb-4ab2-84c3-4444741e36f0" name="XPath Match">
+              <con:configuration>
+                <path>//renewalRule</path>
+                <content><![CDATA[<renewalRule xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <initialyActiveFor>2</initialyActiveFor>
+  <initialyActiveForUnit>MONTH</initialyActiveForUnit>
+  <autoRenew>true</autoRenew>
+  <endOfTermAction>TERMINATE</endOfTermAction>
+  <terminationReasonCode>TERM_REASON_1</terminationReasonCode>
+  <renewFor>1</renewFor>
+  <renewForUnit>MONTH</renewForUnit>
+  <extendAgreementPeriodToSubscribedTillDate>true</extendAgreementPeriodToSubscribedTillDate>
+</renewalRule>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 7">
+              <con:configuration>
+                <path>//subscribedTillDate</path>
+                <content>2016-03-25T00:00:00${#Project#timezone}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="179b3fbc-f6ba-4c63-b636-67f253b95948" name="XPath Match 8">
+              <con:configuration>
+                <path>//renewed</path>
+                <content>false</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Modify ordered product (renew rule - all will apply)" id="4271041a-4504-462c-9d92-6fe5ae6595b3">
+        <con:settings/>
+        <con:config service="MEVEO JAX-WS API Documentation" resourcePath="/api/rest/orderManagement/productOrder" methodName="POST - createProductOrder" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Modify ordered product (renew rule - all will apply)" id="3e63d18c-0002-446a-940a-1e03685399a5" mediaType="application/json" postQueryString="false">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
+            <con:request>{   "orderDate": "2017-07-04T00:13:48-03:00",
+    "orderItem": [{
+    	   "id": "01",
+        "action": "modify",
+        "billingAccount": [{
+            "id": "${#Project#baseEntityPrefix}_UA"
+        }],
+        "productOffering": {
+            "id": "${#Project#baseEntityPrefix}_OFFER1"
+        },
+        "product": {
+            "id": "${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB",
+            "productCharacteristic": [ {
+               "name": "initialyActiveFor",
+               "value": "3"
+            },{
+               "name": "initialyActiveForUnit",
+               "value": "MONTH"
+            },{
+               "name": "autoRenew",
+               "value": "true"
+            },{
+               "name": "renewFor",
+               "value": "2"
+            },{
+               "name": "renewForUnit",
+               "value": "MONTH"
+            },{
+               "name": "endOfTermAction",
+               "value": "TERMINATE"
+            },{
+               "name": "renewTerminationReason",
+               "value": "TERM_REASON_1"
+            },{
+               "name": "extendAgreementPeriodToSubscribedTillDate",
+               "value": "true"
+            },{
+                "name": "${#Project#baseEntityPrefix}_SUB_CF_LONG_MAP"
+            }, {
+                "name": "${#Project#baseEntityPrefix}_SUB_CF_PRICE",
+                "value": "5.0"
+            }, {
+                "name": "${#Project#baseEntityPrefix}_SUB_CF_STRING",
+                "value": "Subscription CF value"
+            }],
+            "productRelationship": [{
+                "type": "bundled",
+                "product": {
+                    "productCharacteristic": [{
+                        "name": "subscriptionDate",
+                        "value": "2016-01-27"
+                    }, {
+                        "name": "terminationReason",
+                        "value": ""
+                    }, {
+                        "name": "quantity",
+                        "value": "2.000000000000"
+                    }, {
+                        "name": "subscriptionEndDate",
+                        "value": "2017-02-22"
+                    }, {
+                        "name": "${#Project#baseEntityPrefix}_SERVICE_CF_STRING",
+                        "value": "Service CF value"
+                    }, {
+                        "name": "${#Project#baseEntityPrefix}_SERVICE_CF_PRICE",
+                        "value": "20.0"
+                    }, {
+                        "name": "${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX",
+                        "value": "matrix_String|MAT_1/MAT_2|{\"Fifth|Fourth\":\"150\",\"Fifth|Second\":\"100\"}"
+                    }, {
+                        "name": "serviceCode",
+                        "value": "${#Project#baseEntityPrefix}_SERVICE1"
+                    }]
+                }
+            }]
+        }
+    }]
+}</con:request>
+            <con:originalUri>http://localhost/opencell/api/rest/orderManagement/productOrder</con:originalUri>
+            <con:assertion type="Valid HTTP Status Codes" id="d2019593-3a6b-431a-a279-ed2dca1a1662" name="Valid HTTP Status Codes">
+              <con:configuration>
+                <codes>201</codes>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username/>
+              <con:password/>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters/>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Find Subscription after modify 2" id="52a2de2d-514a-47f7-a171-68fb236b9aec">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SubscriptionWsSoapBinding</con:interface>
+          <con:operation>findSubscription</con:operation>
+          <con:request name="Find Subscription after modify 2" id="03614745-d791-4187-a28a-da9833308ae7">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SubscriptionWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findSubscription>\r
+         <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB</subscriptionCode>\r
+      </ws:findSubscription>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="46d17b43-2c05-48f5-a669-e1233de7d27a"/>
+            <con:assertion type="Simple Contains" id="b86be349-406a-41f7-ad57-8d656075c08f" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
+              <con:configuration>
+                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB">
+               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+               <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
+               <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>
+               <endAgreementDate>2016-02-22T00:00:00${#Project#timezone}</endAgreementDate>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="ab81d456-9f84-4c28-b48c-dace4a2e6856" name="Contains 2">
+              <con:configuration>
+                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE1" description="Service 1">
+                     &lt;status>ACTIVE&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="fe07d4f5-51a6-4005-96e9-53a7f4e9fb2f" name="XPath Match 1">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING"]/stringValue</path>
+                <content>Service CF value</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="dcc1e1d1-7ca1-4ab3-93af-dc2cb066bc55" name="XPath Match 2">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <mapValue>
+    <entry>
+      <key>Fifth|Fourth</key>
+      <value>
+        <stringValue>150</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>Fifth|Second</key>
+      <value>
+        <stringValue>100</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>key</key>
+      <value>
+        <stringValue>MAT_1/MAT_2</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</customField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="703fdac6-6e44-4163-8caa-71c4066a55d1" name="XPath Match 5">
+              <con:configuration>
+                <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE1']/subscriptionDate</path>
+                <content>2016-01-27T00:00:00${#Project#timezone}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="537c0b5d-5e54-47eb-88d5-f3d3d00abd64" name="XPath Match 6">
+              <con:configuration>
+                <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE1']/quantity</path>
+                <content>2.000000000000</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="1c793df2-a3cb-4ab2-84c3-4444741e36f0" name="XPath Match">
+              <con:configuration>
+                <path>//renewalRule</path>
+                <content><![CDATA[<renewalRule xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <initialyActiveFor>3</initialyActiveFor>
+  <initialyActiveForUnit>MONTH</initialyActiveForUnit>
+  <autoRenew>true</autoRenew>
+  <endOfTermAction>TERMINATE</endOfTermAction>
+  <terminationReasonCode>TERM_REASON_1</terminationReasonCode>
+  <renewFor>2</renewFor>
+  <renewForUnit>MONTH</renewForUnit>
+  <extendAgreementPeriodToSubscribedTillDate>true</extendAgreementPeriodToSubscribedTillDate>
+</renewalRule>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 7">
+              <con:configuration>
+                <path>//subscribedTillDate</path>
+                <content>2016-04-25T00:00:00${#Project#timezone}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="179b3fbc-f6ba-4c63-b636-67f253b95948" name="XPath Match 8">
+              <con:configuration>
+                <path>//renewed</path>
+                <content>false</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Run Subscription status job" id="0afd4062-f0c2-4e9e-9417-19d192aed7a7">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>JobWsSoapBinding</con:interface>
+          <con:operation>execute</con:operation>
+          <con:request name="Run Subscription status job" id="f44152d1-5d4d-4d57-ba38-7e8e3e881047">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/JobWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:execute>\r
+         <jobInstanceInfo code="Sub_Status_Job">\r
+         </jobInstanceInfo>\r
+      </ws:execute>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="2fa31fe9-3815-45f0-b88a-d90d6e345ec8"/>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Find Subscription after renewal" id="5da08597-0b26-4d1c-8c93-681c7981a4ff">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SubscriptionWsSoapBinding</con:interface>
+          <con:operation>findSubscription</con:operation>
+          <con:request name="Find Subscription after renewal" id="03614745-d791-4187-a28a-da9833308ae7">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SubscriptionWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findSubscription>\r
+         <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB</subscriptionCode>\r
+      </ws:findSubscription>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="46d17b43-2c05-48f5-a669-e1233de7d27a"/>
+            <con:assertion type="Simple Contains" id="b86be349-406a-41f7-ad57-8d656075c08f" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
+              <con:configuration>
+                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB">
+               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+               <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
+               <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>
+               <endAgreementDate>2016-06-25T00:00:00${#Project#timezone}</endAgreementDate>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="ab81d456-9f84-4c28-b48c-dace4a2e6856" name="Contains 2">
+              <con:configuration>
+                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE1" description="Service 1">
+                     &lt;status>ACTIVE&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="fe07d4f5-51a6-4005-96e9-53a7f4e9fb2f" name="XPath Match 1">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING"]/stringValue</path>
+                <content>Service CF value</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="dcc1e1d1-7ca1-4ab3-93af-dc2cb066bc55" name="XPath Match 2">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <mapValue>
+    <entry>
+      <key>Fifth|Fourth</key>
+      <value>
+        <stringValue>150</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>Fifth|Second</key>
+      <value>
+        <stringValue>100</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>key</key>
+      <value>
+        <stringValue>MAT_1/MAT_2</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</customField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="703fdac6-6e44-4163-8caa-71c4066a55d1" name="XPath Match 5">
+              <con:configuration>
+                <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE1']/subscriptionDate</path>
+                <content>2016-01-27T00:00:00${#Project#timezone}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="537c0b5d-5e54-47eb-88d5-f3d3d00abd64" name="XPath Match 6">
+              <con:configuration>
+                <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE1']/quantity</path>
+                <content>2.000000000000</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="1c793df2-a3cb-4ab2-84c3-4444741e36f0" name="XPath Match">
+              <con:configuration>
+                <path>//renewalRule</path>
+                <content><![CDATA[<renewalRule xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <initialyActiveFor>3</initialyActiveFor>
+  <initialyActiveForUnit>MONTH</initialyActiveForUnit>
+  <autoRenew>true</autoRenew>
+  <endOfTermAction>TERMINATE</endOfTermAction>
+  <terminationReasonCode>TERM_REASON_1</terminationReasonCode>
+  <renewFor>2</renewFor>
+  <renewForUnit>MONTH</renewForUnit>
+  <extendAgreementPeriodToSubscribedTillDate>true</extendAgreementPeriodToSubscribedTillDate>
+</renewalRule>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 7">
+              <con:configuration>
+                <path>//subscribedTillDate</path>
+                <content>2016-06-25T00:00:00${#Project#timezone}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="179b3fbc-f6ba-4c63-b636-67f253b95948" name="XPath Match 8">
+              <con:configuration>
+                <path>//renewed</path>
+                <content>true</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 9">
+              <con:configuration>
+                <path>//subscription/endAgreementDate</path>
+                <content>2016-06-25T00:00:00${#Project#timezone}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 10">
+              <con:configuration>
+                <path>//subscription/subscriptionDate</path>
+                <content>2016-01-25T00:00:00${#Project#timezone}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Run Subscription status job again" id="669a5349-0a48-44e9-b6cc-f5fcdbcb643e">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>JobWsSoapBinding</con:interface>
+          <con:operation>execute</con:operation>
+          <con:request name="Run Subscription status job again" id="f44152d1-5d4d-4d57-ba38-7e8e3e881047">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/JobWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:execute>\r
+         <jobInstanceInfo code="Sub_Status_Job">\r
+         </jobInstanceInfo>\r
+      </ws:execute>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="2fa31fe9-3815-45f0-b88a-d90d6e345ec8"/>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Find Subscription after renewal 2" id="16e2ecca-7917-4f8e-a705-54a347863d22">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SubscriptionWsSoapBinding</con:interface>
+          <con:operation>findSubscription</con:operation>
+          <con:request name="Find Subscription after renewal 2" id="03614745-d791-4187-a28a-da9833308ae7">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SubscriptionWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findSubscription>\r
+         <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB</subscriptionCode>\r
+      </ws:findSubscription>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="46d17b43-2c05-48f5-a669-e1233de7d27a"/>
+            <con:assertion type="Simple Contains" id="b86be349-406a-41f7-ad57-8d656075c08f" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
+              <con:configuration>
+                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB">
+               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+               <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
+               <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="ab81d456-9f84-4c28-b48c-dace4a2e6856" name="Contains 2">
+              <con:configuration>
+                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE1" description="Service 1">
+                     &lt;status>ACTIVE&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="fe07d4f5-51a6-4005-96e9-53a7f4e9fb2f" name="XPath Match 1">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING"]/stringValue</path>
+                <content>Service CF value</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="dcc1e1d1-7ca1-4ab3-93af-dc2cb066bc55" name="XPath Match 2">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <mapValue>
+    <entry>
+      <key>Fifth|Fourth</key>
+      <value>
+        <stringValue>150</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>Fifth|Second</key>
+      <value>
+        <stringValue>100</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>key</key>
+      <value>
+        <stringValue>MAT_1/MAT_2</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</customField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="703fdac6-6e44-4163-8caa-71c4066a55d1" name="XPath Match 5">
+              <con:configuration>
+                <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE1']/subscriptionDate</path>
+                <content>2016-01-27T00:00:00${#Project#timezone}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="537c0b5d-5e54-47eb-88d5-f3d3d00abd64" name="XPath Match 6">
+              <con:configuration>
+                <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE1']/quantity</path>
+                <content>2.000000000000</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="1c793df2-a3cb-4ab2-84c3-4444741e36f0" name="XPath Match">
+              <con:configuration>
+                <path>//renewalRule</path>
+                <content><![CDATA[<renewalRule xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <initialyActiveFor>3</initialyActiveFor>
+  <initialyActiveForUnit>MONTH</initialyActiveForUnit>
+  <autoRenew>true</autoRenew>
+  <endOfTermAction>TERMINATE</endOfTermAction>
+  <terminationReasonCode>TERM_REASON_1</terminationReasonCode>
+  <renewFor>2</renewFor>
+  <renewForUnit>MONTH</renewForUnit>
+  <extendAgreementPeriodToSubscribedTillDate>true</extendAgreementPeriodToSubscribedTillDate>
+</renewalRule>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 7">
+              <con:configuration>
+                <path>//subscribedTillDate</path>
+                <content>2016-08-25T00:00:00${#Project#timezone}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="179b3fbc-f6ba-4c63-b636-67f253b95948" name="XPath Match 8">
+              <con:configuration>
+                <path>//renewed</path>
+                <content>true</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 9">
+              <con:configuration>
+                <path>//subscription/endAgreementDate</path>
+                <content>2016-08-25T00:00:00${#Project#timezone}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 10">
+              <con:configuration>
+                <path>//subscription/subscriptionDate</path>
+                <content>2016-01-25T00:00:00${#Project#timezone}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Update subscription - dont extend end agreement date" id="0d06b597-82aa-44de-a3bf-46a3dc8532c9">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SubscriptionWsSoapBinding</con:interface>
+          <con:operation>update</con:operation>
+          <con:request name="Update subscription - dont extend end agreement date" id="78b62f52-e128-4072-971f-02c3d4c4e3e8">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SubscriptionWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:update>\r
+         <subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB">\r
+            <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>\r
+            <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>\r
+            <subscriptionDate>2016-01-25</subscriptionDate>\r
+            <endAgreementDate>2016-08-25</endAgreementDate>\r
+            <services>\r
+               <serviceInstance code="${#Project#baseEntityPrefix}_SERVICE1" description="Service 1">\r
+                  <status>ACTIVE</status>\r
+                  <subscriptionDate>2016-01-27</subscriptionDate>\r
+                  <quantity>2.000000000000</quantity>\r
+                  <endAgreementDate>2016-02-22</endAgreementDate>\r
+                  <recurringChargeInstances>\r
+                     <recurringChargeInstance code="${#Project#baseEntityPrefix}_REC1" description="Recurring charge">\r
+                        <status>ACTIVE</status>\r
+                        <sellerCode>SELLER_FR</sellerCode>\r
+                        <userAccountCode>${#Project#baseEntityPrefix}_UA</userAccountCode>\r
+                     </recurringChargeInstance>\r
+                  </recurringChargeInstances>\r
+                  <subscriptionChargeInstances>\r
+                     <subscriptionChargeInstance code="${#Project#baseEntityPrefix}_OS1" description="One shot charge">\r
+                        <status>CLOSED</status>\r
+                        <sellerCode>SELLER_FR</sellerCode>\r
+                        <userAccountCode>${#Project#baseEntityPrefix}_UA</userAccountCode>\r
+                     </subscriptionChargeInstance>\r
+                  </subscriptionChargeInstances>\r
+                  <terminationChargeInstances>\r
+                     <terminationChargeInstance code="${#Project#baseEntityPrefix}_OST" description="One shot termination charge">\r
+                        <status>INACTIVE</status>\r
+                        <sellerCode>SELLER_FR</sellerCode>\r
+                        <userAccountCode>${#Project#baseEntityPrefix}_UA</userAccountCode>\r
+                     </terminationChargeInstance>\r
+                  </terminationChargeInstances>\r
+                  <usageChargeInstances>\r
+                     <usageChargeInstance code="${#Project#baseEntityPrefix}_USAGE1" description="Usage charge">\r
+                        <status>ACTIVE</status>\r
+                        <sellerCode>SELLER_FR</sellerCode>\r
+                        <userAccountCode>${#Project#baseEntityPrefix}_UA</userAccountCode>\r
+                     </usageChargeInstance>\r
+                  </usageChargeInstances>\r
+                  <orderNumber>95ef2db7-f492-4647-bf36-862cf3398457</orderNumber>\r
+               </serviceInstance>\r
+            </services>\r
+            <products/>\r
+            <orderNumber>95ef2db7-f492-4647-bf36-862cf3398457</orderNumber>\r
+            <renewalRule>\r
+               <autoRenew>true</autoRenew>
+               <endOfTermAction>TERMINATE</endOfTermAction>\r
+               <terminationReasonCode>TERM_REASON_1</terminationReasonCode>\r
+               <extendAgreementPeriodToSubscribedTillDate>false</extendAgreementPeriodToSubscribedTillDate>\r
+            </renewalRule>\r
+         </subscription>\r
+      </ws:update>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" name="Contains" id="a67c7e53-f712-404e-ba01-eaf27bb22b78">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Run Subscription status job again 2" id="6a45aa27-c943-415b-a46d-0ee7b43e003e">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>JobWsSoapBinding</con:interface>
+          <con:operation>execute</con:operation>
+          <con:request name="Run Subscription status job again 2" id="f44152d1-5d4d-4d57-ba38-7e8e3e881047">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/JobWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:execute>\r
+         <jobInstanceInfo code="Sub_Status_Job">\r
+         </jobInstanceInfo>\r
+      </ws:execute>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="2fa31fe9-3815-45f0-b88a-d90d6e345ec8"/>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Find Subscription after renewal 3" id="fca5b968-7ced-4c1f-9a0f-b8bc36f458c9">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SubscriptionWsSoapBinding</con:interface>
+          <con:operation>findSubscription</con:operation>
+          <con:request name="Find Subscription after renewal 3" id="03614745-d791-4187-a28a-da9833308ae7">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SubscriptionWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findSubscription>\r
+         <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB</subscriptionCode>\r
+      </ws:findSubscription>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="46d17b43-2c05-48f5-a669-e1233de7d27a"/>
+            <con:assertion type="Simple Contains" id="b86be349-406a-41f7-ad57-8d656075c08f" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
+              <con:configuration>
+                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB">
+               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+               <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
+               <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="ab81d456-9f84-4c28-b48c-dace4a2e6856" name="Contains 2">
+              <con:configuration>
+                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE1" description="Service 1">
+                     &lt;status>ACTIVE&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="fe07d4f5-51a6-4005-96e9-53a7f4e9fb2f" name="XPath Match 1">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING"]/stringValue</path>
+                <content>Service CF value</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="dcc1e1d1-7ca1-4ab3-93af-dc2cb066bc55" name="XPath Match 2">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <mapValue>
+    <entry>
+      <key>Fifth|Fourth</key>
+      <value>
+        <stringValue>150</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>Fifth|Second</key>
+      <value>
+        <stringValue>100</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>key</key>
+      <value>
+        <stringValue>MAT_1/MAT_2</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</customField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="703fdac6-6e44-4163-8caa-71c4066a55d1" name="XPath Match 5">
+              <con:configuration>
+                <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE1']/subscriptionDate</path>
+                <content>2016-01-27T00:00:00${#Project#timezone}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="537c0b5d-5e54-47eb-88d5-f3d3d00abd64" name="XPath Match 6">
+              <con:configuration>
+                <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE1']/quantity</path>
+                <content>2.000000000000</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="1c793df2-a3cb-4ab2-84c3-4444741e36f0" name="XPath Match">
+              <con:configuration>
+                <path>//renewalRule</path>
+                <content><![CDATA[<renewalRule xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <initialyActiveFor>3</initialyActiveFor>
+  <initialyActiveForUnit>MONTH</initialyActiveForUnit>
+  <autoRenew>true</autoRenew>
+  <endOfTermAction>TERMINATE</endOfTermAction>
+  <terminationReasonCode>TERM_REASON_1</terminationReasonCode>
+  <renewFor>2</renewFor>
+  <renewForUnit>MONTH</renewForUnit>
+  <extendAgreementPeriodToSubscribedTillDate>false</extendAgreementPeriodToSubscribedTillDate>
+</renewalRule>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 7">
+              <con:configuration>
+                <path>//subscribedTillDate</path>
+                <content>2016-10-25T00:00:00${#Project#timezone}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="179b3fbc-f6ba-4c63-b636-67f253b95948" name="XPath Match 8">
+              <con:configuration>
+                <path>//renewed</path>
+                <content>true</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 9">
+              <con:configuration>
+                <path>//subscription/endAgreementDate</path>
+                <content>2016-08-25T00:00:00${#Project#timezone}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 10">
+              <con:configuration>
+                <path>//subscription/subscriptionDate</path>
+                <content>2016-01-25T00:00:00${#Project#timezone}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Modify ordered product (subscription CF values, renew rule - only some will apply)" id="563ca943-2542-4b60-a049-92d509b0d231">
+        <con:settings/>
+        <con:config service="MEVEO JAX-WS API Documentation" resourcePath="/api/rest/orderManagement/productOrder" methodName="POST - createProductOrder" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Modify ordered product (subscription CF values, renew rule - only some will apply)" id="3e63d18c-0002-446a-940a-1e03685399a5" mediaType="application/json" postQueryString="false">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
+            <con:request>{   "orderDate": "2017-07-04T00:13:48-03:00",
+    "orderItem": [{
+    	   "id": "01",
+        "action": "modify",
+        "billingAccount": [{
+            "id": "${#Project#baseEntityPrefix}_UA"
+        }],
+        "productOffering": {
+            "id": "${#Project#baseEntityPrefix}_OFFER1"
+        },
+        "product": {
+            "id": "${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB",
+            "productCharacteristic": [{
+                "name": "endOfTermAction",
+                "value": "SUSPEND"
+            }, {
+                "name": "autoRenew",
+                "value": "false"
+            }, {
+                "name": "initialyActiveFor",
+                "value": "20"
+            }, {
+                "name": "renewForUnit",
+                "value": "DAY"
+            }, {
+                "name": "subscriptionEndDate",
+                "value": "2018-05-25"
+            }, {
+                "name": "initialyActiveForUnit",
+                "value": "DAY"
+            }, {
+                "name": "subscriptionDate",
+                "value": "2017-10-25"
+            }, {
+                "name": "extendAgreementPeriodToSubscribedTillDate",
+                "value": "true"
+            }, {
+                "name": "renewFor",
+                "value": "10"
+            }, {
+                "name": "renewTerminationReason",
+                "value": "TERM_REASON_2"
+            }, {
+                "name": "${#Project#baseEntityPrefix}_SUB_CF_LONG_MAP"
+            }, {
+                "name": "${#Project#baseEntityPrefix}_SUB_CF_PRICE",
+                "value": "5.0"
+            }, {
+                "name": "${#Project#baseEntityPrefix}_SUB_CF_STRING",
+                "value": "Subscription CF value"
+            }],
+            "productRelationship": [{
+                "type": "bundled",
+                "product": {
+                    "productCharacteristic": [{
+                        "name": "subscriptionDate",
+                        "value": "2016-01-27"
+                    }, {
+                        "name": "terminationReason",
+                        "value": ""
+                    }, {
+                        "name": "quantity",
+                        "value": "2.000000000000"
+                    }, {
+                        "name": "subscriptionEndDate",
+                        "value": "2017-08-25"
+                    }, {
+                        "name": "${#Project#baseEntityPrefix}_SERVICE_CF_STRING",
+                        "value": "Service CF value"
+                    }, {
+                        "name": "${#Project#baseEntityPrefix}_SERVICE_CF_PRICE",
+                        "value": "20.0"
+                    }, {
+                        "name": "${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX",
+                        "value": "matrix_String|MAT_1/MAT_2|{\"Fifth|Fourth\":\"150\",\"Fifth|Second\":\"100\"}"
+                    }, {
+                        "name": "serviceCode",
+                        "value": "${#Project#baseEntityPrefix}_SERVICE1"
+                    }]
+                }
+            }]
+        }
+    }]
+}</con:request>
+            <con:originalUri>http://localhost/opencell/api/rest/orderManagement/productOrder</con:originalUri>
+            <con:assertion type="Valid HTTP Status Codes" id="d2019593-3a6b-431a-a279-ed2dca1a1662" name="Valid HTTP Status Codes">
+              <con:configuration>
+                <codes>201</codes>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username/>
+              <con:password/>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters/>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Find Subscription after modify 4" id="e7ff947d-2324-44d9-b49d-34e0f3f08ea7">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SubscriptionWsSoapBinding</con:interface>
+          <con:operation>findSubscription</con:operation>
+          <con:request name="Find Subscription after modify 4" id="03614745-d791-4187-a28a-da9833308ae7">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SubscriptionWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findSubscription>\r
+         <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB</subscriptionCode>\r
+      </ws:findSubscription>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="46d17b43-2c05-48f5-a669-e1233de7d27a"/>
+            <con:assertion type="Simple Contains" id="b86be349-406a-41f7-ad57-8d656075c08f" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
+              <con:configuration>
+                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB">
+               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+               <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
+               <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="ab81d456-9f84-4c28-b48c-dace4a2e6856" name="Contains 2">
+              <con:configuration>
+                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE1" description="Service 1">
+                     &lt;status>ACTIVE&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="fe07d4f5-51a6-4005-96e9-53a7f4e9fb2f" name="XPath Match 1">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING"]/stringValue</path>
+                <content>Service CF value</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="dcc1e1d1-7ca1-4ab3-93af-dc2cb066bc55" name="XPath Match 2">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <mapValue>
+    <entry>
+      <key>Fifth|Fourth</key>
+      <value>
+        <stringValue>150</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>Fifth|Second</key>
+      <value>
+        <stringValue>100</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>key</key>
+      <value>
+        <stringValue>MAT_1/MAT_2</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</customField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="703fdac6-6e44-4163-8caa-71c4066a55d1" name="XPath Match 5">
+              <con:configuration>
+                <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE1']/subscriptionDate</path>
+                <content>2016-01-27T00:00:00${#Project#timezone}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="537c0b5d-5e54-47eb-88d5-f3d3d00abd64" name="XPath Match 6">
+              <con:configuration>
+                <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE1']/quantity</path>
+                <content>2.000000000000</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="1c793df2-a3cb-4ab2-84c3-4444741e36f0" name="XPath Match">
+              <con:configuration>
+                <path>//renewalRule</path>
+                <content><![CDATA[<renewalRule xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <initialyActiveFor>3</initialyActiveFor>
+  <initialyActiveForUnit>MONTH</initialyActiveForUnit>
+  <autoRenew>false</autoRenew>
+  <endOfTermAction>SUSPEND</endOfTermAction>
+  <terminationReasonCode>TERM_REASON_2</terminationReasonCode>
+  <renewFor>2</renewFor>
+  <renewForUnit>MONTH</renewForUnit>
+  <extendAgreementPeriodToSubscribedTillDate>true</extendAgreementPeriodToSubscribedTillDate>
+</renewalRule>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 7">
+              <con:configuration>
+                <path>//subscribedTillDate</path>
+                <content>2016-10-25T00:00:00${#Project#timezone}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="179b3fbc-f6ba-4c63-b636-67f253b95948" name="XPath Match 8">
+              <con:configuration>
+                <path>//renewed</path>
+                <content>true</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 9">
+              <con:configuration>
+                <path>//subscription/endAgreementDate</path>
+                <content>2016-08-25T00:00:00${#Project#timezone}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 10">
+              <con:configuration>
+                <path>//subscription/subscriptionDate</path>
+                <content>2016-01-25T00:00:00${#Project#timezone}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Run Subscription status job again 3" id="a0816b05-a014-484e-bd57-d811e7267aa8">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>JobWsSoapBinding</con:interface>
+          <con:operation>execute</con:operation>
+          <con:request name="Run Subscription status job again 3" id="f44152d1-5d4d-4d57-ba38-7e8e3e881047">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/JobWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:execute>\r
+         <jobInstanceInfo code="Sub_Status_Job">\r
+         </jobInstanceInfo>\r
+      </ws:execute>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="2fa31fe9-3815-45f0-b88a-d90d6e345ec8"/>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Find Subscription after suspension 5" id="12ede076-e72f-4842-8c7d-640527e2a340">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SubscriptionWsSoapBinding</con:interface>
+          <con:operation>findSubscription</con:operation>
+          <con:request name="Find Subscription after suspension 5" id="03614745-d791-4187-a28a-da9833308ae7">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SubscriptionWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findSubscription>\r
+         <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB</subscriptionCode>\r
+      </ws:findSubscription>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="46d17b43-2c05-48f5-a669-e1233de7d27a"/>
+            <con:assertion type="Simple Contains" id="b86be349-406a-41f7-ad57-8d656075c08f" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
+              <con:configuration>
+                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB">
+               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+               <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
+               <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>
+               <terminationDate>2016-10-25T00:00:00${#Project#timezone}</terminationDate>
+               <endAgreementDate>2016-08-25T00:00:00${#Project#timezone}</endAgreementDate>
+               <status>SUSPENDED</status>]]></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="ab81d456-9f84-4c28-b48c-dace4a2e6856" name="Contains 2">
+              <con:configuration>
+                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE1" description="Service 1">
+                     &lt;status>SUSPENDED&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="fe07d4f5-51a6-4005-96e9-53a7f4e9fb2f" name="XPath Match 1">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING"]/stringValue</path>
+                <content>Service CF value</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="dcc1e1d1-7ca1-4ab3-93af-dc2cb066bc55" name="XPath Match 2">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX"]</path>
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <mapValue>
+    <entry>
+      <key>Fifth|Fourth</key>
+      <value>
+        <stringValue>150</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>Fifth|Second</key>
+      <value>
+        <stringValue>100</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>key</key>
+      <value>
+        <stringValue>MAT_1/MAT_2</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</customField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="703fdac6-6e44-4163-8caa-71c4066a55d1" name="XPath Match 5">
+              <con:configuration>
+                <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE1']/subscriptionDate</path>
+                <content>2016-01-27T00:00:00${#Project#timezone}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="537c0b5d-5e54-47eb-88d5-f3d3d00abd64" name="XPath Match 6">
+              <con:configuration>
+                <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE1']/quantity</path>
+                <content>2.000000000000</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="1c793df2-a3cb-4ab2-84c3-4444741e36f0" name="XPath Match">
+              <con:configuration>
+                <path>//renewalRule</path>
+                <content><![CDATA[<renewalRule xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <initialyActiveFor>3</initialyActiveFor>
+  <initialyActiveForUnit>MONTH</initialyActiveForUnit>
+  <autoRenew>false</autoRenew>
+  <endOfTermAction>SUSPEND</endOfTermAction>
+  <terminationReasonCode>TERM_REASON_2</terminationReasonCode>
+  <renewFor>2</renewFor>
+  <renewForUnit>MONTH</renewForUnit>
+  <extendAgreementPeriodToSubscribedTillDate>true</extendAgreementPeriodToSubscribedTillDate>
+</renewalRule>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 7">
+              <con:configuration>
+                <path>//subscribedTillDate</path>
+                <content>2016-10-25T00:00:00${#Project#timezone}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="179b3fbc-f6ba-4c63-b636-67f253b95948" name="XPath Match 8">
+              <con:configuration>
+                <path>//renewed</path>
+                <content>true</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 9">
+              <con:configuration>
+                <path>//subscription/endAgreementDate</path>
+                <content>2016-08-25T00:00:00${#Project#timezone}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 10">
+              <con:configuration>
+                <path>//subscription/subscriptionDate</path>
+                <content>2016-01-25T00:00:00${#Project#timezone}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
         </con:config>
       </con:testStep>
       <con:properties/>
