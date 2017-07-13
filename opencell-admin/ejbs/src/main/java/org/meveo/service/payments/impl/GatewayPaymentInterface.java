@@ -1,5 +1,7 @@
 package org.meveo.service.payments.impl;
 
+import java.util.Map;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.payment.DoPaymentResponseDto;
 import org.meveo.model.payments.CreditCardTypeEnum;
@@ -27,10 +29,11 @@ public interface GatewayPaymentInterface {
 	 * 
 	 * @param paymentToken
 	 * @param ctsAmount
+	 * @param additionalParams
 	 * @return
 	 * @throws BusinessException
 	 */
-	public DoPaymentResponseDto doPaymentToken(PaymentToken paymentToken, Long ctsAmount)throws BusinessException;
+	public DoPaymentResponseDto doPaymentToken(PaymentToken paymentToken, Long ctsAmount,Map<String,Object> additionalParams)throws BusinessException;
 	
 	
 	/**
@@ -45,7 +48,8 @@ public interface GatewayPaymentInterface {
 	 * @return
 	 * @throws BusinessException
 	 */
-	public DoPaymentResponseDto doPaymentCard(CustomerAccount customerAccount, Long ctsAmount,String cardNumber,String ownerName, String cvv,String expirayDate,CreditCardTypeEnum cardType,String countryCode)throws BusinessException;
+	public DoPaymentResponseDto doPaymentCard(CustomerAccount customerAccount, Long ctsAmount,String cardNumber,String ownerName, String cvv,String expirayDate,CreditCardTypeEnum cardType,
+			String countryCode,Map<String,Object> additionalParams)throws BusinessException;
 	
 	/**
 	 * This makes it impossible to process the payment any further and will also try to reverse an authorization on a card.

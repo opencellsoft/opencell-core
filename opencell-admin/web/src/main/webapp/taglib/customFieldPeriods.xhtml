@@ -24,11 +24,14 @@
 
 <ui:composition>
 
-    <c:set var="cfValueHolder" value="#{customFieldDataEntryBean.getFieldValueHolderByUUID(entity.uuid)}" />
+	<c:if test="#{cfVersionableValues eq null}">
+    	<c:set var="cfValueHolder" value="#{customFieldDataEntryBean.getFieldValueHolderByUUID(entity.uuid)}" />
+		<c:set var="cfVersionableValues" value="#{cfValueHolder.values[cft.code]}" />
+	</c:if>
 
     <o:importConstants type="org.meveo.model.crm.custom.CustomFieldTypeEnum" />
     <o:importConstants type="org.meveo.model.crm.custom.CustomFieldStorageTypeEnum" />
-    <p:dataTable id="periodTable_omitFromSubmit" lazy="false" value="#{cfValueHolder.values[cft.code]}" var="period"
+    <p:dataTable id="#{prefix}periodTable_omitFromSubmit" lazy="false" value="#{cfVersionableValues}" var="period"
         sortField="#{cft.calendar!=null?period.period.from:period.priority}" editable="#{edit and cft.storageType==CustomFieldStorageTypeEnum.SINGLE and !disabled}"
         editMode="cell" resizableColumns="true" reflow="true">
 
@@ -69,7 +72,7 @@
                 <p:resetInput target=":#{p:component(prefix.concat('periodFields'))}" />
             </p:commandButton>
             <!-- <p:commandButton id="deletelink" action="#{cft.instance.removeValuePeriod(period)}" partialSubmit="true" process="@this" icon="ui-icon-trash"
-                                        update="periodTable_omitFromSubmit" rendered="#{edit}" /> -->
+                                        update="#{prefix}periodTable_omitFromSubmit" rendered="#{edit}" /> -->
         </p:column>
         <f:facet name="footer">
             <p:messages globalOnly="false" redisplay="false" />
@@ -96,22 +99,21 @@
                 </c:if>
             </hf:namingContainer>
 
-            <p:commandButton value="#{messages['customFieldTemplate.addNewPeriod']}" partialSubmit="true" process="@this addNewFields" update="periodTable_omitFromSubmit"
+            <p:commandButton value="#{messages['customFieldTemplate.addNewPeriod']}" partialSubmit="true" process="@this addNewFields" update="#{prefix}periodTable_omitFromSubmit"
                 action="#{customFieldDataEntryBean.addNewValuePeriod(cfValueHolder, cft)}" 
                 rendered="#{edit and !disabled and cft.storageType == CustomFieldStorageTypeEnum.SINGLE}">
                 <p:resetInput target="addNewFields" />
             </p:commandButton>
 
             <p:commandButton value="#{messages['customFieldTemplate.addNewPeriod']}" partialSubmit="true" process="@this addNewFields"
-                update="periodTable_omitFromSubmit :#{p:component(prefix.concat('periodFields'))}"
+                update="#{prefix}periodTable_omitFromSubmit :#{p:component(prefix.concat('periodFields'))}"
                 oncomplete="if (args &amp;&amp; !args.validationFailed) PF('#{prefix}periodValuesDialogWidget').show()"
                 action="#{customFieldDataEntryBean.addNewValuePeriod(cfValueHolder, cft)}" 
-                actionListener="#{cfValueHolder.setSelectedValuePeriodId(':'.concat(clientGuiId.concat(':periodTable_omitFromSubmit')))}" 
+                actionListener="#{cfValueHolder.setSelectedValuePeriodId(':'.concat(clientGuiId.concat(':#{prefix}periodTable_omitFromSubmit')))}" 
                 rendered="#{edit and !disabled and cft.storageType != CustomFieldStorageTypeEnum.SINGLE}">
                 <p:resetInput target="addNewFields" />
                 <p:resetInput target=":#{p:component(prefix.concat('periodFields'))}" />
             </p:commandButton>
-
 
         </f:facet>
     </p:dataTable>

@@ -78,11 +78,11 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 				matchingAmount.setMatchingAmount(amountToMatch);
 			}
 			accountOperationService.update(accountOperation);
-			
+
 			matchingAmount.updateAudit(currentUser);
 			matchingAmount.setAccountOperation(accountOperation);
 			matchingAmount.setMatchingCode(matchingCode);
-			
+
 			accountOperation.getMatchingAmounts().add(matchingAmount);
 			matchingCode.getMatchingAmounts().add(matchingAmount);			
 		}
@@ -91,6 +91,19 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 		matchingCode.setMatchingDate(new Date());
 		matchingCode.setMatchingType(matchingTypeEnum);
 		create(matchingCode);
+
+	}
+
+	public void unmatchingByAOid(Long aoID) throws BusinessException {
+
+		AccountOperation accountOperation = accountOperationService.findById(aoID);
+		if(accountOperation == null){
+			throw new BusinessException("Cant find account operation by id:"+aoID);
+		}
+		if(!MatchingStatusEnum.L.name().equals(accountOperation.getMatchingStatus().name())){
+			throw new BusinessException("The account operation is unmatched");
+		}
+		unmatching(accountOperation.getMatchingAmounts().get(0).getMatchingCode().getId());
 
 	}
 
@@ -135,8 +148,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 		CustomerAccount customerAccount = customerAccountService.findCustomerAccount(customerAccountId, customerAccountCode);
 
 		BigDecimal amoutDebit = new BigDecimal(0);
-		BigDecimal amoutCredit = new BigDecimal(0);
-		List<AccountOperation> listAccountOperationOfAccountCustomer = customerAccount.getAccountOperations();
+		BigDecimal amoutCredit = new BigDecimal(0);		
 		List<AccountOperation> listOcc = new ArrayList<AccountOperation>();
 		MatchingReturnObject matchingReturnObject = new MatchingReturnObject();
 		matchingReturnObject.setOk(false);
@@ -154,7 +166,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 		}
 
 		for (AccountOperation accountOperation : listOcc) {
-			if (!listAccountOperationOfAccountCustomer.contains(accountOperation)) {
+			if (!accountOperation.getCustomerAccount().getCode().equals(customerAccount.getCode())) {
 				log.warn("matchOperations The operationId " + accountOperation.getId() + " is not for the customerAccount");
 				throw new BusinessException("The operationId " + accountOperation.getId() + " is not for the customerAccount");
 			}
@@ -180,7 +192,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 		BigDecimal balance = amoutDebit.subtract(amoutCredit);
 		balance = balance.abs();
 		BigDecimal matchedAmount = amoutDebit;
-		
+
 
 		log.info("matchOperations  balance:" + balance);
 
@@ -190,7 +202,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 			log.info("matchOperations successful : no partial");
 			return matchingReturnObject;
 		}
-		
+
 		if( matchedAmount.compareTo(amoutCredit)>0){
 			matchedAmount = amoutCredit;
 		}

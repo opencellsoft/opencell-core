@@ -23,7 +23,6 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.crm.custom.EntityCustomAction;
 import org.meveo.model.scripts.ScriptInstance;
@@ -236,6 +235,7 @@ public class EntityCustomActionApi extends BaseApi {
         action.setApplicableOnEl(dto.getApplicableOnEl());
         action.setAppliesTo(dto.getAppliesTo());
         action.setLabel(dto.getLabel());
+        action.setGuiPosition(dto.getGuiPosition());
 
         // Extract script associated with an action
         ScriptInstance scriptInstance = null;
@@ -253,6 +253,7 @@ public class EntityCustomActionApi extends BaseApi {
 
     }
     
+	@SuppressWarnings("rawtypes")
 	public String execute(String actionCode, String appliesTo, String entityCode) throws MeveoApiException, InvalidScriptException, ElementNotFoundException, InvalidPermissionException, BusinessException {
 		EntityCustomAction action = entityCustomActionService.findByCodeAndAppliesTo(actionCode, appliesTo);
 		if (action == null) {

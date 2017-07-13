@@ -41,6 +41,7 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
@@ -89,10 +90,9 @@ public class PDFParametersConstruction {
 			BillingCycle billingCycle = null;
 			if (billingAccount!= null && billingAccount.getBillingCycle()!= null) {
 				billingCycle=billingAccount.getBillingCycle();
-			}			
-			String billingTemplateName = billingCycle != null
-					&& billingCycle.getBillingTemplateName() != null ? billingCycle
-					.getBillingTemplateName() : "default";
+			}	
+			
+            String billingTemplateName = InvoiceService.getInvoiceTemplateName(billingCycle, invoice.getInvoiceType());
 
 			ParamBean paramBean = ParamBean.getInstance();
 			String meveoDir = paramBean.getProperty("providers.rootDir",

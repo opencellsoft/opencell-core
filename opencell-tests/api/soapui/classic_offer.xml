@@ -1464,7 +1464,7 @@
   </con:interface>
   <con:interface xsi:type="con:RestService" id="cbea8ecf-a6c3-4d0d-a813-222e3d4af5ee" wadlVersion="http://wadl.dev.java.net/2009/02" name="Classic offer" type="rest" definitionUrl="hierar" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints/>
+    <con:definitionCache/><con:endpoints/>
   </con:interface>
   <con:interface xsi:type="con:RestService" id="7959a799-a204-4db3-a820-bb959de54cab" wadlVersion="http://wadl.dev.java.net/2009/02" name="MEVEO JAX-WS API Documentation" type="rest" basePath="/api/rest" definitionUrl="" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>

@@ -44,7 +44,7 @@ import org.meveo.model.crm.BusinessAccountModel;
 @ObservableEntity
 @VersionedEntity
 @MultilanguageEntity(key = "menu.catalog.offersAndProducts", group = "ProductOffering")
-@ExportIdentifier({ "code", "validity.startDate", "validity.endDate" })
+@ExportIdentifier({ "code", "validity.from", "validity.to" })
 @Table(name = "cat_offer_template", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "valid_from", "valid_to" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cat_offer_template_seq"), })
@@ -92,7 +92,7 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
     @ManyToMany
     @JoinTable(name = "cat_product_offer_channels", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "channel_id"))
     @OrderColumn(name = "INDX")
-    private List<Channel> channels = new ArrayList<Channel>();;
+    private List<Channel> channels = new ArrayList<Channel>();
 
     public void addOfferTemplateCategory(OfferTemplateCategory offerTemplateCategory) {
         if (getOfferTemplateCategories() == null) {

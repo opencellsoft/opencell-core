@@ -125,6 +125,8 @@ public class OrderApi extends BaseApi {
         order.setDescription(productOrder.getDescription());
         order.setExternalId(productOrder.getExternalId());
         order.setReceivedFromApp("API");
+        order.setPaymentMethod(productOrder.getPaymentMethod());
+        order.setDueDateDelayEL(productOrder.getDueDateDelayEL());
 
         order.setOrderDate(productOrder.getOrderDate() != null ? productOrder.getOrderDate() : new Date());
         if (!StringUtils.isBlank(productOrder.getPriority())) {
@@ -792,6 +794,8 @@ public class OrderApi extends BaseApi {
         productOrder.setRequestedCompletionDate(order.getRequestedCompletionDate());
         productOrder.setRequestedStartDate(order.getRequestedStartDate());
         productOrder.setState(order.getStatus().getApiState());
+        productOrder.setPaymentMethod(order.getPaymentMethod());
+        productOrder.setDueDateDelayEL(order.getDueDateDelayEL());
 
         List<ProductOrderItem> productOrderItems = new ArrayList<>();
         productOrder.setOrderItem(productOrderItems);

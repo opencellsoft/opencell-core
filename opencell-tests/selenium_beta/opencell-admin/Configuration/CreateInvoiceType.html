@@ -67,6 +67,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td>${accountOperation}</td>
+</tr>
+<tr>
 	<td>waitForText</td>
 	<td>//tbody[@id='searchOccTemplatePopuppopupForm:searchOccTemplatePopupdatatable_data']/tr/td</td>
 	<td>${accountOperation}</td>
@@ -142,13 +147,13 @@
 	<td></td>
 </tr>
 <tr>
-	<td>click</td>
+	<td>clickAndWait</td>
 	<td>${saveButtonWhenCreate}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForPageToLoad</td>
-	<td>${defaultTimeout}</td>
+	<td>waitForElementPresent</td>
+	<td>${infoSummary}</td>
 	<td></td>
 </tr>
 <tr>

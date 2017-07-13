@@ -58,22 +58,20 @@ public class InvoiceTypeBean extends BaseBean<InvoiceType> {
 		super(InvoiceType.class);
 	}
 
-	
-	
-	  @Override
-	    @ActionMethod
-	    public String saveOrUpdate(boolean killConversation) throws BusinessException {
-	        log.trace("saving new InvoiceType={}", entity.getCode());
-	        getEntity().getAppliesTo().clear();
-	        getEntity().getAppliesTo().addAll(invoiceTypeService.refreshOrRetrieve(invoiceTypesDM.getTarget()));
-	        if(entity.getSequence().getCurrentInvoiceNb().longValue() 
-					< invoiceTypeService.getMaxCurrentInvoiceNumber(entity.getCode()).longValue()) {
-				messages.error(new BundleKey("messages", "invoice.downgrade.cuurrentNb.error.msg"));
-				return null;
-			}
-	        return super.saveOrUpdate(killConversation);
-	    }
-	  
+    @Override
+    @ActionMethod
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
+        log.trace("saving new InvoiceType={}", entity.getCode());
+        getEntity().getAppliesTo().clear();
+        getEntity().getAppliesTo().addAll(invoiceTypeService.refreshOrRetrieve(invoiceTypesDM.getTarget()));
+        if (entity.getSequence() != null && entity.getSequence().getCurrentInvoiceNb() != null
+                && entity.getSequence().getCurrentInvoiceNb().longValue() < invoiceTypeService.getMaxCurrentInvoiceNumber(entity.getCode()).longValue()) {
+            messages.error(new BundleKey("messages", "invoice.downgrade.cuurrentNb.error.msg"));
+            return null;
+        }
+        return super.saveOrUpdate(killConversation);
+    }
+
 	/**
 	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
 	 */

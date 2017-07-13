@@ -16,11 +16,13 @@ import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.account.AccessApi;
+import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
 import org.meveo.api.dto.account.ApplyProductRequestDto;
 import org.meveo.api.dto.billing.ActivateServicesRequestDto;
 import org.meveo.api.dto.billing.ChargeInstanceOverrideDto;
+import org.meveo.api.dto.billing.DueDateDelayDto;
 import org.meveo.api.dto.billing.InstantiateServicesRequestDto;
 import org.meveo.api.dto.billing.OperationServicesRequestDto;
 import org.meveo.api.dto.billing.ProductDto;
@@ -35,6 +37,7 @@ import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.billing.UpdateServicesRequestDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
+import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -43,8 +46,14 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.DueDateDelayEnum;
 import org.meveo.model.billing.InstanceStatusEnum;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.ProductChargeInstance;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.ServiceInstance;
@@ -55,12 +64,16 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.mediation.Access;
+import org.meveo.model.order.Order;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.ChargeInstanceService;
+import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 import org.meveo.service.billing.impl.ProductInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
@@ -68,10 +81,12 @@ import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.TerminationReasonService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletTemplateService;
+import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.order.OrderService;
 
 @Stateless
 public class SubscriptionApi extends BaseApi {
@@ -115,6 +130,19 @@ public class SubscriptionApi extends BaseApi {
     @Inject
 	private ProductInstanceService productInstanceService;
     
+    @Inject
+
+    private InvoiceService invoiceService;
+    
+    @Inject
+    private InvoiceTypeService invoiceTypeService;
+    
+    @Inject
+    private OrderService orderService;
+
+    private CatMessagesService catMessagesService;
+    
+
 
     public void create(SubscriptionDto postData) throws MeveoApiException, BusinessException {
 
@@ -1130,6 +1158,104 @@ public class SubscriptionApi extends BaseApi {
 		}
 
 		return result;
+	}
+
+	public DueDateDelayDto getDueDateDelay(String subscriptionCode, String invoiceNumber, String invoiceTypeCode,
+			String orderCode) throws MeveoApiException, BusinessException {
+		if (StringUtils.isBlank(subscriptionCode)) {
+			missingParameters.add("subscriptionCode");
+		}
+
+		Subscription subscription = subscriptionService.findByCode(subscriptionCode);
+		if (subscription == null) {
+			throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
+		}
+		
+		handleMissingParameters();
+
+		DueDateDelayDto result = new DueDateDelayDto();
+
+		Invoice invoice = null;
+		if (!StringUtils.isBlank(invoiceNumber) && !StringUtils.isBlank(invoiceTypeCode)) {
+			InvoiceType invoiceType = invoiceTypeService.findByCode(invoiceTypeCode);
+			if (invoiceType != null) {
+				invoice = invoiceService.findByInvoiceNumberAndType(invoiceNumber, invoiceType);
+			}
+		}
+
+		Order order = null;
+		if (!StringUtils.isBlank(orderCode)) {
+			order = orderService.findByCode(orderCode);
+		}
+
+		BillingAccount billingAccount = subscription.getUserAccount().getBillingAccount();
+		BillingCycle billingCycle = billingAccount.getBillingCycle();
+
+		Integer delay = billingCycle.getDueDateDelay();
+		String delayEL = billingCycle.getDueDateDelayEL();
+		DueDateDelayEnum delayOrigin = DueDateDelayEnum.BC;
+		if (order != null && !StringUtils.isBlank(order.getDueDateDelayEL())) {
+			delay = invoiceService.evaluateIntegerExpression(order.getDueDateDelayEL(), billingAccount, invoice, order);
+			delayEL = order.getDueDateDelayEL();
+			delayOrigin = DueDateDelayEnum.ORDER;
+		} else {
+			if (!StringUtils.isBlank(billingAccount.getCustomerAccount().getDueDateDelayEL())) {
+				delay = invoiceService.evaluateIntegerExpression(
+						billingAccount.getCustomerAccount().getDueDateDelayEL(), billingAccount, invoice, null);
+				delayEL = billingAccount.getCustomerAccount().getDueDateDelayEL();
+				delayOrigin = DueDateDelayEnum.CA;
+			} else if (!StringUtils.isBlank(billingCycle.getDueDateDelayEL())) {
+				delay = invoiceService.evaluateIntegerExpression(billingCycle.getDueDateDelayEL(), billingAccount,
+						invoice, null);
+				delayEL = billingCycle.getDueDateDelayEL();
+				delayOrigin = DueDateDelayEnum.ORDER;
+			}
+		}
+
+		result.setComputedDelay(delay);
+		result.setDelayEL(delayEL);
+		result.setDelayOrigin(delayOrigin);
+		
+		return result;
+	}
+	
+	/**
+	 * @param type of one shot charge (SUBSCRIPTION, TERMINATION, OTHER)
+	 * @return list of one shot charge template type other.s
+	 * 
+	 */
+	private List<OneShotChargeTemplateDto> getOneShotCharges(OneShotChargeTemplateTypeEnum type) {
+		List<OneShotChargeTemplateDto> results = new ArrayList<OneShotChargeTemplateDto>();
+		if (oneShotChargeTemplateService == null) {
+			return results;
+		}
+		
+		List<OneShotChargeTemplate> list = oneShotChargeTemplateService.list();
+		for (OneShotChargeTemplate chargeTemplate : list) {
+			if (chargeTemplate.getOneShotChargeTemplateType() == type) {
+				OneShotChargeTemplateDto oneshotChartTemplateDto = new OneShotChargeTemplateDto(chargeTemplate,
+						entityToDtoConverter.getCustomFieldsWithInheritedDTO(chargeTemplate, true));
+				List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
+				for (CatMessages msg : catMessagesService
+						.getCatMessagesList(OneShotChargeTemplate.class.getSimpleName(), chargeTemplate.getCode())) {
+					languageDescriptions.add(new LanguageDescriptionDto(msg.getLanguageCode(), msg.getDescription()));
+				}
+
+				oneshotChartTemplateDto.setLanguageDescriptions(languageDescriptions);
+
+				results.add(oneshotChartTemplateDto);
+			}
+		}
+
+		return results;
+	}
+	
+	
+	/**
+	 * @return list of one shot charge others.
+	 */
+	public  List<OneShotChargeTemplateDto> getOneShotChargeOthers() {
+		return this.getOneShotCharges(OneShotChargeTemplateTypeEnum.OTHER);
 	}
 	
 }

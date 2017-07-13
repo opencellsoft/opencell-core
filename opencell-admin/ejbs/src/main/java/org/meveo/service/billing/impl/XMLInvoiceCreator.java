@@ -270,9 +270,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			}
 		}
 
-		invoiceTag.setAttribute("templateName", billingCycle != null
-				&& billingCycle.getBillingTemplateName() != null ? billingCycle.getBillingTemplateName()
-						: "default");
+        String billingTemplateName = InvoiceService.getInvoiceTemplateName(billingCycle, invoice.getInvoiceType());
+
+		invoiceTag.setAttribute("templateName", billingTemplateName);
 		doc.appendChild(invoiceTag);
 		invoiceTag.appendChild(header);
 		// log.debug("creating provider");
@@ -431,6 +431,12 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					invoiceDateFormat));
 			dueDate.appendChild(dueDateTxt);
 			header.appendChild(dueDate);
+		}
+		
+		if(invoice.getPaymentMethod() != null) {
+			Element paymentMethod = doc.createElement("paymentMethod");
+			paymentMethod.appendChild(doc.createTextNode(invoice.getPaymentMethod().name()));
+			header.appendChild(paymentMethod);
 		}
 
 		Element comment = doc.createElement("comment");

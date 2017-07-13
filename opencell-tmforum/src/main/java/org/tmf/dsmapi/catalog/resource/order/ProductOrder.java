@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.tmf.dsmapi.catalog.resource.RelatedParty;
 import org.tmf.dsmapi.serialize.CustomDateSerializer;
 
@@ -50,6 +51,9 @@ public class ProductOrder implements Serializable {
     private List<ProductOrderItem> orderItem;
 
     private CustomFieldsDto customFields = new CustomFieldsDto();
+    
+	private PaymentMethodEnum paymentMethod;
+	private String dueDateDelayEL;
 
     public String getId() {
         return id;
@@ -186,4 +190,20 @@ public class ProductOrder implements Serializable {
     public void setCustomFields(CustomFieldsDto customFields) {
         this.customFields = customFields;
     }
+
+	public PaymentMethodEnum getPaymentMethod() {
+		return paymentMethod;
+	}
+
+	public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
+		this.paymentMethod = paymentMethod;
+	}
+
+	public String getDueDateDelayEL() {
+		return dueDateDelayEL;
+	}
+
+	public void setDueDateDelayEL(String dueDateDelayEL) {
+		this.dueDateDelayEL = dueDateDelayEL;
+	}
 }
