@@ -32,6 +32,7 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
+import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.Address;
 
@@ -318,8 +319,8 @@ public class Order extends BusinessCFEntity {
 		this.dueDateDelayEL = dueDateDelayEL;
 	}
 
-	public PaymentMethodEnum getPaymentMethod() {
-		return paymentMethod;
+	public PaymentMethod getPaymentMethod() {
+		return null;
 	}
 
 	public void setPaymentMethod(PaymentMethodEnum paymentMethod) {

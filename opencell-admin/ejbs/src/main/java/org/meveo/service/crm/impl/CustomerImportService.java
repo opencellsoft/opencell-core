@@ -15,7 +15,6 @@ import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.payments.DunningLevelEnum;
-import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Title;
@@ -121,9 +120,7 @@ public class CustomerImportService extends ImportService {
         }
         customerAccount.setExternalRef1(custAcc.getExternalRef1());
         customerAccount.setExternalRef2(custAcc.getExternalRef2());
-        if (!StringUtils.isBlank(custAcc.getPaymentMethod())) {
-            customerAccount.setPaymentMethod(PaymentMethodEnum.valueOf(custAcc.getPaymentMethod()));
-        }
+
         org.meveo.model.shared.Name name = new org.meveo.model.shared.Name();
 
         if (custAcc.getName() != null) {
@@ -210,9 +207,7 @@ public class CustomerImportService extends ImportService {
         }
         customerAccount.setExternalRef1(custAcc.getExternalRef1());
         customerAccount.setExternalRef2(custAcc.getExternalRef2());
-        if (!StringUtils.isBlank(custAcc.getPaymentMethod())) {
-            customerAccount.setPaymentMethod(PaymentMethodEnum.valueOf(custAcc.getPaymentMethod()));
-        }
+
         org.meveo.model.shared.Name name = new org.meveo.model.shared.Name();
 
         if (custAcc.getName() != null) {

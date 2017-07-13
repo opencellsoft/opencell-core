@@ -19,7 +19,6 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.AccountImportHisto;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jaxb.account.Address;
-import org.meveo.model.jaxb.account.BankCoordinates;
 import org.meveo.model.jaxb.account.BillingAccount;
 import org.meveo.model.jaxb.account.BillingAccounts;
 import org.meveo.model.jaxb.account.Name;
@@ -105,14 +104,12 @@ public class ExportAccountsJobBean {
             dto.setAddress(new Address(ba.getAddress()));
             dto.setElectronicBilling(ba.getElectronicBilling() == null ? null : ba.getElectronicBilling() + "");
             dto.setEmail(ba.getEmail() == null ? null : ba.getEmail());
-            dto.setBankCoordinates(new BankCoordinates(ba.getBankCoordinates()));
             dto.setTradingCountryCode(ba.getTradingCountry() == null ? null : ba.getTradingCountry().getCountryCode());
             dto.setTradingLanguageCode(ba.getTradingLanguage() == null ? null : ba.getTradingLanguage().getLanguageCode());
             dto.setCustomFields(CustomFields.toDTO(customFieldInstanceService.getCustomFieldInstances(ba)));
             dto.setUserAccounts(userAccountsToDto(ba.getUsersAccounts(), dateFormat));
             dto.setCode(ba.getCode() == null ? null : ba.getCode());
             dto.setCustomerAccountId(ba.getCustomerAccount().getCode());
-            dto.setPaymentMethod(ba.getPaymentMethod() == null ? null : ba.getPaymentMethod().name());
             dto.setBillingCycle(ba.getBillingCycle() == null ? null : ba.getBillingCycle().getCode());
         }
 

@@ -23,36 +23,9 @@ package org.meveo.model.payments;
  */
 public enum PaymentMethodEnum {
 
-    CHECK(1, "paymentMethod.check"),
-    DIRECTDEBIT(2, "paymentMethod.directDebit"),
-    TIP(3, "paymentMethod.tip"),
-    WIRETRANSFER(4, "paymentMethod.wiretransfer"),
-    CARD(5,"paymentMethod.card");
-
-    private String label;
-    private Integer id;
-
-    PaymentMethodEnum(Integer id, String label) {
-        this.label = label;
-        this.id = id;
-    }
+    CHECK, DIRECTDEBIT, TIP, WIRETRANSFER, CARD;
 
     public String getLabel() {
-        return this.label;
-    }
-
-    public Integer getId() {
-        return this.id;
-    }
-
-    public static PaymentMethodEnum getValue(Integer id) {
-        if (id != null) {
-            for (PaymentMethodEnum status : values()) {
-                if (id.equals(status.getId())) {
-                    return status;
-                }
-            }
-        }
-        return null;
+        return this.getClass().getSimpleName() + "." + this.name();
     }
 }

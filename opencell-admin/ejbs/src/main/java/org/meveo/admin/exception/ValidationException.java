@@ -28,6 +28,8 @@ public class ValidationException extends BusinessException {
 
     private static final long serialVersionUID = 4921614951372762464L;
 
+    private String messageKey;
+
     public ValidationException() {
         super();
     }
@@ -40,8 +42,20 @@ public class ValidationException extends BusinessException {
         super(message);
     }
 
+    /**
+     * @param message Message to log or display in GUI if message key is not provided
+     * @param messageKey An optional message key to be displayed in GUI
+     */
+    public ValidationException(String message, String messageKey) {
+        super(message);
+        this.messageKey = messageKey;
+    }
+
     public ValidationException(Throwable cause) {
         super(cause);
     }
 
+    public String getMessageKey() {
+        return messageKey;
+    }
 }

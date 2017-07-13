@@ -19,18 +19,18 @@
             <c:if test="#{spinner and listValues == null}">
 
                 <c:if test="#{not empty(maxValue) and !negativeValue}">
-                    <p:spinner id="#{id}" disabled="#{disabled}" value="#{fieldItem}" required="#{required}" min="#{minValue}" max="#{maxValue}" maxlength="#{maxlength}">
+                    <p:spinner id="#{id}" disabled="#{disabled}" value="#{fieldItem}" required="#{required}" min="#{minValue}" max="#{maxValue}" maxlength="#{maxlength}" size="#{size}">
                         <f:converter converterId="#{converter}" />
                     </p:spinner>
                 </c:if>
                 <c:if test="#{empty(maxValue) and !negativeValue}">
-                    <p:spinner id="#{id}" disabled="#{disabled}" value="#{fieldItem}" required="#{required}" min="#{minValue}" maxlength="#{maxlength}">
+                    <p:spinner id="#{id}" disabled="#{disabled}" value="#{fieldItem}" required="#{required}" min="#{minValue}" maxlength="#{maxlength}" size="#{size}">
                         <f:converter converterId="#{converter}" />
                     </p:spinner>
                 </c:if>
                 <!--  for negative values, it is duplicated because if we set minValue=-99999999 the default value diplayed in GUI is -99999999 -->
                 <c:if test="#{negativeValue}">
-                    <p:spinner id="#{id}" disabled="#{disabled}" value="#{fieldItem}" required="#{required}" maxlength="#{maxlength}">
+                    <p:spinner id="#{id}" disabled="#{disabled}" value="#{fieldItem}" required="#{required}" maxlength="#{maxlength}" size="#{size}">
                         <f:converter converterId="#{converter}" />
                     </p:spinner>
                 </c:if>

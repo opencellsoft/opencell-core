@@ -29,7 +29,6 @@ xmlns:h="http://xmlns.jcp.org/jsf/html"
             <hftl:searchField label="#{messages['businessEntity.description']}" field="description" />
             <hftl:searchField label="#{messages['customerAccount.name']}" field="name" />
             <hftl:searchField label="#{messages['customerAccount.status']}" field="status" />
-            <hftl:searchField label="#{messages['customerAccount.paymentMethod']}" field="paymentMethod" />
             <hftl:searchField label="#{messages['customerAccount.creditCategory']}" field="creditCategory.code" />
         </hftl:searchPanel>
 
@@ -39,7 +38,6 @@ xmlns:h="http://xmlns.jcp.org/jsf/html"
             <hftl:column label="#{messages['customerAccount.name']}" field="name" titleWithMessage="true" />
             <hftl:column label="#{messages['customerAccount.customer']}" field="customer.code" valueIdField="customer.id" propagateConversation="false" entityView="customerDetail"
                 objectIdParamName="customerId" />
-            <hftl:column label="#{messages['customerAccount.paymentMethod']}" field="paymentMethod.label" isMessage="true" />
             <hftl:column label="#{messages['customerAccount.creditCategory']}" field="creditCategory.code" />
             <hftl:column label="#{messages['tradingCountry.languageCode']}" field="tradingLanguage.language.languageCode" />
             <hftl:column label="#{messages['currency.codeCurrency']}" field="tradingCurrency.currency.currencyCode" />

@@ -39,15 +39,13 @@
         <sql>insert into dwh_chart_seq (select IFNULL(max(id),0)+1 from dwh_chart)</sql>
      </changeSet>
      
-     <changeSet
-		id="#2408_20170623-Override payment method and due date delay in order"
-		author="EdwardLegaspi">
+    <changeSet id="#2408_20170623-Override payment method and due date delay in order" author="EdwardLegaspi">
 		<addColumn tableName="ord_order">
 			<column name="due_date_delay_el" type="varchar(2000)" />
 			<column name="payment_method" type="varchar(20)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="#2665_20170710-Add guiPosition to custom action" author="EdwardLegaspi">
 		<addColumn tableName="crm_custom_action">
 			<column name="gui_position" type="varchar(100)" />
@@ -59,4 +57,52 @@
             <column name="billing_template_name" type="varchar(50)" />
         </addColumn>
     </changeSet>
+    <changeSet id="#2406_20170710" author="AndriusKarpavicius">
+        <addColumn tableName="ar_payment_token">
+            <column name="bank_code" type="varchar(5)" />
+            <column name="branch_code" type="varchar(5)" />
+            <column name="account_number" type="varchar(11)" />
+            <column name="hash_key" type="varchar(2)" />
+            <column name="iban" type="varchar(34)" />
+            <column name="bic" type="varchar(11)" />
+            <column name="account_owner" type="varchar(50)" />
+            <column name="bank_id" type="varchar(50)" />
+            <column name="bank_name" type="varchar(50)" />
+            <column name="issuer_name" type="varchar(50)" />
+            <column name="issuer_number" type="varchar(50)" />
+            <column name="ics" type="varchar(35)" />
+        </addColumn>
+        <dropNotNullConstraint tableName="ar_payment_token" columnName="card_type" />
+        <dropNotNullConstraint tableName="ar_payment_token" columnName="owner" />
+        <dropNotNullConstraint tableName="ar_payment_token" columnName="month_expiration" />
+        <dropNotNullConstraint tableName="ar_payment_token" columnName="year_expiration" />
+        <dropNotNullConstraint tableName="ar_payment_token" columnName="card_type" />
+        <dropColumn tableName="billing_billing_account" columnName="payment_term" />
+        <dropColumn tableName="ar_customer_account" columnName="payment_method" />
+
+        <sql>insert into ar_payment_token (id, version,created, token_type, customer_account_id, bank_code,branch_code,account_number, hash_key, iban, bic, account_owner, bank_id, bank_name, issuer_name, issuer_number,
+            ics) (select id*(-1), 0, now(), 'DIRECTDEBIT', customer_account_id, bank_code,branch_code,account_number, hash_key, iban, bic, account_owner, bank_id, bank_name, issuer_name, issuer_number, ics from
+            billing_billing_account where payment_method='DIRECTDEBIT' and (iban is not null or bic is not null))</sql>
+        <sql>insert into ar_payment_token (id, version,created, token_type, customer_account_id, bank_code,branch_code,account_number, hash_key, iban, bic, account_owner, bank_id, bank_name, issuer_name, issuer_number,
+            ics) (select id*(-1), 0, now(), 'TIP', customer_account_id, bank_code,branch_code,account_number, hash_key, iban, bic, account_owner, bank_id, bank_name, issuer_name, issuer_number, ics from
+            billing_billing_account where payment_method='TIP' and (iban is not null or bic is not null))</sql>
+        <sql>insert into ar_payment_token (id, version,created, token_type, customer_account_id) (select id*(-1), 0, now(), 'CHECK', customer_account_id from billing_billing_account where payment_method='CHECK')</sql>
+        <sql>insert into ar_payment_token (id, version,created, token_type, customer_account_id) (select id*(-1), 0, now(), 'WIRETRANSFER', customer_account_id from billing_billing_account where payment_method='WIRETRANSFER')
+        </sql>
+
+        <dropColumn tableName="billing_billing_account" columnName="bank_code" />
+        <dropColumn tableName="billing_billing_account" columnName="branch_code" />
+        <dropColumn tableName="billing_billing_account" columnName="account_number" />
+        <dropColumn tableName="billing_billing_account" columnName="hash_key" />
+        <dropColumn tableName="billing_billing_account" columnName="iban" />
+        <dropColumn tableName="billing_billing_account" columnName="bic" />
+        <dropColumn tableName="billing_billing_account" columnName="account_owner" />
+        <dropColumn tableName="billing_billing_account" columnName="bank_id" />
+        <dropColumn tableName="billing_billing_account" columnName="bank_name" />
+        <dropColumn tableName="billing_billing_account" columnName="issuer_name" />
+        <dropColumn tableName="billing_billing_account" columnName="issuer_number" />
+        <dropColumn tableName="billing_billing_account" columnName="ics" />
+
+    </changeSet>
+
 </databaseChangeLog> 

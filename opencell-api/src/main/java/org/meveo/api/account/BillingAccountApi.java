@@ -109,9 +109,6 @@ public class BillingAccountApi extends AccountEntityApi {
 		if (StringUtils.isBlank(postData.getLanguage())) {
 			missingParameters.add("language");
 		}
-		if (postData.getPaymentMethod() == null) {
-			missingParameters.add("paymentMethod");
-		}
 
 		handleMissingParametersAndValidate(postData);
 
@@ -148,8 +145,6 @@ public class BillingAccountApi extends AccountEntityApi {
 		billingAccount.setBillingCycle(billingCycle);
 		billingAccount.setTradingCountry(tradingCountry);
 		billingAccount.setTradingLanguage(tradingLanguage);
-		billingAccount.setPaymentMethod(postData.getPaymentMethod());
-		billingAccount.setPaymentTerm(postData.getPaymentTerms());
 		billingAccount.setNextInvoiceDate(postData.getNextInvoiceDate());
 		billingAccount.setSubscriptionDate(postData.getSubscriptionDate());
 		billingAccount.setTerminationDate(postData.getTerminationDate());
@@ -171,21 +166,6 @@ public class BillingAccountApi extends AccountEntityApi {
 		billingAccount.setEmail(postData.getEmail());
 		billingAccount.setExternalRef1(postData.getExternalRef1());
 		billingAccount.setExternalRef2(postData.getExternalRef2());
-
-		if (postData.getBankCoordinates() != null) {
-			billingAccount.getBankCoordinates().setBankCode(postData.getBankCoordinates().getBankCode());
-			billingAccount.getBankCoordinates().setBranchCode(postData.getBankCoordinates().getBranchCode());
-			billingAccount.getBankCoordinates().setAccountNumber(postData.getBankCoordinates().getAccountNumber());
-			billingAccount.getBankCoordinates().setKey(postData.getBankCoordinates().getKey());
-			billingAccount.getBankCoordinates().setIban(postData.getBankCoordinates().getIban());
-			billingAccount.getBankCoordinates().setBic(postData.getBankCoordinates().getBic());
-			billingAccount.getBankCoordinates().setAccountOwner(postData.getBankCoordinates().getAccountOwner());
-			billingAccount.getBankCoordinates().setBankName(postData.getBankCoordinates().getBankName());
-			billingAccount.getBankCoordinates().setBankId(postData.getBankCoordinates().getBankId());
-			billingAccount.getBankCoordinates().setIssuerNumber(postData.getBankCoordinates().getIssuerNumber());
-			billingAccount.getBankCoordinates().setIssuerName(postData.getBankCoordinates().getIssuerName());
-			billingAccount.getBankCoordinates().setIcs(postData.getBankCoordinates().getIcs());
-		}
 
 		if(businessAccountModel != null) {
 			billingAccount.setBusinessAccountModel(businessAccountModel);
@@ -229,9 +209,6 @@ public class BillingAccountApi extends AccountEntityApi {
 		if (StringUtils.isBlank(postData.getLanguage())) {
 			missingParameters.add("language");
 		}
-		if (postData.getPaymentMethod() == null) {
-			missingParameters.add("paymentMethod");
-		}
 
 		handleMissingParametersAndValidate(postData);
 
@@ -274,14 +251,6 @@ public class BillingAccountApi extends AccountEntityApi {
 				throw new EntityDoesNotExistsException(TradingLanguage.class, postData.getLanguage());
 			}
 			billingAccount.setTradingLanguage(tradingLanguage);
-		}
-
-		if (postData.getPaymentMethod() != null) {
-			billingAccount.setPaymentMethod(postData.getPaymentMethod());
-		}
-
-		if (!StringUtils.isBlank(postData.getPaymentTerms())) {
-			billingAccount.setPaymentTerm(postData.getPaymentTerms());
 		}
 
 		if (!StringUtils.isBlank(postData.getExternalRef1())) {
@@ -359,7 +328,6 @@ public class BillingAccountApi extends AccountEntityApi {
 			if (!StringUtils.isBlank(postData.getBankCoordinates().getIcs())) {
 				bankCoordinates.setIcs(postData.getBankCoordinates().getIcs());
 			}
-			billingAccount.setBankCoordinates(bankCoordinates);
 		}
 
 		if(businessAccountModel != null){
@@ -550,12 +518,6 @@ public class BillingAccountApi extends AccountEntityApi {
 					existedBillingAccountDto.setLanguage(postData.getLanguage());
 				}
 
-				if (postData.getPaymentMethod() != null) {
-					existedBillingAccountDto.setPaymentMethod(postData.getPaymentMethod());
-				}
-				if (postData.getPaymentTerms() != null) {
-					existedBillingAccountDto.setPaymentTerms(postData.getPaymentTerms());
-				}
 				//
 				if (!StringUtils.isBlank(postData.getNextInvoiceDate())) {
 					existedBillingAccountDto.setNextInvoiceDate(postData.getNextInvoiceDate());

@@ -9,8 +9,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.payment.CardTokenRequestDto;
-import org.meveo.api.dto.payment.CardTokenResponseDto;
+import org.meveo.api.dto.payment.CardPaymentMethodDto;
+import org.meveo.api.dto.payment.CardPaymentMethodTokenDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
 import org.meveo.api.rest.IBaseRs;
@@ -40,15 +40,14 @@ public interface PaymentRs extends IBaseRs {
     @GET
     @Path("/customerPayment")
     public CustomerPaymentsResponse list(@QueryParam("customerAccountCode") String customerAccountCode);
-    
+
     /**
-     * Tokenize payment card details
+     * Add a new card payment method. It will be marked as preferred.
      * 
-     * @param cardTokenRequestDto
-     * @return
+     * @param cardPaymentMethod Card payment method DTO
+     * @return Token id in payment gateway
      */
     @POST
-    @Path("/createCardToken")
-    public CardTokenResponseDto createCardToken(CardTokenRequestDto postData);
-
+    @Path("/addCardPaymentMethod")
+    public CardPaymentMethodTokenDto addCardPaymentMethod(CardPaymentMethodDto cardPaymentMethod);
 }

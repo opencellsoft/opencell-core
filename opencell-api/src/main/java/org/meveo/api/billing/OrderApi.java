@@ -794,7 +794,7 @@ public class OrderApi extends BaseApi {
         productOrder.setRequestedCompletionDate(order.getRequestedCompletionDate());
         productOrder.setRequestedStartDate(order.getRequestedStartDate());
         productOrder.setState(order.getStatus().getApiState());
-        productOrder.setPaymentMethod(order.getPaymentMethod());
+//        productOrder.setPaymentMethod(order.getPaymentMethod());
         productOrder.setDueDateDelayEL(order.getDueDateDelayEL());
 
         List<ProductOrderItem> productOrderItems = new ArrayList<>();

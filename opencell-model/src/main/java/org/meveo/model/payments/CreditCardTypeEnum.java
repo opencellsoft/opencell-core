@@ -23,17 +23,12 @@ package org.meveo.model.payments;
 
 public enum CreditCardTypeEnum {
 
-    VISA(1, "CreditCardTypeEnum.VISA"),
-    MASTERCARD(2, "CreditCardTypeEnum.MASTERCARD"),
-    AMERICAN_EXPRESS(3, "CreditCardTypeEnum.AMERICAN_EXPRESS"),
-	CB(130, "CreditCardTypeEnum.CB");
+    VISA(1), MASTERCARD(2), AMERICAN_EXPRESS(3), CB(130);
 
     private Integer id;
-    private String label;
 
-    CreditCardTypeEnum(Integer id, String label) {
+    CreditCardTypeEnum(Integer id) {
         this.id = id;
-        this.label = label;
     }
 
     public Integer getId() {
@@ -41,18 +36,6 @@ public enum CreditCardTypeEnum {
     }
 
     public String getLabel() {
-        return this.label;
+        return this.getClass().getSimpleName() + "." + this.name();
     }
-
-    public static CreditCardTypeEnum getValue(Integer id) {
-        if (id != null) {
-            for (CreditCardTypeEnum value : values()) {
-                if (value.getId() == id) {
-                    return value;
-                }
-            }
-        }
-        return null;
-    }
-
 }

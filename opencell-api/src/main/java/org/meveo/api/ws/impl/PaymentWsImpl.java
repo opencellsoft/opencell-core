@@ -8,11 +8,11 @@ import javax.jws.WebService;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.payment.CardTokenRequestDto;
-import org.meveo.api.dto.payment.CardTokenResponseDto;
+import org.meveo.api.dto.payment.CardPaymentMethodDto;
+import org.meveo.api.dto.payment.CardPaymentMethodTokenDto;
 import org.meveo.api.dto.payment.DDRequestLotOpDto;
-import org.meveo.api.dto.payment.DoPaymentRequestDto;
-import org.meveo.api.dto.payment.DoPaymentResponseDto;
+import org.meveo.api.dto.payment.PayByCardDto;
+import org.meveo.api.dto.payment.PayByCardResponseDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
 import org.meveo.api.dto.response.payment.DDRequestLotOpsResponseDto;
@@ -86,11 +86,11 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
 
 
 	@Override
-	public CardTokenResponseDto createCardToken(CardTokenRequestDto cardTokenRequestDto) {
-		CardTokenResponseDto response = new CardTokenResponseDto();
+	public CardPaymentMethodTokenDto addCardPaymentMethod(CardPaymentMethodDto cardTokenRequestDto) {
+		CardPaymentMethodTokenDto response = new CardPaymentMethodTokenDto();
 		response.setActionStatus(new ActionStatus(ActionStatusEnum.FAIL, ""));
 		try{
-			response.setTokenID(paymentApi.createCardToken(cardTokenRequestDto));
+			response.setTokenID(paymentApi.addCardPaymentMethod(cardTokenRequestDto));
 			response.setActionStatus(new ActionStatus(ActionStatusEnum.SUCCESS, ""));
 		}catch(Exception e){
 			processException(e, response.getActionStatus());
@@ -100,11 +100,11 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
 	}
 
 	@Override
-	public DoPaymentResponseDto doPayment(DoPaymentRequestDto doPaymentRequestDto) {
-		DoPaymentResponseDto response = new DoPaymentResponseDto();	
+	public PayByCardResponseDto payByCard(PayByCardDto doPaymentRequestDto) {
+		PayByCardResponseDto response = new PayByCardResponseDto();	
 		response.setActionStatus(new ActionStatus(ActionStatusEnum.FAIL, ""));
 		try{
-			response = paymentApi.doPayment(doPaymentRequestDto);
+			response = paymentApi.payByCard(doPaymentRequestDto);
 			response.setActionStatus(new ActionStatus(ActionStatusEnum.SUCCESS, ""));
 		}catch(Exception e){
 			processException(e, response.getActionStatus());

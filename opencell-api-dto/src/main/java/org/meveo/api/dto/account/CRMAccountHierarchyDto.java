@@ -16,7 +16,6 @@ import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.payments.DunningLevelEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.model.payments.PaymentTermEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -73,7 +72,6 @@ public class CRMAccountHierarchyDto extends BaseDto {
 	private String billingCycle;
 	private String country;
 	private Date nextInvoiceDate;
-	private PaymentTermEnum paymentTerms;
 	private Boolean electronicBilling;
 	private AccountStatusEnum baStatus;
 	private String email;
@@ -305,14 +303,6 @@ public class CRMAccountHierarchyDto extends BaseDto {
 		this.nextInvoiceDate = nextInvoiceDate;
 	}
 
-	public PaymentTermEnum getPaymentTerms() {
-		return paymentTerms;
-	}
-
-	public void setPaymentTerms(PaymentTermEnum paymentTerms) {
-		this.paymentTerms = paymentTerms;
-	}
-
 	public Boolean getElectronicBilling() {
 		return electronicBilling;
 	}
@@ -362,7 +352,7 @@ public class CRMAccountHierarchyDto extends BaseDto {
 				+ ", mandateDate=" + mandateDate + ", currency=" + currency + ", caStatus=" + caStatus
 				+ ", creditCategory=" + creditCategory + ", dateStatus=" + dateStatus + ", dateDunningLevel="
 				+ dateDunningLevel + ", dunningLevel=" + dunningLevel + ", billingCycle=" + billingCycle + ", country="
-				+ country + ", nextInvoiceDate=" + nextInvoiceDate + ", paymentTerms=" + paymentTerms
+				+ country + ", nextInvoiceDate=" + nextInvoiceDate
 				+ ", electronicBilling=" + electronicBilling + ", baStatus=" + baStatus + ", email=" + email
 				+ ", bankCoordinates=" + bankCoordinates + ", uaStatus=" + uaStatus + ",customFields=" + customFields
 				+ ", invoicingThreshold=" + invoicingThreshold + ", invoicingThreshold=" + invoicingThreshold + "]";
