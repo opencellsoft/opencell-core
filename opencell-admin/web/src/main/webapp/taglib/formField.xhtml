@@ -301,8 +301,8 @@
                 required="${required}" componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}" style="${style}" labelStyle="${labelStyle}"
                 labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}" inputWidth="${inputWidth}" size="${size}"
                 maxlength="${maxlength}" listValues="${listValues}" minValue="${minValue}" maxValue="${maxValue}" isMessage="${isMessage}" messagePrefix="${messagePrefix}"
-                converter="${empty(converter)?fieldInfo.numberConverter:converter}" negativeValue="${negativeValue}" spinner="${spinner}" edit="#{edit}" />
-
+                converter="${empty(converter)?fieldInfo.numberConverter:converter}" negativeValue="${negativeValue}" spinner="${spinner}" edit="#{edit}" listenerUpdate="${listenerUpdate}"
+                actionListenerBean="${actionListenerBean}" actionListenerMethod="${actionListenerMethod}" />
         </c:if>
 
 
@@ -311,7 +311,7 @@
             <hftl:formBooleanField id="${empty(id)?fieldIdPrefix.concat('_bool'):id}" fieldItem="#{fieldItem}" label="${label}" disabled="${disabled}" required="${required}"
                 componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}" style="${style}" labelStyle="${labelStyle}"
                 labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}" inputWidth="${inputWidth}" isMessage="${isMessage}"
-                listenerUpdate="${listenerUpdate}" edit="#{edit}" />
+                listenerUpdate="${listenerUpdate}" actionListenerBean="${actionListenerBean}" actionListenerMethod="${actionListenerMethod}" edit="#{edit}" />
         </c:if>
 
         <!-- If the value binding is a date, display a p:calendar field. -->

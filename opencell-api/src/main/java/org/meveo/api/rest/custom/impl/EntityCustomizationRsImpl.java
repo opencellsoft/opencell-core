@@ -315,6 +315,7 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
         return result;
     }
 
+
 	@Override
 	public ActionStatus execute(String actionCode, String appliesTo, String entityCode) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -326,5 +327,14 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
 		}
 
 		return result;
+	}
+
+	/**
+	 * Used for create or update template.
+	 * @see org.meveo.api.rest.custom.EntityCustomizationRs#createOrUpdateCustumizedEntityTemplate(org.meveo.api.dto.CustomEntityTemplateDto)
+	 */
+	@Override
+	public ActionStatus createOrUpdateCustumizedEntityTemplate(CustomEntityTemplateDto dto) {
+		return this.createOrUpdateEntityTemplate(dto);
 	}
 }

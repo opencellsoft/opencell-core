@@ -10,28 +10,45 @@
         <c:set var="messagePrefixWithDot" value="#{messagePrefix==null?'':messagePrefix.concat('.')}" />
     </c:if>
 
-    <hftl:decorateFormField fieldId="#{id}" label="#{label}" componentWidth="#{componentWidth}" newLine="#{newLine}" displayOneLine="#{displayOneLine}" styleClass="#{styleClass}"
-        style="#{style}" labelStyle="#{labelStyle}" labelStyleClass="#{labelStyleClass}" inputStyle="#{inputStyle}" inputStyleClass="#{inputStyleClass}" labelWidth="#{labelWidth}"
-        inputWidth="#{inputWidth}">
+    <hftl:decorateFormField fieldId="#{id}" label="#{label}" componentWidth="#{componentWidth}" newLine="#{newLine}" displayOneLine="#{displayOneLine}" styleClass="#{styleClass}" style="#{style}"
+        labelStyle="#{labelStyle}" labelStyleClass="#{labelStyleClass}" inputStyle="#{inputStyle}" inputStyleClass="#{inputStyleClass}" labelWidth="#{labelWidth}" inputWidth="#{inputWidth}">
 
         <c:if test="#{ edit}">
             <!--  As a spinner of values -->
             <c:if test="#{spinner and listValues == null}">
 
                 <c:if test="#{not empty(maxValue) and !negativeValue}">
-                    <p:spinner id="#{id}" disabled="#{disabled}" value="#{fieldItem}" required="#{required}" min="#{minValue}" max="#{maxValue}" maxlength="#{maxlength}" size="#{size}">
+                    <p:spinner id="#{id}" disabled="#{disabled}" value="#{fieldItem}" required="#{required}" size="#{size}" min="#{minValue}" max="#{maxValue}" maxlength="#{maxlength}">
                         <f:converter converterId="#{converter}" />
+                        <c:if test="#{not empty listenerUpdate and empty actionListenerBean}">
+                            <p:ajax update="#{listenerUpdate}" event="change" />
+                        </c:if>
+                        <c:if test="#{not empty listenerUpdate and not empty actionListenerBean}">
+                            <p:ajax update="#{listenerUpdate}" listener="#{actionListenerBean[actionListenerMethod]}" event="change" />
+                        </c:if>
                     </p:spinner>
                 </c:if>
                 <c:if test="#{empty(maxValue) and !negativeValue}">
-                    <p:spinner id="#{id}" disabled="#{disabled}" value="#{fieldItem}" required="#{required}" min="#{minValue}" maxlength="#{maxlength}" size="#{size}">
+                    <p:spinner id="#{id}" disabled="#{disabled}" value="#{fieldItem}" required="#{required}" size="#{size}" min="#{minValue}" maxlength="#{maxlength}">
                         <f:converter converterId="#{converter}" />
+                        <c:if test="#{not empty listenerUpdate and empty actionListenerBean}">
+                            <p:ajax update="#{listenerUpdate}" event="change" />
+                        </c:if>
+                        <c:if test="#{not empty listenerUpdate and not empty actionListenerBean}">
+                            <p:ajax update="#{listenerUpdate}" listener="#{actionListenerBean[actionListenerMethod]}" event="change" />
+                        </c:if>
                     </p:spinner>
                 </c:if>
                 <!--  for negative values, it is duplicated because if we set minValue=-99999999 the default value diplayed in GUI is -99999999 -->
                 <c:if test="#{negativeValue}">
-                    <p:spinner id="#{id}" disabled="#{disabled}" value="#{fieldItem}" required="#{required}" maxlength="#{maxlength}" size="#{size}">
+                    <p:spinner id="#{id}" disabled="#{disabled}" value="#{fieldItem}" required="#{required}" size="#{size}" maxlength="#{maxlength}">
                         <f:converter converterId="#{converter}" />
+                        <c:if test="#{not empty listenerUpdate and empty actionListenerBean}">
+                            <p:ajax update="#{listenerUpdate}" event="change" />
+                        </c:if>
+                        <c:if test="#{not empty listenerUpdate and not empty actionListenerBean}">
+                            <p:ajax update="#{listenerUpdate}" listener="#{actionListenerBean[actionListenerMethod]}" event="change" />
+                        </c:if>
                     </p:spinner>
                 </c:if>
             </c:if>
@@ -40,6 +57,12 @@
             <c:if test="#{!spinner and listValues == null}">
                 <p:inputText id="#{id}" disabled="#{disabled}" value="#{fieldItem}" required="#{required}" size="#{size}" maxlength="#{maxlength}">
                     <f:converter converterId="#{converter}" />
+                    <c:if test="#{not empty listenerUpdate and empty actionListenerBean}">
+                        <p:ajax update="#{listenerUpdate}" event="change" />
+                    </c:if>
+                    <c:if test="#{not empty listenerUpdate and not empty actionListenerBean}">
+                        <p:ajax update="#{listenerUpdate}" listener="#{actionListenerBean[actionListenerMethod]}" event="change" />
+                    </c:if>
                 </p:inputText>
             </c:if>
 
@@ -48,6 +71,12 @@
                 <p:selectOneMenu id="#{id}" value="#{fieldItem}" required="#{required}" disabled="#{disabled}">
                     <f:selectItem itemValue="#{null}" itemLabel="" />
                     <f:selectItems value="#{listValues.entrySet()}" var="listVal" itemValue="#{listVal.key}" itemLabel="#{listVal.value}" />
+                    <c:if test="#{not empty listenerUpdate and empty actionListenerBean}">
+                        <p:ajax update="#{listenerUpdate}" event="valueChange" />
+                    </c:if>
+                    <c:if test="#{not empty listenerUpdate and not empty actionListenerBean}">
+                        <p:ajax update="#{listenerUpdate}" listener="#{actionListenerBean[actionListenerMethod]}" event="valueChange" />
+                    </c:if>
                 </p:selectOneMenu>
             </c:if>
         </c:if>

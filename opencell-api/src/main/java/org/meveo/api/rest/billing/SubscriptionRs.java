@@ -24,6 +24,8 @@ import org.meveo.api.dto.response.billing.GetDueDateDelayResponseDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsResponseDto;
+import org.meveo.api.dto.response.catalog.GetChargeTemplateResponseDto;
+import org.meveo.api.dto.response.catalog.GetOneShotChargesResponseDto;
 import org.meveo.api.rest.IBaseRs;
 
 /**
@@ -131,6 +133,18 @@ public interface SubscriptionRs extends IBaseRs {
     @GET
     @Path("/")
     GetSubscriptionResponseDto findSubscription(@QueryParam("subscriptionCode") String subscriptionCode);
+    
+    
+    
+    /**
+     * Search for a subscription with a given code 
+     * 
+     * @param subscriptionCode The subscription's code
+     * @return A subscription
+     */
+    @GET
+    @Path("/listOneshotChargeOthers")
+    GetOneShotChargesResponseDto getOneShotChargeOthers();
 
     /**
      * Create new or update an existing subscription
