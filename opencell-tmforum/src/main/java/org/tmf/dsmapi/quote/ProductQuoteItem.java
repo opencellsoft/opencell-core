@@ -61,8 +61,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  * 
  * 
  */
-@XmlRootElement(name="QuoteItem", namespace="http://www.tmforum.org")
-@XmlType(name="QuoteItem", namespace="http://www.tmforum.org")
+@XmlRootElement(name = "QuoteItem", namespace = "http://www.tmforum.org")
+@XmlType(name = "QuoteItem", namespace = "http://www.tmforum.org")
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProductQuoteItem implements Serializable {
@@ -351,19 +351,29 @@ public class ProductQuoteItem implements Serializable {
     public void setConsumptionCdr(List<String> consumptionCdr) {
         this.consumptionCdr = consumptionCdr;
     }
-    
-	public List<BillingAccount> getBillingAccount() {
+
+    public List<BillingAccount> getBillingAccount() {
+        return this.billingAccount;
+    }
+
+    public void setBillingAccount(List<BillingAccount> billingAccount) {
+        this.billingAccount = billingAccount;
+    }
+
+    public void addBillingAccount(BillingAccount billingAccountToAdd) {
         if (billingAccount == null) {
             this.billingAccount = new ArrayList<BillingAccount>();
         }
-        return this.billingAccount;
-	}
+        billingAccount.add(billingAccountToAdd);
+    }
 
-	public void setBillingAccount(List<BillingAccount> billingAccount) {
-		this.billingAccount = billingAccount;
-	}
+    public void addBillingAccount(String baId) {
+        BillingAccount ba = new BillingAccount();
+        ba.setId(baId);
+        addBillingAccount(ba);
+    }
 
-	/**
+    /**
      * Serialize orderItem DTO into a string
      * 
      * @param productQuoteItem Quote item to serialize

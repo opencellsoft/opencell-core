@@ -28,9 +28,9 @@ public class SubscriptionDto extends BusinessDto {
     private Date subscriptionDate;
 
     private Date terminationDate;
-    
+
     private Date endAgreementDate;
-    
+
     private SubscriptionStatusEnum status;
     private Date statusDate;
 
@@ -48,6 +48,23 @@ public class SubscriptionDto extends BusinessDto {
 
     private String terminationReason;
     private String orderNumber;
+
+    /**
+     * A date till which subscription is subscribed. After this date it will either be extended or terminated
+     */
+    private Date subscribedTillDate;
+
+    /**
+     * Was subscription renewed
+     */
+    private boolean renewed;
+
+    /**
+     * Was/when "endOfTerm" notification fired for soon to expire subscription
+     */
+    private Date renewalNotifiedDate;
+
+    private SubscriptionRenewalDto renewalRule;
 
     public SubscriptionDto() {
 
@@ -84,20 +101,20 @@ public class SubscriptionDto extends BusinessDto {
     public void setTerminationDate(Date terminationDate) {
         this.terminationDate = terminationDate;
     }
-    
+
     public Date getEndAgreementDate() {
         return endAgreementDate;
     }
-    
+
     public void setEndAgreementDate(Date endAgreementDate) {
         this.endAgreementDate = endAgreementDate;
     }
 
     @Override
     public String toString() {
-        return "SubscriptionDto [code=" + getCode() + ", description=" + getDescription() + ", userAccount=" + userAccount + ", offerTemplate=" + offerTemplate + ", subscriptionDate="
-                + subscriptionDate + ", terminationDate=" + terminationDate + ", status=" + status + ",statusDate="+statusDate+", customFields=" + customFields + ", accesses=" + accesses + ", services="
-                + services + ", terminationReason=" + terminationReason + ", orderNumber="+orderNumber+"]";
+        return "SubscriptionDto [code=" + getCode() + ", description=" + getDescription() + ", userAccount=" + userAccount + ", offerTemplate=" + offerTemplate
+                + ", subscriptionDate=" + subscriptionDate + ", terminationDate=" + terminationDate + ", status=" + status + ",statusDate=" + statusDate + ", customFields="
+                + customFields + ", accesses=" + accesses + ", services=" + services + ", terminationReason=" + terminationReason + ", orderNumber=" + orderNumber + "]";
     }
 
     public SubscriptionStatusEnum getStatus() {
@@ -109,14 +126,14 @@ public class SubscriptionDto extends BusinessDto {
     }
 
     public Date getStatusDate() {
-		return statusDate;
-	}
+        return statusDate;
+    }
 
-	public void setStatusDate(Date statusDate) {
-		this.statusDate = statusDate;
-	}
+    public void setStatusDate(Date statusDate) {
+        this.statusDate = statusDate;
+    }
 
-	public AccessesDto getAccesses() {
+    public AccessesDto getAccesses() {
         return accesses;
     }
 
@@ -133,14 +150,14 @@ public class SubscriptionDto extends BusinessDto {
     }
 
     public ProductsDto getProducts() {
-		return products;
-	}
+        return products;
+    }
 
-	public void setProducts(ProductsDto products) {
-		this.products = products;
-	}
+    public void setProducts(ProductsDto products) {
+        this.products = products;
+    }
 
-	public CustomFieldsDto getCustomFields() {
+    public CustomFieldsDto getCustomFields() {
         return customFields;
     }
 
@@ -156,12 +173,43 @@ public class SubscriptionDto extends BusinessDto {
         this.terminationReason = terminationReason;
     }
 
-	public String getOrderNumber() {
-		return orderNumber;
-	}
+    public String getOrderNumber() {
+        return orderNumber;
+    }
 
-	public void setOrderNumber(String orderNumber) {
-		this.orderNumber = orderNumber;
-	}
+    public void setOrderNumber(String orderNumber) {
+        this.orderNumber = orderNumber;
+    }
 
+    public Date getSubscribedTillDate() {
+        return subscribedTillDate;
+    }
+
+    public void setSubscribedTillDate(Date subscribedTillDate) {
+        this.subscribedTillDate = subscribedTillDate;
+    }
+
+    public boolean isRenewed() {
+        return renewed;
+    }
+
+    public void setRenewed(boolean renewed) {
+        this.renewed = renewed;
+    }
+
+    public Date getRenewalNotifiedDate() {
+        return renewalNotifiedDate;
+    }
+
+    public void setRenewalNotifiedDate(Date renewalNotifiedDate) {
+        this.renewalNotifiedDate = renewalNotifiedDate;
+    }
+
+    public SubscriptionRenewalDto getRenewalRule() {
+        return renewalRule;
+    }
+
+    public void setRenewalRule(SubscriptionRenewalDto renewalRule) {
+        this.renewalRule = renewalRule;
+    }
 }
