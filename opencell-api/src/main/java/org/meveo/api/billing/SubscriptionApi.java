@@ -26,6 +26,7 @@ import org.meveo.api.dto.billing.DueDateDelayDto;
 import org.meveo.api.dto.billing.InstantiateServicesRequestDto;
 import org.meveo.api.dto.billing.OperationServicesRequestDto;
 import org.meveo.api.dto.billing.ProductDto;
+import org.meveo.api.dto.billing.ProductInstanceDto;
 import org.meveo.api.dto.billing.ServiceInstanceDto;
 import org.meveo.api.dto.billing.ServiceToActivateDto;
 import org.meveo.api.dto.billing.ServiceToInstantiateDto;
@@ -55,7 +56,6 @@ import org.meveo.model.billing.DueDateDelayEnum;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.billing.ProductChargeInstance;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
@@ -882,9 +882,8 @@ public class SubscriptionApi extends BaseApi {
         
 		if (subscription.getProductInstances() != null) {
 			for (ProductInstance productInstance : subscription.getProductInstances()) {
-				for (ProductChargeInstance pci : productInstance.getProductChargeInstances()) {
-                    dto.getProducts().getProducts().add(new ProductDto(pci, entityToDtoConverter.getCustomFieldsDTO(productInstance, true)));
-				}
+				dto.getProductInstances().getProductInstances().add(
+						new ProductInstanceDto(productInstance, entityToDtoConverter.getCustomFieldsDTO(productInstance, true)));
 			}
 		}
 

@@ -43,8 +43,17 @@ public class SubscriptionDto extends BusinessDto {
     @XmlElement(required = false)
     private ServiceInstancesDto services = new ServiceInstancesDto();
 
+    /**
+     * Use in creation and update.
+     */
     @XmlElement(required = false)
     private ProductsDto products = new ProductsDto();
+    
+    /**
+     * Use in find.
+     */
+    @XmlElement(required = false)
+    private ProductInstancesDto productInstances = new ProductInstancesDto();
 
     private String terminationReason;
     private String orderNumber;
@@ -212,4 +221,12 @@ public class SubscriptionDto extends BusinessDto {
     public void setRenewalRule(SubscriptionRenewalDto renewalRule) {
         this.renewalRule = renewalRule;
     }
+
+	public ProductInstancesDto getProductInstances() {
+		return productInstances;
+	}
+
+	public void setProductInstances(ProductInstancesDto productInstances) {
+		this.productInstances = productInstances;
+	}
 }
