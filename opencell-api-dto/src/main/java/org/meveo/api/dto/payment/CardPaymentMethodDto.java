@@ -38,6 +38,7 @@ public class CardPaymentMethodDto extends PaymentMethodDto {
      * Card expiration: month
      */
     @NotNull
+    @Min(1)
     @Max(12)
     private Integer monthExpiration;
 
@@ -45,7 +46,8 @@ public class CardPaymentMethodDto extends PaymentMethodDto {
      * Card expiration: year
      */
     @NotNull
-    @Min(2017)
+    @Min(0)
+    @Max(99)
     private Integer yearExpiration;
 
     /**

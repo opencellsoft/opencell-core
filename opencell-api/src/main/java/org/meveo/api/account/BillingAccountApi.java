@@ -26,7 +26,6 @@ import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.parameter.SecureMethodParameter;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.CounterInstance;
@@ -288,46 +287,6 @@ public class BillingAccountApi extends AccountEntityApi {
 			billingAccount.setDiscountPlan(discountPlan);
 		} else if(postData.getDiscountPlan()!=null){
 			billingAccount.setDiscountPlan(null);
-		}
-
-		if (postData.getBankCoordinates() != null) {
-			BankCoordinates bankCoordinates = new BankCoordinates();
-			if (!StringUtils.isBlank(postData.getBankCoordinates().getBankCode())) {
-				bankCoordinates.setBankCode(postData.getBankCoordinates().getBankCode());
-			}
-			if (!StringUtils.isBlank(postData.getBankCoordinates().getBranchCode())) {
-				bankCoordinates.setBranchCode(postData.getBankCoordinates().getBranchCode());
-			}
-			if (!StringUtils.isBlank(postData.getBankCoordinates().getAccountNumber())) {
-				bankCoordinates.setAccountNumber(postData.getBankCoordinates().getAccountNumber());
-			}
-			if (!StringUtils.isBlank(postData.getBankCoordinates().getKey())) {
-				bankCoordinates.setKey(postData.getBankCoordinates().getKey());
-			}
-			if (!StringUtils.isBlank(postData.getBankCoordinates().getIban())) {
-				bankCoordinates.setIban(postData.getBankCoordinates().getIban());
-			}
-			if (!StringUtils.isBlank(postData.getBankCoordinates().getBic())) {
-				bankCoordinates.setBic(postData.getBankCoordinates().getBic());
-			}
-			if (!StringUtils.isBlank(postData.getBankCoordinates().getAccountOwner())) {
-				bankCoordinates.setAccountOwner(postData.getBankCoordinates().getAccountOwner());
-			}
-			if (!StringUtils.isBlank(postData.getBankCoordinates().getBankName())) {
-				bankCoordinates.setBankName(postData.getBankCoordinates().getBankName());
-			}
-			if (!StringUtils.isBlank(postData.getBankCoordinates().getBankId())) {
-				bankCoordinates.setBankId(postData.getBankCoordinates().getBankId());
-			}
-			if (!StringUtils.isBlank(postData.getBankCoordinates().getIssuerNumber())) {
-				bankCoordinates.setIssuerNumber(postData.getBankCoordinates().getIssuerNumber());
-			}
-			if (!StringUtils.isBlank(postData.getBankCoordinates().getIssuerName())) {
-				bankCoordinates.setIssuerName(postData.getBankCoordinates().getIssuerName());
-			}
-			if (!StringUtils.isBlank(postData.getBankCoordinates().getIcs())) {
-				bankCoordinates.setIcs(postData.getBankCoordinates().getIcs());
-			}
 		}
 
 		if(businessAccountModel != null){

@@ -17,7 +17,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.EnableEntity;
+import org.meveo.model.BaseEntity;
 
 @Entity
 @Table(name = "ar_payment_token")
@@ -27,7 +27,7 @@ import org.meveo.model.EnableEntity;
         @Parameter(name = "sequence_name", value = "ar_payment_token_seq"), })
 @NamedQueries({
         @NamedQuery(name = "PaymentMethod.updatePrefreredPaymentMethod", query = "UPDATE PaymentMethod pm set pm.preferred = false where pm.id <> :id and pm.customerAccount = :ca") })
-public abstract class PaymentMethod extends EnableEntity {
+public abstract class PaymentMethod extends BaseEntity {
 
     private static final long serialVersionUID = 8726571628074346184L;
 

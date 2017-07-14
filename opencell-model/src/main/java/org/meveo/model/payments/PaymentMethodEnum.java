@@ -19,7 +19,7 @@
 package org.meveo.model.payments;
 
 /**
- * Payment Enum for Customer Account.
+ * Payment Method types
  */
 public enum PaymentMethodEnum {
 
@@ -27,5 +27,12 @@ public enum PaymentMethodEnum {
 
     public String getLabel() {
         return this.getClass().getSimpleName() + "." + this.name();
+    }
+
+    /**
+     * Is it as simple payment method that does not required any additional information
+     */
+    public boolean isSimple() {
+        return this == CHECK || this == PaymentMethodEnum.WIRETRANSFER;
     }
 }

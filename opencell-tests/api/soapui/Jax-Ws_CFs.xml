@@ -4182,7 +4182,7 @@ public class Action1 extends Script {
    <soapenv:Header/> 
    <soapenv:Body> 
       <ws:findSeller> 
-         <!--Optional:--> 
+          
          <sellerCode>${#Project#entityPrefix}_${#TestSuite#index}_SELLER_ALL</sellerCode> 
       </ws:findSeller> 
    </soapenv:Body> 
@@ -6731,7 +6731,7 @@ public class Action1 extends Script {
    <soapenv:Header/> 
    <soapenv:Body> 
       <ws:findProvider> 
-         <!--Optional:--> 
+          
          <providerCode>DEMO</providerCode> 
       </ws:findProvider> 
    </soapenv:Body> 
@@ -6882,7 +6882,7 @@ public class Action1 extends Script {
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:updateProviderCF>
-         <!--Optional:-->
+         
          <provider code="DEMO">
          	  <customFields>
 	            <customField code="${#Project#baseEntityPrefix}_PROVIDER_STRING_SINGLE_NV">
@@ -7181,7 +7181,7 @@ public class Action1 extends Script {
             </address>
             <customer>${#Project#entityPrefix}_${#TestSuite#index}_CUST</customer>
             <currency>EUR</currency>
-            <paymentMethod>CHECK</paymentMethod>
+
             <creditCategory>Pro</creditCategory>
             <language>FRA</language>
             <customFields>
@@ -7252,10 +7252,10 @@ public class Action1 extends Script {
             <billingCycle>CYC_INV_MT_1</billingCycle>
             <country>FR</country>
             <language>FRA</language>
-            <paymentMethod>CHECK</paymentMethod>
+
             <nextInvoiceDate>2015-04-01</nextInvoiceDate>
             <subscriptionDate>2015-01-01</subscriptionDate>
-            <paymentTerms>CASH</paymentTerms>
+
             <electronicBilling>true</electronicBilling>
             <email>613@manaty.net</email>
             <customFields>
@@ -7876,7 +7876,7 @@ public class Action1 extends Script {
             </address>
             <customer>${#Project#entityPrefix}_${#TestSuite#index}_CUST</customer>
             <currency>EUR</currency>
-            <paymentMethod>CHECK</paymentMethod>
+
             <creditCategory>Pro</creditCategory>
             <language>FRA</language>
             <customFields>
@@ -7947,10 +7947,10 @@ public class Action1 extends Script {
             <billingCycle>CYC_INV_MT_1</billingCycle>
             <country>FR</country>
             <language>FRA</language>
-            <paymentMethod>CHECK</paymentMethod>
+
             <nextInvoiceDate>2015-04-01</nextInvoiceDate>
             <subscriptionDate>2015-01-01</subscriptionDate>
-            <paymentTerms>CASH</paymentTerms>
+
             <electronicBilling>true</electronicBilling>
             <email>613@manaty.net</email>
             <customFields>
@@ -8068,7 +8068,7 @@ public class Action1 extends Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findSeller>
-         <!--Optional:-->
+         
          <sellerCode>${#Project#entityPrefix}_${#TestSuite#index}_SELLER</sellerCode>
       </ws:findSeller>
    </soapenv:Body>
@@ -8430,11 +8430,11 @@ public class Action1 extends Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createRecurringChargeTemplate>
-         <!--Optional:-->
+         
          <recurringChargeTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_REC1" description="${#Project#entityPrefix}_${#TestSuite#index}_REC1">
             <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
             <disabled>false</disabled>
-            <!--Optional:-->
+            
             <amountEditable>false</amountEditable>
             <!--Zero or more repetitions:-->
             <languageDescriptions>
@@ -8446,9 +8446,9 @@ public class Action1 extends Script {
             <terminationProrata>true</terminationProrata>
             <applyInAdvance>true</applyInAdvance>
             <inputUnitDescription>1</inputUnitDescription>
-            <!--Optional:-->
+            
             <ratingUnitDescription>1</ratingUnitDescription>
-            <!--Optional:-->
+            
             <unitMultiplicator>1</unitMultiplicator>
             <unitNbDecimal>2</unitNbDecimal>
             <customFields>
@@ -8528,26 +8528,26 @@ public class Action1 extends Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOneShotChargeTemplate>
-         <!--Optional:-->
+         
          <oneShotChargeTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_OS1" description="${#Project#entityPrefix}_${#TestSuite#index}_OS1">
             <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
             <disabled>false</disabled>
-            <!--Optional:-->
+            
             <amountEditable>false</amountEditable>
             <!--Zero or more repetitions:-->
             <languageDescriptions>
                <languageCode>FRA</languageCode>
                <description>Forfait test 685</description>
             </languageDescriptions>
-            <!--Optional:-->
+            
             <inputUnitDescription>1</inputUnitDescription>
-            <!--Optional:-->
+            
             <ratingUnitDescription>1</ratingUnitDescription>
-            <!--Optional:-->
+            
             <unitMultiplicator>1</unitMultiplicator>
             <unitNbDecimal>2</unitNbDecimal>
             <oneShotChargeTemplateType>SUBSCRIPTION</oneShotChargeTemplateType>
-            <!--Optional:-->
+            
             <immediateInvoicing>false</immediateInvoicing>
             <customFields>
                <customField code="${#Project#baseEntityPrefix}_CHARGE_STRING_MAP_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">
@@ -8625,22 +8625,22 @@ public class Action1 extends Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createUsageChargeTemplate>
-         <!--Optional:-->
+         
          <usageChargeTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_USAGE1" description="${#Project#entityPrefix}_${#TestSuite#index}_USAGE1">
             <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
             <disabled>false</disabled>
-            <!--Optional:-->
+            
             <amountEditable>false</amountEditable>
             <!--Zero or more repetitions:-->
             <languageDescriptions>
                <languageCode>FRA</languageCode>
                <description>Forfait test 685</description>
             </languageDescriptions>
-            <!--Optional:-->
+            
             <inputUnitDescription>1</inputUnitDescription>
-            <!--Optional:-->
+            
             <ratingUnitDescription>1</ratingUnitDescription>
-            <!--Optional:-->
+            
             <unitMultiplicator>1</unitMultiplicator>
             <unitNbDecimal>2</unitNbDecimal>
             <priority>1</priority>
@@ -8837,24 +8837,24 @@ public class Action1 extends Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateProductChargeTemplate>
-         <!--Optional:-->
+         
          <productChargeTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_PC1" description="product charge offer 1">
             <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
             <disabled>false</disabled>
-            <!--Optional:-->
+            
             <amountEditable>false</amountEditable>
             <!--Zero or more repetitions:-->
             <languageDescriptions>
-               <!--Optional:-->
+               
                <languageCode>FRA</languageCode>
-               <!--Optional:-->
+               
                <description>Produit 1</description>
             </languageDescriptions>
-            <!--Optional:-->
+            
             <inputUnitDescription>1</inputUnitDescription>
-            <!--Optional:-->
+            
             <ratingUnitDescription>1</ratingUnitDescription>
-            <!--Optional:-->
+            
             <unitMultiplicator>1</unitMultiplicator>
             <unitNbDecimal>2</unitNbDecimal>
           <customFields>
@@ -8917,7 +8917,7 @@ public class Action1 extends Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateProductTemplate>
-         <!--Optional:-->
+         
          <productTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_PRODUCT1" description="PRODUCT 1">
             <name>Product 1</name>
           <customFields>
@@ -9028,31 +9028,31 @@ public class Action1 extends Script {
                <offerServiceTemplate>\r
                   <!--Zero or more repetitions:-->\r
                   <serviceTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE1">\r
-                     <!--Optional:-->\r
+                     \r
                      <invoicingCalendar>MONTHLY</invoicingCalendar>\r
-                     <!--Optional:-->\r
+                     \r
                      <serviceChargeTemplateRecurrings>\r
                         <!--Zero or more repetitions:-->\r
                         <serviceChargeTemplateRecurring>\r
-                           <!--Optional:-->\r
+                           \r
                            <code>${#Project#entityPrefix}_${#TestSuite#index}_REC1</code>\r
                         </serviceChargeTemplateRecurring>\r
                      </serviceChargeTemplateRecurrings>\r
-                     <!--Optional:-->\r
+                     \r
                      <serviceChargeTemplateSubscriptions>\r
                         <!--Zero or more repetitions:-->\r
                         <serviceChargeTemplateSubscription>\r
-                           <!--Optional:-->\r
+                           \r
                            <code>${#Project#entityPrefix}_${#TestSuite#index}_OS1</code>\r
                         </serviceChargeTemplateSubscription>\r
                      </serviceChargeTemplateSubscriptions>\r
-                     <!--Optional:-->\r
+                     \r
                      <serviceChargeTemplateUsages>\r
                         <!--Zero or more repetitions:-->\r
                         <serviceChargeTemplateUsage>\r
-                           <!--Optional:-->\r
+                           \r
                            <code>${#Project#entityPrefix}_${#TestSuite#index}_USAGE1</code>\r
-                           <!--Optional:-->\r
+                           \r
                            <counterTemplate/>\r
                         </serviceChargeTemplateUsage>\r
                      </serviceChargeTemplateUsages>\r
@@ -9104,7 +9104,7 @@ public class Action1 extends Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:create>
-         <!--Optional:-->
+         
          <jobInstance jobTemplate="PurgeJob" code="${#Project#entityPrefix}_${#TestSuite#index}_JobInstance" description="${#Project#entityPrefix}_${#TestSuite#index}_JobInstance" timerCode="Hourly">
             <jobCategory>UTILS</jobCategory>
             <parameter>ONE</parameter>
@@ -9542,7 +9542,7 @@ public class Action1 extends Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findOfferTemplate>
-         <!--Optional:-->
+         
          <offerTemplateCode>${#Project#entityPrefix}_${#TestSuite#index}_OFFER1</offerTemplateCode>
       </ws:findOfferTemplate>
    </soapenv:Body>
@@ -9684,11 +9684,11 @@ public class Action1 extends Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateRecurringChargeTemplate>
-         <!--Optional:-->
+         
          <recurringChargeTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_REC1" description="${#Project#entityPrefix}_${#TestSuite#index}_REC1">
             <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
             <disabled>false</disabled>
-            <!--Optional:-->
+            
             <amountEditable>false</amountEditable>
             <!--Zero or more repetitions:-->
             <languageDescriptions>
@@ -9700,9 +9700,9 @@ public class Action1 extends Script {
             <terminationProrata>true</terminationProrata>
             <applyInAdvance>true</applyInAdvance>
             <inputUnitDescription>1</inputUnitDescription>
-            <!--Optional:-->
+            
             <ratingUnitDescription>1</ratingUnitDescription>
-            <!--Optional:-->
+            
             <unitMultiplicator>1</unitMultiplicator>
             <unitNbDecimal>2</unitNbDecimal>
             <customFields>
@@ -9782,26 +9782,26 @@ public class Action1 extends Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateOneShotChargeTemplate>
-         <!--Optional:-->
+         
          <oneShotChargeTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_OS1" description="${#Project#entityPrefix}_${#TestSuite#index}_OS1">
             <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
             <disabled>false</disabled>
-            <!--Optional:-->
+            
             <amountEditable>false</amountEditable>
             <!--Zero or more repetitions:-->
             <languageDescriptions>
                <languageCode>FRA</languageCode>
                <description>Forfait test 685</description>
             </languageDescriptions>
-            <!--Optional:-->
+            
             <inputUnitDescription>1</inputUnitDescription>
-            <!--Optional:-->
+            
             <ratingUnitDescription>1</ratingUnitDescription>
-            <!--Optional:-->
+            
             <unitMultiplicator>1</unitMultiplicator>
             <unitNbDecimal>2</unitNbDecimal>
             <oneShotChargeTemplateType>SUBSCRIPTION</oneShotChargeTemplateType>
-            <!--Optional:-->
+            
             <immediateInvoicing>false</immediateInvoicing>
             <customFields>
                <customField code="${#Project#baseEntityPrefix}_CHARGE_STRING_MAP_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">
@@ -9879,33 +9879,33 @@ public class Action1 extends Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateUsageChargeTemplate>
-         <!--Optional:-->
+         
          <usageChargeTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_USAGE1" description="${#Project#entityPrefix}_${#TestSuite#index}_USAGE1">
             <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
             <disabled>false</disabled>
-            <!--Optional:-->
+            
             <amountEditable>false</amountEditable>
             <!--Zero or more repetitions:-->
             <languageDescriptions>
                <languageCode>FRA</languageCode>
                <description>Forfait test 685</description>
             </languageDescriptions>
-            <!--Optional:-->
+            
             <inputUnitDescription>1</inputUnitDescription>
-            <!--Optional:-->
+            
             <ratingUnitDescription>1</ratingUnitDescription>
-            <!--Optional:-->
+            
             <unitMultiplicator>1</unitMultiplicator>
             <unitNbDecimal>2</unitNbDecimal>
-            <!--Optional:-->
+            
             <filterParam1></filterParam1>
-            <!--Optional:-->
+            
             <filterParam2></filterParam2>
-            <!--Optional:-->
+            
             <filterParam3></filterParam3>
-            <!--Optional:-->
+            
             <filterParam4></filterParam4>
-            <!--Optional:-->
+            
             <filterExpression></filterExpression>
             <priority>1</priority>
             <customFields>
@@ -9958,34 +9958,34 @@ public class Action1 extends Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateServiceTemplate>
-         <!--Optional:-->
+         
          <serviceTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE1" description="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE1">
-            <!--Optional:-->
+            
             <invoicingCalendar>MONTHLY</invoicingCalendar>
-            <!--Optional:-->
+            
             <serviceChargeTemplateRecurrings>
                <!--Zero or more repetitions:-->
                <serviceChargeTemplateRecurring>
-                  <!--Optional:-->
+                  
                   <code>${#Project#entityPrefix}_${#TestSuite#index}_REC1</code>
-                  <!--Optional:-->
+                  
                </serviceChargeTemplateRecurring>
             </serviceChargeTemplateRecurrings>
-            <!--Optional:-->
+            
             <serviceChargeTemplateSubscriptions>
                <!--Zero or more repetitions:-->
                <serviceChargeTemplateSubscription>
-                  <!--Optional:-->
+                  
                   <code>${#Project#entityPrefix}_${#TestSuite#index}_OS1</code>
                </serviceChargeTemplateSubscription>
             </serviceChargeTemplateSubscriptions>
-            <!--Optional:-->
+            
             <serviceChargeTemplateUsages>
                <!--Zero or more repetitions:-->
                <serviceChargeTemplateUsage>
-                  <!--Optional:-->
+                  
                   <code>${#Project#entityPrefix}_${#TestSuite#index}_USAGE1</code>
-                  <!--Optional:-->
+                  
                   <counterTemplate/>
                </serviceChargeTemplateUsage>
             </serviceChargeTemplateUsages>
@@ -10086,31 +10086,31 @@ public class Action1 extends Script {
                <offerServiceTemplate>\r
                   <!--Zero or more repetitions:-->\r
                   <serviceTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE1" description="">\r
-                     <!--Optional:-->\r
+                     \r
                      <invoicingCalendar>MONTHLY</invoicingCalendar>\r
-                     <!--Optional:-->\r
+                     \r
                      <serviceChargeTemplateRecurrings>\r
                         <!--Zero or more repetitions:-->\r
                         <serviceChargeTemplateRecurring>\r
-                           <!--Optional:-->\r
+                           \r
                            <code>${#Project#entityPrefix}_${#TestSuite#index}_REC1</code>\r
                         </serviceChargeTemplateRecurring>\r
                      </serviceChargeTemplateRecurrings>\r
-                     <!--Optional:-->\r
+                     \r
                      <serviceChargeTemplateSubscriptions>\r
                         <!--Zero or more repetitions:-->\r
                         <serviceChargeTemplateSubscription>\r
-                           <!--Optional:-->\r
+                           \r
                            <code>${#Project#entityPrefix}_${#TestSuite#index}_OS1</code>\r
                         </serviceChargeTemplateSubscription>\r
                      </serviceChargeTemplateSubscriptions>\r
-                     <!--Optional:-->\r
+                     \r
                      <serviceChargeTemplateUsages>\r
                         <!--Zero or more repetitions:-->\r
                         <serviceChargeTemplateUsage>\r
-                           <!--Optional:-->\r
+                           \r
                            <code>${#Project#entityPrefix}_${#TestSuite#index}_USAGE1</code>\r
-                           <!--Optional:-->\r
+                           \r
                            <counterTemplate/>\r
                         </serviceChargeTemplateUsage>\r
                      </serviceChargeTemplateUsages>\r
@@ -10498,7 +10498,7 @@ public class Action1 extends Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findOfferTemplate>
-         <!--Optional:-->
+         
          <offerTemplateCode>${#Project#entityPrefix}_${#TestSuite#index}_OFFER1</offerTemplateCode>
       </ws:findOfferTemplate>
    </soapenv:Body>
@@ -11831,7 +11831,7 @@ public class Action1 extends Script {
                                     <billingCycle>CYC_INV_MT_1</billingCycle>\r
                                     <country>US</country>\r
                                     <language>ENG</language>\r
-                                    <paymentMethod>CHECK</paymentMethod>\r
+                        \r
                                     <customFields>\r
                                        <customField code="${#Project#baseEntityPrefix}_BA_STRING_SINGLE_VC" valueDate="2015-09-10">\r
                                           <stringValue>BA_STRING_VALUE_11</stringValue>\r
@@ -19570,7 +19570,7 @@ public class Action1 extends Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateField>
-         <!--Optional:-->
+         
          <customField code="${#Project#entityPrefix}_${#TestSuite#index}_CF" description="appliesTo KO">
             <fieldType>DOUBLE</fieldType>
             <accountLevel>I_DO_NOT_EXIST</accountLevel> 
@@ -19652,7 +19652,7 @@ public class Action1 extends Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createField>
-         <!--Optional:-->
+         
          <customField code="${#Project#entityPrefix}_${#TestSuite#index}_CF_DEF_VAL" description="Default value test">
             <fieldType>STRING</fieldType>
             <accountLevel>CUST</accountLevel> 
@@ -30195,16 +30195,16 @@ public class Action1 extends Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createInvoiceCategory>
-         <!--Optional:-->
+         
          <invoiceCategory code="${#Project#entityPrefix}_${#TestSuite#index}_invoiceCategory" description="${#Project#entityPrefix}_invoiceCategory">
             <!--Zero or more repetitions:-->
             <languageDescriptions>
-               <!--Optional:-->
+               
                <languageCode>FRA</languageCode>
-               <!--Optional:-->
+               
                <description>FRANCE</description>
             </languageDescriptions>
-            <!--Optional:-->
+            
            <customFields>
                <customField code="${#Project#baseEntityPrefix}_INV_CAT_DATE_MAP_VC" valueDate="2015-09-10">
                   <mapValue>
@@ -30309,15 +30309,15 @@ public class Action1 extends Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createInvoiceSubCategory>
-         <!--Optional:-->
+         
          <invoiceSubCategory code="${#Project#entityPrefix}_${#TestSuite#index}_invoiceSubCategory2" description="${#Project#entityPrefix}_invoiceSubCategory">
             <invoiceCategory>${#Project#entityPrefix}_${#TestSuite#index}_invoiceCategory</invoiceCategory>
             <accountingCode>205.55.77.98</accountingCode>
             <!--Zero or more repetitions:-->
             <languageDescriptions>
-               <!--Optional:-->
+               
                <languageCode>FRA</languageCode>
-               <!--Optional:-->
+               
                <description>FRANCE</description>
             </languageDescriptions>
              <customFields>
@@ -30530,16 +30530,16 @@ public class Action1 extends Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateInvoiceCategory>
-         <!--Optional:-->
+         
          <invoiceCategory code="${#Project#entityPrefix}_${#TestSuite#index}_invoiceCategory" description="${#Project#entityPrefix}_invoiceCategory">
             <!--Zero or more repetitions:-->
             <languageDescriptions>
-               <!--Optional:-->
+               
                <languageCode>FRA</languageCode>
-               <!--Optional:-->
+               
                <description>FRANCE</description>
             </languageDescriptions>
-            <!--Optional:-->
+            
            <customFields>
                <customField code="${#Project#baseEntityPrefix}_INV_CAT_DATE_MAP_VC" valueDate="2015-02-10">
                   <mapValue>
@@ -30726,15 +30726,15 @@ public class Action1 extends Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateInvoiceSubCategory>
-         <!--Optional:-->
+         
          <invoiceSubCategory code="${#Project#entityPrefix}_${#TestSuite#index}_invoiceSubCategory2" description="${#Project#entityPrefix}_invoiceSubCategory">
             <invoiceCategory>${#Project#entityPrefix}_${#TestSuite#index}_invoiceCategory</invoiceCategory>
             <accountingCode>205.55.77.98</accountingCode>
             <!--Zero or more repetitions:-->
             <languageDescriptions>
-               <!--Optional:-->
+               
                <languageCode>FRA</languageCode>
-               <!--Optional:-->
+               
                <description>FRANCE</description>
             </languageDescriptions>
              <customFields>
@@ -31057,9 +31057,9 @@ public class Action1 extends Script {
              <billingTemplateName>billingTemplateName1</billingTemplateName>
             <invoiceDateDelay>06</invoiceDateDelay>
             <dueDateDelay>07</dueDateDelay>
-            <!--Optional:-->
+            
             <invoiceDateProductionDelay>8</invoiceDateProductionDelay>
-            <!--Optional:-->
+            
             <transactionDateDelay>10</transactionDateDelay>
             <calendar>MONTHLY</calendar>
 
@@ -31655,7 +31655,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>261</con:value>
+        <con:value>263</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -31677,61 +31677,57 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:createCRMAccountHierarchy>
-         <!--Optional:-->
-         <crmAccountHierarchy>
-            <!--Optional:-->
-            <crmAccountType>S</crmAccountType>
-            <!--Optional:-->
-            <code>${#Project#entityPrefix}_${#TestSuite#index}_S</code>
-            <!--Optional:-->
-            <description>Open Source Billing System</description>
-            <!--Optional:-->
-            <name>
-            	<title>MR</title>
-            	<firstName>Edward</firstName>
-               <lastName>Legaspi</lastName>
-            </name>
-            <!--Optional:-->
-            <address>
-               <country>US</country>
-            </address>
-            <!--Optional:-->
-            <contactInformation>
-               <!--Optional:-->
-               <email>edward.legaspi@manaty.net</email>
-               <mobile>+639152154716</mobile>
-            </contactInformation>
-            <!--Optional:-->
-            <language>ENG</language>
-            <!--Optional:-->
-            <paymentMethod>CHECK</paymentMethod>
-            <!--Optional:-->
-            <customerCategory>CLIENT</customerCategory>
-            <!--Optional:-->
-            <customerBrand>DEFAULT</customerBrand>
-          
-            <!--Optional:-->
-            <mandateIdentification>1234</mandateIdentification>
-            <!--Optional:-->
-            <mandateDate>${#TestSuite#currentDate}</mandateDate>
-            <!--Optional:-->
-            <currency>USD</currency>
-            <!--Optional:-->
-            <creditCategory>VIP</creditCategory>
-            <!--Optional:-->
-            <dateStatus>${#TestSuite#currentDate}</dateStatus>
-            <billingCycle>CYC_INV_MT_1</billingCycle>
-            <!--Optional:-->
-            <country>US</country>
-            <!--Optional:-->
-            <electronicBilling>true</electronicBilling>
-         </crmAccountHierarchy>
-      </ws:createCRMAccountHierarchy>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createCRMAccountHierarchy>\r
+         \r
+         <crmAccountHierarchy>\r
+            \r
+            <crmAccountType>S</crmAccountType>\r
+            \r
+            <code>${#Project#entityPrefix}_${#TestSuite#index}_S</code>\r
+            \r
+            <description>Open Source Billing System</description>\r
+            \r
+            <name>\r
+               <title>MR</title>\r
+               <firstName>Edward</firstName>\r
+               <lastName>Legaspi</lastName>\r
+            </name>\r
+            \r
+            <address>\r
+               <country>US</country>\r
+            </address>\r
+            \r
+            <contactInformation>\r
+               \r
+               <email>edward.legaspi@manaty.net</email>\r
+               <mobile>+639152154716</mobile>\r
+            </contactInformation>\r
+            \r
+            <language>ENG</language>\r
+            <customerCategory>CLIENT</customerCategory>\r
+            \r
+            <customerBrand>DEFAULT</customerBrand>\r
+            \r
+            <mandateIdentification>1234</mandateIdentification>\r
+            \r
+            <mandateDate>${#TestSuite#currentDate}</mandateDate>\r
+            \r
+            <currency>USD</currency>\r
+            \r
+            <creditCategory>VIP</creditCategory>\r
+            \r
+            <dateStatus>${#TestSuite#currentDate}</dateStatus>\r
+            <billingCycle>CYC_INV_MT_1</billingCycle>\r
+            \r
+            <country>US</country>\r
+            \r
+            <electronicBilling>true</electronicBilling>\r
+         </crmAccountHierarchy>\r
+      </ws:createCRMAccountHierarchy>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="59f72269-bb6c-40bf-9a4c-fa25b41b2bf7"/>
             <con:assertion type="Simple Contains" id="f4e9864d-c388-4cea-8bf5-dac6a772a885" name="Contains">
@@ -31767,53 +31763,53 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCRMAccountHierarchy>
-         <!--Optional:-->
+         
          <crmAccountHierarchy>
-            <!--Optional:-->
+            
             <crmAccountType>S_C</crmAccountType>
-            <!--Optional:-->
+            
             <code>${#Project#entityPrefix}_${#TestSuite#index}_S_C</code>
-            <!--Optional:-->
+            
             <description>Open Source Billing System</description>
-            <!--Optional:-->
+            
             <name>
             	<title>MR</title>
             	<firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
-            <!--Optional:-->
+            
             <address>
                <country>US</country>
             </address>
-            <!--Optional:-->
+            
             <contactInformation>
-               <!--Optional:-->
+               
                <email>edward.legaspi@manaty.net</email>
                <mobile>+639152154716</mobile>
             </contactInformation>
-            <!--Optional:-->
+            
             <language>ENG</language>
-            <!--Optional:-->
-            <paymentMethod>CHECK</paymentMethod>
-            <!--Optional:-->
+            
+
+            
             <customerCategory>CLIENT</customerCategory>
-            <!--Optional:-->
+            
             <customerBrand>DEFAULT</customerBrand>
           
-            <!--Optional:-->
+            
             <mandateIdentification>1234</mandateIdentification>
-            <!--Optional:-->
+            
             <mandateDate>${#TestSuite#currentDate}</mandateDate>
-            <!--Optional:-->
+            
             <currency>USD</currency>
-            <!--Optional:-->
+            
             <creditCategory>VIP</creditCategory>
-            <!--Optional:-->
+            
             <dateStatus>${#TestSuite#currentDate}</dateStatus>
             <billingCycle>CYC_INV_MT_1</billingCycle>
-            <!--Optional:-->
+            
             <country>US</country>
-            <!--Optional:-->
+            
             <electronicBilling>true</electronicBilling>
          </crmAccountHierarchy>
       </ws:createCRMAccountHierarchy>
@@ -31853,54 +31849,54 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCRMAccountHierarchy>
-         <!--Optional:-->
+         
          <crmAccountHierarchy>
-            <!--Optional:-->
+            
             <crmAccountType>C</crmAccountType>
-            <!--Optional:-->
+            
             <code>${#Project#entityPrefix}_${#TestSuite#index}_C</code>
             <crmParentCode>${#Project#entityPrefix}_${#TestSuite#index}_S</crmParentCode>
-            <!--Optional:-->
+            
             <description>Open Source Billing System</description>
-            <!--Optional:-->
+            
             <name>
             	<title>MR</title>
             	<firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
-            <!--Optional:-->
+            
             <address>
                <country>US</country>
             </address>
-            <!--Optional:-->
+            
             <contactInformation>
-               <!--Optional:-->
+               
                <email>edward.legaspi@manaty.net</email>
                <mobile>+639152154716</mobile>
             </contactInformation>
-            <!--Optional:-->
+            
             <language>ENG</language>
-            <!--Optional:-->
-            <paymentMethod>CHECK</paymentMethod>
-            <!--Optional:-->
+            
+
+            
             <customerCategory>CLIENT</customerCategory>
-            <!--Optional:-->
+            
             <customerBrand>DEFAULT</customerBrand>
           
-            <!--Optional:-->
+            
             <mandateIdentification>1234</mandateIdentification>
-            <!--Optional:-->
+            
             <mandateDate>${#TestSuite#currentDate}</mandateDate>
-            <!--Optional:-->
+            
             <currency>USD</currency>
-            <!--Optional:-->
+            
             <creditCategory>VIP</creditCategory>
-            <!--Optional:-->
+            
             <dateStatus>${#TestSuite#currentDate}</dateStatus>
             <billingCycle>CYC_INV_MT_1</billingCycle>
-            <!--Optional:-->
+            
             <country>US</country>
-            <!--Optional:-->
+            
             <electronicBilling>true</electronicBilling>
          </crmAccountHierarchy>
       </ws:createCRMAccountHierarchy>
@@ -31940,53 +31936,53 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCRMAccountHierarchy>
-         <!--Optional:-->
+         
          <crmAccountHierarchy>
-            <!--Optional:-->
+            
             <crmAccountType>S_CA</crmAccountType>
-            <!--Optional:-->
+            
             <code>${#Project#entityPrefix}_${#TestSuite#index}_S_CA</code>
-            <!--Optional:-->
+            
             <description>Open Source Billing System</description>
-            <!--Optional:-->
+            
             <name>
             	<title>MR</title>
             	<firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
-            <!--Optional:-->
+            
             <address>
                <country>US</country>
             </address>
-            <!--Optional:-->
+            
             <contactInformation>
-               <!--Optional:-->
+               
                <email>edward.legaspi@manaty.net</email>
                <mobile>+639152154716</mobile>
             </contactInformation>
-            <!--Optional:-->
+            
             <language>ENG</language>
-            <!--Optional:-->
-            <paymentMethod>CHECK</paymentMethod>
-            <!--Optional:-->
+            
+
+            
             <customerCategory>CLIENT</customerCategory>
-            <!--Optional:-->
+            
             <customerBrand>DEFAULT</customerBrand>
           
-            <!--Optional:-->
+            
             <mandateIdentification>1234</mandateIdentification>
-            <!--Optional:-->
+            
             <mandateDate>${#TestSuite#currentDate}</mandateDate>
-            <!--Optional:-->
+            
             <currency>USD</currency>
-            <!--Optional:-->
+            
             <creditCategory>VIP</creditCategory>
-            <!--Optional:-->
+            
             <dateStatus>${#TestSuite#currentDate}</dateStatus>
             <billingCycle>CYC_INV_MT_1</billingCycle>
-            <!--Optional:-->
+            
             <country>US</country>
-            <!--Optional:-->
+            
             <electronicBilling>true</electronicBilling>
          </crmAccountHierarchy>
       </ws:createCRMAccountHierarchy>
@@ -32026,54 +32022,54 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCRMAccountHierarchy>
-         <!--Optional:-->
+         
          <crmAccountHierarchy>
-            <!--Optional:-->
+            
             <crmAccountType>C_CA</crmAccountType>
-            <!--Optional:-->
+            
             <crmParentCode>${#Project#entityPrefix}_${#TestSuite#index}_S</crmParentCode>
             <code>${#Project#entityPrefix}_${#TestSuite#index}_C_CA</code>
-            <!--Optional:-->
+            
             <description>Open Source Billing System</description>
-            <!--Optional:-->
+            
             <name>
             	<title>MR</title>
             	<firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
-            <!--Optional:-->
+            
             <address>
                <country>US</country>
             </address>
-            <!--Optional:-->
+            
             <contactInformation>
-               <!--Optional:-->
+               
                <email>edward.legaspi@manaty.net</email>
                <mobile>+639152154716</mobile>
             </contactInformation>
-            <!--Optional:-->
+            
             <language>ENG</language>
-            <!--Optional:-->
-            <paymentMethod>CHECK</paymentMethod>
-            <!--Optional:-->
+            
+
+            
             <customerCategory>CLIENT</customerCategory>
-            <!--Optional:-->
+            
             <customerBrand>DEFAULT</customerBrand>
           
-            <!--Optional:-->
+            
             <mandateIdentification>1234</mandateIdentification>
-            <!--Optional:-->
+            
             <mandateDate>${#TestSuite#currentDate}</mandateDate>
-            <!--Optional:-->
+            
             <currency>USD</currency>
-            <!--Optional:-->
+            
             <creditCategory>VIP</creditCategory>
-            <!--Optional:-->
+            
             <dateStatus>${#TestSuite#currentDate}</dateStatus>
             <billingCycle>CYC_INV_MT_1</billingCycle>
-            <!--Optional:-->
+            
             <country>US</country>
-            <!--Optional:-->
+            
             <electronicBilling>true</electronicBilling>
          </crmAccountHierarchy>
       </ws:createCRMAccountHierarchy>
@@ -32113,54 +32109,54 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCRMAccountHierarchy>
-         <!--Optional:-->
+         
          <crmAccountHierarchy>
-            <!--Optional:-->
+            
             <crmAccountType>CA</crmAccountType>
-            <!--Optional:-->
+            
             <crmParentCode>${#Project#entityPrefix}_${#TestSuite#index}_C</crmParentCode>
             <code>${#Project#entityPrefix}_${#TestSuite#index}_CA</code>
-            <!--Optional:-->
+            
             <description>Open Source Billing System</description>
-            <!--Optional:-->
+            
             <name>
             	<title>MR</title>
             	<firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
-            <!--Optional:-->
+            
             <address>
                <country>US</country>
             </address>
-            <!--Optional:-->
+            
             <contactInformation>
-               <!--Optional:-->
+               
                <email>edward.legaspi@manaty.net</email>
                <mobile>+639152154716</mobile>
             </contactInformation>
-            <!--Optional:-->
+            
             <language>ENG</language>
-            <!--Optional:-->
-            <paymentMethod>CHECK</paymentMethod>
-            <!--Optional:-->
+            
+
+            
             <customerCategory>CLIENT</customerCategory>
-            <!--Optional:-->
+            
             <customerBrand>DEFAULT</customerBrand>
           
-            <!--Optional:-->
+            
             <mandateIdentification>1234</mandateIdentification>
-            <!--Optional:-->
+            
             <mandateDate>${#TestSuite#currentDate}</mandateDate>
-            <!--Optional:-->
+            
             <currency>USD</currency>
-            <!--Optional:-->
+            
             <creditCategory>VIP</creditCategory>
-            <!--Optional:-->
+            
             <dateStatus>${#TestSuite#currentDate}</dateStatus>
             <billingCycle>CYC_INV_MT_1</billingCycle>
-            <!--Optional:-->
+            
             <country>US</country>
-            <!--Optional:-->
+            
             <electronicBilling>true</electronicBilling>
          </crmAccountHierarchy>
       </ws:createCRMAccountHierarchy>
@@ -32200,53 +32196,53 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCRMAccountHierarchy>
-         <!--Optional:-->
+         
          <crmAccountHierarchy>
-            <!--Optional:-->
+            
             <crmAccountType>S_BA</crmAccountType>
-            <!--Optional:-->
+            
             <code>${#Project#entityPrefix}_${#TestSuite#index}_S_BA</code>
-            <!--Optional:-->
+            
             <description>Open Source Billing System</description>
-            <!--Optional:-->
+            
             <name>
             	<title>MR</title>
             	<firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
-            <!--Optional:-->
+            
             <address>
                <country>US</country>
             </address>
-            <!--Optional:-->
+            
             <contactInformation>
-               <!--Optional:-->
+               
                <email>edward.legaspi@manaty.net</email>
                <mobile>+639152154716</mobile>
             </contactInformation>
-            <!--Optional:-->
+            
             <language>ENG</language>
-            <!--Optional:-->
-            <paymentMethod>CHECK</paymentMethod>
-            <!--Optional:-->
+            
+
+            
             <customerCategory>CLIENT</customerCategory>
-            <!--Optional:-->
+            
             <customerBrand>DEFAULT</customerBrand>
           
-            <!--Optional:-->
+            
             <mandateIdentification>1234</mandateIdentification>
-            <!--Optional:-->
+            
             <mandateDate>${#TestSuite#currentDate}</mandateDate>
-            <!--Optional:-->
+            
             <currency>USD</currency>
-            <!--Optional:-->
+            
             <creditCategory>VIP</creditCategory>
-            <!--Optional:-->
+            
             <dateStatus>${#TestSuite#currentDate}</dateStatus>
             <billingCycle>CYC_INV_MT_1</billingCycle>
-            <!--Optional:-->
+            
             <country>US</country>
-            <!--Optional:-->
+            
             <electronicBilling>true</electronicBilling>
          </crmAccountHierarchy>
       </ws:createCRMAccountHierarchy>
@@ -32286,54 +32282,54 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCRMAccountHierarchy>
-         <!--Optional:-->
+         
          <crmAccountHierarchy>
-            <!--Optional:-->
+            
             <crmAccountType>C_BA</crmAccountType>
-            <!--Optional:-->
+            
             <crmParentCode>${#Project#entityPrefix}_${#TestSuite#index}_S</crmParentCode>
             <code>${#Project#entityPrefix}_${#TestSuite#index}_C_BA</code>
-            <!--Optional:-->
+            
             <description>Open Source Billing System</description>
-            <!--Optional:-->
+            
             <name>
             	<title>MR</title>
             	<firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
-            <!--Optional:-->
+            
             <address>
                <country>US</country>
             </address>
-            <!--Optional:-->
+            
             <contactInformation>
-               <!--Optional:-->
+               
                <email>edward.legaspi@manaty.net</email>
                <mobile>+639152154716</mobile>
             </contactInformation>
-            <!--Optional:-->
+            
             <language>ENG</language>
-            <!--Optional:-->
-            <paymentMethod>CHECK</paymentMethod>
-            <!--Optional:-->
+            
+
+            
             <customerCategory>CLIENT</customerCategory>
-            <!--Optional:-->
+            
             <customerBrand>DEFAULT</customerBrand>
           
-            <!--Optional:-->
+            
             <mandateIdentification>1234</mandateIdentification>
-            <!--Optional:-->
+            
             <mandateDate>${#TestSuite#currentDate}</mandateDate>
-            <!--Optional:-->
+            
             <currency>USD</currency>
-            <!--Optional:-->
+            
             <creditCategory>VIP</creditCategory>
-            <!--Optional:-->
+            
             <dateStatus>${#TestSuite#currentDate}</dateStatus>
             <billingCycle>CYC_INV_MT_1</billingCycle>
-            <!--Optional:-->
+            
             <country>US</country>
-            <!--Optional:-->
+            
             <electronicBilling>true</electronicBilling>
          </crmAccountHierarchy>
       </ws:createCRMAccountHierarchy>
@@ -32373,54 +32369,54 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCRMAccountHierarchy>
-         <!--Optional:-->
+         
          <crmAccountHierarchy>
-            <!--Optional:-->
+            
             <crmAccountType>CA_BA</crmAccountType>
-            <!--Optional:-->
+            
              <crmParentCode>${#Project#entityPrefix}_${#TestSuite#index}_C</crmParentCode>
             <code>${#Project#entityPrefix}_${#TestSuite#index}_CA_BA</code>
-            <!--Optional:-->
+            
             <description>Open Source Billing System</description>
-            <!--Optional:-->
+            
             <name>
             	<title>MR</title>
             	<firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
-            <!--Optional:-->
+            
             <address>
                <country>US</country>
             </address>
-            <!--Optional:-->
+            
             <contactInformation>
-               <!--Optional:-->
+               
                <email>edward.legaspi@manaty.net</email>
                <mobile>+639152154716</mobile>
             </contactInformation>
-            <!--Optional:-->
+            
             <language>ENG</language>
-            <!--Optional:-->
-            <paymentMethod>CHECK</paymentMethod>
-            <!--Optional:-->
+            
+
+            
             <customerCategory>CLIENT</customerCategory>
-            <!--Optional:-->
+            
             <customerBrand>DEFAULT</customerBrand>
           
-            <!--Optional:-->
+            
             <mandateIdentification>1234</mandateIdentification>
-            <!--Optional:-->
+            
             <mandateDate>${#TestSuite#currentDate}</mandateDate>
-            <!--Optional:-->
+            
             <currency>USD</currency>
-            <!--Optional:-->
+            
             <creditCategory>VIP</creditCategory>
-            <!--Optional:-->
+            
             <dateStatus>${#TestSuite#currentDate}</dateStatus>
             <billingCycle>CYC_INV_MT_1</billingCycle>
-            <!--Optional:-->
+            
             <country>US</country>
-            <!--Optional:-->
+            
             <electronicBilling>true</electronicBilling>
          </crmAccountHierarchy>
       </ws:createCRMAccountHierarchy>
@@ -32460,54 +32456,54 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCRMAccountHierarchy>
-         <!--Optional:-->
+         
          <crmAccountHierarchy>
-            <!--Optional:-->
+            
             <crmAccountType>BA</crmAccountType>
-            <!--Optional:-->
+            
              <crmParentCode>${#Project#entityPrefix}_${#TestSuite#index}_CA</crmParentCode>
             <code>${#Project#entityPrefix}_${#TestSuite#index}_BA</code>
-            <!--Optional:-->
+            
             <description>Open Source Billing System</description>
-            <!--Optional:-->
+            
             <name>
             	<title>MR</title>
             	<firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
-            <!--Optional:-->
+            
             <address>
                <country>US</country>
             </address>
-            <!--Optional:-->
+            
             <contactInformation>
-               <!--Optional:-->
+               
                <email>edward.legaspi@manaty.net</email>
                <mobile>+639152154716</mobile>
             </contactInformation>
-            <!--Optional:-->
+            
             <language>ENG</language>
-            <!--Optional:-->
-            <paymentMethod>CHECK</paymentMethod>
-            <!--Optional:-->
+            
+
+            
             <customerCategory>CLIENT</customerCategory>
-            <!--Optional:-->
+            
             <customerBrand>DEFAULT</customerBrand>
           
-            <!--Optional:-->
+            
             <mandateIdentification>1234</mandateIdentification>
-            <!--Optional:-->
+            
             <mandateDate>${#TestSuite#currentDate}</mandateDate>
-            <!--Optional:-->
+            
             <currency>USD</currency>
-            <!--Optional:-->
+            
             <creditCategory>VIP</creditCategory>
-            <!--Optional:-->
+            
             <dateStatus>${#TestSuite#currentDate}</dateStatus>
             <billingCycle>CYC_INV_MT_1</billingCycle>
-            <!--Optional:-->
+            
             <country>US</country>
-            <!--Optional:-->
+            
             <electronicBilling>true</electronicBilling>
          </crmAccountHierarchy>
       </ws:createCRMAccountHierarchy>
@@ -32547,53 +32543,53 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCRMAccountHierarchy>
-         <!--Optional:-->
+         
          <crmAccountHierarchy>
-            <!--Optional:-->
+            
             <crmAccountType>S_UA</crmAccountType>
-            <!--Optional:-->
+            
             <code>${#Project#entityPrefix}_${#TestSuite#index}_S_UA</code>
-            <!--Optional:-->
+            
             <description>Open Source Billing System</description>
-            <!--Optional:-->
+            
             <name>
             	<title>MR</title>
             	<firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
-            <!--Optional:-->
+            
             <address>
                <country>US</country>
             </address>
-            <!--Optional:-->
+            
             <contactInformation>
-               <!--Optional:-->
+               
                <email>edward.legaspi@manaty.net</email>
                <mobile>+639152154716</mobile>
             </contactInformation>
-            <!--Optional:-->
+            
             <language>ENG</language>
-            <!--Optional:-->
-            <paymentMethod>CHECK</paymentMethod>
-            <!--Optional:-->
+            
+
+            
             <customerCategory>CLIENT</customerCategory>
-            <!--Optional:-->
+            
             <customerBrand>DEFAULT</customerBrand>
           
-            <!--Optional:-->
+            
             <mandateIdentification>1234</mandateIdentification>
-            <!--Optional:-->
+            
             <mandateDate>${#TestSuite#currentDate}</mandateDate>
-            <!--Optional:-->
+            
             <currency>USD</currency>
-            <!--Optional:-->
+            
             <creditCategory>VIP</creditCategory>
-            <!--Optional:-->
+            
             <dateStatus>${#TestSuite#currentDate}</dateStatus>
             <billingCycle>CYC_INV_MT_1</billingCycle>
-            <!--Optional:-->
+            
             <country>US</country>
-            <!--Optional:-->
+            
             <electronicBilling>true</electronicBilling>
          </crmAccountHierarchy>
       </ws:createCRMAccountHierarchy>
@@ -32633,54 +32629,54 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCRMAccountHierarchy>
-         <!--Optional:-->
+         
          <crmAccountHierarchy>
-            <!--Optional:-->
+            
             <crmAccountType>C_UA</crmAccountType>
-            <!--Optional:-->
+            
              <crmParentCode>${#Project#entityPrefix}_${#TestSuite#index}_S</crmParentCode>
             <code>${#Project#entityPrefix}_${#TestSuite#index}_C_UA</code>
-            <!--Optional:-->
+            
             <description>Open Source Billing System</description>
-            <!--Optional:-->
+            
             <name>
             	<title>MR</title>
             	<firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
-            <!--Optional:-->
+            
             <address>
                <country>US</country>
             </address>
-            <!--Optional:-->
+            
             <contactInformation>
-               <!--Optional:-->
+               
                <email>edward.legaspi@manaty.net</email>
                <mobile>+639152154716</mobile>
             </contactInformation>
-            <!--Optional:-->
+            
             <language>ENG</language>
-            <!--Optional:-->
-            <paymentMethod>CHECK</paymentMethod>
-            <!--Optional:-->
+            
+
+            
             <customerCategory>CLIENT</customerCategory>
-            <!--Optional:-->
+            
             <customerBrand>DEFAULT</customerBrand>
           
-            <!--Optional:-->
+            
             <mandateIdentification>1234</mandateIdentification>
-            <!--Optional:-->
+            
             <mandateDate>${#TestSuite#currentDate}</mandateDate>
-            <!--Optional:-->
+            
             <currency>USD</currency>
-            <!--Optional:-->
+            
             <creditCategory>VIP</creditCategory>
-            <!--Optional:-->
+            
             <dateStatus>${#TestSuite#currentDate}</dateStatus>
             <billingCycle>CYC_INV_MT_1</billingCycle>
-            <!--Optional:-->
+            
             <country>US</country>
-            <!--Optional:-->
+            
             <electronicBilling>true</electronicBilling>
          </crmAccountHierarchy>
       </ws:createCRMAccountHierarchy>
@@ -32720,54 +32716,54 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCRMAccountHierarchy>
-         <!--Optional:-->
+         
          <crmAccountHierarchy>
-            <!--Optional:-->
+            
             <crmAccountType>CA_UA</crmAccountType>
-            <!--Optional:-->
+            
              <crmParentCode>${#Project#entityPrefix}_${#TestSuite#index}_C</crmParentCode>
             <code>${#Project#entityPrefix}_${#TestSuite#index}_CA_UA</code>
-            <!--Optional:-->
+            
             <description>Open Source Billing System</description>
-            <!--Optional:-->
+            
             <name>
             	<title>MR</title>
             	<firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
-            <!--Optional:-->
+            
             <address>
                <country>US</country>
             </address>
-            <!--Optional:-->
+            
             <contactInformation>
-               <!--Optional:-->
+               
                <email>edward.legaspi@manaty.net</email>
                <mobile>+639152154716</mobile>
             </contactInformation>
-            <!--Optional:-->
+            
             <language>ENG</language>
-            <!--Optional:-->
-            <paymentMethod>CHECK</paymentMethod>
-            <!--Optional:-->
+            
+
+            
             <customerCategory>CLIENT</customerCategory>
-            <!--Optional:-->
+            
             <customerBrand>DEFAULT</customerBrand>
           
-            <!--Optional:-->
+            
             <mandateIdentification>1234</mandateIdentification>
-            <!--Optional:-->
+            
             <mandateDate>${#TestSuite#currentDate}</mandateDate>
-            <!--Optional:-->
+            
             <currency>USD</currency>
-            <!--Optional:-->
+            
             <creditCategory>VIP</creditCategory>
-            <!--Optional:-->
+            
             <dateStatus>${#TestSuite#currentDate}</dateStatus>
             <billingCycle>CYC_INV_MT_1</billingCycle>
-            <!--Optional:-->
+            
             <country>US</country>
-            <!--Optional:-->
+            
             <electronicBilling>true</electronicBilling>
          </crmAccountHierarchy>
       </ws:createCRMAccountHierarchy>
@@ -32807,54 +32803,54 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCRMAccountHierarchy>
-         <!--Optional:-->
+         
          <crmAccountHierarchy>
-            <!--Optional:-->
+            
             <crmAccountType>BA_UA</crmAccountType>
-            <!--Optional:-->
+            
              <crmParentCode>${#Project#entityPrefix}_${#TestSuite#index}_CA</crmParentCode>
             <code>${#Project#entityPrefix}_${#TestSuite#index}_UA</code>
-            <!--Optional:-->
+            
             <description>Open Source Billing System</description>
-            <!--Optional:-->
+            
             <name>
             	<title>MR</title>
             	<firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
-            <!--Optional:-->
+            
             <address>
                <country>US</country>
             </address>
-            <!--Optional:-->
+            
             <contactInformation>
-               <!--Optional:-->
+               
                <email>edward.legaspi@manaty.net</email>
                <mobile>+639152154716</mobile>
             </contactInformation>
-            <!--Optional:-->
+            
             <language>ENG</language>
-            <!--Optional:-->
-            <paymentMethod>CHECK</paymentMethod>
-            <!--Optional:-->
+            
+
+            
             <customerCategory>CLIENT</customerCategory>
-            <!--Optional:-->
+            
             <customerBrand>DEFAULT</customerBrand>
           
-            <!--Optional:-->
+            
             <mandateIdentification>1234</mandateIdentification>
-            <!--Optional:-->
+            
             <mandateDate>${#TestSuite#currentDate}</mandateDate>
-            <!--Optional:-->
+            
             <currency>USD</currency>
-            <!--Optional:-->
+            
             <creditCategory>VIP</creditCategory>
-            <!--Optional:-->
+            
             <dateStatus>${#TestSuite#currentDate}</dateStatus>
             <billingCycle>CYC_INV_MT_1</billingCycle>
-            <!--Optional:-->
+            
             <country>US</country>
-            <!--Optional:-->
+            
             <electronicBilling>true</electronicBilling>
          </crmAccountHierarchy>
       </ws:createCRMAccountHierarchy>
@@ -32894,54 +32890,54 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCRMAccountHierarchy>
-         <!--Optional:-->
+         
          <crmAccountHierarchy>
-            <!--Optional:-->
+            
             <crmAccountType>UA</crmAccountType>
-            <!--Optional:-->
+            
              <crmParentCode>${#Project#entityPrefix}_${#TestSuite#index}_BA</crmParentCode>
             <code>${#Project#entityPrefix}_${#TestSuite#index}_BA_UA</code>
-            <!--Optional:-->
+            
             <description>Open Source Billing System</description>
-            <!--Optional:-->
+            
             <name>
             	<title>MR</title>
             	<firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
-            <!--Optional:-->
+            
             <address>
                <country>US</country>
             </address>
-            <!--Optional:-->
+            
             <contactInformation>
-               <!--Optional:-->
+               
                <email>edward.legaspi@manaty.net</email>
                <mobile>+639152154716</mobile>
             </contactInformation>
-            <!--Optional:-->
+            
             <language>ENG</language>
-            <!--Optional:-->
-            <paymentMethod>CHECK</paymentMethod>
-            <!--Optional:-->
+            
+
+            
             <customerCategory>CLIENT</customerCategory>
-            <!--Optional:-->
+            
             <customerBrand>DEFAULT</customerBrand>
           
-            <!--Optional:-->
+            
             <mandateIdentification>1234</mandateIdentification>
-            <!--Optional:-->
+            
             <mandateDate>${#TestSuite#currentDate}</mandateDate>
-            <!--Optional:-->
+            
             <currency>USD</currency>
-            <!--Optional:-->
+            
             <creditCategory>VIP</creditCategory>
-            <!--Optional:-->
+            
             <dateStatus>${#TestSuite#currentDate}</dateStatus>
             <billingCycle>CYC_INV_MT_1</billingCycle>
-            <!--Optional:-->
+            
             <country>US</country>
-            <!--Optional:-->
+            
             <electronicBilling>true</electronicBilling>
          </crmAccountHierarchy>
       </ws:createCRMAccountHierarchy>
@@ -32985,53 +32981,53 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateCRMAccountHierarchy>
-         <!--Optional:-->
+         
          <crmAccountHierarchy>
-            <!--Optional:-->
+            
             <crmAccountType>S</crmAccountType>
-            <!--Optional:-->
+            
             <code>${#Project#entityPrefix}_${#TestSuite#index}_S</code>
-            <!--Optional:-->
+            
             <description>Open Source Billing System - Updated</description>
-            <!--Optional:-->
+            
             <name>
             	<title>MR</title>
             	<firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
-            <!--Optional:-->
+            
             <address>
                <country>US</country>
             </address>
-            <!--Optional:-->
+            
             <contactInformation>
-               <!--Optional:-->
+               
                <email>edward.legaspi@manaty.net</email>
                <mobile>+639152154716</mobile>
             </contactInformation>
-            <!--Optional:-->
+            
             <language>ENG</language>
-            <!--Optional:-->
-            <paymentMethod>CHECK</paymentMethod>
-            <!--Optional:-->
+            
+
+            
             <customerCategory>CLIENT</customerCategory>
-            <!--Optional:-->
+            
             <customerBrand>DEFAULT</customerBrand>
           
-            <!--Optional:-->
+            
             <mandateIdentification>1234</mandateIdentification>
-            <!--Optional:-->
+            
             <mandateDate>${#TestSuite#currentDate}</mandateDate>
-            <!--Optional:-->
+            
             <currency>USD</currency>
-            <!--Optional:-->
+            
             <creditCategory>VIP</creditCategory>
-            <!--Optional:-->
+            
             <dateStatus>${#TestSuite#currentDate}</dateStatus>
             <billingCycle>CYC_INV_MT_1</billingCycle>
-            <!--Optional:-->
+            
             <country>US</country>
-            <!--Optional:-->
+            
             <electronicBilling>true</electronicBilling>
          </crmAccountHierarchy>
       </ws:updateCRMAccountHierarchy>
@@ -33071,53 +33067,53 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateCRMAccountHierarchy>
-         <!--Optional:-->
+         
          <crmAccountHierarchy>
-            <!--Optional:-->
+            
             <crmAccountType>S_C</crmAccountType>
-            <!--Optional:-->
+            
             <code>${#Project#entityPrefix}_${#TestSuite#index}_S_C</code>
-            <!--Optional:-->
+            
             <description>Open Source Billing System - Updated</description>
-            <!--Optional:-->
+            
             <name>
             	<title>MR</title>
             	<firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
-            <!--Optional:-->
+            
             <address>
                <country>US</country>
             </address>
-            <!--Optional:-->
+            
             <contactInformation>
-               <!--Optional:-->
+               
                <email>edward.legaspi@manaty.net</email>
                <mobile>+639152154716</mobile>
             </contactInformation>
-            <!--Optional:-->
+            
             <language>ENG</language>
-            <!--Optional:-->
-            <paymentMethod>CHECK</paymentMethod>
-            <!--Optional:-->
+            
+
+            
             <customerCategory>CLIENT</customerCategory>
-            <!--Optional:-->
+            
             <customerBrand>DEFAULT</customerBrand>
           
-            <!--Optional:-->
+            
             <mandateIdentification>1234</mandateIdentification>
-            <!--Optional:-->
+            
             <mandateDate>${#TestSuite#currentDate}</mandateDate>
-            <!--Optional:-->
+            
             <currency>USD</currency>
-            <!--Optional:-->
+            
             <creditCategory>VIP</creditCategory>
-            <!--Optional:-->
+            
             <dateStatus>${#TestSuite#currentDate}</dateStatus>
             <billingCycle>CYC_INV_MT_1</billingCycle>
-            <!--Optional:-->
+            
             <country>US</country>
-            <!--Optional:-->
+            
             <electronicBilling>true</electronicBilling>
          </crmAccountHierarchy>
       </ws:updateCRMAccountHierarchy>
@@ -33157,54 +33153,54 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateCRMAccountHierarchy>
-         <!--Optional:-->
+         
          <crmAccountHierarchy>
-            <!--Optional:-->
+            
             <crmAccountType>C</crmAccountType>
-            <!--Optional:-->
+            
             <code>${#Project#entityPrefix}_${#TestSuite#index}_C</code>
             <crmParentCode>${#Project#entityPrefix}_${#TestSuite#index}_S</crmParentCode>
-            <!--Optional:-->
+            
             <description>Open Source Billing System - Updated</description>
-            <!--Optional:-->
+            
             <name>
             	<title>MR</title>
             	<firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
-            <!--Optional:-->
+            
             <address>
                <country>US</country>
             </address>
-            <!--Optional:-->
+            
             <contactInformation>
-               <!--Optional:-->
+               
                <email>edward.legaspi@manaty.net</email>
                <mobile>+639152154716</mobile>
             </contactInformation>
-            <!--Optional:-->
+            
             <language>ENG</language>
-            <!--Optional:-->
-            <paymentMethod>CHECK</paymentMethod>
-            <!--Optional:-->
+            
+
+            
             <customerCategory>CLIENT</customerCategory>
-            <!--Optional:-->
+            
             <customerBrand>DEFAULT</customerBrand>
           
-            <!--Optional:-->
+            
             <mandateIdentification>1234</mandateIdentification>
-            <!--Optional:-->
+            
             <mandateDate>${#TestSuite#currentDate}</mandateDate>
-            <!--Optional:-->
+            
             <currency>USD</currency>
-            <!--Optional:-->
+            
             <creditCategory>VIP</creditCategory>
-            <!--Optional:-->
+            
             <dateStatus>${#TestSuite#currentDate}</dateStatus>
             <billingCycle>CYC_INV_MT_1</billingCycle>
-            <!--Optional:-->
+            
             <country>US</country>
-            <!--Optional:-->
+            
             <electronicBilling>true</electronicBilling>
          </crmAccountHierarchy>
       </ws:updateCRMAccountHierarchy>
@@ -33244,53 +33240,53 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateCRMAccountHierarchy>
-         <!--Optional:-->
+         
          <crmAccountHierarchy>
-            <!--Optional:-->
+            
             <crmAccountType>S_CA</crmAccountType>
-            <!--Optional:-->
+            
             <code>${#Project#entityPrefix}_${#TestSuite#index}_S_CA</code>
-            <!--Optional:-->
+            
             <description>Open Source Billing System - Updated</description>
-            <!--Optional:-->
+            
             <name>
             	<title>MR</title>
             	<firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
-            <!--Optional:-->
+            
             <address>
                <country>US</country>
             </address>
-            <!--Optional:-->
+            
             <contactInformation>
-               <!--Optional:-->
+               
                <email>edward.legaspi@manaty.net</email>
                <mobile>+639152154716</mobile>
             </contactInformation>
-            <!--Optional:-->
+            
             <language>ENG</language>
-            <!--Optional:-->
-            <paymentMethod>CHECK</paymentMethod>
-            <!--Optional:-->
+            
+
+            
             <customerCategory>CLIENT</customerCategory>
-            <!--Optional:-->
+            
             <customerBrand>DEFAULT</customerBrand>
           
-            <!--Optional:-->
+            
             <mandateIdentification>1234</mandateIdentification>
-            <!--Optional:-->
+            
             <mandateDate>${#TestSuite#currentDate}</mandateDate>
-            <!--Optional:-->
+            
             <currency>USD</currency>
-            <!--Optional:-->
+            
             <creditCategory>VIP</creditCategory>
-            <!--Optional:-->
+            
             <dateStatus>${#TestSuite#currentDate}</dateStatus>
             <billingCycle>CYC_INV_MT_1</billingCycle>
-            <!--Optional:-->
+            
             <country>US</country>
-            <!--Optional:-->
+            
             <electronicBilling>true</electronicBilling>
          </crmAccountHierarchy>
       </ws:updateCRMAccountHierarchy>
@@ -33330,54 +33326,54 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateCRMAccountHierarchy>
-         <!--Optional:-->
+         
          <crmAccountHierarchy>
-            <!--Optional:-->
+            
             <crmAccountType>C_CA</crmAccountType>
-            <!--Optional:-->
+            
             <crmParentCode>${#Project#entityPrefix}_${#TestSuite#index}_S</crmParentCode>
             <code>${#Project#entityPrefix}_${#TestSuite#index}_C_CA</code>
-            <!--Optional:-->
+            
             <description>Open Source Billing System - Updated</description>
-            <!--Optional:-->
+            
             <name>
             	<title>MR</title>
             	<firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
-            <!--Optional:-->
+            
             <address>
                <country>US</country>
             </address>
-            <!--Optional:-->
+            
             <contactInformation>
-               <!--Optional:-->
+               
                <email>edward.legaspi@manaty.net</email>
                <mobile>+639152154716</mobile>
             </contactInformation>
-            <!--Optional:-->
+            
             <language>ENG</language>
-            <!--Optional:-->
-            <paymentMethod>CHECK</paymentMethod>
-            <!--Optional:-->
+            
+
+            
             <customerCategory>CLIENT</customerCategory>
-            <!--Optional:-->
+            
             <customerBrand>DEFAULT</customerBrand>
           
-            <!--Optional:-->
+            
             <mandateIdentification>1234</mandateIdentification>
-            <!--Optional:-->
+            
             <mandateDate>${#TestSuite#currentDate}</mandateDate>
-            <!--Optional:-->
+            
             <currency>USD</currency>
-            <!--Optional:-->
+            
             <creditCategory>VIP</creditCategory>
-            <!--Optional:-->
+            
             <dateStatus>${#TestSuite#currentDate}</dateStatus>
             <billingCycle>CYC_INV_MT_1</billingCycle>
-            <!--Optional:-->
+            
             <country>US</country>
-            <!--Optional:-->
+            
             <electronicBilling>true</electronicBilling>
          </crmAccountHierarchy>
       </ws:updateCRMAccountHierarchy>
@@ -33417,54 +33413,54 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateCRMAccountHierarchy>
-         <!--Optional:-->
+         
          <crmAccountHierarchy>
-            <!--Optional:-->
+            
             <crmAccountType>CA</crmAccountType>
-            <!--Optional:-->
+            
             <crmParentCode>${#Project#entityPrefix}_${#TestSuite#index}_C</crmParentCode>
             <code>${#Project#entityPrefix}_${#TestSuite#index}_CA</code>
-            <!--Optional:-->
+            
             <description>Open Source Billing System - Updated</description>
-            <!--Optional:-->
+            
             <name>
             	<title>MR</title>
             	<firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
-            <!--Optional:-->
+            
             <address>
                <country>US</country>
             </address>
-            <!--Optional:-->
+            
             <contactInformation>
-               <!--Optional:-->
+               
                <email>edward.legaspi@manaty.net</email>
                <mobile>+639152154716</mobile>
             </contactInformation>
-            <!--Optional:-->
+            
             <language>ENG</language>
-            <!--Optional:-->
-            <paymentMethod>CHECK</paymentMethod>
-            <!--Optional:-->
+            
+
+            
             <customerCategory>CLIENT</customerCategory>
-            <!--Optional:-->
+            
             <customerBrand>DEFAULT</customerBrand>
           
-            <!--Optional:-->
+            
             <mandateIdentification>1234</mandateIdentification>
-            <!--Optional:-->
+            
             <mandateDate>${#TestSuite#currentDate}</mandateDate>
-            <!--Optional:-->
+            
             <currency>USD</currency>
-            <!--Optional:-->
+            
             <creditCategory>VIP</creditCategory>
-            <!--Optional:-->
+            
             <dateStatus>${#TestSuite#currentDate}</dateStatus>
             <billingCycle>CYC_INV_MT_1</billingCycle>
-            <!--Optional:-->
+            
             <country>US</country>
-            <!--Optional:-->
+            
             <electronicBilling>true</electronicBilling>
          </crmAccountHierarchy>
       </ws:updateCRMAccountHierarchy>
@@ -33504,53 +33500,53 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateCRMAccountHierarchy>
-         <!--Optional:-->
+         
          <crmAccountHierarchy>
-            <!--Optional:-->
+            
             <crmAccountType>S_BA</crmAccountType>
-            <!--Optional:-->
+            
             <code>${#Project#entityPrefix}_${#TestSuite#index}_S_BA</code>
-            <!--Optional:-->
+            
             <description>Open Source Billing System - Updated</description>
-            <!--Optional:-->
+            
             <name>
             	<title>MR</title>
             	<firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
-            <!--Optional:-->
+            
             <address>
                <country>US</country>
             </address>
-            <!--Optional:-->
+            
             <contactInformation>
-               <!--Optional:-->
+               
                <email>edward.legaspi@manaty.net</email>
                <mobile>+639152154716</mobile>
             </contactInformation>
-            <!--Optional:-->
+            
             <language>ENG</language>
-            <!--Optional:-->
-            <paymentMethod>CHECK</paymentMethod>
-            <!--Optional:-->
+            
+
+            
             <customerCategory>CLIENT</customerCategory>
-            <!--Optional:-->
+            
             <customerBrand>DEFAULT</customerBrand>
           
-            <!--Optional:-->
+            
             <mandateIdentification>1234</mandateIdentification>
-            <!--Optional:-->
+            
             <mandateDate>${#TestSuite#currentDate}</mandateDate>
-            <!--Optional:-->
+            
             <currency>USD</currency>
-            <!--Optional:-->
+            
             <creditCategory>VIP</creditCategory>
-            <!--Optional:-->
+            
             <dateStatus>${#TestSuite#currentDate}</dateStatus>
             <billingCycle>CYC_INV_MT_1</billingCycle>
-            <!--Optional:-->
+            
             <country>US</country>
-            <!--Optional:-->
+            
             <electronicBilling>true</electronicBilling>
          </crmAccountHierarchy>
       </ws:updateCRMAccountHierarchy>
@@ -33590,54 +33586,54 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateCRMAccountHierarchy>
-         <!--Optional:-->
+         
          <crmAccountHierarchy>
-            <!--Optional:-->
+            
             <crmAccountType>C_BA</crmAccountType>
-            <!--Optional:-->
+            
             <crmParentCode>${#Project#entityPrefix}_${#TestSuite#index}_S</crmParentCode>
             <code>${#Project#entityPrefix}_${#TestSuite#index}_C_BA</code>
-            <!--Optional:-->
+            
             <description>Open Source Billing System - Updated</description>
-            <!--Optional:-->
+            
             <name>
             	<title>MR</title>
             	<firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
-            <!--Optional:-->
+            
             <address>
                <country>US</country>
             </address>
-            <!--Optional:-->
+            
             <contactInformation>
-               <!--Optional:-->
+               
                <email>edward.legaspi@manaty.net</email>
                <mobile>+639152154716</mobile>
             </contactInformation>
-            <!--Optional:-->
+            
             <language>ENG</language>
-            <!--Optional:-->
-            <paymentMethod>CHECK</paymentMethod>
-            <!--Optional:-->
+            
+
+            
             <customerCategory>CLIENT</customerCategory>
-            <!--Optional:-->
+            
             <customerBrand>DEFAULT</customerBrand>
           
-            <!--Optional:-->
+            
             <mandateIdentification>1234</mandateIdentification>
-            <!--Optional:-->
+            
             <mandateDate>${#TestSuite#currentDate}</mandateDate>
-            <!--Optional:-->
+            
             <currency>USD</currency>
-            <!--Optional:-->
+            
             <creditCategory>VIP</creditCategory>
-            <!--Optional:-->
+            
             <dateStatus>${#TestSuite#currentDate}</dateStatus>
             <billingCycle>CYC_INV_MT_1</billingCycle>
-            <!--Optional:-->
+            
             <country>US</country>
-            <!--Optional:-->
+            
             <electronicBilling>true</electronicBilling>
          </crmAccountHierarchy>
       </ws:updateCRMAccountHierarchy>
@@ -33677,54 +33673,54 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateCRMAccountHierarchy>
-         <!--Optional:-->
+         
          <crmAccountHierarchy>
-            <!--Optional:-->
+            
             <crmAccountType>CA_BA</crmAccountType>
-            <!--Optional:-->
+            
              <crmParentCode>${#Project#entityPrefix}_${#TestSuite#index}_C</crmParentCode>
             <code>${#Project#entityPrefix}_${#TestSuite#index}_CA_BA</code>
-            <!--Optional:-->
+            
             <description>Open Source Billing System - Updated</description>
-            <!--Optional:-->
+            
             <name>
             	<title>MR</title>
             	<firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
-            <!--Optional:-->
+            
             <address>
                <country>US</country>
             </address>
-            <!--Optional:-->
+            
             <contactInformation>
-               <!--Optional:-->
+               
                <email>edward.legaspi@manaty.net</email>
                <mobile>+639152154716</mobile>
             </contactInformation>
-            <!--Optional:-->
+            
             <language>ENG</language>
-            <!--Optional:-->
-            <paymentMethod>CHECK</paymentMethod>
-            <!--Optional:-->
+            
+
+            
             <customerCategory>CLIENT</customerCategory>
-            <!--Optional:-->
+            
             <customerBrand>DEFAULT</customerBrand>
           
-            <!--Optional:-->
+            
             <mandateIdentification>1234</mandateIdentification>
-            <!--Optional:-->
+            
             <mandateDate>${#TestSuite#currentDate}</mandateDate>
-            <!--Optional:-->
+            
             <currency>USD</currency>
-            <!--Optional:-->
+            
             <creditCategory>VIP</creditCategory>
-            <!--Optional:-->
+            
             <dateStatus>${#TestSuite#currentDate}</dateStatus>
             <billingCycle>CYC_INV_MT_1</billingCycle>
-            <!--Optional:-->
+            
             <country>US</country>
-            <!--Optional:-->
+            
             <electronicBilling>true</electronicBilling>
          </crmAccountHierarchy>
       </ws:updateCRMAccountHierarchy>
@@ -33764,54 +33760,54 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateCRMAccountHierarchy>
-         <!--Optional:-->
+         
          <crmAccountHierarchy>
-            <!--Optional:-->
+            
             <crmAccountType>BA</crmAccountType>
-            <!--Optional:-->
+            
              <crmParentCode>${#Project#entityPrefix}_${#TestSuite#index}_CA</crmParentCode>
             <code>${#Project#entityPrefix}_${#TestSuite#index}_BA</code>
-            <!--Optional:-->
+            
             <description>Open Source Billing System - Updated</description>
-            <!--Optional:-->
+            
             <name>
             	<title>MR</title>
             	<firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
-            <!--Optional:-->
+            
             <address>
                <country>US</country>
             </address>
-            <!--Optional:-->
+            
             <contactInformation>
-               <!--Optional:-->
+               
                <email>edward.legaspi@manaty.net</email>
                <mobile>+639152154716</mobile>
             </contactInformation>
-            <!--Optional:-->
+            
             <language>ENG</language>
-            <!--Optional:-->
-            <paymentMethod>CHECK</paymentMethod>
-            <!--Optional:-->
+            
+
+            
             <customerCategory>CLIENT</customerCategory>
-            <!--Optional:-->
+            
             <customerBrand>DEFAULT</customerBrand>
           
-            <!--Optional:-->
+            
             <mandateIdentification>1234</mandateIdentification>
-            <!--Optional:-->
+            
             <mandateDate>${#TestSuite#currentDate}</mandateDate>
-            <!--Optional:-->
+            
             <currency>USD</currency>
-            <!--Optional:-->
+            
             <creditCategory>VIP</creditCategory>
-            <!--Optional:-->
+            
             <dateStatus>${#TestSuite#currentDate}</dateStatus>
             <billingCycle>CYC_INV_MT_1</billingCycle>
-            <!--Optional:-->
+            
             <country>US</country>
-            <!--Optional:-->
+            
             <electronicBilling>true</electronicBilling>
          </crmAccountHierarchy>
       </ws:updateCRMAccountHierarchy>
@@ -33851,53 +33847,53 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateCRMAccountHierarchy>
-         <!--Optional:-->
+         
          <crmAccountHierarchy>
-            <!--Optional:-->
+            
             <crmAccountType>S_UA</crmAccountType>
-            <!--Optional:-->
+            
             <code>${#Project#entityPrefix}_${#TestSuite#index}_S_UA</code>
-            <!--Optional:-->
+            
             <description>Open Source Billing System - Updated</description>
-            <!--Optional:-->
+            
             <name>
             	<title>MR</title>
             	<firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
-            <!--Optional:-->
+            
             <address>
                <country>US</country>
             </address>
-            <!--Optional:-->
+            
             <contactInformation>
-               <!--Optional:-->
+               
                <email>edward.legaspi@manaty.net</email>
                <mobile>+639152154716</mobile>
             </contactInformation>
-            <!--Optional:-->
+            
             <language>ENG</language>
-            <!--Optional:-->
-            <paymentMethod>CHECK</paymentMethod>
-            <!--Optional:-->
+            
+
+            
             <customerCategory>CLIENT</customerCategory>
-            <!--Optional:-->
+            
             <customerBrand>DEFAULT</customerBrand>
           
-            <!--Optional:-->
+            
             <mandateIdentification>1234</mandateIdentification>
-            <!--Optional:-->
+            
             <mandateDate>${#TestSuite#currentDate}</mandateDate>
-            <!--Optional:-->
+            
             <currency>USD</currency>
-            <!--Optional:-->
+            
             <creditCategory>VIP</creditCategory>
-            <!--Optional:-->
+            
             <dateStatus>${#TestSuite#currentDate}</dateStatus>
             <billingCycle>CYC_INV_MT_1</billingCycle>
-            <!--Optional:-->
+            
             <country>US</country>
-            <!--Optional:-->
+            
             <electronicBilling>true</electronicBilling>
          </crmAccountHierarchy>
       </ws:updateCRMAccountHierarchy>
@@ -33937,54 +33933,54 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateCRMAccountHierarchy>
-         <!--Optional:-->
+         
          <crmAccountHierarchy>
-            <!--Optional:-->
+            
             <crmAccountType>C_UA</crmAccountType>
-            <!--Optional:-->
+            
              <crmParentCode>${#Project#entityPrefix}_${#TestSuite#index}_S</crmParentCode>
             <code>${#Project#entityPrefix}_${#TestSuite#index}_C_UA</code>
-            <!--Optional:-->
+            
             <description>Open Source Billing System - Updated</description>
-            <!--Optional:-->
+            
             <name>
             	<title>MR</title>
             	<firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
-            <!--Optional:-->
+            
             <address>
                <country>US</country>
             </address>
-            <!--Optional:-->
+            
             <contactInformation>
-               <!--Optional:-->
+               
                <email>edward.legaspi@manaty.net</email>
                <mobile>+639152154716</mobile>
             </contactInformation>
-            <!--Optional:-->
+            
             <language>ENG</language>
-            <!--Optional:-->
-            <paymentMethod>CHECK</paymentMethod>
-            <!--Optional:-->
+            
+
+            
             <customerCategory>CLIENT</customerCategory>
-            <!--Optional:-->
+            
             <customerBrand>DEFAULT</customerBrand>
           
-            <!--Optional:-->
+            
             <mandateIdentification>1234</mandateIdentification>
-            <!--Optional:-->
+            
             <mandateDate>${#TestSuite#currentDate}</mandateDate>
-            <!--Optional:-->
+            
             <currency>USD</currency>
-            <!--Optional:-->
+            
             <creditCategory>VIP</creditCategory>
-            <!--Optional:-->
+            
             <dateStatus>${#TestSuite#currentDate}</dateStatus>
             <billingCycle>CYC_INV_MT_1</billingCycle>
-            <!--Optional:-->
+            
             <country>US</country>
-            <!--Optional:-->
+            
             <electronicBilling>true</electronicBilling>
          </crmAccountHierarchy>
       </ws:updateCRMAccountHierarchy>
@@ -34024,54 +34020,54 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateCRMAccountHierarchy>
-         <!--Optional:-->
+         
          <crmAccountHierarchy>
-            <!--Optional:-->
+            
             <crmAccountType>CA_UA</crmAccountType>
-            <!--Optional:-->
+            
              <crmParentCode>${#Project#entityPrefix}_${#TestSuite#index}_C</crmParentCode>
             <code>${#Project#entityPrefix}_${#TestSuite#index}_CA_UA</code>
-            <!--Optional:-->
+            
             <description>Open Source Billing System - Updated</description>
-            <!--Optional:-->
+            
             <name>
             	<title>MR</title>
             	<firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
-            <!--Optional:-->
+            
             <address>
                <country>US</country>
             </address>
-            <!--Optional:-->
+            
             <contactInformation>
-               <!--Optional:-->
+               
                <email>edward.legaspi@manaty.net</email>
                <mobile>+639152154716</mobile>
             </contactInformation>
-            <!--Optional:-->
+            
             <language>ENG</language>
-            <!--Optional:-->
-            <paymentMethod>CHECK</paymentMethod>
-            <!--Optional:-->
+            
+
+            
             <customerCategory>CLIENT</customerCategory>
-            <!--Optional:-->
+            
             <customerBrand>DEFAULT</customerBrand>
           
-            <!--Optional:-->
+            
             <mandateIdentification>1234</mandateIdentification>
-            <!--Optional:-->
+            
             <mandateDate>${#TestSuite#currentDate}</mandateDate>
-            <!--Optional:-->
+            
             <currency>USD</currency>
-            <!--Optional:-->
+            
             <creditCategory>VIP</creditCategory>
-            <!--Optional:-->
+            
             <dateStatus>${#TestSuite#currentDate}</dateStatus>
             <billingCycle>CYC_INV_MT_1</billingCycle>
-            <!--Optional:-->
+            
             <country>US</country>
-            <!--Optional:-->
+            
             <electronicBilling>true</electronicBilling>
          </crmAccountHierarchy>
       </ws:updateCRMAccountHierarchy>
@@ -34111,54 +34107,54 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateCRMAccountHierarchy>
-         <!--Optional:-->
+         
          <crmAccountHierarchy>
-            <!--Optional:-->
+            
             <crmAccountType>BA_UA</crmAccountType>
-            <!--Optional:-->
+            
              <crmParentCode>${#Project#entityPrefix}_${#TestSuite#index}_CA</crmParentCode>
             <code>${#Project#entityPrefix}_${#TestSuite#index}_UA</code>
-            <!--Optional:-->
+            
             <description>Open Source Billing System - Updated</description>
-            <!--Optional:-->
+            
             <name>
             	<title>MR</title>
             	<firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
-            <!--Optional:-->
+            
             <address>
                <country>US</country>
             </address>
-            <!--Optional:-->
+            
             <contactInformation>
-               <!--Optional:-->
+               
                <email>edward.legaspi@manaty.net</email>
                <mobile>+639152154716</mobile>
             </contactInformation>
-            <!--Optional:-->
+            
             <language>ENG</language>
-            <!--Optional:-->
-            <paymentMethod>CHECK</paymentMethod>
-            <!--Optional:-->
+            
+
+            
             <customerCategory>CLIENT</customerCategory>
-            <!--Optional:-->
+            
             <customerBrand>DEFAULT</customerBrand>
           
-            <!--Optional:-->
+            
             <mandateIdentification>1234</mandateIdentification>
-            <!--Optional:-->
+            
             <mandateDate>${#TestSuite#currentDate}</mandateDate>
-            <!--Optional:-->
+            
             <currency>USD</currency>
-            <!--Optional:-->
+            
             <creditCategory>VIP</creditCategory>
-            <!--Optional:-->
+            
             <dateStatus>${#TestSuite#currentDate}</dateStatus>
             <billingCycle>CYC_INV_MT_1</billingCycle>
-            <!--Optional:-->
+            
             <country>US</country>
-            <!--Optional:-->
+            
             <electronicBilling>true</electronicBilling>
          </crmAccountHierarchy>
       </ws:updateCRMAccountHierarchy>
@@ -34198,54 +34194,54 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateCRMAccountHierarchy>
-         <!--Optional:-->
+         
          <crmAccountHierarchy>
-            <!--Optional:-->
+            
             <crmAccountType>UA</crmAccountType>
-            <!--Optional:-->
+            
              <crmParentCode>${#Project#entityPrefix}_${#TestSuite#index}_BA</crmParentCode>
             <code>${#Project#entityPrefix}_${#TestSuite#index}_BA_UA</code>
-            <!--Optional:-->
+            
             <description>Open Source Billing System - Updated</description>
-            <!--Optional:-->
+            
             <name>
             	<title>MR</title>
             	<firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
-            <!--Optional:-->
+            
             <address>
                <country>US</country>
             </address>
-            <!--Optional:-->
+            
             <contactInformation>
-               <!--Optional:-->
+               
                <email>edward.legaspi@manaty.net</email>
                <mobile>+639152154716</mobile>
             </contactInformation>
-            <!--Optional:-->
+            
             <language>ENG</language>
-            <!--Optional:-->
-            <paymentMethod>CHECK</paymentMethod>
-            <!--Optional:-->
+            
+
+            
             <customerCategory>CLIENT</customerCategory>
-            <!--Optional:-->
+            
             <customerBrand>DEFAULT</customerBrand>
           
-            <!--Optional:-->
+            
             <mandateIdentification>1234</mandateIdentification>
-            <!--Optional:-->
+            
             <mandateDate>${#TestSuite#currentDate}</mandateDate>
-            <!--Optional:-->
+            
             <currency>USD</currency>
-            <!--Optional:-->
+            
             <creditCategory>VIP</creditCategory>
-            <!--Optional:-->
+            
             <dateStatus>${#TestSuite#currentDate}</dateStatus>
             <billingCycle>CYC_INV_MT_1</billingCycle>
-            <!--Optional:-->
+            
             <country>US</country>
-            <!--Optional:-->
+            
             <electronicBilling>true</electronicBilling>
          </crmAccountHierarchy>
       </ws:updateCRMAccountHierarchy>
@@ -34289,12 +34285,12 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateField>\r
-         <!--Optional:-->\r
+         \r
          <customField code="${#Project#entityPrefix}_S_C_1" description="${#Project#entityPrefix}_S_C_1">\r
             <fieldType>STRING</fieldType>\r
             <appliesTo>CUST</appliesTo>\r
             <storageType>SINGLE</storageType>\r
-            <!--Optional:-->\r
+            \r
             <valueRequired>false</valueRequired>\r
             <versionable>false</versionable>\r
             <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
@@ -34336,59 +34332,59 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCRMAccountHierarchy>
-         <!--Optional:-->
+         
          <crmAccountHierarchy>
-            <!--Optional:-->
+            
             <crmAccountType>S_UA</crmAccountType>
-            <!--Optional:-->
+            
             <code>${#Project#entityPrefix}_${#TestSuite#index}_S_C_1</code>
-            <!--Optional:-->
+            
             <description>Open Source Billing System</description>
-            <!--Optional:-->
+            
             <name>
             	<title>MR</title>
             	<firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
-            <!--Optional:-->
+            
             <address>
                <country>US</country>
             </address>
-            <!--Optional:-->
+            
             <contactInformation>
-               <!--Optional:-->
+               
                <email>edward.legaspi@manaty.net</email>
                <mobile>+639152154716</mobile>
             </contactInformation>
-            <!--Optional:-->
+            
             <language>ENG</language>
-            <!--Optional:-->
-            <paymentMethod>CHECK</paymentMethod>
-            <!--Optional:-->
+            
+
+            
             <customerCategory>CLIENT</customerCategory>
-            <!--Optional:-->
+            
             <customerBrand>DEFAULT</customerBrand>
           
-            <!--Optional:-->
+            
             <mandateIdentification>1234</mandateIdentification>
-            <!--Optional:-->
+            
             <mandateDate>${#TestSuite#currentDate}</mandateDate>
-            <!--Optional:-->
+            
             <currency>USD</currency>
-            <!--Optional:-->
+            
             <creditCategory>VIP</creditCategory>
-            <!--Optional:-->
+            
             <dateStatus>${#TestSuite#currentDate}</dateStatus>
             <billingCycle>CYC_INV_MT_1</billingCycle>
-            <!--Optional:-->
+            
             <country>US</country>
-            <!--Optional:-->
+            
             <electronicBilling>true</electronicBilling>
-                <!--Optional:-->
+                
             <customFields>
                <!--Zero or more repetitions:-->
                <customField code="${#Project#entityPrefix}_S_C_1">
-                  <!--Optional:-->
+                  
                   <stringValue>DEMO</stringValue>
                </customField>
             </customFields>
@@ -34430,12 +34426,12 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateField>\r
-         <!--Optional:-->\r
+         \r
          <customField code="${#Project#entityPrefix}_S_C_1" description="${#Project#entityPrefix}_S_C_1">\r
             <fieldType>STRING</fieldType>\r
             <appliesTo>UA</appliesTo>\r
             <storageType>SINGLE</storageType>\r
-            <!--Optional:-->\r
+            \r
             <valueRequired>false</valueRequired>\r
             <versionable>false</versionable>\r
             <triggerEndPeriodEvent>false</triggerEndPeriodEvent>\r
@@ -34477,59 +34473,59 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createCRMAccountHierarchy>
-         <!--Optional:-->
+         
          <crmAccountHierarchy>
-            <!--Optional:-->
+            
             <crmAccountType>S_UA</crmAccountType>
-            <!--Optional:-->
+            
             <code>${#Project#entityPrefix}_${#TestSuite#index}_S_C_2</code>
-            <!--Optional:-->
+            
             <description>Open Source Billing System</description>
-            <!--Optional:-->
+            
             <name>
             	<title>MR</title>
             	<firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
-            <!--Optional:-->
+            
             <address>
                <country>US</country>
             </address>
-            <!--Optional:-->
+            
             <contactInformation>
-               <!--Optional:-->
+               
                <email>edward.legaspi@manaty.net</email>
                <mobile>+639152154716</mobile>
             </contactInformation>
-            <!--Optional:-->
+            
             <language>ENG</language>
-            <!--Optional:-->
-            <paymentMethod>CHECK</paymentMethod>
-            <!--Optional:-->
+            
+
+            
             <customerCategory>CLIENT</customerCategory>
-            <!--Optional:-->
+            
             <customerBrand>DEFAULT</customerBrand>
           
-            <!--Optional:-->
+            
             <mandateIdentification>1234</mandateIdentification>
-            <!--Optional:-->
+            
             <mandateDate>${#TestSuite#currentDate}</mandateDate>
-            <!--Optional:-->
+            
             <currency>USD</currency>
-            <!--Optional:-->
+            
             <creditCategory>VIP</creditCategory>
-            <!--Optional:-->
+            
             <dateStatus>${#TestSuite#currentDate}</dateStatus>
             <billingCycle>CYC_INV_MT_1</billingCycle>
-            <!--Optional:-->
+            
             <country>US</country>
-            <!--Optional:-->
+            
             <electronicBilling>true</electronicBilling>
-                <!--Optional:-->
+                
             <customFields>
                <!--Zero or more repetitions:-->
                <customField code="${#Project#entityPrefix}_S_C_1">
-                  <!--Optional:-->
+                  
                   <stringValue>DEMO</stringValue>
                </customField>
            </customFields>
@@ -34575,59 +34571,59 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateCRMAccountHierarchy>
-         <!--Optional:-->
+         
          <crmAccountHierarchy>
-            <!--Optional:-->
+            
             <crmAccountType>S_UA</crmAccountType>
-            <!--Optional:-->
+            
             <code>${#Project#entityPrefix}_${#TestSuite#index}_S_C_1</code>
-            <!--Optional:-->
+            
             <description>Open Source Billing System</description>
-            <!--Optional:-->
+            
             <name>
             	<title>MR</title>
             	<firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
-            <!--Optional:-->
+            
             <address>
                <country>US</country>
             </address>
-            <!--Optional:-->
+            
             <contactInformation>
-               <!--Optional:-->
+               
                <email>edward.legaspi@manaty.net</email>
                <mobile>+639152154716</mobile>
             </contactInformation>
-            <!--Optional:-->
+            
             <language>ENG</language>
-            <!--Optional:-->
-            <paymentMethod>CHECK</paymentMethod>
-            <!--Optional:-->
+            
+
+            
             <customerCategory>CLIENT</customerCategory>
-            <!--Optional:-->
+            
             <customerBrand>DEFAULT</customerBrand>
           
-            <!--Optional:-->
+            
             <mandateIdentification>1234</mandateIdentification>
-            <!--Optional:-->
+            
             <mandateDate>${#TestSuite#currentDate}</mandateDate>
-            <!--Optional:-->
+            
             <currency>USD</currency>
-            <!--Optional:-->
+            
             <creditCategory>VIP</creditCategory>
-            <!--Optional:-->
+            
             <dateStatus>${#TestSuite#currentDate}</dateStatus>
             <billingCycle>CYC_INV_MT_1</billingCycle>
-            <!--Optional:-->
+            
             <country>US</country>
-            <!--Optional:-->
+            
             <electronicBilling>true</electronicBilling>
-                <!--Optional:-->
+                
             <customFields>
                <!--Zero or more repetitions:-->
                <customField code="${#Project#entityPrefix}_S_C_1">
-                  <!--Optional:-->
+                  
                   <stringValue>DEMO - Updated</stringValue>
                </customField>
             </customFields>
@@ -34669,59 +34665,59 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateCRMAccountHierarchy>
-         <!--Optional:-->
+         
          <crmAccountHierarchy>
-            <!--Optional:-->
+            
             <crmAccountType>S_UA</crmAccountType>
-            <!--Optional:-->
+            
             <code>${#Project#entityPrefix}_${#TestSuite#index}_S_C_2</code>
-            <!--Optional:-->
+            
             <description>Open Source Billing System</description>
-            <!--Optional:-->
+            
             <name>
             	<title>MR</title>
             	<firstName>Edward</firstName>
                <lastName>Legaspi</lastName>
             </name>
-            <!--Optional:-->
+            
             <address>
                <country>US</country>
             </address>
-            <!--Optional:-->
+            
             <contactInformation>
-               <!--Optional:-->
+               
                <email>edward.legaspi@manaty.net</email>
                <mobile>+639152154716</mobile>
             </contactInformation>
-            <!--Optional:-->
+            
             <language>ENG</language>
-            <!--Optional:-->
-            <paymentMethod>CHECK</paymentMethod>
-            <!--Optional:-->
+            
+
+            
             <customerCategory>CLIENT</customerCategory>
-            <!--Optional:-->
+            
             <customerBrand>DEFAULT</customerBrand>
           
-            <!--Optional:-->
+            
             <mandateIdentification>1234</mandateIdentification>
-            <!--Optional:-->
+            
             <mandateDate>${#TestSuite#currentDate}</mandateDate>
-            <!--Optional:-->
+            
             <currency>USD</currency>
-            <!--Optional:-->
+            
             <creditCategory>VIP</creditCategory>
-            <!--Optional:-->
+            
             <dateStatus>${#TestSuite#currentDate}</dateStatus>
             <billingCycle>CYC_INV_MT_1</billingCycle>
-            <!--Optional:-->
+            
             <country>US</country>
-            <!--Optional:-->
+            
             <electronicBilling>true</electronicBilling>
-                <!--Optional:-->
+                
             <customFields>
                <!--Zero or more repetitions:-->
                <customField code="${#Project#entityPrefix}_S_C_1">
-                  <!--Optional:-->
+                  
                   <stringValue>DEMO - Updated</stringValue>
                </customField>
            </customFields>
@@ -34757,7 +34753,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>48</con:value>
+        <con:value>50</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -34934,7 +34930,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateRecurringChargeTemplate>
-         <!--Optional:-->
+         
          <recurringChargeTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_REC1" description="${#Project#entityPrefix}_${#TestSuite#index}_REC1">
             <invoiceSubCategory>SUB_DATA</invoiceSubCategory>
             <disabled>false</disabled>
@@ -35203,7 +35199,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <ws:createOrUpdateOccTemplate>\r
-         <!--Optional:-->\r
+         \r
          <occTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_OCC" description="${#Project#entityPrefix}_${#TestSuite#index}_OCC_desc">\r
             <accountCode>${#Project#entityPrefix}_${#TestSuite#index}_OCC_ACC</accountCode>\r
             <occCategory>DEBIT</occCategory>\r
@@ -35455,7 +35451,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateCustomer>
-         <!--Optional:-->
+         
          <customer code="${#Project#entityPrefix}_${#TestSuite#index}_CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CUST">
             <name>
                <title>MR</title>
@@ -35535,7 +35531,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             </address>
             <customer>${#Project#entityPrefix}_${#TestSuite#index}_CUST</customer>
             <currency>EUR</currency>
-            <paymentMethod>CHECK</paymentMethod>
+
             <creditCategory>Pro</creditCategory>
             <language>FRA</language>
          </customerAccount>
@@ -35596,38 +35592,12 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             <billingCycle>CYC_INV_MT_1</billingCycle>
             <country>FR</country>
             <language>FRA</language>
-            <paymentMethod>DIRECTDEBIT</paymentMethod>
+
             <nextInvoiceDate>2015-04-01</nextInvoiceDate>
             <subscriptionDate>2015-01-01</subscriptionDate>
-            <paymentTerms>CASH</paymentTerms>
+
             <electronicBilling>true</electronicBilling>
             <email>613@manaty.net</email>
-            <bankCoordinates>
-              <!--Optional:-->
-              <bankCode>BP</bankCode>
-              <!--Optional:-->
-              <branchCode>LB</branchCode>
-              <!--Optional:-->
-              <accountNumber>12</accountNumber>
-              <!--Optional:-->
-              <key>12</key>
-              <!--Optional:-->
-              <iban>12341</iban>
-              <!--Optional:-->
-              <bic>12341</bic>
-              <!--Optional:-->
-              <accountOwner>Mbarek</accountOwner>
-              <!--Optional:-->
-              <bankName>Bank</bankName>
-              <!--Optional:-->
-              <bankId>BPI1</bankId>
-              <!--Optional:-->
-              <issuerNumber>11</issuerNumber>
-              <!--Optional:-->
-              <issuerName>BPI1</issuerName>
-              <!--Optional:-->
-              <ics>NA1</ics>
-		</bankCoordinates>
          </billingAccount>
       </ws:createOrUpdateBillingAccount>
    </soapenv:Body>
@@ -35813,37 +35783,37 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createAccountOperation>
-         <!--Optional:-->
+         
          <accountOperation>
-            <!--Optional:-->
+            
             <dueDate>2015-06-01</dueDate>
-            <!--Optional:-->
+            
             <type>OCC</type>
-            <!--Optional:-->
+            
             <transactionDate>2015-06-15</transactionDate>
-            <!--Optional:-->
+            
             <transactionCategory>DEBIT</transactionCategory>
-            <!--Optional:-->
+            
             <reference>1234</reference>
-            <!--Optional:-->
+            
             <accountCode>1234</accountCode>
-            <!--Optional:-->
+            
             <accountCodeClientSide>1234</accountCodeClientSide>
-            <!--Optional:-->
+            
             <amount>1000</amount>
-            <!--Optional:-->
+            
             <matchingAmount>500</matchingAmount>
-            <!--Optional:-->
+            
             <unMatchingAmount>500</unMatchingAmount>
-            <!--Optional:-->
+            
             <matchingStatus>C</matchingStatus>
-            <!--Optional:-->
+            
             <occCode>1234</occCode>
-            <!--Optional:-->
+            
             <occDescription>1234</occDescription>
-            <!--Optional:-->
+            
             <customerAccount>${#Project#entityPrefix}_${#TestSuite#index}_CA</customerAccount>
-            <!--Optional:--> 
+             
             <otherCreditAndCharge>
             	<operationDate>2015-06-15</operationDate>
             </otherCreditAndCharge>
@@ -35917,72 +35887,58 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoUrl}/PaymentWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:create>
-         <!--Optional:-->
-         <PaymentDto>
-            <!--Optional:-->
-            <type>P</type>
-            <!--Optional:-->
-            <description>Payment</description>
-            <!--Optional:-->
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:create>\r
+         <PaymentDto>\r
+            <type>P</type>\r
+            <description>Payment</description>\r
+            <occTemplateCode>FA_FACT</occTemplateCode>\r
+            <amount>120</amount>\r
+            <customerAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_CA</customerAccountCode>\r
+            <reference>123</reference>\r
+            <bankLot>2</bankLot>\r
+            <depositDate>2015-06-15</depositDate>\r
+            <bankCollectionDate>2015-06-15</bankCollectionDate>\r
+            <dueDate>2015-06-15</dueDate>\r
+            <transactionDate>2015-06-15</transactionDate>\r
             <paymentMethod>CHECK</paymentMethod>
-            <!--Optional:-->
-            <occTemplateCode>FA_FACT</occTemplateCode>
-            <!--Optional:-->
-            <amount>120</amount>
-            <!--Optional:-->
-            <customerAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_CA</customerAccountCode>
-            <!--Optional:-->
-            <reference>123</reference>
-            <!--Optional:-->
-            <bankLot>2</bankLot>
-            <!--Optional:-->
-            <depositDate>2015-06-15</depositDate>
-            <!--Optional:-->
-            <bankCollectionDate>2015-06-15</bankCollectionDate>
-            <!--Optional:-->
-            <dueDate>2015-06-15</dueDate>
-            <!--Optional:-->
-            <transactionDate>2015-06-15</transactionDate>
-            <!--Zero or more repetitions:--> 
-            <isToMatching>true</isToMatching>
-            <customFields>
-               <customField code="${#Project#baseEntityPrefix}_ACC_OP_LONG_LIST_VC" valueDate="2016-10-10">
-                  <listValue>
-                     <value>
-                        <longValue>884</longValue>
-                     </value>
-                     <value>
-                        <longValue>366</longValue>
-                     </value>
-                  </listValue>
-               </customField>
-               <customField code="${#Project#baseEntityPrefix}_ACC_OP_LONG_LIST_VC" valueDate="2014-08-10">
-                  <listValue>
-                     <value>
-                        <longValue>88</longValue>
-                     </value>
-                     <value>
-                        <longValue>22</longValue>
-                     </value>
-                  </listValue>
-               </customField>
-                <customField code="${#Project#baseEntityPrefix}_ACC_OP_STRING_SINGLE_NV">
-                  <stringValue>ACC_STRING_VALUE_1</stringValue>
-               </customField>
-               <customField code="${#Project#baseEntityPrefix}_ACC_OP_LONG_SINGLE_NV">
-                  <longValue>66</longValue>
-               </customField>
-               <customField code="${#Project#baseEntityPrefix}_ACC_OP_DOUBLE_SINGLE_NV">
-                  <doubleValue>9.17</doubleValue>
-               </customField>
-            </customFields> 
-         </PaymentDto>
-      </ws:create>
-   </soapenv:Body>
+            <isToMatching>true</isToMatching>\r
+            <customFields>\r
+               <customField code="${#Project#baseEntityPrefix}_ACC_OP_LONG_LIST_VC" valueDate="2016-10-10">\r
+                  <listValue>\r
+                     <value>\r
+                        <longValue>884</longValue>\r
+                     </value>\r
+                     <value>\r
+                        <longValue>366</longValue>\r
+                     </value>\r
+                  </listValue>\r
+               </customField>\r
+               <customField code="${#Project#baseEntityPrefix}_ACC_OP_LONG_LIST_VC" valueDate="2014-08-10">\r
+                  <listValue>\r
+                     <value>\r
+                        <longValue>88</longValue>\r
+                     </value>\r
+                     <value>\r
+                        <longValue>22</longValue>\r
+                     </value>\r
+                  </listValue>\r
+               </customField>\r
+               <customField code="${#Project#baseEntityPrefix}_ACC_OP_STRING_SINGLE_NV">\r
+                  <stringValue>ACC_STRING_VALUE_1</stringValue>\r
+               </customField>\r
+               <customField code="${#Project#baseEntityPrefix}_ACC_OP_LONG_SINGLE_NV">\r
+                  <longValue>66</longValue>\r
+               </customField>\r
+               <customField code="${#Project#baseEntityPrefix}_ACC_OP_DOUBLE_SINGLE_NV">\r
+                  <doubleValue>9.17</doubleValue>\r
+               </customField>\r
+            </customFields>\r
+         </PaymentDto>\r
+      </ws:create>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="2714aff9-c235-4a03-acd3-7df9cfda9f07"/>
             <con:assertion type="Simple Contains" id="1e65f2eb-1ca7-4373-9722-0b815aef3e54" name="Contains">
@@ -36014,14 +35970,13 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:listAccountOperations>
-         <!--Optional:-->
-         <customerAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_CA</customerAccountCode>
-      </ws:listAccountOperations>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:listAccountOperations>\r
+         <customerAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_CA</customerAccountCode>\r
+      </ws:listAccountOperations>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="2714aff9-c235-4a03-acd3-7df9cfda9f07"/>
             <con:assertion type="Simple Contains" id="62af3a23-4970-47ad-b0f8-1606ed828529" name="Contains">
@@ -36057,7 +36012,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:list>
-         <!--Optional:-->
+         
          <customerAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_CA</customerAccountCode>
       </ws:list>
    </soapenv:Body>
@@ -36218,7 +36173,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>9</con:value>
+        <con:value>12</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -36294,9 +36249,9 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
              <billingTemplateName>billingTemplateName1</billingTemplateName>
             <invoiceDateDelay>06</invoiceDateDelay>
             <dueDateDelay>07</dueDateDelay>
-            <!--Optional:-->
+            
             <invoiceDateProductionDelay>8</invoiceDateProductionDelay>
-            <!--Optional:-->
+            
             <transactionDateDelay>10</transactionDateDelay>
             <calendar>MONTHLY</calendar>
 
@@ -36646,10 +36601,10 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateUsageChargeTemplate>
-         <!--Optional:-->
+         
          <usageChargeTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_USG1" description="${#Project#entityPrefix}_${#TestSuite#index}_USG1" disabled="false">
          	  <invoiceSubCategory>${#Project#entityPrefix}_${#TestSuite#index}_ISubC</invoiceSubCategory>
-            <!--Optional:-->
+            
             <amountEditable>false</amountEditable>
             <priority>1</priority>
             <!--Zero or more repetitions:-->
@@ -36657,11 +36612,11 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
                <languageCode>FRA</languageCode>
                <description>Forfait test ${#ticket}</description>
             </languageDescriptions>
-            <!--Optional:-->
+            
             <inputUnitDescription>1</inputUnitDescription>
-            <!--Optional:-->
+            
             <ratingUnitDescription>Quantity</ratingUnitDescription>
-            <!--Optional:-->
+            
             <unitMultiplicator>2</unitMultiplicator>
             <unitNbDecimal>2</unitNbDecimal>
          </usageChargeTemplate>
@@ -36706,11 +36661,11 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateRecurringChargeTemplate>
-         <!--Optional:-->
+         
          <recurringChargeTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_REC1" description="${#Project#entityPrefix}_${#TestSuite#index}_REC1">
             <invoiceSubCategory>${#Project#entityPrefix}_${#TestSuite#index}_ISubC</invoiceSubCategory>
             <disabled>false</disabled>
-            <!--Optional:-->
+            
             <amountEditable>false</amountEditable>
             <!--Zero or more repetitions:-->
             <languageDescriptions>
@@ -36722,9 +36677,9 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             <terminationProrata>true</terminationProrata>
             <applyInAdvance>true</applyInAdvance>
             <inputUnitDescription>1</inputUnitDescription>
-            <!--Optional:-->
+            
             <ratingUnitDescription>1</ratingUnitDescription>
-            <!--Optional:-->
+            
             <unitMultiplicator>1</unitMultiplicator>
             <unitNbDecimal>2</unitNbDecimal>
          </recurringChargeTemplate>
@@ -36769,9 +36724,9 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateServiceTemplate>
-         <!--Optional:-->
+         
          <serviceTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE1" description="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE1">
-            <!--Optional:-->
+            
             <invoicingCalendar>MONTHLY</invoicingCalendar> 
             <serviceChargeTemplateRecurrings> 
                <serviceChargeTemplateRecurring> 
@@ -36826,33 +36781,33 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateOfferTemplate>
-         <!--Optional:-->
+         
          <offerTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_OFFER1" description="${#Project#entityPrefix}_${#TestSuite#index}_OFFER1">
             <disabled>false</disabled>
-            <!--Optional:-->
+            
             <bomCode></bomCode>
-            <!--Optional:-->
+            
             <offerTemplateCategoryCode></offerTemplateCategoryCode>
-            <!--Optional:-->
+            
             <offerServiceTemplates>
                <!--Zero or more repetitions:-->
                <offerServiceTemplate>
-                  <!--Optional:-->
+                  
                   <serviceTemplate code="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE1" description="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE1">
-                     <!--Optional:-->
+                     
                      <invoicingCalendar>MONTHLY</invoicingCalendar>
-                     <!--Optional:-->
+                     
                      <serviceChargeTemplateRecurrings>
                         <!--Zero or more repetitions:-->
                         <serviceChargeTemplateRecurring>
-                           <!--Optional:-->
+                           
                            <code>${#Project#entityPrefix}_${#TestSuite#index}_REC1</code>
-                           <!--Optional:--> 
+                            
                         </serviceChargeTemplateRecurring>
                         <serviceChargeTemplateRecurring>
-                           <!--Optional:-->
+                           
                            <code>${#Project#entityPrefix}_${#TestSuite#index}_REC2</code>
-                           <!--Optional:--> 
+                            
                         </serviceChargeTemplateRecurring>
                      </serviceChargeTemplateRecurrings>
                   </serviceTemplate> 
@@ -36995,7 +36950,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateCustomer>
-         <!--Optional:-->
+         
          <customer code="${#Project#entityPrefix}_${#TestSuite#index}_CUST" description="${#Project#entityPrefix}_${#TestSuite#index}_CUST">
             <name>
                <title>MR</title>
@@ -37075,7 +37030,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             </address>
             <customer>${#Project#entityPrefix}_${#TestSuite#index}_CUST</customer>
             <currency>EUR</currency>
-            <paymentMethod>CHECK</paymentMethod>
+
             <creditCategory>Pro</creditCategory>
             <language>FRA</language>
          </customerAccount>
@@ -37136,38 +37091,12 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
             <billingCycle>${#Project#entityPrefix}_${#TestSuite#index}_BILLING_CYCLE</billingCycle>
             <country>FR</country>
             <language>FRA</language>
-            <paymentMethod>DIRECTDEBIT</paymentMethod>
+
             <nextInvoiceDate>2015-04-01</nextInvoiceDate>
             <subscriptionDate>2015-01-01</subscriptionDate>
-            <paymentTerms>CASH</paymentTerms>
+
             <electronicBilling>true</electronicBilling>
             <email>613@manaty.net</email>
-            <bankCoordinates>
-              <!--Optional:-->
-              <bankCode>BP</bankCode>
-              <!--Optional:-->
-              <branchCode>LB</branchCode>
-              <!--Optional:-->
-              <accountNumber>12</accountNumber>
-              <!--Optional:-->
-              <key>12</key>
-              <!--Optional:-->
-              <iban>12341</iban>
-              <!--Optional:-->
-              <bic>12341</bic>
-              <!--Optional:-->
-              <accountOwner>Mbarek</accountOwner>
-              <!--Optional:-->
-              <bankName>Bank</bankName>
-              <!--Optional:-->
-              <bankId>BPI1</bankId>
-              <!--Optional:-->
-              <issuerNumber>11</issuerNumber>
-              <!--Optional:-->
-              <issuerName>BPI1</issuerName>
-              <!--Optional:-->
-              <ics>NA1</ics>
-		</bankCoordinates>
          </billingAccount>
       </ws:createOrUpdateBillingAccount>
    </soapenv:Body>
@@ -37408,7 +37337,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:generateInvoiceData>
-         <!--Optional:-->
+         
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_BA</billingAccountCode>
             <invoicingDate>2015-10-15T00:00:00</invoicingDate>
@@ -37445,7 +37374,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findXMLInvoice>
-         <!--Optional:-->
+         
          <invoiceNumber>000000053</invoiceNumber>
       </ws:findXMLInvoice>
    </soapenv:Body>

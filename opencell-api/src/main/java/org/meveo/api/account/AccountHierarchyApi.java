@@ -25,7 +25,6 @@ import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.account.AccountDto;
 import org.meveo.api.dto.account.AccountHierarchyDto;
 import org.meveo.api.dto.account.AddressDto;
-import org.meveo.api.dto.account.BankCoordinatesDto;
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.account.BillingAccountsDto;
 import org.meveo.api.dto.account.CRMAccountHierarchyDto;
@@ -273,7 +272,6 @@ public class AccountHierarchyApi extends BaseApi {
             customerDto.setCustomerCategory(customerCategoryCode);
         }
 
-        int caPaymentMethod = Integer.parseInt(paramBean.getProperty("api.default.customerAccount.paymentMethod", "1"));
         String creditCategory = paramBean.getProperty("api.default.customerAccount.creditCategory", "NEWCUSTOMER");
 
         AddressDto address = customerDto.getAddress();
@@ -314,6 +312,7 @@ public class AccountHierarchyApi extends BaseApi {
         customerAccountDto.setCurrency(postData.getCurrencyCode());
         customerAccountDto.setLanguage(postData.getLanguageCode());
         customerAccountDto.setDateDunningLevel(new Date());
+        customerAccountDto.setPaymentMethods(postData.getPaymentMethods());
 
         customerAccountApi.create(customerAccountDto);
 
@@ -436,7 +435,7 @@ public class AccountHierarchyApi extends BaseApi {
             customerDto.setCustomerCategory(customerCategoryCode);
         }
 
-        int caPaymentMethod = Integer.parseInt(paramBean.getProperty("api.default.customerAccount.paymentMethod", "1"));
+        
         String creditCategory = paramBean.getProperty("api.default.customerAccount.creditCategory", "NEWCUSTOMER");
 
         AddressDto address = customerDto.getAddress();
@@ -486,6 +485,8 @@ public class AccountHierarchyApi extends BaseApi {
         }
         customerAccountDto.setCurrency(postData.getCurrencyCode());
         customerAccountDto.setLanguage(postData.getLanguageCode());
+        customerAccountDto.setPaymentMethods(postData.getPaymentMethods());
+        
         customerAccountApi.createOrUpdate(customerAccountDto);
 
         String billingCycleCode = StringUtils.normalizeHierarchyCode(postData.getBillingCycleCode());
@@ -1005,6 +1006,7 @@ public class AccountHierarchyApi extends BaseApi {
             customerAccountDto.setContactInformation(contactInformation);
             customerAccountDto.setExternalRef1(postData.getExternalRef1());
             customerAccountDto.setExternalRef2(postData.getExternalRef2());
+            customerAccountDto.setPaymentMethods(postData.getPaymentMethods());
 
             CustomFieldsDto cfsDto = new CustomFieldsDto();
             if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
@@ -1044,22 +1046,6 @@ public class AccountHierarchyApi extends BaseApi {
             billingAccountDto.setEmail(postData.getEmail());
             billingAccountDto.setInvoicingThreshold(postData.getInvoicingThreshold());
             billingAccountDto.setDiscountPlan(postData.getDiscountPlan());
-            if (postData.getBankCoordinates() != null) {
-                BankCoordinatesDto bankCoordinatesDto = new BankCoordinatesDto();
-                bankCoordinatesDto.setAccountNumber(postData.getBankCoordinates().getAccountNumber());
-                bankCoordinatesDto.setAccountOwner(postData.getBankCoordinates().getAccountOwner());
-                bankCoordinatesDto.setBankCode(postData.getBankCoordinates().getBankCode());
-                bankCoordinatesDto.setBankId(postData.getBankCoordinates().getBankId());
-                bankCoordinatesDto.setBankName(postData.getBankCoordinates().getBankName());
-                bankCoordinatesDto.setBic(postData.getBankCoordinates().getBic());
-                bankCoordinatesDto.setBranchCode(postData.getBankCoordinates().getBranchCode());
-                bankCoordinatesDto.setIban(postData.getBankCoordinates().getIban());
-                bankCoordinatesDto.setIcs(postData.getBankCoordinates().getIcs());
-                bankCoordinatesDto.setIssuerName(postData.getBankCoordinates().getIssuerName());
-                bankCoordinatesDto.setIssuerNumber(postData.getBankCoordinates().getIssuerNumber());
-                bankCoordinatesDto.setKey(postData.getBankCoordinates().getKey());
-                billingAccountDto.setBankCoordinates(bankCoordinatesDto);
-            }
             billingAccountDto.setName(name);
             billingAccountDto.setAddress(address);
             billingAccountDto.setExternalRef1(postData.getExternalRef1());
@@ -1273,7 +1259,8 @@ public class AccountHierarchyApi extends BaseApi {
             customerAccountDto.setContactInformation(contactInformation);
             customerAccountDto.setExternalRef1(postData.getExternalRef1());
             customerAccountDto.setExternalRef2(postData.getExternalRef2());
-
+            customerAccountDto.setPaymentMethods(postData.getPaymentMethods());
+            
             CustomFieldsDto cfsDto = new CustomFieldsDto();
             if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
                 Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(CustomerAccount.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
@@ -1312,22 +1299,6 @@ public class AccountHierarchyApi extends BaseApi {
             billingAccountDto.setEmail(postData.getEmail());
             billingAccountDto.setInvoicingThreshold(postData.getInvoicingThreshold());
             billingAccountDto.setDiscountPlan(postData.getDiscountPlan());
-            if (postData.getBankCoordinates() != null) {
-                BankCoordinatesDto bankCoordinatesDto = new BankCoordinatesDto();
-                bankCoordinatesDto.setAccountNumber(postData.getBankCoordinates().getAccountNumber());
-                bankCoordinatesDto.setAccountOwner(postData.getBankCoordinates().getAccountOwner());
-                bankCoordinatesDto.setBankCode(postData.getBankCoordinates().getBankCode());
-                bankCoordinatesDto.setBankId(postData.getBankCoordinates().getBankId());
-                bankCoordinatesDto.setBankName(postData.getBankCoordinates().getBankName());
-                bankCoordinatesDto.setBic(postData.getBankCoordinates().getBic());
-                bankCoordinatesDto.setBranchCode(postData.getBankCoordinates().getBranchCode());
-                bankCoordinatesDto.setIban(postData.getBankCoordinates().getIban());
-                bankCoordinatesDto.setIcs(postData.getBankCoordinates().getIcs());
-                bankCoordinatesDto.setIssuerName(postData.getBankCoordinates().getIssuerName());
-                bankCoordinatesDto.setIssuerNumber(postData.getBankCoordinates().getIssuerNumber());
-                bankCoordinatesDto.setKey(postData.getBankCoordinates().getKey());
-                billingAccountDto.setBankCoordinates(bankCoordinatesDto);
-            }
             billingAccountDto.setName(name);
             billingAccountDto.setAddress(address);
             billingAccountDto.setExternalRef1(postData.getExternalRef1());
@@ -1544,15 +1515,17 @@ public class AccountHierarchyApi extends BaseApi {
 
         for (CustomerDto customerDto : result.getCustomers().getCustomer()) {
             for (CustomerAccountDto customerAccountDto : customerDto.getCustomerAccounts().getCustomerAccount()) {
-                for (BillingAccountDto billingAccountDto : customerAccountDto.getBillingAccounts().getBillingAccount()) {
-                    if (billingAccountDto.getCode().equals(billingAccount.getCode())) {
-                        if (billingAccountDto.getUserAccounts() != null && billingAccountDto.getUserAccounts().getUserAccount().size() > 0) {
-                            UserAccountDto userAccountDto = userAccountToDto(userAccount);
-                            if (!billingAccountDto.getUserAccounts().getUserAccount().contains(userAccountDto)) {
-                                billingAccountDto.getUserAccounts().getUserAccount().add(userAccountDto);
+                if (customerAccountDto.getBillingAccounts() != null) {
+                    for (BillingAccountDto billingAccountDto : customerAccountDto.getBillingAccounts().getBillingAccount()) {
+                        if (billingAccountDto.getCode().equals(billingAccount.getCode())) {
+                            if (billingAccountDto.getUserAccounts() != null && billingAccountDto.getUserAccounts().getUserAccount().size() > 0) {
+                                UserAccountDto userAccountDto = userAccountToDto(userAccount);
+                                if (!billingAccountDto.getUserAccounts().getUserAccount().contains(userAccountDto)) {
+                                    billingAccountDto.getUserAccounts().getUserAccount().add(userAccountDto);
+                                }
+                            } else {
+                                billingAccountDto.getUserAccounts().getUserAccount().add(userAccountToDto(userAccount));
                             }
-                        } else {
-                            billingAccountDto.getUserAccounts().getUserAccount().add(userAccountToDto(userAccount));
                         }
                     }
                 }

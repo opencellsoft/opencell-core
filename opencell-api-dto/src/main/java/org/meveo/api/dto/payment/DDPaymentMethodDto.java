@@ -24,6 +24,10 @@ public class DDPaymentMethodDto extends PaymentMethodDto {
      */
     private BankCoordinatesDto bankCoordinates;
 
+    public DDPaymentMethodDto() {
+        super();
+    }
+
     public DDPaymentMethodDto(DDPaymentMethod paymentMethod) {
         super(paymentMethod);
         if (paymentMethod.getBankCoordinates() != null) {

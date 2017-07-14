@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.CustomEntityTemplateDto;
+import org.meveo.api.dto.payment.CardPaymentMethodDto;
 import org.meveo.api.dto.payment.DDPaymentMethodDto;
 import org.meveo.api.dto.payment.OtherPaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
@@ -53,14 +53,14 @@ public class CustomerAccountDto extends AccountDto {
     private String dueDateDelayEL;
 
     @XmlElementWrapper(name = "paymentMethods")
-    @XmlElements({ @XmlElement(name = "card", type = CustomEntityTemplateDto.class), @XmlElement(name = "directDebit", type = DDPaymentMethodDto.class),
+    @XmlElements({ @XmlElement(name = "card", type = CardPaymentMethodDto.class), @XmlElement(name = "directDebit", type = DDPaymentMethodDto.class),
             @XmlElement(name = "tip", type = TipPaymentMethodDto.class), @XmlElement(name = "other", type = OtherPaymentMethodDto.class) })
     private List<PaymentMethodDto> paymentMethods;
 
     /**
      * Use for GET / LIST only.
      */
-    private BillingAccountsDto billingAccounts = new BillingAccountsDto();
+    private BillingAccountsDto billingAccounts;
 
     public CustomerAccountDto() {
         super();

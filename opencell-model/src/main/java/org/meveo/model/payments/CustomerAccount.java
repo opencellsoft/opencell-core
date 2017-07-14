@@ -355,30 +355,60 @@ public class CustomerAccount extends AccountEntity {
      */
     public PaymentMethod markCurrentlyValidCardPaymentAsPreferred() {
 
+        if (paymentMethods == null) {
+            return null;
+        }
+
         PaymentMethod matchedPaymentMethod = null;
 
-        if (paymentMethods != null) {
-            for (PaymentMethod paymentMethod : paymentMethods) {
-                if (paymentMethod instanceof CardPaymentMethod) {
-                    if (((CardPaymentMethod) paymentMethod).isValidForDate(new Date())) {
-                        paymentMethod.setPreferred(true);
-                        matchedPaymentMethod = paymentMethod;
-                        break;
-                    }
+        for (PaymentMethod paymentMethod : paymentMethods) {
+            if (paymentMethod instanceof CardPaymentMethod) {
+                if (((CardPaymentMethod) paymentMethod).isValidForDate(new Date())) {
+                    paymentMethod.setPreferred(true);
+                    matchedPaymentMethod = paymentMethod;
+                    break;
                 }
             }
+        }
 
-            if (matchedPaymentMethod == null) {
-                return null;
-            }
+        if (matchedPaymentMethod == null) {
+            return null;
+        }
 
-            for (PaymentMethod paymentMethod : paymentMethods) {
-                if (!paymentMethod.equals(matchedPaymentMethod)) {
-                    paymentMethod.setPreferred(false);
-                }
+        for (PaymentMethod paymentMethod : paymentMethods) {
+            if (!paymentMethod.equals(matchedPaymentMethod)) {
+                paymentMethod.setPreferred(false);
             }
         }
 
         return matchedPaymentMethod;
     }
+
+    /**
+     * Ensure that one payment method is marked as preferred. If currently preferred payment method is of type card, but expired, advance to a currently valid card payment method
+     * if possible. If not possible - leave as it is. If no preferred payment method was found - mark the first payment method as preferred.
+     * 
+     * @return A preferred payment method
+     */
+    public PaymentMethod ensureOnePreferredPaymentMethod() {
+        if (paymentMethods == null) {
+            return null;
+        }
+
+        for (PaymentMethod paymentMethod : paymentMethods) {
+            if (paymentMethod.isPreferred()) {
+                // If currently preferred payment method has expired, select a new car
+                if (paymentMethod instanceof CardPaymentMethod && !((CardPaymentMethod) paymentMethod).isValidForDate(new Date())) {
+                    return markCurrentlyValidCardPaymentAsPreferred();
+                }
+                return paymentMethod;
+            }
+        }
+
+        // As no preferred payment method was found, mark the first available payment method as preferred
+        paymentMethods.get(0).setPreferred(true);
+        
+        return paymentMethods.get(0);
+    }
+
 }

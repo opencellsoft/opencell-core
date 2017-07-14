@@ -9,6 +9,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Transient;
 import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.StringUtils;
@@ -35,11 +36,13 @@ public class CardPaymentMethod extends PaymentMethod {
 
     @Column(name = "month_expiration")
     @NotNull
+    @Min(1)
     @Max(12)
     private Integer monthExpiration;
 
     @Column(name = "year_expiration")
     @NotNull
+    @Min(0)
     @Max(99)
     private Integer yearExpiration;
 
@@ -170,7 +173,6 @@ public class CardPaymentMethod extends PaymentMethod {
         setPreferred(otherPaymentMethod.isPreferred());
         setYearExpiration(otherPaymentMethod.getYearExpiration());
         setMonthExpiration(otherPaymentMethod.getMonthExpiration());
-        setAuditable(otherPaymentMethod.getAuditable());
     }
 
     /**

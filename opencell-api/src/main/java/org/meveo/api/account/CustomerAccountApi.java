@@ -23,7 +23,6 @@ import org.meveo.api.dto.payment.DunningInclusionExclusionDto;
 import org.meveo.api.dto.payment.OtherPaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.TipPaymentMethodDto;
-import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -33,6 +32,7 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.parameter.SecureMethodParameter;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
@@ -106,9 +106,6 @@ public class CustomerAccountApi extends AccountEntityApi {
         if (postData.getName() != null && !StringUtils.isBlank(postData.getName().getTitle()) && StringUtils.isBlank(postData.getName().getLastName())) {
             missingParameters.add("name.lastName");
         }
-        if (postData.getPaymentMethods() == null || postData.getPaymentMethods().isEmpty()) {
-            missingParameters.add("paymentMethods");
-        }
 
         handleMissingParametersAndValidate(postData);
 
@@ -130,6 +127,16 @@ public class CustomerAccountApi extends AccountEntityApi {
         TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(postData.getLanguage());
         if (tradingLanguage == null) {
             throw new EntityDoesNotExistsException(TradingLanguage.class, postData.getLanguage());
+        }
+
+        if (postData.getPaymentMethods() == null || postData.getPaymentMethods().isEmpty()) {
+            PaymentMethodEnum defaultPaymentMethod = PaymentMethodEnum.valueOf(ParamBean.getInstance().getProperty("api.default.customerAccount.paymentMethod", "CHECK"));
+            if (defaultPaymentMethod == null || !defaultPaymentMethod.isSimple()) {
+                throw new InvalidParameterException(
+                    "Please specify payment method, as currently specified default payment method (in api.default.customerAccount.paymentMethod) is invalid or requires additional information");
+            }
+            postData.setPaymentMethods(new ArrayList<>());
+            postData.getPaymentMethods().add(new OtherPaymentMethodDto(defaultPaymentMethod));
         }
 
         CustomerAccount customerAccount = new CustomerAccount();
@@ -300,6 +307,21 @@ public class CustomerAccountApi extends AccountEntityApi {
             customerAccount.getPaymentMethods().retainAll(paymentMethodsFromDto);
         }
 
+        // Create a default payment method if non was specified
+        if (customerAccount.getPaymentMethods() == null || customerAccount.getPaymentMethods().isEmpty()) {
+            PaymentMethodEnum defaultPaymentMethod = PaymentMethodEnum.valueOf(ParamBean.getInstance().getProperty("api.default.customerAccount.paymentMethod", "CHECK"));
+            if (defaultPaymentMethod == null || !defaultPaymentMethod.isSimple()) {
+                throw new InvalidParameterException(
+                    "Please specify payment method, as currently specified default payment method (in api.default.customerAccount.paymentMethod) is invalid or requires additional information");
+            }
+
+            PaymentMethod paymentMethodFromDto = paymentMethodFromDto(new OtherPaymentMethodDto(defaultPaymentMethod), customerAccount);
+            if (customerAccount.getPaymentMethods() == null) {
+                customerAccount.setPaymentMethods(new ArrayList<>());
+            }
+            customerAccount.getPaymentMethods().add(paymentMethodFromDto);
+        }
+
         if (businessAccountModel != null) {
             customerAccount.setBusinessAccountModel(businessAccountModel);
         }
@@ -406,32 +428,29 @@ public class CustomerAccountApi extends AccountEntityApi {
         return result;
     }
 
-    public void dunningExclusionInclusion(DunningInclusionExclusionDto dunningDto) throws EntityDoesNotExistsException, BusinessApiException {
-        try {
-            for (String ref : dunningDto.getInvoiceReferences()) {
-                AccountOperation accountOp = accountOperationService.findByReference(ref);
-                if (accountOp == null) {
-                    throw new EntityDoesNotExistsException(AccountOperation.class, "no account operation with this reference " + ref);
-                }
-                if (accountOp instanceof RecordedInvoice) {
-                    accountOp.setExcludedFromDunning(dunningDto.getExclude());
-                    accountOperationService.update(accountOp);
-                } else {
-                    throw new BusinessEntityException(accountOp.getReference() + " is not an invoice account operation");
-                }
-                if (accountOp.getMatchingStatus() == MatchingStatusEnum.P) {
-                    for (MatchingAmount matchingAmount : accountOp.getMatchingAmounts()) {
-                        MatchingCode matchingCode = matchingAmount.getMatchingCode();
-                        for (MatchingAmount ma : matchingCode.getMatchingAmounts()) {
-                            AccountOperation accountoperation = ma.getAccountOperation();
-                            accountoperation.setExcludedFromDunning(dunningDto.getExclude());
-                            accountOperationService.update(accountoperation);
-                        }
+    public void dunningExclusionInclusion(DunningInclusionExclusionDto dunningDto) throws EntityDoesNotExistsException, BusinessException {
+
+        for (String ref : dunningDto.getInvoiceReferences()) {
+            AccountOperation accountOp = accountOperationService.findByReference(ref);
+            if (accountOp == null) {
+                throw new EntityDoesNotExistsException(AccountOperation.class, "no account operation with this reference " + ref);
+            }
+            if (accountOp instanceof RecordedInvoice) {
+                accountOp.setExcludedFromDunning(dunningDto.getExclude());
+                accountOperationService.update(accountOp);
+            } else {
+                throw new BusinessEntityException(accountOp.getReference() + " is not an invoice account operation");
+            }
+            if (accountOp.getMatchingStatus() == MatchingStatusEnum.P) {
+                for (MatchingAmount matchingAmount : accountOp.getMatchingAmounts()) {
+                    MatchingCode matchingCode = matchingAmount.getMatchingCode();
+                    for (MatchingAmount ma : matchingCode.getMatchingAmounts()) {
+                        AccountOperation accountoperation = ma.getAccountOperation();
+                        accountoperation.setExcludedFromDunning(dunningDto.getExclude());
+                        accountOperationService.update(accountoperation);
                     }
                 }
             }
-        } catch (BusinessException e) {
-            throw new BusinessApiException(e);
         }
     }
 
@@ -584,7 +603,7 @@ public class CustomerAccountApi extends AccountEntityApi {
             if (customerAccountDto.getDunningLevel() != null) {
                 existedCustomerAccountDto.setDunningLevel(customerAccountDto.getDunningLevel());
             }
-            
+
             if (customerAccountDto.getContactInformation() != null) {
                 if (!StringUtils.isBlank(customerAccountDto.getContactInformation().getEmail())) {
                     existedCustomerAccountDto.getContactInformation().setEmail(customerAccountDto.getContactInformation().getEmail());
@@ -626,8 +645,6 @@ public class CustomerAccountApi extends AccountEntityApi {
             }
             paymentMethod = ((DDPaymentMethodDto) pmDto).fromDto();
 
-            return paymentMethod;
-
         } else if (pmDto instanceof TipPaymentMethodDto) {
             if (((TipPaymentMethodDto) pmDto).getBankCoordinates() == null) {
                 throw new MissingParameterException("bankCoordinates");
@@ -642,7 +659,6 @@ public class CustomerAccountApi extends AccountEntityApi {
         }
 
         paymentMethod.setCustomerAccount(customerAccount);
-        paymentMethod.updateAudit(currentUser);
         return paymentMethod;
     }
 }

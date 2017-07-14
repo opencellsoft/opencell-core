@@ -438,6 +438,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
             paymentMethodService.obtainAndSetCardToken(cardPaymentMethod);
         }
 
+        entity.ensureOnePreferredPaymentMethod();
         super.create(entity);
     }
 
@@ -453,6 +454,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
             paymentMethodService.obtainAndSetCardToken(cardPaymentMethod);
         }
 
+        entity.ensureOnePreferredPaymentMethod();
         return super.update(entity);
     }
 }

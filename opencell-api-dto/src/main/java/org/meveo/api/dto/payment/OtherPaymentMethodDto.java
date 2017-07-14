@@ -2,6 +2,7 @@ package org.meveo.api.dto.payment;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.payments.PaymentMethod;
@@ -22,9 +23,14 @@ public class OtherPaymentMethodDto extends PaymentMethodDto {
     /**
      * Payment type. Allowed values are: Check and Wire transfer
      */
+    @XmlAttribute()
     public PaymentMethodEnum paymentMethodType;
 
     public OtherPaymentMethodDto() {
+    }
+
+    public OtherPaymentMethodDto(PaymentMethodEnum paymentMethodType) {
+        this.paymentMethodType = paymentMethodType;
     }
 
     public OtherPaymentMethodDto(PaymentMethod paymentMethod) {

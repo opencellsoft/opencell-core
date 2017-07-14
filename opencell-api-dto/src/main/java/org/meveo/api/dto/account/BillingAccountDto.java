@@ -44,7 +44,6 @@ public class BillingAccountDto extends AccountDto {
     private Date statusDate;
     private String terminationReason;
     private String email;
-    private BankCoordinatesDto bankCoordinates = new BankCoordinatesDto();
     private List<InvoiceDto> invoices = new ArrayList<InvoiceDto>();
     private BigDecimal invoicingThreshold;
     private String discountPlan;
@@ -165,14 +164,6 @@ public class BillingAccountDto extends AccountDto {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public BankCoordinatesDto getBankCoordinates() {
-        return bankCoordinates;
-    }
-
-    public void setBankCoordinates(BankCoordinatesDto bankCoordinates) {
-        this.bankCoordinates = bankCoordinates;
     }
 
     public List<InvoiceDto> getInvoices() {

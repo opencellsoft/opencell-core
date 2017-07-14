@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project activeEnvironment="Default" name="Classic offer" resourceRoot="${projectDir}" soapui-version="5.3.0" abortOnError="false" runType="SEQUENTIAL" id="2e379382-059f-42f2-a263-3971d606356b" xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project activeEnvironment="Default" name="Classic offer" resourceRoot="${projectDir}" soapui-version="5.2.1" abortOnError="false" runType="SEQUENTIAL" id="2e379382-059f-42f2-a263-3971d606356b" xmlns:con="http://eviware.com/soapui/config">
   <con:settings>
     <con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
@@ -1464,7 +1464,7 @@
   </con:interface>
   <con:interface xsi:type="con:RestService" id="cbea8ecf-a6c3-4d0d-a813-222e3d4af5ee" wadlVersion="http://wadl.dev.java.net/2009/02" name="Classic offer" type="rest" definitionUrl="hierar" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints/>
+    <con:endpoints/>
   </con:interface>
   <con:interface xsi:type="con:RestService" id="7959a799-a204-4db3-a820-bb959de54cab" wadlVersion="http://wadl.dev.java.net/2009/02" name="MEVEO JAX-WS API Documentation" type="rest" basePath="/api/rest" definitionUrl="" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
@@ -40379,7 +40379,6 @@ public class ForgotPassword extends ModuleScript{
             	<email>${#TestSuite#CUST}@opencellsoft.com</email>
             </contactInformation>
             <language>FRA</language>\r
-            <paymentMethod>CHECK</paymentMethod>\r
             <customerCategory>PARTNER</customerCategory>\r
             <customerBrand>${#Project#templateCode}</customerBrand>\r
             <currency>EUR</currency>\r
@@ -40737,7 +40736,6 @@ public class ForgotPassword extends ModuleScript{
             </address>\r
             <email>${#TestSuite#CUST}@opencellsoft.com</email>
             <language>FRA</language>\r
-            <paymentMethod>CHECK</paymentMethod>\r
             <customerCategory>CLIENT</customerCategory>\r
             <customerBrand>${#Project#templateCode}</customerBrand>\r
             <currency>EUR</currency>\r
@@ -41247,7 +41245,6 @@ public class ForgotPassword extends ModuleScript{
             </address>\r
             <email>${#TestSuite#CUST}@opencellsoft.com</email>
             <language>FRA</language>\r
-            <paymentMethod>CHECK</paymentMethod>\r
             <customerCategory>CLIENT</customerCategory>\r
             <customerBrand>${#Project#templateCode}</customerBrand>\r
             <currency>EUR</currency>\r
@@ -41938,26 +41935,25 @@ public class ForgotPassword extends ModuleScript{
                <address1>14 rue Crespin du Gast</address1>\r
                <zipCode>75011</zipCode>\r
                <city>PARIS</city>\r
-               <state>Paris Area</state>
+               <state>Paris Area</state>\r
                <country>FR</country>\r
             </address>\r
-            <email>${#TestSuite#CUST}@opencellsoft.com</email>
+            <email>${#TestSuite#CUST}@opencellsoft.com</email>\r
             <language>FRA</language>\r
-            <paymentMethod>CHECK</paymentMethod>\r
             <customerCategory>CLIENT</customerCategory>\r
             <customerBrand>${#Project#templateCode}</customerBrand>\r
             <currency>EUR</currency>\r
             <billingCycle>${#TestSuite#billingCycle}</billingCycle>\r
             <country>FR</country>\r
             <electronicBilling>true</electronicBilling>\r
-            <contactInformation>
-            	<email>${#TestSuite#CUST}@opencellsoft.com</email>
-            </contactInformation>
-            <customFields>
-              <customField code="password">
-                	<stringValue>${#TestSuite#CUST}</stringValue>
-              </customField>   
-            </customFields>
+            <contactInformation>\r
+               <email>${#TestSuite#CUST}@opencellsoft.com</email>\r
+            </contactInformation>\r
+            <customFields>\r
+               <customField code="password">\r
+                  <stringValue>${#TestSuite#CUST}</stringValue>\r
+               </customField>\r
+            </customFields>\r
          </crmAccountHierarchy>\r
       </ws:createOrUpdateCRMAccountHierarchy>\r
    </soapenv:Body>\r
@@ -43341,7 +43337,6 @@ public class ForgotPassword extends ModuleScript{
             </address>\r
             <email>${#TestSuite#CUST}@opencellsoft.com</email>
             <language>FRA</language>\r
-            <paymentMethod>CHECK</paymentMethod>\r
             <customerCategory>CLIENT</customerCategory>\r
             <customerBrand>${#Project#templateCode}</customerBrand>\r
             <currency>EUR</currency>\r
@@ -45132,7 +45127,6 @@ MFBG0AAAAABJRU5ErkJggg==
             </address>\r
             <email>${#TestSuite#CUST}@opencellsoft.com</email>
             <language>FRA</language>\r
-            <paymentMethod>CHECK</paymentMethod>\r
             <customerCategory>CLIENT</customerCategory>\r
             <customerBrand>${#Project#templateCode}</customerBrand>\r
             <currency>EUR</currency>\r
@@ -48883,7 +48877,6 @@ MFBG0AAAAABJRU5ErkJggg==
             </address>\r
             <email>${#Project#SCUsername}@opencellsoft.com</email>
             <language>FRA</language>\r
-            <paymentMethod>CHECK</paymentMethod>\r
             <customerCategory>CLIENT</customerCategory>\r
             <customerBrand>${#Project#templateCode}</customerBrand>\r
             <currency>EUR</currency>\r

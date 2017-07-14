@@ -353,7 +353,6 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
     public void savePaymentMethod() {
 
         try {
-            selectedPaymentMethod.updateAudit(currentUser);
 
             if (selectedPaymentMethod instanceof CardPaymentMethod) {
                 if (((CardPaymentMethod) selectedPaymentMethod).getTokenId() == null && ((CardPaymentMethod) selectedPaymentMethod).getCardNumber() != null) {
