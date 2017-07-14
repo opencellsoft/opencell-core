@@ -14,6 +14,8 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.model.shared.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Entity
 @DiscriminatorValue(value = "CARD")
@@ -145,7 +147,8 @@ public class CardPaymentMethod extends PaymentMethod {
             return true;
         }
 
-        return StringUtils.compare(hiddenCardNumber, other.getHiddenCardNumber()) == 0;
+        return StringUtils.compare(hiddenCardNumber, other.getHiddenCardNumber()) == 0 && monthExpiration.equals(other.getMonthExpiration())
+                && yearExpiration.equals(other.getYearExpiration());
     }
 
     public String getExpirationMonthAndYear() {
@@ -183,9 +186,12 @@ public class CardPaymentMethod extends PaymentMethod {
      */
     public boolean isValidForDate(Date date) {
 
-        int year = new Integer(DateUtils.getYearFromDate(date).toString().substring(2, 3));
-
-        return yearExpiration.intValue() > year || (yearExpiration.intValue() == year && monthExpiration >= DateUtils.getMonthFromDate(new Date()));
+        int year = new Integer(DateUtils.getYearFromDate(date).toString().substring(2, 4));
+        int month = DateUtils.getMonthFromDate(new Date());
+        Logger log = LoggerFactory.getLogger(getClass());
+        log.error("AKK now year {} year expiration {}, now month {}, month expiration {} valid {}", year, yearExpiration.intValue(), month, yearExpiration.intValue(),
+            yearExpiration.intValue() > year || (yearExpiration.intValue() == year && monthExpiration >= month));
+        return yearExpiration.intValue() > year || (yearExpiration.intValue() == year && monthExpiration >= month);
     }
 
     @Override

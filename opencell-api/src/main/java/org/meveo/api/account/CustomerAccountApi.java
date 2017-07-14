@@ -130,10 +130,10 @@ public class CustomerAccountApi extends AccountEntityApi {
         }
 
         if (postData.getPaymentMethods() == null || postData.getPaymentMethods().isEmpty()) {
-            PaymentMethodEnum defaultPaymentMethod = PaymentMethodEnum.valueOf(ParamBean.getInstance().getProperty("api.default.customerAccount.paymentMethod", "CHECK"));
+            PaymentMethodEnum defaultPaymentMethod = PaymentMethodEnum.valueOf(ParamBean.getInstance().getProperty("api.default.customerAccount.paymentMethodType", "CHECK"));
             if (defaultPaymentMethod == null || !defaultPaymentMethod.isSimple()) {
                 throw new InvalidParameterException(
-                    "Please specify payment method, as currently specified default payment method (in api.default.customerAccount.paymentMethod) is invalid or requires additional information");
+                    "Please specify payment method, as currently specified default payment method (in api.default.customerAccount.paymentMethodType) is invalid or requires additional information");
             }
             postData.setPaymentMethods(new ArrayList<>());
             postData.getPaymentMethods().add(new OtherPaymentMethodDto(defaultPaymentMethod));
@@ -309,10 +309,10 @@ public class CustomerAccountApi extends AccountEntityApi {
 
         // Create a default payment method if non was specified
         if (customerAccount.getPaymentMethods() == null || customerAccount.getPaymentMethods().isEmpty()) {
-            PaymentMethodEnum defaultPaymentMethod = PaymentMethodEnum.valueOf(ParamBean.getInstance().getProperty("api.default.customerAccount.paymentMethod", "CHECK"));
+            PaymentMethodEnum defaultPaymentMethod = PaymentMethodEnum.valueOf(ParamBean.getInstance().getProperty("api.default.customerAccount.paymentMethodType", "CHECK"));
             if (defaultPaymentMethod == null || !defaultPaymentMethod.isSimple()) {
                 throw new InvalidParameterException(
-                    "Please specify payment method, as currently specified default payment method (in api.default.customerAccount.paymentMethod) is invalid or requires additional information");
+                    "Please specify payment method, as currently specified default payment method (in api.default.customerAccount.paymentMethodType) is invalid or requires additional information");
             }
 
             PaymentMethod paymentMethodFromDto = paymentMethodFromDto(new OtherPaymentMethodDto(defaultPaymentMethod), customerAccount);

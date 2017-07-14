@@ -48,6 +48,8 @@ import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.shared.ContactInformation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Customer Account entity.
@@ -364,6 +366,8 @@ public class CustomerAccount extends AccountEntity {
         for (PaymentMethod paymentMethod : paymentMethods) {
             if (paymentMethod instanceof CardPaymentMethod) {
                 if (((CardPaymentMethod) paymentMethod).isValidForDate(new Date())) {
+                    Logger log = LoggerFactory.getLogger(getClass());
+                    log.error("AKK card {} is valid", paymentMethod.getAlias());
                     paymentMethod.setPreferred(true);
                     matchedPaymentMethod = paymentMethod;
                     break;
@@ -396,9 +400,13 @@ public class CustomerAccount extends AccountEntity {
         }
 
         for (PaymentMethod paymentMethod : paymentMethods) {
+            Logger log = LoggerFactory.getLogger(getClass());
+            log.error("AKK method {} is prefered {}", paymentMethod.getAlias(), paymentMethod.isPreferred());
             if (paymentMethod.isPreferred()) {
                 // If currently preferred payment method has expired, select a new car
                 if (paymentMethod instanceof CardPaymentMethod && !((CardPaymentMethod) paymentMethod).isValidForDate(new Date())) {
+
+                    log.error("AKK card {} is no longer valid", paymentMethod.getAlias());
                     return markCurrentlyValidCardPaymentAsPreferred();
                 }
                 return paymentMethod;
@@ -407,7 +415,7 @@ public class CustomerAccount extends AccountEntity {
 
         // As no preferred payment method was found, mark the first available payment method as preferred
         paymentMethods.get(0).setPreferred(true);
-        
+
         return paymentMethods.get(0);
     }
 

@@ -187,4 +187,8 @@
         <dropColumn tableName="ar_payment_token" columnName="updater" />
     </changeSet>
 
+    <changeSet id="#2406_20170714" author="AndriusKarpavicius">
+        <modifyDataType tableName="meveo_module_item" columnName="item_code" newDataType="varchar(255)"/>
+    </changeSet>
+    
 </databaseChangeLog> 
