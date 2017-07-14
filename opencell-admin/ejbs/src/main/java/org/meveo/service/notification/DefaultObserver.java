@@ -28,6 +28,7 @@ import org.meveo.event.monitoring.BusinessExceptionEvent;
 import org.meveo.event.qualifier.Created;
 import org.meveo.event.qualifier.Disabled;
 import org.meveo.event.qualifier.Enabled;
+import org.meveo.event.qualifier.EndOfTerm;
 import org.meveo.event.qualifier.InboundRequestReceived;
 import org.meveo.event.qualifier.LoggedIn;
 import org.meveo.event.qualifier.LowBalance;
@@ -295,6 +296,11 @@ public class DefaultObserver {
     public void entityRejected(@Observes @Rejected BaseEntity e) throws BusinessException {
         log.debug("Defaut observer : Entity {} with id {} rejected", e.getClass().getName(), e.getId());
         checkEvent(NotificationEventTypeEnum.REJECTED, e);
+    }
+    
+    public void entityEndOfTerm(@Observes @EndOfTerm BaseEntity e) throws BusinessException {
+        log.debug("Defaut observer : Entity {} with id {} end of term", e.getClass().getName(), e.getId());
+        checkEvent(NotificationEventTypeEnum.END_OF_TERM, e);
     }
 
     public void cdrRejected(@Observes @RejectedCDR Object cdr) throws BusinessException {

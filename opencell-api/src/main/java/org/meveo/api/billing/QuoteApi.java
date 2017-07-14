@@ -60,7 +60,6 @@ import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.wf.WorkflowService;
 import org.meveo.util.EntityCustomizationUtils;
 import org.slf4j.Logger;
-import org.tmf.dsmapi.catalog.resource.order.BillingAccount;
 import org.tmf.dsmapi.catalog.resource.order.Product;
 import org.tmf.dsmapi.catalog.resource.order.ProductCharacteristic;
 import org.tmf.dsmapi.catalog.resource.order.ProductOrder;
@@ -209,13 +208,13 @@ public class QuoteApi extends BaseApi {
                 missingParameters.add("billingAccount");
 
             } else if (itemLevelUserAccount == null && quoteLevelUserAccount != null) {
-                productQuoteItem.setBillingAccount(new ArrayList<BillingAccount>());
-                BillingAccount billingAccountDto = new BillingAccount();
-                billingAccountDto.setId(quoteLevelUserAccount.getCode());
-                productQuoteItem.getBillingAccount().add(billingAccountDto);
+                productQuoteItem.addBillingAccount(quoteLevelUserAccount.getCode());
             }
 
             handleMissingParameters();
+
+            // Validate subscription renewal fields
+            orderApi.validateSubscriptionRenewalFields(productQuoteItem.getProduct());
 
             QuoteItem quoteItem = new QuoteItem();
             List<QuoteItemProductOffering> productOfferings = new ArrayList<>();
@@ -227,7 +226,8 @@ public class QuoteApi extends BaseApi {
 
                 ProductOffering productOfferingInDB = productOfferingService.findByCode(productQuoteItem.getProductOffering().getId(), subscriptionDate);
                 if (productOfferingInDB == null) {
-                    throw new EntityDoesNotExistsException(ProductOffering.class, productQuoteItem.getProductOffering().getId() + " / " + DateUtils.formatDateWithPattern(subscriptionDate, ParamBean.getInstance().getDateTimeFormat()));
+                    throw new EntityDoesNotExistsException(ProductOffering.class,
+                        productQuoteItem.getProductOffering().getId() + " / " + DateUtils.formatDateWithPattern(subscriptionDate, ParamBean.getInstance().getDateTimeFormat()));
                 }
                 productOfferings.add(new QuoteItemProductOffering(quoteItem, productOfferingInDB, 0));
 
@@ -235,7 +235,8 @@ public class QuoteApi extends BaseApi {
                     for (BundledProductReference bundledProductOffering : productQuoteItem.getProductOffering().getBundledProductOffering()) {
                         productOfferingInDB = productOfferingService.findByCode(bundledProductOffering.getReferencedId(), subscriptionDate);
                         if (productOfferingInDB == null) {
-                            throw new EntityDoesNotExistsException(ProductOffering.class, bundledProductOffering.getReferencedId() + " / " + DateUtils.formatDateWithPattern(subscriptionDate, ParamBean.getInstance().getDateTimeFormat()));
+                            throw new EntityDoesNotExistsException(ProductOffering.class,
+                                bundledProductOffering.getReferencedId() + " / " + DateUtils.formatDateWithPattern(subscriptionDate, ParamBean.getInstance().getDateTimeFormat()));
                         }
                         productOfferings.add(new QuoteItemProductOffering(quoteItem, productOfferingInDB, productOfferings.size()));
                     }
@@ -529,7 +530,7 @@ public class QuoteApi extends BaseApi {
             }
 
             // Instantiate a service
-            subscription = instantiateVirtualSubscription((OfferTemplate) primaryOffering, productQuoteItem.getProduct(), services, quoteItem, productQuoteItem);
+            subscription = instantiateVirtualSubscription((OfferTemplate) primaryOffering, services, quoteItem, productQuoteItem);
 
             // Instantiate products - find a matching product offering. The order of products must match the order of productOfferings
             index = 1;
@@ -581,28 +582,27 @@ public class QuoteApi extends BaseApi {
         return quoteInvoiceInfo;
     }
 
-    private Subscription instantiateVirtualSubscription(OfferTemplate offerTemplate, Product product, List<Product> services, QuoteItem quoteItem,
-            ProductQuoteItem productQuoteItem) throws BusinessException, MissingParameterException, InvalidParameterException {
+    private Subscription instantiateVirtualSubscription(OfferTemplate offerTemplate, List<Product> services, QuoteItem quoteItem, ProductQuoteItem productQuoteItem)
+            throws BusinessException, MissingParameterException, InvalidParameterException {
 
         log.debug("Instantiating virtual subscription from offer template {} for quote {} line {}", offerTemplate.getCode(), quoteItem.getQuote().getCode(), quoteItem.getItemId());
 
-        String subscriptionCode = (String) getProductCharacteristic(productQuoteItem.getProduct(), OrderProductCharacteristicEnum.SUBSCRIPTION_CODE.getCharacteristicName(),
-            String.class, UUID.randomUUID().toString());
+        Product product = productQuoteItem.getProduct();
+
+        String subscriptionCode = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.SUBSCRIPTION_CODE.getCharacteristicName(), String.class,
+            UUID.randomUUID().toString());
 
         Subscription subscription = new Subscription();
         subscription.setCode(subscriptionCode);
         subscription.setUserAccount(quoteItem.getUserAccount());
         subscription.setOffer(offerTemplate);
-        subscription.setSubscriptionDate((Date) getProductCharacteristic(productQuoteItem.getProduct(), OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(),
-            Date.class, DateUtils.setTimeToZero(quoteItem.getQuote().getQuoteDate())));
-        subscription.setEndAgreementDate(
-            (Date) getProductCharacteristic(productQuoteItem.getProduct(), OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(), Date.class, null));
+        subscription.setSubscriptionDate((Date) getProductCharacteristic(product, OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(), Date.class,
+            DateUtils.setTimeToZero(quoteItem.getQuote().getQuoteDate())));
+        subscription.setEndAgreementDate((Date) getProductCharacteristic(product, OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(), Date.class, null));
 
-        String terminationReasonCode = (String) getProductCharacteristic(productQuoteItem.getProduct(), OrderProductCharacteristicEnum.TERMINATION_REASON.getCharacteristicName(),
-            String.class, null);
+        String terminationReasonCode = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.TERMINATION_REASON.getCharacteristicName(), String.class, null);
 
-        Date terminationDate = (Date) getProductCharacteristic(productQuoteItem.getProduct(), OrderProductCharacteristicEnum.TERMINATION_DATE.getCharacteristicName(), Date.class,
-            null);
+        Date terminationDate = (Date) getProductCharacteristic(product, OrderProductCharacteristicEnum.TERMINATION_DATE.getCharacteristicName(), Date.class, null);
 
         if (terminationDate == null && terminationReasonCode != null) {
             throw new MissingParameterException("terminationDate");
@@ -622,7 +622,7 @@ public class QuoteApi extends BaseApi {
         }
 
         // Validate and populate customFields
-        CustomFieldsDto customFields = extractCustomFields(productQuoteItem.getProduct(), Subscription.class);
+        CustomFieldsDto customFields = extractCustomFields(product, Subscription.class);
         try {
             populateCustomFields(customFields, subscription, true, true);
         } catch (MissingParameterException e) {
@@ -974,7 +974,7 @@ public class QuoteApi extends BaseApi {
             orderItem.setBillingAccount(productQuoteItem.getBillingAccount());
             orderItem.setProduct(productQuoteItem.getProduct());
             orderItem.setProductOffering(productQuoteItem.getProductOffering());
-
+            
             productOrder.getOrderItem().add(orderItem);
         }
 
