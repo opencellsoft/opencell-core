@@ -7,6 +7,8 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 
 import org.meveo.api.dto.BusinessDto;
 import org.meveo.api.dto.CustomFieldsDto;
@@ -25,7 +27,8 @@ public class ProductInstanceDto extends BusinessDto {
 	protected BigDecimal quantity = BigDecimal.ONE;
 	private String orderNumber;
 	
-	
+	@XmlElementWrapper(name = "productChargeInstances")
+	@XmlElement(name = "productChargeInstance")
 	private List<ProductChargeInstanceDto> productChargeInstances = new ArrayList<>();
 
 	private CustomFieldsDto customFields = new CustomFieldsDto();
