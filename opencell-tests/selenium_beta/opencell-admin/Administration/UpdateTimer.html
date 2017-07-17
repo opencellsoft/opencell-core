@@ -4,16 +4,16 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://integration.i.opencellsoft.com/opencell/" />
-<title>UpdateOffer</title>
+<title>UpdateTimer</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">UpdateOffer</td></tr>
+<tr><td rowspan="1" colspan="3">UpdateTimer</td></tr>
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
-	<td>${offers}</td>
+	<td>${timers}</td>
 	<td></td>
 </tr>
 <tr>
@@ -63,16 +63,6 @@
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${offerNameField}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>${offerNameField}</td>
-	<td>${code}</td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
 	<td>${descriptionField}</td>
 	<td></td>
 </tr>
@@ -80,6 +70,66 @@
 	<td>type</td>
 	<td>${descriptionField}</td>
 	<td>${description}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${hourField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${hourField}</td>
+	<td>${hour}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${minuteField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${minuteField}</td>
+	<td>${minute}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${secondField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${secondField}</td>
+	<td>${second}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${monthField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${monthField}</td>
+	<td>${month}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${dayOfMonthField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${dayOfMonthField}</td>
+	<td>${dayOfMonth}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${dayOfWeekField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${dayOfWeekField}</td>
+	<td>${dayOfWeek}</td>
 </tr>
 <tr>
 	<td>click</td>
@@ -96,6 +146,7 @@
 	<td>${infoSummary}</td>
 	<td></td>
 </tr>
+
 </tbody></table>
 </body>
 </html>

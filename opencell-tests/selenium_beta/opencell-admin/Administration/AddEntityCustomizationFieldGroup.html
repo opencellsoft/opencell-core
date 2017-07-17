@@ -4,26 +4,26 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://integration.i.opencellsoft.com/opencell/" />
-<title>DisableOffer</title>
+<title>AddEntityCustomizationFieldGroup</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">DisableOffer</td></tr>
+<tr><td rowspan="1" colspan="3">AddEntityCustomizationFieldGroup</td></tr>
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
-	<td>${offers}</td>
+	<td>${entityCustomization}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>${codeField}</td>
+	<td>${searchField}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>${codeField}</td>
+	<td>${searchField}</td>
 	<td>${code}</td>
 </tr>
 <tr>
@@ -38,49 +38,75 @@
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>link=${code}</td>
+	<td>link=Custom Entity Template - ${code}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>assertElementPresent</td>
-	<td>link=${code}</td>
+	<td>link=Custom Entity Template - ${code}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>link=${code}</td>
+	<td>link=Custom Entity Template - ${code}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForElementPresent</td>
-	<td>//span[contains(text(),'Disable')]	</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>//span[contains(text(),'Disable')]	</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForElementPresent</td>
-	<td>${confirmationYes}</td>
+	<td>assertElementPresent</td>
+	<td>${addFieldGroupButton}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>${confirmationYes}</td>
+	<td>${addFieldGroupButton}</td>
 	<td></td>
 </tr>
 <tr>
-	<td>waitForElementPresent</td>
-	<td>//span[contains(text(),'Enable')]	</td>
+	<td>waitForVisible</td>
+	<td>${fieldGroupingPopup}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertVisible</td>
+	<td>${fieldGroupingPopup}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${titleFieldGroupField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${titleFieldGroupField}</td>
+	<td>${titleFieldGroup}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${saveFieldGroupingButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${saveFieldGroupingButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForNotVisible</td>
+	<td>${fieldGroupingPopup}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertNotVisible</td>
+	<td>${fieldGroupingPopup}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>verifyElementPresent</td>
-	<td>//span[contains(text(),'Enable')]	</td>
+	<td>//*[text()[contains(.,'${titleFieldGroup}')]]</td>
 	<td></td>
 </tr>
+
 </tbody></table>
 </body>
 </html>

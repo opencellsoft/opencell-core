@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://integration.i.opencellsoft.com/opencell/" />
+<title>CreateNotification</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">CreateNotification</td></tr>
+</thead><tbody>
+<tr>
+	<td>clickAndWait</td>
+	<td>${notifications}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>${newButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${codeField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${codeField}</td>
+	<td>${code}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${classnameFilterField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>sendKeys</td>
+	<td>${classnameFilterField}</td>
+	<td>${classnameFilterValue}</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>${classnameFilter}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${classnameFilter}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${eventTypeFilter}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${eventTypeFilter}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${eventELFilterField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${eventELFilterField}</td>
+	<td>${eventELFilter}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${priorityField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${priorityField}</td>
+	<td>${priority}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${scriptInstanceField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${scriptInstanceField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVisible</td>
+	<td>${scriptsPopup}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${scriptsPopup}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${scriptsSearchField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${scriptsSearchField}</td>
+	<td>${codeScript}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${scriptsSearchButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${scriptsSearchButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//tbody[@id='scriptInstancePopuppopupForm:scriptInstancePopupdatatable_data']/tr/td[text()[contains(., '${codeScript}')]]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//tbody[@id='scriptInstancePopuppopupForm:scriptInstancePopupdatatable_data']/tr/td[text()[contains(., '${codeScript}')]]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//tbody[@id='scriptInstancePopuppopupForm:scriptInstancePopupdatatable_data']/tr/td[text()[contains(., '${codeScript}')]]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${saveButtonWhenCreate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>${infoSummary}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>${infoSummary}</td>
+	<td></td>
+</tr>
+</tbody></table>
+</body>
+</html>

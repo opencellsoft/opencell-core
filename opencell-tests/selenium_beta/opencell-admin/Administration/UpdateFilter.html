@@ -4,16 +4,16 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://integration.i.opencellsoft.com/opencell/" />
-<title>DisableOffer</title>
+<title>UpdateFilter</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">DisableOffer</td></tr>
+<tr><td rowspan="1" colspan="3">UpdateFilter</td></tr>
 </thead><tbody>
 <tr>
 	<td>clickAndWait</td>
-	<td>${offers}</td>
+	<td>${filters}</td>
 	<td></td>
 </tr>
 <tr>
@@ -52,35 +52,41 @@
 	<td></td>
 </tr>
 <tr>
-	<td>waitForElementPresent</td>
-	<td>//span[contains(text(),'Disable')]	</td>
+	<td>assertElementPresent</td>
+	<td>${codeField}</td>
 	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${codeField}</td>
+	<td>${code}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${descriptionField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${descriptionField}</td>
+	<td>${description}</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//span[contains(text(),'Disable')]	</td>
+	<td>${saveButtonWhenUpdate}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>${confirmationYes}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${confirmationYes}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>waitForElementPresent</td>
-	<td>//span[contains(text(),'Enable')]	</td>
+	<td>${infoSummary}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>verifyElementPresent</td>
-	<td>//span[contains(text(),'Enable')]	</td>
+	<td>${infoSummary}</td>
 	<td></td>
 </tr>
+
 </tbody></table>
 </body>
 </html>
