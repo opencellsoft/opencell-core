@@ -28,6 +28,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
@@ -52,6 +53,9 @@ import org.meveo.model.MultilanguageEntity;
 	 	           		+ " OR r.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null))  ")	                
 	       })
 public class RecurringChargeTemplate extends ChargeTemplate {
+	
+	@Transient
+	public static final String CHARGE_TYPE = "RECURRING";
 
 	private static final long serialVersionUID = 1L;
 
@@ -148,6 +152,10 @@ public class RecurringChargeTemplate extends ChargeTemplate {
 
 	public void setFilterExpression(String filterExpression) {
 		this.filterExpression = filterExpression;
+	}
+
+	public String getChargeType() {
+		return CHARGE_TYPE;
 	}
 
 }

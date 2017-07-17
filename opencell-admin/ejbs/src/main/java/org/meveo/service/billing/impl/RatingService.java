@@ -213,7 +213,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 		//TODO do this in the right place (one time by userAccount)				
 	    boolean  isExonerated = billingAccountService.isExonerated(userAccount.getBillingAccount()); 
 
-		if (chargeTemplate instanceof RecurringChargeTemplate) {
+		if (chargeTemplate.getChargeType().equals(RecurringChargeTemplate.CHARGE_TYPE)) {
 			walletOperation.setSubscriptionDate(subscriptionDate);
 		}
 		
