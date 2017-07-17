@@ -17,6 +17,7 @@ public class TipPaymentMethod extends PaymentMethod {
     private BankCoordinates bankCoordinates = new BankCoordinates();
 
     public TipPaymentMethod() {
+        this.paymentType = PaymentMethodEnum.TIP;
     }
 
     public TipPaymentMethod(String alias, boolean preferred) {

@@ -79,8 +79,7 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
             FacesContext.getCurrentInstance().validationFailed();
 
         } catch (Exception e) {
-            log.error("Failed to execute {}.{} method due to errors ", invocationContext.getMethod().getDeclaringClass().getName(), invocationContext.getMethod().getName(), e);
-
+         
             // See if can get to the root of the exception cause
             String message = e.getMessage();
             String messageKey = null;
@@ -108,6 +107,7 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
                 messages.error(message);
 
             } else {
+                log.error("Failed to execute {}.{} method due to errors ", invocationContext.getMethod().getDeclaringClass().getName(), invocationContext.getMethod().getName(), e);
                 messages.error(new BundleKey("messages", "error.action.failed"), message == null ? e.getClass().getSimpleName() : message);
             }
             FacesContext.getCurrentInstance().validationFailed();

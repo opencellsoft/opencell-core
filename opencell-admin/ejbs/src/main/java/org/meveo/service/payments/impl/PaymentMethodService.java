@@ -26,6 +26,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.Country;
 import org.meveo.model.payments.CardPaymentMethod;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.base.PersistenceService;
@@ -48,7 +49,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         if (paymentMethod instanceof CardPaymentMethod) {
 
             CardPaymentMethod cardPayment = (CardPaymentMethod) paymentMethod;
-            obtainAndSetCardToken(cardPayment);
+            obtainAndSetCardToken(cardPayment, cardPayment.getCustomerAccount());
         }
 
         super.create(paymentMethod);
@@ -60,26 +61,34 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         }
     }
 
-    public void obtainAndSetCardToken(CardPaymentMethod cardPayment) throws BusinessException {
-        if (!StringUtils.isBlank(cardPayment.getTokenId())) {
+    /**
+     * Store payment information in payment gateway and return token id in a payment gateway
+     * 
+     * @param cardPaymentMethod Card payment method
+     * @param customerAccount Customer account
+     * @throws BusinessException
+     */
+    public void obtainAndSetCardToken(CardPaymentMethod cardPaymentMethod, CustomerAccount customerAccount) throws BusinessException {
+        if (!StringUtils.isBlank(cardPaymentMethod.getTokenId())) {
             return;
         }
-        cardPayment.setHiddenCardNumber(cardPayment.getCardNumber().substring(cardPayment.getCardNumber().length() - 4));
+
+        cardPaymentMethod.setHiddenCardNumber(cardPaymentMethod.getCardNumber().substring(cardPaymentMethod.getCardNumber().length() - 4));
 
         String coutryCode = null;
-        Country country = countryService.findByName(cardPayment.getCustomerAccount().getAddress() != null ? cardPayment.getCustomerAccount().getAddress().getCountry() : null);
+        Country country = countryService.findByName(customerAccount.getAddress() != null ? customerAccount.getAddress().getCountry() : null);
         if (country != null) {
             coutryCode = country.getCountryCode();
         }
         GatewayPaymentInterface gatewayPaymentInterface = gatewayPaymentFactory
             .getInstance(GatewayPaymentNamesEnum.valueOf(ParamBean.getInstance().getProperty("meveo.gatewayPayment", "CUSTOM_API")));
 
-        String cardNumber = cardPayment.getCardNumber();
+        String cardNumber = cardPaymentMethod.getCardNumber();
         cardNumber = cardNumber.replaceAll(" ", "");
-        String tockenID = gatewayPaymentInterface.createCardToken(cardPayment.getCustomerAccount(), cardPayment.getAlias(), cardNumber, cardPayment.getOwner(),
-            StringUtils.getLongAsNChar(cardPayment.getMonthExpiration(), 2) + StringUtils.getLongAsNChar(cardPayment.getYearExpiration(), 2), cardPayment.getIssueNumber(),
-            cardPayment.getCardType().getId(), coutryCode);
+        String tockenID = gatewayPaymentInterface.createCardToken(customerAccount, cardPaymentMethod.getAlias(), cardNumber, cardPaymentMethod.getOwner(),
+            StringUtils.getLongAsNChar(cardPaymentMethod.getMonthExpiration(), 2) + StringUtils.getLongAsNChar(cardPaymentMethod.getYearExpiration(), 2),
+            cardPaymentMethod.getIssueNumber(), cardPaymentMethod.getCardType().getId(), coutryCode);
 
-        cardPayment.setTokenId(tockenID);
+        cardPaymentMethod.setTokenId(tockenID);
     }
 }

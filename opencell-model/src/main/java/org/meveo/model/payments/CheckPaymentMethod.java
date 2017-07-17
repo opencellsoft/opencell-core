@@ -10,6 +10,7 @@ public class CheckPaymentMethod extends PaymentMethod {
     private static final long serialVersionUID = 8726571628074346184L;
 
     public CheckPaymentMethod() {
+        this.paymentType = PaymentMethodEnum.CHECK;
     }
 
     public CheckPaymentMethod(String alias, boolean preferred, CustomerAccount customerAccount) {

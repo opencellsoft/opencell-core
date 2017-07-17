@@ -435,7 +435,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 
         // Register card payment methods in payment gateway and obtain a token id
         for (CardPaymentMethod cardPaymentMethod : entity.getCardPaymentMethods(true)) {
-            paymentMethodService.obtainAndSetCardToken(cardPaymentMethod);
+            paymentMethodService.obtainAndSetCardToken(cardPaymentMethod, cardPaymentMethod.getCustomerAccount());
         }
 
         entity.ensureOnePreferredPaymentMethod();
@@ -451,7 +451,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 
         // Register card payment methods in payment gateway and obtain a token id
         for (CardPaymentMethod cardPaymentMethod : entity.getCardPaymentMethods(true)) {
-            paymentMethodService.obtainAndSetCardToken(cardPaymentMethod);
+            paymentMethodService.obtainAndSetCardToken(cardPaymentMethod, cardPaymentMethod.getCustomerAccount());
         }
 
         entity.ensureOnePreferredPaymentMethod();

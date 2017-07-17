@@ -711,7 +711,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
         log.trace("Removing custom field template {} for {} from custom field template cache", cft.getCode(), cacheKeyByAppliesTo);
 
         Map<String, CustomFieldTemplate> cfts = cftsByAppliesTo.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKeyByAppliesTo);
-        if (cfts.containsKey(cft.getCode())) {
+        if (cfts !=null && cfts.containsKey(cft.getCode())) {
             cfts.remove(cft.getCode());
             cftsByAppliesTo.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKeyByAppliesTo, cfts);
             log.trace("Removed custom field template {} for {} from custom field template cache", cft.getCode(), cacheKeyByAppliesTo);

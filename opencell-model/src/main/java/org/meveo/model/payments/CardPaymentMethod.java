@@ -14,8 +14,6 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.model.shared.DateUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Entity
 @DiscriminatorValue(value = "CARD")
@@ -59,6 +57,7 @@ public class CardPaymentMethod extends PaymentMethod {
     private String issueNumber;
 
     public CardPaymentMethod() {
+        this.paymentType = PaymentMethodEnum.CARD;
     }
 
     public CardPaymentMethod(String alias, boolean preferred) {
@@ -188,9 +187,6 @@ public class CardPaymentMethod extends PaymentMethod {
 
         int year = new Integer(DateUtils.getYearFromDate(date).toString().substring(2, 4));
         int month = DateUtils.getMonthFromDate(new Date());
-        Logger log = LoggerFactory.getLogger(getClass());
-        log.error("AKK now year {} year expiration {}, now month {}, month expiration {} valid {}", year, yearExpiration.intValue(), month, yearExpiration.intValue(),
-            yearExpiration.intValue() > year || (yearExpiration.intValue() == year && monthExpiration >= month));
         return yearExpiration.intValue() > year || (yearExpiration.intValue() == year && monthExpiration >= month);
     }
 

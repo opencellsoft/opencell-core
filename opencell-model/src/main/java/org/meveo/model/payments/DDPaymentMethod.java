@@ -17,6 +17,7 @@ public class DDPaymentMethod extends PaymentMethod {
     private BankCoordinates bankCoordinates = new BankCoordinates();
 
     public DDPaymentMethod() {
+        this.paymentType = PaymentMethodEnum.DIRECTDEBIT;
     }
 
     public DDPaymentMethod(String alias, boolean preferred) {

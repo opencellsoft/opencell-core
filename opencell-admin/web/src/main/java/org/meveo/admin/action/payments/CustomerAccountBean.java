@@ -322,7 +322,6 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
         } else if (newPaymentMethodType == PaymentMethodEnum.DIRECTDEBIT) {
             selectedPaymentMethod = new DDPaymentMethod();
         }
-        selectedPaymentMethod.setPaymentType(newPaymentMethodType);
     }
 
     public void editPaymentMethod(PaymentMethod paymentMethod) throws BusinessException {

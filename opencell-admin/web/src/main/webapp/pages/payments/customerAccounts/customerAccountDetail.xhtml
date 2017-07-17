@@ -176,7 +176,7 @@
                                                     <f:setPropertyActionListener value="#{null}" target="#{customerAccountBean.selectedPaymentMethod}" />
                                                     <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
                                                 </p:commandButton>
-                                                <p:commandButton icon="ui-icon-star" action="#{customerAccountBean.setPreferredPaymentMethod(entity)}"
+                                                <p:commandButton icon="ui-icon-star" action="#{customerAccountBean.setPreferredPaymentMethod(entity)}" title="#{messages['paymentMethod.makePreferred']}"
                                                     update=":parentTab:formCustomerAccount:childTab:paymentMethodMessages :parentTab:formCustomerAccount:childTab:paymentMethodDetails paymentMethods"
                                                     rendered="#{customerAccountBean.entity.status!=CustomerAccountStatusEnum.CLOSE and !entity.preferred}" process="@this">
                                                 </p:commandButton>
@@ -204,7 +204,7 @@
                                                 <p:outputPanel styleClass="form-panel-fields #{edit?'':' form-panel-fields-view'}">
                                                     <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['paymentMethod.alias']}" field="alias" />
 
-                                                    <h:panelGroup rendered="#{customerAccountBean.selectedPaymentMethod.paymentType == PaymentMethodEnum.CARD}">
+                                                    <c:if test="#{customerAccountBean.selectedPaymentMethod.paymentType == PaymentMethodEnum.CARD}">
 
                                                         <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['paymentMethod.cardType']}" field="cardType"
                                                             required="true" edit="#{customerAccountBean.selectedPaymentMethod.tokenId==null}" />
@@ -225,10 +225,10 @@
                                                             required="true">
                                                             <p:inputMask id="cardNr" mask="9999 9999 9999 9999" value="#{customerAccountBean.selectedPaymentMethod.cardNumber}" required="true" />
                                                         </hftl:decorateFormField>
-                                                    </h:panelGroup>
+                                                    </c:if>
 
-                                                    <h:panelGroup
-                                                        rendered="#{customerAccountBean.selectedPaymentMethod.paymentType == PaymentMethodEnum.DIRECTDEBIT or customerAccountBean.selectedPaymentMethod.paymentType == PaymentMethodEnum.TIP}">
+                                                    <c:if
+                                                        test="#{customerAccountBean.selectedPaymentMethod.paymentType == PaymentMethodEnum.DIRECTDEBIT or customerAccountBean.selectedPaymentMethod.paymentType == PaymentMethodEnum.TIP}">
                                                         <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.bankName']}" field="bankCoordinates"
                                                             childField="bankName" size="55" required="true" />
                                                         <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.bankCode']}" id="bankCode"
@@ -245,7 +245,7 @@
                                                             childField="bic" size="15" required="true" />
                                                         <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.iban']}" field="bankCoordinates"
                                                             childField="iban" size="45" required="true" />
-                                                    </h:panelGroup>
+                                                    </c:if>
 
                                                 </p:outputPanel>
                                                 <h:panelGroup layout="block" styleClass="form-panel-actions">

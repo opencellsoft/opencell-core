@@ -130,7 +130,18 @@ public class CustomerAccountApi extends AccountEntityApi {
         }
 
         if (postData.getPaymentMethods() == null || postData.getPaymentMethods().isEmpty()) {
-            PaymentMethodEnum defaultPaymentMethod = PaymentMethodEnum.valueOf(ParamBean.getInstance().getProperty("api.default.customerAccount.paymentMethodType", "CHECK"));
+
+            // Start compatibility with pre-4.6 versions
+            PaymentMethodEnum defaultPaymentMethod = postData.getPaymentMethod();
+
+            if (defaultPaymentMethod != null && !defaultPaymentMethod.isSimple()) {
+                throw new InvalidParameterException(
+                    "Please specify payment method via 'paymentMethods' attribute, as currently specified payment method requires additional information");
+            } else if (defaultPaymentMethod == null) {
+                // End of compatibility with pre-4.6 versions
+
+                defaultPaymentMethod = PaymentMethodEnum.valueOf(ParamBean.getInstance().getProperty("api.default.customerAccount.paymentMethodType", "CHECK"));
+            }
             if (defaultPaymentMethod == null || !defaultPaymentMethod.isSimple()) {
                 throw new InvalidParameterException(
                     "Please specify payment method, as currently specified default payment method (in api.default.customerAccount.paymentMethodType) is invalid or requires additional information");
@@ -309,7 +320,19 @@ public class CustomerAccountApi extends AccountEntityApi {
 
         // Create a default payment method if non was specified
         if (customerAccount.getPaymentMethods() == null || customerAccount.getPaymentMethods().isEmpty()) {
-            PaymentMethodEnum defaultPaymentMethod = PaymentMethodEnum.valueOf(ParamBean.getInstance().getProperty("api.default.customerAccount.paymentMethodType", "CHECK"));
+
+            // Start compatibility with pre-4.6 versions
+            PaymentMethodEnum defaultPaymentMethod = postData.getPaymentMethod();
+
+            if (defaultPaymentMethod != null && !defaultPaymentMethod.isSimple()) {
+                throw new InvalidParameterException(
+                    "Please specify payment method via 'paymentMethods' attribute, as currently specified payment method requires additional information");
+            } else if (defaultPaymentMethod == null) {
+                // End of compatibility with pre-4.6 versions
+
+                defaultPaymentMethod = PaymentMethodEnum.valueOf(ParamBean.getInstance().getProperty("api.default.customerAccount.paymentMethodType", "CHECK"));
+            }
+
             if (defaultPaymentMethod == null || !defaultPaymentMethod.isSimple()) {
                 throw new InvalidParameterException(
                     "Please specify payment method, as currently specified default payment method (in api.default.customerAccount.paymentMethodType) is invalid or requires additional information");
@@ -626,9 +649,10 @@ public class CustomerAccountApi extends AccountEntityApi {
         }
     }
 
-    private PaymentMethod paymentMethodFromDto(PaymentMethodDto pmDto, CustomerAccount customerAccount) throws MeveoApiException {
+    public PaymentMethod paymentMethodFromDto(PaymentMethodDto pmDto, CustomerAccount customerAccount) throws MeveoApiException {
 
         PaymentMethod paymentMethod = null;
+        validate(pmDto);
 
         if (pmDto instanceof OtherPaymentMethodDto) {
 
@@ -643,17 +667,17 @@ public class CustomerAccountApi extends AccountEntityApi {
             if (((DDPaymentMethodDto) pmDto).getBankCoordinates() == null) {
                 throw new MissingParameterException("bankCoordinates");
             }
+            validate(((DDPaymentMethodDto) pmDto).getBankCoordinates());
             paymentMethod = ((DDPaymentMethodDto) pmDto).fromDto();
 
         } else if (pmDto instanceof TipPaymentMethodDto) {
             if (((TipPaymentMethodDto) pmDto).getBankCoordinates() == null) {
                 throw new MissingParameterException("bankCoordinates");
             }
+            validate(((TipPaymentMethodDto) pmDto).getBankCoordinates());
             paymentMethod = ((TipPaymentMethodDto) pmDto).fromDto();
 
         } else if (pmDto instanceof CardPaymentMethodDto) {
-
-            validate(pmDto);
             paymentMethod = ((CardPaymentMethodDto) pmDto).fromDto();
 
         }

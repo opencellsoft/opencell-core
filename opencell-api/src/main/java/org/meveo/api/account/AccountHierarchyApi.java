@@ -25,6 +25,7 @@ import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.account.AccountDto;
 import org.meveo.api.dto.account.AccountHierarchyDto;
 import org.meveo.api.dto.account.AddressDto;
+import org.meveo.api.dto.account.BankCoordinatesDto;
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.account.BillingAccountsDto;
 import org.meveo.api.dto.account.CRMAccountHierarchyDto;
@@ -435,7 +436,6 @@ public class AccountHierarchyApi extends BaseApi {
             customerDto.setCustomerCategory(customerCategoryCode);
         }
 
-        
         String creditCategory = paramBean.getProperty("api.default.customerAccount.creditCategory", "NEWCUSTOMER");
 
         AddressDto address = customerDto.getAddress();
@@ -486,7 +486,7 @@ public class AccountHierarchyApi extends BaseApi {
         customerAccountDto.setCurrency(postData.getCurrencyCode());
         customerAccountDto.setLanguage(postData.getLanguageCode());
         customerAccountDto.setPaymentMethods(postData.getPaymentMethods());
-        
+
         customerAccountApi.createOrUpdate(customerAccountDto);
 
         String billingCycleCode = StringUtils.normalizeHierarchyCode(postData.getBillingCycleCode());
@@ -1260,7 +1260,7 @@ public class AccountHierarchyApi extends BaseApi {
             customerAccountDto.setExternalRef1(postData.getExternalRef1());
             customerAccountDto.setExternalRef2(postData.getExternalRef2());
             customerAccountDto.setPaymentMethods(postData.getPaymentMethods());
-            
+
             CustomFieldsDto cfsDto = new CustomFieldsDto();
             if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
                 Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(CustomerAccount.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
@@ -1710,6 +1710,9 @@ public class AccountHierarchyApi extends BaseApi {
                 dto.getPaymentMethods().add(pmDto);
             }
 
+            // Start compatibility with pre-4.6 versions
+            dto.setPaymentMethod(ca.getPaymentMethods().get(0).getPaymentType());
+            // End compatibility with pre-4.6 versions
         }
 
         dto.setLoaded(true);
@@ -1758,6 +1761,19 @@ public class AccountHierarchyApi extends BaseApi {
             dto.setDiscountPlan(ba.getDiscountPlan().getCode());
         }
 
+        // Start compatibility with pre-4.6 versions
+
+        PaymentMethod paymentMethod = ba.getCustomerAccount().getPreferredPaymentMethod();
+        if (paymentMethod != null) {
+            dto.setPaymentMethod(paymentMethod.getPaymentType());
+            if (paymentMethod instanceof DDPaymentMethod) {
+                dto.setBankCoordinates(new BankCoordinatesDto(((DDPaymentMethod) paymentMethod).getBankCoordinates()));
+            } else if (paymentMethod instanceof TipPaymentMethod) {
+                dto.setBankCoordinates(new BankCoordinatesDto(((TipPaymentMethod) paymentMethod).getBankCoordinates()));
+            }
+        }
+
+        // End compatibility with pre-4.6 versions
         return dto;
 
     }

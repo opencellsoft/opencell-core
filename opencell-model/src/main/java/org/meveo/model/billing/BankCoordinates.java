@@ -24,7 +24,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.Size;
 
-import org.apache.commons.lang3.StringUtils;
+import org.meveo.commons.utils.StringUtils;
 
 @Embeddable
 public class BankCoordinates implements Serializable, Cloneable {

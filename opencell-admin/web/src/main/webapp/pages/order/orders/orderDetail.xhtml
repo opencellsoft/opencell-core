@@ -15,6 +15,7 @@
         <p:importEnum type="org.meveo.api.order.OrderProductCharacteristicEnum" var="CharacteristicsEnum" />
         <p:importEnum type="org.meveo.model.billing.SubscriptionRenewal$EndOfTermActionEnum" var="EndOfTermActionEnum" />
         <p:importEnum type="org.meveo.model.billing.SubscriptionRenewal$RenewalPeriodUnitEnum" var="RenewalPeriodUnitEnum" />
+        <p:importEnum type="org.meveo.model.payments.PaymentMethodEnum" var="PaymentMethodEnum" />
 
         <h:form id="crumbmenuForm">
             <p:breadCrumb homeDisplay="text" id="crumbmenu">
@@ -54,9 +55,8 @@
                         <hftl:formField label="#{messages['order.orderDate']}" field="orderDate" doNotShowOnNew="true" allowEdit="false" />
                         <hftl:formField label="#{messages['order.priority']}" field="priority" allowEdit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
                         <hftl:formField label="#{messages['order.category']}" field="category" allowEdit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
-						<hftl:formField label="#{messages['order.paymentMethod']}" field="paymentMethod" allowEdit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
                         <hftl:formField label="#{messages['order.dueDateDelayEL']}" field="dueDateDelayEL" allowEdit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
-                        
+
                         <hftl:formField label="#{messages['order.receivedFromApp']}" field="receivedFromApp" edit="false" rendered="#{orderBean.entity.receivedFromApp!=null}" />
                         <hftl:formField label="#{messages['order.externalId']}" field="externalId" edit="false" rendered="#{orderBean.entity.receivedFromApp!=null}" />
 
@@ -78,6 +78,50 @@
                             <hftl:formField label="#{messages['order.completionDate']}" field="completionDate" edit="false" rendered="#{orderBean.entity.completionDate!=null}" />
                         </p:fieldset>
 
+                        <p:fieldset legend="#{messages['customerAccount.paymentMethod']}" styleClass="clearBoth">
+                            <p:outputPanel id="paymentMethodDetail" styleClass="form-panel-fields #{edit?'':' form-panel-fields-view'}">
+                                <hftl:formField entity="#{orderBean}" label="#{messages['paymentMethod.type']}" field="paymentMethodType" actionListenerBean="#{orderBean}"
+                                    actionListenerMethod="changePaymentMethodType" listenerUpdate="paymentMethodDetail" componentWidth="15" />
+
+                                <h:panelGroup rendered="#{orderBean.paymentMethodType!=null}">
+                                    <hftl:formField label="#{messages['paymentMethod.alias']}" field="paymentMethod" childField="alias" />
+
+                                    <c:if test="#{orderBean.entity.paymentMethod.paymentType == PaymentMethodEnum.CARD}">
+
+                                        <hftl:formField entity="#{orderBean.paymentMethod}" label="#{messages['paymentMethod.cardType']}" field="cardType" required="true"
+                                            edit="#{orderBean.paymentMethod.tokenId==null}" />
+                                        <hftl:formField entity="#{orderBean.paymentMethod}" label="#{messages['paymentMethod.cardOwner']}" field="owner" required="true"
+                                            edit="#{orderBean.paymentMethod.tokenId==null}" />
+                                        <hftl:formField entity="#{orderBean.paymentMethod}" label="#{messages['paymentMethod.cardExpirationMonth']}" field="monthExpiration" required="true"
+                                            edit="#{orderBean.paymentMethod.tokenId==null}" minValue="1" maxValue="12" size="2" componentWidth="15" />
+                                        <hftl:formField entity="#{orderBean.paymentMethod}" label="#{messages['paymentMethod.cardExpirationYear']}" field="yearExpiration" required="true"
+                                            edit="#{orderBean.paymentMethod.tokenId==null}" size="2" componentWidth="15" minValue="0" maxValue="99" />
+                                        <hftl:decorateFormField fieldId="cardNr" label="#{messages['paymentMethod.cardNumber']}" rendered="#{orderBean.paymentMethod.tokenId!=null}">
+                                            <h:outputText value="**** **** **** #{orderBean.paymentMethod.hiddenCardNumber}" styleClass="field-value" />
+                                        </hftl:decorateFormField>
+                                        <hftl:decorateFormField fieldId="cardNr" label="#{messages['paymentMethod.cardNumber']}" rendered="#{orderBean.paymentMethod.tokenId==null}"
+                                            edit="#{orderBean.paymentMethod.tokenId==null}" required="true">
+                                            <p:inputMask id="cardNr" mask="9999 9999 9999 9999" value="#{orderBean.paymentMethod.cardNumber}" required="true" />
+                                        </hftl:decorateFormField>
+                                    </c:if>
+
+                                    <c:if test="#{orderBean.entity.paymentMethod.paymentType == PaymentMethodEnum.DIRECTDEBIT or orderBean.entity.paymentMethod.paymentType == PaymentMethodEnum.TIP}">
+                                        <hftl:formField entity="#{orderBean.paymentMethod.bankCoordinates}" label="#{messages['bankCoordinates.bankName']}" field="bankName" size="55" required="true" />
+                                        <hftl:formField entity="#{orderBean.paymentMethod.bankCoordinates}" label="#{messages['bankCoordinates.bankCode']}" id="bankCode" field="bankCode" size="5"
+                                            maxlength="5" validateRib="false" required="true" />
+                                        <hftl:formField entity="#{orderBean.paymentMethod.bankCoordinates}" label="#{messages['bankCoordinates.branchCode']}" field="branchCode" size="5"
+                                            required="true" />
+                                        <hftl:formField entity="#{orderBean.paymentMethod.bankCoordinates}" label="#{messages['bankCoordinates.accountNumber']}" field="accountNumber" size="11"
+                                            required="true" />
+                                        <hftl:formField entity="#{orderBean.paymentMethod.bankCoordinates}" label="#{messages['bankCoordinates.accountOwner']}" field="accountOwner" size="55"
+                                            required="true" />
+                                        <hftl:formField entity="#{orderBean.paymentMethod.bankCoordinates}" label="#{messages['bankCoordinates.key']}" field="key" size="2" required="true" />
+                                        <hftl:formField entity="#{orderBean.paymentMethod.bankCoordinates}" label="#{messages['bankCoordinates.bic']}" field="bic" size="15" required="true" />
+                                        <hftl:formField entity="#{orderBean.paymentMethod.bankCoordinates}" label="#{messages['bankCoordinates.iban']}" field="iban" size="45" required="true" />
+                                    </c:if>
+                                </h:panelGroup>
+                            </p:outputPanel>
+                        </p:fieldset>
                         <div class="clearLeft"></div>
                         <hftl:customFields prefix="order" backingBean="#{orderBean}" messagesId=":orderForm:messages" />
 

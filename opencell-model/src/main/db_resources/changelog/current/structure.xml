@@ -191,4 +191,14 @@
         <modifyDataType tableName="meveo_module_item" columnName="item_code" newDataType="varchar(255)"/>
     </changeSet>
     
+     <changeSet id="#2406_20170715" author="AndriusKarpavicius">
+        <dropNotNullConstraint tableName="ar_payment_token" columnName="customer_account_id"/>
+        <addColumn tableName="ord_order">
+            <column name="payment_method_id" type="BIGINT"/>
+        </addColumn>
+        <dropColumn tableName="ord_order" columnName="payment_method"/>
+        <addForeignKeyConstraint baseColumnNames="payment_method_id" baseTableName="ord_order" constraintName="fk_order_payment_method" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_payment_token" />
+    </changeSet>
+    
 </databaseChangeLog> 

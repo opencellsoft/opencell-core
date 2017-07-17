@@ -13,6 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.payments.PaymentMethodEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -47,6 +48,24 @@ public class BillingAccountDto extends AccountDto {
     private List<InvoiceDto> invoices = new ArrayList<InvoiceDto>();
     private BigDecimal invoicingThreshold;
     private String discountPlan;
+
+    /**
+     * Field was deprecated in 4.6 version. Use 'paymentMethods' field on CustomerAccount entity instead.
+     */
+    @Deprecated
+    private PaymentMethodEnum paymentMethod;
+
+    /**
+     * Field was deprecated in 4.6 version. Use 'paymentMethods' field on CustomerAccount entity instead.
+     */
+    @Deprecated
+    private BankCoordinatesDto bankCoordinates;
+
+    /**
+     * Field was deprecated in 4.6 version. Use custom fields instead.
+     */
+    @Deprecated
+    private String paymentTerms;
 
     /**
      * Use for GET / LIST only.
@@ -194,5 +213,29 @@ public class BillingAccountDto extends AccountDto {
 
     public void setDiscountPlan(String discountPlan) {
         this.discountPlan = discountPlan;
+    }
+
+    public PaymentMethodEnum getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public BankCoordinatesDto getBankCoordinates() {
+        return bankCoordinates;
+    }
+
+    public void setBankCoordinates(BankCoordinatesDto bankCoordinates) {
+        this.bankCoordinates = bankCoordinates;
+    }
+
+    public String getPaymentTerms() {
+        return paymentTerms;
+    }
+
+    public void setPaymentTerms(String paymentTerms) {
+        this.paymentTerms = paymentTerms;
     }
 }

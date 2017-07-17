@@ -1,5 +1,6 @@
 package org.meveo.api.dto.payment;
 
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -22,6 +23,7 @@ public class TipPaymentMethodDto extends PaymentMethodDto {
     /**
      * Bank account information
      */
+    @NotNull
     private BankCoordinatesDto bankCoordinates;
 
     public TipPaymentMethodDto() {
@@ -32,6 +34,11 @@ public class TipPaymentMethodDto extends PaymentMethodDto {
         if (paymentMethod.getBankCoordinates() != null) {
             bankCoordinates = new BankCoordinatesDto(paymentMethod.getBankCoordinates());
         }
+    }
+
+    public TipPaymentMethodDto(BankCoordinatesDto bankCoordinates) {
+        super();
+        this.bankCoordinates = bankCoordinates;
     }
 
     public BankCoordinatesDto getBankCoordinates() {

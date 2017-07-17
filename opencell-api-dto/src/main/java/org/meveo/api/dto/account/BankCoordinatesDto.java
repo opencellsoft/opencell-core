@@ -2,10 +2,13 @@ package org.meveo.api.dto.account;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.model.billing.BankCoordinates;
 
 /**
@@ -17,17 +20,52 @@ public class BankCoordinatesDto implements Serializable {
 
     private static final long serialVersionUID = 4452076136683484895L;
 
+    @NotNull
+    @Size(max = 5)
     private String bankCode;
+
+    @NotNull
+    @Size(max = 5)
     private String branchCode;
+
+    @NotNull
+    @Size(max = 11)
     private String accountNumber;
+
+    @NotNull
+    @Size(max = 2)
     private String key;
+
+    @NotNull
+    @Size(max = 34)
     private String iban;
+
+    @NotNull
+    @Size(max = 11)
     private String bic;
+
+    @NotNull
+    @Size(max = 50)
     private String accountOwner;
+
+    @NotNull
+    @Size(max = 50)
     private String bankName;
+
+    @NotNull
+    @Size(max = 50)
     private String bankId;
+
+    @NotNull
+    @Size(max = 50)
     private String issuerNumber;
+
+    @NotNull
+    @Size(max = 50)
     private String issuerName;
+
+    @NotNull
+    @Size(max = 35)
     private String ics;
 
     public BankCoordinatesDto() {
@@ -169,5 +207,9 @@ public class BankCoordinatesDto implements Serializable {
         return "BankCoordinatesDto [bankCode=" + bankCode + ", branchCode=" + branchCode + ", accountNumber=" + accountNumber + ", key=" + key + ", iban=" + iban + ", bic=" + bic
                 + ", accountOwner=" + accountOwner + ", bankName=" + bankName + ", bankId=" + bankId + ", issuerNumber=" + issuerNumber + ", issuerName=" + issuerName + ", ics="
                 + ics + "]";
+    }
+
+    public boolean isEmpty() {
+        return StringUtils.isBlank(iban);
     }
 }
