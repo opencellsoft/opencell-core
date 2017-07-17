@@ -6,6 +6,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 
+import org.meveo.model.billing.ChargeInstance;
+
 /**
  * @author Edward P. Legaspi
  **/
@@ -26,6 +28,25 @@ public class ChargeInstanceDto {
 	
 	public ChargeInstanceDto() {
 		
+	}
+	
+	public ChargeInstanceDto(ChargeInstance e) {
+		super();
+		if (e != null) {
+			this.code = e.getCode();
+			this.description = e.getDescription();
+			if (e.getStatus() != null) {
+				this.status = e.getStatus().name();
+			}
+			this.amountWithTax = e.getAmountWithTax();
+			this.amountWithoutTax = e.getAmountWithoutTax();
+			if (e.getSeller() != null) {
+				this.sellerCode = e.getSeller().getCode();
+			}
+			if (e.getUserAccount() != null) {
+				this.userAccountCode = e.getUserAccount().getCode();
+			}
+		}
 	}
 
 	public ChargeInstanceDto(String code, String description, String status, BigDecimal amountWithTax, BigDecimal amountWithoutTax, String sellerCode, String userAccountCode) {

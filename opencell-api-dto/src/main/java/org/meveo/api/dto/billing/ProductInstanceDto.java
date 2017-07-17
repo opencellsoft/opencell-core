@@ -1,13 +1,16 @@
 package org.meveo.api.dto.billing;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 import org.meveo.api.dto.BusinessDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.model.billing.ProductChargeInstance;
 import org.meveo.model.billing.ProductInstance;
 
 /**
@@ -21,6 +24,9 @@ public class ProductInstanceDto extends BusinessDto {
 	private Date applicationDate;
 	protected BigDecimal quantity = BigDecimal.ONE;
 	private String orderNumber;
+	
+	
+	private List<ProductChargeInstanceDto> productChargeInstances = new ArrayList<>();
 
 	private CustomFieldsDto customFields = new CustomFieldsDto();
 
@@ -34,6 +40,12 @@ public class ProductInstanceDto extends BusinessDto {
 		applicationDate = e.getApplicationDate();
 		quantity = e.getQuantity();
 		orderNumber = e.getOrderNumber();
+		
+		if (e.getProductChargeInstances() != null) {
+			for (ProductChargeInstance pci : e.getProductChargeInstances()) {
+				productChargeInstances.add(new ProductChargeInstanceDto(pci));
+			}
+		}
 		
 		customFields = customFieldInstances;
 	}
