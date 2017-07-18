@@ -133,7 +133,7 @@ public class QuoteService extends BusinessService<Quote> {
                         for (RecurringChargeInstance recurringCharge : serviceInstance.getRecurringChargeInstances()) {
                             List<WalletOperation> walletOps = recurringChargeInstanceService.applyRecurringChargeVirtual(recurringCharge, quoteInvoiceInfo.getFromDate(),
                                 quoteInvoiceInfo.getToDate());
-                            if (walletOperations != null) {
+                            if (walletOperations != null && walletOps != null) {
                                 walletOperations.addAll(walletOps);
                             }
                         }
