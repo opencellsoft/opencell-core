@@ -81,9 +81,13 @@ public class PaymentService extends PersistenceService<Payment> {
 		}
 		GatewayPaymentInterface  gatewayPaymentInterface = gatewayPaymentFactory.getInstance(GatewayPaymentNamesEnum.valueOf(ParamBean.getInstance().getProperty("meveo.gatewayPayment", "CUSTOM_API")));		
 
-		DoPaymentResponseDto doPaymentResponseDto =  gatewayPaymentInterface.doPaymentToken(cardTokenService.getPreferedToken(customerAccount), ctsAmount,null);
+		CardToken cradToken = cardTokenService.getPreferedToken(customerAccount);
+		
+		DoPaymentResponseDto doPaymentResponseDto =  gatewayPaymentInterface.doPaymentToken(cradToken, ctsAmount,null);
 
 		if(PaymentStatusEnum.ACCEPTED.name().equals(doPaymentResponseDto.getPaymentStatus().name())){
+			cradToken.setUserId(doPaymentResponseDto.getCodeClientSide());
+			cardTokenService.update(cradToken);
 			Long aoPaymentId = null;
 			if(createAO){
 				try{
