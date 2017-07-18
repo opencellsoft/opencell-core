@@ -105,7 +105,7 @@
        <modifyDataType tableName="account_entity" columnName="external_ref_1" newDataType="varchar(255)" />
        <modifyDataType tableName="account_entity" columnName="external_ref_2" newDataType="varchar(255)" />
     </changeSet>
-
+<!--
      <changeSet author="anasseh" id="#2416_20170307">
      <createSequence sequenceName="ar_payment_token_seq" />           
      <createTable tableName="ar_payment_token">
@@ -147,7 +147,7 @@
      <addForeignKeyConstraint baseColumnNames="customer_account_id" baseTableName="ar_payment_token" constraintName="fk_ca_id_payment_token" deferrable="false"
 								initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_customer_account" />
  </changeSet>
- 
+ -->
     <changeSet id="#2698_20170622" author="TienLanPHUNG">
     	<addColumn tableName="rating_edr">
     		<column name="extra_parameter" type="text" />
