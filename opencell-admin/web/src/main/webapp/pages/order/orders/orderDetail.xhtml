@@ -78,7 +78,7 @@
                             <hftl:formField label="#{messages['order.completionDate']}" field="completionDate" edit="false" rendered="#{orderBean.entity.completionDate!=null}" />
                         </p:fieldset>
 
-                        <p:fieldset legend="#{messages['customerAccount.paymentMethod']}" styleClass="clearBoth">
+                        <p:fieldset legend="#{messages['customerAccount.paymentMethod']}" styleClass="clearBoth" rendered="#{orderBean.orderEditable or orderBean.entity.paymentMethod!=null}">
                             <p:outputPanel id="paymentMethodDetail" styleClass="form-panel-fields #{edit?'':' form-panel-fields-view'}">
                                 <hftl:formField entity="#{orderBean}" label="#{messages['paymentMethod.type']}" field="paymentMethodType" actionListenerBean="#{orderBean}"
                                     actionListenerMethod="changePaymentMethodType" listenerUpdate="paymentMethodDetail" componentWidth="15" />
