@@ -562,6 +562,15 @@ public class InvoiceApi extends BaseApi {
         if(invoice.getRecordedInvoice() != null){
         	dto.setAccountOperationId(invoice.getRecordedInvoice().getId());
         }
+        
+        List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = new ArrayList<>();
+		subCategoryInvoiceAgregates = invoiceAgregateService.findDiscountAggregates(invoice);
+        
+        for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : subCategoryInvoiceAgregates) {
+        	SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = new SubCategoryInvoiceAgregateDto(subCategoryInvoiceAgregate);
+        	dto.getDiscountAggregates().add(subCategoryInvoiceAgregateDto);
+        }
+        
         return dto;
     }
     
