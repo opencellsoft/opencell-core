@@ -19,7 +19,9 @@
 package org.meveo.model.billing;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -29,6 +31,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -44,8 +48,10 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.mediation.Access;
+import org.meveo.model.shared.DateUtils;
 
 /**
  * Subscription
@@ -57,6 +63,9 @@ import org.meveo.model.mediation.Access;
 @Table(name = "billing_subscription", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_subscription_seq"), })
+@NamedQueries({ @NamedQuery(name = "Subscription.getExpired", query = "select s.id from Subscription s where s.subscribedTillDate is not null and s.subscribedTillDate<=:date"),
+        @NamedQuery(name = "Subscription.getToNotifyExpiration", query = "select s.id from Subscription s where s.subscribedTillDate is not null and s.renewalNotifiedDate is null and s.notifyOfRenewalDate is not null and s.notifyOfRenewalDate<=:date and :date < s.subscribedTillDate") })
+
 public class Subscription extends BusinessCFEntity {
 
     private static final long serialVersionUID = 1L;
@@ -80,6 +89,13 @@ public class Subscription extends BusinessCFEntity {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "termination_date")
     private Date terminationDate;
+
+    /**
+     * A date till which subscription is subscribed. After this date it will either be extended or terminated
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "subscribed_till_date")
+    private Date subscribedTillDate;
 
     @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
     // TODO : Add orphanRemoval annotation.
@@ -110,6 +126,29 @@ public class Subscription extends BusinessCFEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "default_level")
     private Boolean defaultLevel = true;
+
+    private SubscriptionRenewal subscriptionRenewal = new SubscriptionRenewal();
+
+    /**
+     * Was subscription renewed
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "renewed")
+    private boolean renewed;
+
+    /**
+     * A date on which "endOfTerm" notification should be fired for soon to expire subscriptions. It is calculated as subscribedTillDate-subscriptionRenewal.daysNotifyRenewal
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "notify_of_renewal_date")
+    private Date notifyOfRenewalDate;
+
+    /**
+     * Was/when "endOfTerm" notification fired for soon to expire subscription
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "renewal_notified_date")
+    private Date renewalNotifiedDate;
 
     public Date getEndAgreementDate() {
         return endAgreementDate;
@@ -228,22 +267,127 @@ public class Subscription extends BusinessCFEntity {
         }
         return false;
     }
-    
+
     /**
      * get orderNumber linked to subscription
      * 
      * @return orderNumber
      */
-    public String getOrderNumber(){
-    	String orderNumber = null;
-    	if(serviceInstances != null && !serviceInstances.isEmpty()){
-    		orderNumber = serviceInstances.get(0).getOrderNumber();
-    	}
-    	if(orderNumber == null){
-        	if(productInstances != null && !productInstances.isEmpty()){
-        		orderNumber = productInstances.get(0).getOrderNumber();
-        	}
-    	}
-    	return orderNumber;
+    public String getOrderNumber() {
+        String orderNumber = null;
+        if (serviceInstances != null && !serviceInstances.isEmpty()) {
+            orderNumber = serviceInstances.get(0).getOrderNumber();
+        }
+        if (orderNumber == null) {
+            if (productInstances != null && !productInstances.isEmpty()) {
+                orderNumber = productInstances.get(0).getOrderNumber();
+            }
+        }
+        return orderNumber;
     }
+
+    public Date getSubscribedTillDate() {
+        return subscribedTillDate;
+    }
+
+    public void setSubscribedTillDate(Date subscribedTillDate) {
+        this.subscribedTillDate = subscribedTillDate;
+    }
+
+    public SubscriptionRenewal getSubscriptionRenewal() {
+        return subscriptionRenewal;
+    }
+
+    public void setSubscriptionRenewal(SubscriptionRenewal subscriptionRenewal) {
+        this.subscriptionRenewal = subscriptionRenewal;
+    }
+
+    public Date getRenewalNotifiedDate() {
+        return renewalNotifiedDate;
+    }
+
+    public void setRenewalNotifiedDate(Date renewalNotifiedDate) {
+        this.renewalNotifiedDate = renewalNotifiedDate;
+    }
+
+    public boolean isRenewed() {
+        return renewed;
+    }
+
+    public void setRenewed(boolean renewed) {
+        this.renewed = renewed;
+    }
+
+    public Date getNotifyOfRenewalDate() {
+        return notifyOfRenewalDate;
+    }
+
+    public void setNotifyOfRenewalDate(Date notifyOfRenewalDate) {
+        this.notifyOfRenewalDate = notifyOfRenewalDate;
+    }
+
+    /**
+     * Check if renewal notice should be fired for a current date
+     * 
+     * @return True if today is within "subscription expiration date - days before to notify renewal" and subscription expiration date
+     */
+    public boolean isFireRenewalNotice() {
+
+        if (notifyOfRenewalDate != null && renewalNotifiedDate == null) {
+
+            return DateUtils.isTodayWithinPeriod(notifyOfRenewalDate, subscribedTillDate);
+
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if subscription has expired for a current date
+     * 
+     * @return True if subscription has expired for a current date
+     */
+    public boolean isSubscriptionExpired() {
+
+        return subscribedTillDate != null && DateUtils.setTimeToZero(subscribedTillDate).compareTo(DateUtils.setTimeToZero(new Date())) <= 0;
+    }
+
+    /**
+     * Update subscribedTillDate field in subscription while it was not renewed yet. Also calculate Notify of renewal date
+     */
+    public void updateSubscribedTillAndRenewalNotifyDates() {
+        if (isRenewed()) {
+            return;
+        }
+        if (getSubscriptionDate() != null && getSubscriptionRenewal() != null && getSubscriptionRenewal().getInitialyActiveFor() != null) {
+            if (getSubscriptionRenewal().getInitialyActiveForUnit() == null) {
+                getSubscriptionRenewal().setInitialyActiveForUnit(RenewalPeriodUnitEnum.MONTH);
+            }
+            Calendar calendar = new GregorianCalendar();
+            calendar.setTime(getSubscriptionDate());
+            calendar.add(getSubscriptionRenewal().getInitialyActiveForUnit().getCalendarField(), getSubscriptionRenewal().getInitialyActiveFor());
+            setSubscribedTillDate(calendar.getTime());
+
+        } else {
+            setSubscribedTillDate(null);
+        }
+
+        if (getSubscribedTillDate() != null && getSubscriptionRenewal().isAutoRenew() && getSubscriptionRenewal().getDaysNotifyRenewal() != null) {
+            Calendar calendar = new GregorianCalendar();
+            calendar.setTime(getSubscribedTillDate());
+            calendar.add(Calendar.DAY_OF_MONTH, getSubscriptionRenewal().getDaysNotifyRenewal() * (-1));
+            setNotifyOfRenewalDate(calendar.getTime());
+        } else {
+            setNotifyOfRenewalDate(null);
+        }
+    }
+
+    public void updateRenewalRule(SubscriptionRenewal newRenewalRule){
+        if (getSubscribedTillDate() != null && isRenewed()){
+            
+        }
+        
+        
+    }
+    
 }

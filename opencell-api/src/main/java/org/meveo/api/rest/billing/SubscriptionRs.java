@@ -20,9 +20,12 @@ import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.billing.UpdateServicesRequestDto;
+import org.meveo.api.dto.response.billing.GetDueDateDelayResponseDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsResponseDto;
+import org.meveo.api.dto.response.catalog.GetOneShotChargesResponseDto;
+import org.meveo.api.dto.response.catalog.GetServiceInstanceResponseDto;
 import org.meveo.api.rest.IBaseRs;
 
 /**
@@ -130,6 +133,18 @@ public interface SubscriptionRs extends IBaseRs {
     @GET
     @Path("/")
     GetSubscriptionResponseDto findSubscription(@QueryParam("subscriptionCode") String subscriptionCode);
+    
+    
+    
+    /**
+     * Search for a subscription with a given code 
+     * 
+     * @param subscriptionCode The subscription's code
+     * @return A subscription
+     */
+    @GET
+    @Path("/listOneshotChargeOthers")
+    GetOneShotChargesResponseDto getOneShotChargeOthers();
 
     /**
      * Create new or update an existing subscription
@@ -200,4 +215,25 @@ public interface SubscriptionRs extends IBaseRs {
     @PUT
 	@Path("updateServices")
 	ActionStatus updateServices(UpdateServicesRequestDto postData);
+    
+	@GET
+	@Path("serviceInstance")
+	GetServiceInstanceResponseDto findServiceInstance(@QueryParam("subscriptionCode") String subscriptionCode,
+			@QueryParam("serviceInstanceCode") String serviceInstanceCode);
+
+    /**
+     * Returns the due date delay information.
+     * 
+     * @param subscriptionCode - required
+     * @param invoiceNumber - invoice number, can be null
+     * @param invoiceTypeCode - can be null
+     * @param orderCode - can be null
+     * @return
+     */
+	@GET
+	@Path("/dueDateDelay")
+	GetDueDateDelayResponseDto findDueDateDelay(@QueryParam("subscriptionCode") String subscriptionCode,
+			@QueryParam("invoiceNumber") String invoiceNumber, @QueryParam("invoiceTypeCode") String invoiceTypeCode,
+			@QueryParam("orderCode") String orderCode);
+	
 }

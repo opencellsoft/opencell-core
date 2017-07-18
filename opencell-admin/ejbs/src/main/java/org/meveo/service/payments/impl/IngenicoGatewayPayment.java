@@ -1,11 +1,14 @@
 package org.meveo.service.payments.impl;
 
+import java.util.Map;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.payment.DoPaymentResponseDto;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.model.payments.PaymentToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +37,7 @@ import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.TokenCard;
 import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.TokenCardData;
 
 public class IngenicoGatewayPayment implements GatewayPaymentInterface {
-	
+
 	protected Logger log = LoggerFactory.getLogger(IngenicoGatewayPayment.class);
 
 	private static Client client = null;
@@ -95,7 +98,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			CreateTokenRequest body = new CreateTokenRequest();
 			body.setCard(tokenCard);
 			body.setPaymentProductId(productPaymentId);
-			
+
 			CreateTokenResponse response = getClient().merchant(merchantId).tokens().create(body);			
 			if (!response.getIsNewToken()) {				
 				throw new BusinessException("A token already exist for card:"+StringUtils.hideCardNumber(cardNumber));
@@ -111,24 +114,24 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 	}
 
 	@Override
-	public DoPaymentResponseDto doPaymentToken(PaymentToken paymentToken, Long ctsAmount) throws BusinessException {
+	public DoPaymentResponseDto doPaymentToken(PaymentToken paymentToken, Long ctsAmount,Map<String,Object> additionalParams) throws BusinessException {
 
-		return doPayment(paymentToken, ctsAmount, paymentToken.getCustomerAccount(), null, null, null,null, null,null);
+		return doPayment(paymentToken, ctsAmount, paymentToken.getCustomerAccount(), null, null, null,null, null,null,additionalParams);
 	}
 
 	@Override
 	public DoPaymentResponseDto doPaymentCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber,
-			String ownerName, String cvv, String expirayDate,CreditCardTypeEnum cardType,String countryCode) throws BusinessException {
-		return doPayment(null, ctsAmount, customerAccount, cardNumber, ownerName, cvv, expirayDate,cardType,countryCode);
+			String ownerName, String cvv, String expirayDate,CreditCardTypeEnum cardType,String countryCode,Map<String,Object> additionalParams) throws BusinessException {
+		return doPayment(null, ctsAmount, customerAccount, cardNumber, ownerName, cvv, expirayDate,cardType,countryCode,additionalParams);
 	}
 
 	private DoPaymentResponseDto doPayment(PaymentToken paymentToken, Long ctsAmount, CustomerAccount customerAccount,String cardNumber, String ownerName, String cvv, 
-			String expirayDate,CreditCardTypeEnum cardType,String countryCode) throws BusinessException {
-		
+			String expirayDate,CreditCardTypeEnum cardType,String countryCode,Map<String,Object> additionalParams) throws BusinessException {
+
 		AmountOfMoney amountOfMoney = new AmountOfMoney();
 		amountOfMoney.setAmount(ctsAmount);
 		amountOfMoney.setCurrencyCode(customerAccount.getTradingCurrency().getCurrencyCode());
-		
+
 		Order order = new Order();
 		order.setAmountOfMoney(amountOfMoney);
 
@@ -146,7 +149,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			Customer customer = new Customer();
 			customer.setBillingAddress(getBillingAddress(customerAccount, countryCode));
 			order.setCustomer(customer);
-			
+
 		}
 		CreatePaymentRequest body = new CreatePaymentRequest();
 		body.setCardPaymentMethodSpecificInput(cardPaymentMethodSpecificInput);
@@ -154,13 +157,21 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 
 		try {
 			CreatePaymentResponse response = getClient().merchant(merchantId).payments().create(body);
-			DoPaymentResponseDto doPaymentResponseDto = new DoPaymentResponseDto();
-			doPaymentResponseDto.setPaymentID(response.getPayment().getId());
-			doPaymentResponseDto.setPaymentStatus(response.getPayment().getStatus());
-			doPaymentResponseDto.setTransactionId(response.getCreationOutput().getExternalReference());
-			doPaymentResponseDto.setTokenId(response.getCreationOutput().getToken());
-			doPaymentResponseDto.setNewToken(response.getCreationOutput().getIsNewToken());
-			return doPaymentResponseDto;
+			if(response != null){
+				DoPaymentResponseDto doPaymentResponseDto = new DoPaymentResponseDto();
+				doPaymentResponseDto.setPaymentID(response.getPayment().getId());
+				doPaymentResponseDto.setPaymentStatus(mappingStaus(response.getPayment().getStatus()));
+				doPaymentResponseDto.setTransactionId(response.getCreationOutput().getExternalReference());
+				doPaymentResponseDto.setTokenId(response.getCreationOutput().getToken());
+				doPaymentResponseDto.setNewToken(response.getCreationOutput().getIsNewToken());
+				if(response.getPayment() != null && response.getPayment().getStatusOutput() != null && response.getPayment().getStatusOutput().getErrors() != null ){
+					doPaymentResponseDto.setErrorMessage(response.getPayment().getStatusOutput().getErrors().toString());
+				}
+
+				return doPaymentResponseDto;
+			}else{
+				throw new BusinessException("Gateway response is nulla");
+			}
 		} catch (DeclinedPaymentException e) {
 			throw new BusinessException(e.getResponseBody());
 		} catch (ApiException e) {
@@ -176,7 +187,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			throw new BusinessException(e.getResponseBody());
 		}		
 	}
-	
+
 	private Address getBillingAddress(CustomerAccount customerAccount, String countryCode){
 		Address billingAddress = new Address();
 		if (customerAccount.getAddress() != null) {
@@ -189,5 +200,18 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			billingAddress.setZip(customerAccount.getAddress().getZipCode());
 		}
 		return billingAddress;
+	}
+
+	private PaymentStatusEnum mappingStaus(String ingenicoStatus){
+		if(ingenicoStatus == null){
+			return PaymentStatusEnum.REJECTED;
+		}
+		if("CREATED".equals(ingenicoStatus) || "PAID".equals(ingenicoStatus)){
+			return PaymentStatusEnum.ACCEPTED;
+		}
+		if(ingenicoStatus.startsWith("PENDING")){
+			return PaymentStatusEnum.PENDING;
+		}
+		return PaymentStatusEnum.REJECTED;
 	}
 }

@@ -497,9 +497,9 @@ public abstract class BaseApi {
                 if ((cfDto.getValueDate() == null && cft.getCalendar() != null)) {
                     throw new MissingParameterException("Custom field " + cft.getCode() + " is versionable by calendar. Missing valueDate parameter.");
 
-                } else if (cft.getCalendar() == null && (cfDto.getValuePeriodStartDate() == null || cfDto.getValuePeriodEndDate() == null)) {
-                    throw new MissingParameterException(
-                        "Custom field " + cft.getCode() + " is versionable by periods. Missing valuePeriodStartDate and/or valuePeriodEndDate parameters.");
+//                } else if (cft.getCalendar() == null && (cfDto.getValuePeriodStartDate() == null || cfDto.getValuePeriodEndDate() == null)) {
+//                    throw new MissingParameterException(
+//                        "Custom field " + cft.getCode() + " is versionable by periods. Missing valuePeriodStartDate and/or valuePeriodEndDate parameters.");
                 }
             }
 

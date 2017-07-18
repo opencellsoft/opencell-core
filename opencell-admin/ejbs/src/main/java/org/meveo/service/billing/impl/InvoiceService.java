@@ -428,18 +428,29 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoice.setBillingRun(em.getReference(BillingRun.class, billingRun.getId()));
             }
 			invoice.setInvoiceDate(invoiceDate);
+			
+			Order order = orderService.findByCodeOrExternalId(orderNumber);
 
 			PaymentMethodEnum paymentMethod = billingAccount.getPaymentMethod();
-			if (paymentMethod == null) {
-				paymentMethod = billingAccount.getCustomerAccount().getPaymentMethod();
+			if (order != null && order.getPaymentMethod() != null) {
+				paymentMethod = order.getPaymentMethod();
+			} else {
+				if (paymentMethod == null) {
+					paymentMethod = billingAccount.getCustomerAccount().getPaymentMethod();
+				}
 			}
 			invoice.setPaymentMethod(paymentMethod);
 			
-			Integer delay = billingCycle.getDueDateDelay();			
-			if (!StringUtils.isBlank(billingAccount.getCustomerAccount().getDueDateDelayEL())) {
-				delay = evaluateIntegerExpression(billingAccount.getCustomerAccount().getDueDateDelayEL(), billingAccount, invoice);
-			} else if (!StringUtils.isBlank(billingCycle.getDueDateDelayEL())) {
-				delay = evaluateIntegerExpression(billingCycle.getDueDateDelayEL(), billingAccount, invoice);
+			Integer delay = billingCycle.getDueDateDelay();	
+			if (order != null && !StringUtils.isBlank(order.getDueDateDelayEL())) {
+				delay = evaluateIntegerExpression(order.getDueDateDelayEL(), billingAccount, invoice, order);
+			} else {
+				if (!StringUtils.isBlank(billingAccount.getCustomerAccount().getDueDateDelayEL())) {
+					delay = evaluateIntegerExpression(billingAccount.getCustomerAccount().getDueDateDelayEL(),
+							billingAccount, invoice, null);
+				} else if (!StringUtils.isBlank(billingCycle.getDueDateDelayEL())) {
+					delay = evaluateIntegerExpression(billingCycle.getDueDateDelayEL(), billingAccount, invoice, null);
+				}
 			}
 			
 			Date dueDate = invoiceDate;
@@ -598,35 +609,42 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (billingAccount != null && billingAccount.getBillingCycle() != null) {
             billingCycle = billingAccount.getBillingCycle();
         }
-        String billingTemplate = (billingCycle != null && billingCycle.getBillingTemplateName() != null) ? billingCycle.getBillingTemplateName() : "default";
+        
+        String billingTemplateName = InvoiceService.getInvoiceTemplateName(billingCycle, invoice.getInvoiceType());
+        
         String resDir = meveoDir + "jasper";
 
         String pdfFileName = getFullPdfFilePath(invoice, true);
 
         try {
-            File destDir = new File(resDir + File.separator + billingTemplate + File.separator + "pdf");
+        	
+            File destDir = new File(resDir + File.separator + billingTemplateName + File.separator + "pdf");
+            
             if (!destDir.exists()) {
-                destDir.mkdirs();
-                String sourcePath = Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath();
+                
+                String sourcePath = Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath() + File.separator + billingTemplateName + File.separator + "invoice";
+      
                 File sourceFile = new File(sourcePath);
                 if (!sourceFile.exists()) {
-                    VirtualFile vfDir = VFS.getChild("content/" + ParamBean.getInstance().getProperty("opencell.moduleName", "opencell") + ".war/WEB-INF/classes/jasper");
+                    VirtualFile vfDir = VFS.getChild("content/" + ParamBean.getInstance().getProperty("opencell.moduleName", "opencell") + ".war/WEB-INF/classes/jasper/" + billingTemplateName + File.separator + "invoice" );
                     log.info("default jaspers path :" + vfDir.getPathName());
                     URL vfPath = VFSUtils.getPhysicalURL(vfDir);
                     sourceFile = new File(vfPath.getPath());
+                    
                     if (!sourceFile.exists()) {
-                        throw new BusinessException("embedded jasper report for invoice is missing!");
+                        throw new BusinessException("embedded jasper report for invoice is missing!!");
                     }
                 }
+                destDir.mkdirs();
                 FileUtils.copyDirectory(sourceFile, destDir);
             }
-            File destDirInvoiceAdjustment = new File(resDir + File.separator + billingTemplate + File.separator + "invoiceAdjustmentPdf");
+            File destDirInvoiceAdjustment = new File(resDir + File.separator + billingTemplateName + File.separator + "invoiceAdjustmentPdf");
             if (!destDirInvoiceAdjustment.exists()) {
                 destDirInvoiceAdjustment.mkdirs();
-                String sourcePathInvoiceAdjustment = Thread.currentThread().getContextClassLoader().getResource("./invoiceAdjustment").getPath();
+                String sourcePathInvoiceAdjustment = Thread.currentThread().getContextClassLoader().getResource("./jasper/" + billingTemplateName + "/invoiceAdjustment").getPath();
                 File sourceFileInvoiceAdjustment = new File(sourcePathInvoiceAdjustment);
                 if (!sourceFileInvoiceAdjustment.exists()) {
-                    VirtualFile vfDir = VFS.getChild("content/" + ParamBean.getInstance().getProperty("opencell.moduleName", "opencell") + ".war/WEB-INF/classes/invoiceAdjustment");
+                    VirtualFile vfDir = VFS.getChild("content/" + ParamBean.getInstance().getProperty("opencell.moduleName", "opencell") + ".war/WEB-INF/classes/jasper/" + billingTemplateName + "/invoiceAdjustment");
                     URL vfPath = VFSUtils.getPhysicalURL(vfDir);
                     sourceFileInvoiceAdjustment = new File(vfPath.getPath());
                     if (!sourceFileInvoiceAdjustment.exists()) {
@@ -635,7 +653,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 }
                 FileUtils.copyDirectory(sourceFileInvoiceAdjustment, destDirInvoiceAdjustment);
             }
-            File jasperFile = getJasperTemplateFile(resDir, billingTemplate, billingAccount.getPaymentMethod(), isInvoiceAdjustment);
+            File jasperFile = getJasperTemplateFile(resDir, billingTemplateName, billingAccount.getPaymentMethod(), isInvoiceAdjustment);
             if (!jasperFile.exists()) {
                 throw new InvoiceJasperNotFoundException("The jasper file doesn't exist.");
             }
@@ -1386,7 +1404,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		log.debug("cancel invoice:{} done",invoice.getTemporaryInvoiceNumber());
 	}
 	
-	private Integer evaluateIntegerExpression(String expression, BillingAccount billingAccount, Invoice invoice) throws BusinessException {
+	public Integer evaluateIntegerExpression(String expression, BillingAccount billingAccount, Invoice invoice, Order order) throws BusinessException {
 		Integer result = null;
 		if (StringUtils.isBlank(expression)) {
 			return result;
@@ -1398,6 +1416,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		if (expression.indexOf("invoice") >= 0) {
 			userMap.put("invoice", invoice);
 		}
+		if (expression.indexOf("order") >= 0) {
+			userMap.put("order", order);
+		}
 
 		Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Integer.class);
 		try {
@@ -1407,4 +1428,26 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		}
 		return result;
 	}
+
+    /**
+     * Determine an invoice template to use. Rule for selecting an invoiceTemplate is: InvoiceType > BillingCycle > default
+     * 
+     * @param billingCycle Billing cycle
+     * @param invoiceType Invoice type
+     * @return Invoice template name
+     */
+    public static String getInvoiceTemplateName(BillingCycle billingCycle, InvoiceType invoiceType) {
+
+        String billingTemplateName = "default";
+        if (invoiceType != null && !StringUtils.isBlank(invoiceType.getBillingTemplateName())) {
+            billingTemplateName = invoiceType.getBillingTemplateName();
+        
+        } else if (billingCycle != null && billingCycle.getInvoiceType() != null && !StringUtils.isBlank(billingCycle.getInvoiceType().getBillingTemplateName())) {
+            billingTemplateName = billingCycle.getInvoiceType().getBillingTemplateName();
+
+        } else if (billingCycle != null && !StringUtils.isBlank(billingCycle.getBillingTemplateName())) {
+            billingTemplateName = billingCycle.getBillingTemplateName();
+        }
+        return billingTemplateName;
+    }
 }

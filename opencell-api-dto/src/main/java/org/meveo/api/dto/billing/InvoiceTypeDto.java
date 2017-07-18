@@ -18,134 +18,109 @@ import org.meveo.model.billing.InvoiceTypeSellerSequence;
 
 @XmlRootElement(name = "InvoiceType")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class InvoiceTypeDto  extends BusinessDto{
-	
-		private static final long serialVersionUID = 1L;
-		
-		@XmlElement(required = true)
-		private String occTemplateCode;
-		
-		private String occTemplateNegativeCode;		
-		
-		private SequenceDto sequenceDto;
-		
-		@XmlElementWrapper
-	    @XmlElement(name="sellerSequence")
-		private Map<String,SequenceDto> sellerSequences = new HashMap<String,SequenceDto>();
-		
-		
-		private List<String> appliesTo = new ArrayList<String>();
-		
-		private boolean matchingAuto = false;
-		
-		public InvoiceTypeDto(){
-			
-		}
+public class InvoiceTypeDto extends BusinessDto {
 
-		public InvoiceTypeDto(InvoiceType invoiceType){
-			super(invoiceType);
-			
-			this.occTemplateCode = invoiceType.getOccTemplate() != null ? invoiceType.getOccTemplate().getCode():null;
-			this.occTemplateNegativeCode = invoiceType.getOccTemplateNegative() != null ? invoiceType.getOccTemplateNegative().getCode():null;
-			this.sequenceDto = new SequenceDto(invoiceType.getSequence());
-			if(invoiceType.getAppliesTo() != null){				
-				for(InvoiceType tmpInvoiceType : invoiceType.getAppliesTo()){
-					this.getAppliesTo().add(tmpInvoiceType.getCode());
-				}
-			}			
-			for(InvoiceTypeSellerSequence seq : invoiceType.getSellerSequence()){
-				sellerSequences.put(seq.getSeller().getCode(), new SequenceDto(seq.getSequence()));
-			}		
-			this.matchingAuto = invoiceType.isMatchingAuto();
-		}
-		
-		/**
-		 * @return the occTemplateCode
-		 */
-		public String getOccTemplateCode() {
-			return occTemplateCode;
-		}
+    private static final long serialVersionUID = 1L;
 
-		/**
-		 * @param occTemplateCode the occTemplateCode to set
-		 */
-		public void setOccTemplateCode(String occTemplateCode) {
-			this.occTemplateCode = occTemplateCode;
-		}
+    @XmlElement(required = true)
+    private String occTemplateCode;
 
-		
-		/**
-		 * @return the appliesTo
-		 */
-		public List<String> getAppliesTo() {
-			return appliesTo;
-		}
+    private String occTemplateNegativeCode;
 
-		/**
-		 * @param appliesTo the appliesTo to set
-		 */
-		public void setAppliesTo(List<String> appliesTo) {
-			this.appliesTo = appliesTo;
-		}
+    private SequenceDto sequenceDto;
 
-		/**
-		 * @return the matchingAuto
-		 */
-		public boolean isMatchingAuto() {
-			return matchingAuto;
-		}
+    @XmlElementWrapper
+    @XmlElement(name = "sellerSequence")
+    private Map<String, SequenceDto> sellerSequences = new HashMap<String, SequenceDto>();
 
-		/**
-		 * @param matchingAuto the matchingAuto to set
-		 */
-		public void setMatchingAuto(boolean matchingAuto) {
-			this.matchingAuto = matchingAuto;
-		}
+    private List<String> appliesTo = new ArrayList<String>();
 
-		/**
-		 * @return the sequenceDto
-		 */
-		public SequenceDto getSequenceDto() {
-			return sequenceDto;
-		}
+    private boolean matchingAuto = false;
 
-		/**
-		 * @param sequenceDto the sequenceDto to set
-		 */
-		public void setSequenceDto(SequenceDto sequenceDto) {
-			this.sequenceDto = sequenceDto;
-		}
+    private String billingTemplateName;
 
-		/**
-		 * @return the sellerSequences
-		 */
-		public Map<String, SequenceDto> getSellerSequences() {
-			return sellerSequences;
-		}
+    public InvoiceTypeDto() {
 
-		/**
-		 * @param sellerSequences the sellerSequences to set
-		 */
-		public void setSellerSequences(Map<String, SequenceDto> sellerSequences) {
-			this.sellerSequences = sellerSequences;
-		}
+    }
 
-		/**
-		 * @return the occTemplateNegativeCode
-		 */
-		public String getOccTemplateNegativeCode() {
-			return occTemplateNegativeCode;
-		}
+    public InvoiceTypeDto(InvoiceType invoiceType) {
+        super(invoiceType);
 
-		/**
-		 * @param occTemplateNegativeCode the occTemplateNegativeCode to set
-		 */
-		public void setOccTemplateNegativeCode(String occTemplateNegativeCode) {
-			this.occTemplateNegativeCode = occTemplateNegativeCode;
-		}
+        this.occTemplateCode = invoiceType.getOccTemplate() != null ? invoiceType.getOccTemplate().getCode() : null;
+        this.occTemplateNegativeCode = invoiceType.getOccTemplateNegative() != null ? invoiceType.getOccTemplateNegative().getCode() : null;
+        this.sequenceDto = new SequenceDto(invoiceType.getSequence());
+        if (invoiceType.getAppliesTo() != null) {
+            for (InvoiceType tmpInvoiceType : invoiceType.getAppliesTo()) {
+                this.getAppliesTo().add(tmpInvoiceType.getCode());
+            }
+        }
+        for (InvoiceTypeSellerSequence seq : invoiceType.getSellerSequence()) {
+            sellerSequences.put(seq.getSeller().getCode(), new SequenceDto(seq.getSequence()));
+        }
+        this.matchingAuto = invoiceType.isMatchingAuto();
+        this.billingTemplateName = invoiceType.getBillingTemplateName();
+    }
 
-		@Override
-		public String toString() {
-			return "InvoiceTypeDto [code=" + getCode() + ", description=" + getDescription() + ", occTemplateCode=" + occTemplateCode + ", occTemplateNegativeCode=" + occTemplateNegativeCode + ", sequenceDto=" + sequenceDto + ", sellerSequences=" + sellerSequences + ", appliesTo=" + appliesTo + ", matchingAuto=" + matchingAuto + "]";
-		}		
+    public String getOccTemplateCode() {
+        return occTemplateCode;
+    }
+
+    public void setOccTemplateCode(String occTemplateCode) {
+        this.occTemplateCode = occTemplateCode;
+    }
+
+    public List<String> getAppliesTo() {
+        return appliesTo;
+    }
+
+    public void setAppliesTo(List<String> appliesTo) {
+        this.appliesTo = appliesTo;
+    }
+
+    public boolean isMatchingAuto() {
+        return matchingAuto;
+    }
+
+    public void setMatchingAuto(boolean matchingAuto) {
+        this.matchingAuto = matchingAuto;
+    }
+
+    public SequenceDto getSequenceDto() {
+        return sequenceDto;
+    }
+
+    public void setSequenceDto(SequenceDto sequenceDto) {
+        this.sequenceDto = sequenceDto;
+    }
+
+    public Map<String, SequenceDto> getSellerSequences() {
+        return sellerSequences;
+    }
+
+    public void setSellerSequences(Map<String, SequenceDto> sellerSequences) {
+        this.sellerSequences = sellerSequences;
+    }
+
+    public String getOccTemplateNegativeCode() {
+        return occTemplateNegativeCode;
+    }
+
+    public void setOccTemplateNegativeCode(String occTemplateNegativeCode) {
+        this.occTemplateNegativeCode = occTemplateNegativeCode;
+    }
+
+    public String getBillingTemplateName() {
+        return billingTemplateName;
+    }
+
+    public void setBillingTemplateName(String billingTemplateName) {
+        this.billingTemplateName = billingTemplateName;
+    }
+
+    @Override
+    public String toString() {
+        return "InvoiceTypeDto [code=" + getCode() + ", description=" + getDescription() + ", occTemplateCode=" + occTemplateCode + ", occTemplateNegativeCode="
+                + occTemplateNegativeCode + ", sequenceDto=" + sequenceDto + ", sellerSequences=" + sellerSequences + ", appliesTo=" + appliesTo + ", matchingAuto=" + matchingAuto
+                + "]";
+    }
 }

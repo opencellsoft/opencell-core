@@ -743,6 +743,29 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
         }
         return null;
     }
+    
+	public List<CustomFieldInstance> getInheritedVersionableOnlyCFValue(ICustomFieldEntity entity, String code) {
+		ICustomFieldEntity[] parentCFEntities = entity.getParentCFEntities();
+		if (parentCFEntities != null) {
+			for (ICustomFieldEntity parentCfEntity : parentCFEntities) {
+				if (parentCfEntity == null) {
+					continue;
+				}
+				// If Parent entity is Provider, use appProvider instead as
+				// entity passed will be a fake one.
+				if (parentCfEntity instanceof Provider) {
+					parentCfEntity = appProvider;
+				} else {
+					parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+				}
+				List<CustomFieldInstance> value = getCustomFieldInstances(parentCfEntity, code);
+				if (value != null) {
+					return value;
+				}
+			}
+		}
+		return null;
+	}
 
     /**
      * Check if give entity's parent has any custom field value defined (in any period for versionable fields)

@@ -1,22 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
-	<changeSet id="#450_20170420" author="EdwardPLegaspi">
+    <changeSet id="#450_20170420" author="EdwardPLegaspi">
 		<addColumn tableName="billing_inv_sub_cat_country">
-			<column name="start_validity_date" type="DATE" />
-			<column name="end_validity_date" type="DATE" />
-			<column defaultValueNumeric="0" name="priority" type="INT4" />
-		</addColumn>
-		<addUniqueConstraint
-			columnNames="invoice_sub_category_id, selling_country_id, trading_country_id, start_validity_date, end_validity_date"
-			constraintName="uk_billing_inv_sub_cat_country" deferrable="false"
-			disabled="false" initiallyDeferred="false" tableName="billing_inv_sub_cat_country" />
-	</changeSet>
-	
-	 <changeSet id="#2716_20170627" author="TienLanPHUNG">
-       <modifyDataType tableName="com_meveo_instance" columnName="url" newDataType="varchar(255)" />
-      </changeSet>
+            <column name="start_validity_date" type="DATE" />
+            <column name="end_validity_date" type="DATE" />
+            <column defaultValueNumeric="0" name="priority" type="INT4" />
+        </addColumn>
+        <addUniqueConstraint columnNames="invoice_sub_category_id, selling_country_id, trading_country_id, start_validity_date, end_validity_date" constraintName="uk_billing_inv_sub_cat_country"
+            deferrable="false" disabled="false" initiallyDeferred="false" tableName="billing_inv_sub_cat_country" />
+    </changeSet>
 
+    <changeSet id="#2716_20170627" author="TienLanPHUNG">
+        <modifyDataType tableName="com_meveo_instance" columnName="url" newDataType="varchar(255)" />
+    </changeSet>
+    
     
     <changeSet id="#2416_20170307-1" author="AndriusKarpavicius" dbms="mysql">
         <createTable tableName="ar_payment_token_seq">
@@ -40,5 +38,119 @@
         </createTable>
         <sql>insert into dwh_chart_seq (select IFNULL(max(id),0)+1 from dwh_chart)</sql>
      </changeSet>
+     
+     <changeSet
+		id="#2408_20170623-Override payment method and due date delay in order"
+		author="EdwardLegaspi">
+		<addColumn tableName="ord_order">
+			<column name="due_date_delay_el" type="varchar(2000)" />
+			<column name="payment_method" type="varchar(20)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="#2665_20170710-Add guiPosition to custom action" author="EdwardLegaspi">
+		<addColumn tableName="crm_custom_action">
+			<column name="gui_position" type="varchar(100)" />
+		</addColumn>
+	</changeSet>
         
+    <changeSet id="#2433_20170627" author="AndriusKarpavicius">
+        <addColumn tableName="billing_invoice_type">
+            <column name="billing_template_name" type="varchar(50)" />
+        </addColumn>
+    </changeSet>
+    <changeSet id="#2361_20170628" author="AndriusKarpavicius">
+        <addColumn tableName="billing_subscription">
+            <column name="subscribed_till_date" type="datetime" />
+            <column name="auto_renew" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="days_notify_renew" type="INT4" />
+            <column name="end_of_term_action" type="varchar(10)" />
+            <column name="auto_termin_reason_id" type="bigint" />
+            <column name="init_active_unit" type="varchar(5)" />
+            <column name="init_active" type="INT4" />
+            <column name="match_end_aggr_date" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="renew_for_unit" type="varchar(5)" />
+            <column name="renew_for" type="INT4" />            
+            <column name="renewed" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="notify_of_renewal_date" type="datetime" /> 
+            <column name="renewal_notified_date" type="datetime" />            
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="auto_termin_reason_id" baseTableName="billing_subscription" constraintName="fk_sub_auto_tr_id" deferrable="false"
+            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscrip_termin_reason" />
+    </changeSet>    
+
+    <changeSet id="#2361_20170701" author="AndriusKarpavicius">
+        <addColumn tableName="billing_subscrip_termin_reason">
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="datetime">
+<!--                 <constraints nullable="false" /> -->
+            </column>
+            <column name="updated" type="datetime" />            
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+        </addColumn>
+        <sql>update billing_subscrip_termin_reason set created=now()</sql>
+        <addNotNullConstraint tableName="billing_subscrip_termin_reason" columnName="created"/>
+    </changeSet>    
+    
+    <changeSet id="#2691_20170616" author="TienLanPHUNG">
+       <modifyDataType tableName="account_entity" columnName="external_ref_1" newDataType="varchar(255)" />
+       <modifyDataType tableName="account_entity" columnName="external_ref_2" newDataType="varchar(255)" />
+    </changeSet>
+<!--
+     <changeSet author="anasseh" id="#2416_20170307">
+     <createSequence sequenceName="ar_payment_token_seq" />           
+     <createTable tableName="ar_payment_token">
+         <column name="token_type" type="VARCHAR(20)" />
+         <column name="id" type="BIGINT" autoIncrement="${id.auto}">
+             <constraints nullable="false" primaryKey="true" primaryKeyName="ar_payment_token_pkey" />
+         </column>
+         <column name="version" type="INT4" />
+         <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+             <constraints nullable="false" />
+         </column>
+         <column name="created" type="DATETIME">
+			<constraints nullable="false" />
+		</column>
+         <column name="updated" type="DATETIME" />
+         <column name="card_type" type="VARCHAR(60)">
+             <constraints nullable="false" />
+         </column>
+         <column name="owner" type="VARCHAR(256)" >
+         	<constraints nullable="false" />
+         </column>
+         <column name="month_expiration" type="INT4" >
+         	<constraints nullable="false" />
+         </column>
+         <column name="year_expiration" type="INT4" >
+         	<constraints nullable="false" />
+         </column>    
+         <column name="token_id" type="VARCHAR(60)" >            	
+         </column>    
+         <column name="alias" type="VARCHAR(256)" />
+         <column name="is_default" type="${type.boolean}" defaultValueNumeric="0" />
+          <column name="card_number" type="VARCHAR(16)" />
+         <column name="customer_account_id" type="BIGINT">
+             <constraints nullable="false"/>
+         </column>
+         <column name="creator" type="VARCHAR(100)" />
+         <column name="updater" type="VARCHAR(100)" />
+     </createTable>
+     <addForeignKeyConstraint baseColumnNames="customer_account_id" baseTableName="ar_payment_token" constraintName="fk_ca_id_payment_token" deferrable="false"
+								initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_customer_account" />
+ </changeSet>
+ -->
+    <changeSet id="#2698_20170622" author="TienLanPHUNG">
+    	<addColumn tableName="rating_edr">
+    		<column name="extra_parameter" type="text" />
+    	</addColumn>
+    </changeSet>
 </databaseChangeLog> 

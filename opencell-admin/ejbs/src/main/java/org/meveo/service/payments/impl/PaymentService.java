@@ -41,6 +41,7 @@ import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.base.PersistenceService;
 
@@ -62,6 +63,9 @@ public class PaymentService extends PersistenceService<Payment> {
 	@Inject
 	private CountryService countryService;
 	
+	@Inject
+	private GatewayPaymentFactory gatewayPaymentFactory;
+	
 	@MeveoAudit
 	@Override
 	public void create(Payment entity) throws BusinessException {
@@ -72,28 +76,30 @@ public class PaymentService extends PersistenceService<Payment> {
 		if(customerAccount.getPaymentTokens() == null || customerAccount.getPaymentTokens().isEmpty()){
 			throw new BusinessException("There no payment token for customerAccount:"+customerAccount.getCode());
 		}
-		GatewayPaymentInterface  gatewayPaymentInterface = GatewayPaymentFactory.getInstance(GatewayPaymentNamesEnum.valueOf(ParamBean.getInstance().getProperty("meveo.gatewayPayment", "INGENICO")));		
 		if(!PaymentMethodEnum.CARD.name().equals(customerAccount.getPaymentMethod().name())){
 			throw new BusinessException("Unsupported payment method:"+customerAccount.getPaymentMethod());
 		}
+		GatewayPaymentInterface  gatewayPaymentInterface = gatewayPaymentFactory.getInstance(GatewayPaymentNamesEnum.valueOf(ParamBean.getInstance().getProperty("meveo.gatewayPayment", "CUSTOM_API")));		
 
-		DoPaymentResponseDto doPaymentResponseDto =  gatewayPaymentInterface.doPaymentToken(cardTokenService.getPreferedToken(customerAccount), ctsAmount);
+		DoPaymentResponseDto doPaymentResponseDto =  gatewayPaymentInterface.doPaymentToken(cardTokenService.getPreferedToken(customerAccount), ctsAmount,null);
 
-		if(!StringUtils.isBlank(doPaymentResponseDto.getPaymentID())){
+		if(PaymentStatusEnum.ACCEPTED.name().equals(doPaymentResponseDto.getPaymentStatus().name())){
 			Long aoPaymentId = null;
 			if(createAO){
 				try{
-					aoPaymentId = createPaymentAO(customerAccount, ctsAmount, doPaymentResponseDto.getPaymentID());
+					aoPaymentId = createPaymentAO(customerAccount, ctsAmount, doPaymentResponseDto);
 					doPaymentResponseDto.setAoCreated(true);
 				}catch (Exception e) {
-					log.warn("Cant create Account operation payment :"+e.getMessage());
+					log.warn("Cant create Account operation payment :",e);
 				}
 				if(matchingAO){
 					try{
-						createMatching(customerAccount, ctsAmount, aoPaymentId, aoIdsToPay);
+						 List<Long> aoIdsToMatch = aoIdsToPay;						 
+						 aoIdsToMatch.add(aoPaymentId);
+						 matchingCodeService.matchOperations(null, customerAccount.getCode(), aoIdsToMatch, null, MatchingTypeEnum.A);			
 						doPaymentResponseDto.setMatchingCreated(true);
 					}catch (Exception e) {
-						log.warn("Cant create matching :"+e.getMessage());
+						log.warn("Cant create matching :",e);
 					}
 				}
 			}
@@ -118,7 +124,7 @@ public class PaymentService extends PersistenceService<Payment> {
 	 */
 	public DoPaymentResponseDto doPaymentCard(CustomerAccount customerAccount, Long ctsAmount,String cardNumber,String ownerName, String cvv,String expirayDate,
 			CreditCardTypeEnum cardType, List<Long> aoIdsToPay,boolean createAO,boolean matchingAO ) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
-		GatewayPaymentInterface  gatewayPaymentInterface = GatewayPaymentFactory.getInstance(GatewayPaymentNamesEnum.valueOf(ParamBean.getInstance().getProperty("meveo.gatewayPayment", "INGENICO")));		
+		GatewayPaymentInterface  gatewayPaymentInterface = gatewayPaymentFactory.getInstance(GatewayPaymentNamesEnum.valueOf(ParamBean.getInstance().getProperty("meveo.gatewayPayment", "INGENICO_GC")));		
 		if(!PaymentMethodEnum.CARD.name().equals(customerAccount.getPaymentMethod().name())){
 			throw new BusinessException("Unsupported payment method:"+customerAccount.getPaymentMethod());
 		}				
@@ -127,9 +133,9 @@ public class PaymentService extends PersistenceService<Payment> {
 		if(country != null){
 			coutryCode = country.getCountryCode();
 		}	
-		DoPaymentResponseDto doPaymentResponseDto =  gatewayPaymentInterface.doPaymentCard(customerAccount, ctsAmount, cardNumber, ownerName,  cvv, expirayDate,cardType,coutryCode);		
+		DoPaymentResponseDto doPaymentResponseDto =  gatewayPaymentInterface.doPaymentCard(customerAccount, ctsAmount, cardNumber, ownerName,  cvv, expirayDate,cardType,coutryCode,null);		
 		
-		if(!StringUtils.isBlank(doPaymentResponseDto.getPaymentID())){
+		if(PaymentStatusEnum.ACCEPTED.name().equals(doPaymentResponseDto.getPaymentStatus().name())){
 			CardToken cardToken = new CardToken(); 
 			cardToken.setAlias("Card_"+cardNumber.substring(12, 16));
 			cardToken.setCardNumber(cardNumber);
@@ -145,14 +151,16 @@ public class PaymentService extends PersistenceService<Payment> {
 			Long aoPaymentId = null;
 			if(createAO){
 				try{
-					aoPaymentId = createPaymentAO(customerAccount, ctsAmount, doPaymentResponseDto.getPaymentID());
+					aoPaymentId = createPaymentAO(customerAccount, ctsAmount, doPaymentResponseDto);
 					doPaymentResponseDto.setAoCreated(true);
 				}catch (Exception e) {
 					log.warn("Cant create Account operation payment :"+e.getMessage());
 				}
 				if(matchingAO){
 					try{
-						createMatching(customerAccount, ctsAmount, aoPaymentId, aoIdsToPay);
+						 List<Long> aoIdsToMatch = aoIdsToPay;						 
+						 aoIdsToMatch.add(aoPaymentId);
+						matchingCodeService.matchOperations(null, customerAccount.getCode(), aoIdsToMatch, null, MatchingTypeEnum.A);							
 						doPaymentResponseDto.setMatchingCreated(true);
 					}catch (Exception e) {
 						log.warn("Cant create matching :"+e.getMessage());
@@ -171,7 +179,7 @@ public class PaymentService extends PersistenceService<Payment> {
  * @return the AO id created
  * @throws BusinessException
  */
-	public Long createPaymentAO(CustomerAccount customerAccount,Long ctsAmount,String paymentReference) throws BusinessException {
+	public Long createPaymentAO(CustomerAccount customerAccount,Long ctsAmount,DoPaymentResponseDto doPaymentResponseDto) throws BusinessException {
 		OCCTemplate occTemplate = oCCTemplateService.findByCode(ParamBean.getInstance().getProperty("occ.payment.card", "RG_CARD"));
 		if (occTemplate == null) {
 			throw new BusinessException("Cannot find OCC Template with code=" + (ParamBean.getInstance().getProperty("occ.payment.card", "RG_CARD")));
@@ -184,33 +192,17 @@ public class PaymentService extends PersistenceService<Payment> {
 		payment.setAccountCode(occTemplate.getAccountCode());
 		payment.setOccCode(occTemplate.getCode());
 		payment.setOccDescription(occTemplate.getDescription());
+		payment.setType(doPaymentResponseDto.getPaymentBrand());
 		payment.setTransactionCategory(occTemplate.getOccCategory());
-		payment.setAccountCodeClientSide(occTemplate.getAccountCodeClientSide());
+		payment.setAccountCodeClientSide(doPaymentResponseDto.getCodeClientSide());
 		payment.setCustomerAccount(customerAccount);
-		payment.setReference(paymentReference);				
+		payment.setReference(doPaymentResponseDto.getPaymentID());				
 		payment.setTransactionDate(new Date());
-		payment.setMatchingStatus(MatchingStatusEnum.O);				
+		payment.setMatchingStatus(MatchingStatusEnum.O);	
+		payment.setBankReference(doPaymentResponseDto.getBankRefenrence());		
 		create(payment);
 		return payment.getId();
 
 	}
 	
-	
-/**
- * Create matching for aoPaymentId and aoIdsToPay
- * @param customerAccount
- * @param ctsAmount
- * @param aoPaymentId
- * @param aoIdsToPay
- * @throws BusinessException
- * @throws NoAllOperationUnmatchedException
- * @throws UnbalanceAmountException
- */
-	public void createMatching(CustomerAccount customerAccount,Long ctsAmount,Long aoPaymentId,List<Long> aoIdsToPay) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
-		List<Long> listReferenceToMatch = aoIdsToPay;
-		if(listReferenceToMatch != null){							
-			listReferenceToMatch.add(aoPaymentId);
-			matchingCodeService.matchOperations(null, customerAccount.getCode(), listReferenceToMatch, null, MatchingTypeEnum.A);
-		}			
-	}
 }

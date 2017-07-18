@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://integration.i.opencellsoft.com/opencell/" />
+<title>UpdatePricePlan</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">UpdatePricePlan</td></tr>
+</thead><tbody>
+<tr>
+	<td>clickAndWait</td>
+	<td>${pricePlans}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${codeField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${codeField}</td>
+	<td>PP_${code}_1</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${searchButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${searchButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>link=PP_${code}_1</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>link=PP_${code}_1</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=PP_${code}_1</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${pricePlanCodeField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${pricePlanCodeField}</td>
+	<td>${code}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${chargeCodeField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${pricePlanDescriptionField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${pricePlanDescriptionField}</td>
+	<td>${description}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${country}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${country}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>${currency}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${currency}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>${priorityField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${priorityField}</td>
+	<td>${priority}</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>${minQuantityField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${minQuantityField}</td>
+	<td>${minQuantity}</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>${maxQuantityField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${maxQuantityField}</td>
+	<td>${maxQuantity}</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>${startDateSubscriptionField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${startDateSubscriptionField}</td>
+	<td>${startDateSubscription}</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>${endDateSubscriptionField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${endDateSubscriptionField}</td>
+	<td>${endDateSubscription}</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>${startDateEventField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${startDateEventField}</td>
+	<td>${startDateEvent}</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>${endDateEventField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${endDateEventField}</td>
+	<td>${endDateEvent}</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>${amountWithoutTaxField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${amountWithoutTaxField}</td>
+	<td>${amountWithoutTax}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${saveButtonWhenUpdate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>${infoSummary}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>${infoSummary}</td>
+	<td></td>
+</tr>
+
+</tbody></table>
+</body>
+</html>

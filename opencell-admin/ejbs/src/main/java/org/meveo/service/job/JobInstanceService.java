@@ -92,6 +92,8 @@ public class JobInstanceService extends BusinessService<JobInstance> {
     @SuppressWarnings("unchecked")
     private void startTimers(Job job) {
 
+        job.cleanTimers();
+        
         List<JobInstance> jobInstances = getEntityManager().createQuery("from JobInstance ji LEFT JOIN FETCH ji.followingJob where ji.jobTemplate=:jobName")
             .setParameter("jobName", ReflectionUtils.getCleanClassName(job.getClass().getSimpleName())).getResultList();
 

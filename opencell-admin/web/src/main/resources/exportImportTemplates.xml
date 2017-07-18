@@ -303,7 +303,7 @@
         </groupedTemplates>
     </template>
 
-    <template name="Catalog, Customer hierarchy and subscriptions">
+    <template name="Configuration, Catalog, Customer hierarchy and subscriptions">
         <groupedTemplates>
             <template ref="Catalog" />
             <template ref="Customer hierarchy and subscriptions" />
@@ -346,5 +346,13 @@
         <classesToExportAsFull>
             <java-class>org.meveo.model.billing.InvoiceTypeSellerSequence</java-class>
         </classesToExportAsFull>
-    </template>    
+    </template>
+    <template name="Subscription" entityToExport="org.meveo.model.billing.Subscription">
+        <classesToExportAsFull>
+            <java-class>org.meveo.model.billing.ServiceInstance</java-class>
+            <java-class>org.meveo.model.billing.ProductInstance</java-class>
+            <java-class>org.meveo.model.billing.ChargeInstance</java-class>
+            <java-class>org.meveo.model.billing.WalletInstance</java-class>
+        </classesToExportAsFull>
+    </template>  
 </list>

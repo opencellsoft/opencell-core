@@ -14,6 +14,7 @@ import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.NotifiableEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.CounterPeriod;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.RecurringChargeTemplate;
@@ -72,44 +73,52 @@ public abstract class BaseNotificationBean<T extends Notification>  extends Upda
      * filter the event type of the notification by class
      */
     public List<NotificationEventTypeEnum> getNotificationEventTypeFilters(){
-    	String clazzStr=getEntity().getClassNameFilter();
-    	if(StringUtils.isBlank(clazzStr)){return null;}
-    	return getEventTypesByClazz(clazzStr);
+        String clazzStr = getEntity().getClassNameFilter();
+        if (StringUtils.isBlank(clazzStr)) {
+            return null;
+        }
+        return getEventTypesByClazz(clazzStr);
     }
 
     /**
-     * get notification eventType by class name filter, refer for {@link NotificationEventTypeEnum} and {@link DefaultObserver} 
+     * get notification eventType by class name filter, refer for {@link NotificationEventTypeEnum} and {@link DefaultObserver}
+     * 
      * @param clazzStr
      * @return
      */
-	private List<NotificationEventTypeEnum> getEventTypesByClazz(String clazzStr){
-		Class<?> clazz=null;
-    	try{
-    		clazz=Class.forName(clazzStr);
-    	}catch(Exception e){return null;}
-    	
-		List<NotificationEventTypeEnum> events=new ArrayList<NotificationEventTypeEnum>();
-		if(hasObservableEntity(clazz)){
-    		events.addAll(Arrays.asList(NotificationEventTypeEnum.CREATED,NotificationEventTypeEnum.UPDATED,NotificationEventTypeEnum.REMOVED,
-    				NotificationEventTypeEnum.DISABLED,NotificationEventTypeEnum.ENABLED));
-    		if(clazzStr.equals(WalletInstance.class.getName())){
-    			events.add(NotificationEventTypeEnum.LOW_BALANCE);
-    		}else if(clazzStr.equals(org.meveo.model.admin.User.class.getName())){
-    			events.add(NotificationEventTypeEnum.LOGGED_IN);
-    		}else if(clazzStr.equals(InboundRequest.class.getName())){
-    			events.add(NotificationEventTypeEnum.INBOUND_REQ);
-    		}else if(clazzStr.equals(WalletOperation.class.getName())||clazzStr.equals(EDR.class.getName())||clazzStr.equals(RecurringChargeTemplate.class.getName())){
-    			events.add(NotificationEventTypeEnum.REJECTED);
-    		}else if(clazzStr.equals(CounterPeriod.class.getName())){
-    			events.add(NotificationEventTypeEnum.COUNTER_DEDUCED);
-    		}
-    	}else if(hasNotificableEntity(clazz)){
-    		if(clazzStr.equals(MeveoFtpFile.class.getName())){
-    			events=Arrays.asList(NotificationEventTypeEnum.FILE_UPLOAD,NotificationEventTypeEnum.FILE_DOWNLOAD,NotificationEventTypeEnum.FILE_DELETE,NotificationEventTypeEnum.FILE_RENAME);
-    		}else if(clazzStr.equals(CDR.class.getName())){
-    			events.add(NotificationEventTypeEnum.REJECTED_CDR);
-    		}
-    	}
+    private List<NotificationEventTypeEnum> getEventTypesByClazz(String clazzStr) {
+        Class<?> clazz = null;
+        try {
+            clazz = Class.forName(clazzStr);
+        } catch (Exception e) {
+            return null;
+        }
+
+        List<NotificationEventTypeEnum> events = new ArrayList<NotificationEventTypeEnum>();
+        if (hasObservableEntity(clazz)) {
+            events.addAll(Arrays.asList(NotificationEventTypeEnum.CREATED, NotificationEventTypeEnum.UPDATED, NotificationEventTypeEnum.REMOVED, NotificationEventTypeEnum.DISABLED,
+                NotificationEventTypeEnum.ENABLED));
+            if (clazzStr.equals(WalletInstance.class.getName())) {
+                events.add(NotificationEventTypeEnum.LOW_BALANCE);
+            } else if (clazzStr.equals(org.meveo.model.admin.User.class.getName())) {
+                events.add(NotificationEventTypeEnum.LOGGED_IN);
+            } else if (clazzStr.equals(InboundRequest.class.getName())) {
+                events.add(NotificationEventTypeEnum.INBOUND_REQ);
+            } else if (clazzStr.equals(WalletOperation.class.getName()) || clazzStr.equals(EDR.class.getName()) || clazzStr.equals(RecurringChargeTemplate.class.getName())) {
+                events.add(NotificationEventTypeEnum.REJECTED);
+            } else if (clazzStr.equals(CounterPeriod.class.getName())) {
+                events.add(NotificationEventTypeEnum.COUNTER_DEDUCED);
+            } else if (clazzStr.equals(Subscription.class.getName())) {
+                events.add(NotificationEventTypeEnum.END_OF_TERM);
+            }
+        } else if (hasNotificableEntity(clazz)) {
+            if (clazzStr.equals(MeveoFtpFile.class.getName())) {
+                events = Arrays.asList(NotificationEventTypeEnum.FILE_UPLOAD, NotificationEventTypeEnum.FILE_DOWNLOAD, NotificationEventTypeEnum.FILE_DELETE,
+                    NotificationEventTypeEnum.FILE_RENAME);
+            } else if (clazzStr.equals(CDR.class.getName())) {
+                events.add(NotificationEventTypeEnum.REJECTED_CDR);
+            }
+        }
 		return events;
 	}
 	

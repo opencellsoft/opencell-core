@@ -82,10 +82,21 @@
         </c:if>
 
         <c:if test="#{cc.attrs.cft.versionable}">
+            <c:set var="inheritedValue" value="#{customFieldDataEntryBean.getInheritedCFValue(cc.attrs.entity, cc.attrs.cft.code)}" />
+            
             <hftl:decorateFormField label="#{cc.attrs.cft.description}#{cc.attrs.cft.valueRequired?' *':''}" componentWidth="100" displayOneLine="false">
                 <hftl:customFieldPeriods cft="#{cc.attrs.cft}" edit="#{cc.attrs.edit}" datePattern="#{cc.attrs.datePattern}" dateTimePattern="#{cc.attrs.dateTimePattern}"
                     entity="#{cc.attrs.entity}" messagesId="#{cc.attrs.messagesId}" disabled="#{cc.attrs.disabled}" prefix="#{cc.attrs.prefix}" clientGuiId="#{cc.clientId}" />
             </hftl:decorateFormField>
+            
+            <c:if test="#{inheritedValue != null}">
+            	<c:set var="cfVersionableValues" value="#{customFieldDataEntryBean.getInheritedVersionableCFValue(entity, cc.attrs.cft.code)}" />
+	
+            	<hftl:decorateFormField label="#{cft.description} #{messages['customField.inheritedValue']}" componentWidth="100" displayOneLine="false">
+	                <hftl:customFieldPeriods cfVersionableValues="#{cfVersionableValues}" cft="#{cc.attrs.cft}" edit="#{cc.attrs.edit}" datePattern="#{cc.attrs.datePattern}" dateTimePattern="#{cc.attrs.dateTimePattern}"
+	                    entity="#{cc.attrs.entity}" messagesId="#{cc.attrs.messagesId}" disabled="#{cc.attrs.disabled}" prefix="inherited" clientGuiId="#{cc.clientId}" />
+	            </hftl:decorateFormField>
+            </c:if>
         </c:if>
     </c:if>
 
