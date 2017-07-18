@@ -555,6 +555,7 @@ public class InvoiceApi extends BaseApi {
         dto.setAmountWithoutTax(invoice.getAmountWithoutTax());
         dto.setAmountWithTax(invoice.getAmountWithTax());
         dto.setAmountTax(invoice.getAmountTax());
+        dto.setDiscount(invoice.getDiscount());
         if (includePdf && invoiceService.isInvoicePdfExist(invoice)) {
             dto.setPdf(invoiceService.getInvoicePdf(invoice));
         }

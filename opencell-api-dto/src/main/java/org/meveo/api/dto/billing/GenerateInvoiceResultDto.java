@@ -29,6 +29,8 @@ public class GenerateInvoiceResultDto {
     private byte[] pdf;
     
     private Long accountOperationId;
+    
+    private BigDecimal discount;
 
 
     /**
@@ -136,4 +138,12 @@ public class GenerateInvoiceResultDto {
     public String toString() {
         return "GenerateInvoiceResultDto [invoiceNumber=" + (invoiceNumber != null ? invoiceNumber : temporaryInvoiceNumber) + " ,invoiceId:"+invoiceId+"]";
     }
+
+	public BigDecimal getDiscount() {
+		return discount;
+	}
+
+	public void setDiscount(BigDecimal discount) {
+		this.discount = discount;
+	}
 }
