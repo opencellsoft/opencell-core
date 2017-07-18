@@ -882,8 +882,8 @@ public class SubscriptionApi extends BaseApi {
         
 		if (subscription.getProductInstances() != null) {
 			for (ProductInstance productInstance : subscription.getProductInstances()) {
-				dto.getProductInstances().getProductInstances().add(
-						new ProductInstanceDto(productInstance, entityToDtoConverter.getCustomFieldsDTO(productInstance, true)));
+				dto.getProductInstances().add(new ProductInstanceDto(productInstance,
+						entityToDtoConverter.getCustomFieldsDTO(productInstance, true)));
 			}
 		}
 

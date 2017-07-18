@@ -1,10 +1,13 @@
 package org.meveo.api.dto.billing;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BusinessDto;
@@ -52,8 +55,9 @@ public class SubscriptionDto extends BusinessDto {
     /**
      * Use in find.
      */
-    @XmlElement(required = false)
-    private ProductInstancesDto productInstances = new ProductInstancesDto();
+	@XmlElementWrapper(name = "productInstances")
+	@XmlElement(name = "productInstance")
+	private List<ProductInstanceDto> productInstances = new ArrayList<ProductInstanceDto>();
 
     private String terminationReason;
     private String orderNumber;
@@ -222,11 +226,12 @@ public class SubscriptionDto extends BusinessDto {
         this.renewalRule = renewalRule;
     }
 
-	public ProductInstancesDto getProductInstances() {
+	public List<ProductInstanceDto> getProductInstances() {
 		return productInstances;
 	}
 
-	public void setProductInstances(ProductInstancesDto productInstances) {
+	public void setProductInstances(List<ProductInstanceDto> productInstances) {
 		this.productInstances = productInstances;
 	}
+    
 }
