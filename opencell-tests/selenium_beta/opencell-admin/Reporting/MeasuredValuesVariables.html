@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://integration.i.opencellsoft.com/opencell/" />
+<title>MeasuredValuesVariables</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">MeasuredValuesVariables</td></tr>
+</thead><tbody>
+<tr>
+	<td>store</td>
+	<td>id=menu:measuredValues</td>
+	<td>measuredValues</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//ul[@id='measurementForm:measurableQuantityCode_items']/li[text()[contains(., '${codeMqtt}')]]</td>
+	<td>measurableQuantityCode</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>Daily</td>
+	<td>measurementPeriodValue</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//ul[@id='measurementForm:measurablePeriod_items']/li[text()[contains(.,'${measurementPeriodValue}')]]</td>
+	<td>measurementPeriod</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=measurementForm:selectedDate_input</td>
+	<td>dateField</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>March 2017</td>
+	<td>date</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[text()[contains(.,'Display Table')]]</td>
+	<td>displayTableButton</td>
+</tr>
+
+</tbody></table>
+</body>
+</html>

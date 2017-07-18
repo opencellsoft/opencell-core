@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://integration.i.opencellsoft.com/opencell/" />
+<title>OrdersVariables</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">OrdersVariables</td></tr>
+</thead><tbody>
+<tr>
+	<td>store</td>
+	<td>//a[@id='menu:orders']/span</td>
+	<td>orders</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>OR_SELENIUM</td>
+	<td>code</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>Selenium Order</td>
+	<td>description</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=orderForm:tabView:orderInfo:deliveryInstructions_txt</td>
+	<td>deliveryInstructionsField</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>Order instructions</td>
+	<td>deliveryInstructions</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>link=Order lines</td>
+	<td>orderLinesTab</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//button[contains(@id,'orderForm:tabView:orderItems')]</td>
+	<td>addNewButton</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>New subscription or product purchase</td>
+	<td>actionValue</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//ul[@id='orderForm:tabView:action_enum_items']/li[text()[contains(., '${actionValue}')]]</td>
+	<td>action</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=orderForm:tabView:userAccount_selectLink</td>
+	<td>accountField</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=userAccountPopup_title</td>
+	<td>userAccountPopup</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//tbody[@id='userAccountPopuppopupForm:userAccountPopupdatatable_data']/tr/td</td>
+	<td>userAccount</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=orderForm:tabView:offer_selectLink</td>
+	<td>offerField</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=offerPopup_title</td>
+	<td>offersPopup</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//tbody[@id='offerPopuppopupForm:offerPopupdatatable_data']/tr/td</td>
+	<td>offers</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[text()[contains(.,'Save order line')]]</td>
+	<td>saveOrderLineButton</td>
+</tr>
+
+</tbody></table>
+</body>
+</html>

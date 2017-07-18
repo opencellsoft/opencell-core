@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://integration.i.opencellsoft.com/opencell/" />
+<title>CreateBarChart</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">CreateBarChart</td></tr>
+</thead><tbody>
+<tr>
+	<td>clickAndWait</td>
+	<td>${charts}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>${newBarChartButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${codeField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${codeField}</td>
+	<td>${codeBarChart}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${descriptionField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${descriptionField}</td>
+	<td>${description}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${measurableQuantityField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${measurableQuantityField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>${measurableQuantityPopup}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>${measurableQuantitySearchField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${measurableQuantitySearchField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${measurableQuantitySearchField}</td>
+	<td>${codeMqtt}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${measurableQuantitySearchButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${measurableQuantitySearchButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//tbody[@id='searchMeasurableQuantitypopupForm:searchMeasurableQuantitydatatable_data']/tr/td[text()[contains(.,'${codeMqtt}')]]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//tbody[@id='searchMeasurableQuantitypopupForm:searchMeasurableQuantitydatatable_data']/tr/td[text()[contains(.,'${codeMqtt}')]]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//tbody[@id='searchMeasurableQuantitypopupForm:searchMeasurableQuantitydatatable_data']/tr/td[text()[contains(.,'${codeMqtt}')]]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${widthField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${widthField}</td>
+	<td>${width}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${heightField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${heightField}</td>
+	<td>${height}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${barPaddingField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${barPaddingField}</td>
+	<td>${barPadding}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${barMarginField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${barMarginField}</td>
+	<td>${barMargin}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${minimumField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${minimumField}</td>
+	<td>${minimum}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${maximumField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${maximumField}</td>
+	<td>${maximum}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${xAxisLabelField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${xAxisLabelField}</td>
+	<td>${xAxisLabel}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${yAxisLabelField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${yAxisLabelField}</td>
+	<td>${yAxisLabel}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${legendColumnsField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${legendColumnsField}</td>
+	<td>${legendColumns}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${legendRowsField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${legendRowsField}</td>
+	<td>${legendRows}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${saveButtonWhenCreate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${saveButtonWhenCreate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>${infoSummary}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${infoSummary}</td>
+	<td></td>
+</tr>
+
+</tbody></table>
+</body>
+</html>
