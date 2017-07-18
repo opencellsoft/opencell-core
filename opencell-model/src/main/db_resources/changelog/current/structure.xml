@@ -99,5 +99,58 @@
         </addColumn>
         <sql>update billing_subscrip_termin_reason set created=now()</sql>
         <addNotNullConstraint tableName="billing_subscrip_termin_reason" columnName="created"/>
-    </changeSet>        
+    </changeSet>    
+    
+    <changeSet id="#2691_20170616" author="TienLanPHUNG">
+       <modifyDataType tableName="account_entity" columnName="external_ref_1" newDataType="varchar(255)" />
+       <modifyDataType tableName="account_entity" columnName="external_ref_2" newDataType="varchar(255)" />
+    </changeSet>
+<!--
+     <changeSet author="anasseh" id="#2416_20170307">
+     <createSequence sequenceName="ar_payment_token_seq" />           
+     <createTable tableName="ar_payment_token">
+         <column name="token_type" type="VARCHAR(20)" />
+         <column name="id" type="BIGINT" autoIncrement="${id.auto}">
+             <constraints nullable="false" primaryKey="true" primaryKeyName="ar_payment_token_pkey" />
+         </column>
+         <column name="version" type="INT4" />
+         <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+             <constraints nullable="false" />
+         </column>
+         <column name="created" type="DATETIME">
+			<constraints nullable="false" />
+		</column>
+         <column name="updated" type="DATETIME" />
+         <column name="card_type" type="VARCHAR(60)">
+             <constraints nullable="false" />
+         </column>
+         <column name="owner" type="VARCHAR(256)" >
+         	<constraints nullable="false" />
+         </column>
+         <column name="month_expiration" type="INT4" >
+         	<constraints nullable="false" />
+         </column>
+         <column name="year_expiration" type="INT4" >
+         	<constraints nullable="false" />
+         </column>    
+         <column name="token_id" type="VARCHAR(60)" >            	
+         </column>    
+         <column name="alias" type="VARCHAR(256)" />
+         <column name="is_default" type="${type.boolean}" defaultValueNumeric="0" />
+          <column name="card_number" type="VARCHAR(16)" />
+         <column name="customer_account_id" type="BIGINT">
+             <constraints nullable="false"/>
+         </column>
+         <column name="creator" type="VARCHAR(100)" />
+         <column name="updater" type="VARCHAR(100)" />
+     </createTable>
+     <addForeignKeyConstraint baseColumnNames="customer_account_id" baseTableName="ar_payment_token" constraintName="fk_ca_id_payment_token" deferrable="false"
+								initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_customer_account" />
+ </changeSet>
+ -->
+    <changeSet id="#2698_20170622" author="TienLanPHUNG">
+    	<addColumn tableName="rating_edr">
+    		<column name="extra_parameter" type="text" />
+    	</addColumn>
+    </changeSet>
 </databaseChangeLog> 
