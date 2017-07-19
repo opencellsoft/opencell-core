@@ -438,11 +438,11 @@
             <ui:define name="buttons">
 
 
-                <p:commandButton value="#{messages['quote.sendToProcess']}" action="#{quoteBean.sendToProcess()}" process="@this" update=":quoteForm:messages @form"
+                <p:commandButton value="#{messages['quote.sendToProcess']}" action="#{quoteBean.sendToProcess()}" process="@this" update=":quoteForm:messages @form" ajax="false"
                     rendered="#{quoteBean.workflowEnabled and !quoteBean.entity.transient and quoteBean.entity.status==QuoteStatusEnum.IN_PROGRESS}" />
-                <p:commandButton value="#{messages['quote.createInvoice']}" action="#{quoteBean.createInvoice()}" process="@this" update=":quoteForm:messages @form"
+                <p:commandButton value="#{messages['quote.createInvoice']}" action="#{quoteBean.createInvoice()}" process="@this" update=":quoteForm:messages @form" ajax="false"
                     rendered="#{!quoteBean.entity.transient and (quoteBean.entity.status==QuoteStatusEnum.IN_PROGRESS or quoteBean.entity.status==QuoteStatusEnum.PENDING)}" />
-                <p:commandButton value="#{messages['quote.placeOrder']}" action="#{quoteBean.placeOrder()}" process="@this" update=":quoteForm:messages @form"
+                <p:commandButton value="#{messages['quote.placeOrder']}" action="#{quoteBean.placeOrder()}" process="@this" update=":quoteForm:messages @form" ajax="false"
                     rendered="#{!quoteBean.entity.transient and (quoteBean.entity.status==QuoteStatusEnum.IN_PROGRESS or quoteBean.entity.status==QuoteStatusEnum.PENDING)}" />
 
             </ui:define>

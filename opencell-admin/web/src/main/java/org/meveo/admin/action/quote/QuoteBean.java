@@ -411,17 +411,22 @@ public class QuoteBean extends CustomFieldBean<Quote> {
      * 
      * @throws BusinessException
      */
-    public void sendToProcess() {
+    @ActionMethod
+    public String sendToProcess() {
 
         try {
             entity = quoteApi.initiateWorkflow(entity);
             messages.info(new BundleKey("messages", "quote.sendToProcess.ok"));
+
+            return "quoteDetail";
 
         } catch (BusinessException e) {
             log.error("Failed to send quote for processing ", e);
             messages.error(new BundleKey("messages", "quote.sendToProcess.ko"), e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
             FacesContext.getCurrentInstance().validationFailed();
         }
+
+        return null;
     }
 
     /**
@@ -814,7 +819,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
     }
 
     @ActionMethod
-    public void createInvoice() {
+    public String createInvoice() {
         if (entity.getStatus() == QuoteStatusEnum.IN_PROGRESS || entity.getStatus() == QuoteStatusEnum.PENDING) {
             try {
                 entity = quoteService.refreshOrRetrieve(entity);
@@ -822,11 +827,14 @@ public class QuoteBean extends CustomFieldBean<Quote> {
 
                 messages.info(new BundleKey("messages", "quote.createInvoices.ok"));
 
+                return "quoteDetail";
+
             } catch (BusinessException e) {
                 log.error("Failed to generate invoices for quote {}", entity.getCode());
                 messages.error(new BundleKey("messages", "quote.createInvoices.ko"), e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
             }
         }
+        return null;
     }
 
     @ActionMethod

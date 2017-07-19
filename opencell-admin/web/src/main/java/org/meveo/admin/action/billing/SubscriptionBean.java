@@ -653,7 +653,8 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         }
     }
 
-    public void terminateSubscription() {
+    @ActionMethod
+    public String terminateSubscription() {
         try {
             
             SubscriptionTerminationReason reason = entity.getSubscriptionTerminationReason();
@@ -668,12 +669,15 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
                 new Object[] { entity.getSubscriptionTerminationReason(), entity.getTerminationDate(), entity.getCode(), entity.getStatus() });
             subscriptionService.terminateSubscription(entity, entity.getTerminationDate(), entity.getSubscriptionTerminationReason(), entity.getOrderNumber());
             messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
+            return "subscriptionDetail";
+            
         } catch (BusinessException e1) {
             messages.error(e1.getMessage());
         } catch (Exception e) {
             log.error("unexpected exception when terminating service!", e);
             messages.error(e.getMessage());
         }
+        return null;
     }
 
     public void cancelService() {

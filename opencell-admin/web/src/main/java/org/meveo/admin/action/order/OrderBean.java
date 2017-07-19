@@ -379,17 +379,20 @@ public class OrderBean extends CustomFieldBean<Order> {
      * 
      * @throws BusinessException
      */
-    public void sendToProcess() {
+    @ActionMethod
+    public String sendToProcess() {
 
         try {
             entity = orderApi.initiateWorkflow(entity);
             messages.info(new BundleKey("messages", "order.sendToProcess.ok"));
-
+            return "orderDetail";
+            
         } catch (BusinessException e) {
             log.error("Failed to send order for processing ", e);
             messages.error(new BundleKey("messages", "order.sendToProcess.ko"), e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
-            FacesContext.getCurrentInstance().validationFailed();
+            FacesContext.getCurrentInstance().validationFailed();            
         }
+        return null;
     }
 
     /**
