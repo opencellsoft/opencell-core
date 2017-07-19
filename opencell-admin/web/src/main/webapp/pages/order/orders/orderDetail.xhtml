@@ -555,7 +555,7 @@
             <ui:define name="buttons">
 
 
-                <p:commandButton value="#{messages['order.sendToProcess']}" action="#{orderBean.sendToProcess()}" update=":orderForm:messages @form"
+                <p:commandButton value="#{messages['order.sendToProcess']}" action="#{orderBean.sendToProcess()}" update=":orderForm:messages @form" process="@this" ajax="false"
                     rendered="#{!orderBean.entity.transient and orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
             </ui:define>
 

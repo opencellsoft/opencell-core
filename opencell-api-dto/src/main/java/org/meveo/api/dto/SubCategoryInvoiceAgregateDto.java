@@ -29,6 +29,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.model.billing.SubCategoryInvoiceAgregate;
+
 /**
  * @author R.AITYAAZZA
  *
@@ -57,7 +59,38 @@ public class SubCategoryInvoiceAgregateDto implements Serializable {
 	@XmlElementWrapper
     @XmlElement(name="ratedTransaction")
 	private List<RatedTransactionDto> ratedTransactions = new ArrayList<RatedTransactionDto>();
+	
+	private String discountPlanCode;
+	private String discountPlanItemCode;
+	private BigDecimal discountPercent;
 
+	public SubCategoryInvoiceAgregateDto(SubCategoryInvoiceAgregate e) {
+		if (e != null) {
+			discountPlanCode = e.getDiscountPlanCode();
+			discountPlanItemCode = e.getDiscountPlanItemCode();
+			discountPercent = e.getDiscountPercent();
+			itemNumber = e.getItemNumber();
+			accountingCode = e.getAccountingCode();
+			description = e.getDescription();
+			taxPercent = e.getTaxPercent();
+			quantity = e.getQuantity();
+			amountWithoutTax = e.getAmountWithoutTax();
+			amountTax = e.getAmountTax();
+			amountWithTax = e.getAmountTax();
+
+			if (e.getInvoiceSubCategory() != null) {
+				invoiceSubCategoryCode = e.getInvoiceSubCategory().getCode();
+			}
+			if (e.getUserAccount() != null) {
+				userAccountCode = e.getUserAccount().getCode();
+			}
+		}
+	}
+
+	public SubCategoryInvoiceAgregateDto() {
+
+	}
+	
 	public Integer getItemNumber() {
 		return itemNumber;
 	}
@@ -168,6 +201,30 @@ public class SubCategoryInvoiceAgregateDto implements Serializable {
 
 	public void setUserAccountCode(String userAccountCode) {
 		this.userAccountCode = userAccountCode;
+	}
+
+	public String getDiscountPlanCode() {
+		return discountPlanCode;
+	}
+
+	public void setDiscountPlanCode(String discountPlanCode) {
+		this.discountPlanCode = discountPlanCode;
+	}
+
+	public String getDiscountPlanItemCode() {
+		return discountPlanItemCode;
+	}
+
+	public void setDiscountPlanItemCode(String discountPlanItemCode) {
+		this.discountPlanItemCode = discountPlanItemCode;
+	}
+
+	public BigDecimal getDiscountPercent() {
+		return discountPercent;
+	}
+
+	public void setDiscountPercent(BigDecimal discountPercent) {
+		this.discountPercent = discountPercent;
 	}
 
 

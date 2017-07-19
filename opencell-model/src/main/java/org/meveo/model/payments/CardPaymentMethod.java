@@ -50,6 +50,24 @@ public class CardPaymentMethod extends PaymentMethod {
     @NotNull
     private String hiddenCardNumber;
 
+    @Column(name = "USER_ID")
+    private String userId;
+
+    @Column(name = "INFO_1")
+    private String info1;
+
+    @Column(name = "INFO_2")
+    private String info2;
+
+    @Column(name = "INFO_3")
+    private String info3;
+
+    @Column(name = "INFO_4")
+    private String info4;
+
+    @Column(name = "INFO_5")
+    private String info5;
+
     @Transient
     private String cardNumber;
 
@@ -130,6 +148,54 @@ public class CardPaymentMethod extends PaymentMethod {
         this.hiddenCardNumber = hiddenCardNumber;
     }
 
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getInfo1() {
+        return info1;
+    }
+
+    public void setInfo1(String info1) {
+        this.info1 = info1;
+    }
+
+    public String getInfo2() {
+        return info2;
+    }
+
+    public void setInfo2(String info2) {
+        this.info2 = info2;
+    }
+
+    public String getInfo3() {
+        return info3;
+    }
+
+    public void setInfo3(String info3) {
+        this.info3 = info3;
+    }
+
+    public String getInfo4() {
+        return info4;
+    }
+
+    public void setInfo4(String info4) {
+        this.info4 = info4;
+    }
+
+    public String getInfo5() {
+        return info5;
+    }
+
+    public void setInfo5(String info5) {
+        this.info5 = info5;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -175,6 +241,12 @@ public class CardPaymentMethod extends PaymentMethod {
         setPreferred(otherPaymentMethod.isPreferred());
         setYearExpiration(otherPaymentMethod.getYearExpiration());
         setMonthExpiration(otherPaymentMethod.getMonthExpiration());
+        setUserId(otherPaymentMethod.getUserId());
+        setInfo1(otherPaymentMethod.getInfo1());
+        setInfo2(otherPaymentMethod.getInfo2());
+        setInfo3(otherPaymentMethod.getInfo3());
+        setInfo4(otherPaymentMethod.getInfo4());
+        setInfo5(otherPaymentMethod.getInfo5());
     }
 
     /**
@@ -192,7 +264,8 @@ public class CardPaymentMethod extends PaymentMethod {
 
     @Override
     public String toString() {
-        return "CardPaymentMethod [alias=" + alias + ", preferred=" + preferred + ", tokenId=" + tokenId + ", cardType=" + cardType + ", owner=" + owner + ", monthExpiration="
-                + monthExpiration + ", yearExpiration=" + yearExpiration + ", hiddenCardNumber=" + hiddenCardNumber + "]";
+        return "CardPaymentMethod [tokenId=" + tokenId + ", cardType=" + cardType + ", owner=" + owner + ", monthExpiration=" + monthExpiration + ", yearExpiration="
+                + yearExpiration + ", hiddenCardNumber=" + hiddenCardNumber + ", userId=" + userId + ", info1=" + info1 + ", info2=" + info2 + ", info3=" + info3 + ", info4="
+                + info4 + ", info5=" + info5 + ", cardNumber=" + cardNumber + ", issueNumber=" + issueNumber + "]";
     }
 }

@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -212,6 +213,11 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         }
 
         return entity;
+    }
+    
+    @Override
+    protected List<String> getFormFieldsToFetch() {
+    	return Arrays.asList("productInstances");
     }
 
     private void initServiceTemplates() {
@@ -647,7 +653,8 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         }
     }
 
-    public void terminateSubscription() {
+    @ActionMethod
+    public String terminateSubscription() {
         try {
             
             SubscriptionTerminationReason reason = entity.getSubscriptionTerminationReason();
@@ -662,12 +669,15 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
                 new Object[] { entity.getSubscriptionTerminationReason(), entity.getTerminationDate(), entity.getCode(), entity.getStatus() });
             subscriptionService.terminateSubscription(entity, entity.getTerminationDate(), entity.getSubscriptionTerminationReason(), entity.getOrderNumber());
             messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
+            return "subscriptionDetail";
+            
         } catch (BusinessException e1) {
             messages.error(e1.getMessage());
         } catch (Exception e) {
             log.error("unexpected exception when terminating service!", e);
             messages.error(e.getMessage());
         }
+        return null;
     }
 
     public void cancelService() {

@@ -73,18 +73,37 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     @Inject
     ServiceTemplateService serviceTemplateService;
 
-    public ServiceInstance findByCodeAndSubscription(String code, Subscription subscription) {
-        return findByCodeAndSubscription(getEntityManager(), code, subscription);
-    }
+	public ServiceInstance findBySubscriptionCodeAndCode(String subscriptionCode, String code) {
+		ServiceInstance chargeInstance = null;
+		try {
+			log.debug("start of find {} by code (code={}) ..", "ServiceInstance", code);
+			
+			QueryBuilder qb = new QueryBuilder(ServiceInstance.class, "c");
+			qb.addCriterion("c.code", "=", code, true);
+			qb.addCriterion("c.subscription.code", "=", subscriptionCode, true);
+			chargeInstance = (ServiceInstance) qb.getQuery(getEntityManager()).getSingleResult();
+			
+			log.debug("end of find {} by code (code={}). Result found={}.",
+					new Object[] { "ServiceInstance", code, chargeInstance != null });
+			
+		} catch (NoResultException nre) {
+			log.debug("findBySubscriptionCodeAndCode : no service has been found");
+			
+		} catch (Exception e) {
+			log.error("findBySubscriptionCodeAndCode error={} ", e);
+		}
 
-    public ServiceInstance findByCodeAndSubscription(EntityManager em, String code, Subscription subscription) {
+		return chargeInstance;
+	}
+
+    public ServiceInstance findByCodeAndSubscription(String code, Subscription subscription) {
         ServiceInstance chargeInstance = null;
         try {
             log.debug("start of find {} by code (code={}) ..", "ServiceInstance", code);
             QueryBuilder qb = new QueryBuilder(ServiceInstance.class, "c");
             qb.addCriterion("c.code", "=", code, true);
             qb.addCriterion("c.subscription", "=", subscription, true);
-            chargeInstance = (ServiceInstance) qb.getQuery(em).getSingleResult();
+            chargeInstance = (ServiceInstance) qb.getQuery(getEntityManager()).getSingleResult();
             log.debug("end of find {} by code (code={}). Result found={}.", new Object[] { "ServiceInstance", code, chargeInstance != null });
         } catch (NoResultException nre) {
             log.debug("findByCodeAndSubscription : no service has been found");

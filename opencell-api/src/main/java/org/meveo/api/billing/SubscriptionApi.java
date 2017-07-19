@@ -1146,6 +1146,29 @@ public class SubscriptionApi extends BaseApi {
 		}
 	}
 	
+	public ServiceInstanceDto findServiceInstance(String subscriptionCode, String serviceInstanceCode)
+			throws MeveoApiException {
+		ServiceInstanceDto result = new ServiceInstanceDto();
+
+		if (StringUtils.isBlank(subscriptionCode)) {
+			missingParameters.add("subscriptionCode");
+		}
+
+		if (StringUtils.isBlank(serviceInstanceCode)) {
+			missingParameters.add("serviceInstanceCode");
+		}
+
+		handleMissingParameters();
+
+		ServiceInstance serviceInstance = serviceInstanceService.findBySubscriptionCodeAndCode(subscriptionCode,
+				serviceInstanceCode);
+		if (serviceInstance != null) {
+			result = new ServiceInstanceDto(serviceInstance,
+					entityToDtoConverter.getCustomFieldsWithInheritedDTO(serviceInstance, true));
+		}
+
+		return result;
+	}
 
 	public DueDateDelayDto getDueDateDelay(String subscriptionCode, String invoiceNumber, String invoiceTypeCode,
 			String orderCode) throws MeveoApiException, BusinessException {

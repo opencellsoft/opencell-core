@@ -27,6 +27,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.meveo.model.MultilanguageEntity;
 
@@ -37,6 +38,9 @@ import org.meveo.model.MultilanguageEntity;
 		@NamedQuery(name = "productChargeTemplate.getNbrProductWithNotPricePlan", query = "select count (*) from ProductChargeTemplate o where o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) "),
 		@NamedQuery(name = "productChargeTemplate.getProductWithNotPricePlan", query = "from ProductChargeTemplate o where o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) "), })
 public class ProductChargeTemplate extends ChargeTemplate {
+	
+	@Transient
+	public static final String CHARGE_TYPE = "PRODUCT";
 
 	private static final long serialVersionUID = 1L;
 
@@ -49,6 +53,10 @@ public class ProductChargeTemplate extends ChargeTemplate {
 
 	public void setProductTemplates(List<ProductTemplate> productTemplates) {
 		this.productTemplates = productTemplates;
+	}
+
+	public String getChargeType() {
+		return CHARGE_TYPE;
 	}
 
 }

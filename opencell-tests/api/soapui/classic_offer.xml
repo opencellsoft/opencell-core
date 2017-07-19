@@ -19951,7 +19951,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          
          <billingCycle code="BILLCYCLE1" description="Billed the 1st of the month, every month (default)">
             
-            <billingTemplateName>${#Project#provider}</billingTemplateName>
+            <billingTemplateName>${#Project#templateCode}</billingTemplateName>
             <invoiceDateDelay>2</invoiceDateDelay>
             <dueDateDelay>30</dueDateDelay>
             
@@ -20050,7 +20050,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          
          <billingCycle code="BC_${#Project#templateCode}_PARTNER" description="${#Project#templateLabel} Partner Credit Note calculation">
             
-            <billingTemplateName>${#Project#templateCode}_partner</billingTemplateName>
+            <billingTemplateName>${#Project#templateCode}</billingTemplateName>
             <invoiceDateDelay>2</invoiceDateDelay>
             <dueDateDelay>30</dueDateDelay>
             

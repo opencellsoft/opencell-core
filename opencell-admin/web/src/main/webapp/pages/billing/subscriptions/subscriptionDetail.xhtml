@@ -194,9 +194,9 @@
                         <ui:param name="buttons" value="true"/>
                         <ui:define name="buttons">                        
 							<p:commandButton action="#{subscriptionBean.terminateSubscription()}"
-								value="#{messages['button.terminateButton']}"
+								value="#{messages['button.terminateButton']}" ajax="true" update="@form"
 								oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_subscriptionTerminationPopup').hide()"
-								update=":subscriptionTab:subscriptionFormId"/>
+								/>
 							<p:commandButton immediate="true"
 								onclick="PF('dlg_subscriptionTerminationPopup').hide()" type="button"
 								value="#{messages['management.close']}" />

@@ -66,6 +66,11 @@ public class CardPaymentMethodDto extends PaymentMethodDto {
      */
     private String issueNumber;
 
+    /**
+     * User identifier
+     */
+    private String userId;
+    
     public CardPaymentMethodDto() {
 
     }
@@ -87,6 +92,7 @@ public class CardPaymentMethodDto extends PaymentMethodDto {
         setOwner(paymentMethod.getOwner());
         setTokenId(paymentMethod.getTokenId());
         setYearExpiration(paymentMethod.getYearExpiration());
+        setUserId(paymentMethod.getUserId());
     }
 
     public CreditCardTypeEnum getCardType() {
@@ -144,6 +150,14 @@ public class CardPaymentMethodDto extends PaymentMethodDto {
     public void setIssueNumber(String issueNumber) {
         this.issueNumber = issueNumber;
     }
+    
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+    
+    public String getUserId() {
+        return userId;
+    }
 
     public CardPaymentMethod fromDto() {
         CardPaymentMethod paymentMethod = new CardPaymentMethod(getAlias(), isPreferred());
@@ -158,6 +172,7 @@ public class CardPaymentMethodDto extends PaymentMethodDto {
         paymentMethod.setPreferred(isPreferred());
         paymentMethod.setYearExpiration(getYearExpiration());
         paymentMethod.setMonthExpiration(getMonthExpiration());
+        paymentMethod.setUserId(getUserId());
 
         return paymentMethod;
     }

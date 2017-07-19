@@ -23,6 +23,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.Country;
 import org.meveo.model.payments.CardPaymentMethod;
@@ -61,6 +62,19 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         }
     }
 
+    @Override
+    public PaymentMethod update(PaymentMethod entity) throws BusinessException {
+        PaymentMethod paymentMethod = super.update(entity);
+
+        // Mark other payment methods as not preferred
+        if (paymentMethod.isPreferred()) {
+            getEntityManager().createNamedQuery("PaymentMethod.updatePreferredPaymentMethod").setParameter("id", paymentMethod.getId())
+                .setParameter("ca", paymentMethod.getCustomerAccount()).executeUpdate();
+        }
+
+        return paymentMethod;
+    }
+
     /**
      * Store payment information in payment gateway and return token id in a payment gateway
      * 
@@ -90,5 +104,11 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
             cardPaymentMethod.getIssueNumber(), cardPaymentMethod.getCardType().getId(), coutryCode);
 
         cardPaymentMethod.setTokenId(tockenID);
+    }
+
+    public CardPaymentMethod findByTokenId(String tokenId) {
+        QueryBuilder queryBuilder = new QueryBuilder(CardPaymentMethod.class, "a", null);
+        queryBuilder.addCriterion("tokenId", "=", tokenId, true);
+        return (CardPaymentMethod) queryBuilder.getQuery(getEntityManager()).getSingleResult();
     }
 }

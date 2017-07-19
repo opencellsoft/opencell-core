@@ -23,6 +23,7 @@ import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -52,6 +53,9 @@ query = "select count(*) from UsageChargeTemplate u where (u.id not in (select s
 
 public class UsageChargeTemplate extends ChargeTemplate {
 	static String WILCARD = "";
+	
+	@Transient
+	public static final String CHARGE_TYPE = "USAGE";
 
 	private static final long serialVersionUID = 1L;
 
@@ -124,6 +128,10 @@ public class UsageChargeTemplate extends ChargeTemplate {
 
 	public void setPriority(int priority) {
 		this.priority = priority;
+	}
+
+	public String getChargeType() {
+		return CHARGE_TYPE;
 	}
 
 }

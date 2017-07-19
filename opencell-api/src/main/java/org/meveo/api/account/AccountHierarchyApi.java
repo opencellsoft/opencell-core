@@ -41,11 +41,7 @@ import org.meveo.api.dto.account.ParentEntitiesDto;
 import org.meveo.api.dto.account.ParentEntityDto;
 import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
-import org.meveo.api.dto.payment.CardPaymentMethodDto;
-import org.meveo.api.dto.payment.DDPaymentMethodDto;
-import org.meveo.api.dto.payment.OtherPaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
-import org.meveo.api.dto.payment.TipPaymentMethodDto;
 import org.meveo.api.dto.response.account.GetAccountHierarchyResponseDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -71,7 +67,6 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
-import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.payments.DDPaymentMethod;
@@ -1691,22 +1686,7 @@ public class AccountHierarchyApi extends BaseApi {
             dto.setPaymentMethods(new ArrayList<>());
             PaymentMethodDto pmDto = null;
             for (PaymentMethod paymentMethod : ca.getPaymentMethods()) {
-                switch (paymentMethod.getPaymentType()) {
-                case CARD:
-                    pmDto = new CardPaymentMethodDto((CardPaymentMethod) paymentMethod);
-                    break;
-                case DIRECTDEBIT:
-                    pmDto = new DDPaymentMethodDto((DDPaymentMethod) paymentMethod);
-                    break;
-                case TIP:
-                    pmDto = new TipPaymentMethodDto((TipPaymentMethod) paymentMethod);
-                    break;
-                case CHECK:
-                case WIRETRANSFER:
-                    pmDto = new OtherPaymentMethodDto(paymentMethod);
-                    break;
-
-                }
+                pmDto = PaymentMethodDto.toDto(paymentMethod);
                 dto.getPaymentMethods().add(pmDto);
             }
 

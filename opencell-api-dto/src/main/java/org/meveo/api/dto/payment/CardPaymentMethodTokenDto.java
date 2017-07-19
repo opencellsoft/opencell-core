@@ -11,21 +11,21 @@ import org.meveo.api.dto.response.BaseResponse;
 public class CardPaymentMethodTokenDto extends BaseResponse {
 
     private static final long serialVersionUID = 1L;
-    private String tokenID;
+    private CardPaymentMethodDto cardPaymentMethod;
 
     public CardPaymentMethodTokenDto() {
     }
 
-    public String getTokenID() {
-        return tokenID;
+    public CardPaymentMethodDto getCardPaymentMethod() {
+        return cardPaymentMethod;
     }
 
-    public void setTokenID(String tokenID) {
-        this.tokenID = tokenID;
+    public void setCardPaymentMethod(CardPaymentMethodDto cardPaymentMethod) {
+        this.cardPaymentMethod = cardPaymentMethod;
     }
 
     @Override
     public String toString() {
-        return "CardPaymentMethodTokenDto [tokenID=" + tokenID + "]";
+        return "CardPaymentMethodTokenDto [cardPaymentMethod=" + cardPaymentMethod + "]";
     }
 }

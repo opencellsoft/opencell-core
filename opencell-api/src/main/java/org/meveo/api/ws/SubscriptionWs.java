@@ -18,6 +18,7 @@ import org.meveo.api.dto.billing.UpdateServicesRequestDto;
 import org.meveo.api.dto.response.billing.GetDueDateDelayResponseDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsResponseDto;
+import org.meveo.api.dto.response.catalog.GetServiceInstanceResponseDto;
 
 @WebService
 public interface SubscriptionWs extends IBaseWs {
@@ -84,4 +85,8 @@ public interface SubscriptionWs extends IBaseWs {
 			@WebParam(name = "invoiceNumber") String invoiceNumber,
 			@WebParam(name = "invoiceTypeCode") String invoiceTypeCode, @WebParam(name = "orderCode") String orderCode);
 
+	@WebMethod
+	GetServiceInstanceResponseDto findServiceInstance(@WebParam(name = "subscriptionCode") String subscriptionCode,
+			@WebParam(name = "serviceInstanceCode") String serviceInstanceCode);
+	
 }

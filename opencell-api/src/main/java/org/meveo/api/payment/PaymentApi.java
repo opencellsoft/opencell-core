@@ -12,19 +12,16 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.api.BaseApi;
-import org.meveo.api.dto.payment.CardPaymentMethodDto;
 import org.meveo.api.dto.payment.PayByCardDto;
 import org.meveo.api.dto.payment.PayByCardResponseDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AutomatedPayment;
-import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.MatchingTypeEnum;
@@ -33,7 +30,6 @@ import org.meveo.model.payments.OtherCreditAndCharge;
 import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
-import org.meveo.service.payments.impl.PaymentMethodService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 import org.meveo.service.payments.impl.OCCTemplateService;
@@ -57,9 +53,6 @@ public class PaymentApi extends BaseApi {
 
     @Inject
     private OCCTemplateService oCCTemplateService;
-
-    @Inject
-    private PaymentMethodService cardTokenService;
 
     public void createPayment(PaymentDto paymentDto) throws NoAllOperationUnmatchedException, UnbalanceAmountException, BusinessException, MeveoApiException {
         log.info("create payment for amount:" + paymentDto.getAmount() + " paymentMethodEnum:" + paymentDto.getPaymentMethod() + " isToMatching:" + paymentDto.isToMatching()
@@ -202,43 +195,6 @@ public class PaymentApi extends BaseApi {
         return customerAccountService.customerAccountBalanceDue(customerAccount, new Date()).doubleValue();
     }
 
-    public String addCardPaymentMethod(CardPaymentMethodDto cardPaymentMethodDto)
-            throws InvalidParameterException, MissingParameterException, EntityDoesNotExistsException, BusinessException {
-
-        if (StringUtils.isBlank(cardPaymentMethodDto.getCardNumber())) {
-            missingParameters.add("cardNumber");
-        }
-        if (StringUtils.isBlank(cardPaymentMethodDto.getOwner())) {
-            missingParameters.add("owner");
-        }
-        if (StringUtils.isBlank(cardPaymentMethodDto.getMonthExpiration()) || StringUtils.isBlank(cardPaymentMethodDto.getYearExpiration())) {
-            missingParameters.add("expiryDate");
-        }
-
-        if (StringUtils.isBlank(cardPaymentMethodDto.getCustomerAccountCode())) {
-            missingParameters.add("customerAccountCode");
-        }
-        handleMissingParameters();
-        CustomerAccount customerAccount = customerAccountService.findByCode(cardPaymentMethodDto.getCustomerAccountCode());
-        if (customerAccount == null) {
-            throw new EntityDoesNotExistsException(CustomerAccount.class, cardPaymentMethodDto.getCustomerAccountCode());
-        }
-
-        CardPaymentMethod paymentMethod = new CardPaymentMethod();
-        paymentMethod.setCustomerAccount(customerAccount);
-        paymentMethod.setAlias(cardPaymentMethodDto.getAlias());
-        paymentMethod.setCardNumber(cardPaymentMethodDto.getCardNumber());
-        paymentMethod.setOwner(cardPaymentMethodDto.getOwner());
-        paymentMethod.setCardType(cardPaymentMethodDto.getCardType());
-        paymentMethod.setPreferred(cardPaymentMethodDto.isPreferred());
-        paymentMethod.setIssueNumber(cardPaymentMethodDto.getIssueNumber());
-        paymentMethod.setYearExpiration(cardPaymentMethodDto.getYearExpiration());
-        paymentMethod.setMonthExpiration(cardPaymentMethodDto.getMonthExpiration());
-        cardTokenService.create(paymentMethod);
-        
-        return paymentMethod.getTokenId();
-    }
-
     public PayByCardResponseDto payByCard(PayByCardDto cardPaymentRequestDto)
             throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException, MeveoApiException {
 
@@ -283,13 +239,13 @@ public class PaymentApi extends BaseApi {
         }
 
         PaymentMethodEnum preferedMethod = customerAccount.getPreferredPaymentMethodType();
-        if (preferedMethod!=null && PaymentMethodEnum.CARD != preferedMethod) {
+        if (preferedMethod != null && PaymentMethodEnum.CARD != preferedMethod) {
             throw new BusinessApiException("Can not process payment as prefered payment method is " + preferedMethod);
         }
 
         PayByCardResponseDto doPaymentResponseDto = null;
         if (useCard) {
-            
+
             doPaymentResponseDto = paymentService.payByCard(customerAccount, cardPaymentRequestDto.getCtsAmount(), cardPaymentRequestDto.getCardNumber(),
                 cardPaymentRequestDto.getOwnerName(), cardPaymentRequestDto.getCvv(), cardPaymentRequestDto.getExpiryDate(), cardPaymentRequestDto.getCardType(),
                 cardPaymentRequestDto.getAoToPay(), cardPaymentRequestDto.isCreateAO(), cardPaymentRequestDto.isToMatch());

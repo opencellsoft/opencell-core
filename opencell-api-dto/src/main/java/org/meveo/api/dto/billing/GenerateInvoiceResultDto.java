@@ -1,10 +1,16 @@
 package org.meveo.api.dto.billing;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.meveo.api.dto.SubCategoryInvoiceAgregateDto;
 
 @XmlRootElement(name = "GenerateInvoiceResult")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -29,7 +35,12 @@ public class GenerateInvoiceResultDto {
     private byte[] pdf;
     
     private Long accountOperationId;
-
+    
+    private BigDecimal discount;
+    
+    @XmlElementWrapper(name = "discountAggregates")
+    @XmlElement(name = "discountAggregate")
+    private List<SubCategoryInvoiceAgregateDto> discountAggregates = new ArrayList<>();
 
     /**
      * @return the invoiceNumber
@@ -136,4 +147,20 @@ public class GenerateInvoiceResultDto {
     public String toString() {
         return "GenerateInvoiceResultDto [invoiceNumber=" + (invoiceNumber != null ? invoiceNumber : temporaryInvoiceNumber) + " ,invoiceId:"+invoiceId+"]";
     }
+
+	public BigDecimal getDiscount() {
+		return discount;
+	}
+
+	public void setDiscount(BigDecimal discount) {
+		this.discount = discount;
+	}
+
+	public List<SubCategoryInvoiceAgregateDto> getDiscountAggregates() {
+		return discountAggregates;
+	}
+
+	public void setDiscountAggregates(List<SubCategoryInvoiceAgregateDto> discountAggregates) {
+		this.discountAggregates = discountAggregates;
+	}
 }
