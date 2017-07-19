@@ -6,11 +6,14 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
+import org.meveo.model.payments.CardToken;
 import org.meveo.model.payments.CreditCardTypeEnum;
+import org.meveo.model.payments.PaymentToken;
 
 @XmlRootElement(name = "CardTokenRequest")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CardTokenRequestDto extends BaseDto{
+public class CardTokenDto extends BaseDto{
+	private Long id;
 	private CreditCardTypeEnum cardType;
 	private String owner;
 	private Integer monthExpiration;
@@ -21,9 +24,30 @@ public class CardTokenRequestDto extends BaseDto{
 	private String customerAccountCode;
 	private String cardNumber;
 	private String issueNumber;
+	private Boolean isDisabled;
+	private String userId;
 	
-	public CardTokenRequestDto(){
+	public CardTokenDto(){
 		
+	}
+
+	public CardTokenDto(PaymentToken token) {
+		this.id = token.getId();
+		this.tokenId=token.getTokenId();
+		this.isDefault=token.getIsDefault();
+		this.customerAccountCode=token.getCustomerAccount().getCode();
+		this.isDisabled=((CardToken)token).isDisabled();
+		this.userId=token.getUserId();
+		this.alias=token.getAlias();
+		if(token instanceof CardToken){			
+			this.cardType = ((CardToken)token).getCardType();
+			this.owner=((CardToken)token).getOwner();
+			this.monthExpiration=((CardToken)token).getMonthExpiration();
+			this.yearExpiration=((CardToken)token).getYearExpiration();
+			this.cardNumber=((CardToken)token).getHiddenCardNumber();
+			this.issueNumber=((CardToken)token).getIssueNumber();
+
+		}
 	}
 
 	public CreditCardTypeEnum getCardType() {
@@ -105,13 +129,39 @@ public class CardTokenRequestDto extends BaseDto{
 	public void setIssueNumber(String issueNumber) {
 		this.issueNumber = issueNumber;
 	}
+	
+	
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public Boolean getIsDisabled() {
+		return isDisabled;
+	}
+
+	public void setIsDisabled(Boolean isDisabled) {
+		this.isDisabled = isDisabled;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	@Override
 	public String toString() {
-		return "CardTokenRequestDto [cardType=" + cardType + ", owner=" + owner + ", monthExpiration=" + monthExpiration
+		return "CardTokenRequestDto [id="+id+",isDisabled="+isDisabled+", cardType=" + cardType + ", owner=" + owner + ", monthExpiration=" + monthExpiration
 				+ ", yearExpiration=" + yearExpiration + ", tokenId=" + tokenId + ", alias=" + alias + ", isDefault="
 				+ isDefault + ", customerAccountCode=" + customerAccountCode + ", cardNumber=" + ((cardNumber != null && cardNumber.length() == 16)?cardNumber.substring(12, 15) : "invalid")
-				+ ", issueNumber=" + issueNumber + "]";
+				+ ", issueNumber=" + issueNumber + ",userId="+userId+"]";
 	}
 
 	

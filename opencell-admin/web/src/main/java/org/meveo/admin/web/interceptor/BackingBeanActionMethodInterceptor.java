@@ -100,8 +100,10 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
             if (validation && message != null) {
                 messages.error(message);
             } else {
-            	message = StringEscapeUtils.escapeJava(message);
-            	message = message.replace("$", "\\$");
+                if (message != null) {
+                    message = StringEscapeUtils.escapeJava(message);
+                    message = message.replace("$", "\\$");
+                }
                 messages.error(new BundleKey("messages", "error.action.failed"), message == null ? e.getClass().getSimpleName() : message);
             }
             FacesContext.getCurrentInstance().validationFailed();

@@ -25,7 +25,9 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.EnableEntity;
 import org.meveo.model.billing.Country;
 import org.meveo.model.payments.CardToken;
 import org.meveo.model.payments.CustomerAccount;
@@ -94,5 +96,15 @@ public class CardTokenService extends PersistenceService<CardToken> {
 			throw new BusinessException("There no valid token for customerAccount:"+customerAccount.getCode());
 		}
 		return cardToken;
+	}
+
+
+	public CardToken findByTokenId(String tokenId){    
+	    QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
+	    if (EnableEntity.class.isAssignableFrom(entityClass)) {
+	        queryBuilder.addBooleanCriterion("disabled", false);
+	    }
+	    queryBuilder.addCriterion("tokenId", "=", tokenId, true);
+	    return (CardToken) queryBuilder.getQuery(getEntityManager()).getSingleResult();
 	}
 }

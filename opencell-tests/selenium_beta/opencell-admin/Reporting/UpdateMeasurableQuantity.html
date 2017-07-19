@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://integration.i.opencellsoft.com/opencell/" />
+<title>UpdateMeasurableQuantity</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">UpdateMeasurableQuantity</td></tr>
+</thead><tbody>
+<tr>
+	<td>clickAndWait</td>
+	<td>${measurableQuantities}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${codeField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${codeField}</td>
+	<td>${code}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${searchButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${searchButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>link=${code}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>link=${code}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=${code}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${codeField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${codeField}</td>
+	<td>${code}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${dimension1Field}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${dimension1Field}</td>
+	<td>${dimension1}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${dimension2Field}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${dimension2Field}</td>
+	<td>${dimension2}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${SQLQueryField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${SQLQueryField}</td>
+	<td>${SQLQuery}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${measurementPeriod}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${measurementPeriod}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${lastMeasureField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${lastMeasureField}</td>
+	<td>${lastMeasure}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${editableField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${editableField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${saveButtonWhenUpdate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${saveButtonWhenUpdate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>${infoSummary}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${infoSummary}</td>
+	<td></td>
+</tr>
+
+</tbody></table>
+</body>
+</html>

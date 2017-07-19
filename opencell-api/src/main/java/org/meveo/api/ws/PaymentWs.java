@@ -7,11 +7,12 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.payment.CardTokenRequestDto;
+import org.meveo.api.dto.payment.CardTokenDto;
 import org.meveo.api.dto.payment.CardTokenResponseDto;
 import org.meveo.api.dto.payment.DDRequestLotOpDto;
 import org.meveo.api.dto.payment.DoPaymentRequestDto;
 import org.meveo.api.dto.payment.DoPaymentResponseDto;
+import org.meveo.api.dto.payment.ListCardTokenResponseDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
 import org.meveo.api.dto.response.payment.DDRequestLotOpsResponseDto;
@@ -44,7 +45,19 @@ public interface PaymentWs extends IBaseWs {
 	DDRequestLotOpsResponseDto listDDRequestLotops(@WebParam(name="fromDueDate")Date fromDueDate,@WebParam(name="toDueDate")Date toDueDate,@WebParam(name="status")DDRequestOpStatusEnum status);
 	
 	@WebMethod
-	public CardTokenResponseDto createCardToken(@WebParam(name = "CardTokenRequest")CardTokenRequestDto cardTokenRequestDto);
+	public CardTokenResponseDto createCardToken(@WebParam(name = "CardTokenRequest")CardTokenDto cardTokenRequestDto);
+	
+	@WebMethod
+	public ActionStatus updateCardToken(@WebParam(name = "CardTokenRequest")CardTokenDto cardTokenRequestDto);
+	
+	@WebMethod
+	public ActionStatus removeCardToken(@WebParam(name = "id")Long id);
+	
+	@WebMethod
+	public ListCardTokenResponseDto listCardToken(@WebParam(name = "customerAccountId")Long customerAccountId,@WebParam(name = "customerAccountCode")String customerAccountCode);
+	
+	@WebMethod
+	public CardTokenResponseDto findCardToken(@WebParam(name = "id")Long id);
 	
 	@WebMethod
 	public DoPaymentResponseDto doPayment(@WebParam(name = "DoPaymentRequest")DoPaymentRequestDto doPaymentRequestDto);

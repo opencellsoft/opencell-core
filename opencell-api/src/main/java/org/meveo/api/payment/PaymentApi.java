@@ -12,7 +12,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.api.BaseApi;
-import org.meveo.api.dto.payment.CardTokenRequestDto;
 import org.meveo.api.dto.payment.DoPaymentRequestDto;
 import org.meveo.api.dto.payment.DoPaymentResponseDto;
 import org.meveo.api.dto.payment.PaymentDto;
@@ -24,7 +23,6 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AutomatedPayment;
-import org.meveo.model.payments.CardToken;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.MatchingTypeEnum;
@@ -32,7 +30,6 @@ import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OtherCreditAndCharge;
 import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.RecordedInvoice;
-import org.meveo.service.payments.impl.CardTokenService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 import org.meveo.service.payments.impl.OCCTemplateService;
@@ -57,8 +54,6 @@ public class PaymentApi extends BaseApi {
 	@Inject
 	private OCCTemplateService oCCTemplateService;
 
-	@Inject
-	private CardTokenService cardTokenService;
 
 	public void createPayment(PaymentDto paymentDto) throws  NoAllOperationUnmatchedException, UnbalanceAmountException, BusinessException, MeveoApiException {
 		log.info("create payment for amount:" + paymentDto.getAmount() + " paymentMethodEnum:" + paymentDto.getPaymentMethod() + " isToMatching:" + paymentDto.isToMatching() + "  customerAccount:" + paymentDto.getCustomerAccountCode() + "...");
@@ -199,45 +194,7 @@ public class PaymentApi extends BaseApi {
 
 		return customerAccountService.customerAccountBalanceDue(customerAccount, new Date()).doubleValue();
 	}
-
-	public String createCardToken(CardTokenRequestDto cardTokenRequestDto) throws InvalidParameterException, MissingParameterException, EntityDoesNotExistsException, BusinessException{
-		if(cardTokenRequestDto == null){
-			throw new InvalidParameterException("CardTokenRequestDto","cardTokenRequestDto");
-		}
-		if(StringUtils.isBlank(cardTokenRequestDto.getCardNumber())){
-			missingParameters.add("CardNumber");
-		}
-		if(StringUtils.isBlank(cardTokenRequestDto.getOwner())){
-			missingParameters.add("Owner");
-		}
-		if(StringUtils.isBlank(cardTokenRequestDto.getMonthExpiration()) || StringUtils.isBlank(cardTokenRequestDto.getYearExpiration())){
-			missingParameters.add("ExpiryDate");
-		}
-
-		if(StringUtils.isBlank(cardTokenRequestDto.getCustomerAccountCode())){
-			missingParameters.add("CustomerAccountCode");
-		}
-		handleMissingParameters();
-		CustomerAccount customerAccount = customerAccountService.findByCode(cardTokenRequestDto.getCustomerAccountCode());
-		if(customerAccount == null){
-			throw new EntityDoesNotExistsException(CustomerAccount.class, cardTokenRequestDto.getCustomerAccountCode());
-		}
-
-		CardToken cardToken = new CardToken();
-		cardToken.setCustomerAccount(customerAccount);
-		cardToken.setAlias(cardTokenRequestDto.getAlias());
-		cardToken.setCardNumber(cardTokenRequestDto.getCardNumber());
-		cardToken.setOwner(cardTokenRequestDto.getOwner());
-		cardToken.setCardType(cardTokenRequestDto.getCardType());
-		cardToken.setIsDefault(cardTokenRequestDto.getIsDefault());
-		cardToken.setIssueNumber(cardTokenRequestDto.getIssueNumber());
-		cardToken.setYearExpiration(cardTokenRequestDto.getYearExpiration());
-		cardToken.setMonthExpiration(cardTokenRequestDto.getMonthExpiration());		
-		cardToken.setHiddenCardNumber(StringUtils.hideCardNumber(cardTokenRequestDto.getCardNumber()) );
-		cardTokenService.create(cardToken);
-		return cardToken.getTokenId();
-	}
-
+	
 	public DoPaymentResponseDto doPayment(DoPaymentRequestDto doPaymentRequestDto) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException, MeveoApiException{
 		if(doPaymentRequestDto == null){
 			throw new InvalidParameterException("DoPaymentRequestDto","doPaymentRequestDto");
