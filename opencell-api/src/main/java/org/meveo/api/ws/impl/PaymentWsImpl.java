@@ -8,15 +8,17 @@ import javax.jws.WebService;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.payment.CardTokenRequestDto;
+import org.meveo.api.dto.payment.CardTokenDto;
 import org.meveo.api.dto.payment.CardTokenResponseDto;
 import org.meveo.api.dto.payment.DDRequestLotOpDto;
 import org.meveo.api.dto.payment.DoPaymentRequestDto;
 import org.meveo.api.dto.payment.DoPaymentResponseDto;
+import org.meveo.api.dto.payment.ListCardTokenResponseDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
 import org.meveo.api.dto.response.payment.DDRequestLotOpsResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
+import org.meveo.api.payment.CardTokenApi;
 import org.meveo.api.payment.DDRequestLotOpApi;
 import org.meveo.api.payment.PaymentApi;
 import org.meveo.api.ws.PaymentWs;
@@ -31,6 +33,9 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
 
 	@Inject
 	private DDRequestLotOpApi ddrequestLotOpApi;
+	
+	@Inject
+	private CardTokenApi cardTokenApi;
 
 	@Override
 	public ActionStatus create(PaymentDto postData) {
@@ -86,20 +91,6 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
 
 
 	@Override
-	public CardTokenResponseDto createCardToken(CardTokenRequestDto cardTokenRequestDto) {
-		CardTokenResponseDto response = new CardTokenResponseDto();
-		response.setActionStatus(new ActionStatus(ActionStatusEnum.FAIL, ""));
-		try{
-			response.setTokenID(paymentApi.createCardToken(cardTokenRequestDto));
-			response.setActionStatus(new ActionStatus(ActionStatusEnum.SUCCESS, ""));
-		}catch(Exception e){
-			processException(e, response.getActionStatus());
-		}
-
-		return response;
-	}
-
-	@Override
 	public DoPaymentResponseDto doPayment(DoPaymentRequestDto doPaymentRequestDto) {
 		DoPaymentResponseDto response = new DoPaymentResponseDto();	
 		response.setActionStatus(new ActionStatus(ActionStatusEnum.FAIL, ""));
@@ -109,6 +100,73 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
 		}catch(Exception e){
 			processException(e, response.getActionStatus());
 		}		
+		return response;
+	}
+
+	@Override
+	public CardTokenResponseDto createCardToken(CardTokenDto cardTokenRequestDto) {
+		CardTokenResponseDto response = new CardTokenResponseDto();
+		response.setActionStatus(new ActionStatus(ActionStatusEnum.FAIL, ""));
+		try{
+			CardTokenDto cardTokenDto = new CardTokenDto();
+			cardTokenDto.setTokenId(cardTokenApi.create(cardTokenRequestDto));
+			response.setCardTokenDto(cardTokenDto);
+			response.setActionStatus(new ActionStatus(ActionStatusEnum.SUCCESS, ""));
+		}catch(Exception e){
+			processException(e, response.getActionStatus());
+		}
+
+		return response;
+	}
+	
+	@Override
+	public ActionStatus updateCardToken(CardTokenDto cardTokenRequestDto) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		try{
+			cardTokenApi.update(cardTokenRequestDto);			
+		}catch(Exception e){
+			processException(e, result);
+		}
+
+		return result;
+	}
+
+	@Override
+	public ActionStatus removeCardToken(Long id) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+		try{
+			cardTokenApi.remove(id);			
+		}catch(Exception e){
+			processException(e, result);
+		}
+
+		return result;
+	}
+
+	@Override
+	public ListCardTokenResponseDto listCardToken(Long customerAccountId,String customerAccountCode ) {
+		ListCardTokenResponseDto response = new ListCardTokenResponseDto();
+		response.setActionStatus(new ActionStatus(ActionStatusEnum.FAIL, ""));
+		try{
+			response.setListCardToken(cardTokenApi.list(customerAccountId,customerAccountCode));
+			response.setActionStatus(new ActionStatus(ActionStatusEnum.SUCCESS, ""));
+		}catch(Exception e){
+			processException(e, response.getActionStatus());
+		}
+
+		return response;
+	}
+
+	@Override
+	public CardTokenResponseDto findCardToken(Long id) {
+		CardTokenResponseDto response = new CardTokenResponseDto();
+		response.setActionStatus(new ActionStatus(ActionStatusEnum.FAIL, ""));
+		try{			
+			response.setCardTokenDto(cardTokenApi.find(id));
+			response.setActionStatus(new ActionStatus(ActionStatusEnum.SUCCESS, ""));
+		}catch(Exception e){
+			processException(e, response.getActionStatus());
+		}
 		return response;
 	}
 }

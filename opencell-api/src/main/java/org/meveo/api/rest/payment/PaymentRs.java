@@ -1,16 +1,19 @@
 package org.meveo.api.rest.payment;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.payment.CardTokenRequestDto;
+import org.meveo.api.dto.payment.CardTokenDto;
 import org.meveo.api.dto.payment.CardTokenResponseDto;
+import org.meveo.api.dto.payment.ListCardTokenResponseDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
 import org.meveo.api.rest.IBaseRs;
@@ -48,7 +51,23 @@ public interface PaymentRs extends IBaseRs {
      * @return
      */
     @POST
-    @Path("/createCardToken")
-    public CardTokenResponseDto createCardToken(CardTokenRequestDto postData);
+    @Path("/cardToken")
+    public CardTokenResponseDto createCardToken(CardTokenDto postData);
+    
+    @PUT
+    @Path("/cardToken")
+	public ActionStatus updateCardToken(CardTokenDto cardTokenRequestDto);
+	
+    @DELETE
+    @Path("/cardToken")
+	public ActionStatus removeCardToken(@QueryParam("id")Long id);
+	
+    @GET
+    @Path("/cardToken/list")
+	public ListCardTokenResponseDto listCardToken(@QueryParam("customerAccountId")Long customerAccountId,@QueryParam("customerAccountCode")String customerAccountCode);
+	
+    @GET
+    @Path("/cardToken")
+	public CardTokenResponseDto findCardToken(@QueryParam("id")Long id);
 
 }

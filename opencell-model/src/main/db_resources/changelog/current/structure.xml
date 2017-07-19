@@ -114,12 +114,12 @@
     
     <changeSet id="#2743 - add extra field on  ar_payment_token" author="anasseh">
 		<addColumn tableName="ar_payment_token">
-			<column name="user_id" type="255" />
-			<column name="info_1" type="255" />
-			<column name="info_2" type="255" />
-			<column name="info_3" type="255" />
-			<column name="info_4" type="255" />
-			<column name="info_5" type="255" />
+			<column name="user_id" type="varchar(256)" />
+			<column name="info_1" type="varchar(256)" />
+			<column name="info_2" type="varchar(256)" />
+			<column name="info_3" type="varchar(256)" />
+			<column name="info_4" type="varchar(256)" />
+			<column name="info_5" type="varchar(256)" />
 			
 		</addColumn>
 	</changeSet>

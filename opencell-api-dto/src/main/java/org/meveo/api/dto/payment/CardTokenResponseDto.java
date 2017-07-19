@@ -11,19 +11,16 @@ import org.meveo.api.dto.response.BaseResponse;
 public class CardTokenResponseDto extends BaseResponse{
 
 	private static final long serialVersionUID = 1L;
-	private String tokenID;
+	private CardTokenDto cardTokenDto;
 	public CardTokenResponseDto(){
 
 	}
-	public String getTokenID() {
-		return tokenID;
+	public CardTokenDto getCardTokenDto() {
+		return cardTokenDto;
 	}
-	public void setTokenID(String tokenID) {
-		this.tokenID = tokenID;
+	public void setCardTokenDto(CardTokenDto cardTokenDto) {
+		this.cardTokenDto = cardTokenDto;
 	}
-	@Override
-	public String toString() {
-		return "CardTokenResponseDto [tokenID=" + tokenID + "]";
-	}
+	
 
 }
