@@ -16,6 +16,7 @@ import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.account.AccessApi;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
@@ -765,8 +766,24 @@ public class SubscriptionApi extends BaseApi {
             }
         }
     }
-
+    
+    /**
+     * @param userAccountCode user account code
+     * @return instance of SubscriptionsListDto which contains list of Subscription DTO 
+     * @throws MeveoApiException
+     */
     public SubscriptionsDto listByUserAccount(String userAccountCode) throws MeveoApiException {
+    	return this.listByUserAccount(userAccountCode, false);
+    	
+    }
+
+    /**
+     * @param userAccountCode user account code
+     * @param mergedCF true/false (true if we want the merged CF in return)
+     * @return instance of SubscriptionsListDto which contains list of Subscription DTO 
+     * @throws MeveoApiException
+     */
+    public SubscriptionsDto listByUserAccount(String userAccountCode, boolean mergedCF) throws MeveoApiException {
         if (StringUtils.isBlank(userAccountCode)) {
             missingParameters.add("userAccountCode");
             handleMissingParameters();
@@ -781,7 +798,7 @@ public class SubscriptionApi extends BaseApi {
         List<Subscription> subscriptions = subscriptionService.listByUserAccount(userAccount);
         if (subscriptions != null) {
             for (Subscription s : subscriptions) {
-                result.getSubscription().add(subscriptionToDto(s));
+                result.getSubscription().add(subscriptionToDto(s, mergedCF));
             }
         }
 
@@ -789,23 +806,58 @@ public class SubscriptionApi extends BaseApi {
 
     }
 
+    /**
+     * @param pageSize page size
+     * @param pageNum page number
+     * @return instance of SubscriptionsListDto which contains list of Subscription DTO 
+     * @throws MeveoApiException
+     */
     public SubscriptionsListDto listAll(int pageSize, int pageNum) throws MeveoApiException {
 
+       return this.listAll(pageSize, pageNum, false);
+
+    }
+    
+    
+    /**
+     * @param pageSize size of page
+     * @param pageNum page number
+     * @param mergedCF
+     * @return instance of SubscriptionsListDto which contains list of Subscription DTO
+     * @throws MeveoApiException
+     */
+    public SubscriptionsListDto listAll(int pageSize, int pageNum, boolean mergedCF) throws MeveoApiException {
+    	
         SubscriptionsListDto result = new SubscriptionsListDto();
         Map<String, Object> filters = new HashMap<>();
         PaginationConfiguration paginationConfiguration = new PaginationConfiguration(pageNum, pageSize, filters, null, null, "code", null);
         List<Subscription> subscriptions = subscriptionService.list(paginationConfiguration);
         if (subscriptions != null) {
             for (Subscription subscription : subscriptions) {
-                result.getSubscription().add(subscriptionToDto(subscription));
+                result.getSubscription().add(subscriptionToDto(subscription, mergedCF));
             }
         }
 
         return result;
 
     }
-
+    
+    /**
+     * @param subscriptionCode code of subscription to find
+     * @return instance of SubscriptionsListDto which contains list of Subscription DTO 
+     * @throws MeveoApiException meveo api exception
+     */
     public SubscriptionDto findSubscription(String subscriptionCode) throws MeveoApiException {
+    	return this.findSubscription(subscriptionCode, false);
+    }
+
+    /**
+     * @param subscriptionCode code of subscription to find
+     * @param mergedCF true/false
+     * @return instance of SubscriptionsListDto which contains list of Subscription DTO 
+     * @throws MeveoApiException meveo api exception
+     */
+    public SubscriptionDto findSubscription(String subscriptionCode, boolean mergedCF) throws MeveoApiException {
         SubscriptionDto result = new SubscriptionDto();
 
         if (StringUtils.isBlank(subscriptionCode)) {
@@ -817,7 +869,7 @@ public class SubscriptionApi extends BaseApi {
             throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
         }
 
-        result = subscriptionToDto(subscription);
+        result = subscriptionToDto(subscription, mergedCF);
 
         return result;
     }
@@ -837,8 +889,21 @@ public class SubscriptionApi extends BaseApi {
             update(postData);
         }
     }
-
+    
+    /**
+     * @param subscription instance of Subscription to be mapped
+     * @return instance of SubscriptionDto.
+     */
     public SubscriptionDto subscriptionToDto(Subscription subscription) {
+    	return this.subscriptionToDto(subscription, false);
+    }
+
+    /**
+     * @param subscription instance of Subscription to be mapped
+     * @param mergedCF true/false
+     * @return instance of SubscriptionDto
+     */
+    public SubscriptionDto subscriptionToDto(Subscription subscription, boolean mergedCF) {
         SubscriptionDto dto = new SubscriptionDto();
         dto.setCode(subscription.getCode());
         dto.setDescription(subscription.getDescription());
@@ -862,12 +927,20 @@ public class SubscriptionApi extends BaseApi {
         dto.setEndAgreementDate(subscription.getEndAgreementDate());
 
         if (subscription.getAccessPoints() != null) {
-            for (Access ac : subscription.getAccessPoints()) {
-                dto.getAccesses().getAccess().add(new AccessDto(ac, entityToDtoConverter.getCustomFieldsWithInheritedDTO(ac, true)));
-            }
+        	for (Access ac : subscription.getAccessPoints()) {
+        		CustomFieldsDto customFieldsDTO = null;
+        		if (mergedCF) {
+        			customFieldsDTO = entityToDtoConverter.getMergedCustomFieldsWithInheritedDTO(ac,true);
+        		} else {
+        			customFieldsDTO = entityToDtoConverter.getCustomFieldsDTO(ac,true);
+        		}
+
+        		AccessDto accessDto = new AccessDto(ac, customFieldsDTO);
+        		dto.getAccesses().getAccess().add(accessDto);
+        	}
         }
 
-        dto.setCustomFields(entityToDtoConverter.getCustomFieldsWithInheritedDTO(subscription, true));
+        dto.setCustomFields(entityToDtoConverter.getMergedCustomFieldsWithInheritedDTO(subscription, true));
         dto.setSubscribedTillDate(subscription.getSubscribedTillDate());
         dto.setRenewed(subscription.isRenewed());
         dto.setRenewalNotifiedDate(subscription.getRenewalNotifiedDate());
@@ -876,14 +949,30 @@ public class SubscriptionApi extends BaseApi {
 
         if (subscription.getServiceInstances() != null) {
             for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
-                dto.getServices().getServiceInstance().add(new ServiceInstanceDto(serviceInstance, entityToDtoConverter.getCustomFieldsDTO(serviceInstance,true)));
+                ServiceInstanceDto serviceInstanceDto = null;
+                CustomFieldsDto customFieldsDTO = null;
+                if (mergedCF) {
+                	customFieldsDTO = entityToDtoConverter.getMergedCustomFieldsWithInheritedDTO(serviceInstance,true);
+                } else {
+                	customFieldsDTO = entityToDtoConverter.getCustomFieldsDTO(serviceInstance,true);
+                }
+                serviceInstanceDto = new ServiceInstanceDto(serviceInstance, customFieldsDTO);
+				dto.getServices().getServiceInstance().add(serviceInstanceDto);
             }
         }
         
 		if (subscription.getProductInstances() != null) {
 			for (ProductInstance productInstance : subscription.getProductInstances()) {
 				for (ProductChargeInstance pci : productInstance.getProductChargeInstances()) {
-                    dto.getProducts().getProducts().add(new ProductDto(pci, entityToDtoConverter.getCustomFieldsDTO(productInstance, true)));
+					CustomFieldsDto customFieldsDTO = null;
+					if (mergedCF) {
+						customFieldsDTO = entityToDtoConverter.getMergedCustomFieldsWithInheritedDTO(productInstance,true);
+					} else {
+						customFieldsDTO = entityToDtoConverter.getCustomFieldsDTO(productInstance,true);
+					}
+
+					ProductDto productDto = new ProductDto(pci, customFieldsDTO);
+					dto.getProducts().getProducts().add(productDto);
 				}
 			}
 		}
