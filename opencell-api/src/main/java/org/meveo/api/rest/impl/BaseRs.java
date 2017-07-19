@@ -180,22 +180,28 @@ public abstract class BaseRs implements IBaseRs {
     
     private void handleErrorStatus(ActionStatus status){
         String str = status.getErrorCode().toString();
-        if("ENTITY_DOES_NOT_EXISTS_EXCEPTION".equals(str)){
-            throw new NotFoundException(status);
-        }
-        else if("ENTITY_ALREADY_EXISTS_EXCEPTION".equals(str)
-                || "MISSING_PARAMETER".equals(str)
+        if("MISSING_PARAMETER".equals(str)
                 || "INVALID_PARAMETER".equals(str)
-                || "INVALID_ENUM_VALUE".equals(str)){
+                || "INVALID_ENUM_VALUE".equals(str)
+                || "INVALID_IMAGE_DATA".equals(str)){
             throw new BadRequestException(status);
         }
-        else if("ACTION_FORBIDDEN".equals(str)){
-            throw new NotAllowedException(status);
+        else if("UNAUTHORIZED".equals(str)){
+            throw new NotAuthorizedException(status);
         }
-        else if("INSUFFICIENT_BALANCE".equals(str)
-                || "DUPLICATE_ACCESS".equals(str)){
-            throw new NotAcceptableException(status);
-        }else{
+        else if("ENTITY_ALREADY_EXISTS_EXCEPTION".equals(str)
+            || "DELETE_REFERENCED_ENTITY_EXCEPTION".equals(str)
+            || "DUPLICATE_ACCESS".equals(str)
+            || "INSUFFICIENT_BALANCE".equals(str))
+            || "ACTION_FORBIDDEN".equals(str)
+            || "INSUFFICIENT_BALANCE".equals(str)
+            || "DUPLICATE_ACCESS".equals(str){
+            throw new ForbiddenException(status);
+        }
+        else if("ENTITY_DOES_NOT_EXISTS_EXCEPTION".equals(str)){
+            throw new NotFoundException(status);
+        }
+        else{
             throw new InternalServerErrorException(status);    
         }
     }
