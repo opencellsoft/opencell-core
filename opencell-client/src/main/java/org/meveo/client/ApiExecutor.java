@@ -15,20 +15,35 @@ import org.apache.http.entity.ByteArrayEntity;
 
 public class ApiExecutor {
 
-	// TODO Use org.apache.http.entity.mime.MultipartEntity;
+    /**
+     * 
+     * @param api
+     * @param url
+     * @param userName
+     * @param password
+     * @param method
+     * @param cotentType
+     * @param headers
+     * @param params
+     * @param body
+     * @param authMode
+     * @param proxyInfos
+     * @param tlsVersion TLSv1.1 or TLSv1.2 ...
+     * @return
+     */
 	public HttpResponse executeApi(String api, String url, String userName, String password, HttpMethodsEnum method, CommonContentTypeEnum cotentType, Map<String, String> headers, 
-			Map<String, String> params, String body, AuthentificationModeEnum authMode ,ProxyInfos proxyInfos) {
+			Map<String, String> params, String body, AuthentificationModeEnum authMode ,ProxyInfos proxyInfos,String tlsVersion) {
 		try {
 			
 			URI uri = new URI(url  + (api==null?"":api));			
 			uri = addParamsToUri( uri, params);
 
 			if (HttpMethodsEnum.POST == method) {
-				return executePost(uri, userName, password, cotentType, headers, body,params, authMode,proxyInfos);
+				return executePost(uri, userName, password, cotentType, headers, body,params, authMode,proxyInfos,tlsVersion);
 			}
 
 			if (HttpMethodsEnum.GET == method) {
-				return executeGet(uri, userName, password, cotentType, headers, params, authMode,proxyInfos);
+				return executeGet(uri, userName, password, cotentType, headers, params, authMode,proxyInfos,tlsVersion);
 			}
 
 		} catch (Exception e) {
@@ -38,7 +53,7 @@ public class ApiExecutor {
 	}
 
 	private HttpResponse executePost(URI uri, String userName, String password, CommonContentTypeEnum cotentType, Map<String, String> headers, String body,Map<String, String> params,
-			AuthentificationModeEnum authMode ,ProxyInfos proxyInfos) {
+			AuthentificationModeEnum authMode ,ProxyInfos proxyInfos,String tlsVersion) {
 		try {
 			
 			System.out.println("uri.toASCIIString:"+uri.toASCIIString());
@@ -58,7 +73,7 @@ public class ApiExecutor {
 				HttpEntity entity = new ByteArrayEntity(body.getBytes("UTF-8"));
 				theRequest.setEntity(entity);
 			}
-			HttpResponse response = MeveoConnectionFactory.getClient(proxyInfos).execute(theRequest);			
+			HttpResponse response = MeveoConnectionFactory.getClient(proxyInfos,tlsVersion).execute(theRequest);			
 			if(response != null){
 				System.out.println("executePost code :" + response.getStatusLine().getStatusCode());
 			}
@@ -72,7 +87,7 @@ public class ApiExecutor {
 	}
 
 	private HttpResponse executeGet(URI uri, String userName, String password, CommonContentTypeEnum cotentType, Map<String, String> headers, Map<String, String> params, 
-			AuthentificationModeEnum authMode,ProxyInfos proxyInfos) {
+			AuthentificationModeEnum authMode,ProxyInfos proxyInfos,String tlsVersion) {
 		try {			
 			System.out.println("uri.toASCIIString:"+uri.toASCIIString());
 			HttpGet theRequest = new HttpGet(uri);
@@ -88,7 +103,7 @@ public class ApiExecutor {
 				}
 			}
 
-			HttpResponse response = MeveoConnectionFactory.getClient(proxyInfos).execute(theRequest);
+			HttpResponse response = MeveoConnectionFactory.getClient(proxyInfos,tlsVersion).execute(theRequest);
 			if(response != null){
 				System.out.println("executeGet code :" + response.getStatusLine().getStatusCode());
 			}
