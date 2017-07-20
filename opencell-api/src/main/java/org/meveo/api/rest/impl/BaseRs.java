@@ -41,6 +41,7 @@ import org.meveo.api.rest.exception.BadRequestException;
 import org.meveo.api.rest.exception.NotAcceptableException;
 import org.meveo.api.rest.exception.NotAllowedException;
 import org.meveo.api.rest.exception.InternalServerErrorException;
+import org.meveo.api.rest.exception.ForbiddenException;
 
 
 
@@ -192,10 +193,10 @@ public abstract class BaseRs implements IBaseRs {
         else if("ENTITY_ALREADY_EXISTS_EXCEPTION".equals(str)
             || "DELETE_REFERENCED_ENTITY_EXCEPTION".equals(str)
             || "DUPLICATE_ACCESS".equals(str)
-            || "INSUFFICIENT_BALANCE".equals(str))
+            || "INSUFFICIENT_BALANCE".equals(str)
             || "ACTION_FORBIDDEN".equals(str)
             || "INSUFFICIENT_BALANCE".equals(str)
-            || "DUPLICATE_ACCESS".equals(str){
+            || "DUPLICATE_ACCESS".equals(str)){
             throw new ForbiddenException(status);
         }
         else if("ENTITY_DOES_NOT_EXISTS_EXCEPTION".equals(str)){

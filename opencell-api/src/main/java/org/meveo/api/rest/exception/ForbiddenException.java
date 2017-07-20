@@ -6,7 +6,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 public class ForbiddenException extends WebApplicationException {
-     public NotAuthorizedException(ActionStatus status) {
+     public ForbiddenException(ActionStatus status) {
          super(Response.status(Response.Status.FORBIDDEN)
              .entity(status).type(MediaType.APPLICATION_JSON_TYPE).build());
      }
