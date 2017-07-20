@@ -24,6 +24,7 @@ import org.meveo.api.dto.payment.TipPaymentMethodDto;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.payments.DunningLevelEnum;
+import org.meveo.model.payments.PaymentMethodEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -79,6 +80,18 @@ public class CRMAccountHierarchyDto extends BaseDto {
     @XmlElements({ @XmlElement(name = "card", type = CardPaymentMethodDto.class), @XmlElement(name = "directDebit", type = DDPaymentMethodDto.class),
             @XmlElement(name = "tip", type = TipPaymentMethodDto.class), @XmlElement(name = "other", type = OtherPaymentMethodDto.class) })
     private List<PaymentMethodDto> paymentMethods;
+
+    /**
+     * Field was deprecated in 4.6 version. Use 'paymentMethods' field instead
+     */
+    @Deprecated
+    private PaymentMethodEnum paymentMethod;
+
+    /**
+     * Field was deprecated in 4.6 version. Use 'paymentMethods' field instead
+     */
+    @Deprecated
+    private BankCoordinatesDto bankCoordinates;
 
     // billing account
     private String billingCycle;
@@ -439,5 +452,13 @@ public class CRMAccountHierarchyDto extends BaseDto {
 
     public void setPaymentMethods(List<PaymentMethodDto> paymentMethods) {
         this.paymentMethods = paymentMethods;
+    }
+    
+    public PaymentMethodEnum getPaymentMethod() {
+        return paymentMethod;
+    }
+    
+    public BankCoordinatesDto getBankCoordinates() {
+        return bankCoordinates;
     }
 }

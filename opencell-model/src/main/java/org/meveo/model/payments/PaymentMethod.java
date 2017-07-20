@@ -26,7 +26,10 @@ import org.meveo.model.BaseEntity;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ar_payment_token_seq"), })
 @NamedQueries({
-        @NamedQuery(name = "PaymentMethod.updatePrefreredPaymentMethod", query = "UPDATE PaymentMethod pm set pm.preferred = false where pm.id <> :id and pm.customerAccount = :ca") })
+        @NamedQuery(name = "PaymentMethod.updatePreferredPaymentMethod", query = "UPDATE PaymentMethod pm set pm.preferred = false where pm.id <> :id and pm.customerAccount = :ca"),
+        @NamedQuery(name = "PaymentMethod.updateFirstPaymentMethodToPreferred1", query = "UPDATE PaymentMethod pm set pm.preferred = true where pm.id in (select min(pmg.id) from PaymentMethod pmg where pmg.customerAccount.id = :caId)"),
+        @NamedQuery(name = "PaymentMethod.updateFirstPaymentMethodToPreferred2", query = "UPDATE PaymentMethod pm set pm.preferred = false where pm.id not in (select min(pmg.id) from PaymentMethod pmg where pmg.customerAccount.id = :caId)) and pm.customerAccount.id = :caId"),
+        @NamedQuery(name = "PaymentMethod.getNumberOfPaymentMethods", query = "select count(*) from  PaymentMethod pm where pm.customerAccount.id = :caId") })
 public abstract class PaymentMethod extends BaseEntity {
 
     private static final long serialVersionUID = 8726571628074346184L;

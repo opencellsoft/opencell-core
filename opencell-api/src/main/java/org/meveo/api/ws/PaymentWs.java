@@ -55,7 +55,7 @@ public interface PaymentWs extends IBaseWs {
      * @return Card payment DTO with Token id from payment gateway
      */
     @WebMethod
-    public CardPaymentMethodTokenDto addCardPaymentMethod(@WebParam(name = "CardPaymentMethod") CardPaymentMethodDto cardPaymentMethod);
+    public CardPaymentMethodTokenDto addCardPaymentMethod(@WebParam(name = "cardPaymentMethod") CardPaymentMethodDto cardPaymentMethod);
 
     /**
      * Update existing card payment method.
@@ -63,7 +63,7 @@ public interface PaymentWs extends IBaseWs {
      * @param cardPaymentMethod Card payment method DTO
      * @return Action status
      */
-    public ActionStatus updateCardPaymentMethod(@WebParam(name = "CardPaymentMethod") CardPaymentMethodDto cardPaymentMethod);
+    public ActionStatus updateCardPaymentMethod(@WebParam(name = "cardPaymentMethod") CardPaymentMethodDto cardPaymentMethod);
 
     /**
      * Remove card payment method. If it was marked as preferred, some other payment method will be marked as preferred

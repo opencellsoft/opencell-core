@@ -41,7 +41,10 @@ import org.meveo.api.dto.account.ParentEntitiesDto;
 import org.meveo.api.dto.account.ParentEntityDto;
 import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
+import org.meveo.api.dto.payment.DDPaymentMethodDto;
+import org.meveo.api.dto.payment.OtherPaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
+import org.meveo.api.dto.payment.TipPaymentMethodDto;
 import org.meveo.api.dto.response.account.GetAccountHierarchyResponseDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -71,6 +74,7 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.TipPaymentMethod;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.Name;
@@ -308,7 +312,17 @@ public class AccountHierarchyApi extends BaseApi {
         customerAccountDto.setCurrency(postData.getCurrencyCode());
         customerAccountDto.setLanguage(postData.getLanguageCode());
         customerAccountDto.setDateDunningLevel(new Date());
-        customerAccountDto.setPaymentMethods(postData.getPaymentMethods());
+
+        if (postData.getPaymentMethods() != null && !postData.getPaymentMethods().isEmpty()) {
+            customerAccountDto.setPaymentMethods(postData.getPaymentMethods());
+
+            // Start compatibility with pre-4.6 versions
+        } else if (postData.getPaymentMethod() != null && (postData.getPaymentMethod().intValue() == 1 || postData.getPaymentMethod().intValue() == 4)) {
+            customerAccountDto.setPaymentMethods(new ArrayList<>());
+            customerAccountDto.getPaymentMethods()
+                .add(new OtherPaymentMethodDto(postData.getPaymentMethod().intValue() == 1 ? PaymentMethodEnum.CHECK : PaymentMethodEnum.WIRETRANSFER));
+        }
+        // End compatibility with pre-4.6 versions
 
         customerAccountApi.create(customerAccountDto);
 
@@ -480,7 +494,17 @@ public class AccountHierarchyApi extends BaseApi {
         }
         customerAccountDto.setCurrency(postData.getCurrencyCode());
         customerAccountDto.setLanguage(postData.getLanguageCode());
-        customerAccountDto.setPaymentMethods(postData.getPaymentMethods());
+
+        if (postData.getPaymentMethods() != null && !postData.getPaymentMethods().isEmpty()) {
+            customerAccountDto.setPaymentMethods(postData.getPaymentMethods());
+
+            // Start compatibility with pre-4.6 versions
+        } else if (postData.getPaymentMethod() != null && (postData.getPaymentMethod().intValue() == 1 || postData.getPaymentMethod().intValue() == 4)) {
+            customerAccountDto.setPaymentMethods(new ArrayList<>());
+            customerAccountDto.getPaymentMethods()
+                .add(new OtherPaymentMethodDto(postData.getPaymentMethod().intValue() == 1 ? PaymentMethodEnum.CHECK : PaymentMethodEnum.WIRETRANSFER));
+        }
+        // End compatibility with pre-4.6 versions
 
         customerAccountApi.createOrUpdate(customerAccountDto);
 
@@ -1001,7 +1025,26 @@ public class AccountHierarchyApi extends BaseApi {
             customerAccountDto.setContactInformation(contactInformation);
             customerAccountDto.setExternalRef1(postData.getExternalRef1());
             customerAccountDto.setExternalRef2(postData.getExternalRef2());
-            customerAccountDto.setPaymentMethods(postData.getPaymentMethods());
+
+            if (postData.getPaymentMethods() != null && !postData.getPaymentMethods().isEmpty()) {
+                customerAccountDto.setPaymentMethods(postData.getPaymentMethods());
+
+                // Start compatibility with pre-4.6 versions
+            } else if (postData.getPaymentMethod() != null
+                    && (postData.getPaymentMethod() == PaymentMethodEnum.CHECK || postData.getPaymentMethod() == PaymentMethodEnum.WIRETRANSFER)) {
+                customerAccountDto.setPaymentMethods(new ArrayList<>());
+                customerAccountDto.getPaymentMethods().add(new OtherPaymentMethodDto(postData.getPaymentMethod()));
+
+            } else if (postData.getPaymentMethod() != null && postData.getPaymentMethod() == PaymentMethodEnum.DIRECTDEBIT && postData.getBankCoordinates() != null
+                    && !StringUtils.isBlank(postData.getBankCoordinates().getIban())) {
+                customerAccountDto.setPaymentMethods(new ArrayList<>());
+                customerAccountDto.getPaymentMethods().add(new DDPaymentMethodDto(postData.getBankCoordinates()));
+            } else if (postData.getPaymentMethod() != null && postData.getPaymentMethod() == PaymentMethodEnum.TIP && postData.getBankCoordinates() != null
+                    && !StringUtils.isBlank(postData.getBankCoordinates().getIban())) {
+                customerAccountDto.setPaymentMethods(new ArrayList<>());
+                customerAccountDto.getPaymentMethods().add(new TipPaymentMethodDto(postData.getBankCoordinates()));
+            }
+            // End compatibility with pre-4.6 versions
 
             CustomFieldsDto cfsDto = new CustomFieldsDto();
             if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
@@ -1018,7 +1061,9 @@ public class AccountHierarchyApi extends BaseApi {
             accountEntity = customerAccountApi.create(customerAccountDto, true, businessAccountModel);
         }
 
-        if (accountHierarchyTypeEnum.getHighLevel() >= 1 && accountHierarchyTypeEnum.getLowLevel() <= 1) {
+        if (accountHierarchyTypeEnum.getHighLevel() >= 1 && accountHierarchyTypeEnum.getLowLevel() <= 1)
+
+        {
             // create billing account
             log.debug("create ba");
 
@@ -1254,7 +1299,26 @@ public class AccountHierarchyApi extends BaseApi {
             customerAccountDto.setContactInformation(contactInformation);
             customerAccountDto.setExternalRef1(postData.getExternalRef1());
             customerAccountDto.setExternalRef2(postData.getExternalRef2());
-            customerAccountDto.setPaymentMethods(postData.getPaymentMethods());
+
+            if (postData.getPaymentMethods() != null && !postData.getPaymentMethods().isEmpty()) {
+                customerAccountDto.setPaymentMethods(postData.getPaymentMethods());
+
+                // Start compatibility with pre-4.6 versions
+            } else if (postData.getPaymentMethod() != null
+                    && (postData.getPaymentMethod() == PaymentMethodEnum.CHECK || postData.getPaymentMethod() == PaymentMethodEnum.WIRETRANSFER)) {
+                customerAccountDto.setPaymentMethods(new ArrayList<>());
+                customerAccountDto.getPaymentMethods().add(new OtherPaymentMethodDto(postData.getPaymentMethod()));
+
+            } else if (postData.getPaymentMethod() != null && postData.getPaymentMethod() == PaymentMethodEnum.DIRECTDEBIT && postData.getBankCoordinates() != null
+                    && !StringUtils.isBlank(postData.getBankCoordinates().getIban())) {
+                customerAccountDto.setPaymentMethods(new ArrayList<>());
+                customerAccountDto.getPaymentMethods().add(new DDPaymentMethodDto(postData.getBankCoordinates()));
+            } else if (postData.getPaymentMethod() != null && postData.getPaymentMethod() == PaymentMethodEnum.TIP && postData.getBankCoordinates() != null
+                    && !StringUtils.isBlank(postData.getBankCoordinates().getIban())) {
+                customerAccountDto.setPaymentMethods(new ArrayList<>());
+                customerAccountDto.getPaymentMethods().add(new TipPaymentMethodDto(postData.getBankCoordinates()));
+            }
+            // End compatibility with pre-4.6 versions
 
             CustomFieldsDto cfsDto = new CustomFieldsDto();
             if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {

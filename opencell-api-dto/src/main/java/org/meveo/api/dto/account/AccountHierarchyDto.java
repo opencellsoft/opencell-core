@@ -165,6 +165,12 @@ public class AccountHierarchyDto implements Serializable {
             @XmlElement(name = "tip", type = TipPaymentMethodDto.class), @XmlElement(name = "other", type = OtherPaymentMethodDto.class) })
     private List<PaymentMethodDto> paymentMethods;
 
+    /**
+     * Field was deprecated in 4.6 version. Use 'paymentMethods' field instead
+     */
+    @Deprecated
+    private Integer paymentMethod;
+
     public AccountHierarchyDto() {
 
     }
@@ -450,5 +456,13 @@ public class AccountHierarchyDto implements Serializable {
 
     public void setPaymentMethods(List<PaymentMethodDto> paymentMethods) {
         this.paymentMethods = paymentMethods;
+    }
+
+    public Integer getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(Integer paymentMethod) {
+        this.paymentMethod = paymentMethod;
     }
 }

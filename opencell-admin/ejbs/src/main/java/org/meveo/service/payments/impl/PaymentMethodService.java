@@ -22,6 +22,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
@@ -73,6 +74,25 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         }
 
         return paymentMethod;
+    }
+
+    @Override
+    public void remove(PaymentMethod paymentMethod) throws BusinessException {
+
+        boolean wasPreferred = paymentMethod.isPreferred();
+        Long caId = paymentMethod.getCustomerAccount().getId();
+
+        long paymentMethodCount = (long) getEntityManager().createNamedQuery("PaymentMethod.getNumberOfPaymentMethods").setParameter("caId", caId).getSingleResult();
+        if (paymentMethodCount <= 1) {
+            throw new ValidationException("At least one payment method on a customer account is required");
+        }
+
+        super.remove(paymentMethod);
+
+        if (wasPreferred) {
+            getEntityManager().createNamedQuery("PaymentMethod.updateFirstPaymentMethodToPreferred1").setParameter("caId", caId).executeUpdate();
+            getEntityManager().createNamedQuery("PaymentMethod.updateFirstPaymentMethodToPreferred2").setParameter("caId", caId).executeUpdate();
+        }
     }
 
     /**
