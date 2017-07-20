@@ -93,6 +93,11 @@ public class CRMAccountHierarchyDto extends BaseDto {
     @Deprecated
     private BankCoordinatesDto bankCoordinates;
 
+    /**
+     * Field was deprecated in 4.6 version. Use custom fields instead
+     */
+    private String paymentTerms;
+
     // billing account
     private String billingCycle;
     private String country;
@@ -453,12 +458,20 @@ public class CRMAccountHierarchyDto extends BaseDto {
     public void setPaymentMethods(List<PaymentMethodDto> paymentMethods) {
         this.paymentMethods = paymentMethods;
     }
-    
+
     public PaymentMethodEnum getPaymentMethod() {
         return paymentMethod;
     }
-    
+
     public BankCoordinatesDto getBankCoordinates() {
         return bankCoordinates;
+    }
+
+    public String getPaymentTerms() {
+        return paymentTerms;
+    }
+
+    public void setPaymentTerms(String paymentTerms) {
+        this.paymentTerms = paymentTerms;
     }
 }
