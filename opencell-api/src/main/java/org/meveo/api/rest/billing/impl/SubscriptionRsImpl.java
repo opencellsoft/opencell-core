@@ -166,7 +166,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         GetSubscriptionResponseDto result = new GetSubscriptionResponseDto();
 
         try {
-            result.setSubscription(subscriptionApi.findSubscription(subscriptionCode));
+            result.setSubscription(subscriptionApi.findSubscription(subscriptionCode, mergedCF));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
