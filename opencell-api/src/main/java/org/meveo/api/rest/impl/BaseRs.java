@@ -187,7 +187,8 @@ public abstract class BaseRs implements IBaseRs {
                 || "INVALID_IMAGE_DATA".equals(str)){
             throw new BadRequestException(status);
         }
-        else if("UNAUTHORIZED".equals(str)){
+        else if("UNAUTHORIZED".equals(str)
+            || "AUTHENTICATION_AUTHORIZATION_EXCEPTION".equals(str)) {
             throw new NotAuthorizedException(status);
         }
         else if("ENTITY_ALREADY_EXISTS_EXCEPTION".equals(str)
