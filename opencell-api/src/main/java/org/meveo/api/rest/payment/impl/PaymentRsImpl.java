@@ -7,13 +7,13 @@ import javax.ws.rs.QueryParam;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.payment.CardTokenDto;
-import org.meveo.api.dto.payment.CardTokenResponseDto;
-import org.meveo.api.dto.payment.ListCardTokenResponseDto;
+import org.meveo.api.dto.payment.CardPaymentMethodDto;
+import org.meveo.api.dto.payment.CardPaymentMethodTokenDto;
+import org.meveo.api.dto.payment.CardPaymentMethodTokensDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
 import org.meveo.api.logging.WsRestApiInterceptor;
-import org.meveo.api.payment.CardTokenApi;
+import org.meveo.api.payment.CardPaymentMethodApi;
 import org.meveo.api.payment.PaymentApi;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.payment.PaymentRs;
@@ -28,9 +28,9 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
 
     @Inject
     private PaymentApi paymentApi;
-    
-	@Inject
-	private CardTokenApi cardTokenApi;
+
+    @Inject
+    private CardPaymentMethodApi cardPaymentMethodApi;
 
     @Override
     public ActionStatus create(PaymentDto postData) {
@@ -58,71 +58,71 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
         return result;
     }
 
-	@Override
-	public CardTokenResponseDto createCardToken(CardTokenDto cardTokenRequestDto) {
-		CardTokenResponseDto response = new CardTokenResponseDto();
-		response.setActionStatus(new ActionStatus(ActionStatusEnum.SUCCESS, ""));
-		try{
-			CardTokenDto cardTokenDto = new CardTokenDto();
-			cardTokenDto.setTokenId(cardTokenApi.create(cardTokenRequestDto));
-			response.setCardTokenDto(cardTokenDto);
-			response.setActionStatus(new ActionStatus(ActionStatusEnum.SUCCESS, ""));
-		}catch(Exception e){
-			processException(e, response.getActionStatus());
-		}
-		
-		return response;
-	}
+    @Override
+    public CardPaymentMethodTokenDto addCardPaymentMethod(CardPaymentMethodDto cardPaymentMethodDto) {
+        CardPaymentMethodTokenDto response = new CardPaymentMethodTokenDto();
+        try {
+            String tokenId = cardPaymentMethodApi.create(cardPaymentMethodDto);
+            response.setCardPaymentMethod(cardPaymentMethodApi.find(null, tokenId));
 
-	@Override
-	public ActionStatus updateCardToken(CardTokenDto cardTokenRequestDto) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-		try{
-			cardTokenApi.update(cardTokenRequestDto);			
-		}catch(Exception e){
-			processException(e, result);
-		}
+        } catch (Exception e) {
+            processException(e, response.getActionStatus());
+        }
 
-		return result;
-	}
+        return response;
+    }
 
-	@Override
-	public ActionStatus removeCardToken(Long id) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-		try{
-			cardTokenApi.remove(id);			
-		}catch(Exception e){
-			processException(e, result);
-		}
+    @Override
+    public ActionStatus updateCardPaymentMethod(CardPaymentMethodDto cardPaymentMethod) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-		return result;
-	}
+        try {
+            cardPaymentMethodApi.update(cardPaymentMethod);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-	@Override
-	public ListCardTokenResponseDto listCardToken(Long customerAccountId,String customerAccountCode) {
-		ListCardTokenResponseDto response = new ListCardTokenResponseDto();
-		response.setActionStatus(new ActionStatus(ActionStatusEnum.FAIL, ""));
-		try{
-			response.setListCardToken(cardTokenApi.list(customerAccountId,customerAccountCode));
-			response.setActionStatus(new ActionStatus(ActionStatusEnum.SUCCESS, ""));
-		}catch(Exception e){
-			processException(e, response.getActionStatus());
-		}
+        return result;
+    }
 
-		return response;
-	}
+    @Override
+    public ActionStatus removeCardPaymentMethod(Long id) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-	@Override
-	public CardTokenResponseDto findCardToken(Long id) {
-		CardTokenResponseDto response = new CardTokenResponseDto();
-		response.setActionStatus(new ActionStatus(ActionStatusEnum.FAIL, ""));
-		try{			
-			response.setCardTokenDto(cardTokenApi.find(id));
-			response.setActionStatus(new ActionStatus(ActionStatusEnum.SUCCESS, ""));
-		}catch(Exception e){
-			processException(e, response.getActionStatus());
-		}
-		return response;
-	}
+        try {
+            cardPaymentMethodApi.remove(id, null);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
+        return result;
+    }
+
+    @Override
+    public CardPaymentMethodTokensDto listCardPaymentMethods(Long customerAccountId, String customerAccountCode) {
+
+        CardPaymentMethodTokensDto response = new CardPaymentMethodTokensDto();
+
+        try {
+            response.setCardPaymentMethods(cardPaymentMethodApi.list(customerAccountId, customerAccountCode));
+        } catch (Exception e) {
+            processException(e, response.getActionStatus());
+        }
+
+        return response;
+    }
+
+    @Override
+    public CardPaymentMethodTokenDto findCardPaymentMethod(Long id) {
+
+        CardPaymentMethodTokenDto response = new CardPaymentMethodTokenDto();
+
+        try {
+            response.setCardPaymentMethod(cardPaymentMethodApi.find(id, null));
+        } catch (Exception e) {
+            processException(e, response.getActionStatus());
+        }
+
+        return response;
+    }
 }

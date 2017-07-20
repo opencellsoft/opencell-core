@@ -39,6 +39,7 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.action.admin.custom.CustomFieldDataEntryBean;
 import org.meveo.admin.action.order.OfferItemInfo;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.api.billing.QuoteApi;
 import org.meveo.api.order.OrderProductCharacteristicEnum;
@@ -374,6 +375,10 @@ public class QuoteBean extends CustomFieldBean<Quote> {
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
+        if (entity.getQuoteItems() == null || entity.getQuoteItems().isEmpty()) {
+            throw new ValidationException("At least one quote item is required", "quote.itemsRequired");
+        }
+        
         // Default quote item user account field to quote user account field value if applicable.
         // Validate that user accounts belong to the same billing account as quote level account (if quote level account is specified)
         BillingAccount billingAccount = null;

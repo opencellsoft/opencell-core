@@ -39,7 +39,6 @@ import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.billing.UpdateServicesRequestDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
-import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
@@ -297,7 +296,7 @@ public class SubscriptionApi extends BaseApi {
 
     }
 
-    public void activateServices(ActivateServicesRequestDto postData, String orderNumber, boolean ignoreAlreadyActivatedError) throws MeveoApiException {
+    public void activateServices(ActivateServicesRequestDto postData, String orderNumber, boolean ignoreAlreadyActivatedError) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getSubscription())) {
             missingParameters.add("subscription");
@@ -424,7 +423,7 @@ public class SubscriptionApi extends BaseApi {
                     }
                 } catch (BusinessException e) {
                     log.error("Failed to instantiate a service {} on subscription {}", serviceToActivateDto.getCode(), subscription.getCode(), e);
-                    throw new BusinessApiException(e.getMessage());
+                    throw e;
                 }
             }
             
@@ -484,7 +483,7 @@ public class SubscriptionApi extends BaseApi {
 
     }
 
-    public void instantiateServices(InstantiateServicesRequestDto postData) throws MeveoApiException {
+    public void instantiateServices(InstantiateServicesRequestDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getSubscription())) {
             missingParameters.add("subscription");
@@ -572,7 +571,7 @@ public class SubscriptionApi extends BaseApi {
 
                 } catch (BusinessException e) {
                     log.error("Failed to instantiate a service {} on subscription {}", serviceToInstantiateDto.getCode(), subscription.getCode(), e);
-                    throw new BusinessApiException(e.getMessage());
+                    throw e;
                 }
                 
             }

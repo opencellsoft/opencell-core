@@ -14,7 +14,6 @@ import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.model.payments.PaymentTermEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -24,210 +23,219 @@ import org.meveo.model.payments.PaymentTermEnum;
 @FilterResults(property = "userAccounts.userAccount", entityClass = UserAccount.class)
 public class BillingAccountDto extends AccountDto {
 
-	private static final long serialVersionUID = 8701417481481359155L;
+    private static final long serialVersionUID = 8701417481481359155L;
 
-	@XmlElement(required = true)
-	private String customerAccount;
+    @XmlElement(required = true)
+    private String customerAccount;
 
-	@XmlElement(required = true)
-	private String billingCycle;
+    @XmlElement(required = true)
+    private String billingCycle;
 
-	@XmlElement(required = true)
-	private String country;
+    @XmlElement(required = true)
+    private String country;
 
-	@XmlElement(required = true)
-	private String language;
+    @XmlElement(required = true)
+    private String language;
 
-	@XmlElement(required = true)
-	private PaymentMethodEnum paymentMethod;
+    private Date nextInvoiceDate;
+    private Date subscriptionDate;
+    private Date terminationDate;
+    private Boolean electronicBilling;
+    private AccountStatusEnum status;
+    private Date statusDate;
+    private String terminationReason;
+    private String email;
+    private List<InvoiceDto> invoices = new ArrayList<InvoiceDto>();
+    private BigDecimal invoicingThreshold;
+    private String discountPlan;
 
-	private Date nextInvoiceDate;
-	private Date subscriptionDate;
-	private Date terminationDate;
-	private PaymentTermEnum paymentTerms;
-	private Boolean electronicBilling;
-	private AccountStatusEnum status;
-	private Date statusDate;
-	private String terminationReason;
-	private String email;
-	private BankCoordinatesDto bankCoordinates = new BankCoordinatesDto();
-	private List<InvoiceDto> invoices = new ArrayList<InvoiceDto>();
-	private BigDecimal invoicingThreshold;
-	private String discountPlan;
-	
-	/**
-	 * Use for GET / LIST only.
-	 */
-	private UserAccountsDto userAccounts = new UserAccountsDto();
+    /**
+     * Field was deprecated in 4.6 version. Use 'paymentMethods' field on CustomerAccount entity instead.
+     */
+    @Deprecated
+    private PaymentMethodEnum paymentMethod;
 
-	public BillingAccountDto() {
+    /**
+     * Field was deprecated in 4.6 version. Use 'paymentMethods' field on CustomerAccount entity instead.
+     */
+    @Deprecated
+    private BankCoordinatesDto bankCoordinates;
 
-	}
+    /**
+     * Field was deprecated in 4.6 version. Use custom fields instead.
+     */
+    @Deprecated
+    private String paymentTerms;
 
-	public String getCustomerAccount() {
-		return customerAccount;
-	}
+    /**
+     * Use for GET / LIST only.
+     */
+    private UserAccountsDto userAccounts = new UserAccountsDto();
 
-	public void setCustomerAccount(String customerAccount) {
-		this.customerAccount = customerAccount;
-	}
+    public BillingAccountDto() {
 
-	public String getBillingCycle() {
-		return billingCycle;
-	}
+    }
 
-	public void setBillingCycle(String billingCycle) {
-		this.billingCycle = billingCycle;
-	}
+    public String getCustomerAccount() {
+        return customerAccount;
+    }
 
-	public String getCountry() {
-		return country;
-	}
+    public void setCustomerAccount(String customerAccount) {
+        this.customerAccount = customerAccount;
+    }
 
-	public void setCountry(String country) {
-		this.country = country;
-	}
+    public String getBillingCycle() {
+        return billingCycle;
+    }
 
-	public String getLanguage() {
-		return language;
-	}
+    public void setBillingCycle(String billingCycle) {
+        this.billingCycle = billingCycle;
+    }
 
-	public void setLanguage(String language) {
-		this.language = language;
-	}
+    public String getCountry() {
+        return country;
+    }
 
-	public Date getNextInvoiceDate() {
-		return nextInvoiceDate;
-	}
+    public void setCountry(String country) {
+        this.country = country;
+    }
 
-	public void setNextInvoiceDate(Date nextInvoiceDate) {
-		this.nextInvoiceDate = nextInvoiceDate;
-	}
+    public String getLanguage() {
+        return language;
+    }
 
-	public PaymentMethodEnum getPaymentMethod() {
-		return paymentMethod;
-	}
+    public void setLanguage(String language) {
+        this.language = language;
+    }
 
-	public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
-		this.paymentMethod = paymentMethod;
-	}
+    public Date getNextInvoiceDate() {
+        return nextInvoiceDate;
+    }
 
-	public PaymentTermEnum getPaymentTerms() {
-		return paymentTerms;
-	}
+    public void setNextInvoiceDate(Date nextInvoiceDate) {
+        this.nextInvoiceDate = nextInvoiceDate;
+    }
 
-	public void setPaymentTerms(PaymentTermEnum paymentTerms) {
-		this.paymentTerms = paymentTerms;
-	}
+    public Boolean getElectronicBilling() {
+        return electronicBilling;
+    }
 
-	public Boolean getElectronicBilling() {
-		return electronicBilling;
-	}
+    public void setElectronicBilling(Boolean electronicBilling) {
+        this.electronicBilling = electronicBilling;
+    }
 
-	public void setElectronicBilling(Boolean electronicBilling) {
-		this.electronicBilling = electronicBilling;
-	}
+    @Override
+    public String toString() {
+        return "BillingAccountDto [code=" + code + ", description=" + description + "]";
+    }
 
-	@Override
-	public String toString() {
-		return "BillingAccountDto [customerAccount=" + customerAccount + ", billingCycle=" + billingCycle + ", country=" + country + ", language=" + language + ", paymentMethod="
-				+ paymentMethod + ", nextInvoiceDate=" + nextInvoiceDate + ", subscriptionDate=" + subscriptionDate + ", terminationDate=" + terminationDate + ", paymentTerms="
-				+ paymentTerms + ", electronicBilling=" + electronicBilling + ", status=" + status + ", statusDate=" + statusDate + ",terminationReason=" + terminationReason
-				+ ", email=" + email + ", bankCoordinates=" + bankCoordinates + ", userAccounts=" + userAccounts + ", invoicingThreshold=" + invoicingThreshold
-				+ ", discountPlan=" + discountPlan + "]";
-	}
+    public Date getSubscriptionDate() {
+        return subscriptionDate;
+    }
 
-	public Date getSubscriptionDate() {
-		return subscriptionDate;
-	}
+    public void setSubscriptionDate(Date subscriptionDate) {
+        this.subscriptionDate = subscriptionDate;
+    }
 
-	public void setSubscriptionDate(Date subscriptionDate) {
-		this.subscriptionDate = subscriptionDate;
-	}
+    public Date getTerminationDate() {
+        return terminationDate;
+    }
 
-	public Date getTerminationDate() {
-		return terminationDate;
-	}
+    public void setTerminationDate(Date terminationDate) {
+        this.terminationDate = terminationDate;
+    }
 
-	public void setTerminationDate(Date terminationDate) {
-		this.terminationDate = terminationDate;
-	}
+    public AccountStatusEnum getStatus() {
+        return status;
+    }
 
-	public AccountStatusEnum getStatus() {
-		return status;
-	}
+    public void setStatus(AccountStatusEnum status) {
+        this.status = status;
+    }
 
-	public void setStatus(AccountStatusEnum status) {
-		this.status = status;
-	}
+    public Date getStatusDate() {
+        return statusDate;
+    }
 
-	public Date getStatusDate() {
-		return statusDate;
-	}
+    public void setStatusDate(Date statusDate) {
+        this.statusDate = statusDate;
+    }
 
-	public void setStatusDate(Date statusDate) {
-		this.statusDate = statusDate;
-	}
+    public String getTerminationReason() {
+        return terminationReason;
+    }
 
-	public String getTerminationReason() {
-		return terminationReason;
-	}
+    public void setTerminationReason(String terminationReason) {
+        this.terminationReason = terminationReason;
+    }
 
-	public void setTerminationReason(String terminationReason) {
-		this.terminationReason = terminationReason;
-	}
+    public UserAccountsDto getUserAccounts() {
+        return userAccounts;
+    }
 
-	public UserAccountsDto getUserAccounts() {
-		return userAccounts;
-	}
+    public void setUserAccounts(UserAccountsDto userAccounts) {
+        this.userAccounts = userAccounts;
+    }
 
-	public void setUserAccounts(UserAccountsDto userAccounts) {
-		this.userAccounts = userAccounts;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public List<InvoiceDto> getInvoices() {
+        return invoices;
+    }
 
-	public BankCoordinatesDto getBankCoordinates() {
-		return bankCoordinates;
-	}
+    public void setInvoices(List<InvoiceDto> invoices) {
+        this.invoices = invoices;
+    }
 
-	public void setBankCoordinates(BankCoordinatesDto bankCoordinates) {
-		this.bankCoordinates = bankCoordinates;
-	}
+    /**
+     * @return the invoicingThreshold
+     */
+    public BigDecimal getInvoicingThreshold() {
+        return invoicingThreshold;
+    }
 
-	public List<InvoiceDto> getInvoices() {
-		return invoices;
-	}
+    /**
+     * @param invoicingThreshold the invoicingThreshold to set
+     */
+    public void setInvoicingThreshold(BigDecimal invoicingThreshold) {
+        this.invoicingThreshold = invoicingThreshold;
+    }
 
-	public void setInvoices(List<InvoiceDto> invoices) {
-		this.invoices = invoices;
-	}
+    public String getDiscountPlan() {
+        return discountPlan;
+    }
 
-	/**
-	 * @return the invoicingThreshold
-	 */
-	public BigDecimal getInvoicingThreshold() {
-		return invoicingThreshold;
-	}
+    public void setDiscountPlan(String discountPlan) {
+        this.discountPlan = discountPlan;
+    }
 
-	/**
-	 * @param invoicingThreshold the invoicingThreshold to set
-	 */
-	public void setInvoicingThreshold(BigDecimal invoicingThreshold) {
-		this.invoicingThreshold = invoicingThreshold;
-	}
+    public PaymentMethodEnum getPaymentMethod() {
+        return paymentMethod;
+    }
 
-	public String getDiscountPlan() {
-		return discountPlan;
-	}
+    public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
 
-	public void setDiscountPlan(String discountPlan) {
-		this.discountPlan = discountPlan;
-	}
+    public BankCoordinatesDto getBankCoordinates() {
+        return bankCoordinates;
+    }
+
+    public void setBankCoordinates(BankCoordinatesDto bankCoordinates) {
+        this.bankCoordinates = bankCoordinates;
+    }
+
+    public String getPaymentTerms() {
+        return paymentTerms;
+    }
+
+    public void setPaymentTerms(String paymentTerms) {
+        this.paymentTerms = paymentTerms;
+    }
 }

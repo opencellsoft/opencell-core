@@ -52,8 +52,9 @@ public class WFActionDto extends BaseDto {
 	}
 	
 	public WFAction fromDto(WFAction wfAction) {
-		if(wfAction == null)
-			wfAction = new WFAction();
+        if (wfAction == null) {
+            wfAction = new WFAction();
+        }
         wfAction.setUuid(getUuid());
 		wfAction.setActionEl(getActionEl());
 		wfAction.setPriority(getPriority());

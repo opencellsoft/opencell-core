@@ -13,25 +13,20 @@ import javax.xml.bind.annotation.XmlAccessorType;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BillingAccountsDto implements Serializable {
 
-	private static final long serialVersionUID = -2034319035301583131L;
+    private static final long serialVersionUID = -2034319035301583131L;
 
-	private List<BillingAccountDto> billingAccount;
+    private List<BillingAccountDto> billingAccount = new ArrayList<>();
 
-	public List<BillingAccountDto> getBillingAccount() {
-		if (billingAccount == null) {
-			billingAccount = new ArrayList<BillingAccountDto>();
-		}
+    public List<BillingAccountDto> getBillingAccount() {
+        return billingAccount;
+    }
 
-		return billingAccount;
-	}
+    public void setBillingAccount(List<BillingAccountDto> billingAccount) {
+        this.billingAccount = billingAccount;
+    }
 
-	public void setBillingAccount(List<BillingAccountDto> billingAccount) {
-		this.billingAccount = billingAccount;
-	}
-
-	@Override
-	public String toString() {
-		return "BillingAccountsDto [billingAccount=" + billingAccount + "]";
-	}
-
+    @Override
+    public String toString() {
+        return "BillingAccountsDto [billingAccount=" + billingAccount + "]";
+    }
 }

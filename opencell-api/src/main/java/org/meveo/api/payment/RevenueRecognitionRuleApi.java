@@ -151,8 +151,9 @@ public class RevenueRecognitionRuleApi extends BaseApi {
      * @param action RevenueRecognitionRule to update with values from dto
      * @return A new or updated RevenueRecognitionRule object
      * @throws MeveoApiException
+     * @throws BusinessException 
      */
-    private void revenueRecognitionRuleFromDTO(RevenueRecognitionRuleDto dto, RevenueRecognitionRule rrr) throws MeveoApiException {
+    private void revenueRecognitionRuleFromDTO(RevenueRecognitionRuleDto dto, RevenueRecognitionRule rrr) throws MeveoApiException, BusinessException {
 
         rrr.setCode(dto.getCode());
         rrr.setDescription(dto.getDescription());

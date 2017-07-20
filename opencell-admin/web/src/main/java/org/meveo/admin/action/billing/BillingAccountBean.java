@@ -40,7 +40,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.admin.util.ListItemsSelector;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
@@ -129,17 +128,11 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 			CustomerAccount customerAccount = customerAccountService.findById(customerAccountId);
 			entity.setCustomerAccount(customerAccount);
 			entity.setTradingLanguage(customerAccount.getTradingLanguage());
-			populateAccounts(customerAccount);
-
-			
+			populateAccounts(customerAccount);		
 		}
 
 		if (entity.getName() == null) {
 			entity.setName(new Name());
-		}
-
-		if (entity.getBankCoordinates() == null) {
-			entity.setBankCoordinates(new BankCoordinates());
 		}
 
 		selectedCounterInstance = entity.getCounters() != null && entity.getCounters().size() > 0 ? entity.getCounters().values().iterator().next() : null;
@@ -398,7 +391,6 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 			entity.setExternalRef2(customerAccount.getExternalRef2());
 			entity.setProviderContact(customerAccount.getProviderContact());
 			entity.setName(customerAccount.getName());
-			entity.setPaymentMethod(customerAccount.getPaymentMethod());
 			entity.setPrimaryContact(customerAccount.getPrimaryContact());
 		}
 	}

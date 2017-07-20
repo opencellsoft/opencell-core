@@ -4,11 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.dto.payment.DoPaymentResponseDto;
+import org.meveo.api.dto.payment.PayByCardResponseDto;
+import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentStatusEnum;
-import org.meveo.model.payments.PaymentToken;
 import org.meveo.service.script.payment.PaymentScript;
 import org.meveo.service.script.payment.PaymentScriptInterface;
 import org.slf4j.Logger;
@@ -35,7 +35,7 @@ public class CustomApiGatewayPayment implements GatewayPaymentInterface {
 	}
 
 	@Override
-	public DoPaymentResponseDto doPaymentToken(PaymentToken paymentToken, Long ctsAmount,Map<String,Object> additionalParams) throws BusinessException {       		
+	public PayByCardResponseDto doPaymentToken(CardPaymentMethod paymentToken, Long ctsAmount,Map<String,Object> additionalParams) throws BusinessException {       		
 		Map<String, Object> scriptContext = new HashMap<String, Object>();
         scriptContext.put(PaymentScript.CONTEXT_TOKEN,paymentToken);
         scriptContext.put(PaymentScript.CONTEXT_AMOUNT_CTS, ctsAmount);
@@ -43,7 +43,7 @@ public class CustomApiGatewayPayment implements GatewayPaymentInterface {
         
         paymentScriptInterface.doPaymentToken(scriptContext);
         
-        DoPaymentResponseDto doPaymentResponseDto = new DoPaymentResponseDto();        
+        PayByCardResponseDto doPaymentResponseDto = new PayByCardResponseDto();        
         doPaymentResponseDto.setPaymentID((String) scriptContext.get(PaymentScript.RESULT_PAYMENT_ID));
         doPaymentResponseDto.setTransactionId((String) scriptContext.get(PaymentScript.RESULT_TRANSACTION_ID));
         doPaymentResponseDto.setPaymentStatus((PaymentStatusEnum) scriptContext.get(PaymentScript.RESULT_PAYMENT_STATUS));
@@ -55,7 +55,7 @@ public class CustomApiGatewayPayment implements GatewayPaymentInterface {
 	}
 
 	@Override
-	public DoPaymentResponseDto doPaymentCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber,
+	public PayByCardResponseDto doPaymentCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber,
 			String ownerName, String cvv, String expirayDate,CreditCardTypeEnum cardType,String countryCode,Map<String,Object> additionalParams) throws BusinessException {
 		return null;
 	}

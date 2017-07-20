@@ -27,6 +27,7 @@
         
      Attributes applicable to ALL types of fields
         entity - an entity containing a given field. If not provided and entity passed to a parent formPanel will be used.
+        entityClass - in cases where entity class can not be determined automatically (e.g. case when entity is declared as superclass and fields are in subclass) an entity class can be declared explicitly
         backingBean - backing bean associated with data entry. Required for Map and List type fields only. If not provided a backing bean passed to a parent formPanel will be used.
         label - a label
         field and optional childField - a field.childField for data entry/view. E.g. address.email
@@ -129,7 +130,8 @@
     </c:if>
     <!-- <c:set var="formEntityIsNull" value="#{formLevelEntity==null}"/> -->
 
-    <hftl:getFieldInformation backingBean="${backingBean}" entity="${entity}" defaultEntityFromBean="${defaultEntityFromBean}" fieldName="${field}" childFieldName="${childField}" var="fieldInfo" />
+    <hftl:getFieldInformation backingBean="${backingBean}" entity="${entity}" entityClass="${entityClass}" defaultEntityFromBean="${defaultEntityFromBean}" fieldName="${field}"
+        childFieldName="${childField}" var="fieldInfo" />
 
     <c:if test="${empty(required)}">
         <c:set var="required" value="${fieldInfo.required}" />

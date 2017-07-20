@@ -2,7 +2,7 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
     <changeSet id="#450_20170420" author="EdwardPLegaspi">
-		<addColumn tableName="billing_inv_sub_cat_country">
+        <addColumn tableName="billing_inv_sub_cat_country">
             <column name="start_validity_date" type="DATE" />
             <column name="end_validity_date" type="DATE" />
             <column defaultValueNumeric="0" name="priority" type="INT4" />
@@ -14,51 +14,50 @@
     <changeSet id="#2716_20170627" author="TienLanPHUNG">
         <modifyDataType tableName="com_meveo_instance" columnName="url" newDataType="varchar(255)" />
     </changeSet>
-    
-    
+
+
     <changeSet id="#2416_20170307-1" author="AndriusKarpavicius" dbms="mysql">
         <createTable tableName="ar_payment_token_seq">
-            <column name="next_val" type="BIGINT" >
+            <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ar_payment_token_seq_pk" />
             </column>
         </createTable>
         <sql>insert into ar_payment_token_seq values(1)</sql>
-     </changeSet>
-    
-    
+    </changeSet>
+
+
     <changeSet id="#2553_20170621" author="AndriusKarpavicius">
         <createSequence sequenceName="dwh_chart_seq" startValue="1000" />
     </changeSet>
-    
+
     <changeSet id="#2553_20170621-1" author="AndriusKarpavicius" dbms="mysql">
         <createTable tableName="dwh_chart_seq">
-            <column name="next_val" type="BIGINT" >
+            <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="dwh_chart_seq_pk" />
             </column>
         </createTable>
         <sql>insert into dwh_chart_seq (select IFNULL(max(id),0)+1 from dwh_chart)</sql>
-     </changeSet>
-     
-     <changeSet
-		id="#2408_20170623-Override payment method and due date delay in order"
-		author="EdwardLegaspi">
-		<addColumn tableName="ord_order">
-			<column name="due_date_delay_el" type="varchar(2000)" />
-			<column name="payment_method" type="varchar(20)" />
-		</addColumn>
-	</changeSet>
-	
-	<changeSet id="#2665_20170710-Add guiPosition to custom action" author="EdwardLegaspi">
-		<addColumn tableName="crm_custom_action">
-			<column name="gui_position" type="varchar(100)" />
-		</addColumn>
-	</changeSet>
-        
+    </changeSet>
+
+    <changeSet id="#2408_20170623-Override payment method and due date delay in order" author="EdwardLegaspi">
+        <addColumn tableName="ord_order">
+            <column name="due_date_delay_el" type="varchar(2000)" />
+            <column name="payment_method" type="varchar(20)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="#2665_20170710-Add guiPosition to custom action" author="EdwardLegaspi">
+        <addColumn tableName="crm_custom_action">
+            <column name="gui_position" type="varchar(100)" />
+        </addColumn>
+    </changeSet>
+
     <changeSet id="#2433_20170627" author="AndriusKarpavicius">
         <addColumn tableName="billing_invoice_type">
             <column name="billing_template_name" type="varchar(50)" />
         </addColumn>
     </changeSet>
+
     <changeSet id="#2361_20170628" author="AndriusKarpavicius">
         <addColumn tableName="billing_subscription">
             <column name="subscribed_till_date" type="datetime" />
@@ -74,16 +73,16 @@
                 <constraints nullable="false" />
             </column>
             <column name="renew_for_unit" type="varchar(5)" />
-            <column name="renew_for" type="INT4" />            
+            <column name="renew_for" type="INT4" />
             <column name="renewed" type="${type.boolean}" defaultValueNumeric="0">
                 <constraints nullable="false" />
             </column>
-            <column name="notify_of_renewal_date" type="datetime" /> 
-            <column name="renewal_notified_date" type="datetime" />            
+            <column name="notify_of_renewal_date" type="datetime" />
+            <column name="renewal_notified_date" type="datetime" />
         </addColumn>
-        <addForeignKeyConstraint baseColumnNames="auto_termin_reason_id" baseTableName="billing_subscription" constraintName="fk_sub_auto_tr_id" deferrable="false"
-            initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscrip_termin_reason" />
-    </changeSet>    
+        <addForeignKeyConstraint baseColumnNames="auto_termin_reason_id" baseTableName="billing_subscription" constraintName="fk_sub_auto_tr_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscrip_termin_reason" />
+    </changeSet>
 
     <changeSet id="#2361_20170701" author="AndriusKarpavicius">
         <addColumn tableName="billing_subscrip_termin_reason">
@@ -91,36 +90,138 @@
                 <constraints nullable="false" />
             </column>
             <column name="created" type="datetime">
-<!--                 <constraints nullable="false" /> -->
+                <!-- <constraints nullable="false" /> -->
             </column>
-            <column name="updated" type="datetime" />            
+            <column name="updated" type="datetime" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
         </addColumn>
         <sql>update billing_subscrip_termin_reason set created=now()</sql>
-        <addNotNullConstraint tableName="billing_subscrip_termin_reason" columnName="created"/>
-    </changeSet>    
-    
+        <addNotNullConstraint tableName="billing_subscrip_termin_reason" columnName="created" />
+    </changeSet>
+
     <changeSet id="#2691_20170616" author="TienLanPHUNG">
-       <modifyDataType tableName="account_entity" columnName="external_ref_1" newDataType="varchar(255)" />
-       <modifyDataType tableName="account_entity" columnName="external_ref_2" newDataType="varchar(255)" />
+        <modifyDataType tableName="account_entity" columnName="external_ref_1" newDataType="varchar(255)" />
+        <modifyDataType tableName="account_entity" columnName="external_ref_2" newDataType="varchar(255)" />
     </changeSet>
 
     <changeSet id="#2698_20170622" author="TienLanPHUNG">
-    	<addColumn tableName="rating_edr">
-    		<column name="extra_parameter" type="text" />
-    	</addColumn>
+        <addColumn tableName="rating_edr">
+            <column name="extra_parameter" type="text" />
+        </addColumn>
     </changeSet>
-    
+
     <changeSet id="#2743 - add extra field on  ar_payment_token" author="anasseh">
-		<addColumn tableName="ar_payment_token">
-			<column name="user_id" type="varchar(256)" />
-			<column name="info_1" type="varchar(256)" />
-			<column name="info_2" type="varchar(256)" />
-			<column name="info_3" type="varchar(256)" />
-			<column name="info_4" type="varchar(256)" />
-			<column name="info_5" type="varchar(256)" />
-			
-		</addColumn>
-	</changeSet>
+        <addColumn tableName="ar_payment_token">
+            <column name="user_id" type="varchar(256)" />
+            <column name="info_1" type="varchar(256)" />
+            <column name="info_2" type="varchar(256)" />
+            <column name="info_3" type="varchar(256)" />
+            <column name="info_4" type="varchar(256)" />
+            <column name="info_5" type="varchar(256)" />
+
+        </addColumn>
+    </changeSet>
+    <changeSet id="#2406_20170710" author="AndriusKarpavicius">
+        <addColumn tableName="ar_payment_token">
+            <column name="bank_code" type="varchar(5)" />
+            <column name="branch_code" type="varchar(5)" />
+            <column name="account_number" type="varchar(11)" />
+            <column name="hash_key" type="varchar(2)" />
+            <column name="iban" type="varchar(34)" />
+            <column name="bic" type="varchar(11)" />
+            <column name="account_owner" type="varchar(50)" />
+            <column name="bank_id" type="varchar(50)" />
+            <column name="bank_name" type="varchar(50)" />
+            <column name="issuer_name" type="varchar(50)" />
+            <column name="issuer_number" type="varchar(50)" />
+            <column name="ics" type="varchar(35)" />
+        </addColumn>
+        <dropNotNullConstraint tableName="ar_payment_token" columnName="card_type" />
+        <dropNotNullConstraint tableName="ar_payment_token" columnName="owner" />
+        <dropNotNullConstraint tableName="ar_payment_token" columnName="month_expiration" />
+        <dropNotNullConstraint tableName="ar_payment_token" columnName="year_expiration" />
+        <dropNotNullConstraint tableName="ar_payment_token" columnName="card_type" />
+        <dropColumn tableName="billing_billing_account" columnName="payment_term" />
+        <dropColumn tableName="ar_customer_account" columnName="payment_method" />
+    </changeSet>
+
+    <changeSet id="#2406_20170710-1" author="AndriusKarpavicius" dbms="postgresql">
+
+        <sql>insert into ar_payment_token (id, version,created, token_type, customer_account_id, bank_code,branch_code,account_number, hash_key, iban, bic, account_owner, bank_id, bank_name, issuer_name, issuer_number,
+            ics) (select nextval('ar_payment_token_seq'), 0, now(), 'DIRECTDEBIT', customer_account_id, bank_code,branch_code,account_number, hash_key, iban, bic, account_owner, bank_id, bank_name, issuer_name,
+            issuer_number, ics from
+            (select distinct customer_account_id, bank_code,branch_code,account_number, hash_key, iban, bic, account_owner, bank_id, bank_name, issuer_name, issuer_number, ics
+            from
+            billing_billing_account where payment_method='DIRECTDEBIT' and (iban is not null or bic is not null)) as dis)
+        </sql>
+        <sql>insert into ar_payment_token (id, version,created, token_type, customer_account_id, bank_code,branch_code,account_number, hash_key, iban, bic, account_owner, bank_id, bank_name, issuer_name, issuer_number,
+            ics) (select nextval('ar_payment_token_seq'), 0, now(), 'TIP', customer_account_id, bank_code,branch_code,account_number, hash_key, iban, bic, account_owner, bank_id, bank_name, issuer_name, issuer_number,
+            ics from
+            (select distinct customer_account_id, bank_code,branch_code,account_number, hash_key, iban, bic, account_owner, bank_id, bank_name, issuer_name, issuer_number, ics
+            from billing_billing_account where
+            payment_method='TIP' and (iban is not null or bic is not null)) as dis)
+        </sql>
+        <sql>insert into ar_payment_token (id, version,created, token_type, customer_account_id) (select nextval('ar_payment_token_seq'), 0, now(), 'CHECK', customer_account_id from (select distinct customer_account_id
+            from billing_billing_account where payment_method='CHECK') dis)
+        </sql>
+        <sql>insert into ar_payment_token (id, version,created, token_type, customer_account_id) (select nextval('ar_payment_token_seq'), 0, now(), 'WIRETRANSFER', customer_account_id from (select distinct
+            customer_account_id from billing_billing_account where payment_method='WIRETRANSFER') dis)
+        </sql>
+    </changeSet>
+
+    <changeSet id="#2406_20170710-2" author="AndriusKarpavicius" dbms="mysql">
+
+        <sql>insert into ar_payment_token (id, version,created, token_type, customer_account_id, bank_code,branch_code,account_number, hash_key, iban, bic, account_owner, bank_id, bank_name, issuer_name, issuer_number,
+            ics) (select id*(-1), 0, now(), 'DIRECTDEBIT', customer_account_id, bank_code,branch_code,account_number, hash_key, iban, bic, account_owner, bank_id, bank_name, issuer_name, issuer_number, ics from
+            billing_billing_account where payment_method='DIRECTDEBIT' and (iban is not null or bic is not null))
+        </sql>
+        <sql>insert into ar_payment_token (id, version,created, token_type, customer_account_id, bank_code,branch_code,account_number, hash_key, iban, bic, account_owner, bank_id, bank_name, issuer_name, issuer_number,
+            ics) (select id*(-1), 0, now(), 'TIP', customer_account_id, bank_code,branch_code,account_number, hash_key, iban, bic, account_owner, bank_id, bank_name, issuer_name, issuer_number, ics from
+            billing_billing_account where payment_method='TIP' and (iban is not null or bic is not null))
+        </sql>
+        <sql>insert into ar_payment_token (id, version,created, token_type, customer_account_id) (select id*(-1), 0, now(), 'CHECK', customer_account_id from billing_billing_account where payment_method='CHECK')</sql>
+        <sql>insert into ar_payment_token (id, version,created, token_type, customer_account_id) (select id*(-1), 0, now(), 'WIRETRANSFER', customer_account_id from billing_billing_account where
+            payment_method='WIRETRANSFER')
+        </sql>
+    </changeSet>
+
+    <changeSet id="#2406_20170710-3" author="AndriusKarpavicius">
+        <sql>update ar_payment_token set is_default=1 where id in (select max(id)from ar_payment_token group by customer_account_id)</sql>
+        <dropColumn tableName="billing_billing_account" columnName="bank_code" />
+        <dropColumn tableName="billing_billing_account" columnName="branch_code" />
+        <dropColumn tableName="billing_billing_account" columnName="account_number" />
+        <dropColumn tableName="billing_billing_account" columnName="hash_key" />
+        <dropColumn tableName="billing_billing_account" columnName="iban" />
+        <dropColumn tableName="billing_billing_account" columnName="bic" />
+        <dropColumn tableName="billing_billing_account" columnName="account_owner" />
+        <dropColumn tableName="billing_billing_account" columnName="bank_id" />
+        <dropColumn tableName="billing_billing_account" columnName="bank_name" />
+        <dropColumn tableName="billing_billing_account" columnName="issuer_name" />
+        <dropColumn tableName="billing_billing_account" columnName="issuer_number" />
+        <dropColumn tableName="billing_billing_account" columnName="ics" />
+    </changeSet>
+
+    <changeSet id="#2406_20170710-4" author="AndriusKarpavicius">
+        <dropColumn tableName="ar_payment_token" columnName="disabled" />
+        <dropColumn tableName="ar_payment_token" columnName="created" />
+        <dropColumn tableName="ar_payment_token" columnName="creator" />
+        <dropColumn tableName="ar_payment_token" columnName="updated" />
+        <dropColumn tableName="ar_payment_token" columnName="updater" />
+    </changeSet>
+
+    <changeSet id="#2406_20170714" author="AndriusKarpavicius">
+        <modifyDataType tableName="meveo_module_item" columnName="item_code" newDataType="varchar(255)" />
+    </changeSet>
+
+    <changeSet id="#2406_20170715" author="AndriusKarpavicius">
+        <dropNotNullConstraint tableName="ar_payment_token" columnName="customer_account_id" />
+        <addColumn tableName="ord_order">
+            <column name="payment_method_id" type="BIGINT" />
+        </addColumn>
+        <dropColumn tableName="ord_order" columnName="payment_method" />
+        <addForeignKeyConstraint baseColumnNames="payment_method_id" baseTableName="ord_order" constraintName="fk_order_payment_method" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_payment_token" />
+    </changeSet>
+
 </databaseChangeLog> 

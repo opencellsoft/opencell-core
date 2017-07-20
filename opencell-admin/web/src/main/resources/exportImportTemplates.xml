@@ -355,4 +355,9 @@
             <java-class>org.meveo.model.billing.WalletInstance</java-class>
         </classesToExportAsFull>
     </template>  
+    <template name="CustomerAccount" entityToExport="org.meveo.model.payments.CustomerAccount">
+        <classesToExportAsFull>
+            <java-class>org.meveo.model.payments.PaymentMethod</java-class>
+        </classesToExportAsFull>
+    </template>      
 </list>
