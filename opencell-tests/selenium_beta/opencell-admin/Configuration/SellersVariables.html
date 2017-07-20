@@ -58,12 +58,12 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>//*[contains(@id, 'parentSelectId_label')]</td>
-	<td>parentSellerSelectField</td>
+	<td>DEMO</td>
+	<td>parentSellerValue</td>
 </tr>
 <tr>
 	<td>store</td>
-	<td>MAIN_SELLER</td>
+	<td>//ul[@id='sellerFormId:tabView:parentSelectId_items']/li[text()[contains(., '${parentSellerValue}')]]</td>
 	<td>parentSeller</td>
 </tr>
 <tr>
@@ -73,12 +73,7 @@
 </tr>
 <tr>
 	<td>store</td>
-	<td>//*[contains(@id, 'sellerFormId:tabView:j_i')]/label</td>
-	<td>invoiceTypeSelectField</td>
-</tr>
-<tr>
-	<td>store</td>
-	<td>INV_SELENIUM</td>
+	<td>css=li:contains(&quot;${codeInvoice}&quot;)</td>
 	<td>invoiceType</td>
 </tr>
 <tr>
