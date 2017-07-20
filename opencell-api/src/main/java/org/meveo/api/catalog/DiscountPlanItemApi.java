@@ -59,9 +59,6 @@ public class DiscountPlanItemApi extends BaseApi {
         if(StringUtils.isBlank(postData.getDiscountPlanCode())){
         	missingParameters.add("discountPlanCode");
         }
-        if(StringUtils.isBlank(postData.getInvoiceCategoryCode())){
-        	missingParameters.add("invoiceCategoryCode");
-        }
         if(postData.getPercent()==null){
         	missingParameters.add("percent");
         }
@@ -212,6 +209,9 @@ public class DiscountPlanItemApi extends BaseApi {
         
         if(!StringUtils.isBlank(dto.getInvoiceSubCategoryCode())){
     		InvoiceSubCategory invoiceSubCategory=invoiceSubCategoryService.findByCode(dto.getInvoiceSubCategoryCode());
+    		if(invoiceSubCategory==null){
+                throw new EntityDoesNotExistsException(InvoiceSubCategory.class, dto.getInvoiceSubCategoryCode());
+            }
     		discountPlanItem.setInvoiceSubCategory(invoiceSubCategory);
     	}
         if(dto.getPercent()!=null){

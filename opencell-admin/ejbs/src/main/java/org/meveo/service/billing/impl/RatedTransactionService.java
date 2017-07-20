@@ -389,7 +389,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             }
             
             for (Object[] object : invoiceSubCats) {
-                log.info("amountWithoutTax=" + object[1] + " amountWithTax =" + object[2] + " amountTax=" + object[3]);
+                log.info("invoice subcategory {}, amountWithoutTax {}, amountWithTax {}, amountTax {}", object[0], object[1], object[2], object[3]);
                 Long invoiceSubCategoryId = (Long) object[0];
                 InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findById(invoiceSubCategoryId);
                 List<Tax> taxes = new ArrayList<Tax>();
@@ -759,26 +759,47 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
 	}
 	private void createInvoiceDiscountAggregates(UserAccount userAccount,Invoice invoice,Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap, boolean isVirtual){
-		try {
+        try {
 
-			BillingAccount billingAccount=userAccount.getBillingAccount();
-			DiscountPlan discountPlan=billingAccount.getDiscountPlan();
-			CustomerAccount customerAccount=billingAccount.getCustomerAccount();
-			if(discountPlan!=null && discountPlan.isActive()){
-				List<DiscountPlanItem> discountPlanItems =discountPlan.getDiscountPlanItems();
-				for(DiscountPlanItem discountPlanItem:discountPlanItems){
-					if(discountPlanItem.isActive() && matchDiscountPlanItemExpression(discountPlanItem.getExpressionEl(),customerAccount, billingAccount, invoice)){
-						if(discountPlanItem.getInvoiceSubCategory()!=null){
-							createDiscountAggregate(userAccount,userAccount.getWallet(), invoice, discountPlanItem.getInvoiceSubCategory(),discountPlanItem,taxInvoiceAgregateMap, isVirtual);
-						}else if(discountPlanItem.getInvoiceCategory()!=null){
-							InvoiceCategory invoiceCat=discountPlanItem.getInvoiceCategory();
-							for(InvoiceSubCategory invoiceSubCat:invoiceCat.getInvoiceSubCategories()){
-								createDiscountAggregate(userAccount,userAccount.getWallet(), invoice, invoiceSubCat,discountPlanItem,taxInvoiceAgregateMap, isVirtual);
-							}
-						}
-					}
-				}
-			}
+            BillingAccount billingAccount = userAccount.getBillingAccount();
+            DiscountPlan discountPlan = billingAccount.getDiscountPlan();
+            CustomerAccount customerAccount = billingAccount.getCustomerAccount();
+            if (discountPlan != null && discountPlan.isActive()) {
+                List<DiscountPlanItem> discountPlanItems = discountPlan.getDiscountPlanItems();
+                
+                for (DiscountPlanItem discountPlanItem : discountPlanItems) {
+                    if (discountPlanItem.isActive() && matchDiscountPlanItemExpression(discountPlanItem.getExpressionEl(), customerAccount, billingAccount, invoice)) {
+                
+                        // Apply discount to a particular invoice subcategory
+                        if (discountPlanItem.getInvoiceSubCategory() != null) {
+                            createDiscountAggregate(userAccount, userAccount.getWallet(), invoice, discountPlanItem.getInvoiceSubCategory(), discountPlanItem,
+                                taxInvoiceAgregateMap, isVirtual);
+                        
+                            // Apply discount to all subcategories of a particular invoice category
+                        } else if (discountPlanItem.getInvoiceCategory() != null) {
+                            InvoiceCategory invoiceCat = discountPlanItem.getInvoiceCategory();
+                            for (InvoiceSubCategory invoiceSubCat : invoiceCat.getInvoiceSubCategories()) {
+                                createDiscountAggregate(userAccount, userAccount.getWallet(), invoice, invoiceSubCat, discountPlanItem, taxInvoiceAgregateMap, isVirtual);
+                            }
+
+                            // Apply discount to all subcategories in the invoice
+                        } else {
+
+                            List<InvoiceSubCategory> allSubcategories = new ArrayList<>();
+                            for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
+
+                                if (invoiceAgregate instanceof SubCategoryInvoiceAgregate
+                                        && ((SubCategoryInvoiceAgregate) invoiceAgregate).getWallet().equals(userAccount.getWallet()) && !invoiceAgregate.isDiscountAggregate()) {
+                                    allSubcategories.add(((SubCategoryInvoiceAgregate) invoiceAgregate).getInvoiceSubCategory());
+                                }
+                            }
+                            for (InvoiceSubCategory invoiceSubCategory : allSubcategories) {
+                                createDiscountAggregate(userAccount, userAccount.getWallet(), invoice, invoiceSubCategory, discountPlanItem, taxInvoiceAgregateMap, isVirtual);
+                            }
+                        }
+                    }
+                }
+            }
 
 		} catch (BusinessException e) {
 			log.error("Error when trying to create discount aggregates",e);
