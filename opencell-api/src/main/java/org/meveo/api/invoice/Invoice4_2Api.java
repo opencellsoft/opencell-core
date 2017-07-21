@@ -283,10 +283,8 @@ public class Invoice4_2Api extends BaseApi {
                 RatedTransaction meveoRatedTransaction = new RatedTransaction(null, ratedTransaction.getUsageDate(), ratedTransaction.getUnitAmountWithoutTax(),
                     ratedTransaction.getUnitAmountWithTax(), ratedTransaction.getUnitAmountTax(), ratedTransaction.getQuantity(), ratedTransaction.getAmountWithoutTax(),
                     ratedTransaction.getAmountWithTax(), ratedTransaction.getAmountTax(), RatedTransactionStatusEnum.BILLED, null, billingAccount, invoiceSubCategory,
-                    null, null, null, null,null, null, null, null);
-                meveoRatedTransaction.setCode(ratedTransaction.getCode());
-                meveoRatedTransaction.setDescription(ratedTransaction.getDescription());
-                meveoRatedTransaction.setUnityDescription(ratedTransaction.getUnityDescription());
+                    null, null, null, null, ratedTransaction.getUnityDescription(), null, null, null, null, ratedTransaction.getCode(), ratedTransaction.getDescription());
+
                 meveoRatedTransaction.setInvoice(invoice);
                 meveoRatedTransaction.setWallet(billingAccountUserAccount.getWallet());
                 ratedTransactionService.create(meveoRatedTransaction);

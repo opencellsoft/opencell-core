@@ -986,15 +986,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             unitAmountWithTax = walletOperation.getUnitAmountWithoutTax();
             unitAmountTax = BigDecimal.ZERO;
         }*/
-        RatedTransaction ratedTransaction = new RatedTransaction(walletOperation, walletOperation.getOperationDate(), walletOperation.getUnitAmountWithoutTax(),
-            unitAmountWithTax, unitAmountTax, walletOperation.getQuantity(), walletOperation.getAmountWithoutTax(), amountWithTAx, amountTax, RatedTransactionStatusEnum.OPEN,
-            walletOperation.getWallet(), walletOperation.getWallet().getUserAccount().getBillingAccount(), invoiceSubCategory,
-            walletOperation.getParameter1(), walletOperation.getParameter2(), walletOperation.getParameter3(), walletOperation.getOrderNumber(), walletOperation.getRatingUnitDescription(),
-            walletOperation.getPriceplan(), walletOperation.getOfferCode(), walletOperation.getEdr());
-        ratedTransaction.setDescription(walletOperation.getDescription());
-        ratedTransaction.setCode(walletOperation.getCode());
-        ratedTransaction.setUnityDescription(walletOperation.getChargeInstance().getChargeTemplate().getInputUnitDescription());
-        ratedTransaction.setRatingUnitDescription(walletOperation.getChargeInstance().getChargeTemplate().getRatingUnitDescription());
+        RatedTransaction ratedTransaction = new RatedTransaction(walletOperation, walletOperation.getOperationDate(), walletOperation.getUnitAmountWithoutTax(), unitAmountWithTax,
+            unitAmountTax, walletOperation.getQuantity(), walletOperation.getAmountWithoutTax(), amountWithTAx, amountTax, RatedTransactionStatusEnum.OPEN,
+            walletOperation.getWallet(), walletOperation.getWallet().getUserAccount().getBillingAccount(), invoiceSubCategory, walletOperation.getParameter1(),
+            walletOperation.getParameter2(), walletOperation.getParameter3(), walletOperation.getOrderNumber(), walletOperation.getInputUnitDescription(),
+            walletOperation.getRatingUnitDescription(), walletOperation.getPriceplan(), walletOperation.getOfferCode(), walletOperation.getEdr(), null, null);
 
         walletOperation.setStatus(WalletOperationStatusEnum.TREATED);
 
