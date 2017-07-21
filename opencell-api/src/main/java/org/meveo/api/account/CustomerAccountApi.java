@@ -385,7 +385,7 @@ public class CustomerAccountApi extends AccountEntityApi {
         if (customerAccount == null) {
             throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
         }
-
+        
         CustomerAccountDto customerAccountDto = accountHierarchyApi.customerAccountToDto(customerAccount);
 
         if (calculateBalances) {
