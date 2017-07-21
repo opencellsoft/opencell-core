@@ -43,7 +43,7 @@
             dataModel="#{productTemplateBean.listActiveByDate(userAccountBean.productInstance.applicationDate)}"
             selection="#{userAccountBean.productInstance.productTemplate}" width="1000"
             selectionListenerBean="#{userAccountBean}" selectionListenerMethod="updateProductInstanceCode" 
-            updateField=":#{p:component('productTemplateSelectedId')} :#{p:component('productTemplateSelectedId_text')}">
+            updateField=":parentTab:applyProductForm:productTemplateSelectedId :parentTab:applyProductForm:productTemplateSelectedId_text :parentTab:applyProductForm:productCF">
         </hftl:entityPopup>
 
         <!-- 		<hftl:entityPopup id="walletOperationPopup" -->
@@ -201,82 +201,14 @@
                         </hftl:formPanel>
                     </p:tab>
 
-					<p:tab id="productInstancesTab"
-						title="#{messages['userAccount.tab.productInstances']}">
-						<p:messages id="applyProductMessages" />
-						<h:form id="productInstanceResultsForm" prependId="false">
-							<p:dataTable resizableColumns="true"
-								value="#{userAccountBean.productChargeInstances}" var="entity"
-								paginator="true" rows="10" lazy="true"
-								paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-								rowsPerPageTemplate="10,20,30,50" styleClass="custom-grid">
-								<hftl:column label="#{messages['chargeInstance.code']}"
-									field="code" />
-								<hftl:column label="#{messages['chargeInstance.description']}"
-									field="description" />
-								<hftl:column label="#{messages['chargeApplication.status']}"
-									field="status" />
-								<hftl:column
-									label="#{messages['oneShotChargeInstance.chargeDate']}"
-									field="chargeDate" isDate="true" />
-								<p:column styleClass="actions-column">
-									<f:facet name="header">
-										<h:outputText value="#{messages['commons.actions']}" />
-									</f:facet>
-									<p:commandButton id="viewProductInstanceDetailLink"
-										action="#{userAccountBean.setAndRefreshProductInstance(entity.productInstance)}"
-										oncomplete="PF('dlg_productInstanceDetailPopup').show()"
-										update=":productInstanceDetailPopupPanel"
-										icon="ui-icon-document">
-									</p:commandButton>
-									<p:tooltip for="viewProductInstanceDetailLink"
-										value="#{messages['commons.view']}" />
-								</p:column>
-							</p:dataTable>
+                    <ui:include src="../subscriptions/productInstances.xhtml">
+                        <ui:param name="parentBackingBean" value="#{userAccountBean}" />
+                        <ui:param name="parentEntityIsEditable" value="#{userAccountBean.entity.status=='ACTIVE'}" />
+                        <ui:param name="parentIdPath" value=":parentTab" />
+                    </ui:include>
 
-							<p:commandButton value="#{messages['action.applyProduct']}"
-								actionListener="#{userAccountBean.initProductInstance()}"
-								update=":parentTab:applyProductPanel"
-								oncomplete="PF('applyProductPanel').toggle()" />
-						</h:form>
 
-						<p:panel widgetVar="applyProductPanel" id="applyProductPanel" toggleable="true" collapsed="true">
-							<hftl:formPanel edit="true" backingBean="#{userAccountBean}"
-								entity="#{userAccountBean.productInstance}"
-								styleClass="formPanel" formId="applyProductForm"
-								showFormButtons="false">
-								<hftl:formField label="#{messages['commons.quantity']}"
-									field="quantity" required="true" />
-								<hftl:formField
-									label="#{messages['chargeApplication.applicationDate']}"
-									field="applicationDate" required="true" listenerUpdate="productTemplatePopup" componentWidth="30" />
-								<hftl:formField id="productTemplateSelectedId"
-									label="#{messages['productTemplate.title']}"
-									field="productTemplate" popup="true" required="true"
-									popupId="productTemplatePopup" valueLabelField="code" />
-
-								<h:panelGroup id="productCF">
-									<hftl:customFields backingBean="#{productInstanceBean}"
-										entity="#{userAccountBean.productInstance}"
-										messagesId=":parentTab:applyProductMessages" prefix="pi" />
-								</h:panelGroup>
-
-								<h:panelGroup layout="block" styleClass="form-panel-actions">
-									<p:commandButton value="#{messages['action.save']}"
-										action="#{userAccountBean.applyProduct()}"
-										oncomplete="PF('applyProductPanel').toggle()"
-										update=":parentTab:productInstanceResultsForm :parentTab:applyProductMessages"></p:commandButton>
-									<p:commandButton value="#{messages['button.closeButton']}"
-										action="#{userAccountBean.initProductInstance()}"
-										oncomplete="PF('applyProductPanel').close()"
-										update=":parentTab:applyProductPanel" immediate="true" />
-								</h:panelGroup>
-
-							</hftl:formPanel>
-						</p:panel>
-					</p:tab>
-
-					<c:forEach items="#{userAccountBean.entity.prepaidWallets}" var="wallet">
+                    <c:forEach items="#{userAccountBean.entity.prepaidWallets}" var="wallet">
                         <p:tab title="Wallet #{wallet.key}" id="tab#{wallet.key}">
                             <p:panel id="panelWallet_#{wallet.key}" styleClass="form-panel-fields">
                                 <hftl:decorateFormField label="#{messages['chargeInstance.code']}">
@@ -466,38 +398,6 @@
             </hftl:formPanel>
         </p:dialog>
 
-		<p:dialog id="productInstanceDetailPopup"
-			header="#{messages['subscription.tab.productInstanceDetail']}"
-			widgetVar="dlg_productInstanceDetailPopup" modal="true"
-			dynamic="false" width="90%" closeOnEscape="true">
-
-			<p:panel id="productInstanceDetailPopupPanel">
-				<hftl:formPanel edit="false"
-					label="#{messages['subscription.tab.productInstanceDetail']}"
-					backingBean="#{userAccountBean}" columns="1"
-					entity="#{userAccountBean.productInstance}"
-					formId="productInstancePopupForm" showFormButtons="false"
-					ajaxSubmit="true"
-					rendered="#{userAccountBean.productInstance!=null}">
-					<hftl:formField id="popupPICode"
-						label="#{messages['businessEntity.code']}" field="code" />
-					<hftl:formField id="popupPIDesc"
-						label="#{messages['businessEntity.description']}"
-						field="description" />
-					<hftl:formField id="popupPIQty"
-						label="#{messages['commons.quantity']}" field="quantity" />
-					<hftl:formField id="popupPIAppDate"
-						label="#{messages['chargeApplication.applicationDate']}"
-						field="applicationDate" />
-
-					<h:panelGroup id="productInstancePopupFormCF">
-						<hftl:customFields backingBean="#{productInstanceBean}"
-							entity="#{userAccountBean.productInstance}"
-							messagesId=":productInstancePopupForm:messages" prefix="piPopup" />
-					</h:panelGroup>
-				</hftl:formPanel>
-			</p:panel>
-		</p:dialog>
 	</ui:define>
 
 </ui:composition>
