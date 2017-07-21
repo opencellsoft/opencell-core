@@ -55,14 +55,14 @@
 		}	
 		</script>
 
-        <hftl:entityPopup id="productTemplatePopup" header="#{messages['productTemplate.title']}" backingBean="#{productTemplateBean}"
+        <hftl:entityPopup id="productTemplatePopup" header="#{messages['productTemplate.title']}" backingBean="#{productTemplateBean}" width="700"
             dataModel="#{subscriptionBean.getOfferProductTemplatesByDate(subscriptionBean.productInstance.applicationDate)}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
             searchField2Label="#{messages['businessEntity.description']}" searchField2="description" searchField3Label="#{messages['commons.validFrom']}" searchField3="validity.from"
             searchField4Label="#{messages['commons.validTo']}" searchField4="validity.to" column1Label="#{messages['businessEntity.code']}" column1="code"
             column2Label="#{messages['businessEntity.description']}" column2="description" column3Label="#{messages['commons.validFrom']}" column3="validity" column3Child="from"
             column4Label="#{messages['commons.validTo']}" column4="validity" column4Child="to" selection="#{subscriptionBean.productInstance.productTemplate}"
             selectionListenerBean="#{subscriptionBean}" selectionListenerMethod="updateProductInstanceCode"
-            updateField=":subscriptionTab:applyProductForm:productTemplateSelectedId :subscriptionTab:applyProductForm:productTemplateSelectedId_text :#{p:component('productCF')}">
+            updateField=":subscriptionTab:applyProductForm:productTemplateSelectedId :subscriptionTab:applyProductForm:productTemplateSelectedId_text :subscriptionTab:applyProductForm:productCF">
         </hftl:entityPopup>
 
         <hftl:entityPopup id="userAccountPopup"
@@ -549,12 +549,14 @@
 													</p:dataTable>
 												</h:form>
 											</p:tab>
-											
-											<ui:include src="productInstances.xhtml">
-												<ui:param name="backingBean" value="#{subscriptionBean}" />
-											</ui:include>
-											
-											<!-- Access -->
+
+                                            <ui:include src="productInstances.xhtml">
+                                                <ui:param name="parentBackingBean" value="#{subscriptionBean}" />
+                                                <ui:param name="parentEntityIsEditable" value="#{subscriptionBean.entity.status=='CREATED' or subscriptionBean.entity.status=='ACTIVE'}" />
+                                                <ui:param name="parentIdPath" value=":subscriptionTab" />
+                                            </ui:include>
+                        
+                                            <!-- Access -->
 											<p:tab id="medinaAccessTab"
 												title="#{messages['menu.accessPoints']}"
 												rendered="#{not empty subscriptionBean.entity.id}">
@@ -870,36 +872,6 @@
 			</p:outputPanel>
 		</p:dialog>
 		
-		<p:dialog id="productInstanceDetailPopup"
-			header="#{messages['subscription.tab.productInstanceDetail']}"
-			widgetVar="dlg_productInstanceDetailPopup" modal="true"
-			dynamic="false" width="90%" closeOnEscape="true">
-			<p:outputPanel id="productInstanceDetailPopupPanel">
-				<hftl:formPanel edit="false"
-					label="#{messages['subscription.tab.productInstanceDetail']}"
-					backingBean="#{subscriptionBean}" columns="1"
-					entity="#{subscriptionBean.productInstance}"
-					formId="productInstancePopupForm" showFormButtons="false"
-					ajaxSubmit="true"
-					rendered="#{subscriptionBean.productInstance!=null}">
-					<hftl:formField label="#{messages['businessEntity.code']}"
-						field="code" />
-					<hftl:formField label="#{messages['businessEntity.description']}"
-						field="description" />
-					<hftl:formField label="#{messages['commons.quantity']}"
-						field="quantity" />
-					<hftl:formField
-						label="#{messages['chargeApplication.applicationDate']}"
-						field="applicationDate" />
-					
-					<h:panelGroup id="productInstancePopupFormCF">
-						<hftl:customFields backingBean="#{productInstanceBean}"
-							entity="#{subscriptionBean.productInstance}"
-							messagesId=":productInstancePopupForm:messages" prefix="piPopup" />
-					</h:panelGroup>
-				</hftl:formPanel>
-			</p:outputPanel>
-		</p:dialog>
 	</ui:define>
 </ui:composition>
 

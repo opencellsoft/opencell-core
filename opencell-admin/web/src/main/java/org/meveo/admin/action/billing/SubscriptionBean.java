@@ -143,7 +143,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
     private ServiceInstance selectedServiceInstance;
 
-    private ProductInstance productInstance = new ProductInstance();
+    private ProductInstance productInstance;
 
     private BigDecimal quantity = BigDecimal.ONE;
 
@@ -214,10 +214,10 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
         return entity;
     }
-    
+
     @Override
     protected List<String> getFormFieldsToFetch() {
-    	return Arrays.asList("productInstances");
+        return Arrays.asList("productInstances");
     }
 
     private void initServiceTemplates() {
@@ -272,11 +272,11 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             return null;
         }
 
-		if(entity.getOffer().isDisabled()) {
-			messages.error(new BundleKey("messages", "message.subscription.offerIsDisabled"));
-			return null;
-		}
-		
+        if (entity.getOffer().isDisabled()) {
+            messages.error(new BundleKey("messages", "message.subscription.offerIsDisabled"));
+            return null;
+        }
+
         String outcome = super.saveOrUpdate(killConversation);
 
         if (outcome != null) {
@@ -576,43 +576,61 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         }
     }
 
-    public void applyProduct() {
-        log.debug("applyProduct...");
+    @ActionMethod
+    public void saveProductInstance() throws BusinessException {
 
-        if (productInstance.getProductTemplate().getValidityRaw() != null
-                && !productInstance.getProductTemplate().getValidityRaw().isCorrespondsToPeriod(productInstance.getApplicationDate())) {
+        if (productInstance.isTransient()) {
 
-            String datePattern = paramBean.getDateFormat();
-            messages.error(new BundleKey("messages", "productInstance.error.productTemplateInvalidVersion"),
-                productInstance.getProductTemplate().getValidityRaw().toString(datePattern), DateUtils.formatDateWithPattern(productInstance.getApplicationDate(), datePattern));
-            FacesContext.getCurrentInstance().validationFailed();
-            return;
-        }
+            if (productInstance.getProductTemplate().getValidityRaw() != null
+                    && !productInstance.getProductTemplate().getValidityRaw().isCorrespondsToPeriod(productInstance.getApplicationDate())) {
 
-        productInstance.setCode(productInstance.getProductTemplate().getCode());
-        productInstance.setDescription(productInstance.getProductTemplate().getDescription());
-        if (productInstance.getApplicationDate() == null) {
-            productInstance.setApplicationDate(new Date());
-        }
+                String datePattern = paramBean.getDateFormat();
+                messages.error(new BundleKey("messages", "productInstance.error.productTemplateInvalidVersion"),
+                    productInstance.getProductTemplate().getValidityRaw().toString(datePattern),
+                    DateUtils.formatDateWithPattern(productInstance.getApplicationDate(), datePattern));
+                FacesContext.getCurrentInstance().validationFailed();
+                return;
+            }
 
-        productInstance.setSubscription(getPersistenceService().refreshOrRetrieve(entity));
-        productInstance.setUserAccount(getPersistenceService().refreshOrRetrieve(entity).getUserAccount());
-        productInstance.setProductTemplate(productTemplateService.refreshOrRetrieve(productInstance.getProductTemplate()));
+            productInstance.setCode(productInstance.getProductTemplate().getCode());
+            productInstance.setDescription(productInstance.getProductTemplate().getDescription());
+            if (productInstance.getApplicationDate() == null) {
+                productInstance.setApplicationDate(new Date());
+            }
 
-        try {
-            productInstanceService.create(productInstance);
+            productInstance.setSubscription(getPersistenceService().refreshOrRetrieve(entity));
+            productInstance.setUserAccount(getPersistenceService().refreshOrRetrieve(entity).getUserAccount());
+            productInstance.setProductTemplate(productTemplateService.refreshOrRetrieve(productInstance.getProductTemplate()));
+
+            try {
+                productInstanceService.create(productInstance);
+                // save custom field before product application so we can use in el
+                customFieldDataEntryBean.saveCustomFieldsToEntity(productInstance, true);
+                productInstanceService.applyProductInstance(productInstance, null, null, null, true);
+                productChargeInstances = null;
+                productInstances = null;
+                productInstance = null;
+
+                messages.info(new BundleKey("messages", "productInstance.saved.ok"));
+            } catch (BusinessException e) {
+                messages.error(new BundleKey("messages", "message.product.application.fail"), e.getMessage());
+
+            } catch (Exception e) {
+                log.error("unexpected exception when applying a product! {}", e.getMessage());
+                messages.error(new BundleKey("messages", "message.product.application.fail"), e.getMessage());
+            }
+
+            // For update operation only custom field values can be changed
+        } else {
             // save custom field before product application so we can use in el
-            customFieldDataEntryBean.saveCustomFieldsToEntity(productInstance, true);
-            productInstanceService.applyProductInstance(productInstance, null, null, null, true);
-        } catch (BusinessException e) {
-            messages.error(new BundleKey("messages", "message.product.application.fail"), e.getMessage());
-        } catch (Exception e) {
-            log.error("unexpected exception when applying a product! {}", e.getMessage());
-            messages.error(new BundleKey("messages", "message.product.application.fail"), e.getMessage());
+            customFieldDataEntryBean.saveCustomFieldsToEntity(productInstance, false);
+
+            productChargeInstances = null;
+            productInstances = null;
+            productInstance = null;
+
+            messages.info(new BundleKey("messages", "productInstance.saved.ok"));
         }
-        productChargeInstances = null;
-        productInstances = null;
-        clearObjectId();
     }
 
     public void terminateService() {
@@ -656,21 +674,21 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     @ActionMethod
     public String terminateSubscription() {
         try {
-            
+
             SubscriptionTerminationReason reason = entity.getSubscriptionTerminationReason();
-            Date terminationDate =  entity.getTerminationDate();
-            
+            Date terminationDate = entity.getTerminationDate();
+
             entity = subscriptionService.refreshOrRetrieve(entity);
-            
+
             entity.setSubscriptionTerminationReason(reason);
             entity.setTerminationDate(terminationDate);
-            
+
             log.debug("selected subscriptionTerminationReason={},terminationDate={},subscriptionId={},status={}",
                 new Object[] { entity.getSubscriptionTerminationReason(), entity.getTerminationDate(), entity.getCode(), entity.getStatus() });
             subscriptionService.terminateSubscription(entity, entity.getTerminationDate(), entity.getSubscriptionTerminationReason(), entity.getOrderNumber());
             messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
             return "subscriptionDetail";
-            
+
         } catch (BusinessException e1) {
             messages.error(e1.getMessage());
         } catch (Exception e) {
@@ -998,10 +1016,16 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
     public void updateProductInstanceCode() {
         productInstance.setCode(productInstance.getProductTemplate().getCode());
+        customFieldDataEntryBean.refreshFieldsAndActions(productInstance);
     }
 
-    public void setAndRefreshProductInstance(ProductInstance prodInstance) {
+    public void editProductInstance(ProductInstance prodInstance) {
         this.productInstance = productInstanceService.refreshOrRetrieve(prodInstance);
+        customFieldDataEntryBean.refreshFieldsAndActions(this.productInstance);
+    }
+
+    public void cancelProductInstanceEdit() {
+        this.productInstance = null;
     }
 
     public void onOfferSelected() {
