@@ -97,7 +97,6 @@
             <column name="updater" type="varchar(100)" />
         </addColumn>
         <sql>update billing_subscrip_termin_reason set created=now()</sql>
-        <addNotNullConstraint tableName="billing_subscrip_termin_reason" columnName="created" />
     </changeSet>
 
     <changeSet id="#2691_20170616" author="TienLanPHUNG">
