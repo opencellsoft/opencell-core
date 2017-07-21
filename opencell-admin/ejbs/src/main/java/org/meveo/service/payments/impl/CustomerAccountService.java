@@ -125,7 +125,6 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
     private BigDecimal computeBalance(CustomerAccount customerAccount, Date to, boolean isDue, boolean dunningExclusion, MatchingStatusEnum... status) throws BusinessException {
         log.trace("start computeBalance customerAccount:{}, toDate:{}, isDue:{}, dunningExclusion:{}", (customerAccount == null ? "null" : customerAccount.getCode()), to, isDue,
             dunningExclusion);
-        detach(customerAccount);
         if (customerAccount == null) {
             log.warn("Error when customerAccount is null!");
             throw new BusinessException("customerAccount is null");
