@@ -1305,8 +1305,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 		if (this.providerService != null) {
 			return this.providerService.getProvider().getCode();
 		}
-		return null;
 		
+		return null;
 	}
 
 	public boolean isOverrideImageOnUpload() {
@@ -1317,4 +1317,12 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 		this.overrideImageOnUpload = overrideImageOnUpload;
 	}
 
+	public Provider getProvider() {
+		if (this.providerService != null) {
+			return this.providerService.getProvider();
+		}
+		
+		return null;
+	}
+	
 }

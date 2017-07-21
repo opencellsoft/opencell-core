@@ -43,7 +43,7 @@
 						label="#{messages['pricePlanMatrix.amountWithoutTax']}"
 						field="amountWithoutTax" isMessage="false" />
 					<p:column headerText="#{messages['pricePlanMatrix.amountWithTax']}"
-						rendered="#{!appProvider.entreprise}">
+						rendered="#{!subscriptionBean.provider.entreprise}">
 						<h:outputText value="#{entity.amountWithTax}"
 							converter="#{getConverter.forType(entity.amountWithTax,'4digits')}" />
 					</p:column>

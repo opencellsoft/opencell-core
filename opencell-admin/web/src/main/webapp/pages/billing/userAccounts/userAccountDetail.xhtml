@@ -94,7 +94,7 @@
                         <p:inputText id="amountWithoutTax" value="#{userAccountBean.reloadOperation.amountWithoutTax}"></p:inputText>
                     </hftl:decorateFormField>
                     <hftl:decorateFormField fieldId="amountWithTax" label="#{messages['walletOperation.amountWithTax']}"
-                        rendered="#{ userAccountBean.entity != null and ! appProvider.entreprise}">
+                        rendered="#{ userAccountBean.entity != null and ! userAccountBean.provider.entreprise}">
                         <p:inputText id="amountWithTax" value="#{userAccountBean.reloadOperation.amountWithTax}"></p:inputText>
                     </hftl:decorateFormField>
 
@@ -226,7 +226,7 @@
                                 <p:fieldset legend="#{messages['walletOperationStatus.open']}" rendered="#{wallet.key!='PREPAID'}" styleClass="clearLeft"
                                     style="width: 25%; float:left;">
                                     <hftl:decorateFormField label="#{messages['pricePlanMatrix.amountWithTax']}" displayOneLine="true" componentWidth="100" labelWidth="70"
-                                        rendered="#{ userAccountBean.entity != null and ! appProvider.entreprise}">
+                                        rendered="#{ userAccountBean.entity != null and ! userAccountBean.provider.entreprise}">
                                         <h:outputText
                                             value="#{userAccountBean.getOpenBalanceWithTax(userAccountBean.entity.billingAccount.customerAccount.customer.seller.code,userAccountBean.entity.code,null,null)}" />
                                     </hftl:decorateFormField>
@@ -239,7 +239,7 @@
                                 </p:fieldset>
                                 <p:fieldset legend="#{messages['walletOperationStatus.reserved']}" rendered="#{wallet.key!='PREPAID'}" style="width: 25%; float:left;">
                                     <hftl:decorateFormField label="#{messages['pricePlanMatrix.amountWithTax']}" displayOneLine="true" componentWidth="100" labelWidth="70"
-                                        rendered="#{ userAccountBean.entity != null and ! appProvider.entreprise}">
+                                        rendered="#{ userAccountBean.entity != null and ! userAccountBean.provider.entreprise}">
                                         <h:outputText
                                             value="#{userAccountBean.getReservedBalanceWithTax(userAccountBean.entity.billingAccount.customerAccount.customer.seller.code
     													,userAccountBean.entity.code,null,null)}" />
@@ -253,7 +253,7 @@
                                 </p:fieldset>
                                 <p:fieldset legend="#{messages['walletOperationStatus.current']}" rendered="#{wallet.key!='PREPAID'}" style="width: 25%; float:left;">
                                     <hftl:decorateFormField label="#{messages['pricePlanMatrix.amountWithTax']}" displayOneLine="true" componentWidth="100" labelWidth="70"
-                                        rendered="#{ userAccountBean.entity != null and ! appProvider.entreprise}">
+                                        rendered="#{ userAccountBean.entity != null and ! userAccountBean.provider.entreprise}">
                                         <h:outputText
                                             value="#{userAccountBean.getCurrentBalanceWithTax(userAccountBean.entity.billingAccount.customerAccount.customer.seller.code
     													,userAccountBean.entity.code,null,null)}" />
@@ -312,7 +312,7 @@
                                         <h:outputText value="#{e.amountWithoutTax}" converter="bigDecimal12DigitsConverter" />
                                     </p:column>
 
-                                    <p:column rendered="#{ userAccountBean.entity != null and ! appProvider.entreprise}">
+                                    <p:column rendered="#{ userAccountBean.entity != null and ! userAccountBean.provider.entreprise}">
                                         <f:facet name="header">
                                             <h:outputText value="#{messages['walletOperation.amountWithTax']}" />
                                         </f:facet>
