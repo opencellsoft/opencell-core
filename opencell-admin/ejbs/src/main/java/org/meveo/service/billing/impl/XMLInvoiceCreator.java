@@ -285,17 +285,11 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 				&& appProvider.getInvoiceConfiguration().getDisplayProvider()) {
 			Element providerTag = doc.createElement("provider");
 			providerTag.setAttribute("code", appProvider.getCode() + "");
-			Element bankCoordinates = doc.createElement("bankCoordinates");
-			Element ics = doc.createElement("ics");
-			Element iban = doc.createElement("iban");
-			Element bic = doc.createElement("bic");
-			bankCoordinates.appendChild(ics);
-			bankCoordinates.appendChild(iban);
-			bankCoordinates.appendChild(bic);
-			providerTag.appendChild(bankCoordinates);
-			header.appendChild(providerTag);
-
 			if (appProvider.getBankCoordinates() != null) {
+				Element bankCoordinates = doc.createElement("bankCoordinates");
+				Element ics = doc.createElement("ics");
+				Element iban = doc.createElement("iban");
+				Element bic = doc.createElement("bic");
 				Text icsTxt = doc.createTextNode(appProvider.getBankCoordinates().getIcs() != null ? appProvider
 						.getBankCoordinates().getIcs() : "");
 				ics.appendChild(icsTxt);
@@ -304,8 +298,13 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 				iban.appendChild(ibanTxt);
 				Text bicTxt = doc.createTextNode(appProvider.getBankCoordinates().getBic() != null ? appProvider
 						.getBankCoordinates().getBic() : "");
-				bic.appendChild(bicTxt);
+				bic.appendChild(bicTxt);				
+				bankCoordinates.appendChild(ics);
+				bankCoordinates.appendChild(iban);
+				bankCoordinates.appendChild(bic);
+				providerTag.appendChild(bankCoordinates);
 			}
+			header.appendChild(providerTag);
 		}
 
 		Customer customer = invoice.getBillingAccount().getCustomerAccount().getCustomer();
