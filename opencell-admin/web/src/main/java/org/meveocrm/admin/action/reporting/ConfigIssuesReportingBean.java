@@ -143,7 +143,6 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
 		usagesChrgNotAssociatedList = usageChargeTemplateService.getUsagesChrgNotAssociated();
 	}
 
-	@SuppressWarnings("unchecked")
 	public void constructCounterWithNotService(TabChangeEvent event) {
 		counterWithNotServicList = counterTemplateService.getCounterWithNotService();
 	}

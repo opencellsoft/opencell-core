@@ -114,7 +114,7 @@
 			<hftl:column label="#{messages['ratedTransaction.quantity']}" field="quantity"  converterParam="4digits" wrapHeader="true" />
 			<hftl:column label="#{messages['ratedTransaction.amount1WithoutTax']}" field="amountWithoutTax"  converterParam="4digits" wrapHeader="true" />
 			
-			<hftl:column label="#{messages['ratedTransaction.amount1WithTax']}" field="amountWithTax"  converterParam="4digits" wrapHeader="true" rendered="#{ ! ratedTransactionListBean.provider.entreprise}" />
+			<hftl:column label="#{messages['ratedTransaction.amount1WithTax']}" field="amountWithTax"  converterParam="4digits" wrapHeader="true" rendered="#{ ! appProvider.entreprise}" />
 			<hftl:column label="#{messages['ratedTransaction.usageDate']}" field="usageDate" isDate="true" />
 			<hftl:column label="#{messages['invoice.invoiceNumber']}" field="invoice.invoiceNumber"  /> 
 			<hftl:actionsColumn renderEditLink="true" renderDeleteLink="false" width="60"

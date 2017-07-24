@@ -114,9 +114,9 @@
                 </f:facet>
             </p:cellEditor>
         </p:column>
-        <p:column exportable="true" toggleable="#{pricePlanMatrixBean.provider.entreprise}"
+        <p:column exportable="true" toggleable="#{appProvider.entreprise}"
                   visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[6]}"
-                  rendered="#{!pricePlanMatrixBean.provider.entreprise}"
+                  rendered="#{!appProvider.entreprise}"
                   width="#{pricePlanMatrixColumnSelectorBean.getColumnWidth(6)}">
             <f:facet name="header">
                 <h:outputText value="#{messages['pricePlanMatrix.amountWithTax']}"/>
@@ -132,7 +132,7 @@
                 </f:facet>
             </p:cellEditor>
         </p:column>
-        <p:column exportable="true" toggleable="#{!pricePlanMatrixBean.provider.entreprise}" width="15%">
+        <p:column exportable="true" toggleable="#{!appProvider.entreprise}" width="15%">
             <f:facet name="header">
                 <h:outputText
                         value="#{messages['pricePlanMatrix.amountWithoutTax']}"/>

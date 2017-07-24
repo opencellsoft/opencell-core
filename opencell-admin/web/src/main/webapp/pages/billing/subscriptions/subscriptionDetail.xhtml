@@ -463,7 +463,7 @@
 																field="amountWithoutTax" isMessage="false" />
 															<p:column
 																headerText="#{messages['pricePlanMatrix.amountWithTax']}"
-																rendered="#{!subscriptionBean.provider.entreprise}">
+																rendered="#{!appProvider.entreprise}">
 																<h:outputText value="#{entity.amountWithTax}"
 																	  converter="#{getConverter.forType(entity.amountWithTax,'4digits')}" />
 															</p:column>
@@ -528,7 +528,7 @@
 															field="amountWithoutTax" isMessage="false" />
 														<p:column
 															headerText="#{messages['pricePlanMatrix.amountWithTax']}"
-															rendered="#{!subscriptionBean.provider.entreprise}">
+															rendered="#{!appProvider.entreprise}">
 															<h:outputText value="#{entity.amountWithTax}"
 																converter="#{getConverter.forType(entity.amountWithTax,'4digits')}" />
 														</p:column>
@@ -688,12 +688,12 @@
 							field="chargeDate" edit="false" newLine="true" />
 						<hftl:formField label="#{messages['counterTemplate.title']}"
 							field="counter" valueLabelField="descriptionOrCode" edit="false" />
-						<hftl:formField rendered="#{!subscriptionBean.provider.entreprise}"
+						<hftl:formField rendered="#{!appProvider.entreprise}"
 							label="#{messages['chargeInstance.amountWithTax']}"
 							field="amountWithTax" edit="true" newLine="true" />
 						<hftl:formField
 							label="#{messages['chargeInstance.amountWithoutTax']}"
-							field="amountWithoutTax" edit="true" newLine="#{subscriptionBean.provider.entreprise}"/>
+							field="amountWithoutTax" edit="true" newLine="#{appProvider.entreprise}"/>
 
 
                         <ui:param name="buttons" value="true"/>
@@ -738,7 +738,7 @@
 								disabled="#{subscriptionBean.recurringChargeInstance.id!=null and !subscriptionBean.recurringChargeInstance.chargeTemplate.amountEditable}">
 							</p:inputText>
                         </hftl:decorateFormField>
-						<hftl:decorateFormField fieldId="RCamountWithTax" label="#{messages['recurringChargeInstance.amountWithTax']}" rendered="#{!subscriptionBean.provider.entreprise}">
+						<hftl:decorateFormField fieldId="RCamountWithTax" label="#{messages['recurringChargeInstance.amountWithTax']}" rendered="#{!appProvider.entreprise}">
 							<p:inputText id="RCamountWithTax"
 								value="#{subscriptionBean.recurringChargeInstance.amountWithTax}"
 								size="5" converter="bigDecimalConverter"
@@ -852,7 +852,7 @@
 								</f:facet>
 								<h:outputText value="#{shotApplication.amountWithoutTax}" />
 							</p:column>
-							<p:column rendered="#{!subscriptionBean.provider.entreprise}" sortBy="#{shotApplication.amountWithTax}">
+							<p:column rendered="#{!appProvider.entreprise}" sortBy="#{shotApplication.amountWithTax}">
 								<f:facet name="header">
 									<h:outputText
 										value="#{messages['walletOperation.amountWithTax']}" />

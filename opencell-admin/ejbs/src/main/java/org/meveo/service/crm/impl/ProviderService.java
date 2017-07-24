@@ -18,15 +18,14 @@
  */
 package org.meveo.service.crm.impl;
 
-import javax.ejb.Stateless;
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Produces;
-import javax.inject.Named;
+import java.lang.reflect.InvocationTargetException;
 
+import javax.ejb.Stateless;
+
+import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.util.ApplicationProvider;
 
 /**
  * Provider service implementation.
@@ -34,17 +33,10 @@ import org.meveo.util.ApplicationProvider;
 @Stateless
 public class ProviderService extends PersistenceService<Provider> {
 
-    /**
-     * Expose application provider
-     * 
-     * @return
-     */
-    @Produces
-    @ApplicationScoped
-    @Named("appProvider")
-    @ApplicationProvider
     public Provider getProvider() {
+
         Provider provider = list().get(0);
+
         if (provider.getCurrency() != null) {
             provider.getCurrency().getCurrencyCode();
         }
@@ -58,7 +50,6 @@ public class ProviderService extends PersistenceService<Provider> {
             provider.getInvoiceConfiguration().getDisplayBillingCycle();
         }
 
-        detach(provider);
         return provider;
     }
 
@@ -67,11 +58,16 @@ public class ProviderService extends PersistenceService<Provider> {
         entity = super.update(entity);
 
         // Refresh appProvider application scope variable
-        Provider detachedProvider = getProvider();
-        appProvider.setCurrency(detachedProvider.getCurrency() != null ? detachedProvider.getCurrency() : null);
-        appProvider.setCountry(detachedProvider.getCountry() != null ? detachedProvider.getCountry() : null);
-        appProvider.setLanguage(detachedProvider.getLanguage() != null ? detachedProvider.getLanguage() : null);
-        appProvider.setInvoiceConfiguration(detachedProvider.getInvoiceConfiguration() != null ? detachedProvider.getInvoiceConfiguration() : null);
+        try {
+            BeanUtils.copyProperties(appProvider, entity);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            log.error("Failed to update alProvider fields");
+        }
+
+        appProvider.setCurrency(entity.getCurrency() != null ? entity.getCurrency() : null);
+        appProvider.setCountry(entity.getCountry() != null ? entity.getCountry() : null);
+        appProvider.setLanguage(entity.getLanguage() != null ? entity.getLanguage() : null);
+        appProvider.setInvoiceConfiguration(entity.getInvoiceConfiguration() != null ? entity.getInvoiceConfiguration() : null);
 
         return entity;
     }

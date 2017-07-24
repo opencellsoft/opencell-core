@@ -43,7 +43,7 @@
 						label="#{messages['pricePlanMatrix.amountWithoutTax']}"
 						field="amountWithoutTax" isMessage="false" />
 					<p:column headerText="#{messages['pricePlanMatrix.amountWithTax']}"
-						rendered="#{!subscriptionBean.provider.entreprise}">
+						rendered="#{!appProvider.entreprise}">
 						<h:outputText value="#{entity.amountWithTax}"
 							converter="#{getConverter.forType(entity.amountWithTax,'4digits')}" />
 					</p:column>
@@ -177,7 +177,7 @@
 						</hftl:decorateFormField>
 						<hftl:decorateFormField fieldId="amountWithTax"
 							label="#{messages['oneShotChargeInstance.amountWithTax']}"
-							rendered="#{subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable and !subscriptionBean.provider.entreprise}">
+							rendered="#{subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable and !appProvider.entreprise}">
 							<p:inputText id="amountWithTax"
 								value="#{subscriptionBean.oneShotChargeInstance.amountWithTax}"
 								size="5" converter="bigDecimalConverter"
@@ -231,7 +231,7 @@
 										styleClass="field-value" />
 								</hftl:decorateFormField>
 								<hftl:decorateFormField
-									rendered="#{!subscriptionBean.provider.entreprise}"
+									rendered="#{!appProvider.entreprise}"
 									label="#{messages['walletOperation.amountWithTax']}">
 									<h:outputText
 										value="#{subscriptionBean.oneShotWalletOperations[0].amountWithTax}"
