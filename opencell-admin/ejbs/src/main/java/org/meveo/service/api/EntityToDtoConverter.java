@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -202,6 +204,89 @@ public class EntityToDtoConverter {
 								}
 							}
 						}
+					}
+				}
+			}
+		}
+		if (customFieldsDto.isEmpty()) {
+			return null;
+		}
+
+		return customFieldsDto;
+	}
+	
+	
+	/**
+	 * @param entity
+	 * @param includeInheritedCF
+	 * @return
+	 */
+	public CustomFieldsDto getMergedCustomFieldsWithInheritedDTO(ICustomFieldEntity entity, boolean includeInheritedCF) {
+		CustomFieldsDto customFieldsDto = getCustomFieldsDTO(entity);
+		if (customFieldsDto == null) {
+			customFieldsDto = new CustomFieldsDto();
+		}
+		ICustomFieldEntity[] parentEntities = entity.getParentCFEntities();
+
+		List<CustomFieldDto> customFieldList = customFieldsDto.getCustomField();
+		if (!customFieldsDto.isEmpty() && includeInheritedCF) {
+			if (parentEntities != null) {
+				for (ICustomFieldEntity iCustomFieldEntity : parentEntities) {
+					CustomFieldsDto inheritedCustomFieldsDto = getCustomFieldsDTO(iCustomFieldEntity,
+							includeInheritedCF);
+					List<CustomFieldDto> inheritedCustomFieldList = inheritedCustomFieldsDto.getCustomField();
+					if (inheritedCustomFieldsDto != null) {
+						for (CustomFieldDto cfDto : customFieldList) {
+							
+							for (CustomFieldDto inheritedCFDto : inheritedCustomFieldList) {
+								if (cfDto.getCode().equals(inheritedCFDto.getCode())) {
+									customFieldsDto.getInheritedCustomField().add(inheritedCFDto);
+								}
+							}
+						}
+						
+						for (CustomFieldDto inheritedCFDto : inheritedCustomFieldList) {
+							boolean found = false;
+							for (CustomFieldDto cfDto : customFieldList) {
+								if (cfDto.getCode().equals(inheritedCFDto.getCode())) {
+									found = true;
+									
+									Map<String, CustomFieldValueDto> mapValue = cfDto.getMapValue();
+									Map<String, CustomFieldValueDto> inheritedMapValue = inheritedCFDto.getMapValue();
+									if (inheritedMapValue != null) {
+										Set<Entry<String, CustomFieldValueDto>> entrySet = inheritedMapValue.entrySet();
+										for (Entry<String, CustomFieldValueDto> entry : entrySet) {
+											CustomFieldValueDto customFieldValueDto = mapValue.get(entry.getKey());
+											if(customFieldValueDto == null) {
+												mapValue.put(entry.getKey(), entry.getValue());
+											}
+										}
+									}
+									
+									/**
+									List<CustomFieldValueDto> listValue = cfDto.getListValue();
+									List<CustomFieldValueDto> inheritedListValue = inheritedCFDto.getListValue();
+									for (CustomFieldValueDto customFieldValueDto : inheritedListValue) {
+										
+									}*/
+								}
+							}
+							
+							if (!found) {
+								customFieldList.add(inheritedCFDto);
+							}
+						}
+						
+					}
+				
+				}
+			}
+		} else if(includeInheritedCF && ( customFieldsDto == null || customFieldList.isEmpty() ) ){
+			if(parentEntities != null){
+				for(ICustomFieldEntity iCustomFieldEntity : parentEntities){
+					CustomFieldsDto inheritedCustomFieldsDto = getCustomFieldsDTO(iCustomFieldEntity,includeInheritedCF);
+					if(inheritedCustomFieldsDto != null){
+						customFieldList.addAll(inheritedCustomFieldsDto.getCustomField());
 					}
 				}
 			}

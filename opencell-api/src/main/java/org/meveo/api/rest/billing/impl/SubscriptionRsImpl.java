@@ -5,6 +5,9 @@ import java.util.List;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
 
 import org.meveo.api.billing.SubscriptionApi;
 import org.meveo.api.dto.ActionStatus;
@@ -146,11 +149,11 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     }
 
     @Override
-    public SubscriptionsResponseDto listByUserAccount(String userAccountCode) {
+    public SubscriptionsResponseDto listByUserAccount(String userAccountCode, boolean mergedCF) {
         SubscriptionsResponseDto result = new SubscriptionsResponseDto();
 
         try {
-            result.setSubscriptions(subscriptionApi.listByUserAccount(userAccountCode));
+            result.setSubscriptions(subscriptionApi.listByUserAccount(userAccountCode, mergedCF));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -159,11 +162,11 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     }
 
     @Override
-    public GetSubscriptionResponseDto findSubscription(String subscriptionCode) {
+    public GetSubscriptionResponseDto findSubscription(String subscriptionCode, boolean mergedCF) {
         GetSubscriptionResponseDto result = new GetSubscriptionResponseDto();
 
         try {
-            result.setSubscription(subscriptionApi.findSubscription(subscriptionCode));
+            result.setSubscription(subscriptionApi.findSubscription(subscriptionCode, mergedCF));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -185,19 +188,19 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     }
 
     @Override
-    public SubscriptionsListResponseDto listAll(int pageSize, int pageNumber) {
+    public SubscriptionsListResponseDto listAll(int pageSize, int pageNumber, boolean mergedCF) {
+    	SubscriptionsListResponseDto result = new SubscriptionsListResponseDto();
 
-        SubscriptionsListResponseDto result = new SubscriptionsListResponseDto();
+    	try {
+    		SubscriptionsListDto subscriptionsDto = subscriptionApi.listAll(pageSize, pageNumber, mergedCF);
+    		result.setSubscriptions(subscriptionsDto);
+    	} catch (Exception e) {
+    		processException(e, result.getActionStatus());
+    	}
 
-        try {
+    	return result;
 
-            SubscriptionsListDto subscriptionsDto = subscriptionApi.listAll(pageSize, pageNumber);
-            result.setSubscriptions(subscriptionsDto);
-        } catch (Exception e) {
-            processException(e, result.getActionStatus());
-        }
 
-        return result;
     }
 
     @Override
