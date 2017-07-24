@@ -175,6 +175,7 @@ public abstract class BaseRs implements IBaseRs {
             status.setStatus(ActionStatusEnum.FAIL);
             status.setMessage(message);
         }
+        
         handleErrorStatus(status);
     }
     
