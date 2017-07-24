@@ -28,19 +28,18 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
-import org.meveo.api.dto.payment.DoPaymentResponseDto;
+import org.meveo.api.dto.payment.PayByCardResponseDto;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.Country;
-import org.meveo.model.payments.CardToken;
+import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.Payment;
-import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.base.PersistenceService;
@@ -51,158 +50,205 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class PaymentService extends PersistenceService<Payment> {
 
-	@Inject
-	private CardTokenService cardTokenService;
+    @Inject
+    private PaymentMethodService paymentMethodService;
 
-	@Inject
-	private OCCTemplateService oCCTemplateService;
+    @Inject
+    private OCCTemplateService oCCTemplateService;
 
-	@Inject
-	private MatchingCodeService matchingCodeService;
-	
-	@Inject
-	private CountryService countryService;
-	
-	@Inject
-	private GatewayPaymentFactory gatewayPaymentFactory;
-	
-	@MeveoAudit
-	@Override
-	public void create(Payment entity) throws BusinessException {
-		super.create(entity);
-	}
+    @Inject
+    private MatchingCodeService matchingCodeService;
 
-	public DoPaymentResponseDto doPaymentCardToken(CustomerAccount customerAccount, Long ctsAmount, List<Long> aoIdsToPay,boolean createAO,boolean matchingAO) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
-		if(customerAccount.getPaymentTokens() == null || customerAccount.getPaymentTokens().isEmpty()){
-			throw new BusinessException("There no payment token for customerAccount:"+customerAccount.getCode());
-		}
-		if(!PaymentMethodEnum.CARD.name().equals(customerAccount.getPaymentMethod().name())){
-			throw new BusinessException("Unsupported payment method:"+customerAccount.getPaymentMethod());
-		}
-		GatewayPaymentInterface  gatewayPaymentInterface = gatewayPaymentFactory.getInstance(GatewayPaymentNamesEnum.valueOf(ParamBean.getInstance().getProperty("meveo.gatewayPayment", "CUSTOM_API")));		
+    @Inject
+    private CountryService countryService;
 
-		DoPaymentResponseDto doPaymentResponseDto =  gatewayPaymentInterface.doPaymentToken(cardTokenService.getPreferedToken(customerAccount), ctsAmount,null);
+    @Inject
+    private GatewayPaymentFactory gatewayPaymentFactory;
 
-		if(PaymentStatusEnum.ACCEPTED.name().equals(doPaymentResponseDto.getPaymentStatus().name())){
-			Long aoPaymentId = null;
-			if(createAO){
-				try{
-					aoPaymentId = createPaymentAO(customerAccount, ctsAmount, doPaymentResponseDto);
-					doPaymentResponseDto.setAoCreated(true);
-				}catch (Exception e) {
-					log.warn("Cant create Account operation payment :",e);
-				}
-				if(matchingAO){
-					try{
-						 List<Long> aoIdsToMatch = aoIdsToPay;						 
-						 aoIdsToMatch.add(aoPaymentId);
-						 matchingCodeService.matchOperations(null, customerAccount.getCode(), aoIdsToMatch, null, MatchingTypeEnum.A);			
-						doPaymentResponseDto.setMatchingCreated(true);
-					}catch (Exception e) {
-						log.warn("Cant create matching :",e);
-					}
-				}
-			}
-		}
+    @Inject
+    private CustomerAccountService customerAccountService;
 
-		return doPaymentResponseDto;
-	}
+    @MeveoAudit
+    @Override
+    public void create(Payment entity) throws BusinessException {
+        super.create(entity);
+    }
 
-	/**
-	 * 
-	 * @param customerAccount
-	 * @param ctsAmount
-	 * @param invoice
-	 * @param cardNumber
-	 * @param ownerName
-	 * @param cvv
-	 * @param expirayDate format :MMyy
-	 * @return
-	 * @throws BusinessException
-	 * @throws UnbalanceAmountException 
-	 * @throws NoAllOperationUnmatchedException 
-	 */
-	public DoPaymentResponseDto doPaymentCard(CustomerAccount customerAccount, Long ctsAmount,String cardNumber,String ownerName, String cvv,String expirayDate,
-			CreditCardTypeEnum cardType, List<Long> aoIdsToPay,boolean createAO,boolean matchingAO ) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
-		GatewayPaymentInterface  gatewayPaymentInterface = gatewayPaymentFactory.getInstance(GatewayPaymentNamesEnum.valueOf(ParamBean.getInstance().getProperty("meveo.gatewayPayment", "INGENICO_GC")));		
-		if(!PaymentMethodEnum.CARD.name().equals(customerAccount.getPaymentMethod().name())){
-			throw new BusinessException("Unsupported payment method:"+customerAccount.getPaymentMethod());
-		}				
-		String coutryCode = null;
-		Country country = countryService.findByName(customerAccount.getAddress() != null ? customerAccount.getAddress().getCountry() : null);
-		if(country != null){
-			coutryCode = country.getCountryCode();
-		}	
-		DoPaymentResponseDto doPaymentResponseDto =  gatewayPaymentInterface.doPaymentCard(customerAccount, ctsAmount, cardNumber, ownerName,  cvv, expirayDate,cardType,coutryCode,null);		
-		
-		if(PaymentStatusEnum.ACCEPTED.name().equals(doPaymentResponseDto.getPaymentStatus().name())){
-			CardToken cardToken = new CardToken(); 
-			cardToken.setAlias("Card_"+cardNumber.substring(12, 16));
-			cardToken.setCardNumber(cardNumber);
-			cardToken.setCardType(cardType);
-			cardToken.setCustomerAccount(customerAccount);
-			cardToken.setDefault(true);		
-			cardToken.setHiddenCardNumber(StringUtils.hideCardNumber(cardNumber));
-			cardToken.setMonthExpiration(new Integer(expirayDate.substring(0, 2)));
-			cardToken.setYearExpiration(new Integer(expirayDate.substring(2, 4)));
-			cardToken.setOwner(ownerName);
-			cardToken.setTokenId(doPaymentResponseDto.getTokenId());
-			cardTokenService.create(cardToken);	
-			Long aoPaymentId = null;
-			if(createAO){
-				try{
-					aoPaymentId = createPaymentAO(customerAccount, ctsAmount, doPaymentResponseDto);
-					doPaymentResponseDto.setAoCreated(true);
-				}catch (Exception e) {
-					log.warn("Cant create Account operation payment :"+e.getMessage());
-				}
-				if(matchingAO){
-					try{
-						 List<Long> aoIdsToMatch = aoIdsToPay;						 
-						 aoIdsToMatch.add(aoPaymentId);
-						matchingCodeService.matchOperations(null, customerAccount.getCode(), aoIdsToMatch, null, MatchingTypeEnum.A);							
-						doPaymentResponseDto.setMatchingCreated(true);
-					}catch (Exception e) {
-						log.warn("Cant create matching :"+e.getMessage());
-					}
-				}
-			}			
-		}
-		return doPaymentResponseDto;
-	}
+    /**
+     * Pay by card. An existing and preferred card payment method will be used. If currently preferred card payment method is not valid, a new currently valid card payment will be
+     * used (and marked as preferred)
+     * 
+     * @param customerAccount Customer account
+     * @param ctsAmount Amount to mpau
+     * @param aoIdsToPay
+     * @param createAO
+     * @param matchingAO
+     * @return
+     * @throws BusinessException
+     * @throws NoAllOperationUnmatchedException
+     * @throws UnbalanceAmountException
+     */
+    public PayByCardResponseDto payByCard(CustomerAccount customerAccount, Long ctsAmount, List<Long> aoIdsToPay, boolean createAO, boolean matchingAO)
+            throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
 
-/**
- * 
- * @param customerAccount
- * @param ctsAmount
- * @param paymentID
- * @return the AO id created
- * @throws BusinessException
- */
-	public Long createPaymentAO(CustomerAccount customerAccount,Long ctsAmount,DoPaymentResponseDto doPaymentResponseDto) throws BusinessException {
-		OCCTemplate occTemplate = oCCTemplateService.findByCode(ParamBean.getInstance().getProperty("occ.payment.card", "RG_CARD"));
-		if (occTemplate == null) {
-			throw new BusinessException("Cannot find OCC Template with code=" + (ParamBean.getInstance().getProperty("occ.payment.card", "RG_CARD")));
-		}
-		Payment payment = new Payment();
-		payment.setPaymentMethod(customerAccount.getPaymentMethod());
-		payment.setAmount((new BigDecimal(ctsAmount).divide(new BigDecimal(100))));
-		payment.setUnMatchingAmount(payment.getAmount());
-		payment.setMatchingAmount(BigDecimal.ZERO);
-		payment.setAccountCode(occTemplate.getAccountCode());
-		payment.setOccCode(occTemplate.getCode());
-		payment.setOccDescription(occTemplate.getDescription());
-		payment.setType(doPaymentResponseDto.getPaymentBrand());
-		payment.setTransactionCategory(occTemplate.getOccCategory());
-		payment.setAccountCodeClientSide(doPaymentResponseDto.getCodeClientSide());
-		payment.setCustomerAccount(customerAccount);
-		payment.setReference(doPaymentResponseDto.getPaymentID());				
-		payment.setTransactionDate(new Date());
-		payment.setMatchingStatus(MatchingStatusEnum.O);	
-		payment.setBankReference(doPaymentResponseDto.getBankRefenrence());		
-		create(payment);
-		return payment.getId();
+        if (customerAccount.getPaymentMethods() == null || customerAccount.getPaymentMethods().isEmpty()) {
+            throw new BusinessException("There no payment token for customerAccount:" + customerAccount.getCode());
+        }
 
-	}
-	
+        PaymentMethod preferredMethod = customerAccount.getPreferredPaymentMethod();
+        if (preferredMethod == null) {
+            throw new BusinessException("There is no payment method for customerAccount:" + customerAccount.getCode());
+
+        } else if (!(preferredMethod instanceof CardPaymentMethod)) {
+            throw new BusinessException("Can not process payment as prefered payment method is " + preferredMethod.getPaymentType());
+        }
+
+        // If card payment method is currently not valid, find a valid one and mark it as preferred or throw an exception
+        if (!((CardPaymentMethod) preferredMethod).isValidForDate(new Date())) {
+            preferredMethod = customerAccount.markCurrentlyValidCardPaymentAsPreferred();
+            if (preferredMethod != null) {
+                customerAccount = customerAccountService.update(customerAccount);
+            } else {
+                throw new BusinessException("There is no currently valid payment method for customerAccount:" + customerAccount.getCode());
+            }
+        }
+
+        CardPaymentMethod cardPaymentMethod = (CardPaymentMethod) preferredMethod;
+
+        GatewayPaymentInterface gatewayPaymentInterface = gatewayPaymentFactory
+            .getInstance(GatewayPaymentNamesEnum.valueOf(ParamBean.getInstance().getProperty("meveo.gatewayPayment", "CUSTOM_API")));
+
+        PayByCardResponseDto doPaymentResponseDto = gatewayPaymentInterface.doPaymentToken(cardPaymentMethod, ctsAmount, null);
+
+        if (PaymentStatusEnum.ACCEPTED == doPaymentResponseDto.getPaymentStatus()) {
+            log.error("AKK updating card payment with user id {}", cardPaymentMethod.getAlias());
+            cardPaymentMethod.setUserId(doPaymentResponseDto.getCodeClientSide());
+            cardPaymentMethod = (CardPaymentMethod) paymentMethodService.update(cardPaymentMethod);
+            Long aoPaymentId = null;
+            if (createAO) {
+                try {
+                    aoPaymentId = createPaymentAO(customerAccount, ctsAmount, doPaymentResponseDto);
+                    doPaymentResponseDto.setAoCreated(true);
+                } catch (Exception e) {
+                    log.warn("Cant create Account operation payment :", e);
+                }
+                if (matchingAO) {
+                    try {
+                        List<Long> aoIdsToMatch = aoIdsToPay;
+                        aoIdsToMatch.add(aoPaymentId);
+                        matchingCodeService.matchOperations(null, customerAccount.getCode(), aoIdsToMatch, null, MatchingTypeEnum.A);
+                        doPaymentResponseDto.setMatchingCreated(true);
+                    } catch (Exception e) {
+                        log.warn("Cant create matching :", e);
+                    }
+                }
+            }
+        }
+
+        return doPaymentResponseDto;
+    }
+
+    /**
+     * Pay by card. A new card payment type is registered if payment was successfull.
+     * 
+     * @param customerAccount
+     * @param ctsAmount
+     * @param cardNumber
+     * @param ownerName
+     * @param cvv
+     * @param expiryDate
+     * @param cardType
+     * @param aoIdsToPay
+     * @param createAO
+     * @param matchingAO
+     * @return
+     * @throws BusinessException
+     * @throws NoAllOperationUnmatchedException
+     * @throws UnbalanceAmountException
+     */
+    public PayByCardResponseDto payByCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber, String ownerName, String cvv, String expiryDate,
+            CreditCardTypeEnum cardType, List<Long> aoIdsToPay, boolean createAO, boolean matchingAO)
+            throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
+
+        GatewayPaymentInterface gatewayPaymentInterface = gatewayPaymentFactory
+            .getInstance(GatewayPaymentNamesEnum.valueOf(ParamBean.getInstance().getProperty("meveo.gatewayPayment", "INGENICO_GC")));
+
+        String coutryCode = null;
+        Country country = countryService.findByName(customerAccount.getAddress() != null ? customerAccount.getAddress().getCountry() : null);
+        if (country != null) {
+            coutryCode = country.getCountryCode();
+        }
+        PayByCardResponseDto doPaymentResponseDto = gatewayPaymentInterface.doPaymentCard(customerAccount, ctsAmount, cardNumber, ownerName, cvv, expiryDate, cardType, coutryCode,
+            null);
+
+        if (PaymentStatusEnum.ACCEPTED == doPaymentResponseDto.getPaymentStatus()) {
+            CardPaymentMethod paymentMethod = new CardPaymentMethod();
+            paymentMethod.setAlias("Card_" + cardNumber.substring(12, 16));
+            paymentMethod.setCardNumber(cardNumber);
+            paymentMethod.setCardType(cardType);
+            paymentMethod.setCustomerAccount(customerAccount);
+            paymentMethod.setPreferred(true);
+            paymentMethod.setMonthExpiration(new Integer(expiryDate.substring(0, 2)));
+            paymentMethod.setYearExpiration(new Integer(expiryDate.substring(2, 4)));
+            paymentMethod.setOwner(ownerName);
+            paymentMethod.setTokenId(doPaymentResponseDto.getTokenId());
+            paymentMethodService.create(paymentMethod);
+
+            Long aoPaymentId = null;
+            if (createAO) {
+                try {
+                    aoPaymentId = createPaymentAO(customerAccount, ctsAmount, doPaymentResponseDto);
+                    doPaymentResponseDto.setAoCreated(true);
+                } catch (Exception e) {
+                    log.warn("Cant create Account operation payment :" + e.getMessage());
+                }
+                if (matchingAO) {
+                    try {
+                        List<Long> aoIdsToMatch = aoIdsToPay;
+                        aoIdsToMatch.add(aoPaymentId);
+                        matchingCodeService.matchOperations(null, customerAccount.getCode(), aoIdsToMatch, null, MatchingTypeEnum.A);
+                        doPaymentResponseDto.setMatchingCreated(true);
+                    } catch (Exception e) {
+                        log.warn("Cant create matching :" + e.getMessage());
+                    }
+                }
+            }
+        }
+        return doPaymentResponseDto;
+    }
+
+    /**
+     * 
+     * @param customerAccount
+     * @param ctsAmount
+     * @param paymentID
+     * @return the AO id created
+     * @throws BusinessException
+     */
+    public Long createPaymentAO(CustomerAccount customerAccount, Long ctsAmount, PayByCardResponseDto doPaymentResponseDto) throws BusinessException {
+        OCCTemplate occTemplate = oCCTemplateService.findByCode(ParamBean.getInstance().getProperty("occ.payment.card", "RG_CARD"));
+        if (occTemplate == null) {
+            throw new BusinessException("Cannot find OCC Template with code=" + (ParamBean.getInstance().getProperty("occ.payment.card", "RG_CARD")));
+        }
+        Payment payment = new Payment();
+        payment.setPaymentMethod(customerAccount.getPreferredPaymentMethod().getPaymentType());
+        payment.setAmount((new BigDecimal(ctsAmount).divide(new BigDecimal(100))));
+        payment.setUnMatchingAmount(payment.getAmount());
+        payment.setMatchingAmount(BigDecimal.ZERO);
+        payment.setAccountCode(occTemplate.getAccountCode());
+        payment.setOccCode(occTemplate.getCode());
+        payment.setOccDescription(occTemplate.getDescription());
+        payment.setType(doPaymentResponseDto.getPaymentBrand());
+        payment.setTransactionCategory(occTemplate.getOccCategory());
+        payment.setAccountCodeClientSide(doPaymentResponseDto.getCodeClientSide());
+        payment.setCustomerAccount(customerAccount);
+        payment.setReference(doPaymentResponseDto.getPaymentID());
+        payment.setTransactionDate(new Date());
+        payment.setMatchingStatus(MatchingStatusEnum.O);
+        payment.setBankReference(doPaymentResponseDto.getBankRefenrence());
+        create(payment);
+        return payment.getId();
+
+    }
+
 }

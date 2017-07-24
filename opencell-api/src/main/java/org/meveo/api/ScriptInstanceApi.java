@@ -39,8 +39,8 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
     @Inject
     private RoleService roleService;
 
-    public List<ScriptInstanceErrorDto> create(ScriptInstanceDto scriptInstanceDto) throws MissingParameterException, EntityAlreadyExistsException,
-            MeveoApiException {
+    public List<ScriptInstanceErrorDto> create(ScriptInstanceDto scriptInstanceDto)
+            throws MissingParameterException, EntityAlreadyExistsException, MeveoApiException, BusinessException {
         List<ScriptInstanceErrorDto> result = new ArrayList<ScriptInstanceErrorDto>();
         checkDtoAndUpdateCode(scriptInstanceDto);
 
@@ -50,11 +50,7 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
 
         ScriptInstance scriptInstance = scriptInstanceFromDTO(scriptInstanceDto, null);
 
-        try {
-            scriptInstanceService.create(scriptInstance);
-        } catch (BusinessException e) {
-            throw new BusinessApiException(e.getMessage());
-        }
+        scriptInstanceService.create(scriptInstance);
 
         if (scriptInstance != null && scriptInstance.isError() != null && scriptInstance.isError().booleanValue()) {
             for (ScriptInstanceError error : scriptInstance.getScriptErrors()) {
@@ -65,8 +61,8 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
         return result;
     }
 
-    public List<ScriptInstanceErrorDto> update(ScriptInstanceDto scriptInstanceDto) throws MissingParameterException, EntityDoesNotExistsException,
-            MeveoApiException {
+    public List<ScriptInstanceErrorDto> update(ScriptInstanceDto scriptInstanceDto)
+            throws MissingParameterException, EntityDoesNotExistsException, MeveoApiException, BusinessException {
 
         List<ScriptInstanceErrorDto> result = new ArrayList<ScriptInstanceErrorDto>();
         checkDtoAndUpdateCode(scriptInstanceDto);
@@ -81,11 +77,8 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
 
         scriptInstance = scriptInstanceFromDTO(scriptInstanceDto, scriptInstance);
 
-        try {
-            scriptInstance = scriptInstanceService.update(scriptInstance);
-        } catch (Exception e) {
-            throw new MeveoApiException(e.getMessage());
-        }
+        scriptInstance = scriptInstanceService.update(scriptInstance);
+
         if (scriptInstance.isError().booleanValue()) {
             for (ScriptInstanceError error : scriptInstance.getScriptErrors()) {
                 ScriptInstanceErrorDto errorDto = new ScriptInstanceErrorDto(error);
@@ -95,7 +88,9 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
         return result;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.meveo.api.ApiService#find(java.lang.String)
      */
     @Override
@@ -115,7 +110,7 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
         }
         return scriptInstanceDtoResult;
     }
-    
+
     public void removeScriptInstance(String scriptInstanceCode) throws EntityDoesNotExistsException, MissingParameterException, BusinessException {
         if (StringUtils.isBlank(scriptInstanceCode)) {
             missingParameters.add("scriptInstanceCode");
@@ -129,14 +124,14 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
     }
 
     @Override
-    public ScriptInstance createOrUpdate(ScriptInstanceDto postData) throws MeveoApiException {
+    public ScriptInstance createOrUpdate(ScriptInstanceDto postData) throws MeveoApiException, BusinessException {
         createOrUpdateWithCompile(postData);
 
         ScriptInstance scriptInstance = scriptInstanceService.findByCode(postData.getCode());
         return scriptInstance;
     }
 
-    public List<ScriptInstanceErrorDto> createOrUpdateWithCompile(ScriptInstanceDto postData) throws MeveoApiException {
+    public List<ScriptInstanceErrorDto> createOrUpdateWithCompile(ScriptInstanceDto postData) throws MeveoApiException, BusinessException {
 
         List<ScriptInstanceErrorDto> result = new ArrayList<ScriptInstanceErrorDto>();
         checkDtoAndUpdateCode(postData);

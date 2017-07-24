@@ -125,6 +125,9 @@ public class UsageRatingService {
     
 	@Inject
 	protected CatMessagesService catMessagesService;
+	
+	@Inject
+	private ReservationService reservationService;
 
     // @PreDestroy
     // accessing Entity manager in predestroy is bugged in jboss7.1.3
@@ -462,21 +465,30 @@ public class UsageRatingService {
         } else {
             stopEDRRating = true;
         }
+        
+        BigDecimal quantityToCharge = null;
+        if (deducedQuantity == null) {
+            quantityToCharge = edr.getQuantity();
+        } else {
+            edr.setQuantity(edr.getQuantity().subtract(deducedQuantity));
+            quantityToCharge = deducedQuantity;
+        }
 
         if (deducedQuantity == null || deducedQuantity.compareTo(BigDecimal.ZERO) > 0) {
 
             WalletReservation walletOperation = new WalletReservation();
-            rateEDRwithMatchingCharge(walletOperation, edr, deducedQuantity, charge, false);
+            rateEDRwithMatchingCharge(walletOperation, edr, quantityToCharge, charge, false);
             walletOperation.setReservation(reservation);
             walletOperation.setStatus(WalletOperationStatusEnum.RESERVED);
             reservation.setAmountWithoutTax(reservation.getAmountWithoutTax().add(walletOperation.getAmountWithoutTax()));
             reservation.setAmountWithTax(reservation.getAmountWithoutTax().add(walletOperation.getAmountWithTax()));
+            
             if (deducedQuantity != null) {
-                edr.setQuantity(edr.getQuantity().subtract(deducedQuantity));
-                walletOperation.setQuantity(deducedQuantity);
+                walletOperation.setQuantity(quantityToCharge);
             }
 
             walletOperationService.chargeWalletOperation(walletOperation);
+            
         } else {
             log.warn("deduceQuantity is null");
         }
@@ -669,8 +681,9 @@ public class UsageRatingService {
                     reservation.setOriginEdr(edr);
                     reservation.setQuantity(edr.getQuantity());
                     // it would be nice to have a persistence context bound to
-                    // the JTA transaction
-                    em.persist(reservation);
+//                    // the JTA transaction
+//                    em.persist(reservation);
+                    reservationService.create(reservation);
 
                     for (CachedUsageChargeInstance charge : charges) {
                         CachedUsageChargeTemplate chargeTemplate =  ratingCacheContainerProvider.getUsageChargeTemplate(charge.getChargeTemplateId());

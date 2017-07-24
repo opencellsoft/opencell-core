@@ -24,8 +24,8 @@ import org.meveo.api.dto.response.billing.GetDueDateDelayResponseDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsResponseDto;
-import org.meveo.api.dto.response.catalog.GetChargeTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetOneShotChargesResponseDto;
+import org.meveo.api.dto.response.catalog.GetServiceInstanceResponseDto;
 import org.meveo.api.rest.IBaseRs;
 
 /**
@@ -216,6 +216,11 @@ public interface SubscriptionRs extends IBaseRs {
 	@Path("updateServices")
 	ActionStatus updateServices(UpdateServicesRequestDto postData);
     
+	@GET
+	@Path("serviceInstance")
+	GetServiceInstanceResponseDto findServiceInstance(@QueryParam("subscriptionCode") String subscriptionCode,
+			@QueryParam("serviceInstanceCode") String serviceInstanceCode);
+
     /**
      * Returns the due date delay information.
      * 

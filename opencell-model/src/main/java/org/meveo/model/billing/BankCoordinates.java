@@ -24,191 +24,202 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.Size;
 
+import org.meveo.commons.utils.StringUtils;
+
 @Embeddable
 public class BankCoordinates implements Serializable, Cloneable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Column(name = "bank_code", length = 5)
-	@Size(max = 5)
-	private String bankCode;
+    @Column(name = "bank_code", length = 5)
+    @Size(max = 5)
+    private String bankCode;
 
-	@Column(name = "branch_code", length = 5)
-	@Size(max = 5)
-	private String branchCode;
+    @Column(name = "branch_code", length = 5)
+    @Size(max = 5)
+    private String branchCode;
 
-	@Column(name = "account_number", length = 11)
-	@Size(max = 11)
-	private String accountNumber;
+    @Column(name = "account_number", length = 11)
+    @Size(max = 11)
+    private String accountNumber;
 
-	@Column(name = "hash_key", length = 2)
-	@Size(max = 2)
-	private String key;
+    @Column(name = "hash_key", length = 2)
+    @Size(max = 2)
+    private String key;
 
-	@Column(name = "iban", length = 34)
-	@Size(max = 34)
-	private String iban;
+    @Column(name = "iban", length = 34)
+    @Size(max = 34)
+    private String iban;
 
-	@Column(name = "bic", length = 11)
-	@Size(max = 11)
-	private String bic;
+    @Column(name = "bic", length = 11)
+    @Size(max = 11)
+    private String bic;
 
-	@Column(name = "account_owner", length = 50)
-	@Size(max = 50)
-	private String accountOwner;
+    @Column(name = "account_owner", length = 50)
+    @Size(max = 50)
+    private String accountOwner;
 
-	@Column(name = "bank_name", length = 50)
-	@Size(max = 50)
-	private String bankName;
+    @Column(name = "bank_name", length = 50)
+    @Size(max = 50)
+    private String bankName;
 
-	@Column(name = "bank_id", length = 50)
-	@Size(max = 50)
-	private String bankId;
+    @Column(name = "bank_id", length = 50)
+    @Size(max = 50)
+    private String bankId;
 
-	@Column(name = "issuer_number", length = 50)
-	@Size(max = 50)
-	private String issuerNumber;
+    @Column(name = "issuer_number", length = 50)
+    @Size(max = 50)
+    private String issuerNumber;
 
-	@Column(name = "issuer_name", length = 50)
-	@Size(max = 50)
-	private String issuerName;
-	
-	@Column(name = "ics", length = 35)
-	@Size(max = 35)
-	private String ics; //L'identifiant Créancier Sepa
-	
+    @Column(name = "issuer_name", length = 50)
+    @Size(max = 50)
+    private String issuerName;
 
-	public BankCoordinates() {
-	}
+    @Column(name = "ics", length = 35)
+    @Size(max = 35)
+    private String ics; // L'identifiant Créancier Sepa
 
-	public BankCoordinates(BankCoordinates bankCoordinates) {
-		this(bankCoordinates.bankCode, bankCoordinates.branchCode, bankCoordinates.accountNumber,
-				bankCoordinates.key, bankCoordinates.iban, bankCoordinates.bic,
-				bankCoordinates.accountOwner, bankCoordinates.bankName);
-	}
+    public BankCoordinates() {
+    }
 
-	public BankCoordinates(String bankCode, String branchCode, String accountNumber, String key,
-			String iban, String bic, String accountOwner, String bankName) {
-		super();
-		this.bankCode = bankCode;
-		this.branchCode = branchCode;
-		this.accountNumber = accountNumber;
-		this.key = key;
-		this.iban = iban;
-		this.bic = bic;
-		this.accountOwner = accountOwner;
-		this.bankName = bankName;
-	}
+    public BankCoordinates(BankCoordinates bankCoordinates) {
+        this(bankCoordinates.bankCode, bankCoordinates.branchCode, bankCoordinates.accountNumber, bankCoordinates.key, bankCoordinates.iban, bankCoordinates.bic,
+            bankCoordinates.accountOwner, bankCoordinates.bankName);
+    }
 
-	public String getBankCode() {
-		return bankCode;
-	}
+    public BankCoordinates(String bankCode, String branchCode, String accountNumber, String key, String iban, String bic, String accountOwner, String bankName) {
+        super();
+        this.bankCode = bankCode;
+        this.branchCode = branchCode;
+        this.accountNumber = accountNumber;
+        this.key = key;
+        this.iban = iban;
+        this.bic = bic;
+        this.accountOwner = accountOwner;
+        this.bankName = bankName;
+    }
 
-	public void setBankCode(String bankCode) {
-		this.bankCode = bankCode;
-	}
+    public String getBankCode() {
+        return bankCode;
+    }
 
-	public String getBranchCode() {
-		return branchCode;
-	}
+    public void setBankCode(String bankCode) {
+        this.bankCode = bankCode;
+    }
 
-	public void setBranchCode(String branchCode) {
-		this.branchCode = branchCode;
-	}
+    public String getBranchCode() {
+        return branchCode;
+    }
 
-	public String getAccountNumber() {
-		return accountNumber;
-	}
+    public void setBranchCode(String branchCode) {
+        this.branchCode = branchCode;
+    }
 
-	public void setAccountNumber(String accountNumber) {
-		this.accountNumber = accountNumber;
-	}
+    public String getAccountNumber() {
+        return accountNumber;
+    }
 
-	public String getKey() {
-		return key;
-	}
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
+    }
 
-	public void setKey(String key) {
-		this.key = key;
-	}
+    public String getKey() {
+        return key;
+    }
 
-	public String getIban() {
-		return iban;
-	}
+    public void setKey(String key) {
+        this.key = key;
+    }
 
-	public void setIban(String iban) {
-		this.iban = iban;
-	}
+    public String getIban() {
+        return iban;
+    }
 
-	public String getBic() {
-		return bic;
-	}
+    public void setIban(String iban) {
+        this.iban = iban;
+    }
 
-	public void setBic(String bic) {
-		this.bic = bic;
-	}
+    public String getBic() {
+        return bic;
+    }
 
-	public String getAccountOwner() {
-		return accountOwner;
-	}
+    public void setBic(String bic) {
+        this.bic = bic;
+    }
 
-	public void setAccountOwner(String accountOwner) {
-		this.accountOwner = accountOwner;
-	}
+    public String getAccountOwner() {
+        return accountOwner;
+    }
 
-	public String getBankName() {
-		return bankName;
-	}
+    public void setAccountOwner(String accountOwner) {
+        this.accountOwner = accountOwner;
+    }
 
-	public void setBankName(String bankName) {
-		this.bankName = bankName;
-	}
+    public String getBankName() {
+        return bankName;
+    }
 
-	@Override
-	public Object clone() throws CloneNotSupportedException {
-		BankCoordinates o = (BankCoordinates) super.clone();
-		return o;
-	}
+    public void setBankName(String bankName) {
+        this.bankName = bankName;
+    }
 
-	public void setBankId(String bankId) {
-		this.bankId = bankId;
-	}
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        BankCoordinates o = (BankCoordinates) super.clone();
+        return o;
+    }
 
-	public String getBankId() {
-		return bankId;
-	}
+    public void setBankId(String bankId) {
+        this.bankId = bankId;
+    }
 
-	public void setIssuerNumber(String issuerNumber) {
-		this.issuerNumber = issuerNumber;
-	}
+    public String getBankId() {
+        return bankId;
+    }
 
-	public String getIssuerNumber() {
-		return issuerNumber;
-	}
+    public void setIssuerNumber(String issuerNumber) {
+        this.issuerNumber = issuerNumber;
+    }
 
-	public void setIssuerName(String issuerName) {
-		this.issuerName = issuerName;
-	}
+    public String getIssuerNumber() {
+        return issuerNumber;
+    }
 
-	public String getIssuerName() {
-		return issuerName;
-	}
+    public void setIssuerName(String issuerName) {
+        this.issuerName = issuerName;
+    }
 
-	public String getIcs() {
-		return ics;
-	}
+    public String getIssuerName() {
+        return issuerName;
+    }
 
-	public void setIcs(String ics) {
-		this.ics = ics;
-	}
+    public String getIcs() {
+        return ics;
+    }
 
-	@Override
-	public String toString() {
-		return "BankCoordinates [bankCode=" + bankCode + ", branchCode=" + branchCode + ", accountNumber=" + accountNumber + ", key=" + key + ", iban=" + iban + ", bic=" + bic
-				+ ", accountOwner=" + accountOwner + ", bankName=" + bankName + ", bankId=" + bankId + ", issuerNumber=" + issuerNumber + ", issuerName=" + issuerName + ", ics="
-				+ ics + "]";
-	}
-	
-	
+    public void setIcs(String ics) {
+        this.ics = ics;
+    }
 
+    @Override
+    public String toString() {
+        return "BankCoordinates [bankCode=" + bankCode + ", branchCode=" + branchCode + ", accountNumber=" + accountNumber + ", key=" + key + ", iban=" + iban + ", bic=" + bic
+                + ", accountOwner=" + accountOwner + ", bankName=" + bankName + ", bankId=" + bankId + ", issuerNumber=" + issuerNumber + ", issuerName=" + issuerName + ", ics="
+                + ics + "]";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof BankCoordinates)) {
+            return false;
+        }
+
+        BankCoordinates other = (BankCoordinates) obj;
+
+        return StringUtils.compare(iban, other.getIban()) == 0;
+    }
 }

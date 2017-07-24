@@ -61,10 +61,6 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
 	@Inject
 	private MatchingCodeService matchingCodeService;
 
-	@Inject
-	private MatchingAmountService matchingAmountService;
-	
-
 	public DDRequestLOT createDDRquestLot(Date fromDueDate, Date toDueDate, DDRequestFileFormatEnum ddRequestFileFormatEnum) throws BusinessEntityException, Exception {
 		log.info("createDDRquestLot fromDueDate: {}   toDueDate: {}", fromDueDate, toDueDate);
 

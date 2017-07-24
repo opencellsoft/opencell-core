@@ -38,6 +38,7 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.action.admin.custom.CustomFieldDataEntryBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.api.billing.OrderApi;
 import org.meveo.api.order.OrderProductCharacteristicEnum;
@@ -61,6 +62,13 @@ import org.meveo.model.order.OrderItem;
 import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.model.order.OrderItemProductOffering;
 import org.meveo.model.order.OrderStatusEnum;
+import org.meveo.model.payments.CardPaymentMethod;
+import org.meveo.model.payments.CheckPaymentMethod;
+import org.meveo.model.payments.DDPaymentMethod;
+import org.meveo.model.payments.PaymentMethod;
+import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.TipPaymentMethod;
+import org.meveo.model.payments.WirePaymentMethod;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.PersistenceService;
@@ -70,6 +78,7 @@ import org.meveo.service.catalog.impl.ProductOfferingService;
 import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
 import org.meveo.service.order.OrderItemService;
 import org.meveo.service.order.OrderService;
+import org.meveo.util.PersistenceUtils;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
@@ -122,11 +131,43 @@ public class OrderBean extends CustomFieldBean<Order> {
 
     private List<OfferItemInfo> offerConfigurations;
 
+    private PaymentMethodEnum paymentMethodType;
+
+    private PaymentMethod paymentMethod;
+
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
     public OrderBean() {
         super(Order.class);
+    }
+
+    @Override
+    public Order initEntity() {
+        super.initEntity();
+        if (entity.getPaymentMethod() != null) {
+            paymentMethodType = entity.getPaymentMethod().getPaymentType();
+            paymentMethod = PersistenceUtils.initializeAndUnproxy(entity.getPaymentMethod());
+            // if (paymentMethodType == PaymentMethodEnum.CARD) {
+            // entity.setPaymentMethod(new CardPaymentMethod());
+            // } else if (paymentMethodType == PaymentMethodEnum.CHECK) {
+            // entity.setPaymentMethod(new CheckPaymentMethod());
+            // } else if (paymentMethodType == PaymentMethodEnum.TIP) {
+            // entity.setPaymentMethod(new TipPaymentMethod());
+            // } else if (paymentMethodType == PaymentMethodEnum.WIRETRANSFER) {
+            // entity.setPaymentMethod(new WirePaymentMethod());
+            // } else if (paymentMethodType == PaymentMethodEnum.DIRECTDEBIT) {
+            // entity.setPaymentMethod(new DDPaymentMethod());
+            // }
+            //
+            // if (paymentMethodType == null) {
+            // entity.setPaymentMethod(null);
+            // } else {
+            // entity.getPaymentMethod().setPaymentType(paymentMethodType);
+            // }
+
+        }
+        return entity;
     }
 
     /**
@@ -365,6 +406,11 @@ public class OrderBean extends CustomFieldBean<Order> {
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
+
+        if (entity.getOrderItems() == null || entity.getOrderItems().isEmpty()) {
+            throw new ValidationException("At least one order item is required", "order.itemsRequired");
+        }
+
         String result = super.saveOrUpdate(killConversation);
 
         // Execute workflow with every update
@@ -379,17 +425,20 @@ public class OrderBean extends CustomFieldBean<Order> {
      * 
      * @throws BusinessException
      */
-    public void sendToProcess() {
+    @ActionMethod
+    public String sendToProcess() {
 
         try {
             entity = orderApi.initiateWorkflow(entity);
             messages.info(new BundleKey("messages", "order.sendToProcess.ok"));
-
+            return "orderDetail";
+            
         } catch (BusinessException e) {
             log.error("Failed to send order for processing ", e);
             messages.error(new BundleKey("messages", "order.sendToProcess.ko"), e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
-            FacesContext.getCurrentInstance().validationFailed();
+            FacesContext.getCurrentInstance().validationFailed();            
         }
+        return null;
     }
 
     /**
@@ -875,5 +924,39 @@ public class OrderBean extends CustomFieldBean<Order> {
      */
     public void updateCFEntityCode(OfferItemInfo itemInfo, OrderProductCharacteristicEnum characteristicName) {
         itemInfo.getEntityForCFValues().setCode((String) itemInfo.getCharacteristics().get(characteristicName));
+    }
+
+    public PaymentMethodEnum getPaymentMethodType() {
+        return paymentMethodType;
+    }
+
+    public void setPaymentMethodType(PaymentMethodEnum paymentMethodType) {
+        this.paymentMethodType = paymentMethodType;
+    }
+
+    public PaymentMethod getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public void changePaymentMethodType() {
+
+        if (paymentMethodType == PaymentMethodEnum.CARD) {
+            entity.setPaymentMethod(new CardPaymentMethod());
+        } else if (paymentMethodType == PaymentMethodEnum.CHECK) {
+            entity.setPaymentMethod(new CheckPaymentMethod());
+        } else if (paymentMethodType == PaymentMethodEnum.TIP) {
+            entity.setPaymentMethod(new TipPaymentMethod());
+        } else if (paymentMethodType == PaymentMethodEnum.WIRETRANSFER) {
+            entity.setPaymentMethod(new WirePaymentMethod());
+        } else if (paymentMethodType == PaymentMethodEnum.DIRECTDEBIT) {
+            entity.setPaymentMethod(new DDPaymentMethod());
+        } else if (paymentMethodType == null) {
+            entity.setPaymentMethod(null);
+        }
+        setPaymentMethod(entity.getPaymentMethod());
     }
 }

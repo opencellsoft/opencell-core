@@ -43,8 +43,8 @@ public class MeveoModuleItem extends BaseEntity {
     @NotNull
     private String itemClass;
 
-    @Column(name = "item_code", length = 60, nullable = false)
-    @Size(max = 60)
+    @Column(name = "item_code", length = 255, nullable = false)
+    @Size(max = 255)
     @NotNull
     private String itemCode;
 

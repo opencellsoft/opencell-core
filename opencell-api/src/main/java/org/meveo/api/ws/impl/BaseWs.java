@@ -62,7 +62,7 @@ public abstract class BaseWs {
             log.warn("Failed to execute API", e);
 
             String message = e.getMessage();
-            MeveoApiErrorCodeEnum errorCode = MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION;
+            MeveoApiErrorCodeEnum errorCode = e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION;
             Throwable cause = e;
 
             // See if can get to the root of the exception cause

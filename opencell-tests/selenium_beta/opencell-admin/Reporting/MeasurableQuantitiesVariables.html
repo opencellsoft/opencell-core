@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://integration.i.opencellsoft.com/opencell/" />
+<title>MeasurableQuantitiesVariables</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">MeasurableQuantitiesVariables</td></tr>
+</thead><tbody>
+<tr>
+	<td>store</td>
+	<td>id=menu:measurableQuantities</td>
+	<td>measurableQuantities</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>MQtt_SELENIUM</td>
+	<td>codeMqtt</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>${codeMqtt}</td>
+	<td>code</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=formId:dimension1_txt</td>
+	<td>dimension1Field</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>1</td>
+	<td>dimension1</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=formId:dimension2_txt</td>
+	<td>dimension2Field</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>1</td>
+	<td>dimension2</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=formId:sqlQuery_txt</td>
+	<td>SQLQueryField</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>select count(*) from billing_subscription where status='CREATED'</td>
+	<td>SQLQuery</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>Monthly</td>
+	<td>measurementPeriodValue</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//ul[@id='formId:measurementPeriod_enum_items']/li[text()[contains(., '${measurementPeriodValue}')]]</td>
+	<td>measurementPeriod</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=formId:lastMeasureDate_date_input</td>
+	<td>lastMeasureField</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td></td>
+	<td>lastMeasure</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//div[@id='formId:editable_bool']/div/input</td>
+	<td>editableField</td>
+</tr>
+
+</tbody></table>
+</body>
+</html>

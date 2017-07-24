@@ -39,6 +39,7 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.action.admin.custom.CustomFieldDataEntryBean;
 import org.meveo.admin.action.order.OfferItemInfo;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.api.billing.QuoteApi;
 import org.meveo.api.order.OrderProductCharacteristicEnum;
@@ -374,6 +375,10 @@ public class QuoteBean extends CustomFieldBean<Quote> {
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
+        if (entity.getQuoteItems() == null || entity.getQuoteItems().isEmpty()) {
+            throw new ValidationException("At least one quote item is required", "quote.itemsRequired");
+        }
+        
         // Default quote item user account field to quote user account field value if applicable.
         // Validate that user accounts belong to the same billing account as quote level account (if quote level account is specified)
         BillingAccount billingAccount = null;
@@ -411,17 +416,22 @@ public class QuoteBean extends CustomFieldBean<Quote> {
      * 
      * @throws BusinessException
      */
-    public void sendToProcess() {
+    @ActionMethod
+    public String sendToProcess() {
 
         try {
             entity = quoteApi.initiateWorkflow(entity);
             messages.info(new BundleKey("messages", "quote.sendToProcess.ok"));
+
+            return "quoteDetail";
 
         } catch (BusinessException e) {
             log.error("Failed to send quote for processing ", e);
             messages.error(new BundleKey("messages", "quote.sendToProcess.ko"), e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
             FacesContext.getCurrentInstance().validationFailed();
         }
+
+        return null;
     }
 
     /**
@@ -814,7 +824,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
     }
 
     @ActionMethod
-    public void createInvoice() {
+    public String createInvoice() {
         if (entity.getStatus() == QuoteStatusEnum.IN_PROGRESS || entity.getStatus() == QuoteStatusEnum.PENDING) {
             try {
                 entity = quoteService.refreshOrRetrieve(entity);
@@ -822,11 +832,14 @@ public class QuoteBean extends CustomFieldBean<Quote> {
 
                 messages.info(new BundleKey("messages", "quote.createInvoices.ok"));
 
+                return "quoteDetail";
+
             } catch (BusinessException e) {
                 log.error("Failed to generate invoices for quote {}", entity.getCode());
                 messages.error(new BundleKey("messages", "quote.createInvoices.ko"), e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
             }
         }
+        return null;
     }
 
     @ActionMethod

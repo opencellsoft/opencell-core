@@ -17,6 +17,7 @@
         formId - form id value. Defaults to "formId"
         showFormButtons - should default form buttons be displayed
         showMessages - should messages be displayed
+        rendered - shall form be displayed
         Attributes related to a default form buttons:
             ajaxSubmit - should create/update form submit be done in ajax way
             submitPartialProcess - items to process during ajax submit
@@ -87,44 +88,31 @@
     <c:if test="${empty(ignoreEnterKey)}">
         <c:set var="ignoreEnterKey" value="false" />
     </c:if>
-	<c:if test="${empty(formButtonsTopRight)}">
+    <c:if test="${empty(formButtonsTopRight)}">
         <c:set var="formButtonsTopRight" value="false" />
     </c:if>
 
-
-
-
-    <h:form id="#{formId}" enctype="#{enctype}" onkeypress="if (event.keyCode == 13) { return #{ignoreEnterKey ? 'false':'true'}; }">
+    <h:form id="#{formId}" enctype="#{enctype}" onkeypress="if (event.keyCode == 13) { return #{ignoreEnterKey ? 'false':'true'}; }" rendered="#{rendered==null?true:rendered}">
 
         <p:panel>
-			<p:panel styleClass="TexAlRight" rendered="#{formButtonsTopRight}">
-				<c:if test="#{showFormButtons}">
-					<hf:formButtons backingBean="#{backingBean}"
-						edit="#{formLevelEdit}" ajaxSubmit="#{ajaxSubmit}"
-						submitPartialProcess="#{submitPartialProcess}"
-						submitPartialSubmitFilter="#{submitPartialSubmitFilter}"
-						submitUpdate="#{submitUpdate}"
-						killConversationOnSave="#{killConversationOnSave}"
-						killConversationOnBack="#{killConversationOnBack}"
-						useCustomIdParam="#{useCustomIdParam}"
-						objectIdParamName="#{objectIdParamName}"
-						showBackButton="#{showBackButton}"
-						showEditButton="#{showEditButton}"
-						showEnableDisableButton="#{showEnableDisableButton}"
-						showDeleteButton="#{showDeleteButton}"
-						updateConfirmationMessage="#{updateConfirmationMessage}"
-						formId="#{formId}" submitActionListener="#{submitActionListener}" />
-				</c:if>
-				<c:if test="#{buttons}">
-					<h:panelGroup layout="block" styleClass="form-panel-actions">
-						<ui:insert name="buttons" />
-					</h:panelGroup>
-				</c:if>
-			</p:panel>
+            <p:panel styleClass="TexAlRight" rendered="#{formButtonsTopRight}">
+                <c:if test="#{showFormButtons}">
+                    <hf:formButtons backingBean="#{backingBean}" edit="#{formLevelEdit}" ajaxSubmit="#{ajaxSubmit}" submitPartialProcess="#{submitPartialProcess}"
+                        submitPartialSubmitFilter="#{submitPartialSubmitFilter}" submitUpdate="#{submitUpdate}" killConversationOnSave="#{killConversationOnSave}"
+                        killConversationOnBack="#{killConversationOnBack}" useCustomIdParam="#{useCustomIdParam}" objectIdParamName="#{objectIdParamName}" showBackButton="#{showBackButton}"
+                        showEditButton="#{showEditButton}" showEnableDisableButton="#{showEnableDisableButton}" showDeleteButton="#{showDeleteButton}"
+                        updateConfirmationMessage="#{updateConfirmationMessage}" formId="#{formId}" submitActionListener="#{submitActionListener}" />
+                </c:if>
+                <c:if test="#{buttons}">
+                    <h:panelGroup layout="block" styleClass="form-panel-actions">
+                        <ui:insert name="buttons" />
+                    </h:panelGroup>
+                </c:if>
+            </p:panel>
 
-			<h:panelGroup layout="block" styleClass="form-panel">
+            <h:panelGroup layout="block" styleClass="form-panel">
                 <c:if test="#{showMessages}">
-                    <p:messages id="messages"/>
+                    <p:messages id="messages" />
                 </c:if>
                 <p:outputPanel styleClass="form-panel-fields #{edit ? '' : ' form-panel-fields-view'}">
                     <c:set var="id" value="${null}" />
@@ -133,20 +121,19 @@
                     <ui:insert />
                 </p:outputPanel>
 
-				<p:panel rendered="#{not formButtonsTopRight}">
-	                <c:if test="#{showFormButtons}">
-	                    <hf:formButtons backingBean="#{backingBean}" edit="#{formLevelEdit}" ajaxSubmit="#{ajaxSubmit}" submitPartialProcess="#{submitPartialProcess}"
-	                        submitPartialSubmitFilter="#{submitPartialSubmitFilter}" submitUpdate="#{submitUpdate}" killConversationOnSave="#{killConversationOnSave}"
-	                        killConversationOnBack="#{killConversationOnBack}" useCustomIdParam="#{useCustomIdParam}" objectIdParamName="#{objectIdParamName}"
-	                        showBackButton="#{showBackButton}" showEditButton="#{showEditButton}" showEnableDisableButton="#{showEnableDisableButton}"
-	                        showDeleteButton="#{showDeleteButton}" updateConfirmationMessage="#{updateConfirmationMessage}" formId="#{formId}"
-	                        submitActionListener="#{submitActionListener}" />
-	                </c:if>
-	                <c:if test="#{buttons}">
-	                    <h:panelGroup layout="block" styleClass="form-panel-actions">
-	                        <ui:insert name="buttons" />
-	                    </h:panelGroup>
-	                </c:if>
+                <p:panel rendered="#{not formButtonsTopRight}">
+                    <c:if test="#{showFormButtons}">
+                        <hf:formButtons backingBean="#{backingBean}" edit="#{formLevelEdit}" ajaxSubmit="#{ajaxSubmit}" submitPartialProcess="#{submitPartialProcess}"
+                            submitPartialSubmitFilter="#{submitPartialSubmitFilter}" submitUpdate="#{submitUpdate}" killConversationOnSave="#{killConversationOnSave}"
+                            killConversationOnBack="#{killConversationOnBack}" useCustomIdParam="#{useCustomIdParam}" objectIdParamName="#{objectIdParamName}" showBackButton="#{showBackButton}"
+                            showEditButton="#{showEditButton}" showEnableDisableButton="#{showEnableDisableButton}" showDeleteButton="#{showDeleteButton}"
+                            updateConfirmationMessage="#{updateConfirmationMessage}" formId="#{formId}" submitActionListener="#{submitActionListener}" />
+                    </c:if>
+                    <c:if test="#{buttons}">
+                        <h:panelGroup layout="block" styleClass="form-panel-actions">
+                            <ui:insert name="buttons" />
+                        </h:panelGroup>
+                    </c:if>
                 </p:panel>
             </h:panelGroup>
         </p:panel>

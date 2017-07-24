@@ -51,6 +51,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRunStatusEnum;
@@ -80,9 +81,12 @@ import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.order.Order;
 import org.meveo.model.order.OrderItem;
+import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
-import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.DDPaymentMethod;
+import org.meveo.model.payments.PaymentMethod;
+import org.meveo.model.payments.TipPaymentMethod;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.CountryService;
@@ -281,17 +285,11 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 				&& appProvider.getInvoiceConfiguration().getDisplayProvider()) {
 			Element providerTag = doc.createElement("provider");
 			providerTag.setAttribute("code", appProvider.getCode() + "");
-			Element bankCoordinates = doc.createElement("bankCoordinates");
-			Element ics = doc.createElement("ics");
-			Element iban = doc.createElement("iban");
-			Element bic = doc.createElement("bic");
-			bankCoordinates.appendChild(ics);
-			bankCoordinates.appendChild(iban);
-			bankCoordinates.appendChild(bic);
-			providerTag.appendChild(bankCoordinates);
-			header.appendChild(providerTag);
-
 			if (appProvider.getBankCoordinates() != null) {
+				Element bankCoordinates = doc.createElement("bankCoordinates");
+				Element ics = doc.createElement("ics");
+				Element iban = doc.createElement("iban");
+				Element bic = doc.createElement("bic");
 				Text icsTxt = doc.createTextNode(appProvider.getBankCoordinates().getIcs() != null ? appProvider
 						.getBankCoordinates().getIcs() : "");
 				ics.appendChild(icsTxt);
@@ -300,8 +298,13 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 				iban.appendChild(ibanTxt);
 				Text bicTxt = doc.createTextNode(appProvider.getBankCoordinates().getBic() != null ? appProvider
 						.getBankCoordinates().getBic() : "");
-				bic.appendChild(bicTxt);
+				bic.appendChild(bicTxt);				
+				bankCoordinates.appendChild(ics);
+				bankCoordinates.appendChild(iban);
+				bankCoordinates.appendChild(bic);
+				providerTag.appendChild(bankCoordinates);
 			}
+			header.appendChild(providerTag);
 		}
 
 		Customer customer = invoice.getBillingAccount().getCustomerAccount().getCustomer();
@@ -318,10 +321,12 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 				.getCode() : "");
 		customerTag.setAttribute("category", customer.getCustomerCategory() != null ? customer
 				.getCustomerCategory().getCode() : "");
-		if (PaymentMethodEnum.DIRECTDEBIT.equals(invoice.getBillingAccount().getPaymentMethod())) {
-			customerTag.setAttribute("mandateIdentification",
-					customer.getMandateIdentification() != null ? customer.getMandateIdentification() : "");
-		}
+		
+        PaymentMethod preferedPaymentMethod = invoice.getBillingAccount().getCustomerAccount().getPreferredPaymentMethod();
+        if (preferedPaymentMethod != null && preferedPaymentMethod instanceof DDPaymentMethod) {
+            customerTag.setAttribute("mandateIdentification", customer.getMandateIdentification() != null ? customer.getMandateIdentification() : "");
+        }
+
 		addCustomFields(customer, invoice, doc, customerTag);
 		addNameAndAdress(customer, doc, customerTag, billingAccountLanguage);
 
@@ -341,11 +346,10 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 		customerAccountTag.setAttribute("language",
 				customerAccount.getTradingLanguage().getPrDescription() != null ? customerAccount
 						.getTradingLanguage().getPrDescription() : "");
-		if (PaymentMethodEnum.DIRECTDEBIT.equals(invoice.getBillingAccount().getPaymentMethod())) {
-			customerAccountTag.setAttribute("mandateIdentification",
-					customerAccount.getMandateIdentification() != null ? customerAccount.getMandateIdentification()
-							: "");
-		}
+		
+        if (preferedPaymentMethod != null && preferedPaymentMethod instanceof DDPaymentMethod) {
+            customerAccountTag.setAttribute("mandateIdentification", customerAccount.getMandateIdentification() != null ? customerAccount.getMandateIdentification() : "");
+        }
 		addCustomFields(customerAccount, invoice, doc, customerAccountTag);
 		header.appendChild(customerAccountTag);
 
@@ -366,6 +370,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 		customerAccountTag.setAttribute("accountTerminated",
 				customerAccount.getStatus().equals(CustomerAccountStatusEnum.CLOSE) + "");
 
+		addPaymentInfo(customerAccount, doc, customerAccountTag);
+		
 		header.appendChild(customerAccountTag);
 		addNameAndAdress(customerAccount, doc, customerAccountTag, billingAccountLanguage);
 		addproviderContact(customerAccount, doc, customerAccountTag);
@@ -412,9 +418,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 		email.appendChild(emailTxt);
 		billingAccountTag.appendChild(email);
 
-		addNameAndAdress(billingAccount, doc, billingAccountTag, billingAccountLanguage);
-
-		addPaymentInfo(billingAccount, doc, billingAccountTag);
+		addNameAndAdress(billingAccount, doc, billingAccountTag, billingAccountLanguage);		
 
 		header.appendChild(billingAccountTag);
 
@@ -862,66 +866,85 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 	}
 
-	public void addPaymentInfo(BillingAccount billingAccount, Document doc, Element parent) {
+	public void addPaymentInfo(CustomerAccount customerAccount, Document doc, Element parent) {
 
 		Element paymentMethod = doc.createElement("paymentMethod");
 		parent.appendChild(paymentMethod);
-		if (billingAccount.getPaymentMethod() != null) {
-			paymentMethod.setAttribute("type", billingAccount.getPaymentMethod().name());
-		}
+		
+		PaymentMethod preferedPaymentMethod = customerAccount.getPreferredPaymentMethod();
+		if (preferedPaymentMethod != null) {
+			paymentMethod.setAttribute("type", preferedPaymentMethod.getPaymentType().name());
+        }
+		
+        if (paymentMethod instanceof DDPaymentMethod || paymentMethod instanceof TipPaymentMethod) {
+            BankCoordinates bankCoordinates = null;
+            if (paymentMethod instanceof DDPaymentMethod) {
+                bankCoordinates = ((DDPaymentMethod) paymentMethod).getBankCoordinates();
+            } else if (paymentMethod instanceof TipPaymentMethod) {
+                bankCoordinates = ((TipPaymentMethod) paymentMethod).getBankCoordinates();
+            }
 
-		Element bankCoordinates = doc.createElement("bankCoordinates");
-		Element bankCode = doc.createElement("bankCode");
-		Element branchCode = doc.createElement("branchCode");
-		Element accountNumber = doc.createElement("accountNumber");
-		Element accountOwner = doc.createElement("accountOwner");
-		Element key = doc.createElement("key");
-		Element iban = doc.createElement("IBAN");
-		bankCoordinates.appendChild(bankCode);
-		bankCoordinates.appendChild(branchCode);
-		bankCoordinates.appendChild(accountNumber);
-		bankCoordinates.appendChild(accountOwner);
-		bankCoordinates.appendChild(key);
-		bankCoordinates.appendChild(iban);
-		paymentMethod.appendChild(bankCoordinates);
+            if (bankCoordinates != null) {
 
-		Element paymentTerm = doc.createElement("paymentTerm");
-		parent.appendChild(paymentTerm);
-		paymentTerm.setAttribute("type", billingAccount.getPaymentTerm() != null ? billingAccount.getPaymentTerm()
-				.toString() : "");
+                Element bankCoordinatesElement = doc.createElement("bankCoordinates");
+                Element bankCode = doc.createElement("bankCode");
+                Element branchCode = doc.createElement("branchCode");
+                Element accountNumber = doc.createElement("accountNumber");
+                Element accountOwner = doc.createElement("accountOwner");
+                Element key = doc.createElement("key");
+                Element iban = doc.createElement("IBAN");
+                bankCoordinatesElement.appendChild(bankCode);
+                bankCoordinatesElement.appendChild(branchCode);
+                bankCoordinatesElement.appendChild(accountNumber);
+                bankCoordinatesElement.appendChild(accountOwner);
+                bankCoordinatesElement.appendChild(key);
+                bankCoordinatesElement.appendChild(iban);
+                paymentMethod.appendChild(bankCoordinatesElement);
 
-		if (billingAccount.getBankCoordinates() != null) {
-			Text bankCodeTxt = doc
-					.createTextNode(billingAccount.getBankCoordinates().getBankCode() != null ? billingAccount
-							.getBankCoordinates().getBankCode() : "");
-			bankCode.appendChild(bankCodeTxt);
+                Text bankCodeTxt = doc.createTextNode(bankCoordinates.getBankCode() != null ? bankCoordinates.getBankCode() : "");
+                bankCode.appendChild(bankCodeTxt);
 
-			Text branchCodeTxt = doc
-					.createTextNode(billingAccount.getBankCoordinates().getBranchCode() != null ? billingAccount
-							.getBankCoordinates().getBranchCode() : "");
-			branchCode.appendChild(branchCodeTxt);
+                Text branchCodeTxt = doc.createTextNode(bankCoordinates.getBranchCode() != null ? bankCoordinates.getBranchCode() : "");
+                branchCode.appendChild(branchCodeTxt);
 
-			Text accountNumberTxt = doc
-					.createTextNode(billingAccount.getBankCoordinates().getAccountNumber() != null ? billingAccount
-							.getBankCoordinates().getAccountNumber() : "");
-			accountNumber.appendChild(accountNumberTxt);
+                Text accountNumberTxt = doc.createTextNode(bankCoordinates.getAccountNumber() != null ? bankCoordinates.getAccountNumber() : "");
+                accountNumber.appendChild(accountNumberTxt);
 
-			Text accountOwnerTxt = doc
-					.createTextNode(billingAccount.getBankCoordinates().getAccountOwner() != null ? billingAccount
-							.getBankCoordinates().getAccountOwner() : "");
-			accountOwner.appendChild(accountOwnerTxt);
+                Text accountOwnerTxt = doc.createTextNode(bankCoordinates.getAccountOwner() != null ? bankCoordinates.getAccountOwner() : "");
+                accountOwner.appendChild(accountOwnerTxt);
 
-			Text keyTxt = doc.createTextNode(billingAccount.getBankCoordinates().getKey() != null ? billingAccount
-					.getBankCoordinates().getKey() : "");
-			key.appendChild(keyTxt);
-			
-			Text ibanTxt = doc
-					.createTextNode(billingAccount.getBankCoordinates().getIban() != null ? billingAccount
-							.getBankCoordinates().getIban() : "");
-			iban.appendChild(ibanTxt);
-			
+                Text keyTxt = doc.createTextNode(bankCoordinates.getKey() != null ? bankCoordinates.getKey() : "");
+                key.appendChild(keyTxt);
 
-		}
+                Text ibanTxt = doc.createTextNode(bankCoordinates.getIban() != null ? bankCoordinates.getIban() : "");
+                iban.appendChild(ibanTxt);
+            }
+            
+        } else if (paymentMethod instanceof CardPaymentMethod){
+            
+            Element cardInformationElement = doc.createElement("cardInformation");
+            Element cardType = doc.createElement("cardType");
+            Element owner = doc.createElement("owner");
+            Element cardNumber = doc.createElement("cardNumber");
+            Element expiration = doc.createElement("expiration");
+            cardInformationElement.appendChild(cardType);
+            cardInformationElement.appendChild(owner);
+            cardInformationElement.appendChild(cardNumber);
+            cardInformationElement.appendChild(expiration);
+            paymentMethod.appendChild(cardInformationElement);
+
+            Text cardTypeTxt = doc.createTextNode(((CardPaymentMethod)paymentMethod).getCardType().name());
+            cardType.appendChild(cardTypeTxt);
+
+            Text ownerTxt = doc.createTextNode(((CardPaymentMethod)paymentMethod).getOwner());
+            owner.appendChild(ownerTxt);
+
+            Text cardNumberTxt = doc.createTextNode(((CardPaymentMethod)paymentMethod).getHiddenCardNumber());
+            cardNumber.appendChild(cardNumberTxt);
+
+            Text expirationTxt = doc.createTextNode(((CardPaymentMethod)paymentMethod).getExpirationMonthAndYear());
+            expiration.appendChild(expirationTxt);            
+        }
 	}
 
 	public void addCategories(UserAccount userAccount, Invoice invoice, Document doc, Element invoiceTag,Element parent,

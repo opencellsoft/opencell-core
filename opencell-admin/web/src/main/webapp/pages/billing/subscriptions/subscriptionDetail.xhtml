@@ -55,14 +55,14 @@
 		}	
 		</script>
 
-        <hftl:entityPopup id="productTemplatePopup" header="#{messages['productTemplate.title']}" backingBean="#{productTemplateBean}"
+        <hftl:entityPopup id="productTemplatePopup" header="#{messages['productTemplate.title']}" backingBean="#{productTemplateBean}" width="700"
             dataModel="#{subscriptionBean.getOfferProductTemplatesByDate(subscriptionBean.productInstance.applicationDate)}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
             searchField2Label="#{messages['businessEntity.description']}" searchField2="description" searchField3Label="#{messages['commons.validFrom']}" searchField3="validity.from"
             searchField4Label="#{messages['commons.validTo']}" searchField4="validity.to" column1Label="#{messages['businessEntity.code']}" column1="code"
             column2Label="#{messages['businessEntity.description']}" column2="description" column3Label="#{messages['commons.validFrom']}" column3="validity" column3Child="from"
             column4Label="#{messages['commons.validTo']}" column4="validity" column4Child="to" selection="#{subscriptionBean.productInstance.productTemplate}"
             selectionListenerBean="#{subscriptionBean}" selectionListenerMethod="updateProductInstanceCode"
-            updateField=":subscriptionTab:applyProductForm:productTemplateSelectedId :subscriptionTab:applyProductForm:productTemplateSelectedId_text :#{p:component('productCF')}">
+            updateField=":subscriptionTab:applyProductForm:productTemplateSelectedId :subscriptionTab:applyProductForm:productTemplateSelectedId_text :subscriptionTab:applyProductForm:productCF">
         </hftl:entityPopup>
 
         <hftl:entityPopup id="userAccountPopup"
@@ -194,9 +194,9 @@
                         <ui:param name="buttons" value="true"/>
                         <ui:define name="buttons">                        
 							<p:commandButton action="#{subscriptionBean.terminateSubscription()}"
-								value="#{messages['button.terminateButton']}"
+								value="#{messages['button.terminateButton']}" ajax="true" update="@form"
 								oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_subscriptionTerminationPopup').hide()"
-								update=":subscriptionTab:subscriptionFormId"/>
+								/>
 							<p:commandButton immediate="true"
 								onclick="PF('dlg_subscriptionTerminationPopup').hide()" type="button"
 								value="#{messages['management.close']}" />
@@ -463,7 +463,7 @@
 																field="amountWithoutTax" isMessage="false" />
 															<p:column
 																headerText="#{messages['pricePlanMatrix.amountWithTax']}"
-																rendered="#{!appProvider.entreprise}">
+																rendered="#{!subscriptionBean.provider.entreprise}">
 																<h:outputText value="#{entity.amountWithTax}"
 																	  converter="#{getConverter.forType(entity.amountWithTax,'4digits')}" />
 															</p:column>
@@ -528,7 +528,7 @@
 															field="amountWithoutTax" isMessage="false" />
 														<p:column
 															headerText="#{messages['pricePlanMatrix.amountWithTax']}"
-															rendered="#{!appProvider.entreprise}">
+															rendered="#{!subscriptionBean.provider.entreprise}">
 															<h:outputText value="#{entity.amountWithTax}"
 																converter="#{getConverter.forType(entity.amountWithTax,'4digits')}" />
 														</p:column>
@@ -549,12 +549,14 @@
 													</p:dataTable>
 												</h:form>
 											</p:tab>
-											
-											<ui:include src="productInstances.xhtml">
-												<ui:param name="backingBean" value="#{subscriptionBean}" />
-											</ui:include>
-											
-											<!-- Access -->
+
+                                            <ui:include src="productInstances.xhtml">
+                                                <ui:param name="parentBackingBean" value="#{subscriptionBean}" />
+                                                <ui:param name="parentEntityIsEditable" value="#{subscriptionBean.entity.status=='CREATED' or subscriptionBean.entity.status=='ACTIVE'}" />
+                                                <ui:param name="parentIdPath" value=":subscriptionTab" />
+                                            </ui:include>
+                        
+                                            <!-- Access -->
 											<p:tab id="medinaAccessTab"
 												title="#{messages['menu.accessPoints']}"
 												rendered="#{not empty subscriptionBean.entity.id}">
@@ -686,12 +688,12 @@
 							field="chargeDate" edit="false" newLine="true" />
 						<hftl:formField label="#{messages['counterTemplate.title']}"
 							field="counter" valueLabelField="descriptionOrCode" edit="false" />
-						<hftl:formField rendered="#{!appProvider.entreprise}"
+						<hftl:formField rendered="#{!subscriptionBean.provider.entreprise}"
 							label="#{messages['chargeInstance.amountWithTax']}"
 							field="amountWithTax" edit="true" newLine="true" />
 						<hftl:formField
 							label="#{messages['chargeInstance.amountWithoutTax']}"
-							field="amountWithoutTax" edit="true" newLine="#{appProvider.entreprise}"/>
+							field="amountWithoutTax" edit="true" newLine="#{subscriptionBean.provider.entreprise}"/>
 
 
                         <ui:param name="buttons" value="true"/>
@@ -736,7 +738,7 @@
 								disabled="#{subscriptionBean.recurringChargeInstance.id!=null and !subscriptionBean.recurringChargeInstance.chargeTemplate.amountEditable}">
 							</p:inputText>
                         </hftl:decorateFormField>
-						<hftl:decorateFormField fieldId="RCamountWithTax" label="#{messages['recurringChargeInstance.amountWithTax']}" rendered="#{!appProvider.entreprise}">
+						<hftl:decorateFormField fieldId="RCamountWithTax" label="#{messages['recurringChargeInstance.amountWithTax']}" rendered="#{!subscriptionBean.provider.entreprise}">
 							<p:inputText id="RCamountWithTax"
 								value="#{subscriptionBean.recurringChargeInstance.amountWithTax}"
 								size="5" converter="bigDecimalConverter"
@@ -850,7 +852,7 @@
 								</f:facet>
 								<h:outputText value="#{shotApplication.amountWithoutTax}" />
 							</p:column>
-							<p:column rendered="#{!appProvider.entreprise}" sortBy="#{shotApplication.amountWithTax}">
+							<p:column rendered="#{!subscriptionBean.provider.entreprise}" sortBy="#{shotApplication.amountWithTax}">
 								<f:facet name="header">
 									<h:outputText
 										value="#{messages['walletOperation.amountWithTax']}" />
@@ -870,36 +872,6 @@
 			</p:outputPanel>
 		</p:dialog>
 		
-		<p:dialog id="productInstanceDetailPopup"
-			header="#{messages['subscription.tab.productInstanceDetail']}"
-			widgetVar="dlg_productInstanceDetailPopup" modal="true"
-			dynamic="false" width="90%" closeOnEscape="true">
-			<p:outputPanel id="productInstanceDetailPopupPanel">
-				<hftl:formPanel edit="false"
-					label="#{messages['subscription.tab.productInstanceDetail']}"
-					backingBean="#{subscriptionBean}" columns="1"
-					entity="#{subscriptionBean.productInstance}"
-					formId="productInstancePopupForm" showFormButtons="false"
-					ajaxSubmit="true"
-					rendered="#{subscriptionBean.productInstance!=null}">
-					<hftl:formField label="#{messages['businessEntity.code']}"
-						field="code" />
-					<hftl:formField label="#{messages['businessEntity.description']}"
-						field="description" />
-					<hftl:formField label="#{messages['commons.quantity']}"
-						field="quantity" />
-					<hftl:formField
-						label="#{messages['chargeApplication.applicationDate']}"
-						field="applicationDate" />
-					
-					<h:panelGroup id="productInstancePopupFormCF">
-						<hftl:customFields backingBean="#{productInstanceBean}"
-							entity="#{subscriptionBean.productInstance}"
-							messagesId=":productInstancePopupForm:messages" prefix="piPopup" />
-					</h:panelGroup>
-				</hftl:formPanel>
-			</p:outputPanel>
-		</p:dialog>
 	</ui:define>
 </ui:composition>
 

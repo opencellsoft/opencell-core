@@ -49,6 +49,7 @@ public class GetFieldInformationHandler extends TagHandler {
 
     private String backingBean;
     private String entity;
+    private String entityClassName;
     private String defaultEntityFromBean;
     private String fieldName;
     private String childFieldName;
@@ -59,6 +60,7 @@ public class GetFieldInformationHandler extends TagHandler {
      * <ul>
      * <li>backingBean - BaseBean instance with entity field. Used to access "entity" if entity parameter is not passed</li>
      * <li>entity - Entity object to read field metadata from</li>
+     * <li>entityClass - Explicit entity class for cases when it can not be determined (super entity with fields in child entity
      * <li>defaultEntityFromBean - does entity correspond to backingBean.entity as was set by default in hftl:formField tag</li>
      * <li>fieldName - name of a field. Can contain "." in a name</li>
      * <li>childFieldName - name of a secondary field.</li>
@@ -81,6 +83,10 @@ public class GetFieldInformationHandler extends TagHandler {
             entity = getAttribute("entity").getValue();
         }
 
+        if (getAttribute("entityClass") != null) {
+            entityClassName = getAttribute("entityClass").getValue();
+        }
+
         if (getAttribute("defaultEntityFromBean") != null) {
             defaultEntityFromBean = getAttribute("defaultEntityFromBean").getValue();
         }
@@ -101,6 +107,19 @@ public class GetFieldInformationHandler extends TagHandler {
     @Override
     public void apply(FaceletContext context, UIComponent parent) throws IOException {
         Class entityClass = null;
+
+        if (entityClassName != null) {
+            String entityClassNameVal = (String) executeExpressionInUIContext(context, entityClassName);
+            if (entityClassNameVal != null) {
+
+                try {
+                    entityClass = Class.forName(entityClassNameVal);
+                } catch (ClassNotFoundException e) {
+                    log.error("Invalid classname {}", entityClassNameVal);
+                }
+            }
+        }
+
         // Either entity or backing bean must be set. Resolve the values
 
         // // Code is ok, but need to better test before release.
@@ -114,7 +133,8 @@ public class GetFieldInformationHandler extends TagHandler {
         // }
         //
         // if (entity != null && !isDefaultEntityFromBean) {
-        if (entity != null) {
+
+        if (entityClass == null && entity != null) {
             Object entityObj = executeExpressionInUIContext(context, entity);
             if (entityObj != null) {
                 entityClass = entityObj.getClass();
@@ -230,7 +250,7 @@ public class GetFieldInformationHandler extends TagHandler {
             fieldInfo.fieldType = FieldTypeEnum.Number;
 
         } else if (fieldClassType == DatePeriod.class) {
-         
+
             fieldInfo.fieldType = FieldTypeEnum.DatePeriod;
         }
 

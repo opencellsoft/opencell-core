@@ -497,9 +497,9 @@ public abstract class BaseApi {
                 if ((cfDto.getValueDate() == null && cft.getCalendar() != null)) {
                     throw new MissingParameterException("Custom field " + cft.getCode() + " is versionable by calendar. Missing valueDate parameter.");
 
-//                } else if (cft.getCalendar() == null && (cfDto.getValuePeriodStartDate() == null || cfDto.getValuePeriodEndDate() == null)) {
-//                    throw new MissingParameterException(
-//                        "Custom field " + cft.getCode() + " is versionable by periods. Missing valuePeriodStartDate and/or valuePeriodEndDate parameters.");
+                    // } else if (cft.getCalendar() == null && (cfDto.getValuePeriodStartDate() == null || cfDto.getValuePeriodEndDate() == null)) {
+                    // throw new MissingParameterException(
+                    // "Custom field " + cft.getCode() + " is versionable by periods. Missing valuePeriodStartDate and/or valuePeriodEndDate parameters.");
                 }
             }
 
@@ -533,24 +533,24 @@ public abstract class BaseApi {
      * @throws ConstraintViolationException
      * @throws ValidationException
      */
-    private void validate(BaseDto dto) throws MeveoApiException {
+    public void validate(Object dto) throws MeveoApiException {
 
         if (dto == null) {
             return;
         }
 
-        Set<ConstraintViolation<BaseDto>> violations = validator.validate(dto);
+        Set<ConstraintViolation<Object>> violations = validator.validate(dto);
 
         if (!violations.isEmpty()) {
             StringBuilder sb = new StringBuilder();
             Iterator<? extends ConstraintViolation<?>> it = violations.iterator();
             while (it.hasNext()) {
                 ConstraintViolation<?> i = it.next();
-                sb.append(i.getMessage() + "|");
+                sb.append(i.getPropertyPath().toString() + " " + i.getMessage() + "|");
             }
             sb.delete(sb.length() - 1, sb.length());
 
-            throw new MeveoApiException(sb.toString());
+            throw new InvalidParameterException(sb.toString());
         }
     }
 

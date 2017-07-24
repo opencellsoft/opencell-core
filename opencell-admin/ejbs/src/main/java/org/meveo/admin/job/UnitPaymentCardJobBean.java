@@ -9,7 +9,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
-import org.meveo.api.dto.payment.DoPaymentResponseDto;
+import org.meveo.api.dto.payment.PayByCardResponseDto;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.RecordedInvoice;
@@ -48,7 +48,7 @@ public class UnitPaymentCardJobBean {
             }
             List<Long> listAOids = new ArrayList<>();
             listAOids.add(aoId);
-           DoPaymentResponseDto doPaymentResponseDto =  paymentService.doPaymentCardToken(recordedInvoice.getCustomerAccount(), recordedInvoice.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO);
+           PayByCardResponseDto doPaymentResponseDto =  paymentService.payByCard(recordedInvoice.getCustomerAccount(), recordedInvoice.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO);
            if(!StringUtils.isBlank(doPaymentResponseDto.getPaymentID())){
         	   result.registerSucces();
             }

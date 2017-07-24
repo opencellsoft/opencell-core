@@ -18086,7 +18086,6 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </address>
             <customer>${#Project#baseEntityPrefix}_CUST</customer>
             <currency>EUR</currency>
-            <paymentMethod>CHECK</paymentMethod>
             <creditCategory>Pro</creditCategory>
             <language>FRA</language>
          </customerAccount>
@@ -18146,10 +18145,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <billingCycle>CYC_INV_MT_1</billingCycle>
             <country>FR</country>
             <language>FRA</language>
-            <paymentMethod>CHECK</paymentMethod>
             <nextInvoiceDate>2015-04-01</nextInvoiceDate>
             <subscriptionDate>2015-01-01</subscriptionDate>
-            <paymentTerms>CASH</paymentTerms>
             <electronicBilling>true</electronicBilling>
             <email>613@manaty.net</email>
          </billingAccount>
@@ -18210,10 +18207,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <billingCycle>CYC_INV_MT_1</billingCycle>
             <country>FR</country>
             <language>FRA</language>
-            <paymentMethod>CHECK</paymentMethod>
             <nextInvoiceDate>2015-04-01</nextInvoiceDate>
             <subscriptionDate>2015-01-01</subscriptionDate>
-            <paymentTerms>CASH</paymentTerms>
             <electronicBilling>true</electronicBilling>
             <email>613@manaty.net</email>
          </billingAccount>
@@ -18693,7 +18688,6 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:request>{
    "description":"${#Project#entityPrefix}_${#TestSuite#index}_Product_Order",
    "orderDate":"2015-10-25T15:50:48+08",
-   "paymentMethod" : "DIRECTDEBIT",
    "dueDateDelayEL" : "#{order.orderDate.date}",
    "orderItem":[
       {      	
@@ -20441,7 +20435,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="4c543ad4-c016-429e-8b81-a34cf6bbafc3" name="Contains 1">
               <con:configuration>
-                <token>"message":"org.meveo.api.exception.BusinessApiException: Service ${#Project#baseEntityPrefix}_SERVICE1 is not associated with Offer"</token>
+                <token>"message":"Service ${#Project#baseEntityPrefix}_SERVICE1 is not associated with Offer"</token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -26516,6 +26510,26 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:request>{
    "description":"${#Project#entityPrefix}_${#TestSuite#index}_Product_Order",
    "orderDate":"2015-10-25T15:50:48+08",
+    "paymentMethods": [
+    	{
+	      "directDebit": {
+	          "alias": "some alias",
+	          "bankCoordinates" : {
+				"bankCode" : "12456",
+				"branchCode" : "23456",
+				"accountNumber" : "34589324756",
+				"key" : "45",
+				"iban" : "5688789456321878945645",
+				"bic" : "67789456",
+				"accountOwner" : "Me and co",
+				"bankName" : "Some bank",
+				"bankId" : "78946",
+				"issuerNumber" : "46789",
+				"issuerName" : "Some issuer",
+				"ics" : "5587"	          	
+	          }
+	      }
+       }] ,
    "orderItem":[
       {      	
          "id":"01",
@@ -26887,6 +26901,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="Simple Contains" id="2ce89db8-a29d-4eca-8fbc-0c250bf2fdb1" name="Contains 1">
+              <con:configuration>
+                <token>&lt;paymentMethod>DIRECTDEBIT&lt;/paymentMethod></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:username>meveo.admin</con:username>
               <con:password>meveo.admin</con:password>
@@ -27246,6 +27267,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="8dc34ece-eec6-42e7-a533-8fb6f3952b9c" name="Contains 1">
+              <con:configuration>
+                <token>&lt;paymentMethod>DIRECTDEBIT&lt;/paymentMethod></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
             <con:credentials>

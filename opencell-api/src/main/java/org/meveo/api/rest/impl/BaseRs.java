@@ -35,11 +35,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-
-import javax.ws.rs.NotAuthorizedException;
-import javax.ws.rs.WebApplicationException;
-
-
 /**
  * @author Edward P. Legaspi
  **/
@@ -137,7 +132,7 @@ public abstract class BaseRs implements IBaseRs {
             log.warn("Failed to execute API", e);
 
             String message = e.getMessage();
-            MeveoApiErrorCodeEnum errorCode = MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION;
+            MeveoApiErrorCodeEnum errorCode = e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION;
             Throwable cause = e;
 
             // See if can get to the root of the exception cause
@@ -170,8 +165,6 @@ public abstract class BaseRs implements IBaseRs {
             status.setStatus(ActionStatusEnum.FAIL);
             status.setMessage(message);
         }
-        
-        throw new NotAuthorizedException("Do not exist");
 
     }
 }
