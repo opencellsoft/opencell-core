@@ -609,20 +609,22 @@ public class InvoiceService extends PersistenceService<Invoice> {
         String pdfFileName = getFullPdfFilePath(invoice, true);
 
         try {
-        	
+
             File destDir = new File(resDir + File.separator + billingTemplateName + File.separator + "pdf");
-            
+
             if (!destDir.exists()) {
-                
-                String sourcePath = Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath() + File.separator + billingTemplateName + File.separator + "invoice";
-      
+
+                String sourcePath = Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath() + File.separator + billingTemplateName + File.separator
+                        + "invoice";
+
                 File sourceFile = new File(sourcePath);
                 if (!sourceFile.exists()) {
-                    VirtualFile vfDir = VFS.getChild("content/" + ParamBean.getInstance().getProperty("opencell.moduleName", "opencell") + ".war/WEB-INF/classes/jasper/" + billingTemplateName + File.separator + "invoice" );
+                    VirtualFile vfDir = VFS.getChild("content/" + ParamBean.getInstance().getProperty("opencell.moduleName", "opencell") + ".war/WEB-INF/classes/jasper/"
+                            + billingTemplateName + File.separator + "invoice");
                     log.info("default jaspers path :" + vfDir.getPathName());
                     URL vfPath = VFSUtils.getPhysicalURL(vfDir);
                     sourceFile = new File(vfPath.getPath());
-                    
+
                     if (!sourceFile.exists()) {
                         throw new BusinessException("embedded jasper report for invoice is missing!!");
                     }
@@ -636,7 +638,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 String sourcePathInvoiceAdjustment = Thread.currentThread().getContextClassLoader().getResource("./jasper/" + billingTemplateName + "/invoiceAdjustment").getPath();
                 File sourceFileInvoiceAdjustment = new File(sourcePathInvoiceAdjustment);
                 if (!sourceFileInvoiceAdjustment.exists()) {
-                    VirtualFile vfDir = VFS.getChild("content/" + ParamBean.getInstance().getProperty("opencell.moduleName", "opencell") + ".war/WEB-INF/classes/jasper/" + billingTemplateName + "/invoiceAdjustment");
+                    VirtualFile vfDir = VFS.getChild("content/" + ParamBean.getInstance().getProperty("opencell.moduleName", "opencell") + ".war/WEB-INF/classes/jasper/"
+                            + billingTemplateName + "/invoiceAdjustment");
                     URL vfPath = VFSUtils.getPhysicalURL(vfDir);
                     sourceFileInvoiceAdjustment = new File(vfPath.getPath());
                     if (!sourceFileInvoiceAdjustment.exists()) {
@@ -1426,5 +1429,24 @@ public class InvoiceService extends PersistenceService<Invoice> {
             billingTemplateName = billingCycle.getBillingTemplateName();
         }
         return billingTemplateName;
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void incrementInvoiceDates(Long invoiceId) throws BusinessException {
+
+        log.debug("incrementInvoiceDates in new transaction");
+
+        Invoice invoice = findById(invoiceId);
+
+        invoice.setInvoiceNumber(getInvoiceNumber(invoice));
+        BillingAccount billingAccount = invoice.getBillingAccount();
+        Date initCalendarDate = billingAccount.getSubscriptionDate();
+        if (initCalendarDate == null) {
+            initCalendarDate = billingAccount.getAuditable().getCreated();
+        }
+        Date nextCalendarDate = billingAccount.getBillingCycle().getNextCalendarDate(initCalendarDate);
+        billingAccount.setNextInvoiceDate(nextCalendarDate);
+        billingAccount.updateAudit(currentUser);
+        update(invoice);
     }
 }

@@ -36,6 +36,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -58,295 +60,296 @@ import org.meveo.model.quote.Quote;
 @Entity
 @ObservableEntity
 @Table(name = "billing_invoice", uniqueConstraints = @UniqueConstraint(columnNames = { "invoice_number", "invoice_type_id" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_invoice_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "billing_invoice_seq"), })
 @CustomFieldEntity(cftCodePrefix = "INVOICE")
+@NamedQueries({ @NamedQuery(name = "Invoice.byBR", query = "select inv.id from Invoice inv where inv.billingRun.id=:billingRunId") })
 public class Invoice extends EnableEntity implements ICustomFieldEntity {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "billing_account_id")
-	private BillingAccount billingAccount;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "billing_account_id")
+    private BillingAccount billingAccount;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "billing_run_id")
-	private BillingRun billingRun;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "billing_run_id")
+    private BillingRun billingRun;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "recorded_invoice_id")
-	private RecordedInvoice recordedInvoice;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "recorded_invoice_id")
+    private RecordedInvoice recordedInvoice;
 
-	@OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private List<InvoiceAgregate> invoiceAgregates = new ArrayList<InvoiceAgregate>();
+    @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<InvoiceAgregate> invoiceAgregates = new ArrayList<InvoiceAgregate>();
 
-	@Column(name = "invoice_number", length = 50)
-	@Size(max = 50)
-	private String invoiceNumber;
+    @Column(name = "invoice_number", length = 50)
+    @Size(max = 50)
+    private String invoiceNumber;
 
-	@Column(name = "temporary_invoice_number", length = 60, unique = true)
-	@Size(max = 60)
-	private String temporaryInvoiceNumber;
+    @Column(name = "temporary_invoice_number", length = 60, unique = true)
+    @Size(max = 60)
+    private String temporaryInvoiceNumber;
 
-	@Column(name = "product_date")
-	private Date productDate;
+    @Column(name = "product_date")
+    private Date productDate;
 
-	@Column(name = "invoice_date")
-	private Date invoiceDate;
+    @Column(name = "invoice_date")
+    private Date invoiceDate;
 
-	@Column(name = "due_date")
-	private Date dueDate;
+    @Column(name = "due_date")
+    private Date dueDate;
 
-	@Column(name = "amount", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal amount;
+    @Column(name = "amount", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal amount;
 
-	@Column(name = "discount", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal discount;
+    @Column(name = "discount", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal discount;
 
-	@Column(name = "amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal amountWithoutTax;
+    @Column(name = "amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal amountWithoutTax;
 
-	@Column(name = "amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal amountTax;
+    @Column(name = "amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal amountTax;
 
-	@Column(name = "amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal amountWithTax;
+    @Column(name = "amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal amountWithTax;
 
-	@Column(name = "net_to_pay", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal netToPay;
+    @Column(name = "net_to_pay", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal netToPay;
 
-	@Column(name = "payment_method")
-	@Enumerated(EnumType.STRING)
-	private PaymentMethodEnum paymentMethod;
+    @Column(name = "payment_method")
+    @Enumerated(EnumType.STRING)
+    private PaymentMethodEnum paymentMethod;
 
-	@Column(name = "iban", length = 255)
-	@Size(max = 255)
-	private String iban;
+    @Column(name = "iban", length = 255)
+    @Size(max = 255)
+    private String iban;
 
-	@Column(name = "alias", length = 255)
-	@Size(max = 255)
-	private String alias;
+    @Column(name = "alias", length = 255)
+    @Size(max = 255)
+    private String alias;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "trading_currency_id")
-	private TradingCurrency tradingCurrency;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trading_currency_id")
+    private TradingCurrency tradingCurrency;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "trading_country_id")
-	private TradingCountry tradingCountry;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trading_country_id")
+    private TradingCountry tradingCountry;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "trading_language_id")
-	private TradingLanguage tradingLanguage;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trading_language_id")
+    private TradingLanguage tradingLanguage;
 
-	@OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
-	private List<RatedTransaction> ratedTransactions = new ArrayList<RatedTransaction>();
+    @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY)
+    private List<RatedTransaction> ratedTransactions = new ArrayList<RatedTransaction>();
 
-	@Column(name = "comment", length = 1200)
-	@Size(max = 1200)
-	private String comment;
+    @Column(name = "comment", length = 1200)
+    @Size(max = 1200)
+    private String comment;
 
-	@Type(type="numeric_boolean")
+    @Type(type = "numeric_boolean")
     @Column(name = "detailed_invoice")
-	private boolean isDetailedInvoice = true;
+    private boolean isDetailedInvoice = true;
 
-	@ManyToOne
-	@JoinColumn(name = "invoice_id")
-	private Invoice adjustedInvoice;
+    @ManyToOne
+    @JoinColumn(name = "invoice_id")
+    private Invoice adjustedInvoice;
 
-	@ManyToOne
-	@JoinColumn(name = "invoice_type_id")
-	private InvoiceType invoiceType;
+    @ManyToOne
+    @JoinColumn(name = "invoice_type_id")
+    private InvoiceType invoiceType;
 
-	@Column(name = "uuid", nullable = false, updatable = false, length = 60)
-	@Size(max = 60)
-	@NotNull
-	private String uuid = UUID.randomUUID().toString();
+    @Column(name = "uuid", nullable = false, updatable = false, length = 60)
+    @Size(max = 60)
+    @NotNull
+    private String uuid = UUID.randomUUID().toString();
 
-	@ManyToMany
-	@JoinTable(name = "billing_linked_invoices", joinColumns = { @JoinColumn(name = "id") }, inverseJoinColumns = { @JoinColumn(name = "linked_invoice_id") })
-	private Set<Invoice> linkedInvoices = new HashSet<>();
-	
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "billing_invoices_orders", joinColumns = @JoinColumn(name = "invoice_id"), inverseJoinColumns = @JoinColumn(name = "order_id"))	
-	private List<Order> orders = new ArrayList<Order>();	
-	
+    @ManyToMany
+    @JoinTable(name = "billing_linked_invoices", joinColumns = { @JoinColumn(name = "id") }, inverseJoinColumns = { @JoinColumn(name = "linked_invoice_id") })
+    private Set<Invoice> linkedInvoices = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "billing_invoices_orders", joinColumns = @JoinColumn(name = "invoice_id"), inverseJoinColumns = @JoinColumn(name = "order_id"))
+    private List<Order> orders = new ArrayList<Order>();
+
     @ManyToOne
     @JoinColumn(name = "quote_id")
     private Quote quote;
-    
-	@Type(type="numeric_boolean")
+
+    @Type(type = "numeric_boolean")
     @Column(name = "pdf_generated")
-	private boolean isPdfGenerated = false;
-    
+    private boolean isPdfGenerated = false;
 
-	@Transient
-	private Long invoiceAdjustmentCurrentSellerNb;
+    @Transient
+    private Long invoiceAdjustmentCurrentSellerNb;
 
-	@Transient
-	private Long invoiceAdjustmentCurrentProviderNb;
+    @Transient
+    private Long invoiceAdjustmentCurrentProviderNb;
 
-	public List<RatedTransaction> getRatedTransactions() {
-		return ratedTransactions;
-	}
+    public List<RatedTransaction> getRatedTransactions() {
+        return ratedTransactions;
+    }
 
-	public void setRatedTransactions(List<RatedTransaction> ratedTransactions) {
-		this.ratedTransactions = ratedTransactions;
-	}
+    public void setRatedTransactions(List<RatedTransaction> ratedTransactions) {
+        this.ratedTransactions = ratedTransactions;
+    }
 
-	public String getInvoiceNumber() {
-		return invoiceNumber;
-	}
+    public String getInvoiceNumber() {
+        return invoiceNumber;
+    }
 
-	public void setInvoiceNumber(String invoiceNumber) {
-		this.invoiceNumber = invoiceNumber;
-	}
+    public void setInvoiceNumber(String invoiceNumber) {
+        this.invoiceNumber = invoiceNumber;
+    }
 
-	public Date getProductDate() {
-		return productDate;
-	}
+    public Date getProductDate() {
+        return productDate;
+    }
 
-	public void setProductDate(Date productDate) {
-		this.productDate = productDate;
-	}
+    public void setProductDate(Date productDate) {
+        this.productDate = productDate;
+    }
 
-	public Date getInvoiceDate() {
-		return invoiceDate;
-	}
+    public Date getInvoiceDate() {
+        return invoiceDate;
+    }
 
-	public void setInvoiceDate(Date invoiceDate) {
-		this.invoiceDate = invoiceDate;
-	}
+    public void setInvoiceDate(Date invoiceDate) {
+        this.invoiceDate = invoiceDate;
+    }
 
-	public Date getDueDate() {
-		return dueDate;
-	}
+    public Date getDueDate() {
+        return dueDate;
+    }
 
-	public void setDueDate(Date dueDate) {
-		this.dueDate = dueDate;
-	}
+    public void setDueDate(Date dueDate) {
+        this.dueDate = dueDate;
+    }
 
-	public BigDecimal getAmount() {
-		return amount;
-	}
+    public BigDecimal getAmount() {
+        return amount;
+    }
 
-	public void setAmount(BigDecimal amount) {
-		this.amount = amount;
-	}
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
 
-	public BigDecimal getDiscount() {
-		return discount;
-	}
+    public BigDecimal getDiscount() {
+        return discount;
+    }
 
-	public void setDiscount(BigDecimal discount) {
-		this.discount = discount;
-	}
+    public void setDiscount(BigDecimal discount) {
+        this.discount = discount;
+    }
 
-	public BigDecimal getAmountWithoutTax() {
-		return amountWithoutTax;
-	}
+    public BigDecimal getAmountWithoutTax() {
+        return amountWithoutTax;
+    }
 
-	public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
-		this.amountWithoutTax = amountWithoutTax;
-	}
+    public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
+        this.amountWithoutTax = amountWithoutTax;
+    }
 
-	public BigDecimal getAmountTax() {
-		return amountTax;
-	}
+    public BigDecimal getAmountTax() {
+        return amountTax;
+    }
 
-	public void setAmountTax(BigDecimal amountTax) {
-		this.amountTax = amountTax;
-	}
+    public void setAmountTax(BigDecimal amountTax) {
+        this.amountTax = amountTax;
+    }
 
-	public BigDecimal getAmountWithTax() {
-		return amountWithTax;
-	}
+    public BigDecimal getAmountWithTax() {
+        return amountWithTax;
+    }
 
-	public void setAmountWithTax(BigDecimal amountWithTax) {
-		this.amountWithTax = amountWithTax;
-	}
+    public void setAmountWithTax(BigDecimal amountWithTax) {
+        this.amountWithTax = amountWithTax;
+    }
 
-	public PaymentMethodEnum getPaymentMethod() {
-		return paymentMethod;
-	}
+    public PaymentMethodEnum getPaymentMethod() {
+        return paymentMethod;
+    }
 
-	public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
-		this.paymentMethod = paymentMethod;
-	}
+    public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
 
-	public String getIban() {
-		return iban;
-	}
+    public String getIban() {
+        return iban;
+    }
 
-	public void setIban(String iban) {
-		this.iban = iban;
-	}
+    public void setIban(String iban) {
+        this.iban = iban;
+    }
 
-	public String getAlias() {
-		return alias;
-	}
+    public String getAlias() {
+        return alias;
+    }
 
-	public void setAlias(String alias) {
-		this.alias = alias;
-	}
+    public void setAlias(String alias) {
+        this.alias = alias;
+    }
 
-	public BillingAccount getBillingAccount() {
-		return billingAccount;
-	}
+    public BillingAccount getBillingAccount() {
+        return billingAccount;
+    }
 
-	public void setBillingAccount(BillingAccount billingAccount) {
-		this.billingAccount = billingAccount;
-	}
+    public void setBillingAccount(BillingAccount billingAccount) {
+        this.billingAccount = billingAccount;
+    }
 
-	public BillingRun getBillingRun() {
-		return billingRun;
-	}
+    public BillingRun getBillingRun() {
+        return billingRun;
+    }
 
-	public void setBillingRun(BillingRun billingRun) {
-		this.billingRun = billingRun;
-	}
+    public void setBillingRun(BillingRun billingRun) {
+        this.billingRun = billingRun;
+    }
 
-	public List<InvoiceAgregate> getInvoiceAgregates() {
-		return invoiceAgregates;
-	}
+    public List<InvoiceAgregate> getInvoiceAgregates() {
+        return invoiceAgregates;
+    }
 
-	public void setInvoiceAgregates(List<InvoiceAgregate> invoiceAgregates) {
-		this.invoiceAgregates = invoiceAgregates;
-	}
+    public void setInvoiceAgregates(List<InvoiceAgregate> invoiceAgregates) {
+        this.invoiceAgregates = invoiceAgregates;
+    }
 
-	public void addAmountWithTax(BigDecimal amountToAdd) {
-		if (amountWithTax == null) {
-			amountWithTax = BigDecimal.ZERO;
-		}
-		if (amountToAdd != null) {
-			amountWithTax = amountWithTax.add(amountToAdd);
-		}
-	}
+    public void addAmountWithTax(BigDecimal amountToAdd) {
+        if (amountWithTax == null) {
+            amountWithTax = BigDecimal.ZERO;
+        }
+        if (amountToAdd != null) {
+            amountWithTax = amountWithTax.add(amountToAdd);
+        }
+    }
 
-	public void addAmountWithoutTax(BigDecimal amountToAdd) {
-		if (amountWithoutTax == null) {
-			amountWithoutTax = BigDecimal.ZERO;
-		}
-		if (amountToAdd != null) {
-			amountWithoutTax = amountWithoutTax.add(amountToAdd);
-		}
-	}
+    public void addAmountWithoutTax(BigDecimal amountToAdd) {
+        if (amountWithoutTax == null) {
+            amountWithoutTax = BigDecimal.ZERO;
+        }
+        if (amountToAdd != null) {
+            amountWithoutTax = amountWithoutTax.add(amountToAdd);
+        }
+    }
 
-	public void addAmountTax(BigDecimal amountToAdd) {
-		if (amountTax == null) {
-			amountTax = BigDecimal.ZERO;
-		}
-		if (amountToAdd != null) {
-			amountTax = amountTax.add(amountToAdd);
-		}
-	}
+    public void addAmountTax(BigDecimal amountToAdd) {
+        if (amountTax == null) {
+            amountTax = BigDecimal.ZERO;
+        }
+        if (amountToAdd != null) {
+            amountTax = amountTax.add(amountToAdd);
+        }
+    }
 
-	public String getTemporaryInvoiceNumber() {
-		return temporaryInvoiceNumber;
-	}
+    public String getTemporaryInvoiceNumber() {
+        return temporaryInvoiceNumber;
+    }
 
-	public void setTemporaryInvoiceNumber(String temporaryInvoiceNumber) {
-		this.temporaryInvoiceNumber = temporaryInvoiceNumber;
-	}
+    public void setTemporaryInvoiceNumber(String temporaryInvoiceNumber) {
+        this.temporaryInvoiceNumber = temporaryInvoiceNumber;
+    }
 
     public String getInvoiceNumberOrTemporaryNumber() {
         if (invoiceNumber != null) {
@@ -355,89 +358,89 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
             return "[" + temporaryInvoiceNumber + "]";
         }
     }
-	
-	public TradingCurrency getTradingCurrency() {
-		return tradingCurrency;
-	}
 
-	public void setTradingCurrency(TradingCurrency tradingCurrency) {
-		this.tradingCurrency = tradingCurrency;
-	}
+    public TradingCurrency getTradingCurrency() {
+        return tradingCurrency;
+    }
 
-	public TradingCountry getTradingCountry() {
-		return tradingCountry;
-	}
+    public void setTradingCurrency(TradingCurrency tradingCurrency) {
+        this.tradingCurrency = tradingCurrency;
+    }
 
-	public void setTradingCountry(TradingCountry tradingCountry) {
-		this.tradingCountry = tradingCountry;
-	}
+    public TradingCountry getTradingCountry() {
+        return tradingCountry;
+    }
 
-	public TradingLanguage getTradingLanguage() {
-		return tradingLanguage;
-	}
+    public void setTradingCountry(TradingCountry tradingCountry) {
+        this.tradingCountry = tradingCountry;
+    }
 
-	public void setTradingLanguage(TradingLanguage tradingLanguage) {
-		this.tradingLanguage = tradingLanguage;
-	}
+    public TradingLanguage getTradingLanguage() {
+        return tradingLanguage;
+    }
 
-	public BigDecimal getNetToPay() {
-		return netToPay;
-	}
+    public void setTradingLanguage(TradingLanguage tradingLanguage) {
+        this.tradingLanguage = tradingLanguage;
+    }
 
-	public void setNetToPay(BigDecimal netToPay) {
-		this.netToPay = netToPay;
-	}
+    public BigDecimal getNetToPay() {
+        return netToPay;
+    }
 
-	public RecordedInvoice getRecordedInvoice() {
-		return recordedInvoice;
-	}
+    public void setNetToPay(BigDecimal netToPay) {
+        this.netToPay = netToPay;
+    }
 
-	public void setRecordedInvoice(RecordedInvoice recordedInvoice) {
-		this.recordedInvoice = recordedInvoice;
-	}
+    public RecordedInvoice getRecordedInvoice() {
+        return recordedInvoice;
+    }
 
-	public String getComment() {
-		return comment;
-	}
+    public void setRecordedInvoice(RecordedInvoice recordedInvoice) {
+        this.recordedInvoice = recordedInvoice;
+    }
 
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
+    public String getComment() {
+        return comment;
+    }
 
-	public boolean isDetailedInvoice() {
-		return isDetailedInvoice;
-	}
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
 
-	public void setDetailedInvoice(boolean isDetailedInvoice) {
-		this.isDetailedInvoice = isDetailedInvoice;
-	}
+    public boolean isDetailedInvoice() {
+        return isDetailedInvoice;
+    }
 
-	public Invoice getAdjustedInvoice() {
-		return adjustedInvoice;
-	}
+    public void setDetailedInvoice(boolean isDetailedInvoice) {
+        this.isDetailedInvoice = isDetailedInvoice;
+    }
 
-	public void setAdjustedInvoice(Invoice adjustedInvoice) {
-		this.adjustedInvoice = adjustedInvoice;
-	}
+    public Invoice getAdjustedInvoice() {
+        return adjustedInvoice;
+    }
 
-	public Long getInvoiceAdjustmentCurrentSellerNb() {
-		return invoiceAdjustmentCurrentSellerNb;
-	}
+    public void setAdjustedInvoice(Invoice adjustedInvoice) {
+        this.adjustedInvoice = adjustedInvoice;
+    }
 
-	public void setInvoiceAdjustmentCurrentSellerNb(Long invoiceAdjustmentCurrentSellerNb) {
-		this.invoiceAdjustmentCurrentSellerNb = invoiceAdjustmentCurrentSellerNb;
-	}
+    public Long getInvoiceAdjustmentCurrentSellerNb() {
+        return invoiceAdjustmentCurrentSellerNb;
+    }
 
-	public Long getInvoiceAdjustmentCurrentProviderNb() {
-		return invoiceAdjustmentCurrentProviderNb;
-	}
+    public void setInvoiceAdjustmentCurrentSellerNb(Long invoiceAdjustmentCurrentSellerNb) {
+        this.invoiceAdjustmentCurrentSellerNb = invoiceAdjustmentCurrentSellerNb;
+    }
 
-	public void setInvoiceAdjustmentCurrentProviderNb(Long invoiceAdjustmentCurrentProviderNb) {
-		this.invoiceAdjustmentCurrentProviderNb = invoiceAdjustmentCurrentProviderNb;
-	}
+    public Long getInvoiceAdjustmentCurrentProviderNb() {
+        return invoiceAdjustmentCurrentProviderNb;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
+    public void setInvoiceAdjustmentCurrentProviderNb(Long invoiceAdjustmentCurrentProviderNb) {
+        this.invoiceAdjustmentCurrentProviderNb = invoiceAdjustmentCurrentProviderNb;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
 
         if (this == obj) {
             return true;
@@ -446,86 +449,83 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
         } else if (!(obj instanceof Invoice)) {
             return false;
         }
-        
-		Invoice other = (Invoice) obj;
-		if (other.getId() == null) {
-			return false;
-		} else if (!other.getId().equals(this.getId())) {
-			return false;
-		}
-		return true;
-	}
-	
-	@Override
-	public int hashCode() {
-		return id == null ? 0 : id.intValue();
-	}
 
-	/**
-	 * @return the invoiceType
-	 */
-	public InvoiceType getInvoiceType() {
-		return invoiceType;
-	}
+        Invoice other = (Invoice) obj;
+        if (other.getId() == null) {
+            return false;
+        } else if (!other.getId().equals(this.getId())) {
+            return false;
+        }
+        return true;
+    }
 
-	/**
-	 * @param invoiceType
-	 *            the invoiceType to set
-	 */
-	public void setInvoiceType(InvoiceType invoiceType) {
-		this.invoiceType = invoiceType;
-	}
-	
-	
+    @Override
+    public int hashCode() {
+        return id == null ? 0 : id.intValue();
+    }
 
-	/**
-	 * @return the orders
-	 */
-	public List<Order> getOrders() {
-		return orders;
-	}
+    /**
+     * @return the invoiceType
+     */
+    public InvoiceType getInvoiceType() {
+        return invoiceType;
+    }
 
-	/**
-	 * @param orders the orders to set
-	 */
-	public void setOrders(List<Order> orders) {
-		this.orders = orders;
-	}
+    /**
+     * @param invoiceType the invoiceType to set
+     */
+    public void setInvoiceType(InvoiceType invoiceType) {
+        this.invoiceType = invoiceType;
+    }
 
-	@Override
-	public String getUuid() {
-		return uuid;
-	}
+    /**
+     * @return the orders
+     */
+    public List<Order> getOrders() {
+        return orders;
+    }
 
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
+    /**
+     * @param orders the orders to set
+     */
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
+    }
 
-	@Override
-	public String clearUuid() {
-		String oldUuid = uuid;
-		uuid = UUID.randomUUID().toString();
-		return oldUuid;
-	}
+    @Override
+    public String getUuid() {
+        return uuid;
+    }
 
-	@Override
-	public ICustomFieldEntity[] getParentCFEntities() {
-		return null;
-	}
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
 
-	public Set<Invoice> getLinkedInvoices() {
-		return linkedInvoices;
-	}
+    @Override
+    public String clearUuid() {
+        String oldUuid = uuid;
+        uuid = UUID.randomUUID().toString();
+        return oldUuid;
+    }
 
-	public void setLinkedInvoices(Set<Invoice> linkedInvoices) {
-		this.linkedInvoices = linkedInvoices;
-	}
-	
-	public void addInvoiceAggregate(InvoiceAgregate obj) {
-		if (!invoiceAgregates.contains(obj)) {
-			invoiceAgregates.add(obj);
-		}
-	}
+    @Override
+    public ICustomFieldEntity[] getParentCFEntities() {
+        return null;
+    }
+
+    public Set<Invoice> getLinkedInvoices() {
+        return linkedInvoices;
+    }
+
+    public void setLinkedInvoices(Set<Invoice> linkedInvoices) {
+        this.linkedInvoices = linkedInvoices;
+    }
+
+    public void addInvoiceAggregate(InvoiceAgregate obj) {
+        if (!invoiceAgregates.contains(obj)) {
+            invoiceAgregates.add(obj);
+        }
+    }
 
     public List<SubCategoryInvoiceAgregate> getDiscountAgregates() {
         List<SubCategoryInvoiceAgregate> aggregates = new ArrayList<>();
@@ -535,7 +535,7 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
                 aggregates.add((SubCategoryInvoiceAgregate) invoiceAggregate);
             }
         }
-        
+
         return aggregates;
     }
 
@@ -543,7 +543,7 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
 
         List<RatedTransaction> ratedTransactionsMatched = new ArrayList<>();
 
-        for (RatedTransaction ratedTransaction : ratedTransactions) {           
+        for (RatedTransaction ratedTransaction : ratedTransactions) {
             if (ratedTransaction.getWallet().equals(wallet) && ratedTransaction.getInvoiceSubCategory().equals(invoiceSubCategory)) {
                 ratedTransactionsMatched.add(ratedTransaction);
             }
@@ -552,26 +552,26 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
         return ratedTransactionsMatched;
     }
 
-	/**
-	 * @return the quote
-	 */
-	public Quote getQuote() {
-		return quote;
-	}
+    /**
+     * @return the quote
+     */
+    public Quote getQuote() {
+        return quote;
+    }
 
-	/**
-	 * @param quote the quote to set
-	 */
-	public void setQuote(Quote quote) {
-		this.quote = quote;
-	}
+    /**
+     * @param quote the quote to set
+     */
+    public void setQuote(Quote quote) {
+        this.quote = quote;
+    }
 
-	public boolean isPdfGenerated() {
-		return isPdfGenerated;
-	}
+    public boolean isPdfGenerated() {
+        return isPdfGenerated;
+    }
 
-	public void setPdfGenerated(boolean isPdfGenerated) {
-		this.isPdfGenerated = isPdfGenerated;
-	}
-    
+    public void setPdfGenerated(boolean isPdfGenerated) {
+        this.isPdfGenerated = isPdfGenerated;
+    }
+
 }

@@ -96,6 +96,7 @@ public class CRMAccountHierarchyDto extends BaseDto {
     /**
      * Field was deprecated in 4.6 version. Use custom fields instead
      */
+    @Deprecated
     private String paymentTerms;
 
     // billing account

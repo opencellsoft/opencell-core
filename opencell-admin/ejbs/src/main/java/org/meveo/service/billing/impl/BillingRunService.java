@@ -34,7 +34,6 @@ import javax.inject.Inject;
 import javax.persistence.Query;
 
 import org.meveo.admin.async.InvoicingAsync;
-import org.meveo.admin.async.RatedTxInvoicingAsync;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
@@ -62,633 +61,649 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class BillingRunService extends PersistenceService<BillingRun> {
 
-	@Inject
-	private WalletOperationService walletOperationService;
+    @Inject
+    private WalletOperationService walletOperationService;
 
     @Inject
     private BillingAccountService billingAccountService;
-	
-	@Inject
-	private RatedTxInvoicingAsync ratedTxInvoicingAsync;
-	
-	@Inject
-	private RatedTransactionService ratedTransactionService;
 
-	@Inject
-	private ResourceBundle resourceMessages;
+    @Inject
+    private RatedTransactionService ratedTransactionService;
 
-	@Inject
-	private InvoicingAsync invoicingAsync;
-	
-	@Inject
-	private BillingRunExtensionService billingRunExtensionService;
+    @Inject
+    private ResourceBundle resourceMessages;
 
-	public PreInvoicingReportsDTO generatePreInvoicingReports(BillingRun billingRun) throws BusinessException {
-		log.debug("start generatePreInvoicingReports.......");
+    @Inject
+    private InvoicingAsync invoicingAsync;
 
-		PreInvoicingReportsDTO preInvoicingReportsDTO = new PreInvoicingReportsDTO();
+    @Inject
+    private BillingRunExtensionService billingRunExtensionService;
 
-		preInvoicingReportsDTO.setBillingCycleCode(billingRun.getBillingCycle() != null ? billingRun.getBillingCycle()
-				.getCode() : null);
-		preInvoicingReportsDTO.setBillingAccountNumber(billingRun.getBillingAccountNumber());
-		preInvoicingReportsDTO.setLastTransactionDate(billingRun.getLastTransactionDate());
-		preInvoicingReportsDTO.setInvoiceDate(billingRun.getInvoiceDate());
-		preInvoicingReportsDTO.setBillableBillingAccountNumber(billingRun.getBillableBillingAcountNumber());
-		preInvoicingReportsDTO.setAmoutWitountTax(billingRun.getPrAmountWithoutTax());
+    public PreInvoicingReportsDTO generatePreInvoicingReports(BillingRun billingRun) throws BusinessException {
+        log.debug("start generatePreInvoicingReports.......");
 
-		BillingCycle billingCycle = billingRun.getBillingCycle();
+        PreInvoicingReportsDTO preInvoicingReportsDTO = new PreInvoicingReportsDTO();
 
-		Date startDate = billingRun.getStartDate();
-		Date endDate = billingRun.getEndDate();
-		endDate = endDate != null ? endDate : new Date();
-		List<BillingAccount> billingAccounts = new ArrayList<BillingAccount>();
+        preInvoicingReportsDTO.setBillingCycleCode(billingRun.getBillingCycle() != null ? billingRun.getBillingCycle().getCode() : null);
+        preInvoicingReportsDTO.setBillingAccountNumber(billingRun.getBillingAccountNumber());
+        preInvoicingReportsDTO.setLastTransactionDate(billingRun.getLastTransactionDate());
+        preInvoicingReportsDTO.setInvoiceDate(billingRun.getInvoiceDate());
+        preInvoicingReportsDTO.setBillableBillingAccountNumber(billingRun.getBillableBillingAcountNumber());
+        preInvoicingReportsDTO.setAmoutWitountTax(billingRun.getPrAmountWithoutTax());
 
-		if (billingCycle != null) {
-			billingAccounts = billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);
-		} else {
-			String[] baIds = billingRun.getSelectedBillingAccounts().split(",");
-			for (String id : Arrays.asList(baIds)) {
-				Long baId = Long.valueOf(id);
-				billingAccounts.add(billingAccountService.findById(baId));
-			}
-		}
+        BillingCycle billingCycle = billingRun.getBillingCycle();
 
-		log.debug("BA in PreInvoicingReport: {}", billingAccounts.size());
-		Integer checkBANumber = 0;
-		Integer directDebitBANumber = 0;
-		Integer tipBANumber = 0;
-		Integer wiretransferBANumber = 0;
-		Integer creditDebitCardBANumber = 0;
+        Date startDate = billingRun.getStartDate();
+        Date endDate = billingRun.getEndDate();
+        endDate = endDate != null ? endDate : new Date();
+        List<BillingAccount> billingAccounts = new ArrayList<BillingAccount>();
 
-		Integer checkBillableBANumber = 0;
-		Integer directDebitBillableBANumber = 0;
-		Integer tipBillableBANumber = 0;
-		Integer wiretransferBillableBANumber = 0;
-		Integer creditDebitCardBillableBANumber = 0;
-
-		BigDecimal checkBillableBAAmountHT = BigDecimal.ZERO;
-		BigDecimal directDebitBillableBAAmountHT = BigDecimal.ZERO;
-		BigDecimal tipBillableBAAmountHT = BigDecimal.ZERO;
-		BigDecimal wiretransferBillableBAAmountHT = BigDecimal.ZERO;
-		BigDecimal creditDebitCardBillableBAAmountHT = BigDecimal.ZERO;
-
-		for (BillingAccount billingAccount : billingAccounts) {
-		    
-		    PaymentMethod preferedPaymentMethod =  billingAccount.getCustomerAccount().getPreferredPaymentMethod();
-            PaymentMethodEnum paymentMethodEnum = null;
-            if (preferedPaymentMethod != null) {
-                paymentMethodEnum = preferedPaymentMethod.getPaymentType();
+        if (billingCycle != null) {
+            billingAccounts = billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);
+        } else {
+            String[] baIds = billingRun.getSelectedBillingAccounts().split(",");
+            for (String id : Arrays.asList(baIds)) {
+                Long baId = Long.valueOf(id);
+                billingAccounts.add(billingAccountService.findById(baId));
             }
-			switch (paymentMethodEnum) {
-			case CHECK:
-				checkBANumber++;
-				break;
-			case DIRECTDEBIT:
-				directDebitBANumber++;
-				break;
-			case TIP:
-				tipBANumber++;
-				break;
-			case WIRETRANSFER:
-				wiretransferBANumber++;
-				break;
-				
-			case CARD:
-				creditDebitCardBANumber++;
-				break;	
-				
-			default:
-				break;
-			}
+        }
 
-		}
+        log.debug("BA in PreInvoicingReport: {}", billingAccounts.size());
+        Integer checkBANumber = 0;
+        Integer directDebitBANumber = 0;
+        Integer tipBANumber = 0;
+        Integer wiretransferBANumber = 0;
+        Integer creditDebitCardBANumber = 0;
 
-		for (BillingAccount billingAccount : billingRun.getBillableBillingAccounts()) {
-            PaymentMethod preferedPaymentMethod =  billingAccount.getCustomerAccount().getPreferredPaymentMethod();
+        Integer checkBillableBANumber = 0;
+        Integer directDebitBillableBANumber = 0;
+        Integer tipBillableBANumber = 0;
+        Integer wiretransferBillableBANumber = 0;
+        Integer creditDebitCardBillableBANumber = 0;
+
+        BigDecimal checkBillableBAAmountHT = BigDecimal.ZERO;
+        BigDecimal directDebitBillableBAAmountHT = BigDecimal.ZERO;
+        BigDecimal tipBillableBAAmountHT = BigDecimal.ZERO;
+        BigDecimal wiretransferBillableBAAmountHT = BigDecimal.ZERO;
+        BigDecimal creditDebitCardBillableBAAmountHT = BigDecimal.ZERO;
+
+        for (BillingAccount billingAccount : billingAccounts) {
+
+            PaymentMethod preferedPaymentMethod = billingAccount.getCustomerAccount().getPreferredPaymentMethod();
             PaymentMethodEnum paymentMethodEnum = null;
             if (preferedPaymentMethod != null) {
                 paymentMethodEnum = preferedPaymentMethod.getPaymentType();
             }
             switch (paymentMethodEnum) {
-			case CHECK:
-				checkBillableBANumber++;
-				checkBillableBAAmountHT = checkBillableBAAmountHT.add(billingAccount.getBrAmountWithoutTax());
-				break;
-			case DIRECTDEBIT:
-				directDebitBillableBANumber++;
-				directDebitBillableBAAmountHT = directDebitBillableBAAmountHT.add(billingAccount
-						.getBrAmountWithoutTax());
-				break;
-			case TIP:
-				tipBillableBANumber++;
-				tipBillableBAAmountHT = tipBillableBAAmountHT.add(billingAccount.getBrAmountWithoutTax());
-				break;
-			case WIRETRANSFER:
-				wiretransferBillableBANumber++;
-				wiretransferBillableBAAmountHT = wiretransferBillableBAAmountHT.add(billingAccount
-						.getBrAmountWithoutTax());
-				break;
-			
-			case CARD:
-				creditDebitCardBillableBANumber++;
-				creditDebitCardBillableBAAmountHT = creditDebitCardBillableBAAmountHT.add(billingAccount.getBrAmountWithoutTax());
+            case CHECK:
+                checkBANumber++;
+                break;
+            case DIRECTDEBIT:
+                directDebitBANumber++;
+                break;
+            case TIP:
+                tipBANumber++;
+                break;
+            case WIRETRANSFER:
+                wiretransferBANumber++;
+                break;
 
-			default:
-				break;
-			}
-		}
+            case CARD:
+                creditDebitCardBANumber++;
+                break;
 
-		preInvoicingReportsDTO.setCheckBANumber(checkBANumber);
-		preInvoicingReportsDTO.setCheckBillableBAAmountHT(round(checkBillableBAAmountHT, 2));
-		preInvoicingReportsDTO.setCheckBillableBANumber(checkBillableBANumber);
-		preInvoicingReportsDTO.setDirectDebitBANumber(directDebitBANumber);
-		preInvoicingReportsDTO.setDirectDebitBillableBAAmountHT(round(directDebitBillableBAAmountHT, 2));
-		preInvoicingReportsDTO.setDirectDebitBillableBANumber(directDebitBillableBANumber);
-		preInvoicingReportsDTO.setTipBANumber(tipBANumber);
-		preInvoicingReportsDTO.setTipBillableBAAmountHT(round(tipBillableBAAmountHT, 2));
-		preInvoicingReportsDTO.setTipBillableBANumber(tipBillableBANumber);
-		preInvoicingReportsDTO.setWiretransferBANumber(wiretransferBANumber);
-		preInvoicingReportsDTO.setWiretransferBillableBAAmountHT(round(wiretransferBillableBAAmountHT, 2));
-		preInvoicingReportsDTO.setWiretransferBillableBANumber(wiretransferBillableBANumber);
-		preInvoicingReportsDTO.setCreditDebitCardBANumber(creditDebitCardBANumber);
-		preInvoicingReportsDTO.setCreditDebitCardBillableBAAmountHT(round(creditDebitCardBillableBAAmountHT, 2));
-		preInvoicingReportsDTO.setCreditDebitCardBillableBANumber(creditDebitCardBillableBANumber);
+            default:
+                break;
+            }
 
-		return preInvoicingReportsDTO;
-	}
+        }
 
-	public PostInvoicingReportsDTO generatePostInvoicingReports(BillingRun billingRun) throws BusinessException {
-		log.info("generatePostInvoicingReports billingRun=" + billingRun.getId());
-		PostInvoicingReportsDTO postInvoicingReportsDTO = new PostInvoicingReportsDTO();
+        for (BillingAccount billingAccount : billingRun.getBillableBillingAccounts()) {
+            PaymentMethod preferedPaymentMethod = billingAccount.getCustomerAccount().getPreferredPaymentMethod();
+            PaymentMethodEnum paymentMethodEnum = null;
+            if (preferedPaymentMethod != null) {
+                paymentMethodEnum = preferedPaymentMethod.getPaymentType();
+            }
+            switch (paymentMethodEnum) {
+            case CHECK:
+                checkBillableBANumber++;
+                checkBillableBAAmountHT = checkBillableBAAmountHT.add(billingAccount.getBrAmountWithoutTax());
+                break;
+            case DIRECTDEBIT:
+                directDebitBillableBANumber++;
+                directDebitBillableBAAmountHT = directDebitBillableBAAmountHT.add(billingAccount.getBrAmountWithoutTax());
+                break;
+            case TIP:
+                tipBillableBANumber++;
+                tipBillableBAAmountHT = tipBillableBAAmountHT.add(billingAccount.getBrAmountWithoutTax());
+                break;
+            case WIRETRANSFER:
+                wiretransferBillableBANumber++;
+                wiretransferBillableBAAmountHT = wiretransferBillableBAAmountHT.add(billingAccount.getBrAmountWithoutTax());
+                break;
 
-		BigDecimal globalAmountHT = BigDecimal.ZERO;
-		BigDecimal globalAmountTTC = BigDecimal.ZERO;
+            case CARD:
+                creditDebitCardBillableBANumber++;
+                creditDebitCardBillableBAAmountHT = creditDebitCardBillableBAAmountHT.add(billingAccount.getBrAmountWithoutTax());
 
-		Integer positiveInvoicesNumber = 0;
-		BigDecimal positiveInvoicesAmountHT = BigDecimal.ZERO;
-		BigDecimal positiveInvoicesAmount = BigDecimal.ZERO;
-		BigDecimal positiveInvoicesTaxAmount = BigDecimal.ZERO;
+            default:
+                break;
+            }
+        }
 
-		Integer negativeInvoicesNumber = 0;
-		BigDecimal negativeInvoicesAmountHT = BigDecimal.ZERO;
-		BigDecimal negativeInvoicesTaxAmount = BigDecimal.ZERO;
-		BigDecimal negativeInvoicesAmount = BigDecimal.ZERO;
+        preInvoicingReportsDTO.setCheckBANumber(checkBANumber);
+        preInvoicingReportsDTO.setCheckBillableBAAmountHT(round(checkBillableBAAmountHT, 2));
+        preInvoicingReportsDTO.setCheckBillableBANumber(checkBillableBANumber);
+        preInvoicingReportsDTO.setDirectDebitBANumber(directDebitBANumber);
+        preInvoicingReportsDTO.setDirectDebitBillableBAAmountHT(round(directDebitBillableBAAmountHT, 2));
+        preInvoicingReportsDTO.setDirectDebitBillableBANumber(directDebitBillableBANumber);
+        preInvoicingReportsDTO.setTipBANumber(tipBANumber);
+        preInvoicingReportsDTO.setTipBillableBAAmountHT(round(tipBillableBAAmountHT, 2));
+        preInvoicingReportsDTO.setTipBillableBANumber(tipBillableBANumber);
+        preInvoicingReportsDTO.setWiretransferBANumber(wiretransferBANumber);
+        preInvoicingReportsDTO.setWiretransferBillableBAAmountHT(round(wiretransferBillableBAAmountHT, 2));
+        preInvoicingReportsDTO.setWiretransferBillableBANumber(wiretransferBillableBANumber);
+        preInvoicingReportsDTO.setCreditDebitCardBANumber(creditDebitCardBANumber);
+        preInvoicingReportsDTO.setCreditDebitCardBillableBAAmountHT(round(creditDebitCardBillableBAAmountHT, 2));
+        preInvoicingReportsDTO.setCreditDebitCardBillableBANumber(creditDebitCardBillableBANumber);
 
-		Integer emptyInvoicesNumber = 0;
-		Integer electronicInvoicesNumber = 0;
+        return preInvoicingReportsDTO;
+    }
 
-		Integer checkInvoicesNumber = 0;
-		Integer directDebitInvoicesNumber = 0;
-		Integer tipInvoicesNumber = 0;
-		Integer wiretransferInvoicesNumber = 0;
-		Integer creditDebitCardInvoicesNumber = 0;
+    public PostInvoicingReportsDTO generatePostInvoicingReports(BillingRun billingRun) throws BusinessException {
+        log.info("generatePostInvoicingReports billingRun=" + billingRun.getId());
+        PostInvoicingReportsDTO postInvoicingReportsDTO = new PostInvoicingReportsDTO();
 
-		BigDecimal checkAmuontHT = BigDecimal.ZERO;
-		BigDecimal directDebitAmuontHT = BigDecimal.ZERO;
-		BigDecimal tipAmuontHT = BigDecimal.ZERO;
-		BigDecimal wiretransferAmuontHT = BigDecimal.ZERO;
-		BigDecimal creditDebitCardAmountHT = BigDecimal.ZERO;
+        BigDecimal globalAmountHT = BigDecimal.ZERO;
+        BigDecimal globalAmountTTC = BigDecimal.ZERO;
 
-		BigDecimal checkAmuont = BigDecimal.ZERO;
-		BigDecimal directDebitAmuont = BigDecimal.ZERO;
-		BigDecimal tipAmuont = BigDecimal.ZERO;
-		BigDecimal wiretransferAmuont = BigDecimal.ZERO;
-		BigDecimal creditDebitCardAmount = BigDecimal.ZERO;
+        Integer positiveInvoicesNumber = 0;
+        BigDecimal positiveInvoicesAmountHT = BigDecimal.ZERO;
+        BigDecimal positiveInvoicesAmount = BigDecimal.ZERO;
+        BigDecimal positiveInvoicesTaxAmount = BigDecimal.ZERO;
 
-		for (Invoice invoice : billingRun.getInvoices()) {
+        Integer negativeInvoicesNumber = 0;
+        BigDecimal negativeInvoicesAmountHT = BigDecimal.ZERO;
+        BigDecimal negativeInvoicesTaxAmount = BigDecimal.ZERO;
+        BigDecimal negativeInvoicesAmount = BigDecimal.ZERO;
 
-			if (invoice.getAmountWithoutTax() != null && invoice.getAmountWithTax() != null) {
-				switch (invoice.getPaymentMethod()) {
-				case CHECK:
-					checkInvoicesNumber++;
-					checkAmuontHT = checkAmuontHT.add(invoice.getAmountWithoutTax());
-					checkAmuont = checkAmuont.add(invoice.getAmountWithTax());
-					break;
-				case DIRECTDEBIT:
-					directDebitInvoicesNumber++;
-					directDebitAmuontHT = directDebitAmuontHT.add(invoice.getAmountWithoutTax());
-					directDebitAmuont = directDebitAmuont.add(invoice.getAmountWithTax());
-					break;
-				case TIP:
-					tipInvoicesNumber++;
-					tipAmuontHT = tipAmuontHT.add(invoice.getAmountWithoutTax());
-					tipAmuont = tipAmuont.add(invoice.getAmountWithTax());
-					break;
-				case WIRETRANSFER:
-					wiretransferInvoicesNumber++;
-					wiretransferAmuontHT = wiretransferAmuontHT.add(invoice.getAmountWithoutTax());
-					wiretransferAmuont = wiretransferAmuont.add(invoice.getAmountWithTax());
-					break;
-				case CARD:
-					creditDebitCardInvoicesNumber++;
-					creditDebitCardAmountHT = creditDebitCardAmountHT.add(invoice.getAmountWithoutTax());
-					creditDebitCardAmount = creditDebitCardAmount.add(invoice.getAmountWithTax());
-					break;
-					
-				default:
-					break;
-				}
-			}
+        Integer emptyInvoicesNumber = 0;
+        Integer electronicInvoicesNumber = 0;
 
-			if (invoice.getAmountWithoutTax() != null && invoice.getAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0) {
-				positiveInvoicesNumber++;
-				positiveInvoicesAmountHT = positiveInvoicesAmountHT.add(invoice.getAmountWithoutTax());
-				positiveInvoicesTaxAmount = positiveInvoicesTaxAmount.add(invoice.getAmountTax() == null ? BigDecimal.ZERO : invoice.getAmountTax());
-				positiveInvoicesAmount = positiveInvoicesAmount.add(invoice.getAmountWithTax());
-			} else if (invoice.getAmountWithoutTax() == null
-					|| invoice.getAmountWithoutTax().compareTo(BigDecimal.ZERO) == 0) {
-				emptyInvoicesNumber++;
-			} else {
-				negativeInvoicesNumber++;
-				negativeInvoicesAmountHT = negativeInvoicesAmountHT.add(invoice.getAmountWithoutTax());
-				negativeInvoicesTaxAmount = negativeInvoicesTaxAmount.add(invoice.getAmountTax());
-				negativeInvoicesAmount = negativeInvoicesAmount.add(invoice.getAmountWithTax());
-			}
+        Integer checkInvoicesNumber = 0;
+        Integer directDebitInvoicesNumber = 0;
+        Integer tipInvoicesNumber = 0;
+        Integer wiretransferInvoicesNumber = 0;
+        Integer creditDebitCardInvoicesNumber = 0;
 
-			if (invoice.getBillingAccount().getElectronicBilling()) {
-				electronicInvoicesNumber++;
-			}
+        BigDecimal checkAmuontHT = BigDecimal.ZERO;
+        BigDecimal directDebitAmuontHT = BigDecimal.ZERO;
+        BigDecimal tipAmuontHT = BigDecimal.ZERO;
+        BigDecimal wiretransferAmuontHT = BigDecimal.ZERO;
+        BigDecimal creditDebitCardAmountHT = BigDecimal.ZERO;
 
-			if (invoice.getAmountWithoutTax() != null && invoice.getAmountWithTax() != null) {
-				globalAmountHT = globalAmountHT.add(invoice.getAmountWithoutTax());
-				globalAmountTTC = globalAmountTTC.add(invoice.getAmountWithTax());
-			}
+        BigDecimal checkAmuont = BigDecimal.ZERO;
+        BigDecimal directDebitAmuont = BigDecimal.ZERO;
+        BigDecimal tipAmuont = BigDecimal.ZERO;
+        BigDecimal wiretransferAmuont = BigDecimal.ZERO;
+        BigDecimal creditDebitCardAmount = BigDecimal.ZERO;
 
-		}
+        for (Invoice invoice : billingRun.getInvoices()) {
 
-		postInvoicingReportsDTO.setInvoicesNumber(billingRun.getInvoiceNumber());
-		postInvoicingReportsDTO.setCheckAmuont(checkAmuont);
-		postInvoicingReportsDTO.setCheckAmuontHT(checkAmuontHT);
-		postInvoicingReportsDTO.setCheckInvoicesNumber(checkInvoicesNumber);
-		postInvoicingReportsDTO.setDirectDebitAmuont(directDebitAmuont);
-		postInvoicingReportsDTO.setDirectDebitAmuontHT(directDebitAmuontHT);
-		postInvoicingReportsDTO.setDirectDebitInvoicesNumber(directDebitInvoicesNumber);
-		postInvoicingReportsDTO.setElectronicInvoicesNumber(electronicInvoicesNumber);
-		postInvoicingReportsDTO.setEmptyInvoicesNumber(emptyInvoicesNumber);
+            if (invoice.getAmountWithoutTax() != null && invoice.getAmountWithTax() != null) {
+                switch (invoice.getPaymentMethod()) {
+                case CHECK:
+                    checkInvoicesNumber++;
+                    checkAmuontHT = checkAmuontHT.add(invoice.getAmountWithoutTax());
+                    checkAmuont = checkAmuont.add(invoice.getAmountWithTax());
+                    break;
+                case DIRECTDEBIT:
+                    directDebitInvoicesNumber++;
+                    directDebitAmuontHT = directDebitAmuontHT.add(invoice.getAmountWithoutTax());
+                    directDebitAmuont = directDebitAmuont.add(invoice.getAmountWithTax());
+                    break;
+                case TIP:
+                    tipInvoicesNumber++;
+                    tipAmuontHT = tipAmuontHT.add(invoice.getAmountWithoutTax());
+                    tipAmuont = tipAmuont.add(invoice.getAmountWithTax());
+                    break;
+                case WIRETRANSFER:
+                    wiretransferInvoicesNumber++;
+                    wiretransferAmuontHT = wiretransferAmuontHT.add(invoice.getAmountWithoutTax());
+                    wiretransferAmuont = wiretransferAmuont.add(invoice.getAmountWithTax());
+                    break;
+                case CARD:
+                    creditDebitCardInvoicesNumber++;
+                    creditDebitCardAmountHT = creditDebitCardAmountHT.add(invoice.getAmountWithoutTax());
+                    creditDebitCardAmount = creditDebitCardAmount.add(invoice.getAmountWithTax());
+                    break;
 
-		postInvoicingReportsDTO.setPositiveInvoicesAmountHT(positiveInvoicesAmountHT);
-		postInvoicingReportsDTO.setPositiveInvoicesAmount(positiveInvoicesAmount);
-		postInvoicingReportsDTO.setPositiveInvoicesTaxAmount(positiveInvoicesTaxAmount);
-		postInvoicingReportsDTO.setPositiveInvoicesNumber(positiveInvoicesNumber);
+                default:
+                    break;
+                }
+            }
 
-		postInvoicingReportsDTO.setNegativeInvoicesAmountHT(negativeInvoicesAmountHT);
-		postInvoicingReportsDTO.setNegativeInvoicesAmount(negativeInvoicesAmount);
-		postInvoicingReportsDTO.setNegativeInvoicesTaxAmount(negativeInvoicesTaxAmount);
-		postInvoicingReportsDTO.setNegativeInvoicesNumber(negativeInvoicesNumber);
+            if (invoice.getAmountWithoutTax() != null && invoice.getAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0) {
+                positiveInvoicesNumber++;
+                positiveInvoicesAmountHT = positiveInvoicesAmountHT.add(invoice.getAmountWithoutTax());
+                positiveInvoicesTaxAmount = positiveInvoicesTaxAmount.add(invoice.getAmountTax() == null ? BigDecimal.ZERO : invoice.getAmountTax());
+                positiveInvoicesAmount = positiveInvoicesAmount.add(invoice.getAmountWithTax());
+            } else if (invoice.getAmountWithoutTax() == null || invoice.getAmountWithoutTax().compareTo(BigDecimal.ZERO) == 0) {
+                emptyInvoicesNumber++;
+            } else {
+                negativeInvoicesNumber++;
+                negativeInvoicesAmountHT = negativeInvoicesAmountHT.add(invoice.getAmountWithoutTax());
+                negativeInvoicesTaxAmount = negativeInvoicesTaxAmount.add(invoice.getAmountTax());
+                negativeInvoicesAmount = negativeInvoicesAmount.add(invoice.getAmountWithTax());
+            }
 
-		postInvoicingReportsDTO.setTipAmuont(tipAmuont);
-		postInvoicingReportsDTO.setTipAmuontHT(tipAmuontHT);
-		postInvoicingReportsDTO.setTipInvoicesNumber(tipInvoicesNumber);
-		postInvoicingReportsDTO.setWiretransferAmuont(wiretransferAmuont);
-		postInvoicingReportsDTO.setWiretransferAmuontHT(wiretransferAmuontHT);
-		postInvoicingReportsDTO.setWiretransferInvoicesNumber(wiretransferInvoicesNumber);
-		
-		postInvoicingReportsDTO.setCreditDebitCardAmount(creditDebitCardAmount);
-		postInvoicingReportsDTO.setCreditDebitCardAmountHT(creditDebitCardAmountHT);
-		postInvoicingReportsDTO.setCreditDebitCardInvoicesNumber(creditDebitCardInvoicesNumber);
-		postInvoicingReportsDTO.setGlobalAmount(globalAmountHT);
+            if (invoice.getBillingAccount().getElectronicBilling()) {
+                electronicInvoicesNumber++;
+            }
 
-		return postInvoicingReportsDTO;
-	}
+            if (invoice.getAmountWithoutTax() != null && invoice.getAmountWithTax() != null) {
+                globalAmountHT = globalAmountHT.add(invoice.getAmountWithoutTax());
+                globalAmountTTC = globalAmountTTC.add(invoice.getAmountWithTax());
+            }
 
-	public static BigDecimal round(BigDecimal amount, int decimal) {
-		if (amount == null) {
-			return null;
-		}
-		amount = amount.setScale(decimal, RoundingMode.HALF_UP);
+        }
 
-		return amount;
-	}
+        postInvoicingReportsDTO.setInvoicesNumber(billingRun.getInvoices().size());
+        postInvoicingReportsDTO.setCheckAmuont(checkAmuont);
+        postInvoicingReportsDTO.setCheckAmuontHT(checkAmuontHT);
+        postInvoicingReportsDTO.setCheckInvoicesNumber(checkInvoicesNumber);
+        postInvoicingReportsDTO.setDirectDebitAmuont(directDebitAmuont);
+        postInvoicingReportsDTO.setDirectDebitAmuontHT(directDebitAmuontHT);
+        postInvoicingReportsDTO.setDirectDebitInvoicesNumber(directDebitInvoicesNumber);
+        postInvoicingReportsDTO.setElectronicInvoicesNumber(electronicInvoicesNumber);
+        postInvoicingReportsDTO.setEmptyInvoicesNumber(emptyInvoicesNumber);
 
-	public void cancel(BillingRun billingRun) throws BusinessException {
-		billingRun.setStatus(BillingRunStatusEnum.CANCELED);
-		update(billingRun);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public void cleanBillingRun(BillingRun billingRun) {
-		Query queryTrans = getEntityManager()
-				.createQuery(
-						"update "
-								+ RatedTransaction.class.getName()
-								+ " set invoice=null,invoiceAgregateF=null,invoiceAgregateR=null,invoiceAgregateT=null,status=:status where billingRun=:billingRun");
-		queryTrans.setParameter("billingRun", billingRun);
-		queryTrans.setParameter("status", RatedTransactionStatusEnum.OPEN);
-		queryTrans.executeUpdate();
-		
-		Query queryAgregate = getEntityManager()
-				.createQuery(
-						"from "
-								+ InvoiceAgregate.class.getName()+" where billingRun=:billingRun");
-		queryAgregate.setParameter("billingRun", billingRun);
-		List<InvoiceAgregate> invoiceAgregates=(List<InvoiceAgregate>)queryAgregate.getResultList();
-		for(InvoiceAgregate invoiceAgregate:invoiceAgregates){
-			
-			getEntityManager().remove(invoiceAgregate);
-		}
-		getEntityManager().flush();
+        postInvoicingReportsDTO.setPositiveInvoicesAmountHT(positiveInvoicesAmountHT);
+        postInvoicingReportsDTO.setPositiveInvoicesAmount(positiveInvoicesAmount);
+        postInvoicingReportsDTO.setPositiveInvoicesTaxAmount(positiveInvoicesTaxAmount);
+        postInvoicingReportsDTO.setPositiveInvoicesNumber(positiveInvoicesNumber);
 
-		Query queryInvoices = getEntityManager().createQuery(
-				"delete from " + Invoice.class.getName() + " where billingRun=:billingRun");
-		queryInvoices.setParameter("billingRun", billingRun);
-		queryInvoices.executeUpdate();
+        postInvoicingReportsDTO.setNegativeInvoicesAmountHT(negativeInvoicesAmountHT);
+        postInvoicingReportsDTO.setNegativeInvoicesAmount(negativeInvoicesAmount);
+        postInvoicingReportsDTO.setNegativeInvoicesTaxAmount(negativeInvoicesTaxAmount);
+        postInvoicingReportsDTO.setNegativeInvoicesNumber(negativeInvoicesNumber);
 
-		Query queryBA = getEntityManager().createQuery(
-				"update " + BillingAccount.class.getName() + " set billingRun=null where billingRun=:billingRun");
-		queryBA.setParameter("billingRun", billingRun);
-		queryBA.executeUpdate();
-	}
+        postInvoicingReportsDTO.setTipAmuont(tipAmuont);
+        postInvoicingReportsDTO.setTipAmuontHT(tipAmuontHT);
+        postInvoicingReportsDTO.setTipInvoicesNumber(tipInvoicesNumber);
+        postInvoicingReportsDTO.setWiretransferAmuont(wiretransferAmuont);
+        postInvoicingReportsDTO.setWiretransferAmuontHT(wiretransferAmuontHT);
+        postInvoicingReportsDTO.setWiretransferInvoicesNumber(wiretransferInvoicesNumber);
 
-	@SuppressWarnings("unchecked")
-	public boolean isActiveBillingRunsExist() {
-		QueryBuilder qb = new QueryBuilder(BillingRun.class, "c");
-		qb.startOrClause();
-		qb.addCriterionEnum("c.status", BillingRunStatusEnum.NEW);
-		qb.addCriterionEnum("c.status", BillingRunStatusEnum.PREVALIDATED);
-		qb.addCriterionEnum("c.status", BillingRunStatusEnum.POSTINVOICED);
-		qb.addCriterionEnum("c.status", BillingRunStatusEnum.PREINVOICED);
-		qb.endOrClause();
-		List<BillingRun> billingRuns = qb.getQuery(getEntityManager()).getResultList();
+        postInvoicingReportsDTO.setCreditDebitCardAmount(creditDebitCardAmount);
+        postInvoicingReportsDTO.setCreditDebitCardAmountHT(creditDebitCardAmountHT);
+        postInvoicingReportsDTO.setCreditDebitCardInvoicesNumber(creditDebitCardInvoicesNumber);
+        postInvoicingReportsDTO.setGlobalAmount(globalAmountHT);
 
-		return billingRuns != null && billingRuns.size() > 0 ? true : false;
-	}
+        return postInvoicingReportsDTO;
+    }
 
-	public void retateBillingRunTransactions(BillingRun billingRun) throws BusinessException {
-		for (RatedTransaction ratedTransaction : billingRun.getRatedTransactions()) {
-			WalletOperation walletOperation = walletOperationService.findById(ratedTransaction.getWalletOperationId());
-			walletOperation.setStatus(WalletOperationStatusEnum.TO_RERATE);
-			walletOperationService.update(walletOperation);
-		}
-	}
+    public static BigDecimal round(BigDecimal amount, int decimal) {
+        if (amount == null) {
+            return null;
+        }
+        amount = amount.setScale(decimal, RoundingMode.HALF_UP);
 
-	public List<BillingRun> getbillingRuns(BillingRunStatusEnum... status) {
-		return getBillingRuns(null,status);
-	}
-	@SuppressWarnings("unchecked")
-	public List<BillingRun> getBillingRuns(String code, BillingRunStatusEnum... status){
-		
-		BillingRunStatusEnum bRStatus;
-		log.debug("getbillingRuns ");
-		QueryBuilder qb = new QueryBuilder(BillingRun.class, "c", null);
-		
-		if (code != null) {
-			qb.addCriterion("c.billingCycle.code", "=", code, false);
-		}
+        return amount;
+    }
 
-		qb.startOrClause();
-		if (status != null) {
-			for (int i = 0; i < status.length; i++) {
-				bRStatus = status[i];
-				qb.addCriterionEnum("c.status", bRStatus);
-			}
-		}
-		qb.endOrClause();
+    public void cancel(BillingRun billingRun) throws BusinessException {
+        billingRun.setStatus(BillingRunStatusEnum.CANCELED);
+        update(billingRun);
+    }
 
-		List<BillingRun> billingRuns = qb.getQuery(getEntityManager()).getResultList();
+    @SuppressWarnings("unchecked")
+    public void cleanBillingRun(BillingRun billingRun) {
+        Query queryTrans = getEntityManager().createQuery("update " + RatedTransaction.class.getName()
+                + " set invoice=null,invoiceAgregateF=null,invoiceAgregateR=null,invoiceAgregateT=null,status=:status where billingRun=:billingRun");
+        queryTrans.setParameter("billingRun", billingRun);
+        queryTrans.setParameter("status", RatedTransactionStatusEnum.OPEN);
+        queryTrans.executeUpdate();
 
+        Query queryAgregate = getEntityManager().createQuery("from " + InvoiceAgregate.class.getName() + " where billingRun=:billingRun");
+        queryAgregate.setParameter("billingRun", billingRun);
+        List<InvoiceAgregate> invoiceAgregates = (List<InvoiceAgregate>) queryAgregate.getResultList();
+        for (InvoiceAgregate invoiceAgregate : invoiceAgregates) {
 
-		return billingRuns;
-	}
-	
-	public List<BillingRun> getValidatedBillingRuns() {
-		QueryBuilder qb = new QueryBuilder(BillingRun.class, "c", null);
-		qb.addCriterionEnum("c.status", BillingRunStatusEnum.VALIDATED);
-		qb.addBooleanCriterion("c.xmlInvoiceGenerated", false);
-		@SuppressWarnings("unchecked")
+            getEntityManager().remove(invoiceAgregate);
+        }
+        getEntityManager().flush();
+
+        Query queryInvoices = getEntityManager().createQuery("delete from " + Invoice.class.getName() + " where billingRun=:billingRun");
+        queryInvoices.setParameter("billingRun", billingRun);
+        queryInvoices.executeUpdate();
+
+        Query queryBA = getEntityManager().createQuery("update " + BillingAccount.class.getName() + " set billingRun=null where billingRun=:billingRun");
+        queryBA.setParameter("billingRun", billingRun);
+        queryBA.executeUpdate();
+    }
+
+    @SuppressWarnings("unchecked")
+    public boolean isActiveBillingRunsExist() {
+        QueryBuilder qb = new QueryBuilder(BillingRun.class, "c");
+        qb.startOrClause();
+        qb.addCriterionEnum("c.status", BillingRunStatusEnum.NEW);
+        qb.addCriterionEnum("c.status", BillingRunStatusEnum.PREVALIDATED);
+        qb.addCriterionEnum("c.status", BillingRunStatusEnum.POSTINVOICED);
+        qb.addCriterionEnum("c.status", BillingRunStatusEnum.PREINVOICED);
+        qb.endOrClause();
         List<BillingRun> billingRuns = qb.getQuery(getEntityManager()).getResultList();
 
-		return billingRuns;
+        return billingRuns != null && billingRuns.size() > 0 ? true : false;
+    }
 
-	}
+    public void retateBillingRunTransactions(BillingRun billingRun) throws BusinessException {
+        for (RatedTransaction ratedTransaction : billingRun.getRatedTransactions()) {
+            WalletOperation walletOperation = walletOperationService.findById(ratedTransaction.getWalletOperationId());
+            walletOperation.setStatus(WalletOperationStatusEnum.TO_RERATE);
+            walletOperationService.update(walletOperation);
+        }
+    }
 
-	public List<BillingAccount> getBillingAccounts(BillingRun billingRun) {
-		List<BillingAccount> result = null;
-		BillingCycle billingCycle = billingRun.getBillingCycle();
+    public List<BillingRun> getbillingRuns(BillingRunStatusEnum... status) {
+        return getBillingRuns(null, status);
+    }
 
-		log.debug("getBillingAccounts for billingRun {}", billingRun.getId());
+    @SuppressWarnings("unchecked")
+    public List<BillingRun> getBillingRuns(String code, BillingRunStatusEnum... status) {
 
-		if (billingCycle != null) {
-			Date startDate = billingRun.getStartDate();
-			Date endDate = billingRun.getEndDate();
+        BillingRunStatusEnum bRStatus;
+        log.debug("getbillingRuns ");
+        QueryBuilder qb = new QueryBuilder(BillingRun.class, "c", null);
 
-			if (startDate != null && endDate == null) {
-				endDate = new Date();
-			}
+        if (code != null) {
+            qb.addCriterion("c.billingCycle.code", "=", code, false);
+        }
 
-			result = billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);
+        qb.startOrClause();
+        if (status != null) {
+            for (int i = 0; i < status.length; i++) {
+                bRStatus = status[i];
+                qb.addCriterionEnum("c.status", bRStatus);
+            }
+        }
+        qb.endOrClause();
 
-		} else {
-			result = new ArrayList<BillingAccount>();
-			String[] baIds = billingRun.getSelectedBillingAccounts().split(",");
+        List<BillingRun> billingRuns = qb.getQuery(getEntityManager()).getResultList();
 
-			for (String id : Arrays.asList(baIds)) {
-				Long baId = Long.valueOf(id);
-				result.add(billingAccountService.findById(baId));
-			}
-		}
+        return billingRuns;
+    }
 
-		return result;
-	}
-	
+    public List<BillingRun> getValidatedBillingRuns() {
+        QueryBuilder qb = new QueryBuilder(BillingRun.class, "c", null);
+        qb.addCriterionEnum("c.status", BillingRunStatusEnum.VALIDATED);
+        qb.addBooleanCriterion("c.xmlInvoiceGenerated", false);
+        @SuppressWarnings("unchecked")
+        List<BillingRun> billingRuns = qb.getQuery(getEntityManager()).getResultList();
 
-	@SuppressWarnings("unchecked")
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public void createAgregatesAndInvoice(BillingRun billingRun, long nbRuns,long waitingMillis) throws BusinessException {
-		
-	    List<BillingAccount> billingAccounts = getEntityManager()
-				.createNamedQuery("BillingAccount.listByBillingRunId", BillingAccount.class)
-				.setParameter("billingRunId", billingRun.getId())
-                .getResultList();
-	    
-    	SubListCreator subListCreator = null;
-    	
-    	try {
-			subListCreator = new SubListCreator(billingAccounts,(int) nbRuns);
-		} catch (Exception e1) {
-			throw new BusinessException("cannot create  agregates and invoice with nbRuns="+nbRuns);
-		}
-    	List<Future<String>> asyncReturns =  new ArrayList<Future<String>>();
-		while (subListCreator.isHasNext()) {
-			asyncReturns.add(ratedTxInvoicingAsync.createAgregatesAndInvoiceAsync((List<BillingAccount>) subListCreator.getNextWorkSet(), billingRun));
-			try {
-				Thread.sleep(waitingMillis);
-			} catch (InterruptedException e) {
-				log.error("Failed to create agregates and invoice waiting for thread",e);
-				throw new BusinessException(e);
-			} 
-		}
-		for(Future<String> futureItsNow : asyncReturns){
-			 try {
-				futureItsNow.get();
-			} catch (InterruptedException | ExecutionException e) {
-				log.error("Failed to create agregates and invoice getting future",e);
-				throw new BusinessException(e);
-			}	
-		}
-	
-	}
+        return billingRuns;
 
+    }
 
+    public List<BillingAccount> getBillingAccounts(BillingRun billingRun) {
+        List<BillingAccount> result = null;
+        BillingCycle billingCycle = billingRun.getBillingCycle();
 
-	public BillingRun launchExceptionalInvoicing(List<Long> billingAccountIds, Date invoiceDate,
-			Date lastTransactionDate,BillingProcessTypesEnum processType) throws BusinessException{
-		log.info("launchExceptionelInvoicing...");
+        log.debug("getBillingAccounts for billingRun {}", billingRun.getId());
 
-		ParamBean param = ParamBean.getInstance();
-		String allowManyInvoicing = param.getProperty("billingRun.allowManyInvoicing", "true");
-		boolean isAllowed = Boolean.parseBoolean(allowManyInvoicing);
-		log.info("launchInvoicing allowManyInvoicing=#", isAllowed);
-		if (isActiveBillingRunsExist() && !isAllowed) {
-			throw new BusinessException(resourceMessages.getString("error.invoicing.alreadyLunched"));				
-		}
-		
-		BillingRun billingRun = new BillingRun();
-		billingRun.setStatus(BillingRunStatusEnum.NEW);
-		billingRun.setProcessDate(new Date());
-		billingRun.setProcessType(processType);
-		String selectedBillingAccounts = "";
-		String sep = "";
-		boolean isBillable = false;
+        if (billingCycle != null) {
+            Date startDate = billingRun.getStartDate();
+            Date endDate = billingRun.getEndDate();
 
-		if(lastTransactionDate == null){
-			lastTransactionDate = new Date();
-		}
+            if (startDate != null && endDate == null) {
+                endDate = new Date();
+            }
 
-		BillingAccount currentBA = null;
-		for (Long baId : billingAccountIds) {
-			currentBA = billingAccountService.findById(baId);
-			if(currentBA == null){
-				throw new BusinessException("BillingAccount whit id="+baId+" does not exists");
-			}
-			selectedBillingAccounts = selectedBillingAccounts + sep + baId;
-			sep = ",";
-			if (!isBillable && ratedTransactionService.isBillingAccountBillable(currentBA, lastTransactionDate)) {
-				isBillable = true;
-			}
-		}
+            result = billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);
 
-		if (!isBillable) {
-			throw new BusinessException(resourceMessages.getString("error.invoicing.noTransactions"));				
-		}
-		log.debug("selectedBillingAccounts=" + selectedBillingAccounts);
-		billingRun.setSelectedBillingAccounts(selectedBillingAccounts);
+        } else {
+            result = new ArrayList<BillingAccount>();
+            String[] baIds = billingRun.getSelectedBillingAccounts().split(",");
 
-		billingRun.setInvoiceDate(invoiceDate);
-		billingRun.setLastTransactionDate(lastTransactionDate);
-		create(billingRun);
-		commit();
-		return billingRun;
-	}
-	
-	@SuppressWarnings("unchecked")
-	public void validate(BillingRun billingRun,long nbRuns,long waitingMillis) throws Exception{
+            for (String id : Arrays.asList(baIds)) {
+                Long baId = Long.valueOf(id);
+                result.add(billingAccountService.findById(baId));
+            }
+        }
 
-		log.debug("validate, billingRun status={}",billingRun.getStatus());
-		
-		if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())) {
-			List<BillingAccount> billingAccounts = getBillingAccounts(billingRun);
-			log.info("Nb billingAccounts to process={}",
-					(billingAccounts != null ? billingAccounts.size() : 0));
+        return result;
+    }
 
-			billingRunExtensionService.updateBRAmounts(billingRun);
-			
-			if (billingAccounts != null && billingAccounts.size() > 0) {
-				int billableBA = 0;
-				SubListCreator subListCreator = new SubListCreator(billingAccounts,(int)nbRuns);
-				List<Future<Integer>> asyncReturns = new ArrayList<Future<Integer>>();
-				while (subListCreator.isHasNext()) {
-					Future<Integer> count = invoicingAsync.updateBillingAccountTotalAmountsAsync((List<BillingAccount>) subListCreator.getNextWorkSet(), billingRun);
-					asyncReturns.add(count);
-					try {
-						Thread.sleep(waitingMillis);
-					} catch (InterruptedException e) {
-						log.error("", e);
-					} 
-				}
+    @SuppressWarnings("unchecked")
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public void createAgregatesAndInvoice(BillingRun billingRun, long nbRuns, long waitingMillis) throws BusinessException {
 
-				for(Future<Integer> futureItsNow : asyncReturns){
-					billableBA+= futureItsNow.get().intValue();	
-				}
+        List<BillingAccount> billingAccounts = getEntityManager().createNamedQuery("BillingAccount.listByBillingRunId", BillingAccount.class)
+            .setParameter("billingRunId", billingRun.getId()).getResultList();
 
-				log.info("Total billableBA:"+billableBA);
+        SubListCreator subListCreator = null;
 
-				billingRunExtensionService.updateBillingRun(billingRun,billingAccounts.size(),billableBA,BillingRunStatusEnum.PREINVOICED,new Date());
+        try {
+            subListCreator = new SubListCreator(billingAccounts, (int) nbRuns);
+        } catch (Exception e1) {
+            throw new BusinessException("cannot create  agregates and invoice with nbRuns=" + nbRuns);
+        }
+        List<Future<String>> asyncReturns = new ArrayList<Future<String>>();
+        while (subListCreator.isHasNext()) {
+            asyncReturns.add(invoicingAsync.createAgregatesAndInvoiceAsync((List<BillingAccount>) subListCreator.getNextWorkSet(), billingRun));
+            try {
+                Thread.sleep(waitingMillis);
+            } catch (InterruptedException e) {
+                log.error("Failed to create agregates and invoice waiting for thread", e);
+                throw new BusinessException(e);
+            }
+        }
+        for (Future<String> futureItsNow : asyncReturns) {
+            try {
+                futureItsNow.get();
+            } catch (InterruptedException | ExecutionException e) {
+                log.error("Failed to create agregates and invoice getting future", e);
+                throw new BusinessException(e);
+            }
+        }
+    }
 
-				if (billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC
-						|| appProvider.isAutomaticInvoicing()) {
-					
-				    createAgregatesAndInvoice(billingRun, nbRuns,waitingMillis);										
-				    billingRunExtensionService.updateBillingRun(billingRun,null,null,BillingRunStatusEnum.POSTINVOICED,null);
-				}
-			}
-		} else if (BillingRunStatusEnum.PREVALIDATED.equals(billingRun.getStatus())) {
-			createAgregatesAndInvoice(billingRun, nbRuns,waitingMillis);								
-			billingRunExtensionService.updateBillingRun(billingRun,null,null,BillingRunStatusEnum.POSTINVOICED,null);
-		} else if (BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus())) {
-		    billingRunExtensionService.incrementInvoiceDatesAndValidate(billingRun);
-		}
-	}
-	
-	public void forceValidate(Long billingRunId) throws BusinessException{
-		BillingRun billingRun = findById(billingRunId);
-		if(billingRun == null){
-			throw  new BusinessException("Cant find BillingRun with id:"+billingRunId);
-		}
-		detach(billingRun);
-		log.debug("forceValidate, billingRun status={}",billingRun.getStatus());
-		switch(billingRun.getStatus()){
-		case POSTINVOICED:
-		case POSTVALIDATED:
-		    billingRunExtensionService.incrementInvoiceDatesAndValidate(billingRun);
-			break;
-		case PREINVOICED:
-		case PREVALIDATED:
-			createAgregatesAndInvoice(billingRun, 1,0);								
-			billingRunExtensionService.updateBillingRun(billingRun,1,0,BillingRunStatusEnum.POSTINVOICED,null);
-			break;
-		case VALIDATED:
-		case CANCELED:
-		case NEW:
-		default:
-			throw new BusinessException("BillingRun with status " + billingRun.getStatus() + " cannot be validated");
-		}
-	}
-	
+    @SuppressWarnings("unchecked")
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public void incrementInvoiceDates(BillingRun billingRun, long nbRuns, long waitingMillis) throws BusinessException {
 
+        List<Long> invoices = getEntityManager().createNamedQuery("Invoice.byBR", Long.class).setParameter("billingRunId", billingRun.getId()).getResultList();
 
-	public boolean launchInvoicingRejectedBA(BillingRun br) throws BusinessException {
-		boolean result = false;
-		BillingRun billingRun = new BillingRun();
-		billingRun.setStatus(BillingRunStatusEnum.NEW);
-		billingRun.setProcessDate(new Date());
-		BillingCycle billingCycle = br.getBillingCycle();
-		if (billingCycle != null && billingCycle.getInvoiceDateProductionDelay() != null) {
-			billingRun.setInvoiceDate(DateUtils.addDaysToDate(billingRun.getProcessDate(), billingCycle.getInvoiceDateProductionDelay()));
-		} else {
-			billingRun.setInvoiceDate(br.getProcessDate());
-		}
-		if (billingCycle != null && billingCycle.getTransactionDateDelay() != null) {
-			billingRun.setLastTransactionDate(DateUtils.addDaysToDate(billingRun.getProcessDate(), billingCycle.getTransactionDateDelay()));
-		} else {
-			billingRun.setLastTransactionDate(billingRun.getProcessDate());
-		}
-		billingRun.setProcessType(br.getProcessType());
-		String selectedBillingAccounts = "";
-		String sep = "";
-		for (RejectedBillingAccount ba : br.getRejectedBillingAccounts()) {
-			selectedBillingAccounts = selectedBillingAccounts + sep + ba.getId();
-			sep = ",";
-			if (!result && ratedTransactionService.isBillingAccountBillable(ba.getBillingAccount(), billingRun.getLastTransactionDate())) {
-				result = true;
-				break;
-			}
-		}
-		if (result) {
-			log.debug("selectedBillingAccounts=" + selectedBillingAccounts);
-			billingRun.setSelectedBillingAccounts(selectedBillingAccounts);
-			create(billingRun);
-		}
-		return result;
-	}
+        SubListCreator subListCreator = null;
+
+        try {
+            subListCreator = new SubListCreator(invoices, (int) nbRuns);
+        } catch (Exception e1) {
+            throw new BusinessException("Failed to subdivide an invoice list with nbRuns=" + nbRuns);
+        }
+
+        List<Future<String>> asyncReturns = new ArrayList<Future<String>>();
+        while (subListCreator.isHasNext()) {
+            asyncReturns.add(invoicingAsync.incrementInvoiceDatesAsync((List<Long>) subListCreator.getNextWorkSet()));
+            try {
+                Thread.sleep(waitingMillis);
+            } catch (InterruptedException e) {
+                log.error("Failed to create agregates and invoice waiting for thread", e);
+                throw new BusinessException(e);
+            }
+        }
+        for (Future<String> futureItsNow : asyncReturns) {
+            try {
+                futureItsNow.get();
+            } catch (InterruptedException | ExecutionException e) {
+                log.error("Failed to create agregates and invoice getting future", e);
+                throw new BusinessException(e);
+            }
+        }
+    }
+
+    public BillingRun launchExceptionalInvoicing(List<Long> billingAccountIds, Date invoiceDate, Date lastTransactionDate, BillingProcessTypesEnum processType)
+            throws BusinessException {
+        log.info("launchExceptionelInvoicing...");
+
+        ParamBean param = ParamBean.getInstance();
+        String allowManyInvoicing = param.getProperty("billingRun.allowManyInvoicing", "true");
+        boolean isAllowed = Boolean.parseBoolean(allowManyInvoicing);
+        log.info("launchInvoicing allowManyInvoicing=#", isAllowed);
+        if (isActiveBillingRunsExist() && !isAllowed) {
+            throw new BusinessException(resourceMessages.getString("error.invoicing.alreadyLunched"));
+        }
+
+        BillingRun billingRun = new BillingRun();
+        billingRun.setStatus(BillingRunStatusEnum.NEW);
+        billingRun.setProcessDate(new Date());
+        billingRun.setProcessType(processType);
+        String selectedBillingAccounts = "";
+        String sep = "";
+        boolean isBillable = false;
+
+        if (lastTransactionDate == null) {
+            lastTransactionDate = new Date();
+        }
+
+        BillingAccount currentBA = null;
+        for (Long baId : billingAccountIds) {
+            currentBA = billingAccountService.findById(baId);
+            if (currentBA == null) {
+                throw new BusinessException("BillingAccount whit id=" + baId + " does not exists");
+            }
+            selectedBillingAccounts = selectedBillingAccounts + sep + baId;
+            sep = ",";
+            if (!isBillable && ratedTransactionService.isBillingAccountBillable(currentBA, lastTransactionDate)) {
+                isBillable = true;
+            }
+        }
+
+        if (!isBillable) {
+            throw new BusinessException(resourceMessages.getString("error.invoicing.noTransactions"));
+        }
+        log.debug("selectedBillingAccounts=" + selectedBillingAccounts);
+        billingRun.setSelectedBillingAccounts(selectedBillingAccounts);
+
+        billingRun.setInvoiceDate(invoiceDate);
+        billingRun.setLastTransactionDate(lastTransactionDate);
+        create(billingRun);
+        commit();
+        return billingRun;
+    }
+
+    @SuppressWarnings("unchecked")
+    public void validate(BillingRun billingRun, long nbRuns, long waitingMillis) throws Exception {
+
+        log.debug("validate, billingRun id={} status={}", billingRun.getId(), billingRun.getStatus());
+
+        if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())) {
+            List<BillingAccount> billingAccounts = getBillingAccounts(billingRun);
+            log.info("Nb billingAccounts to process={}", (billingAccounts != null ? billingAccounts.size() : 0));
+
+            billingRunExtensionService.updateBRAmounts(billingRun);
+
+            if (billingAccounts != null && billingAccounts.size() > 0) {
+                int billableBA = 0;
+                SubListCreator subListCreator = new SubListCreator(billingAccounts, (int) nbRuns);
+                List<Future<Integer>> asyncReturns = new ArrayList<Future<Integer>>();
+                while (subListCreator.isHasNext()) {
+                    Future<Integer> count = invoicingAsync.updateBillingAccountTotalAmountsAsync((List<BillingAccount>) subListCreator.getNextWorkSet(), billingRun);
+                    asyncReturns.add(count);
+                    try {
+                        Thread.sleep(waitingMillis);
+                    } catch (InterruptedException e) {
+                        log.error("", e);
+                    }
+                }
+
+                for (Future<Integer> futureItsNow : asyncReturns) {
+                    billableBA += futureItsNow.get().intValue();
+                }
+
+                log.info("Total billableBA:" + billableBA);
+
+                billingRunExtensionService.updateBillingRun(billingRun, billingAccounts.size(), billableBA, BillingRunStatusEnum.PREINVOICED, new Date());
+
+                if (billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC || appProvider.isAutomaticInvoicing()) {
+
+                    createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis);
+                    billingRunExtensionService.updateBillingRun(billingRun, null, null, BillingRunStatusEnum.POSTINVOICED, null);
+                }
+            }
+
+        } else if (BillingRunStatusEnum.PREVALIDATED.equals(billingRun.getStatus())) {
+            createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis);
+            billingRunExtensionService.updateBillingRun(billingRun, null, null, BillingRunStatusEnum.POSTINVOICED, null);
+
+        } else if (BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus())) {
+            incrementInvoiceDates(billingRun, nbRuns, waitingMillis);
+            billingRunExtensionService.updateBillingRun(billingRun, null, null, BillingRunStatusEnum.VALIDATED, null);
+        }
+    }
+
+    public void forceValidate(Long billingRunId) throws BusinessException {
+        BillingRun billingRun = findById(billingRunId);
+        if (billingRun == null) {
+            throw new BusinessException("Cant find BillingRun with id:" + billingRunId);
+        }
+        detach(billingRun);
+        log.debug("forceValidate, billingRun status={}", billingRun.getStatus());
+        switch (billingRun.getStatus()) {
+
+        case POSTINVOICED:
+        case POSTVALIDATED:
+            incrementInvoiceDates(billingRun, 1, 0);
+            billingRunExtensionService.updateBillingRun(billingRun, null, null, BillingRunStatusEnum.VALIDATED, null);
+            break;
+
+        case PREINVOICED:
+        case PREVALIDATED:
+            createAgregatesAndInvoice(billingRun, 1, 0);
+            billingRunExtensionService.updateBillingRun(billingRun, 1, 0, BillingRunStatusEnum.POSTINVOICED, null);
+            break;
+
+        case VALIDATED:
+        case CANCELED:
+        case NEW:
+        default:
+            throw new BusinessException("BillingRun with status " + billingRun.getStatus() + " cannot be validated");
+        }
+    }
+
+    public boolean launchInvoicingRejectedBA(BillingRun br) throws BusinessException {
+        boolean result = false;
+        BillingRun billingRun = new BillingRun();
+        billingRun.setStatus(BillingRunStatusEnum.NEW);
+        billingRun.setProcessDate(new Date());
+        BillingCycle billingCycle = br.getBillingCycle();
+        if (billingCycle != null && billingCycle.getInvoiceDateProductionDelay() != null) {
+            billingRun.setInvoiceDate(DateUtils.addDaysToDate(billingRun.getProcessDate(), billingCycle.getInvoiceDateProductionDelay()));
+        } else {
+            billingRun.setInvoiceDate(br.getProcessDate());
+        }
+        if (billingCycle != null && billingCycle.getTransactionDateDelay() != null) {
+            billingRun.setLastTransactionDate(DateUtils.addDaysToDate(billingRun.getProcessDate(), billingCycle.getTransactionDateDelay()));
+        } else {
+            billingRun.setLastTransactionDate(billingRun.getProcessDate());
+        }
+        billingRun.setProcessType(br.getProcessType());
+        String selectedBillingAccounts = "";
+        String sep = "";
+        for (RejectedBillingAccount ba : br.getRejectedBillingAccounts()) {
+            selectedBillingAccounts = selectedBillingAccounts + sep + ba.getId();
+            sep = ",";
+            if (!result && ratedTransactionService.isBillingAccountBillable(ba.getBillingAccount(), billingRun.getLastTransactionDate())) {
+                result = true;
+                break;
+            }
+        }
+        if (result) {
+            log.debug("selectedBillingAccounts=" + selectedBillingAccounts);
+            billingRun.setSelectedBillingAccounts(selectedBillingAccounts);
+            create(billingRun);
+        }
+        return result;
+    }
 
 }
