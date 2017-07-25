@@ -15,6 +15,7 @@ import javax.inject.Inject;
 
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
+import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.slf4j.Logger;
@@ -75,5 +76,43 @@ public class InvoicingAsync {
             }
         }
         return new AsyncResult<String>("OK");
+    }
+
+    @Asynchronous
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public Future<String> generatePdfAsync(List<Long> invoiceIds, JobExecutionResultImpl result) {
+        for (Long invoiceId : invoiceIds) {
+            try {
+                invoiceService.produceInvoicePdfInNewTransaction(invoiceId);
+                result.registerSucces();
+            } catch (Exception e) {
+                result.registerError(invoiceId, e.getMessage());
+                log.error("Failed to create PDF invoice for invoice {}", invoiceId, e);
+            }
+        }
+
+        return new AsyncResult<String>("OK");
+    }
+
+    @Asynchronous
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public Future<Boolean> generateXmlAsync(List<Long> invoiceIds, JobExecutionResultImpl result) {
+
+        boolean allOk = true;
+
+        for (Long invoiceId : invoiceIds) {
+            long startDate = System.currentTimeMillis();
+            try {
+                invoiceService.produceInvoiceXmlInNewTransaction(invoiceId);
+                result.registerSucces();
+            } catch (Exception e) {
+                result.registerError(invoiceId, e.getMessage());
+                allOk = false;
+                log.error("Failed to create XML invoice for invoice {}", invoiceId, e);
+            }
+            log.info("Invoice creation delay :" + (System.currentTimeMillis() - startDate));
+        }
+
+        return new AsyncResult<Boolean>(allOk);
     }
 }

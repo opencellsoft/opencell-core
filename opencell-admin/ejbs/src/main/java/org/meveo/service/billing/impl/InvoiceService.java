@@ -335,21 +335,20 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return sequence;
     }
 
-    @SuppressWarnings("unchecked")
-    public List<Invoice> getValidatedInvoicesWithNoPdf(BillingRun br) {
-        try {
-            QueryBuilder qb = new QueryBuilder(Invoice.class, "i");
-            qb.addCriterionEntity("i.billingRun.status", BillingRunStatusEnum.VALIDATED);
-            qb.addSql("i.isPdfGenerated is false");
+    /**
+     * Get a list of invoices that are validated, but PDF was not yet generated
+     * 
+     * @param billingRunId An optional billing run identifier for filtering
+     * @return A list of invoice ids
+     */
+    public List<Long> getInvoicesIdsValidatedWithNoPdf(Long billingRunId) {
 
-            if (br != null) {
-                qb.addCriterionEntity("i.billingRun", br);
-            }
-            return (List<Invoice>) qb.getQuery(getEntityManager()).getResultList();
-        } catch (Exception ex) {
-            log.error("failed to get validated invoices with no pdf", ex);
+        if (billingRunId == null) {
+            return getEntityManager().createNamedQuery("Invoice.validatedNoPdf", Long.class).getResultList();
+
+        } else {
+            return getEntityManager().createNamedQuery("Invoice.validatedNoPdfByBR", Long.class).setParameter("billingRunId", billingRunId).getResultList();
         }
-        return null;
     }
 
     @SuppressWarnings("unchecked")
@@ -1347,7 +1346,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             recordedInvoiceService.generateRecordedInvoice(invoice);
         }
 
-        update(invoice);
+        invoice = update(invoice);
 
         return invoice;
     }
@@ -1448,5 +1447,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
         billingAccount.setNextInvoiceDate(nextCalendarDate);
         billingAccount.updateAudit(currentUser);
         update(invoice);
+    }
+
+    /**
+     * Get a list of invoice identifiers that belong to a given Billing run
+     * 
+     * @param id Billing run id
+     * @return A list of invoice identifiers
+     */
+    public List<Long> getInvoiceIdsByBR(Long billingRunId) {
+        return getEntityManager().createNamedQuery("Invoice.byBR", Long.class).setParameter("billingRunId", billingRunId).getResultList();
     }
 }

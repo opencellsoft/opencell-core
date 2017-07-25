@@ -63,7 +63,9 @@ import org.meveo.model.quote.Quote;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_invoice_seq"), })
 @CustomFieldEntity(cftCodePrefix = "INVOICE")
-@NamedQueries({ @NamedQuery(name = "Invoice.byBR", query = "select inv.id from Invoice inv where inv.billingRun.id=:billingRunId") })
+@NamedQueries({ @NamedQuery(name = "Invoice.byBR", query = "select inv.id from Invoice inv where inv.billingRun.id=:billingRunId"),
+        @NamedQuery(name = "Invoice.validatedNoPdf", query = "select inv.id from Invoice inv where inv.billingRun.status = 'VALIDATED' and inv.isPdfGenerated is false"),
+        @NamedQuery(name = "Invoice.validatedNoPdfByBR", query = "select inv.id from Invoice inv where inv.billingRun.status = 'VALIDATED' and inv.isPdfGenerated is false and inv.billingRun.id=:billingRunId") })
 public class Invoice extends EnableEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;

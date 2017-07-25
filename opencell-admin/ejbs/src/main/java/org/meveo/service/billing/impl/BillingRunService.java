@@ -77,6 +77,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     private InvoicingAsync invoicingAsync;
 
     @Inject
+    private InvoiceService invoiceService;
+
+    @Inject
     private BillingRunExtensionService billingRunExtensionService;
 
     public PreInvoicingReportsDTO generatePreInvoicingReports(BillingRun billingRun) throws BusinessException {
@@ -434,15 +437,13 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         return billingRuns;
     }
 
-    public List<BillingRun> getValidatedBillingRuns() {
-        QueryBuilder qb = new QueryBuilder(BillingRun.class, "c", null);
-        qb.addCriterionEnum("c.status", BillingRunStatusEnum.VALIDATED);
-        qb.addBooleanCriterion("c.xmlInvoiceGenerated", false);
-        @SuppressWarnings("unchecked")
-        List<BillingRun> billingRuns = qb.getQuery(getEntityManager()).getResultList();
-
-        return billingRuns;
-
+    /**
+     * Get a list of billing run ids that were validated and XML was not yet generated
+     * 
+     * @return A list of billing run ids
+     */
+    public List<Long> getBillingRunIdsValidatedNoXml() {
+        return getEntityManager().createNamedQuery("BillingRun.validatedNoXml", Long.class).getResultList();
     }
 
     public List<BillingAccount> getBillingAccounts(BillingRun billingRun) {
@@ -512,7 +513,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void incrementInvoiceDates(BillingRun billingRun, long nbRuns, long waitingMillis) throws BusinessException {
 
-        List<Long> invoices = getEntityManager().createNamedQuery("Invoice.byBR", Long.class).setParameter("billingRunId", billingRun.getId()).getResultList();
+        List<Long> invoices = invoiceService.getInvoiceIdsByBR(billingRun.getId());
 
         SubListCreator subListCreator = null;
 
