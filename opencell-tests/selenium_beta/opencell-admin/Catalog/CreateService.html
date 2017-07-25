@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://integration.i.opencellsoft.com/opencell/" />
+<title>CreateService</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">CreateService</td></tr>
+</thead><tbody>
+<tr>
+	<td>clickAndWait</td>
+	<td>${services}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>${newButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${codeField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${codeField}</td>
+	<td>${code}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${descriptionField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${descriptionField}</td>
+	<td>${description}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${calendarField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${calendarField}/div/ul/li[text()[contains(.,'${calendar}')]]</td>
+	<td>${type}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${saveButtonWhenCreate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>${infoSummary}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>${infoSummary}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVisible</td>
+	<td>${recurringCharges}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${recurringCharges}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>${recChargesCodeField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${recChargesCodeField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVisible</td>
+	<td>${recurringChargesPopup}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${recurringChargesSearchField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${recurringChargesSearchField}</td>
+	<td>${codeRec}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${recurringChargesSearchButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${recurringChargesSearchButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//tbody[@id='searchRecurringChargeTemplatePopuppopupForm:searchRecurringChargeTemplatePopupdatatable_data']/tr/td[text()[contains(.,'${codeRec}')]]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//tbody[@id='searchRecurringChargeTemplatePopuppopupForm:searchRecurringChargeTemplatePopupdatatable_data']/tr/td[text()[contains(.,'${codeRec}')]]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//tbody[@id='searchRecurringChargeTemplatePopuppopupForm:searchRecurringChargeTemplatePopupdatatable_data']/tr/td[text()[contains(.,'${codeRec}')]]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${recPrepaidWalletsLeft}/li[text()[contains(., '${codePpw}')]]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>doubleClick</td>
+	<td>${recPrepaidWalletsLeft}/li[text()[contains(., '${codePpw}')]]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${recAddSaveButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>link=${codeRec}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>link=${codeRec}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${usageCharges}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${usageChargesCodeField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVisible</td>
+	<td>${usagePopup}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${usageSearchField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${usageSearchField}</td>
+	<td>${codeUsage}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${usageSearchButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${usageSearchButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//tbody[@id='searchUsageChargeTemplatePopuppopupForm:searchUsageChargeTemplatePopupdatatable_data']/tr/td[text()[contains(., '${codeUsage}')]]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//tbody[@id='searchUsageChargeTemplatePopuppopupForm:searchUsageChargeTemplatePopupdatatable_data']/tr/td[text()[contains(., '${codeUsage}')]]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//tbody[@id='searchUsageChargeTemplatePopuppopupForm:searchUsageChargeTemplatePopupdatatable_data']/tr/td[text()[contains(., '${codeUsage}')]]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${usagePrepaidWalletsLeft}/li[text()[contains(., '${codePpw}')]]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>doubleClick</td>
+	<td>${usagePrepaidWalletsLeft}/li[text()[contains(., '${codePpw}')]]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${usageAddSaveButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>link=${codeUsage}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>link=${codeUsage}</td>
+	<td></td>
+</tr>
+
+</tbody></table>
+</body>
+</html>

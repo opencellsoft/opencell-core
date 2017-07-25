@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://integration.i.opencellsoft.com/opencell/" />
+<title>ScriptsVariables</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">ScriptsVariables</td></tr>
+</thead><tbody>
+<tr>
+	<td>store</td>
+	<td>id=menu:scriptInstances</td>
+	<td>scripts</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>JAVA</td>
+	<td>typeValue</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id, 'scriptInstanceForm')]/li[text()[contains(., '${typeValue}')]]</td>
+	<td>type</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>css=div.CodeMirror &gt; div &gt; textarea</td>
+	<td>scriptSourceField</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>package org.meveo.service.script;&nbsp;&nbsp;import java.io.File; import java.math.BigDecimal; import java.math.RoundingMode; import java.util.ArrayList; import java.util.List; import java.util.Map;&nbsp;&nbsp;import org.meveo.admin.exception.BusinessException; import org.meveo.model.crm.Provider; import org.meveo.service.crm.impl.ProviderService; import org.meveo.model.ICustomFieldEntity; import org.meveo.model.admin.User; import org.meveo.model.billing.Invoice; import org.meveo.service.billing.impl.XMLInvoiceCreator; import org.meveo.service.crm.impl.CustomFieldInstanceService; import org.meveo.service.script.Script; import org.slf4j.Logger; import org.slf4j.LoggerFactory; import org.w3c.dom.Document; import org.w3c.dom.Element; import org.w3c.dom.Node; import org.w3c.dom.Text;&nbsp;&nbsp;/**&nbsp;&nbsp;*&nbsp;&nbsp;&nbsp;* @author anasseh&nbsp;&nbsp;*&nbsp;&nbsp;*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Generate custom Xml Invoice&nbsp;&nbsp;*&nbsp;&nbsp;&nbsp;*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Execute Context Variable :&nbsp;&nbsp;&nbsp;*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;li&gt;CONTEXT_ENTITY : the invoice&nbsp;&nbsp;*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;li&gt;isVirtual : invoicing mode&nbsp;&nbsp;*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;li&gt;XMLInvoiceCreator : XMLInvoiceCreator std service&nbsp;&nbsp;*&nbsp;&nbsp;&nbsp;* Object: [SCN]&nbsp;&nbsp;*&nbsp;&nbsp;&nbsp;+ Add Provider CF&nbsp;&nbsp;*&nbsp;&nbsp;&nbsp;*/ public class InvoiceXmlScriptSelenium extends org.meveo.service.script.Script {&nbsp;&nbsp;	private static final Logger log = LoggerFactory.getLogger(InvoiceXmlScriptSelenium.class); 	private CustomFieldInstanceService cfiService = (CustomFieldInstanceService) getServiceInterface(&quot;CustomFieldInstanceService&quot;);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;private Provider provider = ((ProviderService)getServiceInterface(&quot;ProviderService&quot;)).getProvider();&nbsp;&nbsp;	@Override 	public void execute(Map&lt;String, Object&gt; methodContext) throws BusinessException { 		log.debug(&quot;EXECUTE&nbsp;&nbsp;methodContext {}&quot;, methodContext); 		try{ 			XMLInvoiceCreator xmlInvoiceCreator = (XMLInvoiceCreator) methodContext.get(&quot;XMLInvoiceCreator&quot;); 			Invoice invoice = (Invoice) methodContext.get(Script.CONTEXT_ENTITY);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Boolean isVirtual = (Boolean) methodContext.get(&quot;isVirtual&quot;); 			int rounding = provider.getRounding() == null ? 2 : provider.getRounding();&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Document document = xmlInvoiceCreator.createDocument(invoice,isVirtual.booleanValue());&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	/* Get CF lists */&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	Element element = (Element)document.getElementsByTagName(&quot;provider&quot;).item(0); 			addCustomFields(provider, invoice, document, element);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;File file = xmlInvoiceCreator.createFile(document,invoice); 			methodContext.put(Script.RESULT_VALUE, file); 		}catch(Exception e){ 			throw new BusinessException(e.getMessage()); 		} 	}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	private String round(BigDecimal amount, Integer scale) { 		if (amount == null) { 			amount = BigDecimal.ZERO; 		} 		if (scale == null) { 			scale = 2; 		} 		amount = amount.setScale(scale, RoundingMode.HALF_UP); 		return amount.toPlainString(); 	}	&nbsp;&nbsp;	private void addCustomFields(ICustomFieldEntity entity, Invoice invoice, Document doc, Element parent) { 		if (provider.getInvoiceConfiguration() != null &amp;&amp; provider.getInvoiceConfiguration().getDisplayCfAsXML() != null &amp;&amp; provider.getInvoiceConfiguration().getDisplayCfAsXML()) { 			Element customFieldsTag = cfiService.getCFValuesAsDomElement(entity, doc); 			parent.appendChild(customFieldsTag); 		} else { 			String json = cfiService.getCFValuesAsJson(entity); 			if (json != null &amp;&amp; json.length() &gt; 0) { 				parent.setAttribute(&quot;customFields&quot;, json); 			} 		} 	} }</td>
+	<td>scriptSource</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//div[@id='scriptInstanceForm:executionRoles_list']/div[1]/ul</td>
+	<td>executionRolesLeft</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//div[@id='scriptInstanceForm:executionRoles_list']/div[3]/ul</td>
+	<td>executionRolesRight</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>administrateur</td>
+	<td>executionRoles</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//div[@id='scriptInstanceForm:sourcingRoles_list']/div[1]/ul</td>
+	<td>sourcingRolesLeft</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//div[@id='scriptInstanceForm:sourcingRoles_list']/div[3]/ul</td>
+	<td>sourcingRolesRight</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>administrateur</td>
+	<td>sourcingRoles</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>org.meveo.service.script.InvoiceXmlScriptSelenium</td>
+	<td>codeScript</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>${codeScript}</td>
+	<td>code</td>
+</tr>
+</tbody></table>
+</body>
+</html>

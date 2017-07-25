@@ -23,57 +23,58 @@ import org.meveo.model.crm.Provider;
 @Entity
 @ExportIdentifier({ "provider" })
 @Table(name = "billing_invoice_configuration", uniqueConstraints = @UniqueConstraint(columnNames = { "provider_id" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_invoice_configuration_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "billing_invoice_configuration_seq"), })
 public class InvoiceConfiguration extends BaseEntity implements Serializable, IEntity {
 
     private static final long serialVersionUID = -735961368678724497L;
-    
-    @Type(type="numeric_boolean")
+
+    @Type(type = "numeric_boolean")
     @Column(name = "display_subscriptions")
     private Boolean displaySubscriptions = false;
 
-    @Type(type="numeric_boolean")
+    @Type(type = "numeric_boolean")
     @Column(name = "display_services")
     private Boolean displayServices = false;
 
-    @Type(type="numeric_boolean")
+    @Type(type = "numeric_boolean")
     @Column(name = "display_offers")
     private Boolean displayOffers = false;
-    
-    @Type(type="numeric_boolean")
+
+    @Type(type = "numeric_boolean")
     @Column(name = "display_priceplans")
     private Boolean displayPricePlans = false;
 
-    @Type(type="numeric_boolean")
+    @Type(type = "numeric_boolean")
     @Column(name = "display_edrs")
     private Boolean displayEdrs = false;
 
-    @Type(type="numeric_boolean")
+    @Type(type = "numeric_boolean")
     @Column(name = "display_provider")
     private Boolean displayProvider = false;
 
-    @Type(type="numeric_boolean")
+    @Type(type = "numeric_boolean")
     @Column(name = "display_detail")
     private Boolean displayDetail = true;
 
-    @Type(type="numeric_boolean")
+    @Type(type = "numeric_boolean")
     @Column(name = "display_cf_as_xml")
     private Boolean displayCfAsXML = false;
-    
-    @Type(type="numeric_boolean")
+
+    @Type(type = "numeric_boolean")
     @Column(name = "display_charges_periods")
     private Boolean displayChargesPeriods = false;
-    
-    @Type(type="numeric_boolean")
+
+    @Type(type = "numeric_boolean")
     @Column(name = "display_billing_cycle")
     private Boolean displayBillingCycle = false;
-    
-    @Type(type="numeric_boolean")
+
+    @Type(type = "numeric_boolean")
     @Column(name = "display_orders")
     private Boolean displayOrders = false;
 
     @OneToOne
-    @JoinColumn(name="provider_id")
+    @JoinColumn(name = "provider_id")
     private Provider provider;
 
     public Boolean getDisplaySubscriptions() {
@@ -101,14 +102,14 @@ public class InvoiceConfiguration extends BaseEntity implements Serializable, IE
     }
 
     public Boolean getDisplayPricePlans() {
-		return displayPricePlans;
-	}
+        return displayPricePlans;
+    }
 
-	public void setDisplayPricePlans(Boolean displayPricePlans) {
-		this.displayPricePlans = displayPricePlans;
-	}
+    public void setDisplayPricePlans(Boolean displayPricePlans) {
+        this.displayPricePlans = displayPricePlans;
+    }
 
-	public Boolean getDisplayEdrs() {
+    public Boolean getDisplayEdrs() {
         return displayEdrs;
     }
 
@@ -132,62 +133,86 @@ public class InvoiceConfiguration extends BaseEntity implements Serializable, IE
         this.displayDetail = displayDetail;
     }
 
-	public Boolean getDisplayCfAsXML() {
-		return displayCfAsXML;
-	}
+    public Boolean getDisplayCfAsXML() {
+        return displayCfAsXML;
+    }
 
-	public void setDisplayCfAsXML(Boolean displayCfAsXML) {
-		this.displayCfAsXML = displayCfAsXML;
-	}
+    public void setDisplayCfAsXML(Boolean displayCfAsXML) {
+        this.displayCfAsXML = displayCfAsXML;
+    }
 
-	public Boolean getDisplayChargesPeriods() {
-		return displayChargesPeriods;
-	}
+    public Boolean getDisplayChargesPeriods() {
+        return displayChargesPeriods;
+    }
 
-	public void setDisplayChargesPeriods(Boolean displayChargesPeriods) {
-		this.displayChargesPeriods = displayChargesPeriods;
-	}
+    public void setDisplayChargesPeriods(Boolean displayChargesPeriods) {
+        this.displayChargesPeriods = displayChargesPeriods;
+    }
 
+    public Boolean getDisplayBillingCycle() {
+        return displayBillingCycle;
+    }
 
+    public void setDisplayBillingCycle(Boolean displayBillingCycle) {
+        this.displayBillingCycle = displayBillingCycle;
+    }
 
-	public Boolean getDisplayBillingCycle() {
-		return displayBillingCycle;
-	}
+    @Override
+    public String toString() {
+        return "InvoiceConfiguration [displaySubscriptions=" + displaySubscriptions + ", displayServices=" + displayServices + ", displayOffers=" + displayOffers + ", "
+                + "displayPricePlans=" + displayPricePlans + ", displayEdrs=" + displayEdrs + ", displayProvider=" + displayProvider + ", " + "displayDetail=" + displayDetail
+                + ", displayCfAsXML=" + displayCfAsXML + ", displayChargesPeriods=" + displayChargesPeriods + ", displayBillingCycle=" + displayBillingCycle + ",displayOrders="
+                + displayOrders + "]";
+    }
 
-	public void setDisplayBillingCycle(Boolean displayBillingCycle) {
-		this.displayBillingCycle = displayBillingCycle;
-	}
+    public Provider getProvider() {
+        return provider;
+    }
 
-	@Override
-	public String toString() {
-		return "InvoiceConfiguration [displaySubscriptions=" + displaySubscriptions + ", displayServices=" + displayServices + ", displayOffers=" + displayOffers + ", "
-				+ "displayPricePlans=" + displayPricePlans + ", displayEdrs=" + displayEdrs + ", displayProvider=" + displayProvider + ", "
-				+ "displayDetail=" + displayDetail + ", displayCfAsXML=" + displayCfAsXML + ", displayChargesPeriods=" + displayChargesPeriods
-				+ ", displayBillingCycle=" + displayBillingCycle +",displayOrders="+displayOrders + "]";
-	}
+    public void setProvider(Provider provider) {
+        this.provider = provider;
+    }
 
-	public Provider getProvider() {
-		return provider;
-	}
+    /**
+     * @return the displayOrders
+     */
+    public Boolean getDisplayOrders() {
+        return displayOrders;
+    }
 
-	public void setProvider(Provider provider) {
-		this.provider = provider;
-	}
+    /**
+     * @param displayOrders the displayOrders to set
+     */
+    public void setDisplayOrders(Boolean displayOrders) {
+        this.displayOrders = displayOrders;
+    }
 
-	/**
-	 * @return the displayOrders
-	 */
-	public Boolean getDisplayOrders() {
-		return displayOrders;
-	}
+    @Override
+    public boolean equals(Object obj) {
 
-	/**
-	 * @param displayOrders the displayOrders to set
-	 */
-	public void setDisplayOrders(Boolean displayOrders) {
-		this.displayOrders = displayOrders;
-	}
-	
-	
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof InvoiceConfiguration)) {
+            return false;
+        }
+
+        InvoiceConfiguration other = (InvoiceConfiguration) obj;
+
+        if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
+            return true;
+        }
+
+        // if (code == null) {
+        // if (other.getCode() != null) {
+        // return false;
+        // }
+        // } else if (!code.equals(other.getCode())) {
+        // return false;
+        // }
+        // Always return true as there can be only one record of invoice configuration
+        return true;
+    }
 
 }

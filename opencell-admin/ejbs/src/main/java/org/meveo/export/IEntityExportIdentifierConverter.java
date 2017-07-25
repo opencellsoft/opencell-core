@@ -1,6 +1,7 @@
 package org.meveo.export;
 
 import java.lang.reflect.Modifier;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -14,10 +15,12 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.Parameter;
 import javax.persistence.Query;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.hibernate.proxy.HibernateProxy;
 import org.meveo.model.IEntity;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.shared.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +49,6 @@ public class IEntityExportIdentifierConverter implements Converter {
     private boolean referenceFKById;
     private boolean ignoreNotFoundFK;
     private Provider forceToProvider;
-    private Map<String, Long> providerMap = new HashMap<String, Long>();
     private IEntityClassConverter iEntityClassConverter;
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -107,7 +109,7 @@ public class IEntityExportIdentifierConverter implements Converter {
         String[] exportIdentifiers = exportImportConfig.getExportIdsForClass(baseClass);
 
         writer.addAttribute("id", ((IEntity) object).getId().toString());
-        // Append class name when serialising an abstract or inheritance class' implementation
+        // Append class name when serializing an abstract or inheritance class' implementation
         if (Modifier.isAbstract(baseClass.getModifiers()) || baseClass.isAnnotationPresent(Inheritance.class) || baseClass.getSuperclass().isAnnotationPresent(Inheritance.class)) {
             writer.addAttribute("class", baseClass.getCanonicalName());
         }
@@ -116,15 +118,16 @@ public class IEntityExportIdentifierConverter implements Converter {
             try {
                 Object attributeValue = getAttributeValue(object, attributeName);
                 if (attributeValue == null) {
-                    log.error("Attribute {} value is null for entity id={} of type {}", attributeName, ((IEntity) object).getId(), baseClass.getName());
-                    writer.addAttribute(attributeName + "_error", String.format("Attribute %s value is null", attributeName));
+                    // log.error("Attribute {} value is null for entity id={} of type {}", attributeName, ((IEntity) object).getId(), baseClass.getName());
+                    writer.addAttribute(attributeName, "");
                     continue;
                 }
                 if (attributeValue instanceof Provider) {
                     attributeValue = ((Provider) attributeValue).getCode();
                 }
 
-                writer.addAttribute(attributeName, attributeValue.toString());
+                writer.addAttribute(attributeName,
+                    attributeValue instanceof Date ? DateUtils.formatDateWithPattern((Date) attributeValue, DateUtils.DATE_TIME_PATTERN) : attributeValue.toString());
 
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 log.error("No attribute {} found on entity of type {}", attributeName, baseClass.getName());
@@ -148,6 +151,9 @@ public class IEntityExportIdentifierConverter implements Converter {
         while (tokenizer.hasMoreElements()) {
             String attrName = tokenizer.nextToken();
             value = FieldUtils.readField(value, attrName, true);
+            if (value == null) {
+                return null;
+            }
             if (value instanceof HibernateProxy) {
                 value = ((HibernateProxy) value).getHibernateLazyInitializer().getImplementation();
             }
@@ -223,12 +229,20 @@ public class IEntityExportIdentifierConverter implements Converter {
                 if (!firstWhere) {
                     sql.append(" and ");
                 }
-                sql.append(String.format(" %s=:%s", param.getKey(), param.getKey().replace('.', '_')));
+                if (StringUtils.isEmpty((String) param.getValue())) {
+                    sql.append(String.format(" %s is null", param.getKey()));
+                } else {
+                    sql.append(String.format(" %s=:%s", param.getKey(), param.getKey().replace('.', '_')));
+                }
                 firstWhere = false;
             }
             Query query = em.createQuery(sql.toString());
             for (Entry<String, Object> param : parameters.entrySet()) {
 
+                // Skip null values as they are taken care by "is null" sql clause
+                if (StringUtils.isEmpty((String) param.getValue())) {
+                    continue;
+                }
                 Parameter<?> sqlParam = query.getParameter(param.getKey().replace('.', '_'));
                 if (!sqlParam.getParameterType().isAssignableFrom(param.getValue().getClass())) {
                     if (Enum.class.isAssignableFrom(sqlParam.getParameterType())) {
@@ -241,6 +255,8 @@ public class IEntityExportIdentifierConverter implements Converter {
                         param.setValue(Integer.parseInt((String) param.getValue()));
                     } else if (Long.class.isAssignableFrom(sqlParam.getParameterType())) {
                         param.setValue(Long.parseLong((String) param.getValue()));
+                    } else if (Date.class.isAssignableFrom(sqlParam.getParameterType())) {
+                        param.setValue(DateUtils.parseDateWithPattern((String) param.getValue(), DateUtils.DATE_TIME_PATTERN));
                     }
 
                 }

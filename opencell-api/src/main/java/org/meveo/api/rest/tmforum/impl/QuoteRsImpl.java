@@ -43,6 +43,7 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
 
         } catch (Exception e) {
             processException(e, result);
+            responseBuilder.entity(result);
         }
 
 
@@ -65,6 +66,7 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
 
         } catch (Exception e) {
             processException(e, result);
+            responseBuilder.entity(result);
         }
 
 
@@ -91,6 +93,7 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
 //            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
             processException(e, result);
+            responseBuilder.entity(result);
         }
 
 
@@ -112,6 +115,7 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
 
         } catch (Exception e) {
             processException(e, result);
+            responseBuilder.entity(result);
         }
 
 
@@ -134,6 +138,7 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
 
         } catch (Exception e) {
             processException(e, result);
+            responseBuilder.entity(result);
         }
 
 
@@ -154,6 +159,7 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
 
         } catch (Exception e) {
             processException(e, result);
+            responseBuilder.entity(result);
         }
 
 

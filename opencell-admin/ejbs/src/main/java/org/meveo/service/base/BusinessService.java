@@ -100,7 +100,7 @@ public abstract class BusinessService<P extends BusinessEntity> extends Persiste
     }
 
     public String findDuplicateCode(BusinessEntity entity) {
-        return findDuplicateCode(entity, " - Copy");
+        return findDuplicateCode(entity, "-Copy");
     }
 
     public String findDuplicateCode(BusinessEntity entity, String suffix) {
@@ -114,7 +114,7 @@ public abstract class BusinessService<P extends BusinessEntity> extends Persiste
                 break;
             }
             id++;
-            criteria = code + " " + id;
+            criteria = code + "-" + id;
         }
         return criteria;
     }

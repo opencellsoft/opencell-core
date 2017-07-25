@@ -23,7 +23,6 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.crm.custom.EntityCustomAction;
 import org.meveo.model.scripts.ScriptInstance;
@@ -47,11 +46,9 @@ public class EntityCustomActionApi extends BaseApi {
 
     @Inject
     private EntityCustomActionService entityCustomActionService;
-    
-    
 
-    public List<ScriptInstanceErrorDto> create(EntityCustomActionDto actionDto, String appliesTo) throws MissingParameterException, EntityAlreadyExistsException,
-            MeveoApiException {
+    public List<ScriptInstanceErrorDto> create(EntityCustomActionDto actionDto, String appliesTo)
+            throws MissingParameterException, EntityAlreadyExistsException, MeveoApiException, BusinessException {
 
         checkDtoAndSetAppliesTo(actionDto, appliesTo);
 
@@ -62,11 +59,7 @@ public class EntityCustomActionApi extends BaseApi {
         EntityCustomAction action = new EntityCustomAction();
         entityCustomActionFromDTO(actionDto, action);
 
-        try {
-            entityCustomActionService.create(action);
-        } catch (BusinessException e) {
-            throw new BusinessApiException(e.getMessage());
-        }
+        entityCustomActionService.create(action);
 
         List<ScriptInstanceErrorDto> result = new ArrayList<ScriptInstanceErrorDto>();
         ScriptInstance scriptInstance = action.getScript();
@@ -79,8 +72,8 @@ public class EntityCustomActionApi extends BaseApi {
         return result;
     }
 
-    public List<ScriptInstanceErrorDto> update(EntityCustomActionDto actionDto, String appliesTo) throws MissingParameterException, EntityDoesNotExistsException,
-            MeveoApiException {
+    public List<ScriptInstanceErrorDto> update(EntityCustomActionDto actionDto, String appliesTo)
+            throws MissingParameterException, EntityDoesNotExistsException, MeveoApiException, BusinessException {
 
         checkDtoAndSetAppliesTo(actionDto, appliesTo);
 
@@ -91,11 +84,7 @@ public class EntityCustomActionApi extends BaseApi {
 
         entityCustomActionFromDTO(actionDto, action);
 
-        try {
-            action = entityCustomActionService.update(action);
-        } catch (Exception e) {
-            throw new MeveoApiException(e.getMessage());
-        }
+        action = entityCustomActionService.update(action);
 
         List<ScriptInstanceErrorDto> result = new ArrayList<ScriptInstanceErrorDto>();
         ScriptInstance scriptInstance = action.getScript();
@@ -145,14 +134,14 @@ public class EntityCustomActionApi extends BaseApi {
      * @throws MissingParameterException A parameter, necessary to find an entity custom action, was not provided
      */
     public EntityCustomActionDto findIgnoreNotFound(String actionCode, String appliesTo) throws MissingParameterException {
-        try{
+        try {
             return find(actionCode, appliesTo);
-        } catch (EntityDoesNotExistsException e){
+        } catch (EntityDoesNotExistsException e) {
             return null;
         }
     }
-    
-    public void remove(String actionCode, String appliesTo) throws EntityDoesNotExistsException, MissingParameterException, BusinessException  {
+
+    public void remove(String actionCode, String appliesTo) throws EntityDoesNotExistsException, MissingParameterException, BusinessException {
 
         if (StringUtils.isBlank(actionCode)) {
             missingParameters.add("actionCode");
@@ -170,8 +159,8 @@ public class EntityCustomActionApi extends BaseApi {
         entityCustomActionService.remove(scriptInstance);
     }
 
-    public List<ScriptInstanceErrorDto> createOrUpdate(EntityCustomActionDto postData, String appliesTo) throws MissingParameterException,
-            EntityAlreadyExistsException, EntityDoesNotExistsException, MeveoApiException {
+    public List<ScriptInstanceErrorDto> createOrUpdate(EntityCustomActionDto postData, String appliesTo)
+            throws MissingParameterException, EntityAlreadyExistsException, EntityDoesNotExistsException, MeveoApiException, BusinessException {
 
         List<ScriptInstanceErrorDto> result = new ArrayList<ScriptInstanceErrorDto>();
         checkDtoAndSetAppliesTo(postData, appliesTo);
@@ -228,14 +217,16 @@ public class EntityCustomActionApi extends BaseApi {
      * @param action EntityCustomAction to update with values from dto
      * @return A new or updated EntityCustomAction object
      * @throws MeveoApiException
+     * @throws BusinessException 
      */
-    private void entityCustomActionFromDTO(EntityCustomActionDto dto, EntityCustomAction action) throws MeveoApiException {
+    private void entityCustomActionFromDTO(EntityCustomActionDto dto, EntityCustomAction action) throws MeveoApiException, BusinessException {
 
         action.setCode(dto.getCode());
         action.setDescription(dto.getDescription());
         action.setApplicableOnEl(dto.getApplicableOnEl());
         action.setAppliesTo(dto.getAppliesTo());
         action.setLabel(dto.getLabel());
+        action.setGuiPosition(dto.getGuiPosition());
 
         // Extract script associated with an action
         ScriptInstance scriptInstance = null;
@@ -252,34 +243,34 @@ public class EntityCustomActionApi extends BaseApi {
         action.setScript(scriptInstance);
 
     }
-    
-	public String execute(String actionCode, String appliesTo, String entityCode) throws MeveoApiException, InvalidScriptException, ElementNotFoundException, InvalidPermissionException, BusinessException {
-		EntityCustomAction action = entityCustomActionService.findByCodeAndAppliesTo(actionCode, appliesTo);
-		if (action == null) {
-			throw new EntityDoesNotExistsException(EntityCustomAction.class, actionCode + "/" + appliesTo);
-		}
 
-		Set<Class<?>> cfClasses = ReflectionUtils.getClassesAnnotatedWith(CustomFieldEntity.class);
-		Class entityClass = null;
-		for (Class<?> clazz : cfClasses) {
-			if (appliesTo.startsWith(clazz.getAnnotation(CustomFieldEntity.class).cftCodePrefix())) {
-				entityClass = clazz;
-			}
-		}
+    @SuppressWarnings("rawtypes")
+    public String execute(String actionCode, String appliesTo, String entityCode)
+            throws MeveoApiException, InvalidScriptException, ElementNotFoundException, InvalidPermissionException, BusinessException {
+        EntityCustomAction action = entityCustomActionService.findByCodeAndAppliesTo(actionCode, appliesTo);
+        if (action == null) {
+            throw new EntityDoesNotExistsException(EntityCustomAction.class, actionCode + "/" + appliesTo);
+        }
 
-		IEntity entity = (IEntity) entityCustomActionService.findByEntityClassAndCode(entityClass,
-				entityCode);
+        Set<Class<?>> cfClasses = ReflectionUtils.getClassesAnnotatedWith(CustomFieldEntity.class);
+        Class entityClass = null;
+        for (Class<?> clazz : cfClasses) {
+            if (appliesTo.startsWith(clazz.getAnnotation(CustomFieldEntity.class).cftCodePrefix())) {
+                entityClass = clazz;
+            }
+        }
 
-		Map<String, Object> context = new HashMap<String, Object>();
+        IEntity entity = (IEntity) entityCustomActionService.findByEntityClassAndCode(entityClass, entityCode);
 
-		Map<String, Object> result = scriptInstanceService.execute(entity, action.getScript().getCode(),
-				context);
-		
-		if (result.containsKey(Script.RESULT_GUI_OUTCOME)) {
+        Map<String, Object> context = new HashMap<String, Object>();
+
+        Map<String, Object> result = scriptInstanceService.execute(entity, action.getScript().getCode(), context);
+
+        if (result.containsKey(Script.RESULT_GUI_OUTCOME)) {
             return (String) result.get(Script.RESULT_GUI_OUTCOME);
         }
-		
-		return null;
-	}
-    
+
+        return null;
+    }
+
 }

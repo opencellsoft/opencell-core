@@ -39,10 +39,12 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.action.admin.custom.CustomFieldDataEntryBean;
 import org.meveo.admin.action.order.OfferItemInfo;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.api.billing.QuoteApi;
 import org.meveo.api.order.OrderProductCharacteristicEnum;
 import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ProductInstance;
@@ -127,7 +129,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
 
     @Inject
     private BillingAccountService billingAccountService;
-    
+
     @Inject
     private UserService userService;
 
@@ -195,6 +197,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
             }
 
         } catch (Exception e) {
+            log.error("Failed to load quote item for edit", e);
             messages.error(new BundleKey("messages", "quote.quoteItemEdit.ko"), e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
             FacesContext.getCurrentInstance().validationFailed();
         }
@@ -294,8 +297,8 @@ public class QuoteBean extends CustomFieldBean<Quote> {
                     int index = 0;
                     for (ProductTemplate productTemplate : productTemplates) {
 
-                        selectedQuoteItem.getQuoteItemProductOfferings().add(
-                            new QuoteItemProductOffering(selectedQuoteItem, productTemplate, selectedQuoteItem.getQuoteItemProductOfferings().size()));
+                        selectedQuoteItem.getQuoteItemProductOfferings()
+                            .add(new QuoteItemProductOffering(selectedQuoteItem, productTemplate, selectedQuoteItem.getQuoteItemProductOfferings().size()));
 
                         BundledProductReference productOffering = new BundledProductReference();
                         productOffering.setReferencedId(productTemplate.getCode());
@@ -322,8 +325,8 @@ public class QuoteBean extends CustomFieldBean<Quote> {
                         relatedProduct.setType("bundled");
                         Product productDto = new Product();
                         productDto.setProductCharacteristic(serviceCharacteristics.get(index));
-                        productDto.getProductCharacteristic().add(
-                            new ProductCharacteristic(OrderProductCharacteristicEnum.SERVICE_CODE.getCharacteristicName(), serviceTemplate.getCode()));
+                        productDto.getProductCharacteristic()
+                            .add(new ProductCharacteristic(OrderProductCharacteristicEnum.SERVICE_CODE.getCharacteristicName(), serviceTemplate.getCode()));
                         relatedProduct.setProduct(productDto);
                         quoteItemDto.getProduct().getProductRelationship().add(relatedProduct);
 
@@ -338,12 +341,10 @@ public class QuoteBean extends CustomFieldBean<Quote> {
                 quoteItemDto.getProduct().setProductCharacteristic(mapToProductCharacteristics(offerConfigurations.get(0).getCharacteristics()));
                 quoteItemDto.getProduct().getProductCharacteristic().addAll(customFieldsAsCharacteristics(offerConfigurations.get(0).getEntityForCFValues()));
             }
-            
-			// set billingAccount
-			org.tmf.dsmapi.catalog.resource.order.BillingAccount quoteBa = new org.tmf.dsmapi.catalog.resource.order.BillingAccount();
-			UserAccount quoteUa = userAccountService.refreshOrRetrieve(selectedQuoteItem.getUserAccount());  
-			quoteBa.setId(quoteUa.getBillingAccount().getCode());
-			quoteItemDto.getBillingAccount().add(quoteBa);
+
+            // set billingAccount
+            UserAccount quoteUa = userAccountService.refreshOrRetrieve(selectedQuoteItem.getUserAccount());
+            quoteItemDto.addBillingAccount(quoteUa.getCode());
 
             selectedQuoteItem.setQuoteItemDto(quoteItemDto);
             selectedQuoteItem.setSource(ProductQuoteItem.serializeQuoteItem(quoteItemDto));
@@ -374,6 +375,10 @@ public class QuoteBean extends CustomFieldBean<Quote> {
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
+        if (entity.getQuoteItems() == null || entity.getQuoteItems().isEmpty()) {
+            throw new ValidationException("At least one quote item is required", "quote.itemsRequired");
+        }
+        
         // Default quote item user account field to quote user account field value if applicable.
         // Validate that user accounts belong to the same billing account as quote level account (if quote level account is specified)
         BillingAccount billingAccount = null;
@@ -390,12 +395,12 @@ public class QuoteBean extends CustomFieldBean<Quote> {
 
                 UserAccount itemUa = userAccountService.refreshOrRetrieve(quoteItem.getUserAccount());
                 if (billingAccount != null && !billingAccount.equals(itemUa.getBillingAccount())) {
-                        messages.error(new BundleKey("messages", "quote.billingAccountMissmatch"));
-                        FacesContext.getCurrentInstance().validationFailed();
-                        return null;
-                    }
+                    messages.error(new BundleKey("messages", "quote.billingAccountMissmatch"));
+                    FacesContext.getCurrentInstance().validationFailed();
+                    return null;
                 }
             }
+        }
 
         String result = super.saveOrUpdate(killConversation);
 
@@ -411,17 +416,22 @@ public class QuoteBean extends CustomFieldBean<Quote> {
      * 
      * @throws BusinessException
      */
-    public void sendToProcess() {
+    @ActionMethod
+    public String sendToProcess() {
 
         try {
             entity = quoteApi.initiateWorkflow(entity);
             messages.info(new BundleKey("messages", "quote.sendToProcess.ok"));
+
+            return "quoteDetail";
 
         } catch (BusinessException e) {
             log.error("Failed to send quote for processing ", e);
             messages.error(new BundleKey("messages", "quote.sendToProcess.ko"), e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
             FacesContext.getCurrentInstance().validationFailed();
         }
+
+        return null;
     }
 
     /**
@@ -527,7 +537,8 @@ public class QuoteBean extends CustomFieldBean<Quote> {
             }
 
             // Show products - all or only the ones quoteed
-            if ((showAvailableProducts || this.selectedQuoteItem.getQuoteItemProductOfferings().size() > 1) && !((OfferTemplate) mainOffering).getOfferProductTemplates().isEmpty()) {
+            if ((showAvailableProducts || this.selectedQuoteItem.getQuoteItemProductOfferings().size() > 1)
+                    && !((OfferTemplate) mainOffering).getOfferProductTemplates().isEmpty()) {
                 TreeNode productsNode = null;
                 productsNode = new DefaultTreeNode("ProductList", "Product", mainOfferingNode);
                 productsNode.setSelectable(false);
@@ -567,8 +578,8 @@ public class QuoteBean extends CustomFieldBean<Quote> {
                             productCharacteristics.put(OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY, 1);
                         }
 
-                        offerItemInfo = new OfferItemInfo(offerProductTemplate.getProductTemplate(), productCharacteristics, false, productProductMatched != null
-                                || offerProductTemplate.isMandatory(), offerProductTemplate.isMandatory(), productInstanceEntity);
+                        offerItemInfo = new OfferItemInfo(offerProductTemplate.getProductTemplate(), productCharacteristics, false,
+                            productProductMatched != null || offerProductTemplate.isMandatory(), offerProductTemplate.isMandatory(), productInstanceEntity);
                         new DefaultTreeNode(ProductTemplate.class.getSimpleName(), offerItemInfo, productsNode);
 
                         if (offerItemInfo.isSelected()) {
@@ -612,8 +623,8 @@ public class QuoteBean extends CustomFieldBean<Quote> {
             return;
         }
 
-        OrderProductCharacteristicEnum characteristicEnum = OrderProductCharacteristicEnum.getByCharacteristicName((String) event.getComponent().getAttributes()
-            .get("characteristic"));
+        OrderProductCharacteristicEnum characteristicEnum = OrderProductCharacteristicEnum
+            .getByCharacteristicName((String) event.getComponent().getAttributes().get("characteristic"));
         for (OfferItemInfo offerItemInfo : offerConfigurations) {
             if (offerItemInfo.getCharacteristics().get(characteristicEnum) == null) {
                 offerItemInfo.getCharacteristics().put(characteristicEnum, event.getObject());
@@ -627,23 +638,35 @@ public class QuoteBean extends CustomFieldBean<Quote> {
      * @param characteristics Product characteristics to check
      * @return A map of values
      */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private Map<OrderProductCharacteristicEnum, Object> productCharacteristicsToMap(List<ProductCharacteristic> characteristics) {
         Map<OrderProductCharacteristicEnum, Object> values = new HashMap<>();
 
         for (ProductCharacteristic productCharacteristic : characteristics) {
+            if (productCharacteristic.getValue() == null) {
+                continue;
+            }
 
             OrderProductCharacteristicEnum characteristicEnum = OrderProductCharacteristicEnum.getByCharacteristicName(productCharacteristic.getName());
             // No matching characteristic found
             if (characteristicEnum == null) {
                 continue;
             }
-            Class<?> valueClazz = characteristicEnum.getClazz();
+            Class valueClazz = characteristicEnum.getClazz();
             if (valueClazz == String.class) {
                 values.put(characteristicEnum, productCharacteristic.getValue());
             } else if (valueClazz == BigDecimal.class) {
                 values.put(characteristicEnum, new BigDecimal(productCharacteristic.getValue()));
             } else if (valueClazz == Date.class) {
                 values.put(characteristicEnum, DateUtils.parseDateWithPattern(productCharacteristic.getValue(), DateUtils.DATE_PATTERN));
+            } else if (valueClazz == Integer.class) {
+                values.put(characteristicEnum, new Integer(productCharacteristic.getValue()));
+            } else if (valueClazz == Boolean.class) {
+                values.put(characteristicEnum, new Boolean(productCharacteristic.getValue()));
+            } else if (valueClazz.isEnum()) {
+                values.put(characteristicEnum, Enum.valueOf(valueClazz, productCharacteristic.getValue()));
+            } else if (BusinessEntity.class.isAssignableFrom(valueClazz)) {
+                values.put(characteristicEnum, productCharacteristic.getValue()); // Right now a code is shown as value element in GUI.
             }
         }
         return values;
@@ -667,10 +690,14 @@ public class QuoteBean extends CustomFieldBean<Quote> {
                 characteristics.add(productCharacteristic);
 
                 Class valueClazz = valueInfo.getKey().getClazz();
-                if (valueClazz == String.class || valueClazz == BigDecimal.class) {
+                if (valueClazz == String.class || valueClazz == BigDecimal.class || valueClazz == Integer.class || valueClazz == Boolean.class) {
                     productCharacteristic.setValue(valueInfo.getValue().toString());
                 } else if (valueClazz == Date.class) {
                     productCharacteristic.setValue(DateUtils.formatDateWithPattern((Date) valueInfo.getValue(), DateUtils.DATE_PATTERN));
+                } else if (valueClazz.isEnum()) {
+                    productCharacteristic.setValue(((Enum) valueInfo.getValue()).name());
+                } else if (BusinessEntity.class.isAssignableFrom(valueClazz)) {
+                    productCharacteristic.setValue(valueInfo.getValue().toString());// Right now a code is shown as value element in GUI.
                 }
             }
         }
@@ -797,7 +824,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
     }
 
     @ActionMethod
-    public void createInvoice() {
+    public String createInvoice() {
         if (entity.getStatus() == QuoteStatusEnum.IN_PROGRESS || entity.getStatus() == QuoteStatusEnum.PENDING) {
             try {
                 entity = quoteService.refreshOrRetrieve(entity);
@@ -805,11 +832,14 @@ public class QuoteBean extends CustomFieldBean<Quote> {
 
                 messages.info(new BundleKey("messages", "quote.createInvoices.ok"));
 
+                return "quoteDetail";
+
             } catch (BusinessException e) {
                 log.error("Failed to generate invoices for quote {}", entity.getCode());
                 messages.error(new BundleKey("messages", "quote.createInvoices.ko"), e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
             }
         }
+        return null;
     }
 
     @ActionMethod

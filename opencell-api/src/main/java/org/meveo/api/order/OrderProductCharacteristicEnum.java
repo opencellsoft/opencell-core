@@ -3,6 +3,10 @@ package org.meveo.api.order;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import org.meveo.model.billing.SubscriptionRenewal.EndOfTermActionEnum;
+import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
+import org.meveo.model.billing.SubscriptionTerminationReason;
+
 public enum OrderProductCharacteristicEnum {
 
     /**
@@ -31,7 +35,7 @@ public enum OrderProductCharacteristicEnum {
     SUBSCRIPTION_DATE("subscriptionDate", Date.class),
 
     /**
-     * Subscription end date
+     * Subscription agreement end date
      */
     SUBSCRIPTION_END_DATE("subscriptionEndDate", Date.class),
 
@@ -45,19 +49,61 @@ public enum OrderProductCharacteristicEnum {
      */
     TERMINATION_REASON("terminationReason", String.class),
 
-
     /**
-     * Quote script executed before creating the quote
-     * it is executed with a context containing the productQuote
+     * Quote script executed before creating the quote it is executed with a context containing the productQuote
      */
     PRE_QUOTE_SCRIPT("preQuoteScript", String.class),
 
     /**
-     * Quote script executed after creating the quote but before commiting it
-     * it is executed with a context containing the productQuote and the quote
+     * Quote script executed after creating the quote but before commiting it it is executed with a context containing the productQuote and the quote
      */
-    POST_QUOTE_SCRIPT("postQuoteScript", String.class);
-	
+    POST_QUOTE_SCRIPT("postQuoteScript", String.class),
+
+    /**
+     * Should subscription be renewed automatically
+     */
+    SUBSCRIPTION_AUTO_RENEW("autoRenew", Boolean.class),
+
+    /**
+     * Number of days before the end of term to trigger notification event
+     */
+    SUBSCRIPTION_DAYS_NOTIFY_RENEWAL("daysNotifyRenewal", Integer.class),
+
+    /**
+     * Whether the Subscription should be suspended or terminated if not renewed
+     */
+    SUBSCRIPTION_END_OF_TERM_ACTION("endOfTermAction", EndOfTermActionEnum.class),
+
+    /**
+     * TerminationReason used when terminating subscription if endOfTermAction is to terminate
+     */
+    SUBSCRIPTION_RENEW_TERMINATION_REASON("renewTerminationReason", SubscriptionTerminationReason.class),
+
+    /**
+     * The initial period for which the subscription will be active - unit
+     */
+    SUBSCRIPTION_INITIALLY_ACTIVE_FOR_UNIT("initialyActiveForUnit", RenewalPeriodUnitEnum.class),
+
+    /**
+     * The initial period for which the subscription will be active - value
+     */
+    SUBSCRIPTION_INITIALLY_ACTIVE_FOR("initialyActiveFor", Integer.class),
+
+    /**
+     * Whether end of agreement date should be matched to the active till date
+     */
+    SUBSCRIPTION_EXTEND_AGREEMENT_PERIOD("extendAgreementPeriodToSubscribedTillDate", Boolean.class),
+
+    /**
+     * The period to renew subscription for - units
+     */
+    SUBSCRIPTION_RENEW_FOR_UNIT("renewForUnit", RenewalPeriodUnitEnum.class),
+
+    /**
+     * The period to renew subscription for - value
+     */
+    SUBSCRIPTION_RENEW_FOR("renewFor", Integer.class);
+
     protected String characteristicName;
 
     @SuppressWarnings("rawtypes")

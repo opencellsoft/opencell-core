@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://integration.i.opencellsoft.com/opencell/" />
+<title>EntityCustomizationVariables</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">EntityCustomizationVariables</td></tr>
+</thead><tbody>
+<tr>
+	<td>store</td>
+	<td>id=menu:customizedEntities</td>
+	<td>entityCustomization</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=searchPanel:entityName</td>
+	<td>searchField</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>ENT_SELENIUM</td>
+	<td>code</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=cetForm:name_txt</td>
+	<td>titleField</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>Selenium Entity</td>
+	<td>title</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>Entity Customization Selenium Template</td>
+	<td>description</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=cftForm:code_txt</td>
+	<td>codeCustomFieldField</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>FIELD_SELENIUM</td>
+	<td>codeCustomField</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=cftForm:description</td>
+	<td>fieldLabelField</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>Selenium field	</td>
+	<td>fieldLabel</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>String</td>
+	<td>dataEntryTypeValue</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//ul[@id='cftForm:fieldType_enum_items']/li[text()[contains(., '${dataEntryTypeValue}')]]</td>
+	<td>dataEntryType</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=fieldsForm:fields:0:addFieldInTabBtn</td>
+	<td>addFieldButton</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//div[@id='cftDialog']</td>
+	<td>customFieldPopup</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=cftForm:valueRequired_bool_input</td>
+	<td>mandatoryFieldField</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=cftForm:hideOnNew_bool_input</td>
+	<td>hideOnNewField</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=cftForm:allowEdit_bool_input</td>
+	<td>modifiableField</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=cftForm:applicableOnEl_txt</td>
+	<td>applicableWhenField</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td></td>
+	<td>applicableWhen</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=cftForm:maxValue_number_input</td>
+	<td>maxLengthField</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>50</td>
+	<td>maxLength</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=cftForm:regExp_txt</td>
+	<td>regularExpressionField</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td></td>
+	<td>regularExpression</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=cftForm:cacheValue_bool_input</td>
+	<td>cacheValueField</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id, 'cftDialog')]//*[text()[contains(., 'Save')]]</td>
+	<td>saveCustomFieldButton</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=fieldsForm:fields:0_0:deletelink</td>
+	<td>deleteCustomFieldButton</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=fieldsForm:fields:0:addFieldGroupBtn</td>
+	<td>addFieldGroupButton</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=groupDialog_title</td>
+	<td>fieldGroupingPopup</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=groupForm:name</td>
+	<td>titleFieldGroupField</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>Selenium Field Group</td>
+	<td>titleFieldGroup</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[@id='groupDialog']//*[text()[contains(.,'Save')]]</td>
+	<td>saveFieldGroupingButton</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id, 'deleteFieldGrouplink')]</td>
+	<td>deleteCustomFieldGroupButton</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=fieldsForm:entityActions:addAction</td>
+	<td>addNewActionButton</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=actionDialog_title</td>
+	<td>actionPopup</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=actionForm:code_txt</td>
+	<td>codeActionField</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>Selenium_Field_Group</td>
+	<td>codeAction</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=actionForm:label_txt</td>
+	<td>buttonLabelField</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>Selenium Button label</td>
+	<td>buttonLabel</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=actionForm:script_selectLink</td>
+	<td>actionExecutionScriptField</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[@id='actionDialog']//*[text()[contains(.,'Save')]]</td>
+	<td>saveActionButton</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//div[@id='actionScriptPopup']</td>
+	<td>scriptSearchPopup</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=actionScriptPopuppopupForm:searchField1</td>
+	<td>scriptSearchField</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=actionScriptPopuppopupForm:buttonSearch</td>
+	<td>scriptSearchButton</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//tbody[@id='actionScriptPopuppopupForm:actionScriptPopupdatatable_data']/tr/td[text()[contains(.,'Selenium')]]</td>
+	<td>seleniumScript</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id,'actionForm')]//*[text()[contains(.,'Save')]]</td>
+	<td>saveActionButton</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=fieldsForm:entityActions:0:disableActionlink</td>
+	<td>disableActionGroupButton</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=fieldsForm:entityActions:0:enableActionlink</td>
+	<td>enableActionGroupButton</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=fieldsForm:entityActions:0:deleteActionlink</td>
+	<td>deleteActionGroupButton</td>
+</tr>
+</tbody></table>
+</body>
+</html>

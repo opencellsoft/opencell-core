@@ -60,6 +60,9 @@ public class SubscriptionService extends BusinessService<Subscription> {
     @MeveoAudit
     @Override
     public void create(Subscription subscription) throws BusinessException {
+
+        subscription.updateSubscribedTillAndRenewalNotifyDates();
+
         super.create(subscription);
 
         // execute subscription script
@@ -73,20 +76,29 @@ public class SubscriptionService extends BusinessService<Subscription> {
     }
 
     @MeveoAudit
-    public void terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber)
+    @Override
+    public Subscription update(Subscription subscription) throws BusinessException {
+
+        subscription.updateSubscribedTillAndRenewalNotifyDates();
+
+        return super.update(subscription);
+    }
+
+    @MeveoAudit
+    public Subscription terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
 
         if (terminationReason == null) {
             throw new BusinessException("terminationReason is null");
         }
 
-        terminateSubscription(subscription, terminationDate, terminationReason, terminationReason.isApplyAgreement(), terminationReason.isApplyReimbursment(),
+        return terminateSubscription(subscription, terminationDate, terminationReason, terminationReason.isApplyAgreement(), terminationReason.isApplyReimbursment(),
             terminationReason.isApplyTerminationCharges(), orderNumber);
     }
 
     @MeveoAudit
-    public void subscriptionCancellation(Subscription subscription, Date cancelationDate) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException,
-            BusinessException {
+    public Subscription subscriptionCancellation(Subscription subscription, Date cancelationDate)
+            throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
         if (cancelationDate == null) {
             cancelationDate = new Date();
         }
@@ -96,12 +108,14 @@ public class SubscriptionService extends BusinessService<Subscription> {
          */
         subscription.setTerminationDate(cancelationDate);
         subscription.setStatus(SubscriptionStatusEnum.CANCELED);
-        update(subscription);
+        subscription = update(subscription);
+
+        return subscription;
     }
 
     @MeveoAudit
-    public void subscriptionSuspension(Subscription subscription, Date suspensionDate) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException,
-            BusinessException {
+    public Subscription subscriptionSuspension(Subscription subscription, Date suspensionDate)
+            throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
         if (suspensionDate == null) {
             suspensionDate = new Date();
         }
@@ -123,15 +137,17 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
         subscription.setTerminationDate(suspensionDate);
         subscription.setStatus(SubscriptionStatusEnum.SUSPENDED);
-        update(subscription);
-        for(Access access : subscription.getAccessPoints()){
-        	accessService.disable(access);
+        subscription = update(subscription);
+        for (Access access : subscription.getAccessPoints()) {
+            accessService.disable(access);
         }
+
+        return subscription;
     }
 
     @MeveoAudit
-    public void subscriptionReactivation(Subscription subscription, Date reactivationDate) throws IncorrectSusbcriptionException,
-            ElementNotResiliatedOrCanceledException, IncorrectServiceInstanceException, BusinessException {
+    public Subscription subscriptionReactivation(Subscription subscription, Date reactivationDate)
+            throws IncorrectSusbcriptionException, ElementNotResiliatedOrCanceledException, IncorrectServiceInstanceException, BusinessException {
 
         if (reactivationDate == null) {
             reactivationDate = new Date();
@@ -153,10 +169,10 @@ public class SubscriptionService extends BusinessService<Subscription> {
             }
         }
 
-        update(subscription);
-        
-        for(Access access : subscription.getAccessPoints()){
-        	accessService.enable(access);
+        subscription = update(subscription);
+
+        for (Access access : subscription.getAccessPoints()) {
+            accessService.enable(access);
         }
 
         if (subscription.getOffer().getBusinessOfferModel() != null && subscription.getOffer().getBusinessOfferModel().getScript() != null) {
@@ -166,16 +182,19 @@ public class SubscriptionService extends BusinessService<Subscription> {
                 log.error("Failed to execute a script {}", subscription.getOffer().getBusinessOfferModel().getScript().getCode(), e);
             }
         }
+
+        return subscription;
     }
 
     @MeveoAudit
-    private void terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, boolean applyAgreement,
-            boolean applyReimbursment, boolean applyTerminationCharges, String orderNumber) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+    private Subscription terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, boolean applyAgreement,
+            boolean applyReimbursment, boolean applyTerminationCharges, String orderNumber)
+            throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
         if (terminationDate == null) {
             terminationDate = new Date();
         }
-        
-		subscription = refreshOrRetrieve(subscription);
+
+        subscription = refreshOrRetrieve(subscription);
 
         List<ServiceInstance> serviceInstances = subscription.getServiceInstances();
         for (ServiceInstance serviceInstance : serviceInstances) {
@@ -193,8 +212,8 @@ public class SubscriptionService extends BusinessService<Subscription> {
         }
         subscription.setTerminationDate(terminationDate);
         subscription.setStatus(SubscriptionStatusEnum.RESILIATED);
-        update(subscription);
-        
+        subscription = update(subscription);
+
         for (Access access : subscription.getAccessPoints()) {
             access.setEndDate(terminationDate);
             accessService.update(access);
@@ -203,6 +222,8 @@ public class SubscriptionService extends BusinessService<Subscription> {
         if (subscription.getOffer().getBusinessOfferModel() != null && subscription.getOffer().getBusinessOfferModel().getScript() != null) {
             offerModelScriptService.terminateSubscription(subscription, subscription.getOffer().getBusinessOfferModel().getScript().getCode(), terminationDate, terminationReason);
         }
+
+        return subscription;
     }
 
     @SuppressWarnings("unchecked")
@@ -223,7 +244,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
         QueryBuilder qb = new QueryBuilder(Subscription.class, "s");
 
         try {
-            
+
             qb.addCriterionEntity("offer", offerTemplate);
 
             return (List<Subscription>) qb.getQuery(em).getResultList();
@@ -245,4 +266,16 @@ public class SubscriptionService extends BusinessService<Subscription> {
         }
     }
 
+    /**
+     * Get a list of subscription ids that are about to expire or have expired already
+     * 
+     * @return A list of subscription ids
+     */
+    public List<Long> getSubscriptionsToRenewOrNotify() {
+
+        List<Long> ids = getEntityManager().createNamedQuery("Subscription.getExpired", Long.class).setParameter("date", new Date()).getResultList();
+        ids.addAll(getEntityManager().createNamedQuery("Subscription.getToNotifyExpiration", Long.class).setParameter("date", new Date()).getResultList());
+
+        return ids;
+    }
 }

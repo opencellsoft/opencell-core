@@ -15,91 +15,90 @@ import org.meveo.model.wf.WFAction;
 import org.meveo.model.wf.WFTransition;
 import org.meveo.service.wf.WFActionService;
 
-
 @Stateless
 public class WFActionApi extends BaseApi {
 
-	@Inject
-	private  WFActionService  wfActionService;
-		
-	/**
-	 * 	
-	 * @param wfActionDto
+    @Inject
+    private WFActionService wfActionService;
 
-	 * @throws MissingParameterException
-	 * @throws EntityDoesNotExistsException
-	 * @throws EntityAlreadyExistsException
-	 * @throws BusinessException
-	 */
-	public void create(WFTransition wfTransition, WFActionDto wfActionDto) throws MissingParameterException, EntityDoesNotExistsException, EntityAlreadyExistsException, BusinessException {
-		validateDto(wfActionDto, false);
+    /**
+     * 
+     * @param wfActionDto
+     * 
+     * @throws MissingParameterException
+     * @throws EntityDoesNotExistsException
+     * @throws EntityAlreadyExistsException
+     * @throws BusinessException
+     */
+    public void create(WFTransition wfTransition, WFActionDto wfActionDto)
+            throws MissingParameterException, EntityDoesNotExistsException, EntityAlreadyExistsException, BusinessException {
+        validateDto(wfActionDto, false);
         WFAction wfAction = fromDTO(wfActionDto, null);
-		wfAction.setWfTransition(wfTransition);
-		wfActionService.create(wfAction);
-	}
- 
-	/**
-	 * 
-	 * @param wfActionDto
+        wfAction.setWfTransition(wfTransition);
+        wfActionService.create(wfAction);
+    }
 
-	 * @throws MissingParameterException
-	 * @throws EntityDoesNotExistsException
-	 * @throws BusinessException
+    /**
+     * 
+     * @param wfActionDto
+     * 
+     * @throws MissingParameterException
+     * @throws EntityDoesNotExistsException
+     * @throws BusinessException
      * @throws BusinessApiException
-	 */
-	public void update(WFTransition wfTransition, WFActionDto wfActionDto) throws MissingParameterException,
-                                         EntityDoesNotExistsException, BusinessException, BusinessApiException {
-		validateDto(wfActionDto, true);
+     */
+    public void update(WFTransition wfTransition, WFActionDto wfActionDto) throws MissingParameterException, EntityDoesNotExistsException, BusinessException, BusinessApiException {
+        validateDto(wfActionDto, true);
 
         WFAction wfAction = wfActionService.findWFActionByUUID(wfActionDto.getUuid());
-		
-		if(wfAction == null){
-			throw new EntityDoesNotExistsException(WFAction.class.getName() + "with uuid=" + wfActionDto.getUuid());
-		}
-        if (!wfTransition.equals(wfAction.getWfTransition())) {
-            throw new BusinessApiException();
-        }
-		
-		wfAction = fromDTO(wfActionDto, wfAction);
-		wfAction.setWfTransition(wfTransition);
-		wfActionService.update(wfAction);
-	}
-	
-	/**
-	 * 
-	 * @param wfActionDto
 
-	 * @throws MissingParameterException
-	 * @throws EntityDoesNotExistsException
-	 * @throws EntityAlreadyExistsException
-	 * @throws BusinessException
+        if (wfAction == null) {
+            throw new EntityDoesNotExistsException(WFAction.class.getName() + "with uuid=" + wfActionDto.getUuid());
+        }
+        if (!wfTransition.equals(wfAction.getWfTransition())) {
+            throw new BusinessApiException("Workflow transition does not match");
+        }
+
+        wfAction = fromDTO(wfActionDto, wfAction);
+        wfAction.setWfTransition(wfTransition);
+        wfActionService.update(wfAction);
+    }
+
+    /**
+     * 
+     * @param wfActionDto
+     * 
+     * @throws MissingParameterException
+     * @throws EntityDoesNotExistsException
+     * @throws EntityAlreadyExistsException
+     * @throws BusinessException
      * @throws BusinessApiException
-	 */
-	public void createOrUpdate(WFTransition wfTransition, WFActionDto wfActionDto) throws MissingParameterException, EntityDoesNotExistsException,
-            EntityAlreadyExistsException, BusinessException, BusinessApiException {
+     */
+    public void createOrUpdate(WFTransition wfTransition, WFActionDto wfActionDto)
+            throws MissingParameterException, EntityDoesNotExistsException, EntityAlreadyExistsException, BusinessException, BusinessApiException {
         WFAction wfAction = wfActionService.findWFActionByUUID(wfActionDto.getUuid());
         if (wfAction == null) {
             create(wfTransition, wfActionDto);
         } else {
             update(wfTransition, wfActionDto);
         }
-	}
+    }
 
     /**
      * 
      * @param wfActionDto
      * @throws MissingParameterException
      */
-	public void validateDto(WFActionDto wfActionDto, boolean isUpdate) throws MissingParameterException{
+    public void validateDto(WFActionDto wfActionDto, boolean isUpdate) throws MissingParameterException {
         if (isUpdate && StringUtils.isBlank(wfActionDto.getUuid())) {
             missingParameters.add("uuid");
         }
-		if (StringUtils.isBlank(wfActionDto.getActionEl())) {
-			missingParameters.add("actionEl");
-		}
-		
-		handleMissingParameters();	
-	}
+        if (StringUtils.isBlank(wfActionDto.getActionEl())) {
+            missingParameters.add("actionEl");
+        }
+
+        handleMissingParameters();
+    }
 
     protected WFAction fromDTO(WFActionDto dto, WFAction wfActionToUpdate) {
         WFAction wfAction = new WFAction();
@@ -112,7 +111,5 @@ public class WFActionApi extends BaseApi {
         wfAction.setConditionEl(dto.getConditionEl());
         return wfAction;
     }
-	
+
 }
-
-

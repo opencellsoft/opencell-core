@@ -103,6 +103,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
         } catch (Exception e) {
             processException(e, result);
+            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -145,6 +146,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
         } catch (Exception e) {
             processException(e, result);
+            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -167,6 +169,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 //            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
             processException(e, result);
+            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -187,6 +190,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
         } catch (Exception e) {
             processException(e, result);
+            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -210,6 +214,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 //            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
             processException(e, result);
+            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -229,6 +234,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
         } catch (Exception e) {
             processException(e, result);
+            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -247,6 +253,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
         } catch (Exception e) {
             processException(e, result);
+            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -265,6 +272,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
         } catch (Exception e) {
             processException(e, result);
+            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -282,6 +290,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
         } catch (Exception e) {
             processException(e, result);
+            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -299,6 +308,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
         } catch (Exception e) {
             processException(e, result);
+            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -316,6 +326,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
         } catch (Exception e) {
             processException(e, result);
+            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -333,6 +344,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
         } catch (Exception e) {
             processException(e, result);
+            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -350,6 +362,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
         } catch (Exception e) {
             processException(e, result);
+            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -368,6 +381,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
         } catch (Exception e) {
             processException(e, result);
+            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -385,6 +399,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
         } catch (Exception e) {
             processException(e, result);
+            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -402,6 +417,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
         } catch (Exception e) {
             processException(e, result);
+            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -419,6 +435,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
         } catch (Exception e) {
             processException(e, result);
+            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -436,6 +453,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
         } catch (Exception e) {
             processException(e, result);
+            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -454,6 +472,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         }
          catch (Exception e) {
             processException(e, result);
+            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();

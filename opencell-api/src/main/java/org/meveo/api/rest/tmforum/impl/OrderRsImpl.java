@@ -41,7 +41,9 @@ public class OrderRsImpl extends BaseRs implements OrderRs {
 
         } catch (Exception e) {
             processException(e, result);
+            responseBuilder.entity(result);
         }
+
 
 
         Response response = responseBuilder.build();
@@ -63,7 +65,9 @@ public class OrderRsImpl extends BaseRs implements OrderRs {
 
         } catch (Exception e) {
             processException(e, result);
+            responseBuilder.entity(result);
         }
+
 
 
         Response response = responseBuilder.build();
@@ -89,7 +93,9 @@ public class OrderRsImpl extends BaseRs implements OrderRs {
 //            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
             processException(e, result);
+            responseBuilder.entity(result);
         }
+
 
 
         Response response = responseBuilder.build();
@@ -110,7 +116,9 @@ public class OrderRsImpl extends BaseRs implements OrderRs {
 
         } catch (Exception e) {
             processException(e, result);
+            responseBuilder.entity(result);
         }
+
 
 
         Response response = responseBuilder.build();
@@ -132,8 +140,9 @@ public class OrderRsImpl extends BaseRs implements OrderRs {
 
         } catch (Exception e) {
             processException(e, result);
+            responseBuilder.entity(result);
         }
-
+        
 
         Response response = responseBuilder.build();
         log.debug("RESPONSE={}", response.getEntity());

@@ -40,7 +40,10 @@ import org.meveo.model.billing.TIP;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.PaymentMethod;
+import org.meveo.model.payments.TipPaymentMethod;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
@@ -68,7 +71,6 @@ public class PDFParametersConstruction {
     @ApplicationProvider
     private Provider appProvider;
     
-	private  String TIP_PAYMENT_METHOD = "TIP";
 	private  String PDF_DIR_NAME = "pdf";
 	private NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("FR"));
 	
@@ -89,10 +91,9 @@ public class PDFParametersConstruction {
 			BillingCycle billingCycle = null;
 			if (billingAccount!= null && billingAccount.getBillingCycle()!= null) {
 				billingCycle=billingAccount.getBillingCycle();
-			}			
-			String billingTemplateName = billingCycle != null
-					&& billingCycle.getBillingTemplateName() != null ? billingCycle
-					.getBillingTemplateName() : "default";
+			}	
+			
+            String billingTemplateName = InvoiceService.getInvoiceTemplateName(billingCycle, invoice.getInvoiceType());
 
 			ParamBean paramBean = ParamBean.getInstance();
 			String meveoDir = paramBean.getProperty("providers.rootDir",
@@ -109,8 +110,10 @@ public class PDFParametersConstruction {
 			parameters.put(PdfGeneratorConstants.CUSTOMER_ADDRESS_KEY,
 					getCustomerAddress(invoice));
 			parameters.put(PdfGeneratorConstants.SUBREPORT_DIR, templateDir);
-			if (TIP_PAYMENT_METHOD.equals(billingAccount.getPaymentMethod()
-					.toString())) {
+			
+			PaymentMethod preferedPaymentMethod =  billingAccount.getCustomerAccount().getPreferredPaymentMethod();
+
+            if (preferedPaymentMethod != null && preferedPaymentMethod instanceof TipPaymentMethod) {
 				BigDecimal netToPay = invoice.getNetToPay();
 				if (netToPay.signum() != 1) {
 					parameters.put(PdfGeneratorConstants.HIGH_OPTICAL_LINE_KEY,
@@ -118,8 +121,7 @@ public class PDFParametersConstruction {
 					parameters.put(PdfGeneratorConstants.LOW_OPTICAL_LINE_KEY,
 							" ");
 				} else {
-					BankCoordinates bankCoordinates = billingAccount
-							.getBankCoordinates();
+					BankCoordinates bankCoordinates = ((TipPaymentMethod)preferedPaymentMethod).getBankCoordinates();
 					if (bankCoordinates == null
 							|| bankCoordinates.getBankCode() == null) {
 						BankCoordinates bankCoordinatesEmpty = new BankCoordinates();

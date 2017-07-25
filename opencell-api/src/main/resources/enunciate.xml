@@ -10,7 +10,7 @@
     </api-classes>
 
     <modules>
-        <jackson disabled="false" honorJaxb="true" disableExamples="true" collapse-type-hierarchy="true" />
+        <jackson disabled="false" honorJaxb="true" disableExamples="false" collapse-type-hierarchy="true" />
         <jackson1 disabled="true" />
         <spring-web disabled="true" />
         <c-xml-client disabled="true" />

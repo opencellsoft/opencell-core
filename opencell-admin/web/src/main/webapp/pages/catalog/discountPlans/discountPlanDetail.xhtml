@@ -127,15 +127,12 @@
 							backingBean="#{discountPlanBean}" entity="#{discountPlanBean.discountPlanItem}"
 							showFormButtons="false" ajaxSubmit="true">
 
-							<div class="alert-box alert-box-notice">
-								#{messages['message.discountPlanItem.info.requiredFields']}</div>
-
 							<hftl:formField label="#{messages['discountPlanMatrix.itemCode']}"
 								field="code" required="true" />
 
 							<hftl:formField id="categorySelectId"
     							label="#{messages['invoiceSubCategory.invoiceCategory']}"
-    							field="invoiceCategory" valueLabelField="code" required="true"
+    							field="invoiceCategory" valueLabelField="code"
     							popup="true" popupId="searchInvoiceCategoryPopup" /> 
 
                             <hftl:decorateFormField id="invoiceSubCategories" fieldId="invoiceSubCategories" label="#{messages['charge.subCategory']}">
@@ -150,13 +147,13 @@
 								field="accountingCode" />
 								
 							<hftl:formField label="#{messages['discountPlanItem.expressionEl']}"
-							 field="expressionEl"  textArea="true" maxlength="2000"/>
+							 field="expressionEl"  textArea="true" maxlength="2000" rows="1" />
 
 							<hftl:formField label="#{messages['discountPlanItem.percent']}"
 								field="percent" required="true" minValue="-100" maxValue="100" />
 								 
 							<hftl:formField label="#{messages['discountPlanItem.percent']} EL"
-							 field="discountPercentEl"  textArea="true" maxlength="2000"/>
+							 field="discountPercentEl"  textArea="true" maxlength="2000" rows="1" />
 							 
 							<hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false"
 							field="disabled" isMessage="true" />

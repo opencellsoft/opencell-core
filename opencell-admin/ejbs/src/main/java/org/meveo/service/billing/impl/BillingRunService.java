@@ -54,6 +54,7 @@ import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.RejectedBillingAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
+import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
@@ -132,11 +133,13 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		BigDecimal creditDebitCardBillableBAAmountHT = BigDecimal.ZERO;
 
 		for (BillingAccount billingAccount : billingAccounts) {
-		    PaymentMethodEnum paymentMethod= billingAccount.getPaymentMethod();
-		    if(paymentMethod==null){
-		        paymentMethod=billingAccount.getCustomerAccount().getPaymentMethod();
-		    }
-			switch (paymentMethod) {
+		    
+		    PaymentMethod preferedPaymentMethod =  billingAccount.getCustomerAccount().getPreferredPaymentMethod();
+            PaymentMethodEnum paymentMethodEnum = null;
+            if (preferedPaymentMethod != null) {
+                paymentMethodEnum = preferedPaymentMethod.getPaymentType();
+            }
+			switch (paymentMethodEnum) {
 			case CHECK:
 				checkBANumber++;
 				break;
@@ -161,11 +164,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		}
 
 		for (BillingAccount billingAccount : billingRun.getBillableBillingAccounts()) {
-            PaymentMethodEnum paymentMethod= billingAccount.getPaymentMethod();
-            if(paymentMethod==null){
-                paymentMethod=billingAccount.getCustomerAccount().getPaymentMethod();
+            PaymentMethod preferedPaymentMethod =  billingAccount.getCustomerAccount().getPreferredPaymentMethod();
+            PaymentMethodEnum paymentMethodEnum = null;
+            if (preferedPaymentMethod != null) {
+                paymentMethodEnum = preferedPaymentMethod.getPaymentType();
             }
-            switch (paymentMethod) {
+            switch (paymentMethodEnum) {
 			case CHECK:
 				checkBillableBANumber++;
 				checkBillableBAAmountHT = checkBillableBAAmountHT.add(billingAccount.getBrAmountWithoutTax());

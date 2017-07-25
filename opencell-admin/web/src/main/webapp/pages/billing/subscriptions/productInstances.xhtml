@@ -1,93 +1,57 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-	xmlns:h="http://xmlns.jcp.org/jsf/html"
-	xmlns:f="http://xmlns.jcp.org/jsf/core"
-	xmlns:p="http://primefaces.org/ui"
-	xmlns:s="http://jboss.org/seam/faces"
-	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
-	xmlns:o="http://omnifaces.org/ui"
-	xmlns:of="http://omnifaces.org/functions" xmlns:hftl="http://hftl.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:p="http://primefaces.org/ui" xmlns:s="http://jboss.org/seam/faces" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:o="http://omnifaces.org/ui" xmlns:of="http://omnifaces.org/functions"
+    xmlns:hftl="http://hftl.org">
 
 <ui:composition>
 
-	<p:tab id="productInstancesTab"
-		title="#{messages['userAccount.tab.productInstances']}" rendered="#{not empty subscriptionBean.entity.id}">
-		<p:messages id="applyProductMessages" />
-		<p:outputPanel id="productInstancePanel">
-			<h:form id="productInstanceResultsForm" prependId="false">
-				<p:dataTable resizableColumns="true"
-					value="#{backingBean.getProductInstances()}" var="entity"
-					paginator="true" rows="10" lazy="true"
-					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-					rowsPerPageTemplate="10,20,30,50" styleClass="custom-grid">
-					<hftl:column label="#{messages['chargeInstance.code']}"
-						field="code" noLinkToView="true" />
-					<hftl:column label="#{messages['chargeInstance.description']}"
-						field="description" />
-					<hftl:column
-						label="#{messages['chargeApplication.applicationDate']}"
-						field="applicationDate" isDate="true" />
-					<hftl:column label="#{messages['commons.quantity']}"
-						field="quantity" converter="bigDecimal4DigitsConverter" />
-					<p:column styleClass="actions-column">
-						<f:facet name="header">
-							<h:outputText value="#{messages['commons.actions']}" />
-						</f:facet>
-						<p:commandButton id="viewProductInstanceDetailLink"
-							action="#{subscriptionBean.setAndRefreshProductInstance(entity)}"
-							oncomplete="PF('dlg_productInstanceDetailPopup').show()"
-							update=":productInstanceDetailPopupPanel" icon="ui-icon-document">
-						</p:commandButton>
-						<p:tooltip for="viewProductInstanceDetailLink"
-							value="#{messages['commons.view']}" />
-					</p:column>
-				</p:dataTable>
+    <p:tab id="productInstancesTab" title="#{messages['userAccount.tab.productInstances']}" rendered="#{not parentBackingBean.entity.transient}">
+        <h:panelGroup id="productInstances">
+            <p:messages id="applyProductMessages" />
+            <h:form id="productInstanceResultsForm">
+                <p:dataTable resizableColumns="true" value="#{parentBackingBean.getProductInstances()}" var="entity" paginator="true" rows="10" lazy="true"
+                    paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="10,20,30,50"
+                    styleClass="custom-grid">
+                    <hftl:column label="#{messages['chargeInstance.code']}" field="code" noLinkToView="true" />
+                    <hftl:column label="#{messages['chargeInstance.description']}" field="description" />
+                    <hftl:column label="#{messages['chargeApplication.applicationDate']}" field="applicationDate" isDate="true" />
+                    <hftl:column label="#{messages['commons.quantity']}" field="quantity" converter="bigDecimal4DigitsConverter" />
+                    <p:column styleClass="actions-column" headerText="#{messages['commons.actions']}">
+                        <p:commandButton id="viewProductInstanceDetailLink" action="#{parentBackingBean.editProductInstance(entity)}" update="#{parentIdPath}:applyProductPanel" icon="ui-icon-document">
+                        </p:commandButton>
+                        <p:tooltip for="viewProductInstanceDetailLink" value="#{messages['commons.view']}" />
+                    </p:column>
+                </p:dataTable>
 
-				<p:commandButton value="#{messages['action.applyProduct']}"
-					actionListener="#{backingBean.initProductInstance()}"
-					update=":subscriptionTab:applyProductPanel"
-					oncomplete="PF('applyProductPanel').toggle()" />
-			</h:form>
+                <p:commandButton value="#{messages['action.applyProduct']}" actionListener="#{parentBackingBean.initProductInstance()}" update="#{parentIdPath}:applyProductPanel"
+                    disabled="#{!parentEntityIsEditable}" />
+            </h:form>
 
-			<p:panel widgetVar="applyProductPanel" id="applyProductPanel"
-				update=":subscriptionTab:applyProductPanel" toggleable="true"
-				collapsed="true">
-				<hftl:formPanel edit="true" backingBean="#{backingBean}"
-					entity="#{backingBean.productInstance}" styleClass="formPanel"
-					formId="applyProductForm" showFormButtons="false">
-					<hftl:formField label="#{messages['commons.quantity']}"
-						field="quantity" required="true" width="10"/>
-					<hftl:formField
-						label="#{messages['chargeApplication.applicationDate']}"
-						field="applicationDate" required="true" listenerUpdate="productTemplatePopup"/>
-					<hftl:formField id="productTemplateSelectedId"
-						label="#{messages['productTemplate.title']}"
-						field="productTemplate" popup="true" required="true"
-						popupId="productTemplatePopup" valueLabelField="code" width="30"/>
+            <h:panelGroup id="applyProductPanel">
+                <hftl:formPanel edit="#{parentEntityIsEditable}" backingBean="#{parentBackingBean}" entity="#{parentBackingBean.productInstance}" styleClass="formPanel" formId="applyProductForm"
+                    showFormButtons="false" rendered="#{parentBackingBean.productInstance!=null}">
+                    <hftl:formField label="#{messages['commons.quantity']}" field="quantity" required="true" width="10" allowEdit="false" />
+                    <hftl:formField label="#{messages['chargeApplication.applicationDate']}" field="applicationDate" required="true" listenerUpdate="productTemplatePopup" allowEdit="false" />
+                    <hftl:formField id="productTemplateSelectedId" label="#{messages['productTemplate.title']}" field="productTemplate" popup="true" required="true" popupId="productTemplatePopup"
+                        valueLabelField="code" width="30" allowEdit="false" />
 
-					<p:outputPanel id="productCF">
-						<hftl:customFields backingBean="#{productInstanceBean}"
-							entity="#{subscriptionBean.productInstance}"
-							messagesId=":subscriptionTab:applyProductForm:messages" prefix="pi" />
-					</p:outputPanel>
+                    <h:panelGroup id="productCF">
+                        <hftl:customFields backingBean="#{parentBackingBean}" entity="#{parentBackingBean.productInstance}" messagesId="#{parentIdPath}:applyProductForm:messages" prefix="pi" />
+                    </h:panelGroup>
 
-					<h:panelGroup layout="block" styleClass="form-panel-actions">
-						<p:commandButton value="#{messages['action.save']}"
-							action="#{backingBean.applyProduct()}"
-							oncomplete="if (args &amp;&amp; !args.validationFailed){PF('applyProductPanel').toggle();}"
-							update=":subscriptionTab:productInstanceResultsForm :subscriptionTab:applyProductMessages"></p:commandButton>
-						<p:commandButton value="#{messages['button.closeButton']}"
-							action="#{backingBean.initProductInstance()}"
-							update=":subscriptionTab:applyProductForm"
-							oncomplete="PF('applyProductPanel').close()" immediate="true" />
-					</h:panelGroup>
-				</hftl:formPanel>
-			</p:panel>
-		</p:outputPanel>
-	</p:tab>
+                    <h:panelGroup layout="block" styleClass="form-panel-actions">
+                        <p:commandButton value="#{messages['action.save']}" action="#{parentBackingBean.saveProductInstance()}" update="#{parentIdPath}:productInstances"
+                            disabled="#{!parentEntityIsEditable}" />
+                        <p:commandButton value="#{messages['button.closeButton']}" update="#{parentIdPath}:applyProductPanel" action="#{parentBackingBean.cancelProductInstanceEdit()}" immediate="true">
+                            <!--                             <f:setPropertyActionListener value="#{null}" target="#{parentBackingBean.productInstance}" /> -->
+                        </p:commandButton>
+                    </h:panelGroup>
+                </hftl:formPanel>
+            </h:panelGroup>
+        </h:panelGroup>
+    </p:tab>
 
 </ui:composition>
 

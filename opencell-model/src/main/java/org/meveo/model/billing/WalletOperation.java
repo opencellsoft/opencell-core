@@ -254,10 +254,6 @@ public class WalletOperation extends BusinessEntity {
 		this.wallet = wallet;
 	}
 
-	public void setDescription(String d) {
-		super.setDescription(d);
-	}
-
 	public Date getOperationDate() {
 		return operationDate;
 	}

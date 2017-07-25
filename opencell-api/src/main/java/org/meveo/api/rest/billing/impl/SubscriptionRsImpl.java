@@ -1,5 +1,7 @@
 package org.meveo.api.rest.billing.impl;
 
+import java.util.List;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -18,9 +20,13 @@ import org.meveo.api.dto.billing.SubscriptionsListDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.billing.UpdateServicesRequestDto;
+import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
+import org.meveo.api.dto.response.billing.GetDueDateDelayResponseDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsResponseDto;
+import org.meveo.api.dto.response.catalog.GetOneShotChargesResponseDto;
+import org.meveo.api.dto.response.catalog.GetServiceInstanceResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.billing.SubscriptionRs;
 import org.meveo.api.rest.impl.BaseRs;
@@ -256,4 +262,52 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 
         return result;
     }
+
+	@Override
+	public GetServiceInstanceResponseDto findServiceInstance(String subscriptionCode, String serviceInstanceCode) {
+		GetServiceInstanceResponseDto result = new GetServiceInstanceResponseDto();
+
+		try {
+			result.setServiceInstance(subscriptionApi.findServiceInstance(subscriptionCode, serviceInstanceCode));
+		} catch (Exception e) {
+			processException(e, result.getActionStatus());
+		}
+
+		return result;
+	}
+
+	@Override
+	public GetDueDateDelayResponseDto findDueDateDelay(String subscriptionCode, String invoiceNumber,
+			String invoiceTypeCode, String orderCode) {
+		GetDueDateDelayResponseDto result = new GetDueDateDelayResponseDto();
+
+		try {
+			result.setDueDateDelay(
+					subscriptionApi.getDueDateDelay(subscriptionCode, invoiceNumber, invoiceTypeCode, orderCode));
+		} catch (Exception e) {
+			processException(e, result.getActionStatus());
+		}
+
+		return result;
+	}
+	
+
+    
+    
+    /**
+     * Get all one shot charge others.
+     * @see org.meveo.api.rest.billing.SubscriptionRs#getOneShotChargeOthers()
+     */
+    public GetOneShotChargesResponseDto getOneShotChargeOthers() {
+    	GetOneShotChargesResponseDto result = new GetOneShotChargesResponseDto();
+    	try {
+            List<OneShotChargeTemplateDto> oneShotChargeOthers = subscriptionApi.getOneShotChargeOthers();
+            result.getOneshotCharges().addAll(oneShotChargeOthers);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
 }

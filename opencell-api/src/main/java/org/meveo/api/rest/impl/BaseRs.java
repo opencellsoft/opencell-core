@@ -34,7 +34,6 @@ import org.meveo.util.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import org.meveo.api.rest.exception.NotAuthorizedException;
 import org.meveo.api.rest.exception.NotFoundException;
 import org.meveo.api.rest.exception.BadRequestException;
@@ -42,7 +41,6 @@ import org.meveo.api.rest.exception.NotAcceptableException;
 import org.meveo.api.rest.exception.NotAllowedException;
 import org.meveo.api.rest.exception.InternalServerErrorException;
 import org.meveo.api.rest.exception.ForbiddenException;
-
 
 
 /**
@@ -142,7 +140,7 @@ public abstract class BaseRs implements IBaseRs {
             log.warn("Failed to execute API", e);
 
             String message = e.getMessage();
-            MeveoApiErrorCodeEnum errorCode = MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION;
+            MeveoApiErrorCodeEnum errorCode = e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION;
             Throwable cause = e;
 
             // See if can get to the root of the exception cause
