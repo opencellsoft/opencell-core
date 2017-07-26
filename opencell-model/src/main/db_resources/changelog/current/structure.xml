@@ -136,11 +136,10 @@
             <column name="issuer_number" type="varchar(50)" />
             <column name="ics" type="varchar(35)" />
         </addColumn>
-        <dropNotNullConstraint tableName="ar_payment_token" columnName="card_type" />
-        <dropNotNullConstraint tableName="ar_payment_token" columnName="owner" />
-        <dropNotNullConstraint tableName="ar_payment_token" columnName="month_expiration" />
-        <dropNotNullConstraint tableName="ar_payment_token" columnName="year_expiration" />
-        <dropNotNullConstraint tableName="ar_payment_token" columnName="card_type" />
+        <dropNotNullConstraint tableName="ar_payment_token" columnName="card_type" columnDataType="VARCHAR(60)" />
+        <dropNotNullConstraint tableName="ar_payment_token" columnName="owner" columnDataType="VARCHAR(256)" />
+        <dropNotNullConstraint tableName="ar_payment_token" columnName="month_expiration" columnDataType="INT4" />
+        <dropNotNullConstraint tableName="ar_payment_token" columnName="year_expiration" columnDataType="INT4" />
         <dropColumn tableName="billing_billing_account" columnName="payment_term" />
         <dropColumn tableName="ar_customer_account" columnName="payment_method" />
     </changeSet>
@@ -185,8 +184,16 @@
         </sql>
     </changeSet>
 
-    <changeSet id="#2406_20170710-3" author="AndriusKarpavicius">
+    <changeSet id="#2406_20170710-30" author="AndriusKarpavicius" dbms="postgresql">
         <sql>update ar_payment_token set is_default=1 where id in (select max(id)from ar_payment_token group by customer_account_id)</sql>
+    </changeSet>
+
+    <changeSet id="#2406_20170710-31" author="AndriusKarpavicius" dbms="mysql">
+        <sql>update ar_payment_token set is_default=0</sql>
+        <sql>update ar_payment_token pt1 inner join (select max(pt.id) as maxid from ar_payment_token pt group by pt.customer_account_id) pt3 on pt1.id=pt3.maxid set pt1.is_default=1</sql>
+    </changeSet>
+
+    <changeSet id="#2406_20170710-3" author="AndriusKarpavicius">
         <dropColumn tableName="billing_billing_account" columnName="bank_code" />
         <dropColumn tableName="billing_billing_account" columnName="branch_code" />
         <dropColumn tableName="billing_billing_account" columnName="account_number" />
@@ -214,7 +221,7 @@
     </changeSet>
 
     <changeSet id="#2406_20170715" author="AndriusKarpavicius">
-        <dropNotNullConstraint tableName="ar_payment_token" columnName="customer_account_id" />
+        <dropNotNullConstraint tableName="ar_payment_token" columnName="customer_account_id" columnDataType="BIGINT" />
         <addColumn tableName="ord_order">
             <column name="payment_method_id" type="BIGINT" />
         </addColumn>

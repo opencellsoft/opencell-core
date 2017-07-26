@@ -177,7 +177,7 @@ public class EDR extends BaseEntity {
 	@ManyToOne()
 	private EDR headerEDR;
 	
-	@Column(name = "EXTRA_PARAMETER")
+	@Column(name = "EXTRA_PARAMETER", columnDefinition = "TEXT")
 	private String extraParameter;
 	
 	public Subscription getSubscription() {
