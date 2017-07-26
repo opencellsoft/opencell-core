@@ -29,7 +29,6 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.Auditable;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
@@ -155,10 +154,7 @@ public class Invoice4_2Api extends BaseApi {
         invoice.setBillingAccount(billingAccount);
 
         // no billing run here, use auditable.created as xml dir
-        Auditable auditable = new Auditable(currentUser);
-        invoice.setAuditable(auditable);
-        Date invoiceDate = new Date();
-        invoice.setInvoiceDate(invoiceDate);
+        invoice.setInvoiceDate(new Date());
         invoice.setDueDate(invoiceDTO.getDueDate());
         
         PaymentMethod preferedPaymentMethod = billingAccount.getCustomerAccount().getPreferredPaymentMethod();
@@ -184,7 +180,7 @@ public class Invoice4_2Api extends BaseApi {
             invoice.setAdjustedInvoice(commercialInvoice);
            
         } 
-        invoice.setInvoiceNumber(invoiceService.getInvoiceNumber(invoice));
+        invoice.setInvoiceNumber(invoiceService.generateInvoiceNumber(invoice));
         
         invoiceService.create(invoice);
 

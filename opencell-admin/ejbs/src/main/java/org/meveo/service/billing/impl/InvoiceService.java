@@ -170,6 +170,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @Inject
     private RecordedInvoiceService recordedInvoiceService;
 
+    @Inject
+    private ServiceSingleton serviceSingleton;
+
     private String PDF_DIR_NAME = "pdf";
     private String ADJUSTEMENT_DIR_NAME = "invoiceAdjustmentPdf";
     private String INVOICE_TEMPLATE_FILENAME = "invoice.jasper";
@@ -244,10 +247,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     public void setInvoiceNumber(Invoice invoice) throws BusinessException {
-        invoice.setInvoiceNumber(getInvoiceNumber(invoice));
+        invoice.setInvoiceNumber(generateInvoiceNumber(invoice));
     }
 
-    public String getInvoiceNumber(Invoice invoice) throws BusinessException {
+    public String generateInvoiceNumber(Invoice invoice) throws BusinessException {
         String cfName = "INVOICE_SEQUENCE_" + invoice.getInvoiceType().getCode().toUpperCase();
         if (invoiceTypeService.getAdjustementCode().equals(invoice.getInvoiceType().getCode())) {
             cfName = "INVOICE_ADJUSTMENT_SEQUENCE";
@@ -260,7 +263,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         InvoiceType invoiceType = invoiceTypeService.refreshOrRetrieve(invoice.getInvoiceType());
         Seller seller = chooseSeller(cust.getSeller(), cfName, invoice.getInvoiceDate(), invoiceType);
 
-        Sequence sequence = getSequence(invoice, seller, cfName, 1, true);
+        Sequence sequence = serviceSingleton.getInvoiceNumberSequence(invoice.getInvoiceDate(), invoice.getInvoiceType().getId(), seller, cfName, 1);
         String prefix = sequence.getPrefixEL();
         int sequenceSize = sequence.getSequenceSize();
 
@@ -274,65 +277,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoice.setAlias(invoiceNumber);
 
         return (prefix + invoiceNumber);
-    }
-
-    public synchronized Sequence getSequence(Invoice invoice, Seller seller, String cfName, int step, boolean increment) throws BusinessException {
-        Long currentNbFromCF = null;
-        Object currentValObj = customFieldInstanceService.getCFValue(seller, cfName, invoice.getInvoiceDate());
-        if (currentValObj != null) {
-            currentNbFromCF = (Long) currentValObj;
-            if (increment) {
-                currentNbFromCF = currentNbFromCF + step;
-                customFieldInstanceService.setCFValue(seller, cfName, currentNbFromCF, invoice.getInvoiceDate());
-                customFieldInstanceService.commit();
-            }
-        } else {
-            currentValObj = customFieldInstanceService.getCFValue(appProvider, cfName, invoice.getInvoiceDate());
-            if (currentValObj != null) {
-                currentNbFromCF = (Long) currentValObj;
-                if (increment) {
-                    currentNbFromCF = currentNbFromCF + step;
-                    customFieldInstanceService.setCFValue(appProvider, cfName, currentNbFromCF, invoice.getInvoiceDate());
-                    customFieldInstanceService.commit();
-                }
-            }
-        }
-
-        InvoiceType invoiceType = invoice.getInvoiceType();
-        invoiceType = invoiceTypeService.refreshOrRetrieve(invoiceType);
-        Sequence sequence = null;
-        if (invoiceType.getSellerSequence() != null && invoiceType.isContainsSellerSequence(seller)) {
-            sequence = invoiceType.getSellerSequenceByType(seller).getSequence();
-            if (increment && currentNbFromCF == null) {
-                sequence.setCurrentInvoiceNb((sequence.getCurrentInvoiceNb() == null ? 0L : sequence.getCurrentInvoiceNb()) + step);
-                invoiceType.getSellerSequenceByType(seller).setSequence(sequence);
-                invoiceTypeService.update(invoiceType);
-            }
-        } else {
-            if (invoiceType.getSequence() != null) {
-                sequence = invoiceType.getSequence();
-                if (increment && currentNbFromCF == null) {
-                    sequence.setCurrentInvoiceNb((sequence.getCurrentInvoiceNb() == null ? 0L : sequence.getCurrentInvoiceNb()) + step);
-                    invoiceType.setSequence(sequence);
-                    invoiceTypeService.update(invoiceType);
-                }
-            }
-        }
-        if (sequence == null) {
-            sequence = new Sequence();
-            sequence.setCurrentInvoiceNb(1L);
-            sequence.setSequenceSize(9);
-            sequence.setPrefixEL("");
-            invoiceType.setSequence(sequence);
-            invoiceTypeService.update(invoiceType);
-        }
-        if (currentNbFromCF != null) {
-            sequence.setCurrentInvoiceNb(currentNbFromCF);
-        }
-        log.debug("getSequence:" + sequence);
-        invoiceTypeService.commit();
-
-        return sequence;
     }
 
     /**
@@ -1331,7 +1275,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         Invoice invoice = createAgregatesAndInvoice(billingAccount, null, ratedTxFilter, orderNumber, invoiceDate, lastTransactionDate);
         if (!isDraft) {
-            invoice.setInvoiceNumber(getInvoiceNumber(invoice));
+            invoice.setInvoiceNumber(generateInvoiceNumber(invoice));
         }
 
         if (produceXml) {
@@ -1437,7 +1381,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         Invoice invoice = findById(invoiceId);
 
-        invoice.setInvoiceNumber(getInvoiceNumber(invoice));
+        invoice.setInvoiceNumber(generateInvoiceNumber(invoice));
         BillingAccount billingAccount = invoice.getBillingAccount();
         Date initCalendarDate = billingAccount.getSubscriptionDate();
         if (initCalendarDate == null) {

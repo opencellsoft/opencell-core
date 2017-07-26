@@ -423,7 +423,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 			entity.setBillingAccount(getFreshBA());
 			entity.setDetailedInvoice(isDetailed());
 	
-			entity.setInvoiceNumber(invoiceService.getInvoiceNumber(entity));
+			entity.setInvoiceNumber(invoiceService.generateInvoiceNumber(entity));
 			super.saveOrUpdate(false);
 			invoiceService.commit();
 			entity = invoiceService.refreshOrRetrieve(entity);
