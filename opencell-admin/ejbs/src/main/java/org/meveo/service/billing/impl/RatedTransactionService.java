@@ -730,7 +730,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
 	@SuppressWarnings("unchecked")
 	public List<RatedTransaction> getNotBilledRatedTransactions(Long walletOperationId) { 
-		QueryBuilder qb = new QueryBuilder("from RatedTransaction c");
+		QueryBuilder qb = new QueryBuilder(RatedTransaction.class, "c");
 		qb.addCriterionEntity("c.walletOperationId", walletOperationId);
 		qb.addCriterion("c.status", "!=", RatedTransactionStatusEnum.BILLED, false); 
 		try {
@@ -747,7 +747,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
 	@SuppressWarnings("unchecked")
 	public List<RatedTransaction> getRatedTransactionsByBillingRun(BillingRun BillingRun) { 
-		QueryBuilder qb = new QueryBuilder("from RatedTransaction c");
+		QueryBuilder qb = new QueryBuilder(RatedTransaction.class, "c");
 		qb.addCriterionEntity("c.billingRun", BillingRun); 
 		try {
 			return (List<RatedTransaction>) qb.getQuery(getEntityManager())

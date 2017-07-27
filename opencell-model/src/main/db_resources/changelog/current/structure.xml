@@ -230,4 +230,8 @@
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_payment_token" />
     </changeSet>
 
+    <changeSet id="#2770_20170726" author="AndriusKarpavicius">
+        <dropUniqueConstraint tableName="billing_invoice_type" constraintName="uk_billing_invoice_type" />
+        <addUniqueConstraint columnNames="code" constraintName="uk_billing_invoice_type" deferrable="false" disabled="false" initiallyDeferred="false" tableName="billing_invoice_type" />
+    </changeSet>
 </databaseChangeLog> 

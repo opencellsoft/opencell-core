@@ -55,260 +55,273 @@ import org.meveo.service.base.ValueExpressionWrapper;
 @Stateless
 public class BillingAccountService extends AccountService<BillingAccount> {
 
-	@Inject
-	private UserAccountService userAccountService;
+    @Inject
+    private UserAccountService userAccountService;
 
-	@EJB
-	private BillingRunService billingRunService;
+    @EJB
+    private BillingRunService billingRunService;
 
-	public void initBillingAccount(BillingAccount billingAccount) {
-		billingAccount.setStatus(AccountStatusEnum.ACTIVE);
-		if (billingAccount.getSubscriptionDate() == null) {
-			billingAccount.setSubscriptionDate(new Date());
-		}
+    public void initBillingAccount(BillingAccount billingAccount) {
+        billingAccount.setStatus(AccountStatusEnum.ACTIVE);
+        if (billingAccount.getSubscriptionDate() == null) {
+            billingAccount.setSubscriptionDate(new Date());
+        }
 
-		if (billingAccount.getNextInvoiceDate() == null) {
-			billingAccount.setNextInvoiceDate(new Date());
-		}
-	}
+        if (billingAccount.getNextInvoiceDate() == null) {
+            billingAccount.setNextInvoiceDate(new Date());
+        }
+    }
 
-	public void createBillingAccount(BillingAccount billingAccount) throws BusinessException {
+    public void createBillingAccount(BillingAccount billingAccount) throws BusinessException {
 
-	    billingAccount.setStatus(AccountStatusEnum.ACTIVE);
-		if (billingAccount.getSubscriptionDate() == null) {
-			billingAccount.setSubscriptionDate(new Date());
-		}
+        billingAccount.setStatus(AccountStatusEnum.ACTIVE);
+        if (billingAccount.getSubscriptionDate() == null) {
+            billingAccount.setSubscriptionDate(new Date());
+        }
 
-		if (billingAccount.getNextInvoiceDate() == null) {
-			billingAccount.setNextInvoiceDate(new Date());
-		}
+        if (billingAccount.getNextInvoiceDate() == null) {
+            billingAccount.setNextInvoiceDate(new Date());
+        }
 
-		create(billingAccount);
-	}
+        create(billingAccount);
+    }
 
-	public BillingAccount updateElectronicBilling(BillingAccount billingAccount, Boolean electronicBilling) throws BusinessException {
-		billingAccount.setElectronicBilling(electronicBilling);
-		return update(billingAccount);
-	}
+    public BillingAccount updateElectronicBilling(BillingAccount billingAccount, Boolean electronicBilling) throws BusinessException {
+        billingAccount.setElectronicBilling(electronicBilling);
+        return update(billingAccount);
+    }
 
-	public BillingAccount updateBillingAccountDiscount(BillingAccount billingAccount, BigDecimal ratedDiscount)
-			throws BusinessException {
-		billingAccount.setDiscountRate(ratedDiscount);
-		return update(billingAccount);
-	}
+    public BillingAccount updateBillingAccountDiscount(BillingAccount billingAccount, BigDecimal ratedDiscount) throws BusinessException {
+        billingAccount.setDiscountRate(ratedDiscount);
+        return update(billingAccount);
+    }
 
-	@MeveoAudit
-	public BillingAccount billingAccountTermination(BillingAccount billingAccount, Date terminationDate,
-			SubscriptionTerminationReason terminationReason) throws BusinessException {
-		if (terminationDate == null) {
-			terminationDate = new Date();
-		}
-		
-		List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
-		for (UserAccount userAccount : userAccounts) {
-			userAccountService.userAccountTermination(userAccount, terminationDate, terminationReason);
-		}
-		billingAccount.setTerminationReason(terminationReason);
-		billingAccount.setTerminationDate(terminationDate);
-		billingAccount.setStatus(AccountStatusEnum.TERMINATED);
-		return update(billingAccount);
-	}
+    @MeveoAudit
+    public BillingAccount billingAccountTermination(BillingAccount billingAccount, Date terminationDate, SubscriptionTerminationReason terminationReason) throws BusinessException {
+        if (terminationDate == null) {
+            terminationDate = new Date();
+        }
 
-	@MeveoAudit
-	public BillingAccount billingAccountCancellation(BillingAccount billingAccount, Date terminationDate)
-			throws BusinessException {
-		if (terminationDate == null) {
-			terminationDate = new Date();
-		}
-		List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
-		for (UserAccount userAccount : userAccounts) {
-			userAccountService.userAccountCancellation(userAccount, terminationDate);
-		}
-		billingAccount.setTerminationDate(terminationDate);
-		billingAccount.setStatus(AccountStatusEnum.CANCELED);
-		return update(billingAccount);
-	}
+        List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
+        for (UserAccount userAccount : userAccounts) {
+            userAccountService.userAccountTermination(userAccount, terminationDate, terminationReason);
+        }
+        billingAccount.setTerminationReason(terminationReason);
+        billingAccount.setTerminationDate(terminationDate);
+        billingAccount.setStatus(AccountStatusEnum.TERMINATED);
+        return update(billingAccount);
+    }
 
-	@MeveoAudit
-	public BillingAccount billingAccountReactivation(BillingAccount billingAccount, Date activationDate)
-			throws BusinessException {
-		if (activationDate == null) {
-			activationDate = new Date();
-		}
-		if (billingAccount.getStatus() != AccountStatusEnum.TERMINATED
-				&& billingAccount.getStatus() != AccountStatusEnum.CANCELED) {
-			throw new ElementNotResiliatedOrCanceledException("billing account", billingAccount.getCode());
-		}
+    @MeveoAudit
+    public BillingAccount billingAccountCancellation(BillingAccount billingAccount, Date terminationDate) throws BusinessException {
+        if (terminationDate == null) {
+            terminationDate = new Date();
+        }
+        List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
+        for (UserAccount userAccount : userAccounts) {
+            userAccountService.userAccountCancellation(userAccount, terminationDate);
+        }
+        billingAccount.setTerminationDate(terminationDate);
+        billingAccount.setStatus(AccountStatusEnum.CANCELED);
+        return update(billingAccount);
+    }
 
-		billingAccount.setStatus(AccountStatusEnum.ACTIVE);
-		return update(billingAccount);
-	}
+    @MeveoAudit
+    public BillingAccount billingAccountReactivation(BillingAccount billingAccount, Date activationDate) throws BusinessException {
+        if (activationDate == null) {
+            activationDate = new Date();
+        }
+        if (billingAccount.getStatus() != AccountStatusEnum.TERMINATED && billingAccount.getStatus() != AccountStatusEnum.CANCELED) {
+            throw new ElementNotResiliatedOrCanceledException("billing account", billingAccount.getCode());
+        }
 
-	@MeveoAudit
-	public BillingAccount closeBillingAccount(BillingAccount billingAccount) throws BusinessException {
+        billingAccount.setStatus(AccountStatusEnum.ACTIVE);
+        return update(billingAccount);
+    }
 
-		/**
-		 * *
-		 * 
-		 * @Todo : ajouter la condition : l'encours de facturation est vide :
-		 */
-		if (billingAccount.getStatus() != AccountStatusEnum.TERMINATED
-				&& billingAccount.getStatus() != AccountStatusEnum.CANCELED) {
-			throw new ElementNotResiliatedOrCanceledException("billing account", billingAccount.getCode());
-		}
-		billingAccount.setStatus(AccountStatusEnum.CLOSED);
-		return update(billingAccount);
-	}
+    @MeveoAudit
+    public BillingAccount closeBillingAccount(BillingAccount billingAccount) throws BusinessException {
 
-	public List<Invoice> invoiceList(BillingAccount billingAccount) throws BusinessException {
-		List<Invoice> invoices = billingAccount.getInvoices();
-		Collections.sort(invoices, new Comparator<Invoice>() {
-			public int compare(Invoice c0, Invoice c1) {
+        /**
+         * *
+         * 
+         * @Todo : ajouter la condition : l'encours de facturation est vide :
+         */
+        if (billingAccount.getStatus() != AccountStatusEnum.TERMINATED && billingAccount.getStatus() != AccountStatusEnum.CANCELED) {
+            throw new ElementNotResiliatedOrCanceledException("billing account", billingAccount.getCode());
+        }
+        billingAccount.setStatus(AccountStatusEnum.CLOSED);
+        return update(billingAccount);
+    }
 
-				return c1.getInvoiceDate().compareTo(c0.getInvoiceDate());
-			}
-		});
-		return invoices;
-	}
+    public List<Invoice> invoiceList(BillingAccount billingAccount) throws BusinessException {
+        List<Invoice> invoices = billingAccount.getInvoices();
+        Collections.sort(invoices, new Comparator<Invoice>() {
+            public int compare(Invoice c0, Invoice c1) {
 
-	public Invoice InvoiceDetail(String invoiceReference) {
-		try {
-			QueryBuilder qb = new QueryBuilder(Invoice.class, "i");
-			qb.addCriterion("i.invoiceNumber", "=", invoiceReference, true);
-			return (Invoice) qb.getQuery(getEntityManager()).getSingleResult();
-		} catch (NoResultException ex) {
-			log.debug("invoice search returns no result for reference={}.", invoiceReference);
-		}
-		return null;
-	}
+                return c1.getInvoiceDate().compareTo(c0.getInvoiceDate());
+            }
+        });
+        return invoices;
+    }
 
-	public InvoiceSubCategory invoiceSubCategoryDetail(String invoiceReference, String invoiceSubCategoryCode) {
-		// TODO : need to be more clarified
-		return null;
-	}
+    public Invoice InvoiceDetail(String invoiceReference) {
+        try {
+            QueryBuilder qb = new QueryBuilder(Invoice.class, "i");
+            qb.addCriterion("i.invoiceNumber", "=", invoiceReference, true);
+            return (Invoice) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException ex) {
+            log.debug("invoice search returns no result for reference={}.", invoiceReference);
+        }
+        return null;
+    }
 
-	@SuppressWarnings("unchecked")
+    public InvoiceSubCategory invoiceSubCategoryDetail(String invoiceReference, String invoiceSubCategoryCode) {
+        // TODO : need to be more clarified
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
     public List<BillingAccount> findBillingAccounts(BillingCycle billingCycle, Date startdate, Date endDate) {
-		try {
-			QueryBuilder qb = new QueryBuilder(BillingAccount.class, "b",null);
-			qb.addCriterionEntity("b.billingCycle", billingCycle);
+        try {
+            QueryBuilder qb = new QueryBuilder(BillingAccount.class, "b", null);
+            qb.addCriterionEntity("b.billingCycle", billingCycle);
 
-			if (startdate != null) {
-				qb.addCriterionDateRangeFromTruncatedToDay("nextInvoiceDate", startdate);
-			}
+            if (startdate != null) {
+                qb.addCriterionDateRangeFromTruncatedToDay("nextInvoiceDate", startdate);
+            }
 
-			if (endDate != null) {
-				qb.addCriterionDateRangeToTruncatedToDay("nextInvoiceDate", endDate);
-			}
+            if (endDate != null) {
+                qb.addCriterionDateRangeToTruncatedToDay("nextInvoiceDate", endDate);
+            }
 
-			return (List<BillingAccount>) qb.getQuery(getEntityManager()).getResultList();
-		} catch (Exception ex) {
-			log.error("failed to find billing accounts",ex);
-		}
+            return (List<BillingAccount>) qb.getQuery(getEntityManager()).getResultList();
+        } catch (Exception ex) {
+            log.error("failed to find billing accounts", ex);
+        }
 
-		return null;
-	}
-	
-	
+        return null;
+    }
 
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public boolean updateBillingAccountTotalAmounts(BillingAccount billingAccount, BillingRun billingRun) {
+    public List<Long> findBillingAccountIds(BillingCycle billingCycle, Date startdate, Date endDate) {
+        try {
+            QueryBuilder qb = new QueryBuilder(BillingAccount.class, "b", null);
+            qb.addCriterionEntity("b.billingCycle", billingCycle);
 
-		log.debug("updateBillingAccountTotalAmounts  billingAccount:" + billingAccount.getCode());
-		billingAccount = findById(billingAccount.getId(), true);
+            if (startdate != null) {
+                qb.addCriterionDateRangeFromTruncatedToDay("nextInvoiceDate", startdate);
+            }
 
-		BigDecimal invoiceAmount = computeBaInvoiceAmount(billingAccount, billingRun.getLastTransactionDate());
-		if (invoiceAmount != null) {
+            if (endDate != null) {
+                qb.addCriterionDateRangeToTruncatedToDay("nextInvoiceDate", endDate);
+            }
 
-			BigDecimal invoicingThreshold = billingRun.getBillingCycle() == null ? null : billingRun.getBillingCycle().getInvoicingThreshold();
+            return qb.getIdQuery(getEntityManager()).getResultList();
+        } catch (Exception ex) {
+            log.error("failed to find billing accounts", ex);
+        }
 
-			log.debug("updateBillingAccountTotalAmounts invoicingThreshold is {}", invoicingThreshold);
-			if (invoicingThreshold != null) {
-				if (invoicingThreshold.compareTo(invoiceAmount) > 0) {
-					log.debug("updateBillingAccountTotalAmounts  invoicingThreshold( stop invoicing)  baCode:{}, amountWithoutTax:{} ,invoicingThreshold:{}", billingAccount.getCode(), invoiceAmount, invoicingThreshold);
-					return false;
-				} else {
-					log.debug("updateBillingAccountTotalAmounts  invoicingThreshold(out continue invoicing)  baCode:{}, amountWithoutTax:{} ,invoicingThreshold:{}", billingAccount.getCode(), invoiceAmount, invoicingThreshold);
-				}
-			} else {
-				log.debug("updateBillingAccountTotalAmounts no invoicingThreshold to apply");
-			}
-			billingAccount.setBrAmountWithoutTax(invoiceAmount);
+        return null;
+    }
 
-			log.debug("set brAmount {} in BA {}", invoiceAmount, billingAccount.getId());
-		} else {
-			log.debug("updateBillingAccountTotalAmounts invoiceAmount is null");
-		}
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public boolean updateBillingAccountTotalAmounts(Long billingAccountId, BillingRun billingRun) {
 
-		billingAccount.setBillingRun(getEntityManager().getReference(BillingRun.class, billingRun.getId()));
-		updateNoCheck(billingAccount);
+        log.debug("updateBillingAccountTotalAmounts  billingAccount:" + billingAccountId);
+        BillingAccount billingAccount = findById(billingAccountId, true);
 
-		return true;
-	}
-	
-	
-	
-	/**
-	 * Compute  the invoice amount for billingAccount
-	 * 
-	 * @param billingAccount
-	 * @param lastTransactionDate
-	 * @return
-	 */
-	public BigDecimal computeBaInvoiceAmount(BillingAccount billingAccount,Date lastTransactionDate){
-		Query q = getEntityManager().createNamedQuery("RatedTransaction.sumBillingAccount").setParameter("billingAccount", billingAccount).setParameter("lastTransactionDate", lastTransactionDate);
-		BigDecimal sumAmountWithouttax = (BigDecimal) q.getSingleResult();		
-		if(sumAmountWithouttax == null){
-			sumAmountWithouttax = BigDecimal.ZERO;		
-		}
-	    return sumAmountWithouttax;
-	}
-	
-	
+        BigDecimal invoiceAmount = computeBaInvoiceAmount(billingAccount, billingRun.getLastTransactionDate());
+        if (invoiceAmount != null) {
 
-	@SuppressWarnings("unchecked")
-	public List<BillingAccount> listByCustomerAccount(CustomerAccount customerAccount) {
-		QueryBuilder qb = new QueryBuilder(BillingAccount.class, "c");
-		qb.addCriterionEntity("customerAccount", customerAccount);
-		qb.addOrderCriterion("c.id", true);
-		try {
-			return (List<BillingAccount>) qb.getQuery(getEntityManager()).getResultList();
-		} catch (NoResultException e) {
-			log.warn("error while getting list by customer account",e);
-			return null;
-		}
-	}
-	/**
-	 * Evatuate the exoneration Taxes EL
-	 * 
-	 * @param ba The BillingAccount
-	 * @return
-	 */
-	public boolean isExonerated(BillingAccount ba){
-		boolean isExonerated = false;
-		CustomerCategory customerCategory = null;
-		if(ba == null ||  ba.getCustomerAccount().getCustomer().getCustomerCategory() == null){
-			return false;
-		}
-		customerCategory = ba.getCustomerAccount().getCustomer().getCustomerCategory();
-		if(customerCategory.getExoneratedFromTaxes()){
-			return true;
-		}
-		Map<Object, Object> userMap = new HashMap<Object, Object>();
-		if(!StringUtils.isBlank(customerCategory.getExonerationTaxEl())){
-			if(customerCategory.getExonerationTaxEl().indexOf("ba.")>-1){
-				userMap.put("ba", ba);
-			}
-			Boolean isExon = Boolean.FALSE;
-			try {
-				isExon = (Boolean) ValueExpressionWrapper.evaluateExpression(customerCategory.getExonerationTaxEl(), userMap, Boolean.class);
-			} catch (BusinessException e) {
-				log.error("Error evaluateExpression Exoneration taxes:",e);
-				e.printStackTrace();
-			}
-			isExonerated = (isExon == null ? false : isExon);
-		}		
-		return isExonerated;
-	}
-	
+            BigDecimal invoicingThreshold = billingRun.getBillingCycle() == null ? null : billingRun.getBillingCycle().getInvoicingThreshold();
+
+            log.debug("updateBillingAccountTotalAmounts invoicingThreshold is {}", invoicingThreshold);
+            if (invoicingThreshold != null) {
+                if (invoicingThreshold.compareTo(invoiceAmount) > 0) {
+                    log.debug("updateBillingAccountTotalAmounts  invoicingThreshold( stop invoicing)  baCode:{}, amountWithoutTax:{} ,invoicingThreshold:{}",
+                        billingAccount.getCode(), invoiceAmount, invoicingThreshold);
+                    return false;
+                } else {
+                    log.debug("updateBillingAccountTotalAmounts  invoicingThreshold(out continue invoicing)  baCode:{}, amountWithoutTax:{} ,invoicingThreshold:{}",
+                        billingAccount.getCode(), invoiceAmount, invoicingThreshold);
+                }
+            } else {
+                log.debug("updateBillingAccountTotalAmounts no invoicingThreshold to apply");
+            }
+            billingAccount.setBrAmountWithoutTax(invoiceAmount);
+
+            log.debug("set brAmount {} in BA {}", invoiceAmount, billingAccount.getId());
+        } else {
+            log.debug("updateBillingAccountTotalAmounts invoiceAmount is null");
+        }
+
+        billingAccount.setBillingRun(getEntityManager().getReference(BillingRun.class, billingRun.getId()));
+        updateNoCheck(billingAccount);
+
+        return true;
+    }
+
+    /**
+     * Compute the invoice amount for billingAccount
+     * 
+     * @param billingAccount
+     * @param lastTransactionDate
+     * @return
+     */
+    public BigDecimal computeBaInvoiceAmount(BillingAccount billingAccount, Date lastTransactionDate) {
+        Query q = getEntityManager().createNamedQuery("RatedTransaction.sumBillingAccount").setParameter("billingAccount", billingAccount).setParameter("lastTransactionDate",
+            lastTransactionDate);
+        BigDecimal sumAmountWithouttax = (BigDecimal) q.getSingleResult();
+        if (sumAmountWithouttax == null) {
+            sumAmountWithouttax = BigDecimal.ZERO;
+        }
+        return sumAmountWithouttax;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<BillingAccount> listByCustomerAccount(CustomerAccount customerAccount) {
+        QueryBuilder qb = new QueryBuilder(BillingAccount.class, "c");
+        qb.addCriterionEntity("customerAccount", customerAccount);
+        qb.addOrderCriterion("c.id", true);
+        try {
+            return (List<BillingAccount>) qb.getQuery(getEntityManager()).getResultList();
+        } catch (NoResultException e) {
+            log.warn("error while getting list by customer account", e);
+            return null;
+        }
+    }
+
+    /**
+     * Evatuate the exoneration Taxes EL
+     * 
+     * @param ba The BillingAccount
+     * @return
+     */
+    public boolean isExonerated(BillingAccount ba) {
+        boolean isExonerated = false;
+        CustomerCategory customerCategory = null;
+        if (ba == null || ba.getCustomerAccount().getCustomer().getCustomerCategory() == null) {
+            return false;
+        }
+        customerCategory = ba.getCustomerAccount().getCustomer().getCustomerCategory();
+        if (customerCategory.getExoneratedFromTaxes()) {
+            return true;
+        }
+        Map<Object, Object> userMap = new HashMap<Object, Object>();
+        if (!StringUtils.isBlank(customerCategory.getExonerationTaxEl())) {
+            if (customerCategory.getExonerationTaxEl().indexOf("ba.") > -1) {
+                userMap.put("ba", ba);
+            }
+            Boolean isExon = Boolean.FALSE;
+            try {
+                isExon = (Boolean) ValueExpressionWrapper.evaluateExpression(customerCategory.getExonerationTaxEl(), userMap, Boolean.class);
+            } catch (BusinessException e) {
+                log.error("Error evaluateExpression Exoneration taxes:", e);
+                e.printStackTrace();
+            }
+            isExonerated = (isExon == null ? false : isExon);
+        }
+        return isExonerated;
+    }
+
 }

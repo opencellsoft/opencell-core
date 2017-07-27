@@ -275,13 +275,12 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         invoice.setRecordedInvoice(recordedInvoice);
     }
 
-    @SuppressWarnings("unchecked")
     public List<Long> getAOidsToPay() {
-		QueryBuilder qb = new QueryBuilder("SELECT ao.id FROM "+RecordedInvoice.class.getName()+" ao");
+		QueryBuilder qb = new QueryBuilder(RecordedInvoice.class,"ao");
 		qb.addCriterionEnum("ao.paymentMethod", PaymentMethodEnum.CARD);
 		qb.addCriterionEnum("ao.matchingStatus",MatchingStatusEnum.O);
 		try {
-			return (List<Long>) qb.getQuery(getEntityManager()).getResultList();
+			return qb.getIdQuery(getEntityManager()).getResultList();
 		} catch (NoResultException e) {
 			return null;
 		}
