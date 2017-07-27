@@ -16,7 +16,7 @@
             <column name="sc_sec" value="59" />
             <column name="sc_year" value="*" />
 
-            <column name="code" value="Daily - midnight" />
+            <column name="code" value="Daily-midnight" />
             <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2017-06-29 00:04:19.913" />
         </insert>
