@@ -13,7 +13,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
-import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -39,10 +38,10 @@ public class InvoicingAsync {
 
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<Integer> updateBillingAccountTotalAmountsAsync(List<BillingAccount> billingAccounts, BillingRun billingRun) {
+    public Future<Integer> updateBillingAccountTotalAmountsAsync(List<Long> billingAccountIds, BillingRun billingRun) {
         int count = 0;
-        for (BillingAccount billingAccount : billingAccounts) {
-            if (billingAccountService.updateBillingAccountTotalAmounts(billingAccount, billingRun)) {
+        for (Long billingAccountId : billingAccountIds) {
+            if (billingAccountService.updateBillingAccountTotalAmounts(billingAccountId, billingRun)) {
                 count++;
             }
         }
@@ -52,13 +51,13 @@ public class InvoicingAsync {
 
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> createAgregatesAndInvoiceAsync(List<BillingAccount> billingAccounts, BillingRun billingRun) {
+    public Future<String> createAgregatesAndInvoiceAsync(List<Long> billingAccountIds, BillingRun billingRun) {
 
-        for (BillingAccount billingAccount : billingAccounts) {
+        for (Long billingAccountId : billingAccountIds) {
             try {
-                invoiceService.createAgregatesAndInvoice(billingAccount, billingRun, null, null, null, null);
+                invoiceService.createAgregatesAndInvoice(billingAccountId, billingRun, null, null, null, null);
             } catch (Exception e) {
-                log.error("Error for BA=" + billingAccount.getCode() + " : " + e);
+                log.error("Error for BA=" + billingAccountId + " : " + e);
             }
         }
         return new AsyncResult<String>("OK");

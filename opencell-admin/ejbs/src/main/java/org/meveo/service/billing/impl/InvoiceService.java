@@ -295,16 +295,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public List<Long> getInvoiceIdsWithNoAccountOperation(BillingRun br) {
         try {
-            QueryBuilder qb = new QueryBuilder("SELECT i.id FROM " + Invoice.class.getName() + " i");
+            QueryBuilder qb = new QueryBuilder(Invoice.class, " i");
             qb.addSql("i.invoiceNumber is not null");
             qb.addSql("i.recordedInvoice is null");
             if (br != null) {
                 qb.addCriterionEntity("i.billingRun", br);
             }
-            return (List<Long>) qb.getQuery(getEntityManager()).getResultList();
+            return qb.getIdQuery(getEntityManager()).getResultList();
         } catch (Exception ex) {
             log.error("failed to get invoices with no account operation", ex);
         }
@@ -312,11 +311,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public Invoice createAgregatesAndInvoice(BillingAccount billingAccount, BillingRun billingRun, Filter ratedTransactionFilter, String orderNumber, Date invoiceDate,
+    public Invoice createAgregatesAndInvoice(Long billingAccountId, BillingRun billingRun, Filter ratedTransactionFilter, String orderNumber, Date invoiceDate,
             Date lastTransactionDate) throws BusinessException {
+
         Invoice invoice = null;
+
         log.debug("createAgregatesAndInvoice billingAccount={} , billingRunId={} , ratedTransactionFilter={} , orderNumber{}, lastTransactionDate={} ,invoiceDate={} ",
-            billingAccount, billingRun != null ? billingRun.getId() : null, ratedTransactionFilter, orderNumber, lastTransactionDate, invoiceDate);
+            billingAccountId, billingRun != null ? billingRun.getId() : null, ratedTransactionFilter, orderNumber, lastTransactionDate, invoiceDate);
 
         EntityManager em = getEntityManager();
         if (billingRun == null) {
@@ -331,6 +332,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoiceDate = billingRun.getInvoiceDate();
         }
 
+        BillingAccount billingAccount = billingAccountService.findById(billingAccountId, true);
+
         if (billingAccount.getInvoicingThreshold() != null) {
             BigDecimal invoiceAmount = billingAccountService.computeBaInvoiceAmount(billingAccount, lastTransactionDate);
             if (invoiceAmount == null) {
@@ -342,7 +345,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         try {
-            billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
 
             Long startDate = System.currentTimeMillis();
             BillingCycle billingCycle = billingRun == null ? billingAccount.getBillingCycle() : billingRun.getBillingCycle();
@@ -1211,7 +1213,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @SuppressWarnings("unchecked")
     public List<Invoice> getInvoicesWithAccountOperation(BillingAccount billingAccount) {
         try {
-            QueryBuilder qb = new QueryBuilder("SELECT i FROM " + Invoice.class.getName() + " i");
+            QueryBuilder qb = new QueryBuilder(Invoice.class, "i");
             qb.addSql("i.recordedInvoice is not null");
             if (billingAccount != null) {
                 qb.addCriterionEntity("i.billingAccount", billingAccount);
@@ -1273,7 +1275,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
         }
 
-        Invoice invoice = createAgregatesAndInvoice(billingAccount, null, ratedTxFilter, orderNumber, invoiceDate, lastTransactionDate);
+        Invoice invoice = createAgregatesAndInvoice(billingAccount.getId(), null, ratedTxFilter, orderNumber, invoiceDate, lastTransactionDate);
         if (!isDraft) {
             invoice.setInvoiceNumber(generateInvoiceNumber(invoice));
         }

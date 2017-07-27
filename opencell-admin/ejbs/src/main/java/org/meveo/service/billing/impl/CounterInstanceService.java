@@ -413,8 +413,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      */
     public long countCounterPeriodsToDelete(Date date) {
         long result = 0;
-        String sql = "select cp from CounterPeriod cp";
-        QueryBuilder qb = new QueryBuilder(sql);
+        QueryBuilder qb = new QueryBuilder(CounterPeriod.class, "cp");
         qb.addCriterion("cp.periodEndDate", "<", date, false);
         result = qb.count(getEntityManager());
 
@@ -432,8 +431,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     public long deleteCounterPeriods(Date date) {
         log.trace("Removing counter periods which end date is older then a {} date", date);
         long itemsDeleted = 0;
-        String sql = "select cp from CounterPeriod cp";
-        QueryBuilder qb = new QueryBuilder(sql);
+        QueryBuilder qb = new QueryBuilder(CounterPeriod.class, "cp");
         qb.addCriterion("cp.periodEndDate", "<", date, false);
         EntityManager em = getEntityManager();
         List<CounterPeriod> periods = qb.find(em);
