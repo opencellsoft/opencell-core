@@ -47,7 +47,7 @@ import org.meveo.model.payments.OCCTemplate;
 
 @Entity
 @ExportIdentifier({ "code" })
-@Table(name = "billing_invoice_type", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "occ_template_id" }))
+@Table(name = "billing_invoice_type", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_invoice_type_seq"), })
 @NamedQueries({ @NamedQuery(name = "InvoiceType.currentInvoiceNb", query = "select max(sequence.currentInvoiceNb) from InvoiceType i where i.code=:invoiceTypeCode") })
