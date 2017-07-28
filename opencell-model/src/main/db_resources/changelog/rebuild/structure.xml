@@ -169,13 +169,13 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="adm_currency_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into adm_currency_seq values(1)</sql>
+        <sql>insert into adm_currency_seq values(169)</sql>
         <createTable tableName="adm_inbound_request_seq">
             <column name="next_val" type="BIGINT" >
                 <constraints nullable="false" primaryKey="true" primaryKeyName="adm_inbound_request_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into adm_inbound_request_seq values(169)</sql>
+        <sql>insert into adm_inbound_request_seq values(1)</sql>
         <createTable tableName="adm_input_history_seq">
             <column name="next_val" type="BIGINT" >
                 <constraints nullable="false" primaryKey="true" primaryKeyName="adm_input_history_seq_pk" />
