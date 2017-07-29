@@ -21,9 +21,12 @@ package org.meveo.service.crm.impl;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
+import org.meveo.event.monitoring.ClusterEventPublisher;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
@@ -32,6 +35,9 @@ import org.meveo.service.base.PersistenceService;
  */
 @Stateless
 public class ProviderService extends PersistenceService<Provider> {
+
+    @Inject
+    private ClusterEventPublisher clusterEventPublisher;
 
     public Provider getProvider() {
 
@@ -54,21 +60,39 @@ public class ProviderService extends PersistenceService<Provider> {
     }
 
     @Override
-    public Provider update(Provider entity) throws BusinessException {
-        entity = super.update(entity);
+    public Provider update(Provider provider) throws BusinessException {
+        provider = super.update(provider);
 
         // Refresh appProvider application scope variable
+        refreshAppProvider(provider);
+        clusterEventPublisher.publishEvent(provider, CrudActionEnum.update);
+        return provider;
+    }
+
+    /**
+     * Refresh appProvider application scope variable
+     * 
+     * @param provider New provider data to refresh with
+     */
+    private void refreshAppProvider(Provider provider) {
+
         try {
-            BeanUtils.copyProperties(appProvider, entity);
+            BeanUtils.copyProperties(appProvider, provider);
         } catch (IllegalAccessException | InvocationTargetException e) {
             log.error("Failed to update alProvider fields");
         }
 
-        appProvider.setCurrency(entity.getCurrency() != null ? entity.getCurrency() : null);
-        appProvider.setCountry(entity.getCountry() != null ? entity.getCountry() : null);
-        appProvider.setLanguage(entity.getLanguage() != null ? entity.getLanguage() : null);
-        appProvider.setInvoiceConfiguration(entity.getInvoiceConfiguration() != null ? entity.getInvoiceConfiguration() : null);
+        appProvider.setCurrency(provider.getCurrency() != null ? provider.getCurrency() : null);
+        appProvider.setCountry(provider.getCountry() != null ? provider.getCountry() : null);
+        appProvider.setLanguage(provider.getLanguage() != null ? provider.getLanguage() : null);
+        appProvider.setInvoiceConfiguration(provider.getInvoiceConfiguration() != null ? provider.getInvoiceConfiguration() : null);
 
-        return entity;
+    }
+
+    /**
+     * Refresh appProvider application scope variable with provider data from DB
+     */
+    public void refreshAppProvider() {
+        refreshAppProvider(getProvider());
     }
 }

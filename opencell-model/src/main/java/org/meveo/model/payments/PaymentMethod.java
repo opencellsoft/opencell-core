@@ -27,8 +27,9 @@ import org.meveo.model.BaseEntity;
         @Parameter(name = "sequence_name", value = "ar_payment_token_seq"), })
 @NamedQueries({
         @NamedQuery(name = "PaymentMethod.updatePreferredPaymentMethod", query = "UPDATE PaymentMethod pm set pm.preferred = false where pm.id <> :id and pm.customerAccount = :ca"),
-        @NamedQuery(name = "PaymentMethod.updateFirstPaymentMethodToPreferred1", query = "UPDATE PaymentMethod pm set pm.preferred = true where pm.id in (select min(pmg.id) from PaymentMethod pmg where pmg.customerAccount.id = :caId)"),
-        @NamedQuery(name = "PaymentMethod.updateFirstPaymentMethodToPreferred2", query = "UPDATE PaymentMethod pm set pm.preferred = false where pm.id not in (select min(pmg.id) from PaymentMethod pmg where pmg.customerAccount.id = :caId)) and pm.customerAccount.id = :caId"),
+        @NamedQuery(name = "PaymentMethod.updateFirstPaymentMethodToPreferred1", query = "select min(pmg.id) from PaymentMethod pmg where pmg.customerAccount.id = :caId"),
+        @NamedQuery(name = "PaymentMethod.updateFirstPaymentMethodToPreferred2", query = "UPDATE PaymentMethod pm set pm.preferred = true where pm.customerAccount.id = :caId and pm.id =:id"),
+        @NamedQuery(name = "PaymentMethod.updateFirstPaymentMethodToPreferred3", query = "UPDATE PaymentMethod pm set pm.preferred = false where pm.customerAccount.id = :caId and pm.id <>:id"),
         @NamedQuery(name = "PaymentMethod.getNumberOfPaymentMethods", query = "select count(*) from  PaymentMethod pm where pm.customerAccount.id = :caId") })
 public abstract class PaymentMethod extends BaseEntity {
 

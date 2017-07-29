@@ -121,7 +121,7 @@ public class PaymentService extends PersistenceService<Payment> {
         PayByCardResponseDto doPaymentResponseDto = gatewayPaymentInterface.doPaymentToken(cardPaymentMethod, ctsAmount, null);
 
         if (PaymentStatusEnum.ACCEPTED == doPaymentResponseDto.getPaymentStatus()) {
-            // log.error("AKK updating card payment with user id {}", cardPaymentMethod.getAlias());
+            // log.error("AKK updating card payment with user id {} {}", cardPaymentMethod.getAlias(), doPaymentResponseDto.getCodeClientSide());
             cardPaymentMethod.setUserId(doPaymentResponseDto.getCodeClientSide());
             cardPaymentMethod = (CardPaymentMethod) paymentMethodService.update(cardPaymentMethod);
             Long aoPaymentId = null;
@@ -143,6 +143,8 @@ public class PaymentService extends PersistenceService<Payment> {
                     }
                 }
             }
+        } else {
+            log.warn("Payment by card {} was not successfull. Status: {}", cardPaymentMethod.getTokenId(), doPaymentResponseDto.getPaymentStatus());
         }
 
         return doPaymentResponseDto;
