@@ -175,5 +175,5 @@ public class InvoiceSubCategoryService extends MultilanguageEntityService<Invoic
 		
 		return result;
 	}
-
+	
 }

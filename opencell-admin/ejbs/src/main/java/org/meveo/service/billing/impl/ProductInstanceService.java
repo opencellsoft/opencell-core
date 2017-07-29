@@ -51,7 +51,7 @@ public class ProductInstanceService extends BusinessService<ProductInstance> {
     ProductTemplateService productTemplateService;
 
     @Inject
-	private ProductChargeInstanceService productChargeInstanceService;
+    private ProductChargeInstanceService productChargeInstanceService;
 
     @Inject
     private WalletService walletService;
@@ -86,16 +86,16 @@ public class ProductInstanceService extends BusinessService<ProductInstance> {
         QueryBuilder qb = new QueryBuilder(ServiceInstance.class, "i");
         try {
             qb.addCriterionEntity("productTemplate", productTemplate);
-            
+
             qb.addCriterionEnum("status", status);
             return (List<ProductInstance>) qb.getQuery(em).getResultList();
         } catch (NoResultException e) {
             return null;
         }
     }
-    
+
     @SuppressWarnings("unchecked")
-	public List<ProductInstance> findBySubscription(Subscription subscription) {
+    public List<ProductInstance> findBySubscription(Subscription subscription) {
         QueryBuilder qb = new QueryBuilder(ProductInstance.class, "p", null);
         try {
             qb.addCriterionEntity("subscription", subscription);
@@ -104,45 +104,56 @@ public class ProductInstanceService extends BusinessService<ProductInstance> {
             return null;
         }
     }
-    
+
+    @SuppressWarnings("unchecked")
+    public List<ProductInstance> findByUserAccount(UserAccount userAccount) {
+        QueryBuilder qb = new QueryBuilder(ProductInstance.class, "p", null);
+        try {
+            qb.addCriterionEntity("userAccount", userAccount);
+            qb.addSql("subscription is null");
+            return (List<ProductInstance>) qb.getQuery(getEntityManager()).getResultList();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
     public List<WalletOperation> applyProductInstance(ProductInstance productInstance, String criteria1, String criteria2, String criteria3, boolean persist)
             throws BusinessException {
-    	return applyProductInstance(productInstance, criteria1, criteria2, criteria3, persist, true);
+        return applyProductInstance(productInstance, criteria1, criteria2, criteria3, persist, true);
     }
 
     public List<WalletOperation> applyProductInstance(ProductInstance productInstance, String criteria1, String criteria2, String criteria3, boolean persist, boolean instantiate)
             throws BusinessException {
 
-    	if(instantiate) {
-    		instantiateProductInstance(productInstance, criteria1, criteria2, criteria3, !persist);
-    	}
-        
+        if (instantiate) {
+            instantiateProductInstance(productInstance, criteria1, criteria2, criteria3, !persist);
+        }
+
         List<WalletOperation> walletOperations = new ArrayList<>();
         for (ProductChargeInstance productChargeInstance : productInstance.getProductChargeInstances()) {
             walletOperations.addAll(productChargeInstanceService.applyProductChargeInstance(productChargeInstance, !persist));
         }
-        
+
         return walletOperations;
     }
-    
-	public void instantiateProductInstance(ProductInstance productInstance, String criteria1, String criteria2, String criteria3, boolean isVirtual)
-			throws BusinessException {
-		
-		if (!isVirtual) {
-			create(productInstance);
-		}
-		
-		for (ProductChargeTemplate productChargeTemplate : productInstance.getProductTemplate().getProductChargeTemplates()) {
-			ProductChargeInstance productChargeInstance = new ProductChargeInstance(productInstance, productChargeTemplate);
-			productChargeInstance.setCriteria1(criteria1);
-			productChargeInstance.setCriteria1(criteria2);
-			productChargeInstance.setCriteria1(criteria3);
-			productChargeInstance.setOrderNumber(productInstance.getOrderNumber());
-			if (!isVirtual) {
-				productChargeInstanceService.create(productChargeInstance);
-			}
- 
-			productInstance.getProductChargeInstances().add(productChargeInstance);
+
+    public void instantiateProductInstance(ProductInstance productInstance, String criteria1, String criteria2, String criteria3, boolean isVirtual) throws BusinessException {
+
+        if (!isVirtual) {
+            create(productInstance);
+        }
+
+        for (ProductChargeTemplate productChargeTemplate : productInstance.getProductTemplate().getProductChargeTemplates()) {
+            ProductChargeInstance productChargeInstance = new ProductChargeInstance(productInstance, productChargeTemplate);
+            productChargeInstance.setCriteria1(criteria1);
+            productChargeInstance.setCriteria1(criteria2);
+            productChargeInstance.setCriteria1(criteria3);
+            productChargeInstance.setOrderNumber(productInstance.getOrderNumber());
+            if (!isVirtual) {
+                productChargeInstanceService.create(productChargeInstance);
+            }
+
+            productInstance.getProductChargeInstances().add(productChargeInstance);
 
             List<WalletTemplate> walletTemplates = productInstance.getProductTemplate().getWalletTemplates();
             productChargeInstance.setPrepaid(false);
@@ -163,7 +174,7 @@ public class ProductInstanceService extends BusinessService<ProductInstance> {
                 log.debug("as the charge is postpaid, we add the principal wallet");
                 productChargeInstance.getWalletInstances().add(productChargeInstance.getUserAccount().getWallet());
             }
-		}
-	}
-	
+        }
+    }
+
 }

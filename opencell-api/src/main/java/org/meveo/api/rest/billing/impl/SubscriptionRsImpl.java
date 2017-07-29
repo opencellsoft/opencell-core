@@ -1,8 +1,13 @@
 package org.meveo.api.rest.billing.impl;
 
+import java.util.List;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
 
 import org.meveo.api.billing.SubscriptionApi;
 import org.meveo.api.dto.ActionStatus;
@@ -18,9 +23,13 @@ import org.meveo.api.dto.billing.SubscriptionsListDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.billing.UpdateServicesRequestDto;
+import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
+import org.meveo.api.dto.response.billing.GetDueDateDelayResponseDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsResponseDto;
+import org.meveo.api.dto.response.catalog.GetOneShotChargesResponseDto;
+import org.meveo.api.dto.response.catalog.GetServiceInstanceResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.billing.SubscriptionRs;
 import org.meveo.api.rest.impl.BaseRs;
@@ -140,11 +149,11 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     }
 
     @Override
-    public SubscriptionsResponseDto listByUserAccount(String userAccountCode) {
+    public SubscriptionsResponseDto listByUserAccount(String userAccountCode, boolean mergedCF) {
         SubscriptionsResponseDto result = new SubscriptionsResponseDto();
 
         try {
-            result.setSubscriptions(subscriptionApi.listByUserAccount(userAccountCode));
+            result.setSubscriptions(subscriptionApi.listByUserAccount(userAccountCode, mergedCF));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -153,11 +162,11 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     }
 
     @Override
-    public GetSubscriptionResponseDto findSubscription(String subscriptionCode) {
+    public GetSubscriptionResponseDto findSubscription(String subscriptionCode, boolean mergedCF) {
         GetSubscriptionResponseDto result = new GetSubscriptionResponseDto();
 
         try {
-            result.setSubscription(subscriptionApi.findSubscription(subscriptionCode));
+            result.setSubscription(subscriptionApi.findSubscription(subscriptionCode, mergedCF));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -179,19 +188,19 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     }
 
     @Override
-    public SubscriptionsListResponseDto listAll(int pageSize, int pageNumber) {
+    public SubscriptionsListResponseDto listAll(int pageSize, int pageNumber, boolean mergedCF) {
+    	SubscriptionsListResponseDto result = new SubscriptionsListResponseDto();
 
-        SubscriptionsListResponseDto result = new SubscriptionsListResponseDto();
+    	try {
+    		SubscriptionsListDto subscriptionsDto = subscriptionApi.listAll(pageSize, pageNumber, mergedCF);
+    		result.setSubscriptions(subscriptionsDto);
+    	} catch (Exception e) {
+    		processException(e, result.getActionStatus());
+    	}
 
-        try {
+    	return result;
 
-            SubscriptionsListDto subscriptionsDto = subscriptionApi.listAll(pageSize, pageNumber);
-            result.setSubscriptions(subscriptionsDto);
-        } catch (Exception e) {
-            processException(e, result.getActionStatus());
-        }
 
-        return result;
     }
 
     @Override
@@ -256,4 +265,52 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 
         return result;
     }
+
+	@Override
+	public GetServiceInstanceResponseDto findServiceInstance(String subscriptionCode, String serviceInstanceCode) {
+		GetServiceInstanceResponseDto result = new GetServiceInstanceResponseDto();
+
+		try {
+			result.setServiceInstance(subscriptionApi.findServiceInstance(subscriptionCode, serviceInstanceCode));
+		} catch (Exception e) {
+			processException(e, result.getActionStatus());
+		}
+
+		return result;
+	}
+
+	@Override
+	public GetDueDateDelayResponseDto findDueDateDelay(String subscriptionCode, String invoiceNumber,
+			String invoiceTypeCode, String orderCode) {
+		GetDueDateDelayResponseDto result = new GetDueDateDelayResponseDto();
+
+		try {
+			result.setDueDateDelay(
+					subscriptionApi.getDueDateDelay(subscriptionCode, invoiceNumber, invoiceTypeCode, orderCode));
+		} catch (Exception e) {
+			processException(e, result.getActionStatus());
+		}
+
+		return result;
+	}
+	
+
+    
+    
+    /**
+     * Get all one shot charge others.
+     * @see org.meveo.api.rest.billing.SubscriptionRs#getOneShotChargeOthers()
+     */
+    public GetOneShotChargesResponseDto getOneShotChargeOthers() {
+    	GetOneShotChargesResponseDto result = new GetOneShotChargesResponseDto();
+    	try {
+            List<OneShotChargeTemplateDto> oneShotChargeOthers = subscriptionApi.getOneShotChargeOthers();
+            result.getOneshotCharges().addAll(oneShotChargeOthers);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
 }

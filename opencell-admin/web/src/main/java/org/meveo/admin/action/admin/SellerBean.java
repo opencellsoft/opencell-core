@@ -110,6 +110,14 @@ public class SellerBean extends CustomFieldBean<Seller> {
 			 messages.error(new BundleKey("messages", "invoice.downgrade.cuurrentNb.error.msg"));
 			 return;
 		 }
+		 
+		 Seller seller = sellerService.findByCode(entity.getCode());
+		 
+		 if (seller != null) {
+			 messages.error(new BundleKey("messages","seller.unique"));
+			 return;
+		 }
+		 
 		 InvoiceType invoiceType=invoiceTypeService.findByCode(invoiceTypeCode);
 		 if(invoiceType!=null){
 			 if(!editSellerSequence){

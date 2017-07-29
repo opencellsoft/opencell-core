@@ -47,7 +47,7 @@ public interface InvoiceSubCategoryCountryRs extends IBaseRs {
     public ActionStatus update(InvoiceSubCategoryCountryDto postData);
 
     /**
-     * Search invoice sub category country with a given code and country.
+     * Search invoice sub category country with a given code and country with the highest priority (1-lowest).
      * 
      * @param invoiceSubCategoryCode
      * @param country
@@ -58,7 +58,7 @@ public interface InvoiceSubCategoryCountryRs extends IBaseRs {
     public GetInvoiceSubCategoryCountryResponse find(@QueryParam("invoiceSubCategoryCode") String invoiceSubCategoryCode, @QueryParam("country") String country);
 
     /**
-     * Remove invoice sub category country with a given code and country.
+     * Remove all the InvoiceSubCategoryCountries with a given code and country.
      * 
      * @param invoiceSubCategoryCode
      * @param country

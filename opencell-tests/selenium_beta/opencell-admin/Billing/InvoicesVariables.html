@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://integration.i.opencellsoft.com/opencell/" />
+<title>InvoicesVariables</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">InvoicesVariables</td></tr>
+</thead><tbody>
+<tr>
+	<td>store</td>
+	<td>id=menu:invoices</td>
+	<td>invoices</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=menu:aggregateInvoices</td>
+	<td>newAggregatedInvoice</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>Adjustement for Opencell Classic</td>
+	<td>typeValue</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//ul[@id='formId:tabView:invoiceType_entity_items']/li[text()[contains(., '${typeValue}')]]</td>
+	<td>type</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=formId:tabView:billingAccountSelectedId_selectLink</td>
+	<td>billingAccountField</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//div[@id='billingAccountPopup']</td>
+	<td>billingAccountPopup</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>id=billingAccountPopuppopupForm:searchField1</td>
+	<td>billingAccountSearchField</td>
+</tr>
+</tbody></table>
+</body>
+</html>

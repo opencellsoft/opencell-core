@@ -80,28 +80,39 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
             FacesContext.getCurrentInstance().validationFailed();
 
         } catch (Exception e) {
-            log.error("Failed to execute {}.{} method due to errors ", invocationContext.getMethod().getDeclaringClass().getName(), invocationContext.getMethod().getName(), e);
-
+         
             // See if can get to the root of the exception cause
             String message = e.getMessage();
+            String messageKey = null;
             boolean validation = false;
             Throwable cause = e;
             while (cause != null) {
 
                 if (cause instanceof SQLException || cause instanceof BusinessException) {
                     message = cause.getMessage();
-                    validation = cause instanceof ValidationException;
+                    if (cause instanceof ValidationException) {
+                        validation = true;
+                        messageKey = ((ValidationException) cause).getMessageKey();
+                    }
                     break;
                 }
                 cause = cause.getCause();
             }
 
             messages.clear();
-            if (validation && message != null) {
+
+            if (validation && messageKey != null) {
+                messages.error(new BundleKey("messages", messageKey));
+
+            } else if (validation && message != null) {
                 messages.error(message);
+
             } else {
-            	message = StringEscapeUtils.escapeJava(message);
-            	message = message.replace("$", "\\$");
+                log.error("Failed to execute {}.{} method due to errors ", invocationContext.getMethod().getDeclaringClass().getName(), invocationContext.getMethod().getName(), e);
+                if (message != null) {
+                    message = StringEscapeUtils.escapeJava(message);
+                    message = message.replace("$", "\\$");
+                }
                 messages.error(new BundleKey("messages", "error.action.failed"), message == null ? e.getClass().getSimpleName() : message);
             }
             FacesContext.getCurrentInstance().validationFailed();

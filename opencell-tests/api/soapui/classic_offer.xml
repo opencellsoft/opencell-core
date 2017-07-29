@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project activeEnvironment="Default" name="Classic offer" resourceRoot="${projectDir}" soapui-version="5.3.0" abortOnError="false" runType="SEQUENTIAL" id="2e379382-059f-42f2-a263-3971d606356b" xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project activeEnvironment="Default" name="Classic offer" resourceRoot="${projectDir}" soapui-version="5.2.1" abortOnError="false" runType="SEQUENTIAL" id="2e379382-059f-42f2-a263-3971d606356b" xmlns:con="http://eviware.com/soapui/config">
   <con:settings>
     <con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
@@ -18546,7 +18546,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateCreditCategory>
-         <creditCategory code>BRONZE" description>Bronze">
+         <creditCategory code="BRONZE" description="Bronze">
          </creditCategory>
       </ws:createOrUpdateCreditCategory>
    </soapenv:Body>
@@ -19951,7 +19951,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          
          <billingCycle code="BILLCYCLE1" description="Billed the 1st of the month, every month (default)">
             
-            <billingTemplateName>${#Project#provider}</billingTemplateName>
+            <billingTemplateName>${#Project#templateCode}</billingTemplateName>
             <invoiceDateDelay>2</invoiceDateDelay>
             <dueDateDelay>30</dueDateDelay>
             
@@ -20050,7 +20050,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          
          <billingCycle code="BC_${#Project#templateCode}_PARTNER" description="${#Project#templateLabel} Partner Credit Note calculation">
             
-            <billingTemplateName>${#Project#templateCode}_partner</billingTemplateName>
+            <billingTemplateName>${#Project#templateCode}</billingTemplateName>
             <invoiceDateDelay>2</invoiceDateDelay>
             <dueDateDelay>30</dueDateDelay>
             
@@ -22301,7 +22301,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>
       <ws:chargeCdr>
          
-         <cdr>2016-08-23T10:15:11.000Z;100;0171809456;GERMANY GSM VODAFONE;</cdr>
+         <cdr>2017-08-23T10:15:11.000Z;100;0171809456;GERMANY GSM VODAFONE;</cdr>
       </ws:chargeCdr>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -25821,7 +25821,7 @@ public class SuspendSubscriptions extends org.meveo.service.script.Script {
          <accountOperation>
         	   <customerAccount>${#Project#provider}.customer</customerAccount>
              <type>OCC</type>
-             <transactionDate>2016-10-06T00:00:00Z</transactionDate>
+             <transactionDate>2017-10-06T00:00:00Z</transactionDate>
              <transactionCategory>DEBIT</transactionCategory>
              <reference>REF</reference>
              <accountCode>ACCOUNT_CODE</accountCode>
@@ -40379,7 +40379,6 @@ public class ForgotPassword extends ModuleScript{
             	<email>${#TestSuite#CUST}@opencellsoft.com</email>
             </contactInformation>
             <language>FRA</language>\r
-            <paymentMethod>CHECK</paymentMethod>\r
             <customerCategory>PARTNER</customerCategory>\r
             <customerBrand>${#Project#templateCode}</customerBrand>\r
             <currency>EUR</currency>\r
@@ -40674,15 +40673,15 @@ public class ForgotPassword extends ModuleScript{
       </con:property>
       <con:property>
         <con:name>SUBSCRIPTION_DATE</con:name>
-        <con:value>2016-10-01</con:value>
+        <con:value>2017-10-01</con:value>
       </con:property>
       <con:property>
         <con:name>USAGE_DATE</con:name>
-        <con:value>2016-10-15</con:value>
+        <con:value>2017-10-15</con:value>
       </con:property>
       <con:property>
         <con:name>THIS_MONTH</con:name>
-        <con:value>2016-12</con:value>
+        <con:value>2017-12</con:value>
       </con:property>
       <con:property>
         <con:name>OFFER_CODE</con:name>
@@ -40737,7 +40736,6 @@ public class ForgotPassword extends ModuleScript{
             </address>\r
             <email>${#TestSuite#CUST}@opencellsoft.com</email>
             <language>FRA</language>\r
-            <paymentMethod>CHECK</paymentMethod>\r
             <customerCategory>CLIENT</customerCategory>\r
             <customerBrand>${#Project#templateCode}</customerBrand>\r
             <currency>EUR</currency>\r
@@ -41172,15 +41170,15 @@ public class ForgotPassword extends ModuleScript{
       </con:property>
       <con:property>
         <con:name>SUBSCRIPTION_DATE</con:name>
-        <con:value>2016-10-20</con:value>
+        <con:value>2017-10-20</con:value>
       </con:property>
       <con:property>
         <con:name>USAGE_DATE</con:name>
-        <con:value>2016-10-25</con:value>
+        <con:value>2017-10-25</con:value>
       </con:property>
       <con:property>
         <con:name>THIS_MONTH</con:name>
-        <con:value>2016-11</con:value>
+        <con:value>2017-11</con:value>
       </con:property>
       <con:property>
         <con:name>firstname</con:name>
@@ -41247,7 +41245,6 @@ public class ForgotPassword extends ModuleScript{
             </address>\r
             <email>${#TestSuite#CUST}@opencellsoft.com</email>
             <language>FRA</language>\r
-            <paymentMethod>CHECK</paymentMethod>\r
             <customerCategory>CLIENT</customerCategory>\r
             <customerBrand>${#Project#templateCode}</customerBrand>\r
             <currency>EUR</currency>\r
@@ -41872,15 +41869,15 @@ public class ForgotPassword extends ModuleScript{
       </con:property>
       <con:property>
         <con:name>FIRST_MONTH</con:name>
-        <con:value>2016-10</con:value>
+        <con:value>2017-10</con:value>
       </con:property>
       <con:property>
         <con:name>LAST_MONTH</con:name>
-        <con:value>2016-10</con:value>
+        <con:value>2017-10</con:value>
       </con:property>
       <con:property>
         <con:name>THIS_MONTH</con:name>
-        <con:value>2016-11</con:value>
+        <con:value>2017-11</con:value>
       </con:property>
       <con:property>
         <con:name>SUBSCRIPTION_DATE</con:name>
@@ -41938,26 +41935,25 @@ public class ForgotPassword extends ModuleScript{
                <address1>14 rue Crespin du Gast</address1>\r
                <zipCode>75011</zipCode>\r
                <city>PARIS</city>\r
-               <state>Paris Area</state>
+               <state>Paris Area</state>\r
                <country>FR</country>\r
             </address>\r
-            <email>${#TestSuite#CUST}@opencellsoft.com</email>
+            <email>${#TestSuite#CUST}@opencellsoft.com</email>\r
             <language>FRA</language>\r
-            <paymentMethod>CHECK</paymentMethod>\r
             <customerCategory>CLIENT</customerCategory>\r
             <customerBrand>${#Project#templateCode}</customerBrand>\r
             <currency>EUR</currency>\r
             <billingCycle>${#TestSuite#billingCycle}</billingCycle>\r
             <country>FR</country>\r
             <electronicBilling>true</electronicBilling>\r
-            <contactInformation>
-            	<email>${#TestSuite#CUST}@opencellsoft.com</email>
-            </contactInformation>
-            <customFields>
-              <customField code="password">
-                	<stringValue>${#TestSuite#CUST}</stringValue>
-              </customField>   
-            </customFields>
+            <contactInformation>\r
+               <email>${#TestSuite#CUST}@opencellsoft.com</email>\r
+            </contactInformation>\r
+            <customFields>\r
+               <customField code="password">\r
+                  <stringValue>${#TestSuite#CUST}</stringValue>\r
+               </customField>\r
+            </customFields>\r
          </crmAccountHierarchy>\r
       </ws:createOrUpdateCRMAccountHierarchy>\r
    </soapenv:Body>\r
@@ -43341,7 +43337,6 @@ public class ForgotPassword extends ModuleScript{
             </address>\r
             <email>${#TestSuite#CUST}@opencellsoft.com</email>
             <language>FRA</language>\r
-            <paymentMethod>CHECK</paymentMethod>\r
             <customerCategory>CLIENT</customerCategory>\r
             <customerBrand>${#Project#templateCode}</customerBrand>\r
             <currency>EUR</currency>\r
@@ -44111,19 +44106,19 @@ public class ForgotPassword extends ModuleScript{
       </con:property>
       <con:property>
         <con:name>FIRST_MONTH</con:name>
-        <con:value>2016-08</con:value>
+        <con:value>2017-03</con:value>
       </con:property>
       <con:property>
         <con:name>LAST_MONTH</con:name>
-        <con:value>2016-09</con:value>
+        <con:value>2017-06</con:value>
       </con:property>
       <con:property>
         <con:name>THIS_MONTH</con:name>
-        <con:value>2016-10</con:value>
+        <con:value>2017-07</con:value>
       </con:property>
       <con:property>
         <con:name>END_MONTH</con:name>
-        <con:value>2016-10</con:value>
+        <con:value>2017-06</con:value>
       </con:property>
       <con:property>
         <con:name>SUBSCRIPTION_DATE</con:name>
@@ -45117,7 +45112,7 @@ MFBG0AAAAABJRU5ErkJggg==
             <crmParentCode>${#Project#templateCode}</crmParentCode>\r
             <code>${#TestSuite#CUST}</code>\r
             <description>${#TestSuite#firstname} ${#TestSuite#lastname}</description>\r
-            <subscriptionDate>2016-01-01</subscriptionDate>
+            <subscriptionDate>2017-01-01</subscriptionDate>
             <name>\r
                <title>MR</title>\r
                <firstName>${#TestSuite#firstname}</firstName>\r
@@ -45132,7 +45127,6 @@ MFBG0AAAAABJRU5ErkJggg==
             </address>\r
             <email>${#TestSuite#CUST}@opencellsoft.com</email>
             <language>FRA</language>\r
-            <paymentMethod>CHECK</paymentMethod>\r
             <customerCategory>CLIENT</customerCategory>\r
             <customerBrand>${#Project#templateCode}</customerBrand>\r
             <currency>EUR</currency>\r
@@ -48808,7 +48802,7 @@ MFBG0AAAAABJRU5ErkJggg==
       </con:property>
       <con:property>
         <con:name>SUBSCRIPTION_YEAR</con:name>
-        <con:value>2016</con:value>
+        <con:value>2017</con:value>
       </con:property>
       <con:property>
         <con:name>TERMINATION_DAY</con:name>
@@ -48883,7 +48877,6 @@ MFBG0AAAAABJRU5ErkJggg==
             </address>\r
             <email>${#Project#SCUsername}@opencellsoft.com</email>
             <language>FRA</language>\r
-            <paymentMethod>CHECK</paymentMethod>\r
             <customerCategory>CLIENT</customerCategory>\r
             <customerBrand>${#Project#templateCode}</customerBrand>\r
             <currency>EUR</currency>\r
@@ -50660,7 +50653,7 @@ MFBG0AAAAABJRU5ErkJggg==
          <applyProduct>
             <product>PR_${#Project#templateCode}_DEFAULT</product>
             <subscription>${#TestSuite#CUST}_SUB2</subscription>
-            <operationDate>2016-11-11</operationDate>
+            <operationDate>2017-11-11</operationDate>
             <quantity>3</quantity>
             <description>Default applied product</description>
          </applyProduct>
@@ -50845,7 +50838,7 @@ MFBG0AAAAABJRU5ErkJggg==
    <soapenv:Header/>
    <soapenv:Body>
       <ws:chargeCdr>
-         <cdr>2016-10-01T01:00:00.000Z;1;${#TestSuite#CUST}_ACCESS3;UNIT</cdr>
+         <cdr>2017-10-01T01:00:00.000Z;1;${#TestSuite#CUST}_ACCESS3;UNIT</cdr>
       </ws:chargeCdr>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -50883,7 +50876,7 @@ MFBG0AAAAABJRU5ErkJggg==
    <soapenv:Header/>
    <soapenv:Body>
       <ws:chargeCdr>
-         <cdr>2016-10-02T01:00:00.000Z;2;${#TestSuite#CUST}_ACCESS3;UNIT</cdr>
+         <cdr>2017-10-02T01:00:00.000Z;2;${#TestSuite#CUST}_ACCESS3;UNIT</cdr>
       </ws:chargeCdr>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -50921,7 +50914,7 @@ MFBG0AAAAABJRU5ErkJggg==
    <soapenv:Header/>
    <soapenv:Body>
       <ws:chargeCdr>
-         <cdr>2016-10-03T01:00:00.000Z;3;${#TestSuite#CUST}_ACCESS3;UNIT</cdr>
+         <cdr>2017-10-03T01:00:00.000Z;3;${#TestSuite#CUST}_ACCESS3;UNIT</cdr>
       </ws:chargeCdr>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -50959,7 +50952,7 @@ MFBG0AAAAABJRU5ErkJggg==
    <soapenv:Header/>
    <soapenv:Body>
       <ws:chargeCdr>
-         <cdr>2016-10-04T01:00:00.000Z;4;${#TestSuite#CUST}_ACCESS3;UNIT</cdr>
+         <cdr>2017-10-04T01:00:00.000Z;4;${#TestSuite#CUST}_ACCESS3;UNIT</cdr>
       </ws:chargeCdr>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -50997,7 +50990,7 @@ MFBG0AAAAABJRU5ErkJggg==
    <soapenv:Header/>
    <soapenv:Body>
       <ws:chargeCdr>
-         <cdr>2016-10-05T01:00:00.000Z;5;${#TestSuite#CUST}_ACCESS3;UNIT</cdr>
+         <cdr>2017-10-05T01:00:00.000Z;5;${#TestSuite#CUST}_ACCESS3;UNIT</cdr>
       </ws:chargeCdr>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -51035,7 +51028,7 @@ MFBG0AAAAABJRU5ErkJggg==
    <soapenv:Header/>
    <soapenv:Body>
       <ws:chargeCdr>
-         <cdr>2016-10-06T01:00:00.000Z;6;${#TestSuite#CUST}_ACCESS3;UNIT</cdr>
+         <cdr>2017-10-06T01:00:00.000Z;6;${#TestSuite#CUST}_ACCESS3;UNIT</cdr>
       </ws:chargeCdr>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -51482,15 +51475,15 @@ MFBG0AAAAABJRU5ErkJggg==
       </con:property>
       <con:property>
         <con:name>SUBSCRIPTION_DATE</con:name>
-        <con:value>2016-10-20</con:value>
+        <con:value>2017-10-20</con:value>
       </con:property>
       <con:property>
         <con:name>USAGE_DATE</con:name>
-        <con:value>2016-10-30</con:value>
+        <con:value>2017-10-30</con:value>
       </con:property>
       <con:property>
         <con:name>INVOICING_DATE</con:name>
-        <con:value>2016-11-01</con:value>
+        <con:value>2017-11-01</con:value>
       </con:property>
       <con:property>
         <con:name>firstname</con:name>
@@ -51619,15 +51612,15 @@ MFBG0AAAAABJRU5ErkJggg==
       </con:property>
       <con:property>
         <con:name>SUBSCRIPTION_DATE</con:name>
-        <con:value>2016-10-01</con:value>
+        <con:value>2017-10-01</con:value>
       </con:property>
       <con:property>
         <con:name>USAGE_DATE</con:name>
-        <con:value>2016-10-15</con:value>
+        <con:value>2017-10-15</con:value>
       </con:property>
       <con:property>
         <con:name>THIS_MONTH</con:name>
-        <con:value>2016-12</con:value>
+        <con:value>2017-12</con:value>
       </con:property>
       <con:property>
         <con:name>OFFER_CODE</con:name>
@@ -51703,7 +51696,7 @@ MFBG0AAAAABJRU5ErkJggg==
             <additive>false</additive>
             <sqlQuery>select round(sum(wo.amount_without_tax),2) from billing_wallet_operation wo where provider_id = #{provider} and date_trunc('day', wo.operation_date) = date_trunc('day', to_date('#{date}','YYYY-MM-DD')) group by date_trunc('day', wo.operation_date)</sqlQuery>
             <measurementPeriod>DAILY</measurementPeriod>
-            <lastMeasureDate>2016-09-30</lastMeasureDate>
+            <lastMeasureDate>2017-09-30</lastMeasureDate>
          </measurableQuantity>
       </ws:createMeasurableQuantity>
    </soapenv:Body>
@@ -51756,7 +51749,7 @@ group by
 	date_trunc('month', wo.operation_date)
 		  </sqlQuery>
             <measurementPeriod>MONTHLY</measurementPeriod>
-            <lastMeasureDate>2016-01-01</lastMeasureDate>
+            <lastMeasureDate>2017-01-01</lastMeasureDate>
          </measurableQuantity>
       </ws:createMeasurableQuantity>
    </soapenv:Body>
@@ -51818,7 +51811,7 @@ t.count as terminations
 from subscriptions s, terminations t
 		  </sqlQuery>
             <measurementPeriod>MONTHLY</measurementPeriod>
-            <lastMeasureDate>2016-01-01</lastMeasureDate>
+            <lastMeasureDate>2017-01-01</lastMeasureDate>
          </measurableQuantity>
       </ws:createMeasurableQuantity>
    </soapenv:Body>
@@ -51876,7 +51869,7 @@ from
 ;
             </sqlQuery>
             <measurementPeriod>DAILY</measurementPeriod>
-            <lastMeasureDate>2016-12-01</lastMeasureDate>
+            <lastMeasureDate>2017-12-01</lastMeasureDate>
          </measurableQuantity>
       </ws:createMeasurableQuantity>
    </soapenv:Body>
@@ -51939,7 +51932,7 @@ select
    coalesce((select sum(value) from mrr where offer_code='${#TestSuite#offer4}'),0) as offer4
         </sqlQuery>
             <measurementPeriod>MONTHLY</measurementPeriod>
-            <lastMeasureDate>2016-01-01</lastMeasureDate>
+            <lastMeasureDate>2017-01-01</lastMeasureDate>
          </measurableQuantity>
       </ws:createMeasurableQuantity>
    </soapenv:Body>
@@ -52013,7 +52006,7 @@ select
         coalesce((select sum(a.value) from a where (a.su_termination_month = a.wo_operation_month)),0) as cancelled
 		  </sqlQuery>
             <measurementPeriod>MONTHLY</measurementPeriod>
-            <lastMeasureDate>2016-01-01</lastMeasureDate>
+            <lastMeasureDate>2017-01-01</lastMeasureDate>
          </measurableQuantity>
       </ws:createMeasurableQuantity>
    </soapenv:Body>
@@ -52815,8 +52808,8 @@ select
    <soapenv:Body>
       <ws:findMVByDateAndPeriod>
       	<mqCode>MQ_WO_AMOUNT_DAY</mqCode>
-      	<fromDate>2016-10-01</fromDate>
-      	<toDate>2016-10-06</toDate>
+      	<fromDate>2017-10-01</fromDate>
+      	<toDate>2017-10-06</toDate>
       </ws:findMVByDateAndPeriod>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -52910,8 +52903,8 @@ select
    <soapenv:Body>
       <ws:findMVByDateAndPeriod>
       	<mqCode>MQ_ORDERS_BY_STATUS</mqCode>
-      	<fromDate>2016-12-14</fromDate>
-      	<toDate>2016-12-16</toDate>
+      	<fromDate>2017-12-14</fromDate>
+      	<toDate>2017-12-16</toDate>
       </ws:findMVByDateAndPeriod>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -55406,7 +55399,7 @@ rkJggg==
           <subscription code="${#TestCase#customer}" description="selector Subscription to offer Selector">
              <userAccount>${#TestCase#customer}</userAccount>
              <offerTemplate>OF_${#Project#templateCode}_SELECTOR</offerTemplate>
-             <subscriptionDate>2016-10-15</subscriptionDate>
+             <subscriptionDate>2017-10-15</subscriptionDate>
           </subscription>
       </ws:createOrUpdateSubscription>\r
    </soapenv:Body>\r
@@ -55442,7 +55435,7 @@ rkJggg==
 		  <subscription>${#TestCase#customer}</subscription>
 		  <servicesToActivate>
 		    <service code="SE_${#Project#templateCode}_REC_SELECTOR_FLAT">
-		      <subscriptionDate>2016-10-15</subscriptionDate>
+		      <subscriptionDate>2017-10-15</subscriptionDate>
 		      <quantity>1</quantity>
 		      <customFields>
 	              <customField code="CF_${#Project#templateCode}_PRICE_REC">

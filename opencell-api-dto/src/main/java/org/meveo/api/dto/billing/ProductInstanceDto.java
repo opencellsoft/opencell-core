@@ -7,11 +7,9 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.BusinessDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.billing.ProductChargeInstance;
 import org.meveo.model.billing.ProductInstance;
@@ -20,23 +18,16 @@ import org.meveo.model.billing.ProductInstance;
  * @author Edward P. Legaspi
  **/
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ProductInstanceDto extends BaseDto {
+public class ProductInstanceDto extends BusinessDto {
 
 	private static final long serialVersionUID = 6853333357907373635L;
-
-	@XmlAttribute(required = true)
-	private String code;
-
-	@XmlAttribute()
-	private String description;
 
 	private Date applicationDate;
 	protected BigDecimal quantity = BigDecimal.ONE;
 	private String orderNumber;
-
-	@XmlElementWrapper(name = "productChargeInstances")
+	
 	@XmlElement(name = "productChargeInstance")
-	private List<ChargeInstanceDto> productChargeInstances;
+	private List<ProductChargeInstanceDto> productChargeInstances = new ArrayList<>();
 
 	private CustomFieldsDto customFields = new CustomFieldsDto();
 
@@ -50,34 +41,14 @@ public class ProductInstanceDto extends BaseDto {
 		applicationDate = e.getApplicationDate();
 		quantity = e.getQuantity();
 		orderNumber = e.getOrderNumber();
-
+		
 		if (e.getProductChargeInstances() != null) {
-			productChargeInstances = new ArrayList<ChargeInstanceDto>();
-
-			for (ProductChargeInstance ci : e.getProductChargeInstances()) {
-				productChargeInstances.add(new ChargeInstanceDto(ci.getCode(), ci.getDescription(),
-						ci.getStatus().name(), ci.getAmountWithTax(), ci.getAmountWithoutTax(),
-						ci.getSeller().getCode(), ci.getUserAccount().getCode()));
+			for (ProductChargeInstance pci : e.getProductChargeInstances()) {
+				productChargeInstances.add(new ProductChargeInstanceDto(pci));
 			}
 		}
-
+		
 		customFields = customFieldInstances;
-	}
-
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
 	}
 
 	public Date getApplicationDate() {
@@ -102,14 +73,6 @@ public class ProductInstanceDto extends BaseDto {
 
 	public void setOrderNumber(String orderNumber) {
 		this.orderNumber = orderNumber;
-	}
-
-	public List<ChargeInstanceDto> getProductChargeInstances() {
-		return productChargeInstances;
-	}
-
-	public void setProductChargeInstances(List<ChargeInstanceDto> productChargeInstances) {
-		this.productChargeInstances = productChargeInstances;
 	}
 
 	public CustomFieldsDto getCustomFields() {

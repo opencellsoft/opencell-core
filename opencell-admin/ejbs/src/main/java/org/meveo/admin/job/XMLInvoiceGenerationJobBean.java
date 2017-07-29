@@ -11,14 +11,13 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
+import org.meveo.admin.async.InvoicingAsync;
 import org.meveo.admin.async.SubListCreator;
-import org.meveo.admin.async.XmlInvoiceAsync;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.Invoice;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.service.billing.impl.BillingRunExtensionService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
@@ -27,107 +26,105 @@ import org.slf4j.Logger;
 @Stateless
 public class XMLInvoiceGenerationJobBean {
 
-	@Inject
-	private Logger log;
+    @Inject
+    private Logger log;
 
-	@Inject
-	private BillingRunService billingRunService;
+    @Inject
+    private BillingRunService billingRunService;
 
-	@Inject
-	private InvoiceService invoiceService;
+    @Inject
+    private BillingRunExtensionService billingRunExtensionService;
 
-	@Inject
-	private XmlInvoiceAsync xmlInvoiceAsync;
-	
+    @Inject
+    private InvoiceService invoiceService;
+
+    @Inject
+    private InvoicingAsync invoicingAsync;
+
     @Inject
     protected CustomFieldInstanceService customFieldInstanceService;
 
-	@SuppressWarnings("unchecked")
-	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public void execute(JobExecutionResultImpl result, String parameter, JobInstance jobInstance) {
-		log.debug("Running for parameter={}",  parameter);
-		
-		List<BillingRun> billingRuns = new ArrayList<BillingRun>();
+    @SuppressWarnings("unchecked")
+    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public void execute(JobExecutionResultImpl result, String parameter, JobInstance jobInstance) {
+        log.debug("Running for parameter={}", parameter);
 
-		if (parameter != null && parameter.trim().length() > 0) {
-			try {
-				billingRuns.add(billingRunService.findById(Long.parseLong(parameter)));
-			} catch (Exception e) {
-				log.error("error while getting billing run",e);
-				result.registerError(e.getMessage());
-			}
-		} else {
-			billingRuns = billingRunService.getValidatedBillingRuns();
-		}
+        List<Long> billingRuns = null;
 
-		log.info("billingRuns to process={}", billingRuns.size());
+        if (parameter != null && parameter.trim().length() > 0) {
+            try {
+                billingRuns = new ArrayList<Long>();
+                billingRuns.add(Long.parseLong(parameter));
+            } catch (Exception e) {
+                log.error("error while getting billing run", e);
+                result.registerError(e.getMessage());
+            }
+        } else {
+            billingRuns = billingRunService.getBillingRunIdsValidatedNoXml();
+        }
 
-		for (BillingRun billingRun : billingRuns) {
-			try {
+        log.info("billingRuns to process={}", billingRuns.size());
 
-				Long nbRuns = new Long(1);		
-				Long waitingMillis = new Long(0);
-				try{
-					nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "nbRuns");             
-	                waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis");
-					if(nbRuns == -1){
-						nbRuns = (long) Runtime.getRuntime().availableProcessors();
-					}
-				}catch(Exception e){
-					nbRuns = new Long(1);
-					waitingMillis = new Long(0);
-					log.warn("Cant get customFields for "+jobInstance.getJobTemplate(),e.getMessage());
-				}
+        for (Long billingRunId : billingRuns) {
+            try {
 
+                Long nbRuns = new Long(1);
+                Long waitingMillis = new Long(0);
+                try {
+                    nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "nbRuns");
+                    waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis");
+                    if (nbRuns == -1) {
+                        nbRuns = (long) Runtime.getRuntime().availableProcessors();
+                    }
+                } catch (Exception e) {
+                    nbRuns = new Long(1);
+                    waitingMillis = new Long(0);
+                    log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e.getMessage());
+                }
 
-				List<Future<String>> futures = new ArrayList<Future<String>>();
-				SubListCreator subListCreator = new SubListCreator(invoiceService.getInvoices(billingRun),nbRuns.intValue());
-				result.setNbItemsToProcess(subListCreator.getListSize());
+                List<Long> invoiceIds = invoiceService.getInvoiceIdsByBR(billingRunId);
+                List<Future<Boolean>> futures = new ArrayList<Future<Boolean>>();
+                SubListCreator subListCreator = new SubListCreator(invoiceIds, nbRuns.intValue());
 
-				while (subListCreator.isHasNext()) {
-					futures.add(xmlInvoiceAsync.launchAndForget((List<Invoice>) subListCreator.getNextWorkSet(), result));
-					if(result.getNbItemsProcessedWithError()==0){
-					updateBillingRun(billingRun.getId());
-					}
-	                if (subListCreator.isHasNext()) {
-	                    try {
-	                        Thread.sleep(waitingMillis.longValue());
-	                    } catch (InterruptedException e) {
-	                        log.error("", e);
-	                    }
-	                }
-				}
+                result.setNbItemsToProcess(subListCreator.getListSize());
 
-	            // Wait for all async methods to finish
-	            for (Future<String> future : futures) {
-	                try {
-	                    future.get();
+                while (subListCreator.isHasNext()) {
+                    futures.add(invoicingAsync.generateXmlAsync((List<Long>) subListCreator.getNextWorkSet(), result));
 
-	                } catch (InterruptedException e) {
-	                    // It was cancelled from outside - no interest
-	                    
-	                } catch (ExecutionException e) {
-	                    Throwable cause = e.getCause();
-	                    result.registerError(cause.getMessage());
-	                    log.error("Failed to execute async method", cause);
-	                }
-	            }
-	            
-				
-			} catch (Exception e) {
-	            log.error("Failed to generate XML invoices",e);
-	            result.registerError(e.getMessage());
-			}
-		}
-	}
+                    if (subListCreator.isHasNext()) {
+                        try {
+                            Thread.sleep(waitingMillis.longValue());
+                        } catch (InterruptedException e) {
+                            log.error("", e);
+                        }
+                    }
+                }
 
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void updateBillingRun(Long billingRunId) {
-		BillingRun billingRun = billingRunService.findById(billingRunId);
-		billingRun.setXmlInvoiceGenerated(true);
-		billingRunService.updateNoCheck(billingRun);
+                // Wait for all async methods to finish
+                boolean allXmlGenerated = true;
+                for (Future<Boolean> future : futures) {
+                    try {
+                        allXmlGenerated = allXmlGenerated && future.get();
 
-	}
+                    } catch (InterruptedException e) {
+                        // It was cancelled from outside - no interest
 
+                    } catch (ExecutionException e) {
+                        Throwable cause = e.getCause();
+                        result.registerError(cause.getMessage());
+                        log.error("Failed to execute async method", cause);
+                    }
+                }
+
+                if (allXmlGenerated) {
+                    billingRunExtensionService.markBillingRunAsAllXMLGenerated(billingRunId);
+                }
+
+            } catch (Exception e) {
+                log.error("Failed to generate XML invoices", e);
+                result.registerError(e.getMessage());
+            }
+        }
+    }
 }

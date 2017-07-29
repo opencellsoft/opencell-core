@@ -16,7 +16,6 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
-import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.service.base.PersistenceService;
 
@@ -25,9 +24,6 @@ import org.meveo.service.base.PersistenceService;
  **/
 @Stateless
 public class BillingRunExtensionService extends PersistenceService<BillingRun> {
-
-    @Inject
-    private InvoiceService invoiceService;
 
     @Inject
     private BillingAccountService billingAccountService;
@@ -53,8 +49,7 @@ public class BillingRunExtensionService extends PersistenceService<BillingRun> {
             if (startDate != null) {
                 ratedTransactionsAmounts = (Object[]) getEntityManager().createNamedQuery("RatedTransaction.sumbillingRunByCycle")
                     .setParameter("status", RatedTransactionStatusEnum.OPEN).setParameter("billingCycle", billingCycle).setParameter("startDate", startDate)
-                    .setParameter("endDate", endDate).setParameter("lastTransactionDate", billingRun.getLastTransactionDate())
-                    .getSingleResult();
+                    .setParameter("endDate", endDate).setParameter("lastTransactionDate", billingRun.getLastTransactionDate()).getSingleResult();
             } else {
                 ratedTransactionsAmounts = (Object[]) getEntityManager().createNamedQuery("RatedTransaction.sumbillingRunByCycleNoDate")
                     .setParameter("status", RatedTransactionStatusEnum.OPEN).setParameter("billingCycle", billingCycle)
@@ -105,28 +100,12 @@ public class BillingRunExtensionService extends PersistenceService<BillingRun> {
         }
         billingRun.setStatus(status);
         updateNoCheck(billingRun);
-
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void incrementInvoiceDatesAndValidate(BillingRun billingRun) throws BusinessException {
-        log.debug("incrementInvoiceDatesAndValidate in new transaction");
-        billingRun = findById(billingRun.getId());
-
-        for (Invoice invoice : billingRun.getInvoices()) {
-            invoice.setInvoiceNumber(invoiceService.getInvoiceNumber(invoice));
-            BillingAccount billingAccount = invoice.getBillingAccount();
-            Date initCalendarDate = billingAccount.getSubscriptionDate();
-            if (initCalendarDate == null) {
-                initCalendarDate = billingAccount.getAuditable().getCreated();
-            }
-            Date nextCalendarDate = billingAccount.getBillingCycle().getNextCalendarDate(initCalendarDate);
-            billingAccount.setNextInvoiceDate(nextCalendarDate);
-            billingAccount.updateAudit(currentUser);
-            invoiceService.update(invoice);
-        }
-        billingRun.setStatus(BillingRunStatusEnum.VALIDATED);
-        billingRun = update(billingRun);
+    public void markBillingRunAsAllXMLGenerated(Long billingRunId) {
+        BillingRun billingRun = findById(billingRunId);
+        billingRun.setXmlInvoiceGenerated(true);
+        updateNoCheck(billingRun);
     }
-
 }

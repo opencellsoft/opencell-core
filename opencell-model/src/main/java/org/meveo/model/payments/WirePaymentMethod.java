@@ -1,0 +1,49 @@
+package org.meveo.model.payments;
+
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+
+@Entity
+@DiscriminatorValue(value = "WIRETRANSFER")
+
+public class WirePaymentMethod extends PaymentMethod {
+
+    private static final long serialVersionUID = 8726571628074346184L;
+
+    public WirePaymentMethod() {
+        this.paymentType = PaymentMethodEnum.WIRETRANSFER;
+    }
+
+    public WirePaymentMethod(String alias, boolean preferred, CustomerAccount customerAccount) {
+        super();
+        this.alias = alias;
+        this.preferred = preferred;
+        this.customerAccount = customerAccount;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (!(obj instanceof WirePaymentMethod)) {
+            return false;
+        }
+
+        // Only one wire payment can be as it has no extra information
+        return true;
+    }
+
+    @Override
+    public void updateWith(PaymentMethod paymentMethod) {
+
+        setAlias(paymentMethod.getAlias());
+        setPreferred(paymentMethod.isPreferred());
+    }
+
+    @Override
+    public String toString() {
+        return "WirePaymentMethod [alias=" + alias + ", preferred=" + preferred + "]";
+    }
+}

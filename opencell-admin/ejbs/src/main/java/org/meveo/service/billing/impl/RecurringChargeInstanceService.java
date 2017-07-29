@@ -85,24 +85,21 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 		return chargeInstance;
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<Long> findIdsByStatus(InstanceStatusEnum status, Date maxChargeDate) {
-		List<Long> ids = new ArrayList<Long>();
-		try {
-			log.debug("start of find RecurringChargeInstance --IDS---  by status {} and date {}", status, maxChargeDate);
-			
-			QueryBuilder qb = new QueryBuilder("SELECT c.id FROM "+RecurringChargeInstance.class.getName()+" c");
-			qb.addCriterionEnum("c.status", status);
-			qb.addCriterionDateRangeToTruncatedToDay("c.nextChargeDate", maxChargeDate);
-			ids = qb.getQuery(getEntityManager()).getResultList();
-			log.debug("end of find {} by status (status={}). Result size found={}.",
-					new Object[] { "RecurringChargeInstance", status,
-					(ids != null ? ids.size() : "NULL") });
-		} catch (Exception e) {
-			log.error("findIdsByStatus error={} ", e.getMessage(),e);
-		}
-		return ids;
-	}
+    public List<Long> findIdsByStatus(InstanceStatusEnum status, Date maxChargeDate) {
+        List<Long> ids = new ArrayList<Long>();
+        try {
+            log.debug("start of find RecurringChargeInstance --IDS---  by status {} and date {}", status, maxChargeDate);
+
+            QueryBuilder qb = new QueryBuilder(RecurringChargeInstance.class, "c");
+            qb.addCriterionEnum("c.status", status);
+            qb.addCriterionDateRangeToTruncatedToDay("c.nextChargeDate", maxChargeDate);
+            ids = qb.getIdQuery(getEntityManager()).getResultList();
+            log.debug("end of find {} by status (status={}). Result size found={}.", new Object[] { "RecurringChargeInstance", status, (ids != null ? ids.size() : "NULL") });
+        } catch (Exception e) {
+            log.error("findIdsByStatus error={} ", e.getMessage(), e);
+        }
+        return ids;
+    }
 	
 	@SuppressWarnings("unchecked")
 	public List<RecurringChargeInstance> findByStatus(InstanceStatusEnum status, Date maxChargeDate) {

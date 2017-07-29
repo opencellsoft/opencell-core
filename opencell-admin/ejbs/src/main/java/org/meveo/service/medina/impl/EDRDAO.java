@@ -28,6 +28,7 @@ public class EDRDAO {
 	private BigDecimal decimalParam3; 
 	private BigDecimal decimalParam4; 
 	private BigDecimal decimalParam5;
+	private String extraParam;
 	
 	public String getOriginBatch() {
 		return originBatch;
@@ -166,6 +167,18 @@ public class EDRDAO {
 	}
 	public void setDecimalParam5(BigDecimal decimalParam5) {
 		this.decimalParam5 = decimalParam5;
+	}
+	/**
+	 * @return the extraParam
+	 */
+	public String getExtraParam() {
+		return extraParam;
+	}
+	/**
+	 * @param extraParam the extraParam to set
+	 */
+	public void setExtraParam(String extraParam) {
+		this.extraParam = extraParam;
 	}
 	
 	

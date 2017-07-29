@@ -28,7 +28,6 @@ import java.util.Map;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -52,383 +51,346 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.model.payments.PaymentTermEnum;
 
 @Entity
 @CustomFieldEntity(cftCodePrefix = "BA")
-@ExportIdentifier({ "code"})
+@ExportIdentifier({ "code" })
 @Table(name = "billing_billing_account")
 @DiscriminatorValue(value = "ACCT_BA")
-@NamedQueries({ @NamedQuery(name = "BillingAccount.listByBillingRunId", query = "SELECT b FROM BillingAccount b where b.billingRun.id=:billingRunId") })
+@NamedQueries({ @NamedQuery(name = "BillingAccount.listIdsByBillingRunId", query = "SELECT b.id FROM BillingAccount b where b.billingRun.id=:billingRunId") })
 public class BillingAccount extends AccountEntity {
-    
+
     public static final String ACCOUNT_TYPE = ((DiscriminatorValue) BillingAccount.class.getAnnotation(DiscriminatorValue.class)).value();
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "status", length = 10)
-	private AccountStatusEnum status;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", length = 10)
+    private AccountStatusEnum status;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "status_date")
-	private Date statusDate=new Date();
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "status_date")
+    private Date statusDate = new Date();
 
-	@Embedded
-	private BankCoordinates bankCoordinates = new BankCoordinates();
-
-	@Column(name = "email", length = 255)
+    @Column(name = "email", length = 255)
     @Size(max = 255)
-	// @Pattern(regexp = ".+@.+\\..{2,4}")
-	private String email;
+    // @Pattern(regexp = ".+@.+\\..{2,4}")
+    private String email;
 
-	@Type(type="numeric_boolean")
+    @Type(type = "numeric_boolean")
     @Column(name = "electronic_billing")
-	private Boolean electronicBilling = false;
+    private Boolean electronicBilling = false;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "next_invoice_date")
-	private Date nextInvoiceDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "next_invoice_date")
+    private Date nextInvoiceDate;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "subscription_date")
-	private Date subscriptionDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "subscription_date")
+    private Date subscriptionDate;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "termination_date")
-	private Date terminationDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "termination_date")
+    private Date terminationDate;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "customer_account_id")
-	private CustomerAccount customerAccount;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_account_id")
+    private CustomerAccount customerAccount;
 
-	@Column(name = "payment_method")
-	@Enumerated(EnumType.STRING)
-	private PaymentMethodEnum paymentMethod = PaymentMethodEnum.CHECK;
+    @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    // TODO : Add orphanRemoval annotation.
+    // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    private List<UserAccount> usersAccounts = new ArrayList<UserAccount>();
 
-	@Column(name = "payment_term")
-	@Enumerated(EnumType.STRING)
-	private PaymentTermEnum paymentTerm;
+    @OneToMany(mappedBy = "billingAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Invoice> invoices = new ArrayList<Invoice>();
 
-	@OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-	// TODO : Add orphanRemoval annotation.
-	// @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-	private List<UserAccount> usersAccounts = new ArrayList<UserAccount>();
+    @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    // TODO : Add orphanRemoval annotation.
+    // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    private List<BillingRunList> billingRunLists = new ArrayList<BillingRunList>();
 
-	@OneToMany(mappedBy = "billingAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<Invoice> invoices = new ArrayList<Invoice>();
+    @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    // TODO : Add orphanRemoval annotation.
+    // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    private List<InvoiceAgregate> invoiceAgregates = new ArrayList<InvoiceAgregate>();
 
-	@OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	// TODO : Add orphanRemoval annotation.
-	// @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-	private List<BillingRunList> billingRunLists = new ArrayList<BillingRunList>();
+    @Column(name = "discount_rate", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal discountRate;
 
-	@OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	// TODO : Add orphanRemoval annotation.
-	// @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-	private List<InvoiceAgregate> invoiceAgregates = new ArrayList<InvoiceAgregate>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "billing_cycle")
+    private BillingCycle billingCycle;
 
-	@Column(name = "discount_rate", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal discountRate;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trading_country_id")
+    private TradingCountry tradingCountry;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "billing_cycle")
-	private BillingCycle billingCycle;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trading_language_id")
+    private TradingLanguage tradingLanguage;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "trading_country_id")
-	private TradingCountry tradingCountry;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "billing_run")
+    private BillingRun billingRun;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "trading_language_id")
-	private TradingLanguage tradingLanguage;
+    @Column(name = "br_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal brAmountWithoutTax;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "billing_run")
-	private BillingRun billingRun;
+    @Column(name = "br_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal brAmountWithTax;
 
-	@Column(name = "br_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal brAmountWithoutTax;
-
-	@Column(name = "br_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal brAmountWithTax;
-
-	@Column(name = "invoice_prefix", length = 255)
+    @Column(name = "invoice_prefix", length = 255)
     @Size(max = 255)
-	private String invoicePrefix;
+    private String invoicePrefix;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "termin_reason_id")
-	private SubscriptionTerminationReason terminationReason;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "termin_reason_id")
+    private SubscriptionTerminationReason terminationReason;
 
-	@OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY)
-	private List<RatedTransaction> ratedTransactions;
+    @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY)
+    private List<RatedTransaction> ratedTransactions;
 
-	@ManyToOne
-	@JoinColumn(name = "discount_plan_id")
-	private DiscountPlan discountPlan;
+    @ManyToOne
+    @JoinColumn(name = "discount_plan_id")
+    private DiscountPlan discountPlan;
 
-	@OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY)
-	@MapKey(name = "code")
-	// TODO : Add orphanRemoval annotation.
-	// @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-	// key is the counter template code
-	Map<String, CounterInstance> counters = new HashMap<String, CounterInstance>();
-	
-	@Column(name = "invoicing_threshold")
-	private BigDecimal invoicingThreshold; 
+    @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY)
+    @MapKey(name = "code")
+    // TODO : Add orphanRemoval annotation.
+    // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    // key is the counter template code
+    Map<String, CounterInstance> counters = new HashMap<String, CounterInstance>();
+
+    @Column(name = "invoicing_threshold")
+    private BigDecimal invoicingThreshold;
 
     public BillingAccount() {
         accountType = ACCOUNT_TYPE;
     }
 
-	public List<UserAccount> getUsersAccounts() {
-		return usersAccounts;
-	}
+    public List<UserAccount> getUsersAccounts() {
+        return usersAccounts;
+    }
 
-	public void setUsersAccounts(List<UserAccount> usersAccounts) {
-		this.usersAccounts = usersAccounts;
-	}
+    public void setUsersAccounts(List<UserAccount> usersAccounts) {
+        this.usersAccounts = usersAccounts;
+    }
 
-	public PaymentMethodEnum getPaymentMethod() {
-		return paymentMethod;
-	}
+    public CustomerAccount getCustomerAccount() {
+        return customerAccount;
+    }
 
-	public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
-		this.paymentMethod = paymentMethod;
-	}
+    public void setCustomerAccount(CustomerAccount customerAccount) {
+        this.customerAccount = customerAccount;
+    }
 
-	public CustomerAccount getCustomerAccount() {
-		return customerAccount;
-	}
+    public AccountStatusEnum getStatus() {
+        return status;
+    }
 
-	public void setCustomerAccount(CustomerAccount customerAccount) {
-		this.customerAccount = customerAccount;
-	}
+    public void setStatus(AccountStatusEnum status) {
+        if (this.status != status) {
+            this.statusDate = new Date();
+        }
+        this.status = status;
+    }
 
-	public AccountStatusEnum getStatus() {
-		return status;
-	}
+    public Date getStatusDate() {
+        return statusDate;
+    }
 
-	public void setStatus(AccountStatusEnum status) {
-		if(this.status!=status){
-			this.statusDate = new Date();
-		}
-		this.status = status;
-	}
+    public void setStatusDate(Date statusDate) {
+        this.statusDate = statusDate;
+    }
 
-	public Date getStatusDate() {
-		return statusDate;
-	}
+    public Boolean getElectronicBilling() {
+        return electronicBilling;
+    }
 
-	public void setStatusDate(Date statusDate) {
-		this.statusDate = statusDate;
-	}
+    public void setElectronicBilling(Boolean electronicBilling) {
+        this.electronicBilling = electronicBilling;
+    }
 
-	public Boolean getElectronicBilling() {
-		return electronicBilling;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public void setElectronicBilling(Boolean electronicBilling) {
-		this.electronicBilling = electronicBilling;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    public Date getNextInvoiceDate() {
+        return nextInvoiceDate;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public void setNextInvoiceDate(Date nextInvoiceDate) {
+        this.nextInvoiceDate = nextInvoiceDate;
+    }
 
-	public Date getNextInvoiceDate() {
-		return nextInvoiceDate;
-	}
+    public Date getSubscriptionDate() {
+        return subscriptionDate;
+    }
 
-	public void setNextInvoiceDate(Date nextInvoiceDate) {
-		this.nextInvoiceDate = nextInvoiceDate;
-	}
+    public void setSubscriptionDate(Date subscriptionDate) {
+        this.subscriptionDate = subscriptionDate;
+    }
 
-	public Date getSubscriptionDate() {
-		return subscriptionDate;
-	}
+    public Date getTerminationDate() {
+        return terminationDate;
+    }
 
-	public void setSubscriptionDate(Date subscriptionDate) {
-		this.subscriptionDate = subscriptionDate;
-	}
+    public void setTerminationDate(Date terminationDate) {
+        this.terminationDate = terminationDate;
+    }
 
-	public Date getTerminationDate() {
-		return terminationDate;
-	}
+    public BigDecimal getDiscountRate() {
+        return discountRate;
+    }
 
-	public void setTerminationDate(Date terminationDate) {
-		this.terminationDate = terminationDate;
-	}
+    public void setDiscountRate(BigDecimal discountRate) {
+        this.discountRate = discountRate;
+    }
 
-	public BankCoordinates getBankCoordinates() {
-		return bankCoordinates;
-	}
+    public List<Invoice> getInvoices() {
+        return invoices;
+    }
 
-	public void setBankCoordinates(BankCoordinates bankCoordinates) {
-		this.bankCoordinates = bankCoordinates;
-	}
+    public void setInvoices(List<Invoice> invoices) {
+        this.invoices = invoices;
+    }
 
-	public BigDecimal getDiscountRate() {
-		return discountRate;
-	}
+    public BillingCycle getBillingCycle() {
+        return billingCycle;
+    }
 
-	public void setDiscountRate(BigDecimal discountRate) {
-		this.discountRate = discountRate;
-	}
+    public void setBillingCycle(BillingCycle billingCycle) {
+        this.billingCycle = billingCycle;
+    }
 
-	public List<Invoice> getInvoices() {
-		return invoices;
-	}
+    public BillingRun getBillingRun() {
+        return billingRun;
+    }
 
-	public void setInvoices(List<Invoice> invoices) {
-		this.invoices = invoices;
-	}
+    public void setBillingRun(BillingRun billingRun) {
+        this.billingRun = billingRun;
+    }
 
-	public BillingCycle getBillingCycle() {
-		return billingCycle;
-	}
+    public String getInvoicePrefix() {
+        return invoicePrefix;
+    }
 
-	public void setBillingCycle(BillingCycle billingCycle) {
-		this.billingCycle = billingCycle;
-	}
+    public void setInvoicePrefix(String invoicePrefix) {
+        this.invoicePrefix = invoicePrefix;
+    }
 
-	public BillingRun getBillingRun() {
-		return billingRun;
-	}
+    public List<BillingRunList> getBillingRunLists() {
+        return billingRunLists;
+    }
 
-	public void setBillingRun(BillingRun billingRun) {
-		this.billingRun = billingRun;
-	}
+    public void setBillingRunLists(List<BillingRunList> billingRunLists) {
+        this.billingRunLists = billingRunLists;
+    }
 
-	public String getInvoicePrefix() {
-		return invoicePrefix;
-	}
+    public List<InvoiceAgregate> getInvoiceAgregates() {
+        return invoiceAgregates;
+    }
 
-	public void setInvoicePrefix(String invoicePrefix) {
-		this.invoicePrefix = invoicePrefix;
-	}
+    public void setInvoiceAgregates(List<InvoiceAgregate> invoiceAgregates) {
+        this.invoiceAgregates = invoiceAgregates;
+    }
 
-	public List<BillingRunList> getBillingRunLists() {
-		return billingRunLists;
-	}
+    public TradingCountry getTradingCountry() {
+        return tradingCountry;
+    }
 
-	public void setBillingRunLists(List<BillingRunList> billingRunLists) {
-		this.billingRunLists = billingRunLists;
-	}
+    public void setTradingCountry(TradingCountry tradingCountry) {
+        this.tradingCountry = tradingCountry;
+    }
 
-	public List<InvoiceAgregate> getInvoiceAgregates() {
-		return invoiceAgregates;
-	}
+    public TradingLanguage getTradingLanguage() {
+        return tradingLanguage;
+    }
 
-	public void setInvoiceAgregates(List<InvoiceAgregate> invoiceAgregates) {
-		this.invoiceAgregates = invoiceAgregates;
-	}
+    public void setTradingLanguage(TradingLanguage tradingLanguage) {
+        this.tradingLanguage = tradingLanguage;
+    }
 
-	public TradingCountry getTradingCountry() {
-		return tradingCountry;
-	}
+    public SubscriptionTerminationReason getTerminationReason() {
+        return terminationReason;
+    }
 
-	public void setTradingCountry(TradingCountry tradingCountry) {
-		this.tradingCountry = tradingCountry;
-	}
+    public void setTerminationReason(SubscriptionTerminationReason terminationReason) {
+        this.terminationReason = terminationReason;
+    }
 
-	public TradingLanguage getTradingLanguage() {
-		return tradingLanguage;
-	}
+    public BigDecimal getBrAmountWithoutTax() {
+        return brAmountWithoutTax;
+    }
 
-	public void setTradingLanguage(TradingLanguage tradingLanguage) {
-		this.tradingLanguage = tradingLanguage;
-	}
+    public void setBrAmountWithoutTax(BigDecimal brAmountWithoutTax) {
+        this.brAmountWithoutTax = brAmountWithoutTax;
+    }
 
-	public SubscriptionTerminationReason getTerminationReason() {
-		return terminationReason;
-	}
+    public BigDecimal getBrAmountWithTax() {
+        return brAmountWithTax;
+    }
 
-	public void setTerminationReason(SubscriptionTerminationReason terminationReason) {
-		this.terminationReason = terminationReason;
-	}
+    public void setBrAmountWithTax(BigDecimal brAmountWithTax) {
+        this.brAmountWithTax = brAmountWithTax;
+    }
 
-	public BigDecimal getBrAmountWithoutTax() {
-		return brAmountWithoutTax;
-	}
+    public List<RatedTransaction> getRatedTransactions() {
+        return ratedTransactions;
+    }
 
-	public void setBrAmountWithoutTax(BigDecimal brAmountWithoutTax) {
-		this.brAmountWithoutTax = brAmountWithoutTax;
-	}
+    public void setRatedTransactions(List<RatedTransaction> ratedTransactions) {
+        this.ratedTransactions = ratedTransactions;
+    }
 
-	public BigDecimal getBrAmountWithTax() {
-		return brAmountWithTax;
-	}
+    public DiscountPlan getDiscountPlan() {
+        return discountPlan;
+    }
 
-	public void setBrAmountWithTax(BigDecimal brAmountWithTax) {
-		this.brAmountWithTax = brAmountWithTax;
-	}
+    public void setDiscountPlan(DiscountPlan discountPlan) {
+        this.discountPlan = discountPlan;
+    }
 
-	public PaymentTermEnum getPaymentTerm() {
-		return paymentTerm;
-	}
+    public Map<String, CounterInstance> getCounters() {
+        return counters;
+    }
 
-	public void setPaymentTerm(PaymentTermEnum paymentTerm) {
-		this.paymentTerm = paymentTerm;
-	}
-
-	public List<RatedTransaction> getRatedTransactions() {
-		return ratedTransactions;
-	}
-
-	public void setRatedTransactions(List<RatedTransaction> ratedTransactions) {
-		this.ratedTransactions = ratedTransactions;
-	}
-
-	public DiscountPlan getDiscountPlan() {
-		return discountPlan;
-	}
-
-	public void setDiscountPlan(DiscountPlan discountPlan) {
-		this.discountPlan = discountPlan;
-	}
-
-	public Map<String, CounterInstance> getCounters() {
-		return counters;
-	}
-
-	public void setCounters(Map<String, CounterInstance> counters) {
-		this.counters = counters;
-	}
+    public void setCounters(Map<String, CounterInstance> counters) {
+        this.counters = counters;
+    }
 
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
-        return new ICustomFieldEntity[]{customerAccount};
-	}
+        return new ICustomFieldEntity[] { customerAccount };
+    }
 
-	@Override
-	public BusinessEntity getParentEntity() {
-		return customerAccount;
-	}
-	
-	@Override
-	public Class<? extends BusinessEntity> getParentEntityType() {
-		return CustomerAccount.class;
-	}
+    @Override
+    public BusinessEntity getParentEntity() {
+        return customerAccount;
+    }
 
-	/**
-	 * @return the invoicingThreshold
-	 */
-	public BigDecimal getInvoicingThreshold() {
-		return invoicingThreshold;
-	}
+    @Override
+    public Class<? extends BusinessEntity> getParentEntityType() {
+        return CustomerAccount.class;
+    }
 
-	/**
-	 * @param invoicingThreshold the invoicingThreshold to set
-	 */
-	public void setInvoicingThreshold(BigDecimal invoicingThreshold) {
-		this.invoicingThreshold = invoicingThreshold;
-	}
-	
+    /**
+     * @return the invoicingThreshold
+     */
+    public BigDecimal getInvoicingThreshold() {
+        return invoicingThreshold;
+    }
+
+    /**
+     * @param invoicingThreshold the invoicingThreshold to set
+     */
+    public void setInvoicingThreshold(BigDecimal invoicingThreshold) {
+        this.invoicingThreshold = invoicingThreshold;
+    }
+
 }

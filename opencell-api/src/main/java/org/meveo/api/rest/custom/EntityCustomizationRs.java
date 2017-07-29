@@ -91,6 +91,18 @@ public interface EntityCustomizationRs extends IBaseRs {
     @POST
     @Path("/cet/createOrUpdate")
     public ActionStatus createOrUpdateEntityTemplate(CustomEntityTemplateDto dto);
+    
+    
+    /**
+     * To be sure the compatibility of above method we will create a new one.
+     * Define new or update existing custom entity template definition
+     * 
+     * @param dto
+     * @return
+     */
+    @POST
+    @Path("/entity/createOrUpdate")
+    public ActionStatus createOrUpdateCustumizedEntityTemplate(CustomEntityTemplateDto dto);
 
     /**
      * Customize a standard Meveo entity definition by adding fields and/or custom actions
@@ -244,5 +256,10 @@ public interface EntityCustomizationRs extends IBaseRs {
     @GET
     @Path("/entity/listELFiltered")
     public EntityCustomizationResponseDto listELFiltered(@QueryParam("appliesTo") String appliesTo, @QueryParam("entityCode") String entityCode);
+
+    @POST
+    @Path("/entity/action/execute/{actionCode}/{appliesTo}/{entityCode}")
+	ActionStatus execute(@PathParam("actionCode") String actionCode, @PathParam("appliesTo") String appliesTo,
+			@PathParam("entityCode") String entityCode);
 
 }

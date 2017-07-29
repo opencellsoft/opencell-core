@@ -1,5 +1,7 @@
 package org.meveo.api.dto;
 
+import java.util.Date;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -26,8 +28,11 @@ public class InvoiceSubCategoryCountryDto extends BaseDto {
 	
 	private String discountCode;
 	
-
 	private String filterEL;
+	
+	private Date startValidityDate;
+	private Date endValidityDate;
+	private int priority;
 
 	public InvoiceSubCategoryCountryDto() {
 
@@ -40,6 +45,9 @@ public class InvoiceSubCategoryCountryDto extends BaseDto {
 		tax = invoiceSubcategoryCountry.getTax()==null?null:invoiceSubcategoryCountry.getTax().getCode();
 		taxCodeEL = invoiceSubcategoryCountry.getTaxCodeEL();
 		filterEL=invoiceSubcategoryCountry.getFilterEL();
+		startValidityDate = invoiceSubcategoryCountry.getStartValidityDate();
+		endValidityDate = invoiceSubcategoryCountry.getEndValidityDate();
+		priority = invoiceSubcategoryCountry.getPriority();
 	}
 
 	public String getInvoiceSubCategory() {
@@ -105,6 +113,30 @@ public class InvoiceSubCategoryCountryDto extends BaseDto {
 		return "InvoiceSubCategoryCountryDto [invoiceSubCategory=" + invoiceSubCategory 
 				+ ", selling country=" + sellingCountry + ", country=" + country
 				+ ", tax=" + tax + ", taxCodeEL=" + taxCodeEL + ", discountCode=" + discountCode +",filterEL="+filterEL+ "]";
+	}
+
+	public Date getStartValidityDate() {
+		return startValidityDate;
+	}
+
+	public void setStartValidityDate(Date startValidityDate) {
+		this.startValidityDate = startValidityDate;
+	}
+
+	public Date getEndValidityDate() {
+		return endValidityDate;
+	}
+
+	public void setEndValidityDate(Date endValidityDate) {
+		this.endValidityDate = endValidityDate;
+	}
+
+	public int getPriority() {
+		return priority;
+	}
+
+	public void setPriority(int priority) {
+		this.priority = priority;
 	}
 
 }

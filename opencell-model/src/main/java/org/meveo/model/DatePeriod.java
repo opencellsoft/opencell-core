@@ -35,9 +35,9 @@ import org.meveo.model.shared.DateUtils;
 @Embeddable
 public class DatePeriod implements Comparable<DatePeriod>, Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "start_date")
     private Date from;
 
@@ -179,7 +179,10 @@ public class DatePeriod implements Comparable<DatePeriod>, Serializable {
             return true;
         } else if (!isEmpty() && other == null) {
             return false;
+        } else if (!(other instanceof DatePeriod)) {
+            return false;
         }
+
         return isCorrespondsToPeriod((DatePeriod) other, true);
     }
 }

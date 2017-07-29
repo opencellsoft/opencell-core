@@ -138,7 +138,7 @@
 												<hftl:formField
 														label="#{messages['billingAccount.invoicingThreshold']}"
 														field="invoicingThreshold" required="false" size="20" />														
-													
+													<!-- 
 													<h:panelGroup id="invoicePrefixBoxPanel">
                                                         <hftl:decorateFormField fieldId="returnToAgency_select" label="#{messages['billingAccount.returnToAgency']}" >
     														<c:set var="fieldValueRA"
@@ -170,12 +170,17 @@
 																style="font-weight:bold;" />
 														</hftl:decorateFormField>
 													</h:panelGroup>
-													<h:panelGroup id="invoicePrefixPanel">                                                        
+													 
+													<h:panelGroup id="invoicePrefixPanel">
+                                                       
 														<hftl:decorateFormField fieldId="invoicePrefix" label="#{messages['billingAccount.invoicePrefix']}" rendered="#{billingAccountBean.returnToAgency}">
     														<h:outputText id="invoicePrefix"
     															value="#{billingAccountBean.entity.invoicePrefix}" style="font-weight:bold;" />
                                                         </hftl:decorateFormField>
+                                                        
 													</h:panelGroup>
+													 -->
+													 
 													<hftl:formField
 														label="#{messages['billingAccount.externalRef1']}"
 														field="externalRef1" useConverter="false" newLine="true"/>
@@ -185,7 +190,9 @@
 															value="#{billingAccountBean.entity.externalRef2}"
 															rendered="#{billingAccountBean.edit}"
 															valueChangeListener="#{billingAccountBean.processValueChange}">
+															<!-- 
 															<p:ajax event="valueChange" update="invoicePrefixPanel" />
+															 -->
 														</p:inputText>
 <!-- 														<h:outputText -->
 <!-- 															value="#{billingAccountBean.entity.externalRef2}" -->
@@ -264,15 +271,8 @@
 												
 											</p:fieldset>
 
-												<p:fieldset legend="#{messages['commons.bankCoordinates']}">
-													<hftl:formField
-                                                        label="#{messages['billingAccount.paymentMethod']}"
-                                                        field="paymentMethod" required="true" listenerUpdate=":parentTab:formId:childTab:bankCoordinatesPanel"/>                                                        
-
-													<hftl:formField id="paymentTerm"
-														label="#{messages['billingAccount.paymentTerm']}"
-														field="paymentTerm" required="false" />
-
+												<p:fieldset legend="#{messages['billingAccount.contactPreferences']}">
+											
 														<hftl:formField
 															label="#{messages['billingAccount.electronicBilling']}"
 															field="electronicBilling" isMessage="true" />
@@ -294,44 +294,6 @@
  																value="#{billingAccountBean.entity.email}" />
                                                             </hftl:decorateFormField>
 														</h:panelGroup>
-													<h:panelGroup id="bankCoordinatesPanel" >
-														<h:panelGroup rendered="#{billingAccountBean.entity.paymentMethod.toString() == 'DIRECTDEBIT' or billingAccountBean.entity.paymentMethod.toString() == 'TIP'}">
-															<hftl:formField
-																label="#{messages['bankCoordinates.bankCode']}"
-																id="bankCode" field="bankCoordinates"
-																childField="bankCode" size="5" maxlength="5"
-																validateRib="false" />
-															<hftl:formField
-																label="#{messages['bankCoordinates.branchCode']}"
-																field="bankCoordinates" childField="branchCode" size="5"
-																/>
-															<hftl:formField
-																label="#{messages['bankCoordinates.accountNumber']}"
-																field="bankCoordinates" childField="accountNumber"
-																size="11" />
-															<hftl:formField
-																label="#{messages['bankCoordinates.key']}"
-																field="bankCoordinates" childField="key" size="2"
-																 />														
-															<hftl:formField
-																label="#{messages['bankCoordinates.bic']}"
-																field="bankCoordinates" childField="bic" size="15"
-																 />
-															<hftl:formField
-																label="#{messages['bankCoordinates.iban']}"
-																field="bankCoordinates" childField="iban" size="45"
-																 />
-															<hftl:formField
-																label="#{messages['bankCoordinates.accountOwner']}"
-																field="bankCoordinates" childField="accountOwner"
-																size="55" 
-																required="#{entity.paymentMethod.toString() == 'DIRECTDEBIT'}" />
-															<hftl:formField
-																label="#{messages['bankCoordinates.bankName']}"
-																field="bankCoordinates" childField="bankName" size="55"
-																 />
-                                                        </h:panelGroup>
-													</h:panelGroup>
 												</p:fieldset>
 
 										</p:tab>

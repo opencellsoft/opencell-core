@@ -88,7 +88,6 @@
 
 				</p:tab>
 				
-
 				<p:tab title="#{messages['invoiceSubCategory.tab2']}" id="tab2"
 					rendered="#{invoiceSubCategoryBean.entity.id!=null}">
 
@@ -131,6 +130,15 @@
 							<hftl:column
 								label="#{messages['invoiceSubCategoryCountry.taxeCodeEL']}"
 								field="taxCodeEL" />
+							<hftl:column
+								label="#{messages['invoiceSubCategoryCountry.priority']}"
+								field="priority" />
+							<hftl:column
+								label="#{messages['invoiceSubCategoryCountry.startValidityDate']}"
+								field="startValidityDate" />
+							<hftl:column
+								label="#{messages['invoiceSubCategoryCountry.endValidityDate']}"
+								field="endValidityDate" />
 							<p:column styleClass="actions-column"
 								rendered="#{invoiceSubCategoryBean.edit}">
 								<f:facet name="header">
@@ -157,67 +165,79 @@
 						</hftl:dataList>
 					</h:panelGroup>
 
+					<p:panel id="subCategoryCountrydiv"
+						rendered="#{invoiceSubCategoryBean.edit}">
+						<hftl:formPanel formId="formTax"
+							edit="#{invoiceSubCategoryBean.edit}"
+							label="#{messages['invoiceSubCategoryCountry.panel']}"
+							backingBean="#{invoiceSubCategoryBean}"
+							entity="#{invoiceSubCategoryBean.invoiceSubcategoryCountry}"
+							showFormButtons="false" ajaxSubmit="true">
 
-						<p:panel id="subCategoryCountrydiv" rendered="#{invoiceSubCategoryBean.edit}">
-								<hftl:formPanel formId="formTax"
-									edit="#{invoiceSubCategoryBean.edit}"
-									label="#{messages['invoiceSubCategoryCountry.panel']}"
-									backingBean="#{invoiceSubCategoryBean}"
-									entity="#{invoiceSubCategoryBean.invoiceSubcategoryCountry}" showFormButtons="false"
-									ajaxSubmit="true">
-									
+							<hftl:formField id="sellingCountrySelectedId"
+								label="#{messages['invoiceSubCategoryCountry.sellingCountryCode']}"
+								field="sellingCountry" valueLabelField="countryCode"
+								required="false" listBean="#{tradingCountryBean}" />
 
-									<hftl:formField id="sellingCountrySelectedId"
-										label="#{messages['invoiceSubCategoryCountry.sellingCountryCode']}" field="sellingCountry"
-										valueLabelField="countryCode" required="false" listBean="#{tradingCountryBean}" />
+							<hftl:formField id="countrySelectedId"
+								label="#{messages['invoiceSubCategoryCountry.countryCode']}"
+								field="tradingCountry" valueLabelField="countryCode"
+								required="false" listBean="#{tradingCountryBean}" />
+							<!--                                         popup="true" popupId="invSubCatCountryPopup" /> -->
 
-									<hftl:formField id="countrySelectedId"
-										label="#{messages['invoiceSubCategoryCountry.countryCode']}" field="tradingCountry"
-										valueLabelField="countryCode" required="false" listBean="#{tradingCountryBean}" />
-<!--                                         popup="true" popupId="invSubCatCountryPopup" /> -->
+							<hftl:formField id="taxSelectedId"
+								label="#{messages['invoiceSubCategoryCountry.taxe']}"
+								field="tax" valueLabelField="code" required="false"
+								listBean="#{taxBean}" />
+							<!--                                         popup="true" popupId="invSubCatCountTaxPopup" required="true" /> -->
+							<hftl:formField id="startValidityDate"
+								label="#{messages['invoiceSubCategoryCountry.startValidityDate']}"
+								field="startValidityDate" />
+							<hftl:formField id="endValidityDate"
+								label="#{messages['invoiceSubCategoryCountry.endValidityDate']}"
+								field="endValidityDate" />
 
-									<hftl:formField id="taxSelectedId"
-										label="#{messages['invoiceSubCategoryCountry.taxe']}"
-										field="tax" valueLabelField="code" required="false" listBean="#{taxBean}"/>
-<!--                                         popup="true" popupId="invSubCatCountTaxPopup" required="true" /> -->
-									
-									<hftl:formField label="#{messages['invoiceSubCategoryCountry.taxeCodeEL']}"
-			        				field="taxCodeEL" textArea="true" rows="1" maxlength="2000" required="false"/>	
-										
-									<hftl:formField label="#{messages['pricePlanMatrix.criteriaEL']}"
-			        				field="filterEL" textArea="true" rows="1" maxlength="2000" required="false"/>	
+							<hftl:formField
+								label="#{messages['invoiceSubCategoryCountry.taxeCodeEL']}"
+								field="taxCodeEL" textArea="true" rows="1" maxlength="2000"
+								required="false" />
 
-                                    <ui:param name="buttons" value="true"/>
-									<ui:define name="buttons">
-										<p:commandButton
-											rendered="#{invoiceSubCategoryBean.invoiceSubcategoryCountry.id==null and invoiceSubCategoryBean.canUserUpdateEntity()}"
-											action="#{invoiceSubCategoryBean.saveInvoiceSubCategoryCountry}"
-											value="#{messages['invoiceSubCategoryCountry.saveNewtax']}"
-											update=":tabView:invoiceSubCategoryCountries_panel,:tabView:formTax,:tabView:subCategoryCountrydiv" />
+							<hftl:formField label="#{messages['pricePlanMatrix.criteriaEL']}"
+								field="filterEL" textArea="true" rows="1" maxlength="2000"
+								required="false" />
 
-										<p:commandButton
-											rendered="#{invoiceSubCategoryBean.invoiceSubcategoryCountry.id!=null and invoiceSubCategoryBean.canUserUpdateEntity()}"
-											action="#{invoiceSubCategoryBean.saveInvoiceSubCategoryCountry}"
-											value="#{messages['invoiceSubCategoryCountry.modifyTax']}"
-											update=":tabView:invoiceSubCategoryCountries_panel,:tabView:formTax,:tabView:subCategoryCountrydiv" />
+							<ui:param name="buttons" value="true" />
+							<ui:define name="buttons">
+								<p:commandButton
+									rendered="#{invoiceSubCategoryBean.invoiceSubcategoryCountry.id==null and invoiceSubCategoryBean.canUserUpdateEntity()}"
+									action="#{invoiceSubCategoryBean.saveInvoiceSubCategoryCountry}"
+									value="#{messages['invoiceSubCategoryCountry.saveNewtax']}"
+									update=":tabView:invoiceSubCategoryCountries_panel,:tabView:formTax,:tabView:subCategoryCountrydiv" />
 
-										<p:commandButton value="#{messages['action.cancel']}"
-											action="#{invoiceSubCategoryBean.newInvoiceSubcategoryCountryInstance}"
-											update=":tabView:subCategoryCountrydiv" />
+								<p:commandButton
+									rendered="#{invoiceSubCategoryBean.invoiceSubcategoryCountry.id!=null and invoiceSubCategoryBean.canUserUpdateEntity()}"
+									action="#{invoiceSubCategoryBean.saveInvoiceSubCategoryCountry}"
+									value="#{messages['invoiceSubCategoryCountry.modifyTax']}"
+									update=":tabView:invoiceSubCategoryCountries_panel,:tabView:formTax,:tabView:subCategoryCountrydiv" />
+
+								<p:commandButton value="#{messages['action.cancel']}"
+									action="#{invoiceSubCategoryBean.newInvoiceSubcategoryCountryInstance}"
+									update=":tabView:subCategoryCountrydiv" />
 
 
-										<!-- <p:button id="buttonBack" value="#{messages['action.back']}"
+								<!-- <p:button id="buttonBack" value="#{messages['action.back']}"
 											outcome="#{invoiceSubCategoryBean.back()}"
 											includeViewParams="true">
 											</p:button> -->
-										<p:commandButton id="buttonBack"
-											value="#{messages['action.back']}"
-											action="#{invoiceSubCategoryBean.setIndex()}"
-											update=":tabView" immediate="true"></p:commandButton>
-									</ui:define>
-								</hftl:formPanel>
-							</p:panel>
+								<p:commandButton id="buttonBack"
+									value="#{messages['action.back']}"
+									action="#{invoiceSubCategoryBean.setIndex()}" update=":tabView"
+									immediate="true"></p:commandButton>
+							</ui:define>
+						</hftl:formPanel>
+					</p:panel>
 				</p:tab>
+				
 				<p:tab title="#{messages['meveoModule.customFields']}" id="tab3" rendered="#{invoiceSubCategoryBean.entity.id!=null}">
 					<hftl:formPanel formId="invoiceSubCatFormId" edit="#{invoiceSubCategoryBean.edit}"
 						backingBean="#{invoiceSubCategoryBean}">

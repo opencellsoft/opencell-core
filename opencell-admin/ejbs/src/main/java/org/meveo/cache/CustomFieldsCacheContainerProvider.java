@@ -1,6 +1,7 @@
 package org.meveo.cache;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -20,6 +21,7 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.infinispan.Cache;
 import org.infinispan.context.Flag;
 import org.meveo.model.ICustomFieldEntity;
@@ -146,7 +148,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
                 }
             }
             if (cft.getListValues() != null) {
-                cft.setListValues(PersistenceUtils.initializeAndUnproxy(cft.getListValues()));
+                cft.getListValues().values().toArray(new String[]{});
             }
 
             customFieldTemplateService.detach(cft);
@@ -598,7 +600,8 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
 
     private CachedCFPeriodValue convertFromCFI(CustomFieldInstance cfi, Date cutoffDate) {
 
-        if (cutoffDate == null || cfi.getPeriodRaw() == null || (cfi.getPeriodRaw() != null && (cfi.getPeriod().getTo() == null || (cfi.getPeriod().getTo() != null && cutoffDate.before(cfi.getPeriod().getTo()))))) {
+        if (cutoffDate == null || cfi.getPeriodRaw() == null
+                || (cfi.getPeriodRaw() != null && (cfi.getPeriod().getTo() == null || (cfi.getPeriod().getTo() != null && cutoffDate.before(cfi.getPeriod().getTo()))))) {
             cfi.deserializeValue();
             CachedCFPeriodValue value = new CachedCFPeriodValue(cfi.getCfValue().getValue(), cfi.getPriority(), cfi.getPeriod().getFrom(), cfi.getPeriod().getTo());
             return value;
@@ -669,17 +672,23 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
             cft.setCalendar(PersistenceUtils.initializeAndUnproxy(cft.getCalendar()));
             if (cft.getCalendar() instanceof CalendarDaily) {
                 ((CalendarDaily) cft.getCalendar()).setHours(PersistenceUtils.initializeAndUnproxy(((CalendarDaily) cft.getCalendar()).getHours()));
-                ((CalendarDaily) cft.getCalendar()).nextPeriodStartDate(new Date());
+                ((CalendarDaily) cft.getCalendar()).nextCalendarDate(new Date());
             } else if (cft.getCalendar() instanceof CalendarYearly) {
                 ((CalendarYearly) cft.getCalendar()).setDays(PersistenceUtils.initializeAndUnproxy(((CalendarYearly) cft.getCalendar()).getDays()));
-                ((CalendarYearly) cft.getCalendar()).nextPeriodStartDate(new Date());
+                ((CalendarYearly) cft.getCalendar()).nextCalendarDate(new Date());
             } else if (cft.getCalendar() instanceof CalendarInterval) {
                 ((CalendarInterval) cft.getCalendar()).setIntervals(PersistenceUtils.initializeAndUnproxy(((CalendarInterval) cft.getCalendar()).getIntervals()));
-                ((CalendarInterval) cft.getCalendar()).nextPeriodStartDate(new Date());
+                ((CalendarInterval) cft.getCalendar()).nextCalendarDate(new Date());
             }
         }
         if (cft.getListValues() != null) {
-            cft.setListValues(PersistenceUtils.initializeAndUnproxy(cft.getListValues()));
+            cft.getListValues().values().toArray(new String[]{});
+        }
+
+        try {
+            cft = (CustomFieldTemplate) BeanUtils.cloneBean(cft);
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
+            log.error("Failed to clone a CFT entity {} for storage in CFT cache", cft.getCode());
         }
 
         cfts.put(cft.getCode(), cft);
@@ -711,7 +720,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
         log.trace("Removing custom field template {} for {} from custom field template cache", cft.getCode(), cacheKeyByAppliesTo);
 
         Map<String, CustomFieldTemplate> cfts = cftsByAppliesTo.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKeyByAppliesTo);
-        if (cfts.containsKey(cft.getCode())) {
+        if (cfts != null && cfts.containsKey(cft.getCode())) {
             cfts.remove(cft.getCode());
             cftsByAppliesTo.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKeyByAppliesTo, cfts);
             log.trace("Removed custom field template {} for {} from custom field template cache", cft.getCode(), cacheKeyByAppliesTo);

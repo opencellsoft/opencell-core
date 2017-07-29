@@ -2589,115 +2589,113 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:customerHierarchyUpdate>
-         <customerHierarchy>
-            <sellers>
-               <seller code="${#TestSuite#entityPrefix}_${#TestSuite#index}_SELLER" description="${#TestSuite#entityPrefix}_${#TestSuite#index}_SELLER">
-                  <customers>
-                     <customer code="${#TestSuite#entityPrefix}_${#TestSuite#index}_CUST" description="${#TestSuite#entityPrefix}_${#TestSuite#index}_CUST">
-                        <name>
-                           <title>MR</title>
-                           <firstName>SEBASTIEN</firstName>
-                           <lastName>MICHEA</lastName>
-                        </name>
-                        <customerCategory>CLIENT</customerCategory>
-                        <customerBrand>DEFAULT</customerBrand>
-                        <customerAccounts>
-                           <customerAccount code="${#TestSuite#entityPrefix}_${#TestSuite#index}_CA" description="${#TestSuite#entityPrefix}_${#TestSuite#index}_CA">
-                              <name>
-	                           <title>MR</title>
-	                           <firstName>SEBASTIEN</firstName>
-	                           <lastName>MICHEA</lastName>
-	                        </name>
-                              <currency>EUR</currency>
-                              <language>FRA</language>
-                              <paymentMethod>CHECK</paymentMethod>
-                              <creditCategory>NEWCUSTOMER</creditCategory>
-                              <billingAccounts>
-                                 <billingAccount code="${#TestSuite#entityPrefix}_${#TestSuite#index}_BA" description="${#TestSuite#entityPrefix}_${#TestSuite#index}_BA">
-                                    <name>
-		                           <title>MR</title>
-		                           <firstName>SEBASTIEN</firstName>
-		                           <lastName>MICHEA</lastName>
-		                        </name>
-                                    <billingCycle>CYC_INV_MT_1</billingCycle>
-                                    <country>FR</country>
-                                    <language>FRA</language>
-                                    <paymentMethod>CHECK</paymentMethod>
-                                    <paymentTerms>CASH</paymentTerms>
-                                    <electronicBilling>true</electronicBilling>
-                                    <userAccounts>
-                                       <userAccount code="${#TestSuite#entityPrefix}_${#TestSuite#index}_UA" description="${#TestSuite#entityPrefix}_${#TestSuite#index}_UA">
-                                          <name>
-				                           <title>MR</title>
-				                           <firstName>SEBASTIEN</firstName>
-				                           <lastName>MICHEA</lastName>
-				                      </name>
-                                          <subscriptions>
-                                             <subscription code="${#TestSuite#entityPrefix}_${#TestSuite#index}_SUB1" description="${#TestSuite#entityPrefix}_${#TestSuite#index}_SUB1">
-                                                <offerTemplate>${#TestSuite#entityPrefix}_OFFER</offerTemplate>
-                                                <subscriptionDate>2015-06-15</subscriptionDate>
-                                                <services>
-                                                   <serviceInstance code="${#TestSuite#entityPrefix}_VOICE">
-                                                      <subscriptionDate>2015-06-15</subscriptionDate>
-                                                      <quantity>1</quantity>
-                                                   </serviceInstance>
-                                                   <serviceInstance code="${#TestSuite#entityPrefix}_TOPTEN">
-                                                      <subscriptionDate>2015-06-15</subscriptionDate>
-                                                      <quantity>1</quantity>
-                                                   </serviceInstance>
-                                                </services>
-                                                <customFields>
-                                                    <customField code="${#TestSuite#entityPrefix}" description="" valueDate="2015-06-15"><!-- valuePeriodStartDate="?" valuePeriodEndDate="?" valuePeriodPriority="?">-->
-            							                <listValue>
-                                                            <value>
-            							                         <stringValue>0102030405</stringValue>
-                                                            </value>
-                                                            <value>
-            							                         <stringValue>0203040506</stringValue>
-                                                            </value>
-                                                            <value>
-            							                         <stringValue>0304050607</stringValue>
-                                                            </value>
-            				                                <value>
-            							                         <stringValue>0102030406</stringValue>
-                                                            </value>
-                                                            <value>
-            							                         <stringValue>0203040507</stringValue>
-                                                            </value>
-                                                            <value>
-            							                         <stringValue>0304050609</stringValue>
-                                                            </value>
-                                                            <value>
-            							                         <stringValue>0102030407</stringValue>
-                                                            </value>
-                                                            <value>
-            							                         <stringValue>0203040508</stringValue>
-                                                            </value>
-                                                            <value>
-            							                         <stringValue>0304050609</stringValue>
-                                                            </value>
-                                                            </listValue>
-            							             </customField>
-    							                 </customFields>
-                                             </subscription>
-                                          </subscriptions>
-                                       </userAccount>
-                                    </userAccounts>
-                                 </billingAccount>
-                              </billingAccounts>
-                           </customerAccount>
-                        </customerAccounts>
-                     </customer>
-                  </customers>
-               </seller>
-            </sellers>
-         </customerHierarchy>
-      </ws:customerHierarchyUpdate>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:customerHierarchyUpdate>\r
+         <customerHierarchy>\r
+            <sellers>\r
+               <seller code="${#TestSuite#entityPrefix}_${#TestSuite#index}_SELLER" description="${#TestSuite#entityPrefix}_${#TestSuite#index}_SELLER">\r
+                  <customers>\r
+                     <customer code="${#TestSuite#entityPrefix}_${#TestSuite#index}_CUST" description="${#TestSuite#entityPrefix}_${#TestSuite#index}_CUST">\r
+                        <name>\r
+                           <title>MR</title>\r
+                           <firstName>SEBASTIEN</firstName>\r
+                           <lastName>MICHEA</lastName>\r
+                        </name>\r
+                        <customerCategory>CLIENT</customerCategory>\r
+                        <customerBrand>DEFAULT</customerBrand>\r
+                        <customerAccounts>\r
+                           <customerAccount code="${#TestSuite#entityPrefix}_${#TestSuite#index}_CA" description="${#TestSuite#entityPrefix}_${#TestSuite#index}_CA">\r
+                              <name>\r
+                                 <title>MR</title>\r
+                                 <firstName>SEBASTIEN</firstName>\r
+                                 <lastName>MICHEA</lastName>\r
+                              </name>\r
+                              <currency>EUR</currency>\r
+                              <language>FRA</language>\r
+                              <creditCategory>NEWCUSTOMER</creditCategory>\r
+                              <billingAccounts>\r
+                                 <billingAccount code="${#TestSuite#entityPrefix}_${#TestSuite#index}_BA" description="${#TestSuite#entityPrefix}_${#TestSuite#index}_BA">\r
+                                    <name>\r
+                                       <title>MR</title>\r
+                                       <firstName>SEBASTIEN</firstName>\r
+                                       <lastName>MICHEA</lastName>\r
+                                    </name>\r
+                                    <billingCycle>CYC_INV_MT_1</billingCycle>\r
+                                    <country>FR</country>\r
+                                    <language>FRA</language>\r
+                                    <electronicBilling>true</electronicBilling>\r
+                                    <userAccounts>\r
+                                       <userAccount code="${#TestSuite#entityPrefix}_${#TestSuite#index}_UA" description="${#TestSuite#entityPrefix}_${#TestSuite#index}_UA">\r
+                                          <name>\r
+                                             <title>MR</title>\r
+                                             <firstName>SEBASTIEN</firstName>\r
+                                             <lastName>MICHEA</lastName>\r
+                                          </name>\r
+                                          <subscriptions>\r
+                                             <subscription code="${#TestSuite#entityPrefix}_${#TestSuite#index}_SUB1" description="${#TestSuite#entityPrefix}_${#TestSuite#index}_SUB1">\r
+                                                <offerTemplate>${#TestSuite#entityPrefix}_OFFER</offerTemplate>\r
+                                                <subscriptionDate>2015-06-15</subscriptionDate>\r
+                                                <services>\r
+                                                   <serviceInstance code="${#TestSuite#entityPrefix}_VOICE">\r
+                                                      <subscriptionDate>2015-06-15</subscriptionDate>\r
+                                                      <quantity>1</quantity>\r
+                                                   </serviceInstance>\r
+                                                   <serviceInstance code="${#TestSuite#entityPrefix}_TOPTEN">\r
+                                                      <subscriptionDate>2015-06-15</subscriptionDate>\r
+                                                      <quantity>1</quantity>\r
+                                                   </serviceInstance>\r
+                                                </services>\r
+                                                <customFields>\r
+                                                   <customField code="${#TestSuite#entityPrefix}" description="" valueDate="2015-06-15">\r
+                                                      <!--valuePeriodStartDate="?" valuePeriodEndDate="?" valuePeriodPriority="?">-->\r
+                                                      <listValue>\r
+                                                         <value>\r
+                                                            <stringValue>0102030405</stringValue>\r
+                                                         </value>\r
+                                                         <value>\r
+                                                            <stringValue>0203040506</stringValue>\r
+                                                         </value>\r
+                                                         <value>\r
+                                                            <stringValue>0304050607</stringValue>\r
+                                                         </value>\r
+                                                         <value>\r
+                                                            <stringValue>0102030406</stringValue>\r
+                                                         </value>\r
+                                                         <value>\r
+                                                            <stringValue>0203040507</stringValue>\r
+                                                         </value>\r
+                                                         <value>\r
+                                                            <stringValue>0304050609</stringValue>\r
+                                                         </value>\r
+                                                         <value>\r
+                                                            <stringValue>0102030407</stringValue>\r
+                                                         </value>\r
+                                                         <value>\r
+                                                            <stringValue>0203040508</stringValue>\r
+                                                         </value>\r
+                                                         <value>\r
+                                                            <stringValue>0304050609</stringValue>\r
+                                                         </value>\r
+                                                      </listValue>\r
+                                                   </customField>\r
+                                                </customFields>\r
+                                             </subscription>\r
+                                          </subscriptions>\r
+                                       </userAccount>\r
+                                    </userAccounts>\r
+                                 </billingAccount>\r
+                              </billingAccounts>\r
+                           </customerAccount>\r
+                        </customerAccounts>\r
+                     </customer>\r
+                  </customers>\r
+               </seller>\r
+            </sellers>\r
+         </customerHierarchy>\r
+      </ws:customerHierarchyUpdate>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="bcda2769-e741-4e8b-9a05-f5d2d3cc24b7"/>
             <con:assertion type="Simple Contains" id="cbef1cc2-48da-484e-9399-ce39b1404e7e" name="Contains">
@@ -3879,7 +3877,6 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
 	                        </name>
                               <currency>EUR</currency>
                               <language>FRA</language>
-                              <paymentMethod>CHECK</paymentMethod>
                               <creditCategory>NEWCUSTOMER</creditCategory>
                               <billingAccounts>
                                  <billingAccount code="${#TestSuite#entityPrefix}_${#TestSuite#index}_BA" description="${#TestSuite#entityPrefix}_${#TestSuite#index}_BA">
@@ -3891,8 +3888,6 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
                                     <billingCycle>CYC_INV_MT_1</billingCycle>
                                     <country>FR</country>
                                     <language>FRA</language>
-                                    <paymentMethod>CHECK</paymentMethod>
-                                    <paymentTerms>CASH</paymentTerms>
                                     <electronicBilling>true</electronicBilling>
                                     <userAccounts>
                                        <userAccount code="${#TestSuite#entityPrefix}_${#TestSuite#index}_UA" description="${#TestSuite#entityPrefix}_${#TestSuite#index}_UA">
@@ -5205,96 +5200,93 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:customerHierarchyUpdate>
-         <customerHierarchy>
-            <sellers>
-               <seller code="${#TestSuite#entityPrefix}_${#TestSuite#index}_SELLER" description="${#TestSuite#entityPrefix}_${#TestSuite#index}_SELLER">
-                  <customers>
-                     <customer code="${#TestSuite#entityPrefix}_${#TestSuite#index}_CUST" description="${#TestSuite#entityPrefix}_${#TestSuite#index}_CUST">
-                        <name>
-                           <title>MR</title>
-                           <firstName>SEBASTIEN</firstName>
-                           <lastName>MICHEA</lastName>
-                        </name>
-                        <customerCategory>CLIENT</customerCategory>
-                        <customerBrand>DEFAULT</customerBrand>
-                        <customFields>
-                             <customField code="${#TestSuite#entityPrefix}" description="" valueDate="2015-06-15" valuePeriodStartDate="2015-01-01" valuePeriodEndDate="2018-01-01">
-			                <mapValue>
-			                     <entry>
-			                        <key>+</key>
-			                        <value>
-			                           <stringValue>INTERNATIONAL</stringValue>
-			                        </value>
-			                     </entry>
-			                     <entry>
-			                        <key>+33</key>
-			                        <value>
-			                           <stringValue>LOCAL</stringValue>
-			                        </value>
-			                     </entry>
-                  			</mapValue>
-                  			</customField>
-	                 </customFields>
-                        <customerAccounts>
-                           <customerAccount code="${#TestSuite#entityPrefix}_${#TestSuite#index}_CA" description="${#TestSuite#entityPrefix}_${#TestSuite#index}_CA">
-                              <name>
-	                           <title>MR</title>
-	                           <firstName>SEBASTIEN</firstName>
-	                           <lastName>MICHEA</lastName>
-	                        </name>
-                              <currency>EUR</currency>
-                              <language>FRA</language>
-                              <paymentMethod>CHECK</paymentMethod>
-                              <creditCategory>NEWCUSTOMER</creditCategory>
-                              <billingAccounts>
-                                 <billingAccount code="${#TestSuite#entityPrefix}_${#TestSuite#index}_BA" description="${#TestSuite#entityPrefix}_${#TestSuite#index}_BA">
-                                    <name>
-		                           <title>MR</title>
-		                           <firstName>SEBASTIEN</firstName>
-		                           <lastName>MICHEA</lastName>
-		                        </name>
-                                    <billingCycle>CYC_INV_MT_1</billingCycle>
-                                    <country>FR</country>
-                                    <language>FRA</language>
-                                    <paymentMethod>CHECK</paymentMethod>
-                                    <paymentTerms>CASH</paymentTerms>
-                                    <electronicBilling>true</electronicBilling>
-                                    <userAccounts>
-                                       <userAccount code="${#TestSuite#entityPrefix}_${#TestSuite#index}_UA" description="${#TestSuite#entityPrefix}_${#TestSuite#index}_UA">
-                                          <name>
-				                           <title>MR</title>
-				                           <firstName>SEBASTIEN</firstName>
-				                           <lastName>MICHEA</lastName>
-				                      </name>
-                                          <subscriptions>
-                                             <subscription code="${#TestSuite#entityPrefix}_${#TestSuite#index}_SUB1" description="${#TestSuite#entityPrefix}_${#TestSuite#index}_SUB1">
-                                                <offerTemplate>${#TestSuite#entityPrefix}_OFFER</offerTemplate>
-                                                <subscriptionDate>2015-06-15</subscriptionDate>
-                                                <services>
-                                                   <serviceInstance code="${#TestSuite#entityPrefix}_VOICE">
-                                                      <subscriptionDate>2015-06-15</subscriptionDate>
-                                                      <quantity>1</quantity>
-                                                   </serviceInstance>
-                                                </services>
-                                             </subscription>
-                                          </subscriptions>
-                                       </userAccount>
-                                    </userAccounts>
-                                 </billingAccount>
-                              </billingAccounts>
-                           </customerAccount>
-                        </customerAccounts>
-                     </customer>
-                  </customers>
-               </seller>
-            </sellers>
-         </customerHierarchy>
-      </ws:customerHierarchyUpdate>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:customerHierarchyUpdate>\r
+         <customerHierarchy>\r
+            <sellers>\r
+               <seller code="${#TestSuite#entityPrefix}_${#TestSuite#index}_SELLER" description="${#TestSuite#entityPrefix}_${#TestSuite#index}_SELLER">\r
+                  <customers>\r
+                     <customer code="${#TestSuite#entityPrefix}_${#TestSuite#index}_CUST" description="${#TestSuite#entityPrefix}_${#TestSuite#index}_CUST">\r
+                        <name>\r
+                           <title>MR</title>\r
+                           <firstName>SEBASTIEN</firstName>\r
+                           <lastName>MICHEA</lastName>\r
+                        </name>\r
+                        <customerCategory>CLIENT</customerCategory>\r
+                        <customerBrand>DEFAULT</customerBrand>\r
+                        <customFields>\r
+                           <customField code="${#TestSuite#entityPrefix}" description="" valueDate="2015-06-15" valuePeriodStartDate="2015-01-01" valuePeriodEndDate="2018-01-01">\r
+                              <mapValue>\r
+                                 <entry>\r
+                                    <key>+</key>\r
+                                    <value>\r
+                                       <stringValue>INTERNATIONAL</stringValue>\r
+                                    </value>\r
+                                 </entry>\r
+                                 <entry>\r
+                                    <key>+33</key>\r
+                                    <value>\r
+                                       <stringValue>LOCAL</stringValue>\r
+                                    </value>\r
+                                 </entry>\r
+                              </mapValue>\r
+                           </customField>\r
+                        </customFields>\r
+                        <customerAccounts>\r
+                           <customerAccount code="${#TestSuite#entityPrefix}_${#TestSuite#index}_CA" description="${#TestSuite#entityPrefix}_${#TestSuite#index}_CA">\r
+                              <name>\r
+                                 <title>MR</title>\r
+                                 <firstName>SEBASTIEN</firstName>\r
+                                 <lastName>MICHEA</lastName>\r
+                              </name>\r
+                              <currency>EUR</currency>\r
+                              <language>FRA</language>\r
+                              <creditCategory>NEWCUSTOMER</creditCategory>\r
+                              <billingAccounts>\r
+                                 <billingAccount code="${#TestSuite#entityPrefix}_${#TestSuite#index}_BA" description="${#TestSuite#entityPrefix}_${#TestSuite#index}_BA">\r
+                                    <name>\r
+                                       <title>MR</title>\r
+                                       <firstName>SEBASTIEN</firstName>\r
+                                       <lastName>MICHEA</lastName>\r
+                                    </name>\r
+                                    <billingCycle>CYC_INV_MT_1</billingCycle>\r
+                                    <country>FR</country>\r
+                                    <language>FRA</language>\r
+                                    <electronicBilling>true</electronicBilling>\r
+                                    <userAccounts>\r
+                                       <userAccount code="${#TestSuite#entityPrefix}_${#TestSuite#index}_UA" description="${#TestSuite#entityPrefix}_${#TestSuite#index}_UA">\r
+                                          <name>\r
+                                             <title>MR</title>\r
+                                             <firstName>SEBASTIEN</firstName>\r
+                                             <lastName>MICHEA</lastName>\r
+                                          </name>\r
+                                          <subscriptions>\r
+                                             <subscription code="${#TestSuite#entityPrefix}_${#TestSuite#index}_SUB1" description="${#TestSuite#entityPrefix}_${#TestSuite#index}_SUB1">\r
+                                                <offerTemplate>${#TestSuite#entityPrefix}_OFFER</offerTemplate>\r
+                                                <subscriptionDate>2015-06-15</subscriptionDate>\r
+                                                <services>\r
+                                                   <serviceInstance code="${#TestSuite#entityPrefix}_VOICE">\r
+                                                      <subscriptionDate>2015-06-15</subscriptionDate>\r
+                                                      <quantity>1</quantity>\r
+                                                   </serviceInstance>\r
+                                                </services>\r
+                                             </subscription>\r
+                                          </subscriptions>\r
+                                       </userAccount>\r
+                                    </userAccounts>\r
+                                 </billingAccount>\r
+                              </billingAccounts>\r
+                           </customerAccount>\r
+                        </customerAccounts>\r
+                     </customer>\r
+                  </customers>\r
+               </seller>\r
+            </sellers>\r
+         </customerHierarchy>\r
+      </ws:customerHierarchyUpdate>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="bcda2769-e741-4e8b-9a05-f5d2d3cc24b7"/>
             <con:assertion type="Simple Contains" id="cbef1cc2-48da-484e-9399-ce39b1404e7e" name="Contains">
@@ -6661,96 +6653,93 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:customerHierarchyUpdate>
-         <customerHierarchy>
-            <sellers>
-               <seller code="${#TestSuite#entityPrefix}_${#TestSuite#index}_SELLER" description="${#TestSuite#entityPrefix}_${#TestSuite#index}_SELLER">
-                  <customers>
-                     <customer code="${#TestSuite#entityPrefix}_${#TestSuite#index}_CUST" description="${#TestSuite#entityPrefix}_${#TestSuite#index}_CUST">
-                        <name>
-                           <title>MR</title>
-                           <firstName>SEBASTIEN</firstName>
-                           <lastName>MICHEA</lastName>
-                        </name>
-                        <customerCategory>CLIENT</customerCategory>
-                        <customerBrand>DEFAULT</customerBrand>
-                        <customFields>
-                             <customField code="${#TestSuite#entityPrefix}" description="" valueDate="2015-06-15" valuePeriodStartDate="2015-01-01" valuePeriodEndDate="2018-01-01">
-			                <mapValue>
-			                     <entry>
-			                        <key>+</key>
-			                        <value>
-			                           <stringValue>INTERNATIONAL</stringValue>
-			                        </value>
-			                     </entry>
-			                     <entry>
-			                        <key>+33</key>
-			                        <value>
-			                           <stringValue>LOCAL</stringValue>
-			                        </value>
-			                     </entry>
-                  			</mapValue>
-                  			</customField>
-	                 </customFields>
-                        <customerAccounts>
-                           <customerAccount code="${#TestSuite#entityPrefix}_${#TestSuite#index}_CA" description="${#TestSuite#entityPrefix}_${#TestSuite#index}_CA">
-                              <name>
-	                           <title>MR</title>
-	                           <firstName>SEBASTIEN</firstName>
-	                           <lastName>MICHEA</lastName>
-	                        </name>
-                              <currency>EUR</currency>
-                              <language>FRA</language>
-                              <paymentMethod>CHECK</paymentMethod>
-                              <creditCategory>NEWCUSTOMER</creditCategory>
-                              <billingAccounts>
-                                 <billingAccount code="${#TestSuite#entityPrefix}_${#TestSuite#index}_BA" description="${#TestSuite#entityPrefix}_${#TestSuite#index}_BA">
-                                    <name>
-		                           <title>MR</title>
-		                           <firstName>SEBASTIEN</firstName>
-		                           <lastName>MICHEA</lastName>
-		                        </name>
-                                    <billingCycle>CYC_INV_MT_1</billingCycle>
-                                    <country>FR</country>
-                                    <language>FRA</language>
-                                    <paymentMethod>CHECK</paymentMethod>
-                                    <paymentTerms>CASH</paymentTerms>
-                                    <electronicBilling>true</electronicBilling>
-                                    <userAccounts>
-                                       <userAccount code="${#TestSuite#entityPrefix}_${#TestSuite#index}_UA" description="${#TestSuite#entityPrefix}_${#TestSuite#index}_UA">
-                                          <name>
-				                           <title>MR</title>
-				                           <firstName>SEBASTIEN</firstName>
-				                           <lastName>MICHEA</lastName>
-				                      </name>
-                                          <subscriptions>
-                                             <subscription code="${#TestSuite#entityPrefix}_${#TestSuite#index}_SUB1" description="${#TestSuite#entityPrefix}_${#TestSuite#index}_SUB1">
-                                                <offerTemplate>${#TestSuite#entityPrefix}_OFFER</offerTemplate>
-                                                <subscriptionDate>2015-06-15</subscriptionDate>
-                                                <services>
-                                                   <serviceInstance code="${#TestSuite#entityPrefix}_VOICE">
-                                                      <subscriptionDate>2015-06-15</subscriptionDate>
-                                                      <quantity>1</quantity>
-                                                   </serviceInstance>
-                                                </services>
-                                             </subscription>
-                                          </subscriptions>
-                                       </userAccount>
-                                    </userAccounts>
-                                 </billingAccount>
-                              </billingAccounts>
-                           </customerAccount>
-                        </customerAccounts>
-                     </customer>
-                  </customers>
-               </seller>
-            </sellers>
-         </customerHierarchy>
-      </ws:customerHierarchyUpdate>
-   </soapenv:Body>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:customerHierarchyUpdate>\r
+         <customerHierarchy>\r
+            <sellers>\r
+               <seller code="${#TestSuite#entityPrefix}_${#TestSuite#index}_SELLER" description="${#TestSuite#entityPrefix}_${#TestSuite#index}_SELLER">\r
+                  <customers>\r
+                     <customer code="${#TestSuite#entityPrefix}_${#TestSuite#index}_CUST" description="${#TestSuite#entityPrefix}_${#TestSuite#index}_CUST">\r
+                        <name>\r
+                           <title>MR</title>\r
+                           <firstName>SEBASTIEN</firstName>\r
+                           <lastName>MICHEA</lastName>\r
+                        </name>\r
+                        <customerCategory>CLIENT</customerCategory>\r
+                        <customerBrand>DEFAULT</customerBrand>\r
+                        <customFields>\r
+                           <customField code="${#TestSuite#entityPrefix}" description="" valueDate="2015-06-15" valuePeriodStartDate="2015-01-01" valuePeriodEndDate="2018-01-01">\r
+                              <mapValue>\r
+                                 <entry>\r
+                                    <key>+</key>\r
+                                    <value>\r
+                                       <stringValue>INTERNATIONAL</stringValue>\r
+                                    </value>\r
+                                 </entry>\r
+                                 <entry>\r
+                                    <key>+33</key>\r
+                                    <value>\r
+                                       <stringValue>LOCAL</stringValue>\r
+                                    </value>\r
+                                 </entry>\r
+                              </mapValue>\r
+                           </customField>\r
+                        </customFields>\r
+                        <customerAccounts>\r
+                           <customerAccount code="${#TestSuite#entityPrefix}_${#TestSuite#index}_CA" description="${#TestSuite#entityPrefix}_${#TestSuite#index}_CA">\r
+                              <name>\r
+                                 <title>MR</title>\r
+                                 <firstName>SEBASTIEN</firstName>\r
+                                 <lastName>MICHEA</lastName>\r
+                              </name>\r
+                              <currency>EUR</currency>\r
+                              <language>FRA</language>\r\r
+                              <creditCategory>NEWCUSTOMER</creditCategory>\r
+                              <billingAccounts>\r
+                                 <billingAccount code="${#TestSuite#entityPrefix}_${#TestSuite#index}_BA" description="${#TestSuite#entityPrefix}_${#TestSuite#index}_BA">\r
+                                    <name>\r
+                                       <title>MR</title>\r
+                                       <firstName>SEBASTIEN</firstName>\r
+                                       <lastName>MICHEA</lastName>\r
+                                    </name>\r
+                                    <billingCycle>CYC_INV_MT_1</billingCycle>\r
+                                    <country>FR</country>\r
+                                    <language>FRA</language>\r
+                                    <electronicBilling>true</electronicBilling>\r
+                                    <userAccounts>\r
+                                       <userAccount code="${#TestSuite#entityPrefix}_${#TestSuite#index}_UA" description="${#TestSuite#entityPrefix}_${#TestSuite#index}_UA">\r
+                                          <name>\r
+                                             <title>MR</title>\r
+                                             <firstName>SEBASTIEN</firstName>\r
+                                             <lastName>MICHEA</lastName>\r
+                                          </name>\r
+                                          <subscriptions>\r
+                                             <subscription code="${#TestSuite#entityPrefix}_${#TestSuite#index}_SUB1" description="${#TestSuite#entityPrefix}_${#TestSuite#index}_SUB1">\r
+                                                <offerTemplate>${#TestSuite#entityPrefix}_OFFER</offerTemplate>\r
+                                                <subscriptionDate>2015-06-15</subscriptionDate>\r
+                                                <services>\r
+                                                   <serviceInstance code="${#TestSuite#entityPrefix}_VOICE">\r
+                                                      <subscriptionDate>2015-06-15</subscriptionDate>\r
+                                                      <quantity>1</quantity>\r
+                                                   </serviceInstance>\r
+                                                </services>\r
+                                             </subscription>\r
+                                          </subscriptions>\r
+                                       </userAccount>\r
+                                    </userAccounts>\r
+                                 </billingAccount>\r
+                              </billingAccounts>\r
+                           </customerAccount>\r
+                        </customerAccounts>\r
+                     </customer>\r
+                  </customers>\r
+               </seller>\r
+            </sellers>\r
+         </customerHierarchy>\r
+      </ws:customerHierarchyUpdate>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="bcda2769-e741-4e8b-9a05-f5d2d3cc24b7"/>
             <con:assertion type="Simple Contains" id="cbef1cc2-48da-484e-9399-ce39b1404e7e" name="Contains">

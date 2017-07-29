@@ -4,7 +4,7 @@
 	<groupId>com.opencellsoft</groupId>
 	<artifactId>opencell</artifactId>
 	<packaging>pom</packaging>
-	<version>4.5.3</version>
+	<version>4.6</version>
 	<name>Opencell Parent Project</name>
 
 	<modules>
@@ -115,6 +115,11 @@
 				<artifactId>opencell-security</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>com.opencellsoft</groupId>
+				<artifactId>opencell-client</artifactId>
+				<version>${project.version}</version>
+			</dependency>			
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>

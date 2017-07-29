@@ -144,8 +144,8 @@ public class MeveoInstance extends BusinessEntity {
     @Size(max = 255)
     private String asVersion;
 
-    @Column(name = "url", nullable = false, length = 60)
-    @Size(max = 60)
+    @Column(name = "url", nullable = false, length = 255)
+    @Size(max = 255)
     @NotNull
     private String url;
     

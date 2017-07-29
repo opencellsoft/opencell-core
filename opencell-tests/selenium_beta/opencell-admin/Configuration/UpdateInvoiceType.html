@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://integration.i.opencellsoft.com/opencell/" />
+<title>Update Invoice Type</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">New Test</td></tr>
+</thead><tbody>
+<tr>
+	<td>clickAndWait</td>
+	<td>${invoice}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${codeField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${codeField}</td>
+	<td>${code}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${searchButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>link=${code}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>link=${code}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=${code}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${codeField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${codeField}</td>
+	<td>${code}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${descriptionField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${descriptionField}</td>
+	<td>${description}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${accountOperationField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${accountOperationField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//*[contains(@id, 'searchField1')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>//*[contains(@id, 'searchField1')]</td>
+	<td>${accountOperation}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${searchButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>//tbody[@id='searchOccTemplatePopuppopupForm:searchOccTemplatePopupdatatable_data']/tr/td</td>
+	<td>${accountOperation}</td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>${accountOperation}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//tbody[@id='searchOccTemplatePopuppopupForm:searchOccTemplatePopupdatatable_data']/tr/td</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${prefixField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${prefixField}</td>
+	<td>${prefix}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${sequenceSizeField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${sequenceSizeField}</td>
+	<td>${sequenceSize}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${currentInvoiceNumberField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${currentInvoiceNumberField}</td>
+	<td>${currentInvoiceNumber}</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>${invoiceTypeOut}</td>
+	<td>${invoiceType}</td>
+</tr>
+<tr>
+	<td>doubleClick</td>
+	<td>${invoiceTypeOut}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>${invoiceTypeIn}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>${invoiceTypeIn}</td>
+	<td>${invoiceType}</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>${saveButtonWhenUpdate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>${infoSummary}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>${infoSummary}</td>
+	<td></td>
+</tr>
+</tbody></table>
+</body>
+</html>

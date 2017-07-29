@@ -32,13 +32,15 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
+import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.shared.Address;
 
 @Entity
-@ExportIdentifier({ "code"})
+@ExportIdentifier({ "code" })
 @CustomFieldEntity(cftCodePrefix = "ORDER")
-@Table(name = "ord_order", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ord_order_seq"), })
+@Table(name = "ord_order", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "ord_order_seq"), })
 public class Order extends BusinessCFEntity {
 
     private static final long serialVersionUID = -9060067698650286828L;
@@ -139,6 +141,14 @@ public class Order extends BusinessCFEntity {
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "orders")
     private List<Invoice> invoices = new ArrayList<Invoice>();
+
+    @Column(name = "DUE_DATE_DELAY_EL", length = 2000)
+    @Size(max = 2000)
+    private String dueDateDelayEL;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "payment_method_id")
+    private PaymentMethod paymentMethod;
 
     public String getExternalId() {
         return externalId;
@@ -293,12 +303,27 @@ public class Order extends BusinessCFEntity {
     public String getOrderNumber() {
         return StringUtils.isBlank(externalId) ? code : externalId;
     }
-    
-    public Address getShippingAddress(){
-    	if(getOrderItems() != null && !getOrderItems().isEmpty() ){
-    		return getOrderItems().get(0).getShippingAddress();
-    	}
-    	return null;
+
+    public Address getShippingAddress() {
+        if (getOrderItems() != null && !getOrderItems().isEmpty()) {
+            return getOrderItems().get(0).getShippingAddress();
+        }
+        return null;
     }
-    
+
+    public String getDueDateDelayEL() {
+        return dueDateDelayEL;
+    }
+
+    public void setDueDateDelayEL(String dueDateDelayEL) {
+        this.dueDateDelayEL = dueDateDelayEL;
+    }
+
+    public PaymentMethod getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
 }

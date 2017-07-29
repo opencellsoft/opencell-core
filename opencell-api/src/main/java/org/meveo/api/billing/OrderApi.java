@@ -15,15 +15,23 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.api.BaseApi;
+import org.meveo.api.account.CustomerAccountApi;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.billing.ActivateServicesRequestDto;
 import org.meveo.api.dto.billing.ServiceToActivateDto;
+import org.meveo.api.dto.billing.SubscriptionRenewalDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
+import org.meveo.api.dto.payment.CardPaymentMethodDto;
+import org.meveo.api.dto.payment.DDPaymentMethodDto;
+import org.meveo.api.dto.payment.OtherPaymentMethodDto;
+import org.meveo.api.dto.payment.PaymentMethodDto;
+import org.meveo.api.dto.payment.TipPaymentMethodDto;
 import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidEnumValueException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.order.OrderProductCharacteristicEnum;
@@ -31,6 +39,9 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.SubscriptionRenewal.EndOfTermActionEnum;
+import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
+import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductOffering;
@@ -42,10 +53,14 @@ import org.meveo.model.order.Order;
 import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.model.order.OrderItemProductOffering;
 import org.meveo.model.order.OrderStatusEnum;
+import org.meveo.model.payments.CardPaymentMethod;
+import org.meveo.model.payments.DDPaymentMethod;
+import org.meveo.model.payments.TipPaymentMethod;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.ProductInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.billing.impl.TerminationReasonService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.ProductOfferingService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
@@ -98,6 +113,12 @@ public class OrderApi extends BaseApi {
     @Inject
     private WorkflowService workflowService;
 
+    @Inject
+    private TerminationReasonService terminationReasonService;
+
+    @Inject
+    private CustomerAccountApi customerAccountApi;
+
     /**
      * Register an order from TMForumApi
      * 
@@ -125,6 +146,11 @@ public class OrderApi extends BaseApi {
         order.setDescription(productOrder.getDescription());
         order.setExternalId(productOrder.getExternalId());
         order.setReceivedFromApp("API");
+        order.setDueDateDelayEL(productOrder.getDueDateDelayEL());
+
+        if (productOrder.getPaymentMethods() != null && !productOrder.getPaymentMethods().isEmpty()) {
+            order.setPaymentMethod(customerAccountApi.paymentMethodFromDto(productOrder.getPaymentMethods().get(0), null));
+        }
 
         order.setOrderDate(productOrder.getOrderDate() != null ? productOrder.getOrderDate() : new Date());
         if (!StringUtils.isBlank(productOrder.getPriority())) {
@@ -160,6 +186,9 @@ public class OrderApi extends BaseApi {
                 throw new EntityDoesNotExistsException(UserAccount.class, billingAccountId);
             }
 
+            // Validate subscription renewal fields
+            validateSubscriptionRenewalFields(productOrderItem.getProduct());
+
             org.meveo.model.order.OrderItem orderItem = new org.meveo.model.order.OrderItem();
             List<OrderItemProductOffering> productOfferings = new ArrayList<>();
 
@@ -171,7 +200,8 @@ public class OrderApi extends BaseApi {
 
                 ProductOffering productOfferingInDB = productOfferingService.findByCode(productOrderItem.getProductOffering().getId(), subscriptionDate);
                 if (productOfferingInDB == null) {
-                    throw new EntityDoesNotExistsException(ProductOffering.class, productOrderItem.getProductOffering().getId() + " / " + DateUtils.formatDateWithPattern(subscriptionDate, ParamBean.getInstance().getDateTimeFormat()));
+                    throw new EntityDoesNotExistsException(ProductOffering.class,
+                        productOrderItem.getProductOffering().getId() + " / " + DateUtils.formatDateWithPattern(subscriptionDate, ParamBean.getInstance().getDateTimeFormat()));
                 }
                 productOfferings.add(new OrderItemProductOffering(orderItem, productOfferingInDB, productOfferings.size()));
 
@@ -179,7 +209,8 @@ public class OrderApi extends BaseApi {
                     for (BundledProductReference bundledProductOffering : productOrderItem.getProductOffering().getBundledProductOffering()) {
                         productOfferingInDB = productOfferingService.findByCode(bundledProductOffering.getReferencedId(), subscriptionDate);
                         if (productOfferingInDB == null) {
-                            throw new EntityDoesNotExistsException(ProductOffering.class, bundledProductOffering.getReferencedId() + " / " + DateUtils.formatDateWithPattern(subscriptionDate, ParamBean.getInstance().getDateTimeFormat()));
+                            throw new EntityDoesNotExistsException(ProductOffering.class,
+                                bundledProductOffering.getReferencedId() + " / " + DateUtils.formatDateWithPattern(subscriptionDate, ParamBean.getInstance().getDateTimeFormat()));
                         }
                         productOfferings.add(new OrderItemProductOffering(orderItem, productOfferingInDB, productOfferings.size()));
                     }
@@ -388,8 +419,7 @@ public class OrderApi extends BaseApi {
                 }
 
                 // Instantiate a service
-                Subscription subscription = instantiateSubscription((OfferTemplate) primaryOffering, productOrderItem.getProduct(), services, orderItem, productOrderItem,
-                    orderNumber);
+                Subscription subscription = instantiateSubscription((OfferTemplate) primaryOffering, services, orderItem, productOrderItem, orderNumber);
                 orderItem.setSubscription(subscription);
                 // Instantiate products - find a matching product offering. The order of products must match the order of productOfferings
                 index = 1;
@@ -448,6 +478,10 @@ public class OrderApi extends BaseApi {
                     throw new MeveoApiException("Sub's userAccount doesn't match with orderitem's billingAccount");
                 }
 
+                // Update renewal rule if applicable
+                subscription.setSubscriptionRenewal(subscriptionApi.subscriptionRenewalFromDto(subscription.getSubscriptionRenewal(),
+                    extractSubscriptionRenewalDto(productOrderItem.getProduct()), subscription.isRenewed()));
+
                 // Validate and populate customFields
                 CustomFieldsDto customFields = extractCustomFields(productOrderItem.getProduct(), Subscription.class);
 
@@ -471,6 +505,7 @@ public class OrderApi extends BaseApi {
                 }
 
                 processServices(subscription, services, orderNumber);
+                subscription = subscriptionService.update(subscription);
 
                 orderItem.setSubscription(subscription);
 
@@ -518,13 +553,14 @@ public class OrderApi extends BaseApi {
         log.info("Finished processing order item {} {}", order.getCode(), orderItem.getItemId());
     }
 
-    private Subscription instantiateSubscription(OfferTemplate offerTemplate, Product product, List<Product> services, org.meveo.model.order.OrderItem orderItem,
-            ProductOrderItem productOrderItem, String orderNumber) throws BusinessException, MeveoApiException {
+    private Subscription instantiateSubscription(OfferTemplate offerTemplate, List<Product> services, org.meveo.model.order.OrderItem orderItem, ProductOrderItem productOrderItem,
+            String orderNumber) throws BusinessException, MeveoApiException {
 
         log.debug("Instantiating subscription from offer template {} for order {} line {}", offerTemplate.getCode(), orderItem.getOrder().getCode(), orderItem.getItemId());
 
-        String subscriptionCode = (String) getProductCharacteristic(productOrderItem.getProduct(), OrderProductCharacteristicEnum.SUBSCRIPTION_CODE.getCharacteristicName(),
-            String.class, UUID.randomUUID().toString());
+        Product product = productOrderItem.getProduct();
+        String subscriptionCode = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.SUBSCRIPTION_CODE.getCharacteristicName(), String.class,
+            UUID.randomUUID().toString());
 
         if (subscriptionService.findByCode(subscriptionCode) != null) {
             throw new BusinessException("Subscription with code " + subscriptionCode + " already exists");
@@ -534,13 +570,14 @@ public class OrderApi extends BaseApi {
         subscription.setCode(subscriptionCode);
         subscription.setUserAccount(orderItem.getUserAccount());
         subscription.setOffer(offerTemplate);
-        subscription.setSubscriptionDate((Date) getProductCharacteristic(productOrderItem.getProduct(), OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(),
-            Date.class, DateUtils.setTimeToZero(orderItem.getOrder().getOrderDate())));
-        subscription.setEndAgreementDate(
-            (Date) getProductCharacteristic(productOrderItem.getProduct(), OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(), Date.class, null));
+        subscription.setSubscriptionDate((Date) getProductCharacteristic(product, OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(), Date.class,
+            DateUtils.setTimeToZero(orderItem.getOrder().getOrderDate())));
+        subscription.setEndAgreementDate((Date) getProductCharacteristic(product, OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(), Date.class, null));
+
+        subscription.setSubscriptionRenewal(subscriptionApi.subscriptionRenewalFromDto(null, extractSubscriptionRenewalDto(product), false));
 
         // Validate and populate customFields
-        CustomFieldsDto customFields = extractCustomFields(productOrderItem.getProduct(), Subscription.class);
+        CustomFieldsDto customFields = extractCustomFields(product, Subscription.class);
 
         try {
             populateCustomFields(customFields, subscription, true, true);
@@ -638,9 +675,17 @@ public class OrderApi extends BaseApi {
                 if (valueClass == BigDecimal.class) {
                     value = new BigDecimal((String) value);
 
-                }
-                if (valueClass == Date.class) {
+                } else if (valueClass == Integer.class) {
+                    value = new Integer((String) value);
+
+                } else if (valueClass == Date.class) {
                     value = DateUtils.parseDateWithPattern((String) value, DateUtils.DATE_PATTERN);
+
+                } else if (valueClass == Boolean.class) {
+                    value = new Boolean((String) value);
+
+                } else if (valueClass.isEnum()) {
+                    value = Enum.valueOf(valueClass, (String) value);
                 }
             }
 
@@ -792,6 +837,29 @@ public class OrderApi extends BaseApi {
         productOrder.setRequestedCompletionDate(order.getRequestedCompletionDate());
         productOrder.setRequestedStartDate(order.getRequestedStartDate());
         productOrder.setState(order.getStatus().getApiState());
+        productOrder.setDueDateDelayEL(order.getDueDateDelayEL());
+        if (order.getPaymentMethod() != null) {
+            productOrder.setPaymentMethods(new ArrayList<>());
+
+            PaymentMethodDto pmDto = null;
+            switch (order.getPaymentMethod().getPaymentType()) {
+            case CARD:
+                pmDto = new CardPaymentMethodDto((CardPaymentMethod) order.getPaymentMethod());
+                break;
+            case DIRECTDEBIT:
+                pmDto = new DDPaymentMethodDto((DDPaymentMethod) order.getPaymentMethod());
+                break;
+            case TIP:
+                pmDto = new TipPaymentMethodDto((TipPaymentMethod) order.getPaymentMethod());
+                break;
+            case CHECK:
+            case WIRETRANSFER:
+                pmDto = new OtherPaymentMethodDto(order.getPaymentMethod());
+                break;
+            }
+            productOrder.getPaymentMethods().add(pmDto);
+
+        }
 
         List<ProductOrderItem> productOrderItems = new ArrayList<>();
         productOrder.setOrderItem(productOrderItems);
@@ -847,5 +915,98 @@ public class OrderApi extends BaseApi {
             }
         }
         return new List[] { products, services };
+    }
+
+    public void validateSubscriptionRenewalFields(Product product) throws InvalidParameterException, MissingParameterException {
+
+        Integer initialyActiveFor = (Integer) getProductCharacteristic(product, OrderProductCharacteristicEnum.SUBSCRIPTION_INITIALLY_ACTIVE_FOR.getCharacteristicName(),
+            Integer.class, null);
+        if (initialyActiveFor == null) {
+            return;
+        }
+
+        List<String> missingFields = new ArrayList<>();
+
+        RenewalPeriodUnitEnum initialyActiveForUnit = (RenewalPeriodUnitEnum) getProductCharacteristic(product,
+            OrderProductCharacteristicEnum.SUBSCRIPTION_INITIALLY_ACTIVE_FOR_UNIT.getCharacteristicName(), RenewalPeriodUnitEnum.class, null);
+        if (initialyActiveForUnit == null) {
+            missingFields.add(OrderProductCharacteristicEnum.SUBSCRIPTION_INITIALLY_ACTIVE_FOR_UNIT.getCharacteristicName());
+        }
+
+        EndOfTermActionEnum endOfTermAction = (EndOfTermActionEnum) getProductCharacteristic(product,
+            OrderProductCharacteristicEnum.SUBSCRIPTION_END_OF_TERM_ACTION.getCharacteristicName(), EndOfTermActionEnum.class, null);
+        if (endOfTermAction == null) {
+            missingFields.add(OrderProductCharacteristicEnum.SUBSCRIPTION_END_OF_TERM_ACTION.getCharacteristicName());
+        }
+
+        boolean autoRenew = (boolean) getProductCharacteristic(product, OrderProductCharacteristicEnum.SUBSCRIPTION_AUTO_RENEW.getCharacteristicName(), Boolean.class, false);
+        if (autoRenew) {
+            Integer renewFor = (Integer) getProductCharacteristic(product, OrderProductCharacteristicEnum.SUBSCRIPTION_RENEW_FOR.getCharacteristicName(), Integer.class, null);
+            if (renewFor == null) {
+                missingFields.add(OrderProductCharacteristicEnum.SUBSCRIPTION_RENEW_FOR.getCharacteristicName());
+            }
+            RenewalPeriodUnitEnum renewForUnit = (RenewalPeriodUnitEnum) getProductCharacteristic(product,
+                OrderProductCharacteristicEnum.SUBSCRIPTION_RENEW_FOR_UNIT.getCharacteristicName(), RenewalPeriodUnitEnum.class, null);
+            if (renewForUnit == null) {
+                missingFields.add(OrderProductCharacteristicEnum.SUBSCRIPTION_RENEW_FOR_UNIT.getCharacteristicName());
+            }
+        }
+        String terminationReasonCode = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.SUBSCRIPTION_RENEW_TERMINATION_REASON.getCharacteristicName(),
+            String.class, null);
+
+        if (terminationReasonCode != null) {
+            SubscriptionTerminationReason terminationReason = terminationReasonService.findByCode(terminationReasonCode);
+            if (terminationReason == null) {
+                throw new InvalidParameterException(OrderProductCharacteristicEnum.SUBSCRIPTION_RENEW_TERMINATION_REASON.getCharacteristicName(), terminationReasonCode);
+            }
+        } else if (endOfTermAction == EndOfTermActionEnum.TERMINATE) {
+            missingFields.add(OrderProductCharacteristicEnum.SUBSCRIPTION_RENEW_TERMINATION_REASON.getCharacteristicName());
+        }
+
+        if (!missingFields.isEmpty()) {
+            throw new MissingParameterException(missingFields);
+        }
+    }
+
+    /**
+     * Extract from product characteristics values related to subscription renewal rule
+     * 
+     * @param product Product information
+     * @return SubscriptionRenewalDto object
+     * @throws InvalidParameterException
+     */
+    public SubscriptionRenewalDto extractSubscriptionRenewalDto(Product product) throws InvalidParameterException {
+
+        SubscriptionRenewalDto renewRuleDto = new SubscriptionRenewalDto();
+
+        renewRuleDto
+            .setAutoRenew((boolean) getProductCharacteristic(product, OrderProductCharacteristicEnum.SUBSCRIPTION_AUTO_RENEW.getCharacteristicName(), Boolean.class, false));
+        renewRuleDto.setDaysNotifyRenewal(
+            (Integer) getProductCharacteristic(product, OrderProductCharacteristicEnum.SUBSCRIPTION_DAYS_NOTIFY_RENEWAL.getCharacteristicName(), Integer.class, null));
+        renewRuleDto.setEndOfTermAction((EndOfTermActionEnum) getProductCharacteristic(product,
+            OrderProductCharacteristicEnum.SUBSCRIPTION_END_OF_TERM_ACTION.getCharacteristicName(), EndOfTermActionEnum.class, null));
+        renewRuleDto.setExtendAgreementPeriodToSubscribedTillDate(
+            (boolean) getProductCharacteristic(product, OrderProductCharacteristicEnum.SUBSCRIPTION_EXTEND_AGREEMENT_PERIOD.getCharacteristicName(), Boolean.class, false));
+        renewRuleDto.setInitialyActiveFor(
+            (Integer) getProductCharacteristic(product, OrderProductCharacteristicEnum.SUBSCRIPTION_INITIALLY_ACTIVE_FOR.getCharacteristicName(), Integer.class, null));
+        renewRuleDto.setInitialyActiveForUnit((RenewalPeriodUnitEnum) getProductCharacteristic(product,
+            OrderProductCharacteristicEnum.SUBSCRIPTION_INITIALLY_ACTIVE_FOR_UNIT.getCharacteristicName(), RenewalPeriodUnitEnum.class, null));
+        renewRuleDto.setRenewFor((Integer) getProductCharacteristic(product, OrderProductCharacteristicEnum.SUBSCRIPTION_RENEW_FOR.getCharacteristicName(), Integer.class, null));
+        renewRuleDto.setRenewForUnit((RenewalPeriodUnitEnum) getProductCharacteristic(product, OrderProductCharacteristicEnum.SUBSCRIPTION_RENEW_FOR_UNIT.getCharacteristicName(),
+            RenewalPeriodUnitEnum.class, null));
+
+        String terminationReasonCode = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.SUBSCRIPTION_RENEW_TERMINATION_REASON.getCharacteristicName(),
+            String.class, null);
+
+        if (terminationReasonCode != null) {
+            SubscriptionTerminationReason terminationReason = terminationReasonService.findByCode(terminationReasonCode);
+            if (terminationReason != null) {
+                renewRuleDto.setTerminationReasonCode(terminationReasonCode);
+
+            } else {
+                throw new InvalidParameterException(OrderProductCharacteristicEnum.SUBSCRIPTION_RENEW_TERMINATION_REASON.getCharacteristicName(), terminationReasonCode);
+            }
+        }
+        return renewRuleDto;
     }
 }

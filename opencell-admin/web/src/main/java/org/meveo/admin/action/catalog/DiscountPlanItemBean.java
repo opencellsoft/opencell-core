@@ -6,10 +6,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.catalog.DiscountPlanItem;
@@ -24,41 +21,28 @@ import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 @ViewScoped
 public class DiscountPlanItemBean extends BaseBean<DiscountPlanItem> {
 
-	private static final long serialVersionUID = -2345373648137067066L;
+    private static final long serialVersionUID = -2345373648137067066L;
 
-	@Inject
-	private DiscountPlanItemService discountPlanItemService;
-	
-	@Inject
-	private InvoiceSubCategoryService invoiceSubCategoryService;
+    @Inject
+    private DiscountPlanItemService discountPlanItemService;
 
-	public DiscountPlanItemBean() {
-		super(DiscountPlanItem.class);
-	}
+    @Inject
+    private InvoiceSubCategoryService invoiceSubCategoryService;
 
-	@Override
-	protected IPersistenceService<DiscountPlanItem> getPersistenceService() {
-		return discountPlanItemService;
-	}
+    public DiscountPlanItemBean() {
+        super(DiscountPlanItem.class);
+    }
 
-	@Override
-    @ActionMethod
-	public String saveOrUpdate(boolean killConversation) throws BusinessException {
-		// check for required fields
-		if (getEntity().getInvoiceCategory() == null && getEntity().getInvoiceSubCategory() == null) {
-			messages.error(new BundleKey("messages", "message.discountPlanItem.error.requiredFields"));
-			return null;
-		}
+    @Override
+    protected IPersistenceService<DiscountPlanItem> getPersistenceService() {
+        return discountPlanItemService;
+    }
 
-		return super.saveOrUpdate(killConversation);
-	}
-	
-	  public  List<InvoiceSubCategory> getInvoiceSubCategories(InvoiceCategory invoiceCategory){  
-	     if(invoiceCategory!=null){
-		return invoiceSubCategoryService.findByInvoiceCategory(invoiceCategory); 
-			}else{
-	     return null; 
-			}  
-	}
+    public List<InvoiceSubCategory> getInvoiceSubCategories(InvoiceCategory invoiceCategory) {
+        if (invoiceCategory != null) {
+            return invoiceSubCategoryService.findByInvoiceCategory(invoiceCategory);
+        } else {
+            return null;
+        }
+    }
 }
-

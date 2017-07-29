@@ -4,7 +4,7 @@
 		<artifactId>opencell-admin</artifactId>
 		<groupId>com.opencellsoft</groupId>
 		<relativePath>../pom.xml</relativePath>
-		<version>4.5.3</version>
+		<version>4.6</version>
 	</parent>
 	<artifactId>opencell-admin-web</artifactId>
 	<name>Opencell Admin Web Application - Web Module</name>
@@ -17,8 +17,8 @@
 				<directory>src/main/resources</directory>
 				<excludes>
 					<exclude>**/import-*.sql</exclude>
-					<exclude>**/jasper/*</exclude>
-					<exclude>**/invoiceAdjustment/*</exclude>
+					<exclude>**/jasper/**/*</exclude>
+					<exclude>**/invoiceAdjustment/**/*</exclude>
 				</excludes>
 				<filtering>true</filtering>
 			</resource>
@@ -173,6 +173,10 @@
 		<dependency>
 			<groupId>com.opencellsoft</groupId>
 			<artifactId>opencell-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.opencellsoft</groupId>
+			<artifactId>opencell-client</artifactId>
 		</dependency>
 
 		<!-- Libraries included in JBoss -->

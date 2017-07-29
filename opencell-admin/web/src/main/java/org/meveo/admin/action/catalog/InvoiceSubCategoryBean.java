@@ -32,8 +32,10 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.InvoiceSubCategoryCountryService;
@@ -92,61 +94,51 @@ public class InvoiceSubCategoryBean extends CustomFieldBean<InvoiceSubCategory> 
 
 		try {
 			if (invoiceSubcategoryCountry != null) {
-			
+				ParamBean paramBean = ParamBean.getInstance();
+				String datePattern = paramBean.getProperty("meveo.dateFormat", "dd/MM/yyyy");
 
 				if (invoiceSubcategoryCountry.getId() != null) {
-					invoiceSubCategoryCountryService
-							.update(invoiceSubcategoryCountry);
+					invoiceSubCategoryCountryService.update(invoiceSubcategoryCountry);
 					messages.info(new BundleKey("messages", "update.successful"));
 				} else {
-					
-					List<InvoiceSubcategoryCountry> beanInvoiceSubcategoryCountries = 
-							entity.getInvoiceSubcategoryCountries();
-					boolean found = false;
-					if (beanInvoiceSubcategoryCountries != null && !beanInvoiceSubcategoryCountries.isEmpty()) {
-						
-						for (InvoiceSubcategoryCountry isc: beanInvoiceSubcategoryCountries) {
-							if (isc.getTax().getCode().equals(invoiceSubcategoryCountry.getTax().getCode()) &&
-									((isc.getSellingCountry()==null && invoiceSubcategoryCountry.getSellingCountry()==null) ||
-									 (isc.getSellingCountry()!=null && invoiceSubcategoryCountry.getSellingCountry()!=null &&
-									  isc.getSellingCountry().getCountryCode().equals(invoiceSubcategoryCountry.getSellingCountry().getCountryCode()))) &&
-									((isc.getTradingCountry()==null && invoiceSubcategoryCountry.getTradingCountry()==null) ||
-									 (isc.getTradingCountry()!=null && invoiceSubcategoryCountry.getTradingCountry()!=null &&
-									  isc.getTradingCountry().getCountryCode().equals(invoiceSubcategoryCountry.getTradingCountry().getCountryCode())))) {
-								found = true;
-								break;
-							}
+					invoiceSubcategoryCountry.setInvoiceSubCategory(entity);
+					try {
+						invoiceSubCategoryCountryService.create(invoiceSubcategoryCountry);
+					} catch (BusinessException e1) {
+						if (invoiceSubcategoryCountry.isStrictMatch()) {
+							messages.error(new BundleKey("messages", "invoiceSubCategoryCountry.validityDates.matchingFound.strict"),
+									invoiceSubcategoryCountry.getStartValidityDateMatch() == null ? "null"
+											: DateUtils.formatDateWithPattern(
+													invoiceSubcategoryCountry.getStartValidityDateMatch(), datePattern),
+									invoiceSubcategoryCountry.getEndValidityDateMatch() == null ? "null"
+											: DateUtils.formatDateWithPattern(
+													invoiceSubcategoryCountry.getEndValidityDateMatch(), datePattern));
+							return null;
 						}
-						
-						if (!found) {
-							invoiceSubcategoryCountry.setInvoiceSubCategory(entity);
-							invoiceSubCategoryCountryService
-									.create(invoiceSubcategoryCountry);
-							entity.getInvoiceSubcategoryCountries().add(
-									invoiceSubcategoryCountry);
-							messages.info(new BundleKey("messages", "save.successful"));
-						} else {
-							messages.error(new BundleKey("messages", "save.unsuccessful.duplicate"));
-						}
-					} else {
-						invoiceSubcategoryCountry.setInvoiceSubCategory(entity);
-						invoiceSubCategoryCountryService
-								.create(invoiceSubcategoryCountry);
-						entity.getInvoiceSubcategoryCountries().add(
-								invoiceSubcategoryCountry);
-						messages.info(new BundleKey("messages", "save.successful"));
 					}
+					
+					if (invoiceSubcategoryCountry.isStrictMatch() != null
+							&& !invoiceSubcategoryCountry.isStrictMatch()) {
+						messages.warn(
+								new BundleKey("messages", "invoiceSubCategoryCountry.validityDates.matchingFound"),
+								invoiceSubcategoryCountry.getStartValidityDateMatch() == null ? "null"
+										: DateUtils.formatDateWithPattern(
+												invoiceSubcategoryCountry.getStartValidityDateMatch(), datePattern),
+								invoiceSubcategoryCountry.getEndValidityDateMatch() == null ? "null"
+										: DateUtils.formatDateWithPattern(
+												invoiceSubcategoryCountry.getEndValidityDateMatch(), datePattern));
+					}
+					
+					entity.getInvoiceSubcategoryCountries().add(invoiceSubcategoryCountry);
+					messages.info(new BundleKey("messages", "save.successful"));
 				}
 
 				invoiceSubcategoryCountry = new InvoiceSubcategoryCountry();
 				return null;
 			}
 		} catch (Exception e) {
-			log.error(
-					"exception when applying one invoiceSubCategoryCountry !",
-					e);
-			messages.error(new BundleKey("messages",
-					"invoiceSubCategory.uniqueTaxFlied"));
+			log.error("exception when applying one invoiceSubCategoryCountry !", e);
+			messages.error(new BundleKey("messages", "invoiceSubCategory.uniqueTaxFlied"));
 
 			return null;
 		}

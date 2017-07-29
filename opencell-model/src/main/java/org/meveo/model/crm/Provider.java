@@ -433,7 +433,7 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
         Provider other = (Provider) obj;
 
         if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
-            // return true;
+             return true;
         }
 
         if (code == null) {

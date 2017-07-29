@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://integration.i.opencellsoft.com/opencell/" />
+<title>CreateNewBillingRun</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">CreateNewBillingRun</td></tr>
+</thead><tbody>
+<tr>
+	<td>clickAndWait</td>
+	<td>${newBillingRun}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${billingCycleField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${billingCycleField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForVisible</td>
+	<td>${billingCyclePopup}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${billingCycleSearchField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${billingCycleSearchField}</td>
+	<td>${codeBCycle}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${billingCycleSearchButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${billingCycleSearchButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//tbody[@id='billingCyclePopuppopupForm:billingCyclePopupdatatable_data']/tr/td[text()[contains(., '${codeBCycle}')]]</td>
+	<td>${codeBCycle}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//tbody[@id='billingCyclePopuppopupForm:billingCyclePopupdatatable_data']/tr/td[text()[contains(., '${codeBCycle}')]]</td>
+	<td>${codeBCycle}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//tbody[@id='billingCyclePopuppopupForm:billingCyclePopupdatatable_data']/tr/td[text()[contains(., '${codeBCycle}')]]</td>
+	<td>${codeBCycle}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${invoiceDateField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${invoiceDateField}</td>
+	<td>${invoiceDate}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${lastTransactionDateField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${lastTransactionDateField}</td>
+	<td>${lastTransactionDate}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${createBillingRun}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>${createBillingRun}</td>
+	<td></td>
+</tr>
+</tbody></table>
+</body>
+</html>

@@ -135,7 +135,6 @@ public class ExportCustomersJobBean {
             dto.setTradingCurrencyCode(ca.getTradingCurrency() == null ? null : ca.getTradingCurrency().getCurrencyCode());
             dto.setTradingLanguageCode(ca.getTradingLanguage() == null ? null : ca.getTradingLanguage().getLanguageCode());
             dto.setCustomFields(CustomFields.toDTO(customFieldInstanceService.getCustomFieldInstances(ca)));
-            dto.setPaymentMethod(ca.getPaymentMethod() == null ? null : ca.getPaymentMethod().name());
             dto.setCreditCategory(ca.getCreditCategory() == null ? null : ca.getCreditCategory().getCode());
             if (ca.getContactInformation() != null) {
                 dto.setEmail(ca.getContactInformation().getEmail());

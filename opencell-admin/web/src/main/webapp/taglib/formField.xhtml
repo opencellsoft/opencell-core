@@ -27,6 +27,7 @@
         
      Attributes applicable to ALL types of fields
         entity - an entity containing a given field. If not provided and entity passed to a parent formPanel will be used.
+        entityClass - in cases where entity class can not be determined automatically (e.g. case when entity is declared as superclass and fields are in subclass) an entity class can be declared explicitly
         backingBean - backing bean associated with data entry. Required for Map and List type fields only. If not provided a backing bean passed to a parent formPanel will be used.
         label - a label
         field and optional childField - a field.childField for data entry/view. E.g. address.email
@@ -129,7 +130,8 @@
     </c:if>
     <!-- <c:set var="formEntityIsNull" value="#{formLevelEntity==null}"/> -->
 
-    <hftl:getFieldInformation backingBean="${backingBean}" entity="${entity}" defaultEntityFromBean="${defaultEntityFromBean}" fieldName="${field}" childFieldName="${childField}" var="fieldInfo" />
+    <hftl:getFieldInformation backingBean="${backingBean}" entity="${entity}" entityClass="${entityClass}" defaultEntityFromBean="${defaultEntityFromBean}" fieldName="${field}"
+        childFieldName="${childField}" var="fieldInfo" />
 
     <c:if test="${empty(required)}">
         <c:set var="required" value="${fieldInfo.required}" />
@@ -301,8 +303,8 @@
                 required="${required}" componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}" style="${style}" labelStyle="${labelStyle}"
                 labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}" inputWidth="${inputWidth}" size="${size}"
                 maxlength="${maxlength}" listValues="${listValues}" minValue="${minValue}" maxValue="${maxValue}" isMessage="${isMessage}" messagePrefix="${messagePrefix}"
-                converter="${empty(converter)?fieldInfo.numberConverter:converter}" negativeValue="${negativeValue}" spinner="${spinner}" edit="#{edit}" />
-
+                converter="${empty(converter)?fieldInfo.numberConverter:converter}" negativeValue="${negativeValue}" spinner="${spinner}" edit="#{edit}" listenerUpdate="${listenerUpdate}"
+                actionListenerBean="${actionListenerBean}" actionListenerMethod="${actionListenerMethod}" />
         </c:if>
 
 
@@ -311,7 +313,7 @@
             <hftl:formBooleanField id="${empty(id)?fieldIdPrefix.concat('_bool'):id}" fieldItem="#{fieldItem}" label="${label}" disabled="${disabled}" required="${required}"
                 componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}" style="${style}" labelStyle="${labelStyle}"
                 labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}" inputWidth="${inputWidth}" isMessage="${isMessage}"
-                listenerUpdate="${listenerUpdate}" edit="#{edit}" />
+                listenerUpdate="${listenerUpdate}" actionListenerBean="${actionListenerBean}" actionListenerMethod="${actionListenerMethod}" edit="#{edit}" />
         </c:if>
 
         <!-- If the value binding is a date, display a p:calendar field. -->

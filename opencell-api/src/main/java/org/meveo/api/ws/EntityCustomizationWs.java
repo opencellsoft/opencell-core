@@ -107,4 +107,8 @@ public interface EntityCustomizationWs extends IBaseWs {
 	@WebMethod
 	EntityCustomizationResponseDto listELFiltered(@WebParam(name = "appliesTo") String appliesTo, @WebParam(name = "entityCode") String entityCode);
 
+	@WebMethod
+	ActionStatus executeAction(@WebParam(name = "actionCode") String actionCode,
+			@WebParam(name = "appliesTo") String appliesTo, @WebParam(name = "entityCode") String entityCode);
+	
 }

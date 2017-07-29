@@ -20,7 +20,7 @@ public class AuditConfiguration {
 	private List<ClassAndMethods> classes = new ArrayList<>();
 
 	public void init() {
-		setEnabled(true);
+		setEnabled(false);
 		getHandlers().add(new ConsoleAuditHandler());
 		setLayout(new SimpleLayout());
 		setClasses(new ArrayList<>());

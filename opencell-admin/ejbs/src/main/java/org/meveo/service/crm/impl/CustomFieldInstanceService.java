@@ -89,7 +89,9 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
             }
             elasticClient.partialUpdate((BusinessEntity) entity, cfi.getCode(), cfi.getValue());
         }
-        triggerEndPeriodEvent(cfi);
+        if (cft.isTriggerEndPeriodEvent()) {
+            triggerEndPeriodEvent(cfi);
+        }
     }
 
     @Override
@@ -110,7 +112,9 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
             }
             elasticClient.partialUpdate((BusinessEntity) entity, cfi.getCode(), value);
         }
-        triggerEndPeriodEvent(cfi);
+        if (cft.isTriggerEndPeriodEvent()) {
+            triggerEndPeriodEvent(cfi);
+        }
 
         return cfi;
     }
@@ -736,6 +740,29 @@ public class CustomFieldInstanceService extends PersistenceService<CustomFieldIn
                     parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
                 }
                 Object value = getInheritedCFValue(parentCfEntity, code);
+                if (value != null) {
+                    return value;
+                }
+            }
+        }
+        return null;
+    }
+
+    public List<CustomFieldInstance> getInheritedVersionableOnlyCFValue(ICustomFieldEntity entity, String code) {
+        ICustomFieldEntity[] parentCFEntities = entity.getParentCFEntities();
+        if (parentCFEntities != null) {
+            for (ICustomFieldEntity parentCfEntity : parentCFEntities) {
+                if (parentCfEntity == null) {
+                    continue;
+                }
+                // If Parent entity is Provider, use appProvider instead as
+                // entity passed will be a fake one.
+                if (parentCfEntity instanceof Provider) {
+                    parentCfEntity = appProvider;
+                } else {
+                    parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                }
+                List<CustomFieldInstance> value = getCustomFieldInstances(parentCfEntity, code);
                 if (value != null) {
                     return value;
                 }

@@ -4,7 +4,7 @@
 		<artifactId>opencell</artifactId>
 		<groupId>com.opencellsoft</groupId>
 		<relativePath>../pom.xml</relativePath>
-		<version>4.5.3</version>
+		<version>4.6</version>
 	</parent>
 	<artifactId>opencell-model</artifactId>
 	<packaging>jar</packaging>

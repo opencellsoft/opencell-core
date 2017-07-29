@@ -12,8 +12,10 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.ObservableEntity;
 
 @Entity
+@ObservableEntity
 @CustomFieldEntity(cftCodePrefix = "CE", cftCodeFields = "cetCode")
 @ExportIdentifier({ "code", "cetCode"})
 @Table(name = "cust_cei", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "cet_code"}))
@@ -22,8 +24,8 @@ public class CustomEntityInstance extends BusinessCFEntity {
 
     private static final long serialVersionUID = 8281478284763353310L;
 
-    @Column(name = "cet_code", length = 50, nullable = false)
-    @Size(max = 50)
+    @Column(name = "cet_code", length = 255, nullable = false)
+    @Size(max = 255)
     @NotNull
     public String cetCode;
 

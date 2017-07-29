@@ -25,6 +25,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
 import org.meveo.model.MultilanguageEntity;
@@ -60,6 +61,9 @@ import org.meveo.model.MultilanguageEntity;
 		 	           		+ " and  oneShotChargeTemplateType=:oneShotChargeTemplateType")           	                  	         
 	})
 public class OneShotChargeTemplate extends ChargeTemplate {
+	
+	@Transient
+	public static final String CHARGE_TYPE = "ONESHOT";
 
     private static final long serialVersionUID = 1L;
 
@@ -87,6 +91,8 @@ public class OneShotChargeTemplate extends ChargeTemplate {
 		this.immediateInvoicing = immediateInvoicing;
 	}
 
-    
+	public String getChargeType() {
+		return CHARGE_TYPE;
+	}
 
 }

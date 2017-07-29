@@ -41,8 +41,12 @@ public class EntityCustomAction extends BusinessEntity {
     @ManyToOne()
     @JoinColumn(name = "script_instance_id")
     private ScriptInstance script;
+    
+    @Column(name = "gui_position", length = 100)
+    @Size(max = 100)
+    private String guiPosition;
 
-      public String getAppliesTo() {
+    public String getAppliesTo() {
         return appliesTo;
     }
 
@@ -107,4 +111,12 @@ public class EntityCustomAction extends BusinessEntity {
     public String toString() {
         return String.format("EntityActionScript [id=%s, appliesTo=%s, code=%s]", id, appliesTo, code);
     }
+
+	public String getGuiPosition() {
+		return guiPosition;
+	}
+
+	public void setGuiPosition(String guiPosition) {
+		this.guiPosition = guiPosition;
+	}
 }

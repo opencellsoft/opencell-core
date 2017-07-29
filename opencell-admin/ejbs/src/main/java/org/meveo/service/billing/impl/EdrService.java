@@ -54,13 +54,12 @@ public class EdrService extends PersistenceService<EDR> {
 		useInMemoryDeduplication = paramBean.getProperty("mediation.deduplicateInMemory", "true").equals("true");
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<Long> getEDRidsToRate() {
-		QueryBuilder qb = new QueryBuilder("SELECT c.id FROM "+EDR.class.getName()+" c");
+		QueryBuilder qb = new QueryBuilder(EDR.class, "c");
 		qb.addCriterion("c.status", "=", EDRStatusEnum.OPEN, true);
 
 		try {
-			return (List<Long>) qb.getQuery(getEntityManager()).getResultList();
+			return qb.getIdQuery(getEntityManager()).getResultList();
 		} catch (NoResultException e) {
 			return null;
 		}

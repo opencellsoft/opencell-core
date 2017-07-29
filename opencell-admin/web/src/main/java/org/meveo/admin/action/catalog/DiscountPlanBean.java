@@ -73,10 +73,6 @@ public class DiscountPlanBean extends BaseBean<DiscountPlan> {
     }
 
     public void saveOrUpdateDiscountPlan() throws BusinessException {
-        if (discountPlanItem.getInvoiceCategory() == null && discountPlanItem.getInvoiceSubCategory() == null) {
-            messages.error(new BundleKey("messages", "message.discountPlanItem.error.requiredFields"));
-            return;
-        }
 
         discountPlanItem.setDiscountPlan(getEntity());
 

@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://integration.i.opencellsoft.com/opencell/" />
+<title>CreatePricePlan</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">CreatePricePlan</td></tr>
+</thead><tbody>
+<tr>
+	<td>clickAndWait</td>
+	<td>${pricePlans}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>${newButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${pricePlanCodeField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${pricePlanCodeField}</td>
+	<td>${code}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${chargeCodeField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${chargeCodeField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>${chargesPopup}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>${chargesCodeField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>${chargesCodeField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${chargesCodeField}</td>
+	<td>${codeCharges}</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>${chargesSearchButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${chargesSearchButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//tbody[@id='pricPlanMatChargePopuppopupForm:pricPlanMatChargePopupdatatable_data']/tr/td[text()[contains(.,'${codeCharges}')]]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//tbody[@id='pricPlanMatChargePopuppopupForm:pricPlanMatChargePopupdatatable_data']/tr/td[text()[contains(.,'${codeCharges}')]]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//tbody[@id='pricPlanMatChargePopuppopupForm:pricPlanMatChargePopupdatatable_data']/tr/td[text()[contains(.,'${codeCharges}')]]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForNotVisible</td>
+	<td>${chargesPopup}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${pricePlanDescriptionField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${pricePlanDescriptionField}</td>
+	<td>${description}</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${country}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${country}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>${offerCodeField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${offerCodeField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>${offersPopup}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>${offersCodeField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>${offersCodeField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${offersCodeField}</td>
+	<td>${codeOffer}</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>${offersSearchButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${offersSearchButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//tbody[@id='offerPopuppopupForm:offerPopupdatatable_data']/tr/td[text()[contains(.,'${codeOffer}')]]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//tbody[@id='offerPopuppopupForm:offerPopupdatatable_data']/tr/td[text()[contains(.,'${codeOffer}')]]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//tbody[@id='offerPopuppopupForm:offerPopupdatatable_data']/tr/td[text()[contains(.,'${codeOffer}')]]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForNotVisible</td>
+	<td>${offersPopup}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>${currency}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${currency}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>${priorityField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${priorityField}</td>
+	<td>${priority}</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>${minQuantityField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${minQuantityField}</td>
+	<td>${minQuantity}</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>${maxQuantityField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${maxQuantityField}</td>
+	<td>${maxQuantity}</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>${startDateSubscriptionField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${startDateSubscriptionField}</td>
+	<td>${startDateSubscription}</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>${endDateSubscriptionField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${endDateSubscriptionField}</td>
+	<td>${endDateSubscription}</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>${startDateEventField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${startDateEventField}</td>
+	<td>${startDateEvent}</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>${endDateEventField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${endDateEventField}</td>
+	<td>${endDateEvent}</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>${amountWithoutTaxField}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>${amountWithoutTaxField}</td>
+	<td>${amountWithoutTax}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>${saveButtonWhenCreate}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>${infoSummary}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>${infoSummary}</td>
+	<td></td>
+</tr>
+
+</tbody></table>
+</body>
+</html>

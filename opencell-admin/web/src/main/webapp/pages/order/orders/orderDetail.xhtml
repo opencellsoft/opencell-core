@@ -13,6 +13,9 @@
         <p:importEnum type="org.meveo.model.order.OrderStatusEnum" var="OrderStatusEnum" />
         <p:importEnum type="org.meveo.model.order.OrderItemActionEnum" var="OrderItemActionEnum" />
         <p:importEnum type="org.meveo.api.order.OrderProductCharacteristicEnum" var="CharacteristicsEnum" />
+        <p:importEnum type="org.meveo.model.billing.SubscriptionRenewal$EndOfTermActionEnum" var="EndOfTermActionEnum" />
+        <p:importEnum type="org.meveo.model.billing.SubscriptionRenewal$RenewalPeriodUnitEnum" var="RenewalPeriodUnitEnum" />
+        <p:importEnum type="org.meveo.model.payments.PaymentMethodEnum" var="PaymentMethodEnum" />
 
         <h:form id="crumbmenuForm">
             <p:breadCrumb homeDisplay="text" id="crumbmenu">
@@ -52,6 +55,7 @@
                         <hftl:formField label="#{messages['order.orderDate']}" field="orderDate" doNotShowOnNew="true" allowEdit="false" />
                         <hftl:formField label="#{messages['order.priority']}" field="priority" allowEdit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
                         <hftl:formField label="#{messages['order.category']}" field="category" allowEdit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
+                        <hftl:formField label="#{messages['order.dueDateDelayEL']}" field="dueDateDelayEL" allowEdit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
 
                         <hftl:formField label="#{messages['order.receivedFromApp']}" field="receivedFromApp" edit="false" rendered="#{orderBean.entity.receivedFromApp!=null}" />
                         <hftl:formField label="#{messages['order.externalId']}" field="externalId" edit="false" rendered="#{orderBean.entity.receivedFromApp!=null}" />
@@ -74,6 +78,50 @@
                             <hftl:formField label="#{messages['order.completionDate']}" field="completionDate" edit="false" rendered="#{orderBean.entity.completionDate!=null}" />
                         </p:fieldset>
 
+                        <p:fieldset legend="#{messages['customerAccount.paymentMethod']}" styleClass="clearBoth" rendered="#{orderBean.orderEditable or orderBean.entity.paymentMethod!=null}">
+                            <p:outputPanel id="paymentMethodDetail" styleClass="form-panel-fields #{edit?'':' form-panel-fields-view'}">
+                                <hftl:formField entity="#{orderBean}" label="#{messages['paymentMethod.type']}" field="paymentMethodType" actionListenerBean="#{orderBean}"
+                                    actionListenerMethod="changePaymentMethodType" listenerUpdate="paymentMethodDetail" componentWidth="15" />
+
+                                <h:panelGroup rendered="#{orderBean.paymentMethodType!=null}">
+                                    <hftl:formField label="#{messages['paymentMethod.alias']}" field="paymentMethod" childField="alias" />
+
+                                    <c:if test="#{orderBean.entity.paymentMethod.paymentType == PaymentMethodEnum.CARD}">
+
+                                        <hftl:formField entity="#{orderBean.paymentMethod}" label="#{messages['paymentMethod.cardType']}" field="cardType" required="true"
+                                            edit="#{orderBean.paymentMethod.tokenId==null}" />
+                                        <hftl:formField entity="#{orderBean.paymentMethod}" label="#{messages['paymentMethod.cardOwner']}" field="owner" required="true"
+                                            edit="#{orderBean.paymentMethod.tokenId==null}" />
+                                        <hftl:formField entity="#{orderBean.paymentMethod}" label="#{messages['paymentMethod.cardExpirationMonth']}" field="monthExpiration" required="true"
+                                            edit="#{orderBean.paymentMethod.tokenId==null}" minValue="1" maxValue="12" size="2" componentWidth="15" />
+                                        <hftl:formField entity="#{orderBean.paymentMethod}" label="#{messages['paymentMethod.cardExpirationYear']}" field="yearExpiration" required="true"
+                                            edit="#{orderBean.paymentMethod.tokenId==null}" size="2" componentWidth="15" minValue="0" maxValue="99" />
+                                        <hftl:decorateFormField fieldId="cardNr" label="#{messages['paymentMethod.cardNumber']}" rendered="#{orderBean.paymentMethod.tokenId!=null}">
+                                            <h:outputText value="**** **** **** #{orderBean.paymentMethod.hiddenCardNumber}" styleClass="field-value" />
+                                        </hftl:decorateFormField>
+                                        <hftl:decorateFormField fieldId="cardNr" label="#{messages['paymentMethod.cardNumber']}" rendered="#{orderBean.paymentMethod.tokenId==null}"
+                                            edit="#{orderBean.paymentMethod.tokenId==null}" required="true">
+                                            <p:inputMask id="cardNr" mask="9999 9999 9999 9999" value="#{orderBean.paymentMethod.cardNumber}" required="true" />
+                                        </hftl:decorateFormField>
+                                    </c:if>
+
+                                    <c:if test="#{orderBean.entity.paymentMethod.paymentType == PaymentMethodEnum.DIRECTDEBIT or orderBean.entity.paymentMethod.paymentType == PaymentMethodEnum.TIP}">
+                                        <hftl:formField entity="#{orderBean.paymentMethod.bankCoordinates}" label="#{messages['bankCoordinates.bankName']}" field="bankName" size="55" required="true" />
+                                        <hftl:formField entity="#{orderBean.paymentMethod.bankCoordinates}" label="#{messages['bankCoordinates.bankCode']}" id="bankCode" field="bankCode" size="5"
+                                            maxlength="5" validateRib="false" required="true" />
+                                        <hftl:formField entity="#{orderBean.paymentMethod.bankCoordinates}" label="#{messages['bankCoordinates.branchCode']}" field="branchCode" size="5"
+                                            required="true" />
+                                        <hftl:formField entity="#{orderBean.paymentMethod.bankCoordinates}" label="#{messages['bankCoordinates.accountNumber']}" field="accountNumber" size="11"
+                                            required="true" />
+                                        <hftl:formField entity="#{orderBean.paymentMethod.bankCoordinates}" label="#{messages['bankCoordinates.accountOwner']}" field="accountOwner" size="55"
+                                            required="true" />
+                                        <hftl:formField entity="#{orderBean.paymentMethod.bankCoordinates}" label="#{messages['bankCoordinates.key']}" field="key" size="2" required="true" />
+                                        <hftl:formField entity="#{orderBean.paymentMethod.bankCoordinates}" label="#{messages['bankCoordinates.bic']}" field="bic" size="15" required="true" />
+                                        <hftl:formField entity="#{orderBean.paymentMethod.bankCoordinates}" label="#{messages['bankCoordinates.iban']}" field="iban" size="45" required="true" />
+                                    </c:if>
+                                </h:panelGroup>
+                            </p:outputPanel>
+                        </p:fieldset>
                         <div class="clearLeft"></div>
                         <hftl:customFields prefix="order" backingBean="#{orderBean}" messagesId=":orderForm:messages" />
 
@@ -205,7 +253,7 @@
 
                                                     <hftl:decorateFormField fieldId="subscriptionDate_#{itemStatus.index}"
                                                         label="#{messages['order.config.'.concat(CharacteristicsEnum.SUBSCRIPTION_DATE.characteristicName).concat(itemConfiguration.isMain()?'.main':itemConfiguration.isService()?'.service':'.product')]}"
-                                                        pattern="#{paramBean.dateFormat}">
+                                                        pattern="#{paramBean.dateFormat}" componentWidth="15">
                                                         <p:calendar id="subscriptionDate_#{itemStatus.index}" value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_DATE]}"
                                                             required="#{itemConfiguration.isMain()}" pattern="#{paramBean.dateFormat}"
                                                             rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION and orderBean.selectedOrderItem.action==OrderItemActionEnum.ADD}">
@@ -221,6 +269,151 @@
                                                             <f:convertDateTime type="date" pattern="#{paramBean.dateFormat}" />
                                                         </h:outputText>
                                                     </hftl:decorateFormField>
+
+                                                    <h:panelGroup id="renewRulePanel"
+                                                        rendered="#{itemConfiguration.isOffer() and (orderBean.selectedOrderItem.action==OrderItemActionEnum.ADD or orderBean.selectedOrderItem.action==OrderItemActionEnum.MODIFY)}">
+
+                                                        <hftl:decorateFormField fieldId="initialyActiveFor_#{itemStatus.index}" label="#{messages['subscription.initialyActiveFor']}"
+                                                            componentWidth="10">
+                                                            <p:spinner id="initialyActiveFor_#{itemStatus.index}"
+                                                                value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_INITIALLY_ACTIVE_FOR]}" size="2" min="1"
+                                                                rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION}">
+                                                                <p:ajax update="renewRulePanel" event="change" />
+                                                            </p:spinner>
+                                                            <h:outputText value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_INITIALLY_ACTIVE_FOR]}" styleClass="field-value"
+                                                                rendered="#{!(orderBean.entity.status == OrderStatusEnum.IN_CREATION)}">
+                                                            </h:outputText>
+                                                        </hftl:decorateFormField>
+
+                                                        <hftl:decorateFormField fieldId="initialyActiveForUnit_#{itemStatus.index}" label="#{messages['subscription.initialyActiveForUnit']}"
+                                                            componentWidth="10">
+                                                            <p:selectOneMenu id="initialyActiveForUnit_#{itemStatus.index}"
+                                                                value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_INITIALLY_ACTIVE_FOR_UNIT]}"
+                                                                required="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_INITIALLY_ACTIVE_FOR]!=null}"
+                                                                disabled="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_INITIALLY_ACTIVE_FOR]==null}"
+                                                                rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION}">
+                                                                <f:selectItems value="#{RenewalPeriodUnitEnum.ALL_VALUES}" var="enumElement" itemValue="#{enumElement}"
+                                                                    itemLabel="#{messages[enumElement.label]}" />
+                                                                <f:converter converterId="enumConverter" />
+                                                                <f:attribute name="GenericEnumConverter.enumType" value="org.meveo.model.billing.SubscriptionRenewal$RenewalPeriodUnitEnum" />
+                                                            </p:selectOneMenu>
+
+                                                            <h:outputText value="#{messages[itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_INITIALLY_ACTIVE_FOR_UNIT].label]}"
+                                                                styleClass="field-value"
+                                                                rendered="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_INITIALLY_ACTIVE_FOR_UNIT]!=null and !(orderBean.entity.status == OrderStatusEnum.IN_CREATION)}">
+                                                            </h:outputText>
+                                                        </hftl:decorateFormField>
+
+
+                                                        <h:panelGroup id="autoRenewPanel" rendered="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_INITIALLY_ACTIVE_FOR]!=null}">
+                                                            <hftl:decorateFormField fieldId="autoRenew_#{itemStatus.index}" label="#{messages['subscription.autoRenew']}" componentWidth="10">
+                                                                <p:selectBooleanCheckbox id="autoRenew_#{itemStatus.index}"
+                                                                    value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_AUTO_RENEW]}"
+                                                                    rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION}">
+                                                                    <p:ajax update="autoRenewPanel" event="change" />
+                                                                </p:selectBooleanCheckbox>
+
+                                                                <h:outputText
+                                                                    value="#{messages[itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_AUTO_RENEW].toString()=='true'?'commons.yes':'commons.no']}"
+                                                                    styleClass="field-value" rendered="#{!(orderBean.entity.status == OrderStatusEnum.IN_CREATION)}">
+                                                                </h:outputText>
+                                                            </hftl:decorateFormField>
+
+                                                            <h:panelGroup rendered="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_AUTO_RENEW]}">
+                                                                <hftl:decorateFormField fieldId="renewFor_#{itemStatus.index}" label="#{messages['subscription.renewFor']}" componentWidth="5">
+                                                                    <p:spinner id="renewFor_#{itemStatus.index}"
+                                                                        value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_RENEW_FOR]}" size="2" min="1" required="true"
+                                                                        rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION}">
+                                                                    </p:spinner>
+                                                                    <h:outputText value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_RENEW_FOR]}" styleClass="field-value"
+                                                                        rendered="#{!(orderBean.entity.status == OrderStatusEnum.IN_CREATION)}">
+                                                                    </h:outputText>
+                                                                </hftl:decorateFormField>
+
+                                                                <hftl:decorateFormField fieldId="renewForUnit_#{itemStatus.index}" label="#{messages['subscription.renewForUnit']}" componentWidth="10">
+                                                                    <p:selectOneMenu id="renewForUnit_#{itemStatus.index}"
+                                                                        value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_RENEW_FOR_UNIT]}" required="true"
+                                                                        rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION}">
+                                                                        <f:selectItems value="#{RenewalPeriodUnitEnum.ALL_VALUES}" var="enumElement" itemValue="#{enumElement}"
+                                                                            itemLabel="#{messages[enumElement.label]}" />
+                                                                        <f:converter converterId="enumConverter" />
+                                                                        <f:attribute name="GenericEnumConverter.enumType" value="org.meveo.model.billing.SubscriptionRenewal$RenewalPeriodUnitEnum" />
+                                                                    </p:selectOneMenu>
+
+                                                                    <h:outputText value="#{messages[itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_RENEW_FOR_UNIT].label]}"
+                                                                        styleClass="field-value"
+                                                                        rendered="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_RENEW_FOR_UNIT]!=null and !(orderBean.entity.status == OrderStatusEnum.IN_CREATION)}">
+                                                                    </h:outputText>
+                                                                </hftl:decorateFormField>
+
+
+
+                                                                <hftl:decorateFormField fieldId="daysNotifyBeforeRenew_#{itemStatus.index}" label="#{messages['subscription.renewNotifyBefore']}"
+                                                                    componentWidth="15">
+                                                                    <p:spinner id="daysNotifyBeforeRenew_#{itemStatus.index}"
+                                                                        value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_DAYS_NOTIFY_RENEWAL]}" size="2" min="1"
+                                                                        rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION}">
+                                                                    </p:spinner>
+                                                                    <h:outputText value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_DAYS_NOTIFY_RENEWAL]}"
+                                                                        styleClass="field-value" rendered="#{!(orderBean.entity.status == OrderStatusEnum.IN_CREATION)}">
+                                                                    </h:outputText>
+                                                                </hftl:decorateFormField>
+
+
+                                                                <hftl:decorateFormField fieldId="extendEndAgreement_#{itemStatus.index}" label="#{messages['subscription.extendAgreementPeriod']}"
+                                                                    componentWidth="15">
+                                                                    <p:selectBooleanCheckbox id="extendEndAgreement_#{itemStatus.index}"
+                                                                        value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_EXTEND_AGREEMENT_PERIOD]}"
+                                                                        rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION}">
+                                                                    </p:selectBooleanCheckbox>
+
+                                                                    <h:outputText
+                                                                        value="#{messages[itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_EXTEND_AGREEMENT_PERIOD].toString()=='true'?'commons.yes':'commons.no']}"
+                                                                        styleClass="field-value" rendered="#{!(orderBean.entity.status == OrderStatusEnum.IN_CREATION)}">
+                                                                    </h:outputText>
+                                                                </hftl:decorateFormField>
+
+                                                            </h:panelGroup>
+
+                                                            <hftl:decorateFormField fieldId="endOfTermAction_#{itemStatus.index}" label="#{messages['subscription.endOfTermAction']}"
+                                                                componentWidth="15">
+                                                                <p:selectOneMenu id="endOfTermAction_#{itemStatus.index}"
+                                                                    value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_END_OF_TERM_ACTION]}" required="true"
+                                                                    rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION}">
+                                                                    <f:selectItems value="#{EndOfTermActionEnum.ALL_VALUES}" var="enumElement" itemValue="#{enumElement}"
+                                                                        itemLabel="#{messages[enumElement.label]}" />
+                                                                    <f:converter converterId="enumConverter" />
+                                                                    <f:attribute name="GenericEnumConverter.enumType" value="org.meveo.model.billing.SubscriptionRenewal$EndOfTermActionEnum" />
+                                                                    <p:ajax update="renewTerminationReasonPanel" event="change" />
+                                                                </p:selectOneMenu>
+
+                                                                <h:outputText value="#{messages[itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_END_OF_TERM_ACTION].label]}"
+                                                                    styleClass="field-value"
+                                                                    rendered="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_END_OF_TERM_ACTION]!=null and !(orderBean.entity.status == OrderStatusEnum.IN_CREATION)}">
+                                                                </h:outputText>
+                                                            </hftl:decorateFormField>
+
+                                                            <h:panelGroup id="renewTerminationReasonPanel">
+                                                                <hftl:decorateFormField fieldId="endOfTermReason_#{itemStatus.index}" label="#{messages['subscription.endOfTermTerminationReason']}"
+                                                                    componentWidth="15"
+                                                                    rendered="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_END_OF_TERM_ACTION]==EndOfTermActionEnum.TERMINATE}">
+                                                                    <p:selectOneMenu id="endOfTermReason_#{itemStatus.index}"
+                                                                        value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_RENEW_TERMINATION_REASON]}" required="true"
+                                                                        rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION}">
+                                                                        <f:selectItem itemLabel="" itemValue="" />
+                                                                        <f:selectItems value="#{terminationReasonBean.listAll()}" var="elem" itemLabel="#{elem.descriptionOrCode}"
+                                                                            itemValue="#{elem.code}" />
+                                                                    </p:selectOneMenu>
+
+                                                                    <h:outputText value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_RENEW_TERMINATION_REASON]}"
+                                                                        styleClass="field-value"
+                                                                        rendered="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_RENEW_TERMINATION_REASON]!=null and !(orderBean.entity.status == OrderStatusEnum.IN_CREATION)}">
+                                                                    </h:outputText>
+                                                                </hftl:decorateFormField>
+                                                            </h:panelGroup>
+                                                        </h:panelGroup>
+
+                                                    </h:panelGroup>
 
                                                     <hftl:decorateFormField fieldId="subscriptionEndDate_#{itemStatus.index}"
                                                         label="#{messages['order.config.'.concat(CharacteristicsEnum.SUBSCRIPTION_END_DATE.characteristicName)]}" pattern="#{paramBean.dateFormat}">
@@ -242,7 +435,7 @@
 
                                                     <hftl:decorateFormField fieldId="subscriptionCode_#{itemStatus.index}"
                                                         label="#{messages['order.config.'.concat(CharacteristicsEnum.SUBSCRIPTION_CODE.characteristicName)]}"
-                                                        rendered="#{itemConfiguration.isOffer() and orderBean.selectedOrderItem.action==OrderItemActionEnum.ADD}">
+                                                        rendered="#{itemConfiguration.isOffer() and orderBean.selectedOrderItem.action==OrderItemActionEnum.ADD}" newLine="true">
                                                         <p:inputText id="subscriptionCode_#{itemStatus.index}" value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_CODE]}"
                                                             rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION}">
                                                             <p:ajax update=":orderForm:tabView:configTab:cf_#{itemStatus.index}_panel"
@@ -362,7 +555,7 @@
             <ui:define name="buttons">
 
 
-                <p:commandButton value="#{messages['order.sendToProcess']}" action="#{orderBean.sendToProcess()}" update=":orderForm:messages @form"
+                <p:commandButton value="#{messages['order.sendToProcess']}" action="#{orderBean.sendToProcess()}" update=":orderForm:messages @form" process="@this" ajax="false"
                     rendered="#{!orderBean.entity.transient and orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
             </ui:define>
 

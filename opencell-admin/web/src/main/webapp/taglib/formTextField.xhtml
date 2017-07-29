@@ -12,7 +12,7 @@
 
         <c:if test="#{not isHtml and not textArea and listValues == null and !isAutocomplete and not popup and edit}">
 
-            <p:inputText id="#{id}" value="#{fieldItem}" disabled="#{disabled}" required="#{required}" size="#{size}" maxlength="#{maxlength}">
+            <p:inputText id="#{id}" value="#{fieldItem}" disabled="#{disabled}" required="#{required}" size="#{size}" maxlength="#{maxlength}" >
 
                 <c:if test="#{not empty converter}">
                     <f:converter converterId="#{converter}" />

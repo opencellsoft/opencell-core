@@ -1,6 +1,7 @@
 package org.meveo.api.rest.billing;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -20,9 +21,12 @@ import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.billing.UpdateServicesRequestDto;
+import org.meveo.api.dto.response.billing.GetDueDateDelayResponseDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsResponseDto;
+import org.meveo.api.dto.response.catalog.GetOneShotChargesResponseDto;
+import org.meveo.api.dto.response.catalog.GetServiceInstanceResponseDto;
 import org.meveo.api.rest.IBaseRs;
 
 /**
@@ -108,18 +112,12 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @GET
     @Path("/list")
-    SubscriptionsResponseDto listByUserAccount(@QueryParam("userAccountCode") String userAccountCode);
+    SubscriptionsResponseDto listByUserAccount(@QueryParam("userAccountCode") String userAccountCode, @DefaultValue("false") @QueryParam("mergedCF") boolean mergedCF );
 
-    /**
-     * List All Subscriptions with pagination
-     * 
-     * @param pageSize Page size integer
-     * @param pageNumber Page number integer
-     * @return Subscriptions List
-     */
+
     @GET
     @Path("/listAll")
-    SubscriptionsListResponseDto listAll(@QueryParam("pageSize") int pageSize, @QueryParam("pageNumber") int pageNumber);
+    SubscriptionsListResponseDto listAll(@QueryParam("pageSize") int pageSize, @QueryParam("pageNumber") int pageNumber, @DefaultValue("false") @QueryParam("mergedCF") boolean mergedCF );
 
     /**
      * Search for a subscription with a given code 
@@ -129,7 +127,19 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @GET
     @Path("/")
-    GetSubscriptionResponseDto findSubscription(@QueryParam("subscriptionCode") String subscriptionCode);
+    GetSubscriptionResponseDto findSubscription(@QueryParam("subscriptionCode") String subscriptionCode, @DefaultValue("false") @QueryParam("mergedCF") boolean mergedCF );
+    
+    
+    
+    /**
+     * Search for a subscription with a given code 
+     * 
+     * @param subscriptionCode The subscription's code
+     * @return A subscription
+     */
+    @GET
+    @Path("/listOneshotChargeOthers")
+    GetOneShotChargesResponseDto getOneShotChargeOthers();
 
     /**
      * Create new or update an existing subscription
@@ -200,4 +210,25 @@ public interface SubscriptionRs extends IBaseRs {
     @PUT
 	@Path("updateServices")
 	ActionStatus updateServices(UpdateServicesRequestDto postData);
+    
+	@GET
+	@Path("serviceInstance")
+	GetServiceInstanceResponseDto findServiceInstance(@QueryParam("subscriptionCode") String subscriptionCode,
+			@QueryParam("serviceInstanceCode") String serviceInstanceCode);
+
+    /**
+     * Returns the due date delay information.
+     * 
+     * @param subscriptionCode - required
+     * @param invoiceNumber - invoice number, can be null
+     * @param invoiceTypeCode - can be null
+     * @param orderCode - can be null
+     * @return
+     */
+	@GET
+	@Path("/dueDateDelay")
+	GetDueDateDelayResponseDto findDueDateDelay(@QueryParam("subscriptionCode") String subscriptionCode,
+			@QueryParam("invoiceNumber") String invoiceNumber, @QueryParam("invoiceTypeCode") String invoiceTypeCode,
+			@QueryParam("orderCode") String orderCode);
+	
 }

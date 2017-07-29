@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://integration.i.opencellsoft.com/opencell/" />
+<title>Invoice Type Variables</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">New Test</td></tr>
+</thead><tbody>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id, 'invoiceTypes')]</td>
+	<td>invoice</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>INV_SELENIUM</td>
+	<td>codeInvoice</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>${codeInvoice}</td>
+	<td>code</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>Selenium Invoice Type</td>
+	<td>description</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id, 'occTemplateSelectedId_selectLink')]</td>
+	<td>accountOperationField</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>FA_FACT</td>
+	<td>accountOperation</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id, 'occTemplateSelectedId_selectLink')]</td>
+	<td>accountOperationField</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id, 'prefix')]</td>
+	<td>prefixField</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>test</td>
+	<td>prefix</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id, 'sequenceSize_input')]</td>
+	<td>sequenceSizeField</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>9</td>
+	<td>sequenceSize</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id, 'currentInvoiceNb_input')]</td>
+	<td>currentInvoiceNumberField</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>9</td>
+	<td>currentInvoiceNumber</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id, 'formInvoiceType:appliesTo')]/div/ul/li[text() = 'COM']</td>
+	<td>invoiceTypeIn</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>//*[contains(@id, 'formInvoiceType:appliesTo')]/div[3]/ul/li[text() = 'COM']</td>
+	<td>invoiceTypeOut</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>COM</td>
+	<td>invoiceType</td>
+</tr>
+</tbody></table>
+</body>
+</html>

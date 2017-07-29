@@ -28,6 +28,7 @@ import org.meveo.event.monitoring.BusinessExceptionEvent;
 import org.meveo.event.qualifier.Created;
 import org.meveo.event.qualifier.Disabled;
 import org.meveo.event.qualifier.Enabled;
+import org.meveo.event.qualifier.EndOfTerm;
 import org.meveo.event.qualifier.InboundRequestReceived;
 import org.meveo.event.qualifier.LoggedIn;
 import org.meveo.event.qualifier.LowBalance;
@@ -57,6 +58,7 @@ import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.CounterValueInsufficientException;
+import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 import org.slf4j.Logger;
@@ -188,7 +190,7 @@ public class DefaultObserver {
             // thus
             // will not be related to inbound request.
             if (notif instanceof ScriptNotification) {
-                NotificationHistory histo = notificationHistoryService.create(notif, entityOrEvent, "", NotificationHistoryStatusEnum.SENT);
+                NotificationHistory histo = notificationHistoryService.create(notif, entityOrEvent, (String)context.get(Script.RESULT_VALUE), NotificationHistoryStatusEnum.SENT);
 
                 if (notif.getEventTypeFilter() == NotificationEventTypeEnum.INBOUND_REQ && histo != null) {
                     ((InboundRequest) entityOrEvent).add(histo);
@@ -294,6 +296,11 @@ public class DefaultObserver {
     public void entityRejected(@Observes @Rejected BaseEntity e) throws BusinessException {
         log.debug("Defaut observer : Entity {} with id {} rejected", e.getClass().getName(), e.getId());
         checkEvent(NotificationEventTypeEnum.REJECTED, e);
+    }
+    
+    public void entityEndOfTerm(@Observes @EndOfTerm BaseEntity e) throws BusinessException {
+        log.debug("Defaut observer : Entity {} with id {} end of term", e.getClass().getName(), e.getId());
+        checkEvent(NotificationEventTypeEnum.END_OF_TERM, e);
     }
 
     public void cdrRejected(@Observes @RejectedCDR Object cdr) throws BusinessException {

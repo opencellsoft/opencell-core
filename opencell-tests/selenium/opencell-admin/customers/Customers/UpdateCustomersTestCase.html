@@ -12,6 +12,16 @@
 <tr><td rowspan="1" colspan="3">UpdateJobInstancesTestCase</td></tr>
 </thead><tbody>
 <tr>
+	<td>clickAndWait</td>
+	<td>${Customers}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>${defaultTimeout}</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>id=searchForm:code_txt</td>
 	<td>${Code}</td>
@@ -34,21 +44,6 @@
 <tr>
 	<td>waitForPageToLoad</td>
 	<td>${defaultTimeout}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertText</td>
-	<td>${Account}</td>
-	<td>Account</td>
-</tr>
-<tr>
-	<td>assertElementPresent</td>
-	<td>${Account}</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>${Account}</td>
 	<td></td>
 </tr>
 <tr>

@@ -44,7 +44,7 @@ public class PermissionService extends PersistenceService<Permission> {
     @SuppressWarnings("unchecked")
     @Override
     public List<Permission> list() {
-        QueryBuilder qb = new QueryBuilder("from Permission p");
+        QueryBuilder qb = new QueryBuilder(Permission.class, "p");
         boolean superAdmin = currentUser.hasRole("superAdminManagement");
         if (!superAdmin) {
             qb.addSqlCriterion("p.permission != :permission", "permission", "superAdminManagement");

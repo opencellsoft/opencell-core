@@ -1,16 +1,22 @@
 package org.meveo.client;
 
+
+
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLContexts;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.client.ProxyAuthenticationStrategy;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.meveo.commons.utils.StringUtils;
 
 
 
@@ -27,7 +33,7 @@ public class MeveoConnectionFactory {
 	}
 	private static  CloseableHttpClient httpClient = null;
 
-	public static CloseableHttpClient getClient(ProxyInfos proxyInfos) {
+	public static CloseableHttpClient getClient(ProxyInfos proxyInfos,String tlsVersion) {
 		if (httpClient == null) {
 			HttpClientBuilder httpClientBuilder = HttpClients.custom();
 			httpClientBuilder.setConnectionManager(connPool);
@@ -47,7 +53,26 @@ public class MeveoConnectionFactory {
 					httpClientBuilder.setProxyAuthenticationStrategy(new ProxyAuthenticationStrategy());
 				}						
 			}
-			httpClient = httpClientBuilder.build();
+			if(!StringUtils.isBlank(tlsVersion)){
+				System.out.println("tlsversion:"+tlsVersion);
+				 try{
+
+					SSLConnectionSocketFactory f = new SSLConnectionSocketFactory(
+							SSLContexts.custom().useTLS().build(),
+					    new String[]{tlsVersion},   
+					    null,
+					    new NoopHostnameVerifier());
+
+					httpClient = httpClientBuilder
+					    .setSSLSocketFactory(f)
+					    .build();
+					
+				 }catch (Exception e) {
+					e.printStackTrace();
+				}
+			}else{
+				httpClient = httpClientBuilder.build();
+			}
 		}
 		return httpClient;
 	}

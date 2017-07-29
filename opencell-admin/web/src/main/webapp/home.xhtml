@@ -9,7 +9,7 @@
 	template="layout/template.xhtml" xmlns:hftl="http://hftl.org">
 
 	<ui:define name="body">
-	<p:messages id="messages" />
+		<p:messages id="messages" />
 		<p:panel>
 
 
@@ -49,7 +49,6 @@
 											style="color:red"
 											rendered="#{configIssuesReportingBean.nbrChargesWithNotPricePlan!=0}" />
 									</f:facet>
-
 									<h:panelGrid columns="1"
 										rendered="#{configIssuesReportingBean.nbrUsagesWithNotPricePlan!=0}">
 										<h:outputLabel
@@ -60,16 +59,13 @@
 											backingBean="#{usageChargeTemplateBean}" checkMany="true"
 											dataModel="#{configIssuesReportingBean.usagesWithNotPricePlList}">
 											<hftl:column label="#{messages['chargeTemplate.code']}"
-												field="code" />
+												field="code" noLinkToView="true" />
 											<hftl:column
 												label="#{messages['chargeTemplate.description']}"
 												field="description" />
 											<hftl:column
 												label="#{messages['usageChargeTemplate.unityMultiplicator']}"
 												field="unitMultiplicator" converterParam="12digits" />
-											<!-- 			<hftl:column -->
-											<!-- 				label="#{messages['usageChargeTemplate.unityDescription']}" -->
-											<!-- 				field="unityDescription" /> -->
 											<hftl:column
 												label="#{messages['usageChargeTemplate.filterParam1']}"
 												field="filterParam1" />
@@ -105,7 +101,6 @@
 											</p:column>
 										</hftl:dataList>
 									</h:panelGrid>
-
 									<h:panelGrid columns="1"
 										rendered="#{configIssuesReportingBean.nbrRecurringWithNotPricePlan!=0}">
 										<h:outputLabel
@@ -115,7 +110,7 @@
 											backingBean="#{recurringChargeTemplateBean}" sortBy="code"
 											dataModel="#{configIssuesReportingBean.recurringWithNotPricePlanList}">
 											<hftl:column label="#{messages['chargeTemplate.code']}"
-												field="code" />
+												field="code" noLinkToView="true" />
 											<hftl:column
 												label="#{messages['chargeTemplate.description']}"
 												field="description" />
@@ -159,7 +154,6 @@
 											</p:column>
 										</hftl:dataList>
 									</h:panelGrid>
-
 									<h:panelGrid columns="1"
 										rendered="#{configIssuesReportingBean.nbrOneShotWithNotPricePlan!=0}">
 										<h:outputLabel
@@ -171,7 +165,7 @@
 											backingBean="#{oneShotChargeTemplateBean}"
 											dataModel="#{configIssuesReportingBean.oneShotChrgWithNotPricePlanList}">
 											<hftl:column label="#{messages['chargeTemplate.code']}"
-												field="code" />
+												field="code" noLinkToView="true" />
 											<hftl:column
 												label="#{messages['chargeTemplate.description']}"
 												field="description" />
@@ -240,9 +234,8 @@
 											resultsId="taxes_panel" exportToXml="false"
 											backingBean="#{taxBean}" sortBy="code" checkMany="true"
 											dataModel="#{configIssuesReportingBean.taxesNotAssociatedList}">
-
-
-											<hftl:column label="#{messages['tax.code']}" field="code" />
+											<hftl:column label="#{messages['tax.code']}" field="code"
+												noLinkToView="true" />
 											<hftl:column label="#{messages['tax.description']}"
 												field="description" />
 											<hftl:column label="#{messages['tax.percent']}"
@@ -349,7 +342,7 @@
 											backingBean="#{invoiceCategoryBean}" checkMany="true"
 											sortBy="code" exportToXml="false">
 											<hftl:column label="#{messages['invoiceCategory.code']}"
-												field="code" />
+												field="code" noLinkToView="true" />
 											<hftl:column
 												label="#{messages['invoiceCategory.description']}"
 												field="description" />
@@ -400,7 +393,7 @@
 											backingBean="#{invoiceSubCategoryBean}" sortBy="code"
 											exportToXml="false">
 											<hftl:column label="#{messages['invoiceSubCategory.code']}"
-												field="code" />
+												field="code" noLinkToView="true" />
 											<hftl:column
 												label="#{messages['invoiceSubCategory.invoiceCategory']}"
 												field="invoiceCategory.code" />
@@ -457,7 +450,7 @@
 											dataModel="#{configIssuesReportingBean.servicesWithNotOfferList}"
 											resultsId="servicesOffer_panel">
 											<hftl:column label="#{messages['serviceTemplate.code']}"
-												field="code" />
+												field="code" noLinkToView="true" />
 											<hftl:column
 												label="#{messages['serviceTemplate.description']}"
 												field="description" />
@@ -510,7 +503,6 @@
 									</h:panelGrid>
 								</p:tab>
 							</p:accordionPanel>
-
 							<p:accordionPanel activeIndex="null" dynamic="true" cache="false"
 								id="usagesTempl">
 								<p:ajax event="tabChange"
@@ -537,7 +529,7 @@
 											backingBean="#{usageChargeTemplateListBean}"
 											dataModel="#{configIssuesReportingBean.usagesChrgNotAssociatedList}">
 											<hftl:column label="#{messages['chargeTemplate.code']}"
-												field="code" />
+												field="code" noLinkToView="true" />
 											<hftl:column
 												label="#{messages['chargeTemplate.description']}"
 												field="description" />
@@ -585,7 +577,6 @@
 									</h:panelGrid>
 								</p:tab>
 							</p:accordionPanel>
-
 							<p:accordionPanel activeIndex="null" dynamic="true" cache="false">
 								<p:ajax event="tabChange"
 									listener="#{configIssuesReportingBean.jasperFilesNotFound}" />
@@ -602,7 +593,6 @@
 											style="color:red"
 											rendered="#{configIssuesReportingBean.reportConfigDto.nbrJasperDir!=0}" />
 									</f:facet>
-
 									<p:dataTable var="jasper"
 										value="#{configIssuesReportingBean.jaspers}"
 										id="jaspers_dataTable" style="width:900px;" rows="10"
@@ -653,13 +643,10 @@
 											checkMany="true" backingBean="#{counterTemplateBean}"
 											exportToXml="false">
 											<hftl:column label="#{messages['businessEntity.code']}"
-												field="code" />
+												field="code" noLinkToView="true" />
 											<hftl:column
 												label="#{messages['businessEntity.description']}"
 												field="description" />
-											<!-- 			<hftl:column -->
-											<!-- 				label="#{messages['usageChargeTemplate.unityDescription']}" -->
-											<!-- 				field="unityDescription" /> -->
 											<hftl:column
 												label="#{messages['counterTemplate.counterType']}"
 												field="counterType.label" isMessage="true" />
@@ -667,7 +654,6 @@
 												field="ceiling" converterParam="4digits" />
 											<hftl:column label="#{messages['billingCycle.calendar']}"
 												field="calendar.code" />
-
 											<hftl:column label="#{messages['enableEntity.active']}"
 												field="active" isMessage="true" />
 											<p:column width="50">
@@ -717,7 +703,7 @@
 											sortBy="code"
 											dataModel="#{configIssuesReportingBean.recurringNotAssociatedList}">
 											<hftl:column label="#{messages['chargeTemplate.code']}"
-												field="code" />
+												field="code" noLinkToView="true" />
 											<hftl:column
 												label="#{messages['chargeTemplate.description']}"
 												field="description" />
@@ -786,7 +772,7 @@
 											backingBean="#{serviceChargeTemplateTerminationBean}"
 											dataModel="#{configIssuesReportingBean.terminationNotAssociatedList}">
 											<hftl:column label="#{messages['chargeTemplate.code']}"
-												field="code" />
+												field="code" noLinkToView="true" />
 											<hftl:column
 												label="#{messages['chargeTemplate.description']}"
 												field="description" />
@@ -852,7 +838,7 @@
 											backingBean="#{serviceChargeTemplateSubscriptionBean}"
 											dataModel="#{configIssuesReportingBean.subNotAssociatedList}">
 											<hftl:column label="#{messages['chargeTemplate.code']}"
-												field="code" />
+												field="code" noLinkToView="true" />
 											<hftl:column
 												label="#{messages['chargeTemplate.description']}"
 												field="description" />
@@ -942,9 +928,6 @@
 									</h:panelGrid>
 								</p:tab>
 							</p:accordionPanel>
-							<!-- 
-	                      StringInstance
-	           -->
 							<p:accordionPanel activeIndex="null" dynamic="true" cache="false">
 								<p:ajax event="tabChange"
 									listener="#{configIssuesReportingBean.constructScriptInstancesWithError}" />
@@ -969,7 +952,7 @@
 											dataModel="#{configIssuesReportingBean.scriptInstanceWithErrorList}"
 											exportToXml="false">
 											<hftl:column label="#{messages['businessEntity.code']}"
-												field="code" noLinkToView="true"/>
+												field="code" noLinkToView="true" />
 											<hftl:column
 												label="#{messages['businessEntity.description']}"
 												field="description" />
@@ -977,21 +960,18 @@
 												<f:facet name="header">
 													<h:outputText value="Actions" />
 												</f:facet>
-                                                <p:button id="scriptInstancesButton" outcome="scriptInstanceDetail"
-                                                    icon="ui-icon-search">
-                                                    <f:param name="objectId" value="#{entity.id}" />
-                                                    <f:param name="backView" value="home" />
-                                                </p:button>
-                                            </p:column>
+												<p:button id="scriptInstancesButton"
+													outcome="scriptInstanceDetail" icon="ui-icon-search">
+													<f:param name="objectId" value="#{entity.id}" />
+													<f:param name="backView" value="home" />
+												</p:button>
+											</p:column>
 										</hftl:dataList>
 									</h:panelGrid>
 								</p:tab>
 							</p:accordionPanel>
-
-
 						</h:panelGrid>
 					</h:panelGrid>
-
 				</p:tab>
 				<p:tab title="#{messages['menu.reporting']}">
 					<p:panelGrid columns="1" layout="grid">

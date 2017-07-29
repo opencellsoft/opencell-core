@@ -2,12 +2,20 @@ package org.meveo.api.dto.account;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.payment.CardPaymentMethodDto;
+import org.meveo.api.dto.payment.DDPaymentMethodDto;
+import org.meveo.api.dto.payment.OtherPaymentMethodDto;
+import org.meveo.api.dto.payment.PaymentMethodDto;
+import org.meveo.api.dto.payment.TipPaymentMethodDto;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.payments.DunningLevelEnum;
@@ -18,188 +26,205 @@ import org.meveo.model.payments.PaymentMethodEnum;
 @FilterResults(property = "billingAccounts.billingAccount", entityClass = BillingAccount.class)
 public class CustomerAccountDto extends AccountDto {
 
-	private static final long serialVersionUID = -137632696663739285L;
+    private static final long serialVersionUID = -137632696663739285L;
 
-	@XmlElement(required = true)
-	private String customer;
+    @XmlElement(required = true)
+    private String customer;
 
-	@XmlElement(required = true)
-	private String currency;
+    @XmlElement(required = true)
+    private String currency;
 
-	@XmlElement(required = true)
-	private String language;
+    @XmlElement(required = true)
+    private String language;
 
-	private CustomerAccountStatusEnum status;
-	private PaymentMethodEnum paymentMethod;
-	private String creditCategory;
-	private Date dateStatus;
-	private Date dateDunningLevel;
+    private CustomerAccountStatusEnum status;
+    private String creditCategory;
+    private Date dateStatus;
+    private Date dateDunningLevel;
 
-	private ContactInformationDto contactInformation;
+    private ContactInformationDto contactInformation;
 
-	private DunningLevelEnum dunningLevel;
-	private String mandateIdentification = "";
-	private Date mandateDate;
-	private BigDecimal balance = BigDecimal.ZERO;
-	private BigDecimal totalInvoiceBalance = BigDecimal.ZERO;
-	// currently not use
-	private Date terminationDate;
-	private String dueDateDelayEL;
+    private DunningLevelEnum dunningLevel;
+    private String mandateIdentification = "";
+    private Date mandateDate;
+    private BigDecimal balance = BigDecimal.ZERO;
+    private BigDecimal totalInvoiceBalance = BigDecimal.ZERO;
+    // currently not use
+    private Date terminationDate;
+    private String dueDateDelayEL;
 
-	/**
-	 * Use for GET / LIST only.
-	 */
-	private BillingAccountsDto billingAccounts = new BillingAccountsDto();
+    @XmlElementWrapper(name = "paymentMethods")
+    @XmlElements({ @XmlElement(name = "card", type = CardPaymentMethodDto.class), @XmlElement(name = "directDebit", type = DDPaymentMethodDto.class),
+            @XmlElement(name = "tip", type = TipPaymentMethodDto.class), @XmlElement(name = "other", type = OtherPaymentMethodDto.class) })
+    private List<PaymentMethodDto> paymentMethods;
 
-	public CustomerAccountDto() {
-		super();
-	}
+    /**
+     * Field was deprecated in 4.6 version. Use 'paymentMethods' field instead
+     */
+    @Deprecated
+    private PaymentMethodEnum paymentMethod;
 
-	public CustomerAccountStatusEnum getStatus() {
-		return status;
-	}
+    /**
+     * Use for GET / LIST only.
+     */
+    private BillingAccountsDto billingAccounts;
 
-	public void setStatus(CustomerAccountStatusEnum status) {
-		this.status = status;
-	}
+    public CustomerAccountDto() {
+        super();
+    }
 
-	public String getCreditCategory() {
-		return creditCategory;
-	}
+    public CustomerAccountStatusEnum getStatus() {
+        return status;
+    }
 
-	public void setCreditCategory(String creditCategory) {
-		this.creditCategory = creditCategory;
-	}
+    public void setStatus(CustomerAccountStatusEnum status) {
+        this.status = status;
+    }
 
-	public Date getDateStatus() {
-		return dateStatus;
-	}
+    public String getCreditCategory() {
+        return creditCategory;
+    }
 
-	public void setDateStatus(Date dateStatus) {
-		this.dateStatus = dateStatus;
-	}
+    public void setCreditCategory(String creditCategory) {
+        this.creditCategory = creditCategory;
+    }
 
-	public Date getDateDunningLevel() {
-		return dateDunningLevel;
-	}
+    public Date getDateStatus() {
+        return dateStatus;
+    }
 
-	public void setDateDunningLevel(Date dateDunningLevel) {
-		this.dateDunningLevel = dateDunningLevel;
-	}
+    public void setDateStatus(Date dateStatus) {
+        this.dateStatus = dateStatus;
+    }
 
-	public String getCustomer() {
-		return customer;
-	}
+    public Date getDateDunningLevel() {
+        return dateDunningLevel;
+    }
 
-	public void setCustomer(String customer) {
-		this.customer = customer;
-	}
+    public void setDateDunningLevel(Date dateDunningLevel) {
+        this.dateDunningLevel = dateDunningLevel;
+    }
 
-	public PaymentMethodEnum getPaymentMethod() {
-		return paymentMethod;
-	}
+    public String getCustomer() {
+        return customer;
+    }
 
-	public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
-		this.paymentMethod = paymentMethod;
-	}
+    public void setCustomer(String customer) {
+        this.customer = customer;
+    }
 
-	public DunningLevelEnum getDunningLevel() {
-		return dunningLevel;
-	}
+    public DunningLevelEnum getDunningLevel() {
+        return dunningLevel;
+    }
 
-	public void setDunningLevel(DunningLevelEnum dunningLevel) {
-		this.dunningLevel = dunningLevel;
-	}
+    public void setDunningLevel(DunningLevelEnum dunningLevel) {
+        this.dunningLevel = dunningLevel;
+    }
 
-	public String getMandateIdentification() {
-		return mandateIdentification;
-	}
+    public String getMandateIdentification() {
+        return mandateIdentification;
+    }
 
-	public void setMandateIdentification(String mandateIdentification) {
-		this.mandateIdentification = mandateIdentification;
-	}
+    public void setMandateIdentification(String mandateIdentification) {
+        this.mandateIdentification = mandateIdentification;
+    }
 
-	public Date getMandateDate() {
-		return mandateDate;
-	}
+    public Date getMandateDate() {
+        return mandateDate;
+    }
 
-	public void setMandateDate(Date mandateDate) {
-		this.mandateDate = mandateDate;
-	}
+    public void setMandateDate(Date mandateDate) {
+        this.mandateDate = mandateDate;
+    }
 
-	public BigDecimal getBalance() {
-		return balance;
-	}
+    public BigDecimal getBalance() {
+        return balance;
+    }
 
-	public void setBalance(BigDecimal balance) {
-		this.balance = balance;
-	}
+    public void setBalance(BigDecimal balance) {
+        this.balance = balance;
+    }
 
-	public BigDecimal getTotalInvoiceBalance() {
-		return totalInvoiceBalance;
-	}
+    public BigDecimal getTotalInvoiceBalance() {
+        return totalInvoiceBalance;
+    }
 
-	public void setTotalInvoiceBalance(BigDecimal totalInvoiceBalance) {
-		this.totalInvoiceBalance = totalInvoiceBalance;
-	}
+    public void setTotalInvoiceBalance(BigDecimal totalInvoiceBalance) {
+        this.totalInvoiceBalance = totalInvoiceBalance;
+    }
 
-	public String getCurrency() {
-		return currency;
-	}
+    public String getCurrency() {
+        return currency;
+    }
 
-	public void setCurrency(String currency) {
-		this.currency = currency;
-	}
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
 
-	public String getLanguage() {
-		return language;
-	}
+    public String getLanguage() {
+        return language;
+    }
 
-	public void setLanguage(String language) {
-		this.language = language;
-	}
+    public void setLanguage(String language) {
+        this.language = language;
+    }
 
-	@Override
-	public String toString() {
-		return "CustomerAccountDto [customer=" + customer + ", currency=" + currency + ", language=" + language + ", status=" + status + ", paymentMethod=" + paymentMethod
-				+ ", creditCategory=" + creditCategory + ", dateStatus=" + dateStatus + ", dateDunningLevel=" + dateDunningLevel + ", contactInformation=" + contactInformation
-				+ ", dunningLevel=" + dunningLevel + ", mandateIdentification=" + mandateIdentification + ", mandateDate=" + mandateDate + ", balance=" + balance
-				+ ", terminationDate=" + terminationDate + ", billingAccounts=" + billingAccounts + "]";
-	}
+    @Override
+    public String toString() {
+        return "CustomerAccountDto [customer=" + customer + ", currency=" + currency + ", language=" + language + ", status=" + status + ", creditCategory=" + creditCategory
+                + ", dateStatus=" + dateStatus + ", dateDunningLevel=" + dateDunningLevel + ", contactInformation=" + contactInformation + ", dunningLevel=" + dunningLevel
+                + ", mandateIdentification=" + mandateIdentification + ", mandateDate=" + mandateDate + ", balance=" + balance + ", terminationDate=" + terminationDate
+                + ", billingAccounts=" + billingAccounts + "]";
+    }
 
-	public Date getTerminationDate() {
-		return terminationDate;
-	}
+    public Date getTerminationDate() {
+        return terminationDate;
+    }
 
-	public void setTerminationDate(Date terminationDate) {
-		this.terminationDate = terminationDate;
-	}
+    public void setTerminationDate(Date terminationDate) {
+        this.terminationDate = terminationDate;
+    }
 
-	public BillingAccountsDto getBillingAccounts() {
-		return billingAccounts;
-	}
+    public BillingAccountsDto getBillingAccounts() {
+        return billingAccounts;
+    }
 
-	public void setBillingAccounts(BillingAccountsDto billingAccounts) {
-		this.billingAccounts = billingAccounts;
-	}
+    public void setBillingAccounts(BillingAccountsDto billingAccounts) {
+        this.billingAccounts = billingAccounts;
+    }
 
-	public ContactInformationDto getContactInformation() {
-		if (contactInformation == null) {
-			contactInformation = new ContactInformationDto();
-		}
-		return contactInformation;
-	}
+    public ContactInformationDto getContactInformation() {
+        if (contactInformation == null) {
+            contactInformation = new ContactInformationDto();
+        }
+        return contactInformation;
+    }
 
-	public void setContactInformation(ContactInformationDto contactInformation) {
-		this.contactInformation = contactInformation;
-	}
+    public void setContactInformation(ContactInformationDto contactInformation) {
+        this.contactInformation = contactInformation;
+    }
 
-	public String getDueDateDelayEL() {
-		return dueDateDelayEL;
-	}
+    public String getDueDateDelayEL() {
+        return dueDateDelayEL;
+    }
 
-	public void setDueDateDelayEL(String dueDateDelayEL) {
-		this.dueDateDelayEL = dueDateDelayEL;
-	}
+    public void setDueDateDelayEL(String dueDateDelayEL) {
+        this.dueDateDelayEL = dueDateDelayEL;
+    }
 
+    public List<PaymentMethodDto> getPaymentMethods() {
+        return paymentMethods;
+    }
+
+    public void setPaymentMethods(List<PaymentMethodDto> paymentMethods) {
+        this.paymentMethods = paymentMethods;
+    }
+
+    public PaymentMethodEnum getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
 }
