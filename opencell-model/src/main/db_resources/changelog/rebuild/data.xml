@@ -4033,11 +4033,11 @@
             <column name="name" value="FTP Write" />
             <column name="permission" value="ftpwrite" />
         </insert>
-       	<insert tableName="adm_permission">
-			<column name="id" value="-17" />
-			<column name="name" value="Marketing Catalog"/>
-			<column name="permission" value="marketingCatalogManager"/>
-		</insert>
+        <insert tableName="adm_permission">
+            <column name="id" value="-17" />
+            <column name="name" value="Marketing Catalog" />
+            <column name="permission" value="marketingCatalogManager" />
+        </insert>
         <insert tableName="adm_permission">
             <column name="id" valueNumeric="-18" />
             <column name="name" value="Orders visualization" />
@@ -4047,22 +4047,22 @@
             <column name="id" valueNumeric="-19" />
             <column name="name" value="Order management" />
             <column name="permission" value="orderManagement" />
-        </insert>    
-		<insert tableName="adm_permission">
-			<column name="id" valueNumeric="-20" />
-			<column name="name" value="Finance visualization"/>
-			<column name="permission" value="financeVisualization"/>
-		</insert>		
-		<insert tableName="adm_permission">
-			<column name="id" valueNumeric="-21" />
-			<column name="name" value="Finance management"/>
-			<column name="permission" value="financeManagement"/>
-		</insert>
-		<insert tableName="adm_permission">
-			<column name="id" valueNumeric="-22" />
-			<column name="name" value="Marketing Catalog visualization"/>
-			<column name="permission" value="marketingCatalogVisualization"/>
-		</insert>	
+        </insert>
+        <insert tableName="adm_permission">
+            <column name="id" valueNumeric="-20" />
+            <column name="name" value="Finance visualization" />
+            <column name="permission" value="financeVisualization" />
+        </insert>
+        <insert tableName="adm_permission">
+            <column name="id" valueNumeric="-21" />
+            <column name="name" value="Finance management" />
+            <column name="permission" value="financeManagement" />
+        </insert>
+        <insert tableName="adm_permission">
+            <column name="id" valueNumeric="-22" />
+            <column name="name" value="Marketing Catalog visualization" />
+            <column name="permission" value="marketingCatalogVisualization" />
+        </insert>
         <insert tableName="adm_permission">
             <column name="id" valueNumeric="-23" />
             <column name="name" value="Quote visualization" />
@@ -6699,7 +6699,7 @@
             <column name="customer_account_id" />
             <column name="language_id" valueNumeric="1" />
             <column name="user_account_id" />
-            <column name="uuid" value="DEMO"/>
+            <column name="uuid" value="DEMO" />
         </insert>
         <insert tableName="crm_provider_contact">
             <column name="id" valueNumeric="-1" />
@@ -6708,19 +6708,19 @@
             <column name="created" valueDate="2015-03-19 00:04:19.892" />
             <column name="code" value="OPENCELL" />
             <column name="description" value="Opencell Software" />
-            <column name="address_1" value="14 rue Crespin du Gast"/>
+            <column name="address_1" value="14 rue Crespin du Gast" />
             <column name="address_2" />
             <column name="address_3" />
             <column name="address_city" value="Paris" />
-            <column name="address_country" value="France"/>
+            <column name="address_country" value="France" />
             <column name="address_state" />
             <column name="address_zipcode" value="75011" />
             <column name="email" value="sales@opencellsoft.com" />
             <column name="fax" />
-            <column name="firstname"/>
+            <column name="firstname" />
             <column name="generic_mail" />
-            <column name="lastname"/>
-            <column name="mobile" value="+33607899813"/>
+            <column name="lastname" />
+            <column name="mobile" value="+33607899813" />
             <column name="phone" />
         </insert>
     </changeSet>
@@ -6749,12 +6749,12 @@
             <column name="role_description" value="Read all custom entities" />
             <column name="role_name" value="ReadAllCE" />
         </insert>
-		<insert tableName="adm_role">
-			<column name="id" value="-5"/>
-			<column name="version" value="0"/>
-			<column name="role_description" value="Marketing"/>
-			<column name="role_name" value="marketingManager"/>
-		</insert>
+        <insert tableName="adm_role">
+            <column name="id" value="-5" />
+            <column name="version" value="0" />
+            <column name="role_description" value="Marketing" />
+            <column name="role_name" value="marketingManager" />
+        </insert>
         <insert tableName="adm_role_role">
             <column name="role_id" valueNumeric="-2" />
             <column name="child_role_id" valueNumeric="-1" />
@@ -6842,7 +6842,7 @@
         <insert tableName="adm_role_permission">
             <column name="role_id" valueNumeric="-2" />
             <column name="permission_id" valueNumeric="14" />
-        </insert>	
+        </insert>
         <insert tableName="adm_role_permission">
             <column name="role_id" valueNumeric="-5" />
             <column name="permission_id" valueNumeric="-17" />
@@ -6850,7 +6850,7 @@
         <insert tableName="adm_role_permission">
             <column name="role_id" valueNumeric="-5" />
             <column name="permission_id" valueNumeric="13" />
-        </insert> 
+        </insert>
         <insert tableName="adm_role_permission">
             <column name="role_id" valueNumeric="-1" />
             <column name="permission_id" valueNumeric="-18" />
@@ -6858,7 +6858,7 @@
         <insert tableName="adm_role_permission">
             <column name="role_id" valueNumeric="-1" />
             <column name="permission_id" valueNumeric="-19" />
-        </insert> 
+        </insert>
         <insert tableName="adm_role_permission">
             <column name="role_id" valueNumeric="-1" />
             <column name="permission_id" valueNumeric="-23" />
@@ -6900,7 +6900,7 @@
             <column name="username" value="OPENCELL.SUPERADMIN" />
             <column name="title_id" />
             <column name="uuid" value="OPENCELL.SUPERADMIN" />
-        </insert>        
+        </insert>
         <insert tableName="adm_user">
             <column name="id" valueNumeric="-3" />
             <column name="version" valueNumeric="0" />
@@ -6924,213 +6924,213 @@
         <insert tableName="adm_user_role">
             <column name="user_id" valueNumeric="-3" />
             <column name="role_id" valueNumeric="-5" />
-        </insert>   
+        </insert>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-data-titlesDEMO">
-		<insert tableName="adm_title">
-			<column name="id" valueNumeric="-1" />
-			<column name="version" valueNumeric="0" />
-			<column name="disabled" valueNumeric="0" />
-			<column name="creator" value="OPENCELL.ADMIN" />
-			<column name="created" valueDate="2016-11-03 00:00:00.000" />
-			<column name="code" value="ASSOC" />
-			<column name="description" value="Assoc." />
-			<column name="is_company" valueNumeric="1" />
-						
-		</insert>
-		<insert tableName="adm_title">
-			<column name="id" valueNumeric="-2" />
-			<column name="version" valueNumeric="0" />
-			<column name="disabled" valueNumeric="0" />
-			<column name="creator" value="OPENCELL.ADMIN" />
-			<column name="created" valueDate="2016-11-03 00:00:00.000" />
-			<column name="code" value="CIE" />
-			<column name="description" value="Cie." />
-			<column name="is_company" valueNumeric="1" />
-						
-		</insert>
-		<insert tableName="adm_title">
-			<column name="id" valueNumeric="-3" />
-			<column name="version" valueNumeric="0" />
-			<column name="disabled" valueNumeric="0" />
-			<column name="creator" value="OPENCELL.ADMIN" />
-			<column name="created" valueDate="2016-11-03 00:00:00.000" />
-			<column name="code" value="MR" />
-			<column name="description" value="Mr." />
-			<column name="is_company" valueNumeric="0" />
-						
-		</insert>
-		<insert tableName="adm_title">
-			<column name="id" valueNumeric="-4" />
-			<column name="version" valueNumeric="0" />
-			<column name="disabled" valueNumeric="0" />
-			<column name="creator" value="OPENCELL.ADMIN" />
-			<column name="created" valueDate="2016-11-03 00:00:00.000" />
-			<column name="code" value="MRS" />
-			<column name="description" value="Mrs." />
-			<column name="is_company" valueNumeric="0" />
-						
-		</insert>
-		<insert tableName="adm_title">
-			<column name="id" valueNumeric="-5" />
-			<column name="version" valueNumeric="0" />
-			<column name="disabled" valueNumeric="0" />
-			<column name="creator" value="OPENCELL.ADMIN" />
-			<column name="created" valueDate="2016-11-03 00:00:00.000" />
-			<column name="code" value="MS" />
-			<column name="description" value="Ms." />
-			<column name="is_company" valueNumeric="0" />
-						
-		</insert>
-		<insert tableName="adm_title">
-			<column name="id" valueNumeric="-6" />
-			<column name="version" valueNumeric="0" />
-			<column name="disabled" valueNumeric="0" />
-			<column name="creator" value="OPENCELL.ADMIN" />
-			<column name="created" valueDate="2016-11-03 00:00:00.000" />
-			<column name="code" value="DR" />
-			<column name="description" value="Dr." />
-			<column name="is_company" valueNumeric="0" />
-						
-		</insert>
-		<insert tableName="adm_title">
-			<column name="id" valueNumeric="-7" />
-			<column name="version" valueNumeric="0" />
-			<column name="disabled" valueNumeric="0" />
-			<column name="creator" value="OPENCELL.ADMIN" />
-			<column name="created" valueDate="2016-11-03 00:00:00.000" />
-			<column name="code" value="PROF" />
-			<column name="description" value="Prof." />
-			<column name="is_company" valueNumeric="0" />
-						
-		</insert>
-		
-		<insert tableName="adm_messages">
-			<column name="id" valueNumeric="-1" />
-			<column name="version" valueNumeric="0" />
-			<column name="description" value="Assoc." />
-			<column name="language_code" value="ENG" />
-			
-			<column name="entity_class" value="Title" />
-			<column name="entity_code" value="ASSOC" />						
-		</insert>
-		<insert tableName="adm_messages">
-			<column name="id" valueNumeric="-2" />
-			<column name="version" valueNumeric="0" />
-			<column name="description" value="Assoc." />
-			<column name="language_code" value="FRA" />
-			
-			<column name="entity_class" value="Title" />
-			<column name="entity_code" value="ASSOC" />						
-		</insert>
-		<insert tableName="adm_messages">
-			<column name="id" valueNumeric="-3" />
-			<column name="version" valueNumeric="0" />
-			<column name="description" value="Cie." />
-			<column name="language_code" value="ENG" />
-			
-			<column name="entity_class" value="Title" />
-			<column name="entity_code" value="CIE" />						
-		</insert>
-		<insert tableName="adm_messages">
-			<column name="id" valueNumeric="-4" />
-			<column name="version" valueNumeric="0" />
-			<column name="description" value="Sté" />
-			<column name="language_code" value="FRA" />
-			
-			<column name="entity_class" value="Title" />
-			<column name="entity_code" value="CIE" />						
-		</insert>
-		<insert tableName="adm_messages">
-			<column name="id" valueNumeric="-5" />
-			<column name="version" valueNumeric="0" />
-			<column name="description" value="Mr." />
-			<column name="language_code" value="ENG" />
-			
-			<column name="entity_class" value="Title" />
-			<column name="entity_code" value="MR" />						
-		</insert>
-		<insert tableName="adm_messages">
-			<column name="id" valueNumeric="-6" />
-			<column name="version" valueNumeric="0" />
-			<column name="description" value="M." />
-			<column name="language_code" value="FRA" />
-			
-			<column name="entity_class" value="Title" />
-			<column name="entity_code" value="MR" />						
-		</insert>		
-		<insert tableName="adm_messages">
-			<column name="id" valueNumeric="-7" />
-			<column name="version" valueNumeric="0" />
-			<column name="description" value="Mrs." />
-			<column name="language_code" value="ENG" />
-			
-			<column name="entity_class" value="Title" />
-			<column name="entity_code" value="MRS" />						
-		</insert>
-		<insert tableName="adm_messages">
-			<column name="id" valueNumeric="-8" />
-			<column name="version" valueNumeric="0" />
-			<column name="description" value="Mme" />
-			<column name="language_code" value="FRA" />
-			
-			<column name="entity_class" value="Title" />
-			<column name="entity_code" value="MRS" />						
-		</insert>
-		<insert tableName="adm_messages">
-			<column name="id" valueNumeric="-9" />
-			<column name="version" valueNumeric="0" />
-			<column name="description" value="Ms." />
-			<column name="language_code" value="ENG" />
-			
-			<column name="entity_class" value="Title" />
-			<column name="entity_code" value="MS" />						
-		</insert>
-		<insert tableName="adm_messages">
-			<column name="id" valueNumeric="-10" />
-			<column name="version" valueNumeric="0" />
-			<column name="description" value="Mlle" />
-			<column name="language_code" value="FRA" />
-			
-			<column name="entity_class" value="Title" />
-			<column name="entity_code" value="MS" />						
-		</insert>
-		<insert tableName="adm_messages">
-			<column name="id" valueNumeric="-11" />
-			<column name="version" valueNumeric="0" />
-			<column name="description" value="Dr." />
-			<column name="language_code" value="ENG" />
-			
-			<column name="entity_class" value="Title" />
-			<column name="entity_code" value="DR" />						
-		</insert>
-		<insert tableName="adm_messages">
-			<column name="id" valueNumeric="-12" />
-			<column name="version" valueNumeric="0" />
-			<column name="description" value="Dr" />
-			<column name="language_code" value="FRA" />
-			
-			<column name="entity_class" value="Title" />
-			<column name="entity_code" value="DR" />						
-		</insert>
-		<insert tableName="adm_messages">
-			<column name="id" valueNumeric="-13" />
-			<column name="version" valueNumeric="0" />
-			<column name="description" value="Prof." />
-			<column name="language_code" value="ENG" />
-			
-			<column name="entity_class" value="Title" />
-			<column name="entity_code" value="PROF" />						
-		</insert>
-		<insert tableName="adm_messages">
-			<column name="id" valueNumeric="-14" />
-			<column name="version" valueNumeric="0" />
-			<column name="description" value="Pr" />
-			<column name="language_code" value="FRA" />
-			
-			<column name="entity_class" value="Title" />
-			<column name="entity_code" value="PROF" />						
-		</insert>		
+        <insert tableName="adm_title">
+            <column name="id" valueNumeric="-1" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="2016-11-03 00:00:00.000" />
+            <column name="code" value="ASSOC" />
+            <column name="description" value="Assoc." />
+            <column name="is_company" valueNumeric="1" />
+
+        </insert>
+        <insert tableName="adm_title">
+            <column name="id" valueNumeric="-2" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="2016-11-03 00:00:00.000" />
+            <column name="code" value="CIE" />
+            <column name="description" value="Cie." />
+            <column name="is_company" valueNumeric="1" />
+
+        </insert>
+        <insert tableName="adm_title">
+            <column name="id" valueNumeric="-3" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="2016-11-03 00:00:00.000" />
+            <column name="code" value="MR" />
+            <column name="description" value="Mr." />
+            <column name="is_company" valueNumeric="0" />
+
+        </insert>
+        <insert tableName="adm_title">
+            <column name="id" valueNumeric="-4" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="2016-11-03 00:00:00.000" />
+            <column name="code" value="MRS" />
+            <column name="description" value="Mrs." />
+            <column name="is_company" valueNumeric="0" />
+
+        </insert>
+        <insert tableName="adm_title">
+            <column name="id" valueNumeric="-5" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="2016-11-03 00:00:00.000" />
+            <column name="code" value="MS" />
+            <column name="description" value="Ms." />
+            <column name="is_company" valueNumeric="0" />
+
+        </insert>
+        <insert tableName="adm_title">
+            <column name="id" valueNumeric="-6" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="2016-11-03 00:00:00.000" />
+            <column name="code" value="DR" />
+            <column name="description" value="Dr." />
+            <column name="is_company" valueNumeric="0" />
+
+        </insert>
+        <insert tableName="adm_title">
+            <column name="id" valueNumeric="-7" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="2016-11-03 00:00:00.000" />
+            <column name="code" value="PROF" />
+            <column name="description" value="Prof." />
+            <column name="is_company" valueNumeric="0" />
+
+        </insert>
+
+        <insert tableName="adm_messages">
+            <column name="id" valueNumeric="-1" />
+            <column name="version" valueNumeric="0" />
+            <column name="description" value="Assoc." />
+            <column name="language_code" value="ENG" />
+
+            <column name="entity_class" value="Title" />
+            <column name="entity_code" value="ASSOC" />
+        </insert>
+        <insert tableName="adm_messages">
+            <column name="id" valueNumeric="-2" />
+            <column name="version" valueNumeric="0" />
+            <column name="description" value="Assoc." />
+            <column name="language_code" value="FRA" />
+
+            <column name="entity_class" value="Title" />
+            <column name="entity_code" value="ASSOC" />
+        </insert>
+        <insert tableName="adm_messages">
+            <column name="id" valueNumeric="-3" />
+            <column name="version" valueNumeric="0" />
+            <column name="description" value="Cie." />
+            <column name="language_code" value="ENG" />
+
+            <column name="entity_class" value="Title" />
+            <column name="entity_code" value="CIE" />
+        </insert>
+        <insert tableName="adm_messages">
+            <column name="id" valueNumeric="-4" />
+            <column name="version" valueNumeric="0" />
+            <column name="description" value="Sté" />
+            <column name="language_code" value="FRA" />
+
+            <column name="entity_class" value="Title" />
+            <column name="entity_code" value="CIE" />
+        </insert>
+        <insert tableName="adm_messages">
+            <column name="id" valueNumeric="-5" />
+            <column name="version" valueNumeric="0" />
+            <column name="description" value="Mr." />
+            <column name="language_code" value="ENG" />
+
+            <column name="entity_class" value="Title" />
+            <column name="entity_code" value="MR" />
+        </insert>
+        <insert tableName="adm_messages">
+            <column name="id" valueNumeric="-6" />
+            <column name="version" valueNumeric="0" />
+            <column name="description" value="M." />
+            <column name="language_code" value="FRA" />
+
+            <column name="entity_class" value="Title" />
+            <column name="entity_code" value="MR" />
+        </insert>
+        <insert tableName="adm_messages">
+            <column name="id" valueNumeric="-7" />
+            <column name="version" valueNumeric="0" />
+            <column name="description" value="Mrs." />
+            <column name="language_code" value="ENG" />
+
+            <column name="entity_class" value="Title" />
+            <column name="entity_code" value="MRS" />
+        </insert>
+        <insert tableName="adm_messages">
+            <column name="id" valueNumeric="-8" />
+            <column name="version" valueNumeric="0" />
+            <column name="description" value="Mme" />
+            <column name="language_code" value="FRA" />
+
+            <column name="entity_class" value="Title" />
+            <column name="entity_code" value="MRS" />
+        </insert>
+        <insert tableName="adm_messages">
+            <column name="id" valueNumeric="-9" />
+            <column name="version" valueNumeric="0" />
+            <column name="description" value="Ms." />
+            <column name="language_code" value="ENG" />
+
+            <column name="entity_class" value="Title" />
+            <column name="entity_code" value="MS" />
+        </insert>
+        <insert tableName="adm_messages">
+            <column name="id" valueNumeric="-10" />
+            <column name="version" valueNumeric="0" />
+            <column name="description" value="Mlle" />
+            <column name="language_code" value="FRA" />
+
+            <column name="entity_class" value="Title" />
+            <column name="entity_code" value="MS" />
+        </insert>
+        <insert tableName="adm_messages">
+            <column name="id" valueNumeric="-11" />
+            <column name="version" valueNumeric="0" />
+            <column name="description" value="Dr." />
+            <column name="language_code" value="ENG" />
+
+            <column name="entity_class" value="Title" />
+            <column name="entity_code" value="DR" />
+        </insert>
+        <insert tableName="adm_messages">
+            <column name="id" valueNumeric="-12" />
+            <column name="version" valueNumeric="0" />
+            <column name="description" value="Dr" />
+            <column name="language_code" value="FRA" />
+
+            <column name="entity_class" value="Title" />
+            <column name="entity_code" value="DR" />
+        </insert>
+        <insert tableName="adm_messages">
+            <column name="id" valueNumeric="-13" />
+            <column name="version" valueNumeric="0" />
+            <column name="description" value="Prof." />
+            <column name="language_code" value="ENG" />
+
+            <column name="entity_class" value="Title" />
+            <column name="entity_code" value="PROF" />
+        </insert>
+        <insert tableName="adm_messages">
+            <column name="id" valueNumeric="-14" />
+            <column name="version" valueNumeric="0" />
+            <column name="description" value="Pr" />
+            <column name="language_code" value="FRA" />
+
+            <column name="entity_class" value="Title" />
+            <column name="entity_code" value="PROF" />
+        </insert>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-data-occTemplatesDEMO">
         <insert tableName="ar_occ_template">
@@ -7143,7 +7143,7 @@
             <column name="code" value="RG_CHQ" />
             <column name="description" value="Règlement par chèque" />
             <column name="occ_category" value="CREDIT" />
-            
+
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-2" />
@@ -7155,7 +7155,7 @@
             <column name="code" value="RG_TIP" />
             <column name="description" value="Règlement par TIP" />
             <column name="occ_category" value="CREDIT" />
-            
+
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-3" />
@@ -7167,7 +7167,7 @@
             <column name="code" value="RG_PLVT" />
             <column name="description" value="Prélèvement" />
             <column name="occ_category" value="CREDIT" />
-            
+
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-4" />
@@ -7179,7 +7179,7 @@
             <column name="code" value="RG_VIRT" />
             <column name="description" value="Avis de crédit (virement)" />
             <column name="occ_category" value="CREDIT" />
-            
+
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-5" />
@@ -7191,7 +7191,7 @@
             <column name="code" value="IP_CHQ" />
             <column name="description" value="Chèque impayé" />
             <column name="occ_category" value="DEBIT" />
-            
+
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-6" />
@@ -7203,7 +7203,7 @@
             <column name="code" value="IP_PLVT" />
             <column name="description" value="Rejet de Prèlèvement" />
             <column name="occ_category" value="DEBIT" />
-            
+
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-7" />
@@ -7215,7 +7215,7 @@
             <column name="code" value="IP_TIP" />
             <column name="description" value="Impayé TIP" />
             <column name="occ_category" value="DEBIT" />
-            
+
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-8" />
@@ -7227,7 +7227,7 @@
             <column name="code" value="RG_CHQNI" />
             <column name="description" value="Règlement par chèque sur compte NI" />
             <column name="occ_category" value="CREDIT" />
-            
+
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-9" />
@@ -7239,7 +7239,7 @@
             <column name="code" value="RG_VIRTNI" />
             <column name="description" value="Règlement par virement sur compte NI" />
             <column name="occ_category" value="CREDIT" />
-            
+
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-10" />
@@ -7251,7 +7251,7 @@
             <column name="code" value="RB_CHQ" />
             <column name="description" value="Remboursement par chèque" />
             <column name="occ_category" value="DEBIT" />
-            
+
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-11" />
@@ -7263,7 +7263,7 @@
             <column name="code" value="RB_PLVT" />
             <column name="description" value="Remboursement par prélèvement" />
             <column name="occ_category" value="DEBIT" />
-            
+
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-12" />
@@ -7275,7 +7275,7 @@
             <column name="code" value="OD_CC_CL" />
             <column name="description" value="Transfert Compte client - Compte de liaison" />
             <column name="occ_category" value="DEBIT" />
-            
+
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-13" />
@@ -7287,7 +7287,7 @@
             <column name="code" value="OD_CL_NI" />
             <column name="description" value="Transfert Compte de liaison - Compte  NI" />
             <column name="occ_category" value="CREDIT" />
-            
+
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-14" />
@@ -7299,7 +7299,7 @@
             <column name="code" value="OD_NI_CL" />
             <column name="description" value="Transfert Compte NI - Compte de liaison" />
             <column name="occ_category" value="DEBIT" />
-            
+
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-15" />
@@ -7311,7 +7311,7 @@
             <column name="code" value="OD_CL_CC" />
             <column name="description" value="Transfert Compte de liaison - Compte client" />
             <column name="occ_category" value="CREDIT" />
-            
+
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-16" />
@@ -7323,7 +7323,7 @@
             <column name="code" value="OD_ODD" />
             <column name="description" value="Débit porté directement sur compte client" />
             <column name="occ_category" value="DEBIT" />
-            
+
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-17" />
@@ -7335,7 +7335,7 @@
             <column name="code" value="OD_ODC" />
             <column name="description" value="Crédit porté directement sur compte client" />
             <column name="occ_category" value="CREDIT" />
-            
+
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-18" />
@@ -7347,7 +7347,7 @@
             <column name="code" value="OD_PERT" />
             <column name="description" value="Perte sur règlement" />
             <column name="occ_category" value="CREDIT" />
-            
+
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-19" />
@@ -7359,7 +7359,7 @@
             <column name="code" value="OD_PROF" />
             <column name="description" value="Profit sur règlement" />
             <column name="occ_category" value="DEBIT" />
-            
+
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-20" />
@@ -7371,7 +7371,7 @@
             <column name="code" value="OD_ACPT" />
             <column name="description" value="Versement d'un acompte" />
             <column name="occ_category" value="CREDIT" />
-            
+
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-21" />
@@ -7383,7 +7383,7 @@
             <column name="code" value="OD_EXC" />
             <column name="description" value="Enregistrement de trop perçu" />
             <column name="occ_category" value="DEBIT" />
-            
+
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-22" />
@@ -7395,7 +7395,7 @@
             <column name="code" value="OD_IRRE" />
             <column name="description" value="Passage en irrecouvrable" />
             <column name="occ_category" value="CREDIT" />
-            
+
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-23" />
@@ -7407,7 +7407,7 @@
             <column name="code" value="OD_PREL" />
             <column name="description" value="Pénalité de relance" />
             <column name="occ_category" value="DEBIT" />
-            
+
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-24" />
@@ -7419,7 +7419,7 @@
             <column name="code" value="OD_PIMP" />
             <column name="description" value="Pénalité d'impayés" />
             <column name="occ_category" value="DEBIT" />
-            
+
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-25" />
@@ -7431,7 +7431,7 @@
             <column name="code" value="FA_FACT" />
             <column name="description" value="Facture" />
             <column name="occ_category" value="DEBIT" />
-            
+
         </insert>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-data-calendarDEMO">
@@ -7449,7 +7449,7 @@
             <column name="calendar" />
             <column name="join_type" />
             <column name="interval_type" />
-            
+
             <column name="join_cal_1_id" />
             <column name="join_cal_2_id" />
         </insert>
@@ -7467,7 +7467,7 @@
             <column name="calendar" />
             <column name="join_type" />
             <column name="interval_type" />
-            
+
             <column name="join_cal_1_id" />
             <column name="join_cal_2_id" />
         </insert>
@@ -7485,7 +7485,7 @@
             <column name="calendar" />
             <column name="join_type" />
             <column name="interval_type" />
-            
+
             <column name="join_cal_1_id" />
             <column name="join_cal_2_id" />
         </insert>
@@ -7548,7 +7548,7 @@
             <column name="description" value="Monthly Invoice Cycle 1" />
             <column name="due_date_delay" valueNumeric="2" />
             <column name="invoice_date_delay" valueNumeric="4" />
-            
+
             <column name="calendar" valueNumeric="-1" />
             <column name="uuid" value="BillingCycle-1" />
         </insert>
@@ -7561,7 +7561,7 @@
             <column name="description" value="Monthly Invoice Cycle 2" />
             <column name="due_date_delay" valueNumeric="2" />
             <column name="invoice_date_delay" valueNumeric="4" />
-            
+
             <column name="calendar" valueNumeric="-1" />
             <column name="uuid" value="BillingCycle-2" />
         </insert>
@@ -7576,7 +7576,7 @@
             <column name="description" value="0 Percent Tax" />
             <column name="accounting_code" />
             <column name="tax_percentage" valueNumeric="0E-12" />
-            
+
             <column name="uuid" value="tax-1" />
         </insert>
         <insert tableName="billing_tax">
@@ -7588,7 +7588,7 @@
             <column name="description" value="5 Percent Tax" />
             <column name="accounting_code" />
             <column name="tax_percentage" valueNumeric="5.000000000000" />
-            
+
             <column name="uuid" value="tax-2" />
         </insert>
         <insert tableName="billing_tax">
@@ -7600,7 +7600,7 @@
             <column name="description" value="18 Percent Tax" />
             <column name="accounting_code" />
             <column name="tax_percentage" valueNumeric="18.000000000000" />
-            
+
             <column name="uuid" value="tax-3" />
         </insert>
     </changeSet>
@@ -7611,7 +7611,7 @@
             <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.237" />
             <column name="pr_description" value="United States" />
-            
+
             <column name="country_id" valueNumeric="220" />
         </insert>
         <insert tableName="billing_trading_country">
@@ -7620,7 +7620,7 @@
             <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.264" />
             <column name="pr_description" value="France" />
-            
+
             <column name="country_id" valueNumeric="70" />
         </insert>
         <insert tableName="billing_trading_currency">
@@ -7630,7 +7630,7 @@
             <column name="created" valueDate="2015-03-19 00:04:19.195" />
             <column name="pr_currency_to_this" />
             <column name="pr_description" value="US Dollar" />
-            
+
             <column name="currency_id" valueNumeric="49" />
         </insert>
         <insert tableName="billing_trading_currency">
@@ -7640,7 +7640,7 @@
             <column name="created" valueDate="2015-03-19 00:04:19.216" />
             <column name="pr_currency_to_this" />
             <column name="pr_description" value="Euro" />
-            
+
             <column name="currency_id" valueNumeric="5" />
         </insert>
         <insert tableName="billing_trading_language">
@@ -7649,7 +7649,7 @@
             <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.152" />
             <column name="pr_description" value="English" />
-            
+
             <column name="language_id" valueNumeric="2" />
         </insert>
         <insert tableName="billing_trading_language">
@@ -7658,7 +7658,7 @@
             <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.174" />
             <column name="pr_description" value="French" />
-            
+
             <column name="language_id" valueNumeric="12" />
         </insert>
     </changeSet>
@@ -7671,8 +7671,8 @@
             <column name="code" value="CONSUMPTION" />
             <column name="description" value="Consumption" />
             <column name="sort_index" valueNumeric="1" />
-            
-            <column name="uuid" value="CONSUMPTION"/> 
+
+            <column name="uuid" value="CONSUMPTION" />
         </insert>
         <insert tableName="billing_invoice_cat">
             <column name="id" valueNumeric="-2" />
@@ -7682,8 +7682,8 @@
             <column name="code" value="SUBSCRIPTION" />
             <column name="description" value="Subscription" />
             <column name="sort_index" valueNumeric="2" />
-            
-            <column name="uuid" value="SUBSCRIPTION"/> 
+
+            <column name="uuid" value="SUBSCRIPTION" />
         </insert>
         <insert tableName="billing_invoice_sub_cat">
             <column name="id" valueNumeric="-1" />
@@ -7694,9 +7694,9 @@
             <column name="description" value="Consumption Data" />
             <column name="accounting_code" value="120.121.21.2" />
             <column name="discount" valueNumeric="0.00" />
-            
+
             <column name="invoice_category_id" valueNumeric="-1" />
-            <column name="uuid" value="CMP_DATA"/> 
+            <column name="uuid" value="CMP_DATA" />
         </insert>
         <insert tableName="billing_invoice_sub_cat">
             <column name="id" valueNumeric="-2" />
@@ -7707,16 +7707,16 @@
             <column name="description" value="Subscription Data" />
             <column name="accounting_code" value="120.121.21.4" />
             <column name="discount" valueNumeric="0.00" />
-            
+
             <column name="invoice_category_id" valueNumeric="-2" />
-            <column name="uuid" value="SUB_DATA"/> 
+            <column name="uuid" value="SUB_DATA" />
         </insert>
         <insert tableName="billing_inv_sub_cat_country">
             <column name="id" valueNumeric="-1" />
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.765" />
-            
+
             <column name="invoice_sub_category_id" valueNumeric="-1" />
             <column name="tax_id" valueNumeric="-1" />
             <column name="trading_country_id" valueNumeric="-1" />
@@ -7726,7 +7726,7 @@
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.786" />
-            
+
             <column name="invoice_sub_category_id" valueNumeric="-1" />
             <column name="tax_id" valueNumeric="-2" />
             <column name="trading_country_id" valueNumeric="-2" />
@@ -7736,7 +7736,7 @@
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.807" />
-            
+
             <column name="invoice_sub_category_id" valueNumeric="-2" />
             <column name="tax_id" valueNumeric="-1" />
             <column name="trading_country_id" valueNumeric="-1" />
@@ -7746,7 +7746,7 @@
             <column name="version" valueNumeric="0" />
             <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.829" />
-            
+
             <column name="invoice_sub_category_id" valueNumeric="-2" />
             <column name="tax_id" valueNumeric="-2" />
             <column name="trading_country_id" valueNumeric="-2" />
@@ -7761,7 +7761,7 @@
             <column name="apply_termination_charges" valueNumeric="1" />
             <column name="code" value="TERM_REASON_1" />
             <column name="description" value="Agreement Reimbursement Charge" />
-            
+            <column name="created" valueDate="2015-03-19 00:04:19.829" />
         </insert>
         <insert tableName="billing_subscrip_termin_reason">
             <column name="id" valueNumeric="-2" />
@@ -7771,7 +7771,7 @@
             <column name="apply_termination_charges" valueNumeric="0" />
             <column name="code" value="TERM_REASON_2" />
             <column name="description" value="Agreement" />
-            
+            <column name="created" valueDate="2015-03-19 00:04:19.829" />
         </insert>
         <insert tableName="billing_subscrip_termin_reason">
             <column name="id" valueNumeric="-3" />
@@ -7781,7 +7781,7 @@
             <column name="apply_termination_charges" valueNumeric="0" />
             <column name="code" value="TERM_REASON_3" />
             <column name="description" value="Charge" />
-            
+            <column name="created" valueDate="2015-03-19 00:04:19.829" />
         </insert>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-data-customerClasifDEMO">
@@ -7792,7 +7792,7 @@
             <column name="created" valueDate="2015-03-19 00:04:19.131" />
             <column name="code" value="DEFAULT" />
             <column name="description" value="Demo Product and Services" />
-            
+
         </insert>
         <insert tableName="crm_customer_category">
             <column name="id" valueNumeric="-1" />
@@ -7802,7 +7802,7 @@
             <column name="code" value="PROSPECT" />
             <column name="description" value="Prospect" />
             <column name="exonerated_from_taxes" valueNumeric="0" />
-            
+
         </insert>
         <insert tableName="crm_customer_category">
             <column name="id" valueNumeric="-2" />
@@ -7812,7 +7812,7 @@
             <column name="code" value="CLIENT" />
             <column name="description" value="Client" />
             <column name="exonerated_from_taxes" valueNumeric="0" />
-            
+
         </insert>
     </changeSet>
 
@@ -7824,7 +7824,7 @@
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
             <column name="code" value="PART_C" />
             <column name="description" value="Part C" />
-            
+
         </insert>
         <insert tableName="ar_credit_category">
             <column name="id" valueNumeric="-2" />
@@ -7833,7 +7833,7 @@
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
             <column name="code" value="PART_M" />
             <column name="description" value="Part M" />
-            
+
         </insert>
         <insert tableName="ar_credit_category">
             <column name="id" valueNumeric="-3" />
@@ -7842,7 +7842,7 @@
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
             <column name="code" value="PRO" />
             <column name="description" value="PRO" />
-            
+
         </insert>
         <insert tableName="ar_credit_category">
             <column name="id" valueNumeric="-4" />
@@ -7851,7 +7851,7 @@
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
             <column name="code" value="VIP" />
             <column name="description" value="VIP" />
-            
+
         </insert>
         <insert tableName="ar_credit_category">
             <column name="id" valueNumeric="-5" />
@@ -7860,7 +7860,7 @@
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
             <column name="code" value="NEWCUSTOMER" />
             <column name="description" value="New Customer" />
-            
+
         </insert>
     </changeSet>
 
@@ -7879,12 +7879,12 @@
             <column name="address_country" />
             <column name="address_state" />
             <column name="address_zipcode" />
-            
+
             <column name="parent_seller_id" />
             <column name="trading_country_id" />
             <column name="trading_currency_id" valueNumeric="-1" />
             <column name="trading_language_id" valueNumeric="-1" />
-            <column name="uuid" value="MAIN_SELLER"/>
+            <column name="uuid" value="MAIN_SELLER" />
         </insert>
         <insert tableName="crm_seller">
             <column name="id" valueNumeric="-2" />
@@ -7900,12 +7900,12 @@
             <column name="address_country" />
             <column name="address_state" />
             <column name="address_zipcode" />
-            
+
             <column name="parent_seller_id" valueNumeric="-1" />
             <column name="trading_country_id" />
             <column name="trading_currency_id" valueNumeric="-1" />
             <column name="trading_language_id" valueNumeric="-1" />
-            <column name="uuid" value="SELLER_US"/>
+            <column name="uuid" value="SELLER_US" />
         </insert>
         <insert tableName="crm_seller">
             <column name="id" valueNumeric="-3" />
@@ -7921,17 +7921,17 @@
             <column name="address_country" />
             <column name="address_state" />
             <column name="address_zipcode" />
-            
+
             <column name="parent_seller_id" valueNumeric="-1" />
             <column name="trading_country_id" />
             <column name="trading_currency_id" valueNumeric="-2" />
             <column name="trading_language_id" valueNumeric="-2" />
-            <column name="uuid" value="SELLER_FR"/>
+            <column name="uuid" value="SELLER_FR" />
         </insert>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-data-timerDEMO">
         <insert tableName="meveo_timer">
-            <column name="id"  valueNumeric="-1" />
+            <column name="id" valueNumeric="-1" />
             <column name="version" valueNumeric="0" />
             <column name="sc_d_o_month" value="*" />
             <column name="sc_d_o_week" value="*" />
@@ -7940,26 +7940,39 @@
             <column name="sc_month" value="*" />
             <column name="sc_sec" value="0" />
             <column name="sc_year" value="*" />
-            
             <column name="code" value="Hourly" />
             <column name="disabled" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
         </insert>
-		<insert tableName="meveo_timer">
-			<column name="id" valueNumeric="-2" />
-			<column name="version" valueNumeric="0" />
-			<column name="sc_d_o_month" value="Last" />
-			<column name="sc_d_o_week" value="0" />
-			<column name="sc_hour" value="23" />
-			<column name="sc_min" value="59" />
-			<column name="sc_month" value="*" />
-			<column name="sc_sec" value="59" />
-			<column name="sc_year" value="*" />
-			
-			<column name="code" value="Monthly" />
-			<column name="disabled" valueNumeric="0" />
-			<column name="created" valueDate="2015-03-19 00:04:19.913" />
-		</insert>
+        <insert tableName="meveo_timer">
+            <column name="id" valueNumeric="-2" />
+            <column name="version" valueNumeric="0" />
+            <column name="sc_d_o_month" value="Last" />
+            <column name="sc_d_o_week" value="0" />
+            <column name="sc_hour" value="23" />
+            <column name="sc_min" value="59" />
+            <column name="sc_month" value="*" />
+            <column name="sc_sec" value="59" />
+            <column name="sc_year" value="*" />
+            <column name="code" value="Monthly" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="2015-03-19 00:04:19.913" />
+        </insert>
+        <insert tableName="meveo_timer">
+            <column name="id" valueNumeric="-3" />
+            <column name="version" valueNumeric="0" />
+            <column name="sc_d_o_month" value="*" />
+            <column name="sc_d_o_week" value="*" />
+            <column name="sc_hour" value="23" />
+            <column name="sc_min" value="59" />
+            <column name="sc_month" value="*" />
+            <column name="sc_sec" value="59" />
+            <column name="sc_year" value="*" />
+            <column name="code" value="Daily-midnight" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="2017-06-29 00:04:19.913" />
+        </insert>
+
 
         <insert tableName="meveo_job_instance">
             <column name="id" valueNumeric="-1" />
@@ -7969,10 +7982,10 @@
             <column name="job_category" value="RATING" />
             <column name="job_template" value="ReRatingJob" />
             <column name="code" value="Rerate_Job" />
-            
+
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="timerentity_id" valueNumeric="-1" />
-            <column name="uuid" value="Rerate_Job"/>
+            <column name="uuid" value="Rerate_Job" />
         </insert>
 
         <insert tableName="meveo_job_instance">
@@ -7983,10 +7996,10 @@
             <column name="job_category" value="IMPORT_HIERARCHY" />
             <column name="job_template" value="ImportCustomersJob" />
             <column name="code" value="Cust_Job" />
-            
+
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="timerentity_id" valueNumeric="-1" />
-            <column name="uuid" value="Cust_Job"/>
+            <column name="uuid" value="Cust_Job" />
         </insert>
         <insert tableName="meveo_job_instance">
             <column name="id" valueNumeric="-3" />
@@ -7996,10 +8009,10 @@
             <column name="job_category" value="MEDIATION" />
             <column name="job_template" value="MediationJob" />
             <column name="code" value="M_Job" />
-            
+
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="timerentity_id" valueNumeric="-1" />
-            <column name="uuid" value="M_Job"/>
+            <column name="uuid" value="M_Job" />
         </insert>
         <insert tableName="meveo_job_instance">
             <column name="id" valueNumeric="-4" />
@@ -8009,10 +8022,10 @@
             <column name="job_category" value="RATING" />
             <column name="job_template" value="UsageRatingJob" />
             <column name="code" value="U_Job" />
-            
+
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="timerentity_id" valueNumeric="-1" />
-            <column name="uuid" value="U_Job"/>
+            <column name="uuid" value="U_Job" />
         </insert>
         <insert tableName="meveo_job_instance">
             <column name="id" valueNumeric="-5" />
@@ -8022,10 +8035,10 @@
             <column name="job_category" value="RATING" />
             <column name="job_template" value="RecurringRatingJob" />
             <column name="code" value="RR_Job" />
-            
+
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="timerentity_id" valueNumeric="-1" />
-            <column name="uuid" value="RR_Job"/>
+            <column name="uuid" value="RR_Job" />
         </insert>
         <insert tableName="meveo_job_instance">
             <column name="id" valueNumeric="-6" />
@@ -8035,10 +8048,10 @@
             <column name="job_category" value="INVOICING" />
             <column name="job_template" value="RatedTransactionsJob" />
             <column name="code" value="RT_Job" />
-            
+
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="timerentity_id" valueNumeric="-1" />
-            <column name="uuid" value="RT_Job"/>
+            <column name="uuid" value="RT_Job" />
         </insert>
         <insert tableName="meveo_job_instance">
             <column name="id" valueNumeric="-7" />
@@ -8048,10 +8061,10 @@
             <column name="job_category" value="INVOICING" />
             <column name="job_template" value="XMLInvoiceGenerationJob" />
             <column name="code" value="XML_Job" />
-            
+
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="timerentity_id" valueNumeric="-1" />
-            <column name="uuid" value="XML_Job"/>
+            <column name="uuid" value="XML_Job" />
         </insert>
         <insert tableName="meveo_job_instance">
             <column name="id" valueNumeric="-8" />
@@ -8061,10 +8074,10 @@
             <column name="job_category" value="INVOICING" />
             <column name="job_template" value="PDFInvoiceGenerationJob" />
             <column name="code" value="PDF_Job" />
-            
+
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="timerentity_id" valueNumeric="-1" />
-            <column name="uuid" value="PDF_Job"/>
+            <column name="uuid" value="PDF_Job" />
         </insert>
         <insert tableName="meveo_job_instance">
             <column name="id" valueNumeric="-9" />
@@ -8074,10 +8087,10 @@
             <column name="job_category" value="IMPORT_HIERARCHY" />
             <column name="job_template" value="ImportAccountsJob" />
             <column name="code" value="Acco_Job" />
-            
+
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="timerentity_id" valueNumeric="-1" />
-            <column name="uuid" value="Acco_Job"/>
+            <column name="uuid" value="Acco_Job" />
         </insert>
         <insert tableName="meveo_job_instance">
             <column name="id" valueNumeric="-10" />
@@ -8087,10 +8100,10 @@
             <column name="job_category" value="IMPORT_HIERARCHY" />
             <column name="job_template" value="ImportSubscriptionsJob" />
             <column name="code" value="Subs_Job" />
-            
+
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="timerentity_id" valueNumeric="-1" />
-            <column name="uuid" value="Subs_Job"/>
+            <column name="uuid" value="Subs_Job" />
         </insert>
         <insert tableName="meveo_job_instance">
             <column name="id" valueNumeric="-11" />
@@ -8100,53 +8113,64 @@
             <column name="job_category" value="INVOICING" />
             <column name="job_template" value="InvoicingJob" />
             <column name="code" value="Inv_Job" />
-            
+
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="timerentity_id" valueNumeric="-1" />
-            <column name="uuid" value="Inv_Job"/>
+            <column name="uuid" value="Inv_Job" />
         </insert>
         <insert tableName="meveo_job_instance">
-			<column name="id" valueNumeric="-12" />
-			<column name="version" valueNumeric="0" />
-			<column name="disabled" valueNumeric="0" />
-			<column name="created" valueDate="2016-09-14 00:00:00.000" />
-			<column name="job_category" value="DWH" />
-			<column name="job_template" value="DWHQueryJob" />
-			<column name="code" value="DWH_Job_MRR" />
-			
-			<column name="creator" value="OPENCELL.ADMIN" />
-			<column name="timerentity_id" valueNumeric="-2" />
-			<column name="uuid" value="DWH_Job_MRR" />
-			<column name="parametres" value="MRR"/>
-		</insert>
-		<insert tableName="meveo_job_instance">
-			<column name="id" valueNumeric="-13" />
-			<column name="version" valueNumeric="0" />
-			<column name="disabled" valueNumeric="0" />
-			<column name="created" valueDate="2016-09-14 00:00:00.000" />
-			<column name="job_category" value="DWH" />
-			<column name="job_template" value="DWHQueryJob" />
-			<column name="code" value="DWH_Job_CHURN" />
-			
-			<column name="creator" value="OPENCELL.ADMIN" />
-			<column name="timerentity_id" valueNumeric="-2" />
-			<column name="uuid" value="DWH_Job_CHURN" />
-			<column name="parametres" value="CHURN"/>
-		</insert>
-		
-		<insert tableName="meveo_job_instance">
-			<column name="id" valueNumeric="-14" />
-			<column name="version" valueNumeric="0" />
-			<column name="disabled" valueNumeric="0" />
-			<column name="created" valueDate="2017-06-19 00:00:00.000" />
-			<column name="job_category" value="ACCOUNT_RECEIVABLES" />
-			<column name="job_template" value="AccountOperationsGenerationJob" />
-			<column name="code" value="AO_Job" />
-			
-			<column name="creator" value="OPENCELL.ADMIN" />
-			<column name="timerentity_id" valueNumeric="-1" />
-			<column name="uuid" value="ACC_REC_Job" />
-		</insert>
+            <column name="id" valueNumeric="-12" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="2016-09-14 00:00:00.000" />
+            <column name="job_category" value="DWH" />
+            <column name="job_template" value="DWHQueryJob" />
+            <column name="code" value="DWH_Job_MRR" />
+
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="timerentity_id" valueNumeric="-2" />
+            <column name="uuid" value="DWH_Job_MRR" />
+            <column name="parametres" value="MRR" />
+        </insert>
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueNumeric="-13" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="2016-09-14 00:00:00.000" />
+            <column name="job_category" value="DWH" />
+            <column name="job_template" value="DWHQueryJob" />
+            <column name="code" value="DWH_Job_CHURN" />
+
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="timerentity_id" valueNumeric="-2" />
+            <column name="uuid" value="DWH_Job_CHURN" />
+            <column name="parametres" value="CHURN" />
+        </insert>
+
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueNumeric="-14" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="2017-06-19 00:00:00.000" />
+            <column name="job_category" value="ACCOUNT_RECEIVABLES" />
+            <column name="job_template" value="AccountOperationsGenerationJob" />
+            <column name="code" value="AO_Job" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="timerentity_id" valueNumeric="-1" />
+            <column name="uuid" value="ACC_REC_Job" />
+        </insert>
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueNumeric="-15" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="2017-07-29 00:00:00.000" />
+            <column name="job_category" value="UTILS" />
+            <column name="job_template" value="SubscriptionStatusJob" />
+            <column name="code" value="Sub_Status_Job" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="timerentity_id" valueNumeric="-3" />
+            <column name="uuid" value="Sub_Status_Job" />
+        </insert>
     </changeSet>
 
     <changeSet author="AndriusKarpavicius" id="rebuild-data-invoiceConfig">
@@ -8161,32 +8185,32 @@
     </changeSet>
 
     <changeSet author="AndriusKarpavicius" id="rebuild-data-invoiceTypes">
-		<insert tableName="billing_invoice_type">
-			<column name="id" valueNumeric="-1" />
-			<column name="version" valueNumeric="0" />
-			<column name="disabled" valueNumeric="0" />
-			<column name="created" valueDate="2016-09-14 00:00:00.000" />
-			<column name="code" value="COM" />
-			<column name="description" value="Commercial invoice" />
-			
-			<column name="creator" value="OPENCELL.ADMIN" />
-			<column name="sequence_size" valueNumeric="9" />
-			<column name="occ_template_id" value="-25" />	
-			<column name="matching_auto" valueNumeric="0" />		
-		</insert>
-		<insert tableName="billing_invoice_type">
-			<column name="id" valueNumeric="-2" />
-			<column name="version" valueNumeric="0" />
-			<column name="disabled" valueNumeric="0" />
-			<column name="created" valueDate="2016-09-14 00:00:00.000" />
-			<column name="code" value="ADJ" />
-			<column name="description" value="Adjustement" />
-			
-			<column name="creator" value="OPENCELL.ADMIN" />
-			<column name="sequence_size" valueNumeric="9" />
-			<column name="occ_template_id" value="-11" />			
-			<column name="matching_auto" valueNumeric="0" />
-		</insert>		
+        <insert tableName="billing_invoice_type">
+            <column name="id" valueNumeric="-1" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="2016-09-14 00:00:00.000" />
+            <column name="code" value="COM" />
+            <column name="description" value="Commercial invoice" />
+
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="sequence_size" valueNumeric="9" />
+            <column name="occ_template_id" value="-25" />
+            <column name="matching_auto" valueNumeric="0" />
+        </insert>
+        <insert tableName="billing_invoice_type">
+            <column name="id" valueNumeric="-2" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="2016-09-14 00:00:00.000" />
+            <column name="code" value="ADJ" />
+            <column name="description" value="Adjustement" />
+
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="sequence_size" valueNumeric="9" />
+            <column name="occ_template_id" value="-11" />
+            <column name="matching_auto" valueNumeric="0" />
+        </insert>
         <insert tableName="billing_invoice_type">
             <column name="id" valueNumeric="-3" />
             <column name="version" valueNumeric="0" />
@@ -8194,29 +8218,37 @@
             <column name="created" valueDate="2016-09-14 00:00:00.000" />
             <column name="code" value="QUOTE" />
             <column name="description" value="Invoice for quote" />
-            
+
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="sequence_size" valueNumeric="9" />
-            <column name="occ_template_id" value="-25" />    
-            <column name="matching_auto" valueNumeric="0" />        
+            <column name="occ_template_id" value="-25" />
+            <column name="matching_auto" valueNumeric="0" />
         </insert>
-		<insert tableName="billing_invoice_type_applies_to">
-			<column name="invoice_type_id" value="-1" />			
-			<column name="applies_to_id" value="-2" />			
-		</insert>	
-		<insert tableName="billing_invoice_type_applies_to">
-			<column name="invoice_type_id" value="-2" />			
-			<column name="applies_to_id" value="-1" />			
-		</insert>			
-	</changeSet>
+        <insert tableName="billing_invoice_type_applies_to">
+            <column name="invoice_type_id" value="-1" />
+            <column name="applies_to_id" value="-2" />
+        </insert>
+        <insert tableName="billing_invoice_type_applies_to">
+            <column name="invoice_type_id" value="-2" />
+            <column name="applies_to_id" value="-1" />
+        </insert>
+    </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-data-decisionRule">
         <sql>
-            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, creator, updater, model) VALUES (1, 0, 0, '2016-08-12 21:02:31.26', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'Other', 'OPENCELL.ADMIN', NULL, 1);
-            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, creator, updater, model) VALUES (2, 0, 0, '2016-08-13 22:43:06.214', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'south', 'OPENCELL.ADMIN', NULL, 0);
-            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, creator, updater, model) VALUES (3, 0, 0, '2016-08-13 22:43:06.214', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'west', 'OPENCELL.ADMIN', NULL, 0);
-            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, creator, updater, model) VALUES (4, 0, 0, '2016-08-13 22:52:44.007', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'north', 'OPENCELL.ADMIN', NULL, 0);
-            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, creator, updater, model) VALUES (5, 0, 0, '2016-08-15 08:09:43.616', NULL, '#{mv:getCFValue(entity,"SalesAmount")==_VALUE_}', 'Sales amount', 'RANGE_NUMBER', 'Other', 'OPENCELL.ADMIN', NULL, 1);
-            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, creator, updater, model) VALUES (8, 0, 0, '2016-08-16 07:46:20.404', NULL, '#{mv:getCFValue(entity,"AccountType")==_VALUE_}', 'Account Type', 'STRING', 'Other', 'OPENCELL.ADMIN', NULL, 1);
+            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, creator, updater, model) VALUES (1, 0, 0, '2016-08-12 21:02:31.26', NULL,
+            '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'Other', 'OPENCELL.ADMIN', NULL, 1);
+            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type,
+            value, creator, updater, model) VALUES (2, 0, 0, '2016-08-13 22:43:06.214', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'south', 'OPENCELL.ADMIN', NULL, 0);
+            INSERT INTO
+            wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, creator, updater, model) VALUES (3, 0, 0, '2016-08-13 22:43:06.214', NULL,
+            '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'west', 'OPENCELL.ADMIN', NULL, 0);
+            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type,
+            value, creator, updater, model) VALUES (4, 0, 0, '2016-08-13 22:52:44.007', NULL, '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'north', 'OPENCELL.ADMIN', NULL, 0);
+            INSERT INTO
+            wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, creator, updater, model) VALUES (5, 0, 0, '2016-08-15 08:09:43.616', NULL,
+            '#{mv:getCFValue(entity,"SalesAmount")==_VALUE_}', 'Sales amount', 'RANGE_NUMBER', 'Other', 'OPENCELL.ADMIN', NULL, 1);
+            INSERT INTO wf_decision_rule (id, version, disabled, created, updated, condition_el,
+            name, type, value, creator, updater, model) VALUES (8, 0, 0, '2016-08-16 07:46:20.404', NULL, '#{mv:getCFValue(entity,"AccountType")==_VALUE_}', 'Account Type', 'STRING', 'Other', 'OPENCELL.ADMIN', NULL, 1);
         </sql>
     </changeSet>
 

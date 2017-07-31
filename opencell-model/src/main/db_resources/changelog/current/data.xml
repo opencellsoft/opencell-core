@@ -1,39 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
-    <changeSet id="#2361_20170628-job" author="AndriusKarpavicius">
-
-        <insert tableName="meveo_timer">
-            <column name="id" valueNumeric="-3" />
-            <column name="version" valueNumeric="0" />
-            <column name="sc_d_o_month" value="*" />
-            <column name="sc_d_o_week" value="*" />
-            <column name="sc_hour" value="23" />
-            <column name="sc_min" value="59" />
-            <column name="sc_month" value="*" />
-            <column name="sc_sec" value="59" />
-            <column name="sc_year" value="*" />
-
-            <column name="code" value="Daily-midnight" />
-            <column name="disabled" valueNumeric="0" />
-            <column name="created" valueDate="2017-06-29 00:04:19.913" />
-        </insert>
-
-        <insert tableName="meveo_job_instance">
-            <column name="id" valueNumeric="-15" />
-            <column name="version" valueNumeric="0" />
-            <column name="disabled" valueNumeric="0" />
-            <column name="created" valueDate="2017-07-29 00:00:00.000" />
-            <column name="job_category" value="UTILS" />
-            <column name="job_template" value="SubscriptionStatusJob" />
-            <column name="code" value="Sub_Status_Job" />
-
-            <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="timerentity_id" valueNumeric="-3" />
-            <column name="uuid" value="Sub_Status_Job" />
-        </insert>
-    </changeSet>
 
 </databaseChangeLog>
