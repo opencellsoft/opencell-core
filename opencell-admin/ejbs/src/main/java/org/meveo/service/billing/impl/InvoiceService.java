@@ -105,7 +105,6 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.order.OrderService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -151,9 +150,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @Inject
     private RejectedBillingAccountService rejectedBillingAccountService;
-
-    @Inject
-    private CustomFieldInstanceService customFieldInstanceService;
 
     @Inject
     private InvoiceTypeService invoiceTypeService;
@@ -246,24 +242,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
     }
 
-    public void setInvoiceNumber(Invoice invoice) throws BusinessException {
-        invoice.setInvoiceNumber(generateInvoiceNumber(invoice));
-    }
-
-    public String generateInvoiceNumber(Invoice invoice) throws BusinessException {
-        String cfName = "INVOICE_SEQUENCE_" + invoice.getInvoiceType().getCode().toUpperCase();
-        if (invoiceTypeService.getAdjustementCode().equals(invoice.getInvoiceType().getCode())) {
-            cfName = "INVOICE_ADJUSTMENT_SEQUENCE";
-        }
-        if (invoiceTypeService.getCommercialCode().equals(invoice.getInvoiceType().getCode())) {
-            cfName = "INVOICE_SEQUENCE";
-        }
+    public void assignInvoiceNumber(Invoice invoice) throws BusinessException {
+        String cfName = invoiceTypeService.getCustomFieldCode(invoice.getInvoiceType());
         Customer cust = customerService.refreshOrRetrieve(invoice.getBillingAccount().getCustomerAccount().getCustomer());
 
         InvoiceType invoiceType = invoiceTypeService.refreshOrRetrieve(invoice.getInvoiceType());
-        Seller seller = chooseSeller(cust.getSeller(), cfName, invoice.getInvoiceDate(), invoiceType);
+        Seller seller = serviceSingleton.chooseSeller(cust.getSeller(), cfName, invoice.getInvoiceDate(), invoiceType);
 
-        Sequence sequence = serviceSingleton.getInvoiceNumberSequence(invoice.getInvoiceDate(), invoice.getInvoiceType().getId(), seller, cfName, 1);
+        Sequence sequence = serviceSingleton.incrementInvoiceNumberSequence(invoice.getInvoiceDate(), invoice.getInvoiceType().getId(), seller, cfName, 1);
         String prefix = sequence.getPrefixEL();
         int sequenceSize = sequence.getSequenceSize();
 
@@ -275,8 +261,21 @@ public class InvoiceService extends PersistenceService<Invoice> {
         String invoiceNumber = StringUtils.getLongAsNChar(nextInvoiceNb, sequenceSize);
         // request to store invoiceNo in alias field
         invoice.setAlias(invoiceNumber);
+        invoice.setInvoiceNumber(prefix + invoiceNumber);
+    }
 
-        return (prefix + invoiceNumber);
+    private void assignInvoiceNumberFromReserve(Invoice invoice, InvoicesToNumberInfo invoicesToNumberInfo) throws BusinessException {
+
+        String prefix = invoicesToNumberInfo.getNumberingSequence().getPrefixEL();
+
+        if (prefix != null && !StringUtils.isBlank(prefix)) {
+            prefix = evaluatePrefixElExpression(prefix, invoice);
+        }
+
+        String invoiceNumber = invoicesToNumberInfo.nextInvoiceNumber();
+        // request to store invoiceNo in alias field
+        invoice.setAlias(invoiceNumber);
+        invoice.setInvoiceNumber(prefix + invoiceNumber);
     }
 
     /**
@@ -1010,31 +1009,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return pdfFileName;
     }
 
-    /**
-     * if the sequence not found on cust.seller, we try in seller.parent (until seller.parent=null)
-     * 
-     * @param seller
-     * @param cfName
-     * @param date
-     * @param invoiceType
-     * @return
-     */
-    private Seller chooseSeller(Seller seller, String cfName, Date date, InvoiceType invoiceType) {
-        if (seller.getSeller() == null) {
-            return seller;
-        }
-        Object currentValObj = customFieldInstanceService.getCFValue(seller, cfName, date);
-        if (currentValObj != null) {
-            return seller;
-        }
-        if (invoiceType.getSellerSequence() != null && invoiceType.isContainsSellerSequence(seller)) {
-            return seller;
-        }
-
-        return chooseSeller(seller.getSeller(), cfName, date, invoiceType);
-
-    }
-
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void produceInvoiceXmlInNewTransaction(Long invoiceId) throws BusinessException {
         Invoice invoice = findById(invoiceId);
@@ -1277,7 +1251,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         Invoice invoice = createAgregatesAndInvoice(billingAccount.getId(), null, ratedTxFilter, orderNumber, invoiceDate, lastTransactionDate);
         if (!isDraft) {
-            invoice.setInvoiceNumber(generateInvoiceNumber(invoice));
+            assignInvoiceNumber(invoice);
         }
 
         if (produceXml) {
@@ -1377,13 +1351,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void incrementInvoiceDates(Long invoiceId) throws BusinessException {
-
-        log.debug("incrementInvoiceDates in new transaction");
+    public void assignInvoiceNumberAndIncrementBAInvoiceDate(Long invoiceId, InvoicesToNumberInfo invoicesToNumberInfo) throws BusinessException {
 
         Invoice invoice = findById(invoiceId);
 
-        invoice.setInvoiceNumber(generateInvoiceNumber(invoice));
+        assignInvoiceNumberFromReserve(invoice, invoicesToNumberInfo);
+
         BillingAccount billingAccount = invoice.getBillingAccount();
         Date initCalendarDate = billingAccount.getSubscriptionDate();
         if (initCalendarDate == null) {
@@ -1392,7 +1365,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         Date nextCalendarDate = billingAccount.getBillingCycle().getNextCalendarDate(initCalendarDate);
         billingAccount.setNextInvoiceDate(nextCalendarDate);
         billingAccount.updateAudit(currentUser);
-        update(invoice);
+        invoice = update(invoice);
     }
 
     /**
@@ -1403,5 +1376,38 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public List<Long> getInvoiceIdsByBR(Long billingRunId) {
         return getEntityManager().createNamedQuery("Invoice.byBR", Long.class).setParameter("billingRunId", billingRunId).getResultList();
+    }
+
+    /**
+     * Get a summarized information for invoice numbering. Contains grouping by invoice type, seller, invoice date and a number of invoices
+     * 
+     * @param id Billing run id
+     * @return A list of invoice identifiers
+     */
+    @SuppressWarnings("unchecked")
+    public List<InvoicesToNumberInfo> getInvoicesToNumberSummary(Long billingRunId) {
+
+        List<InvoicesToNumberInfo> invoiceSummaries = new ArrayList<>();
+        List<Object[]> summary = getEntityManager().createNamedQuery("Invoice.invoicesToNumberSummary").setParameter("billingRunId", billingRunId).getResultList();
+
+        for (Object[] summaryInfo : summary) {
+            invoiceSummaries.add(new InvoicesToNumberInfo((Long) summaryInfo[0], (Long) summaryInfo[1], (Date) summaryInfo[2], (Long) summaryInfo[3]));
+        }
+
+        return invoiceSummaries;
+    }
+
+    /**
+     * Retrieve invoice ids matching billing run, invoice type, seller and invoice date combination
+     * 
+     * @param billingRunId Billing run id
+     * @param invoiceTypeId Invoice type id
+     * @param sellerId Seller id
+     * @param invoiceDate Invoice date
+     * @return A list of invoice identifiers
+     */
+    public List<Long> getInvoiceIds(Long billingRunId, Long invoiceTypeId, Long sellerId, Date invoiceDate) {
+        return getEntityManager().createNamedQuery("Invoice.byBrItSelDate", Long.class).setParameter("billingRunId", billingRunId).setParameter("invoiceTypeId", invoiceTypeId)
+            .setParameter("sellerId", sellerId).setParameter("invoiceDate", invoiceDate).getResultList();
     }
 }

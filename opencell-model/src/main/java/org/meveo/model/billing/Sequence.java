@@ -2,70 +2,84 @@ package org.meveo.model.billing;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 @Embeddable
 public class Sequence {
-	
-	@Column(name = "prefix_el", length = 2000)
-	@Size(max = 2000)
-	private String prefixEL = "";
-	
-	@Column(name = "sequence_size")
-	private Integer sequenceSize= 9;
-	
+
+    @Column(name = "prefix_el", length = 2000)
+    @Size(max = 2000)
+    private String prefixEL = "";
+
+    @Column(name = "sequence_size")
+    private Integer sequenceSize = 9;
+
     @Column(name = "current_invoice_nb")
     private Long currentInvoiceNb = 0L;
 
-	public Sequence() {
-	}
+    /**
+     * A previously invoiceNb held by this sequence, usually less by one, unless numbers were reserved by more than one
+     */
+    @Transient
+    private Long previousInvoiceNb = 0L;
 
-	/**
-	 * @return the prefixEL
-	 */
-	public String getPrefixEL() {
-		
-		return prefixEL==null?"":prefixEL;
-	}
+    public Sequence() {
+    }
 
-	/**
-	 * @param prefixEL the prefixEL to set
-	 */
-	public void setPrefixEL(String prefixEL) {
-		this.prefixEL = prefixEL;
-	}
+    /**
+     * @return the prefixEL
+     */
+    public String getPrefixEL() {
 
-	/**
-	 * @return the sequenceSize
-	 */
-	public Integer getSequenceSize() {
-		return sequenceSize;
-	}
+        return prefixEL == null ? "" : prefixEL;
+    }
 
-	/**
-	 * @param sequenceSize the sequenceSize to set
-	 */
-	public void setSequenceSize(Integer sequenceSize) {
-		this.sequenceSize = sequenceSize;
-	}
+    /**
+     * @param prefixEL the prefixEL to set
+     */
+    public void setPrefixEL(String prefixEL) {
+        this.prefixEL = prefixEL;
+    }
 
-	/**
-	 * @return the currentInvoiceNb
-	 */
-	public Long getCurrentInvoiceNb() {
-		return currentInvoiceNb;
-	}
+    /**
+     * @return the sequenceSize
+     */
+    public Integer getSequenceSize() {
+        return sequenceSize;
+    }
 
-	/**
-	 * @param currentInvoiceNb the currentInvoiceNb to set
-	 */
-	public void setCurrentInvoiceNb(Long currentInvoiceNb) {
-		this.currentInvoiceNb = currentInvoiceNb;
-	}
+    /**
+     * @param sequenceSize the sequenceSize to set
+     */
+    public void setSequenceSize(Integer sequenceSize) {
+        this.sequenceSize = sequenceSize;
+    }
 
+    /**
+     * @return the currentInvoiceNb
+     */
+    public Long getCurrentInvoiceNb() {
+        return currentInvoiceNb;
+    }
 
-	@Override
-	public String toString() {
-		return "Sequence [prefixEL=" + prefixEL + ", sequenceSize=" + sequenceSize + ", currentInvoiceNb=" + currentInvoiceNb + "]";
-	}
+    /**
+     * @param currentInvoiceNb the currentInvoiceNb to set
+     */
+    public void setCurrentInvoiceNb(Long currentInvoiceNb) {
+        this.currentInvoiceNb = currentInvoiceNb;
+    }
+
+    public Long getPreviousInvoiceNb() {
+        return previousInvoiceNb;
+    }
+
+    public void setPreviousInvoiceNb(Long previousInvoiceNb) {
+        this.previousInvoiceNb = previousInvoiceNb;
+    }
+
+    @Override
+    public String toString() {
+        return "Sequence [prefixEL=" + prefixEL + ", sequenceSize=" + sequenceSize + ", currentInvoiceNb=" + currentInvoiceNb + "]";
+    }
 }

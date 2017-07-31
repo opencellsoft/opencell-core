@@ -65,7 +65,9 @@ import org.meveo.model.quote.Quote;
 @CustomFieldEntity(cftCodePrefix = "INVOICE")
 @NamedQueries({ @NamedQuery(name = "Invoice.byBR", query = "select inv.id from Invoice inv where inv.billingRun.id=:billingRunId"),
         @NamedQuery(name = "Invoice.validatedNoPdf", query = "select inv.id from Invoice inv where inv.billingRun.status = 'VALIDATED' and inv.isPdfGenerated is false"),
-        @NamedQuery(name = "Invoice.validatedNoPdfByBR", query = "select inv.id from Invoice inv where inv.billingRun.status = 'VALIDATED' and inv.isPdfGenerated is false and inv.billingRun.id=:billingRunId") })
+        @NamedQuery(name = "Invoice.validatedNoPdfByBR", query = "select inv.id from Invoice inv where inv.billingRun.status = 'VALIDATED' and inv.isPdfGenerated is false and inv.billingRun.id=:billingRunId"),
+        @NamedQuery(name = "Invoice.invoicesToNumberSummary", query = "select inv.invoiceType.id, inv.billingAccount.customerAccount.customer.seller.id, inv.invoiceDate, count(inv) from Invoice inv where inv.billingRun.id=:billingRunId group by inv.invoiceType.id, inv.billingAccount.customerAccount.customer.seller.id, inv.invoiceDate"),
+        @NamedQuery(name = "Invoice.byBrItSelDate", query = "select inv.id from Invoice inv where inv.billingRun.id=:billingRunId and inv.invoiceType.id=:invoiceTypeId and inv.billingAccount.customerAccount.customer.seller.id = :sellerId and inv.invoiceDate=:invoiceDate order by inv.id") })
 public class Invoice extends EnableEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;

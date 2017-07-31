@@ -239,11 +239,10 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 		boolean entreprise = appProvider.isEntreprise();
 		int rounding = appProvider.getRounding() == null ? 2 : appProvider.getRounding();
 
-		if (!isInvoiceAdjustment && invoice.getBillingRun() != null
-				&& BillingRunStatusEnum.VALIDATED.equals(invoice.getBillingRun().getStatus())
-				&& invoice.getInvoiceNumber() == null) {
-			invoiceService.setInvoiceNumber(invoice);
-		}
+        if (!isInvoiceAdjustment && invoice.getBillingRun() != null && BillingRunStatusEnum.VALIDATED.equals(invoice.getBillingRun().getStatus())
+                && invoice.getInvoiceNumber() == null) {
+            invoiceService.assignInvoiceNumber(invoice);
+        }
 		DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
 		Document doc = docBuilder.newDocument();

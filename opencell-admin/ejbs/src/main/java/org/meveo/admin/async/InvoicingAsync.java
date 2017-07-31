@@ -17,6 +17,7 @@ import org.meveo.model.billing.BillingRun;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.billing.impl.InvoicesToNumberInfo;
 import org.slf4j.Logger;
 
 /**
@@ -65,11 +66,11 @@ public class InvoicingAsync {
 
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> incrementInvoiceDatesAsync(List<Long> invoiceIds) {
+    public Future<String> assignInvoiceNumberAndIncrementBAInvoiceDatesAsync(List<Long> invoiceIds, InvoicesToNumberInfo invoicesToNumberInfo) {
 
         for (Long invoiceId : invoiceIds) {
             try {
-                invoiceService.incrementInvoiceDates(invoiceId);
+                invoiceService.assignInvoiceNumberAndIncrementBAInvoiceDate(invoiceId, invoicesToNumberInfo);
             } catch (Exception e) {
                 log.error("Failed to increment invoice date for invoice {}", invoiceId, e);
             }
