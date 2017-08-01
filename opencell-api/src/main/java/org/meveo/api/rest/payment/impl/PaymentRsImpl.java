@@ -7,6 +7,7 @@ import javax.ws.rs.QueryParam;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.PaymentActionStatus;
 import org.meveo.api.dto.payment.CardPaymentMethodDto;
 import org.meveo.api.dto.payment.CardPaymentMethodTokenDto;
 import org.meveo.api.dto.payment.CardPaymentMethodTokensDto;
@@ -33,14 +34,16 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
     private CardPaymentMethodApi cardPaymentMethodApi;
 
     @Override
-    public ActionStatus create(PaymentDto postData) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    public PaymentActionStatus create(PaymentDto postData) {
+    	PaymentActionStatus result = new PaymentActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            paymentApi.createPayment(postData);
+            Long id = paymentApi.createPayment(postData);
+            result.setPaymentId(id);
         } catch (Exception e) {
             processException(e, result);
         }
+        
         return result;
     }
 

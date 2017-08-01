@@ -54,7 +54,7 @@ public class PaymentApi extends BaseApi {
     @Inject
     private OCCTemplateService oCCTemplateService;
 
-    public void createPayment(PaymentDto paymentDto) throws NoAllOperationUnmatchedException, UnbalanceAmountException, BusinessException, MeveoApiException {
+    public Long createPayment(PaymentDto paymentDto) throws NoAllOperationUnmatchedException, UnbalanceAmountException, BusinessException, MeveoApiException {
         log.info("create payment for amount:" + paymentDto.getAmount() + " paymentMethodEnum:" + paymentDto.getPaymentMethod() + " isToMatching:" + paymentDto.isToMatching()
                 + "  customerAccount:" + paymentDto.getCustomerAccountCode() + "...");
 
@@ -136,6 +136,13 @@ public class PaymentApi extends BaseApi {
             log.info("no matching created ");
         }
         log.debug("payment created for amount:" + payment.getAmount());
+        
+        if (payment != null) {
+        	return payment.getId();
+        } else {
+        	return null;
+        }
+        
     }
 
     public List<PaymentDto> getPaymentList(String customerAccountCode) throws Exception {
