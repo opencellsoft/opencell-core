@@ -54,6 +54,14 @@ public class PaymentApi extends BaseApi {
     @Inject
     private OCCTemplateService oCCTemplateService;
 
+    /**
+     * @param paymentDto payment object which encapsulates the input data sent by client
+     * @return the id of payment if created successful otherwise null
+     * @throws NoAllOperationUnmatchedException
+     * @throws UnbalanceAmountException
+     * @throws BusinessException
+     * @throws MeveoApiException
+     */
     public Long createPayment(PaymentDto paymentDto) throws NoAllOperationUnmatchedException, UnbalanceAmountException, BusinessException, MeveoApiException {
         log.info("create payment for amount:" + paymentDto.getAmount() + " paymentMethodEnum:" + paymentDto.getPaymentMethod() + " isToMatching:" + paymentDto.isToMatching()
                 + "  customerAccount:" + paymentDto.getCustomerAccountCode() + "...");

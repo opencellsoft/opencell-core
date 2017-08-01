@@ -29,7 +29,7 @@ public interface PaymentRs extends IBaseRs {
      * Creates automated payment. It also process if a payment is matching or not
      * 
      * @param postData Payment's data
-     * @return
+     * @return payment action status
      */
     @POST
     @Path("/create")

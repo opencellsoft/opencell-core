@@ -33,6 +33,10 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
     @Inject
     private CardPaymentMethodApi cardPaymentMethodApi;
 
+    /** 
+     * @return payment action status which contains payment id.
+     * @see org.meveo.api.rest.payment.PaymentRs#create(org.meveo.api.dto.payment.PaymentDto)
+     */
     @Override
     public PaymentActionStatus create(PaymentDto postData) {
     	PaymentActionStatus result = new PaymentActionStatus(ActionStatusEnum.SUCCESS, "");
