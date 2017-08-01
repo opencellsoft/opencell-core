@@ -13,6 +13,7 @@ import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.LitigationRequestDto;
 import org.meveo.api.dto.payment.MatchOperationRequestDto;
 import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
+import org.meveo.api.dto.response.payment.AccountOperationResponseDto;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
 import org.meveo.api.rest.IBaseRs;
 
@@ -85,4 +86,13 @@ public interface AccountOperationRs extends IBaseRs {
     @Path("/cancelLitigation")
     ActionStatus cancelLitigation(LitigationRequestDto postData);
 
+    /**
+     * Finds an accountOperation given an id.
+     * @param id id of the account operation
+     * @return
+     */
+    @GET
+    @Path("/")
+    AccountOperationResponseDto find(@QueryParam("id") Long id);
+    
 }

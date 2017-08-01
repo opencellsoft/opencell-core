@@ -193,40 +193,7 @@ public class AccountOperationApi extends BaseApi {
         List<AccountOperation> accountOperations = accountOperationService.listAccountOperationByCustomerAccount(customerAccount);
 
         for (AccountOperation accountOp : accountOperations) {
-            AccountOperationDto accountOperationDto = new AccountOperationDto();
-            accountOperationDto.setId(accountOp.getId());
-            accountOperationDto.setDueDate(accountOp.getDueDate());
-            accountOperationDto.setType(accountOp.getType());
-            accountOperationDto.setTransactionDate(accountOp.getTransactionDate());
-            accountOperationDto.setTransactionCategory(accountOp.getTransactionCategory());
-            accountOperationDto.setReference(accountOp.getReference());
-            accountOperationDto.setAccountCode(accountOp.getAccountCode());
-            accountOperationDto.setAccountCodeClientSide(accountOp.getAccountCodeClientSide());
-            accountOperationDto.setAmount(accountOp.getAmount());
-            accountOperationDto.setMatchingAmount(accountOp.getMatchingAmount());
-            accountOperationDto.setUnMatchingAmount(accountOp.getUnMatchingAmount());
-            accountOperationDto.setMatchingStatus(accountOp.getMatchingStatus());
-            accountOperationDto.setOccCode(accountOp.getOccCode());
-            accountOperationDto.setOccDescription(accountOp.getOccDescription());
-            accountOperationDto.setCustomFields(entityToDtoConverter.getCustomFieldsWithInheritedDTO(accountOp, true));
-            accountOperationDto.setBankLot(accountOp.getBankLot());
-            accountOperationDto.setBankReference(accountOp.getBankReference());
-            accountOperationDto.setDepositDate(accountOp.getDepositDate());
-            accountOperationDto.setBankCollectionDate(accountOp.getBankCollectionDate());
-
-            List<MatchingAmount> matchingAmounts = accountOp.getMatchingAmounts();
-            MatchingAmountDto matchingAmountDto = null;
-            MatchingAmountsDto matchingAmountsDto = new MatchingAmountsDto();
-            for (MatchingAmount matchingAmount : matchingAmounts) {
-                matchingAmountDto = new MatchingAmountDto();
-				if (matchingAmount.getMatchingCode() != null) {
-					matchingAmountDto.setMatchingCode(matchingAmount.getMatchingCode().getCode());
-				}
-                matchingAmountDto.setMatchingAmount(matchingAmount.getMatchingAmount());
-                matchingAmountsDto.getMatchingAmount().add(matchingAmountDto);
-            }
-            accountOperationDto.setMatchingAmounts(matchingAmountsDto);
-
+            AccountOperationDto accountOperationDto = accountOperationToDto(accountOp);
             result.getAccountOperations().getAccountOperation().add(accountOperationDto);
         }
         return result;
@@ -344,5 +311,55 @@ public class AccountOperationApi extends BaseApi {
         checkingLitigation(postData);
         recordedInvoiceService.cancelLitigation(postData.getAccountOperationId());
     }
+
+	public AccountOperationDto find(Long id) throws MeveoApiException {
+		AccountOperationDto result = new AccountOperationDto();
+		AccountOperation ao = accountOperationService.findById(id);
+		if(ao != null) {
+			result = accountOperationToDto(ao);
+		} else {
+			throw new EntityDoesNotExistsException(AccountOperation.class, id);
+		}
+		
+		return result;
+	}
+	
+	private AccountOperationDto accountOperationToDto(AccountOperation accountOp) {
+		AccountOperationDto accountOperationDto = new AccountOperationDto();
+		accountOperationDto.setId(accountOp.getId());
+        accountOperationDto.setDueDate(accountOp.getDueDate());
+        accountOperationDto.setType(accountOp.getType());
+        accountOperationDto.setTransactionDate(accountOp.getTransactionDate());
+        accountOperationDto.setTransactionCategory(accountOp.getTransactionCategory());
+        accountOperationDto.setReference(accountOp.getReference());
+        accountOperationDto.setAccountCode(accountOp.getAccountCode());
+        accountOperationDto.setAccountCodeClientSide(accountOp.getAccountCodeClientSide());
+        accountOperationDto.setAmount(accountOp.getAmount());
+        accountOperationDto.setMatchingAmount(accountOp.getMatchingAmount());
+        accountOperationDto.setUnMatchingAmount(accountOp.getUnMatchingAmount());
+        accountOperationDto.setMatchingStatus(accountOp.getMatchingStatus());
+        accountOperationDto.setOccCode(accountOp.getOccCode());
+        accountOperationDto.setOccDescription(accountOp.getOccDescription());
+        accountOperationDto.setCustomFields(entityToDtoConverter.getCustomFieldsWithInheritedDTO(accountOp, true));
+        accountOperationDto.setBankLot(accountOp.getBankLot());
+        accountOperationDto.setBankReference(accountOp.getBankReference());
+        accountOperationDto.setDepositDate(accountOp.getDepositDate());
+        accountOperationDto.setBankCollectionDate(accountOp.getBankCollectionDate());
+
+        List<MatchingAmount> matchingAmounts = accountOp.getMatchingAmounts();
+        MatchingAmountDto matchingAmountDto = null;
+        MatchingAmountsDto matchingAmountsDto = new MatchingAmountsDto();
+        for (MatchingAmount matchingAmount : matchingAmounts) {
+            matchingAmountDto = new MatchingAmountDto();
+			if (matchingAmount.getMatchingCode() != null) {
+				matchingAmountDto.setMatchingCode(matchingAmount.getMatchingCode().getCode());
+			}
+            matchingAmountDto.setMatchingAmount(matchingAmount.getMatchingAmount());
+            matchingAmountsDto.getMatchingAmount().add(matchingAmountDto);
+        }
+        accountOperationDto.setMatchingAmounts(matchingAmountsDto);
+        
+        return accountOperationDto;
+	}
 
 }

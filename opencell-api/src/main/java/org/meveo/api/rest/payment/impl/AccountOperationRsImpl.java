@@ -10,6 +10,7 @@ import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.LitigationRequestDto;
 import org.meveo.api.dto.payment.MatchOperationRequestDto;
 import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
+import org.meveo.api.dto.response.payment.AccountOperationResponseDto;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.payment.AccountOperationApi;
@@ -99,5 +100,17 @@ public class AccountOperationRsImpl extends BaseRs implements AccountOperationRs
 
         return result;
     }
+
+	@Override
+	public AccountOperationResponseDto find(Long id) {
+		AccountOperationResponseDto result = new AccountOperationResponseDto();
+		try {
+			result.setAccountOperation(accountOperationApi.find(id));
+		} catch (Exception e) {
+			processException(e, result.getActionStatus());
+		}
+
+		return result;
+	}
 
 }

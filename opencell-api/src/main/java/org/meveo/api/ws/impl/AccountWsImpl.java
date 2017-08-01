@@ -57,6 +57,7 @@ import org.meveo.api.dto.response.account.TitlesResponseDto;
 import org.meveo.api.dto.response.account.UserAccountsResponseDto;
 import org.meveo.api.dto.response.billing.GetCountersInstancesResponseDto;
 import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
+import org.meveo.api.dto.response.payment.AccountOperationResponseDto;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.module.MeveoModuleApi;
@@ -1084,5 +1085,17 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 
         return result;
     }
+
+	@Override
+	public AccountOperationResponseDto findAccountOperation(Long id) {
+		AccountOperationResponseDto result = new AccountOperationResponseDto();
+		try {
+			result.setAccountOperation(accountOperationApi.find(id));
+		} catch (Exception e) {
+			processException(e, result.getActionStatus());
+		}
+
+		return result;
+	}
 
 }
