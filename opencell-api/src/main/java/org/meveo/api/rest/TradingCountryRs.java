@@ -20,7 +20,7 @@ import org.meveo.api.dto.response.GetTradingCountryResponse;
  * 
  * @author Edward P. Legaspi
  **/
-@Path("/country")
+@Path("/tradingCountry")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 

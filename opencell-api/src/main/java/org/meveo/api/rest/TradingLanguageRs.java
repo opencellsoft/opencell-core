@@ -20,7 +20,7 @@ import org.meveo.api.dto.response.GetTradingLanguageResponse;
  * 
  * @author Edward P. Legaspi
  **/
-@Path("/language")
+@Path("/tradingLanguage")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
