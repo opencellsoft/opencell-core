@@ -10,6 +10,7 @@ import org.meveo.api.CountryIsoApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.CountryIsoDto;
+import org.meveo.api.dto.response.GetCountriesIsoResponse;
 import org.meveo.api.dto.response.GetCountryIsoResponse;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.CountryIsoRs;
@@ -98,5 +99,18 @@ public class CountryIsoRsImpl extends BaseRs implements CountryIsoRs {
 
         return result;
     }
+
+	@Override
+	public GetCountriesIsoResponse list() {
+		GetCountriesIsoResponse result = new GetCountriesIsoResponse();
+
+        try {
+            result.setCountries(countryIsoApi.list());
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+	}
 
 }

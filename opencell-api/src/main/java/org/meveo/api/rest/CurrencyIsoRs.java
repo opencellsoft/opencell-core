@@ -13,6 +13,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.CurrencyIsoDto;
+import org.meveo.api.dto.response.GetCurrenciesIsoResponse;
 import org.meveo.api.dto.response.GetCurrencyIsoResponse;
 
 /**
@@ -71,4 +72,12 @@ public interface CurrencyIsoRs extends IBaseRs {
     @Path("/createOrUpdate")
     public ActionStatus createOrUpdate(CurrencyIsoDto currencyIsoDto);
 
+    /**
+     * List all currencies.
+     * @return
+     */
+    @GET
+    @Path("/")
+    GetCurrenciesIsoResponse list();
+    
 }

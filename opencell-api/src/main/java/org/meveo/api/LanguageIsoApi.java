@@ -1,5 +1,8 @@
 package org.meveo.api;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -101,4 +104,17 @@ public class LanguageIsoApi extends BaseApi {
             update(postData);
         }
     }
+    
+	public List<LanguageIsoDto> list() {
+		List<LanguageIsoDto> result = new ArrayList<>();
+
+		List<Language> languages = languageService.list();
+		if (languages != null) {
+			for (Language country : languages) {
+				result.add(new LanguageIsoDto(country));
+			}
+		}
+
+		return result;
+	}
 }

@@ -14,9 +14,12 @@ import org.meveo.api.dto.CountryIsoDto;
 import org.meveo.api.dto.CurrencyIsoDto;
 import org.meveo.api.dto.LanguageIsoDto;
 import org.meveo.api.dto.ProviderDto;
+import org.meveo.api.dto.response.GetCountriesIsoResponse;
 import org.meveo.api.dto.response.GetCountryIsoResponse;
+import org.meveo.api.dto.response.GetCurrenciesIsoResponse;
 import org.meveo.api.dto.response.GetCurrencyIsoResponse;
 import org.meveo.api.dto.response.GetLanguageIsoResponse;
+import org.meveo.api.dto.response.GetLanguagesIsoResponse;
 import org.meveo.api.dto.response.GetProviderResponse;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.SuperAdminSettingsWs;
@@ -286,4 +289,43 @@ public class SuperAdminSettingsWsImpl extends BaseWs implements SuperAdminSettin
 
         return result;
     }
+
+	@Override
+	public GetLanguagesIsoResponse listIsoLanguages() {
+		GetLanguagesIsoResponse result = new GetLanguagesIsoResponse();
+
+        try {
+            result.setLanguages(languageIsoApi.list());
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+	}
+
+	@Override
+	public GetCountriesIsoResponse listIsoCountries() {
+		GetCountriesIsoResponse result = new GetCountriesIsoResponse();
+
+        try {
+            result.setCountries(countryIsoApi.list());
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+	}
+
+	@Override
+	public GetCurrenciesIsoResponse listIsoCurrencies() {
+		GetCurrenciesIsoResponse result = new GetCurrenciesIsoResponse();
+
+        try {
+            result.setCurrencies(currencyIsoApi.list());
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+	}
 }
