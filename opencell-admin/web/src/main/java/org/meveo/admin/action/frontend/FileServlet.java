@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.zip.ZipOutputStream;
 
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.WebServlet;
@@ -17,6 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.crm.Provider;
+import org.meveo.util.ApplicationProvider;
 
 /**
  * @author Edward P. Legaspi
@@ -28,6 +31,10 @@ public class FileServlet extends HttpServlet {
 
 	private ParamBean paramBean = ParamBean.getInstance();
 
+	@Inject
+	@ApplicationProvider
+	private Provider appProvider;
+
 	private String basePath;
 
 	/**
@@ -38,7 +45,8 @@ public class FileServlet extends HttpServlet {
 	public void init() throws ServletException {
 
 		// Get base path (path to get all resources from) as init parameter.
-		this.basePath = paramBean.getProperty("providers.rootDir", "./opencelldata");
+		this.basePath = paramBean.getProperty("providers.rootDir", "./opencelldata") + File.separator
+				+ appProvider.getCode();
 
 		// Validate base path.
 		if (this.basePath == null) {
