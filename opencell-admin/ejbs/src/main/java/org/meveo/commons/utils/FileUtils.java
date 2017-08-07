@@ -31,6 +31,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.CRC32;
@@ -545,6 +546,33 @@ public final class FileUtils {
 			ZipEntry entry = new ZipEntry(basedir.replaceAll(File.separator, "/"));
 			entry.setTime(source.lastModified());
             zos.putNextEntry(entry);
+		}
+	}
+	
+	public static void addDirToArchive(String relativeRoot, String dir2zip, ZipOutputStream zos) throws IOException {
+		File zipDir = new File(dir2zip);
+		String[] dirList = zipDir.list();
+		byte[] readBuffer = new byte[2156];
+		int bytesIn = 0;
+
+		for (int i = 0; i < dirList.length; i++) {
+			File f = new File(zipDir, dirList[i]);
+			if (f.isDirectory()) {
+				String filePath = f.getPath();
+				addDirToArchive(relativeRoot, filePath, zos);
+				continue;
+			}
+
+			FileInputStream fis = new FileInputStream(f);
+			String relativePath = Paths.get(relativeRoot).relativize(f.toPath()).toString();
+			ZipEntry anEntry = new ZipEntry(relativePath);
+			zos.putNextEntry(anEntry);
+
+			while ((bytesIn = fis.read(readBuffer)) != -1) {
+				zos.write(readBuffer, 0, bytesIn);
+			}
+
+			fis.close();
 		}
 	}
 }
