@@ -98,7 +98,11 @@ public class DatePeriod implements Comparable<DatePeriod>, Serializable {
      * @return True if current period object corresponds to give dates and strict matching type
      */
     public boolean isCorrespondsToPeriod(DatePeriod period, boolean strictMatch) {
-        return isCorrespondsToPeriod(period.getFrom(), period.getTo(), strictMatch);
+        if (period == null) {
+            return isCorrespondsToPeriod(null, null, strictMatch);
+        } else {
+            return isCorrespondsToPeriod(period.getFrom(), period.getTo(), strictMatch);
+        }
     }
 
     /**

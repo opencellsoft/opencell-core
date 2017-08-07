@@ -5,4 +5,78 @@
         <dropColumn tableName="billing_billing_account" columnName="payment_method" />
     </changeSet>
 
+    <changeSet id="#2751_20170801" author="AndriusKarpavicius">
+        <addColumn tableName="crm_provider">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="account_entity">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="adm_user">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="ar_account_operation">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="billing_cycle">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="billing_invoice">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="billing_invoice_cat">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="billing_invoice_sub_cat">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>        
+        <addColumn tableName="billing_service_instance">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="billing_subscription">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="billing_tax">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="cat_charge_template">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="cat_offer_template">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="cat_price_plan_matrix">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="cat_service_template">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="crm_seller">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>        
+        <addColumn tableName="medina_access">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="meveo_job_instance">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="meveo_filter">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="cust_cei">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="cat_offer_template_category">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="billing_product_instance">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="ord_order">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="ord_quote">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>                
+    </changeSet>
 </databaseChangeLog> 

@@ -30,67 +30,70 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 
+import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.TypeDefs;
+import org.meveo.model.persistence.JsonBinaryType;
+import org.meveo.model.persistence.JsonStringType;
+
 /**
  * Base class for all entity classes.
  */
+@TypeDefs({ @TypeDef(name = "json", typeClass = JsonStringType.class), @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class) })
 @MappedSuperclass
 public abstract class BaseEntity implements Serializable, IEntity, IJPAVersionedEntity {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public static final int NB_PRECISION = 23;
-	public static final int NB_DECIMALS = 12;
-	public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public static final int NB_PRECISION = 23;
+    public static final int NB_DECIMALS = 12;
+    public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @Id
     @GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)
-	@Column(name = "id")
-	@Access(AccessType.PROPERTY)
-	protected Long id;
+    @Column(name = "id")
+    @Access(AccessType.PROPERTY)
+    protected Long id;
 
-	@Version
-	@Column(name = "version")
-	private Integer version;
+    @Version
+    @Column(name = "version")
+    private Integer version;
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public Integer getVersion() {
-		return version;
-	}
+    public Integer getVersion() {
+        return version;
+    }
 
-	public void setVersion(Integer version) {
-		this.version = version;
-	}
+    public void setVersion(Integer version) {
+        this.version = version;
+    }
 
-	public boolean isTransient() {
-		return id == null;
-	}
+    public boolean isTransient() {
+        return id == null;
+    }
 
-	@Override
-	public int hashCode() {
-		return super.hashCode();
-	}
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 
-	/**
-	 * Equals method must be overridden in concrete Entity class. Entities
-	 * shouldn't be compared only by ID, because if entity is not persisted its
-	 * ID is null.
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		System.out.println("this .class"+this.getClass()+" this:"+this+" obj"+obj+" obj.class"+obj.getClass());
-		throw new IllegalStateException("Equals method was not overriden!");
-	}
+    /**
+     * Equals method must be overridden in concrete Entity class. Entities shouldn't be compared only by ID, because if entity is not persisted its ID is null.
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        System.out.println("this .class" + this.getClass() + " this:" + this + " obj" + obj + " obj.class" + obj.getClass());
+        throw new IllegalStateException("Equals method was not overriden!");
+    }
 
-
-	@Override
+    @Override
     public String toString() {
         return String.format("id=%s", id);
     }

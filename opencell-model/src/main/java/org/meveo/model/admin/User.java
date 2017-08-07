@@ -47,11 +47,13 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.security.Role;
 import org.meveo.model.shared.Name;
@@ -62,7 +64,7 @@ import org.meveo.model.shared.Name;
 @Entity
 @ObservableEntity
 @CustomFieldEntity(cftCodePrefix = "USER")
-@ExportIdentifier({ "userName"})
+@ExportIdentifier({ "userName" })
 @Table(name = "adm_user")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "adm_user_seq"), })
@@ -97,10 +99,14 @@ public class User extends EnableEntity implements ICustomFieldEntity {
             @AttributeOverride(name = "entityClass", column = @Column(name = "entity_class", nullable = false, length = 255)) })
     private List<SecuredEntity> securedEntities = new ArrayList<>();
 
-	@Column(name = "uuid", nullable = false, updatable = false, length = 60)
-	@Size(max = 60)
-	@NotNull
-	private String uuid = UUID.randomUUID().toString();
+    @Column(name = "uuid", nullable = false, updatable = false, length = 60)
+    @Size(max = 60)
+    @NotNull
+    private String uuid = UUID.randomUUID().toString();
+
+    @Type(type = "json")
+    @Column(name = "cf_values", columnDefinition = "text")
+    private CustomFieldValues cfValues;
 
     @Transient
     private Map<Class<?>, Set<SecuredEntity>> securedEntitiesMap;
@@ -131,7 +137,7 @@ public class User extends EnableEntity implements ICustomFieldEntity {
     public void setName(Name name) {
         this.name = name;
     }
- 
+
     public String getRolesLabel() {
         StringBuffer sb = new StringBuffer();
         if (roles != null)
@@ -251,25 +257,46 @@ public class User extends EnableEntity implements ICustomFieldEntity {
         return userName;
     }
 
-	@Override
-	public String getUuid() {
-		return uuid;
-	}
-	
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
+    @Override
+    public String getUuid() {
+        return uuid;
+    }
 
-	@Override
-	public String clearUuid() {
-		String oldUuid = uuid;
-		uuid = UUID.randomUUID().toString();
-		return oldUuid;
-	}
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
 
-	@Override
-	public ICustomFieldEntity[] getParentCFEntities() {		
-		return null;
-	}
+    public CustomFieldValues getCfValues() {
+        return cfValues;
+    }
+
+    public void setCfValues(CustomFieldValues cfValues) {
+        this.cfValues = cfValues;
+    }
+
+    @Override
+    public CustomFieldValues getCfValuesNullSafe() {
+        if (cfValues == null) {
+            cfValues = new CustomFieldValues();
+        }
+        return cfValues;
+    }
+
+    @Override
+    public void clearCfValues() {
+        cfValues = null;
+    }
+
+    @Override
+    public String clearUuid() {
+        String oldUuid = uuid;
+        uuid = UUID.randomUUID().toString();
+        return oldUuid;
+    }
+
+    @Override
+    public ICustomFieldEntity[] getParentCFEntities() {
+        return null;
+    }
 
 }

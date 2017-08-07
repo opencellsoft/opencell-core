@@ -28,7 +28,6 @@ import org.meveo.model.jaxb.customer.CustomFields;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.BillingAccountService;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
@@ -44,12 +43,9 @@ public class ExportAccountsJobBean {
     private BillingAccountService billingAccountService;
 
     @Inject
-    private CustomFieldInstanceService customFieldInstanceService;
-    
-    @Inject
     @ApplicationProvider
     protected Provider appProvider;
-        
+
     BillingAccounts billingAccounts;
     ParamBean param = ParamBean.getInstance();
 
@@ -61,9 +57,9 @@ public class ExportAccountsJobBean {
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, String parameter) {
-        
-        String exportDir = param.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator + "exports" + File.separator + "accounts"
-                + File.separator;
+
+        String exportDir = param.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator + "exports" + File.separator
+                + "accounts" + File.separator;
         log.info("exportDir=" + exportDir);
         File dir = new File(exportDir);
         if (!dir.exists()) {
@@ -106,7 +102,9 @@ public class ExportAccountsJobBean {
             dto.setEmail(ba.getEmail() == null ? null : ba.getEmail());
             dto.setTradingCountryCode(ba.getTradingCountry() == null ? null : ba.getTradingCountry().getCountryCode());
             dto.setTradingLanguageCode(ba.getTradingLanguage() == null ? null : ba.getTradingLanguage().getLanguageCode());
-            dto.setCustomFields(CustomFields.toDTO(customFieldInstanceService.getCustomFieldInstances(ba)));
+            if (ba.getCfValues() != null) {
+                dto.setCustomFields(CustomFields.toDTO(ba.getCfValues().getValuesByCode()));
+            }
             dto.setUserAccounts(userAccountsToDto(ba.getUsersAccounts(), dateFormat));
             dto.setCode(ba.getCode() == null ? null : ba.getCode());
             dto.setCustomerAccountId(ba.getCustomerAccount().getCode());
@@ -133,7 +131,9 @@ public class ExportAccountsJobBean {
             dto.setExternalRef2(ua.getExternalRef2());
             dto.setName(new Name(ua.getName()));
             dto.setAddress(new Address(ua.getAddress()));
-            dto.setCustomFields(CustomFields.toDTO(customFieldInstanceService.getCustomFieldInstances(ua)));
+            if (ua.getCfValues() != null) {
+                dto.setCustomFields(CustomFields.toDTO(ua.getCfValues().getValuesByCode()));
+            }
             dto.setCode(ua.getCode());
         }
 

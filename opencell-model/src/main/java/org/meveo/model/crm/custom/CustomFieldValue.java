@@ -20,7 +20,7 @@ import javax.persistence.Transient;
 
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.crm.CustomFieldInstance;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.shared.DateUtils;
@@ -63,6 +63,12 @@ public class CustomFieldValue implements Serializable {
     public static String RON_VALUE_SEPARATOR = "<";
 
     private static String SERIALIZATION_SEPARATOR = "|";
+
+    @Transient
+    private DatePeriod period;
+
+    @Transient
+    private int priority;
 
     @Column(name = "string_value", columnDefinition = "TEXT")
     private String stringValue;
@@ -130,6 +136,19 @@ public class CustomFieldValue implements Serializable {
      */
     @Transient
     private BusinessEntity entityReferenceValueForGUI;
+
+    public CustomFieldValue() {
+    }
+
+    public CustomFieldValue(Object value) {
+        setValue(value);
+    }
+
+    public CustomFieldValue(DatePeriod period, int priority, Object value) {
+        this.period = period;
+        this.priority = priority;
+        setValue(value);
+    }
 
     public String getStringValue() {
         return stringValue;
@@ -249,6 +268,22 @@ public class CustomFieldValue implements Serializable {
 
     public void setChildEntityValuesForGUI(List<CustomFieldValueHolder> childEntityValuesForGUI) {
         this.childEntityValuesForGUI = childEntityValuesForGUI;
+    }
+
+    public DatePeriod getPeriod() {
+        return period;
+    }
+
+    public void setPeriod(DatePeriod period) {
+        this.period = period;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
     }
 
     /**
@@ -555,8 +590,8 @@ public class CustomFieldValue implements Serializable {
      */
     public boolean isValueEmptyForGui() {
         boolean isEmpty = ((stringValue == null || stringValue.isEmpty()) && dateValue == null && longValue == null && doubleValue == null && entityReferenceValueForGUI == null
-                && (mapValuesForGUI == null || mapValuesForGUI.isEmpty()) && (matrixValuesForGUI == null || matrixValuesForGUI.isEmpty()) && (childEntityValuesForGUI == null || childEntityValuesForGUI
-            .isEmpty()));
+                && (mapValuesForGUI == null || mapValuesForGUI.isEmpty()) && (matrixValuesForGUI == null || matrixValuesForGUI.isEmpty())
+                && (childEntityValuesForGUI == null || childEntityValuesForGUI.isEmpty()));
 
         if (isEmpty) {
             return true;
@@ -576,9 +611,9 @@ public class CustomFieldValue implements Serializable {
 
         } else if (childEntityValuesForGUI != null && !childEntityValuesForGUI.isEmpty()) {
             for (CustomFieldValueHolder childEntity : childEntityValuesForGUI) {
-                for (List<CustomFieldInstance> cfiList : childEntity.getValues().values()) {
-                    for (CustomFieldInstance cfi : cfiList) {
-                        if (!cfi.isValueEmptyForGui()) {
+                for (List<CustomFieldValue> cfValueList : childEntity.getValuesByCode().values()) {
+                    for (CustomFieldValue cfValue : cfValueList) {
+                        if (!cfValue.isValueEmptyForGui()) {
 
                             // Logger log = LoggerFactory.getLogger(getClass());
                             // log.error("AKK cfv che is NOT empty {}", cfi);
@@ -602,8 +637,8 @@ public class CustomFieldValue implements Serializable {
      * @return True is value is empty
      */
     public boolean isValueEmpty() {
-        return ((stringValue == null || stringValue.isEmpty()) && dateValue == null && longValue == null && doubleValue == null && (serializedValue == null || serializedValue
-            .isEmpty()));
+        return ((stringValue == null || stringValue.isEmpty()) && dateValue == null && longValue == null && doubleValue == null
+                && (serializedValue == null || serializedValue.isEmpty()));
     }
 
     /**
@@ -654,8 +689,8 @@ public class CustomFieldValue implements Serializable {
 
             // Find the first not null value to determine item class.
             Iterator iterator = ((List) valueToSerialize).iterator();
-            Class itemClass = findItemClass(iterator);            
-            
+            Class itemClass = findItemClass(iterator);
+
             if (itemClass != null) {
                 sValue = "list_" + itemClass.getSimpleName() + SERIALIZATION_SEPARATOR + gson.toJson(((List) valueToSerialize));
             } else {
@@ -679,11 +714,11 @@ public class CustomFieldValue implements Serializable {
                 } else if (columnNames instanceof Collection) {
                     columnNamesString = StringUtils.concatenate(MATRIX_COLUMN_NAME_SEPARATOR, (Collection) columnNames);
                 }
-                
-				// Find the first not null value to determine item class.
-				Iterator iterator = mapCopy.values().iterator();
-				Class itemClass = findItemClass(iterator);
-                
+
+                // Find the first not null value to determine item class.
+                Iterator iterator = mapCopy.values().iterator();
+                Class itemClass = findItemClass(iterator);
+
                 if (itemClass != null) {
                     sValue = "matrix_" + itemClass.getSimpleName() + SERIALIZATION_SEPARATOR + columnNamesString + SERIALIZATION_SEPARATOR + gson.toJson(mapCopy);
                 } else {
@@ -694,9 +729,9 @@ public class CustomFieldValue implements Serializable {
             } else {
 
                 // Find the first not null value to determine item class.
-                Iterator iterator = ((Map) valueToSerialize).values().iterator();                
+                Iterator iterator = ((Map) valueToSerialize).values().iterator();
                 Class itemClass = findItemClass(iterator);
-                
+
                 if (itemClass != null) {
                     sValue = "map_" + itemClass.getSimpleName() + SERIALIZATION_SEPARATOR + gson.toJson(((Map) valueToSerialize));
                 } else {
@@ -706,43 +741,42 @@ public class CustomFieldValue implements Serializable {
         }
         return sValue;
     }
-    
+
     /**
-	 * Get the data type of the first item. If the type is Integer check for
-	 * further item in the list to see if a Double item exists.
-	 */
+     * Get the data type of the first item. If the type is Integer check for further item in the list to see if a Double item exists.
+     */
     @SuppressWarnings("rawtypes")
-	private static Class findItemClass(Iterator iterator) {
-		if (!iterator.hasNext()) {
-			return null;
-		}
-		Object item = iterator.next();
-		while (item == null && iterator.hasNext()) {
-			item = iterator.next();
-		}
-		
-		Class itemClass = null;
-		if (item != null) {
-			itemClass = item.getClass();
-		} else {
-			return null;
-		}
+    private static Class findItemClass(Iterator iterator) {
+        if (!iterator.hasNext()) {
+            return null;
+        }
+        Object item = iterator.next();
+        while (item == null && iterator.hasNext()) {
+            item = iterator.next();
+        }
 
-		if (itemClass != null && (itemClass.equals(Long.class) || itemClass.equals(Integer.class))) {
-			// check for further type
-			while (iterator.hasNext()) {
-				item = iterator.next();
-				if (item != null) {
-					if (Double.class.equals(item.getClass())) {
-						itemClass = Double.class;
-						break;
-					}
-				}
-			}
-		}
+        Class itemClass = null;
+        if (item != null) {
+            itemClass = item.getClass();
+        } else {
+            return null;
+        }
 
-		return itemClass;
-	}
+        if (itemClass != null && (itemClass.equals(Long.class) || itemClass.equals(Integer.class))) {
+            // check for further type
+            while (iterator.hasNext()) {
+                item = iterator.next();
+                if (item != null) {
+                    if (Double.class.equals(item.getClass())) {
+                        itemClass = Double.class;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return itemClass;
+    }
 
     /**
      * Deserialize JSON value serializedValue to a reference to an entity, list or map of values. See method serialize() for serialized value format
@@ -995,13 +1029,12 @@ public class CustomFieldValue implements Serializable {
     @Override
     public String toString() {
         final int maxLen = 10;
-        return String
-            .format(
-                "CustomFieldValue [stringValue=%s, dateValue=%s, longValue=%s, doubleValue=%s, serializedValue=%s, entityReferenceValue=%s, listValue=%s, mapValue=%s, mapValuesForGUI=%s, matrixValuesForGUI=%s, childEntityValuesForGUI=%s, entityReferenceValueForGUI=%s]",
-                stringValue, dateValue, longValue, doubleValue, serializedValue, entityReferenceValue, listValue != null ? toString(listValue, maxLen) : null,
-                mapValue != null ? toString(mapValue.entrySet(), maxLen) : null, mapValuesForGUI != null ? toString(mapValuesForGUI, maxLen) : null,
-                matrixValuesForGUI != null ? toString(matrixValuesForGUI, maxLen) : null, childEntityValuesForGUI != null ? toString(childEntityValuesForGUI, maxLen) : null,
-                entityReferenceValueForGUI);
+        return String.format(
+            "CustomFieldValue [stringValue=%s, dateValue=%s, longValue=%s, doubleValue=%s, serializedValue=%s, entityReferenceValue=%s, listValue=%s, mapValue=%s, mapValuesForGUI=%s, matrixValuesForGUI=%s, childEntityValuesForGUI=%s, entityReferenceValueForGUI=%s]",
+            stringValue, dateValue, longValue, doubleValue, serializedValue, entityReferenceValue, listValue != null ? toString(listValue, maxLen) : null,
+            mapValue != null ? toString(mapValue.entrySet(), maxLen) : null, mapValuesForGUI != null ? toString(mapValuesForGUI, maxLen) : null,
+            matrixValuesForGUI != null ? toString(matrixValuesForGUI, maxLen) : null, childEntityValuesForGUI != null ? toString(childEntityValuesForGUI, maxLen) : null,
+            entityReferenceValueForGUI);
     }
 
     private String toString(Collection<?> collection, int maxLen) {

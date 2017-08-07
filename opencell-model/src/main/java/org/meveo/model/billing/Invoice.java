@@ -52,6 +52,7 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
@@ -167,6 +168,10 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
     @Size(max = 60)
     @NotNull
     private String uuid = UUID.randomUUID().toString();
+
+    @Type(type = "json")
+    @Column(name = "cf_values", columnDefinition = "text")
+    private CustomFieldValues cfValues;
 
     @ManyToMany
     @JoinTable(name = "billing_linked_invoices", joinColumns = { @JoinColumn(name = "id") }, inverseJoinColumns = { @JoinColumn(name = "linked_invoice_id") })
@@ -501,6 +506,27 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
+    }
+
+    public CustomFieldValues getCfValues() {
+        return cfValues;
+    }
+
+    public void setCfValues(CustomFieldValues cfValues) {
+        this.cfValues = cfValues;
+    }
+
+    @Override
+    public CustomFieldValues getCfValuesNullSafe() {
+        if (cfValues == null) {
+            cfValues = new CustomFieldValues();
+        }
+        return cfValues;
+    }
+
+    @Override
+    public void clearCfValues() {
+        cfValues = null;
     }
 
     @Override

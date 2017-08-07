@@ -3,6 +3,7 @@ package org.meveo.model.crm;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,7 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.catalog.Calendar;
@@ -40,6 +42,7 @@ import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
 import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.shared.DateUtils;
 
@@ -578,5 +581,34 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
     @Override
     public int compareTo(CustomFieldTemplate o) {
         return o.getCode().compareTo(getCode());
+    }
+
+    /**
+     * Instantiate a CustomFieldValue from a template, setting a default value if applicable
+     *
+     * @return CustomFieldValue object
+     */
+    public CustomFieldValue toDefaultCFValue() {
+        CustomFieldValue cfValue = new CustomFieldValue();
+
+        // Set a default value
+        if (getStorageType() == CustomFieldStorageTypeEnum.SINGLE) {
+            cfValue.setValue(getDefaultValueConverted());
+        }
+
+        return cfValue;
+    }
+
+    /**
+     * Get a date period for a given date. Applies only to CFT versionable by a calendar.
+     * 
+     * @param date Date
+     * @return Date period matching calendar's dates
+     */
+    public DatePeriod getDatePeriod(Date date) {
+        if (isVersionable() && getCalendar() != null) {
+            return new DatePeriod(getCalendar().previousCalendarDate(date), getCalendar().nextCalendarDate(date));
+        }
+        return null;
     }
 }

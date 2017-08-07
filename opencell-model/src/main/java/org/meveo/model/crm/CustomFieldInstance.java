@@ -289,7 +289,7 @@ public class CustomFieldInstance extends EnableEntity {
         CustomFieldInstance cfi = CustomFieldInstance.fromTemplate(cft, entity);
         if (cft.isVersionable() && cft.getCalendar() != null) {
             cfi.setPeriod(new DatePeriod(cft.getCalendar().previousCalendarDate(valueDate), cft.getCalendar().nextCalendarDate(valueDate)));
-        } else if (cft.isVersionable() && cft.getCalendar() != null) {
+        } else if (cft.isVersionable() && cft.getCalendar() == null) {
             cfi = CustomFieldInstance.fromTemplate(cft, entity, valueDate, null, null);
         }
 

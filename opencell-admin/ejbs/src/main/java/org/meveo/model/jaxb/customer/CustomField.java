@@ -16,10 +16,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.CustomFieldValueDto;
 import org.meveo.api.dto.EntityReferenceDto;
-import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldValue;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "customField")
@@ -65,27 +65,26 @@ public class CustomField {
     public CustomField() {
     }
 
-    public static CustomField toDTO(CustomFieldInstance cfi) {
+    public static CustomField toDTO(String cfCode, CustomFieldValue cfValue) {
 
         CustomField dto = new CustomField();
-        dto.setCode(cfi.getCode());
-        if (cfi.getPeriodRaw() != null) {
-        	dto.setValuePeriodStartDate(cfi.getPeriod().getFrom());
-        	dto.setValuePeriodEndDate(cfi.getPeriod().getTo());
+        dto.setCode(cfCode);
+        if (cfValue.getPeriod() != null) {
+            dto.setValuePeriodStartDate(cfValue.getPeriod().getFrom());
+            dto.setValuePeriodEndDate(cfValue.getPeriod().getTo());
         }
-        
-        
-        if (cfi.getPriority() > 0) {
-            dto.setValuePeriodPriority(cfi.getPriority());
+
+        if (cfValue.getPriority() > 0) {
+            dto.setValuePeriodPriority(cfValue.getPriority());
         }
-        dto.setStringValue(cfi.getCfValue().getStringValue());
-        dto.setDateValue(cfi.getCfValue().getDateValue());
-        dto.setLongValue(cfi.getCfValue().getLongValue());
-        dto.setDoubleValue(cfi.getCfValue().getDoubleValue());
-        dto.setListValue(customFieldValueToDTO(cfi.getCfValue().getListValue()));
-        dto.setMapValue(customFieldValueToDTO(cfi.getCfValue().getMapValue()));
-        if (cfi.getCfValue().getEntityReferenceValue() != null) {
-            dto.setEntityReferenceValue(new EntityReferenceDto(cfi.getCfValue().getEntityReferenceValue()));
+        dto.setStringValue(cfValue.getStringValue());
+        dto.setDateValue(cfValue.getDateValue());
+        dto.setLongValue(cfValue.getLongValue());
+        dto.setDoubleValue(cfValue.getDoubleValue());
+        dto.setListValue(customFieldValueToDTO(cfValue.getListValue()));
+        dto.setMapValue(customFieldValueToDTO(cfValue.getMapValue()));
+        if (cfValue.getEntityReferenceValue() != null) {
+            dto.setEntityReferenceValue(new EntityReferenceDto(cfValue.getEntityReferenceValue()));
         }
 
         return dto;
@@ -302,7 +301,8 @@ public class CustomField {
     public String toString() {
         return String.format(
             "CustomField [code=%s, valueDate=%s, valuePeriodStartDate=%s, valuePeriodEndDate=%s, valuePeriodPriority=%s, stringValue=%s, dateValue=%s, longValue=%s, doubleValue=%s,mapValue="
-                    + mapValue + "]", code, valueDate, valuePeriodStartDate, valuePeriodEndDate, valuePeriodPriority, stringValue, dateValue, longValue, doubleValue);
+                    + mapValue + "]",
+            code, valueDate, valuePeriodStartDate, valuePeriodEndDate, valuePeriodPriority, stringValue, dateValue, longValue, doubleValue);
     }
 
     private static List<CustomFieldValueDto> customFieldValueToDTO(List<Object> listValue) {

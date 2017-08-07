@@ -655,7 +655,7 @@
 				<db.driver>org.mariadb.jdbc.Driver</db.driver>
 				<db.url>jdbc:mariadb://localhost:3306/meveo</db.url>
 				<db.username>root</db.username>
-				<db.password></db.password>
+				<db.password>root</db.password>
 			</properties>
 			<dependencies>
 				<!-- Dependency for liquibase plugin -->

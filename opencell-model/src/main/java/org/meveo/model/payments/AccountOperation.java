@@ -48,6 +48,7 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.crm.custom.CustomFieldValues;
 
 /**
  * Account Transaction.
@@ -57,211 +58,215 @@ import org.meveo.model.ObservableEntity;
 @Table(name = "ar_account_operation")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "transaction_type")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ar_account_operation_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "ar_account_operation_seq"), })
 @CustomFieldEntity(cftCodePrefix = "ACC_OP")
-public class AccountOperation extends EnableEntity implements ICustomFieldEntity{
+public class AccountOperation extends EnableEntity implements ICustomFieldEntity {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Column(name = "due_date")
-	@Temporal(TemporalType.DATE)
-	private Date dueDate;
+    @Column(name = "due_date")
+    @Temporal(TemporalType.DATE)
+    private Date dueDate;
 
-	@Column(name = "transaction_type", insertable = false, updatable = false, length = 31)
-	@Size(max = 31)	
-	private String type;
+    @Column(name = "transaction_type", insertable = false, updatable = false, length = 31)
+    @Size(max = 31)
+    private String type;
 
-	@Column(name = "transaction_date")
-	@Temporal(TemporalType.DATE)
-	private Date transactionDate;
+    @Column(name = "transaction_date")
+    @Temporal(TemporalType.DATE)
+    private Date transactionDate;
 
-	@Column(name = "transaction_category")
-	@Enumerated(EnumType.STRING)
-	private OperationCategoryEnum transactionCategory;
+    @Column(name = "transaction_category")
+    @Enumerated(EnumType.STRING)
+    private OperationCategoryEnum transactionCategory;
 
-	@Column(name = "reference", length = 255)
-	@Size(max = 255)
-	private String reference;
-
-	@Column(name = "account_code", length = 255)
+    @Column(name = "reference", length = 255)
     @Size(max = 255)
-	private String accountCode;
+    private String reference;
 
-	@Column(name = "account_code_client_side", length = 255)
+    @Column(name = "account_code", length = 255)
     @Size(max = 255)
-	private String accountCodeClientSide;
+    private String accountCode;
 
-	@Column(name = "amount", precision = 23, scale = 12)
-	private BigDecimal amount;
-
-	@Column(name = "matching_amount", precision = 23, scale = 12)
-	private BigDecimal matchingAmount = BigDecimal.ZERO;
-
-	@Column(name = "un_matching_amount", precision = 23, scale = 12)
-	private BigDecimal unMatchingAmount = BigDecimal.ZERO;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "customer_account_id")
-	private CustomerAccount customerAccount;
-
-	@Enumerated(EnumType.STRING)
-	@Column(name = "matching_status")
-	private MatchingStatusEnum matchingStatus;
-
-	@OneToMany(mappedBy = "accountOperation")
-	private List<MatchingAmount> matchingAmounts = new ArrayList<MatchingAmount>();
-
-	@Column(name = "occ_code", length = 255)
+    @Column(name = "account_code_client_side", length = 255)
     @Size(max = 255)
-	private String occCode;
+    private String accountCodeClientSide;
 
-	@Column(name = "occ_description", length = 255)
+    @Column(name = "amount", precision = 23, scale = 12)
+    private BigDecimal amount;
+
+    @Column(name = "matching_amount", precision = 23, scale = 12)
+    private BigDecimal matchingAmount = BigDecimal.ZERO;
+
+    @Column(name = "un_matching_amount", precision = 23, scale = 12)
+    private BigDecimal unMatchingAmount = BigDecimal.ZERO;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_account_id")
+    private CustomerAccount customerAccount;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "matching_status")
+    private MatchingStatusEnum matchingStatus;
+
+    @OneToMany(mappedBy = "accountOperation")
+    private List<MatchingAmount> matchingAmounts = new ArrayList<MatchingAmount>();
+
+    @Column(name = "occ_code", length = 255)
     @Size(max = 255)
-	private String occDescription;
-	
-	
-	@Type(type="numeric_boolean")
+    private String occCode;
+
+    @Column(name = "occ_description", length = 255)
+    @Size(max = 255)
+    private String occDescription;
+
+    @Type(type = "numeric_boolean")
     @Column(name = "excluded_from_dunning")
-	private boolean excludedFromDunning;
-	
-	@Column(name = "order_num")   
-	private String orderNumber;// order number, '|' will be used as seperator if many orders
-	
+    private boolean excludedFromDunning;
+
+    @Column(name = "order_num")
+    private String orderNumber;// order number, '|' will be used as seperator if many orders
+
     @Column(name = "uuid", nullable = false, updatable = false, length = 60)
     @Size(max = 60)
     @NotNull
     private String uuid = UUID.randomUUID().toString();
 
-	@Column(name = "bank_lot", length = 255)
-	@Size(max = 255)
-	private String bankLot;
+    @Type(type = "json")
+    @Column(name = "cf_values", columnDefinition = "text")
+    private CustomFieldValues cfValues;
 
-	@Column(name = "bank_reference", length = 255)
-	@Size(max = 255)
-	private String bankReference;
+    @Column(name = "bank_lot", length = 255)
+    @Size(max = 255)
+    private String bankLot;
 
-	@Column(name = "deposit_date")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date depositDate;
+    @Column(name = "bank_reference", length = 255)
+    @Size(max = 255)
+    private String bankReference;
 
-	@Column(name = "bank_collection_date")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date bankCollectionDate;
+    @Column(name = "deposit_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date depositDate;
 
-	public Date getDueDate() {
-		return dueDate;
-	}
+    @Column(name = "bank_collection_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date bankCollectionDate;
 
-	public void setDueDate(Date dueDate) {
-		this.dueDate = dueDate;
-	}
+    public Date getDueDate() {
+        return dueDate;
+    }
 
-	public OperationCategoryEnum getTransactionCategory() {
-		return transactionCategory;
-	}
+    public void setDueDate(Date dueDate) {
+        this.dueDate = dueDate;
+    }
 
-	public void setTransactionCategory(OperationCategoryEnum transactionCategory) {
-		this.transactionCategory = transactionCategory;
-	}
+    public OperationCategoryEnum getTransactionCategory() {
+        return transactionCategory;
+    }
 
-	public String getReference() {
-		return reference;
-	}
+    public void setTransactionCategory(OperationCategoryEnum transactionCategory) {
+        this.transactionCategory = transactionCategory;
+    }
 
-	public void setReference(String reference) {
-		this.reference = reference;
-	}
+    public String getReference() {
+        return reference;
+    }
 
-	public BigDecimal getAmount() {
-		return amount;
-	}
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
 
-	public void setAmount(BigDecimal amount) {
-		this.amount = amount;
-	}
+    public BigDecimal getAmount() {
+        return amount;
+    }
 
-	public BigDecimal getMatchingAmount() {
-		return matchingAmount;
-	}
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
 
-	public void setMatchingAmount(BigDecimal matchingAmount) {
-		this.matchingAmount = matchingAmount;
-	}
+    public BigDecimal getMatchingAmount() {
+        return matchingAmount;
+    }
 
-	public Date getTransactionDate() {
-		return transactionDate;
-	}
+    public void setMatchingAmount(BigDecimal matchingAmount) {
+        this.matchingAmount = matchingAmount;
+    }
 
-	public void setTransactionDate(Date transactionDate) {
-		this.transactionDate = transactionDate;
-	}
+    public Date getTransactionDate() {
+        return transactionDate;
+    }
 
-	public BigDecimal getUnMatchingAmount() {
-		return unMatchingAmount;
-	}
+    public void setTransactionDate(Date transactionDate) {
+        this.transactionDate = transactionDate;
+    }
 
-	public void setUnMatchingAmount(BigDecimal unMatchingAmount) {
-		this.unMatchingAmount = unMatchingAmount;
-	}
+    public BigDecimal getUnMatchingAmount() {
+        return unMatchingAmount;
+    }
 
-	public CustomerAccount getCustomerAccount() {
-		return customerAccount;
-	}
+    public void setUnMatchingAmount(BigDecimal unMatchingAmount) {
+        this.unMatchingAmount = unMatchingAmount;
+    }
 
-	public void setCustomerAccount(CustomerAccount customerAccount) {
-		this.customerAccount = customerAccount;
-	}
+    public CustomerAccount getCustomerAccount() {
+        return customerAccount;
+    }
 
-	public void setAccountCode(String accountCode) {
-		this.accountCode = accountCode;
-	}
+    public void setCustomerAccount(CustomerAccount customerAccount) {
+        this.customerAccount = customerAccount;
+    }
 
-	public String getAccountCode() {
-		return accountCode;
-	}
+    public void setAccountCode(String accountCode) {
+        this.accountCode = accountCode;
+    }
 
-	public String getAccountCodeClientSide() {
-		return accountCodeClientSide;
-	}
+    public String getAccountCode() {
+        return accountCode;
+    }
 
-	public void setAccountCodeClientSide(String accountCodeClientSide) {
-		this.accountCodeClientSide = accountCodeClientSide;
-	}
+    public String getAccountCodeClientSide() {
+        return accountCodeClientSide;
+    }
 
-	public MatchingStatusEnum getMatchingStatus() {
-		return matchingStatus;
-	}
+    public void setAccountCodeClientSide(String accountCodeClientSide) {
+        this.accountCodeClientSide = accountCodeClientSide;
+    }
 
-	public void setMatchingStatus(MatchingStatusEnum matchingStatus) {
-		this.matchingStatus = matchingStatus;
-	}
+    public MatchingStatusEnum getMatchingStatus() {
+        return matchingStatus;
+    }
 
-	public String getOccCode() {
-		return occCode;
-	}
+    public void setMatchingStatus(MatchingStatusEnum matchingStatus) {
+        this.matchingStatus = matchingStatus;
+    }
 
-	public void setOccCode(String occCode) {
-		this.occCode = occCode;
-	}
+    public String getOccCode() {
+        return occCode;
+    }
 
-	public String getOccDescription() {
-		return occDescription;
-	}
+    public void setOccCode(String occCode) {
+        this.occCode = occCode;
+    }
 
-	public void setOccDescription(String occDescription) {
-		this.occDescription = occDescription;
-	}
+    public String getOccDescription() {
+        return occDescription;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((occCode == null) ? 0 : occCode.hashCode());
-		return result;
-	}
+    public void setOccDescription(String occDescription) {
+        this.occDescription = occDescription;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((occCode == null) ? 0 : occCode.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
 
         if (this == obj) {
             return true;
@@ -270,104 +275,125 @@ public class AccountOperation extends EnableEntity implements ICustomFieldEntity
         } else if (!(obj instanceof AccountOperation)) {
             return false;
         }
-        
-		AccountOperation other = (AccountOperation) obj;
-		if (occCode == null) {
-			if (other.occCode != null)
-				return false;
-		} else if (!occCode.equals(other.occCode))
-			return false;
-		return true;
-	}
 
-	public void setType(String type) {
-		this.type = type;
-	}
+        AccountOperation other = (AccountOperation) obj;
+        if (occCode == null) {
+            if (other.occCode != null)
+                return false;
+        } else if (!occCode.equals(other.occCode))
+            return false;
+        return true;
+    }
 
-	public String getType() {
-		return type;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public void setMatchingAmounts(List<MatchingAmount> matchingAmounts) {
-		this.matchingAmounts = matchingAmounts;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public List<MatchingAmount> getMatchingAmounts() {
-		return matchingAmounts;
-	}
+    public void setMatchingAmounts(List<MatchingAmount> matchingAmounts) {
+        this.matchingAmounts = matchingAmounts;
+    }
 
-	public boolean getExcludedFromDunning() {
-		return excludedFromDunning;
-	}
+    public List<MatchingAmount> getMatchingAmounts() {
+        return matchingAmounts;
+    }
 
-	public void setExcludedFromDunning(boolean excludedFromDunning) {
-		this.excludedFromDunning = excludedFromDunning;
-	}
-	
-	   @Override
-	    public String getUuid() {
-	        return uuid;
-	    }
+    public boolean getExcludedFromDunning() {
+        return excludedFromDunning;
+    }
 
-	    public void setUuid(String uuid) {
-	        this.uuid = uuid;
-	    }
+    public void setExcludedFromDunning(boolean excludedFromDunning) {
+        this.excludedFromDunning = excludedFromDunning;
+    }
 
-	    @Override
-	    public String clearUuid() {
-	        String oldUuid = uuid;
-	        uuid = UUID.randomUUID().toString();
-	        return oldUuid;
-	    }
+    @Override
+    public String getUuid() {
+        return uuid;
+    }
 
-		@Override
-		public ICustomFieldEntity[] getParentCFEntities() {
-			return null;
-		}
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
 
-		/**
-		 * @return the orderNumber
-		 */
-		public String getOrderNumber() {
-			return orderNumber;
-		}
+    @Override
+    public String clearUuid() {
+        String oldUuid = uuid;
+        uuid = UUID.randomUUID().toString();
+        return oldUuid;
+    }
 
-		/**
-		 * @param orderNumber the orderNumber to set
-		 */
-		public void setOrderNumber(String orderNumber) {
-			this.orderNumber = orderNumber;
-		}
+    public CustomFieldValues getCfValues() {
+        return cfValues;
+    }
 
-	public String getBankLot() {
-		return bankLot;
-	}
+    public void setCfValues(CustomFieldValues cfValues) {
+        this.cfValues = cfValues;
+    }
 
-	public void setBankLot(String bankLot) {
-		this.bankLot = bankLot;
-	}
+    @Override
+    public CustomFieldValues getCfValuesNullSafe() {
+        if (cfValues == null) {
+            cfValues = new CustomFieldValues();
+        }
+        return cfValues;
+    }
 
-	public String getBankReference() {
-		return bankReference;
-	}
+    @Override
+    public void clearCfValues() {
+        cfValues = null;
+    }
 
-	public void setBankReference(String bankReference) {
-		this.bankReference = bankReference;
-	}
+    @Override
+    public ICustomFieldEntity[] getParentCFEntities() {
+        return null;
+    }
 
-	public Date getDepositDate() {
-		return depositDate;
-	}
+    /**
+     * @return the orderNumber
+     */
+    public String getOrderNumber() {
+        return orderNumber;
+    }
 
-	public void setDepositDate(Date depositDate) {
-		this.depositDate = depositDate;
-	}
+    /**
+     * @param orderNumber the orderNumber to set
+     */
+    public void setOrderNumber(String orderNumber) {
+        this.orderNumber = orderNumber;
+    }
 
-	public Date getBankCollectionDate() {
-		return bankCollectionDate;
-	}
+    public String getBankLot() {
+        return bankLot;
+    }
 
-	public void setBankCollectionDate(Date bankCollectionDate) {
-		this.bankCollectionDate = bankCollectionDate;
-	}
+    public void setBankLot(String bankLot) {
+        this.bankLot = bankLot;
+    }
+
+    public String getBankReference() {
+        return bankReference;
+    }
+
+    public void setBankReference(String bankReference) {
+        this.bankReference = bankReference;
+    }
+
+    public Date getDepositDate() {
+        return depositDate;
+    }
+
+    public void setDepositDate(Date depositDate) {
+        this.depositDate = depositDate;
+    }
+
+    public Date getBankCollectionDate() {
+        return bankCollectionDate;
+    }
+
+    public void setBankCollectionDate(Date bankCollectionDate) {
+        this.bankCollectionDate = bankCollectionDate;
+    }
 }
