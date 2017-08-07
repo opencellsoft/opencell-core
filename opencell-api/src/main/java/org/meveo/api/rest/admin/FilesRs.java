@@ -8,9 +8,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.response.admin.GetFilesResponseDto;
 import org.meveo.api.rest.IBaseRs;
+import org.meveo.api.rest.admin.impl.FileUploadForm;
 
 /**
  * @author Edward P. Legaspi
@@ -33,11 +35,16 @@ public interface FilesRs extends IBaseRs {
 	ActionStatus createDir(String dir);
 
 	@POST
-	@Path("suppressFile")
+	@Path("/suppressFile")
 	ActionStatus suppressFile(String file);
 
 	@POST
-	@Path("suppressDirectory")
+	@Path("/suppressDirectory")
 	ActionStatus suppressDir(String dir);
+
+	@POST
+	@Path("/upload")
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	ActionStatus uploadFile(@MultipartForm FileUploadForm form);
 
 }

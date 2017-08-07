@@ -86,4 +86,17 @@ public class FilesRsImpl extends BaseRs implements FilesRs {
 		return result;
 	}
 
+	@Override
+	public ActionStatus uploadFile(FileUploadForm form) {
+		ActionStatus result = new ActionStatus();
+
+		try {
+			filesApi.uploadFile(form.getData(), form.getFilename());
+		} catch (Exception e) {
+			processException(e, result);
+		}
+
+		return result;
+	}
+
 }
