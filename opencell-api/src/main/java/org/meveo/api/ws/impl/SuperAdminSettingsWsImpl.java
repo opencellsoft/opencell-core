@@ -8,6 +8,7 @@ import org.meveo.api.CountryIsoApi;
 import org.meveo.api.CurrencyIsoApi;
 import org.meveo.api.LanguageIsoApi;
 import org.meveo.api.ProviderApi;
+import org.meveo.api.admin.FilesApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.CountryIsoDto;
@@ -21,6 +22,7 @@ import org.meveo.api.dto.response.GetCurrencyIsoResponse;
 import org.meveo.api.dto.response.GetLanguageIsoResponse;
 import org.meveo.api.dto.response.GetLanguagesIsoResponse;
 import org.meveo.api.dto.response.GetProviderResponse;
+import org.meveo.api.dto.response.admin.GetFilesResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.SuperAdminSettingsWs;
 
@@ -42,6 +44,9 @@ public class SuperAdminSettingsWsImpl extends BaseWs implements SuperAdminSettin
 
     @Inject
     private ProviderApi providerApi;
+    
+    @Inject
+    private FilesApi filesApi;
 
     @Override
     public ActionStatus createProvider(ProviderDto postData) {
@@ -327,5 +332,70 @@ public class SuperAdminSettingsWsImpl extends BaseWs implements SuperAdminSettin
         }
 
         return result;
+	}
+
+	@Override
+	public GetFilesResponseDto listAllFiles() {
+		GetFilesResponseDto result = new GetFilesResponseDto();
+
+		try {
+			result.setFiles(filesApi.listFiles(null));
+		} catch (Exception e) {
+			processException(e, result.getActionStatus());
+		}
+
+		return result;
+	}
+
+	@Override
+	public GetFilesResponseDto listFiles(String dir) {
+		GetFilesResponseDto result = new GetFilesResponseDto();
+
+		try {
+			result.setFiles(filesApi.listFiles(dir));
+		} catch (Exception e) {
+			processException(e, result.getActionStatus());
+		}
+
+		return result;
+	}
+
+	@Override
+	public ActionStatus createDir(String dir) {
+		ActionStatus result = new ActionStatus();
+
+		try {
+			filesApi.createDir(dir);
+		} catch (Exception e) {
+			processException(e, result);
+		}
+
+		return result;
+	}
+
+	@Override
+	public ActionStatus suppressFile(String filePath) {
+		ActionStatus result = new ActionStatus();
+
+		try {
+			filesApi.suppressFile(filePath);
+		} catch (Exception e) {
+			processException(e, result);
+		}
+
+		return result;
+	}
+
+	@Override
+	public ActionStatus suppressDir(String dir) {
+		ActionStatus result = new ActionStatus();
+
+		try {
+			filesApi.suppressDir(dir);
+		} catch (Exception e) {
+			processException(e, result);
+		}
+
+		return result;
 	}
 }

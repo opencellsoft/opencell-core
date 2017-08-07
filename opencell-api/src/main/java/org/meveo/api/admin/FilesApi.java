@@ -1,6 +1,7 @@
 package org.meveo.api.admin;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -97,6 +98,32 @@ public class FilesApi extends BaseApi {
 			fos.close();
 		} catch (IOException e) {
 			throw new BusinessApiException("Error suppressing file: " + file.getName() + ". " + e.getMessage());
+		}
+	}
+
+	public void uploadFile(byte[] data, String filename) throws BusinessApiException {
+		File file = new File(getProviderRootDir() + File.separator + filename);
+
+		try {
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+
+			FileOutputStream fop = new FileOutputStream(file);
+
+			fop.write(data);
+			fop.flush();
+			fop.close();
+
+			if (FilenameUtils.getExtension(file.getName()).equals("zip")) {
+				// unzip
+				// get parent dir
+				String parentDir = file.getParent();
+				FileUtils.unzipFile(parentDir, new FileInputStream(file));
+			}
+			
+		} catch (Exception e) {
+			throw new BusinessApiException("Error uploading file: " + filename + ". " + e.getMessage());
 		}
 	}
 
