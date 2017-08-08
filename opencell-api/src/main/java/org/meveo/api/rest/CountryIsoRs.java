@@ -76,7 +76,7 @@ public interface CountryIsoRs extends IBaseRs {
      * @return
      */
     @GET
-    @Path("/")
+    @Path("/list")
     GetCountriesIsoResponse list();
 
 }
