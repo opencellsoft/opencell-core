@@ -1,5 +1,8 @@
 package org.meveo.api;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -101,4 +104,18 @@ public class CurrencyIsoApi extends BaseApi {
             update(postData);
         }
     }
+    
+	public List<CurrencyIsoDto> list() {
+		List<CurrencyIsoDto> result = new ArrayList<>();
+
+		List<Currency> currencies = currencyService.list();
+		if (currencies != null) {
+			for (Currency country : currencies) {
+				result.add(new CurrencyIsoDto(country));
+			}
+		}
+
+		return result;
+	}
+	
 }
