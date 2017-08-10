@@ -23,6 +23,21 @@ public abstract class PaymentMethodDto extends BaseDto {
     protected boolean preferred;
 
     protected String customerAccountCode;
+    
+    protected String userId;
+
+    protected String info1;
+
+    protected String info2;
+
+    protected String info3;
+
+    protected String info4;
+    
+    protected String info5;
+    
+
+
 
     public PaymentMethodDto() {
     }
@@ -31,6 +46,12 @@ public abstract class PaymentMethodDto extends BaseDto {
         this.id = paymentMethod.getId();
         this.alias = paymentMethod.getAlias();
         this.preferred = paymentMethod.isPreferred();
+        this.userId = paymentMethod.getUserId();
+        this.info1 = paymentMethod.getInfo1();
+        this.info2 = paymentMethod.getInfo2();
+        this.info3 = paymentMethod.getInfo3();
+        this.info4 = paymentMethod.getInfo4();
+        this.info5 = paymentMethod.getInfo5();
     }
 
     public Long getId() {
@@ -64,8 +85,58 @@ public abstract class PaymentMethodDto extends BaseDto {
     public void setCustomerAccountCode(String customerAccountCode) {
         this.customerAccountCode = customerAccountCode;
     }
+    
+    
 
-    /**
+    public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public String getInfo1() {
+		return info1;
+	}
+
+	public void setInfo1(String info1) {
+		this.info1 = info1;
+	}
+
+	public String getInfo2() {
+		return info2;
+	}
+
+	public void setInfo2(String info2) {
+		this.info2 = info2;
+	}
+
+	public String getInfo3() {
+		return info3;
+	}
+
+	public void setInfo3(String info3) {
+		this.info3 = info3;
+	}
+
+	public String getInfo4() {
+		return info4;
+	}
+
+	public void setInfo4(String info4) {
+		this.info4 = info4;
+	}
+
+	public String getInfo5() {
+		return info5;
+	}
+
+	public void setInfo5(String info5) {
+		this.info5 = info5;
+	}
+
+	/**
      * Convert entity to DTO
      * 
      * @param paymentMethod Payment method to convert
