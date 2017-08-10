@@ -265,6 +265,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		String languageCode = billingAccount.getTradingLanguage().getLanguage().getLanguageCode();
 		List<UserAccount> userAccounts = userAccountService.listByBillingAccount(billingAccount);				
 		boolean isExonerated = billingAccountService.isExonerated(billingAccount);
+		
+		//TODO[Edward] If !isExonerated then check if there is a tax script inside invoice.invoiceType.
+		// Create a new boolean calculateTax=!isExonerated and invoice.invoiceType.taxScript is null.
+		
         if (ratedTransactionFilter != null) {
             ratedTransactions = (List<RatedTransaction>) filterService.filteredListAsObjects(ratedTransactionFilter);
             if(ratedTransactions == null || ratedTransactions.isEmpty()){
@@ -392,7 +396,19 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 log.info("invoice subcategory {}, amountWithoutTax {}, amountWithTax {}, amountTax {}", object[0], object[1], object[2], object[3]);
                 Long invoiceSubCategoryId = (Long) object[0];
                 InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findById(invoiceSubCategoryId);
+                
                 List<Tax> taxes = new ArrayList<Tax>();
+                
+                // TODO[Edward] If there is a global tax script in the invoiceType, just skip this part until after the next for-loop.
+                
+                // TODO[Edward] If there is a tax script and script.isApplicable(userAccount, invoice, invoiceSubCategory)=true, 
+                // use it to compute the taxes (script.computeTaxes(userAccount, invoice, invoiceSubCategory) return List<Tax>). 
+                // Script can be inside invoiceSubCategory.
+                //
+                // parameters: userAccount, invoice, invoiceSubCategory
+                // result: list of tax
+                
+                // else use this for loop
                 for (InvoiceSubcategoryCountry invoicesubcatCountry : invoiceSubCategory.getInvoiceSubcategoryCountries()) {
                     if (invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode())
                             && invoiceSubCategoryService.matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(), billingAccount, invoice)) {
@@ -428,6 +444,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 }
 
                 // start aggregate T
+                // TODO[Edward] Replace by if(calculateTax)
                 if (!isExonerated) {
                     for (Tax tax : taxes) {
                         TaxInvoiceAgregate invoiceAgregateTax = null;
@@ -509,6 +526,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 						RoundingMode.HALF_UP));
                 // add it to taxAggregate and CategoryAggregate
                 for (Tax tax : invoiceAgregateSubcat.getSubCategoryTaxes()) {
+                	// TODO[Edward] Replace !isExonerated by calculateTax
                     if (tax.getPercent().compareTo(BigDecimal.ZERO) != 0 && !isExonerated) {
                         TaxInvoiceAgregate taxInvoiceAgregate = taxInvoiceAgregateMap.get(tax.getId());
                         taxInvoiceAgregate.addAmountWithoutTax(invoiceAgregateSubcat.getAmountWithoutTax());
@@ -533,6 +551,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             }
 
             // compute the tax
+            // TODO[Edward] Replace !isExonerated by calculateTax
             if (!isExonerated) {
                 for (Map.Entry<Long, TaxInvoiceAgregate> taxCatMap : taxInvoiceAgregateMap.entrySet()) {
                     TaxInvoiceAgregate taxCat = taxCatMap.getValue();
@@ -551,11 +570,15 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
                 }
             }
-
+            
             for (Map.Entry<Long, CategoryInvoiceAgregate> cat : catInvoiceAgregateMap.entrySet()) {
                 CategoryInvoiceAgregate categoryInvoiceAgregate = cat.getValue();
                 invoice.addAmountWithoutTax(categoryInvoiceAgregate.getAmountWithoutTax().setScale(rounding, RoundingMode.HALF_UP));
             }
+            
+            // TODO [Edward] if(!isExonerated && !calculateTax) then call the global
+            // taxInvoiceAgregateMap = invoice.invoiceType.taxScript.computeTaxAggregateMap(invoice, catInvoiceAgregateMap, invoiceAgregateSubcat)
+            
             for (Map.Entry<Long, TaxInvoiceAgregate> tax : taxInvoiceAgregateMap.entrySet()) {
                 TaxInvoiceAgregate taxInvoiceAgregate = tax.getValue();
                 invoice.addAmountTax(taxInvoiceAgregate.getAmountTax().setScale(rounding, RoundingMode.HALF_UP));
