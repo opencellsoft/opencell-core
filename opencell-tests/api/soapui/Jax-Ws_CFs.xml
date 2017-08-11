@@ -22102,13 +22102,6 @@ public class Action1 extends Script {
                 <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="Simple NotContains" id="ee55cc75-c0c5-4c00-971d-c0aef0347e4e" name="Not Contains">
-              <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_STRING_MATRIX_V_PI_REQUIRED"</token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
             <con:assertion type="Simple Contains" id="33ee3e37-e93e-49b3-9cfc-b791c4616ac1" name="Contains 2">
               <con:configuration>
                 <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_STRING_LIST_PI_REQUIRED">
@@ -22176,11 +22169,43 @@ public class Action1 extends Script {
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="Simple NotContains" id="ebcbf854-c9f6-450b-a37f-c5510eae7392" name="Not Contains 1">
+            <con:assertion type="XPath Match" id="0b8d5a3c-9fbf-49a1-a953-6c51d7cf85d8" name="XPath Match 2">
               <con:configuration>
-                <token>&lt;customField code="${#Project#baseEntityPrefix}_STRING_LIST_V_PI_REQUIRED"</token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
+                <path>//customField[@code="${#Project#baseEntityPrefix}_STRING_LIST_V_PI_REQUIRED"]</path>
+                <content><![CDATA[<customField code="CF_BASE_STRING_LIST_V_PI_REQUIRED" valuePeriodStartDate="*" valuePeriodEndDate="*">
+  <listValue>
+    <value>
+      <stringValue>SELLER_STRING_VALUE_6</stringValue>
+    </value>
+  </listValue>
+</customField>]]></content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="36855ad6-a6ff-42de-bdd1-935a7ae239e5" name="XPath Match 3">
+              <con:configuration>
+                <path>//customField[@code="${#Project#baseEntityPrefix}_STRING_MATRIX_V_PI_REQUIRED"]</path>
+                <content><![CDATA[<customField code="CF_BASE_STRING_MATRIX_V_PI_REQUIRED" valuePeriodStartDate="*" valuePeriodEndDate="*">
+  <mapValue>
+    <entry>
+      <key>n|2&lt;9</key>
+      <value>
+        <stringValue>SELLER_STRING_VALUE_16</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>key</key>
+      <value>
+        <stringValue>MAT_1/MAT_2</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</customField>]]></content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
             <con:credentials>
@@ -37408,19 +37433,19 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
   <con:properties>
     <con:property>
       <con:name>meveoUrl</con:name>
-      <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
+      <con:value>http://localhost:8080/opencell</con:value>
     </con:property>
     <con:property>
       <con:name>meveoUrl2</con:name>
-      <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
+      <con:value>http://localhost:8080/opencell</con:value>
     </con:property>
     <con:property>
       <con:name>timezone</con:name>
-      <con:value>Z</con:value>
+      <con:value>-03:00</con:value>
     </con:property>
     <con:property>
       <con:name>timezone2</con:name>
-      <con:value>Z</con:value>
+      <con:value>-03:00</con:value>
     </con:property>
     <con:property>
       <con:name>meveoAdminUserName</con:name>

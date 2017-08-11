@@ -8,8 +8,6 @@ import org.hibernate.type.descriptor.ValueBinder;
 import org.hibernate.type.descriptor.WrapperOptions;
 import org.hibernate.type.descriptor.java.JavaTypeDescriptor;
 import org.hibernate.type.descriptor.sql.BasicBinder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class JsonStringSqlTypeDescriptor extends AbstractJsonSqlTypeDescriptor {
 
@@ -22,16 +20,11 @@ public class JsonStringSqlTypeDescriptor extends AbstractJsonSqlTypeDescriptor {
         return new BasicBinder<X>(javaTypeDescriptor, this) {
             @Override
             protected void doBind(PreparedStatement st, X value, int index, WrapperOptions options) throws SQLException {
-                Logger log = LoggerFactory.getLogger(getClass());
-                log.error("AKK statement class is {} {}", st.getClass(), st.getConnection().getClass());
                 st.setString(index, javaTypeDescriptor.unwrap(value, String.class, options));
             }
 
             @Override
             protected void doBind(CallableStatement st, X value, String name, WrapperOptions options) throws SQLException {
-                
-                Logger log = LoggerFactory.getLogger(getClass());
-                log.error("AKK statement class is {} {}", st.getClass(), st.getConnection().getClass());
                 st.setString(name, javaTypeDescriptor.unwrap(value, String.class, options));
             }
         };

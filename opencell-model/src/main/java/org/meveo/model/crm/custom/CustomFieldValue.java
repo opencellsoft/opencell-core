@@ -14,10 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.Transient;
-
+import org.meveo.commons.utils.CustomDateSerializer;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.DatePeriod;
@@ -27,6 +24,10 @@ import org.meveo.model.shared.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -50,7 +51,7 @@ import com.google.gson.reflect.TypeToken;
  * @author Andrius Karpavicius
  * 
  */
-@Embeddable
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CustomFieldValue implements Serializable {
 
     private static final long serialVersionUID = -9038541899269528670L;
@@ -64,43 +65,38 @@ public class CustomFieldValue implements Serializable {
 
     private static String SERIALIZATION_SEPARATOR = "|";
 
-    @Transient
+    @JsonUnwrapped(prefix = "period_")
     private DatePeriod period;
 
-    @Transient
-    private int priority;
+    private Integer priority;
 
-    @Column(name = "string_value", columnDefinition = "TEXT")
     private String stringValue;
 
-    @Column(name = "date_value")
+    @JsonSerialize(using = CustomDateSerializer.class)
     private Date dateValue;
 
-    @Column(name = "long_value")
     private Long longValue;
 
-    @Column(name = "double_value")
     private Double doubleValue;
 
-    @Column(name = "serialized_value", columnDefinition = "LONGTEXT")
     private String serializedValue;
 
     /**
      * Entity reference type value deserialized from serializedValue field
      */
-    @Transient
+    @JsonIgnore
     private EntityReferenceWrapper entityReferenceValue;
 
     /**
      * List type value deserialized from serializedValue field
      */
-    @Transient
+    @JsonIgnore
     private List<Object> listValue = null; // new ArrayList<Object>();
 
     /**
      * Map type value deserialized from serializedValue field
      */
-    @Transient
+    @JsonIgnore
     private Map<String, Object> mapValue = null; // new HashMap<String, Object>();
 
     /**
@@ -108,7 +104,7 @@ public class CustomFieldValue implements Serializable {
      * 
      * List item corresponds to an entry in a mapValue with the following list's map values: MAP_KEY=mapValue.entry.key and MAP_VALUE=mapValue.entry.value
      */
-    @Transient
+    @JsonIgnore
     private List<Map<String, Object>> mapValuesForGUI = new ArrayList<Map<String, Object>>();
 
     /**
@@ -117,7 +113,7 @@ public class CustomFieldValue implements Serializable {
      * List item corresponds to an entry in a mapValue with the following list's map values: MAP_VALUE=mapValue.entry.value, mapValue.entry.key is parsed into separate key/value
      * pairs and inserted into map
      */
-    @Transient
+    @JsonIgnore
     private List<Map<String, Object>> matrixValuesForGUI = new ArrayList<Map<String, Object>>();
 
     /**
@@ -125,7 +121,7 @@ public class CustomFieldValue implements Serializable {
      * 
      * CustomFieldValueHolder.entity = entity reference CEI object, CustomFieldValueHolder.values = childEntityValue.fieldValues
      */
-    @Transient
+    @JsonIgnore
     private List<CustomFieldValueHolder> childEntityValuesForGUI = new ArrayList<>();
 
     /**
@@ -134,7 +130,7 @@ public class CustomFieldValue implements Serializable {
      * A class of entityReferenceValue.className type is instantiated with code field set to entityReferenceValue.code value and in case it is Custom Entity Instance class, a
      * cetCode field is set to entityReferenceValue.classnameCode value
      */
-    @Transient
+    @JsonIgnore
     private BusinessEntity entityReferenceValueForGUI;
 
     public CustomFieldValue() {
@@ -144,7 +140,7 @@ public class CustomFieldValue implements Serializable {
         setValue(value);
     }
 
-    public CustomFieldValue(DatePeriod period, int priority, Object value) {
+    public CustomFieldValue(DatePeriod period, Integer priority, Object value) {
         this.period = period;
         this.priority = priority;
         setValue(value);
@@ -279,7 +275,11 @@ public class CustomFieldValue implements Serializable {
     }
 
     public int getPriority() {
-        return priority;
+        if (priority == null) {
+            return 0;
+        } else {
+            return priority;
+        }
     }
 
     public void setPriority(int priority) {
@@ -981,7 +981,17 @@ public class CustomFieldValue implements Serializable {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public void setValue(Object value, boolean toSerialize) {
 
-        if (value instanceof Date) {
+        if (value == null) {
+            dateValue = null;
+            doubleValue = null;
+            longValue = null;
+            stringValue = null;
+            serializedValue = null;
+            entityReferenceValue = null;
+            mapValue = null;
+            listValue = null;
+
+        } else if (value instanceof Date) {
             dateValue = (Date) value;
 
         } else if (value instanceof BigDecimal) {

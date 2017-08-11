@@ -88,7 +88,7 @@
                                     partialSubmitFilter=":not([name*='addNewFields'])" />
                                 <!--                                                  only customFieldListTable as for simple values no need to show a periodvalue dialog -->
                                 <hftl:customFieldListTable edit="#{edit}" cft="#{cfValueHolder.selectedFieldTemplate}" entity="#{entity}"
-                                    field="#{cfValueHolder.selectedValuePeriod.cfValue}" updateOnAddEdit="#{cfValueHolder.selectedValuePeriodId}" messagesId="#{messagesId}"
+                                    field="#{cfValueHolder.selectedValuePeriod}" updateOnAddEdit="#{cfValueHolder.selectedValuePeriodId}" messagesId="#{messagesId}"
                                     popupWidgetVar="#{prefix}periodValuesDialogWidget" prefix="#{prefix}" datePattern="#{datePattern}" componentWidth="100" />
 
                             </h:panelGroup>

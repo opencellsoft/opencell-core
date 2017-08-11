@@ -41,7 +41,7 @@
 
     <c:if test="#{cc.attrs.cft.fieldType eq CustomFieldTypeEnum.CHILD_ENTITY}">
         <hftl:customFieldCHEListTable edit="#{cc.attrs.edit}" cft="#{cc.attrs.cft}" entity="#{cc.attrs.entity}" clientGuiId="#{cc.clientId}" prefix="#{cc.attrs.prefix}"
-            field="#{cc.attrs.cfValueHolder.getFirstValue(cc.attrs.cft.code).cfValue}" messagesId="#{cc.attrs.messagesId}" disabled="#{cc.attrs.disabled}"
+            field="#{cc.attrs.cfValueHolder.getFirstValue(cc.attrs.cft.code)}" messagesId="#{cc.attrs.messagesId}" disabled="#{cc.attrs.disabled}"
             datePattern="#{cc.attrs.datePattern}" dateTimePattern="#{cc.attrs.dateTimePattern}" />
     </c:if>
 
@@ -52,7 +52,7 @@
                 <c:set var="inheritedValue" value="#{customFieldDataEntryBean.getInheritedCFValue(cc.attrs.entity, cc.attrs.cft.code)}" />
                 
                 <hftl:decorateFormField label="#{cc.attrs.cft.description}#{cc.attrs.cft.valueRequired and inheritedValue ==null?' *':''}" componentWidth="25" displayOneLine="false">
-                    <hftl:customFieldValueField edit="#{cc.attrs.edit}" cft="#{cc.attrs.cft}" field="#{cc.attrs.cfValueHolder.getFirstValue(cc.attrs.cft.code).cfValue}"
+                    <hftl:customFieldValueField edit="#{cc.attrs.edit}" cft="#{cc.attrs.cft}" field="#{cc.attrs.cfValueHolder.getFirstValue(cc.attrs.cft.code)}"
                         entity="#{cc.attrs.entity}" disabled="#{cc.attrs.disabled}" datePattern="#{cc.attrs.datePattern}" hasInheritedValue="#{inheritedValue !=null}"/>
                 </hftl:decorateFormField>
                 
@@ -70,7 +70,7 @@
                 <c:set var="inheritedValue" value="#{customFieldDataEntryBean.getInheritedCFValueAsCFValue(cc.attrs.entity, cc.attrs.cft, cc.attrs.cft.code)}" />
                 
                 <hftl:customFieldListTable edit="#{cc.attrs.edit}" cft="#{cc.attrs.cft}" entity="#{cc.attrs.entity}" clientGuiId="#{cc.clientId}" prefix="#{cc.attrs.prefix}"
-                    datePattern="#{cc.attrs.datePattern}" field="#{cc.attrs.cfValueHolder.getFirstValue(cc.attrs.cft.code).cfValue}" messagesId="#{cc.attrs.messagesId}"
+                    datePattern="#{cc.attrs.datePattern}" field="#{cc.attrs.cfValueHolder.getFirstValue(cc.attrs.cft.code)}" messagesId="#{cc.attrs.messagesId}"
                     disabled="#{cc.attrs.disabled}" hasInheritedValue="#{inheritedValue !=null}"/>
 
                 <c:if test="#{inheritedValue !=null}">

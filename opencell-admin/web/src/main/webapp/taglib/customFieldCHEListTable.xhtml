@@ -48,10 +48,10 @@
                 </f:facet>
                 <h:outputText value="#{childEntityValueHolder.entity.code}" rendered="#{fieldCode eq 'code'}" />
                 <h:outputText value="#{childEntityValueHolder.entity.description}" rendered="#{fieldCode eq 'description'}" />
-                <h:outputText value="#{cfv:getShortRepresentationOfValueObj(childEntityValueHolder.getFirstValue(fieldCode).cfValue.value, datePattern)}"
+                <h:outputText value="#{cfv:getShortRepresentationOfValueObj(childEntityValueHolder.getFirstValue(fieldCode).value, datePattern)}"
                     rendered="#{fieldCode ne 'code' and fieldCode ne 'description'}" />
 
-                <!--                 <h:outputText value="#{childEntityValueHolder.getFirstValue(fieldCode).cfValue.getShortRepresentationOfValue(column, datePattern)}" /> -->
+                <!--                 <h:outputText value="#{childEntityValueHolder.getFirstValue(fieldCode).getShortRepresentationOfValue(column, datePattern)}" /> -->
             </p:columns>
             <!--             <p:column headerText="#{messages['businessEntity.code']}"> -->
             <!--                 <h:outputText value="#{childEntityValueHolder.entity.code}" /> -->
@@ -62,7 +62,7 @@
             <!--             </p:column> -->
 
             <!--             <p:columns value="#{customFieldDataEntryBean.getChildEntityColumnsForList(cft)}" var="column" headerText="#{column.description}"> -->
-            <!--                 <h:outputText value="#{childEntityValueHolder.getFirstValue(column.code).cfValue.getShortRepresentationOfValue(column, datePattern)}" /> -->
+            <!--                 <h:outputText value="#{childEntityValueHolder.getFirstValue(column.code).getShortRepresentationOfValue(column, datePattern)}" /> -->
             <!--             </p:columns> -->
 
             <p:column headerText="#{messages['commons.actions']}" width="15%">

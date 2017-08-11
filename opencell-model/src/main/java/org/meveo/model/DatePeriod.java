@@ -26,21 +26,28 @@ import javax.persistence.Embeddable;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.meveo.commons.utils.CustomDateSerializer;
 import org.meveo.model.shared.DateUtils;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
  * @author Ignas
  * @created 2009.10.20
  */
 @Embeddable
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class DatePeriod implements Comparable<DatePeriod>, Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @JsonSerialize(using = CustomDateSerializer.class)
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "start_date")
     private Date from;
 
+    @JsonSerialize(using = CustomDateSerializer.class)
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "end_date")
     private Date to;

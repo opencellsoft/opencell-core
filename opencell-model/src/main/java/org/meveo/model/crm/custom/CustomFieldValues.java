@@ -1,5 +1,6 @@
 package org.meveo.model.crm.custom;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,11 +14,22 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
-public class CustomFieldValues {
+/**
+ * Represents custom field values held by an ICustomFieldEntity entity
+ * 
+ * @author Andrius Karpavicius
+ *
+ */
+public class CustomFieldValues implements Serializable {
+
+    private static final long serialVersionUID = -1733710622601844949L;
 
     public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     public static SimpleDateFormat xmlsdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
+    /**
+     * Custom field values (CF value entity) grouped by a custom field code
+     */
     private Map<String, List<CustomFieldValue>> valuesByCode = new HashMap<>();
 
     public CustomFieldValues() {
@@ -30,15 +42,32 @@ public class CustomFieldValues {
     public Map<String, List<CustomFieldValue>> getValuesByCode() {
         return valuesByCode;
     }
+    
+    public void setValuesByCode(Map<String, List<CustomFieldValue>> valuesByCode) {
+        this.valuesByCode = valuesByCode;
+    }
 
     public void clearValues() {
         valuesByCode = null;
     }
 
+    /**
+     * Check if entity has a value for a given custom field
+     * 
+     * @param cfCode Custom field code
+     * @return True if entity has a value for a given custom field
+     */
     public boolean hasCfValue(String cfCode) {
         return valuesByCode != null && valuesByCode.containsKey(cfCode);
     }
 
+    /**
+     * Get a single custom field value for a given custom field. In case of versioned values (more than one entry in CF value list) a CF value corresponding to a today will be
+     * returned
+     * 
+     * @param cfCode Custom field code
+     * @return CF value entity
+     */
     public CustomFieldValue getCfValue(String cfCode) {
         if (valuesByCode == null) {
             return null;
@@ -54,6 +83,13 @@ public class CustomFieldValues {
         return null;
     }
 
+    /**
+     * Get a single custom field value for a given custom field for a given date
+     * 
+     * @param cfCode Custom field code
+     * @param date Date
+     * @return CF value entity
+     */
     public CustomFieldValue getCfValue(String cfCode, Date date) {
         if (valuesByCode == null) {
             return null;
@@ -77,6 +113,14 @@ public class CustomFieldValues {
         return null;
     }
 
+    /**
+     * Get a single custom field value for a given custom field for a given date period, strictly matching the CF value's period start/end dates
+     * 
+     * @param cfCode Custom field code
+     * @param dateFrom Period start date
+     * @param dateTo Period end date
+     * @return CF value entity
+     */
     public CustomFieldValue getCfValue(String cfCode, Date dateFrom, Date dateTo) {
         if (valuesByCode == null) {
             return null;
@@ -84,6 +128,13 @@ public class CustomFieldValues {
         return getValueByPeriod(cfCode, new DatePeriod(dateFrom, dateTo), true, false);
     }
 
+    /**
+     * Get a value (not CF value entity) for a given custom field. In case of versioned values (more than one entry in CF value list) a CF value corresponding to a today will be
+     * returned
+     * 
+     * @param cfCode Custom field code
+     * @return Value
+     */
     public Object getValue(String cfCode) {
         CustomFieldValue cfValue = getCfValue(cfCode);
         if (cfValue != null) {
@@ -93,6 +144,13 @@ public class CustomFieldValues {
         return null;
     }
 
+    /**
+     * Get a value (not CF value entity) for a given custom field for a given date
+     * 
+     * @param cfCode Custom field code
+     * @param date Date
+     * @return Value
+     */
     public Object getValue(String cfCode, Date date) {
         CustomFieldValue cfValue = getCfValue(cfCode, date);
         if (cfValue != null) {
@@ -102,6 +160,11 @@ public class CustomFieldValues {
         return null;
     }
 
+    /**
+     * Remove custom field values
+     * 
+     * @param cfCode Custom field code
+     */
     public void removeValue(String cfCode) {
         if (valuesByCode == null) {
             return;
@@ -109,6 +172,12 @@ public class CustomFieldValues {
         valuesByCode.remove(cfCode);
     }
 
+    /**
+     * Remove custom field values for a given date
+     * 
+     * @param cfCode Custom field code
+     * @param date Date
+     */
     public void removeValue(String cfCode, Date date) {
         if (valuesByCode == null) {
             return;
@@ -128,6 +197,13 @@ public class CustomFieldValues {
         }
     }
 
+    /**
+     * Remove custom field values for a given date period, strictly matching custom field value's period start and end dates
+     * 
+     * @param cfCode Custom field code
+     * @param dateFrom Period start date
+     * @param dateTo Period end date
+     */
     public void removeValue(String cfCode, Date dateFrom, Date dateTo) {
         if (valuesByCode == null) {
             return;
@@ -147,6 +223,13 @@ public class CustomFieldValues {
         }
     }
 
+    /**
+     * Set custom field value
+     * 
+     * @param cfCode Custom field code
+     * @param value Value to set
+     * @return CF value entity
+     */
     public CustomFieldValue setValue(String cfCode, Object value) {
         if (valuesByCode == null) {
             valuesByCode = new HashMap<>();
@@ -157,33 +240,49 @@ public class CustomFieldValues {
         return cfValue;
     }
 
-    public CustomFieldValue setValue(String cfCode, DatePeriod period, int priority, Object value) {
+    /**
+     * Set custom field value for a given period
+     * 
+     * @param cfCode Custom field code
+     * @param period Period
+     * @param priority Priority. Will default to 0 if passed null, will default to next value if passed as -1, will be set otherwise.
+     * @param value Value to set
+     * @return CF value entity
+     */
+    public CustomFieldValue setValue(String cfCode, DatePeriod period, Integer priority, Object value) {
         if (valuesByCode == null) {
             valuesByCode = new HashMap<>();
         }
-        if (!valuesByCode.containsKey(cfCode)) {
-            valuesByCode.put(cfCode, new ArrayList<>());
-        }
 
         CustomFieldValue valueByPeriod = getValueByPeriod(cfCode, period, true, true);
+        if (priority == null) {
+            valueByPeriod.setPriority(0);
+        } else if (priority.intValue() >= 0) {
+            valueByPeriod.setPriority(priority);
+        }
         valueByPeriod.setValue(value);
         return valueByPeriod;
     }
 
     private CustomFieldValue getValueByPeriod(String cfCode, DatePeriod period, boolean strictMatch, Boolean createIfNotFound) {
         CustomFieldValue valueFound = null;
-        for (CustomFieldValue value : valuesByCode.get(cfCode)) {
-            if (value.getPeriod() == null && (valueFound == null || valueFound.getPriority() < value.getPriority())) {
-                valueFound = value;
-
-            } else if (value.getPeriod() != null && value.getPeriod().isCorrespondsToPeriod(period, strictMatch)) {
-                if (valueFound == null || valueFound.getPriority() < value.getPriority()) {
+        if (valuesByCode.containsKey(cfCode)) {
+            for (CustomFieldValue value : valuesByCode.get(cfCode)) {
+                if (value.getPeriod() == null && (valueFound == null || valueFound.getPriority() < value.getPriority())) {
                     valueFound = value;
+
+                } else if (value.getPeriod() != null && value.getPeriod().isCorrespondsToPeriod(period, strictMatch)) {
+                    if (valueFound == null || valueFound.getPriority() < value.getPriority()) {
+                        valueFound = value;
+                    }
                 }
             }
         }
         // Create a value for period if match not found
         if (valueFound == null && createIfNotFound) {
+            if (!valuesByCode.containsKey(cfCode)) {
+                valuesByCode.put(cfCode, new ArrayList<>());
+            }
             valueFound = new CustomFieldValue(period, getNextPriority(cfCode), null);
             valuesByCode.get(cfCode).add(valueFound);
         }
@@ -204,6 +303,11 @@ public class CustomFieldValues {
         return maxPriority + 1;
     }
 
+    /**
+     * Return custom field values as JSON
+     * 
+     * @return JSON formated string
+     */
     public String asJson() {
 
         if (valuesByCode == null) {
@@ -215,8 +319,9 @@ public class CustomFieldValues {
         for (Entry<String, List<CustomFieldValue>> cfValueInfo : valuesByCode.entrySet()) {
             for (CustomFieldValue cfValue : cfValueInfo.getValue()) {
                 result = result + sep + cfValueInfo.getKey() + ":" + cfValue.toJson(sdf) + ",description:" + "";
+
                 if (cfValue.getPeriod() != null && cfValue.getPeriod().getFrom() != null) {
-                    result = result + "," + "periodStartDate:\"" + sdf.format(cfValue.getPeriod().getFrom() + "\"");
+                    result = result + "," + "periodStartDate:\"" + sdf.format(cfValue.getPeriod().getFrom()) + "\"";
                 }
                 if (cfValue.getPeriod() != null && cfValue.getPeriod().getTo() != null) {
                     result = result + "," + "periodEndDate:\"" + sdf.format(cfValue.getPeriod().getTo()) + "\"";
@@ -229,6 +334,11 @@ public class CustomFieldValues {
         return result;
     }
 
+    /**
+     * Append custom field values to XML document, each as "customField" element
+     * 
+     * @param doc Document to append custom field values
+     */
     public void asDomElement(Document doc) {
 
         for (Entry<String, List<CustomFieldValue>> cfValueInfo : valuesByCode.entrySet()) {

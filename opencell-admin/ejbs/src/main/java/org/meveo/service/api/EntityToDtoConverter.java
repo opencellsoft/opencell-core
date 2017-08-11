@@ -116,7 +116,7 @@ public class EntityToDtoConverter {
     }
 
     private CustomFieldDto customFieldToDTO(String cfCode, CustomFieldValue cfValue, boolean isChildEntityTypeField) {
-
+        cfValue.deserializeValue();
         CustomFieldDto dto = customFieldToDTO(cfCode, cfValue.getValue(), isChildEntityTypeField);
         dto.setCode(cfCode);
         if (cfValue.getPeriod() != null) {

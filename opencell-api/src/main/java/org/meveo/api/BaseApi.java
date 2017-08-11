@@ -276,7 +276,10 @@ public abstract class BaseApi {
         // After saving passed CF values, validate that CustomField value is not
         // empty when field is mandatory. Check inherited values as well.
         // Instantiate CF with default value in case of a new entity
-        Map<String, List<CustomFieldValue>> cfValuesByCode = entity.getCfValuesNullSafe().getValuesByCode();
+        Map<String, List<CustomFieldValue>> cfValuesByCode = null;
+        if (entity.getCfValues() != null) {
+            cfValuesByCode = entity.getCfValues().getValuesByCode();
+        }
 
         for (CustomFieldTemplate cft : customFieldTemplates.values()) {
             if (cft.isDisabled() || (!cft.isValueRequired() && cft.getDefaultValue() == null && !cft.isUseInheritedAsDefaultValue())) {
@@ -290,7 +293,7 @@ public abstract class BaseApi {
             }
 
             // When no instance was found
-            if (!cfValuesByCode.containsKey(cft.getCode()) || cfValuesByCode.get(cft.getCode()).isEmpty()) {
+            if (cfValuesByCode == null || !cfValuesByCode.containsKey(cft.getCode()) || cfValuesByCode.get(cft.getCode()).isEmpty()) {
                 boolean hasValue = false;
 
                 // Need to instantiate default value either from inherited value or from a default value when cft.isInheritedAsDefaultValue()==true

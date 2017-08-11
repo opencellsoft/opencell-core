@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -49,6 +50,7 @@ import org.meveo.model.EnableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.crm.custom.CustomFieldValues;
+import org.meveo.model.persistence.CustomFieldValuesConverter;
 
 /**
  * Account Transaction.
@@ -133,7 +135,8 @@ public class AccountOperation extends EnableEntity implements ICustomFieldEntity
     @NotNull
     private String uuid = UUID.randomUUID().toString();
 
-    @Type(type = "json")
+    // @Type(type = "json")
+    @Convert(converter = CustomFieldValuesConverter.class)
     @Column(name = "cf_values", columnDefinition = "text")
     private CustomFieldValues cfValues;
 

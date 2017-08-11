@@ -28,6 +28,7 @@ import java.util.UUID;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -56,6 +57,7 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
+import org.meveo.model.persistence.CustomFieldValuesConverter;
 import org.meveo.model.quote.Quote;
 
 @Entity
@@ -169,7 +171,8 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
     @NotNull
     private String uuid = UUID.randomUUID().toString();
 
-    @Type(type = "json")
+    // @Type(type = "json")
+    @Convert(converter = CustomFieldValuesConverter.class)
     @Column(name = "cf_values", columnDefinition = "text")
     private CustomFieldValues cfValues;
 

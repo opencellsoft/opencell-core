@@ -21,12 +21,13 @@ package org.meveo.model;
 import java.util.UUID;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.Type;
 import org.meveo.model.crm.custom.CustomFieldValues;
+import org.meveo.model.persistence.CustomFieldValuesConverter;
 
 @MappedSuperclass
 public abstract class BusinessCFEntity extends BusinessEntity implements ICustomFieldEntity {
@@ -38,7 +39,8 @@ public abstract class BusinessCFEntity extends BusinessEntity implements ICustom
     @NotNull
     private String uuid = UUID.randomUUID().toString();
 
-    @Type(type = "json")
+    // @Type(type = "json")
+    @Convert(converter = CustomFieldValuesConverter.class)
     @Column(name = "cf_values", columnDefinition = "text")
     private CustomFieldValues cfValues;
 

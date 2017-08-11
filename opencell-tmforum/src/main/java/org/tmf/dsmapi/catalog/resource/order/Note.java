@@ -6,7 +6,7 @@ import java.util.Date;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.tmf.dsmapi.serialize.CustomDateSerializer;
+import org.meveo.commons.utils.CustomDateSerializer;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
