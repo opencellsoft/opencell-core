@@ -5,4 +5,11 @@
         <dropColumn tableName="billing_billing_account" columnName="payment_method" />
     </changeSet>
 
+    <changeSet id="#2781_20170810" author="anasseh">
+        <modifyDataType tableName="ar_payment_token" columnName="info_1" newDataType="text" />
+        <modifyDataType tableName="ar_payment_token" columnName="info_2" newDataType="text" />
+        <modifyDataType tableName="ar_payment_token" columnName="info_3" newDataType="text" />
+        <modifyDataType tableName="ar_payment_token" columnName="info_4" newDataType="text" />
+        <modifyDataType tableName="ar_payment_token" columnName="info_5" newDataType="text" />
+     </changeSet>
 </databaseChangeLog> 

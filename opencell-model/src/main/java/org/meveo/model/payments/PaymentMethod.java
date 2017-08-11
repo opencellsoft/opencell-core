@@ -49,6 +49,27 @@ public abstract class PaymentMethod extends BaseEntity {
     @Column(name = "token_type", insertable = false, updatable = false, length = 12)
     @Enumerated(EnumType.STRING)
     protected PaymentMethodEnum paymentType;
+    
+    @Column(name = "USER_ID")
+    private String userId;
+
+    @Column(name = "INFO_1")
+    private String info1;
+
+    @Column(name = "INFO_2")
+    private String info2;
+
+    @Column(name = "INFO_3")
+    private String info3;
+
+    @Column(name = "INFO_4")
+    private String info4;
+
+    @Column(name = "INFO_5")
+    private String info5;
+    
+    @Column(name = "BANK_CODE")
+    private String bankCode;
 
     public PaymentMethod() {
     }
@@ -92,5 +113,62 @@ public abstract class PaymentMethod extends BaseEntity {
         this.paymentType = paymentType;
     }
 
-    public abstract void updateWith(PaymentMethod otherPaymentMethod);
+    
+    public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public String getInfo1() {
+		return info1;
+	}
+
+	public void setInfo1(String info1) {
+		this.info1 = info1;
+	}
+
+	public String getInfo2() {
+		return info2;
+	}
+
+	public void setInfo2(String info2) {
+		this.info2 = info2;
+	}
+
+	public String getInfo3() {
+		return info3;
+	}
+
+	public void setInfo3(String info3) {
+		this.info3 = info3;
+	}
+
+	public String getInfo4() {
+		return info4;
+	}
+
+	public void setInfo4(String info4) {
+		this.info4 = info4;
+	}
+
+	public String getInfo5() {
+		return info5;
+	}
+
+	public void setInfo5(String info5) {
+		this.info5 = info5;
+	}
+
+	public String getBankCode() {
+		return bankCode;
+	}
+
+	public void setBankCode(String bankCode) {
+		this.bankCode = bankCode;
+	}
+
+	public abstract void updateWith(PaymentMethod otherPaymentMethod);
 }
