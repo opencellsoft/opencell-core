@@ -19257,8 +19257,6 @@ public class Action1 extends Script {
               <con:configuration>
                 <token><![CDATA[<customField code="${#Project#baseEntityPrefix}_CUST_DOUBLE_LIST_NV">
                      <listValue>
-                        <value/>
-                        <value/>
                         <value>
                            <doubleValue>3000.0</doubleValue>
                         </value>

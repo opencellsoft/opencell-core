@@ -16,9 +16,11 @@ import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldValueDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EntityReferenceDto;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
+import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.customEntities.CustomEntityInstance;
@@ -82,7 +84,7 @@ public class EntityToDtoConverter {
                 continue;
             }
             for (CustomFieldValue cfValue : cfValueInfo.getValue()) {
-                dto.getCustomField().add(customFieldToDTO(cfCode, cfValue, cfts.get(cfCode).getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY));
+                dto.getCustomField().add(customFieldToDTO(cfCode, cfValue, cfts.get(cfCode)));
             }
         }
         if (dto.isEmpty()) {
@@ -115,8 +117,11 @@ public class EntityToDtoConverter {
         return dto;
     }
 
-    private CustomFieldDto customFieldToDTO(String cfCode, CustomFieldValue cfValue, boolean isChildEntityTypeField) {
-        cfValue.deserializeValue();
+    @SuppressWarnings("unchecked")
+    private CustomFieldDto customFieldToDTO(String cfCode, CustomFieldValue cfValue, CustomFieldTemplate cft) {
+
+        boolean isChildEntityTypeField = cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY;
+
         CustomFieldDto dto = customFieldToDTO(cfCode, cfValue.getValue(), isChildEntityTypeField);
         dto.setCode(cfCode);
         if (cfValue.getPeriod() != null) {
@@ -133,6 +138,12 @@ public class EntityToDtoConverter {
         dto.setDoubleValue(cfValue.getDoubleValue());
         dto.setListValue(customFieldValueToDTO(cfValue.getListValue(), isChildEntityTypeField));
         dto.setMapValue(customFieldValueToDTO(cfValue.getMapValue()));
+
+        if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX && !dto.getMapValue().isEmpty() && !dto.getMapValue().containsKey(CustomFieldValue.MAP_KEY)) {
+            dto.getMapValue().put(CustomFieldValue.MAP_KEY,
+                new CustomFieldValueDto(StringUtils.concatenate(CustomFieldValue.MATRIX_COLUMN_NAME_SEPARATOR, cft.getMatrixColumnCodes())));
+        }
+
         if (cfValue.getEntityReferenceValue() != null) {
             dto.setEntityReferenceValue(new EntityReferenceDto(cfValue.getEntityReferenceValue()));
         }
@@ -140,7 +151,7 @@ public class EntityToDtoConverter {
         return dto;
     }
 
-    private List<CustomFieldValueDto> customFieldValueToDTO(List<Object> listValue, boolean isChildEntityTypeField) {
+    private List<CustomFieldValueDto> customFieldValueToDTO(@SuppressWarnings("rawtypes") List listValue, boolean isChildEntityTypeField) {
 
         if (listValue == null) {
             return null;

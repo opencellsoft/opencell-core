@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.gson.Gson;
@@ -41,10 +42,10 @@ import com.google.gson.reflect.TypeToken;
  * <li>a list or a map of above mentioned data types, serialized as Json to to serializedValue field</li>
  * </ul>
  * 
- * A reference to an entity, child entity, list and map values should not be modified behind the scenes - an appropriate SET method has to be called to serialise the value. - This
+ * A reference to an entity, child entity, list and map values should not be modified behind the scenes - an appropriate SET method has to be called to serialize the value. - This
  * limitations comes from MERGE loosing transient values and thus JPA callback @postUpdate can not be used (see CustomFieldInstance class).
  * 
- * Serialised value format is described in serializeValue() method for each data type.
+ * Serialized value format is described in serializeValue() method for each data type.
  * 
  * entityReferenceValueForGUI, mapValuesForGUI, matrixValuesForGUI fields are used in data entry from GUI ONLY.
  * 
@@ -65,39 +66,107 @@ public class CustomFieldValue implements Serializable {
 
     private static String SERIALIZATION_SEPARATOR = "|";
 
-    @JsonUnwrapped(prefix = "period_")
+    /**
+     * Period to which value applies to
+     */
+    @JsonUnwrapped()
     private DatePeriod period;
 
+    /**
+     * Value priority if periods overlapp
+     */
     private Integer priority;
 
+    /**
+     * String type value
+     */
+    @JsonProperty("string")
     private String stringValue;
 
+    /**
+     * Date type value
+     */
+    @JsonProperty("date")
     @JsonSerialize(using = CustomDateSerializer.class)
     private Date dateValue;
 
+    /**
+     * Long type value
+     */
+    @JsonProperty("long")
     private Long longValue;
 
+    /**
+     * Double type value
+     */
+    @JsonProperty("double")
     private Double doubleValue;
 
-    private String serializedValue;
-
     /**
-     * Entity reference type value deserialized from serializedValue field
+     * Entity reference type value
      */
-    @JsonIgnore
+    @JsonProperty("entity")
     private EntityReferenceWrapper entityReferenceValue;
 
     /**
-     * List type value deserialized from serializedValue field
+     * List of Strings type value
      */
-    @JsonIgnore
-    private List<Object> listValue = null; // new ArrayList<Object>();
+    @JsonProperty("listString")
+    private List<String> listStringValue = null;
 
     /**
-     * Map type value deserialized from serializedValue field
+     * List of Date type value
      */
-    @JsonIgnore
-    private Map<String, Object> mapValue = null; // new HashMap<String, Object>();
+    @JsonProperty("listDate")
+    private List<Date> listDateValue = null;
+
+    /**
+     * List of Long type value
+     */
+    @JsonProperty("listLong")
+    private List<Long> listLongValue = null;
+
+    /**
+     * List of Double type value
+     */
+    @JsonProperty("listDouble")
+    private List<Double> listDoubleValue = null;
+
+    /**
+     * List of Entity references type value
+     */
+    @JsonProperty("listEntity")
+    private List<EntityReferenceWrapper> listEntityValue = null;
+
+    /**
+     * Map of String type value
+     */
+    @JsonProperty("mapString")
+    private Map<String, String> mapStringValue = null;
+
+    /**
+     * Map of Date type value
+     */
+    @JsonProperty("mapDate")
+    private Map<String, Date> mapDateValue = null;
+
+    /**
+     * Map of Long type value
+     */
+    @JsonProperty("mapLong")
+    private Map<String, Long> mapLongValue = null;
+
+    /**
+     * Map of Double type value
+     */
+    @JsonProperty("mapDouble")
+    private Map<String, Double> mapDoubleValue = null;
+
+    /**
+     * Map of Entity reference type value
+     */
+    @JsonProperty("mapEntity")
+    private Map<String, EntityReferenceWrapper> mapEntityValue = null;
 
     /**
      * Contains mapValue adapted for GUI data entry in the following way:
@@ -199,7 +268,7 @@ public class CustomFieldValue implements Serializable {
     }
 
     /**
-     * Set a reference to an entity value. Value is serialised immediately.
+     * Set a reference to an entity value. Value is serialized immediately.
      * 
      * NOTE: Always set a new value. DO NOT edit the value, as it will not be persisted, or explicitly call serializeValue() afterwards.
      * 
@@ -207,47 +276,166 @@ public class CustomFieldValue implements Serializable {
      */
     public void setEntityReferenceValue(EntityReferenceWrapper entityReferenceValue) {
         this.entityReferenceValue = entityReferenceValue;
-        serializeValue(entityReferenceValue);
     }
 
-    // public String getSerializedValue() {
-    // return serializedValue;
-    // }
+    @SuppressWarnings("rawtypes")
+    public List getListValue() {
+        if (listStringValue != null) {
+            return listStringValue;
+        } else if (listDateValue != null) {
+            return listDateValue;
+        } else if (listLongValue != null) {
+            return listLongValue;
+        } else if (listDoubleValue != null) {
+            return listDoubleValue;
+        } else if (listEntityValue != null) {
+            return listEntityValue;
+        }
 
-    // public void setSerializedValue(String serializedValue) {
-    // this.serializedValue = serializedValue;
-    // }
-
-    public List<Object> getListValue() {
-        return listValue;
+        return null;
     }
 
     /**
-     * Set a list of values. Value is serialised immediately.
-     * 
-     * NOTE: Always set a new value. DO NOT edit the value, as it will not be persisted, or explicitly call serializeValue() afterwards.
+     * Set a list of values.
      * 
      * @param listValue
      */
-    public void setListValue(List<Object> listValue) {
-        this.listValue = listValue;
-        serializeValue(listValue);
+    @SuppressWarnings({ "rawtypes" })
+    public void setListValue(List listValue) {
+
+        Iterator iterator = ((List) listValue).iterator();
+        Class itemClass = findItemClass(iterator);
+
+        if (itemClass == String.class) {
+            listStringValue = new ArrayList<>();
+            for (Object listItem : listValue) {
+                listStringValue.add(listItem.toString());
+            }
+
+        } else if (itemClass == Date.class) {
+            listDateValue = new ArrayList<>();
+            for (Object listItem : listValue) {
+                listDateValue.add((Date) listItem);
+            }
+
+        } else if (itemClass == Integer.class || itemClass == Long.class) {
+            listLongValue = new ArrayList<>();
+            for (Object listItem : listValue) {
+                if (listItem instanceof Integer) {
+                    listLongValue.add(((Integer) listItem).longValue());
+                } else if (listItem instanceof Long) {
+                    listLongValue.add(((Long) listItem));
+                }
+            }
+
+        } else if (itemClass == Double.class || itemClass == BigDecimal.class) {
+            listDoubleValue = new ArrayList<>();
+            for (Object listItem : listValue) {
+                if (listItem instanceof BigDecimal) {
+                    listDoubleValue.add(((BigDecimal) listItem).doubleValue());
+                } else if (listItem instanceof Double) {
+                    listDoubleValue.add((Double) listItem);
+                }
+            }
+
+        } else if (itemClass == EntityReferenceWrapper.class) {
+            listEntityValue = new ArrayList<>();
+            for (Object listItem : listValue) {
+                listEntityValue.add((EntityReferenceWrapper) listItem);
+            }
+        }
     }
 
-    public Map<String, Object> getMapValue() {
-        return mapValue;
+    @SuppressWarnings("rawtypes")
+    public Map getMapValue() {
+        if (mapStringValue != null && !mapStringValue.isEmpty()) {
+            return mapStringValue;
+        } else if (mapDateValue != null && !mapDateValue.isEmpty()) {
+            return mapDateValue;
+        } else if (mapLongValue != null && !mapLongValue.isEmpty()) {
+            return mapLongValue;
+        } else if (mapDoubleValue != null && !mapDoubleValue.isEmpty()) {
+            return mapDoubleValue;
+        } else if (mapEntityValue != null && !mapEntityValue.isEmpty()) {
+            return mapEntityValue;
+        }
+        return null;
     }
 
     /**
-     * Set a map of values. Value is serialised immediately.
+     * Set a map of values. Value is serialized immediately.
      * 
      * NOTE: Always set a new value. DO NOT edit the value, as it will not be persisted, or explicitly call serializeValue() afterwards.
      * 
      * @param mapValue A map of values
      */
+    @SuppressWarnings({ "rawtypes" })
     public void setMapValue(Map<String, Object> mapValue) {
-        this.mapValue = mapValue;
-        serializeValue(mapValue);
+
+        Map<String, Object> mapCopy = null;
+        // Handle map that stores matrix type values
+        if (mapValue.containsKey(MAP_KEY)) {
+
+            mapCopy = new LinkedHashMap<String, Object>();
+            mapCopy.putAll(mapValue);
+            mapCopy.remove(MAP_KEY);
+
+            Object columnNames = mapValue.get(MAP_KEY);
+            String columnNamesString = null;
+            if (columnNames instanceof String) {
+                columnNamesString = (String) columnNames;
+
+            } else if (columnNames instanceof Collection) {
+                columnNamesString = StringUtils.concatenate(MATRIX_COLUMN_NAME_SEPARATOR, (Collection) columnNames);
+            }
+
+            // A regular map
+        } else {
+            mapCopy = mapValue;
+        }
+
+        // Find the first not null value to determine item class.
+        Iterator iterator = mapCopy.values().iterator();
+        Class itemClass = findItemClass(iterator);
+
+        if (itemClass == String.class) {
+            mapStringValue = new LinkedHashMap<>();
+            for (Entry<String, Object> mapItem : mapCopy.entrySet()) {
+                mapStringValue.put(mapItem.getKey(), mapItem.getValue().toString());
+            }
+
+        } else if (itemClass == Date.class) {
+            mapDateValue = new LinkedHashMap<>();
+            for (Entry<String, Object> mapItem : mapCopy.entrySet()) {
+                mapDateValue.put(mapItem.getKey(), (Date) mapItem.getValue());
+            }
+
+        } else if (itemClass == Integer.class || itemClass == Long.class) {
+            mapLongValue = new LinkedHashMap<>();
+            for (Entry<String, Object> mapItem : mapCopy.entrySet()) {
+                if (mapItem.getValue() instanceof Integer) {
+                    mapLongValue.put(mapItem.getKey(), ((Integer) mapItem.getValue()).longValue());
+                } else if (mapItem.getValue() instanceof Long) {
+                    mapLongValue.put(mapItem.getKey(), (Long) mapItem.getValue());
+                }
+            }
+
+        } else if (itemClass == Double.class || itemClass == BigDecimal.class) {
+            mapDoubleValue = new LinkedHashMap<>();
+            for (Entry<String, Object> mapItem : mapCopy.entrySet()) {
+                if (mapItem.getValue() instanceof BigDecimal) {
+                    mapDoubleValue.put(mapItem.getKey(), ((BigDecimal) mapItem.getValue()).doubleValue());
+                } else if (mapItem.getValue() instanceof Double) {
+                    mapDoubleValue.put(mapItem.getKey(), (Double) mapItem.getValue());
+                }
+            }
+
+        } else if (itemClass == EntityReferenceWrapper.class) {
+            mapEntityValue = new LinkedHashMap<>();
+            for (Entry<String, Object> mapItem : mapCopy.entrySet()) {
+                mapEntityValue.put(mapItem.getKey(), (EntityReferenceWrapper) mapItem.getValue());
+            }
+        }
     }
 
     public void setEntityReferenceValueForGUI(BusinessEntity businessEntity) {
@@ -303,6 +491,10 @@ public class CustomFieldValue implements Serializable {
 
             if (value instanceof BigDecimal) {
                 doubleValue = ((BigDecimal) value).setScale(2, RoundingMode.HALF_UP).doubleValue();
+            } else if (value instanceof Long) {
+                doubleValue = ((Long) value).doubleValue();
+            } else if (value instanceof Integer) {
+                doubleValue = ((Integer) value).doubleValue();
             } else {
                 doubleValue = (Double) value;
             }
@@ -311,6 +503,10 @@ public class CustomFieldValue implements Serializable {
         case LONG:
             if (value instanceof BigDecimal) {
                 longValue = ((BigDecimal) value).longValue();
+            } else if (value instanceof Double) {
+                longValue = ((Double) value).longValue();
+            } else if (value instanceof Integer) {
+                longValue = ((Integer) value).longValue();
             } else {
                 longValue = (Long) value;
             }
@@ -332,62 +528,43 @@ public class CustomFieldValue implements Serializable {
         }
     }
 
-    public String toJson(SimpleDateFormat sdf) {
-        String result = "";
-
-        if (stringValue != null) {
-            result += "'" + stringValue + "'";
-        } else if (dateValue != null) {
-            result += "'" + sdf.format(dateValue) + "'";
-        } else if (longValue != null) {
-            result += longValue;
-        } else if (doubleValue != null) {
-            result += doubleValue;
-        } else if (serializedValue != null) {
-            result += serializedValue.replaceAll("\"", "'");
-        } else {
-            result = "";
-        }
-
-        return result;
-    }
-
+    @SuppressWarnings("rawtypes")
     public String toXmlText(SimpleDateFormat sdf) {
-        String result = "";
 
         if (stringValue != null) {
-            result += stringValue;
+            return stringValue;
         } else if (dateValue != null) {
-            result += sdf.format(dateValue);
+            return sdf.format(dateValue);
         } else if (longValue != null) {
-            result += longValue;
+            return longValue.toString();
         } else if (doubleValue != null) {
-            result += doubleValue;
-        } else if (serializedValue != null) {
-            result += serializedValue;
+            return doubleValue.toString();
         } else {
-            result = "";
+            List listValue = getListValue();
+            if (listValue != null) {
+                return listValue.toString();
+            }
+            Map mapValue = getMapValue();
+            if (mapValue != null) {
+                return mapValue.toString();
+            }
         }
-
-        return result;
+        return "";
     }
 
     public String getValueAsString(SimpleDateFormat sdf) {
-        String result = "";
 
         if (stringValue != null) {
-            result += stringValue;
+            return stringValue;
         } else if (dateValue != null) {
-            result += sdf.format(dateValue);
+            return sdf.format(dateValue);
         } else if (longValue != null) {
-            result += longValue;
+            return longValue.toString();
         } else if (doubleValue != null) {
-            result += doubleValue;
-        } else {
-            result = "";
+            return doubleValue.toString();
         }
 
-        return result;
+        return "";
     }
 
     /**
@@ -632,47 +809,33 @@ public class CustomFieldValue implements Serializable {
     }
 
     /**
-     * Check if values is empty when used in non-GUI data manipulation (use serializedValue instead of XXXForGUI fields)
+     * Check if values is empty when used in non-GUI data manipulation (do not use XXXForGUI fields)
      * 
      * @return True is value is empty
      */
     public boolean isValueEmpty() {
         return ((stringValue == null || stringValue.isEmpty()) && dateValue == null && longValue == null && doubleValue == null
-                && (serializedValue == null || serializedValue.isEmpty()));
+                && (listStringValue == null || listStringValue.isEmpty()) && (listDateValue == null || listDateValue.isEmpty())
+                && (listLongValue == null || listLongValue.isEmpty()) && (listDoubleValue == null || listDoubleValue.isEmpty())
+                && (listEntityValue == null || listEntityValue.isEmpty()) && (mapStringValue == null || mapStringValue.isEmpty())
+                && (mapDateValue == null || mapDateValue.isEmpty()) && (mapLongValue == null || mapLongValue.isEmpty()) && (mapDoubleValue == null || mapDoubleValue.isEmpty())
+                && (mapEntityValue == null || mapEntityValue.isEmpty()) && (entityReferenceValue == null || entityReferenceValue.isEmpty()));
     }
 
     /**
-     * Serialise a reference to an entity, list or map of values to a Json string, stored in serializedValue field in the following format:
+     * Serialize a reference to an entity, list or map of values to a Json string in the following format:
      * <ul>
      * <li>"entity"|<json representation of EntityReferenceWrapper></li>
      * <li>"list_"<value classname eg. String>|<json representation of List></li>
      * <li>"map_"<value classname eg. String>|<json representation of Map></li>
      * <li>"matrix_"<value classname eg. String>|<key names>|<json representation of Map></li>
      * </ul>
-     */
-    protected void serializeValue(Object valueToSerialize) {
-
-        String sValue = CustomFieldValue.serializeValueToString(valueToSerialize);
-
-        // Logger log = LoggerFactory.getLogger(getClass());
-        // if (log.isTraceEnabled()) {
-        // log.trace("Serialized to value {}", sValue != null ? sValue.substring(100) : null);
-        // }
-        serializedValue = sValue;
-
-    }
-
-    /**
-     * Serialise a reference to an entity, list or map of values to a Json string, stored in serializedValue field in the following format:
-     * <ul>
-     * <li>"entity"|<json representation of EntityReferenceWrapper></li>
-     * <li>"list_"<value classname eg. String>|<json representation of List></li>
-     * <li>"map_"<value classname eg. String>|<json representation of Map></li>
-     * <li>"matrix_"<value classname eg. String>|<key names>|<json representation of Map></li>
-     * </ul>
+     * 
+     * @param cft Custom field template
+     * @param valueToSerialize Value to serialize
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public static String serializeValueToString(Object valueToSerialize) {
+    private static String serializeValueToString(CustomFieldTemplate cft, Object valueToSerialize) {
 
         if (valueToSerialize == null) {
             return null;
@@ -687,9 +850,18 @@ public class CustomFieldValue implements Serializable {
 
         } else if (valueToSerialize instanceof List && !((List) valueToSerialize).isEmpty()) {
 
-            // Find the first not null value to determine item class.
-            Iterator iterator = ((List) valueToSerialize).iterator();
-            Class itemClass = findItemClass(iterator);
+            Class itemClass = null;
+            if (cft.getFieldType() == CustomFieldTypeEnum.DATE) {
+                itemClass = Date.class;
+            } else if (cft.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
+                itemClass = Double.class;
+            } else if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY || cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY) {
+                itemClass = EntityReferenceWrapper.class;
+            } else if (cft.getFieldType() == CustomFieldTypeEnum.STRING || cft.getFieldType() == CustomFieldTypeEnum.LIST || cft.getFieldType() == CustomFieldTypeEnum.TEXT_AREA) {
+                itemClass = String.class;
+            } else if (cft.getFieldType() == CustomFieldTypeEnum.LONG) {
+                itemClass = Long.class;
+            }
 
             if (itemClass != null) {
                 sValue = "list_" + itemClass.getSimpleName() + SERIALIZATION_SEPARATOR + gson.toJson(((List) valueToSerialize));
@@ -699,25 +871,27 @@ public class CustomFieldValue implements Serializable {
 
         } else if (valueToSerialize instanceof Map && !((Map) valueToSerialize).isEmpty()) {
 
+            Class itemClass = null;
+            if (cft.getFieldType() == CustomFieldTypeEnum.DATE) {
+                itemClass = Date.class;
+            } else if (cft.getFieldType() == CustomFieldTypeEnum.DOUBLE) {
+                itemClass = Double.class;
+            } else if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY || cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY) {
+                itemClass = EntityReferenceWrapper.class;
+            } else if (cft.getFieldType() == CustomFieldTypeEnum.STRING || cft.getFieldType() == CustomFieldTypeEnum.LIST || cft.getFieldType() == CustomFieldTypeEnum.TEXT_AREA) {
+                itemClass = String.class;
+            } else if (cft.getFieldType() == CustomFieldTypeEnum.LONG) {
+                itemClass = Long.class;
+            }
+
             // Handle map that stores matrix type values
-            if (((Map) valueToSerialize).containsKey(MAP_KEY)) {
+            if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX) {
 
                 Map<String, Object> mapCopy = new LinkedHashMap<String, Object>();
                 mapCopy.putAll(((Map) valueToSerialize));
                 mapCopy.remove(MAP_KEY);
 
-                Object columnNames = ((Map) valueToSerialize).get(MAP_KEY);
-                String columnNamesString = null;
-                if (columnNames instanceof String) {
-                    columnNamesString = (String) columnNames;
-
-                } else if (columnNames instanceof Collection) {
-                    columnNamesString = StringUtils.concatenate(MATRIX_COLUMN_NAME_SEPARATOR, (Collection) columnNames);
-                }
-
-                // Find the first not null value to determine item class.
-                Iterator iterator = mapCopy.values().iterator();
-                Class itemClass = findItemClass(iterator);
+                String columnNamesString = StringUtils.concatenate(MATRIX_COLUMN_NAME_SEPARATOR, cft.getMatrixColumnCodes());
 
                 if (itemClass != null) {
                     sValue = "matrix_" + itemClass.getSimpleName() + SERIALIZATION_SEPARATOR + columnNamesString + SERIALIZATION_SEPARATOR + gson.toJson(mapCopy);
@@ -727,10 +901,6 @@ public class CustomFieldValue implements Serializable {
 
                 // A regular map
             } else {
-
-                // Find the first not null value to determine item class.
-                Iterator iterator = ((Map) valueToSerialize).values().iterator();
-                Class itemClass = findItemClass(iterator);
 
                 if (itemClass != null) {
                     sValue = "map_" + itemClass.getSimpleName() + SERIALIZATION_SEPARATOR + gson.toJson(((Map) valueToSerialize));
@@ -779,53 +949,12 @@ public class CustomFieldValue implements Serializable {
     }
 
     /**
-     * Deserialize JSON value serializedValue to a reference to an entity, list or map of values. See method serialize() for serialized value format
-     * 
-     * @param jsonValue Serialized value - contains only JSON part of serialized value. A prefix information is determined and added before passed to deserialize method
-     * @param fieldType Field type
-     * @param storageType Storage type
-     */
-    public static Object deserializeValueFromString(String jsonValue, CustomFieldTypeEnum fieldType, CustomFieldStorageTypeEnum storageType, List<String> matrixColumnNames) {
-
-        if (jsonValue == null) {
-            return null;
-        }
-
-        String serializedValue = null;
-
-        // Add seralization metadata if it is not available in json string
-        if (!jsonValue.contains(SERIALIZATION_SEPARATOR) || jsonValue.indexOf("{") < jsonValue.indexOf(SERIALIZATION_SEPARATOR)) {
-            if (storageType == CustomFieldStorageTypeEnum.SINGLE && fieldType == CustomFieldTypeEnum.ENTITY) {
-                serializedValue = "entity" + SERIALIZATION_SEPARATOR + jsonValue;
-
-            } else if (storageType == CustomFieldStorageTypeEnum.SINGLE && fieldType == CustomFieldTypeEnum.CHILD_ENTITY) {
-                serializedValue = "childEntity" + SERIALIZATION_SEPARATOR + jsonValue;
-
-            } else if (storageType == CustomFieldStorageTypeEnum.LIST) {
-                serializedValue = "list_" + fieldType.getDataClass().getSimpleName() + SERIALIZATION_SEPARATOR + jsonValue;
-
-            } else if (storageType == CustomFieldStorageTypeEnum.MAP) {
-                serializedValue = "map_" + fieldType.getDataClass().getSimpleName() + SERIALIZATION_SEPARATOR + jsonValue;
-
-            } else if (storageType == CustomFieldStorageTypeEnum.MATRIX) {
-                serializedValue = "matrix_" + fieldType.getDataClass().getSimpleName() + SERIALIZATION_SEPARATOR
-                        + StringUtils.concatenate(MATRIX_COLUMN_NAME_SEPARATOR, matrixColumnNames) + SERIALIZATION_SEPARATOR + jsonValue;
-            }
-        } else {
-            serializedValue = jsonValue;
-        }
-
-        Object deserializedValue = CustomFieldValue.deserializeValue(serializedValue);
-        return deserializedValue;
-    }
-
-    /**
      * Deserialize a serialized reference to an entity, list or map of values. See method serialize() for serialized value format
      * 
      * @param serializedValue Serialized value
      * @return EntityReferenceWrapper, ChildEntityValueWrapper, List or Map object
      */
-    public static Object deserializeValue(String serializedValue) {
+    private static Object deserializeValueFromString(String serializedValue) {
         if (serializedValue == null) {
             return null;
         }
@@ -934,21 +1063,27 @@ public class CustomFieldValue implements Serializable {
         return deserializedValue;
     }
 
-    /**
-     * Deserialize serializedValue field to a reference to an entity, list or map of values. See method serialize() for serialized value format
-     */
-    public void deserializeValue() {
-        if (serializedValue == null) {
-            return;
-        }
-        setValue(CustomFieldValue.deserializeValue(serializedValue), false);
-    }
-
     public Object getValue() {
-        if (mapValue != null && !mapValue.isEmpty()) {
-            return mapValue;
-        } else if (listValue != null && !listValue.isEmpty()) {
-            return listValue;
+        if (mapStringValue != null && !mapStringValue.isEmpty()) {
+            return mapStringValue;
+        } else if (mapDateValue != null && !mapDateValue.isEmpty()) {
+            return mapDateValue;
+        } else if (mapLongValue != null && !mapLongValue.isEmpty()) {
+            return mapLongValue;
+        } else if (mapDoubleValue != null && !mapDoubleValue.isEmpty()) {
+            return mapDoubleValue;
+        } else if (mapEntityValue != null && !mapEntityValue.isEmpty()) {
+            return mapEntityValue;
+        } else if (listStringValue != null && !listStringValue.isEmpty()) {
+            return listStringValue;
+        } else if (listDateValue != null && !listDateValue.isEmpty()) {
+            return listDateValue;
+        } else if (listLongValue != null && !listLongValue.isEmpty()) {
+            return listLongValue;
+        } else if (listDoubleValue != null && !listDoubleValue.isEmpty()) {
+            return listDoubleValue;
+        } else if (listEntityValue != null && !listEntityValue.isEmpty()) {
+            return listEntityValue;
         } else if (stringValue != null) {
             return stringValue;
         } else if (dateValue != null) {
@@ -968,30 +1103,26 @@ public class CustomFieldValue implements Serializable {
      * 
      * @param value Value to set
      */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public void setValue(Object value) {
-        setValue(value, true);
-    }
 
-    /**
-     * Set value of a given type with an option whether complex values should be serialized
-     * 
-     * @param value Value to set
-     * @param toSerialize whether complex values should be serialized
-     */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public void setValue(Object value, boolean toSerialize) {
+        dateValue = null;
+        doubleValue = null;
+        longValue = null;
+        stringValue = null;
+        entityReferenceValue = null;
+        mapStringValue = null;
+        mapDateValue = null;
+        mapLongValue = null;
+        mapDoubleValue = null;
+        mapEntityValue = null;
+        listStringValue = null;
+        listDateValue = null;
+        listLongValue = null;
+        listDoubleValue = null;
+        listEntityValue = null;
 
-        if (value == null) {
-            dateValue = null;
-            doubleValue = null;
-            longValue = null;
-            stringValue = null;
-            serializedValue = null;
-            entityReferenceValue = null;
-            mapValue = null;
-            listValue = null;
-
-        } else if (value instanceof Date) {
+        if (value instanceof Date) {
             dateValue = (Date) value;
 
         } else if (value instanceof BigDecimal) {
@@ -1003,36 +1134,23 @@ public class CustomFieldValue implements Serializable {
         } else if (value instanceof Long) {
             longValue = (Long) value;
 
+        } else if (value instanceof Integer) {
+            longValue = ((Integer) value).longValue();
+
         } else if (value instanceof String) {
             stringValue = (String) value;
 
         } else if (value instanceof BusinessEntity) {
-            if (toSerialize) {
-                setEntityReferenceValue(new EntityReferenceWrapper((BusinessEntity) value));
-            } else {
-                entityReferenceValue = new EntityReferenceWrapper((BusinessEntity) value);
-            }
+            setEntityReferenceValue(new EntityReferenceWrapper((BusinessEntity) value));
 
         } else if (value instanceof EntityReferenceWrapper) {
-            if (toSerialize) {
-                setEntityReferenceValue((EntityReferenceWrapper) value);
-            } else {
-                entityReferenceValue = (EntityReferenceWrapper) value;
-            }
+            setEntityReferenceValue((EntityReferenceWrapper) value);
 
         } else if (value instanceof Map) {
-            if (toSerialize) {
-                setMapValue((Map) value);
-            } else {
-                mapValue = (Map) value;
-            }
+            setMapValue((Map) value);
 
         } else if (value instanceof List) {
-            if (toSerialize) {
-                setListValue((List) value);
-            } else {
-                listValue = (List) value;
-            }
+            setListValue((List) value);
         }
     }
 
@@ -1040,9 +1158,9 @@ public class CustomFieldValue implements Serializable {
     public String toString() {
         final int maxLen = 10;
         return String.format(
-            "CustomFieldValue [stringValue=%s, dateValue=%s, longValue=%s, doubleValue=%s, serializedValue=%s, entityReferenceValue=%s, listValue=%s, mapValue=%s, mapValuesForGUI=%s, matrixValuesForGUI=%s, childEntityValuesForGUI=%s, entityReferenceValueForGUI=%s]",
-            stringValue, dateValue, longValue, doubleValue, serializedValue, entityReferenceValue, listValue != null ? toString(listValue, maxLen) : null,
-            mapValue != null ? toString(mapValue.entrySet(), maxLen) : null, mapValuesForGUI != null ? toString(mapValuesForGUI, maxLen) : null,
+            "CustomFieldValue [stringValue=%s, dateValue=%s, longValue=%s, doubleValue=%s, entityReferenceValue=%s, listValue=%s, mapValue=%s, mapValuesForGUI=%s, matrixValuesForGUI=%s, childEntityValuesForGUI=%s, entityReferenceValueForGUI=%s]",
+            stringValue, dateValue, longValue, doubleValue, entityReferenceValue, getListValue() != null ? toString(getListValue(), maxLen) : null,
+            getMapValue() != null ? toString(getMapValue().entrySet(), maxLen) : null, mapValuesForGUI != null ? toString(mapValuesForGUI, maxLen) : null,
             matrixValuesForGUI != null ? toString(matrixValuesForGUI, maxLen) : null, childEntityValuesForGUI != null ? toString(childEntityValuesForGUI, maxLen) : null,
             entityReferenceValueForGUI);
     }
@@ -1058,10 +1176,6 @@ public class CustomFieldValue implements Serializable {
         }
         builder.append("]");
         return builder.toString();
-    }
-
-    public String getSerializedValue() {
-        return serializedValue;
     }
 
     /**
@@ -1092,7 +1206,33 @@ public class CustomFieldValue implements Serializable {
             } else {
 
                 List<String> matrixColumnNames = cft.getMatrixColumnCodes();
-                return CustomFieldValue.deserializeValueFromString(valueToConvert, cft.getFieldType(), cft.getStorageType(), matrixColumnNames);
+
+                String serializedValueWithMetaInfo = null;
+
+                // Add seralization metadata if it is not available in json string
+                if (!valueToConvert.contains(SERIALIZATION_SEPARATOR) || valueToConvert.indexOf("{") < valueToConvert.indexOf(SERIALIZATION_SEPARATOR)) {
+                    if (cft.getStorageType() == CustomFieldStorageTypeEnum.SINGLE && cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
+                        serializedValueWithMetaInfo = "entity" + SERIALIZATION_SEPARATOR + valueToConvert;
+
+                    } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.SINGLE && cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY) {
+                        serializedValueWithMetaInfo = "childEntity" + SERIALIZATION_SEPARATOR + valueToConvert;
+
+                    } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.LIST) {
+                        serializedValueWithMetaInfo = "list_" + cft.getFieldType().getDataClass().getSimpleName() + SERIALIZATION_SEPARATOR + valueToConvert;
+
+                    } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.MAP) {
+                        serializedValueWithMetaInfo = "map_" + cft.getFieldType().getDataClass().getSimpleName() + SERIALIZATION_SEPARATOR + valueToConvert;
+
+                    } else if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX) {
+                        serializedValueWithMetaInfo = "matrix_" + cft.getFieldType().getDataClass().getSimpleName() + SERIALIZATION_SEPARATOR
+                                + StringUtils.concatenate(MATRIX_COLUMN_NAME_SEPARATOR, matrixColumnNames) + SERIALIZATION_SEPARATOR + valueToConvert;
+                    }
+                } else {
+                    serializedValueWithMetaInfo = valueToConvert;
+                }
+
+                Object deserializedValue = CustomFieldValue.deserializeValueFromString(serializedValueWithMetaInfo);
+                return deserializedValue;
 
             }
 
@@ -1125,7 +1265,7 @@ public class CustomFieldValue implements Serializable {
                     return valueToConvert.toString();
                 }
             } else {
-                return CustomFieldValue.serializeValueToString(valueToConvert);
+                return serializeValueToString(cft, valueToConvert);
             }
 
         } catch (Exception e) {

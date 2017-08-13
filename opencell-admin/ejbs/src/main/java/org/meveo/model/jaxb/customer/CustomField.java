@@ -65,6 +65,7 @@ public class CustomField {
     public CustomField() {
     }
 
+    @SuppressWarnings("unchecked")
     public static CustomField toDTO(String cfCode, CustomFieldValue cfValue) {
 
         CustomField dto = new CustomField();

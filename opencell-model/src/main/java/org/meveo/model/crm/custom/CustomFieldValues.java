@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.meveo.model.DatePeriod;
+import org.meveo.model.persistence.CustomFieldValuesConverter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
@@ -42,7 +43,7 @@ public class CustomFieldValues implements Serializable {
     public Map<String, List<CustomFieldValue>> getValuesByCode() {
         return valuesByCode;
     }
-    
+
     public void setValuesByCode(Map<String, List<CustomFieldValue>> valuesByCode) {
         this.valuesByCode = valuesByCode;
     }
@@ -138,7 +139,6 @@ public class CustomFieldValues implements Serializable {
     public Object getValue(String cfCode) {
         CustomFieldValue cfValue = getCfValue(cfCode);
         if (cfValue != null) {
-            cfValue.deserializeValue();
             return cfValue.getValue();
         }
         return null;
@@ -154,7 +154,6 @@ public class CustomFieldValues implements Serializable {
     public Object getValue(String cfCode, Date date) {
         CustomFieldValue cfValue = getCfValue(cfCode, date);
         if (cfValue != null) {
-            cfValue.deserializeValue();
             return cfValue.getValue();
         }
         return null;
@@ -310,28 +309,11 @@ public class CustomFieldValues implements Serializable {
      */
     public String asJson() {
 
-        if (valuesByCode == null) {
-            return "";
+        String json = CustomFieldValuesConverter.toJson(this);
+        if (json != null) {
+            json = json.replaceAll("\"", "'");
         }
-
-        String result = "";
-        String sep = "";
-        for (Entry<String, List<CustomFieldValue>> cfValueInfo : valuesByCode.entrySet()) {
-            for (CustomFieldValue cfValue : cfValueInfo.getValue()) {
-                result = result + sep + cfValueInfo.getKey() + ":" + cfValue.toJson(sdf) + ",description:" + "";
-
-                if (cfValue.getPeriod() != null && cfValue.getPeriod().getFrom() != null) {
-                    result = result + "," + "periodStartDate:\"" + sdf.format(cfValue.getPeriod().getFrom()) + "\"";
-                }
-                if (cfValue.getPeriod() != null && cfValue.getPeriod().getTo() != null) {
-                    result = result + "," + "periodEndDate:\"" + sdf.format(cfValue.getPeriod().getTo()) + "\"";
-                }
-
-                sep = ";";
-            }
-        }
-
-        return result;
+        return json;
     }
 
     /**

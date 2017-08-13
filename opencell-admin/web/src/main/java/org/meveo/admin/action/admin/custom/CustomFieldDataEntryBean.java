@@ -229,16 +229,13 @@ public class CustomFieldDataEntryBean implements Serializable {
         groupedFieldTemplates.put(entity.getUuid(), groupedCustomField);
 
         Map<String, List<CustomFieldValue>> cfValuesByCode = null;
-
         // Get custom field instances mapped by a CFT code if entity has any field defined
         // if (!((IEntity) entity).isTransient() && customFieldTemplates != null && customFieldTemplates.size() > 0) {
         // No longer checking for isTransient as for offer new version creation, CFs are duplicated, but entity is not persisted, offering to review it in GUI before saving it.
         if (customFieldTemplates != null && customFieldTemplates.size() > 0 && ((ICustomFieldEntity) entity).getCfValues() != null) {
             cfValuesByCode = ((ICustomFieldEntity) entity).getCfValues().getValuesByCode(); // TODO need to close the values
         }
-
         cfValuesByCode = prepareCFIForGUI(customFieldTemplates, cfValuesByCode, entity);
-
         CustomFieldValueHolder entityFieldsValues = new CustomFieldValueHolder(customFieldTemplates, cfValuesByCode, entity);
         fieldsValues.put(entity.getUuid(), entityFieldsValues);
     }
@@ -316,7 +313,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
             // Make sure that only one value is retrieved
             if (!cft.isVersionable()) {
-                cfValuesByTemplate = cfValuesByTemplate.subList(0, 1);
+                cfValuesByTemplate = new ArrayList<CustomFieldValue>(cfValuesByTemplate.subList(0, 1));
             }
             cfisPrepared.put(cft.getCode(), cfValuesByTemplate);
         }
@@ -627,7 +624,7 @@ public class CustomFieldDataEntryBean implements Serializable {
         }
 
         CustomFieldValue cfv = new CustomFieldValue();
-        cfv.setValue(inheritedValue, false);
+        cfv.setValue(inheritedValue);
         deserializeForGUI(cfv, cft);
 
         return cfv;
@@ -841,6 +838,7 @@ public class CustomFieldDataEntryBean implements Serializable {
                             newValuesByCode.put(cft.getCode(), previousCfValues);
                         }
                     }
+                    continue;
                 }
 
                 for (CustomFieldValue cfValue : entityFieldsValues.getValues(cft)) {
@@ -1128,9 +1126,7 @@ public class CustomFieldDataEntryBean implements Serializable {
      */
     @SuppressWarnings("unchecked")
     private void deserializeForGUI(CustomFieldValue customFieldValue, CustomFieldTemplate cft) {
-        
-        customFieldValue.deserializeValue();
-        
+
         // Convert just Entity type field to a JPA object - just Single storage fields
         if (cft.getStorageType() == CustomFieldStorageTypeEnum.SINGLE && cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
             customFieldValue.setEntityReferenceValueForGUI(deserializeEntityReferenceForGUI(customFieldValue.getEntityReferenceValue()));
@@ -1171,7 +1167,7 @@ public class CustomFieldDataEntryBean implements Serializable {
             List<Map<String, Object>> listOfMapValues = new ArrayList<Map<String, Object>>();
 
             if (customFieldValue.getMapValue() != null) {
-                for (Entry<String, Object> mapInfo : customFieldValue.getMapValue().entrySet()) {
+                for (Entry<String, Object> mapInfo : ((Map<String, Object>) customFieldValue.getMapValue()).entrySet()) {
                     Map<String, Object> listEntry = new HashMap<String, Object>();
                     listEntry.put(CustomFieldValue.MAP_KEY, mapInfo.getKey());
                     if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY) {
@@ -1205,7 +1201,7 @@ public class CustomFieldDataEntryBean implements Serializable {
                     }
                 }
 
-                for (Entry<String, Object> mapItem : customFieldValue.getMapValue().entrySet()) {
+                for (Entry<String, Object> mapItem : ((Map<String, Object>) customFieldValue.getMapValue()).entrySet()) {
                     if (mapItem.getKey().equals(CustomFieldValue.MAP_KEY)) {
                         continue;
                     }

@@ -7,6 +7,8 @@ import javax.persistence.AttributeConverter;
 
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.crm.custom.CustomFieldValues;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 
@@ -20,12 +22,7 @@ public class CustomFieldValuesConverter implements AttributeConverter<CustomFiel
 
     @Override
     public String convertToDatabaseColumn(CustomFieldValues cfValues) {
-
-        if (cfValues == null || cfValues.getValuesByCode() == null || cfValues.getValuesByCode().isEmpty()) {
-            return null;
-        }
-
-        return JacksonUtil.toString(cfValues.getValuesByCode());
+        return toJson(cfValues);
     }
 
     @Override
@@ -35,7 +32,28 @@ public class CustomFieldValuesConverter implements AttributeConverter<CustomFiel
             return null;// A nice approach would be to return new CustomFieldValues(), but that will cause update to db even though empty CustomFieldValues with no values is
                         // serialized back to null. Hibernate probably assumes that if json was null, deserialized value should also be null.
         }
-        return new CustomFieldValues(JacksonUtil.fromString(json, new TypeReference<Map<String, List<CustomFieldValue>>>() {
-        }));
+        try {
+            return new CustomFieldValues(JacksonUtil.fromString(json, new TypeReference<Map<String, List<CustomFieldValue>>>() {
+            }));
+        } catch (Exception e) {
+            Logger log = LoggerFactory.getLogger(getClass());
+            log.error("Failed to convert json to CF Value", e);
+            return null;
+        }
+    }
+
+    public static String toJson(CustomFieldValues cfValues) {
+        if (cfValues == null || cfValues.getValuesByCode() == null || cfValues.getValuesByCode().isEmpty()) {
+            return null;
+        }
+
+        try {
+            String json = JacksonUtil.toString(cfValues.getValuesByCode());
+            return json;
+        } catch (Exception e) {
+            Logger log = LoggerFactory.getLogger(CustomFieldValuesConverter.class);
+            log.error("Failed to convert CF Value to json", e);
+            return null;
+        }
     }
 }
