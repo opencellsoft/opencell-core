@@ -19,6 +19,11 @@ public class CheckPaymentMethod extends PaymentMethod {
         this.preferred = preferred;
         this.customerAccount = customerAccount;
     }
+    public CheckPaymentMethod(String alias, boolean preferred) {
+        super();
+        this.alias = alias;
+        this.preferred = preferred;
+    }
 
     @Override
     public boolean equals(Object obj) {

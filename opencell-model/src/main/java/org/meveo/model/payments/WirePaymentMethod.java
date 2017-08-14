@@ -20,6 +20,11 @@ public class WirePaymentMethod extends PaymentMethod {
         this.preferred = preferred;
         this.customerAccount = customerAccount;
     }
+    public WirePaymentMethod(String alias, boolean preferred) {
+        super();
+        this.alias = alias;
+        this.preferred = preferred;
+    }
 
     @Override
     public boolean equals(Object obj) {

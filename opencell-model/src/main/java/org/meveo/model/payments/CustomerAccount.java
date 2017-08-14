@@ -335,6 +335,42 @@ public class CustomerAccount extends AccountEntity {
         }
         return ddPaymentMethods;
     }
+    
+	public List<TipPaymentMethod> getTipPaymentMethods() {
+        List<TipPaymentMethod> tipPaymentMethods = new ArrayList<>();
+        if (paymentMethods != null) {
+            for (PaymentMethod paymentMethod : paymentMethods) {
+                if (paymentMethod instanceof TipPaymentMethod) {
+                        tipPaymentMethods.add((TipPaymentMethod) paymentMethod);                    
+                }
+            }
+        }
+        return tipPaymentMethods;
+	}
+	
+	public List<WirePaymentMethod> getWirePaymentMethods() {
+        List<WirePaymentMethod> wirePaymentMethods = new ArrayList<>();
+        if (paymentMethods != null) {
+            for (PaymentMethod paymentMethod : paymentMethods) {
+                if (paymentMethod instanceof WirePaymentMethod) {
+                	wirePaymentMethods.add((WirePaymentMethod) paymentMethod);                    
+                }
+            }
+        }
+        return wirePaymentMethods;
+	}
+	
+	public List<CheckPaymentMethod> getCheckPaymentMethods() {
+		 List<CheckPaymentMethod> checkPaymentMethods = new ArrayList<>();
+	        if (paymentMethods != null) {
+	            for (PaymentMethod paymentMethod : paymentMethods) {
+	                if (paymentMethod instanceof CheckPaymentMethod) {
+	                	checkPaymentMethods.add((CheckPaymentMethod) paymentMethod);                    
+	                }
+	            }
+	        }
+	        return checkPaymentMethods;
+		}
 
     /**
      * Mark currently valid card payment as preferred

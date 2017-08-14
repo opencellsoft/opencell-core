@@ -190,14 +190,14 @@ public class DDPaymentMethodApi extends BaseApi {
 	public DDPaymentMethodDto find(Long id) throws InvalidParameterException, MissingParameterException, EntityDoesNotExistsException, BusinessException {
 
 		if (id == null) {
-			missingParameters.add("tokenId or id");
+			missingParameters.add("id");
 		}
 
 		handleMissingParameters();
 
-		CardPaymentMethod ddPaymentMethod = null;
+		DDPaymentMethod ddPaymentMethod = null;
 		if (id != null) {
-			ddPaymentMethod = (CardPaymentMethod) paymentMethodService.findById(id);
+			ddPaymentMethod = (DDPaymentMethod) paymentMethodService.findById(id);
 		}
 		if (ddPaymentMethod == null) {
 			throw new EntityDoesNotExistsException(CardPaymentMethod.class, id);
