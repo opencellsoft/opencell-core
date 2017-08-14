@@ -1,8 +1,14 @@
 package org.meveo.model.payments;
 
+import java.util.Date;
+
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.billing.BankCoordinates;
 
@@ -15,6 +21,14 @@ public class DDPaymentMethod extends PaymentMethod {
 
     @Embedded
     private BankCoordinates bankCoordinates = new BankCoordinates();
+    
+    @Column(name = "mandate_identification", length = 255)
+    @Size(max = 255)
+    private String mandateIdentification = "";
+
+    @Column(name = "mandate_date")
+    @Temporal(TemporalType.DATE)
+    private Date mandateDate;
 
     public DDPaymentMethod() {
         this.paymentType = PaymentMethodEnum.DIRECTDEBIT;
@@ -33,8 +47,26 @@ public class DDPaymentMethod extends PaymentMethod {
     public void setBankCoordinates(BankCoordinates bankCoordinates) {
         this.bankCoordinates = bankCoordinates;
     }
+    
+    
 
-    @Override
+    public String getMandateIdentification() {
+		return mandateIdentification;
+	}
+
+	public void setMandateIdentification(String mandateIdentification) {
+		this.mandateIdentification = mandateIdentification;
+	}
+
+	public Date getMandateDate() {
+		return mandateDate;
+	}
+
+	public void setMandateDate(Date mandateDate) {
+		this.mandateDate = mandateDate;
+	}
+
+	@Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -68,8 +100,11 @@ public class DDPaymentMethod extends PaymentMethod {
         otherPaymentMethod.setBankCoordinates(otherPaymentMethod.getBankCoordinates());
     }
 
-    @Override
-    public String toString() {
-        return "DDPaymentMethod [alias=" + alias + ", preferred=" + preferred + ", bankCoordinates=" + bankCoordinates + "]";
-    }
+	@Override
+	public String toString() {
+		return "DDPaymentMethod [bankCoordinates=" + bankCoordinates + ", mandateIdentification="
+				+ mandateIdentification + ", mandateDate=" + mandateDate + "]";
+	}
+
+   
 }

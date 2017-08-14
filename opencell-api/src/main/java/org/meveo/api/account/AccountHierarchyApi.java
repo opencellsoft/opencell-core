@@ -1018,8 +1018,6 @@ public class AccountHierarchyApi extends BaseApi {
             customerAccountDto.setDateDunningLevel(postData.getDateDunningLevel());
             customerAccountDto.setContactInformation(contactInformation);
             customerAccountDto.setDunningLevel(postData.getDunningLevel());
-            customerAccountDto.setMandateDate(postData.getMandateDate());
-            customerAccountDto.setMandateIdentification(postData.getMandateIdentification());
             customerAccountDto.setName(name);
             customerAccountDto.setAddress(address);
             customerAccountDto.setContactInformation(contactInformation);
@@ -1036,7 +1034,7 @@ public class AccountHierarchyApi extends BaseApi {
                 customerAccountDto.getPaymentMethods().add(new OtherPaymentMethodDto(postData.getPaymentMethod()));
 
             } else if (postData.getPaymentMethod() != null && postData.getPaymentMethod() == PaymentMethodEnum.DIRECTDEBIT && postData.getBankCoordinates() != null
-                    && !StringUtils.isBlank(postData.getBankCoordinates().getIban())) {
+                    && !StringUtils.isBlank(postData.getBankCoordinates().getIban())) {            	
                 customerAccountDto.setPaymentMethods(new ArrayList<>());
                 customerAccountDto.getPaymentMethods().add(new DDPaymentMethodDto(postData.getBankCoordinates()));
             } else if (postData.getPaymentMethod() != null && postData.getPaymentMethod() == PaymentMethodEnum.TIP && postData.getBankCoordinates() != null
@@ -1292,8 +1290,6 @@ public class AccountHierarchyApi extends BaseApi {
             customerAccountDto.setDateDunningLevel(postData.getDateDunningLevel());
             customerAccountDto.setContactInformation(contactInformation);
             customerAccountDto.setDunningLevel(postData.getDunningLevel());
-            customerAccountDto.setMandateDate(postData.getMandateDate());
-            customerAccountDto.setMandateIdentification(postData.getMandateIdentification());
             customerAccountDto.setName(name);
             customerAccountDto.setAddress(address);
             customerAccountDto.setContactInformation(contactInformation);
@@ -1733,9 +1729,6 @@ public class AccountHierarchyApi extends BaseApi {
         if (ca.getContactInformation() != null) {
             dto.setContactInformation(new ContactInformationDto(ca.getContactInformation()));
         }
-
-        dto.setMandateIdentification(ca.getMandateIdentification());
-        dto.setMandateDate(ca.getMandateDate());
         dto.setDueDateDelayEL(ca.getDueDateDelayEL());
 
         if (!dto.isLoaded() && ca.getBillingAccounts() != null) {

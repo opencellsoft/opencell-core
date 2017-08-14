@@ -1,5 +1,7 @@
 package org.meveo.api.dto.payment;
 
+import java.util.Date;
+
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -25,6 +27,9 @@ public class DDPaymentMethodDto extends PaymentMethodDto {
      */
     @NotNull
     private BankCoordinatesDto bankCoordinates;
+    
+    private String mandateIdentification = "";
+    private Date mandateDate;
 
     public DDPaymentMethodDto() {
         super();
@@ -35,6 +40,8 @@ public class DDPaymentMethodDto extends PaymentMethodDto {
         if (paymentMethod.getBankCoordinates() != null) {
             bankCoordinates = new BankCoordinatesDto(paymentMethod.getBankCoordinates());
         }
+        mandateIdentification = paymentMethod.getMandateIdentification();
+        mandateDate = paymentMethod.getMandateDate();
     }
 
     public DDPaymentMethodDto(BankCoordinatesDto bankCoordinates) {
@@ -50,18 +57,38 @@ public class DDPaymentMethodDto extends PaymentMethodDto {
         this.bankCoordinates = bankCoordinates;
     }
 
-    public DDPaymentMethod fromDto() {
+    public String getMandateIdentification() {
+		return mandateIdentification;
+	}
+
+	public void setMandateIdentification(String mandateIdentification) {
+		this.mandateIdentification = mandateIdentification;
+	}
+
+	public Date getMandateDate() {
+		return mandateDate;
+	}
+
+	public void setMandateDate(Date mandateDate) {
+		this.mandateDate = mandateDate;
+	}
+
+	public DDPaymentMethod fromDto() {
         DDPaymentMethod paymentMethod = new DDPaymentMethod(getAlias(), isPreferred());
 
         if (bankCoordinates != null) {
             paymentMethod.setBankCoordinates(getBankCoordinates().fromDto());
         }
-
+        paymentMethod.setMandateDate(getMandateDate());
+        paymentMethod.setMandateIdentification(getMandateIdentification());
         return paymentMethod;
     }
 
-    @Override
-    public String toString() {
-        return "DDPaymentMethodDto [alias=" + alias + ", preferred=" + preferred + ", customerAccountCode=" + customerAccountCode + ", bankCoordinates=" + bankCoordinates + "]";
-    }
+	@Override
+	public String toString() {
+		return "DDPaymentMethodDto [isPrefered="+isPreferred()+", alias="+getAlias()+",bankCoordinates=" + bankCoordinates + ", mandateIdentification="
+				+ mandateIdentification + ", mandateDate=" + mandateDate + "]";
+	}
+
+    
 }

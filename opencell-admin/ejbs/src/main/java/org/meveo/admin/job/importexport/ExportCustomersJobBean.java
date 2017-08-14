@@ -106,8 +106,6 @@ public class ExportCustomersJobBean {
             dto.setCustomFields(CustomFields.toDTO(customFieldInstanceService.getCustomFieldInstances(cust)));
             dto.setAddress(new Address(cust.getAddress()));
             dto.setName(new Name(cust.getName()));
-            dto.setMandateDate(cust.getMandateDate());
-            dto.setMandateIdentification(cust.getMandateIdentification());
             dto.setCustomerAccounts(customerAccountsToDto(cust.getCustomerAccounts()));
         }
         return dto;

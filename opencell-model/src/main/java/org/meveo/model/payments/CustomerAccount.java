@@ -113,14 +113,6 @@ public class CustomerAccount extends AccountEntity {
     @Size(max = 10)
     private String password = "";
 
-    @Column(name = "mandate_identification", length = 256)
-    @Size(max = 256)
-    private String mandateIdentification = "";
-
-    @Column(name = "mandate_date")
-    @Temporal(TemporalType.DATE)
-    private Date mandateDate;
-
     @Column(name = "due_date_delay_el", length = 2000)
     @Size(max = 2000)
     private String dueDateDelayEL;
@@ -230,22 +222,6 @@ public class CustomerAccount extends AccountEntity {
         this.actionDunnings = actionDunnings;
     }
 
-    public String getMandateIdentification() {
-        return mandateIdentification;
-    }
-
-    public void setMandateIdentification(String mandateIdentification) {
-        this.mandateIdentification = mandateIdentification;
-    }
-
-    public Date getMandateDate() {
-        return mandateDate;
-    }
-
-    public void setMandateDate(Date mandateDate) {
-        this.mandateDate = mandateDate;
-    }
-
     public TradingLanguage getTradingLanguage() {
         return tradingLanguage;
     }
@@ -346,6 +322,18 @@ public class CustomerAccount extends AccountEntity {
         }
 
         return cardPaymentMethods;
+    }
+    
+    public List<DDPaymentMethod> getDDPaymentMethods() {
+        List<DDPaymentMethod> ddPaymentMethods = new ArrayList<>();
+        if (paymentMethods != null) {
+            for (PaymentMethod paymentMethod : paymentMethods) {
+                if (paymentMethod instanceof DDPaymentMethod) {
+                        ddPaymentMethods.add((DDPaymentMethod) paymentMethod);                    
+                }
+            }
+        }
+        return ddPaymentMethods;
     }
 
     /**

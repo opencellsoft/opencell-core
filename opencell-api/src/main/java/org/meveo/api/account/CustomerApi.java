@@ -110,8 +110,6 @@ public class CustomerApi extends AccountEntityApi {
         customer.setCustomerCategory(customerCategory);
         customer.setCustomerBrand(customerBrand);
         customer.setSeller(seller);
-        customer.setMandateDate(postData.getMandateDate());
-        customer.setMandateIdentification(postData.getMandateIdentification());
         customer.setExternalRef1(postData.getExternalRef1());
         customer.setExternalRef2(postData.getExternalRef2());
 
@@ -200,13 +198,6 @@ public class CustomerApi extends AccountEntityApi {
         }
 
         updateAccount(customer, postData, checkCustomFields);
-
-        if (!StringUtils.isBlank(postData.getMandateDate())) {
-            customer.setMandateDate(postData.getMandateDate());
-        }
-        if (!StringUtils.isBlank(postData.getMandateIdentification())) {
-            customer.setMandateIdentification(postData.getMandateIdentification());
-        }
 
         if (!StringUtils.isBlank(postData.getExternalRef1())) {
             customer.setExternalRef1(postData.getExternalRef1());
