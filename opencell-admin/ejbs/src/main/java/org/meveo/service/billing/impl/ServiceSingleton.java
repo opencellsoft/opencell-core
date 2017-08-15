@@ -103,6 +103,9 @@ public class ServiceSingleton {
         if (currentNbFromCF != null) {
             sequence.setCurrentInvoiceNb(currentNbFromCF);
         } else {
+            if (sequence.getCurrentInvoiceNb() == null) {
+                sequence.setCurrentInvoiceNb(0L);
+            }
             previousInvoiceNb = sequence.getCurrentInvoiceNb();
             sequence.setCurrentInvoiceNb(sequence.getCurrentInvoiceNb() + incrementBy);
         }
