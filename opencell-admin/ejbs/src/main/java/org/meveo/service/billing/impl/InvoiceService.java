@@ -571,7 +571,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     sourceFile = new File(vfPath.getPath());
 
                     if (!sourceFile.exists()) {
-                        throw new BusinessException("embedded jasper report for invoice is missing!!");
+                    	
+                    	sourcePath = Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath() + "/default/invoice" ;
+                        sourceFile = new File(sourcePath);
+                    	
+                        if (!sourceFile.exists()) {
+                        	throw new BusinessException("embedded jasper report for invoice is missing..");
+                        }
                     }
                 }
                 destDir.mkdirs();
@@ -588,7 +594,21 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     URL vfPath = VFSUtils.getPhysicalURL(vfDir);
                     sourceFileInvoiceAdjustment = new File(vfPath.getPath());
                     if (!sourceFileInvoiceAdjustment.exists()) {
-                        throw new BusinessException("embedded jasper report for invoice is missing!");
+                    	
+                    	URL resource = Thread.currentThread().getContextClassLoader().getResource("./jasper/" + billingTemplateName + "/invoiceAdjustment");
+                        
+                        if(resource == null)
+                        	resource = Thread.currentThread().getContextClassLoader().getResource("./jasper/default/invoiceAdjustment");
+                        
+                        if(resource == null)
+                        	throw new BusinessException("embedded InvoiceAdjustment jasper report for invoice is missing!");
+                      
+                        sourcePathInvoiceAdjustment = resource.getPath();
+                        
+                        if (!sourceFileInvoiceAdjustment.exists()) {
+                        	throw new BusinessException("embedded jasper report for invoice is missing.");
+                        }
+                        
                     }
                 }
                 FileUtils.copyDirectory(sourceFileInvoiceAdjustment, destDirInvoiceAdjustment);
