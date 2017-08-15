@@ -35,13 +35,21 @@ public interface FilesRs extends IBaseRs {
 	ActionStatus createDir(String dir);
 
 	@POST
+	@Path("/zipFile")
+	ActionStatus zipFile(String file);
+
+	@POST
+	@Path("/zipDirectory")
+	ActionStatus zipDir(String dir);
+
+	@POST
 	@Path("/suppressFile")
 	ActionStatus suppressFile(String file);
 
 	@POST
 	@Path("/suppressDirectory")
 	ActionStatus suppressDir(String dir);
-
+	
 	@POST
 	@Path("/upload")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)

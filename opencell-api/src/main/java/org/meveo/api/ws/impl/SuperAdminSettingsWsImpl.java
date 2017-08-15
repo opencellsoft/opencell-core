@@ -374,6 +374,32 @@ public class SuperAdminSettingsWsImpl extends BaseWs implements SuperAdminSettin
 	}
 
 	@Override
+	public ActionStatus zipFile(String filePath) {
+		ActionStatus result = new ActionStatus();
+
+		try {
+			filesApi.zipFile(filePath);
+		} catch (Exception e) {
+			processException(e, result);
+		}
+
+		return result;
+	}
+
+	@Override
+	public ActionStatus zipDir(String dir) {
+		ActionStatus result = new ActionStatus();
+
+		try {
+			filesApi.zipDir(dir);
+		} catch (Exception e) {
+			processException(e, result);
+		}
+
+		return result;
+	}
+	
+	@Override
 	public ActionStatus suppressFile(String filePath) {
 		ActionStatus result = new ActionStatus();
 

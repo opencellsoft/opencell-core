@@ -72,7 +72,7 @@ public class FilesApi extends BaseApi {
 		}
 	}
 
-	public void suppressFile(String filePath) throws BusinessApiException {
+	public void zipFile(String filePath) throws BusinessApiException {
 		File file = new File(getProviderRootDir() + File.separator + filePath);
 		if (!file.exists()) {
 			throw new BusinessApiException("File does not exists: " + file.getPath());
@@ -85,7 +85,7 @@ public class FilesApi extends BaseApi {
 		}
 	}
 
-	public void suppressDir(String dir) throws BusinessApiException {
+	public void zipDir(String dir) throws BusinessApiException {
 		File file = new File(getProviderRootDir() + File.separator + dir);
 		if (!file.exists()) {
 			throw new BusinessApiException("File does not exists: " + file.getPath());
@@ -124,6 +124,32 @@ public class FilesApi extends BaseApi {
 				FileUtils.unzipFile(parentDir, new FileInputStream(file));
 			}
 
+		} catch (Exception e) {
+			throw new BusinessApiException("Error uploading file: " + filename + ". " + e.getMessage());
+		}
+	}
+
+	public void suppressFile(String filePath) throws BusinessApiException {
+		String filename = getProviderRootDir() + File.separator + filePath;
+		File file = new File(filename);
+
+		try {
+			if (file.exists()) {
+				file.delete();
+			}
+		} catch (Exception e) {
+			throw new BusinessApiException("Error uploading file: " + filename + ". " + e.getMessage());
+		}
+	}
+
+	public void suppressDir(String dir) throws BusinessApiException {
+		String filename = getProviderRootDir() + File.separator + dir;
+		File file = new File(filename);
+
+		try {
+			if (file.exists()) {
+				org.apache.commons.io.FileUtils.deleteDirectory(file);
+			}
 		} catch (Exception e) {
 			throw new BusinessApiException("Error uploading file: " + filename + ". " + e.getMessage());
 		}
