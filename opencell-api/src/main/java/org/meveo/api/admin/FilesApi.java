@@ -53,10 +53,12 @@ public class FilesApi extends BaseApi {
 
 		List<FileDto> result = new ArrayList<FileDto>();
 
-		List<File> files = Arrays.asList(folder.listFiles());
-		if (files != null) {
-			for (File file : files) {
-				result.add(new FileDto(file));
+		if (folder.listFiles() != null && folder.listFiles().length > 0) {
+			List<File> files = Arrays.asList(folder.listFiles());
+			if (files != null) {
+				for (File file : files) {
+					result.add(new FileDto(file));
+				}
 			}
 		}
 
@@ -121,7 +123,7 @@ public class FilesApi extends BaseApi {
 				String parentDir = file.getParent();
 				FileUtils.unzipFile(parentDir, new FileInputStream(file));
 			}
-			
+
 		} catch (Exception e) {
 			throw new BusinessApiException("Error uploading file: " + filename + ". " + e.getMessage());
 		}
