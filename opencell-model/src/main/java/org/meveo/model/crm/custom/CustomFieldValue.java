@@ -118,6 +118,7 @@ public class CustomFieldValue implements Serializable {
      * List of Date type value
      */
     @JsonProperty("listDate")
+    @JsonSerialize(contentUsing = CustomDateSerializer.class)
     private List<Date> listDateValue = null;
 
     /**
@@ -148,6 +149,7 @@ public class CustomFieldValue implements Serializable {
      * Map of Date type value
      */
     @JsonProperty("mapDate")
+    @JsonSerialize(contentUsing = CustomDateSerializer.class)
     private Map<String, Date> mapDateValue = null;
 
     /**
@@ -202,6 +204,9 @@ public class CustomFieldValue implements Serializable {
     @JsonIgnore
     private BusinessEntity entityReferenceValueForGUI;
 
+    @JsonIgnore
+    protected boolean isNewPeriod = false;
+
     public CustomFieldValue() {
     }
 
@@ -213,6 +218,7 @@ public class CustomFieldValue implements Serializable {
         this.period = period;
         this.priority = priority;
         setValue(value);
+        this.isNewPeriod = true;
     }
 
     public String getStringValue() {
@@ -373,21 +379,21 @@ public class CustomFieldValue implements Serializable {
     public void setMapValue(Map<String, Object> mapValue) {
 
         Map<String, Object> mapCopy = null;
-        // Handle map that stores matrix type values
+        // Handle map that stores matrix type values - not interested in storing matrix column names
         if (mapValue.containsKey(MAP_KEY)) {
 
             mapCopy = new LinkedHashMap<String, Object>();
             mapCopy.putAll(mapValue);
             mapCopy.remove(MAP_KEY);
 
-            Object columnNames = mapValue.get(MAP_KEY);
-            String columnNamesString = null;
-            if (columnNames instanceof String) {
-                columnNamesString = (String) columnNames;
-
-            } else if (columnNames instanceof Collection) {
-                columnNamesString = StringUtils.concatenate(MATRIX_COLUMN_NAME_SEPARATOR, (Collection) columnNames);
-            }
+            // Object columnNames = mapValue.get(MAP_KEY);
+            // String columnNamesString = null;
+            // if (columnNames instanceof String) {
+            // columnNamesString = (String) columnNames;
+            //
+            // } else if (columnNames instanceof Collection) {
+            // columnNamesString = StringUtils.concatenate(MATRIX_COLUMN_NAME_SEPARATOR, (Collection) columnNames);
+            // }
 
             // A regular map
         } else {
@@ -841,7 +847,7 @@ public class CustomFieldValue implements Serializable {
             return null;
         }
 
-        GsonBuilder builder = new GsonBuilder().setDateFormat("yyyy-dd-MM HH:mm:ss zzz");
+        GsonBuilder builder = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
         Gson gson = builder.create();
 
         String sValue = null;
@@ -959,7 +965,7 @@ public class CustomFieldValue implements Serializable {
             return null;
         }
 
-        GsonBuilder builder = new GsonBuilder().setDateFormat("yyyy-dd-MM HH:mm:ss zzz");
+        GsonBuilder builder = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
         Gson gson = builder.create();
 
         int firstSeparatorIndex = serializedValue.indexOf(SERIALIZATION_SEPARATOR);

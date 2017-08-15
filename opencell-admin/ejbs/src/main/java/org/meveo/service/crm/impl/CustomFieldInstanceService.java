@@ -77,55 +77,6 @@ public class CustomFieldInstanceService extends BaseService {
 
     private ParamBean paramBean = ParamBean.getInstance();
 
-    // public void create(CustomFieldInstance cfi, CustomFieldTemplate cft, ICustomFieldEntity entity) throws BusinessException {
-    // customFieldsCacheContainerProvider.addUpdateCustomFieldInCache(entity, cfi);
-    //
-    // // Update Elastic Search index - update custom field value. Maps are stored as Json encoded strings
-    // if (cft.getIndexType() != null) {
-    // Object value = cfi.getValue();
-    // if (value instanceof Map || value instanceof EntityReferenceWrapper) {
-    // value = JsonUtils.toJson(value, false);
-    // }
-    // elasticClient.partialUpdate((BusinessEntity) entity, cfi.getCode(), cfi.getValue());
-    // }
-    // if (cft.isTriggerEndPeriodEvent()) {
-    // triggerEndPeriodEvent(cfi);
-    // }
-    // }
-    //
-    // public CustomFieldInstance update(CustomFieldInstance cfi, CustomFieldTemplate cft, ICustomFieldEntity entity) throws BusinessException {
-    // customFieldsCacheContainerProvider.addUpdateCustomFieldInCache(entity, cfi);
-    //
-    // // Update Elastic Search index - update custom field value. Maps are stored as Json encoded strings
-    // if (cft.getIndexType() != null) {
-    // Object value = cfi.getValue();
-    // if (value instanceof Map || value instanceof EntityReferenceWrapper) {
-    // value = JsonUtils.toJson(value, false);
-    // }
-    // elasticClient.partialUpdate((BusinessEntity) entity, cfi.getCode(), value);
-    // }
-    // if (cft.isTriggerEndPeriodEvent()) {
-    // triggerEndPeriodEvent(cfi);
-    // }
-    //
-    // return cfi;
-    // }
-
-    // public void remove(CustomFieldInstance cfi) throws BusinessException {
-    // customFieldsCacheContainerProvider.removeCustomFieldFromCache(cfi);
-    // }
-
-    // /**
-    // * Get a list of custom field instances to populate a cache
-    // *
-    // * @return A list of custom field instances
-    // */
-    // public List<CustomFieldInstance> getCFIForCache() {
-    //
-    // TypedQuery<CustomFieldInstance> query = getEntityManager().createNamedQuery("CustomFieldInstance.getCfiForCache", CustomFieldInstance.class);
-    // return query.getResultList();
-    // }
-
     // Previous comments
     // /**
     // * Convert BusinessEntityWrapper to an entity by doing a lookup in DB
@@ -1294,7 +1245,8 @@ public class CustomFieldInstanceService extends BaseService {
         if (period != null && period.getTo() != null && period.getTo().before(new Date())) {
             CFEndPeriodEvent event = new CFEndPeriodEvent(entity, cfCode, period);
             cFEndPeriodEvent.fire(event);
-
+            log.debug("AKK Firing timer for triggerEndPeriodEvent for Custom field value {} with expiration={}", event, period.getTo());
+            
         } else if (period != null && period.getTo() != null) {
             CFEndPeriodEvent event = new CFEndPeriodEvent(entity, cfCode, period);
 
@@ -2202,6 +2154,27 @@ public class CustomFieldInstanceService extends BaseService {
             return ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(cft.getApplicableOnEl(), "entity", entity);
         }
         return true;
+    }
+
+    public void scheduleEndPeriodEvents(ICustomFieldEntity entity) {
+
+        if (entity.getCfValues() == null) {
+            return;
+        }
+
+        Map<String, List<DatePeriod>> newCfValuePeriods = entity.getCfValues().getNewVersionedCFValuePeriods();
+        if (newCfValuePeriods == null || newCfValuePeriods.isEmpty()) {
+            return;
+        }
+
+        for (Entry<String, List<DatePeriod>> periodInfo : newCfValuePeriods.entrySet()) {
+            CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(periodInfo.getKey(), entity);
+            if (cft != null && cft.isTriggerEndPeriodEvent()) {
+                for (DatePeriod period : periodInfo.getValue()) {
+                    triggerEndPeriodEvent(entity, periodInfo.getKey(), period);
+                }
+            }
+        }
     }
 
     public EntityManager getEntityManager() {

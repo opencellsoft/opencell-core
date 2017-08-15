@@ -44,8 +44,26 @@ public class CustomFieldValues implements Serializable {
         return valuesByCode;
     }
 
-    public void setValuesByCode(Map<String, List<CustomFieldValue>> valuesByCode) {
-        this.valuesByCode = valuesByCode;
+    /**
+     * Set custom field values as is. Not responsible for validity of what is being set. Only a check is made to mark new versionable custom field value periods as new.
+     * 
+     * @param valuesByCode
+     */
+    public void setValuesByCode(Map<String, List<CustomFieldValue>> newValuesByCode) {
+
+        if (newValuesByCode != null) {
+            for (Entry<String, List<CustomFieldValue>> valueInfo : newValuesByCode.entrySet()) {
+                for (CustomFieldValue cfValue : valueInfo.getValue()) {
+                    cfValue.isNewPeriod = false;
+                    if (cfValue.getPeriod() != null && cfValue.getPeriod().getTo() != null) {
+                        boolean cfValueExists = getCfValueByPeriod(valueInfo.getKey(), cfValue.getPeriod(), true, false) != null;
+                        cfValue.isNewPeriod = !cfValueExists;
+                    }
+                }
+            }
+        }
+
+        this.valuesByCode = newValuesByCode;
     }
 
     public void clearValues() {
@@ -126,7 +144,7 @@ public class CustomFieldValues implements Serializable {
         if (valuesByCode == null) {
             return null;
         }
-        return getValueByPeriod(cfCode, new DatePeriod(dateFrom, dateTo), true, false);
+        return getCfValueByPeriod(cfCode, new DatePeriod(dateFrom, dateTo), true, false);
     }
 
     /**
@@ -253,7 +271,7 @@ public class CustomFieldValues implements Serializable {
             valuesByCode = new HashMap<>();
         }
 
-        CustomFieldValue valueByPeriod = getValueByPeriod(cfCode, period, true, true);
+        CustomFieldValue valueByPeriod = getCfValueByPeriod(cfCode, period, true, true);
         if (priority == null) {
             valueByPeriod.setPriority(0);
         } else if (priority.intValue() >= 0) {
@@ -263,7 +281,7 @@ public class CustomFieldValues implements Serializable {
         return valueByPeriod;
     }
 
-    private CustomFieldValue getValueByPeriod(String cfCode, DatePeriod period, boolean strictMatch, Boolean createIfNotFound) {
+    private CustomFieldValue getCfValueByPeriod(String cfCode, DatePeriod period, boolean strictMatch, Boolean createIfNotFound) {
         CustomFieldValue valueFound = null;
         if (valuesByCode.containsKey(cfCode)) {
             for (CustomFieldValue value : valuesByCode.get(cfCode)) {
@@ -340,5 +358,32 @@ public class CustomFieldValues implements Serializable {
                 customFieldTag.appendChild(customFieldText);
             }
         }
+    }
+
+    /**
+     * Get new versioned custom field value periods
+     * 
+     * @return A map of new custom field value periods with custom field code as a key and list of date periods as values
+     */
+    public Map<String, List<DatePeriod>> getNewVersionedCFValuePeriods() {
+
+        if (valuesByCode == null) {
+            return null;
+        }
+
+        Map<String, List<DatePeriod>> newPeriods = new HashMap<>();
+
+        for (Entry<String, List<CustomFieldValue>> valueInfo : valuesByCode.entrySet()) {
+            for (CustomFieldValue cfValue : valueInfo.getValue()) {
+                if (cfValue.isNewPeriod && cfValue.getPeriod() != null && cfValue.getPeriod().getTo() != null) {
+                    if (!newPeriods.containsKey(valueInfo.getKey())) {
+                        newPeriods.put(valueInfo.getKey(), new ArrayList<>());
+                    }
+                    newPeriods.get(valueInfo.getKey()).add(cfValue.getPeriod());
+                }
+            }
+        }
+
+        return newPeriods;
     }
 }

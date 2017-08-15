@@ -77,7 +77,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public static String SEARCH_IS_NULL = "IS_NULL";
     public static String SEARCH_IS_NOT_NULL = "IS_NOT_NULL";
     public static String SEARCH_FIELD1_OR_FIELD2 = "FIELD1_OR_FIELD2";
-    public static String SEARCH_SQL="SQL";
+    public static String SEARCH_SQL = "SQL";
 
     @Inject
     @MeveoJpa
@@ -92,9 +92,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     @Inject
     private Conversation conversation;
-//
-//    @Resource
-//    protected TransactionSynchronizationRegistry txReg;
+    //
+    // @Resource
+    // protected TransactionSynchronizationRegistry txReg;
 
     @Inject
     @Created
@@ -190,7 +190,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return findById(id, fetchFields, false);
     }
 
-
     /**
      * @see org.meveo.service.base.local.IPersistenceService#findById(java.lang.Long, java.util.List, boolean)
      */
@@ -221,7 +220,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return e;
     }
 
-
     /**
      * @see org.meveo.service.base.local.IPersistenceService#disable(java.lang.Long, org.meveo.model.admin.User)
      */
@@ -243,7 +241,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             }
             entity = getEntityManager().merge(entity);
             if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(ObservableEntity.class)) {
-                entityDisabledEventProducer.fire((BaseEntity)entity);
+                entityDisabledEventProducer.fire((BaseEntity) entity);
             }
             log.trace("end of disable {} entity (id={}).", entity.getClass().getSimpleName(), entity.getId());
         }
@@ -271,7 +269,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             }
             entity = getEntityManager().merge(entity);
             if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(ObservableEntity.class)) {
-                entityEnabledEventProducer.fire((BaseEntity)entity);
+                entityEnabledEventProducer.fire((BaseEntity) entity);
             }
             log.trace("end of enable {} entity (id={}).", entity.getClass().getSimpleName(), entity.getId());
         }
@@ -283,7 +281,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         log.debug("start of remove {} entity (id={}) ..", getEntityClass().getSimpleName(), entity.getId());
         getEntityManager().remove(entity);
         if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(ObservableEntity.class)) {
-            entityRemovedEventProducer.fire((BaseEntity)entity);
+            entityRemovedEventProducer.fire((BaseEntity) entity);
         }
         // getEntityManager().flush();
 
@@ -338,9 +336,15 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         }
 
         if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(ObservableEntity.class)) {
-            entityUpdatedEventProducer.fire((BaseEntity)entity);
+            entityUpdatedEventProducer.fire((BaseEntity) entity);
         }
-        
+
+        // Schedule end of period events
+        // Be carefull - if called after persistence might loose ability to determine new period as CustomFeldvalue.isNewPeriod is not serialized to json
+        if (entity instanceof ICustomFieldEntity) {
+            customFieldInstanceService.scheduleEndPeriodEvents((ICustomFieldEntity) entity);
+        }
+
         entity = getEntityManager().merge(entity);
 
         // Update entity in Elastic Search. ICustomFieldEntity is updated
@@ -369,9 +373,15 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         }
 
         if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(ObservableEntity.class)) {
-            entityCreatedEventProducer.fire((BaseEntity)entity);
+            entityCreatedEventProducer.fire((BaseEntity) entity);
         }
-        
+
+        // Schedule end of period events
+        // Be carefull - if called after persistence might loose ability to determine new period as CustomFeldvalue.isNewPeriod is not serialized to json
+        if (entity instanceof ICustomFieldEntity) {
+            customFieldInstanceService.scheduleEndPeriodEvents((ICustomFieldEntity) entity);
+        }
+
         getEntityManager().persist(entity);
 
         // Add entity to Elastic Search
@@ -379,9 +389,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             elasticClient.createOrFullUpdate((BusinessEntity) entity);
         }
 
-
         log.trace("end of create {}. entity id={}.", entity.getClass().getSimpleName(), entity.getId());
-
     }
 
     /**
@@ -555,7 +563,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         final Class<? extends E> entityClass = getEntityClass();
 
         Map<String, Object> filters = config.getFilters();
-       
+
         QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", config.getFetchFields());
 
         if (filters != null && !filters.isEmpty()) {
@@ -567,7 +575,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             } else {
 
                 for (String key : filters.keySet()) {
-                    
+
                     // Key fomat is: condition field1 field2
                     // example: "ne code", condition=code, fieldName=code, fieldName2=null
                     String[] fieldInfo = key.split(" ");
@@ -579,7 +587,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                     if (filterValue == null) {
                         continue;
                     }
-                    
+
                     // if ranged search - field value in between from - to values
                     if (key.contains("fromRange-")) {
                         String parsedKey = key.substring(10);
@@ -601,13 +609,13 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                         } else if (filterValue instanceof Date) {
                             queryBuilder.addCriterionDateRangeToTruncatedToDay("a." + parsedKey, (Date) filterValue);
                         }
-                        
+
                         // Value is in field value (list)
                     } else if (key.contains("list-")) {
                         String parsedKey = key.substring(5);
                         queryBuilder.addSqlCriterion(":" + parsedKey + " in elements(a." + parsedKey + ")", parsedKey, filterValue);
-                    
-                    // Field value is in value (list)
+
+                        // Field value is in value (list)
                     } else if (key.contains("inList-")) {
                         String parsedKey = key.substring(7);
                         queryBuilder.addSql("a." + parsedKey + " in (" + filterValue + ")");
@@ -621,9 +629,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                                     classes.add((Class) classNameOrClass);
                                 } else {
                                     try {
-                                        classes.add(Class.forName((String)classNameOrClass));
+                                        classes.add(Class.forName((String) classNameOrClass));
                                     } catch (ClassNotFoundException e) {
-                                        log.error("Search by a type will be ignored - unknown class {}", (String)classNameOrClass);
+                                        log.error("Search by a type will be ignored - unknown class {}", (String) classNameOrClass);
                                     }
                                 }
                             }
@@ -652,7 +660,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                                 log.error("Search by a type will be ignored - unknown class {}", filterValue);
                             }
                         }
-                        
+
                         // The value is in between two field values
                     } else if (key.contains("minmaxRange-")) {
                         String parsedKey = key.substring(12);
@@ -700,10 +708,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                         String paramNameFrom = queryBuilder.convertFieldToParam(minmaxFieldNames[0]);
                         String paramNameTo = queryBuilder.convertFieldToParam(minmaxFieldNames[1]);
 
-                        String sql = "(( a." + minmaxFieldNames[0] + " IS NULL and a." + minmaxFieldNames[1] + " IS NULL) or  ( a." + minmaxFieldNames[0] + " IS NULL and a." + minmaxFieldNames[1] + ">:" + paramNameFrom + ") or (a." + minmaxFieldNames[1]
-                                + " IS NULL and a." + minmaxFieldNames[0] + "<:" + paramNameTo + ") or (a." + minmaxFieldNames[0] + " IS NOT NULL and a." + minmaxFieldNames[1]
-                                + " IS NOT NULL and ((a." + minmaxFieldNames[0] + "<=:" + paramNameFrom + " and :" + paramNameFrom + "<a." + minmaxFieldNames[1] + ") or (:"
-                                + paramNameFrom + "<=a." + minmaxFieldNames[0] + " and a." + minmaxFieldNames[0] + "<:" + paramNameTo + "))))";
+                        String sql = "(( a." + minmaxFieldNames[0] + " IS NULL and a." + minmaxFieldNames[1] + " IS NULL) or  ( a." + minmaxFieldNames[0] + " IS NULL and a."
+                                + minmaxFieldNames[1] + ">:" + paramNameFrom + ") or (a." + minmaxFieldNames[1] + " IS NULL and a." + minmaxFieldNames[0] + "<:" + paramNameTo
+                                + ") or (a." + minmaxFieldNames[0] + " IS NOT NULL and a." + minmaxFieldNames[1] + " IS NOT NULL and ((a." + minmaxFieldNames[0] + "<=:"
+                                + paramNameFrom + " and :" + paramNameFrom + "<a." + minmaxFieldNames[1] + ") or (:" + paramNameFrom + "<=a." + minmaxFieldNames[0] + " and a."
+                                + minmaxFieldNames[0] + "<:" + paramNameTo + "))))";
                         queryBuilder.addSqlCriterionMultiple(sql, paramNameFrom, ((Object[]) filterValue)[0], paramNameTo, ((Object[]) filterValue)[1]);
 
                     } else if (key.contains("likeCriterias-")) {
@@ -725,14 +734,13 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                         queryBuilder.addSql("a." + fieldName + " like '%" + filterValue + "%'");
                         queryBuilder.addSql("a." + fieldName2 + " like '%" + filterValue + "%'");
                         queryBuilder.endOrClause();
-                    
+
                         // Search by additional Sql clause with specified parameters
-                    } else if (key.startsWith(SEARCH_SQL)){
-                        String additionalSql = (String) ((Object[] )filterValue)[0] ;
-                        Object[] additionalParameters =  Arrays.copyOfRange(((Object[] )filterValue), 1, ((Object[] )filterValue).length);
+                    } else if (key.startsWith(SEARCH_SQL)) {
+                        String additionalSql = (String) ((Object[]) filterValue)[0];
+                        Object[] additionalParameters = Arrays.copyOfRange(((Object[]) filterValue), 1, ((Object[]) filterValue).length);
                         queryBuilder.addSqlCriterionMultiple(additionalSql, additionalParameters);
-                        
-                        
+
                     } else {
                         if (filterValue instanceof String && SEARCH_IS_NULL.equals(filterValue)) {
                             queryBuilder.addSql("a." + fieldName + " is null ");
@@ -835,20 +843,20 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public void commit() {
         getEntityManager().flush();
     }
-    
+
     /**
      * 
      * @param query
      * @param params
      * @return
      */
-    public Object executeSelectQuery(String query,Map<String,Object> params){
-    	Query q = getEntityManager().createQuery(query);
-    	if(params != null){
-	    	for (Map.Entry<String, Object> entry : params.entrySet()) {    	    
-	    	    q.setParameter(entry.getKey(), entry.getValue());
-	    	}		
-    	}
-		return  q.getResultList();	
+    public Object executeSelectQuery(String query, Map<String, Object> params) {
+        Query q = getEntityManager().createQuery(query);
+        if (params != null) {
+            for (Map.Entry<String, Object> entry : params.entrySet()) {
+                q.setParameter(entry.getKey(), entry.getValue());
+            }
+        }
+        return q.getResultList();
     }
 }

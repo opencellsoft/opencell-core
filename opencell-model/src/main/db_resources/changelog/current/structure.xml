@@ -29,7 +29,7 @@
         </addColumn>
         <addColumn tableName="billing_invoice_sub_cat">
             <column name="cf_values" type="${type.json}"></column>
-        </addColumn>        
+        </addColumn>
         <addColumn tableName="billing_service_instance">
             <column name="cf_values" type="${type.json}"></column>
         </addColumn>
@@ -53,7 +53,7 @@
         </addColumn>
         <addColumn tableName="crm_seller">
             <column name="cf_values" type="${type.json}"></column>
-        </addColumn>        
+        </addColumn>
         <addColumn tableName="medina_access">
             <column name="cf_values" type="${type.json}"></column>
         </addColumn>
@@ -77,6 +77,134 @@
         </addColumn>
         <addColumn tableName="ord_quote">
             <column name="cf_values" type="${type.json}"></column>
-        </addColumn>                
+        </addColumn>
     </changeSet>
+
+    <changeSet id="#2751_migration_1" author="AndriusKarpavicius">
+        <createTable tableName="tmp_cfi_copy">
+            <column name="id" type="bigint" />
+            <column name="code" type="varchar(255)" />
+            <column name="date_value" type="datetime" />
+            <column name="double_value" type="float8" />
+            <column name="long_value" type="bigint" />
+            <column name="string_value" type="text" />
+            <column name="serialized_value" type="${type.longtext}" />
+            <column name="applies_to_uuid" type="varchar(60)" />
+            <column name="priority" type="int4" defaultValue="0" />
+            <column name="period_end_date" type="datetime" />
+            <column name="period_start_date" type="datetime" />
+        </createTable>
+
+        <sql>insert into tmp_cfi_copy (id,code,date_value,double_value,long_value,string_value,serialized_value,applies_to_uuid,priority,period_end_date,period_start_date) (select
+            id,code,date_value,double_value,long_value,string_value,serialized_value,applies_to_uuid,priority,period_end_date,period_start_date from crm_custom_field_inst)
+        </sql>
+
+        <createTable tableName="tmp_cf_values">
+            <column name="uuid" type="varchar(60)" />
+            <column name="cf_values_txt" type="text" />
+        </createTable>
+    </changeSet>
+
+    <changeSet id="#2751_migration_6" author="AndriusKarpavicius" dbms="postgresql">
+
+        <sql>update tmp_cfi_copy set serialized_value = new_value from (select id, 'list_Date|['|| string_agg(new_date,',')||']' as new_value from (select id, old_date, substr(old_date,1,5) || substring(old_date,9,3)||
+            substring(old_date,6,3) || substring(old_date,12) as new_date from (select id, unnest(string_to_array(substring(left(serialized_value,length(serialized_value)-1), strpos(serialized_value,'|')+2),',')) as
+            old_date from crm_custom_field_inst where left(serialized_value,9)='list_Date') old_dates_array) new_dates_array group by id) new_values where tmp_cfi_copy.id=new_values.id
+        </sql>
+
+        <sql>update tmp_cfi_copy set serialized_value = new_value from (select id, string_agg(new_date,',') as new_value from (
+            select id, old_date, key||substr(old_date,1,5) || substring(old_date,9,3)||
+            substring(old_date,6,3) || substring(old_date,12) as new_date from (
+            select id, substr(old_date_w_key,1, strpos(old_date_w_key,'":"')+1) as key, substr(old_date_w_key,strpos(old_date_w_key,'":"')+2) as
+            old_date from (
+            select id, unnest(string_to_array(serialized_value,',')) as old_date_w_key from crm_custom_field_inst where left(serialized_value,8)='map_Date') old_dates_array
+            ) old_dates_split_key
+            )
+            new_dates_array group by id) new_values where tmp_cfi_copy.id=new_values.id
+        </sql>
+
+        <sql>update tmp_cfi_copy set serialized_value = new_value from (select id, string_agg(new_date,',') as new_value from (
+            select id, old_date, key||substr(old_date,1,5) || substring(old_date,9,3)||
+            substring(old_date,6,3) || substring(old_date,12) as new_date from (
+            select id, substr(old_date_w_key,1, strpos(old_date_w_key,'":"')+1) as key, substr(old_date_w_key,strpos(old_date_w_key,'":"')+2) as
+            old_date from (
+            select id, unnest(string_to_array(serialized_value,',')) as old_date_w_key from crm_custom_field_inst where left(serialized_value,11)='matrix_Date'
+            ) old_dates_array
+            ) old_dates_split_key
+            )
+            new_dates_array group by id) new_values where tmp_cfi_copy.id=new_values.id
+        </sql>
+
+        <sql>delete from tmp_cf_values</sql>
+        <sql>insert into tmp_cf_values (uuid, cf_values_txt) (select applies_to_uuid, cf_value_by_uuid from (select applies_to_uuid, '{'||STRING_AGG('"'||code||'":['|| cf_value_by_code ||']',',')||'}' as cf_value_by_uuid
+            from (select applies_to_uuid, code, STRING_AGG(cf_opening || cf_content ||'}',',') as cf_value_by_code from (select applies_to_uuid, code, '{"priority":'||priority|| case when period_start_date is null then
+            '' else ',"from":"'||to_char(period_start_date,'YYYY-MM-DD')||'T'||to_char(period_start_date,'HH24:MI:SSTZ') ||'"' end ||case when period_end_date is null then '' else
+            ',"to":"'||to_char(period_end_date,'YYYY-MM-DD')||'T'||to_char(period_end_date,'HH24:MI:SSTZ') ||'"' end as cf_opening, case when double_value is not null then ',"double":'||double_value else case when
+            date_value is not null then ',"date":"'||to_char(date_value,'YYYY-MM-DD')||'T'||to_char(date_value,'HH24:MI:SSTZ')||'"' else case when long_value is not null then ',"long":'||long_value else case when
+            string_value is not null then ',"string":"'||string_value||'"' else case when left(serialized_value,6) != 'matrix' then replace(replace(replace(replace(replace(replace(
+            replace(replace(replace(replace(replace(serialized_value,'list_String|',',"listString":'),'list_Double|',',"listDouble":'),'list_Long|',',"listLong":'),'list_Date|',',"listDate":'),'list_EntityReferenceWrapper|',',"listEntity":')
+            ,'map_String|',',"mapString":'),'map_Double|',',"mapDouble":'),'map_Long|',',"mapLong":'),'map_Date|',',"mapDate":'),'map_EntityReferenceWrapper|',',"mapEntity":'),'entity|',',"entity":') else case
+            left(serialized_value,strpos(serialized_value, '|')-1) when 'matrix_String' then ',"mapString":' when 'matrix_Long' then ',"mapLong":' when 'matrix_Double' then ',"mapDouble":' when 'matrix_Date' then
+            ',"mapDate":' when 'matrix_EntityReferenceWrapper' then ',"mapEntity":' end || substr(substr(serialized_value, strpos(serialized_value, '|')+1), strpos(substr(serialized_value, strpos(serialized_value,
+            '|')+1), '|')+1) end end end end end as cf_content from tmp_cfi_copy) cf_data group by applies_to_uuid, code) cf_values_by_code group by cf_values_by_code.applies_to_uuid) cf_values_by_uuid)
+        </sql>
+        <sql>update tmp_cf_values set cf_values_txt = replace(cf_values_txt,' 00:00:00 ART','T00:00:00-03:00')</sql>
+        <sql>update tmp_cf_values set cf_values_txt = replace(cf_values_txt,'T00:00:00"','T00:00:00-03:00"')</sql>
+
+        <sql>update crm_seller set cf_values = null</sql>
+        <sql>update crm_seller set cf_values = cf_values_txt from tmp_cf_values where crm_seller.uuid = tmp_cf_values.uuid</sql>
+        <sql>update crm_provider set cf_values = null</sql>
+        <sql>update crm_provider set cf_values = cf_values_txt from tmp_cf_values where crm_provider.uuid = tmp_cf_values.uuid</sql>
+        <sql>update account_entity set cf_values = null</sql>
+        <sql>update account_entity set cf_values = cf_values_txt from tmp_cf_values where account_entity.uuid = tmp_cf_values.uuid</sql>
+        <sql>update adm_user set cf_values = null</sql>
+        <sql>update adm_user set cf_values = cf_values_txt from tmp_cf_values where adm_user.uuid = tmp_cf_values.uuid</sql>
+        <sql>update ar_account_operation set cf_values = null</sql>
+        <sql>update ar_account_operation set cf_values = cf_values_txt from tmp_cf_values where ar_account_operation.uuid = tmp_cf_values.uuid</sql>
+        <sql>update billing_cycle set cf_values = null</sql>
+        <sql>update billing_cycle set cf_values = cf_values_txt from tmp_cf_values where billing_cycle.uuid = tmp_cf_values.uuid</sql>
+        <sql>update billing_invoice set cf_values = null</sql>
+        <sql>update billing_invoice set cf_values = cf_values_txt from tmp_cf_values where billing_invoice.uuid = tmp_cf_values.uuid</sql>
+        <sql>update billing_invoice_cat set cf_values = null</sql>
+        <sql>update billing_invoice_cat set cf_values = cf_values_txt from tmp_cf_values where billing_invoice_cat.uuid = tmp_cf_values.uuid</sql>
+        <sql>update billing_invoice_sub_cat set cf_values = null</sql>
+        <sql>update billing_invoice_sub_cat set cf_values = cf_values_txt from tmp_cf_values where billing_invoice_sub_cat.uuid = tmp_cf_values.uuid</sql>
+        <sql>update billing_service_instance set cf_values = null</sql>
+        <sql>update billing_service_instance set cf_values = cf_values_txt from tmp_cf_values where billing_service_instance.uuid = tmp_cf_values.uuid</sql>
+        <sql>update billing_subscription set cf_values = null</sql>
+        <sql>update billing_subscription set cf_values = cf_values_txt from tmp_cf_values where billing_subscription.uuid = tmp_cf_values.uuid</sql>
+        <sql>update billing_tax set cf_values = null</sql>
+        <sql>update billing_tax set cf_values = cf_values_txt from tmp_cf_values where billing_tax.uuid = tmp_cf_values.uuid</sql>
+        <sql>update cat_charge_template set cf_values = null</sql>
+        <sql>update cat_charge_template set cf_values = cf_values_txt from tmp_cf_values where cat_charge_template.uuid = tmp_cf_values.uuid</sql>
+        <sql>update cat_offer_template set cf_values = null</sql>
+        <sql>update cat_offer_template set cf_values = cf_values_txt from tmp_cf_values where cat_offer_template.uuid = tmp_cf_values.uuid</sql>
+        <sql>update cat_price_plan_matrix set cf_values = null</sql>
+        <sql>update cat_price_plan_matrix set cf_values = cf_values_txt from tmp_cf_values where cat_price_plan_matrix.uuid = tmp_cf_values.uuid</sql>
+        <sql>update cat_service_template set cf_values = null</sql>
+        <sql>update cat_service_template set cf_values = cf_values_txt from tmp_cf_values where cat_service_template.uuid = tmp_cf_values.uuid</sql>
+        <sql>update medina_access set cf_values = null</sql>
+        <sql>update medina_access set cf_values = cf_values_txt from tmp_cf_values where medina_access.uuid = tmp_cf_values.uuid</sql>
+        <sql>update meveo_job_instance set cf_values = null</sql>
+        <sql>update meveo_job_instance set cf_values = cf_values_txt from tmp_cf_values where meveo_job_instance.uuid = tmp_cf_values.uuid</sql>
+        <sql>update meveo_filter set cf_values = null</sql>
+        <sql>update meveo_filter set cf_values = cf_values_txt from tmp_cf_values where meveo_filter.uuid = tmp_cf_values.uuid</sql>
+        <sql>update cust_cei set cf_values = null</sql>
+        <sql>update cust_cei set cf_values = cf_values_txt from tmp_cf_values where cust_cei.uuid = tmp_cf_values.uuid</sql>
+        <sql>update cat_offer_template_category set cf_values = null</sql>
+        <sql>update cat_offer_template_category set cf_values = cf_values_txt from tmp_cf_values where cat_offer_template_category.uuid = tmp_cf_values.uuid</sql>
+        <sql>update billing_product_instance set cf_values = null</sql>
+        <sql>update billing_product_instance set cf_values = cf_values_txt from tmp_cf_values where billing_product_instance.uuid = tmp_cf_values.uuid</sql>
+        <sql>update ord_order set cf_values = null</sql>
+        <sql>update ord_order set cf_values = cf_values_txt from tmp_cf_values where ord_order.uuid = tmp_cf_values.uuid</sql>
+        <sql>update ord_quote set cf_values = null</sql>
+        <sql>update ord_quote set cf_values = cf_values_txt from tmp_cf_values where ord_quote.uuid = tmp_cf_values.uuid</sql>
+    </changeSet>
+
+    <changeSet id="#2751_migration_end" author="AndriusKarpavicius">
+        <dropTable tableName="tmp_cfi_copy" />
+        <dropTable tableName="tmp_cf_values" />
+        <!-- <dropTable tableName="crm_custom_field_inst"/> // drop table after you are sure that CF values were migrated correctly -->
+    </changeSet>
+
 </databaseChangeLog> 
