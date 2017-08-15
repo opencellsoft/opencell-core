@@ -80,6 +80,11 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="#2751_20170802" author="AndriusKarpavicius">
+        <dropColumn tableName="crm_custom_field_tmpl" columnName="cache_value_for" />
+        <dropColumn tableName="crm_custom_field_tmpl" columnName="cache_value" />
+    </changeSet>
+
     <changeSet id="#2751_migration_1" author="AndriusKarpavicius">
         <createTable tableName="tmp_cfi_copy">
             <column name="id" type="bigint" />

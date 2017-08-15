@@ -103,8 +103,8 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
     @JoinColumn(name = "calendar_id")
     private Calendar calendar;
 
-    @Column(name = "cache_value_for")
-    private Integer cacheValueTimeperiod;
+    // @Column(name = "cache_value_for")
+    // private Integer cacheValueTimeperiod;
 
     @Column(name = "default_value", length = 250)
     @Size(max = 250)
@@ -162,10 +162,10 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
     @Size(max = 2000)
     private String applicableOnEl;
 
-    @Type(type = "numeric_boolean")
-    @Column(name = "cache_value")
-    @NotNull
-    private boolean cacheValue;
+    // @Type(type = "numeric_boolean")
+    // @Column(name = "cache_value")
+    // @NotNull
+    // private boolean cacheValue;
 
     /**
      * Child entity fields to display as summary. Field names are separated by a comma.
@@ -412,13 +412,13 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
         this.triggerEndPeriodEvent = triggerEndPeriodEvent;
     }
 
-    public Integer getCacheValueTimeperiod() {
-        return cacheValueTimeperiod;
-    }
-
-    public void setCacheValueTimeperiod(Integer cacheValueTimeperiod) {
-        this.cacheValueTimeperiod = cacheValueTimeperiod;
-    }
+    // public Integer getCacheValueTimeperiod() {
+    // return cacheValueTimeperiod;
+    // }
+    //
+    // public void setCacheValueTimeperiod(Integer cacheValueTimeperiod) {
+    // this.cacheValueTimeperiod = cacheValueTimeperiod;
+    // }
 
     public String getGuiPosition() {
         return guiPosition;
@@ -493,13 +493,13 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
         this.regExp = regExp;
     }
 
-    public boolean isCacheValue() {
-        return cacheValue;
-    }
-
-    public void setCacheValue(boolean cacheValue) {
-        this.cacheValue = cacheValue;
-    }
+    // public boolean isCacheValue() {
+    // return cacheValue;
+    // }
+    //
+    // public void setCacheValue(boolean cacheValue) {
+    // this.cacheValue = cacheValue;
+    // }
 
     public String getApplicableOnEl() {
         return applicableOnEl;

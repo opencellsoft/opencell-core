@@ -1,238 +1,243 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
-	xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:p="http://primefaces.org/ui" xmlns:pe="http://primefaces.org/ui/extensions" xmlns:o="http://omnifaces.org/ui"
-	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:s="http://jboss.org/seam/faces">
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:p="http://primefaces.org/ui" xmlns:pe="http://primefaces.org/ui/extensions" xmlns:o="http://omnifaces.org/ui"
+    xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:s="http://jboss.org/seam/faces">
 
 
-	<o:importConstants type="org.meveo.model.crm.custom.CustomFieldMapKeyEnum" />
-	<o:importConstants type="org.meveo.model.crm.custom.CustomFieldTypeEnum" />
+    <o:importConstants type="org.meveo.model.crm.custom.CustomFieldMapKeyEnum" />
+    <o:importConstants type="org.meveo.model.crm.custom.CustomFieldTypeEnum" />
 
-	<h:form id="fieldsForm">
-		<p:panel width="100" header="#{messages['customizedEntities.fields']}" rendered="#{customEntityTemplateBean.cetPrefix!=null}">
-			<p:treeTable id="fields" value="#{customEntityTemplateBean.fields}" var="entity" nodeVar="node" resizableColumns="true">
-				<p:column headerText="#{messages['BusinessEntity.code']}">
-					<h:outputText value="#{entity.code}" rendered="#{node.type == 'field'}" />
-					<h:panelGroup styleClass="ui-icon ui-icon-folder-collapsed inlineIcon" rendered="#{node.type == 'tab'}" />
-					<h:panelGroup styleClass="ui-icon ui-icon-contact inlineIcon" rendered="#{node.type == 'fieldGroup'}" />
-					<h:outputText value="#{entity}" rendered="#{node.type == 'tab' or node.type == 'fieldGroup'}" />
-				</p:column>
-				<p:column headerText="#{messages['customFieldTemplate.fieldLabel']}">
-					<h:outputText value="#{entity.description}" rendered="#{node.type == 'field'}" />
-				</p:column>
-				<p:column headerText="#{messages['customFieldTemplate.fieldType']}" style="width: 8%">
-					<h:outputText value="#{messages[entity.fieldType.label]}" rendered="#{node.type == 'field'}" />
-				</p:column>
-				<p:column headerText="#{messages['customFieldTemplate.storageType']}" style="width: 7%">
-					<h:outputText value="#{messages[entity.storageType.label]}" rendered="#{node.type == 'field'}" />
-				</p:column>
-				<p:column headerText="#{messages['customFieldTemplate.fieldRequired']}" style="width: 8%">
-					<h:outputText value="#{messages['commons.yes']}" rendered="#{node.type == 'field' and entity.valueRequired != null and entity.valueRequired.toString() == 'true'}" />
-					<h:outputText value="#{messages['commons.no']}" rendered="#{node.type == 'field' and entity.valueRequired != null and entity.valueRequired.toString() == 'false'}" />
-				</p:column>
-				<p:column headerText="#{messages['customFieldTemplate.applicableOnEl.short']}" width="20%">
-					<h:outputText value="#{entity.applicableOnEl}" rendered="#{node.type == 'field'}" />
-				</p:column>
-				<p:column headerText="#{messages['customFieldTemplate.versionable']}" style="width: 6%">
-					<h:outputText value="#{messages['commons.yes']}" rendered="#{node.type == 'field' and entity.versionable != null and entity.versionable.toString() == 'true'}" />
-					<h:outputText value="#{messages['commons.no']}" rendered="#{node.type == 'field' and entity.versionable != null and entity.versionable.toString() == 'false'}" />
-				</p:column>
-				<p:column headerText="#{messages['enableEntity.active']}" style="width: 5%">
-					<h:outputText value="#{messages['commons.yes']}" rendered="#{node.type == 'field' and entity.active != null and entity.active.toString() == 'true'}" />
-					<h:outputText value="#{messages['commons.no']}" rendered="#{node.type == 'field' and entity.active != null and entity.active.toString() == 'false'}" />
-				</p:column>
-				<p:column headerText="#{messages['commons.actions']}" width="12%">
-					<h:panelGroup rendered="#{node.type == 'tab'}">
-						<p:tooltip for="editTabBtn" value="#{messages['commons.edit']}" showEffect="slide" hideEffect="slide" />
-						<p:commandButton id="editTabBtn" icon="ui-icon-document" oncomplete="PF('groupDialog').show()" update=":groupForm">
-							<f:setPropertyActionListener target="#{customEntityTemplateBean.selectedFieldGrouping}" value="#{node}" />
-						</p:commandButton>
+    <h:form id="fieldsForm">
+        <p:panel width="100" header="#{messages['customizedEntities.fields']}" rendered="#{customEntityTemplateBean.cetPrefix!=null}">
+            <p:treeTable id="fields" value="#{customEntityTemplateBean.fields}" var="entity" nodeVar="node" resizableColumns="true">
+                <p:column headerText="#{messages['BusinessEntity.code']}">
+                    <h:outputText value="#{entity.code}" rendered="#{node.type == 'field'}" />
+                    <h:panelGroup styleClass="ui-icon ui-icon-folder-collapsed inlineIcon" rendered="#{node.type == 'tab'}" />
+                    <h:panelGroup styleClass="ui-icon ui-icon-contact inlineIcon" rendered="#{node.type == 'fieldGroup'}" />
+                    <h:outputText value="#{entity}" rendered="#{node.type == 'tab' or node.type == 'fieldGroup'}" />
+                </p:column>
+                <p:column headerText="#{messages['customFieldTemplate.fieldLabel']}">
+                    <h:outputText value="#{entity.description}" rendered="#{node.type == 'field'}" />
+                </p:column>
+                <p:column headerText="#{messages['customFieldTemplate.fieldType']}" style="width: 8%">
+                    <h:outputText value="#{messages[entity.fieldType.label]}" rendered="#{node.type == 'field'}" />
+                </p:column>
+                <p:column headerText="#{messages['customFieldTemplate.storageType']}" style="width: 7%">
+                    <h:outputText value="#{messages[entity.storageType.label]}" rendered="#{node.type == 'field'}" />
+                </p:column>
+                <p:column headerText="#{messages['customFieldTemplate.fieldRequired']}" style="width: 8%">
+                    <h:outputText value="#{messages['commons.yes']}" rendered="#{node.type == 'field' and entity.valueRequired != null and entity.valueRequired.toString() == 'true'}" />
+                    <h:outputText value="#{messages['commons.no']}" rendered="#{node.type == 'field' and entity.valueRequired != null and entity.valueRequired.toString() == 'false'}" />
+                </p:column>
+                <p:column headerText="#{messages['customFieldTemplate.applicableOnEl.short']}" width="20%">
+                    <h:outputText value="#{entity.applicableOnEl}" rendered="#{node.type == 'field'}" />
+                </p:column>
+                <p:column headerText="#{messages['customFieldTemplate.versionable']}" style="width: 6%">
+                    <h:outputText value="#{messages['commons.yes']}" rendered="#{node.type == 'field' and entity.versionable != null and entity.versionable.toString() == 'true'}" />
+                    <h:outputText value="#{messages['commons.no']}" rendered="#{node.type == 'field' and entity.versionable != null and entity.versionable.toString() == 'false'}" />
+                </p:column>
+                <p:column headerText="#{messages['enableEntity.active']}" style="width: 5%">
+                    <h:outputText value="#{messages['commons.yes']}" rendered="#{node.type == 'field' and entity.active != null and entity.active.toString() == 'true'}" />
+                    <h:outputText value="#{messages['commons.no']}" rendered="#{node.type == 'field' and entity.active != null and entity.active.toString() == 'false'}" />
+                </p:column>
+                <p:column headerText="#{messages['commons.actions']}" width="12%">
+                    <h:panelGroup rendered="#{node.type == 'tab'}">
+                        <p:tooltip for="editTabBtn" value="#{messages['commons.edit']}" showEffect="slide" hideEffect="slide" />
+                        <p:commandButton id="editTabBtn" icon="ui-icon-document" oncomplete="PF('groupDialog').show()" update=":groupForm">
+                            <f:setPropertyActionListener target="#{customEntityTemplateBean.selectedFieldGrouping}" value="#{node}" />
+                        </p:commandButton>
 
-						<p:tooltip for="addFieldGroupBtn" value="#{messages['customizedEntities.addFieldGroup']}" showEffect="slide" hideEffect="slide" />
-						<p:commandButton id="addFieldGroupBtn" icon="ui-icon-contact" action="#{customEntityTemplateBean.newFieldGroup(node)}" oncomplete="PF('groupDialog').show()" update=":groupForm" />
+                        <p:tooltip for="addFieldGroupBtn" value="#{messages['customizedEntities.addFieldGroup']}" showEffect="slide" hideEffect="slide" />
+                        <p:commandButton id="addFieldGroupBtn" icon="ui-icon-contact" action="#{customEntityTemplateBean.newFieldGroup(node)}" oncomplete="PF('groupDialog').show()" update=":groupForm" />
 
-						<p:tooltip for="addFieldInTabBtn" value="#{messages['customizedEntities.addField']}" showEffect="slide" hideEffect="slide" />
-						<p:commandButton id="addFieldInTabBtn" icon="ui-icon-plus" oncomplete="PF('cftDialog').show()" actionListener="#{customFieldTemplateBean.newEntity()}" update=":cftForm">
-							<f:setPropertyActionListener target="#{customFieldTemplateBean.backViewSave}" value="customizedEntity" />
-							<f:setPropertyActionListener target="#{customFieldTemplateBean.entity.appliesTo}" value="#{customEntityTemplateBean.cetPrefix}" />
-							<f:setPropertyActionListener target="#{customFieldTemplateBean.entity.guiPosition}" value="#{node.guiPositionForField}" />
-						</p:commandButton>
+                        <p:tooltip for="addFieldInTabBtn" value="#{messages['customizedEntities.addField']}" showEffect="slide" hideEffect="slide" />
+                        <p:commandButton id="addFieldInTabBtn" icon="ui-icon-plus" oncomplete="PF('cftDialog').show()" actionListener="#{customFieldTemplateBean.newEntity()}" update=":cftForm">
+                            <f:setPropertyActionListener target="#{customFieldTemplateBean.backViewSave}" value="customizedEntity" />
+                            <f:setPropertyActionListener target="#{customFieldTemplateBean.entity.appliesTo}" value="#{customEntityTemplateBean.cetPrefix}" />
+                            <f:setPropertyActionListener target="#{customFieldTemplateBean.entity.guiPosition}" value="#{node.guiPositionForField}" />
+                        </p:commandButton>
 
-						<p:tooltip for="deleteTablink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
-						<p:commandButton id="deleteTablink" icon="ui-icon-trash" action="#{customEntityTemplateBean.removeFieldGrouping()}" update=":fieldsForm:fields" rendered="#{node.parent.childCount &gt; 1}">
-							<f:setPropertyActionListener target="#{customEntityTemplateBean.selectedFieldGrouping}" value="#{node}" />
-							<p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['customizedEntities.confirmDeleteTab']}" icon="ui-icon-alert" />
-						</p:commandButton>
-
-
-						<p:tooltip for="moveUpTabBtn" value="#{messages['action.moveUp']}" showEffect="slide" hideEffect="slide" />
-						<p:commandButton id="moveUpTabBtn" icon="ui-icon-arrowthick-1-n" action="#{customEntityTemplateBean.moveUp(node)}" update=":fieldsForm:fields" rendered="#{node.canMoveUp()}" />
-
-						<p:tooltip for="moveDownTabBtn" value="#{messages['action.moveDown']}" showEffect="slide" hideEffect="slide" />
-						<p:commandButton id="moveDownTabBtn" icon="ui-icon-arrowthick-1-s" action="#{customEntityTemplateBean.moveDown(node)}" update=":fieldsForm:fields" rendered="#{node.canMoveDown()}" />
-					</h:panelGroup>
-
-					<h:panelGroup rendered="#{node.type == 'fieldGroup'}">
-						<p:tooltip for="editFieldGroupBtn" value="#{messages['commons.edit']}" showEffect="slide" hideEffect="slide" />
-						<p:commandButton id="editFieldGroupBtn" icon="ui-icon-document" oncomplete="PF('groupDialog').show()" update=":groupForm">
-							<f:setPropertyActionListener target="#{customEntityTemplateBean.selectedFieldGrouping}" value="#{node}" />
-						</p:commandButton>
-
-						<p:tooltip for="addFieldInFieldGroupBtn" value="#{messages['customizedEntities.addField']}" showEffect="slide" hideEffect="slide" />
-						<p:commandButton id="addFieldInFieldGroupBtn" icon="ui-icon-plus" oncomplete="PF('cftDialog').show()" actionListener="#{customFieldTemplateBean.newEntity()}" update=":cftForm">
-							<f:setPropertyActionListener target="#{customFieldTemplateBean.backViewSave}" value="customizedEntity" />
-							<f:setPropertyActionListener target="#{customFieldTemplateBean.entity.appliesTo}" value="#{customEntityTemplateBean.cetPrefix}" />
-							<f:setPropertyActionListener target="#{customFieldTemplateBean.entity.guiPosition}" value="#{node.guiPositionForField}" />
-						</p:commandButton>
-
-						<p:tooltip for="deleteFieldGrouplink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
-						<p:commandButton id="deleteFieldGrouplink" icon="ui-icon-trash" action="#{customEntityTemplateBean.removeFieldGrouping()}" update=":fieldsForm:fields">
-							<f:setPropertyActionListener target="#{customEntityTemplateBean.selectedFieldGrouping}" value="#{node}" />
-							<p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['customizedEntities.confirmDeleteFieldGroup']}" icon="ui-icon-alert" />
-						</p:commandButton>
-
-						<p:tooltip for="moveUpFgBtn" value="#{messages['action.moveUp']}" showEffect="slide" hideEffect="slide" />
-						<p:commandButton id="moveUpFgBtn" icon="ui-icon-arrowthick-1-n" action="#{customEntityTemplateBean.moveUp(node)}" update=":fieldsForm:fields" rendered="#{node.canMoveUp()}" />
-
-						<p:tooltip for="moveDownFgBtn" value="#{messages['action.moveDown']}" showEffect="slide" hideEffect="slide" />
-						<p:commandButton id="moveDownFgBtn" icon="ui-icon-arrowthick-1-s" action="#{customEntityTemplateBean.moveDown(node)}" update=":fieldsForm:fields" rendered="#{node.canMoveDown()}" />
-					</h:panelGroup>
-
-					<h:panelGroup rendered="#{node.type == 'field'}">
-
-						<p:tooltip for="editFieldBtn" value="#{messages['commons.edit']}" showEffect="slide" hideEffect="slide" />
-						<p:commandButton id="editFieldBtn" icon="ui-icon-document" oncomplete="PF('cftDialog').show()" action="#{customFieldTemplateBean.initEntity(entity.id)}" update=":cftForm">
-							<f:setPropertyActionListener target="#{customFieldTemplateBean.backViewSave}" value="customizedEntity" />
-						</p:commandButton>
+                        <p:tooltip for="deleteTablink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
+                        <p:commandButton id="deleteTablink" icon="ui-icon-trash" action="#{customEntityTemplateBean.removeFieldGrouping()}" update=":fieldsForm:fields"
+                            rendered="#{node.parent.childCount &gt; 1}">
+                            <f:setPropertyActionListener target="#{customEntityTemplateBean.selectedFieldGrouping}" value="#{node}" />
+                            <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['customizedEntities.confirmDeleteTab']}" icon="ui-icon-alert" />
+                        </p:commandButton>
 
 
-						<p:commandButton id="enablelink" icon="ui-icon-circle-check" rendered="#{entity.disabled}" actionListener="#{customEntityTemplateBean.refreshFields}" action="#{customFieldTemplateBean.enable()}"
-							update="@form">
-							<f:setPropertyActionListener target="#{customFieldTemplateBean.entity}" value="#{entity}" />
-							<p:confirm header="#{messages['commons.enable']}" message="#{messages['commons.confirmEnable']}" />
-						</p:commandButton>
-						<p:commandButton id="disablelink" icon="ui-icon-circle-close" rendered="#{not entity.disabled}" actionListener="#{customEntityTemplateBean.refreshFields}"
-							action="#{customFieldTemplateBean.disable()}" update="@form">
-							<f:setPropertyActionListener target="#{customFieldTemplateBean.entity}" value="#{entity}" />
-							<p:confirm header="#{messages['commons.disable']}" message="#{messages['commons.confirmDisable']}" />
-						</p:commandButton>
+                        <p:tooltip for="moveUpTabBtn" value="#{messages['action.moveUp']}" showEffect="slide" hideEffect="slide" />
+                        <p:commandButton id="moveUpTabBtn" icon="ui-icon-arrowthick-1-n" action="#{customEntityTemplateBean.moveUp(node)}" update=":fieldsForm:fields" rendered="#{node.canMoveUp()}" />
 
-						<p:tooltip for="enablelink" value="#{messages['commons.enable']}" showEffect="slide" hideEffect="slide" />
+                        <p:tooltip for="moveDownTabBtn" value="#{messages['action.moveDown']}" showEffect="slide" hideEffect="slide" />
+                        <p:commandButton id="moveDownTabBtn" icon="ui-icon-arrowthick-1-s" action="#{customEntityTemplateBean.moveDown(node)}" update=":fieldsForm:fields"
+                            rendered="#{node.canMoveDown()}" />
+                    </h:panelGroup>
 
-						<p:tooltip for="disablelink" value="#{messages['commons.disable']}" showEffect="slide" hideEffect="slide" />
+                    <h:panelGroup rendered="#{node.type == 'fieldGroup'}">
+                        <p:tooltip for="editFieldGroupBtn" value="#{messages['commons.edit']}" showEffect="slide" hideEffect="slide" />
+                        <p:commandButton id="editFieldGroupBtn" icon="ui-icon-document" oncomplete="PF('groupDialog').show()" update=":groupForm">
+                            <f:setPropertyActionListener target="#{customEntityTemplateBean.selectedFieldGrouping}" value="#{node}" />
+                        </p:commandButton>
 
+                        <p:tooltip for="addFieldInFieldGroupBtn" value="#{messages['customizedEntities.addField']}" showEffect="slide" hideEffect="slide" />
+                        <p:commandButton id="addFieldInFieldGroupBtn" icon="ui-icon-plus" oncomplete="PF('cftDialog').show()" actionListener="#{customFieldTemplateBean.newEntity()}" update=":cftForm">
+                            <f:setPropertyActionListener target="#{customFieldTemplateBean.backViewSave}" value="customizedEntity" />
+                            <f:setPropertyActionListener target="#{customFieldTemplateBean.entity.appliesTo}" value="#{customEntityTemplateBean.cetPrefix}" />
+                            <f:setPropertyActionListener target="#{customFieldTemplateBean.entity.guiPosition}" value="#{node.guiPositionForField}" />
+                        </p:commandButton>
 
+                        <p:tooltip for="deleteFieldGrouplink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
+                        <p:commandButton id="deleteFieldGrouplink" icon="ui-icon-trash" action="#{customEntityTemplateBean.removeFieldGrouping()}" update=":fieldsForm:fields">
+                            <f:setPropertyActionListener target="#{customEntityTemplateBean.selectedFieldGrouping}" value="#{node}" />
+                            <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['customizedEntities.confirmDeleteFieldGroup']}" icon="ui-icon-alert" />
+                        </p:commandButton>
 
-						<p:remoteCommand id="remoteDeleteButton" actionListener="#{customFieldTemplateBean.deleteInlist}" action="#{customEntityTemplateBean.removeField(node)}" name="fieldsDoDelete"
-							oncomplete="handleDeleteComplete(xhr,status,args)" update="@form" />
-						<p:tooltip for="deletelink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
-						<p:commandButton id="deletelink" icon="ui-icon-trash" oncomplete="fieldsDoDelete()">
-							<f:setPropertyActionListener target="#{customFieldTemplateBean.entity}" value="#{entity}" />
-							<p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
-						</p:commandButton>
+                        <p:tooltip for="moveUpFgBtn" value="#{messages['action.moveUp']}" showEffect="slide" hideEffect="slide" />
+                        <p:commandButton id="moveUpFgBtn" icon="ui-icon-arrowthick-1-n" action="#{customEntityTemplateBean.moveUp(node)}" update=":fieldsForm:fields" rendered="#{node.canMoveUp()}" />
 
+                        <p:tooltip for="moveDownFgBtn" value="#{messages['action.moveDown']}" showEffect="slide" hideEffect="slide" />
+                        <p:commandButton id="moveDownFgBtn" icon="ui-icon-arrowthick-1-s" action="#{customEntityTemplateBean.moveDown(node)}" update=":fieldsForm:fields"
+                            rendered="#{node.canMoveDown()}" />
+                    </h:panelGroup>
 
-						<p:tooltip for="moveUpFBtn" value="#{messages['action.moveUp']}" showEffect="slide" hideEffect="slide" />
-						<p:commandButton id="moveUpFBtn" icon="ui-icon-arrowthick-1-n" action="#{customEntityTemplateBean.moveUp(node)}" update=":fieldsForm:fields" rendered="#{node.canMoveUp()}" />
+                    <h:panelGroup rendered="#{node.type == 'field'}">
 
-						<p:tooltip for="moveDownFBtn" value="#{messages['action.moveDown']}" showEffect="slide" hideEffect="slide" />
-						<p:commandButton id="moveDownFBtn" icon="ui-icon-arrowthick-1-s" action="#{customEntityTemplateBean.moveDown(node)}" update=":fieldsForm:fields" rendered="#{node.canMoveDown()}" />
-
-					</h:panelGroup>
-				</p:column>
-				<f:facet name="footer">
-					<p:commandButton id="addTab" value="#{messages['customizedEntities.addNewTab']}" oncomplete="PF('groupDialog').show()" actionListener="#{customEntityTemplateBean.newTab()}" update=":groupForm">
-					</p:commandButton>
-					<!--                         <p:commandButton id="addlink" value="#{messages['customizedEntities.addNewField']}" oncomplete="PF('cftDialog').show()" -->
-					<!--                             actionListener="#{customFieldTemplateBean.newEntity()}" update=":cftForm"> -->
-					<!--                             <f:setPropertyActionListener target="#{customFieldTemplateBean.backViewSave}" value="customizedEntity" /> -->
-					<!--                             <f:setPropertyActionListener target="#{customFieldTemplateBean.entity.appliesTo}" value="#{customEntityTemplateBean.cetPrefix}" /> -->
-					<!--                         </p:commandButton> -->
-				</f:facet>
-			</p:treeTable>
-		</p:panel>
-
-		<p:panel width="100" header="#{messages['customizedEntities.actions']}" rendered="#{customEntityTemplateBean.cetPrefix!=null}">
-			<p:dataTable id="entityActions" var="entity" value="#{customEntityTemplateBean.entityActions}" paginator="true" rows="10" sortBy="#{entity.code}" paginatorAlwaysVisible="false"
-				paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="10" lazy="false" styleClass="custom-grid"
-				reflow="true" resizableColumns="true">
-				<p:column headerText="#{messages['BusinessEntity.code']}">
-					<h:outputText value="#{entity.code}" />
-				</p:column>
-				<p:column headerText="#{messages['customizedEntities.actionLabel']}">
-					<h:outputText value="#{entity.label}" />
-				</p:column>
-				<p:column headerText="#{messages['BusinessEntity.description']}">
-					<h:outputText value="#{entity.description}" />
-				</p:column>
-				<p:column headerText="#{messages['customizedEntities.actionApplicableOnEl.short']}" width="27%">
-					<h:outputText value="#{entity.applicableOnEl}" />
-				</p:column>
-				<p:column headerText="#{messages['enableEntity.active']}" width="10%">
-					<h:outputText value="#{messages['commons.yes']}" rendered="#{entity.active != null and entity.active.toString() == 'true'}" />
-					<h:outputText value="#{messages['commons.no']}" rendered="#{entity.active != null and entity.active.toString() == 'false'}" />
-				</p:column>
-
-				<p:column headerText="#{messages['commons.actions']}" width="10%">
-					<p:tooltip for="editActionBtn" value="#{messages['commons.edit']}" showEffect="slide" hideEffect="slide" />
-					<p:commandButton id="editActionBtn" icon="ui-icon-document" oncomplete="PF('actionDialog').show()" action="#{entityCustomActionBean.initEntity(entity.id)}" update=":actionForm">
-						<f:setPropertyActionListener target="#{entityCustomActionBean.backViewSave}" value="customizedEntity" />
-					</p:commandButton>
-
-					<p:commandButton id="enableActionlink" icon="ui-icon-circle-check" rendered="#{entity.disabled}" actionListener="#{customEntityTemplateBean.refreshActions}"
-						action="#{entityCustomActionBean.enable()}" update="@form">
-						<f:setPropertyActionListener target="#{entityCustomActionBean.entity}" value="#{entity}" />
-						<p:confirm header="#{messages['commons.enable']}" message="#{messages['commons.confirmEnable']}" />
-					</p:commandButton>
-					<p:commandButton id="disableActionlink" icon="ui-icon-circle-close" rendered="#{not entity.disabled}" actionListener="#{customEntityTemplateBean.refreshActions}"
-						action="#{entityCustomActionBean.disable()}" update="@form">
-						<f:setPropertyActionListener target="#{entityCustomActionBean.entity}" value="#{entity}" />
-						<p:confirm header="#{messages['commons.disable']}" message="#{messages['commons.confirmDisable']}" />
-					</p:commandButton>
-
-					<p:tooltip for="enableActionlink" value="#{messages['commons.enable']}" showEffect="slide" hideEffect="slide" />
-					<p:tooltip for="disableActionlink" value="#{messages['commons.disable']}" showEffect="slide" hideEffect="slide" />
-
-					<p:tooltip for="deleteActionlink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
-					<p:commandButton id="deleteActionlink" icon="ui-icon-trash" oncomplete="actionsDoDelete()">
-						<f:setPropertyActionListener target="#{entityCustomActionBean.entity}" value="#{entity}" />
-						<p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
-					</p:commandButton>
-
-				</p:column>
-
-				<f:facet name="footer">
-					<p:commandButton id="addAction" value="#{messages['customizedEntities.addAction']}" oncomplete="PF('actionDialog').show()" actionListener="#{entityCustomActionBean.newEntity()}"
-						update=":actionForm">
-						<f:setPropertyActionListener target="#{entityCustomActionBean.backViewSave}" value="customizedEntity" />
-						<f:setPropertyActionListener target="#{entityCustomActionBean.entity.appliesTo}" value="#{customEntityTemplateBean.cetPrefix}" />
-					</p:commandButton>
-				</f:facet>
-
-			</p:dataTable>
+                        <p:tooltip for="editFieldBtn" value="#{messages['commons.edit']}" showEffect="slide" hideEffect="slide" />
+                        <p:commandButton id="editFieldBtn" icon="ui-icon-document" oncomplete="PF('cftDialog').show()" action="#{customFieldTemplateBean.initEntity(entity.id)}" update=":cftForm">
+                            <f:setPropertyActionListener target="#{customFieldTemplateBean.backViewSave}" value="customizedEntity" />
+                        </p:commandButton>
 
 
-			<!--                 <p:button id="backButton" value="#{messages['action.back']}" outcome="#{customEntityTemplateBean.back()}" includeViewParams="true"> -->
-			<!--                     <c:if test="#{javax.enterprise.context.conversation.id != null}"> -->
-			<!--                         <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" /> -->
-			<!--                     </c:if> -->
-			<!--                 </p:button> -->
+                        <p:commandButton id="enablelink" icon="ui-icon-circle-check" rendered="#{entity.disabled}" actionListener="#{customEntityTemplateBean.refreshFields}"
+                            action="#{customFieldTemplateBean.enable()}" update="@form">
+                            <f:setPropertyActionListener target="#{customFieldTemplateBean.entity}" value="#{entity}" />
+                            <p:confirm header="#{messages['commons.enable']}" message="#{messages['commons.confirmEnable']}" />
+                        </p:commandButton>
+                        <p:commandButton id="disablelink" icon="ui-icon-circle-close" rendered="#{not entity.disabled}" actionListener="#{customEntityTemplateBean.refreshFields}"
+                            action="#{customFieldTemplateBean.disable()}" update="@form">
+                            <f:setPropertyActionListener target="#{customFieldTemplateBean.entity}" value="#{entity}" />
+                            <p:confirm header="#{messages['commons.disable']}" message="#{messages['commons.confirmDisable']}" />
+                        </p:commandButton>
 
-			<!--  Field related confirmation widgets -->
+                        <p:tooltip for="enablelink" value="#{messages['commons.enable']}" showEffect="slide" hideEffect="slide" />
 
-			<p:confirmDialog id="confirmCanDeleteDialog" styleClass="confirm-dialog" message="#{messages['commons.confirmCanotDelete']}" header="" severity="alert" widgetVar="fieldsConfirmCanotDeleteWidget"
-				appendTo="@(body)">
-				<p:panel styleClass="confirm-dialog-content">
-					<p:commandButton id="canotdeleteOk" value="#{messages['commons.ok']}" oncomplete="PF('fieldsConfirmCanotDeleteWidget').hide()" update="@this" />
-				</p:panel>
-			</p:confirmDialog>
+                        <p:tooltip for="disablelink" value="#{messages['commons.disable']}" showEffect="slide" hideEffect="slide" />
 
 
 
-			<!-- Action related widgets -->
+                        <p:remoteCommand id="remoteDeleteButton" actionListener="#{customFieldTemplateBean.deleteInlist}" action="#{customEntityTemplateBean.removeField(node)}" name="fieldsDoDelete"
+                            oncomplete="handleDeleteComplete(xhr,status,args)" update="@form" />
+                        <p:tooltip for="deletelink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
+                        <p:commandButton id="deletelink" icon="ui-icon-trash" oncomplete="fieldsDoDelete()">
+                            <f:setPropertyActionListener target="#{customFieldTemplateBean.entity}" value="#{entity}" />
+                            <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
+                        </p:commandButton>
 
-			<p:remoteCommand id="remoteDeleteActionButton" actionListener="#{entityCustomActionBean.deleteInlist}" action="#{customEntityTemplateBean.refreshActions}" name="actionsDoDelete"
-				oncomplete="handleDeleteComplete(xhr,status,args)" update="@form" />
 
-			<script type="text/javascript">
+                        <p:tooltip for="moveUpFBtn" value="#{messages['action.moveUp']}" showEffect="slide" hideEffect="slide" />
+                        <p:commandButton id="moveUpFBtn" icon="ui-icon-arrowthick-1-n" action="#{customEntityTemplateBean.moveUp(node)}" update=":fieldsForm:fields" rendered="#{node.canMoveUp()}" />
+
+                        <p:tooltip for="moveDownFBtn" value="#{messages['action.moveDown']}" showEffect="slide" hideEffect="slide" />
+                        <p:commandButton id="moveDownFBtn" icon="ui-icon-arrowthick-1-s" action="#{customEntityTemplateBean.moveDown(node)}" update=":fieldsForm:fields"
+                            rendered="#{node.canMoveDown()}" />
+
+                    </h:panelGroup>
+                </p:column>
+                <f:facet name="footer">
+                    <p:commandButton id="addTab" value="#{messages['customizedEntities.addNewTab']}" oncomplete="PF('groupDialog').show()" actionListener="#{customEntityTemplateBean.newTab()}"
+                        update=":groupForm">
+                    </p:commandButton>
+                    <!--                         <p:commandButton id="addlink" value="#{messages['customizedEntities.addNewField']}" oncomplete="PF('cftDialog').show()" -->
+                    <!--                             actionListener="#{customFieldTemplateBean.newEntity()}" update=":cftForm"> -->
+                    <!--                             <f:setPropertyActionListener target="#{customFieldTemplateBean.backViewSave}" value="customizedEntity" /> -->
+                    <!--                             <f:setPropertyActionListener target="#{customFieldTemplateBean.entity.appliesTo}" value="#{customEntityTemplateBean.cetPrefix}" /> -->
+                    <!--                         </p:commandButton> -->
+                </f:facet>
+            </p:treeTable>
+        </p:panel>
+
+        <p:panel width="100" header="#{messages['customizedEntities.actions']}" rendered="#{customEntityTemplateBean.cetPrefix!=null}">
+            <p:dataTable id="entityActions" var="entity" value="#{customEntityTemplateBean.entityActions}" paginator="true" rows="10" sortBy="#{entity.code}" paginatorAlwaysVisible="false"
+                paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="10" lazy="false"
+                styleClass="custom-grid" reflow="true" resizableColumns="true">
+                <p:column headerText="#{messages['BusinessEntity.code']}">
+                    <h:outputText value="#{entity.code}" />
+                </p:column>
+                <p:column headerText="#{messages['customizedEntities.actionLabel']}">
+                    <h:outputText value="#{entity.label}" />
+                </p:column>
+                <p:column headerText="#{messages['BusinessEntity.description']}">
+                    <h:outputText value="#{entity.description}" />
+                </p:column>
+                <p:column headerText="#{messages['customizedEntities.actionApplicableOnEl.short']}" width="27%">
+                    <h:outputText value="#{entity.applicableOnEl}" />
+                </p:column>
+                <p:column headerText="#{messages['enableEntity.active']}" width="10%">
+                    <h:outputText value="#{messages['commons.yes']}" rendered="#{entity.active != null and entity.active.toString() == 'true'}" />
+                    <h:outputText value="#{messages['commons.no']}" rendered="#{entity.active != null and entity.active.toString() == 'false'}" />
+                </p:column>
+
+                <p:column headerText="#{messages['commons.actions']}" width="10%">
+                    <p:tooltip for="editActionBtn" value="#{messages['commons.edit']}" showEffect="slide" hideEffect="slide" />
+                    <p:commandButton id="editActionBtn" icon="ui-icon-document" oncomplete="PF('actionDialog').show()" action="#{entityCustomActionBean.initEntity(entity.id)}" update=":actionForm">
+                        <f:setPropertyActionListener target="#{entityCustomActionBean.backViewSave}" value="customizedEntity" />
+                    </p:commandButton>
+
+                    <p:commandButton id="enableActionlink" icon="ui-icon-circle-check" rendered="#{entity.disabled}" actionListener="#{customEntityTemplateBean.refreshActions}"
+                        action="#{entityCustomActionBean.enable()}" update="@form">
+                        <f:setPropertyActionListener target="#{entityCustomActionBean.entity}" value="#{entity}" />
+                        <p:confirm header="#{messages['commons.enable']}" message="#{messages['commons.confirmEnable']}" />
+                    </p:commandButton>
+                    <p:commandButton id="disableActionlink" icon="ui-icon-circle-close" rendered="#{not entity.disabled}" actionListener="#{customEntityTemplateBean.refreshActions}"
+                        action="#{entityCustomActionBean.disable()}" update="@form">
+                        <f:setPropertyActionListener target="#{entityCustomActionBean.entity}" value="#{entity}" />
+                        <p:confirm header="#{messages['commons.disable']}" message="#{messages['commons.confirmDisable']}" />
+                    </p:commandButton>
+
+                    <p:tooltip for="enableActionlink" value="#{messages['commons.enable']}" showEffect="slide" hideEffect="slide" />
+                    <p:tooltip for="disableActionlink" value="#{messages['commons.disable']}" showEffect="slide" hideEffect="slide" />
+
+                    <p:tooltip for="deleteActionlink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
+                    <p:commandButton id="deleteActionlink" icon="ui-icon-trash" oncomplete="actionsDoDelete()">
+                        <f:setPropertyActionListener target="#{entityCustomActionBean.entity}" value="#{entity}" />
+                        <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
+                    </p:commandButton>
+
+                </p:column>
+
+                <f:facet name="footer">
+                    <p:commandButton id="addAction" value="#{messages['customizedEntities.addAction']}" oncomplete="PF('actionDialog').show()" actionListener="#{entityCustomActionBean.newEntity()}"
+                        update=":actionForm">
+                        <f:setPropertyActionListener target="#{entityCustomActionBean.backViewSave}" value="customizedEntity" />
+                        <f:setPropertyActionListener target="#{entityCustomActionBean.entity.appliesTo}" value="#{customEntityTemplateBean.cetPrefix}" />
+                    </p:commandButton>
+                </f:facet>
+
+            </p:dataTable>
+
+
+            <!--                 <p:button id="backButton" value="#{messages['action.back']}" outcome="#{customEntityTemplateBean.back()}" includeViewParams="true"> -->
+            <!--                     <c:if test="#{javax.enterprise.context.conversation.id != null}"> -->
+            <!--                         <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" /> -->
+            <!--                     </c:if> -->
+            <!--                 </p:button> -->
+
+            <!--  Field related confirmation widgets -->
+
+            <p:confirmDialog id="confirmCanDeleteDialog" styleClass="confirm-dialog" message="#{messages['commons.confirmCanotDelete']}" header="" severity="alert"
+                widgetVar="fieldsConfirmCanotDeleteWidget" appendTo="@(body)">
+                <p:panel styleClass="confirm-dialog-content">
+                    <p:commandButton id="canotdeleteOk" value="#{messages['commons.ok']}" oncomplete="PF('fieldsConfirmCanotDeleteWidget').hide()" update="@this" />
+                </p:panel>
+            </p:confirmDialog>
+
+
+
+            <!-- Action related widgets -->
+
+            <p:remoteCommand id="remoteDeleteActionButton" actionListener="#{entityCustomActionBean.deleteInlist}" action="#{customEntityTemplateBean.refreshActions}" name="actionsDoDelete"
+                oncomplete="handleDeleteComplete(xhr,status,args)" update="@form" />
+
+            <script type="text/javascript">
 													//<![CDATA[
 													function handleDeleteComplete(
 															xhr, status, args) {
@@ -249,52 +254,54 @@
 
 
 
-		</p:panel>
-	</h:form>
+        </p:panel>
+    </h:form>
 
-	<p:dialog id="groupDialog" header="#{messages['customizedEntities.groupDialogHeader']}" modal="true" closeOnEscape="false" widgetVar="groupDialog" width="50%" closable="false" appendTo="@(body)">
+    <p:dialog id="groupDialog" header="#{messages['customizedEntities.groupDialogHeader']}" modal="true" closeOnEscape="false" widgetVar="groupDialog" width="50%" closable="false" appendTo="@(body)">
 
-		<hftl:decorateFormPanel formId="groupForm" label="#{messages['customizedEntities.'.concat(customEntityTemplateBean.selectedFieldGrouping.type).concat('DialogHeader')]}">
-			<ui:define name="fields">
-				<hftl:decorateFormField fieldId="parentName" label="#{messages['customizedEntities.parentTabTitle']}"
-					rendered="#{customEntityTemplateBean.selectedFieldGrouping.parent!=null and customEntityTemplateBean.selectedFieldGrouping.parent.type!='root'}">
-					<h:outputText id="parentName" value="#{customEntityTemplateBean.selectedFieldGrouping.parent.data}" styleClass="field-value" />
-				</hftl:decorateFormField>
+        <hftl:decorateFormPanel formId="groupForm" label="#{messages['customizedEntities.'.concat(customEntityTemplateBean.selectedFieldGrouping.type).concat('DialogHeader')]}">
+            <ui:define name="fields">
+                <hftl:decorateFormField fieldId="parentName" label="#{messages['customizedEntities.parentTabTitle']}"
+                    rendered="#{customEntityTemplateBean.selectedFieldGrouping.parent!=null and customEntityTemplateBean.selectedFieldGrouping.parent.type!='root'}">
+                    <h:outputText id="parentName" value="#{customEntityTemplateBean.selectedFieldGrouping.parent.data}" styleClass="field-value" />
+                </hftl:decorateFormField>
 
-				<hftl:decorateFormField fieldId="name" label="#{messages['customizedEntities.title']}">
-					<p:inputText id="name" value="#{customEntityTemplateBean.selectedFieldGrouping.data}" required="true" />
-				</hftl:decorateFormField>
-			</ui:define>
-			<ui:define name="buttons">
-				<p:commandButton value="#{messages['action.save']}" action="#{customEntityTemplateBean.saveUpdateFieldGrouping}" update="@form :fieldsForm:fields"
-					oncomplete="if (args &amp;&amp; !args.validationFailed){PF('groupDialog').hide();}" />
-				<p:commandButton value="#{messages['action.cancel']}" action="#{customEntityTemplateBean.cancelFieldGrouping}" oncomplete="PF('groupDialog').hide()" update=":fieldsForm:fields" immediate="true" />
-			</ui:define>
-		</hftl:decorateFormPanel>
-	</p:dialog>
+                <hftl:decorateFormField fieldId="name" label="#{messages['customizedEntities.title']}">
+                    <p:inputText id="name" value="#{customEntityTemplateBean.selectedFieldGrouping.data}" required="true" />
+                </hftl:decorateFormField>
+            </ui:define>
+            <ui:define name="buttons">
+                <p:commandButton value="#{messages['action.save']}" action="#{customEntityTemplateBean.saveUpdateFieldGrouping}" update="@form :fieldsForm:fields"
+                    oncomplete="if (args &amp;&amp; !args.validationFailed){PF('groupDialog').hide();}" />
+                <p:commandButton value="#{messages['action.cancel']}" action="#{customEntityTemplateBean.cancelFieldGrouping}" oncomplete="PF('groupDialog').hide()" update=":fieldsForm:fields"
+                    immediate="true" />
+            </ui:define>
+        </hftl:decorateFormPanel>
+    </p:dialog>
 
 
-	<p:dialog id="cftDialog" header="#{messages['customFieldTemplate.panel']}" modal="true" closeOnEscape="true" maximizable="true" widgetVar="cftDialog" width="90%" appendTo="@(body)" position="top">
+    <p:dialog id="cftDialog" header="#{messages['customFieldTemplate.panel']}" modal="true" closeOnEscape="true" maximizable="true" widgetVar="cftDialog" width="90%" appendTo="@(body)" position="top">
 
-		<p:scrollPanel mode="native" style="max-height:550px;">
+        <p:scrollPanel mode="native" style="max-height:550px;">
 
-			<hftl:formPanel formId="cftForm" label="#{messages['customFieldTemplate.panel']}" backingBean="#{customFieldTemplateBean}" showFormButtons="false">
+            <hftl:formPanel formId="cftForm" label="#{messages['customFieldTemplate.panel']}" backingBean="#{customFieldTemplateBean}" showFormButtons="false">
 
                 <f:event listener="#{customFieldTemplateBean.validateMatrixColumns(customFieldTemplateBean.entity)}" type="postValidate" />
-				
-                <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" allowEdit="false" componentWidth="15" />
-				<hftl:formField label="#{messages['customFieldTemplate.fieldLabel']}" field="description" required="true" useConverter="false" id="description" componentWidth="35" />
-				<hftl:formField label="#{messages['customFieldTemplate.fieldType']}" field="fieldType" required="true" componentWidth="10"
-					listenerUpdate="listValuesField defaultValueField entityClazzField validations versioning storageType_enum matrixColumns childEntityFields" actionListenerBean="#{customFieldTemplateBean}"
-					actionListenerMethod="updateDefaultValues" allowEdit="false" />
-				<!--                 <hftl:formField label="#{messages['customFieldTemplate.appliesTo']}" field="appliesTo" componentWidth="20" edit="false" /> -->
-				<!--                 <hftl:formField label="#{messages['customFieldTemplate.guipos']}" field="guiPosition" componentWidth="20" edit="false" /> -->
-				<hftl:formField label="#{messages['customFieldTemplate.storageType']}" field="storageType" required="true" componentWidth="10"
-					listenerUpdate="@this defaultValueField mapKeyTypeField matrixColumns" actionListenerBean="#{customFieldTemplateBean}" allowEdit="false" actionListenerMethod="updateDefaultValues" />
 
-				<h:panelGroup id="mapKeyTypeField">
-					<hftl:formField label="#{messages['customFieldTemplate.mapKeyType']}" field="mapKeyType" required="true" componentWidth="10" rendered="#{customFieldTemplateBean.entity.storageType == 'MAP'}" />
-				</h:panelGroup>
+                <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" allowEdit="false" componentWidth="15" />
+                <hftl:formField label="#{messages['customFieldTemplate.fieldLabel']}" field="description" required="true" useConverter="false" id="description" componentWidth="35" />
+                <hftl:formField label="#{messages['customFieldTemplate.fieldType']}" field="fieldType" required="true" componentWidth="10"
+                    listenerUpdate="listValuesField defaultValueField entityClazzField validations versioning storageType_enum matrixColumns childEntityFields"
+                    actionListenerBean="#{customFieldTemplateBean}" actionListenerMethod="updateDefaultValues" allowEdit="false" />
+                <!--                 <hftl:formField label="#{messages['customFieldTemplate.appliesTo']}" field="appliesTo" componentWidth="20" edit="false" /> -->
+                <!--                 <hftl:formField label="#{messages['customFieldTemplate.guipos']}" field="guiPosition" componentWidth="20" edit="false" /> -->
+                <hftl:formField label="#{messages['customFieldTemplate.storageType']}" field="storageType" required="true" componentWidth="10"
+                    listenerUpdate="@this defaultValueField mapKeyTypeField matrixColumns" actionListenerBean="#{customFieldTemplateBean}" allowEdit="false" actionListenerMethod="updateDefaultValues" />
+
+                <h:panelGroup id="mapKeyTypeField">
+                    <hftl:formField label="#{messages['customFieldTemplate.mapKeyType']}" field="mapKeyType" required="true" componentWidth="10"
+                        rendered="#{customFieldTemplateBean.entity.storageType == 'MAP'}" />
+                </h:panelGroup>
                 <h:panelGroup id="defaultValueField">
                     <hftl:formField label="#{messages['customFieldTemplate.defaultValue']}" field="defaultValue" componentWidth="20"
                         rendered="#{customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.DATE and customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.ENTITY and customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.CHILD_ENTITY and customFieldTemplateBean.entity.storageType == 'SINGLE'}"
@@ -305,253 +312,262 @@
 
                 <hftl:formField label="#{messages['customFieldTemplate.tags']}" field="tags" componentWidth="40" textArea="true" maxlength="2000" rows="1" />
 
-				<h:panelGroup id="entityClazzField">
-					<hftl:formField label="#{messages['entity.notification.classNameFilter']}" field="entityClazz" required="true" size="90" maxlength="255" autocompleteBean="#{customFieldTemplateBean}"
-						isAutocomplete="true" autocompleteMethod="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.CHILD_ENTITY?'autocompleteClassNamesCEIOnly':'autocompleteClassNames'}" newLine="true"
-						componentWidth="50" listenerUpdate="childEntityFields" actionListenerBean="#{customFieldTemplateBean}" actionListenerMethod="resetChildEntityFields"
-						rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.ENTITY or customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.CHILD_ENTITY}" />
-				</h:panelGroup>
+                <h:panelGroup id="entityClazzField">
+                    <hftl:formField label="#{messages['entity.notification.classNameFilter']}" field="entityClazz" required="true" size="90" maxlength="255"
+                        autocompleteBean="#{customFieldTemplateBean}" isAutocomplete="true"
+                        autocompleteMethod="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.CHILD_ENTITY?'autocompleteClassNamesCEIOnly':'autocompleteClassNames'}" newLine="true"
+                        componentWidth="50" listenerUpdate="childEntityFields" actionListenerBean="#{customFieldTemplateBean}" actionListenerMethod="resetChildEntityFields"
+                        rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.ENTITY or customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.CHILD_ENTITY}" />
+                </h:panelGroup>
 
-				<h:panelGroup id="childEntityFields" styleClass="clearLeft">
-					<p:fieldset legend="#{messages['customFieldTemplate.childEntity.fieldset']}" styleClass="clearLeft"
-						rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.CHILD_ENTITY and customFieldTemplateBean.entity.entityClazzCetCode!=null}">
-						<hftl:decorateFormField fieldId="cheFields" required="true" label="#{messages['customFieldTemplate.childEntity.fields']}">
-							<p:pickList id="cheFields" value="#{customFieldTemplateBean.childEntityFieldListModel}" required="true" var="item" itemLabel="#{item.label}" itemValue="#{item}">
-								<hftl:objectConverter />
-							</p:pickList>
-						</hftl:decorateFormField>
-					</p:fieldset>
-				</h:panelGroup>
+                <h:panelGroup id="childEntityFields" styleClass="clearLeft">
+                    <p:fieldset legend="#{messages['customFieldTemplate.childEntity.fieldset']}" styleClass="clearLeft"
+                        rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.CHILD_ENTITY and customFieldTemplateBean.entity.entityClazzCetCode!=null}">
+                        <hftl:decorateFormField fieldId="cheFields" required="true" label="#{messages['customFieldTemplate.childEntity.fields']}">
+                            <p:pickList id="cheFields" value="#{customFieldTemplateBean.childEntityFieldListModel}" required="true" var="item" itemLabel="#{item.label}" itemValue="#{item}">
+                                <hftl:objectConverter />
+                            </p:pickList>
+                        </hftl:decorateFormField>
+                    </p:fieldset>
+                </h:panelGroup>
 
-				<h:panelGroup id="matrixColumns" styleClass="clearfix">
-					<p:fieldset legend="#{messages['customFieldTemplate.matrixColumn.columns']}" styleClass="clearLeft" rendered="#{customFieldTemplateBean.entity.storageType == 'MATRIX'}">
-						<p:dataTable editable="true" editMode="cell" value="#{customFieldTemplateBean.entity.matrixColumns}" var="matrixColumn" style="width: 850px" sortBy="#{matrixColumn.position}">
-							<!--                                 <p:ajax event="cellEdit" update=":cftForm:matrixColumns" partialSubmit="true" /> -->
-							<p:column headerText="#{messages['customFieldTemplate.matrixColumn.position']}" width="50">
-								<h:outputText value="#{matrixColumn.position}" styleClass="field-value" />
-							</p:column>
-							<p:column headerText="#{messages['BusinessEntity.code']}" width="150">
-								<p:cellEditor>
-									<f:facet name="output">
-										<h:outputText value="#{matrixColumn.code}" styleClass="field-value" />
-									</f:facet>
-									<f:facet name="input">
-										<h:inputText value="#{matrixColumn.code}" required="true" size="20" maxlength="20" />
-									</f:facet>
-								</p:cellEditor>
-							</p:column>
-							<p:column headerText="#{messages['customFieldTemplate.matrixColumn.label']}" width="300">
-								<p:cellEditor>
-									<f:facet name="output">
-										<h:outputText value="#{matrixColumn.label}" styleClass="field-value" />
-									</f:facet>
-									<f:facet name="input">
-										<h:inputText value="#{matrixColumn.label}" required="true" size="50" maxlength="50" />
-									</f:facet>
-								</p:cellEditor>
-							</p:column>
-							<p:column headerText="#{messages['customFieldTemplate.matrixColumn.keyType']}" width="150">
-								<p:cellEditor>
-									<f:facet name="output">
-										<h:outputText value="#{messages[matrixColumn.keyType.label]}" styleClass="field-value" />
-									</f:facet>
-									<f:facet name="input">
-										<h:selectOneMenu value="#{matrixColumn.keyType}" required="true">
-											<f:converter converterId="enumConverter" />
-											<f:attribute name="GenericEnumConverter.enumType" value="org.meveo.model.crm.custom.CustomFieldMapKeyEnum" />
-											<f:selectItem />
-											<f:selectItems value="#{CustomFieldMapKeyEnum.values()}" var="item" itemValue="#{item}" itemLabel="#{messages[item.label]}" />
-										</h:selectOneMenu>
-									</f:facet>
-								</p:cellEditor>
-							</p:column>
-							<c:if test="#{customFieldTemplateBean.edit}">
-								<p:column width="50">
-									<p:tooltip for="deletelink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
-									<p:commandButton id="deletelink" action="#{customFieldTemplateBean.entity.removeMatrixColumn(matrixColumn)}" partialSubmit="true" icon="ui-icon-trash" process="@this"
-										update=":cftForm:matrixColumns">
-									</p:commandButton>
-								</p:column>
-							</c:if>
-							<c:if test="#{customFieldTemplateBean.edit}">
-								<f:facet name="footer" layout="block">
-									<p:commandButton value="#{messages['customFieldTemplate.addColumn']}" partialSubmit="true" process="@this" update=":cftForm:matrixColumns"
-										action="#{customFieldTemplateBean.entity.addMatrixColumn()}" />
-								</f:facet>
-							</c:if>
-						</p:dataTable>
-					</p:fieldset>
-				</h:panelGroup>
+                <h:panelGroup id="matrixColumns" styleClass="clearfix">
+                    <p:fieldset legend="#{messages['customFieldTemplate.matrixColumn.columns']}" styleClass="clearLeft" rendered="#{customFieldTemplateBean.entity.storageType == 'MATRIX'}">
+                        <p:dataTable editable="true" editMode="cell" value="#{customFieldTemplateBean.entity.matrixColumns}" var="matrixColumn" style="width: 850px" sortBy="#{matrixColumn.position}">
+                            <!--                                 <p:ajax event="cellEdit" update=":cftForm:matrixColumns" partialSubmit="true" /> -->
+                            <p:column headerText="#{messages['customFieldTemplate.matrixColumn.position']}" width="50">
+                                <h:outputText value="#{matrixColumn.position}" styleClass="field-value" />
+                            </p:column>
+                            <p:column headerText="#{messages['BusinessEntity.code']}" width="150">
+                                <p:cellEditor>
+                                    <f:facet name="output">
+                                        <h:outputText value="#{matrixColumn.code}" styleClass="field-value" />
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <h:inputText value="#{matrixColumn.code}" required="true" size="20" maxlength="20" />
+                                    </f:facet>
+                                </p:cellEditor>
+                            </p:column>
+                            <p:column headerText="#{messages['customFieldTemplate.matrixColumn.label']}" width="300">
+                                <p:cellEditor>
+                                    <f:facet name="output">
+                                        <h:outputText value="#{matrixColumn.label}" styleClass="field-value" />
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <h:inputText value="#{matrixColumn.label}" required="true" size="50" maxlength="50" />
+                                    </f:facet>
+                                </p:cellEditor>
+                            </p:column>
+                            <p:column headerText="#{messages['customFieldTemplate.matrixColumn.keyType']}" width="150">
+                                <p:cellEditor>
+                                    <f:facet name="output">
+                                        <h:outputText value="#{messages[matrixColumn.keyType.label]}" styleClass="field-value" />
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <h:selectOneMenu value="#{matrixColumn.keyType}" required="true">
+                                            <f:converter converterId="enumConverter" />
+                                            <f:attribute name="GenericEnumConverter.enumType" value="org.meveo.model.crm.custom.CustomFieldMapKeyEnum" />
+                                            <f:selectItem />
+                                            <f:selectItems value="#{CustomFieldMapKeyEnum.values()}" var="item" itemValue="#{item}" itemLabel="#{messages[item.label]}" />
+                                        </h:selectOneMenu>
+                                    </f:facet>
+                                </p:cellEditor>
+                            </p:column>
+                            <c:if test="#{customFieldTemplateBean.edit}">
+                                <p:column width="50">
+                                    <p:tooltip for="deletelink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
+                                    <p:commandButton id="deletelink" action="#{customFieldTemplateBean.entity.removeMatrixColumn(matrixColumn)}" partialSubmit="true" icon="ui-icon-trash"
+                                        process="@this" update=":cftForm:matrixColumns">
+                                    </p:commandButton>
+                                </p:column>
+                            </c:if>
+                            <c:if test="#{customFieldTemplateBean.edit}">
+                                <f:facet name="footer" layout="block">
+                                    <p:commandButton value="#{messages['customFieldTemplate.addColumn']}" partialSubmit="true" process="@this" update=":cftForm:matrixColumns"
+                                        action="#{customFieldTemplateBean.entity.addMatrixColumn()}" />
+                                </f:facet>
+                            </c:if>
+                        </p:dataTable>
+                    </p:fieldset>
+                </h:panelGroup>
 
-				<p:fieldset id="validations" legend="#{messages['customFieldTemplate.validations']}" styleClass="validations clearfix">
-					<hftl:formField label="#{messages['customFieldTemplate.fieldRequired']}" field="valueRequired" isMessage="true" componentWidth="10" />
-					<hftl:formField label="#{messages['customFieldTemplate.hideOnNew']}" field="hideOnNew" isMessage="true" componentWidth="8" />
-					<hftl:formField label="#{messages['customFieldTemplate.allowEdit']}" field="allowEdit" isMessage="true" componentWidth="7" />
-					<hftl:formField label="#{messages['customFieldTemplate.applicableOnEl']}" field="applicableOnEl" textArea="true" maxlength="2000" rows="1" />
-					<hftl:formField label="#{messages['customFieldTemplate.minValue']}" field="minValue" negativeValue="true" componentWidth="15"
-						rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.LONG or customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.DOUBLE}" />
-					<hftl:formField label="#{messages[customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.STRING?'customFieldTemplate.maxValueTxt':'customFieldTemplate.maxValue']}" field="maxValue"
-						required="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.STRING}" negativeValue="#{customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.STRING}"
-						rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.LONG or customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.DOUBLE or customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.STRING}"
-						componentWidth="15" />
-					<hftl:formField label="#{messages['customFieldTemplate.regExp']}" field="regExp" rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.STRING}" size="29" componentWidth="19" />
-				</p:fieldset>
-				<p:fieldset legend="#{messages['customFieldTemplate.versioningAndCaching']}" styleClass="clearfix versioning-and-caching">
-					<hftl:formField label="#{messages['customFieldTemplate.cacheValue']}" field="cacheValue" isMessage="true" componentWidth="15" />
-					<hftl:formField label="#{messages['customFieldTemplate.indexType']}" field="indexType" required="false" allowEdit="#{customFieldTemplateBean.entity.indexType==null}" componentWidth="10" />
-					<h:panelGroup id="versioning">
-						<hftl:formField label="#{messages['customFieldTemplate.versionable']}" field="versionable" isMessage="true" allowEdit="true" componentWidth="15" listenerUpdate=":cftForm:versionableFields"
-							rendered="#{customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.CHILD_ENTITY}" />
-						<h:panelGroup id="versionableFields" rendered="#{customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.CHILD_ENTITY}">
-							<hftl:formField label="#{messages['customFieldTemplate.calendar']}" field="calendar" valueLabelField="code" listBean="#{calendarBean}" rendered="#{customFieldTemplateBean.entity.versionable}" />
-							<hftl:formField label="#{messages['customFieldTemplate.cacheTimeperiod']}" field="cacheValueTimeperiod" rendered="#{customFieldTemplateBean.entity.versionable}" componentWidth="30" />
-							<hftl:formField label="#{messages['customFieldTemplate.triggerEndPeriodEvent']}" field="triggerEndPeriodEvent" rendered="#{customFieldTemplateBean.entity.versionable}" componentWidth="15" />
-						</h:panelGroup>
-					</h:panelGroup>
-				</p:fieldset>
-				<h:panelGroup id="listValuesField">
-					<p:fieldset legend="#{messages['customFieldTemplate.listValues']}" styleClass="clearLeft" rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.LIST}">
-						<hftl:formField label="#{messages['customFieldTemplate.listValues']}" field="listValues" mapKeyLabel="#{messages['commons.value']}" mapValueLabel="#{messages['commons.label']}"
-							componentWidth="75" newLine="true" />
-					</p:fieldset>
-				</h:panelGroup>
-				<hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" newLine="true" />
-				<hftl:decorateFormField label="#{messages['meveoModule.partOfModules']}" rendered="#{!customFieldTemplateBean.entity.transient}">
-					<h:outputText value="#{customFieldTemplateBean.partOfModules}" />
-				</hftl:decorateFormField>
-				<ui:param name="buttons" value="true" />
-				<ui:define name="buttons">
-					<hf:formButtons backingBean="#{customFieldTemplateBean}" showBackButton="false" ajaxSubmit="true" submitUpdate="@form :fieldsForm:fields" edit="true" killConversationOnSave="false"
-						showEditButton="false" showDeleteButton="false">
-						<p:remoteCommand action="#{customEntityTemplateBean.refreshFields}" name="refreshFields" update=":fieldsForm:fields" />
-						<p:commandButton value="#{messages['action.save']}" onclick="delayDisable(this);" oncomplete="if (args &amp;&amp; !args.validationFailed){refreshFields();PF('cftDialog').hide();}"
-							actionListener="#{customFieldTemplateBean.saveOrUpdateForPopup}" icon="ui-icon-check" process="@form" update="@form">
-							<f:param name="edit" value="true" />
-						</p:commandButton>
-						<p:commandButton value="#{messages['commons.disable']}" rendered="#{not empty customFieldTemplateBean.entity.id and customFieldTemplateBean.entity.active}" oncomplete="refreshFields()"
-							action="#{customFieldTemplateBean.disable}" update="@form">
-							<p:confirm header="#{messages['commons.disable']}" message="#{messages['commons.confirmDisable']}" />
-						</p:commandButton>
+                <p:fieldset id="validations" legend="#{messages['customFieldTemplate.validations']}" styleClass="validations clearfix">
+                    <hftl:formField label="#{messages['customFieldTemplate.fieldRequired']}" field="valueRequired" isMessage="true" componentWidth="10" />
+                    <hftl:formField label="#{messages['customFieldTemplate.hideOnNew']}" field="hideOnNew" isMessage="true" componentWidth="8" />
+                    <hftl:formField label="#{messages['customFieldTemplate.allowEdit']}" field="allowEdit" isMessage="true" componentWidth="7" />
+                    <hftl:formField label="#{messages['customFieldTemplate.applicableOnEl']}" field="applicableOnEl" textArea="true" maxlength="2000" rows="1" />
+                    <hftl:formField label="#{messages['customFieldTemplate.minValue']}" field="minValue" negativeValue="true" componentWidth="15"
+                        rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.LONG or customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.DOUBLE}" />
+                    <hftl:formField label="#{messages[customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.STRING?'customFieldTemplate.maxValueTxt':'customFieldTemplate.maxValue']}"
+                        field="maxValue" required="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.STRING}"
+                        negativeValue="#{customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.STRING}"
+                        rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.LONG or customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.DOUBLE or customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.STRING}"
+                        componentWidth="15" />
+                    <hftl:formField label="#{messages['customFieldTemplate.regExp']}" field="regExp" rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.STRING}" size="29"
+                        componentWidth="19" />
+                </p:fieldset>
+                <p:fieldset legend="#{messages['customFieldTemplate.versioningAndCaching']}" styleClass="clearfix versioning-and-caching">
+                    <!-- 					<hftl:formField label="#{messages['customFieldTemplate.cacheValue']}" field="cacheValue" isMessage="true" componentWidth="15" /> -->
+                    <hftl:formField label="#{messages['customFieldTemplate.indexType']}" field="indexType" required="false" allowEdit="#{customFieldTemplateBean.entity.indexType==null}"
+                        componentWidth="10" />
+                    <h:panelGroup id="versioning">
+                        <hftl:formField label="#{messages['customFieldTemplate.versionable']}" field="versionable" isMessage="true" allowEdit="true" componentWidth="15"
+                            listenerUpdate=":cftForm:versionableFields" rendered="#{customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.CHILD_ENTITY}" />
+                        <h:panelGroup id="versionableFields" rendered="#{customFieldTemplateBean.entity.fieldType != CustomFieldTypeEnum.CHILD_ENTITY}">
+                            <hftl:formField label="#{messages['customFieldTemplate.calendar']}" field="calendar" valueLabelField="code" listBean="#{calendarBean}"
+                                rendered="#{customFieldTemplateBean.entity.versionable}" />
+                            <!-- 							<hftl:formField label="#{messages['customFieldTemplate.cacheTimeperiod']}" field="cacheValueTimeperiod" rendered="#{customFieldTemplateBean.entity.versionable}" componentWidth="30" /> -->
+                            <hftl:formField label="#{messages['customFieldTemplate.triggerEndPeriodEvent']}" field="triggerEndPeriodEvent" rendered="#{customFieldTemplateBean.entity.versionable}"
+                                componentWidth="15" />
+                        </h:panelGroup>
+                    </h:panelGroup>
+                </p:fieldset>
+                <h:panelGroup id="listValuesField">
+                    <p:fieldset legend="#{messages['customFieldTemplate.listValues']}" styleClass="clearLeft" rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.LIST}">
+                        <hftl:formField label="#{messages['customFieldTemplate.listValues']}" field="listValues" mapKeyLabel="#{messages['commons.value']}" mapValueLabel="#{messages['commons.label']}"
+                            componentWidth="75" newLine="true" />
+                    </p:fieldset>
+                </h:panelGroup>
+                <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" newLine="true" />
+                <hftl:decorateFormField label="#{messages['meveoModule.partOfModules']}" rendered="#{!customFieldTemplateBean.entity.transient}">
+                    <h:outputText value="#{customFieldTemplateBean.partOfModules}" />
+                </hftl:decorateFormField>
+                <ui:param name="buttons" value="true" />
+                <ui:define name="buttons">
+                    <hf:formButtons backingBean="#{customFieldTemplateBean}" showBackButton="false" ajaxSubmit="true" submitUpdate="@form :fieldsForm:fields" edit="true" killConversationOnSave="false"
+                        showEditButton="false" showDeleteButton="false">
+                        <p:remoteCommand action="#{customEntityTemplateBean.refreshFields}" name="refreshFields" update=":fieldsForm:fields" />
+                        <p:commandButton value="#{messages['action.save']}" onclick="delayDisable(this);"
+                            oncomplete="if (args &amp;&amp; !args.validationFailed){refreshFields();PF('cftDialog').hide();}" actionListener="#{customFieldTemplateBean.saveOrUpdateForPopup}"
+                            icon="ui-icon-check" process="@form" update="@form">
+                            <f:param name="edit" value="true" />
+                        </p:commandButton>
+                        <p:commandButton value="#{messages['commons.disable']}" rendered="#{not empty customFieldTemplateBean.entity.id and customFieldTemplateBean.entity.active}"
+                            oncomplete="refreshFields()" action="#{customFieldTemplateBean.disable}" update="@form">
+                            <p:confirm header="#{messages['commons.disable']}" message="#{messages['commons.confirmDisable']}" />
+                        </p:commandButton>
 
-						<p:commandButton value="#{messages['commons.enable']}" rendered="#{not empty customFieldTemplateBean.entity.id and customFieldTemplateBean.entity.disabled}" oncomplete="refreshFields()"
-							action="#{customFieldTemplateBean.enable}" update="@form">
-							<p:confirm header="#{messages['commons.enable']}" message="#{messages['commons.confirmEnable']}" />
-						</p:commandButton>
-						<p:commandButton id="deleteButton" icon="ui-icon-trash" value="#{messages['commons.delete']}" action="#{customFieldTemplateBean.delete}"
-							rendered="#{customFieldTemplateBean.entity.id!=null and customFieldTemplateBean.canUserUpdateEntity()}"
-							oncomplete="if (args &amp;&amp; !args.validationFailed){refreshFields();PF('cftDialog').hide();}">
-							<p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
-						</p:commandButton>
-						<p:commandButton value="#{messages['commons.close']}" onclick="PF('cftDialog').hide()" type="button" />
-					</hf:formButtons>
+                        <p:commandButton value="#{messages['commons.enable']}" rendered="#{not empty customFieldTemplateBean.entity.id and customFieldTemplateBean.entity.disabled}"
+                            oncomplete="refreshFields()" action="#{customFieldTemplateBean.enable}" update="@form">
+                            <p:confirm header="#{messages['commons.enable']}" message="#{messages['commons.confirmEnable']}" />
+                        </p:commandButton>
+                        <p:commandButton id="deleteButton" icon="ui-icon-trash" value="#{messages['commons.delete']}" action="#{customFieldTemplateBean.delete}"
+                            rendered="#{customFieldTemplateBean.entity.id!=null and customFieldTemplateBean.canUserUpdateEntity()}"
+                            oncomplete="if (args &amp;&amp; !args.validationFailed){refreshFields();PF('cftDialog').hide();}">
+                            <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
+                        </p:commandButton>
+                        <p:commandButton value="#{messages['commons.close']}" onclick="PF('cftDialog').hide()" type="button" />
+                    </hf:formButtons>
 
-				</ui:define>
-			</hftl:formPanel>
-		</p:scrollPanel>
-	</p:dialog>
-
-
-
-	<p:dialog id="actionDialog" header="#{messages['customizedEntities.actionHeader']}" modal="true" closeOnEscape="true" maximizable="true" widgetVar="actionDialog" width="90%" appendTo="@(body)">
-
-		<hftl:formPanel formId="actionForm" label="#{messages['customizedEntities.actionHeader']}" backingBean="#{entityCustomActionBean}" showFormButtons="false">
-
-			<hftl:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" allowEdit="false" componentWidth="15" />
-			<hftl:formField label="#{messages['customizedEntities.actionLabel']}" field="label" required="true" useConverter="false" maxlength="50" componentWidth="20" />
-			<hftl:formField label="#{messages['BusinessEntity.description']}" field="description" useConverter="false" maxlength="50" componentWidth="35" />
-			<hftl:formField label="#{messages['entityCustomAction.guiPosition']}" field="guiPosition" />
-			<hftl:formField label="#{messages['customizedEntities.actionApplicableOnEl']}" field="applicableOnEl" componentWidth="50" textArea="true" maxlength="2000" rows="1" />
-			<hftl:formField id="script" label="#{messages['customizedEntities.actionScript']}" field="script" valueLabelField="code" componentWidth="30" popup="true" popupId="actionScriptPopup"
-				createEditPopup="true" createEditPopupId="scriptDialog" createEditPopupListenerBean="#{entityCustomActionBean}" createEditPopupListenerViewMethod="viewEditScript"
-				createEditPopupListenerNewMethod="newScript" createEditPopupListenerUpdate=":scriptForm" required="true" />
-
-			<hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" newLine="true" />
-
-			<ui:param name="buttons" value="true" />
-			<ui:define name="buttons">
-				<hf:formButtons backingBean="#{entityCustomActionBean}" showBackButton="false" ajaxSubmit="true" submitUpdate="@form :fieldsForm:entityActions" edit="true" killConversationOnSave="false">
-					<p:commandButton value="#{messages['commons.disable']}" rendered="#{not empty entityCustomActionBean.entity.id and entityCustomActionBean.entity.active}"
-						actionListener="#{customEntityTemplateBean.refreshActions}" action="#{entityCustomActionBean.disable}" update="@form :fieldsForm:entityActions">
-						<p:confirm header="#{messages['commons.disable']}" message="#{messages['commons.confirmDisable']}" />
-					</p:commandButton>
-
-					<p:commandButton value="#{messages['commons.enable']}" rendered="#{not empty entityCustomActionBean.entity.id and entityCustomActionBean.entity.disabled}"
-						actionListener="#{customEntityTemplateBean.refreshActions}" action="#{entityCustomActionBean.enable}" update="@form :fieldsForm:entityActions">
-						<p:confirm header="#{messages['commons.enable']}" message="#{messages['commons.confirmEnable']}" />
-					</p:commandButton>
-
-					<p:commandButton value="#{messages['commons.close']}" onclick="PF('actionDialog').hide()" actionListener="#{customEntityTemplateBean.refreshActions}" update=":fieldsForm:entityActions" />
-				</hf:formButtons>
-			</ui:define>
-		</hftl:formPanel>
-	</p:dialog>
-
-	<hftl:entityPopup id="actionScriptPopup" header="#{messages['scriptInstance.search']}" backingBean="#{scriptInstanceListBean}" searchField1Label="#{messages['BusinessEntity.code']}"
-		searchField1="code" searchField2Label="#{messages['BusinessEntity.description']}" searchField2="description" column1Label="#{messages['BusinessEntity.code']}" column1="code"
-		column2Label="#{messages['BusinessEntity.description']}" column2="description" selection="#{entityCustomActionBean.entity.script}" updateField=":actionForm:script_entity">
-	</hftl:entityPopup>
+                </ui:define>
+            </hftl:formPanel>
+        </p:scrollPanel>
+    </p:dialog>
 
 
 
-	<p:dialog id="scriptDialog" header="#{messages['customizedEntities.actionScriptHeader']}" modal="true" closeOnEscape="false" maximizable="true" closable="false" widgetVar="scriptDialog" width="90%"
-		height="550px" appendTo="@(body)">
+    <p:dialog id="actionDialog" header="#{messages['customizedEntities.actionHeader']}" modal="true" closeOnEscape="true" maximizable="true" widgetVar="actionDialog" width="90%" appendTo="@(body)">
 
-		<p:scrollPanel mode="native" style="max-height:550px">
-			<hftl:formPanel formId="scriptForm" label="#{messages['customizedEntities.actionScriptHeader']}" backingBean="#{scriptInstanceBean}" showFormButtons="false">
-				<h:panelGroup rendered="#{scriptInstanceBean.entity.isError()}">
-					<div class="ui-messages ui-widget">
-						<div class="ui-messages-error ui-corner-all">
-							<span class="ui-messages-error-icon"></span>
-							<ul>
-								<li><h:outputText value="#{messages['scriptInstance.compilationFailed']}" styleClass="ui-messages-error-summary" /></li>
-							</ul>
-						</div>
-					</div>
-				</h:panelGroup>
+        <hftl:formPanel formId="actionForm" label="#{messages['customizedEntities.actionHeader']}" backingBean="#{entityCustomActionBean}" showFormButtons="false">
 
-				<hftl:formField label="#{messages['BusinessEntity.code']}" disabled="true" field="code" required="true" allowEdit="false" componentWidth="15" />
-				<hftl:formField label="#{messages['BusinessEntity.description']}" field="description" required="false" componentWidth="15" />
-				<hftl:formField label="#{messages['scriptInstance.sourceTypeEnum']}" field="sourceTypeEnum" />
-				<hftl:decorateFormField fieldId="codeMirror" label="#{messages['scriptInstance.script']}" newLine="true" componentWidth="100">
-					<pe:codeMirror id="codeMirror" theme="eclipse" mode="text/x-java" value="#{scriptInstanceBean.entity.script}" lineNumbers="true" required="true" />
-				</hftl:decorateFormField>
-				<hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" newLine="true" />
+            <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" allowEdit="false" componentWidth="15" />
+            <hftl:formField label="#{messages['customizedEntities.actionLabel']}" field="label" required="true" useConverter="false" maxlength="50" componentWidth="20" />
+            <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" useConverter="false" maxlength="50" componentWidth="35" />
+            <hftl:formField label="#{messages['entityCustomAction.guiPosition']}" field="guiPosition" />
+            <hftl:formField label="#{messages['customizedEntities.actionApplicableOnEl']}" field="applicableOnEl" componentWidth="50" textArea="true" maxlength="2000" rows="1" />
+            <hftl:formField id="script" label="#{messages['customizedEntities.actionScript']}" field="script" valueLabelField="code" componentWidth="30" popup="true" popupId="actionScriptPopup"
+                createEditPopup="true" createEditPopupId="scriptDialog" createEditPopupListenerBean="#{entityCustomActionBean}" createEditPopupListenerViewMethod="viewEditScript"
+                createEditPopupListenerNewMethod="newScript" createEditPopupListenerUpdate=":scriptForm" required="true" />
 
-				<h:panelGroup id="scriptErrors" rendered="#{scriptInstanceBean.entity.isError()}">
-					<hftl:decorateFormField label="#{messages['scriptInstance.compilationErrors']}" componentWidth="100" newLine="true" rendered="#{scriptInstanceBean.entity.isError()}">
-						<p:dataTable id="entityScripts" var="entity" value="#{scriptInstanceBean.entity.scriptErrors}" paginator="true" rows="10" sortBy="#{entity.lineNumber}" sortField="lineNumber"
-							paginatorAlwaysVisible="false" paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="10"
-							lazy="false" styleClass="custom-grid" reflow="true">
-							<hftl:column label="#{messages['scriptInstance.compilation.lineNumber']}" field="lineNumber" width="10%" />
-							<hftl:column label="#{messages['scriptInstance.compilation.columnNumber']}" field="columnNumber" width="15%" />
-							<hftl:column label="#{messages['scriptInstance.compilation.message']}" field="message" />
-						</p:dataTable>
-					</hftl:decorateFormField>
-				</h:panelGroup>
+            <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" newLine="true" />
 
-				<ui:param name="buttons" value="true" />
-				<ui:define name="buttons">
+            <ui:param name="buttons" value="true" />
+            <ui:define name="buttons">
+                <hf:formButtons backingBean="#{entityCustomActionBean}" showBackButton="false" ajaxSubmit="true" submitUpdate="@form :fieldsForm:entityActions" edit="true"
+                    killConversationOnSave="false">
+                    <p:commandButton value="#{messages['commons.disable']}" rendered="#{not empty entityCustomActionBean.entity.id and entityCustomActionBean.entity.active}"
+                        actionListener="#{customEntityTemplateBean.refreshActions}" action="#{entityCustomActionBean.disable}" update="@form :fieldsForm:entityActions">
+                        <p:confirm header="#{messages['commons.disable']}" message="#{messages['commons.confirmDisable']}" />
+                    </p:commandButton>
 
-					<p:remoteCommand action="#{entityCustomActionBean.refreshScript}" name="refreshScript" update=":actionForm:script_entity" />
+                    <p:commandButton value="#{messages['commons.enable']}" rendered="#{not empty entityCustomActionBean.entity.id and entityCustomActionBean.entity.disabled}"
+                        actionListener="#{customEntityTemplateBean.refreshActions}" action="#{entityCustomActionBean.enable}" update="@form :fieldsForm:entityActions">
+                        <p:confirm header="#{messages['commons.enable']}" message="#{messages['commons.confirmEnable']}" />
+                    </p:commandButton>
 
-					<p:commandButton value="#{messages['action.save']}" action="#{scriptInstanceBean.saveOrUpdateForPopup}"
-						oncomplete="refreshScript(); if (args &amp;&amp; !args.validationFailed) PF('scriptDialog').hide()" update="@form :actionForm:messages">
-					</p:commandButton>
-					<p:commandButton value="#{messages['scriptInstance.testCompilation']}" action="#{scriptInstanceBean.testCompilation}" update="@form" />
-					<p:commandButton value="#{messages['commons.disable']}" rendered="#{not empty scriptInstanceBean.entity.id and scriptInstanceBean.entity.active}" action="#{scriptInstanceBean.disable}"
-						update="@form">
-						<p:confirm header="#{messages['commons.disable']}" message="#{messages['commons.confirmDisable']}" />
-					</p:commandButton>
-					<p:commandButton value="#{messages['commons.enable']}" rendered="#{not empty scriptInstanceBean.entity.id and scriptInstanceBean.entity.disabled}" action="#{scriptInstanceBean.enable}"
-						update="@form">
-						<p:confirm header="#{messages['commons.enable']}" message="#{messages['commons.confirmEnable']}" />
-					</p:commandButton>
+                    <p:commandButton value="#{messages['commons.close']}" onclick="PF('actionDialog').hide()" actionListener="#{customEntityTemplateBean.refreshActions}"
+                        update=":fieldsForm:entityActions" />
+                </hf:formButtons>
+            </ui:define>
+        </hftl:formPanel>
+    </p:dialog>
 
-					<p:commandButton value="#{messages['commons.close']}" immediate="true" oncomplete="PF('scriptDialog').hide()" actionListener="#{entityCustomActionBean.refreshScript}"
-						update=":actionForm:messages" />
-				</ui:define>
-			</hftl:formPanel>
-		</p:scrollPanel>
-	</p:dialog>
+    <hftl:entityPopup id="actionScriptPopup" header="#{messages['scriptInstance.search']}" backingBean="#{scriptInstanceListBean}" searchField1Label="#{messages['BusinessEntity.code']}"
+        searchField1="code" searchField2Label="#{messages['BusinessEntity.description']}" searchField2="description" column1Label="#{messages['BusinessEntity.code']}" column1="code"
+        column2Label="#{messages['BusinessEntity.description']}" column2="description" selection="#{entityCustomActionBean.entity.script}" updateField=":actionForm:script_entity">
+    </hftl:entityPopup>
+
+
+
+    <p:dialog id="scriptDialog" header="#{messages['customizedEntities.actionScriptHeader']}" modal="true" closeOnEscape="false" maximizable="true" closable="false" widgetVar="scriptDialog"
+        width="90%" height="550px" appendTo="@(body)">
+
+        <p:scrollPanel mode="native" style="max-height:550px">
+            <hftl:formPanel formId="scriptForm" label="#{messages['customizedEntities.actionScriptHeader']}" backingBean="#{scriptInstanceBean}" showFormButtons="false">
+                <h:panelGroup rendered="#{scriptInstanceBean.entity.isError()}">
+                    <div class="ui-messages ui-widget">
+                        <div class="ui-messages-error ui-corner-all">
+                            <span class="ui-messages-error-icon"></span>
+                            <ul>
+                                <li><h:outputText value="#{messages['scriptInstance.compilationFailed']}" styleClass="ui-messages-error-summary" /></li>
+                            </ul>
+                        </div>
+                    </div>
+                </h:panelGroup>
+
+                <hftl:formField label="#{messages['BusinessEntity.code']}" disabled="true" field="code" required="true" allowEdit="false" componentWidth="15" />
+                <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" required="false" componentWidth="15" />
+                <hftl:formField label="#{messages['scriptInstance.sourceTypeEnum']}" field="sourceTypeEnum" />
+                <hftl:decorateFormField fieldId="codeMirror" label="#{messages['scriptInstance.script']}" newLine="true" componentWidth="100">
+                    <pe:codeMirror id="codeMirror" theme="eclipse" mode="text/x-java" value="#{scriptInstanceBean.entity.script}" lineNumbers="true" required="true" />
+                </hftl:decorateFormField>
+                <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" newLine="true" />
+
+                <h:panelGroup id="scriptErrors" rendered="#{scriptInstanceBean.entity.isError()}">
+                    <hftl:decorateFormField label="#{messages['scriptInstance.compilationErrors']}" componentWidth="100" newLine="true" rendered="#{scriptInstanceBean.entity.isError()}">
+                        <p:dataTable id="entityScripts" var="entity" value="#{scriptInstanceBean.entity.scriptErrors}" paginator="true" rows="10" sortBy="#{entity.lineNumber}" sortField="lineNumber"
+                            paginatorAlwaysVisible="false" paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                            rowsPerPageTemplate="10" lazy="false" styleClass="custom-grid" reflow="true">
+                            <hftl:column label="#{messages['scriptInstance.compilation.lineNumber']}" field="lineNumber" width="10%" />
+                            <hftl:column label="#{messages['scriptInstance.compilation.columnNumber']}" field="columnNumber" width="15%" />
+                            <hftl:column label="#{messages['scriptInstance.compilation.message']}" field="message" />
+                        </p:dataTable>
+                    </hftl:decorateFormField>
+                </h:panelGroup>
+
+                <ui:param name="buttons" value="true" />
+                <ui:define name="buttons">
+
+                    <p:remoteCommand action="#{entityCustomActionBean.refreshScript}" name="refreshScript" update=":actionForm:script_entity" />
+
+                    <p:commandButton value="#{messages['action.save']}" action="#{scriptInstanceBean.saveOrUpdateForPopup}"
+                        oncomplete="refreshScript(); if (args &amp;&amp; !args.validationFailed) PF('scriptDialog').hide()" update="@form :actionForm:messages">
+                    </p:commandButton>
+                    <p:commandButton value="#{messages['scriptInstance.testCompilation']}" action="#{scriptInstanceBean.testCompilation}" update="@form" />
+                    <p:commandButton value="#{messages['commons.disable']}" rendered="#{not empty scriptInstanceBean.entity.id and scriptInstanceBean.entity.active}"
+                        action="#{scriptInstanceBean.disable}" update="@form">
+                        <p:confirm header="#{messages['commons.disable']}" message="#{messages['commons.confirmDisable']}" />
+                    </p:commandButton>
+                    <p:commandButton value="#{messages['commons.enable']}" rendered="#{not empty scriptInstanceBean.entity.id and scriptInstanceBean.entity.disabled}"
+                        action="#{scriptInstanceBean.enable}" update="@form">
+                        <p:confirm header="#{messages['commons.enable']}" message="#{messages['commons.confirmEnable']}" />
+                    </p:commandButton>
+
+                    <p:commandButton value="#{messages['commons.close']}" immediate="true" oncomplete="PF('scriptDialog').hide()" actionListener="#{entityCustomActionBean.refreshScript}"
+                        update=":actionForm:messages" />
+                </ui:define>
+            </hftl:formPanel>
+        </p:scrollPanel>
+    </p:dialog>
 
 </ui:composition>
