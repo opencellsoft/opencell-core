@@ -19,11 +19,9 @@
 package org.meveo.model.crm;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -32,9 +30,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.Size;
 
 import org.meveo.model.AccountEntity;
 import org.meveo.model.BusinessEntity;
@@ -73,14 +68,6 @@ public class Customer extends AccountEntity{
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "seller_id")
 	private Seller seller;
-
-	@Column(name = "mandate_identification", length = 35)
-	@Size(max = 35)
-	private String mandateIdentification = "";
-
-	@Column(name = "mandate_date")
-	@Temporal(TemporalType.DATE)
-	private Date mandateDate;
 	 
 	public Customer() {
         accountType = ACCOUNT_TYPE;
@@ -127,22 +114,6 @@ public class Customer extends AccountEntity{
 
 	public void setContactInformation(ContactInformation contactInformation) {
 		this.contactInformation = contactInformation;
-	}
-
-	public String getMandateIdentification() {
-		return mandateIdentification;
-	}
-
-	public void setMandateIdentification(String mandateIdentification) {
-		this.mandateIdentification = mandateIdentification;
-	}
-
-	public Date getMandateDate() {
-		return mandateDate;
-	}
-
-	public void setMandateDate(Date mandateDate) {
-		this.mandateDate = mandateDate;
 	}
 
     @Override

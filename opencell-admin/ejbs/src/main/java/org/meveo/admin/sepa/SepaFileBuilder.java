@@ -55,8 +55,10 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.DDRequestItem;
 import org.meveo.model.payments.DDRequestLOT;
+import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.util.ApplicationProvider;
@@ -163,13 +165,14 @@ public class SepaFileBuilder {
 				RoundingMode.HALF_UP));
 		InstructedAmount.setCcy("EUR");
 		DrctDbtTx DirectDebitTransaction = new DrctDbtTx();
-		DirectDebitTransactionInformation.setDrctDbtTx(DirectDebitTransaction);
+		DirectDebitTransactionInformation.setDrctDbtTx(DirectDebitTransaction);        
 		MndtRltdInf MandateRelatedInformation = new MndtRltdInf();
 		DirectDebitTransaction.setMndtRltdInf(MandateRelatedInformation);
-		MandateRelatedInformation.setMndtId(ca.getMandateIdentification());
-		MandateRelatedInformation.setDtOfSgntr(DateUtils
-				.dateToXMLGregorianCalendar(ca.getMandateDate()));
-
+		PaymentMethod preferedPaymentMethod = ca.getPreferredPaymentMethod();
+        if (preferedPaymentMethod != null && preferedPaymentMethod instanceof DDPaymentMethod) {
+        	MandateRelatedInformation.setMndtId(((DDPaymentMethod)preferedPaymentMethod).getMandateIdentification());
+        	MandateRelatedInformation.setDtOfSgntr(DateUtils.dateToXMLGregorianCalendar(((DDPaymentMethod)preferedPaymentMethod).getMandateDate()));        	
+        }
 		DbtrAgt DebtorAgent = new DbtrAgt();
 		DirectDebitTransactionInformation.setDbtrAgt(DebtorAgent);
 		org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.DrctDbtTxInf.DbtrAgt.FinInstnId FinancialInstitutionIdentification = new org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.DrctDbtTxInf.DbtrAgt.FinInstnId();

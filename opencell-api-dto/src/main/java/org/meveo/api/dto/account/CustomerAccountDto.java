@@ -45,8 +45,7 @@ public class CustomerAccountDto extends AccountDto {
     private ContactInformationDto contactInformation;
 
     private DunningLevelEnum dunningLevel;
-    private String mandateIdentification = "";
-    private Date mandateDate;
+
     private BigDecimal balance = BigDecimal.ZERO;
     private BigDecimal totalInvoiceBalance = BigDecimal.ZERO;
     // currently not use
@@ -121,22 +120,6 @@ public class CustomerAccountDto extends AccountDto {
         this.dunningLevel = dunningLevel;
     }
 
-    public String getMandateIdentification() {
-        return mandateIdentification;
-    }
-
-    public void setMandateIdentification(String mandateIdentification) {
-        this.mandateIdentification = mandateIdentification;
-    }
-
-    public Date getMandateDate() {
-        return mandateDate;
-    }
-
-    public void setMandateDate(Date mandateDate) {
-        this.mandateDate = mandateDate;
-    }
-
     public BigDecimal getBalance() {
         return balance;
     }
@@ -173,7 +156,7 @@ public class CustomerAccountDto extends AccountDto {
     public String toString() {
         return "CustomerAccountDto [customer=" + customer + ", currency=" + currency + ", language=" + language + ", status=" + status + ", creditCategory=" + creditCategory
                 + ", dateStatus=" + dateStatus + ", dateDunningLevel=" + dateDunningLevel + ", contactInformation=" + contactInformation + ", dunningLevel=" + dunningLevel
-                + ", mandateIdentification=" + mandateIdentification + ", mandateDate=" + mandateDate + ", balance=" + balance + ", terminationDate=" + terminationDate
+                + ",  balance=" + balance + ", terminationDate=" + terminationDate
                 + ", billingAccounts=" + billingAccounts + "]";
     }
 

@@ -323,9 +323,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 				.getCustomerCategory().getCode() : "");
 		
         PaymentMethod preferedPaymentMethod = invoice.getBillingAccount().getCustomerAccount().getPreferredPaymentMethod();
-        if (preferedPaymentMethod != null && preferedPaymentMethod instanceof DDPaymentMethod) {
-            customerTag.setAttribute("mandateIdentification", customer.getMandateIdentification() != null ? customer.getMandateIdentification() : "");
-        }
 
 		addCustomFields(customer, invoice, doc, customerTag);
 		addNameAndAdress(customer, doc, customerTag, billingAccountLanguage);
@@ -348,7 +345,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 						.getTradingLanguage().getPrDescription() : "");
 		
         if (preferedPaymentMethod != null && preferedPaymentMethod instanceof DDPaymentMethod) {
-            customerAccountTag.setAttribute("mandateIdentification", customerAccount.getMandateIdentification() != null ? customerAccount.getMandateIdentification() : "");
+            customerAccountTag.setAttribute("mandateIdentification", ((DDPaymentMethod)preferedPaymentMethod).getMandateIdentification() != null ?  ((DDPaymentMethod)preferedPaymentMethod).getMandateIdentification() : "");
         }
 		addCustomFields(customerAccount, invoice, doc, customerAccountTag);
 		header.appendChild(customerAccountTag);

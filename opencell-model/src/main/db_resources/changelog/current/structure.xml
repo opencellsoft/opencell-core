@@ -12,4 +12,16 @@
         <modifyDataType tableName="ar_payment_token" columnName="info_4" newDataType="text" />
         <modifyDataType tableName="ar_payment_token" columnName="info_5" newDataType="text" />
      </changeSet>
+     
+    <changeSet id="#2777_20170814" author="anasseh">
+        <dropColumn tableName="ar_customer_account" columnName="mandate_date" />
+        <dropColumn tableName="ar_customer_account" columnName="mandate_identification" />
+        <dropColumn tableName="crm_customer" columnName="mandate_date" />
+        <dropColumn tableName="crm_customer" columnName="mandate_identification" />        
+        <addColumn tableName="ar_payment_token">
+            <column name="mandate_date" type="date" />
+            <column name="mandate_identification" type="varchar(255)" />            
+        </addColumn>
+    </changeSet>
+     
 </databaseChangeLog> 

@@ -159,8 +159,6 @@ public class CustomerAccountApi extends AccountEntityApi {
         if (!StringUtils.isBlank(postData.getCreditCategory())) {
             customerAccount.setCreditCategory(creditCategoryService.findByCode(postData.getCreditCategory()));
         }
-        customerAccount.setMandateDate(postData.getMandateDate());
-        customerAccount.setMandateIdentification(postData.getMandateIdentification());
         customerAccount.setExternalRef1(postData.getExternalRef1());
         customerAccount.setExternalRef2(postData.getExternalRef2());
         customerAccount.setDueDateDelayEL(postData.getDueDateDelayEL());
@@ -275,12 +273,6 @@ public class CustomerAccountApi extends AccountEntityApi {
 
         if (!StringUtils.isBlank(postData.getCreditCategory())) {
             customerAccount.setCreditCategory(creditCategoryService.findByCode(postData.getCreditCategory()));
-        }
-        if (!StringUtils.isBlank(postData.getMandateDate())) {
-            customerAccount.setMandateDate(postData.getMandateDate());
-        }
-        if (!StringUtils.isBlank(postData.getMandateIdentification())) {
-            customerAccount.setMandateIdentification(postData.getMandateIdentification());
         }
 
         if (!StringUtils.isBlank(postData.getExternalRef1())) {
@@ -612,12 +604,6 @@ public class CustomerAccountApi extends AccountEntityApi {
             }
             if (!StringUtils.isBlank(customerAccountDto.getDateDunningLevel())) {
                 existedCustomerAccountDto.setDateDunningLevel(customerAccountDto.getDateDunningLevel());
-            }
-            if (!StringUtils.isBlank(customerAccountDto.getMandateDate())) {
-                existedCustomerAccountDto.setMandateDate(customerAccountDto.getMandateDate());
-            }
-            if (!StringUtils.isBlank(customerAccountDto.getMandateIdentification())) {
-                existedCustomerAccountDto.setMandateIdentification(customerAccountDto.getMandateIdentification());
             }
 
             if (!StringUtils.isBlank(customerAccountDto.getCreditCategory())) {

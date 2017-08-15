@@ -264,7 +264,6 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
         entity.setCustomer(customer);
 
         if (customer != null && appProvider.isLevelDuplication()) {
-
             entity.setCode(customer.getCode());
             entity.setDescription(customer.getDescription());
             entity.setAddress(customer.getAddress());
@@ -274,8 +273,6 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
             entity.setName(customer.getName());
             entity.setPrimaryContact(customer.getPrimaryContact());
             entity.setContactInformation(customer.getContactInformation());
-            entity.setMandateIdentification(customer.getMandateIdentification());
-            entity.setMandateDate(customer.getMandateDate());
         }
     }
 
