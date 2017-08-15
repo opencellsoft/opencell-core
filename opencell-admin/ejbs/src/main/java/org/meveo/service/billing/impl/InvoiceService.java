@@ -64,6 +64,9 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.io.FileUtils;
+import org.jboss.vfs.VFS;
+import org.jboss.vfs.VFSUtils;
+import org.jboss.vfs.VirtualFile;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.admin.exception.InvoiceExistException;
@@ -561,14 +564,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
                 File sourceFile = new File(sourcePath);
                 if (!sourceFile.exists()) {
-                	
-                	sourcePath = Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath() + File.separator + "default" + File.separator
-                            + "invoice";
-                    sourceFile = new File(sourcePath);
-                	
-                	if (!sourceFile.exists()) {
-                		throw new BusinessException("embedded jasper report for invoice is missing!.");
-                	}
+                    VirtualFile vfDir = VFS.getChild("content/" + ParamBean.getInstance().getProperty("opencell.moduleName", "opencell") + ".war/WEB-INF/classes/jasper/"
+                            + billingTemplateName + File.separator + "invoice");
+                    log.info("default jaspers path :" + vfDir.getPathName());
+                    URL vfPath = VFSUtils.getPhysicalURL(vfDir);
+                    sourceFile = new File(vfPath.getPath());
+
+                    if (!sourceFile.exists()) {
+                        throw new BusinessException("embedded jasper report for invoice is missing!!");
+                    }
                 }
                 destDir.mkdirs();
                 FileUtils.copyDirectory(sourceFile, destDir);
@@ -576,16 +580,17 @@ public class InvoiceService extends PersistenceService<Invoice> {
             File destDirInvoiceAdjustment = new File(resDir + File.separator + billingTemplateName + File.separator + "invoiceAdjustmentPdf");
             if (!destDirInvoiceAdjustment.exists()) {
                 destDirInvoiceAdjustment.mkdirs();
-                URL resource = Thread.currentThread().getContextClassLoader().getResource("./jasper/" + billingTemplateName + "/invoiceAdjustment");
-                
-                if(resource == null)
-                	resource = Thread.currentThread().getContextClassLoader().getResource("./jasper/default/invoiceAdjustment");
-                
-                if(resource == null)
-                	throw new BusinessException("embedded InvoiceAdjustment jasper report for invoice is missing!");
-              
-                String sourcePathInvoiceAdjustment = resource.getPath();
+                String sourcePathInvoiceAdjustment = Thread.currentThread().getContextClassLoader().getResource("./jasper/" + billingTemplateName + "/invoiceAdjustment").getPath();
                 File sourceFileInvoiceAdjustment = new File(sourcePathInvoiceAdjustment);
+                if (!sourceFileInvoiceAdjustment.exists()) {
+                    VirtualFile vfDir = VFS.getChild("content/" + ParamBean.getInstance().getProperty("opencell.moduleName", "opencell") + ".war/WEB-INF/classes/jasper/"
+                            + billingTemplateName + "/invoiceAdjustment");
+                    URL vfPath = VFSUtils.getPhysicalURL(vfDir);
+                    sourceFileInvoiceAdjustment = new File(vfPath.getPath());
+                    if (!sourceFileInvoiceAdjustment.exists()) {
+                        throw new BusinessException("embedded jasper report for invoice is missing!");
+                    }
+                }
                 FileUtils.copyDirectory(sourceFileInvoiceAdjustment, destDirInvoiceAdjustment);
             }
 
