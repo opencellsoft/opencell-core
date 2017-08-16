@@ -2,7 +2,6 @@ package org.meveo.api.dto.payment;
 
 import java.util.Date;
 
-import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -25,9 +24,7 @@ public class DDPaymentMethodDto extends PaymentMethodDto {
     /**
      * Bank account information
      */
-    @NotNull
-    private BankCoordinatesDto bankCoordinates;
-    
+    private BankCoordinatesDto bankCoordinates;   
     private String mandateIdentification = "";
     private Date mandateDate;
 

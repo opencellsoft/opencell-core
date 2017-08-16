@@ -45,7 +45,17 @@ public class CustomerAccountDto extends AccountDto {
     private ContactInformationDto contactInformation;
 
     private DunningLevelEnum dunningLevel;
-
+    /**
+     * Field was deprecated in 4.6 version. Use 'DDpaymentMethods' field instead
+     */
+    @Deprecated
+    private String mandateIdentification = "";
+    /**
+     * Field was deprecated in 4.6 version. Use 'DDpaymentMethods' field instead
+     */
+    @Deprecated
+    private Date mandateDate;
+    
     private BigDecimal balance = BigDecimal.ZERO;
     private BigDecimal totalInvoiceBalance = BigDecimal.ZERO;
     // currently not use
@@ -210,4 +220,21 @@ public class CustomerAccountDto extends AccountDto {
     public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
+
+	public String getMandateIdentification() {
+		return mandateIdentification;
+	}
+
+	public void setMandateIdentification(String mandateIdentification) {
+		this.mandateIdentification = mandateIdentification;
+	}
+
+	public Date getMandateDate() {
+		return mandateDate;
+	}
+
+	public void setMandateDate(Date mandateDate) {
+		this.mandateDate = mandateDate;
+	}
+    
 }

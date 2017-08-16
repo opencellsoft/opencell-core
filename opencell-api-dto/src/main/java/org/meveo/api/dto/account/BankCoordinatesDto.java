@@ -52,15 +52,12 @@ public class BankCoordinatesDto implements Serializable {
     @Size(max = 50)
     private String bankName;
 
-    @NotNull
     @Size(max = 50)
     private String bankId;
 
-    @NotNull
     @Size(max = 50)
     private String issuerNumber;
 
-    @NotNull
     @Size(max = 50)
     private String issuerName;
 

@@ -81,14 +81,15 @@ public class DDPaymentMethod extends PaymentMethod {
         if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
             return true;
         }
+        
+        if (getMandateIdentification() != null && getMandateIdentification().equals(other.getMandateIdentification())) {
+            return true;
+        }
 
         if (bankCoordinates != null) {
             return bankCoordinates.equals(other.getBankCoordinates());
-        } else if (bankCoordinates == null && other.getBankCoordinates() == null) {
-            return true;
-        } else {
-            return false;
-        }
+        } 
+        return false;        
     }
 
     @Override

@@ -128,6 +128,18 @@ public class CustomerAccountApi extends AccountEntityApi {
         if (tradingLanguage == null) {
             throw new EntityDoesNotExistsException(TradingLanguage.class, postData.getLanguage());
         }
+        
+        if(!StringUtils.isBlank(postData.getMandateIdentification())){
+        	DDPaymentMethodDto ddPaymentMethod = new DDPaymentMethodDto();
+        	ddPaymentMethod.setAlias("default");
+        	ddPaymentMethod.setPreferred(true);
+        	ddPaymentMethod.setMandateIdentification(postData.getMandateIdentification());
+        	ddPaymentMethod.setMandateDate(postData.getMandateDate());
+        	if(postData.getPaymentMethods() == null){
+        		postData.setPaymentMethods( new ArrayList<PaymentMethodDto>());
+        	}
+        	postData.getPaymentMethods().add(ddPaymentMethod);
+        }
 
         if (postData.getPaymentMethods() == null || postData.getPaymentMethods().isEmpty()) {
 
@@ -283,6 +295,18 @@ public class CustomerAccountApi extends AccountEntityApi {
         }
         if (!StringUtils.isBlank(postData.getDueDateDelayEL())) {
             customerAccount.setDueDateDelayEL(postData.getDueDateDelayEL());
+        }
+        
+        if(!StringUtils.isBlank(postData.getMandateIdentification())){
+        	DDPaymentMethodDto ddPaymentMethod = new DDPaymentMethodDto();
+        	ddPaymentMethod.setAlias("default");
+        	ddPaymentMethod.setPreferred(true);
+        	ddPaymentMethod.setMandateIdentification(postData.getMandateIdentification());
+        	ddPaymentMethod.setMandateDate(postData.getMandateDate());
+        	if(postData.getPaymentMethods() == null){
+        		postData.setPaymentMethods( new ArrayList<PaymentMethodDto>());
+        	}
+        	postData.getPaymentMethods().add(ddPaymentMethod);
         }
 
         // Synchronize payment methods
@@ -650,10 +674,12 @@ public class CustomerAccountApi extends AccountEntityApi {
             }
 
         } else if (pmDto instanceof DDPaymentMethodDto) {
-            if (((DDPaymentMethodDto) pmDto).getBankCoordinates() == null) {
-                throw new MissingParameterException("bankCoordinates");
+            if (((DDPaymentMethodDto) pmDto).getBankCoordinates() == null && StringUtils.isBlank(((DDPaymentMethodDto) pmDto).getMandateIdentification()) ) {
+                throw new MissingParameterException("bankCoordinates or mandateIdentification");
             }
-            validate(((DDPaymentMethodDto) pmDto).getBankCoordinates());
+            if(((DDPaymentMethodDto) pmDto).getBankCoordinates() != null){
+            	validate(((DDPaymentMethodDto) pmDto).getBankCoordinates());
+            }
             paymentMethod = ((DDPaymentMethodDto) pmDto).fromDto();
 
         } else if (pmDto instanceof TipPaymentMethodDto) {
