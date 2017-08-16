@@ -27,6 +27,13 @@ public class Sequence {
     public Sequence() {
     }
 
+    public Sequence(String prefixEL, Integer sequenceSize, Long currentInvoiceNb) {
+        super();
+        this.prefixEL = prefixEL;
+        this.sequenceSize = sequenceSize;
+        this.currentInvoiceNb = currentInvoiceNb;
+    }
+
     /**
      * @return the prefixEL
      */
