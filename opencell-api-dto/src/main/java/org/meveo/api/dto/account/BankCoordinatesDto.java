@@ -61,7 +61,6 @@ public class BankCoordinatesDto implements Serializable {
     @Size(max = 50)
     private String issuerName;
 
-    @NotNull
     @Size(max = 35)
     private String ics;
 

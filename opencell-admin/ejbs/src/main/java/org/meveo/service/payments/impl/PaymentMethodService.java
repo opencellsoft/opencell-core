@@ -18,6 +18,8 @@
  */
 package org.meveo.service.payments.impl;
 
+import java.util.Date;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -48,27 +50,36 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
     @Override
     public void create(PaymentMethod paymentMethod) throws BusinessException {
 
-        if (paymentMethod instanceof CardPaymentMethod) {
+    	if (paymentMethod instanceof CardPaymentMethod) {
+    		CardPaymentMethod cardPayment = (CardPaymentMethod) paymentMethod;        	
+    		if(!cardPayment.isValidForDate(new Date())){
+    			throw new BusinessException("Cant add expired card");
+    		}        	
+    		obtainAndSetCardToken(cardPayment, cardPayment.getCustomerAccount());
+    	}
 
-            CardPaymentMethod cardPayment = (CardPaymentMethod) paymentMethod;
-            obtainAndSetCardToken(cardPayment, cardPayment.getCustomerAccount());
-        }
+    	super.create(paymentMethod);
 
-        super.create(paymentMethod);
-
-        // Mark other payment methods as not preferred
-        if (paymentMethod.isPreferred()) {
-            getEntityManager().createNamedQuery("PaymentMethod.updatePreferredPaymentMethod").setParameter("id", paymentMethod.getId())
-                .setParameter("ca", paymentMethod.getCustomerAccount()).executeUpdate();
-        }
+    	// Mark other payment methods as not preferred
+    	if (paymentMethod.isPreferred()) {
+    		getEntityManager().createNamedQuery("PaymentMethod.updatePreferredPaymentMethod").setParameter("id", paymentMethod.getId())
+    		.setParameter("ca", paymentMethod.getCustomerAccount()).executeUpdate();
+    	}
     }
 
     @Override
     public PaymentMethod update(PaymentMethod entity) throws BusinessException {
+        if (entity.isPreferred()) {
+        	if(entity instanceof CardPaymentMethod){
+        		if(!((CardPaymentMethod)entity).isValidForDate(new Date())){
+        			throw new BusinessException("Cant mark expired card as preferred");
+        		}
+        	}
+        }
         PaymentMethod paymentMethod = super.update(entity);
 
         // Mark other payment methods as not preferred
-        if (paymentMethod.isPreferred()) {
+        if (paymentMethod.isPreferred()) {        	
             getEntityManager().createNamedQuery("PaymentMethod.updatePreferredPaymentMethod").setParameter("id", paymentMethod.getId())
                 .setParameter("ca", paymentMethod.getCustomerAccount()).executeUpdate();
         }
