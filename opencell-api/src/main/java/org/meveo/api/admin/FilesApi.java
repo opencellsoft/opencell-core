@@ -81,14 +81,14 @@ public class FilesApi extends BaseApi {
 		try {
 			FileUtils.archiveFile(file);
 		} catch (IOException e) {
-			throw new BusinessApiException("Error suppressing file: " + file.getName() + ". " + e.getMessage());
+			throw new BusinessApiException("Error zipping file: " + file.getName() + ". " + e.getMessage());
 		}
 	}
 
 	public void zipDir(String dir) throws BusinessApiException {
 		File file = new File(getProviderRootDir() + File.separator + dir);
 		if (!file.exists()) {
-			throw new BusinessApiException("File does not exists: " + file.getPath());
+			throw new BusinessApiException("Directory does not exists: " + file.getPath());
 		}
 
 		try {
@@ -97,9 +97,10 @@ public class FilesApi extends BaseApi {
 			ZipOutputStream zos = new ZipOutputStream(fos);
 			FileUtils.addDirToArchive(getProviderRootDir(), file.getPath(), zos);
 			fos.flush();
+			zos.close();
 			fos.close();
 		} catch (IOException e) {
-			throw new BusinessApiException("Error suppressing file: " + file.getName() + ". " + e.getMessage());
+			throw new BusinessApiException("Error zipping directory: " + file.getName() + ". " + e.getMessage());
 		}
 	}
 
@@ -133,12 +134,14 @@ public class FilesApi extends BaseApi {
 		String filename = getProviderRootDir() + File.separator + filePath;
 		File file = new File(filename);
 
-		try {
-			if (file.exists()) {
+		if (file.exists()) {
+			try {
 				file.delete();
+			} catch (Exception e) {
+				throw new BusinessApiException("Error suppressing file: " + filename + ". " + e.getMessage());
 			}
-		} catch (Exception e) {
-			throw new BusinessApiException("Error uploading file: " + filename + ". " + e.getMessage());
+		} else {
+			throw new BusinessApiException("File does not exists: " + filename);
 		}
 	}
 
@@ -146,12 +149,14 @@ public class FilesApi extends BaseApi {
 		String filename = getProviderRootDir() + File.separator + dir;
 		File file = new File(filename);
 
-		try {
-			if (file.exists()) {
+		if (file.exists()) {
+			try {
 				org.apache.commons.io.FileUtils.deleteDirectory(file);
+			} catch (Exception e) {
+				throw new BusinessApiException("Error suppressing file: " + filename + ". " + e.getMessage());
 			}
-		} catch (Exception e) {
-			throw new BusinessApiException("Error uploading file: " + filename + ". " + e.getMessage());
+		} else {
+			throw new BusinessApiException("Directory does not exists: " + filename);
 		}
 	}
 
