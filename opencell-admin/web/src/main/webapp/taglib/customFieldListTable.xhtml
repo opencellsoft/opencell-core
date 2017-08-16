@@ -141,7 +141,7 @@
                 rowsPerPageTemplate="10,20,30">
 
                 <p:ajax event="cellEdit" update="#{messagesId} #{updateOnAddEdit}" partialSubmit="true" partialSubmitFilter=":not([name*='addNewFields'])" />
-                <p:columns value="#{cft.matrixColumnsSorted}" var="column" headerText="#{column.label}" sortBy="#{mapValues[column.code]}" style="height:25px;">
+                <p:columns value="#{cft.matrixColumns}" var="column" headerText="#{column.label}" sortBy="#{mapValues[column.code]}" style="height:25px;">
                     <p:cellEditor>
                         <f:facet name="output">
                             <h:outputText value="#{mapValues[column.code]}" styleClass="field-value" />
@@ -181,7 +181,7 @@
 
                         <hf:namingContainer id="addNewFields" rendered="#{edit and !disabled}">
 
-                            <c:forEach items="#{cft.matrixColumnsSorted}" var="column">
+                            <c:forEach items="#{cft.matrixColumns}" var="column">
 
                                 <c:if test="#{column.keyType eq CustomFieldMapKeyEnum.STRING}">
                                     <p:inputText value="#{cfValueHolder.newValues[cft.code.concat('_').concat(column.code)]}" placeholder="#{column.label}" label="#{column.label}"

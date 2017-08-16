@@ -3,7 +3,6 @@ package org.meveo.admin.action.admin.custom;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -1051,11 +1050,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
             Map<String, Object> mapValue = new LinkedHashMap<String, Object>();
 
-            List<String> columnKeys = new ArrayList<String>();
-            for (CustomFieldMatrixColumn column : cft.getMatrixColumnsSorted()) {
-                columnKeys.add(column.getCode());
-            }
-            mapValue.put(CustomFieldValue.MAP_KEY, columnKeys);
+            List<String> columnKeys = cft.getMatrixColumnCodes();
 
             for (Map<String, Object> mapItem : customFieldValue.getMatrixValuesForGUI()) {
                 Object value = mapItem.get(CustomFieldValue.MAP_VALUE);
@@ -1188,18 +1183,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
             if (customFieldValue.getMapValue() != null) {
 
-                Object columns = customFieldValue.getMapValue().get(CustomFieldValue.MAP_KEY);
-                String[] columnArray = null;
-                if (columns instanceof String) {
-                    columnArray = ((String) columns).split(CustomFieldValue.MATRIX_COLUMN_NAME_SEPARATOR);
-                } else if (columns instanceof Collection) {
-                    columnArray = new String[((Collection<String>) columns).size()];
-                    int i = 0;
-                    for (String column : (Collection<String>) columns) {
-                        columnArray[i] = column;
-                        i++;
-                    }
-                }
+                List<String> columnCodes = cft.getMatrixColumnCodes();
 
                 for (Entry<String, Object> mapItem : ((Map<String, Object>) customFieldValue.getMapValue()).entrySet()) {
                     if (mapItem.getKey().equals(CustomFieldValue.MAP_KEY)) {
@@ -1215,7 +1199,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
                     String[] keys = mapItem.getKey().split("\\" + CustomFieldValue.MATRIX_KEY_SEPARATOR);
                     for (int i = 0; i < keys.length; i++) {
-                        mapValuesItem.put(columnArray[i], keys[i]);
+                        mapValuesItem.put(columnCodes.get(i), keys[i]);
                     }
                     mapValues.add(mapValuesItem);
                 }

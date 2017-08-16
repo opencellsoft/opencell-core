@@ -1,7 +1,6 @@
 package org.meveo.model.crm;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -22,6 +21,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
@@ -86,6 +86,7 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
     private Map<String, String> listValues;
 
     @ElementCollection(fetch = FetchType.EAGER)
+    @OrderBy("position ASC")
     @CollectionTable(name = "crm_custom_field_tmpl_mcols", joinColumns = { @JoinColumn(name = "cft_id") })
     @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "code", nullable = false, length = 20)),
             @AttributeOverride(name = "label", column = @Column(name = "label", nullable = false, length = 50)),
@@ -267,16 +268,6 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
     }
 
     /**
-     * Get a sorted list of matrix columns by its index position
-     */
-    public List<CustomFieldMatrixColumn> getMatrixColumnsSorted() {
-        if (!matrixColumnsSorted) {
-            Collections.sort(matrixColumns);
-        }
-        return matrixColumns;
-    }
-
-    /**
      * Find a corresponding matrix column by its index (position). Note: result might differ if matrix column was added and value was not updated
      * 
      * @param index Index to return the column for
@@ -286,7 +277,6 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
         if (index >= matrixColumns.size()) {
             return null;
         }
-        getMatrixColumnsSorted();
         return matrixColumns.get(index);
     }
 
@@ -300,7 +290,7 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
         List<String> matrixColumnNames = null;
         if (storageType == CustomFieldStorageTypeEnum.MATRIX) {
             matrixColumnNames = new ArrayList<>();
-            for (CustomFieldMatrixColumn column : getMatrixColumnsSorted()) {
+            for (CustomFieldMatrixColumn column : matrixColumns) {
                 matrixColumnNames.add(column.getCode());
             }
         }
