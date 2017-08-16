@@ -1,19 +1,29 @@
 package org.meveo.model.crm.custom;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.meveo.model.DatePeriod;
+import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.persistence.CustomFieldValuesConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 
 /**
  * Represents custom field values held by an ICustomFieldEntity entity
@@ -323,12 +333,35 @@ public class CustomFieldValues implements Serializable {
     /**
      * Return custom field values as JSON
      * 
+     * @param cfts Custom field template definitions for description lookup
      * @return JSON formated string
      */
-    public String asJson() {
+    public String asJson(Map<String, CustomFieldTemplate> cfts) {
 
         String json = CustomFieldValuesConverter.toJson(this);
         if (json != null) {
+            ObjectMapper om = new ObjectMapper();
+            try {
+                JsonNode jsonTree = om.readTree(json);
+                Iterator<Map.Entry<String, JsonNode>> cfFields = jsonTree.fields();
+                while (cfFields.hasNext()) {
+                    Map.Entry<String, JsonNode> cfField = cfFields.next();
+                    CustomFieldTemplate cft = cfts.get(cfField.getKey());
+                    if (cft != null && cft.getDescription() != null) {
+
+                        Iterator<JsonNode> cfValues = cfField.getValue().elements();
+                        while (cfValues.hasNext()) {
+                            ObjectNode cfValue = (ObjectNode) cfValues.next();
+                            cfValue.set("description", new TextNode(cft.getDescription()));
+                        }
+                    }
+                }
+                json = om.writeValueAsString(jsonTree);
+                
+            } catch (IOException e) {
+                Logger log = LoggerFactory.getLogger(getClass());
+                log.error("Failed to parse json {}", json, e);
+            }
             json = json.replaceAll("\"", "'");
         }
         return json;
@@ -338,15 +371,19 @@ public class CustomFieldValues implements Serializable {
      * Append custom field values to XML document, each as "customField" element
      * 
      * @param doc Document to append custom field values
+     * @param parentElement Parent elemnt to append custom field values to
+     * @param cfts Custom field template definitions for description lookup
      */
-    public void asDomElement(Document doc) {
+    public void asDomElement(Document doc, Element parentElement, Map<String, CustomFieldTemplate> cfts) {
 
         for (Entry<String, List<CustomFieldValue>> cfValueInfo : valuesByCode.entrySet()) {
+            CustomFieldTemplate cft = cfts.get(cfValueInfo.getKey());
+
             for (CustomFieldValue cfValue : cfValueInfo.getValue()) {
 
                 Element customFieldTag = doc.createElement("customField");
                 customFieldTag.setAttribute("code", cfValueInfo.getKey());
-                customFieldTag.setAttribute("description", "");
+                customFieldTag.setAttribute("description", cft != null ? cft.getDescription() : "");
                 if (cfValue.getPeriod() != null && cfValue.getPeriod().getFrom() != null) {
                     customFieldTag.setAttribute("periodStartDate", xmlsdf.format(cfValue.getPeriod().getFrom()));
                 }
@@ -356,6 +393,7 @@ public class CustomFieldValues implements Serializable {
 
                 Text customFieldText = doc.createTextNode(cfValue.toXmlText(xmlsdf));
                 customFieldTag.appendChild(customFieldText);
+                parentElement.appendChild(customFieldTag);
             }
         }
     }

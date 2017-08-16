@@ -279,10 +279,13 @@ public class CustomFieldInstanceService extends BaseService {
     public String getCFValuesAsJson(ICustomFieldEntity entity, boolean includeParent) {
 
         String result = "";
-        String sep = ";";
+        String sep = "";
+        Map<String, CustomFieldTemplate> cfts = null;
 
         if (entity.getCfValues() != null) {
-            result = entity.getCfValues().asJson();
+            cfts = cfTemplateService.findByAppliesTo(entity);
+            result = entity.getCfValues().asJson(cfts);
+            sep = ",";
         }
 
         if (includeParent) {
@@ -290,8 +293,9 @@ public class CustomFieldInstanceService extends BaseService {
             if (parentCFEntities != null && parentCFEntities.length > 0) {
                 for (ICustomFieldEntity parentCF : parentCFEntities) {
                     if (parentCF.getCfValues() != null) {
-                        result += sep + parentCF.getCfValues().asJson();
-                        sep = ";";
+                        cfts = cfTemplateService.findByAppliesTo(parentCF);
+                        result += sep + parentCF.getCfValues().asJson(cfts);
+                        sep = ",";
                     }
                 }
             }
@@ -311,14 +315,17 @@ public class CustomFieldInstanceService extends BaseService {
             return customFieldsTag;
         }
 
-        entity.getCfValues().asDomElement(doc);
+        Map<String, CustomFieldTemplate> cfts = cfTemplateService.findByAppliesTo(entity);
+
+        entity.getCfValues().asDomElement(doc, customFieldsTag, cfts);
 
         if (includeParent) {
             ICustomFieldEntity[] parentCFEntities = getHierarchyParentCFEntities(entity);
             if (parentCFEntities != null && parentCFEntities.length > 0) {
                 for (ICustomFieldEntity parentCF : parentCFEntities) {
                     if (parentCF.getCfValues() != null) {
-                        parentCF.getCfValues().asDomElement(doc);
+                        cfts = cfTemplateService.findByAppliesTo(parentCF);
+                        parentCF.getCfValues().asDomElement(doc, customFieldsTag, cfts);
                     }
                 }
             }
@@ -1246,7 +1253,7 @@ public class CustomFieldInstanceService extends BaseService {
             CFEndPeriodEvent event = new CFEndPeriodEvent(entity, cfCode, period);
             cFEndPeriodEvent.fire(event);
             log.debug("AKK Firing timer for triggerEndPeriodEvent for Custom field value {} with expiration={}", event, period.getTo());
-            
+
         } else if (period != null && period.getTo() != null) {
             CFEndPeriodEvent event = new CFEndPeriodEvent(entity, cfCode, period);
 
