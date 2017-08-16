@@ -35,8 +35,10 @@ import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.MultilanguageEntity;
+import org.meveo.model.ObservableEntity;
 
 @Entity
+@ObservableEntity
 @MultilanguageEntity(key = "menu.invoiceCategories", group="InvoiceCategory")
 @ExportIdentifier({ "code"})
 @Table(name = "billing_invoice_cat", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
@@ -49,7 +51,6 @@ import org.meveo.model.MultilanguageEntity;
 @NamedQuery(name = "invoiceCategory.getInvoiceCatNotAssociated", 
 	           query = "from InvoiceCategory v where v.id not in (select sub.invoiceCategory.id from InvoiceSubCategory sub where sub.invoiceCategory.id is not null) ")         	                  	         
 })
- 
 public class InvoiceCategory extends BusinessCFEntity {
 
 	private static final long serialVersionUID = 1L;

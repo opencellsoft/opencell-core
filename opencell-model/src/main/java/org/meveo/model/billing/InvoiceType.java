@@ -44,6 +44,7 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.payments.OCCTemplate;
+import org.meveo.model.scripts.ScriptInstance;
 
 @Entity
 @ExportIdentifier({ "code" })
@@ -80,6 +81,10 @@ public class InvoiceType extends BusinessEntity {
     @Column(name = "billing_template_name")
     @Size(max = 50)
     private String billingTemplateName;
+    
+    @ManyToOne()
+    @JoinColumn(name = "tax_script_instance_id")
+    private ScriptInstance taxScript;
 
     public InvoiceType() {
 
@@ -167,4 +172,13 @@ public class InvoiceType extends BusinessEntity {
     public void setBillingTemplateName(String billingTemplateName) {
         this.billingTemplateName = billingTemplateName;
     }
+
+	public ScriptInstance getTaxScript() {
+		return taxScript;
+	}
+
+	public void setTaxScript(ScriptInstance taxScript) {
+		this.taxScript = taxScript;
+	}
+
 }

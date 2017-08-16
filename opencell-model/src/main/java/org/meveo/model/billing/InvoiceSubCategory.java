@@ -41,6 +41,7 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.MultilanguageEntity;
+import org.meveo.model.scripts.ScriptInstance;
 
 @Entity
 @MultilanguageEntity(key = "menu.invoiceSubCategories", group = "InvoiceSubCategory")
@@ -71,6 +72,10 @@ public class InvoiceSubCategory extends BusinessCFEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "invoice_category_id")
 	private InvoiceCategory invoiceCategory;
+	
+	@ManyToOne()
+	@JoinColumn(name = "tax_script_instance_id")
+	private ScriptInstance taxScript;
 
 	public List<InvoiceSubcategoryCountry> getInvoiceSubcategoryCountries() {
 		return invoiceSubcategoryCountries;
@@ -132,6 +137,14 @@ public class InvoiceSubCategory extends BusinessCFEntity {
 			return false;
 		
 		return true;
+	}
+
+	public ScriptInstance getTaxScript() {
+		return taxScript;
+	}
+
+	public void setTaxScript(ScriptInstance taxScript) {
+		this.taxScript = taxScript;
 	}
 
 }
