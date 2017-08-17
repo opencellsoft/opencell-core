@@ -137,6 +137,11 @@ public class CustomFieldInstanceService extends BaseService {
      */
     public Object getOrCreateCFValueFromParamValue(String cfCode, String defaultParamBeanValue, ICustomFieldEntity entity, boolean saveInCFIfNotExist) throws BusinessException {
 
+        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+            entity = providerService.findById(appProvider.getId());
+        }
+
         Object value = getCFValue(entity, cfCode, true);
         if (value != null) {
             return value;
@@ -206,6 +211,11 @@ public class CustomFieldInstanceService extends BaseService {
             return getCFValue(entity, cfCode, new Date(), instantiateDefaultValue);
         }
 
+        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+            entity = providerService.findById(appProvider.getId());
+        }
+
         Object value = null;
         if (entity.getCfValues() != null) {
             value = entity.getCfValues().getValue(cfCode);
@@ -213,7 +223,7 @@ public class CustomFieldInstanceService extends BaseService {
 
         // Create such CF with default value if one is specified on CFT and other conditions match
         if (value == null && instantiateDefaultValue) {
-            value = instantiateCFWithDefaultValue(cft, entity);
+            value = instantiateCFWithDefaultValue(entity, cft);
         }
 
         return value;
@@ -252,6 +262,11 @@ public class CustomFieldInstanceService extends BaseService {
             return getCFValue(entity, cfCode, instantiateDefaultValue);
         }
 
+        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+            entity = providerService.findById(appProvider.getId());
+        }
+
         Object value = null;
         if (entity.getCfValues() != null) {
             value = entity.getCfValues().getValue(cfCode, date);
@@ -259,7 +274,7 @@ public class CustomFieldInstanceService extends BaseService {
 
         // Create such CF with default value if one is specified on CFT and other conditions match
         if (value == null && instantiateDefaultValue) {
-            value = instantiateCFWithDefaultValue(cft, entity, date);
+            value = instantiateCFWithDefaultValue(entity, cft, date);
         }
 
         return value;
@@ -277,6 +292,11 @@ public class CustomFieldInstanceService extends BaseService {
      * @return JSON format string
      */
     public String getCFValuesAsJson(ICustomFieldEntity entity, boolean includeParent) {
+
+        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+            entity = providerService.findById(appProvider.getId());
+        }
 
         String result = "";
         String sep = "";
@@ -309,6 +329,12 @@ public class CustomFieldInstanceService extends BaseService {
     }
 
     public Element getCFValuesAsDomElement(ICustomFieldEntity entity, Document doc, boolean includeParent) {
+
+        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+            entity = providerService.findById(appProvider.getId());
+        }
+
         Element customFieldsTag = doc.createElement("customFields");
 
         if (entity.getCfValues() == null) {
@@ -358,6 +384,11 @@ public class CustomFieldInstanceService extends BaseService {
                 "Can not determine a period for Custom Field " + entity.getClass().getSimpleName() + "/" + cfCode + " value if no date or date range is provided");
         }
 
+        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+            entity = providerService.findById(appProvider.getId());
+        }
+
         CustomFieldValue cfValue = null;
         if (entity.getCfValues() != null) {
             cfValue = entity.getCfValues().getCfValue(cfCode);
@@ -392,12 +423,17 @@ public class CustomFieldInstanceService extends BaseService {
         }
 
         if (!cft.isVersionable()) {
-            setCFValue(entity, cfCode, value);
+            return setCFValue(entity, cfCode, value);
 
             // Calendar is needed to be able to set a value with a single date
         } else if (cft.getCalendar() == null) {
             log.error("Can not determine a period for Custom Field {}/{} value if no calendar is provided", entity.getClass().getSimpleName(), cfCode);
             throw new RuntimeException("Can not determine a period for Custom Field " + entity.getClass().getSimpleName() + "/" + cfCode + " value if no calendar is provided");
+        }
+
+        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+            entity = providerService.findById(appProvider.getId());
         }
 
         // Should not match more then one record as periods are calendar based
@@ -437,14 +473,19 @@ public class CustomFieldInstanceService extends BaseService {
         }
 
         if (!cft.isVersionable()) {
-            setCFValue(entity, cfCode, value);
+            return setCFValue(entity, cfCode, value);
 
             // If calendar is provided - use calendar by the valueDateFrom date
         } else if (cft.getCalendar() != null) {
             log.warn(
                 "Calendar is provided in Custom Field template {}/{} while trying to assign value period start and end dates with two values. Only start date will be considered",
                 entity.getClass().getSimpleName(), cfCode);
-            setCFValue(entity, cfCode, value, valueDateFrom);
+            return setCFValue(entity, cfCode, value, valueDateFrom);
+        }
+
+        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+            entity = providerService.findById(appProvider.getId());
         }
 
         // Should not match more then one record, as match is strict
@@ -478,6 +519,12 @@ public class CustomFieldInstanceService extends BaseService {
      * @param cfCode Custom field code to remove
      */
     public void removeCFValue(ICustomFieldEntity entity, String cfCode) throws BusinessException {
+
+        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+            entity = providerService.findById(appProvider.getId());
+        }
+
         if (entity.getCfValues() != null) {
             entity.getCfValues().removeValue(cfCode);
         }
@@ -489,132 +536,14 @@ public class CustomFieldInstanceService extends BaseService {
      * @param entity
      */
     public void removeCFValues(ICustomFieldEntity entity) throws BusinessException {
+
+        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+            entity = providerService.findById(appProvider.getId());
+        }
+
         entity.clearCfValues();
     }
-    //
-    // /**
-    // * Get All custom field instances for a given entity and his parentCFEntities.
-    // *
-    // * @param entity Entity
-    // * @param includeParent flag to include parentCFEntities or not
-    // * @return A map of Custom field instances with CF code as a key
-    // */
-    // public Map<String, List<CustomFieldInstance>> getCustomFieldInstances(ICustomFieldEntity entity, boolean includeParent) {
-    // Map<String, List<CustomFieldInstance>> cfisAsMap = new HashMap<String, List<CustomFieldInstance>>();
-    // if (includeParent && entity.getParentCFEntities() != null) {
-    // for (ICustomFieldEntity entityParent : entity.getParentCFEntities()) {
-    // cfisAsMap.putAll(getCustomFieldInstances(entityParent));
-    // }
-    // }
-    // cfisAsMap.putAll(getCustomFieldInstances(entity));
-    // return cfisAsMap;
-    // }
-    //
-    // /**
-    // * Get All custom field instances for a given entity.
-    // *
-    // * @param entity Entity
-    // * @return A map of Custom field instances with CF code as a key
-    // */
-    // public Map<String, List<CustomFieldInstance>> getCustomFieldInstances(ICustomFieldEntity entity) {
-    // // No longer checking for isTransient as for offer new version creation, CFs are duplicated, but entity is not persisted, ofering to review it in GUI before saving it.
-    // // if (((IEntity) entity).isTransient()) {
-    // // return new HashMap<String, List<CustomFieldInstance>>();
-    // // }
-    //
-    // TypedQuery<CustomFieldInstance> query = getEntityManager().createNamedQuery("CustomFieldInstance.getCfiByEntity", CustomFieldInstance.class);
-    // query.setParameter("appliesToEntity", entity.getUuid());
-    //
-    // List<CustomFieldInstance> cfis = query.getResultList();
-    //
-    // // // Make sure that embedded CF value property is not null
-    // // if (cfi != null && cfi.getCfValue() == null) {
-    // // cfi.setCfValue(new CustomFieldValue());
-    // // }
-    //
-    // Map<String, List<CustomFieldInstance>> cfisAsMap = new HashMap<String, List<CustomFieldInstance>>();
-    //
-    // for (CustomFieldInstance cfi : cfis) {
-    // cfisAsMap.putIfAbsent(cfi.getCode(), new ArrayList<CustomFieldInstance>());
-    // cfisAsMap.get(cfi.getCode()).add(cfi);
-    // }
-    //
-    // return cfisAsMap;
-    // }
-    //
-    // /**
-    // * Get custom field instances for a given entity. Should be only a single record when custom field is not versioned
-    // *
-    // * @param entity Entity
-    // * @param code Custom field code
-    // * @return Custom field instance
-    // */
-    // public List<CustomFieldInstance> getCustomFieldInstances(ICustomFieldEntity entity, String code) {
-    //
-    // TypedQuery<CustomFieldInstance> query = getEntityManager().createNamedQuery("CustomFieldInstance.getCfiByCode", CustomFieldInstance.class);
-    // query.setParameter("appliesToEntity", entity.getUuid());
-    // query.setParameter("code", code);
-    //
-    // List<CustomFieldInstance> cfis = query.getResultList();
-    //
-    // // // Make sure that embedded CF value property is not null
-    // // if (cfi != null && cfi.getCfValue() == null) {
-    // // cfi.setCfValue(new CustomFieldValue());
-    // // }
-    //
-    // return cfis;
-    // }
-    //
-    // /**
-    // * Get custom field instances for a given entity and a given date.
-    // *
-    // * @param entity Entity
-    // * @param code Custom field code
-    // * @return Custom field instance
-    // */
-    // private List<CustomFieldInstance> getCustomFieldInstances(ICustomFieldEntity entity, String code, Date date) {
-    //
-    // TypedQuery<CustomFieldInstance> query = getEntityManager().createNamedQuery("CustomFieldInstance.getCfiByCodeAndDate", CustomFieldInstance.class);
-    // query.setParameter("appliesToEntity", entity.getUuid());
-    // query.setParameter("code", code);
-    // query.setParameter("date", date);
-    //
-    // List<CustomFieldInstance> cfis = query.getResultList();
-    //
-    // // // Make sure that embedded CF value property is not null
-    // // if (cfi != null && cfi.getCfValue() == null) {
-    // // cfi.setCfValue(new CustomFieldValue());
-    // // }
-    //
-    // return cfis;
-    // }
-    //
-    // /**
-    // * Get custom field instances for a given entity and a given date.
-    // *
-    // * @param entity Entity
-    // * @param code Custom field code
-    // * @param valueDateFrom Value period data range - from
-    // * @param valueDateTo Value period data range - to
-    // * @return
-    // */
-    // private List<CustomFieldInstance> getCustomFieldInstances(ICustomFieldEntity entity, String code, Date valueDateFrom, Date valueDateTo) {
-    //
-    // TypedQuery<CustomFieldInstance> query = getEntityManager().createNamedQuery("CustomFieldInstance.getCfiByCodeAndDateRange", CustomFieldInstance.class);
-    // query.setParameter("appliesToEntity", entity.getUuid());
-    // query.setParameter("code", code);
-    // query.setParameter("dateFrom", valueDateFrom);
-    // query.setParameter("dateTo", valueDateTo);
-    //
-    // List<CustomFieldInstance> cfis = query.getResultList();
-    //
-    // // // Make sure that embedded CF value property is not null
-    // // if (cfi != null && cfi.getCfValue() == null) {
-    // // cfi.setCfValue(new CustomFieldValue());
-    // // }
-    //
-    // return cfis;
-    // }
 
     /**
      * Get a custom field value for a given entity's parent's. If custom field is versionable, a current date will be used to access the value.
@@ -624,6 +553,12 @@ public class CustomFieldInstanceService extends BaseService {
      * @return Custom field value
      */
     public Object getInheritedOnlyCFValue(ICustomFieldEntity entity, String cfCode) {
+
+        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+            entity = providerService.findById(appProvider.getId());
+        }
+
         ICustomFieldEntity[] parentCFEntities = entity.getParentCFEntities();
         if (parentCFEntities != null) {
             for (ICustomFieldEntity parentCfEntity : parentCFEntities) {
@@ -654,6 +589,12 @@ public class CustomFieldInstanceService extends BaseService {
      * @return A list of Custom field CFvalues
      */
     public List<CustomFieldValue> getInheritedVersionableOnlyCFValue(ICustomFieldEntity entity, String code) {
+
+        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+            entity = providerService.findById(appProvider.getId());
+        }
+
         ICustomFieldEntity[] parentCFEntities = entity.getParentCFEntities();
         if (parentCFEntities != null) {
             for (ICustomFieldEntity parentCfEntity : parentCFEntities) {
@@ -685,6 +626,12 @@ public class CustomFieldInstanceService extends BaseService {
      * @return True if any of entity's CF parents have value for a given custom field (in any period for versionable fields)
      */
     public boolean hasInheritedOnlyCFValue(ICustomFieldEntity entity, String cfCode) {
+
+        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+            entity = providerService.findById(appProvider.getId());
+        }
+
         ICustomFieldEntity[] parentCFEntities = entity.getParentCFEntities();
         if (parentCFEntities != null) {
             for (ICustomFieldEntity parentCfEntity : parentCFEntities) {
@@ -715,6 +662,11 @@ public class CustomFieldInstanceService extends BaseService {
      * @return True if entity or any of entity's CF parents have value for a given custom field (in any period for versionable fields)
      */
     public boolean hasInheritedCFValue(ICustomFieldEntity entity, String cfCode) {
+
+        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+            entity = providerService.findById(appProvider.getId());
+        }
 
         boolean hasValue = hasCFValue(entity, cfCode);
         if (hasValue) {
@@ -750,6 +702,11 @@ public class CustomFieldInstanceService extends BaseService {
      * @return True if entity or any of entity's CF parents have value for a given custom field (in any period for versionable fields)
      */
     public boolean hasCFValue(ICustomFieldEntity entity, String cfCode) {
+
+        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+            entity = providerService.findById(appProvider.getId());
+        }
 
         if (entity.getCfValues() == null) {
             return false;
@@ -811,6 +768,11 @@ public class CustomFieldInstanceService extends BaseService {
             return null;
         }
 
+        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+            entity = providerService.findById(appProvider.getId());
+        }
+
         List<Object> cfValues = new ArrayList<>();
 
         ICustomFieldEntity[] parentCfEntities = getHierarchyParentCFEntities(entity);
@@ -859,6 +821,11 @@ public class CustomFieldInstanceService extends BaseService {
      */
     public Object getInheritedOnlyCFValue(ICustomFieldEntity entity, String cfCode, Date date) {
 
+        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+            entity = providerService.findById(appProvider.getId());
+        }
+
         ICustomFieldEntity[] parentCfEntities = entity.getParentCFEntities();
         if (parentCfEntities != null) {
             for (ICustomFieldEntity parentCfEntity : parentCfEntities) {
@@ -888,6 +855,11 @@ public class CustomFieldInstanceService extends BaseService {
      * @return Custom field value
      */
     public Object getInheritedCFValue(ICustomFieldEntity entity, String cfCode) {
+
+        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+            entity = providerService.findById(appProvider.getId());
+        }
 
         // Get value without instantiating a default value if value not found
         if (entity.getCfValues() != null) {
@@ -930,6 +902,11 @@ public class CustomFieldInstanceService extends BaseService {
      * @return Custom field value
      */
     public Object getInheritedCFValue(ICustomFieldEntity entity, String cfCode, Date date) {
+
+        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+            entity = providerService.findById(appProvider.getId());
+        }
 
         // Get value without instantiating a default value if value not found
         if (entity.getCfValues() != null) {
@@ -975,6 +952,11 @@ public class CustomFieldInstanceService extends BaseService {
      */
     public Object getInheritedCFValueByClosestMatch(ICustomFieldEntity entity, String cfCode, String keyToMatch) {
 
+        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+            entity = providerService.findById(appProvider.getId());
+        }
+
         Object value = getCFValueByClosestMatch(entity, cfCode, keyToMatch);
         if (value != null) {
             return value;
@@ -1014,6 +996,11 @@ public class CustomFieldInstanceService extends BaseService {
      */
     public Object getInheritedCFValueByClosestMatch(ICustomFieldEntity entity, String code, Date date, String keyToMatch) {
 
+        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+            entity = providerService.findById(appProvider.getId());
+        }
+
         Object value = getCFValueByClosestMatch(entity, code, date, keyToMatch);
         if (value != null) {
             return value;
@@ -1052,6 +1039,11 @@ public class CustomFieldInstanceService extends BaseService {
      * @return Map value that matches the map key (map key or matrix formated map key)
      */
     public Object getInheritedCFValueByKey(ICustomFieldEntity entity, String cfCode, Object... keys) {
+
+        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+            entity = providerService.findById(appProvider.getId());
+        }
 
         Object value = getCFValueByKey(entity, cfCode, keys);
         if (value != null) {
@@ -1093,6 +1085,11 @@ public class CustomFieldInstanceService extends BaseService {
      */
     public Object getInheritedCFValueByKey(ICustomFieldEntity entity, String cfCode, Date date, Object... keys) {
 
+        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+            entity = providerService.findById(appProvider.getId());
+        }
+
         Object value = getCFValueByKey(entity, cfCode, date, keys);
         if (value != null) {
             return value;
@@ -1129,6 +1126,11 @@ public class CustomFieldInstanceService extends BaseService {
      * @return Map value that matches the range of numbers in a map key
      */
     public Object getInheritedCFValueByRangeOfNumbers(ICustomFieldEntity entity, String cfCode, Object numberToMatch) {
+
+        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+            entity = providerService.findById(appProvider.getId());
+        }
 
         Object value = getCFValueByRangeOfNumbers(entity, cfCode, numberToMatch);
         if (value != null) {
@@ -1168,6 +1170,11 @@ public class CustomFieldInstanceService extends BaseService {
      */
     public Object getInheritedCFValueByRangeOfNumbers(ICustomFieldEntity entity, String cfCode, Date date, Object numberToMatch) {
 
+        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+            entity = providerService.findById(appProvider.getId());
+        }
+
         Object value = getCFValueByRangeOfNumbers(entity, cfCode, date, numberToMatch);
         if (value != null) {
             return value;
@@ -1192,39 +1199,6 @@ public class CustomFieldInstanceService extends BaseService {
         }
         return null;
     }
-    //
-    // /**
-    // * Duplicate custom field values from one entity to another
-    // *
-    // * @param sourceAppliesToEntity Source AppliesToEntity (UUID) value
-    // * @param entity New entity to copy custom field values to
-    // * @throws BusinessException
-    // */
-    // public void duplicateCfValues(String sourceAppliesToEntity, ICustomFieldEntity entity) throws BusinessException {
-    // log.debug("Duplicating CF values from entity with UUID {} to {}", sourceAppliesToEntity, entity.getUuid());
-    //
-    // TypedQuery<CustomFieldInstance> query = getEntityManager().createNamedQuery("CustomFieldInstance.getCfiByEntity", CustomFieldInstance.class);
-    //
-    // query.setParameter("appliesToEntity", sourceAppliesToEntity);
-    //
-    // List<CustomFieldInstance> cfis = query.getResultList();
-    //
-    // for (CustomFieldInstance cfi : cfis) {
-    //
-    // CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(cfi.getCode(), entity);
-    // if (cft == null) {
-    // continue;
-    // }
-    //
-    // getEntityManager().detach(cfi);
-    // cfi.setId(null);
-    // cfi.setVersion(0);
-    // cfi.setAppliesToEntity(entity.getUuid());
-    // cfi.setAuditable(null);
-    // create(cfi, cft, entity);
-    // }
-    // log.trace("Finished duplicating CF values from entity with UUID {} to {}", sourceAppliesToEntity, entity.getUuid());
-    // }
 
     /**
      * A trigger when a future custom field end period event expired
@@ -1252,7 +1226,6 @@ public class CustomFieldInstanceService extends BaseService {
         if (period != null && period.getTo() != null && period.getTo().before(new Date())) {
             CFEndPeriodEvent event = new CFEndPeriodEvent(entity, cfCode, period);
             cFEndPeriodEvent.fire(event);
-            log.debug("AKK Firing timer for triggerEndPeriodEvent for Custom field value {} with expiration={}", event, period.getTo());
 
         } else if (period != null && period.getTo() != null) {
             CFEndPeriodEvent event = new CFEndPeriodEvent(entity, cfCode, period);
@@ -1299,6 +1272,11 @@ public class CustomFieldInstanceService extends BaseService {
      */
     public Object getCFValueByClosestMatch(ICustomFieldEntity entity, String cfCode, String keyToMatch) {
 
+        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+            entity = providerService.findById(appProvider.getId());
+        }
+
         if (entity.getCfValues() == null) {
             return null;
         }
@@ -1324,6 +1302,11 @@ public class CustomFieldInstanceService extends BaseService {
      * @return Map value that closely matches map key
      */
     public Object getCFValueByClosestMatch(ICustomFieldEntity entity, String cfCode, Date date, String keyToMatch) {
+
+        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+            entity = providerService.findById(appProvider.getId());
+        }
 
         if (entity.getCfValues() == null) {
             return null;
@@ -1351,6 +1334,11 @@ public class CustomFieldInstanceService extends BaseService {
      */
     @SuppressWarnings("unchecked")
     public Object getCFValueByKey(ICustomFieldEntity entity, String cfCode, Object... keys) {
+
+        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+            entity = providerService.findById(appProvider.getId());
+        }
 
         if (entity.getCfValues() == null) {
             return null;
@@ -1419,6 +1407,11 @@ public class CustomFieldInstanceService extends BaseService {
     @SuppressWarnings("unchecked")
     public Object getCFValueByKey(ICustomFieldEntity entity, String cfCode, Date date, Object... keys) {
 
+        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+            entity = providerService.findById(appProvider.getId());
+        }
+
         if (entity.getCfValues() == null) {
             return null;
         }
@@ -1483,6 +1476,11 @@ public class CustomFieldInstanceService extends BaseService {
     @SuppressWarnings("unchecked")
     public Object getCFValueByRangeOfNumbers(ICustomFieldEntity entity, String cfCode, Object numberToMatch) {
 
+        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+            entity = providerService.findById(appProvider.getId());
+        }
+
         if (entity.getCfValues() == null) {
             return null;
         }
@@ -1518,6 +1516,11 @@ public class CustomFieldInstanceService extends BaseService {
      * @return Map value that matches the range of numbers in a map key
      */
     public Object getCFValueByRangeOfNumbers(ICustomFieldEntity entity, String cfCode, Date date, Object numberToMatch) {
+
+        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+            entity = providerService.findById(appProvider.getId());
+        }
 
         if (entity.getCfValues() == null) {
             return null;
@@ -1782,17 +1785,6 @@ public class CustomFieldInstanceService extends BaseService {
         }
         return false;
     }
-    //
-    // /**
-    // * Get a list of custom fields instances corresponding to entities, identified by uuid
-    // *
-    // * @param uuids A list of uuid values
-    // * @return A list of custom fields instances
-    // */
-    // public List<CustomFieldInstance> getCustomFieldInstances(List<String> uuids) {
-    // return getEntityManager().createNamedQuery("CustomFieldInstance.getCfiByEntityListForIndex", CustomFieldInstance.class).setParameter("appliesToEntityList", uuids)
-    // .getResultList();
-    // }
 
     /**
      * Instantiate a custom field value with default value for a given entity. If custom field is versionable, a current date will be used to access the value.
@@ -1804,22 +1796,17 @@ public class CustomFieldInstanceService extends BaseService {
     public Object instantiateCFWithDefaultValue(ICustomFieldEntity entity, String cfCode) {
 
         CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(cfCode, entity);
-        if (cft == null || cft.getDefaultValue() == null || !isCFTApplicableToEntity(cft, entity)) {
+        if (cft == null) {
             // log.trace("No CFT found or no default value specified {}/{}", entity, code);
             return null;
         }
 
-        if (cft.isVersionable()) {
-            log.warn("Trying to instantiate CF value from default value on a versionable custom field {}/{} value with no provided date. Current date will be used",
-                entity.getClass().getSimpleName(), cfCode);
-            return instantiateCFWithDefaultValue(entity, cfCode, new Date());
+        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+            entity = providerService.findById(appProvider.getId());
         }
 
-        // Create such CF value with default value if one is specified on CFT
-        Object value = cft.getDefaultValueConverted();
-        entity.getCfValuesNullSafe().setValue(cfCode, value);
-
-        return value;
+        return instantiateCFWithDefaultValue(entity, cft);
     }
 
     /**
@@ -1830,6 +1817,11 @@ public class CustomFieldInstanceService extends BaseService {
      * @return Custom field value
      */
     public Object instantiateCFWithInheritedOrDefaultValue(ICustomFieldEntity entity, CustomFieldTemplate cft) {
+
+        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+            entity = providerService.findById(appProvider.getId());
+        }
 
         if (cft.isUseInheritedAsDefaultValue()) {
             Object value = getInheritedOnlyCFValue(entity, cft.getCode());
@@ -1862,32 +1854,25 @@ public class CustomFieldInstanceService extends BaseService {
 
         // If field is not versionable - get the value without the date
         CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(cfCode, entity);
-        if (cft == null || cft.getDefaultValue() == null || cft.getCalendar() == null || !isCFTApplicableToEntity(cft, entity)) {
+        if (cft == null) {
             // log.trace("No CFT found or no default value or calendar specified {}/{}", entity, code);
             return null;
         }
 
-        if (!cft.isVersionable()) {
-            return instantiateCFWithDefaultValue(entity, cfCode);
-        }
-
-        Object value = cft.getDefaultValueConverted();
-        entity.getCfValuesNullSafe().setValue(cfCode, cft.getDatePeriod(date), null, value);
-
-        return value;
+        return instantiateCFWithDefaultValue(entity, cft, date);
     }
 
     /**
      * Instantiate a custom field value with default value for a given entity. If custom field is versionable, a current date will be used to access the value. Can be instantiated
      * only if cft.applicableOnEl condition pass
      * 
-     * @param cft Custom field template
      * @param entity Entity
+     * @param cft Custom field template
      * @return Custom field value
      */
-    private Object instantiateCFWithDefaultValue(CustomFieldTemplate cft, ICustomFieldEntity entity) {
+    private Object instantiateCFWithDefaultValue(ICustomFieldEntity entity, CustomFieldTemplate cft) {
 
-        if (cft.getDefaultValue() == null || !isCFTApplicableToEntity(cft, entity)) {
+        if (cft.getDefaultValue() == null || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || !isCFTApplicableToEntity(cft, entity)) {
             // log.trace("No CFT found or no default value specified {}/{}", entity, cft.getCode());
             return null;
         }
@@ -1895,7 +1880,7 @@ public class CustomFieldInstanceService extends BaseService {
         if (cft.isVersionable()) {
             log.warn("Trying to instantiate CF value from default value on a versionable custom field {}/{} value with no provided date. Current date will be used",
                 entity.getClass().getSimpleName(), cft.getCode());
-            return instantiateCFWithDefaultValue(cft, entity, new Date());
+            return instantiateCFWithDefaultValue(entity, cft, new Date());
         }
 
         // Create such CF with default value if one is specified on CFT
@@ -1909,21 +1894,21 @@ public class CustomFieldInstanceService extends BaseService {
      * Instantiate a custom field value with default value for a given entity and a date. Can be instantiated only if values are versioned by a calendar and cft.applicableOnEl
      * condition pass
      * 
-     * @param cft Custom field template
      * @param entity Entity
+     * @param cft Custom field template
      * @param date Date
      * @return Custom field value
      */
-    private Object instantiateCFWithDefaultValue(CustomFieldTemplate cft, ICustomFieldEntity entity, Date date) {
+    private Object instantiateCFWithDefaultValue(ICustomFieldEntity entity, CustomFieldTemplate cft, Date date) {
 
-        if (cft.getDefaultValue() == null || cft.getCalendar() == null || !isCFTApplicableToEntity(cft, entity)) {
+        if (cft.getDefaultValue() == null || cft.getCalendar() == null || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE || !isCFTApplicableToEntity(cft, entity)) {
             // log.trace("No CFT found or no default value or calendar specified {}/{}", entity, code);
             return null;
         }
 
         // If field is not versionable - instantiate the value without the date
         if (!cft.isVersionable()) {
-            return instantiateCFWithDefaultValue(cft, entity);
+            return instantiateCFWithDefaultValue(entity, cft);
         }
 
         Object value = cft.getDefaultValueConverted();
@@ -1942,6 +1927,11 @@ public class CustomFieldInstanceService extends BaseService {
      */
     @SuppressWarnings("unchecked")
     public boolean isCFValueHasKey(ICustomFieldEntity entity, String cfCode, Object... keys) {
+
+        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+            entity = providerService.findById(appProvider.getId());
+        }
 
         if (entity.getCfValues() == null) {
             return false;
@@ -2004,6 +1994,11 @@ public class CustomFieldInstanceService extends BaseService {
     @SuppressWarnings("unchecked")
     public boolean isCFValueHasKey(ICustomFieldEntity entity, String cfCode, Date date, Object... keys) {
 
+        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+            entity = providerService.findById(appProvider.getId());
+        }
+
         if (entity.getCfValues() == null) {
             return false;
         }
@@ -2064,6 +2059,11 @@ public class CustomFieldInstanceService extends BaseService {
      */
     public boolean isInheritedCFValueHasKey(ICustomFieldEntity entity, String cfCode, Object... keys) {
 
+        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+            entity = providerService.findById(appProvider.getId());
+        }
+
         boolean hasKey = isCFValueHasKey(entity, cfCode, keys);
         if (hasKey) {
             return true;
@@ -2095,6 +2095,11 @@ public class CustomFieldInstanceService extends BaseService {
      * @return True if CF value has a given key at a given perio date
      */
     public boolean isInheritedCFValueHasKey(ICustomFieldEntity entity, String cfCode, Date date, Object... keys) {
+
+        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+            entity = providerService.findById(appProvider.getId());
+        }
 
         boolean hasKey = isCFValueHasKey(entity, cfCode, date, keys);
         if (hasKey) {
@@ -2163,6 +2168,11 @@ public class CustomFieldInstanceService extends BaseService {
         return true;
     }
 
+    /**
+     * Schedule end period events for an entity if applicable
+     * 
+     * @param entity Entity
+     */
     public void scheduleEndPeriodEvents(ICustomFieldEntity entity) {
 
         if (entity.getCfValues() == null) {
