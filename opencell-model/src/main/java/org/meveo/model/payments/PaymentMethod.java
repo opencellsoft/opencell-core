@@ -53,19 +53,19 @@ public abstract class PaymentMethod extends BaseEntity {
     @Column(name = "USER_ID")
     private String userId;
 
-    @Column(name = "INFO_1")
+    @Column(name = "INFO_1",columnDefinition = "TEXT")
     private String info1;
 
-    @Column(name = "INFO_2")
+    @Column(name = "INFO_2",columnDefinition = "TEXT")
     private String info2;
 
-    @Column(name = "INFO_3")
+    @Column(name = "INFO_3",columnDefinition = "TEXT")
     private String info3;
 
-    @Column(name = "INFO_4")
+    @Column(name = "INFO_4",columnDefinition = "TEXT")
     private String info4;
 
-    @Column(name = "INFO_5")
+    @Column(name = "INFO_5",columnDefinition = "TEXT")
     private String info5;
     
     @Column(name = "BANK_CODE")
