@@ -17,13 +17,14 @@
         column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['businessEntity.description']}" column2="description" column3Label="#{messages['commons.validFrom']}"
         column3="validity" column3Child="from" column4Label="#{messages['commons.validTo']}" column4="validity" column4Child="to" />
 
-    <p:dataTable id="offerProducts" var="entity" value="#{mainBackingBean.entity.offerProductTemplates}" paginator="false" rows="30" lazy="false" styleClass="custom-grid"
-        rowIndexVar="rowIndex" resizableColumns="true">
+    <p:dataTable id="offerProducts" var="entity" value="#{mainBackingBean.entity.offerProductTemplates}" rows="20" lazy="false" styleClass="custom-grid" rowIndexVar="rowIndex" resizableColumns="true"
+        paginator="true" rowsPerPageTemplate="10,15,20,50" reflow="true" paginatorAlwaysVisible="false"
+        paginatorTemplate="${prePaginatorControls} {RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
 
         <hftl:column label="#{messages['productTemplate.title']}" field="productTemplate.code" entityView="productTemplateDetail" valueIdField="productTemplate.id" />
         <hftl:column label="#{messages['offerServiceTemplate.mandatory']}" field="mandatory" isMessage="true" />
-        <hftl:column label="#{messages['commons.validFrom']}" field="productTemplate.validityRaw.from" isDate="true"/>
-        <hftl:column label="#{messages['commons.validTo']}" field="productTemplate.validityRaw.to" isDate="true"/>
+        <hftl:column label="#{messages['commons.validFrom']}" field="productTemplate.validityRaw.from" isDate="true" />
+        <hftl:column label="#{messages['commons.validTo']}" field="productTemplate.validityRaw.to" isDate="true" />
 
         <p:column styleClass="actions-column" rendered="#{mainBackingBean.edit}">
             <f:facet name="header">
@@ -31,8 +32,8 @@
             </f:facet>
             <p:commandButton update="#{mainFormId}:messages #{mainFormId}:tabView:offerProductMessages #{mainFormId}:tabView:offerProductDetails"
                 action="#{mainBackingBean.editOfferProductTemplate(entity)}" icon="ui-icon-document" process="@this" />
-            <p:commandButton action="#{mainBackingBean.deleteOfferProductTemplate(entity)}" rendered="#{mainBackingBean.edit and mainBackingBean.canUserUpdateEntity()}"
-                icon="ui-icon-trash" update="#{mainFormId}:messages #{mainFormId}:tabView:offerProductMessages #{mainFormId}:tabView:offerProductDetails #{mainFormId}:tabView:offerProducts" process="@this" />
+            <p:commandButton action="#{mainBackingBean.deleteOfferProductTemplate(entity)}" rendered="#{mainBackingBean.edit and mainBackingBean.canUserUpdateEntity()}" icon="ui-icon-trash"
+                update="#{mainFormId}:messages #{mainFormId}:tabView:offerProductMessages #{mainFormId}:tabView:offerProductDetails #{mainFormId}:tabView:offerProducts" process="@this" />
         </p:column>
         <f:facet name="footer">
             <p:commandButton value="#{messages['commons.addNew']}" action="#{offerTemplateBean.newOfferProductTemplate()}"

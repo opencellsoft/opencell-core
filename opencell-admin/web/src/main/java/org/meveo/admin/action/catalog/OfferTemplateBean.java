@@ -117,27 +117,40 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
     public OfferTemplate initEntity() {
         super.initEntity();
 
-		if (bomId != null) {
-			businessOfferModel = businessOfferModelService.findById(bomId);
-			productTemplatesLookup = new ArrayList<>();
-			if (entity.getOfferProductTemplates() != null && !entity.getOfferProductTemplates().isEmpty()) {
-				for (OfferProductTemplate opt : entity.getOfferProductTemplates()) {
-					productTemplatesLookup.add(opt.getProductTemplate());
-				}
-			}
-			setOverrideImageOnUpload(false);
-		}
+        if (bomId != null) {
+            businessOfferModel = businessOfferModelService.findById(bomId);
+            productTemplatesLookup = new ArrayList<>();
+            if (entity.getOfferProductTemplates() != null && !entity.getOfferProductTemplates().isEmpty()) {
+                for (OfferProductTemplate opt : entity.getOfferProductTemplates()) {
+                    productTemplatesLookup.add(opt.getProductTemplate());
+                }
+            }
+            setOverrideImageOnUpload(false);
+        }
+
+        // Load service templates
+        for (OfferServiceTemplate offerServiceTemplate : entity.getOfferServiceTemplates()) {
+            offerServiceTemplate.getServiceTemplate().getCode();
+            for (ServiceTemplate serviceTemplate : offerServiceTemplate.getIncompatibleServices()) {
+                serviceTemplate.getCode();
+            }
+        }
+
+        // Load product templates
+        for (OfferProductTemplate offerProductTemplate : entity.getOfferProductTemplates()) {
+            offerProductTemplate.getProductTemplate();
+        }
 
         if (newVersion) {
             instantiateNewVersion();
             setObjectId(entity.getId());
             newVersion = false;
         }
-        
-        if(duplicateOffer) {
-        	duplicateOfferOnly();
-        	setObjectId(entity.getId());
-        	duplicateOffer = false;
+
+        if (duplicateOffer) {
+            duplicateOfferOnly();
+            setObjectId(entity.getId());
+            duplicateOffer = false;
         }
 
         return entity;
@@ -166,22 +179,22 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
     protected String getDefaultSort() {
         return "code";
     }
-    
+
     public List<ProductTemplate> getProductTemplatesLookup() {
-		return productTemplatesLookup;
-	}
+        return productTemplatesLookup;
+    }
 
-	public void setProductTemplatesLookup(List<ProductTemplate> productTemplatesLookup) {
-		this.productTemplatesLookup = productTemplatesLookup;
-	}
+    public void setProductTemplatesLookup(List<ProductTemplate> productTemplatesLookup) {
+        this.productTemplatesLookup = productTemplatesLookup;
+    }
 
-	public boolean isDuplicateOffer() {
-		return duplicateOffer;
-	}
+    public boolean isDuplicateOffer() {
+        return duplicateOffer;
+    }
 
-	public void setDuplicateOffer(boolean duplicateOffer) {
-		this.duplicateOffer = duplicateOffer;
-	}
+    public void setDuplicateOffer(boolean duplicateOffer) {
+        this.duplicateOffer = duplicateOffer;
+    }
 
     @ActionMethod
     public void duplicate() {
@@ -195,7 +208,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
             }
         }
     }
-    
+
     /**
      * @param givenEntity entity to check
      * @return true/false
@@ -204,26 +217,26 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
         return (givenEntity != null && !givenEntity.isTransient() && (subscriptionService.findByOfferTemplate(givenEntity) != null)
                 && subscriptionService.findByOfferTemplate(givenEntity).size() > 0) ? true : false;
     }
-    
+
     /**
      * delete all entities related to Offer( used only for Marketing Manager)
      */
     @ActionMethod
     public void deleteCatalogHierarchy(OfferTemplate entity) {
-    	if (!this.isUsedInSubscription(entity)) {
-    		if (entity != null && entity.getId() != null) {
-    			try {
-    				offerTemplateService.delete(entity);
-    				messages.info(new BundleKey("messages", "delete.successful"));
-    			} catch (BusinessException e) {
-    				log.error("Error encountered while deleting offer template entity: {}: {}", entity.getCode(), e);
-    				messages.error(new BundleKey("messages", "error.delete.unexpected"));
-    			}
-    		}
-    	} else {
-    		log.error("This entity is already in subscription: {}", entity.getCode());
-			messages.error(new BundleKey("messages", "error.delete.entityUsed "));
-    	}
+        if (!this.isUsedInSubscription(entity)) {
+            if (entity != null && entity.getId() != null) {
+                try {
+                    offerTemplateService.delete(entity);
+                    messages.info(new BundleKey("messages", "delete.successful"));
+                } catch (BusinessException e) {
+                    log.error("Error encountered while deleting offer template entity: {}: {}", entity.getCode(), e);
+                    messages.error(new BundleKey("messages", "error.delete.unexpected"));
+                }
+            }
+        } else {
+            log.error("This entity is already in subscription: {}", entity.getCode());
+            messages.error(new BundleKey("messages", "error.delete.entityUsed "));
+        }
     }
 
     @ActionMethod
@@ -243,20 +256,20 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
         return (getEntity() != null && !getEntity().isTransient() && (subscriptionService.findByOfferTemplate(getEntity()) != null)
                 && subscriptionService.findByOfferTemplate(getEntity()).size() > 0) ? true : false;
     }
-    
+
     /**
      * 
      * @return sorted offer services templates
      */
     public List<OfferServiceTemplate> getSortedOfferServiceTemplates() {
-    	OfferTemplate givenEntity = this.getEntity();
-    	List<OfferServiceTemplate> sortedList = new ArrayList<>();
-    	if (givenEntity != null) {
-    		 sortedList.addAll(givenEntity.getOfferServiceTemplates());
-    	}
-    	Collections.sort(sortedList, new DescriptionComparator());
-    	return sortedList;
-    } 
+        OfferTemplate givenEntity = this.getEntity();
+        List<OfferServiceTemplate> sortedList = new ArrayList<>();
+        if (givenEntity != null) {
+            sortedList.addAll(givenEntity.getOfferServiceTemplates());
+        }
+        Collections.sort(sortedList, new DescriptionComparator());
+        return sortedList;
+    }
 
     @Override
     @ActionMethod
@@ -604,7 +617,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
     @ActionMethod
     public void duplicateOfferOnly() {
-    	if (entity != null && entity.getId() != null) {
+        if (entity != null && entity.getId() != null) {
             try {
                 entity = offerTemplateService.duplicateOfferOnly(entity);
                 messages.info(new BundleKey("messages", "message.duplicate.ok"));
