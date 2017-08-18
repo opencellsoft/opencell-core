@@ -6,12 +6,15 @@ import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.customEntities.CustomEntityInstance;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 /**
  * Represents a custom field value type - reference to an Meveo entity identified by a classname and code. In case a class is a generic Custom Entity Template a classnameCode is
  * required to identify a concrete custom entity template by its code
  * 
  * @author Andrius Karpavicius
  **/
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class EntityReferenceWrapper implements Serializable {
 
     private static final long serialVersionUID = -4756870628233941711L;

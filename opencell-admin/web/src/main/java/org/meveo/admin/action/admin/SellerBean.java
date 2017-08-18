@@ -18,6 +18,7 @@
  */
 package org.meveo.admin.action.admin;
 
+import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -35,107 +36,96 @@ import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
+
 @Named
 @ViewScoped
 public class SellerBean extends CustomFieldBean<Seller> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Injected @{link PricePlanMatrix} service. Extends
-	 * {@link PersistenceService}.
-	 */
-	@Inject
-	private SellerService sellerService;
-	
-	 @Inject
-	 private InvoiceTypeService invoiceTypeService;
-	 
-	 private InvoiceTypeSellerSequence selectedInvoiceTypeSellerSequence;
-	 private String prefixEl;
-	 private Integer sequenceSize= 9;
-	 private Long currentInvoiceNb = 0L; 
-	 private String invoiceTypeCode;
-	 private boolean editSellerSequence=false;
+    /**
+     * Injected @{link PricePlanMatrix} service. Extends {@link PersistenceService}.
+     */
+    @Inject
+    private SellerService sellerService;
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public SellerBean() {
-		super(Seller.class);
-	}
+    @Inject
+    private InvoiceTypeService invoiceTypeService;
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<Seller> getPersistenceService() {
-		return sellerService;
-	}
+    private InvoiceTypeSellerSequence selectedInvoiceTypeSellerSequence;
+    private String prefixEl;
+    private Integer sequenceSize = 9;
+    private Long currentInvoiceNb = 0L;
+    private String invoiceTypeCode;
+    private boolean editSellerSequence = false;
 
-	@Override
-	protected String getListViewName() {
-		return "sellers";
-	}
-
-	@Override
-	protected String getDefaultSort() {
-		return "code";
-	}
-
-	@Override
-	@ActionMethod
-	public String saveOrUpdate(boolean killConversation) throws BusinessException {
-		return super.saveOrUpdate(killConversation);
-		// prefix must be set
-//		if (entity.getCurrentInvoiceNb() != null && StringUtils.isBlank(entity.getInvoicePrefix())) {
-//			messages.error(new BundleKey("messages", "message.error.seller.invoicePrefix.required"));
-//			return null;
-//		} else {
-//			return super.saveOrUpdate(killConversation);
-//		}
-	}
-
-    private Sequence getSequence() {
-        Sequence sequence = new Sequence();
-        sequence.setPrefixEL(getPrefixEl());
-        sequence.setSequenceSize(getSequenceSize());
-        sequence.setCurrentInvoiceNb(getCurrentInvoiceNb());
-        return sequence;
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public SellerBean() {
+        super(Seller.class);
     }
 
- public void saveOrUpdateSequence() throws BusinessException{ 
-		 if(getCurrentInvoiceNb().longValue()< invoiceTypeService.getMaxCurrentInvoiceNumber(invoiceTypeCode).longValue()) {
-			 messages.error(new BundleKey("messages", "invoice.downgrade.cuurrentNb.error.msg"));
-			 return;
-		 }
-		 
-		 Seller seller = sellerService.findByCode(entity.getCode());
-		 
-		 if (seller != null) {
-			 messages.error(new BundleKey("messages","seller.unique"));
-			 return;
-		 }
-		 
-		 InvoiceType invoiceType=invoiceTypeService.findByCode(invoiceTypeCode);
-		 if(invoiceType!=null){
-			 if(!editSellerSequence){
-				 if(entity.isContainsInvoiceTypeSequence(invoiceType)){
-					 messages.error(new BundleKey("messages","seller.sellerSequence.unique")); 
-				 }else{
-					 entity.getInvoiceTypeSequence().add(new InvoiceTypeSellerSequence(invoiceType, entity, getSequence()));
-					 messages.info(new BundleKey("messages","save.successful"));	
-			         super.saveOrUpdate(false); 
-				 }
-			 }else{ 
-				 selectedInvoiceTypeSellerSequence.setSequence(getSequence());
-				 messages.info(new BundleKey("messages","update.successful"));
-		         super.saveOrUpdate(false);
-			 }
-		 }
-		 resetSequenceField();	 
-	 }	
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<Seller> getPersistenceService() {
+        return sellerService;
+    }
+
+    @Override
+    protected String getListViewName() {
+        return "sellers";
+    }
+
+    @Override
+    protected String getDefaultSort() {
+        return "code";
+    }
+
+    @Override
+    @ActionMethod
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
+        return super.saveOrUpdate(killConversation);
+        // prefix must be set
+        // if (entity.getCurrentInvoiceNb() != null && StringUtils.isBlank(entity.getInvoicePrefix())) {
+        // messages.error(new BundleKey("messages", "message.error.seller.invoicePrefix.required"));
+        // return null;
+        // } else {
+        // return super.saveOrUpdate(killConversation);
+        // }
+    }
+
+    public void saveOrUpdateSequence() throws BusinessException {
+        if (getCurrentInvoiceNb().longValue() < invoiceTypeService.getMaxCurrentInvoiceNumber(invoiceTypeCode).longValue()) {
+            messages.error(new BundleKey("messages", "invoice.downgrade.cuurrentNb.error.msg"));
+            return;
+        }
+
+        InvoiceType invoiceType = invoiceTypeService.findByCode(invoiceTypeCode);
+        if (invoiceType != null) {
+            if (!editSellerSequence) {
+                if (entity.isContainsInvoiceTypeSequence(invoiceType)) {
+                    messages.error(new BundleKey("messages", "seller.sellerSequence.unique"));
+                    FacesContext.getCurrentInstance().validationFailed();
+                    return;
+                } else {
+                    entity.getInvoiceTypeSequence().add(new InvoiceTypeSellerSequence(invoiceType, entity, new Sequence(getPrefixEl(), getSequenceSize(), getCurrentInvoiceNb())));
+                    messages.info(new BundleKey("messages", "seller.sequence.saved"));
+                }
+            } else {
+                if (selectedInvoiceTypeSellerSequence.getSequence() == null) {
+                    selectedInvoiceTypeSellerSequence.setSequence(new Sequence());
+                }
+                selectedInvoiceTypeSellerSequence.getSequence().setPrefixEL(getPrefixEl());
+                selectedInvoiceTypeSellerSequence.getSequence().setSequenceSize(getSequenceSize());
+                selectedInvoiceTypeSellerSequence.getSequence().setCurrentInvoiceNb(getCurrentInvoiceNb());
+                messages.info(new BundleKey("messages", "seller.sequence.saved"));
+            }
+        }
+        resetSequenceField();
+    }
 
     public void deleteSellerSequence(InvoiceType invoiceType) {
 
@@ -145,8 +135,8 @@ public class SellerBean extends CustomFieldBean<Seller> {
                 break;
             }
         }
-        messages.info(new BundleKey("messages", "delete.successful"));
-	 }
+        messages.info(new BundleKey("messages", "seller.sequence.deleted"));
+    }
 
     public void getSequenceSelected(InvoiceTypeSellerSequence invoiceTypeSellerSequence) {
         this.selectedInvoiceTypeSellerSequence = invoiceTypeSellerSequence;
@@ -165,47 +155,45 @@ public class SellerBean extends CustomFieldBean<Seller> {
         currentInvoiceNb = 0L;
         editSellerSequence = false;
     }
-    
-	public String getPrefixEl() {
-		return prefixEl;
-	}
 
-	public void setPrefixEl(String prefixEl) {
-		this.prefixEl = prefixEl;
-	}
+    public String getPrefixEl() {
+        return prefixEl;
+    }
 
-	public Integer getSequenceSize() {
-		return sequenceSize;
-	}
+    public void setPrefixEl(String prefixEl) {
+        this.prefixEl = prefixEl;
+    }
 
-	public void setSequenceSize(Integer sequenceSize) {
-		this.sequenceSize = sequenceSize;
-	}
+    public Integer getSequenceSize() {
+        return sequenceSize;
+    }
 
-	public Long getCurrentInvoiceNb() {
-		return currentInvoiceNb;
-	}
+    public void setSequenceSize(Integer sequenceSize) {
+        this.sequenceSize = sequenceSize;
+    }
 
-	public void setCurrentInvoiceNb(Long currentInvoiceNb) {
-		this.currentInvoiceNb = currentInvoiceNb;
-	}
+    public Long getCurrentInvoiceNb() {
+        return currentInvoiceNb;
+    }
 
-	public String getInvoiceTypeCode() {
-		return invoiceTypeCode;
-	}
+    public void setCurrentInvoiceNb(Long currentInvoiceNb) {
+        this.currentInvoiceNb = currentInvoiceNb;
+    }
 
-	public void setInvoiceTypeCode(String invoiceTypeCode) {
-		this.invoiceTypeCode = invoiceTypeCode;
-	}
+    public String getInvoiceTypeCode() {
+        return invoiceTypeCode;
+    }
 
-	public boolean isEditSellerSequence() {
-		return editSellerSequence;
-	}
+    public void setInvoiceTypeCode(String invoiceTypeCode) {
+        this.invoiceTypeCode = invoiceTypeCode;
+    }
 
-	public void setEditSellerSequence(boolean editSellerSequence) {
-		this.editSellerSequence = editSellerSequence;
-	}
+    public boolean isEditSellerSequence() {
+        return editSellerSequence;
+    }
 
-
+    public void setEditSellerSequence(boolean editSellerSequence) {
+        this.editSellerSequence = editSellerSequence;
+    }
 
 }

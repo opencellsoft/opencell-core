@@ -13,6 +13,7 @@ import javax.persistence.NoResultException;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
@@ -149,11 +150,11 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
 
         if ("INVOICE_SEQUENCE".equals(cft.getCode()) && (cft.getFieldType() != CustomFieldTypeEnum.LONG || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE
                 || !cft.isVersionable() || cft.getCalendar() == null)) {
-            throw new BusinessException("invoice_sequence CF must be versionnable,Long,Single value and must have a Calendar");
+            throw new ValidationException("invoice_sequence CF must be versionnable, Long, Single value and must have a Calendar");
         }
         if ("INVOICE_ADJUSTMENT_SEQUENCE".equals(cft.getCode()) && (cft.getFieldType() != CustomFieldTypeEnum.LONG || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE
                 || !cft.isVersionable() || cft.getCalendar() == null)) {
-            throw new BusinessException("invoice_adjustement_sequence CF must be versionnable,Long,Single value and must have a Calendar");
+            throw new ValidationException("invoice_adjustement_sequence CF must be versionnable, Long, Single value and must have a Calendar");
         }
         super.create(cft);
         customFieldsCache.addUpdateCustomFieldTemplate(cft);
@@ -165,11 +166,11 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
 
         if ("INVOICE_SEQUENCE".equals(cft.getCode()) && (cft.getFieldType() != CustomFieldTypeEnum.LONG || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE
                 || !cft.isVersionable() || cft.getCalendar() == null)) {
-            throw new BusinessException("invoice_sequence CF must be versionnable,Long,Single value and must have a Calendar");
+            throw new ValidationException("invoice_sequence CF must be versionnable, Long, Single value and must have a Calendar");
         }
         if ("INVOICE_ADJUSTMENT_SEQUENCE".equals(cft.getCode()) && (cft.getFieldType() != CustomFieldTypeEnum.LONG || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE
                 || !cft.isVersionable() || cft.getCalendar() == null)) {
-            throw new BusinessException("invoice_adjustement_sequence CF must be versionnable,Long,Single value and must have a Calendar");
+            throw new ValidationException("invoice_adjustement_sequence CF must be versionnable, Long, Single value and must have a Calendar");
         }
         CustomFieldTemplate cftUpdated = super.update(cft);
         customFieldsCache.addUpdateCustomFieldTemplate(cftUpdated);
@@ -214,8 +215,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * @return A list of custom field templates
      */
     public List<CustomFieldTemplate> getCFTForIndex() {
-        List<CustomFieldTemplate> cfts = getEntityManager().createNamedQuery("CustomFieldTemplate.getCFTForIndex", CustomFieldTemplate.class)
-            .getResultList();
+        List<CustomFieldTemplate> cfts = getEntityManager().createNamedQuery("CustomFieldTemplate.getCFTForIndex", CustomFieldTemplate.class).getResultList();
         return cfts;
     }
 
@@ -350,5 +350,5 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
         }
         return allTemplates;
     }
-    
+
 }

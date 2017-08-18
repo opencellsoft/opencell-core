@@ -28,6 +28,7 @@ import java.util.UUID;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -52,9 +53,11 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
+import org.meveo.model.persistence.CustomFieldValuesConverter;
 import org.meveo.model.quote.Quote;
 
 @Entity
@@ -65,7 +68,9 @@ import org.meveo.model.quote.Quote;
 @CustomFieldEntity(cftCodePrefix = "INVOICE")
 @NamedQueries({ @NamedQuery(name = "Invoice.byBR", query = "select inv.id from Invoice inv where inv.billingRun.id=:billingRunId"),
         @NamedQuery(name = "Invoice.validatedNoPdf", query = "select inv.id from Invoice inv where inv.billingRun.status = 'VALIDATED' and inv.isPdfGenerated is false"),
-        @NamedQuery(name = "Invoice.validatedNoPdfByBR", query = "select inv.id from Invoice inv where inv.billingRun.status = 'VALIDATED' and inv.isPdfGenerated is false and inv.billingRun.id=:billingRunId") })
+        @NamedQuery(name = "Invoice.validatedNoPdfByBR", query = "select inv.id from Invoice inv where inv.billingRun.status = 'VALIDATED' and inv.isPdfGenerated is false and inv.billingRun.id=:billingRunId"),
+        @NamedQuery(name = "Invoice.invoicesToNumberSummary", query = "select inv.invoiceType.id, inv.billingAccount.customerAccount.customer.seller.id, inv.invoiceDate, count(inv) from Invoice inv where inv.billingRun.id=:billingRunId group by inv.invoiceType.id, inv.billingAccount.customerAccount.customer.seller.id, inv.invoiceDate"),
+        @NamedQuery(name = "Invoice.byBrItSelDate", query = "select inv.id from Invoice inv where inv.billingRun.id=:billingRunId and inv.invoiceType.id=:invoiceTypeId and inv.billingAccount.customerAccount.customer.seller.id = :sellerId and inv.invoiceDate=:invoiceDate order by inv.id") })
 public class Invoice extends EnableEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;
@@ -167,6 +172,11 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
     @Size(max = 60)
     @NotNull
     private String uuid = UUID.randomUUID().toString();
+
+    // @Type(type = "json")
+    @Convert(converter = CustomFieldValuesConverter.class)
+    @Column(name = "cf_values", columnDefinition = "text")
+    private CustomFieldValues cfValues;
 
     @ManyToMany
     @JoinTable(name = "billing_linked_invoices", joinColumns = { @JoinColumn(name = "id") }, inverseJoinColumns = { @JoinColumn(name = "linked_invoice_id") })
@@ -501,6 +511,27 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
+    }
+
+    public CustomFieldValues getCfValues() {
+        return cfValues;
+    }
+
+    public void setCfValues(CustomFieldValues cfValues) {
+        this.cfValues = cfValues;
+    }
+
+    @Override
+    public CustomFieldValues getCfValuesNullSafe() {
+        if (cfValues == null) {
+            cfValues = new CustomFieldValues();
+        }
+        return cfValues;
+    }
+
+    @Override
+    public void clearCfValues() {
+        cfValues = null;
     }
 
     @Override

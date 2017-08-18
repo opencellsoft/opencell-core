@@ -51,6 +51,7 @@ import org.meveo.model.billing.PreInvoicingReportsDTO;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.RejectedBillingAccount;
+import org.meveo.model.billing.Sequence;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.payments.PaymentMethod;
@@ -81,6 +82,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
     @Inject
     private BillingRunExtensionService billingRunExtensionService;
+
+    @Inject
+    private ServiceSingleton serviceSingleton;
 
     public PreInvoicingReportsDTO generatePreInvoicingReports(BillingRun billingRun) throws BusinessException {
         log.debug("start generatePreInvoicingReports.......");
@@ -489,7 +493,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         } catch (Exception e1) {
             throw new BusinessException("cannot create  agregates and invoice with nbRuns=" + nbRuns);
         }
-        
+
         List<Future<String>> asyncReturns = new ArrayList<Future<String>>();
         while (subListCreator.isHasNext()) {
             asyncReturns.add(invoicingAsync.createAgregatesAndInvoiceAsync((List<Long>) subListCreator.getNextWorkSet(), billingRun));
@@ -512,34 +516,55 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public void incrementInvoiceDates(BillingRun billingRun, long nbRuns, long waitingMillis) throws BusinessException {
+    public void assignInvoiceNumberAndIncrementBAInvoiceDates(BillingRun billingRun, long nbRuns, long waitingMillis) throws BusinessException {
 
-        List<Long> invoices = invoiceService.getInvoiceIdsByBR(billingRun.getId());
+        List<InvoicesToNumberInfo> invoiceSummary = invoiceService.getInvoicesToNumberSummary(billingRun.getId());
 
-        SubListCreator subListCreator = null;
-
-        try {
-            subListCreator = new SubListCreator(invoices, (int) nbRuns);
-        } catch (Exception e1) {
-            throw new BusinessException("Failed to subdivide an invoice list with nbRuns=" + nbRuns);
+        // Reserve invoice number for each invoice type/seller/invoice date combination
+        for (InvoicesToNumberInfo invoicesToNumberInfo : invoiceSummary) {
+            Sequence sequence = serviceSingleton.reserveInvoiceNumbers(invoicesToNumberInfo.getInvoiceTypeId(), invoicesToNumberInfo.getSellerId(),
+                invoicesToNumberInfo.getInvoiceDate(), invoicesToNumberInfo.getNrOfInvoices());
+            invoicesToNumberInfo.setNumberingSequence(sequence);
         }
 
-        List<Future<String>> asyncReturns = new ArrayList<Future<String>>();
-        while (subListCreator.isHasNext()) {
-            asyncReturns.add(invoicingAsync.incrementInvoiceDatesAsync((List<Long>) subListCreator.getNextWorkSet()));
-            try {
-                Thread.sleep(waitingMillis);
-            } catch (InterruptedException e) {
-                log.error("Failed to create agregates and invoice waiting for thread", e);
-                throw new BusinessException(e);
+        // Find and process invoices
+        for (InvoicesToNumberInfo invoicesToNumberInfo : invoiceSummary) {
+
+            List<Long> invoices = invoiceService.getInvoiceIds(billingRun.getId(), invoicesToNumberInfo.getInvoiceTypeId(), invoicesToNumberInfo.getSellerId(),
+                invoicesToNumberInfo.getInvoiceDate());
+
+            // Validate that what was retrieved as summary matches the details
+            if (invoices.size() != invoicesToNumberInfo.getNrOfInvoices().intValue()) {
+                throw new BusinessException(
+                    String.format("Number of invoices retrieved %s dont match the expected number %s for %s/%s/%s/%s", invoices.size(), invoicesToNumberInfo.getNrOfInvoices(),
+                        billingRun.getId(), invoicesToNumberInfo.getInvoiceTypeId(), invoicesToNumberInfo.getSellerId(), invoicesToNumberInfo.getInvoiceDate()));
             }
-        }
-        for (Future<String> futureItsNow : asyncReturns) {
+
+            SubListCreator subListCreator = null;
+
             try {
-                futureItsNow.get();
-            } catch (InterruptedException | ExecutionException e) {
-                log.error("Failed to create agregates and invoice getting future", e);
-                throw new BusinessException(e);
+                subListCreator = new SubListCreator(invoices, (int) nbRuns);
+            } catch (Exception e1) {
+                throw new BusinessException("Failed to subdivide an invoice list with nbRuns=" + nbRuns);
+            }
+
+            List<Future<String>> asyncReturns = new ArrayList<Future<String>>();
+            while (subListCreator.isHasNext()) {
+                asyncReturns.add(invoicingAsync.assignInvoiceNumberAndIncrementBAInvoiceDatesAsync((List<Long>) subListCreator.getNextWorkSet(), invoicesToNumberInfo));
+                try {
+                    Thread.sleep(waitingMillis);
+                } catch (InterruptedException e) {
+                    log.error("Failed to create agregates and invoice waiting for thread", e);
+                    throw new BusinessException(e);
+                }
+            }
+            for (Future<String> futureItsNow : asyncReturns) {
+                try {
+                    futureItsNow.get();
+                } catch (InterruptedException | ExecutionException e) {
+                    log.error("Failed to create agregates and invoice getting future", e);
+                    throw new BusinessException(e);
+                }
             }
         }
     }
@@ -639,7 +664,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             billingRunExtensionService.updateBillingRun(billingRun, null, null, BillingRunStatusEnum.POSTINVOICED, null);
 
         } else if (BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus())) {
-            incrementInvoiceDates(billingRun, nbRuns, waitingMillis);
+            assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, nbRuns, waitingMillis);
             billingRunExtensionService.updateBillingRun(billingRun, null, null, BillingRunStatusEnum.VALIDATED, null);
         }
     }
@@ -655,7 +680,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
         case POSTINVOICED:
         case POSTVALIDATED:
-            incrementInvoiceDates(billingRun, 1, 0);
+            assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, 1, 0);
             billingRunExtensionService.updateBillingRun(billingRun, null, null, BillingRunStatusEnum.VALIDATED, null);
             break;
 

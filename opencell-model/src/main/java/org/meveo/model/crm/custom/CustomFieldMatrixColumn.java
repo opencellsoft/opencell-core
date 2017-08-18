@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Embeddable
-public class CustomFieldMatrixColumn implements Serializable, Comparable<CustomFieldMatrixColumn> {
+public class CustomFieldMatrixColumn implements Serializable {
 
     private static final long serialVersionUID = 4307211518190785915L;
 
@@ -90,10 +90,5 @@ public class CustomFieldMatrixColumn implements Serializable, Comparable<CustomF
             return false;
         }
         return true;
-    }
-
-    @Override
-    public int compareTo(CustomFieldMatrixColumn other) {
-        return this.position - other.getPosition();
     }
 }

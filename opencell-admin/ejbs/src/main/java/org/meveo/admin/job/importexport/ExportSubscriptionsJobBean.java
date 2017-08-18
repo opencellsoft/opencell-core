@@ -26,51 +26,47 @@ import org.meveo.model.jaxb.subscription.Subscriptions;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.SubscriptionService;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
 @Stateless
 public class ExportSubscriptionsJobBean {
 
-	SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_hhmmss");
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_hhmmss");
 
-	@Inject
-	private Logger log;
-
-	@Inject
-	private SubscriptionService subscriptionService;
-	
     @Inject
-    private CustomFieldInstanceService customFieldInstanceService;
-    
+    private Logger log;
+
+    @Inject
+    private SubscriptionService subscriptionService;
+
     @Inject
     @ApplicationProvider
     protected Provider appProvider;
 
-	Subscriptions subscriptions;
-	ParamBean param = ParamBean.getInstance();
+    Subscriptions subscriptions;
+    ParamBean param = ParamBean.getInstance();
 
-	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void execute(JobExecutionResultImpl result, String parameter) {
+    public void execute(JobExecutionResultImpl result, String parameter) {
 
-		String exportDir = param.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode()
-				+ File.separator + "exports" + File.separator + "subscriptions" + File.separator;
-		log.info("exportDir=" + exportDir);
-		File dir = new File(exportDir);
-		if (!dir.exists()) {
-			dir.mkdirs();
-		}
+        String exportDir = param.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator + "exports" + File.separator
+                + "subscriptions" + File.separator;
+        log.info("exportDir=" + exportDir);
+        File dir = new File(exportDir);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
 
-		String timestamp = sdf.format(new Date());
-		List<org.meveo.model.billing.Subscription> subs = subscriptionService.list();
-		subscriptions = subscriptionsToDto(subs, param.getProperty("connectorCRM.dateFormat", "yyyy-MM-dd"));
-		try {
-			JAXBUtils.marshaller(subscriptions, new File(dir + File.separator + "SUB_" + timestamp + ".xml"));
-		} catch (JAXBException e) {
-			log.error("Failed to export subscriptions job",e);
-		}
+        String timestamp = sdf.format(new Date());
+        List<org.meveo.model.billing.Subscription> subs = subscriptionService.list();
+        subscriptions = subscriptionsToDto(subs, param.getProperty("connectorCRM.dateFormat", "yyyy-MM-dd"));
+        try {
+            JAXBUtils.marshaller(subscriptions, new File(dir + File.separator + "SUB_" + timestamp + ".xml"));
+        } catch (JAXBException e) {
+            log.error("Failed to export subscriptions job", e);
+        }
 
     }
 
@@ -83,21 +79,22 @@ public class ExportSubscriptionsJobBean {
         }
         return dto;
     }
-    
 
     private Subscription subscriptionToDto(org.meveo.model.billing.Subscription sub, String dateFormat) {
         Subscription dto = new Subscription();
         if (sub != null) {
-            dto.setSubscriptionDate ( sub.getSubscriptionDate() == null ? null : DateUtils.formatDateWithPattern(sub.getSubscriptionDate(), dateFormat));
-            dto.setEndAgreementDate ( sub.getEndAgreementDate() == null ? null : DateUtils.formatDateWithPattern(sub.getEndAgreementDate(), dateFormat));
-            dto.setDescription ( sub.getDescription());
-            dto.setCustomFields ( CustomFields.toDTO(customFieldInstanceService.getCustomFieldInstances(sub)));
-            dto.setCode ( sub.getCode());
-            dto.setUserAccountId ( sub.getUserAccount() == null ? null : sub.getUserAccount().getCode());
-            dto.setOfferCode ( sub.getOffer() == null ? null : sub.getOffer().getCode());
-            dto.setStatus ( new Status(sub, dateFormat));
-            dto.setServices ( new Services(sub, dateFormat));
-            dto.setAccesses ( new Accesses(sub, dateFormat));
+            dto.setSubscriptionDate(sub.getSubscriptionDate() == null ? null : DateUtils.formatDateWithPattern(sub.getSubscriptionDate(), dateFormat));
+            dto.setEndAgreementDate(sub.getEndAgreementDate() == null ? null : DateUtils.formatDateWithPattern(sub.getEndAgreementDate(), dateFormat));
+            dto.setDescription(sub.getDescription());
+            if (sub.getCfValues() != null) {
+                dto.setCustomFields(CustomFields.toDTO(sub.getCfValues().getValuesByCode()));
+            }
+            dto.setCode(sub.getCode());
+            dto.setUserAccountId(sub.getUserAccount() == null ? null : sub.getUserAccount().getCode());
+            dto.setOfferCode(sub.getOffer() == null ? null : sub.getOffer().getCode());
+            dto.setStatus(new Status(sub, dateFormat));
+            dto.setServices(new Services(sub, dateFormat));
+            dto.setAccesses(new Accesses(sub, dateFormat));
         }
         return dto;
     }

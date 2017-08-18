@@ -210,7 +210,7 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         offer.setId(null);
         offer.setVersion(0);
         offer.setAuditable(new Auditable());
-        String sourceAppliesToEntity = offer.clearUuid();
+        offer.clearUuid();
 
         offer.setCode(code);
 
@@ -281,8 +281,6 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
                 }
             }
         }
-
-        customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, offer);
 
         if (duplicateHierarchy) {
             String prefix = offer.getId() + "_";

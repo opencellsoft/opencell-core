@@ -1,8 +1,8 @@
 package org.meveo.model.crm;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +21,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
@@ -32,6 +33,7 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.catalog.Calendar;
@@ -40,6 +42,7 @@ import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
 import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
+import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.shared.DateUtils;
 
@@ -83,6 +86,7 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
     private Map<String, String> listValues;
 
     @ElementCollection(fetch = FetchType.EAGER)
+    @OrderBy("position ASC")
     @CollectionTable(name = "crm_custom_field_tmpl_mcols", joinColumns = { @JoinColumn(name = "cft_id") })
     @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "code", nullable = false, length = 20)),
             @AttributeOverride(name = "label", column = @Column(name = "label", nullable = false, length = 50)),
@@ -100,8 +104,8 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
     @JoinColumn(name = "calendar_id")
     private Calendar calendar;
 
-    @Column(name = "cache_value_for")
-    private Integer cacheValueTimeperiod;
+    // @Column(name = "cache_value_for")
+    // private Integer cacheValueTimeperiod;
 
     @Column(name = "default_value", length = 250)
     @Size(max = 250)
@@ -159,10 +163,10 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
     @Size(max = 2000)
     private String applicableOnEl;
 
-    @Type(type = "numeric_boolean")
-    @Column(name = "cache_value")
-    @NotNull
-    private boolean cacheValue;
+    // @Type(type = "numeric_boolean")
+    // @Column(name = "cache_value")
+    // @NotNull
+    // private boolean cacheValue;
 
     /**
      * Child entity fields to display as summary. Field names are separated by a comma.
@@ -264,16 +268,6 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
     }
 
     /**
-     * Get a sorted list of matrix columns by its index position
-     */
-    public List<CustomFieldMatrixColumn> getMatrixColumnsSorted() {
-        if (!matrixColumnsSorted) {
-            Collections.sort(matrixColumns);
-        }
-        return matrixColumns;
-    }
-
-    /**
      * Find a corresponding matrix column by its index (position). Note: result might differ if matrix column was added and value was not updated
      * 
      * @param index Index to return the column for
@@ -283,7 +277,6 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
         if (index >= matrixColumns.size()) {
             return null;
         }
-        getMatrixColumnsSorted();
         return matrixColumns.get(index);
     }
 
@@ -297,7 +290,7 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
         List<String> matrixColumnNames = null;
         if (storageType == CustomFieldStorageTypeEnum.MATRIX) {
             matrixColumnNames = new ArrayList<>();
-            for (CustomFieldMatrixColumn column : getMatrixColumnsSorted()) {
+            for (CustomFieldMatrixColumn column : matrixColumns) {
                 matrixColumnNames.add(column.getCode());
             }
         }
@@ -409,13 +402,13 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
         this.triggerEndPeriodEvent = triggerEndPeriodEvent;
     }
 
-    public Integer getCacheValueTimeperiod() {
-        return cacheValueTimeperiod;
-    }
-
-    public void setCacheValueTimeperiod(Integer cacheValueTimeperiod) {
-        this.cacheValueTimeperiod = cacheValueTimeperiod;
-    }
+    // public Integer getCacheValueTimeperiod() {
+    // return cacheValueTimeperiod;
+    // }
+    //
+    // public void setCacheValueTimeperiod(Integer cacheValueTimeperiod) {
+    // this.cacheValueTimeperiod = cacheValueTimeperiod;
+    // }
 
     public String getGuiPosition() {
         return guiPosition;
@@ -490,13 +483,13 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
         this.regExp = regExp;
     }
 
-    public boolean isCacheValue() {
-        return cacheValue;
-    }
-
-    public void setCacheValue(boolean cacheValue) {
-        this.cacheValue = cacheValue;
-    }
+    // public boolean isCacheValue() {
+    // return cacheValue;
+    // }
+    //
+    // public void setCacheValue(boolean cacheValue) {
+    // this.cacheValue = cacheValue;
+    // }
 
     public String getApplicableOnEl() {
         return applicableOnEl;
@@ -578,5 +571,34 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
     @Override
     public int compareTo(CustomFieldTemplate o) {
         return o.getCode().compareTo(getCode());
+    }
+
+    /**
+     * Instantiate a CustomFieldValue from a template, setting a default value if applicable
+     *
+     * @return CustomFieldValue object
+     */
+    public CustomFieldValue toDefaultCFValue() {
+        CustomFieldValue cfValue = new CustomFieldValue();
+
+        // Set a default value
+        if (getStorageType() == CustomFieldStorageTypeEnum.SINGLE) {
+            cfValue.setValue(getDefaultValueConverted());
+        }
+
+        return cfValue;
+    }
+
+    /**
+     * Get a date period for a given date. Applies only to CFT versionable by a calendar.
+     * 
+     * @param date Date
+     * @return Date period matching calendar's dates
+     */
+    public DatePeriod getDatePeriod(Date date) {
+        if (isVersionable() && getCalendar() != null) {
+            return new DatePeriod(getCalendar().previousCalendarDate(date), getCalendar().nextCalendarDate(date));
+        }
+        return null;
     }
 }

@@ -21,9 +21,13 @@ package org.meveo.model;
 import java.util.UUID;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import org.meveo.model.crm.custom.CustomFieldValues;
+import org.meveo.model.persistence.CustomFieldValuesConverter;
 
 @MappedSuperclass
 public abstract class BusinessCFEntity extends BusinessEntity implements ICustomFieldEntity {
@@ -35,6 +39,11 @@ public abstract class BusinessCFEntity extends BusinessEntity implements ICustom
     @NotNull
     private String uuid = UUID.randomUUID().toString();
 
+    // @Type(type = "json")
+    @Convert(converter = CustomFieldValuesConverter.class)
+    @Column(name = "cf_values", columnDefinition = "text")
+    private CustomFieldValues cfValues;
+
     @Override
     public String getUuid() {
         return uuid;
@@ -42,6 +51,27 @@ public abstract class BusinessCFEntity extends BusinessEntity implements ICustom
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
+    }
+
+    public CustomFieldValues getCfValues() {
+        return cfValues;
+    }
+
+    public void setCfValues(CustomFieldValues cfValues) {
+        this.cfValues = cfValues;
+    }
+
+    @Override
+    public CustomFieldValues getCfValuesNullSafe() {
+        if (cfValues == null) {
+            cfValues = new CustomFieldValues();
+        }
+        return cfValues;
+    }
+
+    @Override
+    public void clearCfValues() {
+        cfValues = null;
     }
 
     /**
@@ -55,9 +85,9 @@ public abstract class BusinessCFEntity extends BusinessEntity implements ICustom
         uuid = UUID.randomUUID().toString();
         return oldUuid;
     }
-    
+
     @Override
-    public ICustomFieldEntity[] getParentCFEntities(){
+    public ICustomFieldEntity[] getParentCFEntities() {
         return null;
     }
 }

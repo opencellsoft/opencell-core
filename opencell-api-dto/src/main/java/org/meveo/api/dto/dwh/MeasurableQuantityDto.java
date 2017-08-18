@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BusinessDto;
-import org.meveo.api.serialize.CustomDateSerializer;
+import org.meveo.commons.utils.CustomDateSerializer;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.dwh.MeasurableQuantity;
 import org.meveo.model.dwh.MeasurementPeriodEnum;

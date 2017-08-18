@@ -35,7 +35,6 @@ import org.meveo.model.catalog.ServiceChargeTemplateTermination;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.service.base.MultilanguageEntityService;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
 
 /**
  * Service Template service implementation.
@@ -43,124 +42,116 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
  */
 @Stateless
 public class ServiceTemplateService extends MultilanguageEntityService<ServiceTemplate> {
-	
-	@Inject
-	private ServiceChargeTemplateSubscriptionService serviceChargeTemplateSubscriptionService;
-	
-	@Inject
-	private ServiceChargeTemplateTerminationService serviceChargeTemplateTerminationService;
-	
-	@Inject
-	private ServiceChargeTemplateRecurringService serviceChargeTemplateRecurringService;
-	
-	@Inject
-	private ServiceChargeTemplateUsageService serviceChargeTemplateUsageService;
-		
-	@Inject
-    private CustomFieldInstanceService customFieldInstanceService;
-	
-	@Override
-	public void create(ServiceTemplate serviceTemplate) throws BusinessException {
-		super.create(serviceTemplate);
-	}
 
-	@Override
-	public ServiceTemplate update(ServiceTemplate serviceTemplate) throws BusinessException {
-		ServiceTemplate result = super.update(serviceTemplate);
-		return result;
-	}
+    @Inject
+    private ServiceChargeTemplateSubscriptionService serviceChargeTemplateSubscriptionService;
 
-	public void removeByCode(EntityManager em, String code) {
-		Query query = em.createQuery("DELETE ServiceTemplate t WHERE t.code=:code ");
-		query.setParameter("code", code);
-		query.executeUpdate();
-	}
+    @Inject
+    private ServiceChargeTemplateTerminationService serviceChargeTemplateTerminationService;
 
-	public int getNbServiceWithNotOffer() {
-		return ((Long) getEntityManager().createNamedQuery("serviceTemplate.getNbServiceWithNotOffer", Long.class)
-				.getSingleResult()).intValue();
-	}
+    @Inject
+    private ServiceChargeTemplateRecurringService serviceChargeTemplateRecurringService;
 
-	public List<ServiceTemplate> getServicesWithNotOffer() {
-		return (List<ServiceTemplate>) getEntityManager()
-				.createNamedQuery("serviceTemplate.getServicesWithNotOffer", ServiceTemplate.class)
-				.getResultList();
-	}
+    @Inject
+    private ServiceChargeTemplateUsageService serviceChargeTemplateUsageService;
 
-	@SuppressWarnings("unchecked")
-	public List<ServiceTemplate> listAllActiveExcept(ServiceTemplate st) {
-		QueryBuilder qb = new QueryBuilder(ServiceTemplate.class, "s", null);
-		qb.addCriterion("id", "<>", st.getId(), true);
+    @Override
+    public void create(ServiceTemplate serviceTemplate) throws BusinessException {
+        super.create(serviceTemplate);
+    }
 
-		try {
-			return (List<ServiceTemplate>) qb.getQuery(getEntityManager()).getResultList();
-		} catch (NoResultException e) {
-			return null;
-		}
-	}
-	
-	public synchronized void duplicate(ServiceTemplate entity) throws BusinessException{
-		entity = refreshOrRetrieve(entity);
-        
-        // Lazy load related values first 
-		entity.getServiceRecurringCharges().size();
-		entity.getServiceSubscriptionCharges().size();
-		entity.getServiceTerminationCharges().size();
-		entity.getServiceUsageCharges().size();
-		String code=findDuplicateCode(entity);
+    @Override
+    public ServiceTemplate update(ServiceTemplate serviceTemplate) throws BusinessException {
+        ServiceTemplate result = super.update(serviceTemplate);
+        return result;
+    }
 
-		// Detach and clear ids of entity and related entities
-		detach(entity);
-		entity.setId(null);
-        String sourceAppliesToEntity = entity.clearUuid();
-        
-		List<ServiceChargeTemplateRecurring> recurrings = entity.getServiceRecurringCharges();
-		entity.setServiceRecurringCharges(new ArrayList<ServiceChargeTemplateRecurring>());
-		for (ServiceChargeTemplateRecurring recurring : recurrings) {
-			recurring = serviceChargeTemplateRecurringService.findById(recurring.getId());
-			recurring.getWalletTemplates().size();
-			serviceChargeTemplateRecurringService.detach(recurring);
-			recurring.setId(null);
-			recurring.setServiceTemplate(entity);
-			entity.getServiceRecurringCharges().add(recurring);
-		}
-	
-		List<ServiceChargeTemplateSubscription> subscriptions = entity.getServiceSubscriptionCharges();
-		entity.setServiceSubscriptionCharges(new ArrayList<ServiceChargeTemplateSubscription>());
-		for (ServiceChargeTemplateSubscription subscription : subscriptions) {
-			subscription = serviceChargeTemplateSubscriptionService.findById(subscription.getId());
-			subscription.getWalletTemplates().size();
-			serviceChargeTemplateSubscriptionService.detach(subscription);
-			subscription.setId(null);
-			subscription.setServiceTemplate(entity);
-			entity.getServiceSubscriptionCharges().add(subscription);
-		}
-	
-		List<ServiceChargeTemplateTermination> terminations = entity.getServiceTerminationCharges();
-		entity.setServiceTerminationCharges(new ArrayList<ServiceChargeTemplateTermination>());
-		for (ServiceChargeTemplateTermination termination : terminations) {
-			termination = serviceChargeTemplateTerminationService.findById(termination.getId());
-			termination.getWalletTemplates().size();
-			serviceChargeTemplateTerminationService.detach(termination);
-			termination.setId(null);
-			termination.setServiceTemplate(entity);
-			entity.getServiceTerminationCharges().add(termination);
-		}
-	
-		List<ServiceChargeTemplateUsage> usages = entity.getServiceUsageCharges();
-		entity.setServiceUsageCharges(new ArrayList<ServiceChargeTemplateUsage>());
-		for (ServiceChargeTemplateUsage usage : usages) {
-			usage = serviceChargeTemplateUsageService.findById(usage.getId());
-			usage.getWalletTemplates().size();
-			serviceChargeTemplateUsageService.detach(usage);
-			usage.setId(null);
-			usage.setServiceTemplate(entity);
-			entity.getServiceUsageCharges().add(usage);
-		}
-		entity.setCode(code);
-		
-		create(entity);
-		customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, entity);
-	}
-            
+    public void removeByCode(EntityManager em, String code) {
+        Query query = em.createQuery("DELETE ServiceTemplate t WHERE t.code=:code ");
+        query.setParameter("code", code);
+        query.executeUpdate();
+    }
+
+    public int getNbServiceWithNotOffer() {
+        return ((Long) getEntityManager().createNamedQuery("serviceTemplate.getNbServiceWithNotOffer", Long.class).getSingleResult()).intValue();
+    }
+
+    public List<ServiceTemplate> getServicesWithNotOffer() {
+        return (List<ServiceTemplate>) getEntityManager().createNamedQuery("serviceTemplate.getServicesWithNotOffer", ServiceTemplate.class).getResultList();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<ServiceTemplate> listAllActiveExcept(ServiceTemplate st) {
+        QueryBuilder qb = new QueryBuilder(ServiceTemplate.class, "s", null);
+        qb.addCriterion("id", "<>", st.getId(), true);
+
+        try {
+            return (List<ServiceTemplate>) qb.getQuery(getEntityManager()).getResultList();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    public synchronized void duplicate(ServiceTemplate entity) throws BusinessException {
+        entity = refreshOrRetrieve(entity);
+
+        // Lazy load related values first
+        entity.getServiceRecurringCharges().size();
+        entity.getServiceSubscriptionCharges().size();
+        entity.getServiceTerminationCharges().size();
+        entity.getServiceUsageCharges().size();
+        String code = findDuplicateCode(entity);
+
+        // Detach and clear ids of entity and related entities
+        detach(entity);
+        entity.setId(null);
+
+        List<ServiceChargeTemplateRecurring> recurrings = entity.getServiceRecurringCharges();
+        entity.setServiceRecurringCharges(new ArrayList<ServiceChargeTemplateRecurring>());
+        for (ServiceChargeTemplateRecurring recurring : recurrings) {
+            recurring = serviceChargeTemplateRecurringService.findById(recurring.getId());
+            recurring.getWalletTemplates().size();
+            serviceChargeTemplateRecurringService.detach(recurring);
+            recurring.setId(null);
+            recurring.setServiceTemplate(entity);
+            entity.getServiceRecurringCharges().add(recurring);
+        }
+
+        List<ServiceChargeTemplateSubscription> subscriptions = entity.getServiceSubscriptionCharges();
+        entity.setServiceSubscriptionCharges(new ArrayList<ServiceChargeTemplateSubscription>());
+        for (ServiceChargeTemplateSubscription subscription : subscriptions) {
+            subscription = serviceChargeTemplateSubscriptionService.findById(subscription.getId());
+            subscription.getWalletTemplates().size();
+            serviceChargeTemplateSubscriptionService.detach(subscription);
+            subscription.setId(null);
+            subscription.setServiceTemplate(entity);
+            entity.getServiceSubscriptionCharges().add(subscription);
+        }
+
+        List<ServiceChargeTemplateTermination> terminations = entity.getServiceTerminationCharges();
+        entity.setServiceTerminationCharges(new ArrayList<ServiceChargeTemplateTermination>());
+        for (ServiceChargeTemplateTermination termination : terminations) {
+            termination = serviceChargeTemplateTerminationService.findById(termination.getId());
+            termination.getWalletTemplates().size();
+            serviceChargeTemplateTerminationService.detach(termination);
+            termination.setId(null);
+            termination.setServiceTemplate(entity);
+            entity.getServiceTerminationCharges().add(termination);
+        }
+
+        List<ServiceChargeTemplateUsage> usages = entity.getServiceUsageCharges();
+        entity.setServiceUsageCharges(new ArrayList<ServiceChargeTemplateUsage>());
+        for (ServiceChargeTemplateUsage usage : usages) {
+            usage = serviceChargeTemplateUsageService.findById(usage.getId());
+            usage.getWalletTemplates().size();
+            serviceChargeTemplateUsageService.detach(usage);
+            usage.setId(null);
+            usage.setServiceTemplate(entity);
+            entity.getServiceUsageCharges().add(usage);
+        }
+        entity.setCode(code);
+
+        create(entity);
+    }
+
 }

@@ -102,9 +102,10 @@ public class CustomFieldTemplateDto extends BaseDto {
     protected String calendar;
 
     /**
-     * How long versionable values be cached past the period end date
+     * How long versionable values be cached past the period end date. As of v.4.7 not used anymore
      */
     @XmlElement
+    @Deprecated
     protected Integer cacheValueTimeperiod;
 
     /**
@@ -150,9 +151,10 @@ public class CustomFieldTemplateDto extends BaseDto {
     protected String regExp;
 
     /**
-     * Should value be cached
+     * Should value be cached. As of v.4.7 not used anymore
      */
     @XmlElement
+    @Deprecated
     protected boolean cacheValue;
 
     /**
@@ -225,8 +227,8 @@ public class CustomFieldTemplateDto extends BaseDto {
         minValue = cf.getMinValue();
         maxValue = cf.getMaxValue();
         regExp = cf.getRegExp();
-        cacheValue = cf.isCacheValue();
-        cacheValueTimeperiod = cf.getCacheValueTimeperiod();
+        // cacheValue = cf.isCacheValue();
+        // cacheValueTimeperiod = cf.getCacheValueTimeperiod();
         guiPosition = cf.getGuiPosition();
         if (cf.getFieldType() == CustomFieldTypeEnum.LIST) {
             listValues = cf.getListValuesSorted();

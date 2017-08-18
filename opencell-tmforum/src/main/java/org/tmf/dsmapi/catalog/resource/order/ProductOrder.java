@@ -16,8 +16,8 @@ import org.meveo.api.dto.payment.DDPaymentMethodDto;
 import org.meveo.api.dto.payment.OtherPaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.TipPaymentMethodDto;
+import org.meveo.commons.utils.CustomDateSerializer;
 import org.tmf.dsmapi.catalog.resource.RelatedParty;
-import org.tmf.dsmapi.serialize.CustomDateSerializer;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;

@@ -121,7 +121,7 @@ public class ProductTemplateService extends GenericProductOfferingService<Produc
         // Detach and clear ids of entity and related entities
         detach(product);
         product.setId(null);
-        String sourceAppliesToEntity = product.clearUuid();
+        product.clearUuid();
 
         List<BusinessAccountModel> businessAccountModels = product.getBusinessAccountModels();
         product.setBusinessAccountModels(new ArrayList<BusinessAccountModel>());
@@ -137,7 +137,7 @@ public class ProductTemplateService extends GenericProductOfferingService<Produc
 
         List<WalletTemplate> walletTemplates = product.getWalletTemplates();
         product.setWalletTemplates(new ArrayList<WalletTemplate>());
-        
+
         List<ProductChargeTemplate> chargeTemplates = product.getProductChargeTemplates();
         product.setProductChargeTemplates(new ArrayList<>());
 
@@ -178,8 +178,6 @@ public class ProductTemplateService extends GenericProductOfferingService<Produc
                 product.getProductChargeTemplates().add(chargeTemplate);
             }
         }
-
-        customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, product);
 
         if (persist) {
             create(product);

@@ -548,8 +548,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 			if(billingAccountId!=0){
 				BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
 				entity.setBillingAccount(billingAccount);
-				String invoiceNumber=invoiceService.generateInvoiceNumber(entity);
-				entity.setInvoiceNumber(invoiceNumber);
+				invoiceService.assignInvoiceNumber(entity);
 			} 	 
 		}	
 		if (isDetailed()) {

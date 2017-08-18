@@ -26,7 +26,7 @@
 
 	<c:if test="#{cfVersionableValues eq null}">
     	<c:set var="cfValueHolder" value="#{customFieldDataEntryBean.getFieldValueHolderByUUID(entity.uuid)}" />
-		<c:set var="cfVersionableValues" value="#{cfValueHolder.values[cft.code]}" />
+		<c:set var="cfVersionableValues" value="#{cfValueHolder.getValues(cft)}" />
 	</c:if>
 
     <o:importConstants type="org.meveo.model.crm.custom.CustomFieldTypeEnum" />
@@ -53,13 +53,13 @@
         <p:column headerText="#{messages['customFieldTemplate.periodValue']}">
             <p:cellEditor rendered="#{cft.storageType == CustomFieldStorageTypeEnum.SINGLE}">
                 <f:facet name="output">
-                    <hftl:customFieldValueField edit="false" cft="#{cft}" field="#{period.cfValue}" entity="#{entity}" datePattern="#{datePattern}" />
+                    <hftl:customFieldValueField edit="false" cft="#{cft}" field="#{period}" entity="#{entity}" datePattern="#{datePattern}" />
                 </f:facet>
                 <f:facet name="input">
-                    <hftl:customFieldValueField edit="true" cft="#{cft}" field="#{period.cfValue}" entity="#{entity}" datePattern="#{datePattern}" />
+                    <hftl:customFieldValueField edit="true" cft="#{cft}" field="#{period}" entity="#{entity}" datePattern="#{datePattern}" />
                 </f:facet>
             </p:cellEditor>
-            <h:outputText value="#{period.cfValue.getShortRepresentationOfValue(cft, datePattern)}" rendered="#{cft.storageType != CustomFieldStorageTypeEnum.SINGLE}" />
+            <h:outputText value="#{period.getShortRepresentationOfValue(cft, datePattern)}" rendered="#{cft.storageType != CustomFieldStorageTypeEnum.SINGLE}" />
         </p:column>
         <p:column headerText="#{messages['commons.actions']}" width="15%">
             <!-- update="periodFields"  -->
@@ -109,7 +109,7 @@
                 update="#{prefix}periodTable_omitFromSubmit :#{p:component(prefix.concat('periodFields'))}"
                 oncomplete="if (args &amp;&amp; !args.validationFailed) PF('#{prefix}periodValuesDialogWidget').show()"
                 action="#{customFieldDataEntryBean.addNewValuePeriod(cfValueHolder, cft)}" 
-                actionListener="#{cfValueHolder.setSelectedValuePeriodId(':'.concat(clientGuiId.concat(':#{prefix}periodTable_omitFromSubmit')))}" 
+                actionListener="#{cfValueHolder.setSelectedValuePeriodId(':'.concat(clientGuiId.concat(':'.concat(prefix.concat('periodTable_omitFromSubmit')))))}" 
                 rendered="#{edit and !disabled and cft.storageType != CustomFieldStorageTypeEnum.SINGLE}">
                 <p:resetInput target="addNewFields" />
                 <p:resetInput target=":#{p:component(prefix.concat('periodFields'))}" />

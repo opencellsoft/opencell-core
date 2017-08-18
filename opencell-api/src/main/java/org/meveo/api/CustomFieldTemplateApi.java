@@ -61,21 +61,21 @@ public class CustomFieldTemplateApi extends BaseApi {
         }
         if (postData.getStorageType() == CustomFieldStorageTypeEnum.MATRIX && (postData.getMatrixColumns() == null || postData.getMatrixColumns().isEmpty())) {
             missingParameters.add("matrixColumns");
-            
-        } else if (postData.getStorageType() == CustomFieldStorageTypeEnum.MATRIX){
+
+        } else if (postData.getStorageType() == CustomFieldStorageTypeEnum.MATRIX) {
             for (CustomFieldMatrixColumnDto columnDto : postData.getMatrixColumns()) {
-                if (StringUtils.isBlank(columnDto.getCode())){
+                if (StringUtils.isBlank(columnDto.getCode())) {
                     missingParameters.add("matrixColumns/code");
                 }
-                if (StringUtils.isBlank(columnDto.getLabel())){
+                if (StringUtils.isBlank(columnDto.getLabel())) {
                     missingParameters.add("matrixColumns/label");
                 }
-                if (columnDto.getKeyType()== null){
+                if (columnDto.getKeyType() == null) {
                     missingParameters.add("matrixColumns/keyType");
-                }                
-            }            
+                }
+            }
         }
-        
+
         if (postData.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY && (postData.getStorageType() != CustomFieldStorageTypeEnum.LIST || postData.isVersionable())) {
             throw new InvalidParameterException("Custom field of type CHILD_ENTITY only supports unversioned values and storage type of LIST");
         }
@@ -129,18 +129,18 @@ public class CustomFieldTemplateApi extends BaseApi {
         }
         if (postData.getStorageType() == CustomFieldStorageTypeEnum.MATRIX && (postData.getMatrixColumns() == null || postData.getMatrixColumns().isEmpty())) {
             missingParameters.add("matrixColumns");
-        } else if (postData.getStorageType() == CustomFieldStorageTypeEnum.MATRIX){
+        } else if (postData.getStorageType() == CustomFieldStorageTypeEnum.MATRIX) {
             for (CustomFieldMatrixColumnDto columnDto : postData.getMatrixColumns()) {
-                if (StringUtils.isBlank(columnDto.getCode())){
+                if (StringUtils.isBlank(columnDto.getCode())) {
                     missingParameters.add("matrixColumns/code");
                 }
-                if (StringUtils.isBlank(columnDto.getLabel())){
+                if (StringUtils.isBlank(columnDto.getLabel())) {
                     missingParameters.add("matrixColumns/label");
                 }
-                if (columnDto.getKeyType()== null){
+                if (columnDto.getKeyType() == null) {
                     missingParameters.add("matrixColumns/keyType");
-                }                
-            }            
+                }
+            }
         }
         if (postData.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY && (postData.getStorageType() != CustomFieldStorageTypeEnum.LIST || postData.isVersionable())) {
             throw new InvalidParameterException("Custom field of type CHILD_ENTITY only supports unversioned values and storage type of LIST");
@@ -317,9 +317,9 @@ public class CustomFieldTemplateApi extends BaseApi {
         cft.setHideOnNew(dto.isHideOnNew());
         cft.setMinValue(dto.getMinValue());
         cft.setMaxValue(dto.getMaxValue());
-        cft.setCacheValue(dto.isCacheValue());
+        // cft.setCacheValue(dto.isCacheValue());
         cft.setRegExp(dto.getRegExp());
-        cft.setCacheValueTimeperiod(dto.getCacheValueTimeperiod());
+        // cft.setCacheValueTimeperiod(dto.getCacheValueTimeperiod());
         cft.setGuiPosition(dto.getGuiPosition());
         cft.setApplicableOnEl(dto.getApplicableOnEl());
 

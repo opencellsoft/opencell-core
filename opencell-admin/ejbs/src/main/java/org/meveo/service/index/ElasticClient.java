@@ -81,7 +81,7 @@ public class ElasticClient {
     private ElasticClientConnection esConnection;
 
     /**
-     * Store and index entity in Elastic Search
+     * Store and index entity in Elastic Search. In case of update, a full update will be performed unless it is configured in elasticSearchConfiguration.json to always do upsert.
      * 
      * @param entity Entity to store in Elastic Search
      */
@@ -153,7 +153,8 @@ public class ElasticClient {
      * Store and index entity in Elastic Search
      * 
      * @param entity Entity to store in Elastic Search
-     * @param partialUpdate Should it be treated as partial update instead of replace if document exists
+     * @param partialUpdate Should it be treated as partial update instead of replace if document exists. This value can be overridden in elasticSearchConfiguration.json to always
+     *        do upsert.
      */
     private void createOrUpdate(BusinessEntity entity, boolean partialUpdate) {
 
@@ -178,7 +179,7 @@ public class ElasticClient {
 
             ElasticSearchAction action = upsert ? ElasticSearchAction.UPSERT : partialUpdate ? ElasticSearchAction.UPDATE : ElasticSearchAction.ADD_REPLACE;
 
-            Map<String, Object> jsonValueMap = elasticSearchIndexPopulationService.convertEntityToJson(entity);
+            Map<String, Object> jsonValueMap = elasticSearchIndexPopulationService.convertEntityToJson(entity, null, null);
 
             ElasticSearchChangeset change = new ElasticSearchChangeset(action, index, type, id, entity.getClass(), jsonValueMap);
             queuedChanges.addChange(change);
@@ -238,7 +239,7 @@ public class ElasticClient {
             log.trace("Nothing to flush to ES");
             return;
         }
-        TransportClient client = esConnection.getClient(); 
+        TransportClient client = esConnection.getClient();
 
         // Prepare bulk request
         BulkRequestBuilder bulkRequest = client.prepareBulk();
@@ -515,7 +516,7 @@ public class ElasticClient {
         log.info("Start to repopulate Elastic Search");
 
         try {
-            
+
             esConnection.reinitES();
 
             // Drop all indexes

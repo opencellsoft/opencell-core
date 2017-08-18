@@ -41,7 +41,6 @@ import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.billing.impl.SubscriptionService;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,9 +82,6 @@ public class CatalogHierarchyBuilderService {
 
     @Inject
     private RecurringChargeTemplateService recurringChargeTemplateService;
-
-    @Inject
-    private CustomFieldInstanceService customFieldInstanceService;
 
     @Inject
     @ApplicationProvider
@@ -162,7 +158,6 @@ public class CatalogHierarchyBuilderService {
         ProductTemplate productTemplate = productTemplateService.findById(offerProductTemplate.getProductTemplate().getId());
 
         ProductTemplate newProductTemplate = new ProductTemplate();
-        String sourceAppliesToEntity = productTemplate.getUuid();
 
         try {
             BeanUtils.copyProperties(newProductTemplate, productTemplate);
@@ -170,6 +165,9 @@ public class CatalogHierarchyBuilderService {
             if (serviceConfiguration != null) {
                 newProductTemplate.setDescription(serviceConfiguration.getDescription());
             }
+
+            // duplicate custom field values - // TODO need to check if it is not covered by BeanUtils.copyProperties
+            newProductTemplate.setCfValues(productTemplate.getCfValues());
 
             newProductTemplate.setId(null);
             newProductTemplate.clearUuid();
@@ -199,9 +197,6 @@ public class CatalogHierarchyBuilderService {
             }
 
             productTemplateService.create(newProductTemplate);
-
-            // duplicate custom field instances
-            customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, newProductTemplate);
 
             duplicateProductPrices(productTemplate, prefix, pricePlansInMemory, chargeTemplateInMemory);
             duplicateProductOffering(productTemplate, newProductTemplate);
@@ -338,7 +333,6 @@ public class CatalogHierarchyBuilderService {
         serviceTemplate.getServiceUsageCharges().size();
 
         ServiceTemplate newServiceTemplate = new ServiceTemplate();
-        String sourceAppliesToEntity = serviceTemplate.getUuid();
 
         try {
             BeanUtils.copyProperties(newServiceTemplate, serviceTemplate);
@@ -346,6 +340,9 @@ public class CatalogHierarchyBuilderService {
             if (serviceConfiguration != null) {
                 newServiceTemplate.setDescription(serviceConfiguration.getDescription());
             }
+            // duplicate custom field values - // TODO neeed to check if it is not covered by BeanUtils.copyProperties
+            newServiceTemplate.setCfValues(serviceTemplate.getCfValues());
+
             newServiceTemplate.setId(null);
             newServiceTemplate.clearUuid();
             newServiceTemplate.setVersion(0);
@@ -362,9 +359,6 @@ public class CatalogHierarchyBuilderService {
             }
 
             serviceTemplateService.create(newServiceTemplate);
-
-            // duplicate custom field instances
-            customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, newServiceTemplate);
 
             duplicatePrices(serviceTemplate, prefix, pricePlansInMemory);
             duplicateCharges(serviceTemplate, newServiceTemplate, prefix, chargeTemplateInMemory);
@@ -729,6 +723,7 @@ public class CatalogHierarchyBuilderService {
      * @param serviceTemplate service template.
      * @throws BusinessException
      */
+    @SuppressWarnings("rawtypes")
     private void deleteServiceAndCharge(ServiceTemplate serviceTemplate) throws BusinessException {
 
         List<ServiceChargeTemplateTermination> serviceTerminationCharges = serviceTemplate.getServiceTerminationCharges();
