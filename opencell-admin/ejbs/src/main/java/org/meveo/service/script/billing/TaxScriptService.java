@@ -10,9 +10,11 @@ import javax.ejb.Startup;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.service.script.ScriptInstanceService;
 
@@ -51,6 +53,17 @@ public class TaxScriptService implements Serializable {
 		scriptContext.put(TaxScript.TAX_INVOICE_SUB_CAT, invoiceSubCategory);
 
 		return scriptInterface.computeTaxes(scriptContext);
+	}
+
+	public Map<Long, TaxInvoiceAgregate> computeTaxAggregateMap(String scriptCode, Invoice invoice,
+			Map<Long, CategoryInvoiceAgregate> catInvoiceAgregateMap) throws BusinessException {
+		TaxScriptInterface scriptInterface = (TaxScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
+
+		Map<String, Object> scriptContext = new HashMap<String, Object>();
+		scriptContext.put(TaxScript.TAX_INVOICE, invoice);
+		scriptContext.put(TaxScript.TAX_CAT_INV_AGGREGATE_MAP, catInvoiceAgregateMap);
+
+		return scriptInterface.computeTaxAggregateMap(scriptContext);
 	}
 
 }

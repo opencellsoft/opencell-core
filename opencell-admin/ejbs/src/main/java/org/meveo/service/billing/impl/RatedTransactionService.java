@@ -266,13 +266,13 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		int rounding = appProvider.getRounding()==null?2:appProvider.getRounding();
 		BigDecimal nonEnterprisePriceWithTax = BigDecimal.ZERO;
 		String languageCode = billingAccount.getTradingLanguage().getLanguage().getLanguageCode();
-		List<UserAccount> userAccounts = userAccountService.listByBillingAccount(billingAccount);				
+		List<UserAccount> userAccounts = userAccountService.listByBillingAccount(billingAccount);
 		boolean isExonerated = billingAccountService.isExonerated(billingAccount);
 		
 		//TODO[Edward] If !isExonerated then check if there is a tax script inside invoice.invoiceType.
 		// Create a new boolean calculateTax=!isExonerated and invoice.invoiceType.taxScript is null.
 		// DONE
-		boolean calculateTax = !isExonerated && invoice.getInvoiceType().getTaxScript() != null;
+		boolean calculateTax = !isExonerated && invoice.getInvoiceType().getTaxScript() == null;
 		
         if (ratedTransactionFilter != null) {
             ratedTransactions = (List<RatedTransaction>) filterService.filteredListAsObjects(ratedTransactionFilter);
@@ -406,7 +406,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 
                 // TODO[Edward] If there is a global tax script in the invoiceType, just skip this part until after the next for-loop.
                 // DONE
-                if(invoice.getInvoiceType().getTaxScript() == null) {
+                boolean taxExternal = false;
+                if(invoice.getInvoiceType() != null && invoice.getInvoiceType().getTaxScript() == null) {
 	                
 	                // TODO[Edward] If there is a taxScript in invoiceSubCategory and script.isApplicable(userAccount, invoice, invoiceSubCategory)=true, 
 	                // use it to compute the taxes (script.computeTaxes(userAccount, invoice, invoiceSubCategory) return List<Tax>).
@@ -418,6 +419,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 								invoice, invoiceSubCategory)) {
 							taxes = taxScriptService.computeTaxes(invoiceSubCategory.getTaxScript().getCode(), userAccount,
 									invoice, invoiceSubCategory);
+							taxExternal = true;
 						}
 					} else {	                
 		                // else use this for loop
@@ -473,7 +475,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                             if (!isVirtual){
                                 invoiceAgregateTax.setBillingRun(billingAccount.getBillingRun());
                             }
-                            invoiceAgregateTax.setTax(tax);
+							if (!taxExternal) {
+								invoiceAgregateTax.setTax(tax);
+							}
                             invoiceAgregateTax.setTaxPercent(tax.getPercent());
                             invoiceAgregateTax.setAccountingCode(tax.getAccountingCode());
 
@@ -570,19 +574,20 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             // TODO[Edward] Replace !isExonerated by calculateTax
             //if (!isExonerated) {
             if (calculateTax) {
-                for (Map.Entry<Long, TaxInvoiceAgregate> taxCatMap : taxInvoiceAgregateMap.entrySet()) {
-                    TaxInvoiceAgregate taxCat = taxCatMap.getValue();
-                    if (taxCat.getTax().getPercent().compareTo(BigDecimal.ZERO) != 0) {
+                for (Map.Entry<Long, TaxInvoiceAgregate> taxInvAggregateMap : taxInvoiceAgregateMap.entrySet()) {
+                    TaxInvoiceAgregate taxInvAggregate = taxInvAggregateMap.getValue();
+                    BigDecimal taxPercent = taxInvAggregate.getTaxPercent() != null ? taxInvAggregate.getTaxPercent() : taxInvAggregate.getTax().getPercent();
+                    if (taxPercent.compareTo(BigDecimal.ZERO) != 0) {
                         // then compute the tax
-							taxCat.setAmountTax(taxCat.getAmountWithoutTax().multiply(taxCat.getTaxPercent())
+							taxInvAggregate.setAmountTax(taxInvAggregate.getAmountWithoutTax().multiply(taxInvAggregate.getTaxPercent())
 									.divide(new BigDecimal("100")));
                         // then round the tax
-                        taxCat.setAmountTax(taxCat.getAmountTax().setScale(rounding, RoundingMode.HALF_UP));
+                        taxInvAggregate.setAmountTax(taxInvAggregate.getAmountTax().setScale(rounding, RoundingMode.HALF_UP));
 
                         // and compute amount with tax
                         /*taxCat.setAmountWithTax(taxCat.getAmountWithoutTax().add(taxCat.getAmountTax())
 								.setScale(rounding, RoundingMode.HALF_UP));*/
-                        log.debug("  tax2 ht ->" + taxCat.getAmountWithoutTax());
+                        log.debug("  tax2 ht ->" + taxInvAggregate.getAmountWithoutTax());
                     }
 
                 }
@@ -594,12 +599,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             }
             
             // TODO [Edward] if(!isExonerated && !calculateTax) then call the global
-            // taxInvoiceAgregateMap = invoice.invoiceType.taxScript.computeTaxAggregateMap(invoice, catInvoiceAgregateMap, invoiceAgregateSubcat)
+            // taxInvoiceAgregateMap = invoice.invoiceType.taxScript.computeTaxAggregateMap(invoice, catInvoiceAgregateMap)
 			if (!isExonerated && !calculateTax) {
-				
-				taxInvoiceAgregateMap = null;
+				if (invoice.getInvoiceType() != null && invoice.getInvoiceType().getTaxScript() != null) {
+					taxInvoiceAgregateMap = taxScriptService.computeTaxAggregateMap(
+							invoice.getInvoiceType().getTaxScript().getCode(), invoice, catInvoiceAgregateMap);
+				}
 			}
-            
+
             for (Map.Entry<Long, TaxInvoiceAgregate> tax : taxInvoiceAgregateMap.entrySet()) {
                 TaxInvoiceAgregate taxInvoiceAgregate = tax.getValue();
                 invoice.addAmountTax(taxInvoiceAgregate.getAmountTax().setScale(rounding, RoundingMode.HALF_UP));

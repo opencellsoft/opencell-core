@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.TaxInvoiceAgregate;
 
 /**
  * @author Edward P. Legaspi
@@ -38,5 +39,5 @@ public interface TaxScriptInterface {
 	 * @return
 	 * @throws BusinessException
 	 */
-	List<Tax> computeTaxAggregateMap(Map<String, Object> methodContext) throws BusinessException;
+	Map<Long, TaxInvoiceAgregate> computeTaxAggregateMap(Map<String, Object> methodContext) throws BusinessException;
 }

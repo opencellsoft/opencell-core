@@ -47,40 +47,67 @@
 			</p:breadCrumb>
 		</h:form>
 
-		<hftl:formPanel formId="formInvoiceType" edit="#{invoiceTypeBean.edit}" label="#{messages['invoiceType.panel']}" backingBean="#{invoiceTypeBean}">
-			<hftl:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true"/>
-			<hftl:formField label="#{messages['businessEntity.description']}" id="description" field="description"  />
-			<hftl:formField label="#{messages['invoiceType.occTemplate']}" id="occTemplateSelectedId" field="occTemplate"  valueLabelField="code"  
-							popup="true" popupId="searchOccTemplatePopup" required="true"/>
-			<hftl:formField label="#{messages['invoiceType.occTemplateNegative']}" id="occTemplateNegativeSelectedId" field="occTemplateNegative"  valueLabelField="code"  
-							popup="true" popupId="searchOccTemplateNegativePopup" showResetButton="true" required="false"/>
-            <hftl:formField label="#{messages['billingCycle.billingTemplateName']}" field="billingTemplateName" required="false" />
-            <hftl:formField label="#{messages['invoiceType.prefix']}" field="sequence"  childField="prefixEL" id="prefix" textArea="true" rows="1" maxlength="2000" />
-			<hftl:formField label="#{messages['invoiceType.sequenceSize']}" field="sequence"  childField="sequenceSize" id="sequenceSize" />
-			<hftl:formField label="#{messages['seller.currentInvoiceNb']}" field="sequence"  childField="currentInvoiceNb" id="currentInvoiceNb" />
-            <hftl:formField label="#{messages['invoiceType.appliesTo']}" field="appliesTo" listType="pickUpList" valueLabelField="code" dualListModel="#{invoiceTypeBean.dualListModel}" 
-            newLine="true"  id="appliesTo"/> 
-        <h:panelGroup rendered="#{not empty invoiceTypeBean.entity.id}">		 
-		  <p:dataTable id="sellerSequenceTable" width="80px;" label="#{messages['inboundRequest.responseHeaders']}" style="width:70%;"
-			value="#{invoiceTypeBean.entity.sellerSequence}" 
-			var="sellerSeq" paginator="false"  resizableColumns="true" >
-	       <f:facet name="header">
-            #{messages['invoiceType.sellerSequences']}
-           </f:facet>
-		   <p:column headerText="#{messages['seller.title']}">
-			  <h:outputText value="#{sellerSeq.seller.code}" />
-		   </p:column>
-		   <p:column headerText="#{messages['invoiceType.sequence.prefixEl']}">
-		      <h:outputText value="#{sellerSeq.sequence.prefixEL}" />  
-           </p:column>
-		   <p:column headerText="#{messages['seller.currentInvoiceNb']}">
-			 <h:outputText value="#{sellerSeq.sequence.currentInvoiceNb}" />  
-		   </p:column>
-           <p:column headerText="#{messages['seller.invoiceSequenceSize']}">
-			 <h:outputText value="#{sellerSeq.sequence.sequenceSize}" />  
-		   </p:column> 		  
-		</p:dataTable> 
-		</h:panelGroup>
+		<hftl:formPanel formId="formInvoiceType"
+			edit="#{invoiceTypeBean.edit}"
+			label="#{messages['invoiceType.panel']}"
+			backingBean="#{invoiceTypeBean}">
+			<p:tabView id="tabView" activeIndex="#{invoiceTypeBean.activeTab}">
+				<p:tab title="#{messages['commons.tab.information']}">
+					<hftl:formField label="#{messages['businessEntity.code']}"
+						field="code" validateUnique="true" required="true" />
+					<hftl:formField label="#{messages['businessEntity.description']}"
+						id="description" field="description" />
+					<hftl:formField label="#{messages['invoiceType.occTemplate']}"
+						id="occTemplateSelectedId" field="occTemplate"
+						valueLabelField="code" popup="true"
+						popupId="searchOccTemplatePopup" required="true" />
+					<hftl:formField
+						label="#{messages['invoiceType.occTemplateNegative']}"
+						id="occTemplateNegativeSelectedId" field="occTemplateNegative"
+						valueLabelField="code" popup="true"
+						popupId="searchOccTemplateNegativePopup" showResetButton="true"
+						required="false" />
+					<hftl:formField
+						label="#{messages['billingCycle.billingTemplateName']}"
+						field="billingTemplateName" required="false" />
+					<hftl:formField label="#{messages['invoiceType.prefix']}"
+						field="sequence" childField="prefixEL" id="prefix" textArea="true"
+						rows="1" maxlength="2000" />
+					<hftl:formField label="#{messages['invoiceType.sequenceSize']}"
+						field="sequence" childField="sequenceSize" id="sequenceSize" />
+					<hftl:formField label="#{messages['seller.currentInvoiceNb']}"
+						field="sequence" childField="currentInvoiceNb"
+						id="currentInvoiceNb" />
+					<hftl:formField label="#{messages['invoiceType.appliesTo']}"
+						field="appliesTo" listType="pickUpList" valueLabelField="code"
+						dualListModel="#{invoiceTypeBean.dualListModel}" newLine="true"
+						id="appliesTo" />
+					<h:panelGroup rendered="#{not empty invoiceTypeBean.entity.id}">
+						<p:dataTable id="sellerSequenceTable" width="80px;"
+							label="#{messages['inboundRequest.responseHeaders']}"
+							style="width:70%;"
+							value="#{invoiceTypeBean.entity.sellerSequence}" var="sellerSeq"
+							paginator="false" resizableColumns="true">
+							<f:facet name="header">#{messages['invoiceType.sellerSequences']}</f:facet>
+							<p:column headerText="#{messages['seller.title']}">
+								<h:outputText value="#{sellerSeq.seller.code}" />
+							</p:column>
+							<p:column
+								headerText="#{messages['invoiceType.sequence.prefixEl']}">
+								<h:outputText value="#{sellerSeq.sequence.prefixEL}" />
+							</p:column>
+							<p:column headerText="#{messages['seller.currentInvoiceNb']}">
+								<h:outputText value="#{sellerSeq.sequence.currentInvoiceNb}" />
+							</p:column>
+							<p:column headerText="#{messages['seller.invoiceSequenceSize']}">
+								<h:outputText value="#{sellerSeq.sequence.sequenceSize}" />
+							</p:column>
+						</p:dataTable>
+					</h:panelGroup>
+				</p:tab>
+				<hftl:customFields backingBean="#{invoiceTypeBean}"
+					messagesId="formInvoiceType:messages" />
+			</p:tabView>
 		</hftl:formPanel>
 	</ui:define>
 </ui:composition>

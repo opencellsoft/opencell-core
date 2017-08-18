@@ -50,6 +50,18 @@
 			column1="code" column2Label="#{messages['tax.description']}"
 			column2="description" />
 
+		<hftl:entityPopup id="taxScriptPopup"
+			header="#{messages['scriptInstance.popup.header']}"
+			backingBean="#{scriptInstanceBean}"
+			selection="#{invoiceSubCategoryBean.entity.taxScript}"
+			searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="code" column1Label="#{messages['businessEntity.code']}"
+			column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description" eventBackingBean="#{invoiceSubCategoryBean}"
+			updateField=":tabView:formPanel:taxScriptSelectId :tabView:formPanel:taxScriptSelectId_text">
+		</hftl:entityPopup>
+
 		<h:form id="crumbmenuForm">
 			<p:breadCrumb homeDisplay="text" id="crumbmenu">
 				<p:menuitem value="#{messages['menu.configuration']}" disabled="true" />
@@ -67,7 +79,7 @@
 			<p:tabView id="tabView" activeIndex="#{invoiceSubCategoryBean.activeTab}">
 				<p:tab title="#{messages['customer.tab.information']}">
 
-					<hftl:formPanel id="formPanel" label=""
+					<hftl:formPanel formId="formPanel" label=""
 						backingBean="#{invoiceSubCategoryBean}">
 
 						<hftl:formField id="categorySelectId"
@@ -84,6 +96,12 @@
                             field="accountingCode" />
                             
 						<hftl:formLanguageFields entity="#{invoiceSubCategoryBean.entity}" backingBean="#{invoiceSubCategoryBean}" multiLang="true"/>
+
+						<hftl:formField id="taxScriptSelectId"
+							label="#{messages['invoiceSubCategory.taxScript']}"
+							field="taxScript" valueLabelField="code" required="false"
+							popup="true" popupId="taxScriptPopup"
+							showResetButton="true" />
 					</hftl:formPanel>
 
 				</p:tab>
@@ -246,7 +264,7 @@
 				</p:tab>
 				
 			</p:tabView>
-		</p:panel>
+		</p:panel>		
 	</ui:define>
 
 </ui:composition>
