@@ -54,7 +54,7 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
 
     @Inject
     private CatalogHierarchyBuilderService catalogHierarchyBuilderService;
-    
+
     @Inject
     private SubscriptionService subscriptionService;
 
@@ -162,22 +162,20 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
 
         return offer;
     }
-    
-    
-    /**
-	 * @param entity instance of OfferTemplate
-	 * @throws BusinessException exception when error happens
-	 */
-	public synchronized void delete(OfferTemplate entity) throws BusinessException {
-		entity = refreshOrRetrieve(entity);
-		List<Subscription> subscriptionList = this.subscriptionService.findByOfferTemplate(entity);
-		if (entity != null && !entity.isTransient() && (subscriptionList == null || subscriptionList.size() == 0)) {
-			this.remove(entity);
-			this.catalogHierarchyBuilderService.delete(entity);
-		}
-		
 
-	}
+    /**
+     * @param entity instance of OfferTemplate
+     * @throws BusinessException exception when error happens
+     */
+    public synchronized void delete(OfferTemplate entity) throws BusinessException {
+        entity = refreshOrRetrieve(entity);
+        List<Subscription> subscriptionList = this.subscriptionService.findByOfferTemplate(entity);
+        if (entity != null && !entity.isTransient() && (subscriptionList == null || subscriptionList.size() == 0)) {
+            this.remove(entity);
+            this.catalogHierarchyBuilderService.delete(entity);
+        }
+
+    }
 
     /**
      * Create a duplicate of a given Offer template with an option to duplicate superficial data (Offer and CFs) or all hierarchy deep - services, charges, price plans
@@ -213,14 +211,6 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         offer.setVersion(0);
         offer.setAuditable(new Auditable());
         String sourceAppliesToEntity = offer.clearUuid();
-
-        ImageUploadEventHandler<OfferTemplate> offerImageUploadEventHandler = new ImageUploadEventHandler<>(appProvider);
-        try {
-            String newImagePath = offerImageUploadEventHandler.duplicateImage(offer, offer.getImagePath(), code);
-            offer.setImagePath(newImagePath);
-        } catch (IOException e1) {
-            log.error("IPIEL: Failed duplicating offer image: {}", e1.getMessage());
-        }
 
         offer.setCode(code);
 
@@ -304,7 +294,14 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
             if (offerProductTemplates != null) {
                 catalogHierarchyBuilderService.duplicateOfferProductTemplate(offer, offerProductTemplates, prefix);
             }
+        }
 
+        ImageUploadEventHandler<OfferTemplate> offerImageUploadEventHandler = new ImageUploadEventHandler<>(appProvider);
+        try {
+            String newImagePath = offerImageUploadEventHandler.duplicateImage(offer, offer.getImagePath());
+            offer.setImagePath(newImagePath);
+        } catch (IOException e1) {
+            log.error("IPIEL: Failed duplicating offer image: {}", e1.getMessage());
         }
 
         if (persist) {
@@ -313,7 +310,7 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
 
         return offer;
     }
-    
+
     public synchronized OfferTemplate duplicateOfferOnly(OfferTemplate offer) throws BusinessException {
 
         // Find the latest version of an offer for duplication and to calculate a validity start date for a new offer
@@ -335,5 +332,5 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
 
         return offer;
     }
-    
+
 }

@@ -41,6 +41,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
+import org.meveo.model.catalog.IImageUpload;
 import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
@@ -928,18 +929,23 @@ public abstract class BaseApi {
     }
 
     protected void saveImage(IEntity entity, String imagePath, String imageData) throws IOException, MeveoApiException {
+
+        // No image to save
         if (StringUtils.isBlank(imageData)) {
             return;
-        } else {
-            if (StringUtils.isBlank(imagePath)) {
-                missingParameters.add("imagePath");
-                handleMissingParametersAndValidate(null);
-            }
+        }
+
+        if (StringUtils.isBlank(imagePath)) {
+            missingParameters.add("imagePath");
+            handleMissingParametersAndValidate(null);
         }
 
         try {
             ImageUploadEventHandler<IEntity> imageUploadEventHandler = new ImageUploadEventHandler<>(appProvider);
-            imageUploadEventHandler.saveImageUpload(entity, imagePath, Base64.decodeBase64(imageData));
+            String filename = imageUploadEventHandler.saveImage(entity, imagePath, Base64.decodeBase64(imageData));
+            if (filename != null) {
+                ((IImageUpload) entity).setImagePath(filename);
+            }
         } catch (AccessDeniedException e1) {
             throw new InvalidImageData("Failed saving image. Access is denied: " + e1.getMessage());
         } catch (IOException e) {
