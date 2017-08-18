@@ -1,4 +1,4 @@
-package org.meveo.api.serialize;
+package org.meveo.commons.utils;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;

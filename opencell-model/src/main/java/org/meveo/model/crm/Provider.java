@@ -24,6 +24,7 @@ import java.util.UUID;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -52,8 +53,10 @@ import org.meveo.model.billing.Country;
 import org.meveo.model.billing.InvoiceConfiguration;
 import org.meveo.model.billing.Language;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.persistence.CustomFieldValuesConverter;
 import org.meveo.model.shared.InterBankTitle;
 
 @Entity
@@ -182,6 +185,11 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "recognize_revenue")
     private boolean recognizeRevenue;
+
+    // @Type(type = "json")
+    @Convert(converter = CustomFieldValuesConverter.class)
+    @Column(name = "cf_values", columnDefinition = "text")
+    private CustomFieldValues cfValues;
 
     public String getCode() {
         return code;
@@ -433,7 +441,7 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
         Provider other = (Provider) obj;
 
         if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
-             return true;
+            return true;
         }
 
         if (code == null) {
@@ -486,5 +494,26 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
         String oldUuid = uuid;
         uuid = UUID.randomUUID().toString();
         return oldUuid;
+    }
+
+    public CustomFieldValues getCfValues() {
+        return cfValues;
+    }
+
+    public void setCfValues(CustomFieldValues cfValues) {
+        this.cfValues = cfValues;
+    }
+
+    @Override
+    public CustomFieldValues getCfValuesNullSafe() {
+        if (cfValues == null) {
+            cfValues = new CustomFieldValues();
+        }
+        return cfValues;
+    }
+
+    @Override
+    public void clearCfValues() {
+        cfValues = null;
     }
 }

@@ -119,7 +119,7 @@ public class BundleTemplateService extends GenericProductOfferingService<BundleT
         // Detach and clear ids of entity and related entities
         detach(bundle);
         bundle.setId(null);
-        String sourceAppliesToEntity = bundle.clearUuid();
+        bundle.clearUuid();
 
         List<BusinessAccountModel> businessAccountModels = bundle.getBusinessAccountModels();
         bundle.setBusinessAccountModels(new ArrayList<BusinessAccountModel>());
@@ -141,7 +141,7 @@ public class BundleTemplateService extends GenericProductOfferingService<BundleT
 
         List<ProductChargeTemplate> chargeTemplates = bundle.getProductChargeTemplates();
         bundle.setProductChargeTemplates(new ArrayList<>());
-        
+
         bundle.setCode(code);
 
         if (businessAccountModels != null) {
@@ -187,8 +187,6 @@ public class BundleTemplateService extends GenericProductOfferingService<BundleT
                 bundle.getProductChargeTemplates().add(chargeTemplate);
             }
         }
-        
-        customFieldInstanceService.duplicateCfValues(sourceAppliesToEntity, bundle);
 
         if (persist) {
             create(bundle);

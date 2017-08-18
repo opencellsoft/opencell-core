@@ -19,12 +19,12 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.billing.GenerateInvoiceResultDto;
+import org.meveo.commons.utils.CustomDateSerializer;
 import org.tmf.dsmapi.catalog.resource.RelatedParty;
 import org.tmf.dsmapi.catalog.resource.ServiceLevelAgreement;
 import org.tmf.dsmapi.catalog.resource.TimeRange;
 import org.tmf.dsmapi.catalog.resource.order.BillingAccount;
 import org.tmf.dsmapi.catalog.resource.order.Note;
-import org.tmf.dsmapi.serialize.CustomDateSerializer;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;

@@ -8,8 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.meveo.model.DatePeriod;
 import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +31,7 @@ public class CustomFieldValueHolder implements Serializable {
     /**
      * Values of a single entity
      */
-    private Map<String, List<CustomFieldInstance>> values = new HashMap<String, List<CustomFieldInstance>>();
+    private Map<String, List<CustomFieldValue>> valuesByCode = new HashMap<String, List<CustomFieldValue>>();
 
     private ICustomFieldEntity entity;
 
@@ -43,12 +43,12 @@ public class CustomFieldValueHolder implements Serializable {
     /**
      * Field used to show detail values of a single value period
      */
-    private CustomFieldInstance selectedValuePeriod;
+    private CustomFieldValue selectedValuePeriod;
 
     /**
      * Field used to show detail values of a single value period
      */
-    private String selectedValuePeriodId;
+    private String selectedValuePeriodId; // TODO no longer available
 
     /**
      * Was value period found with identical/overlapping dates
@@ -69,17 +69,17 @@ public class CustomFieldValueHolder implements Serializable {
      * Constructor
      * 
      * @param customFieldTemplates Custom field templates applicable for the entity, mapped by a CFT code
-     * @param cfisAsMap Custom field instances mapped by a CFT code
+     * @param cfValuesAsMap Custom field values mapped by a CFT code
      * @param entity Entity containing custom field values
      */
-    public CustomFieldValueHolder(Map<String, CustomFieldTemplate> customFieldTemplates, Map<String, List<CustomFieldInstance>> cfisAsMap, ICustomFieldEntity entity) {
+    public CustomFieldValueHolder(Map<String, CustomFieldTemplate> customFieldTemplates, Map<String, List<CustomFieldValue>> cfValuesAsMap, ICustomFieldEntity entity) {
 
         this.entity = entity;
         if (customFieldTemplates == null || customFieldTemplates.isEmpty()) {
             return;
         }
 
-        values.putAll(cfisAsMap);
+        valuesByCode.putAll(cfValuesAsMap);
 
         populateNewValueDefaults(customFieldTemplates.values(), null);
 
@@ -133,61 +133,63 @@ public class CustomFieldValueHolder implements Serializable {
     }
 
     /**
-     * Get a custom field instance corresponding to a given date. Calendar is used to determine period start/end dates if requested to create one if not found
+     * Get a custom field value corresponding to a given date. Calendar is used to determine period start/end dates if requested to create one if not found
      * 
      * @param cft Custom field template
      * @param date Date
-     * @param createIfNotFound Should period be created if not found
-     * @return Custom field period
+     * @param createIfNotFound Should custom field value be created if not found
+     * @return Custom field value corresponding to a given date
      */
-    public CustomFieldInstance getValuePeriod(CustomFieldTemplate cft, Date date, Boolean createIfNotFound) {
-        CustomFieldInstance periodFound = null;
-        for (CustomFieldInstance period : values.get(cft.getCode())) {
-            if (period.getPeriodRaw() != null && period.getPeriodRaw().isCorrespondsToPeriod(date)) {
+    public CustomFieldValue getValuePeriod(CustomFieldTemplate cft, Date date, Boolean createIfNotFound) {
+        CustomFieldValue cfValueFound = null;
+        for (CustomFieldValue cfValue : valuesByCode.get(cft.getCode())) {
+            if (cfValue.getPeriod() != null && cfValue.getPeriod().isCorrespondsToPeriod(date)) {
                 // If calendar is used for versioning, then no periods can overlap
                 if (cft.getCalendar() != null) {
-                    periodFound = period;
+                    cfValueFound = cfValue;
                     break;
                     // Otherwise match the period with highest priority
-                } else if (periodFound == null || periodFound.getPriority() < period.getPriority()) {
-                    periodFound = period;
+                } else if (cfValueFound == null || cfValueFound.getPriority() < cfValue.getPriority()) {
+                    cfValueFound = cfValue;
                 }
             }
         }
 
-        if (periodFound == null && createIfNotFound && cft.getCalendar() != null) {
-            periodFound = CustomFieldInstance.fromTemplate(cft, entity, date);
-            values.get(cft.getCode()).add(periodFound);
+        // Create a custom field value if match not found
+        if (cfValueFound == null && createIfNotFound && cft.getCalendar() != null) {
+            cfValueFound = new CustomFieldValue(cft.getDatePeriod(date), 0, null);
+            valuesByCode.get(cft.getCode()).add(cfValueFound);
 
         }
-        return periodFound;
+        return cfValueFound;
     }
 
     /**
-     * Get a custom field instance corresponding to a given start and end date
+     * Get a custom field value corresponding to a given start and end date
      * 
      * @param cft Custom field template
      * @param date Date
-     * @param createIfNotFound Should period be created if not found
-     * @param calendar Calendar to determine period start/end dates when creating a new period
+     * @param createIfNotFound Should custom field value be created if not found
+     * @param calendar Calendar to determine custom field value start/end dates when creating a new custom field value
      * @param strictMatch Should a match occur only if start and end dates match. Non-strict match would match when dates overlap
-     * @return Custom field period
+     * @return Custom field value corresponding to a given start and end date
      */
-    public CustomFieldInstance getValuePeriod(CustomFieldTemplate cft, Date startDate, Date endDate, boolean strictMatch, Boolean createIfNotFound) {
-        CustomFieldInstance periodFound = null;
-        for (CustomFieldInstance period : values.get(cft.getCode())) {
-            if (period.getPeriodRaw() != null && period.getPeriodRaw().isCorrespondsToPeriod(startDate, endDate, strictMatch)) {
-                if (periodFound == null || periodFound.getPriority() < period.getPriority()) {
-                    periodFound = period;
+    public CustomFieldValue getValuePeriod(CustomFieldTemplate cft, Date startDate, Date endDate, boolean strictMatch, Boolean createIfNotFound) {
+        CustomFieldValue cfValueFound = null;
+        for (CustomFieldValue cfValue : valuesByCode.get(cft.getCode())) {
+            if (cfValue.getPeriod() != null && cfValue.getPeriod().isCorrespondsToPeriod(startDate, endDate, strictMatch)) {
+                if (cfValueFound == null || cfValueFound.getPriority() < cfValue.getPriority()) {
+                    cfValueFound = cfValue;
                 }
             }
         }
-        // Create a period if match not found
-        if (periodFound == null && createIfNotFound) {
-            periodFound = CustomFieldInstance.fromTemplate(cft, entity, startDate, endDate, getNextPriority(cft));
-            values.get(cft.getCode()).add(periodFound);
+        
+        // Create a custom field value if match not found
+        if (cfValueFound == null && createIfNotFound) {
+            cfValueFound = new CustomFieldValue(new DatePeriod(startDate, endDate), getNextPriority(cft), null);
+            valuesByCode.get(cft.getCode()).add(cfValueFound);
         }
-        return periodFound;
+        return cfValueFound;
     }
 
     /**
@@ -198,53 +200,53 @@ public class CustomFieldValueHolder implements Serializable {
      */
     private int getNextPriority(CustomFieldTemplate cft) {
         int maxPriority = 0;
-        for (CustomFieldInstance period : values.get(cft.getCode())) {
-            maxPriority = (period.getPriority() > maxPriority ? period.getPriority() : maxPriority);
+        for (CustomFieldValue cfValue : valuesByCode.get(cft.getCode())) {
+            maxPriority = (cfValue.getPriority() > maxPriority ? cfValue.getPriority() : maxPriority);
         }
         return maxPriority + 1;
     }
 
     /**
-     * Add a new custom field instance, corresponding to a given date
+     * Add a new custom field value, corresponding to a given date
      * 
      * @param cft Custom field template
      * @param entity Entity
      * @param date Value date
      * @return Instantiated custom field instance corresponding to a value date period
      */
-    public CustomFieldInstance addValuePeriod(CustomFieldTemplate cft, Date date) {
-        CustomFieldInstance period = getValuePeriod(cft, date, true);
-        return period;
+    public CustomFieldValue addValuePeriod(CustomFieldTemplate cft, Date date) {
+        CustomFieldValue cfValue = getValuePeriod(cft, date, true);
+        return cfValue;
     }
 
     /**
-     * Add a new custom field instance, corresponding to a given date range
+     * Add a new custom field value, corresponding to a given date range
      * 
      * @param cft Custom field template
      * @param entity Entity
-     * @param startDate Period strt date
-     * @param endDate Period end date
-     * @return Instantiated custom field instance corresponding to a value date period
+     * @param startDate Custom field value start date
+     * @param endDate Custom field value end date
+     * @return Instantiated custom field value corresponding to a value date period
      */
-    public CustomFieldInstance addValuePeriod(CustomFieldTemplate cft, Date startDate, Date endDate) {
-        CustomFieldInstance period = getValuePeriod(cft, startDate, endDate, true, true);
+    public CustomFieldValue addValuePeriod(CustomFieldTemplate cft, Date startDate, Date endDate) {
+        CustomFieldValue period = getValuePeriod(cft, startDate, endDate, true, true);
         return period;
     }
 
-    public Map<String, List<CustomFieldInstance>> getValues() {
-        return values;
+    public Map<String, List<CustomFieldValue>> getValuesByCode() {
+        return valuesByCode;
     }
 
-    public List<CustomFieldInstance> getValues(CustomFieldTemplate cft) {
-        return values.get(cft.getCode());
+    public List<CustomFieldValue> getValues(CustomFieldTemplate cft) {
+        return valuesByCode.get(cft.getCode());
     }
 
-    public CustomFieldInstance getFirstValue(String cftCode) {
-        List<CustomFieldInstance> cfis = values.get(cftCode);
-        if (cfis != null && !cfis.isEmpty()) {
-            return cfis.get(0);
+    public CustomFieldValue getFirstValue(String cftCode) {
+        List<CustomFieldValue> cfValues = valuesByCode.get(cftCode);
+        if (cfValues != null && !cfValues.isEmpty()) {
+            return cfValues.get(0);
         }
-        log.error("No custom field instance found for {} when it should", cftCode);
+        log.error("No custom field value found for {} when it should", cftCode);
         return null;
     }
 
@@ -255,8 +257,8 @@ public class CustomFieldValueHolder implements Serializable {
      */
     public boolean isAnyFieldEmptyForGui(CustomFieldTemplate cft) {
 
-        for (CustomFieldInstance cfi : values.get(cft.getCode())) {
-            if (!cfi.isValueEmptyForGui()) {
+        for (CustomFieldValue cfValue : valuesByCode.get(cft.getCode())) {
+            if (!cfValue.isValueEmptyForGui()) {
                 return false;
             }
         }
@@ -298,9 +300,9 @@ public class CustomFieldValueHolder implements Serializable {
      */
     public boolean isEmpty() {
 
-        for (List<CustomFieldInstance> cfis : values.values()) {
-            for (CustomFieldInstance cfi : cfis) {
-                if (!cfi.isValueEmptyForGui()) {
+        for (List<CustomFieldValue> cfValues : valuesByCode.values()) {
+            for (CustomFieldValue cfValue : cfValues) {
+                if (!cfValue.isValueEmptyForGui()) {
                     return false;
                 }
             }
@@ -324,11 +326,11 @@ public class CustomFieldValueHolder implements Serializable {
         this.selectedFieldTemplate = selectedFieldTemplate;
     }
 
-    public CustomFieldInstance getSelectedValuePeriod() {
+    public CustomFieldValue getSelectedValuePeriod() {
         return selectedValuePeriod;
     }
 
-    public void setSelectedValuePeriod(CustomFieldInstance selectedValuePeriod) {
+    public void setSelectedValuePeriod(CustomFieldValue selectedValuePeriod) {
         this.selectedValuePeriod = selectedValuePeriod;
     }
 
@@ -358,7 +360,7 @@ public class CustomFieldValueHolder implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        
+
         if (this == obj) {
             return true;
         } else if (obj == null) {

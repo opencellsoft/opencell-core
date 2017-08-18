@@ -49,7 +49,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.model.crm.CustomFieldInstance;
+import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -275,16 +275,16 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
         if (bomId != null && businessOfferModel != null) {
-            Map<String, List<CustomFieldInstance>> customFieldInstances = customFieldDataEntryBean.getFieldValueHolderByUUID(entity.getUuid()).getValues();
-            CustomFieldsDto cfsDto = entityToDtoConverter.getCustomFieldsDTO(entity, customFieldInstances);
+            Map<String, List<CustomFieldValue>> cfValues = customFieldDataEntryBean.getFieldValueHolderByUUID(entity.getUuid()).getValuesByCode();
+            CustomFieldsDto cfsDto = entityToDtoConverter.getCustomFieldsDTO(entity, cfValues);
 
             List<ServiceConfigurationDto> servicesConfigurations = new ArrayList<>();
             // process the services
             for (OfferServiceTemplate ost : entity.getOfferServiceTemplates()) {
                 ServiceTemplate st = ost.getServiceTemplate();
                 if (st.isSelected()) {
-                    Map<String, List<CustomFieldInstance>> stCustomFieldInstances = customFieldDataEntryBean.getFieldValueHolderByUUID(st.getUuid()).getValues();
-                    CustomFieldsDto stCfsDto = entityToDtoConverter.getCustomFieldsDTO(st, stCustomFieldInstances);
+                    Map<String, List<CustomFieldValue>> stCfValues = customFieldDataEntryBean.getFieldValueHolderByUUID(st.getUuid()).getValuesByCode();
+                    CustomFieldsDto stCfsDto = entityToDtoConverter.getCustomFieldsDTO(st, stCfValues);
 
                     ServiceConfigurationDto serviceConfigurationDto = new ServiceConfigurationDto();
                     serviceConfigurationDto.setCode(st.getCode());
@@ -320,8 +320,8 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
                         ServiceTemplate newServiceTemplate = newOst.getServiceTemplate();
                         String serviceTemplateCode = newOfferTemplate.getId() + "_" + serviceTemplate.getCode();
                         if (serviceTemplateCode.equals(newServiceTemplate.getCode())) {
-                            Map<String, List<CustomFieldInstance>> stCustomFieldInstances = customFieldDataEntryBean.getFieldValueHolderByUUID(serviceTemplate.getUuid())
-                                .getValues();
+                            Map<String, List<CustomFieldValue>> stCustomFieldInstances = customFieldDataEntryBean.getFieldValueHolderByUUID(serviceTemplate.getUuid())
+                                .getValuesByCode();
                             if (stCustomFieldInstances != null) {
                                 // populate offer cf
                                 customFieldDataEntryBean.saveCustomFieldsToEntity(newServiceTemplate, serviceTemplate.getUuid(), true, false, true);
@@ -351,7 +351,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
                     // populate service custom fields
                     for (OfferServiceTemplate ost : entity.getOfferServiceTemplates()) {
                         ServiceTemplate serviceTemplate = ost.getServiceTemplate();
-                        Map<String, List<CustomFieldInstance>> stCustomFieldInstances = customFieldDataEntryBean.getFieldValueHolderByUUID(serviceTemplate.getUuid()).getValues();
+                        Map<String, List<CustomFieldValue>> stCustomFieldInstances = customFieldDataEntryBean.getFieldValueHolderByUUID(serviceTemplate.getUuid()).getValuesByCode();
                         if (stCustomFieldInstances != null) {
                             // populate offer cf
                             customFieldDataEntryBean.saveCustomFieldsToEntity(serviceTemplate, serviceTemplate.getUuid(), false, false);

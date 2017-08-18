@@ -1,5 +1,7 @@
 package org.meveo.model;
 
+import org.meveo.model.crm.custom.CustomFieldValues;
+
 /**
  * An entity that contains custom fields
  * 
@@ -28,4 +30,10 @@ public interface ICustomFieldEntity {
      * @return An entity
      */
     public ICustomFieldEntity[] getParentCFEntities();
+    
+    public CustomFieldValues getCfValues();
+    
+    public CustomFieldValues getCfValuesNullSafe();
+    
+    public void clearCfValues();
 }

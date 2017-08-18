@@ -3,8 +3,8 @@ package org.tmf.dsmapi.catalog.resource;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.meveo.commons.utils.CustomDateSerializer;
 import org.meveo.model.DatePeriod;
-import org.tmf.dsmapi.serialize.CustomDateSerializer;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;

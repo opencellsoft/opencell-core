@@ -3,13 +3,14 @@ package org.meveo.model.jaxb.customer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.meveo.model.crm.CustomFieldInstance;
+import org.meveo.model.crm.custom.CustomFieldValue;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "customField" })
@@ -21,14 +22,15 @@ public class CustomFields {
 
     }
 
-    public static CustomFields toDTO(Map<String, List<CustomFieldInstance>> customFields) {
+    public static CustomFields toDTO(Map<String, List<CustomFieldValue>> customFields) {
         if (customFields == null || customFields.isEmpty()) {
             return null;
         }
         CustomFields dto = new CustomFields();
-        for (List<CustomFieldInstance> cfis : customFields.values()) {
-            for (CustomFieldInstance cfi : cfis) {
-                dto.getCustomField().add(CustomField.toDTO(cfi));
+        for (Entry<String, List<CustomFieldValue>> cfValueInfo : customFields.entrySet()) {
+            String cfCode = cfValueInfo.getKey();
+            for (CustomFieldValue cfValue : cfValueInfo.getValue()) {
+                dto.getCustomField().add(CustomField.toDTO(cfCode, cfValue));
             }
         }
         return dto;

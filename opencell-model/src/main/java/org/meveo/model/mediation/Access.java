@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.UUID;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -44,6 +45,8 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.crm.custom.CustomFieldValues;
+import org.meveo.model.persistence.CustomFieldValuesConverter;
 
 /**
  * Access linked to Subscription and Zone.
@@ -83,6 +86,11 @@ public class Access extends EnableEntity implements ICustomFieldEntity {
     @Size(max = 60)
     @NotNull
     private String uuid = UUID.randomUUID().toString();
+
+    // @Type(type = "json")
+    @Convert(converter = CustomFieldValuesConverter.class)
+    @Column(name = "cf_values", columnDefinition = "text")
+    private CustomFieldValues cfValues;
 
     public Date getStartDate() {
         return startDate;
@@ -154,6 +162,27 @@ public class Access extends EnableEntity implements ICustomFieldEntity {
         }
 
         return false;
+    }
+
+    public CustomFieldValues getCfValues() {
+        return cfValues;
+    }
+
+    public void setCfValues(CustomFieldValues cfValues) {
+        this.cfValues = cfValues;
+    }
+
+    @Override
+    public CustomFieldValues getCfValuesNullSafe() {
+        if (cfValues == null) {
+            cfValues = new CustomFieldValues();
+        }
+        return cfValues;
+    }
+
+    @Override
+    public void clearCfValues() {
+        cfValues = null;
     }
 
     @Override

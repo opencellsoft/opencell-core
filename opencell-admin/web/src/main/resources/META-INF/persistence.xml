@@ -4,7 +4,7 @@
 
 	<persistence-unit name="MeveoAdmin">
 		<jta-data-source>java:jboss/datasources/MeveoAdminDatasource</jta-data-source>
-		<!-- <jta-data-source>java:jboss/datasources/MeveoAdminMariaDBDatasource</jta-data-source> -->
+<!-- 		<jta-data-source>java:jboss/datasources/MeveoAdminMariaDBDatasource</jta-data-source> -->
 		<jar-file>lib/opencell-model-${project.version}.jar</jar-file>
 		<properties>
 			<property name="hibernate.archive.autodetection" value="class" />

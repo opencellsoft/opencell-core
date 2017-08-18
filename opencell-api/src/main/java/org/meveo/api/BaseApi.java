@@ -41,7 +41,6 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
-import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.Provider;
@@ -277,7 +276,10 @@ public abstract class BaseApi {
         // After saving passed CF values, validate that CustomField value is not
         // empty when field is mandatory. Check inherited values as well.
         // Instantiate CF with default value in case of a new entity
-        Map<String, List<CustomFieldInstance>> cfisAsMap = customFieldInstanceService.getCustomFieldInstances(entity);
+        Map<String, List<CustomFieldValue>> cfValuesByCode = null;
+        if (entity.getCfValues() != null) {
+            cfValuesByCode = entity.getCfValues().getValuesByCode();
+        }
 
         for (CustomFieldTemplate cft : customFieldTemplates.values()) {
             if (cft.isDisabled() || (!cft.isValueRequired() && cft.getDefaultValue() == null && !cft.isUseInheritedAsDefaultValue())) {
@@ -291,21 +293,18 @@ public abstract class BaseApi {
             }
 
             // When no instance was found
-            if (!cfisAsMap.containsKey(cft.getCode()) || cfisAsMap.get(cft.getCode()).isEmpty()) {
+            if (cfValuesByCode == null || !cfValuesByCode.containsKey(cft.getCode()) || cfValuesByCode.get(cft.getCode()).isEmpty()) {
                 boolean hasValue = false;
 
                 // Need to instantiate default value either from inherited value or from a default value when cft.isInheritedAsDefaultValue()==true
                 if (isNewEntity && cft.isUseInheritedAsDefaultValue()) {
                     Object value = customFieldInstanceService.instantiateCFWithInheritedOrDefaultValue(entity, cft);
                     hasValue = value != null;
+                }
 
-                    // If no value was created, then check if there is any inherited value, as in case of versioned values, value could be set in some other period, and required
-                    // field validation should pass even though current period wont have any value
-                    if (cft.isVersionable()) {
-                        hasValue = customFieldInstanceService.hasInheritedOnlyCFValue(entity, cft.getCode());
-                    }
-
-                } else {
+                // If no value was created, then check if there is any inherited value, as in case of versioned values, value could be set in some other period, and required
+                // field validation should pass even though current period wont have any value
+                if (!hasValue) {
                     if (cft.isVersionable()) {
                         hasValue = customFieldInstanceService.hasInheritedOnlyCFValue(entity, cft.getCode());
                     } else {
@@ -327,11 +326,11 @@ public abstract class BaseApi {
             } else {
                 boolean noCfi = true;
                 boolean emptyValue = true;
-                for (CustomFieldInstance cfi : cfisAsMap.get(cft.getCode())) {
-                    if (cfi != null) {
+                for (CustomFieldValue cfValue : cfValuesByCode.get(cft.getCode())) {
+                    if (cfValue != null) { // In what cases it could be null??
                         noCfi = false;
 
-                        if (!cfi.isValueEmpty()) {
+                        if (!cfValue.isValueEmpty()) {
                             emptyValue = false;
                             break;
                         }
