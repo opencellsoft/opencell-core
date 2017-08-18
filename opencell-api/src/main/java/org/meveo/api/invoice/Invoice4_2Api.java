@@ -180,7 +180,7 @@ public class Invoice4_2Api extends BaseApi {
             invoice.setAdjustedInvoice(commercialInvoice);
            
         } 
-        invoice.setInvoiceNumber(invoiceService.generateInvoiceNumber(invoice));
+        invoiceService.assignInvoiceNumber(invoice);
         
         invoiceService.create(invoice);
 

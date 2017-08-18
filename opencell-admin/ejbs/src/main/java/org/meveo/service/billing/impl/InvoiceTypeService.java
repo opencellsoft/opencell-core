@@ -93,4 +93,21 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
     public String getQuoteCode() {
         return param.getProperty("invoiceType.quote.code", "QUOTE");
     }
+
+    /**
+     * Get a custom field code to track invoice numbering sequence for a given invoice type
+     * 
+     * @param invoiceType Invoice type
+     * @return A custom field code
+     */
+    public String getCustomFieldCode(InvoiceType invoiceType) {
+        String cfName = "INVOICE_SEQUENCE_" + invoiceType.getCode().toUpperCase();
+        if (getAdjustementCode().equals(invoiceType.getCode())) {
+            cfName = "INVOICE_ADJUSTMENT_SEQUENCE";
+        }
+        if (getCommercialCode().equals(invoiceType.getCode())) {
+            cfName = "INVOICE_SEQUENCE";
+        }
+        return cfName;
+    }
 }

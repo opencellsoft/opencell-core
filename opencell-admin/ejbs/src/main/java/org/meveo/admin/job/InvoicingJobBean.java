@@ -37,7 +37,7 @@ public class InvoicingJobBean {
 
         try {
             List<BillingRun> billingRuns = billingRunService.getbillingRuns(BillingRunStatusEnum.NEW, BillingRunStatusEnum.PREVALIDATED, BillingRunStatusEnum.POSTVALIDATED);
-            log.info("billingRuns to process={}", billingRuns.size());
+            log.info("BillingRuns to process={}", billingRuns.size());
             result.setNbItemsToProcess(billingRuns.size());
             Long nbRuns = new Long(1);
             Long waitingMillis = new Long(0);
@@ -52,7 +52,6 @@ public class InvoicingJobBean {
                 waitingMillis = new Long(0);
                 log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e.getMessage());
             }
-
             for (BillingRun billingRun : billingRuns) {
                 try {
 
