@@ -16,6 +16,7 @@ import org.meveo.api.dto.response.GetCurrencyIsoResponse;
 import org.meveo.api.dto.response.GetLanguageIsoResponse;
 import org.meveo.api.dto.response.GetLanguagesIsoResponse;
 import org.meveo.api.dto.response.GetProviderResponse;
+import org.meveo.api.dto.response.admin.GetFilesResponseDto;
 
 /**
  * @author Edward P. Legaspi
@@ -96,4 +97,26 @@ public interface SuperAdminSettingsWs extends IBaseWs {
 
     @WebMethod
     GetCurrenciesIsoResponse listIsoCurrencies();
+    
+    // files
+    @WebMethod
+    GetFilesResponseDto listAllFiles();
+    
+	@WebMethod
+	GetFilesResponseDto listFiles(@WebParam(name = "dir") String dir);
+
+	@WebMethod
+	ActionStatus createDir(@WebParam(name = "dir") String dir);
+	
+	@WebMethod
+	ActionStatus zipFile(@WebParam(name = "file") String file);
+
+	@WebMethod
+	ActionStatus zipDir(@WebParam(name = "dir") String dir);
+
+	@WebMethod
+	ActionStatus suppressFile(@WebParam(name = "file") String file);
+
+	@WebMethod
+	ActionStatus suppressDir(@WebParam(name = "dir") String dir);
 }
