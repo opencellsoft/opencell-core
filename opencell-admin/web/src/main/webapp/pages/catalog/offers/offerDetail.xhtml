@@ -29,13 +29,25 @@
                     <p:outputPanel>
                         <p:panel rendered="#{not offerTemplateBean.edit}">
                             <ul class="list-inline">
-                                <li class=""><p:commandLink action="#{offerTemplateBean.duplicateCatalogHierarchy()}" update="@form" styleClass="fa fa-copy text-blue fa-2x">
-                                        <f:param name="edit" value="false"></f:param>
-                                        <f:param name="backView" value="#{offerTemplateBean.backView}"></f:param>
+                                <li><p:link id="newVersionLink" title="#{messages['commons.newVersion']}"
+                                                styleClass="fa fa-plus no-text-decoration text-blue fa-2x"
+                                                outcome="mm_offerTemplateDetail">
+                                        <f:param name="cid" value="#{javax.enterprise.context.conversation.id}"/>
+                                        <f:param name="objectId" value="#{offerTemplateBean.entity.id}"/>
+                                        <f:param name="edit" value="true"/>
+                                        <f:param name="backView" value="mm_offers"/>
+                                        <f:param name="tab" value="0"/>                                                        
+                                        <f:param name="newVersion" value="true" />
+                                        </p:link></li>                            
+                                <li class=""><p:link id="duplicate" title="#{messages['commons.duplicate']}" styleClass="fa fa-copy fa-2x text-blue no-text-decoration" outcome="mm_offerTemplateDetail">
                                         <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
-                                        <p:confirm header="#{messages['commons.duplicate']}" message="#{messages['commons.confirmDuplicate']}" />
-                                    </p:commandLink></li>
-                                <li class=""><p:link styleClass="fa fa-edit fa-2x text-blue no-text-decoration" outcome="mm_offerTemplateDetail">
+                                        <f:param name="objectId" value="#{offerTemplateBean.entity.id}" />
+                                        <f:param name="edit" value="true" />
+                                        <f:param name="backView" value="#{offerTemplateBean.backView}" />
+                                        <f:param name="tab" value="0" />
+                                        <f:param name="duplicateOffer" value="true" />
+                                    </p:link></li>
+                                <li class=""><p:link styleClass="fa fa-edit fa-2x text-blue no-text-decoration" outcome="mm_offerTemplateDetail" title="#{messages['action.edit']}">
                                         <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
                                         <f:param name="objectId" value="#{offerTemplateBean.entity.id}"></f:param>
                                         <f:param name="edit" value="true"></f:param>
@@ -50,14 +62,16 @@
                     <h:panelGrid columns="1" styleClass="ui-panelgrid-blank Wid100" columnClasses="Wid100">
                         <h:outputText value="#{offerTemplateBean.entity.nameOrCode}" rendered="#{!offerTemplateBean.edit}"></h:outputText>
                         <hftl:formField label="#{messages['offerTemplate.name']}" required="true" field="name" rendered="#{offerTemplateBean.edit}" />
-                        <c:if test="#{offerTemplateBean.bomId eq null}">
+                        <c:if test="#{offerTemplateBean.businessOfferModel == null}">
                         	<hftl:formField id="code" label="#{messages['offerTemplate.code']}" field="code" required="true" />
                             <hftl:formField label="#{messages['marketingManager.catalog.family']}" allowEdit="false" field="businessOfferModel" valueLabelField="code"
                                 listBean="#{businessOfferModelBean}" />
                         </c:if>
-                        <c:if test="#{offerTemplateBean.bomId ne null}">
+                        <c:if test="#{offerTemplateBean.businessOfferModel != null}">
                         	<hftl:decorateFormField fieldId="transientCode" label="#{messages['offerTemplate.code']}">
-                                <p:inputText id="transientCode" value="#{offerTemplateBean.entity.transientCode}" styleClass="field-value" required="true" />
+                                <p:inputText id="transientCode" value="#{offerTemplateBean.entity.transientCode}" styleClass="field-value" required="true" >
+                                    <o:validator validatorId="codeValidator" />
+                                </p:inputText>
                             </hftl:decorateFormField>
                             <hftl:decorateFormField fieldId="family" label="#{messages['marketingManager.catalog.family']}">
                                 <h:outputText id="family" value="#{offerTemplateBean.businessOfferModel.code}" styleClass="field-value" />
@@ -70,7 +84,7 @@
                         <hftl:formField label="#{messages['commons.lastEditor']}" entity="#{offerTemplateBean.entity.auditable}" field="creator" valueLabelField="nameOrUsername"
                             edit="false" />
 
-                        <c:if test="#{offerTemplateBean.bomId eq null}">
+                        <c:if test="#{offerTemplateBean.businessOfferModel == null}">
                             <o:validateMultiple components=":offerForm:code :offerForm:validity_date :offerForm:validity_date_toRange"
                                     validator="#{offerTemplateBean.validateUniqueVersion}" message="#{messages['offerTemplate.version.exists.short']}" />
                         </c:if>
@@ -183,7 +197,7 @@
 					
 							<p:panel>
 								<p:selectBooleanCheckbox value="#{ost.serviceTemplate.selected}" style="margin-right: 2px; position: relative; top: 5px"
-									rendered="#{offerTemplateBean.edit and offerTemplateBean.bomId ne null}">
+									rendered="#{offerTemplateBean.edit and offerTemplateBean.businessOfferModel != null}">
 									<p:ajax update="serviceCf_panel_#{loopStatus.index}"></p:ajax>
 								</p:selectBooleanCheckbox>
 								
@@ -194,7 +208,7 @@
  							</p:panel>
 
 							<p:outputPanel id="serviceCf_panel_#{loopStatus.index}">
-                                <p:panel rendered="#{(offerTemplateBean.bomId != null and ost.serviceTemplate.selected) || offerTemplateBean.bomId == null}">
+                                <p:panel rendered="#{(offerTemplateBean.businessOfferModel != null and ost.serviceTemplate.selected) || offerTemplateBean.businessOfferModel == null}">
                                     <hftl:decorateFormField fieldId="serviceMandatory_#{loopStatus.index}" label="#{messages['offerServiceTemplate.mandatory']}" componentWidth="5">
                                         <p:selectBooleanCheckbox disabled="#{!offerTemplateBean.edit}" id="serviceMandatory_#{loopStatus.index}" value="#{ost.mandatory}"></p:selectBooleanCheckbox>
                                     </hftl:decorateFormField>

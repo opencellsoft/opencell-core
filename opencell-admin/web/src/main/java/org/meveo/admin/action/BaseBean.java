@@ -52,7 +52,6 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.MultilanguageEntity;
-import org.meveo.model.annotation.ImageType;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.catalog.IImageUpload;
@@ -196,7 +195,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     protected String providerFilePath = paramBean.getProperty("providers.rootDir", "./opencelldata/");
 
     private UploadedFile uploadedFile;
-    private boolean overrideImageOnUpload = true;
 
     /**
      * Constructor
@@ -262,7 +260,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                 entity = (T) getPersistenceService().findById(getObjectId(), formFieldsToFetch);
             }
 
-            loadMultiLanguageFields();
+            loadMultiLanguageFields(entity);
             loadPartOfModules();
 
             // getPersistenceService().detach(entity);
@@ -307,7 +305,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * 
      * @param entity Entity lo load fields for
      */
-    private void loadMultiLanguageFields() {
+    protected void loadMultiLanguageFields(IEntity entity) {
 
         if (!isMultilanguageEntity() || !(entity instanceof BusinessEntity)) {
             return;
@@ -326,7 +324,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     protected boolean isImageUpload() {
-        return clazz.isAnnotationPresent(ImageType.class);
+        return IImageUpload.class.isAssignableFrom(clazz);
     }
 
     private void loadPartOfModules() {
@@ -574,7 +572,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
             log.info("Deleting entity {} with id = {}", clazz.getName(), id);
             getPersistenceService().remove(id);
 
-            if (isImageUpload()) {
+            // Delete image here only if transient. Otherwise it will be deleted as part of a call to a service
+            if (id == null && isImageUpload()) {
                 try {
                     ImageUploadEventHandler<T> imageUploadEventHandler = new ImageUploadEventHandler<>(appProvider);
                     imageUploadEventHandler.deleteImage(entity);
@@ -1257,13 +1256,5 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     public void setUploadedFile(UploadedFile uploadedFile) {
         this.uploadedFile = uploadedFile;
-    }
-
-    public boolean isOverrideImageOnUpload() {
-        return overrideImageOnUpload;
-    }
-
-    public void setOverrideImageOnUpload(boolean overrideImageOnUpload) {
-        this.overrideImageOnUpload = overrideImageOnUpload;
     }
 }

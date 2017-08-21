@@ -136,10 +136,11 @@ public class ImageUploadEventHandler<T extends IEntity> {
     }
 
     public void deleteImage(T entity) throws IOException {
-        String folder = getPicturePath(entity);
 
         String imagePath = ((IImageUpload) entity).getImagePath();
+        
         if (!StringUtils.isBlank(imagePath)) {
+            String folder = getPicturePath(entity);
             Path source = Paths.get(folder, imagePath);
             Files.deleteIfExists(source);
         }

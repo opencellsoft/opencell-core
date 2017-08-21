@@ -19,6 +19,7 @@
 package org.meveo.service.catalog.impl;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -30,6 +31,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.model.Auditable;
@@ -126,8 +128,8 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
      * @return A persisted duplicated offer template
      * @throws BusinessException
      */
-    public synchronized OfferTemplate duplicate(OfferTemplate offer) throws BusinessException {
-        return duplicate(offer, false, true);
+    public synchronized OfferTemplate duplicate(OfferTemplate offer, boolean persist) throws BusinessException {
+        return duplicate(offer, false, persist, false);
     }
 
     /**
@@ -142,7 +144,6 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
 
         // Find the latest version of an offer for duplication and to calculate a validity start date for a new offer
         OfferTemplate latestVersion = findTheLatestVersion(offer.getCode());
-        String code = latestVersion.getCode();
         Date startDate = null;
         Date endDate = null;
         if (latestVersion.getValidityRaw() != null) {
@@ -150,9 +151,7 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
             endDate = latestVersion.getValidityRaw().getTo();
         }
 
-        offer = duplicate(latestVersion, false, false);
-
-        offer.setCode(code);
+        offer = duplicate(latestVersion, false, false, true);
 
         Date from = endDate != null ? endDate : new Date();
         if (startDate != null && from.before(startDate)) {
@@ -180,39 +179,52 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
     /**
      * Create a duplicate of a given Offer template with an option to duplicate superficial data (Offer and CFs) or all hierarchy deep - services, charges, price plans
      * 
-     * @param offer Offer template to duplicate
-     * @param duplicateHierarchy To duplicate superficial data (offer info and CFs) or all hierarchy deep - services, charges, price plans
+     * @param offerToDuplicate Offer template to duplicate
+     * @param duplicateHierarchy To duplicate superficial data (offer info (including services and products, CFs) or all hierarchy deep - new service templates, charge templates,
+     *        price plans
      * @param persist Shall new entity be persisted
+     * @param preserveCode Shall a code be preserved or a " Copy" be added to a code
      * @return A copy of Offer template
      * @throws BusinessException
      */
-    private synchronized OfferTemplate duplicate(OfferTemplate offer, boolean duplicateHierarchy, boolean persist) throws BusinessException {
+    private synchronized OfferTemplate duplicate(OfferTemplate offerToDuplicate, boolean duplicateHierarchy, boolean persist, boolean preserveCode) throws BusinessException {
 
-        offer = refreshOrRetrieve(offer);
+        offerToDuplicate = refreshOrRetrieve(offerToDuplicate);
+
         // Lazy load related values first
-        offer.getOfferServiceTemplates().size();
-        offer.getBusinessAccountModels().size();
-        offer.getAttachments().size();
-        offer.getChannels().size();
-        offer.getOfferProductTemplates().size();
-        offer.getOfferTemplateCategories().size();
+        offerToDuplicate.getOfferServiceTemplates().size();
+        offerToDuplicate.getBusinessAccountModels().size();
+        offerToDuplicate.getAttachments().size();
+        offerToDuplicate.getChannels().size();
+        offerToDuplicate.getOfferProductTemplates().size();
+        offerToDuplicate.getOfferTemplateCategories().size();
 
-        if (offer.getOfferServiceTemplates() != null) {
-            for (OfferServiceTemplate offerServiceTemplate : offer.getOfferServiceTemplates()) {
+        if (offerToDuplicate.getOfferServiceTemplates() != null) {
+            for (OfferServiceTemplate offerServiceTemplate : offerToDuplicate.getOfferServiceTemplates()) {
                 offerServiceTemplate.getIncompatibleServices().size();
             }
         }
 
-        String code = findDuplicateCode(offer);
-
         // Detach and clear ids of entity and related entities
-        detach(offer);
+        detach(offerToDuplicate);
+
+        OfferTemplate offer;
+        try {
+            offer = (OfferTemplate) BeanUtils.cloneBean(offerToDuplicate);
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
+            throw new BusinessException("Failed to clone offer template", e);
+        }
+
+        if (!preserveCode) {
+            String code = findDuplicateCode(offer);
+            offer.setCode(code);
+        }
+
         offer.setId(null);
+
         offer.setVersion(0);
         offer.setAuditable(new Auditable());
         offer.clearUuid();
-
-        offer.setCode(code);
 
         List<OfferServiceTemplate> offerServiceTemplates = offer.getOfferServiceTemplates();
         offer.setOfferServiceTemplates(new ArrayList<OfferServiceTemplate>());
@@ -256,7 +268,18 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
             }
         }
 
-        if (!duplicateHierarchy) {
+        if (duplicateHierarchy) {
+            String prefix = offer.getId() + "_";
+
+            if (offerServiceTemplates != null) {
+                catalogHierarchyBuilderService.duplicateOfferServiceTemplate(offer, offerServiceTemplates, prefix);
+            }
+
+            if (offerProductTemplates != null) {
+                catalogHierarchyBuilderService.duplicateOfferProductTemplate(offer, offerProductTemplates, prefix);
+            }
+
+        } else {
             if (offerServiceTemplates != null) {
                 for (OfferServiceTemplate serviceTemplate : offerServiceTemplates) {
                     serviceTemplate.getIncompatibleServices().size();
@@ -282,18 +305,6 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
             }
         }
 
-        if (duplicateHierarchy) {
-            String prefix = offer.getId() + "_";
-
-            if (offerServiceTemplates != null) {
-                catalogHierarchyBuilderService.duplicateOfferServiceTemplate(offer, offerServiceTemplates, prefix);
-            }
-
-            if (offerProductTemplates != null) {
-                catalogHierarchyBuilderService.duplicateOfferProductTemplate(offer, offerProductTemplates, prefix);
-            }
-        }
-
         ImageUploadEventHandler<OfferTemplate> offerImageUploadEventHandler = new ImageUploadEventHandler<>(appProvider);
         try {
             String newImagePath = offerImageUploadEventHandler.duplicateImage(offer, offer.getImagePath());
@@ -308,27 +319,4 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
 
         return offer;
     }
-
-    public synchronized OfferTemplate duplicateOfferOnly(OfferTemplate offer) throws BusinessException {
-
-        // Find the latest version of an offer for duplication and to calculate a validity start date for a new offer
-        OfferTemplate latestVersion = findTheLatestVersion(offer.getCode());
-        Date startDate = null;
-        Date endDate = null;
-        if (latestVersion.getValidityRaw() != null) {
-            startDate = latestVersion.getValidityRaw().getFrom();
-            endDate = latestVersion.getValidityRaw().getTo();
-        }
-
-        offer = duplicate(latestVersion, false, false);
-
-        Date from = endDate != null ? endDate : new Date();
-        if (startDate != null && from.before(startDate)) {
-            from = startDate;
-        }
-        offer.setValidity(new DatePeriod(from, null));
-
-        return offer;
-    }
-
 }
