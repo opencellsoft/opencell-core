@@ -55,7 +55,7 @@ public class TaxScriptService implements Serializable {
 		return scriptInterface.computeTaxes(scriptContext);
 	}
 
-	public Map<Long, TaxInvoiceAgregate> computeTaxAggregateMap(String scriptCode, Invoice invoice,
+	public Map<String, TaxInvoiceAgregate> computeTaxAggregateMap(String scriptCode, Invoice invoice,
 			Map<Long, CategoryInvoiceAgregate> catInvoiceAgregateMap) throws BusinessException {
 		TaxScriptInterface scriptInterface = (TaxScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
 

@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -387,7 +388,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             List<InvoiceAgregate> invoiceAgregateSubcatList = new ArrayList<InvoiceAgregate>();
 
             Map<Long, CategoryInvoiceAgregate> catInvoiceAgregateMap = new HashMap<Long, CategoryInvoiceAgregate>();
-            Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap = new HashMap<Long, TaxInvoiceAgregate>();
+            Map<String, TaxInvoiceAgregate> taxInvoiceAgregateMap = new HashMap<>();
 
             SubCategoryInvoiceAgregate biggestSubCat = null;
             BigDecimal biggestAmount = new BigDecimal("-100000000");
@@ -464,8 +465,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 //if (!isExonerated) {
                 if(calculateTax) {
                     for (Tax tax : taxes) {
-                        TaxInvoiceAgregate invoiceAgregateTax = null;
-                        Long taxId = tax.getId();
+                        TaxInvoiceAgregate invoiceAgregateTax = null;                        
+                        String taxId = String.valueOf(tax.getId());
+                        if(taxExternal) {
+                        	taxId = tax.getCode();
+                        }                        	
 
                         if (taxInvoiceAgregateMap.containsKey(taxId)) {
                             invoiceAgregateTax = taxInvoiceAgregateMap.get(taxId);
@@ -497,8 +501,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                                 invoiceAgregateService.create(invoiceAgregateTax);
                             }
                         }
-
-                        invoiceAgregateSubcat.addSubCategoryTax(tax);
+                        if(taxExternal) {
+                        	invoiceAgregateSubcat.addSubCategoryTaxTransient(tax);
+                        } else {
+                        	invoiceAgregateSubcat.addSubCategoryTax(tax);
+                        }
                     }
                 }
 
@@ -544,11 +551,16 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 				invoiceAgregateSubcat.setAmountWithoutTax(invoiceAgregateSubcat.getAmountWithoutTax().setScale(rounding,
 						RoundingMode.HALF_UP));
                 // add it to taxAggregate and CategoryAggregate
-                for (Tax tax : invoiceAgregateSubcat.getSubCategoryTaxes()) {
+				Set<Tax> subCategoryTaxes = invoiceAgregateSubcat.getSubCategoryTaxes();
+				if(invoiceAgregateSubcat.getSubCategoryTaxesTransient() != null && !invoiceAgregateSubcat.getSubCategoryTaxesTransient().isEmpty()) {
+					subCategoryTaxes = invoiceAgregateSubcat.getSubCategoryTaxesTransient();
+				}
+				
+                for (Tax tax : subCategoryTaxes) {
                 	// TODO[Edward] Replace !isExonerated by calculateTax
                     //if (tax.getPercent().compareTo(BigDecimal.ZERO) != 0 && !isExonerated) {
                 	if (tax.getPercent().compareTo(BigDecimal.ZERO) != 0 && calculateTax) {
-                        TaxInvoiceAgregate taxInvoiceAgregate = taxInvoiceAgregateMap.get(tax.getId());
+                        TaxInvoiceAgregate taxInvoiceAgregate = taxInvoiceAgregateMap.get(String.valueOf(tax.getIdOrCode()));
                         taxInvoiceAgregate.addAmountWithoutTax(invoiceAgregateSubcat.getAmountWithoutTax());
 						log.info("  tax " + tax.getPercent() + " ht ->"
 								+ taxInvoiceAgregate.getAmountWithoutTax());
@@ -574,7 +586,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             // TODO[Edward] Replace !isExonerated by calculateTax
             //if (!isExonerated) {
             if (calculateTax) {
-                for (Map.Entry<Long, TaxInvoiceAgregate> taxInvAggregateMap : taxInvoiceAgregateMap.entrySet()) {
+                for (Map.Entry<String, TaxInvoiceAgregate> taxInvAggregateMap : taxInvoiceAgregateMap.entrySet()) {
                     TaxInvoiceAgregate taxInvAggregate = taxInvAggregateMap.getValue();
                     BigDecimal taxPercent = taxInvAggregate.getTaxPercent() != null ? taxInvAggregate.getTaxPercent() : taxInvAggregate.getTax().getPercent();
                     if (taxPercent.compareTo(BigDecimal.ZERO) != 0) {
@@ -607,7 +619,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 				}
 			}
 
-            for (Map.Entry<Long, TaxInvoiceAgregate> tax : taxInvoiceAgregateMap.entrySet()) {
+            for (Map.Entry<String, TaxInvoiceAgregate> tax : taxInvoiceAgregateMap.entrySet()) {
                 TaxInvoiceAgregate taxInvoiceAgregate = tax.getValue();
                 invoice.addAmountTax(taxInvoiceAgregate.getAmountTax().setScale(rounding, RoundingMode.HALF_UP));
             }
@@ -620,10 +632,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 log.debug("delta= " + nonEnterprisePriceWithTax + " - " + invoice.getAmountWithTax() + "=" + delta);
                 biggestSubCat.setAmountWithoutTax(biggestSubCat.getAmountWithoutTax().add(delta)
                     .setScale(rounding, RoundingMode.HALF_UP));
-                for (Tax tax : biggestSubCat.getSubCategoryTaxes()) {
+                
+                Set<Tax> subCategoryTaxes = biggestSubCat.getSubCategoryTaxes();
+				if(biggestSubCat.getSubCategoryTaxesTransient() != null && !biggestSubCat.getSubCategoryTaxesTransient().isEmpty()) {
+					subCategoryTaxes = biggestSubCat.getSubCategoryTaxesTransient();
+				}
+                for (Tax tax : subCategoryTaxes) {
 
-                    TaxInvoiceAgregate invoiceAgregateT = taxInvoiceAgregateMap.get(tax
-                        .getId());
+                    TaxInvoiceAgregate invoiceAgregateT = taxInvoiceAgregateMap.get(String.valueOf(tax.getIdOrCode()));
                     log.debug("  tax3 ht ->" + invoiceAgregateT.getAmountWithoutTax());
                     invoiceAgregateT.setAmountWithoutTax(invoiceAgregateT.getAmountWithoutTax().add(delta)
                         .setScale(rounding, RoundingMode.HALF_UP));
@@ -809,7 +825,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		}
 
 	}
-	private void createInvoiceDiscountAggregates(UserAccount userAccount,Invoice invoice,Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap, boolean isVirtual){
+	private void createInvoiceDiscountAggregates(UserAccount userAccount,Invoice invoice,Map<String, TaxInvoiceAgregate> taxInvoiceAgregateMap, boolean isVirtual){
         try {
 
             BillingAccount billingAccount = userAccount.getBillingAccount();
@@ -858,7 +874,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
 	}
 
-	private void createDiscountAggregate(UserAccount userAccount,WalletInstance wallet,Invoice invoice,InvoiceSubCategory invoiceSubCat,DiscountPlanItem discountPlanItem,Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap, boolean isVirtual) throws BusinessException{
+	private void createDiscountAggregate(UserAccount userAccount,WalletInstance wallet,Invoice invoice,InvoiceSubCategory invoiceSubCat,DiscountPlanItem discountPlanItem,Map<String, TaxInvoiceAgregate> taxInvoiceAgregateMap, boolean isVirtual) throws BusinessException{
 		BillingAccount billingAccount=userAccount.getBillingAccount();
 		BigDecimal amount=BigDecimal.ZERO;
 		BigDecimal discountPercent = discountPlanItem.getPercent();
@@ -906,7 +922,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 					BigDecimal amountTax=discountAmountWithoutTax.multiply(tax.getPercent().divide(HUNDRED));
 					discountAmountTax=discountAmountTax.add(amountTax);
 					invoiceAgregateSubcat.addSubCategoryTax(tax);
-					TaxInvoiceAgregate 	taxInvoiceAgregate= taxInvoiceAgregateMap.get(tax.getId());
+					TaxInvoiceAgregate 	taxInvoiceAgregate= taxInvoiceAgregateMap.get(String.valueOf(tax.getIdOrCode()));
 					if(taxInvoiceAgregate!=null){
 						taxInvoiceAgregate.addAmountTax(amountTax);
 						taxInvoiceAgregate.addAmountWithoutTax(discountAmountWithoutTax);

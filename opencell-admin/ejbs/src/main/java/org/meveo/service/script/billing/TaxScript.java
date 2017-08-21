@@ -33,7 +33,7 @@ public class TaxScript extends ModuleScript implements TaxScriptInterface {
 	}
 
 	@Override
-	public Map<Long, TaxInvoiceAgregate> computeTaxAggregateMap(Map<String, Object> methodContext)
+	public Map<String, TaxInvoiceAgregate> computeTaxAggregateMap(Map<String, Object> methodContext)
 			throws BusinessException {
 		return null;
 	}

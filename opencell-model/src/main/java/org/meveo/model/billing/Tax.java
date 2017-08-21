@@ -30,6 +30,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
@@ -87,5 +88,9 @@ public class Tax extends BusinessCFEntity {
 
 	public void setPercent(BigDecimal percent) {
 		this.percent = percent;
+	}
+	
+	public String getIdOrCode() {
+		return StringUtils.isBlank(id) ? getCode() : String.valueOf(id);
 	}
 }

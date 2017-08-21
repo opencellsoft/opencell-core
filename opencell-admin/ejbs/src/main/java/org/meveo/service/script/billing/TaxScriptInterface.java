@@ -39,5 +39,5 @@ public interface TaxScriptInterface {
 	 * @return
 	 * @throws BusinessException
 	 */
-	Map<Long, TaxInvoiceAgregate> computeTaxAggregateMap(Map<String, Object> methodContext) throws BusinessException;
+	Map<String, TaxInvoiceAgregate> computeTaxAggregateMap(Map<String, Object> methodContext) throws BusinessException;
 }

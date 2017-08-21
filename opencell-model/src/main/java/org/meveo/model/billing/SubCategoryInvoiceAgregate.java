@@ -78,6 +78,9 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 	
 	@Transient
 	private BigDecimal oldAmountWithTax;
+	
+	@Transient
+	private Set<Tax> subCategoryTaxesTransient;
 
 	public SubCategoryInvoiceAgregate() {
 
@@ -230,6 +233,23 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 	public String toString() {
 		return "SubCategoryInvoiceAgregate [id="+id+",invoiceSubCategory=" + (invoiceSubCategory == null ? null:invoiceSubCategory.getCode() )+ ", oldAmountWithoutTax=" +
 	oldAmountWithoutTax + ", oldAmountWithTax="+ oldAmountWithTax + "]";
+	}
+
+	public Set<Tax> getSubCategoryTaxesTransient() {
+		return subCategoryTaxesTransient;
+	}
+
+	public void setSubCategoryTaxesTransient(Set<Tax> subCategoryTaxesTransient) {
+		this.subCategoryTaxesTransient = subCategoryTaxesTransient;
+	}
+	
+	public void addSubCategoryTaxTransient(Tax subCategoryTax) {
+		if (subCategoryTaxesTransient == null) {
+			subCategoryTaxesTransient = new HashSet<Tax>();
+		}
+		if (subCategoryTax != null) {
+			subCategoryTaxesTransient.add(subCategoryTax);
+		}
 	}
 
 }

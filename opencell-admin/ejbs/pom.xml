@@ -554,11 +554,6 @@
 		<!-- <artifactId>jaxrs-api</artifactId> -->
 		<!-- </dependency> -->
 
-		<!-- <dependency> -->
-		<!-- <groupId>org.jboss.spec.javax.ws.rs</groupId> -->
-		<!-- <artifactId>jboss-jaxrs-api_2.0_spec</artifactId> -->
-		<!-- </dependency> -->
-
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -598,6 +593,7 @@
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
+			<version>23.0</version>
 		</dependency>
                 
 	</dependencies>
