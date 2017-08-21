@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CreditCardTypeEnum;
 
@@ -166,7 +167,7 @@ public class CardPaymentMethodDto extends PaymentMethodDto {
             paymentMethod.setCardNumber(getCardNumber());
             paymentMethod.setIssueNumber(getIssueNumber());
         }
-        paymentMethod.setHiddenCardNumber(cardNumber.substring(cardNumber.length() - 4));
+        paymentMethod.setHiddenCardNumber(StringUtils.hideCardNumber(getCardNumber()));
         paymentMethod.setOwner(getOwner());
         paymentMethod.setCardType(getCardType());
         paymentMethod.setPreferred(isPreferred());

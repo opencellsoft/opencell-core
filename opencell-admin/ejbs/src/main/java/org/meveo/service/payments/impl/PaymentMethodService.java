@@ -119,7 +119,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
             return;
         }
 
-        cardPaymentMethod.setHiddenCardNumber(cardPaymentMethod.getCardNumber().substring(cardPaymentMethod.getCardNumber().length() - 4));
+        cardPaymentMethod.setHiddenCardNumber(StringUtils.hideCardNumber(cardPaymentMethod.getCardNumber()));
 
         String coutryCode = null;
         Country country = countryService.findByName(customerAccount.getAddress() != null ? customerAccount.getAddress().getCountry() : null);
