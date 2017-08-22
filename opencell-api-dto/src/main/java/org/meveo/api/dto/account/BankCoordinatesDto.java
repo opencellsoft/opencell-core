@@ -69,6 +69,9 @@ public class BankCoordinatesDto implements Serializable {
     }
 
     public BankCoordinatesDto(BankCoordinates e) {
+    	if(e == null){
+    		return;
+    	}
         bankCode = e.getBankCode();
         branchCode = e.getBranchCode();
         accountNumber = e.getAccountNumber();
