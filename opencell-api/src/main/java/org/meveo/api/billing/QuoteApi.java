@@ -651,6 +651,11 @@ public class QuoteApi extends BaseApi {
 
         String code = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.PRODUCT_INSTANCE_CODE.getCharacteristicName(), String.class,
             UUID.randomUUID().toString());
+        
+        String criteria1 = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.CRITERIA_1.getCharacteristicName(), String.class,null);
+        String criteria2 = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.CRITERIA_2.getCharacteristicName(), String.class,null);
+        String criteria3 = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.CRITERIA_3.getCharacteristicName(), String.class,null);
+        
         ProductInstance productInstance = new ProductInstance(quoteItem.getUserAccount(), subscription, productTemplate, quantity, chargeDate, code,
             productTemplate.getDescription(), null);
         productInstance.setOrderNumber(quoteItem.getQuote().getCode());
@@ -664,8 +669,8 @@ public class QuoteApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw new BusinessException("Failed to associate custom field instance to an entity", e);
         }
-
-        productInstanceService.instantiateProductInstance(productInstance, null, null, null, true);
+log.info("\n\n\n\n\n criteria1:"+criteria1+" \n\n\n\n");
+        productInstanceService.instantiateProductInstance(productInstance, criteria1, criteria2, criteria3, true);
 
         return productInstance;
     }

@@ -62,6 +62,7 @@ public class CardPaymentMethod extends PaymentMethod {
 
     public CardPaymentMethod(String alias, boolean preferred) {
         super();
+        this.paymentType = PaymentMethodEnum.CARD;
         this.alias = alias;
         this.preferred = preferred;
     }

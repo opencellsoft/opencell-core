@@ -36,6 +36,7 @@ public class DDPaymentMethod extends PaymentMethod {
 
     public DDPaymentMethod(String alias, boolean preferred) {
         super();
+        this.paymentType = PaymentMethodEnum.DIRECTDEBIT;
         this.alias = alias;
         this.preferred = preferred;
     }

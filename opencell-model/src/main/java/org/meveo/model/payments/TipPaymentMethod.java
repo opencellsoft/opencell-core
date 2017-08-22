@@ -22,6 +22,7 @@ public class TipPaymentMethod extends PaymentMethod {
 
     public TipPaymentMethod(String alias, boolean preferred) {
         super();
+        this.paymentType = PaymentMethodEnum.TIP;
         this.alias = alias;
         this.preferred = preferred;
     }
