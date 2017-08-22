@@ -1,7 +1,12 @@
 package org.meveo.service.billing.impl;
 
+
 import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
+
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.ejb.Lock;
 import javax.ejb.LockType;
@@ -25,13 +30,15 @@ import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
 /**
- * A singleton service to handle synchronized calls. DO not change lock mode to Write
+ * A singleton service to handle synchronized calls. DO not change lock mode to
+ * Write
  * 
  * @author Andrius Karpavicius
  */
 @Singleton
 @Lock(LockType.WRITE)
 public class ServiceSingleton {
+
 
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
@@ -51,6 +58,105 @@ public class ServiceSingleton {
 
     @Inject
     private Logger log;
+    
+    private Map<String, Object> appProviderMap = new HashMap();
+
+	/**
+	 * Get invoice number sequence. NOTE: method is executed synchronously due
+	 * to WRITE lock. DO NOT CHANGE IT.
+	 * 
+	 * @param invoiceDate
+	 *            Invoice date
+	 * @param invoiceTypeId
+	 *            Invoice type id
+	 * @param seller
+	 *            Seller
+	 * @param cfName
+	 *            CFT name
+	 * @param step
+	 *            A number to increment by
+	 * @return An invoice number sequence info
+	 * @throws BusinessException
+	 */
+	@Lock(LockType.WRITE)
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public Sequence getInvoiceNumberSequence(Date invoiceDate, Long invoiceTypeId, Seller seller, String cfName,
+			int step, Object currentValObj) throws BusinessException {
+		long startDate = System.currentTimeMillis();
+		Long currentNbFromCF = null;
+		if (currentValObj == null) {
+			currentValObj = customFieldInstanceService.getCFValue(seller, cfName, invoiceDate);
+		}
+		log.info("After currentValObj : " + (System.currentTimeMillis() - startDate));
+		
+		//Object currentValObj = customFieldInstanceService.getCFValue(seller, cfName, invoiceDate);
+		if (currentValObj != null) {
+			currentNbFromCF = (Long) currentValObj;
+			currentNbFromCF = currentNbFromCF + step;
+			customFieldInstanceService.setCFValue(seller, cfName, currentNbFromCF, invoiceDate);
+		} else {
+			String key = buildKeyForMap(appProvider, cfName, invoiceDate);
+			currentValObj = appProviderMap.get(key);
+			if (currentValObj == null && !appProviderMap.containsKey(key)) {
+				currentValObj = customFieldInstanceService.getCFValue(appProvider, cfName, invoiceDate);
+				appProviderMap.put(key, currentValObj);
+			}
+			if (currentValObj != null) {
+				currentNbFromCF = (Long) currentValObj;
+				currentNbFromCF = currentNbFromCF + step;
+				customFieldInstanceService.setCFValue(appProvider, cfName, currentNbFromCF, invoiceDate);
+			}
+		}
+		
+		log.info("Before invoiceTypeService : " + (System.currentTimeMillis() - startDate));
+
+		InvoiceType invoiceType = invoiceTypeService.findById(invoiceTypeId);
+		
+		log.info("After invoiceTypeService : " + (System.currentTimeMillis() - startDate));
+		
+		Sequence sequence = invoiceType.getSellerSequenceSequenceByType(seller);
+		
+		log.info("After sequence : " + (System.currentTimeMillis() - startDate));
+		
+		if (sequence == null) {
+			sequence = invoiceType.getSequence();
+		}
+		if (sequence != null) {
+			Long currentInvoiceNb = sequence.getCurrentInvoiceNb();
+			sequence.setCurrentInvoiceNb(currentNbFromCF != null ? currentNbFromCF
+					: ((currentInvoiceNb == null ? 0L : currentInvoiceNb) + step));
+			invoiceType = invoiceTypeService.update(invoiceType);
+			log.info("After update : " + (System.currentTimeMillis() - startDate));
+		} else {
+			sequence = new Sequence();
+			sequence.setCurrentInvoiceNb(1L);
+			sequence.setSequenceSize(9);
+			sequence.setPrefixEL("");
+			invoiceType.setSequence(sequence);
+			invoiceTypeService.update(invoiceType);
+			log.info("After update else : " + (System.currentTimeMillis() - startDate));
+		}
+
+		return sequence;
+	}
+
+	/**
+	 * @param appProvider
+	 *            appliation provider
+	 * @param cfName
+	 *            custom field name
+	 * @param invoiceDate
+	 *            invoice date
+	 * @return string.
+	 */
+	private String buildKeyForMap(Provider appProvider, String cfName, Date invoiceDate) {
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append(appProvider.getCode());
+		stringBuilder.append(cfName);
+		SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+		stringBuilder.append(format.format(invoiceDate));
+		return stringBuilder.toString();
+	}
 
     /**
      * Get invoice number sequence. NOTE: method is executed synchronously due to WRITE lock. DO NOT CHANGE IT.
@@ -218,4 +324,5 @@ public class ServiceSingleton {
         invoiceTypeService.create(invoiceType);
         return invoiceType;
     }
+
 }

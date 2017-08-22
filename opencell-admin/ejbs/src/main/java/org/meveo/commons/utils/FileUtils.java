@@ -72,7 +72,7 @@ public final class FileUtils {
 	 *            Extension.
 	 * @return Renamed File object.
 	 */
-	public static File addExtension(File file, String extension) {
+	public static synchronized File addExtension(File file, String extension) {
 		if (file.exists()) {
 			String name = file.getName();
 			File dest = new File(file.getParentFile(), name + extension);

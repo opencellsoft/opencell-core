@@ -3,12 +3,14 @@ package org.meveo.service.crm.impl;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.BaseEntity;
@@ -46,6 +48,9 @@ public class SubscriptionImportService extends ImportService{
 
 	@Inject
 	private ServiceInstanceService serviceInstanceService;
+	
+	@Inject
+	private UserAccountService userAccountService;
 
 	@Inject
 	private AccessService accessService;
@@ -54,38 +59,53 @@ public class SubscriptionImportService extends ImportService{
 	private OfferTemplateService offerTemplateService;
 
 	@Inject
-	private UserAccountService userAccountService;
-	
-    @Inject
     @CurrentUser
     protected MeveoUser currentUser;
 
 	private ParamBean paramBean = ParamBean.getInstance();
-
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	
+	private Map<String, OfferTemplate> offerMap = new HashedMap();
+	
+	private Map<String, UserAccount> userAccountMap = new HashedMap();
+	
+	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public int importSubscription(CheckedSubscription checkSubscription,
 			org.meveo.model.jaxb.subscription.Subscription jaxbSubscription, String fileName, int i)
-			throws BusinessException, SubscriptionServiceException, ImportIgnoredException {
+					throws BusinessException, SubscriptionServiceException, ImportIgnoredException {
 
-        OfferTemplate offerTemplate = null;
-        try {
-            offerTemplate = offerTemplateService.findByCode(jaxbSubscription.getOfferCode().toUpperCase(),
-                DateUtils.parseDateWithPattern(jaxbSubscription.getSubscriptionDate(), paramBean.getProperty("connectorCRM.dateFormat", "dd/MM/yyyy")));
-        } catch (Exception e) {
-            log.warn("failed to find offerTemplate ", e);
-        }
-		checkSubscription.offerTemplate = offerTemplate;
+		OfferTemplate offerTemplate = null;
+		offerTemplate = offerMap.get(jaxbSubscription.getOfferCode().toUpperCase());
+		if (offerTemplate == null) {
 
-		UserAccount userAccount = null;
-		try {
-			userAccount = userAccountService.findByCode(jaxbSubscription.getUserAccountId());
-		} catch (Exception e) {
-			log.error("failed to find userAccount",e);
+
+			try {
+				offerTemplate = offerTemplateService.findByCode(jaxbSubscription.getOfferCode().toUpperCase(),
+						DateUtils.parseDateWithPattern(jaxbSubscription.getSubscriptionDate(), paramBean.getProperty("connectorCRM.dateFormat", "dd/MM/yyyy")));
+				offerMap.put(jaxbSubscription.getOfferCode().toUpperCase(), offerTemplate);
+			} catch (Exception e) {
+				log.warn("failed to find offerTemplate ", e);
+			}
 		}
-		checkSubscription.userAccount = userAccount;
-
+		checkSubscription.offerTemplate = offerTemplate;
+		
+		UserAccount userAccount = checkSubscription.userAccount;
+		if (userAccount == null) {
+			userAccount = userAccountMap.get(jaxbSubscription.getUserAccountId());
+			if (userAccount == null) {
+				try {
+					userAccount = userAccountService.findByCode(jaxbSubscription.getUserAccountId());
+					userAccountMap.put(jaxbSubscription.getUserAccountId(), userAccount);
+				} catch (Exception e) {
+					log.error("failed to find userAccount",e);
+				}
+			}
+			checkSubscription.userAccount = userAccount;
+		}
+		boolean ignoreCheck = jaxbSubscription.getIgnoreCheck() != null && jaxbSubscription.getIgnoreCheck().booleanValue();
 		try {
-			checkSubscription.subscription = subscriptionService.findByCode(jaxbSubscription.getCode());
+			if (!ignoreCheck) {
+				checkSubscription.subscription = subscriptionService.findByCode(jaxbSubscription.getCode());
+			}
 		} catch (Exception e) {
 			log.error("failed to find checkSubscription",e);
 		}
@@ -93,7 +113,7 @@ public class SubscriptionImportService extends ImportService{
 		Subscription subscription = checkSubscription.subscription;
 		if (subscription != null) {
 			if (!"ACTIVE".equals(jaxbSubscription.getStatus().getValue())) {
-				
+
 				SubscriptionTerminationReason subscriptionTerminationType = null;
 				try {
 					subscriptionTerminationType = subscriptionTerminationReasonService.findByCodeReason(
@@ -125,7 +145,7 @@ public class SubscriptionImportService extends ImportService{
 		subscription.setOffer(checkSubscription.offerTemplate);
 		subscription.setCode(jaxbSubscription.getCode());
 		subscription.setDescription(jaxbSubscription.getDescription());
-		
+
 		subscription.setSubscriptionDate(DateUtils.parseDateWithPattern(jaxbSubscription.getSubscriptionDate(),
 				paramBean.getProperty("connectorCRM.dateFormat", "dd/MM/yyyy")));
 		subscription.setEndAgreementDate(DateUtils.parseDateWithPattern(jaxbSubscription.getEndAgreementDate(),
@@ -136,18 +156,21 @@ public class SubscriptionImportService extends ImportService{
 		subscription.setUserAccount(checkSubscription.userAccount);
 		subscriptionService.create(subscription);
 
-       if (jaxbSubscription.getCustomFields() != null) {
-            populateCustomFields(jaxbSubscription.getCustomFields().getCustomField(), subscription);
-        }   
-       
+		if (jaxbSubscription.getCustomFields() != null) {
+			populateCustomFields(jaxbSubscription.getCustomFields().getCustomField(), subscription);
+		}   
+
 		log.info("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:" + jaxbSubscription.getCode()
-				+ ", status:Created");
+		+ ", status:Created");
 
 		for (org.meveo.model.jaxb.subscription.ServiceInstance serviceInst : checkSubscription.serviceInsts) {
 			try {
 				ServiceTemplate serviceTemplate = null;
 				ServiceInstance serviceInstance = new ServiceInstance();
 				serviceTemplate = serviceTemplateService.findByCode(serviceInst.getCode().toUpperCase());
+				if (serviceTemplate == null) {
+					continue;
+				}
 				serviceInstance.setCode(serviceTemplate.getCode());
 				serviceInstance.setDescription(serviceTemplate.getDescription());
 				serviceInstance.setServiceTemplate(serviceTemplate);
@@ -168,10 +191,10 @@ public class SubscriptionImportService extends ImportService{
 				subscription.getServiceInstances().add(serviceInstance);
 
 				if (serviceInst.getRecurringCharges() != null && serviceInstance.getRecurringChargeInstances() != null) {
-				   updateCharges(serviceInstance.getRecurringChargeInstances(),serviceInst.getRecurringCharges());
+					updateCharges(serviceInstance.getRecurringChargeInstances(),serviceInst.getRecurringCharges());
 				}
 				if (serviceInst.getSubscriptionCharges() != null && serviceInstance.getSubscriptionChargeInstances() != null) {
-				   updateCharges(serviceInstance.getSubscriptionChargeInstances(),serviceInst.getSubscriptionCharges());
+					updateCharges(serviceInstance.getSubscriptionChargeInstances(),serviceInst.getSubscriptionCharges());
 				}
 				if (serviceInst.getTerminationCharges() != null && serviceInstance.getTerminationChargeInstances() != null) {
 					updateCharges(serviceInstance.getTerminationChargeInstances(),serviceInst.getTerminationCharges());
@@ -198,17 +221,18 @@ public class SubscriptionImportService extends ImportService{
 			org.meveo.model.mediation.Access access = new org.meveo.model.mediation.Access();
 			access.setSubscription(subscription);
 			access.setAccessUserId(jaxbAccessPoint.getAccessUserId());
-            access.setStartDate(DateUtils.parseDateWithPattern(jaxbAccessPoint.getStartDate(), paramBean.getDateFormat()));
-            access.setEndDate(DateUtils.parseDateWithPattern(jaxbAccessPoint.getEndDate(), paramBean.getDateFormat()));
-			
-//	        if (jaxbAccessPoint.getCustomFields() != null) {
-//	            populateCustomFields(AccountLevelEnum.ACC, jaxbAccessPoint.getCustomFields().getCustomField(), subscription, "access");
-//	        }
-			
+			access.setStartDate(DateUtils.parseDateWithPattern(jaxbAccessPoint.getStartDate(), paramBean.getDateFormat()));
+			access.setEndDate(DateUtils.parseDateWithPattern(jaxbAccessPoint.getEndDate(), paramBean.getDateFormat()));
+
+			//	        if (jaxbAccessPoint.getCustomFields() != null) {
+			//	            populateCustomFields(AccountLevelEnum.ACC, jaxbAccessPoint.getCustomFields().getCustomField(), subscription, "access");
+			//	        }
+
 			accessService.create(access);
 			log.info("File:" + fileName + ", typeEntity:access, index:" + i + ", AccessUserId:"
 					+ access.getAccessUserId());
 		}
+
 
 		return 1;
 	}

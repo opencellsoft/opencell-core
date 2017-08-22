@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -12,6 +13,7 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ImportFileFiltre;
@@ -78,6 +80,11 @@ public class ImportSubscriptionsJobBean {
 	int nbSubscriptionsIgnored;
 	int nbSubscriptionsCreated;
 	SubscriptionImportHisto subscriptionImportHisto;
+	
+	
+	private Map<String, OfferTemplate> offerMap = new HashedMap();
+	
+	private Map<String, UserAccount> userAccountMap = new HashedMap();
 
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
@@ -168,6 +175,7 @@ public class ImportSubscriptionsJobBean {
 		for (org.meveo.model.jaxb.subscription.Subscription jaxbSubscription : jaxbSubscriptions.getSubscription()) {
 			try {
 				log.debug("importing subscription index={}, code={}", i++, jaxbSubscription.getCode());
+				
 				CheckedSubscription checkSubscription = subscriptionCheckError(jaxbSubscription);
 
 				if (checkSubscription == null) {
@@ -290,13 +298,18 @@ public class ImportSubscriptionsJobBean {
 
 			return null;
 		}
-
+		/**
 		OfferTemplate offerTemplate = null;
-		try {
-			offerTemplate = offerTemplateService.findByCode(jaxbSubscription.getOfferCode().toUpperCase(), DateUtils.parseDateWithPattern(jaxbSubscription.getSubscriptionDate(),
-                paramBean.getProperty("connectorCRM.dateFormat", "dd/MM/yyyy")));
-		} catch (Exception e) {
-			log.warn("failed to find offerTemplate ",e);
+		
+		offerTemplate = offerMap.get(jaxbSubscription.getOfferCode().toUpperCase());
+		if (offerTemplate == null) {
+			try {
+				offerTemplate = offerTemplateService.findByCode(jaxbSubscription.getOfferCode().toUpperCase(), DateUtils.parseDateWithPattern(jaxbSubscription.getSubscriptionDate(),
+						paramBean.getProperty("connectorCRM.dateFormat", "dd/MM/yyyy")));
+				offerMap.put(jaxbSubscription.getOfferCode().toUpperCase(), offerTemplate);
+			} catch (Exception e) {
+				log.warn("failed to find offerTemplate ",e);
+			}
 		}
 
 		if (offerTemplate == null) {
@@ -307,10 +320,14 @@ public class ImportSubscriptionsJobBean {
 		checkSubscription.offerTemplate = offerTemplate;
 
 		UserAccount userAccount = null;
-		try {
-			userAccount = userAccountService.findByCode(jaxbSubscription.getUserAccountId());
-		} catch (Exception e) {
-			log.error("error generated while getting user account",e);
+		userAccount = userAccountMap.get(jaxbSubscription.getUserAccountId());
+		if (userAccount == null) {
+			try {
+				userAccount = userAccountService.findByCode(jaxbSubscription.getUserAccountId());
+				userAccountMap.put(jaxbSubscription.getUserAccountId(), userAccount);
+			} catch (Exception e) {
+				log.error("error generated while getting user account",e);
+			}
 		}
 
 		if (userAccount == null) {
@@ -321,7 +338,7 @@ public class ImportSubscriptionsJobBean {
 		checkSubscription.userAccount = userAccount;
 
 		try {
-			checkSubscription.subscription = subscriptionService.findByCode(jaxbSubscription.getCode());
+			//checkSubscription.subscription = subscriptionService.findByCode(jaxbSubscription.getCode());
 		} catch (Exception e) {
 			log.error("failed to find subscription",e);
 		}
@@ -331,7 +348,7 @@ public class ImportSubscriptionsJobBean {
 					"Cannot find subscription with code=" + jaxbSubscription.getCode());
 			return null;
 		}
-
+	*/
 		if ("ACTIVE".equals(jaxbSubscription.getStatus().getValue())) {
 			if (jaxbSubscription.getServices() == null || jaxbSubscription.getServices().getServiceInstance() == null
 					|| jaxbSubscription.getServices().getServiceInstance().isEmpty()) {

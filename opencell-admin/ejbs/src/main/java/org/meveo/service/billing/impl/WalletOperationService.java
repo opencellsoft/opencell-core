@@ -1381,35 +1381,52 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	}
 
 	public List<WalletOperation> chargeWalletOperation(WalletOperation op) throws BusinessException {
+		long startDate = System.currentTimeMillis();
+		
 		List<WalletOperation> result = new ArrayList<>();
-		log.debug("chargeWalletOperation on chargeInstanceId:{}", op.getChargeInstance().getId());
+		ChargeInstance chargeInstance = op.getChargeInstance();
+		log.info("After chargeInstance:" + (System.currentTimeMillis() - startDate));
+		Long id = chargeInstance.getId();
+		log.debug("chargeWalletOperation on chargeInstanceId:{}", id);
 		//case of scheduled operation (for revenue recognition)
-		if(op.getChargeInstance().getId()==null){
-			op.setWallet(op.getChargeInstance().getUserAccount().getWallet());
+		UserAccount userAccount = chargeInstance.getUserAccount();
+		log.info("After userAccount:" + (System.currentTimeMillis() - startDate));
+		if (id == null) {
+			log.info("Inside null:" + (System.currentTimeMillis() - startDate));
+			op.setWallet(userAccount.getWallet());
 			log.debug("chargeWalletOperation is create schedule on wallet {}", op.getWallet());
 			result.add(op);
 			create(op);
-		} else if (walletCacheContainerProvider.isWalletIdsCached(op.getChargeInstance().getId())) {
-			List<Long> walletIds = walletCacheContainerProvider.getWallets(op.getChargeInstance().getId());
+			log.info("After create:" + (System.currentTimeMillis() - startDate));
+		} else if (walletCacheContainerProvider.isWalletIdsCached(id)) {
+			log.info("Inside isWalletIdsCached:" + (System.currentTimeMillis() - startDate));
+			List<Long> walletIds = walletCacheContainerProvider.getWallets(id);
+			log.info("After walletIds:" + (System.currentTimeMillis() - startDate));
 			log.debug("chargeWalletOperation chargeInstanceId found in usageCache with {} wallet ids", walletIds.size());
 			result = chargeOnWalletIds(walletIds, op);
+			log.info("After chargeOnWalletIds:" + (System.currentTimeMillis() - startDate));
 
-		} else if (op.getChargeInstance().getPrepaid() && (op.getChargeInstance() instanceof RecurringChargeInstance || op.getChargeInstance() instanceof OneShotChargeInstance)) {
+		} else if (chargeInstance.getPrepaid() && (chargeInstance instanceof RecurringChargeInstance || chargeInstance instanceof OneShotChargeInstance)) {
+			log.info("Inside getPrepaid:" + (System.currentTimeMillis() - startDate));
 			List<Long> walletIds = new ArrayList<>();
-			for (WalletInstance wallet : op.getChargeInstance().getWalletInstances()) {
+			List<WalletInstance> walletInstances = chargeInstance.getWalletInstances();
+			for (WalletInstance wallet : walletInstances) {
 				walletIds.add(wallet.getId());
 			}
 			log.debug("chargeWalletOperation is recurring or oneshot, and associated to {} wallet ids", walletIds.size());
 			result = chargeOnWalletIds(walletIds, op);
-
-		} else if (!op.getChargeInstance().getPrepaid()) {
-			op.setWallet(op.getChargeInstance().getUserAccount().getWallet());
+			log.info("After chargeOnWalletIds:" + (System.currentTimeMillis() - startDate));
+		} else if (!chargeInstance.getPrepaid()) {
+			log.info("Inside not getPrepaid:" + (System.currentTimeMillis() - startDate));
+			op.setWallet(userAccount.getWallet());
 			log.debug("chargeWalletOperation is postpaid, set wallet to {}", op.getWallet());
 			result.add(op);
 			create(op);
 			walletCacheContainerProvider.updateBalanceCache(op);
+			
+			log.info("After updateBalanceCache:" + (System.currentTimeMillis() - startDate));
 		} else {
-			log.error("chargeWalletOperation wallet not found for chargeInstance {} ", op.getChargeInstance().getId());
+			log.error("chargeWalletOperation wallet not found for chargeInstance {} ", id);
 			throw new BusinessException("WALLET_NOT_FOUND");
 		}
 		return result;

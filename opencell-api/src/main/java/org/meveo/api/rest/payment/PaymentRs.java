@@ -11,6 +11,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.PaymentActionStatus;
 import org.meveo.api.dto.payment.CardPaymentMethodDto;
 import org.meveo.api.dto.payment.CardPaymentMethodTokenDto;
 import org.meveo.api.dto.payment.CardPaymentMethodTokensDto;
@@ -40,11 +41,11 @@ public interface PaymentRs extends IBaseRs {
      * Creates automated payment. It also process if a payment is matching or not
      * 
      * @param postData Payment's data
-     * @return
+     * @return payment action status
      */
     @POST
     @Path("/create")
-    public ActionStatus create(PaymentDto postData);
+    public PaymentActionStatus create(PaymentDto postData);
 
     /**
      * Returns a list of account operations along with the balance of a customer
