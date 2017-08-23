@@ -45,6 +45,8 @@ import org.meveo.service.base.BusinessService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.script.offer.OfferModelScriptService;
 
+import com.google.common.util.concurrent.Service;
+
 @Stateless
 public class SubscriptionService extends BusinessService<Subscription> {
 
@@ -278,4 +280,17 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
         return ids;
     }
+    
+    
+    public List<ServiceInstance> listBySubscription(Subscription subscription) {
+		QueryBuilder qb = new QueryBuilder(ServiceInstance.class, "c");
+		qb.addCriterionEntity("subscription", subscription);
+
+		try {
+			return (List<ServiceInstance>) qb.getQuery(getEntityManager()).getResultList();
+		} catch (NoResultException e) {
+			log.warn("error while getting user account list by billing account",e);
+			return null;
+		}
+	}
 }

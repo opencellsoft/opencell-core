@@ -364,7 +364,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 	// used to rate or rerate a bareWalletOperation
 	public void rateBareWalletOperation(WalletOperation bareWalletOperation,
 			BigDecimal unitPriceWithoutTax, BigDecimal unitPriceWithTax, Long countryId, TradingCurrency tcurrency) throws BusinessException {
-
+		long startDate = System.currentTimeMillis();
 		PricePlanMatrix ratePrice = null;
 
 		if (unitPriceWithoutTax == null) {
@@ -390,6 +390,9 @@ public class RatingService extends BusinessService<WalletOperation>{
 						unitPriceWithoutTax);
 			}
 		}
+		
+		log.info("After unitPriceWithoutTax:" + (System.currentTimeMillis() - startDate));
+		
 		// if the wallet operation correspond to a recurring charge that is
 		// shared, we divide the price by the number of
 		// shared charges
@@ -413,6 +416,8 @@ public class RatingService extends BusinessService<WalletOperation>{
 				}
 			}
 		}
+		
+		log.info("After getChargeInstance:" + (System.currentTimeMillis() - startDate));
 
 		BigDecimal priceWithoutTax = bareWalletOperation.getQuantity().multiply(unitPriceWithoutTax);
 		BigDecimal priceWithTax = null;
@@ -448,6 +453,8 @@ public class RatingService extends BusinessService<WalletOperation>{
 		bareWalletOperation.setAmountWithTax(priceWithTax);
 		bareWalletOperation.setAmountTax(amountTax);
 		
+		
+		log.info("After bareWalletOperation:" + (System.currentTimeMillis() - startDate));
 	
 		if(ratePrice!=null && ratePrice.getScriptInstance()!=null){
 			log.debug("start to execute script instance for ratePrice {}",ratePrice); 			
@@ -470,7 +477,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 			Long countryId, TradingCurrency tcurrency, Long sellerId) throws BusinessException {
 		// FIXME: the price plan properties could be null !
 
-		log.info("ratePrice rate " + bareOperation);
+		//log.info("ratePrice rate " + bareOperation);
 		for (PricePlanMatrix pricePlan : listPricePlan) {
 			boolean sellerAreEqual = pricePlan.getSeller() == null || pricePlan.getSeller().getId().equals(sellerId);
 			if (!sellerAreEqual) {
