@@ -165,7 +165,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 		entity = super.initEntity();
 		entity.setDueDate(new Date());
 		entity.setInvoiceDate(new Date());
-		setStartDate(new Date());
+		
 		if (entity.isTransient()) {
 			if (mode != null && mode != null) {
 				setDetailled("detailed".equals(mode));
