@@ -1,5 +1,35 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
+	<changeSet id="#2730_20170824 Add Account Operation Types"
+		author="EdwardPLegaspi">
+
+		<insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-26" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="account_code" value="90590,41115,00000,000,0000,00000000,00000" />
+			<column name="account_code_client_side" value="90590,51214170,00000,000,0000,00000000,00000" />
+			<column name="code" value="TRANS_CRED" />
+			<column name="description" value="Transfer Credit" />
+			<column name="occ_category" value="CREDIT" />
+		</insert>
+		
+		<insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-27" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="account_code" value="90590,41115,00000,000,0000,00000000,00000" />
+			<column name="account_code_client_side" value="90590,51214170,00000,000,0000,00000000,00000" />
+			<column name="code" value="TRANS_DEB" />
+			<column name="description" value="Transfer Debit" />
+			<column name="occ_category" value="DEBIT" />
+		</insert>
+
+	</changeSet>
 
 </databaseChangeLog>
