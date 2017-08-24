@@ -573,4 +573,18 @@ public class DateUtils {
         }
         return false;
     }
+    
+	public static boolean isWithinDate(Date dateToCheck, Date startDate, Date endDate) {
+		if (startDate == null && endDate == null) {
+			return true;
+		}
+		if (startDate == null) {
+			return !dateToCheck.after(endDate);
+		}
+		if (endDate == null) {
+			return !dateToCheck.before(startDate);
+		}
+
+		return !dateToCheck.before(startDate) && !dateToCheck.after(endDate);
+	}
 }
