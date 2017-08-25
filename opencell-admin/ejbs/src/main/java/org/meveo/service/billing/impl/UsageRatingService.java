@@ -55,7 +55,6 @@ import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
@@ -123,8 +122,6 @@ public class UsageRatingService {
     @ApplicationProvider
     private Provider appProvider;
     
-	@Inject
-	protected CatMessagesService catMessagesService;
 	
 	@Inject
 	private ReservationService reservationService;
@@ -219,7 +216,13 @@ public class UsageRatingService {
         walletOperation.setWallet(userAccount.getWallet());
         walletOperation.setBillingAccount(chargeInstance.getSubscription().getUserAccount().getBillingAccount());
         walletOperation.setCode(chargeTemplate.getCode());
-        walletOperation.setDescription(catMessagesService.getMessageDescriptionByCodeAndLanguage(chargeTemplate.getCode(),userAccount.getBillingAccount().getTradingLanguage().getLanguageCode(),cachedChargeInstance.getDescription()));
+        
+        String descTranslated = (cachedChargeInstance.getDescription() == null) ? chargeTemplate.getDescriptionOrCode() : cachedChargeInstance.getDescription();
+        if (chargeTemplate.getDescriptionI18n() != null && chargeTemplate.getDescriptionI18n().containsKey(userAccount.getBillingAccount().getTradingLanguage().getLanguageCode())) {
+            descTranslated = chargeTemplate.getDescriptionI18n().get(userAccount.getBillingAccount().getTradingLanguage().getLanguageCode());
+        }
+        
+        walletOperation.setDescription(descTranslated);
         walletOperation.setQuantity(quantityToCharge);
 
         walletOperation.setQuantity(NumberUtil.getInChargeUnit(walletOperation.getQuantity(), chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(), chargeTemplate.getRoundingMode()));

@@ -63,7 +63,7 @@
                                 <h:outputText id="family" value="#{offerTemplateBean.businessOfferModel.code}" styleClass="field-value" />
                             </hftl:decorateFormField>                            
                         </c:if>
-                        <hftl:formLanguageFields entity="#{offerTemplateBean.entity}" backingBean="#{offerTemplateBean}" multiLang="true" />
+                        <hftl:formLanguageFields field="description" />
 
                         <hftl:formField label="#{messages['commons.valid']}" field="validity" time="true" displayOneLine="true" labelWidth="100" />
                         <hftl:formField label="#{messages['commons.status']}" field="lifeCycleStatus" displayOneLine="true" labelWidth="100" />

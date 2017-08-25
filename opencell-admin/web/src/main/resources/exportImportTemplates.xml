@@ -245,8 +245,6 @@
             <template ref="Title" />
             <template ref="CustomerBrand" />
             <template ref="CustomerCategory" />
-            <template ref="CreditCategory" />
-            <!-- <template ref="CatMessages" /> -->
             <template ref="MessageTemplate" />
             <template ref="Calendar" />
             <template ref="CustomEntityTemplate" />

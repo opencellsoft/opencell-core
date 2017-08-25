@@ -685,4 +685,88 @@
         <!--     <dropTable tableName="crm_custom_field_inst"/> // NOTE: Drop table after you are sure that CF values were migrated correctly -->
     </changeSet>
 
-</databaseChangeLog> 
+    <changeSet id="#2780_20170821" author="AndriusKarpavicius">
+        <addColumn tableName="adm_title">
+            <column name="description_i18n" type="${type.json}" />
+        </addColumn>
+        <addColumn tableName="billing_invoice_cat">
+            <column name="description_i18n" type="${type.json}" />
+        </addColumn>
+        <addColumn tableName="billing_invoice_sub_cat">
+            <column name="description_i18n" type="${type.json}" />
+        </addColumn>
+        <addColumn tableName="billing_tax">
+            <column name="description_i18n" type="${type.json}" />
+        </addColumn>
+        <addColumn tableName="cat_price_plan_matrix">
+            <column name="description_i18n" type="${type.json}" />
+        </addColumn>
+        <addColumn tableName="cat_charge_template">
+            <column name="description_i18n" type="${type.json}" />
+        </addColumn>
+        <addColumn tableName="cat_offer_template">
+            <column name="description_i18n" type="${type.json}" />
+            <column name="long_description_i18n" type="${type.json}" />
+        </addColumn>
+
+        <createTable tableName="tmp_desc_values">
+            <column name="clazz" type="varchar(255)" />
+            <column name="code" type="varchar(255)" />
+            <column name="desc_values_txt" type="text" />
+        </createTable>
+
+    </changeSet>
+
+    <changeSet id="#2780_desc_migration_P1" author="AndriusKarpavicius" dbms="postgresql">
+
+        <sql>delete from tmp_desc_values</sql>
+        <sql>insert into tmp_desc_values (clazz, code, desc_values_txt) (select entity_class, entity_code, '{'|| string_agg('"'||language_code ||'":"'|| description||'"',',') || '}' as desc_value from adm_messages group by entity_class, entity_code order by entity_class)</sql>
+
+        <sql>update adm_title set description_i18n = null</sql>
+        <sql>update adm_title set description_i18n = desc_values_txt from tmp_desc_values where adm_title.code = tmp_desc_values.code and tmp_desc_values.clazz='Title'</sql>
+        <sql>update billing_invoice_cat set description_i18n = null</sql>
+        <sql>update billing_invoice_cat set description_i18n = desc_values_txt from tmp_desc_values where billing_invoice_cat.code = tmp_desc_values.code and tmp_desc_values.clazz='InvoiceCategory'</sql>
+        <sql>update billing_invoice_sub_cat set description_i18n = null</sql>
+        <sql>update billing_invoice_sub_cat set description_i18n = desc_values_txt from tmp_desc_values where billing_invoice_sub_cat.code = tmp_desc_values.code and tmp_desc_values.clazz='InvoiceSubCategory'</sql>
+        <sql>update billing_tax set description_i18n = null</sql>
+        <sql>update billing_tax set description_i18n = desc_values_txt from tmp_desc_values where billing_tax.code = tmp_desc_values.code and tmp_desc_values.clazz='Tax'</sql>
+        <sql>update cat_price_plan_matrix set description_i18n = null</sql>
+        <sql>update cat_price_plan_matrix set description_i18n = desc_values_txt from tmp_desc_values where cat_price_plan_matrix.code = tmp_desc_values.code and tmp_desc_values.clazz='PricePlanMatrix'</sql>
+        <sql>update cat_charge_template set description_i18n = null</sql>
+        <sql>update cat_charge_template set description_i18n = desc_values_txt from tmp_desc_values where cat_charge_template.code = tmp_desc_values.code and tmp_desc_values.clazz in ('OneShotChargeTemplate','ProductChargeTemplate','RecurringChargeTemplate','UsageChargeTemplate','ChargeTemplate')</sql>
+        <sql>update cat_offer_template set description_i18n = null</sql>
+        <sql>update cat_offer_template set description_i18n = desc_values_txt from tmp_desc_values where cat_offer_template.code = tmp_desc_values.code and tmp_desc_values.clazz in ('OfferTemplate','ProductTemplate','BundleTemplate','ProductOffering')</sql>
+    </changeSet>
+    
+    
+    <changeSet id="#2780_desc_migration_N1" author="AndriusKarpavicius" dbms="mysql">
+
+        <sql>SET group_concat_max_len =300000</sql>
+
+        <sql>delete from tmp_desc_values</sql>
+        <sql>insert into tmp_desc_values (clazz, code, desc_values_txt) (select entity_class, entity_code, '{'.concat( GROUP_CONCAT('"'.concat(language_code).concat('":"').concat(description).concat('"')) ).concat('}') as desc_value from adm_messages group by entity_class, entity_code order by entity_class)</sql>
+   
+   
+        <sql>update adm_title set description_i18n = null</sql>
+        <sql>update adm_title join tmp_desc_values on adm_title.code = tmp_desc_values.code set set description_i18n = desc_values_txt from tmp_desc_values where  tmp_desc_values.clazz='Title'</sql>
+        <sql>update billing_invoice_cat set description_i18n = null</sql>
+        <sql>update billing_invoice_cat join tmp_desc_values on billing_invoice_cat.code = tmp_desc_values.code set description_i18n = desc_values_txt from tmp_desc_values where tmp_desc_values.clazz='InvoiceCategory'</sql>
+        <sql>update billing_invoice_sub_cat set description_i18n = null</sql>
+        <sql>update billing_invoice_sub_cat join tmp_desc_values on billing_invoice_sub_cat.code = tmp_desc_values.code set description_i18n = desc_values_txt from tmp_desc_values where tmp_desc_values.clazz='InvoiceSubCategory'</sql>
+        <sql>update billing_tax set description_i18n = null</sql>
+        <sql>update billing_tax join tmp_desc_values on billing_tax.code = tmp_desc_values.code set description_i18n = desc_values_txt from tmp_desc_values where tmp_desc_values.clazz='Tax'</sql>
+        <sql>update cat_price_plan_matrix set description_i18n = null</sql>
+        <sql>update cat_price_plan_matrix join tmp_desc_values on cat_price_plan_matrix.code = tmp_desc_values.code set description_i18n = desc_values_txt from tmp_desc_values where tmp_desc_values.clazz='PricePlanMatrix'</sql>
+        <sql>update cat_charge_template set description_i18n = null</sql>
+        <sql>update cat_charge_template join tmp_desc_values on cat_charge_template.code = tmp_desc_values.code set description_i18n = desc_values_txt from tmp_desc_values where tmp_desc_values.clazz in ('OneShotChargeTemplate','ProductChargeTemplate','RecurringChargeTemplate','UsageChargeTemplate','ChargeTemplate')</sql>
+        <sql>update cat_offer_template set description_i18n = null</sql>
+        <sql>update cat_offer_template join tmp_desc_values on cat_offer_template.code = tmp_desc_values.code set description_i18n = desc_values_txt from tmp_desc_values where tmp_desc_values.clazz in ('OfferTemplate','ProductTemplate','BundleTemplate','ProductOffering')</sql>
+      
+    </changeSet>
+    
+    <changeSet id="#2780_desc_migration_end" author="AndriusKarpavicius">
+        <dropTable tableName="tmp_desc_values" />
+        <!--     <dropTable tableName="adm_messages"/> // NOTE: Drop table after you are sure that description translation values were migrated correctly -->
+    </changeSet>
+
+</databaseChangeLog>

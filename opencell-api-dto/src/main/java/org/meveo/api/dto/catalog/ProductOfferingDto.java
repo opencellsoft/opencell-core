@@ -13,6 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BusinessDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.model.catalog.DigitalResource;
 import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.OfferTemplateCategory;
@@ -22,7 +23,7 @@ import org.meveo.model.catalog.ProductOffering;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProductOfferingDto extends BusinessDto {
 
-	private static final long serialVersionUID = 4599063410509766484L;
+    private static final long serialVersionUID = 4599063410509766484L;
 
     @XmlAttribute()
     protected Date validFrom;
@@ -33,12 +34,12 @@ public class ProductOfferingDto extends BusinessDto {
     @XmlElement(required = true)
     protected String name;
 
-	@XmlElementWrapper(name = "offerTemplateCategories")
-	@XmlElement(name = "offerTemplateCategory")
+    @XmlElementWrapper(name = "offerTemplateCategories")
+    @XmlElement(name = "offerTemplateCategory")
     protected List<OfferTemplateCategoryDto> offerTemplateCategories;
 
-	@XmlElementWrapper(name = "digitalResources")
-	@XmlElement(name = "digitalResource")
+    @XmlElementWrapper(name = "digitalResources")
+    @XmlElement(name = "digitalResource")
     protected List<DigitalResourcesDto> attachments;
 
     protected String modelCode;
@@ -54,9 +55,15 @@ public class ProductOfferingDto extends BusinessDto {
     protected String imageBase64;
 
     protected boolean disabled = false;
-	
-	public ProductOfferingDto() {
-	}
+
+    protected List<LanguageDescriptionDto> languageDescriptions;
+
+    protected String longDescription;
+
+    protected List<LanguageDescriptionDto> longDescriptionsTranslated;
+
+    public ProductOfferingDto() {
+    }
 
     /**
      * Constructor
@@ -67,12 +74,12 @@ public class ProductOfferingDto extends BusinessDto {
      */
     public ProductOfferingDto(ProductOffering productOffering, CustomFieldsDto customFieldsDto, boolean asLink) {
         super(productOffering);
-        
+
         if (productOffering.getValidityRaw() != null) {
             this.setValidFrom(productOffering.getValidityRaw().getFrom());
             this.setValidTo(productOffering.getValidityRaw().getTo());
         }
-		
+
         if (asLink) {
             this.setDescription(null);
             return;
@@ -84,107 +91,135 @@ public class ProductOfferingDto extends BusinessDto {
         this.disabled = productOffering.isDisabled();
 
         List<OfferTemplateCategory> offerTemplateCategories = productOffering.getOfferTemplateCategories();
-		if (offerTemplateCategories != null && !offerTemplateCategories.isEmpty()) {
-			this.setOfferTemplateCategories(new ArrayList<OfferTemplateCategoryDto>());
-			for (OfferTemplateCategory offerTemplateCategory : offerTemplateCategories) {
-				this.getOfferTemplateCategories().add(new OfferTemplateCategoryDto(offerTemplateCategory));
-			}
-		}
+        if (offerTemplateCategories != null && !offerTemplateCategories.isEmpty()) {
+            this.setOfferTemplateCategories(new ArrayList<OfferTemplateCategoryDto>());
+            for (OfferTemplateCategory offerTemplateCategory : offerTemplateCategories) {
+                this.getOfferTemplateCategories().add(new OfferTemplateCategoryDto(offerTemplateCategory));
+            }
+        }
         List<DigitalResource> attachments = productOffering.getAttachments();
-		if (attachments != null && !attachments.isEmpty()) {
-			this.setAttachments(new ArrayList<DigitalResourcesDto>());
-			for (DigitalResource digitalResource : attachments) {
-				this.getAttachments().add(new DigitalResourcesDto(digitalResource));
-			}
-		}
-		this.customFields = customFieldsDto;
-	}
+        if (attachments != null && !attachments.isEmpty()) {
+            this.setAttachments(new ArrayList<DigitalResourcesDto>());
+            for (DigitalResource digitalResource : attachments) {
+                this.getAttachments().add(new DigitalResourcesDto(digitalResource));
+            }
+        }
+        setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(productOffering.getDescriptionI18n()));
+        setLongDescription(productOffering.getLongDescription());
+        setLongDescriptionsTranslated(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(productOffering.getLongDescriptionI18n()));
 
-	public String getName() {
-		return name;
-	}
+        this.customFields = customFieldsDto;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public List<OfferTemplateCategoryDto> getOfferTemplateCategories() {
-		return offerTemplateCategories;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setOfferTemplateCategories(List<OfferTemplateCategoryDto> offerTemplateCategories) {
-		this.offerTemplateCategories = offerTemplateCategories;
-	}
+    public List<OfferTemplateCategoryDto> getOfferTemplateCategories() {
+        return offerTemplateCategories;
+    }
 
-	public List<DigitalResourcesDto> getAttachments() {
-		return attachments;
-	}
+    public void setOfferTemplateCategories(List<OfferTemplateCategoryDto> offerTemplateCategories) {
+        this.offerTemplateCategories = offerTemplateCategories;
+    }
 
-	public void setAttachments(List<DigitalResourcesDto> attachments) {
-		this.attachments = attachments;
-	}
+    public List<DigitalResourcesDto> getAttachments() {
+        return attachments;
+    }
 
-	public String getModelCode() {
-		return modelCode;
-	}
+    public void setAttachments(List<DigitalResourcesDto> attachments) {
+        this.attachments = attachments;
+    }
 
-	public void setModelCode(String modelCode) {
-		this.modelCode = modelCode;
-	}
+    public String getModelCode() {
+        return modelCode;
+    }
 
-	public Date getValidFrom() {
-		return validFrom;
-	}
+    public void setModelCode(String modelCode) {
+        this.modelCode = modelCode;
+    }
 
-	public void setValidFrom(Date validFrom) {
-		this.validFrom = validFrom;
-	}
+    public Date getValidFrom() {
+        return validFrom;
+    }
 
-	public Date getValidTo() {
-		return validTo;
-	}
+    public void setValidFrom(Date validFrom) {
+        this.validFrom = validFrom;
+    }
 
-	public void setValidTo(Date validTo) {
-		this.validTo = validTo;
-	}
+    public Date getValidTo() {
+        return validTo;
+    }
 
-	public LifeCycleStatusEnum getLifeCycleStatus() {
-		return lifeCycleStatus;
-	}
+    public void setValidTo(Date validTo) {
+        this.validTo = validTo;
+    }
 
-	public void setLifeCycleStatus(LifeCycleStatusEnum lifeCycleStatus) {
-		this.lifeCycleStatus = lifeCycleStatus;
-	}
+    public LifeCycleStatusEnum getLifeCycleStatus() {
+        return lifeCycleStatus;
+    }
 
-	public CustomFieldsDto getCustomFields() {
-		return customFields;
-	}
+    public void setLifeCycleStatus(LifeCycleStatusEnum lifeCycleStatus) {
+        this.lifeCycleStatus = lifeCycleStatus;
+    }
 
-	public void setCustomFields(CustomFieldsDto customFields) {
-		this.customFields = customFields;
-	}
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
 
-	public String getImagePath() {
-		return imagePath;
-	}
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
+    }
 
-	public void setImagePath(String imagePath) {
-		this.imagePath = imagePath;
-	}
+    public String getImagePath() {
+        return imagePath;
+    }
 
-	public String getImageBase64() {
-		return imageBase64;
-	}
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
 
-	public void setImageBase64(String imageBase64) {
-		this.imageBase64 = imageBase64;
-	}
+    public String getImageBase64() {
+        return imageBase64;
+    }
+
+    public void setImageBase64(String imageBase64) {
+        this.imageBase64 = imageBase64;
+    }
 
     public boolean isDisabled() {
         return disabled;
-}
+    }
 
     public void setDisabled(boolean disabled) {
         this.disabled = disabled;
+    }
+
+    public List<LanguageDescriptionDto> getLanguageDescriptions() {
+        return languageDescriptions;
+    }
+
+    public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
+        this.languageDescriptions = languageDescriptions;
+    }
+
+    public String getLongDescription() {
+        return longDescription;
+    }
+
+    public void setLongDescription(String longDescription) {
+        this.longDescription = longDescription;
+    }
+
+    public List<LanguageDescriptionDto> getLongDescriptionsTranslated() {
+        return longDescriptionsTranslated;
+    }
+
+    public void setLongDescriptionsTranslated(List<LanguageDescriptionDto> longDescriptionsTranslated) {
+        this.longDescriptionsTranslated = longDescriptionsTranslated;
     }
 }

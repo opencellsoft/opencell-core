@@ -114,6 +114,7 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
         ProductTemplate productTemplate = new ProductTemplate();
         productTemplate.setCode(postData.getCode());
         productTemplate.setDescription(postData.getDescription());
+        productTemplate.setLongDescription(postData.getLongDescription());
         productTemplate.setName(postData.getName());
         productTemplate.setValidity(new DatePeriod(postData.getValidFrom(), postData.getValidTo()));
         productTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
@@ -134,6 +135,9 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+
+        productTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions()));
+        productTemplate.setLongDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLongDescriptionsTranslated()));
 
         // save product template now so that they can be referenced by the
         // related entities below.
@@ -180,6 +184,7 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 
         productTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         productTemplate.setDescription(postData.getDescription());
+        productTemplate.setLongDescription(postData.getLongDescription());
         productTemplate.setName(postData.getName());
         productTemplate.setValidity(new DatePeriod(postData.getValidFrom(), postData.getValidTo()));
         productTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
@@ -211,6 +216,13 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
             throw e;
         }
 
+        if (postData.getLanguageDescriptions() != null) {
+            productTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions()));
+        }
+        if (postData.getLongDescriptionsTranslated() != null) {
+            productTemplate.setLongDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLongDescriptionsTranslated()));
+        }
+
         productTemplate = productTemplateService.update(productTemplate);
 
         return productTemplate;
@@ -235,8 +247,8 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
     }
 
     /**
-     * List all product templates optionally filtering by code and validity dates. If neither date is provided, validity dates will not be considered. If only validFrom is provided,
-     * a search will return products valid on a given date. If only validTo date is provided, a search will return products valid from today to a given date.
+     * List all product templates optionally filtering by code and validity dates. If neither date is provided, validity dates will not be considered. If only validFrom is
+     * provided, a search will return products valid on a given date. If only validTo date is provided, a search will return products valid from today to a given date.
      * 
      * @param code Product template code for optional filtering
      * @param validFrom Validity range from date.

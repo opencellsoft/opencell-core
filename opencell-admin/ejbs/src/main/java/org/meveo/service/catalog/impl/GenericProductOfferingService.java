@@ -9,13 +9,13 @@ import javax.ejb.Stateless;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.ProductOffering;
-import org.meveo.service.base.MultilanguageEntityService;
+import org.meveo.service.base.BusinessService;
 
 /**
  * @author Andrius Karpavicius
  */
 @Stateless
-public class GenericProductOfferingService<T extends ProductOffering> extends MultilanguageEntityService<T> {
+public class GenericProductOfferingService<T extends ProductOffering> extends BusinessService<T> {
 
     private static String FIND_CODE_BY_DATE_CLAUSE = "((be.validity.from IS NULL and be.validity.to IS NULL) or (be.validity.from<=:date and :date<be.validity.to) or (be.validity.from<=:date and be.validity.to IS NULL) or (be.validity.from IS NULL and :date<be.validity.to))";
 

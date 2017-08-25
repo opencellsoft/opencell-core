@@ -157,7 +157,7 @@ public class GetFieldInformationHandler extends TagHandler {
             }
         }
 
-        // log.error("AKK determining field type for {}", fullFieldName);
+         log.error("AKK determining field type for {}", fullFieldName);
         Field field = null;
         try {
             field = getBeanFieldThrowException(entityClass, fullFieldName);

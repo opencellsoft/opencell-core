@@ -28,10 +28,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
-import org.meveo.model.MultilanguageEntity;
 
 @Entity
-@MultilanguageEntity(key = "menu.charges", group = "ChargeTemplate")
 @Table(name = "cat_one_shot_charge_templ")
 @NamedQueries({			
 @NamedQuery(name = "oneShotChargeTemplate.getNbrOneShotWithNotPricePlan", 
@@ -74,7 +72,7 @@ public class OneShotChargeTemplate extends ChargeTemplate {
     @Type(type="numeric_boolean")
     @Column(name = "immediate_invoicing")
     private Boolean immediateInvoicing = false;
-
+    
     public OneShotChargeTemplateTypeEnum getOneShotChargeTemplateType() {
         return oneShotChargeTemplateType;
     }

@@ -86,7 +86,8 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
                 bundleProductTemplateDto.setQuantity(bundleProductTemplate.getQuantity());
                 productTemplate = bundleProductTemplate.getProductTemplate();
                 if (productTemplate != null) {
-                    bundleProductTemplateDto.setProductTemplate(new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsWithInheritedDTO(productTemplate, true), false));
+                    bundleProductTemplateDto
+                        .setProductTemplate(new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsWithInheritedDTO(productTemplate, true), false));
                 }
                 bundleProductTemplates.add(bundleProductTemplateDto);
             }
@@ -132,6 +133,7 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
         BundleTemplate bundleTemplate = new BundleTemplate();
         bundleTemplate.setCode(postData.getCode());
         bundleTemplate.setDescription(postData.getDescription());
+        bundleTemplate.setLongDescription(postData.getLongDescription());
         bundleTemplate.setName(postData.getName());
         bundleTemplate.setValidity(new DatePeriod(postData.getValidFrom(), postData.getValidTo()));
         bundleTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
@@ -141,6 +143,9 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
             log.error("Invalid image data={}", e1.getMessage());
             throw new InvalidImageData();
         }
+
+        bundleTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions()));
+        bundleTemplate.setLongDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLongDescriptionsTranslated()));
 
         // save product template now so that they can be referenced by the
         // related entities below.
@@ -154,7 +159,7 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
 
         processBundleProductTemplates(postData, bundleTemplate);
 
-        bundleTemplateService.update(bundleTemplate);
+        bundleTemplate = bundleTemplateService.update(bundleTemplate);
 
         return bundleTemplate;
 
@@ -189,6 +194,7 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
 
         bundleTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         bundleTemplate.setDescription(postData.getDescription());
+        bundleTemplate.setLongDescription(postData.getLongDescription());
         bundleTemplate.setName(postData.getName());
         bundleTemplate.setValidity(new DatePeriod(postData.getValidFrom(), postData.getValidTo()));
         bundleTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
@@ -197,6 +203,13 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
         } catch (IOException e1) {
             log.error("Invalid image data={}", e1.getMessage());
             throw new InvalidImageData();
+        }
+
+        if (postData.getLanguageDescriptions() != null) {
+            bundleTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions()));
+        }
+        if (postData.getLongDescriptionsTranslated() != null) {
+            bundleTemplate.setLongDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLongDescriptionsTranslated()));
         }
 
         processProductChargeTemplate(postData, bundleTemplate);
@@ -306,7 +319,7 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
 
             if (!StringUtils.isBlank(code)) {
                 filters.put("code", code);
-}
+            }
 
             // If only validTo date is provided, a search will return products valid from today to a given date.
             if (validFrom == null && validTo != null) {

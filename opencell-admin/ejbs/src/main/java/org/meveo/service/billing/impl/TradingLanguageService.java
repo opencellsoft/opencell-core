@@ -18,7 +18,9 @@
  */
 package org.meveo.service.billing.impl;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
@@ -51,12 +53,16 @@ public class TradingLanguageService extends PersistenceService<TradingLanguage> 
     }
 
     public int getNbLanguageNotAssociated() {
-        return ((Long) getEntityManager().createNamedQuery("tradingLanguage.getNbLanguageNotAssociated", Long.class).getSingleResult())
-            .intValue();
+        return ((Long) getEntityManager().createNamedQuery("TradingLanguage.getNbLanguageNotAssociated", Long.class).getSingleResult()).intValue();
     }
 
     public List<TradingLanguage> getLanguagesNotAssociated() {
-        return (List<TradingLanguage>) getEntityManager().createNamedQuery("tradingLanguage.getLanguagesNotAssociated", TradingLanguage.class)
-            .getResultList();
+        return (List<TradingLanguage>) getEntityManager().createNamedQuery("TradingLanguage.getLanguagesNotAssociated", TradingLanguage.class).getResultList();
+    }
+
+    public Set<String> listLanguageCodes() {
+        Set<String> codes = new HashSet<>();
+        codes.addAll(getEntityManager().createNamedQuery("TradingLanguage.languageCode", String.class).getResultList());
+        return codes;
     }
 }

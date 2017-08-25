@@ -6,6 +6,8 @@ import org.hibernate.type.descriptor.WrapperOptions;
 import org.hibernate.type.descriptor.java.AbstractTypeDescriptor;
 import org.hibernate.type.descriptor.java.MutableMutabilityPlan;
 import org.hibernate.usertype.DynamicParameterizedType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JsonTypeDescriptor extends AbstractTypeDescriptor<Object> implements DynamicParameterizedType {
 
@@ -42,11 +44,17 @@ public class JsonTypeDescriptor extends AbstractTypeDescriptor<Object> implement
 
     @Override
     public String toString(Object value) {
+        Logger log = LoggerFactory.getLogger(getClass());
+        log.error("AKK Json converter to string");
         return JacksonUtil.toString(value);
     }
 
     @Override
     public Object fromString(String string) {
+
+        Logger log = LoggerFactory.getLogger(getClass());
+        log.error("AKK Json converter from string");
+        
         return JacksonUtil.fromString(string, jsonObjectClass);
     }
 

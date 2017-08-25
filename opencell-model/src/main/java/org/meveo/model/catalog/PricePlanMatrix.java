@@ -20,6 +20,8 @@ package org.meveo.model.catalog;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -38,6 +40,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
@@ -52,7 +55,7 @@ import org.meveo.model.scripts.ScriptInstance;
 @Entity
 @ModuleItem
 @ObservableEntity
-@MultilanguageEntity(key = "menu.pricePlanMatrixes", group = "PricePlanMatrix")
+@MultilanguageEntity(label = "menu.pricePlanMatrixes")
 @CustomFieldEntity(cftCodePrefix = "PRICEPLAN")
 @ExportIdentifier({ "code" })
 @Table(name = "cat_price_plan_matrix", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
@@ -159,6 +162,10 @@ public class PricePlanMatrix extends BusinessCFEntity implements Comparable<Pric
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "script_instance_id")
     private ScriptInstance scriptInstance;
+
+    @Type(type = "json")
+    @Column(name = "description_i18n", columnDefinition = "text")
+    private Map<String, String> descriptionI18n;
 
     public String getEventCode() {
         return eventCode;
@@ -485,5 +492,26 @@ public class PricePlanMatrix extends BusinessCFEntity implements Comparable<Pric
     @Override
     public int compareTo(PricePlanMatrix o) {
         return this.getPriority() - o.getPriority();
+    }
+
+    public Map<String, String> getDescriptionI18n() {
+        return descriptionI18n;
+    }
+
+    public void setDescriptionI18n(Map<String, String> descriptionI18n) {
+        this.descriptionI18n = descriptionI18n;
+    }
+
+    /**
+     * Instantiate descriptionI18n field if it is null. NOTE: do not use this method unless you have an intention to modify it's value, as entity will be marked dirty and record
+     * will be updated in DB
+     * 
+     * @return descriptionI18n value or instantiated descriptionI18n field value
+     */
+    public Map<String, String> getDescriptionI18nNullSafe() {
+        if (descriptionI18n == null) {
+            descriptionI18n = new HashMap<>();
+        }
+        return descriptionI18n;
     }
 }

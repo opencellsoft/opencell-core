@@ -9,8 +9,6 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
-import org.meveo.api.MeveoApiErrorCodeEnum;
-import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
 import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -19,18 +17,14 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.LevelEnum;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.finance.RevenueRecognitionRule;
-import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.catalog.impl.CalendarService;
-import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
@@ -52,16 +46,10 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
     private CalendarService calendarService;
 
     @Inject
-    private CatMessagesService catMessagesService;
+    private TriggeredEDRTemplateService triggeredEDRTemplateService;
 
     @Inject
-    private TriggeredEDRTemplateService triggeredEDRTemplateService;
-    
-    @Inject
     private RevenueRecognitionRuleService revenueRecognitionRuleService;
-    
-    @Inject
-    private TradingLanguageService tradingLanguageService;
 
     public RecurringChargeTemplate create(RecurringChargeTemplateDto postData) throws MeveoApiException, BusinessException {
 
@@ -76,9 +64,7 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         }
 
         handleMissingParametersAndValidate(postData);
-        
 
-        
         // check if code already exists
         if (recurringChargeTemplateService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(RecurringChargeTemplate.class, postData.getCode());
@@ -92,26 +78,6 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         Calendar calendar = calendarService.findByCode(postData.getCalendar());
         if (calendar == null) {
             throw new EntityDoesNotExistsException(Calendar.class, postData.getCalendar());
-        }
-
-        List<TradingLanguage> tradingLanguages = tradingLanguageService.list();
-        if (!tradingLanguages.isEmpty()) {
-            if (postData.getLanguageDescriptions() != null) {
-                for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-                    boolean match = false;
-
-                    for (TradingLanguage tl : tradingLanguages) {
-                        if (tl.getLanguageCode().equals(ld.getLanguageCode())) {
-                            match = true;
-                            break;
-                        }
-                    }
-
-                    if (!match) {
-                        throw new MeveoApiException(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, "Language " + ld.getLanguageCode() + " is not supported by the provider.");
-                    }
-                }
-            }
         }
 
         RecurringChargeTemplate chargeTemplate = new RecurringChargeTemplate();
@@ -136,10 +102,10 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         } else {
             chargeTemplate.setRoundingMode(RoundingModeEnum.NEAREST);
         }
-        
-        if(postData.getRevenueRecognitionRuleCode()!=null){
-        	RevenueRecognitionRule revenueRecognitionRule = revenueRecognitionRuleService.findByCode(postData.getRevenueRecognitionRuleCode());
-        	chargeTemplate.setRevenueRecognitionRule(revenueRecognitionRule);
+
+        if (postData.getRevenueRecognitionRuleCode() != null) {
+            RevenueRecognitionRule revenueRecognitionRule = revenueRecognitionRuleService.findByCode(postData.getRevenueRecognitionRuleCode());
+            chargeTemplate.setRevenueRecognitionRule(revenueRecognitionRule);
         }
 
         if (postData.getTriggeredEdrs() != null) {
@@ -168,16 +134,9 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
             throw e;
         }
 
+        chargeTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions()));
+
         recurringChargeTemplateService.create(chargeTemplate);
-
-        // create cat messages
-        if (postData.getLanguageDescriptions() != null) {
-            for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-                CatMessages catMsg = new CatMessages(RecurringChargeTemplate.class.getSimpleName() , chargeTemplate.getCode(), ld.getLanguageCode(), ld.getDescription());
-
-                catMessagesService.create(catMsg);
-            }
-        }
 
         return chargeTemplate;
     }
@@ -195,10 +154,8 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         }
 
         handleMissingParametersAndValidate(postData);
-        
 
-        
-        // check if code already exists       
+        // check if code already exists
         RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService.findByCode(postData.getCode());
         if (chargeTemplate == null) {
             throw new EntityDoesNotExistsException(RecurringChargeTemplate.class, postData.getCode());
@@ -213,7 +170,7 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         if (calendar == null) {
             throw new EntityDoesNotExistsException(Calendar.class, postData.getCalendar());
         }
-        chargeTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode())?postData.getCode():postData.getUpdatedCode());
+        chargeTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         chargeTemplate.setDescription(postData.getDescription());
         chargeTemplate.setDisabled(postData.isDisabled());
         chargeTemplate.setAmountEditable(postData.getAmountEditable());
@@ -234,44 +191,14 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         } else {
             chargeTemplate.setRoundingMode(RoundingModeEnum.NEAREST);
         }
-        
-        if(postData.getRevenueRecognitionRuleCode()!=null){
-        	RevenueRecognitionRule revenueRecognitionRule = revenueRecognitionRuleService.findByCode(postData.getRevenueRecognitionRuleCode());
-        	chargeTemplate.setRevenueRecognitionRule(revenueRecognitionRule);
+
+        if (postData.getRevenueRecognitionRuleCode() != null) {
+            RevenueRecognitionRule revenueRecognitionRule = revenueRecognitionRuleService.findByCode(postData.getRevenueRecognitionRuleCode());
+            chargeTemplate.setRevenueRecognitionRule(revenueRecognitionRule);
         }
 
-        List<TradingLanguage> tradingLanguages = tradingLanguageService.list();
-        if (!tradingLanguages.isEmpty()) {
-            if (postData.getLanguageDescriptions() != null) {
-                for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-                    boolean match = false;
-
-                    for (TradingLanguage tl : tradingLanguages) {
-                        if (tl.getLanguageCode().equals(ld.getLanguageCode())) {
-                            match = true;
-                            break;
-                        }
-                    }
-
-                    if (!match) {
-                        throw new MeveoApiException(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, "Language " + ld.getLanguageCode() + " is not supported by the provider.");
-                    }
-                }
-
-                // create cat messages
-                for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-                    CatMessages catMsg = catMessagesService.getCatMessages(chargeTemplate.getCode(),RecurringChargeTemplate.class.getSimpleName(), ld.getLanguageCode());
-
-                    if (catMsg != null) {
-                        catMsg.setDescription(ld.getDescription());
-                        catMessagesService.update(catMsg);
-                    } else {
-                        CatMessages catMessages = new CatMessages(RecurringChargeTemplate.class.getSimpleName() , chargeTemplate.getCode(), ld.getLanguageCode(),
-                            ld.getDescription());
-                        catMessagesService.create(catMessages);
-                    }
-                }
-            }
+        if (postData.getLanguageDescriptions() != null) {
+            chargeTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions()));
         }
 
         if (postData.getTriggeredEdrs() != null) {
@@ -301,11 +228,13 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         }
 
         chargeTemplate = recurringChargeTemplateService.update(chargeTemplate);
-        
+
         return chargeTemplate;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.meveo.api.ApiService#find(java.lang.String)
      */
     @Override
@@ -316,7 +245,6 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
             handleMissingParameters();
         }
 
-
         // check if code already exists
         RecurringChargeTemplate chargeTemplate = recurringChargeTemplateService.findByCode(code, Arrays.asList("invoiceSubCategory", "calendar"));
         if (chargeTemplate == null) {
@@ -325,16 +253,9 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
 
         RecurringChargeTemplateDto result = new RecurringChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsWithInheritedDTO(chargeTemplate, true));
 
-        List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
-        for (CatMessages msg : catMessagesService.getCatMessagesList(RecurringChargeTemplate.class.getSimpleName() , chargeTemplate.getCode())) {
-            languageDescriptions.add(new LanguageDescriptionDto(msg.getLanguageCode(), msg.getDescription()));
-        }
-
-        result.setLanguageDescriptions(languageDescriptions);
-
         return result;
     }
-    
+
     public void remove(String code) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(code)) {
@@ -351,7 +272,7 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         recurringChargeTemplateService.remove(chargeTemplate);
     }
 
-    public RecurringChargeTemplate createOrUpdate(RecurringChargeTemplateDto postData) throws MeveoApiException, BusinessException {    	
+    public RecurringChargeTemplate createOrUpdate(RecurringChargeTemplateDto postData) throws MeveoApiException, BusinessException {
         if (recurringChargeTemplateService.findByCode(postData.getCode()) == null) {
             return create(postData);
         } else {

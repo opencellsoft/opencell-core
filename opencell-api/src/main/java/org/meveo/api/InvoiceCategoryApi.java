@@ -1,24 +1,16 @@
 package org.meveo.api;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.InvoiceCategoryDto;
-import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.InvoiceCategory;
-import org.meveo.model.billing.TradingLanguage;
-import org.meveo.service.billing.impl.TradingLanguageService;
-import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 
 /**
@@ -30,19 +22,14 @@ public class InvoiceCategoryApi extends BaseApi {
     @Inject
     private InvoiceCategoryService invoiceCategoryService;
 
-    @Inject
-    private CatMessagesService catMessagesService;
-    
-    @Inject
-    private TradingLanguageService tradingLanguageService;
 
     public void create(InvoiceCategoryDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");            
+            missingParameters.add("code");
         }
-        
-        handleMissingParametersAndValidate(postData);        
+
+        handleMissingParametersAndValidate(postData);
 
         if (invoiceCategoryService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(InvoiceCategory.class, postData.getCode());
@@ -52,26 +39,6 @@ public class InvoiceCategoryApi extends BaseApi {
         invoiceCategory.setCode(postData.getCode());
         invoiceCategory.setDescription(postData.getDescription());
 
-        List<TradingLanguage> tradingLanguages = tradingLanguageService.list();
-        if (!tradingLanguages.isEmpty()) {
-            if (postData.getLanguageDescriptions() != null) {
-                for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-                    boolean match = false;
-
-                    for (TradingLanguage tl : tradingLanguages) {
-                        if (tl.getLanguageCode().equals(ld.getLanguageCode())) {
-                            match = true;
-                            break;
-                        }
-                    }
-
-                    if (!match) {
-                        throw new MeveoApiException(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, "Language " + ld.getLanguageCode() + " is not supported by the provider.");
-                    }
-                }
-            }
-        }
-        
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), invoiceCategory, true, true);
@@ -83,17 +50,11 @@ public class InvoiceCategoryApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
-        
+
+        invoiceCategory.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions()));
+
         invoiceCategoryService.create(invoiceCategory);
 
-        // create cat messages
-        if (postData.getLanguageDescriptions() != null) {
-            for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-                CatMessages catMsg = new CatMessages(InvoiceCategory.class.getSimpleName(),invoiceCategory.getCode(), ld.getLanguageCode(), ld.getDescription());
-
-                catMessagesService.create(catMsg);
-            }
-        }
     }
 
     public void update(InvoiceCategoryDto postData) throws MeveoApiException, BusinessException {
@@ -101,7 +62,7 @@ public class InvoiceCategoryApi extends BaseApi {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
-        
+
         handleMissingParametersAndValidate(postData);
 
         InvoiceCategory invoiceCategory = invoiceCategoryService.findByCode(postData.getCode());
@@ -111,39 +72,10 @@ public class InvoiceCategoryApi extends BaseApi {
         invoiceCategory.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         invoiceCategory.setDescription(postData.getDescription());
 
-        List<TradingLanguage> tradingLanguages = tradingLanguageService.list();
-        if (!tradingLanguages.isEmpty()) {
-            if (postData.getLanguageDescriptions() != null) {
-                for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-                    boolean match = false;
-
-                    for (TradingLanguage tl : tradingLanguages) {
-                        if (tl.getLanguageCode().equals(ld.getLanguageCode())) {
-                            match = true;
-                            break;
-                        }
-                    }
-
-                    if (!match) {
-                        throw new MeveoApiException(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, "Language " + ld.getLanguageCode() + " is not supported by the provider.");
-                    }
-                }
-
-                // create cat messages
-                for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-                    CatMessages catMsg = catMessagesService.getCatMessages(invoiceCategory.getCode(),InvoiceCategory.class.getSimpleName(),  ld.getLanguageCode());
-
-                    if (catMsg != null) {
-                        catMsg.setDescription(ld.getDescription());
-                        catMessagesService.update(catMsg);
-                    } else {
-                        CatMessages catMessages = new CatMessages(InvoiceCategory.class.getSimpleName(),invoiceCategory.getCode(), ld.getLanguageCode(), ld.getDescription());
-                        catMessagesService.create(catMessages);
-                    }
-                }
-            }
+        if (postData.getLanguageDescriptions() != null) {
+            invoiceCategory.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions()));
         }
-        
+
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), invoiceCategory, false, true);
@@ -175,13 +107,6 @@ public class InvoiceCategoryApi extends BaseApi {
 
         result = new InvoiceCategoryDto(invoiceCategory, entityToDtoConverter.getCustomFieldsWithInheritedDTO(invoiceCategory, true));
 
-        List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
-        for (CatMessages msg : catMessagesService.getCatMessagesList(InvoiceCategory.class.getSimpleName() , invoiceCategory.getCode())) {
-            languageDescriptions.add(new LanguageDescriptionDto(msg.getLanguageCode(), msg.getDescription()));
-        }
-
-        result.setLanguageDescriptions(languageDescriptions);
-
         return result;
     }
 
@@ -204,9 +129,9 @@ public class InvoiceCategoryApi extends BaseApi {
      * Creates or updates invoice category based on the code. If passed invoice category is not yet existing, it will be created else will be updated.
      * 
      * @param postData
-
+     * 
      * @throws MeveoApiException
-     * @throws BusinessException 
+     * @throws BusinessException
      */
     public void createOrUpdate(InvoiceCategoryDto postData) throws MeveoApiException, BusinessException {
         InvoiceCategory invoiceCategory = invoiceCategoryService.findByCode(postData.getCode());

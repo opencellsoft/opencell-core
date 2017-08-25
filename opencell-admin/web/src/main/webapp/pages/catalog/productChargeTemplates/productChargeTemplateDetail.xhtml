@@ -68,9 +68,7 @@
 						valueLabelField="code" listBean="#{productTemplateListBean}"
 						label="#{messages['productTemplate.title']}" />
 
-					<hftl:formLanguageFields
-						entity="#{productChargeTemplateBean.entity}"
-						backingBean="#{productChargeTemplateBean}" multiLang="true" />
+					<hftl:formLanguageFields field="description" />
 
 					<hftl:formField
 						label="#{messages['chargeTemplate.amountEditable']}"

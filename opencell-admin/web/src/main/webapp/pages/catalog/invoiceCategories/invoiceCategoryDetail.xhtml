@@ -1,8 +1,5 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-	xmlns:f="http://xmlns.jcp.org/jsf/core"
-	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
-	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
     <ui:define name="metadata">
         <f:metadata>
@@ -10,42 +7,36 @@
         </f:metadata>
     </ui:define>
 
-	<ui:define name="body">
-		<h:form id="crumbmenuForm">
-			<p:breadCrumb homeDisplay="text" id="crumbmenu">
-				<p:menuitem value="#{messages['menu.configuration']}" disabled="true" />
-				<p:menuitem outcome="invoiceCategories"
-					value="#{messages['menu.invoiceCategories']}" />
-				<p:menuitem value="#{messages['commons.new']} #{messages['invoiceCategory']}"
-					disabled="true" rendered="#{invoiceCategoryBean.entity.transient}" />
-				<p:menuitem
-					value="#{messages['invoiceCategory']} - #{invoiceCategoryBean.entity.code}"
-					disabled="true" rendered="#{!invoiceCategoryBean.entity.transient}" />
-			</p:breadCrumb>
-		</h:form>
+    <ui:define name="body">
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.configuration']}" disabled="true" />
+                <p:menuitem outcome="invoiceCategories" value="#{messages['menu.invoiceCategories']}" />
+                <p:menuitem value="#{messages['commons.new']} #{messages['invoiceCategory']}" disabled="true" rendered="#{invoiceCategoryBean.entity.transient}" />
+                <p:menuitem value="#{messages['invoiceCategory']} - #{invoiceCategoryBean.entity.code}" disabled="true" rendered="#{!invoiceCategoryBean.entity.transient}" />
+            </p:breadCrumb>
+        </h:form>
 
-		<hftl:formPanel formId="invoiceCatFormId" edit="#{invoiceCategoryBean.edit}" submitPartialProcess=":invoiceCatFormId:tabView"
-			label="#{messages['invoiceCategory.panel']}"
-			backingBean="#{invoiceCategoryBean}">
-			
-			<p:tabView id="tabView" activeIndex="#{invoiceCategoryBean.activeTab}">
-				<p:tab title="#{messages['customer.tab.information']}">
-					<hftl:formField label="#{messages['invoiceCategory.code']}"
-					field="code" required="true" validateUnique="true" />
-	
-					<!-- <hftl:formField label="#{messages['invoiceCategory.subcategories']}"
+        <hftl:formPanel formId="invoiceCatFormId" edit="#{invoiceCategoryBean.edit}" submitPartialProcess=":invoiceCatFormId:tabView" label="#{messages['invoiceCategory.panel']}"
+            backingBean="#{invoiceCategoryBean}">
+
+            <p:tabView id="tabView" activeIndex="#{invoiceCategoryBean.activeTab}">
+                <p:tab title="#{messages['customer.tab.information']}">
+                    <hftl:formField label="#{messages['invoiceCategory.code']}" field="code" required="true" validateUnique="true" />
+
+                    <!-- <hftl:formField label="#{messages['invoiceCategory.subcategories']}"
 						field="invoiceSubCategories" edit="true"
 						showFields="invoiceSubCategory.code,code;invoiceSubCategory.accountingCode,accountingCode"
 		
 						deleteButton="false" />	 -->
-					<hftl:formLanguageFields entity="#{invoiceCategoryBean.entity}" backingBean="#{invoiceCategoryBean}" multiLang="true"/>
-					<!-- <hftl:formField label="#{messages['invoiceCategory.discount']}" field="discount" /> -->					
-				</p:tab>
-				
-				<hftl:customFields backingBean="#{invoiceCategoryBean}" messagesId=":invoiceCatFormId:messages" />
-			</p:tabView>
-		</hftl:formPanel>
+                    <hftl:formLanguageFields  field="description" />
+                    <!-- <hftl:formField label="#{messages['invoiceCategory.discount']}" field="discount" /> -->
+                </p:tab>
 
-	</ui:define>
+                <hftl:customFields backingBean="#{invoiceCategoryBean}" messagesId=":invoiceCatFormId:messages" />
+            </p:tabView>
+        </hftl:formPanel>
+
+    </ui:define>
 
 </ui:composition>

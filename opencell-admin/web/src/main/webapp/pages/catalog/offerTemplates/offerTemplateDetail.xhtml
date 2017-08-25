@@ -51,11 +51,11 @@
 
 					<hf:namingContainer id="offerInfo">
 
-						<p:panelGrid columns="2"
-							columnClasses="Wid20 Responsive100 VAlignTop, Wid80 Responsive100 VAlignTop"
-							styleClass="ui-panelgrid-blank">
+<!-- 						<p:panelGrid columns="2" -->
+<!-- 							columnClasses="Wid20 Responsive100 VAlignTop, Wid80 Responsive100 VAlignTop" -->
+<!-- 							styleClass="ui-panelgrid-blank"> -->
 
-							<h:panelGroup>
+<!-- 							<h:panelGroup> -->
 								<hftl:formField label="#{messages['commons.image']}"
 									field="imagePath" required="false" pictureGroupName="offer" />
 								<hftl:formField label="#{messages['offerTemplate.code']}"
@@ -70,12 +70,8 @@
 								<o:validateMultiple components=":offerForm:tabView:offerInfo:code_txt :offerForm:tabView:offerInfo:validity_date :offerForm:tabView:offerInfo:validity_date_toRange"
 									validator="#{offerTemplateBean.validateUniqueVersion}" message="#{messages['offerTemplate.version.exists.short']}" />
 
-								<!--                                 <hftl:formField label="#{messages['offerTemplate.description']}" field="description" useConverter="false" id="description" /> -->
-                                <hftl:formLanguageFields backingBean="#{offerTemplateBean}" entity="#{offerTemplateBean.entity}" multiLang="true" />
-                                <hftl:formField
-									label="#{messages['offerTemplate.longDescription']}"
-									field="longDescription" textArea="true" id="longDescription"
-									rows="1" componentWidth="100" />
+                                <hftl:formLanguageFields field="description"/>
+                                <hftl:formLanguageFields field="longDescription" label="#{messages['offerTemplate.longDescription']}" componentWidth="100"/>
 								<hftl:formField id="offerTemplateCategories"
 									label="#{messages['offerTemplate.category']}"
 									field="offerTemplateCategories" listType="selectCheckbox"
@@ -95,8 +91,8 @@
 								<hftl:formField label="#{messages['enableEntity.disabled']}"
 									doNotShowOnNew="true" allowEdit="false" field="disabled"
 									isMessage="true" />
-							</h:panelGroup>
-						</p:panelGrid>
+<!-- 							</h:panelGroup> -->
+<!-- 						</p:panelGrid> -->
 					</hf:namingContainer>
 				</p:tab>
 

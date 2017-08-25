@@ -2,6 +2,7 @@ package org.meveo.api.dto.catalog;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -10,6 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BusinessDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.model.catalog.PricePlanMatrix;
 
 @XmlRootElement(name = "PricePlan")
@@ -52,16 +54,18 @@ public class PricePlanMatrixDto extends BusinessDto {
     private String validityCalendarCode;
 
     private String scriptInstance;
-    
+
     private CustomFieldsDto customFields = new CustomFieldsDto();
-    
+
+    private List<LanguageDescriptionDto> languageDescriptions;
+
     public PricePlanMatrixDto() {
 
     }
 
     public PricePlanMatrixDto(PricePlanMatrix pricePlan, CustomFieldsDto customFieldInstances) {
-    	super(pricePlan);
-        
+        super(pricePlan);
+
         eventCode = pricePlan.getEventCode();
         if (pricePlan.getSeller() != null) {
             seller = pricePlan.getSeller().getCode();
@@ -101,6 +105,7 @@ public class PricePlanMatrixDto extends BusinessDto {
             scriptInstance = pricePlan.getScriptInstance().getCode();
         }
         customFields = customFieldInstances;
+        setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(pricePlan.getDescriptionI18n()));
     }
 
     public String getEventCode() {
@@ -288,7 +293,7 @@ public class PricePlanMatrixDto extends BusinessDto {
                 + amountWithTax + ", amountWithoutTaxEL=" + amountWithoutTaxEL + ", amountWithTaxEL=" + amountWithTaxEL + ", priority=" + priority + ", criteria1=" + criteria1
                 + ", criteria2=" + criteria2 + ", criteria3=" + criteria3 + ", validityCalendarCode=" + validityCalendarCode + ", scriptInstance=" + scriptInstance + "]";
     }
-    
+
     public String getValidityCalendarCode() {
         return validityCalendarCode;
     }
@@ -305,20 +310,27 @@ public class PricePlanMatrixDto extends BusinessDto {
         this.criteriaEL = criteriaEL;
     }
 
-	public String getScriptInstance() {
-		return scriptInstance;
-	}
+    public String getScriptInstance() {
+        return scriptInstance;
+    }
 
-	public void setScriptInstance(String scriptInstance) {
-		this.scriptInstance = scriptInstance;
-	}
+    public void setScriptInstance(String scriptInstance) {
+        this.scriptInstance = scriptInstance;
+    }
 
-	public CustomFieldsDto getCustomFields() {
-		return customFields;
-	}
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
 
-	public void setCustomFields(CustomFieldsDto customFields) {
-		this.customFields = customFields;
-	}
-    
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
+    }
+
+    public List<LanguageDescriptionDto> getLanguageDescriptions() {
+        return languageDescriptions;
+    }
+
+    public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
+        this.languageDescriptions = languageDescriptions;
+    }
 }

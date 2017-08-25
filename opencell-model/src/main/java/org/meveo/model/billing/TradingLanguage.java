@@ -26,6 +26,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
@@ -38,63 +39,61 @@ import org.meveo.model.ObservableEntity;
 
 @Entity
 @ObservableEntity
-@ExportIdentifier({ "language.languageCode"})
+@ExportIdentifier({ "language.languageCode" })
 @Cacheable
 @Table(name = "billing_trading_language")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_trading_language_seq"), })
-@NamedQueries({			
-@NamedQuery(name = "tradingLanguage.getNbLanguageNotAssociated", 
-	           query = "select count(*) from TradingLanguage tr where tr.id not in (select s.tradingLanguage.id from Seller s where s.tradingLanguage.id is not null) "),
-	           
-@NamedQuery(name = "tradingLanguage.getLanguagesNotAssociated", 
-	           query = "from TradingLanguage tr where tr.id not in (select s.tradingLanguage.id from Seller s where s.tradingLanguage.id is not null) ")	           	                  	         
-	})
-
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "billing_trading_language_seq"), })
+@NamedQueries({
+        @NamedQuery(name = "TradingLanguage.getNbLanguageNotAssociated", query = "select count(*) from TradingLanguage tr where tr.id not in (select s.tradingLanguage.id from Seller s where s.tradingLanguage.id is not null) "),
+        @NamedQuery(name = "TradingLanguage.getLanguagesNotAssociated", query = "from TradingLanguage tr where tr.id not in (select s.tradingLanguage.id from Seller s where s.tradingLanguage.id is not null) "),
+        @NamedQuery(name = "TradingLanguage.languageCode", query = "select tr.language.languageCode from TradingLanguage tr order by tr.language.languageCode", hints = {
+                @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
 public class TradingLanguage extends EnableEntity {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "language_id")
-	private Language language;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "language_id")
+    private Language language;
 
-	@Column(name = "pr_description", length = 255)
+    @Column(name = "pr_description", length = 255)
     @Size(max = 255)
-	private String prDescription;
+    private String prDescription;
 
-	@Transient
-	String languageCode;
+    @Transient
+    String languageCode;
 
-	public String getPrDescription() {
-		return prDescription;
-	}
+    public String getPrDescription() {
+        return prDescription;
+    }
 
-	public void setPrDescription(String prDescription) {
-		this.prDescription = prDescription;
-	}
+    public void setPrDescription(String prDescription) {
+        this.prDescription = prDescription;
+    }
 
-	public Language getLanguage() {
-		return language;
-	}
+    public Language getLanguage() {
+        return language;
+    }
 
-	public void setLanguage(Language language) {
-		this.language = language;
-	}
+    public void setLanguage(Language language) {
+        this.language = language;
+    }
 
-	public String getLanguageCode() {
-		return (language != null) ? language.getLanguageCode() : null;
-	}
+    public String getLanguageCode() {
+        return (language != null) ? language.getLanguageCode() : null;
+    }
 
-	public void setLanguageCode(String languageCode) {
-		this.languageCode = languageCode;
-	}
+    public void setLanguageCode(String languageCode) {
+        this.languageCode = languageCode;
+    }
 
     @Override
     public String toString() {
         return String.format("TradingLanguage [language=%s, id=%s]", language, getId());
     }
-    
+
     public boolean equals(Object obj) {
-        
+
         if (this == obj) {
             return true;
         } else if (obj == null) {

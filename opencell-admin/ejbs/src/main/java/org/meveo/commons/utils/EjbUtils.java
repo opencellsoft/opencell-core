@@ -24,6 +24,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,9 +88,9 @@ public class EjbUtils {
     }
 
     /**
-     * Return a service
+     * Return a service by a service interface name
      * 
-     * @param serviceInterfaceName A simple name of a service (NOT a full classname). E.g. WorkflowService
+     * @param serviceInterfaceName A simple name of a service class (NOT a full classname). E.g. WorkflowService
      * @return Service instance
      */
     public static Object getServiceInterface(String serviceInterfaceName) {
@@ -101,6 +102,17 @@ public class EjbUtils {
             log.error("Failed to obtain service interface for {} {}", serviceInterfaceName, e.getMessage());
         }
         return null;
+    }
+
+    /**
+     * Return a persistence service for a given entity class
+     * 
+     * @param entityClass Entity class
+     * @return Persistence service
+     */
+    @SuppressWarnings("rawtypes")
+    public static Object getServiceInterface(Class entityClass) {
+        return getServiceInterface(entityClass.getSimpleName() + "Service");
     }
 
     public static String getCurrentClusterNode() {

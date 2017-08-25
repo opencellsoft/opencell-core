@@ -6,6 +6,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.response.TitleDto;
 import org.meveo.api.dto.response.TitlesDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -25,31 +26,32 @@ public class TitleApi extends BaseApi {
      * 
      * @param postData
      * @throws MeveoApiException
-     * @throws BusinessException 
+     * @throws BusinessException
      */
-	public void create(TitleDto postData) throws MeveoApiException, BusinessException {
+    public void create(TitleDto postData) throws MeveoApiException, BusinessException {
 
-		String titleCode = postData.getCode();
+        String titleCode = postData.getCode();
 
-		if (StringUtils.isBlank(titleCode)) {
-			missingParameters.add("titleCode");
-		}
+        if (StringUtils.isBlank(titleCode)) {
+            missingParameters.add("titleCode");
+        }
 
-		handleMissingParametersAndValidate(postData);
+        handleMissingParametersAndValidate(postData);
 
-		Title title = titleService.findByCode(titleCode);
+        Title title = titleService.findByCode(titleCode);
 
-		if (title != null) {
-			throw new EntityAlreadyExistsException(Title.class, titleCode);
-		}
+        if (title != null) {
+            throw new EntityAlreadyExistsException(Title.class, titleCode);
+        }
 
-		Title newTitle = new Title();
-		newTitle.setCode(titleCode);
-		newTitle.setDescription(postData.getDescription());
-		newTitle.setIsCompany(postData.getIsCompany());
+        title = new Title();
+        title.setCode(titleCode);
+        title.setDescription(postData.getDescription());
+        title.setIsCompany(postData.getIsCompany());
+        title.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions()));
 
-		titleService.create(newTitle);
-	}
+        titleService.create(title);
+    }
 
     /**
      * Returns TitleDto based on title code.
@@ -65,51 +67,56 @@ public class TitleApi extends BaseApi {
         handleMissingParameters();
 
         Title title = titleService.findByCode(titleCode);
-        if (title != null) {
-            TitleDto titleDto = new TitleDto();
-            titleDto.setCode(title.getCode());
-            titleDto.setDescription(title.getDescription());
-            titleDto.setIsCompany(title.getIsCompany());
-            return titleDto;
+        if (title == null) {
+            throw new EntityDoesNotExistsException(Title.class, titleCode);
         }
-        throw new EntityDoesNotExistsException(Title.class, titleCode);
+
+        TitleDto titleDto = new TitleDto();
+        titleDto.setCode(title.getCode());
+        titleDto.setDescription(title.getDescription());
+        titleDto.setIsCompany(title.getIsCompany());
+        titleDto.setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(title.getDescriptionI18n()));
+        return titleDto;
     }
 
     /**
      * Updates a Title Entity based on title code.
      * 
      * @param postData
-
+     * 
      * @throws MeveoApiException
-     * @throws BusinessException 
+     * @throws BusinessException
      */
-	public void update(TitleDto postData) throws MeveoApiException, BusinessException {
-		String titleCode = postData.getCode();
-		if (StringUtils.isBlank(titleCode)) {
-			missingParameters.add("titleCode");
-		}
+    public void update(TitleDto postData) throws MeveoApiException, BusinessException {
+        String titleCode = postData.getCode();
+        if (StringUtils.isBlank(titleCode)) {
+            missingParameters.add("titleCode");
+        }
 
-		handleMissingParametersAndValidate(postData);
+        handleMissingParametersAndValidate(postData);
 
-		Title title = titleService.findByCode(titleCode);
-		if (title != null) {
-			title.setCode(
-					StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
-			title.setDescription(postData.getDescription());
-			title.setIsCompany(postData.getIsCompany());
-			titleService.update(title);
-		} else {
-			throw new EntityDoesNotExistsException(Title.class, titleCode);
-		}
-	}
+        Title title = titleService.findByCode(titleCode);
+        if (title == null) {
+            throw new EntityDoesNotExistsException(Title.class, titleCode);
+        }
+
+        title.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
+        title.setDescription(postData.getDescription());
+        title.setIsCompany(postData.getIsCompany());
+        if (postData.getLanguageDescriptions() != null) {
+            title.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions()));
+        }
+
+        titleService.update(title);
+    }
 
     /**
      * Removes a title based on title code.
      * 
      * @param postData
-
+     * 
      * @throws MeveoApiException
-     * @throws BusinessException 
+     * @throws BusinessException
      */
     public void remove(String titleCode) throws MeveoApiException, BusinessException {
 
@@ -150,6 +157,7 @@ public class TitleApi extends BaseApi {
                 titleDto.setDescription(title.getDescription());
                 titleDto.setIsCompany(title.getIsCompany());
                 titlesDto.getTitle().add(titleDto);
+                titleDto.setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(title.getDescriptionI18n()));
             }
         }
 

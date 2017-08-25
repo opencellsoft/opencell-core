@@ -28,7 +28,6 @@
         size - a size attribute of inputText control
         maxlength - a maxlength attribute of inputText control
         listValues - a map of value (key) and label (value) pairs for picklist   
-        i18nLabels - boolean value that indicates if the labels in listValues are bundle keys
         isAutocomplete and autocompleteBean and autocompleteMethod - should autocomplete be used and a bean (el expresseion) and method (string name) to use
         listElements - a list of entities
         valueField - use in conjunction with listElements. Since this is not an entity case
@@ -97,7 +96,7 @@
             <hftl:searchTextField id="${empty(id)?fieldIdPrefix.concat('_txt'):id}" backingBean="${backingBean}" field="${field}" label="${label}" disabled="${disabled}"
                 componentWidth="${componentWidth}" newLine="${newLine}" displayOneLine="${displayOneLine}" styleClass="${styleClass}" style="${style}" labelStyle="${labelStyle}"
                 labelStyleClass="${labelStyleClass}" inputStyle="${inputStyle}" inputStyleClass="${inputStyleClass}" labelWidth="${labelWidth}" inputWidth="${inputWidth}" size="${size}"
-                maxlength="${maxlength}" listValues="${listValues}" i18nLabels="${i18nLabels}" isAutocomplete="${isAutocomplete}" autocompleteBean="#{autocompleteBean}"
+                maxlength="${maxlength}" listValues="${listValues}" isAutocomplete="${isAutocomplete}" autocompleteBean="#{autocompleteBean}"
                 autocompleteMethod="${autocompleteMethod}" converter="${converter}" />
         </c:if>
 

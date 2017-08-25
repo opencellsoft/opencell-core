@@ -51,10 +51,7 @@ import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.ModuleItem;
-import org.meveo.model.MultilanguageEntity;
 import org.meveo.model.annotation.ImageType;
-import org.meveo.model.billing.CatMessages;
-import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.EntityCustomAction;
@@ -65,7 +62,6 @@ import org.meveo.service.admin.impl.MeveoModuleService;
 import org.meveo.service.admin.impl.PermissionService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.TradingLanguageService;
-import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.index.ElasticClient;
 import org.meveo.util.ApplicationProvider;
@@ -101,7 +97,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
-    
+
     @Inject
     @ApplicationProvider
     protected Provider appProvider;
@@ -113,11 +109,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     protected PermissionService permissionService;
 
     @Inject
-    private CatMessagesService catMessagesService;
-
-    @Inject
     private FilterService filterService;
-    
+
     @Inject
     private TradingLanguageService tradingLanguageService;
 
@@ -126,7 +119,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     @Inject
     private ElasticClient elasticClient;
-    
+
     /** Search filters. */
     protected Map<String, Object> filters = new HashMap<String, Object>();
 
@@ -165,9 +158,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      */
     private Long objectId;
 
-    /** Helper field to enter language related field values. */
-    protected Map<String, String> languageMessagesMap = new HashMap<String, String>();
-
     /**
      * Datamodel for lazy dataloading in datatable.
      */
@@ -190,10 +180,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     private int activeMainTab = 0;
 
     private Map<String, Boolean> writeAccessMap;
-    
+
     protected ParamBean paramBean = ParamBean.getInstance();
     protected String providerFilePath = paramBean.getProperty("providers.rootDir", "./opencelldata/");
-    
+
     private UploadedFile uploadedFile;
     private boolean overrideImageOnUpload = true;
 
@@ -261,14 +251,13 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                 entity = (T) getPersistenceService().findById(getObjectId(), formFieldsToFetch);
             }
 
-            loadMultiLanguageFields();
             loadPartOfModules();
 
             // getPersistenceService().detach(entity);
         } else {
             try {
                 entity = getInstance();
-                
+
                 // FIXME: If entity is Auditable, set here the creator and
                 // creation time
             } catch (InstantiationException e) {
@@ -301,29 +290,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         return initEntity();
     }
 
-    /**
-     * Load multi-language fields if applicable for a class (class contains annotation MultilanguageEntity)
-     * 
-     * @param entity Entity lo load fields for
-     */
-    private void loadMultiLanguageFields() {
-
-        if (!isMultilanguageEntity() || !(entity instanceof BusinessEntity)) {
-            return;
-        }
-
-        languageMessagesMap.clear();
-        BusinessEntity businessEntity = (BusinessEntity) entity;
-
-        for (CatMessages msg : catMessagesService.getCatMessagesList(catMessagesService.getEntityClass(clazz), businessEntity.getCode())) {
-            languageMessagesMap.put(msg.getLanguageCode(), msg.getDescription());
-        }
-    }
-
     private boolean isPartOfModules() {
         return clazz.isAnnotationPresent(ModuleItem.class);
     }
-    
+
     protected boolean isImageUpload() {
         return clazz.isAnnotationPresent(ImageType.class);
     }
@@ -386,33 +356,17 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
         String message = entity.isTransient() ? "save.successful" : "update.successful";
-        
-		if (isImageUpload()) {
-			try {
-				ImageUploadEventHandler<T> imageUploadEventHandler = new ImageUploadEventHandler<>(appProvider);
-				imageUploadEventHandler.saveImageUpload(entity);
-			} catch (IOException e) {
-				log.error("Failed moving image file");
-			}
-		}
 
-        entity = saveOrUpdate(entity);
-
-        // Save description translations
-        if (isMultilanguageEntity() && entity instanceof BusinessEntity) {
-
-            for (String languageKey : languageMessagesMap.keySet()) {
-                String description = languageMessagesMap.get(languageKey);
-                CatMessages catMsg = catMessagesService.getCatMessages((BusinessEntity) entity, languageKey);
-                if (catMsg != null) {
-                    catMsg.setDescription(description);
-                    catMessagesService.update(catMsg);
-                } else {
-                    CatMessages catMessages = new CatMessages((BusinessEntity) entity, languageKey, description);
-                    catMessagesService.create(catMessages);
-                }
+        if (isImageUpload()) {
+            try {
+                ImageUploadEventHandler<T> imageUploadEventHandler = new ImageUploadEventHandler<>(appProvider);
+                imageUploadEventHandler.saveImageUpload(entity);
+            } catch (IOException e) {
+                log.error("Failed moving image file");
             }
         }
+
+        entity = saveOrUpdate(entity);
 
         if (killConversation) {
             endConversation();
@@ -581,16 +535,16 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         try {
             log.info("Deleting entity {} with id = {}", clazz.getName(), id);
             getPersistenceService().remove(id);
-            
+
             if (isImageUpload()) {
-    			try {
-    				ImageUploadEventHandler<T> imageUploadEventHandler = new ImageUploadEventHandler<>(appProvider);
-    				imageUploadEventHandler.deleteImage(entity);
-    			} catch (IOException e) {
-    				log.error("Failed deleting image file");
-    			}
-    		}
-            
+                try {
+                    ImageUploadEventHandler<T> imageUploadEventHandler = new ImageUploadEventHandler<>(appProvider);
+                    imageUploadEventHandler.deleteImage(entity);
+                } catch (IOException e) {
+                    log.error("Failed deleting image file");
+                }
+            }
+
             messages.info(new BundleKey("messages", "delete.successful"));
         } catch (Throwable t) {
             if (t.getCause() instanceof EntityExistsException) {
@@ -611,16 +565,16 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         try {
             log.info("Deleting entity {} with id = {}", clazz.getName(), getEntity().getId());
             getPersistenceService().remove((Long) getEntity().getId());
-            
+
             if (isImageUpload()) {
-    			try {
-    				ImageUploadEventHandler<T> imageUploadEventHandler = new ImageUploadEventHandler<>(appProvider);
-    				imageUploadEventHandler.deleteImage(entity);
-    			} catch (IOException e) {
-    				log.error("Failed deleting image file");
-    			}
-    		}
-            
+                try {
+                    ImageUploadEventHandler<T> imageUploadEventHandler = new ImageUploadEventHandler<>(appProvider);
+                    imageUploadEventHandler.deleteImage(entity);
+                } catch (IOException e) {
+                    log.error("Failed deleting image file");
+                }
+            }
+
             messages.info(new BundleKey("messages", "delete.successful"));
         } catch (Throwable t) {
             if (t.getCause() instanceof EntityExistsException) {
@@ -834,7 +788,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
                 @Override
                 protected IPersistenceService<T> getPersistenceServiceImpl() {
-                    return getPersistenceService();
+           
+                    IPersistenceService<T> service = getPersistenceService();
+                    log.error("AKK get persistence service {}", service);
+                    return service;
                 }
 
                 @Override
@@ -943,8 +900,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         objectId = null;
     }
 
-    public List<TradingLanguage> getProviderLanguages() {
-        return  tradingLanguageService.list();
+    public Set<String> getProviderLanguages() {
+        return tradingLanguageService.listLanguageCodes();
     }
 
     public String getProviderLanguageCode() {
@@ -952,14 +909,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
             return appProvider.getLanguage().getLanguageCode();
         }
         return "";
-    }
-
-    public Map<String, String> getLanguageMessagesMap() {
-        return languageMessagesMap;
-    }
-
-    public void setLanguageMessagesMap(Map<String, String> languageMessagesMap) {
-        this.languageMessagesMap = languageMessagesMap;
     }
 
     protected String getDefaultSort() {
@@ -1014,10 +963,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         this.setDataTableFirstAttribute(((DataTable) event.getSource()).getFirst());
     }
 
-    private boolean isMultilanguageEntity() {
-        return clazz.isAnnotationPresent(MultilanguageEntity.class);
-    }
-
     /**
      * Get currently active locale
      * 
@@ -1049,32 +994,32 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * @return back() page if deleted success, if not, return a callback result to UI for validate
      */
     public String deleteWithBack() {
-    	boolean okFlag = true;
+        boolean okFlag = true;
         try {
             this.delete();
             getPersistenceService().commit();
             return back();
 
         } catch (Throwable t) {
-        	okFlag = false;
+            okFlag = false;
             messages.clear();
             if (t.getCause() instanceof EntityExistsException) {
                 log.info("delete was unsuccessful because entity is used in the system {}", t);
                 messages.error(new BundleKey("messages", "error.delete.entityUsed"));
 
             } else if (t.getCause() instanceof javax.persistence.PersistenceException) {
-            	log.info("delete was unsuccessful because entity is used in the system {}", t);
+                log.info("delete was unsuccessful because entity is used in the system {}", t);
                 messages.error(new BundleKey("messages", "error.delete.entityUsed"));
-                
+
             } else {
                 log.info("unexpected exception when deleting {}", t);
                 messages.error(new BundleKey("messages", "error.delete.unexpected"));
             }
         }
-                
+
         RequestContext requestContext = RequestContext.getCurrentInstance();
         requestContext.addCallbackParam("result", okFlag);
-        
+
         FacesContext.getCurrentInstance().validationFailed();
         return null;
     }
@@ -1102,7 +1047,11 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     public List<Filter> getListFilters() {
-        return filterService.findByPrimaryTargetClass(clazz.getName());
+        if (clazz != null) {
+            return filterService.findByPrimaryTargetClass(clazz.getName());
+        } else {
+            return null;
+        }
     }
 
     public void runListFilter() {
@@ -1268,36 +1217,36 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
         return null;
     }
-    
-	public void hfHandleFileUpload(FileUploadEvent event) throws BusinessException {
-		uploadedFile = event.getFile();
-		String code = ((BusinessEntity) entity).getCode();
-		if (!overrideImageOnUpload) {
-			code = null;
-		}
 
-		try {
-			ImageUploadEventHandler<T> uploadHandler = new ImageUploadEventHandler<T>(appProvider);
-			uploadHandler.handleImageUpload(entity, code, uploadedFile);
-			messages.info(new BundleKey("messages", "message.upload.succesful"));
-		} catch (Exception e) {
-			messages.error(new BundleKey("messages", "message.upload.fail"), e.getMessage());
-		}
-	}
+    public void hfHandleFileUpload(FileUploadEvent event) throws BusinessException {
+        uploadedFile = event.getFile();
+        String code = ((BusinessEntity) entity).getCode();
+        if (!overrideImageOnUpload) {
+            code = null;
+        }
 
-	public UploadedFile getUploadedFile() {
-		return uploadedFile;
-	}
+        try {
+            ImageUploadEventHandler<T> uploadHandler = new ImageUploadEventHandler<T>(appProvider);
+            uploadHandler.handleImageUpload(entity, code, uploadedFile);
+            messages.info(new BundleKey("messages", "message.upload.succesful"));
+        } catch (Exception e) {
+            messages.error(new BundleKey("messages", "message.upload.fail"), e.getMessage());
+        }
+    }
 
-	public void setUploadedFile(UploadedFile uploadedFile) {
-		this.uploadedFile = uploadedFile;
-	}
-	
-	public boolean isOverrideImageOnUpload() {
-		return overrideImageOnUpload;
-	}
+    public UploadedFile getUploadedFile() {
+        return uploadedFile;
+    }
 
-	public void setOverrideImageOnUpload(boolean overrideImageOnUpload) {
-		this.overrideImageOnUpload = overrideImageOnUpload;
-	}	
+    public void setUploadedFile(UploadedFile uploadedFile) {
+        this.uploadedFile = uploadedFile;
+    }
+
+    public boolean isOverrideImageOnUpload() {
+        return overrideImageOnUpload;
+    }
+
+    public void setOverrideImageOnUpload(boolean overrideImageOnUpload) {
+        this.overrideImageOnUpload = overrideImageOnUpload;
+    }
 }

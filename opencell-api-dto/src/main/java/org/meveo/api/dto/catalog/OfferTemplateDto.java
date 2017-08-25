@@ -25,11 +25,9 @@ public class OfferTemplateDto extends ProductOfferingDto {
 
     private static final long serialVersionUID = 9156372453581362595L;
 
-    //@XmlTransient
+    // @XmlTransient
     @XmlAttribute()
     private Long id;
-
-    private String longDescription;
 
     private String bomCode;
 
@@ -43,10 +41,10 @@ public class OfferTemplateDto extends ProductOfferingDto {
     @XmlElementWrapper(name = "offerProductTemplates")
     @XmlElement(name = "offerProductTemplate")
     private List<OfferProductTemplateDto> offerProductTemplates;
-    
+
     @XmlElement
     private List<ChannelDto> channels;
-    
+
     @XmlElementWrapper(name = "offerTemplateCategories")
     @XmlElement(name = "offerTemplateCategory")
     private List<OfferTemplateCategoryDto> offerTemplateCategories;
@@ -79,23 +77,22 @@ public class OfferTemplateDto extends ProductOfferingDto {
     public OfferTemplateDto(OfferTemplate offerTemplate, CustomFieldsDto customFieldsDto, boolean asLink) {
         super(offerTemplate, customFieldsDto, asLink);
         id = offerTemplate.getId();
-        setLongDescription(offerTemplate.getLongDescription());
 
         if (offerTemplate.getBusinessOfferModel() != null) {
             setBomCode(offerTemplate.getBusinessOfferModel().getCode());
         }
-		if (offerTemplate.getChannels() != null) {
-			channels = new ArrayList<>();
-			for (Channel channel : offerTemplate.getChannels()) {
-				channels.add(new ChannelDto(channel));
-			}
-		}
-		if (offerTemplate.getOfferTemplateCategories() != null) {
-			offerTemplateCategories = new ArrayList<>();
-			for (OfferTemplateCategory offerTemplateCategory : offerTemplate.getOfferTemplateCategories()) {
-				offerTemplateCategories.add(new OfferTemplateCategoryDto(offerTemplateCategory));
-			}
-		}
+        if (offerTemplate.getChannels() != null) {
+            channels = new ArrayList<>();
+            for (Channel channel : offerTemplate.getChannels()) {
+                channels.add(new ChannelDto(channel));
+            }
+        }
+        if (offerTemplate.getOfferTemplateCategories() != null) {
+            offerTemplateCategories = new ArrayList<>();
+            for (OfferTemplateCategory offerTemplateCategory : offerTemplate.getOfferTemplateCategories()) {
+                offerTemplateCategories.add(new OfferTemplateCategoryDto(offerTemplateCategory));
+            }
+        }
     }
 
     public boolean isDisabled() {
@@ -158,27 +155,19 @@ public class OfferTemplateDto extends ProductOfferingDto {
                 && (offerServiceTemplates == null || offerServiceTemplates.isEmpty()) && (customFields == null || customFields.isEmpty());
     }
 
-    public String getLongDescription() {
-        return longDescription;
+    public List<OfferTemplateCategoryDto> getOfferTemplateCategories() {
+        return offerTemplateCategories;
     }
 
-    public void setLongDescription(String longDescription) {
-        this.longDescription = longDescription;
+    public void setOfferTemplateCategories(List<OfferTemplateCategoryDto> offerTemplateCategories) {
+        this.offerTemplateCategories = offerTemplateCategories;
     }
 
-	public List<OfferTemplateCategoryDto> getOfferTemplateCategories() {
-		return offerTemplateCategories;
-	}
+    public List<ChannelDto> getChannels() {
+        return channels;
+    }
 
-	public void setOfferTemplateCategories(List<OfferTemplateCategoryDto> offerTemplateCategories) {
-		this.offerTemplateCategories = offerTemplateCategories;
-	}
-
-	public List<ChannelDto> getChannels() {
-		return channels;
-	}
-
-	public void setChannels(List<ChannelDto> channels) {
-		this.channels = channels;
-	}
+    public void setChannels(List<ChannelDto> channels) {
+        this.channels = channels;
+    }
 }

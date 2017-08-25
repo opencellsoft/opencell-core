@@ -18,65 +18,64 @@ import org.meveo.model.billing.Tax;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TaxDto extends BusinessDto {
 
-	private static final long serialVersionUID = 5184602572648722134L;
+    private static final long serialVersionUID = 5184602572648722134L;
 
-	@XmlElement(required = true)
-	private BigDecimal percent;
+    @XmlElement(required = true)
+    private BigDecimal percent;
 
-	private String accountingCode;
-	private List<LanguageDescriptionDto> languageDescriptions;
-	
-	private CustomFieldsDto customFields = new CustomFieldsDto();
+    private String accountingCode;
+    private List<LanguageDescriptionDto> languageDescriptions;
 
-	public TaxDto() {
+    private CustomFieldsDto customFields = new CustomFieldsDto();
 
-	}
+    public TaxDto() {
 
-	public TaxDto(Tax tax,CustomFieldsDto customFieldInstances) {
-		super(tax);
-		percent = tax.getPercent();
-		accountingCode = tax.getAccountingCode();
-		customFields = customFieldInstances;
-	}
+    }
 
-	public BigDecimal getPercent() {
-		return percent;
-	}
+    public TaxDto(Tax tax, CustomFieldsDto customFieldInstances) {
+        super(tax);
+        percent = tax.getPercent();
+        accountingCode = tax.getAccountingCode();
+        customFields = customFieldInstances;
+        setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(tax.getDescriptionI18n()));
+    }
 
-	public void setPercent(BigDecimal percent) {
-		this.percent = percent;
-	}
+    public BigDecimal getPercent() {
+        return percent;
+    }
 
-	public String getAccountingCode() {
-		return accountingCode;
-	}
+    public void setPercent(BigDecimal percent) {
+        this.percent = percent;
+    }
 
-	public void setAccountingCode(String accountingCode) {
-		this.accountingCode = accountingCode;
-	}
+    public String getAccountingCode() {
+        return accountingCode;
+    }
 
-	public List<LanguageDescriptionDto> getLanguageDescriptions() {
-		return languageDescriptions;
-	}
+    public void setAccountingCode(String accountingCode) {
+        this.accountingCode = accountingCode;
+    }
 
-	public void setLanguageDescriptions(
-			List<LanguageDescriptionDto> languageDescriptions) {
-		this.languageDescriptions = languageDescriptions;
-	}
-	
+    public List<LanguageDescriptionDto> getLanguageDescriptions() {
+        return languageDescriptions;
+    }
 
-	public CustomFieldsDto getCustomFields() {
-		return customFields;
-	}
+    public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
+        this.languageDescriptions = languageDescriptions;
+    }
 
-	public void setCustomFields(CustomFieldsDto customFields) {
-		this.customFields = customFields;
-	}
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
 
-	@Override
-	public String toString() {
-		return "TaxDto [code=" + getCode() + ", description=" + getDescription() + ", percent=" + percent + ", accountingCode="
-				+ accountingCode + ", languageDescriptions=" + languageDescriptions + ", customFields=" + customFields + "]";
-	}
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
+    }
+
+    @Override
+    public String toString() {
+        return "TaxDto [code=" + getCode() + ", description=" + getDescription() + ", percent=" + percent + ", accountingCode=" + accountingCode + ", languageDescriptions="
+                + languageDescriptions + ", customFields=" + customFields + "]";
+    }
 
 }

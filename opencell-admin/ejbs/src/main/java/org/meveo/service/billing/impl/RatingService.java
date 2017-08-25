@@ -57,7 +57,6 @@ import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.service.medina.impl.AccessService;
@@ -67,9 +66,6 @@ import org.meveo.service.script.ScriptInterface;
 
 @Stateless
 public class RatingService extends BusinessService<WalletOperation>{
-
-	@Inject
-	protected CatMessagesService catMessagesService;
 
 	@Inject
 	private EdrService edrService;
@@ -236,9 +232,14 @@ public class RatingService extends BusinessService<WalletOperation>{
             }
         }
         
-		walletOperation.setCode(chargeTemplate.getCode());		
-		walletOperation.setDescription(catMessagesService.getMessageDescriptionByCodeAndLanguage(
-				chargeTemplate.getCode(), languageCode, chargeInstance.getDescription()));      
+        walletOperation.setCode(chargeTemplate.getCode());
+
+        String descTranslated = (chargeInstance == null || chargeInstance.getDescription() == null) ? chargeTemplate.getDescriptionOrCode() : chargeInstance.getDescription();
+        if (chargeTemplate.getDescriptionI18n() != null && chargeTemplate.getDescriptionI18n().containsKey(languageCode)) {
+            descTranslated = chargeTemplate.getDescriptionI18n().get(languageCode);
+        }
+
+        walletOperation.setDescription(descTranslated);
         walletOperation.setTaxPercent(isExonerated?BigDecimal.ZERO:taxPercent);
 		walletOperation.setCurrency(tCurrency.getCurrency());
 		walletOperation.setStartDate(startdate);

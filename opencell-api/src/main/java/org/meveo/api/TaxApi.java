@@ -1,6 +1,5 @@
 package org.meveo.api;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -8,7 +7,6 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.TaxDto;
 import org.meveo.api.dto.TaxesDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -16,11 +14,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.Tax;
-import org.meveo.model.billing.TradingLanguage;
-import org.meveo.service.billing.impl.TradingLanguageService;
-import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.TaxService;
 
 /**
@@ -31,12 +25,6 @@ public class TaxApi extends BaseApi {
 
     @Inject
     private TaxService taxService;
-
-    @Inject
-    private CatMessagesService catMessagesService;
-    
-    @Inject
-    private TradingLanguageService tradingLanguageService;
 
     public ActionStatus create(TaxDto postData) throws MeveoApiException, BusinessException {
 
@@ -49,11 +37,8 @@ public class TaxApi extends BaseApi {
         }
 
         handleMissingParametersAndValidate(postData);
-        
 
         ActionStatus result = new ActionStatus();
-
-        
 
         // check if tax exists
         if (taxService.findByCode(postData.getCode()) != null) {
@@ -66,26 +51,6 @@ public class TaxApi extends BaseApi {
         tax.setPercent(postData.getPercent());
         tax.setAccountingCode(postData.getAccountingCode());
 
-        List<TradingLanguage> tradingLanguages = tradingLanguageService.list();
-        if (!tradingLanguages.isEmpty()) {
-            if (postData.getLanguageDescriptions() != null) {
-                for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-                    boolean match = false;
-
-                    for (TradingLanguage tl : tradingLanguages) {
-                        if (tl.getLanguageCode().equals(ld.getLanguageCode())) {
-                            match = true;
-                            break;
-                        }
-                    }
-
-                    if (!match) {
-                        throw new MeveoApiException(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, "Language " + ld.getLanguageCode() + " is not supported by the provider.");
-                    }
-                }
-            }
-        }
-     
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), tax, true, true);
@@ -98,16 +63,9 @@ public class TaxApi extends BaseApi {
             throw e;
         }
 
+        tax.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions()));
+
         taxService.create(tax);
-
-        // create cat messages
-        if (postData.getLanguageDescriptions() != null) {
-            for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-                CatMessages catMsg = new CatMessages(Tax.class.getSimpleName() , tax.getCode(), ld.getLanguageCode(), ld.getDescription());
-
-                catMessagesService.create(catMsg);
-            }
-        }
 
         return result;
     }
@@ -123,11 +81,8 @@ public class TaxApi extends BaseApi {
         }
 
         handleMissingParametersAndValidate(postData);
-        
 
         ActionStatus result = new ActionStatus();
-
-        
 
         // check if tax exists
         Tax tax = taxService.findByCode(postData.getCode());
@@ -139,40 +94,11 @@ public class TaxApi extends BaseApi {
         tax.setPercent(postData.getPercent());
         tax.setAccountingCode(postData.getAccountingCode());
 
-        List<TradingLanguage> tradingLanguages = tradingLanguageService.list();
-        if (!tradingLanguages.isEmpty()) {
-            if (postData.getLanguageDescriptions() != null) {
-                for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-                    boolean match = false;
-
-                    for (TradingLanguage tl : tradingLanguages) {
-                        if (tl.getLanguageCode().equals(ld.getLanguageCode())) {
-                            match = true;
-                            break;
-                        }
-                    }
-
-                    if (!match) {
-                        throw new MeveoApiException(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, "Language " + ld.getLanguageCode() + " is not supported by the provider.");
-                    }
-                }
-
-                // create cat messages
-                for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-                    CatMessages catMsg = catMessagesService.getCatMessages( tax.getCode(),Tax.class.getSimpleName() , ld.getLanguageCode());
-
-                    if (catMsg != null) {
-                        catMsg.setDescription(ld.getDescription());
-                        catMessagesService.update(catMsg);
-                    } else {
-                        CatMessages catMessages = new CatMessages(Tax.class.getSimpleName() , tax.getCode(), ld.getLanguageCode(), ld.getDescription());
-                        catMessagesService.create(catMessages);
-                    }
-                }
-            }
+        if (postData.getLanguageDescriptions() != null) {
+            tax.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions()));
         }
-        
-     // populate customFields
+
+        // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), tax, true, true);
 
@@ -203,14 +129,7 @@ public class TaxApi extends BaseApi {
             throw new EntityDoesNotExistsException(Tax.class, taxCode);
         }
 
-        result = new TaxDto(tax,entityToDtoConverter.getCustomFieldsWithInheritedDTO(tax, true));
-
-        List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
-        for (CatMessages msg : catMessagesService.getCatMessagesList(Tax.class.getSimpleName() , tax.getCode())) {
-            languageDescriptions.add(new LanguageDescriptionDto(msg.getLanguageCode(), msg.getDescription()));
-        }
-
-        result.setLanguageDescriptions(languageDescriptions);
+        result = new TaxDto(tax, entityToDtoConverter.getCustomFieldsWithInheritedDTO(tax, true));
 
         return result;
     }
@@ -249,7 +168,7 @@ public class TaxApi extends BaseApi {
         List<Tax> taxes = taxService.list();
         if (taxes != null && !taxes.isEmpty()) {
             for (Tax tax : taxes) {
-                TaxDto taxDto = new TaxDto(tax,entityToDtoConverter.getCustomFieldsWithInheritedDTO(tax, true));
+                TaxDto taxDto = new TaxDto(tax, entityToDtoConverter.getCustomFieldsWithInheritedDTO(tax, true));
                 taxesDto.getTax().add(taxDto);
             }
         }

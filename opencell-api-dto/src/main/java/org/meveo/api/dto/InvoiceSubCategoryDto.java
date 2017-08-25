@@ -16,71 +16,72 @@ import org.meveo.model.billing.InvoiceSubCategory;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InvoiceSubCategoryDto extends BusinessDto {
 
-	private static final long serialVersionUID = 1832246068609179546L;
-	
-	@XmlElement(required = true)
-	private String invoiceCategory;
-	
-	@XmlElement(required = true)
-	private String accountingCode;
+    private static final long serialVersionUID = 1832246068609179546L;
 
-	private List<LanguageDescriptionDto> languageDescriptions;
-	
-	private CustomFieldsDto customFields = new CustomFieldsDto();
+    @XmlElement(required = true)
+    private String invoiceCategory;
 
-	public InvoiceSubCategoryDto() {
+    @XmlElement(required = true)
+    private String accountingCode;
 
-	}
+    private List<LanguageDescriptionDto> languageDescriptions;
 
-	public InvoiceSubCategoryDto(InvoiceSubCategory invoiceSubCategory, CustomFieldsDto customFieldInstances) {
-		super(invoiceSubCategory);
-		invoiceCategory = invoiceSubCategory.getInvoiceCategory().getCode();
-		accountingCode=invoiceSubCategory.getAccountingCode();
-		customFields = customFieldInstances;
-	}
+    private CustomFieldsDto customFields = new CustomFieldsDto();
 
-	public String getInvoiceCategory() {
-		return invoiceCategory;
-	}
+    public InvoiceSubCategoryDto() {
 
-	public void setInvoiceCategory(String invoiceCategory) {
-		this.invoiceCategory = invoiceCategory;
-	}
+    }
 
-	public List<LanguageDescriptionDto> getLanguageDescriptions() {
-		return languageDescriptions;
-	}
+    public InvoiceSubCategoryDto(InvoiceSubCategory invoiceSubCategory, CustomFieldsDto customFieldInstances) {
+        super(invoiceSubCategory);
+        invoiceCategory = invoiceSubCategory.getInvoiceCategory().getCode();
+        accountingCode = invoiceSubCategory.getAccountingCode();
+        customFields = customFieldInstances;
+        setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(invoiceSubCategory.getDescriptionI18n()));
+    }
 
-	public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
-		this.languageDescriptions = languageDescriptions;
-	}
-	
-	public String getAccountingCode() {
-		return accountingCode;
-	}
+    public String getInvoiceCategory() {
+        return invoiceCategory;
+    }
 
-	public void setAccountingCode(String accountingCode) {
-		this.accountingCode = accountingCode;
-	}
+    public void setInvoiceCategory(String invoiceCategory) {
+        this.invoiceCategory = invoiceCategory;
+    }
 
-	/**
-	 * @return the customFields
-	 */
-	public CustomFieldsDto getCustomFields() {
-		return customFields;
-	}
+    public List<LanguageDescriptionDto> getLanguageDescriptions() {
+        return languageDescriptions;
+    }
 
-	/**
-	 * @param customFields the customFields to set
-	 */
-	public void setCustomFields(CustomFieldsDto customFields) {
-		this.customFields = customFields;
-	}
-	
-	@Override
-	public String toString() {
-		return "InvoiceSubCategoryDto [code=" + getCode() + ", description=" + getDescription() + ", invoiceCategory=" + invoiceCategory + ", accountingCode=" + accountingCode + ", languageDescriptions=" + languageDescriptions + ", customFields=" + customFields + "]";
-	}
+    public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
+        this.languageDescriptions = languageDescriptions;
+    }
 
-	
+    public String getAccountingCode() {
+        return accountingCode;
+    }
+
+    public void setAccountingCode(String accountingCode) {
+        this.accountingCode = accountingCode;
+    }
+
+    /**
+     * @return the customFields
+     */
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
+
+    /**
+     * @param customFields the customFields to set
+     */
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
+    }
+
+    @Override
+    public String toString() {
+        return "InvoiceSubCategoryDto [code=" + getCode() + ", description=" + getDescription() + ", invoiceCategory=" + invoiceCategory + ", accountingCode=" + accountingCode
+                + ", languageDescriptions=" + languageDescriptions + ", customFields=" + customFields + "]";
+    }
+
 }

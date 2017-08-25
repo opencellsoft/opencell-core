@@ -91,7 +91,6 @@ import org.meveo.model.rating.EDR;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.script.Script;
@@ -118,9 +117,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 	@Inject
 	private RatedTransactionService ratedTransactionService;
-
-	@Inject
-	private CatMessagesService catMessagesService;
 
 	@Inject
 	private InvoiceAgregateService invoiceAgregateService;
@@ -735,8 +731,14 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
 			Element quality = doc.createElement("quality");
 			if (account.getName().getTitle() != null) {
-				Text qualityTxt = doc.createTextNode(catMessagesService.getMessageDescription(account.getName().getTitle(), languageCode));
-				quality.appendChild(qualityTxt);
+			    
+		        String descTranslated = account.getName().getTitle().getDescriptionOrCode();
+		        if (account.getName().getTitle().getDescriptionI18n() != null && account.getName().getTitle().getDescriptionI18n().containsKey(languageCode)) {
+		            descTranslated = account.getName().getTitle().getDescriptionI18n().get(languageCode);
+		        }
+			    
+				Text titleTxt = doc.createTextNode(descTranslated);
+				quality.appendChild(titleTxt);
 			}
 			nameTag.appendChild(quality);
 			if (account.getName().getFirstName() != null) {
@@ -1120,7 +1122,14 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 							Element pricePlan = doc.createElement("pricePlan");
 							pricePlan.setAttribute("code", ratedTransaction.getPriceplan().getCode());
 							if( ! littleCache.containsKey(ratedTransaction.getPriceplan().getCode()+"_"+languageCode)){
-								littleCache.put(ratedTransaction.getPriceplan().getCode()+"_"+languageCode, catMessagesService.getMessageDescription(ratedTransaction.getPriceplan(),languageCode));
+
+                                String descTranslated = ratedTransaction.getPriceplan().getDescriptionOrCode();
+                                if (ratedTransaction.getPriceplan().getDescriptionI18n() != null
+                                        && ratedTransaction.getPriceplan().getDescriptionI18n().containsKey(languageCode)) {
+                                    descTranslated = ratedTransaction.getPriceplan().getDescriptionI18n().get(languageCode);
+                                }
+
+                                littleCache.put(ratedTransaction.getPriceplan().getCode() + "_" + languageCode, descTranslated);
 							}
 							pricePlan.setAttribute("description", littleCache.get(ratedTransaction.getPriceplan().getCode()+"_"+languageCode));
 							line.appendChild(pricePlan);
@@ -1297,9 +1306,13 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					throw new BusinessException("Billing account must have a trading language.");
 				}
 
-				String taxDescription = catMessagesService.getMessageDescription(taxInvoiceAgregate.getTax(), languageCode);
+                String descTranslated = taxInvoiceAgregate.getTax().getDescriptionOrCode();
+                if (taxInvoiceAgregate.getTax().getDescriptionI18n() != null && taxInvoiceAgregate.getTax().getDescriptionI18n().containsKey(languageCode)) {
+                    descTranslated = taxInvoiceAgregate.getTax().getDescriptionI18n().get(languageCode);
+                }
+				
 				Element taxName = doc.createElement("name");
-				Text taxNameTxt = doc.createTextNode(taxDescription != null ? taxDescription : "");
+				Text taxNameTxt = doc.createTextNode(descTranslated);
 				taxName.appendChild(taxNameTxt);
 				tax.appendChild(taxName);
 

@@ -1,7 +1,9 @@
 package org.meveo.model.catalog;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -26,6 +28,7 @@ import javax.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.ExportIdentifier;
@@ -43,7 +46,7 @@ import org.meveo.model.crm.BusinessAccountModel;
 @ModuleItem
 @ObservableEntity
 @VersionedEntity
-@MultilanguageEntity(key = "menu.catalog.offersAndProducts", group = "ProductOffering")
+@MultilanguageEntity(label = "menu.catalog.offersAndProducts")
 @ExportIdentifier({ "code", "validity.from", "validity.to" })
 @Table(name = "cat_offer_template", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "valid_from", "valid_to" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
@@ -94,6 +97,18 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
     @OrderColumn(name = "INDX")
     private List<Channel> channels = new ArrayList<Channel>();
 
+    @Type(type = "json")
+    @Column(name = "description_i18n", columnDefinition = "text")
+    private Map<String, String> descriptionI18n;
+
+    @Size(max = 2000)
+    @Column(name = "long_description", columnDefinition = "TEXT")
+    private String longDescription;
+
+    @Type(type = "json")
+    @Column(name = "long_description_i18n", columnDefinition = "text")
+    private Map<String, String> longDescriptionI18n;
+
     public void addOfferTemplateCategory(OfferTemplateCategory offerTemplateCategory) {
         if (getOfferTemplateCategories() == null) {
             offerTemplateCategories = new ArrayList<>();
@@ -137,7 +152,7 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
     public void setName(String name) {
         this.name = name;
     }
-    
+
     public DatePeriod getValidityRaw() {
         return validity;
     }
@@ -159,7 +174,7 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
         }
         return validity;
     }
-    
+
     public LifeCycleStatusEnum getLifeCycleStatus() {
         return lifeCycleStatus;
     }
@@ -215,10 +230,10 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
     }
-    
+
     @Override
     public boolean equals(Object obj) {
-        
+
         if (this == obj) {
             return true;
         } else if (obj == null) {
@@ -230,7 +245,7 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
         ProductOffering other = (ProductOffering) obj;
 
         if (id != null && other.getId() != null && id.equals(other.getId())) {
-             return true;
+            return true;
         }
         if (code == null) {
             if (other.getCode() != null) {
@@ -247,5 +262,55 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
         }
 
         return true;
+    }
+
+    public Map<String, String> getDescriptionI18n() {
+        return descriptionI18n;
+    }
+
+    public void setDescriptionI18n(Map<String, String> descriptionI18n) {
+        this.descriptionI18n = descriptionI18n;
+    }
+
+    /**
+     * Instantiate descriptionI18n field if it is null. NOTE: do not use this method unless you have an intention to modify it's value, as entity will be marked dirty and record
+     * will be updated in DB
+     * 
+     * @return descriptionI18n value or instantiated descriptionI18n field value
+     */
+    public Map<String, String> getDescriptionI18nNullSafe() {
+        if (descriptionI18n == null) {
+            descriptionI18n = new HashMap<>();
+        }
+        return descriptionI18n;
+    }
+
+    public String getLongDescription() {
+        return longDescription;
+    }
+
+    public void setLongDescription(String longDescription) {
+        this.longDescription = longDescription;
+    }
+
+    public Map<String, String> getLongDescriptionI18n() {
+        return longDescriptionI18n;
+    }
+
+    public void setLongDescriptionI18n(Map<String, String> longDescriptionI18n) {
+        this.longDescriptionI18n = longDescriptionI18n;
+    }
+
+    /**
+     * Instantiate descriptionI18n field if it is null. NOTE: do not use this method unless you have an intention to modify it's value, as entity will be marked dirty and record
+     * will be updated in DB
+     * 
+     * @return descriptionI18n value or instantiated descriptionI18n field value
+     */
+    public Map<String, String> getLongDescriptionI18nNullSafe() {
+        if (longDescriptionI18n == null) {
+            longDescriptionI18n = new HashMap<>();
+        }
+        return longDescriptionI18n;
     }
 }
