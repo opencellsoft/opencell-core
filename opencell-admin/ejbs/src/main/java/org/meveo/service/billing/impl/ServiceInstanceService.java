@@ -140,6 +140,26 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
         return serviceInstances;
     }
+    
+    public ServiceInstance findFirstByCodeSubscriptionAndStatus(String code, Subscription subscription, InstanceStatusEnum status) {
+    	ServiceInstance result = null;
+        try {
+            log.debug("start of find {} by code (code={}) ..", "ServiceInstance", code);
+            QueryBuilder qb = new QueryBuilder(ServiceInstance.class, "c");
+            qb.addCriterion("c.code", "=", code, true);
+            qb.addCriterion("c.subscription", "=", subscription, true);
+            qb.addCriterionEnum("c.status", status);
+
+            result = (ServiceInstance) qb.getQuery(getEntityManager()).getSingleResult();
+            log.debug("end of find {} by code (code={}). Result found={}.", "ServiceInstance", code, result);
+        } catch (NoResultException nre) {
+            log.debug("findFirstByCodeSubscriptionAndStatus : no service has been found");
+        } catch (Exception e) {
+            log.error("findFirstByCodeSubscriptionAndStatus error={} ", e);
+        }
+
+        return result;
+    }
 
     public void serviceInstanciation(ServiceInstance serviceInstance) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
         serviceInstanciation(serviceInstance, null, null, false);

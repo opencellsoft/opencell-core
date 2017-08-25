@@ -1204,7 +1204,11 @@ public class SubscriptionApi extends BaseApi {
         }
 
         for (ServiceToUpdateDto serviceToUpdateDto : postData.getServicesToUpdate()) {
-            ServiceInstance serviceToUpdate = serviceInstanceService.findByCodeAndSubscription(serviceToUpdateDto.getCode(), subscription);
+			ServiceInstance serviceToUpdate = serviceInstanceService.findFirstByCodeSubscriptionAndStatus(serviceToUpdateDto.getCode(), subscription, InstanceStatusEnum.ACTIVE);
+			if (serviceToUpdate == null) {
+				throw new EntityDoesNotExistsException(ServiceInstance.class, serviceToUpdateDto.getCode());
+			}
+			
             if (serviceToUpdateDto.getEndAgreementDate() != null) {
                 serviceToUpdate.setEndAgreementDate(serviceToUpdateDto.getEndAgreementDate());
             }
