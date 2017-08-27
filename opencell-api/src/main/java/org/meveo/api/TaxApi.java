@@ -63,7 +63,7 @@ public class TaxApi extends BaseApi {
             throw e;
         }
 
-        tax.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions()));
+        tax.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
 
         taxService.create(tax);
 
@@ -95,7 +95,7 @@ public class TaxApi extends BaseApi {
         tax.setAccountingCode(postData.getAccountingCode());
 
         if (postData.getLanguageDescriptions() != null) {
-            tax.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions()));
+            tax.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), tax.getDescriptionI18n()));
         }
 
         // populate customFields

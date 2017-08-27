@@ -115,7 +115,7 @@ public class ProductChargeTemplateApi extends BaseCrudApi<ProductChargeTemplate,
             throw e;
         }
 
-        chargeTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions()));
+        chargeTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
 
         productChargeTemplateService.create(chargeTemplate);
 
@@ -169,7 +169,7 @@ public class ProductChargeTemplateApi extends BaseCrudApi<ProductChargeTemplate,
         }
 
         if (postData.getLanguageDescriptions() != null) {
-            chargeTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions()));
+            chargeTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), chargeTemplate.getDescriptionI18n()));
         }
 
         if (postData.getTriggeredEdrs() != null) {

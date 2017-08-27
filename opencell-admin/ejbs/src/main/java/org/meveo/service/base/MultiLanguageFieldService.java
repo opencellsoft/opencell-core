@@ -2,6 +2,7 @@ package org.meveo.service.base;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -16,6 +17,8 @@ import javax.ejb.Stateless;
 
 import org.meveo.model.IEntity;
 import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Stateless
 public class MultiLanguageFieldService implements Serializable {
@@ -30,13 +33,15 @@ public class MultiLanguageFieldService implements Serializable {
 
         if (multiLanguageFieldMapping == null) {
 
+            Logger log = LoggerFactory.getLogger(getClass());
+            log.error("AKK loading multiLanguageFieldMapping");
             Map<Class, List<String>> entityMapping = new HashMap<>();
 
             Reflections reflections = new Reflections("org.meveo.model", "org.meveocrm.model");
             Set<Class<? extends IEntity>> classes = reflections.getSubTypesOf(IEntity.class);
 
             for (Class clazz : classes) {
-                if (clazz.isInterface() || clazz.isAnnotation() || !IEntity.class.isAssignableFrom(clazz)) {
+                if (clazz.isInterface() || clazz.isAnnotation() || Modifier.isAbstract(clazz.getModifiers()) || !IEntity.class.isAssignableFrom(clazz)) {
                     continue;
                 }
 

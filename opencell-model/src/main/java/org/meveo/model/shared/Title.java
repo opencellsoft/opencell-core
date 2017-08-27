@@ -33,11 +33,9 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
-import org.meveo.model.MultilanguageEntity;
 
 @Entity
 @Cacheable
-@MultilanguageEntity(label = "menu.titles")
 @ExportIdentifier({ "code" })
 @Table(name = "adm_title", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {

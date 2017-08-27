@@ -68,7 +68,7 @@ public class InvoiceSubCategoryApi extends BaseApi {
             throw e;
         }
 
-        invoiceSubCategory.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions()));
+        invoiceSubCategory.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
 
         invoiceSubCategoryService.create(invoiceSubCategory);
     }
@@ -100,7 +100,7 @@ public class InvoiceSubCategoryApi extends BaseApi {
         invoiceSubCategory.setAccountingCode(postData.getAccountingCode());
 
         if (postData.getLanguageDescriptions() != null) {
-            invoiceSubCategory.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions()));
+            invoiceSubCategory.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), invoiceSubCategory.getDescriptionI18n()));
         }
 
         // populate customFields

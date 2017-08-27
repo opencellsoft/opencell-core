@@ -51,7 +51,7 @@ public class InvoiceCategoryApi extends BaseApi {
             throw e;
         }
 
-        invoiceCategory.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions()));
+        invoiceCategory.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
 
         invoiceCategoryService.create(invoiceCategory);
 
@@ -73,7 +73,7 @@ public class InvoiceCategoryApi extends BaseApi {
         invoiceCategory.setDescription(postData.getDescription());
 
         if (postData.getLanguageDescriptions() != null) {
-            invoiceCategory.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions()));
+            invoiceCategory.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), invoiceCategory.getDescriptionI18n()));
         }
 
         // populate customFields

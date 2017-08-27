@@ -1,6 +1,7 @@
 package org.meveo.api.ws;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -414,7 +415,7 @@ public interface SettingsWs extends IBaseWs {
      * @return
      */
     @WebMethod
-    public ActionStatus updateTranslations(@WebParam(name = "translations") CatMessagesDto postData);
+    public ActionStatus updateTranslations(@WebParam(name = "translations") List<CatMessagesDto> translations);
 
     /**
      * Find entity field translations for a particular entity, field (optional) and a language (optional). Deprecated in v.4.7. Use findTranslations instead
@@ -441,8 +442,8 @@ public interface SettingsWs extends IBaseWs {
      * @return A list of field value translations
      */
     @WebMethod
-    public GetDescriptionsResponse findTranslations(@WebParam(name = "entityClass") String entityClass, @WebParam(name = "code") String code,
-            @WebParam(name = "validFrom") Date validFrom, @WebParam(name = "validTo") Date validTo, @WebParam(name = "fieldname") String fieldname,
+    public DescriptionsResponseDto findTranslations(@WebParam(name = "entityClass") String entityClass, @WebParam(name = "code") String code,
+            @WebParam(name = "validFrom") Date validFrom, @WebParam(name = "validTo") Date validTo, @WebParam(name = "fieldName") String fieldname,
             @WebParam(name = "languageCode") String languageCode);
 
     /**
@@ -471,7 +472,7 @@ public interface SettingsWs extends IBaseWs {
      */
     @WebMethod
     public ActionStatus removeTranslations(@WebParam(name = "entityClass") String entityClass, @WebParam(name = "code") String code, @WebParam(name = "validFrom") Date validFrom,
-            @WebParam(name = "validTo") Date validTo, @WebParam(name = "fieldname") String fieldname, @WebParam(name = "languageCode") String languageCode);
+            @WebParam(name = "validTo") Date validTo, @WebParam(name = "fieldName") String fieldname, @WebParam(name = "languageCode") String languageCode);
 
     /**
      * Provide translation of multi language field values. Deprecated in v.4.7. Use updateTranslations instead
@@ -502,7 +503,7 @@ public interface SettingsWs extends IBaseWs {
      * @return A list of entity field value translations
      */
     @WebMethod
-    public DescriptionsResponseDto listTranslations(@WebParam(name = "entityClass") String entityClass, @WebParam(name = "fieldname") String fieldname,
+    public DescriptionsResponseDto listTranslations(@WebParam(name = "entityClass") String entityClass, @WebParam(name = "fieldName") String fieldname,
             @WebParam(name = "languageCode") String languageCode);
 
     /* termination reasons */

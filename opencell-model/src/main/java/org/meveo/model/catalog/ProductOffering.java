@@ -33,7 +33,6 @@ import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
-import org.meveo.model.MultilanguageEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.VersionedEntity;
 import org.meveo.model.annotation.ImageType;
@@ -46,7 +45,6 @@ import org.meveo.model.crm.BusinessAccountModel;
 @ModuleItem
 @ObservableEntity
 @VersionedEntity
-@MultilanguageEntity(label = "menu.catalog.offersAndProducts")
 @ExportIdentifier({ "code", "validity.from", "validity.to" })
 @Table(name = "cat_offer_template", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "valid_from", "valid_to" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {

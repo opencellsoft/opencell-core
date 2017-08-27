@@ -49,7 +49,6 @@ import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
-import org.meveo.model.MultilanguageEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
@@ -59,7 +58,6 @@ import org.meveo.model.finance.RevenueRecognitionRule;
 @Entity
 @ModuleItem
 @ObservableEntity
-@MultilanguageEntity(label = "menu.charges")
 @CustomFieldEntity(cftCodePrefix = "CHARGE")
 @ExportIdentifier({ "code" })
 @Table(name = "cat_charge_template", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))

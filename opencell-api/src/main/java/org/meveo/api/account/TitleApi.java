@@ -48,7 +48,7 @@ public class TitleApi extends BaseApi {
         title.setCode(titleCode);
         title.setDescription(postData.getDescription());
         title.setIsCompany(postData.getIsCompany());
-        title.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions()));
+        title.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
 
         titleService.create(title);
     }
@@ -104,7 +104,7 @@ public class TitleApi extends BaseApi {
         title.setDescription(postData.getDescription());
         title.setIsCompany(postData.getIsCompany());
         if (postData.getLanguageDescriptions() != null) {
-            title.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions()));
+            title.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), title.getDescriptionI18n()));
         }
 
         titleService.update(title);

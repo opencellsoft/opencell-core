@@ -1,6 +1,8 @@
 package org.meveo.api.ws.impl;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -1264,20 +1266,20 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
     @Override
     public ActionStatus createDescriptions(CatMessagesDto postData) {
-        return updateTranslations(postData);
+        return updateTranslations(Arrays.asList(postData));
     }
 
     @Override
     public ActionStatus updateDescriptions(CatMessagesDto postData) {
-        return updateTranslations(postData);
+        return updateTranslations(Arrays.asList(postData));
     }
 
     @Override
-    public ActionStatus updateTranslations(CatMessagesDto postData) {
+    public ActionStatus updateTranslations(List<CatMessagesDto> translations) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            multilanguageFieldApi.createOrUpdate(postData);
+            multilanguageFieldApi.update(translations);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -1287,17 +1289,26 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
     @Override
     public GetDescriptionsResponse findDescriptions(String entityClass, String code, String languageCode) {
-        return findTranslations(entityClass, languageCode, null, null, null, languageCode);
+
+        GetDescriptionsResponse response = new GetDescriptionsResponse();
+
+        DescriptionsResponseDto multiResponse = findTranslations(entityClass, code, null, null, null, languageCode);
+
+        response.setActionStatus(multiResponse.getActionStatus());
+        if (multiResponse.getCatMessages() != null && multiResponse.getCatMessages().getCatMessage() != null && multiResponse.getCatMessages().getCatMessage().size() > 0) {
+            response.setCatMessagesDto(multiResponse.getCatMessages().getCatMessage().get(0));
+        }
+        return response;
     }
 
     @Override
-    public GetDescriptionsResponse findTranslations(String entityClass, String code, Date validFrom, Date validTo, String fieldname, String languageCode) {
+    public DescriptionsResponseDto findTranslations(String entityClass, String code, Date validFrom, Date validTo, String fieldname, String languageCode) {
 
-        GetDescriptionsResponse result = new GetDescriptionsResponse();
+        DescriptionsResponseDto result = new DescriptionsResponseDto();
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         try {
-            result.setCatMessagesDto(multilanguageFieldApi.find(entityClass, code, validFrom, validTo, fieldname, languageCode));
+            result.setCatMessages(multilanguageFieldApi.find(entityClass, code, validFrom, validTo, fieldname, languageCode));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -1325,7 +1336,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
     @Override
     public ActionStatus createOrUpdateDescriptions(CatMessagesDto postData) {
-        return updateTranslations(postData);
+        return updateTranslations(Arrays.asList(postData));
     }
 
     @Override

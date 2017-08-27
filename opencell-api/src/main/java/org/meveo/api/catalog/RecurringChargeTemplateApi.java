@@ -134,7 +134,7 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
             throw e;
         }
 
-        chargeTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions()));
+        chargeTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
 
         recurringChargeTemplateService.create(chargeTemplate);
 
@@ -198,7 +198,7 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         }
 
         if (postData.getLanguageDescriptions() != null) {
-            chargeTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions()));
+            chargeTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), chargeTemplate.getDescriptionI18n()));
         }
 
         if (postData.getTriggeredEdrs() != null) {

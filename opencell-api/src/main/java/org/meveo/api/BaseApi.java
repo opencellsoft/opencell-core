@@ -970,20 +970,28 @@ public abstract class BaseApi {
      * @return Map of values with language code as a key
      * @throws InvalidParameterException
      */
-    protected Map<String, String> convertMultiLanguageToMapOfValues(List<LanguageDescriptionDto> translationInfos) throws InvalidParameterException {
+    protected Map<String, String> convertMultiLanguageToMapOfValues(List<LanguageDescriptionDto> translationInfos, Map<String, String> currentValues)
+            throws InvalidParameterException {
         if (translationInfos == null || translationInfos.isEmpty()) {
             return null;
         }
 
         Set<String> supportedLanguages = tradingLanguageService.listLanguageCodes();
 
-        Map<String, String> values = new HashMap<>();
+        Map<String, String> values = null;
+        if (currentValues == null) {
+            values = new HashMap<>();
+        } else {
+            values = currentValues;
+        }
 
         for (LanguageDescriptionDto translationInfo : translationInfos) {
             if (!supportedLanguages.contains(translationInfo.getLanguageCode())) {
                 throw new InvalidParameterException("Language " + translationInfo.getLanguageCode() + " is not supported by the provider.");
             }
-            if (!StringUtils.isBlank(translationInfo.getDescription())) {
+            if (StringUtils.isBlank(translationInfo.getDescription())) {
+                values.remove(translationInfo.getLanguageCode());
+            } else {
                 values.put(translationInfo.getLanguageCode(), translationInfo.getDescription());
             }
         }

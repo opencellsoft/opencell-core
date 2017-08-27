@@ -788,10 +788,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
                 @Override
                 protected IPersistenceService<T> getPersistenceServiceImpl() {
-           
-                    IPersistenceService<T> service = getPersistenceService();
-                    log.error("AKK get persistence service {}", service);
-                    return service;
+
+                    return getPersistenceService();
                 }
 
                 @Override

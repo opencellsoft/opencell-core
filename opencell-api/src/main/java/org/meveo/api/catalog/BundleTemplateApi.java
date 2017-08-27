@@ -144,8 +144,8 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
             throw new InvalidImageData();
         }
 
-        bundleTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions()));
-        bundleTemplate.setLongDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLongDescriptionsTranslated()));
+        bundleTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
+        bundleTemplate.setLongDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLongDescriptionsTranslated(), null));
 
         // save product template now so that they can be referenced by the
         // related entities below.
@@ -206,10 +206,10 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
         }
 
         if (postData.getLanguageDescriptions() != null) {
-            bundleTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions()));
+            bundleTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), bundleTemplate.getDescriptionI18n()));
         }
         if (postData.getLongDescriptionsTranslated() != null) {
-            bundleTemplate.setLongDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLongDescriptionsTranslated()));
+            bundleTemplate.setLongDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLongDescriptionsTranslated(), bundleTemplate.getLongDescriptionI18n()));
         }
 
         processProductChargeTemplate(postData, bundleTemplate);

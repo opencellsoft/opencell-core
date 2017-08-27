@@ -136,8 +136,8 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
             throw e;
         }
 
-        productTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions()));
-        productTemplate.setLongDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLongDescriptionsTranslated()));
+        productTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
+        productTemplate.setLongDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLongDescriptionsTranslated(), null));
 
         // save product template now so that they can be referenced by the
         // related entities below.
@@ -217,10 +217,10 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
         }
 
         if (postData.getLanguageDescriptions() != null) {
-            productTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions()));
+            productTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), productTemplate.getDescriptionI18n()));
         }
         if (postData.getLongDescriptionsTranslated() != null) {
-            productTemplate.setLongDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLongDescriptionsTranslated()));
+            productTemplate.setLongDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLongDescriptionsTranslated(), productTemplate.getLongDescriptionI18n()));
         }
 
         productTemplate = productTemplateService.update(productTemplate);
