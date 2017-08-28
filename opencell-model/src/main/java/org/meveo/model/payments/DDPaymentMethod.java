@@ -41,7 +41,19 @@ public class DDPaymentMethod extends PaymentMethod {
         this.preferred = preferred;
     }
 
-    public BankCoordinates getBankCoordinates() {
+    public DDPaymentMethod(CustomerAccount customerAccount, String alias, Date mandateDate,
+			String mandateIdentification, BankCoordinates bankCoordinates) {
+        super();
+        setPaymentType(PaymentMethodEnum.CARD);
+        setAlias(alias);
+        setPreferred(preferred);
+        this.customerAccount = customerAccount;
+        this.mandateDate = mandateDate;
+        this.mandateIdentification = mandateIdentification;
+        this.bankCoordinates = bankCoordinates;
+	}
+
+	public BankCoordinates getBankCoordinates() {
         return bankCoordinates;
     }
 

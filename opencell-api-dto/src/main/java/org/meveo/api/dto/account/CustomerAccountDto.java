@@ -8,14 +8,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.payment.CardPaymentMethodDto;
-import org.meveo.api.dto.payment.DDPaymentMethodDto;
-import org.meveo.api.dto.payment.OtherPaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
-import org.meveo.api.dto.payment.TipPaymentMethodDto;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.payments.DunningLevelEnum;
@@ -49,7 +44,7 @@ public class CustomerAccountDto extends AccountDto {
      * Field was deprecated in 4.6 version. Use 'DDpaymentMethods' field instead
      */
     @Deprecated
-    private String mandateIdentification = "";
+    private String mandateIdentification;
     /**
      * Field was deprecated in 4.6 version. Use 'DDpaymentMethods' field instead
      */
@@ -62,9 +57,8 @@ public class CustomerAccountDto extends AccountDto {
     private Date terminationDate;
     private String dueDateDelayEL;
 
-    @XmlElementWrapper(name = "paymentMethods")
-    @XmlElements({ @XmlElement(name = "card", type = CardPaymentMethodDto.class), @XmlElement(name = "directDebit", type = DDPaymentMethodDto.class),
-            @XmlElement(name = "tip", type = TipPaymentMethodDto.class), @XmlElement(name = "other", type = OtherPaymentMethodDto.class) })
+    @XmlElementWrapper(name = "paymentMethods")  
+    @XmlElement(name="paymentMethod")
     private List<PaymentMethodDto> paymentMethods;
 
     /**

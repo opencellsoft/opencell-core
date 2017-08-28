@@ -12,7 +12,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-import org.apache.commons.lang3.StringUtils;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.shared.DateUtils;
 
 @Entity
@@ -67,7 +67,22 @@ public class CardPaymentMethod extends PaymentMethod {
         this.preferred = preferred;
     }
 
-    public String getTokenId() {
+    public CardPaymentMethod(CustomerAccount customerAccount, String alias, String cardNumber, String owner,
+			boolean preferred, String issueNumber, Integer yearExpiration, Integer monthExpiration) {
+        super();
+        setPaymentType(PaymentMethodEnum.CARD);
+        setAlias(alias);
+        setPreferred(preferred);
+        this.customerAccount = customerAccount;
+        this.cardNumber = cardNumber;
+        this.hiddenCardNumber = org.meveo.commons.utils.StringUtils.hideCardNumber(cardNumber);
+        this.owner = owner;
+        this.issueNumber = issueNumber;
+        this.yearExpiration = yearExpiration ;
+        this.monthExpiration = monthExpiration;
+	}
+
+	public String getTokenId() {
         return tokenId;
     }
 

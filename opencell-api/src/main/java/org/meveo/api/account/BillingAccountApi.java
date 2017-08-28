@@ -14,9 +14,7 @@ import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.account.BillingAccountsDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
-import org.meveo.api.dto.payment.DDPaymentMethodDto;
-import org.meveo.api.dto.payment.OtherPaymentMethodDto;
-import org.meveo.api.dto.payment.TipPaymentMethodDto;
+import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -90,9 +88,6 @@ public class BillingAccountApi extends AccountEntityApi {
 
     @Inject
     private DiscountPlanService discountPlanService;
-
-    @Inject
-    private CustomerAccountApi customerAccountApi;
 
     public void create(BillingAccountDto postData) throws MeveoApiException, BusinessException {
         create(postData, true);
@@ -568,7 +563,8 @@ public class BillingAccountApi extends AccountEntityApi {
 
                     } else if (postData.getPaymentMethod() == PaymentMethodEnum.DIRECTDEBIT) {
 
-                        if (postData.getBankCoordinates().getIban().equals(((DDPaymentMethod) paymentMethod).getBankCoordinates().getIban())) {
+                        if (postData.getBankCoordinates().getIban() != null &&  ((DDPaymentMethod) paymentMethod).getBankCoordinates() != null && 
+                        		postData.getBankCoordinates().getIban().equals(((DDPaymentMethod) paymentMethod).getBankCoordinates().getIban())) {
                             found = true;
                             BankCoordinates bankCoordinatesFromDto = postData.getBankCoordinates().fromDto();
 
@@ -599,11 +595,9 @@ public class BillingAccountApi extends AccountEntityApi {
         if (!found) {
             PaymentMethod paymentMethodFromDto = null;
             if (postData.getPaymentMethod() == PaymentMethodEnum.CHECK || postData.getPaymentMethod() == PaymentMethodEnum.WIRETRANSFER) {
-                paymentMethodFromDto = customerAccountApi.paymentMethodFromDto(new OtherPaymentMethodDto(postData.getPaymentMethod()), customerAccount);
+                paymentMethodFromDto = (new PaymentMethodDto(postData.getPaymentMethod())).fromDto(customerAccount);
             } else if (postData.getPaymentMethod() == PaymentMethodEnum.DIRECTDEBIT) {
-                paymentMethodFromDto = customerAccountApi.paymentMethodFromDto(new DDPaymentMethodDto(postData.getBankCoordinates()), customerAccount);
-            } else if (postData.getPaymentMethod() == PaymentMethodEnum.TIP) {
-                paymentMethodFromDto = customerAccountApi.paymentMethodFromDto(new TipPaymentMethodDto(postData.getBankCoordinates()), customerAccount);
+                paymentMethodFromDto = (new PaymentMethodDto(postData.getPaymentMethod(),postData.getBankCoordinates(),null,null)).fromDto(customerAccount);            
             }
 
             if (customerAccount.getPaymentMethods() == null) {
