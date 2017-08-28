@@ -200,7 +200,7 @@
                                     <hftl:decorateFormField fieldId="serviceMandatory_#{loopStatus.index}" label="#{messages['offerServiceTemplate.mandatory']}" componentWidth="5">
                                         <p:selectBooleanCheckbox disabled="#{!offerTemplateBean.edit}" id="serviceMandatory_#{loopStatus.index}" value="#{ost.mandatory}"></p:selectBooleanCheckbox>
                                     </hftl:decorateFormField>
-
+									
                                     <!-- custom fields -->
                                     <c:if test="#{customFieldDataEntryBean.getActiveGroupedFieldTemplatesCount(ost.serviceTemplate) == 1}">
                                         <hftl:customFields backingBean="#{serviceTemplateBean}" entity="#{ost.serviceTemplate}" messagesId=":offerForm:messages"
@@ -209,7 +209,7 @@
                                     <c:if test="#{customFieldDataEntryBean.getActiveGroupedFieldTemplatesCount(ost.serviceTemplate) > 1}">
                                         <p:tabView>
                                             <hftl:customFields backingBean="#{serviceTemplateBean}" entity="#{ost.serviceTemplate}" messagesId=":offerForm:messages"
-                                                defaultTabLabel="#{messages['commons.parameters']}" prefix="#{ost.serviceTemplate.code}_cf_#{loopStatus.index}" />
+                                                defaultTabLabel="#{messages['commons.parameters']}" prefix="tab_cf_#{loopStatus.index}" />
                                         </p:tabView>
                                     </c:if>
                                 </p:panel>

@@ -105,6 +105,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
     private OfferProductTemplate offerProductTemplate;
     private BusinessOfferModel businessOfferModel;
     private List<ProductTemplate> productTemplatesLookup;
+    private List<OfferServiceTemplate> sortedOfferServiceTemplates;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -261,15 +262,23 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
      * 
      * @return sorted offer services templates
      */
-    public List<OfferServiceTemplate> getSortedOfferServiceTemplates() {
-        OfferTemplate givenEntity = this.getEntity();
-        List<OfferServiceTemplate> sortedList = new ArrayList<>();
-        if (givenEntity != null) {
-            sortedList.addAll(givenEntity.getOfferServiceTemplates());
-        }
-        Collections.sort(sortedList, new DescriptionComparator());
-        return sortedList;
-    }
+	public List<OfferServiceTemplate> getSortedOfferServiceTemplates() {
+		if (sortedOfferServiceTemplates == null) {
+			if (entity != null) {
+				sortedOfferServiceTemplates = new ArrayList<>();
+				sortedOfferServiceTemplates.addAll(entity.getOfferServiceTemplates());
+				Collections.sort(sortedOfferServiceTemplates, new DescriptionComparator());
+			}
+		}
+
+		return sortedOfferServiceTemplates;
+	}
+
+	public void resortOfferServiceTemplates() {
+		if (sortedOfferServiceTemplates != null && !sortedOfferServiceTemplates.isEmpty()) {
+//			Collections.sort(sortedOfferServiceTemplates, new DescriptionComparator());
+		}
+	}
 
     @Override
     @ActionMethod
