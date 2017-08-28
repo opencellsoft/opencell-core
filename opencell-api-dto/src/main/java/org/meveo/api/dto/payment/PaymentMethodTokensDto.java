@@ -11,22 +11,22 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.response.BaseResponse;
 
-@XmlRootElement(name = "DDPaymentMethods")
+@XmlRootElement(name = "PaymentMethodTokens")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DDPaymentMethodTokensDto extends BaseResponse {
+public class PaymentMethodTokensDto extends BaseResponse {
 
     private static final long serialVersionUID = 6255115951743225824L;
 
-    @XmlElementWrapper(name = "ddPaymentMethods")
-    @XmlElement(name = "ddPaymentMethod")
-    private List<DDPaymentMethodDto> ddPaymentMethods = new ArrayList<DDPaymentMethodDto>();
+    @XmlElementWrapper(name = "paymentMethods")
+    @XmlElement(name = "paymentMethod")
+    private List<PaymentMethodDto> paymentMethods = new ArrayList<PaymentMethodDto>();
 
-	public List<DDPaymentMethodDto> getDdPaymentMethods() {
-		return ddPaymentMethods;
+	public List<PaymentMethodDto> getPaymentMethods() {
+		return paymentMethods;
 	}
 
-	public void setDdPaymentMethods(List<DDPaymentMethodDto> ddPaymentMethods) {
-		this.ddPaymentMethods = ddPaymentMethods;
+	public void setPaymentMethods(List<PaymentMethodDto> paymentMethods) {
+		this.paymentMethods = paymentMethods;
 	}
 
   

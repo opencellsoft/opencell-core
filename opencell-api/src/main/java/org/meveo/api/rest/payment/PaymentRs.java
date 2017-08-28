@@ -15,19 +15,10 @@ import org.meveo.api.dto.PaymentActionStatus;
 import org.meveo.api.dto.payment.CardPaymentMethodDto;
 import org.meveo.api.dto.payment.CardPaymentMethodTokenDto;
 import org.meveo.api.dto.payment.CardPaymentMethodTokensDto;
-import org.meveo.api.dto.payment.CheckPaymentMethodDto;
-import org.meveo.api.dto.payment.CheckPaymentMethodTokenDto;
-import org.meveo.api.dto.payment.CheckPaymentMethodTokensDto;
-import org.meveo.api.dto.payment.DDPaymentMethodDto;
-import org.meveo.api.dto.payment.DDPaymentMethodTokenDto;
-import org.meveo.api.dto.payment.DDPaymentMethodTokensDto;
 import org.meveo.api.dto.payment.PaymentDto;
-import org.meveo.api.dto.payment.TipPaymentMethodDto;
-import org.meveo.api.dto.payment.TipPaymentMethodTokenDto;
-import org.meveo.api.dto.payment.TipPaymentMethodTokensDto;
-import org.meveo.api.dto.payment.WirePaymentMethodDto;
-import org.meveo.api.dto.payment.WirePaymentMethodTokenDto;
-import org.meveo.api.dto.payment.WirePaymentMethodTokensDto;
+import org.meveo.api.dto.payment.PaymentMethodDto;
+import org.meveo.api.dto.payment.PaymentMethodTokenDto;
+import org.meveo.api.dto.payment.PaymentMethodTokensDto;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
 import org.meveo.api.rest.IBaseRs;
 
@@ -113,215 +104,56 @@ public interface PaymentRs extends IBaseRs {
     public CardPaymentMethodTokenDto findCardPaymentMethod(@QueryParam("id") Long id);
     
     /************************************************************************************************/
-    /****                                 DirectDebit Payment Method                             ****/
+    /****                                 Payment Methods                                         ****/
     /************************************************************************************************/
     /**
-     * Add a new directDebit payment method. It will be marked as preferred.
+     * Add a new payment method. It will be marked as preferred.
      * 
-     * @param ddPaymentMethod DerictDebit payment method DTO
+     * @param paymentMethod  payment method DTO
      * @return Token id in payment gateway
      */
     @POST
-    @Path("/ddPaymentMethod")
-    public DDPaymentMethodTokenDto addDDPaymentMethod(DDPaymentMethodDto ddPaymentMethod);
+    @Path("/paymentMethod")
+    public PaymentMethodTokenDto addPaymentMethod(PaymentMethodDto paymentMethod);
 
     /**
-     * Update existing directDebit payment method.
+     * Update existing payment method.
      * 
-     * @param ddPaymentMethod DerictDebit payment method DTO
+     * @param paymentMethod  payment method DTO
      * @return Action status
      */
     @PUT
-    @Path("/ddPaymentMethod")
-    public ActionStatus updateDDPaymentMethod(DDPaymentMethodDto ddPaymentMethod);
+    @Path("/paymentMethod")
+    public ActionStatus updatePaymentMethod(PaymentMethodDto ddPaymentMethod);
 
     /**
-     * Remove directDebit payment method. If it was marked as preferred, some other payment method will be marked as preferred
+     * Remove payment method. If it was marked as preferred, some other payment method will be marked as preferred
      * 
      * @param id Id
      * @return Action status
      */
     @DELETE
-    @Path("/ddPaymentMethod")
-    public ActionStatus removeDDPaymentMethod(@QueryParam("id") Long id);
+    @Path("/paymentMethod")
+    public ActionStatus removePaymentMethod(@QueryParam("id") Long id);
 
     /**
-     * List available directDebit payment methods for a given customer account identified either by id or by code
+     * List available payment methods for a given customer account identified either by id or by code
      * 
      * @param customerAccountId Customer account id
      * @param customerAccountCode Customer account code
      * @return A list of directDebit payment methods
      */
     @GET
-    @Path("/ddPaymentMethod/list")
-    public DDPaymentMethodTokensDto listDDPaymentMethods(@QueryParam("customerAccountId") Long customerAccountId, @QueryParam("customerAccountCode") String customerAccountCode);
+    @Path("/paymentMethod/list")
+    public PaymentMethodTokensDto listPaymentMethods(@QueryParam("customerAccountId") Long customerAccountId, @QueryParam("customerAccountCode") String customerAccountCode);
 
     /**
-     * Retrieve directDebit payment method by its id
+     * Retrieve payment method by its id
      * 
      * @param id Id
-     * @return DerictDebit payment DTO
+     * @return  payment DTO
      */
     @GET
-    @Path("/ddPaymentMethod")
-    public DDPaymentMethodTokenDto findDDPaymentMethod(@QueryParam("id") Long id);
-    /************************************************************************************************/
-    /****                                 TIP Payment Method                                     ****/
-    /************************************************************************************************/
-    /**
-     * Add a new Tip payment method. It will be marked as preferred.
-     * 
-     * @param tipPaymentMethod DerictDebit payment method DTO
-     * @return Token id in payment gateway
-     */
-    @POST
-    @Path("/tipPaymentMethod")
-    public TipPaymentMethodTokenDto addTipPaymentMethod(TipPaymentMethodDto tipPaymentMethod);
-
-    /**
-     * Update existing tip payment method.
-     * 
-     * @param tipPaymentMethod DerictDebit payment method DTO
-     * @return Action status
-     */
-    @PUT
-    @Path("/tipPaymentMethod")
-    public ActionStatus updateTipPaymentMethod(TipPaymentMethodDto tipPaymentMethod);
-
-    /**
-     * Remove tip payment method. If it was marked as preferred, some other payment method will be marked as preferred
-     * 
-     * @param id Id
-     * @return Action status
-     */
-    @DELETE
-    @Path("/tipPaymentMethod")
-    public ActionStatus removeTipPaymentMethod(@QueryParam("id") Long id);
-
-    /**
-     * List available tip payment methods for a given customer account identified either by id or by code
-     * 
-     * @param customerAccountId Customer account id
-     * @param customerAccountCode Customer account code
-     * @return A list of tip payment methods
-     */
-    @GET
-    @Path("/tipPaymentMethod/list")
-    public TipPaymentMethodTokensDto listTipPaymentMethods(@QueryParam("customerAccountId") Long customerAccountId, @QueryParam("customerAccountCode") String customerAccountCode);
-
-    /**
-     * Retrieve tip payment method by its id
-     * 
-     * @param id Id
-     * @return DerictDebit payment DTO
-     */
-    @GET
-    @Path("/tipPaymentMethod")
-    public TipPaymentMethodTokenDto findTipPaymentMethod(@QueryParam("id") Long id);
-    /************************************************************************************************/
-    /****                                 Check Payment Method                                   ****/
-    /************************************************************************************************/
-    /**
-     * Add a new Check payment method. It will be marked as preferred.
-     * 
-     * @param checkPaymentMethod DerictDebit payment method DTO
-     * @return Token id in payment gateway
-     */
-    @POST
-    @Path("/checkPaymentMethod")
-    public CheckPaymentMethodTokenDto addCheckPaymentMethod(CheckPaymentMethodDto checkPaymentMethod);
-
-    /**
-     * Update existing check payment method.
-     * 
-     * @param checkPaymentMethod DerictDebit payment method DTO
-     * @return Action status
-     */
-    @PUT
-    @Path("/checkPaymentMethod")
-    public ActionStatus updateCheckPaymentMethod(CheckPaymentMethodDto checkPaymentMethod);
-
-    /**
-     * Remove check payment method. If it was marked as preferred, some other payment method will be marked as preferred
-     * 
-     * @param id Id
-     * @return Action status
-     */
-    @DELETE
-    @Path("/checkPaymentMethod")
-    public ActionStatus removeCheckPaymentMethod(@QueryParam("id") Long id);
-
-    /**
-     * List available check payment methods for a given customer account identified either by id or by code
-     * 
-     * @param customerAccountId Customer account id
-     * @param customerAccountCode Customer account code
-     * @return A list of check payment methods
-     */
-    @GET
-    @Path("/checkPaymentMethod/list")
-    public CheckPaymentMethodTokensDto listCheckPaymentMethods(@QueryParam("customerAccountId") Long customerAccountId, @QueryParam("customerAccountCode") String customerAccountCode);
-
-    /**
-     * Retrieve check payment method by its id
-     * 
-     * @param id Id
-     * @return DerictDebit payment DTO
-     */
-    @GET
-    @Path("/checkPaymentMethod")
-    public CheckPaymentMethodTokenDto findCheckPaymentMethod(@QueryParam("id") Long id);
-    /************************************************************************************************/
-    /****                                 Wire Payment Method                                    ****/
-    /************************************************************************************************/
-    /**
-     * Add a new Wire payment method. It will be marked as preferred.
-     * 
-     * @param wirePaymentMethod DerictDebit payment method DTO
-     * @return Token id in payment gateway
-     */
-    @POST
-    @Path("/wirePaymentMethod")
-    public WirePaymentMethodTokenDto addWirePaymentMethod(WirePaymentMethodDto wirePaymentMethod);
-
-    /**
-     * Update existing wire payment method.
-     * 
-     * @param wirePaymentMethod DerictDebit payment method DTO
-     * @return Action status
-     */
-    @PUT
-    @Path("/wirePaymentMethod")
-    public ActionStatus updateWirePaymentMethod(WirePaymentMethodDto wirePaymentMethod);
-
-    /**
-     * Remove wire payment method. If it was marked as preferred, some other payment method will be marked as preferred
-     * 
-     * @param id Id
-     * @return Action status
-     */
-    @DELETE
-    @Path("/wirePaymentMethod")
-    public ActionStatus removeWirePaymentMethod(@QueryParam("id") Long id);
-
-    /**
-     * List available wire payment methods for a given customer account identified either by id or by code
-     * 
-     * @param customerAccountId Customer account id
-     * @param customerAccountCode Customer account code
-     * @return A list of wire payment methods
-     */
-    @GET
-    @Path("/wirePaymentMethod/list")
-    public WirePaymentMethodTokensDto listWirePaymentMethods(@QueryParam("customerAccountId") Long customerAccountId, @QueryParam("customerAccountCode") String customerAccountCode);
-
-    /**
-     * Retrieve wire payment method by its id
-     * 
-     * @param id Id
-     * @return DerictDebit payment DTO
-     */
-    @GET
-    @Path("/wirePaymentMethod")
-    public WirePaymentMethodTokenDto findWirePaymentMethod(@QueryParam("id") Long id);
-}
+    @Path("/paymentMethod")
+    public PaymentMethodTokenDto findPaymentMethod(@QueryParam("id") Long id);
+  }

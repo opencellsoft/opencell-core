@@ -6,26 +6,26 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.response.BaseResponse;
 
-@XmlRootElement(name = "DDPaymentMethodToken")
+@XmlRootElement(name = "PaymentMethodToken")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DDPaymentMethodTokenDto extends BaseResponse {
+public class PaymentMethodTokenDto extends BaseResponse {
 
     private static final long serialVersionUID = 1L;
-    private DDPaymentMethodDto ddPaymentMethod;
+    private PaymentMethodDto paymentMethod;
 
-    public DDPaymentMethodTokenDto() {
+    public PaymentMethodTokenDto() {
     }
 
-    public DDPaymentMethodDto getDDPaymentMethod() {
-        return ddPaymentMethod;
+    public PaymentMethodDto getPaymentMethod() {
+        return paymentMethod;
     }
 
-    public void setDDPaymentMethod(DDPaymentMethodDto ddPaymentMethod) {
-        this.ddPaymentMethod = ddPaymentMethod;
+    public void setPaymentMethod(PaymentMethodDto paymentMethod) {
+        this.paymentMethod = paymentMethod;
     }
 
     @Override
     public String toString() {
-        return "DDPaymentMethodTokenDto [ddPaymentMethod=" + ddPaymentMethod + "]";
+        return "DDPaymentMethodTokenDto [paymentMethod=" + paymentMethod + "]";
     }
 }
