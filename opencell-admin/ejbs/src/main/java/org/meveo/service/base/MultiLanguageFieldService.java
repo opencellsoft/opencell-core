@@ -17,8 +17,6 @@ import javax.ejb.Stateless;
 
 import org.meveo.model.IEntity;
 import org.reflections.Reflections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Stateless
 public class MultiLanguageFieldService implements Serializable {
@@ -33,8 +31,6 @@ public class MultiLanguageFieldService implements Serializable {
 
         if (multiLanguageFieldMapping == null) {
 
-            Logger log = LoggerFactory.getLogger(getClass());
-            log.error("AKK loading multiLanguageFieldMapping");
             Map<Class, List<String>> entityMapping = new HashMap<>();
 
             Reflections reflections = new Reflections("org.meveo.model", "org.meveocrm.model");

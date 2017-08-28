@@ -18,12 +18,12 @@
 
         <o:importFunctions type="org.meveo.commons.utils.ReflectionUtils" var="ref" />
 
-        <hftl:searchPanel backingBean="#{multiLanguageFieldListBean}" columns="3" label="#{messages['multiLanguageFields.search']}" renderNewButton="false" ajaxUpdateIds="@all">
+        <hftl:searchPanel backingBean="#{multiLanguageFieldListBean}" columns="3" label="#{messages['multiLanguageFields.search']}" renderNewButton="false" ajaxUpdateIds="entityList entityDialog">
             <hftl:decorateFormField label="#{messages['multiLanguageFields.objectType']}">
                 <p:selectOneMenu value="#{multiLanguageFieldListBean.entityClass}" disabled="#{disabled}">
                     <f:selectItems value="#{multiLanguageFieldListBean.multiLanguageClasses}" var="listVal" itemValue="#{listVal}" itemLabel="#{ref:getHumanClassName(listVal.simpleName)}" />
                     <hftl:objectConverter />
-                    <p:ajax update="entityList" listener="#{multiLanguageFieldListBean.changeEntityClass}" event="change" />
+                    <p:ajax update="entityList entityDialog" listener="#{multiLanguageFieldListBean.changeEntityClass}" event="change" />
                 </p:selectOneMenu>
             </hftl:decorateFormField>
             <hftl:decorateFormField label="#{messages['businessEntity.code']}">
@@ -70,14 +70,14 @@
                             </hftl:decorateFormField>
 
                             <c:forEach items="#{multiLanguageFieldListBean.multiLanguageFields}" var="field">
-                                <hftl:formLanguageFields backingBean="#{multiLanguageFieldListBean}" entity="#{multiLanguageFieldListBean.selectedEntity}" label="#{messages['multiLanguageFields.'.concat(field)]}"
-                                    field="#{field}" componentWidth="100" cols="170" />
+                                <hftl:formLanguageFields backingBean="#{multiLanguageFieldListBean}" entity="#{multiLanguageFieldListBean.selectedEntity}"
+                                    label="#{messages['multiLanguageFields.'.concat(field)]}" field="#{field}" componentWidth="100" cols="170" />
                             </c:forEach>
                         </ui:define>
                         <ui:define name="buttons">
                             <p:commandButton value="#{messages['action.save']}" action="#{multiLanguageFieldListBean.updateEntity}" update="@form :results_form"
                                 oncomplete="if (args &amp;&amp; !args.validationFailed){PF('entityDialog').hide();}" />
-                            <p:commandButton value="#{messages['action.cancel']}" oncomplete="PF('groupDialog').hide()" update=":results_form" immediate="true" />
+                            <p:button value="#{messages['action.cancel']}" onclick="PF('entityDialog').hide(); return false;" />
                         </ui:define>
                     </hftl:decorateFormPanel>
                 </p:dialog>

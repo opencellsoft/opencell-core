@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.enterprise.context.ConversationScoped;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -54,11 +55,19 @@ public class MultiLanguageFieldListBean extends BaseBean<IEntity> {
     @Inject
     private MultiLanguageFieldService multiLanguageFieldService;
 
-    public MultiLanguageFieldListBean() {
+    @Override
+    public void preRenderView() {
 
+        if (FacesContext.getCurrentInstance().isPostback()) {
+            return; // Skip postback/ajax requests.
+        }
+
+        super.preRenderView();
         multiLanguageFieldMapping = multiLanguageFieldService.getMultiLanguageFieldMapping();
-        setEntityClass(multiLanguageFieldMapping.entrySet().iterator().next().getKey());
-        changeEntityClass();
+        if (entityClass == null) {
+            setEntityClass(multiLanguageFieldMapping.entrySet().iterator().next().getKey());
+            changeEntityClass();
+        }
     }
 
     @SuppressWarnings("rawtypes")
