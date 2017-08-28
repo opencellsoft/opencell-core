@@ -56,7 +56,7 @@ public class InvoicingAsync {
 
         for (Long billingAccountId : billingAccountIds) {
             try {
-                invoiceService.createAgregatesAndInvoice(billingAccountId, billingRun, null, null, null, null);
+                invoiceService.createAgregatesAndInvoice(billingAccountId, billingRun, null, null, null, null, null);
             } catch (Exception e) {
                 log.error("Error for BA=" + billingAccountId + " : " + e);
             }

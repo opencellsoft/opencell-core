@@ -230,7 +230,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         log.debug("updateBillingAccountTotalAmounts  billingAccount:" + billingAccountId);
         BillingAccount billingAccount = findById(billingAccountId, true);
 
-        BigDecimal invoiceAmount = computeBaInvoiceAmount(billingAccount, billingRun.getLastTransactionDate());
+        BigDecimal invoiceAmount = computeBaInvoiceAmount(billingAccount, new Date(0), billingRun.getLastTransactionDate());
         if (invoiceAmount != null) {
 
             BigDecimal invoicingThreshold = billingRun.getBillingCycle() == null ? null : billingRun.getBillingCycle().getInvoicingThreshold();
@@ -268,15 +268,19 @@ public class BillingAccountService extends AccountService<BillingAccount> {
      * @param lastTransactionDate
      * @return
      */
-    public BigDecimal computeBaInvoiceAmount(BillingAccount billingAccount, Date lastTransactionDate) {
-        Query q = getEntityManager().createNamedQuery("RatedTransaction.sumBillingAccount").setParameter("billingAccount", billingAccount).setParameter("lastTransactionDate",
-            lastTransactionDate);
-        BigDecimal sumAmountWithouttax = (BigDecimal) q.getSingleResult();
-        if (sumAmountWithouttax == null) {
-            sumAmountWithouttax = BigDecimal.ZERO;
-        }
-        return sumAmountWithouttax;
-    }
+	public BigDecimal computeBaInvoiceAmount(BillingAccount billingAccount, Date firstTransactionDate,
+			Date lastTransactionDate) {
+		Query q = getEntityManager().createNamedQuery("RatedTransaction.sumBillingAccount")
+				.setParameter("billingAccount", billingAccount)
+				.setParameter("firstTransactionDate", firstTransactionDate)
+				.setParameter("lastTransactionDate", lastTransactionDate);
+		BigDecimal sumAmountWithouttax = (BigDecimal) q.getSingleResult();
+		if (sumAmountWithouttax == null) {
+			sumAmountWithouttax = BigDecimal.ZERO;
+		}
+		
+		return sumAmountWithouttax;
+	}
 
     @SuppressWarnings("unchecked")
     public List<BillingAccount> listByCustomerAccount(CustomerAccount customerAccount) {

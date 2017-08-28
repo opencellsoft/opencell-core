@@ -237,7 +237,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 		log.info("generateInvoice billingAccountId:" + entity.getId());
 		try {
 		    entity = billingAccountService.refreshOrRetrieve(entity);
-			Invoice invoice = invoiceService.generateInvoice(entity, new Date(), new Date(), null, null,false, true, true, true);
+			Invoice invoice = invoiceService.generateInvoice(entity, new Date(), null, new Date(), null, null,false, true, true, true);
 
 			messages.info(new BundleKey("messages", "generateInvoice.successful"),invoice.getInvoiceNumber());
 			
