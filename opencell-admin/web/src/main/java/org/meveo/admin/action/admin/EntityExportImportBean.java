@@ -204,6 +204,10 @@ public class EntityExportImportBean implements Serializable {
 
                     if (getRowCount() > 0) {
                         int toNr = first + pageSize;
+						if (toNr > templates.size()) {
+							first = 0;
+							pageSize = templates.size() - 1;
+						}
                         return new LinkedList(templates.entrySet()).subList(first, getRowCount() <= toNr ? getRowCount() : toNr);
 
                     } else {
