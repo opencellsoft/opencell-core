@@ -226,14 +226,16 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public boolean updateBillingAccountTotalAmounts(Long billingAccountId, BillingRun billingRun) {
-
+    	long startDate = System.currentTimeMillis();
         log.debug("updateBillingAccountTotalAmounts  billingAccount:" + billingAccountId);
         BillingAccount billingAccount = findById(billingAccountId, true);
-
+        log.info("Before  invoiceAmount:" + (System.currentTimeMillis() - startDate));
         BigDecimal invoiceAmount = computeBaInvoiceAmount(billingAccount, billingRun.getLastTransactionDate());
+        log.info("after  invoiceAmount:" + (System.currentTimeMillis() - startDate));
         if (invoiceAmount != null) {
 
-            BigDecimal invoicingThreshold = billingRun.getBillingCycle() == null ? null : billingRun.getBillingCycle().getInvoicingThreshold();
+            BillingCycle billingCycle = billingRun.getBillingCycle();
+			BigDecimal invoicingThreshold = billingCycle == null ? null : billingCycle.getInvoicingThreshold();
 
             log.debug("updateBillingAccountTotalAmounts invoicingThreshold is {}", invoicingThreshold);
             if (invoicingThreshold != null) {
@@ -254,10 +256,16 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         } else {
             log.debug("updateBillingAccountTotalAmounts invoiceAmount is null");
         }
-
+        
+        log.info("Before setBillingRun:" + (System.currentTimeMillis() - startDate));
+        
         billingAccount.setBillingRun(getEntityManager().getReference(BillingRun.class, billingRun.getId()));
+        
+        log.info("Before  updateNoCheck:" + (System.currentTimeMillis() - startDate));
+        
         updateNoCheck(billingAccount);
-
+        
+        log.info("After  updateNoCheck:" + (System.currentTimeMillis() - startDate));
         return true;
     }
 

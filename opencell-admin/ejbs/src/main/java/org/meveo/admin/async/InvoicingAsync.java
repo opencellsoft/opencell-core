@@ -40,6 +40,7 @@ public class InvoicingAsync {
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public Future<Integer> updateBillingAccountTotalAmountsAsync(List<Long> billingAccountIds, BillingRun billingRun) {
+    	long startDate = System.currentTimeMillis();
         int count = 0;
         for (Long billingAccountId : billingAccountIds) {
             if (billingAccountService.updateBillingAccountTotalAmounts(billingAccountId, billingRun)) {
@@ -47,6 +48,7 @@ public class InvoicingAsync {
             }
         }
         log.info("WorkSet billableBA:" + count);
+        log.info("Before  AsyncResult:" + (System.currentTimeMillis() - startDate));
         return new AsyncResult<Integer>(new Integer(count));
     }
 
@@ -105,6 +107,7 @@ public class InvoicingAsync {
             try {
                 invoiceService.produceInvoiceXmlInNewTransaction(invoiceId);
                 result.registerSucces();
+                log.info("Before catch :" + (System.currentTimeMillis() - startDate));
             } catch (Exception e) {
                 result.registerError(invoiceId, e.getMessage());
                 allOk = false;

@@ -546,6 +546,7 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
      * @param chargeTemplateId Usage charge template ID
      * @return Cached usage charge template
      */
+    @Lock(LockType.READ)
     public CachedUsageChargeTemplate getUsageChargeTemplate(Long chargeTemplateId) {
         return usageChargeTemplateCache.get(chargeTemplateId);
     }

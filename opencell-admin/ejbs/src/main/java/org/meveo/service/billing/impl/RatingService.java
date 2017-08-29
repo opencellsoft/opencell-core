@@ -27,7 +27,9 @@ import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.ApplicationTypeEnum;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
@@ -51,7 +53,9 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
+import org.meveo.model.crm.Customer;
 import org.meveo.model.mediation.Access;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.model.shared.DateUtils;
@@ -103,6 +107,8 @@ public class RatingService extends BusinessService<WalletOperation>{
 
 	@Inject
 	private InvoiceSubCategoryService invoiceSubCategoryService;
+	
+	private Map<String, String> descriptionMap = new HashMap<>();
 
 
 	/*
@@ -205,13 +211,14 @@ public class RatingService extends BusinessService<WalletOperation>{
 			Date applicationDate, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal inputQuantity, BigDecimal quantity, TradingCurrency tCurrency, Long countryId, String languageCode,
 			BigDecimal taxPercent, BigDecimal discountPercent, Date nextApplicationDate, InvoiceSubCategory invoiceSubCategory, String criteria1, String criteria2,
 			String criteria3, String orderNumber, Date startdate, Date endDate, ChargeApplicationModeEnum mode, UserAccount userAccount) throws BusinessException {
-
+		long startDate = System.currentTimeMillis();
 		WalletOperation walletOperation = new WalletOperation();
 		Auditable auditable=new Auditable(currentUser);
 		walletOperation.setAuditable(auditable);
         
 		//TODO do this in the right place (one time by userAccount)				
-	    boolean  isExonerated = billingAccountService.isExonerated(userAccount.getBillingAccount()); 
+	    BillingAccount billingAccount = userAccount.getBillingAccount();
+		boolean  isExonerated = billingAccountService.isExonerated(billingAccount); 
 
 		if (chargeTemplate.getChargeType().equals(RecurringChargeTemplate.CHARGE_TYPE)) {
 			walletOperation.setSubscriptionDate(subscriptionDate);
@@ -227,6 +234,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 		walletOperation.setParameter1(criteria1);
 		walletOperation.setParameter2(criteria2);
 		walletOperation.setParameter3(criteria3);
+		String description = null;
         if (chargeInstance != null) {
             walletOperation.setChargeInstance(chargeInstance);
             if (chargeInstance.getInvoicingCalendar() != null) {
@@ -234,11 +242,20 @@ public class RatingService extends BusinessService<WalletOperation>{
 
                 walletOperation.setInvoicingDate(chargeInstance.getInvoicingCalendar().nextCalendarDate(walletOperation.getOperationDate()));
             }
+            description = chargeInstance.getDescription();
         }
         
 		walletOperation.setCode(chargeTemplate.getCode());		
-		walletOperation.setDescription(catMessagesService.getMessageDescriptionByCodeAndLanguage(
-				chargeTemplate.getCode(), languageCode, chargeInstance.getDescription()));      
+		
+		String key = chargeTemplate.getCode() + languageCode + description;
+		String messageDescriptionByCodeAndLanguage = descriptionMap.get(key);
+		if (messageDescriptionByCodeAndLanguage == null) {
+			messageDescriptionByCodeAndLanguage = catMessagesService.getMessageDescriptionByCodeAndLanguage(
+					chargeTemplate.getCode(), languageCode, description);
+			descriptionMap.put(key, messageDescriptionByCodeAndLanguage);
+		}
+		
+		walletOperation.setDescription(messageDescriptionByCodeAndLanguage);      
         walletOperation.setTaxPercent(isExonerated?BigDecimal.ZERO:taxPercent);
 		walletOperation.setCurrency(tCurrency.getCurrency());
 		walletOperation.setStartDate(startdate);
@@ -249,12 +266,17 @@ public class RatingService extends BusinessService<WalletOperation>{
         if (chargeInstance != null) {
             walletOperation.setSeller(chargeInstance.getSeller());
         } else {
-            walletOperation.setSeller(userAccount.getBillingAccount().getCustomerAccount().getCustomer().getSeller());
+            CustomerAccount customerAccount = billingAccount.getCustomerAccount();
+			Customer customer = customerAccount.getCustomer();
+			Seller seller = customer.getSeller();
+			walletOperation.setSeller(seller);
         }
+        
+        log.info("Before setWallet:" + (System.currentTimeMillis() - startDate));
 		// TODO:check that setting the principal wallet at this stage is correct
 		walletOperation.setWallet(userAccount.getWallet());
 		if(chargeInstance.getSubscription() != null) {
-			walletOperation.setBillingAccount(chargeInstance.getSubscription().getUserAccount().getBillingAccount());
+			walletOperation.setBillingAccount(billingAccount);
 		}
 
 		BigDecimal unitPriceWithoutTax = amountWithoutTax;
@@ -263,8 +285,9 @@ public class RatingService extends BusinessService<WalletOperation>{
 		if (unitPriceWithoutTax != null) {
 			unitPriceWithTax = amountWithTax;
 		}
-
+		log.info("Before  rateBareWalletOperation:" + (System.currentTimeMillis() - startDate));
 		rateBareWalletOperation(walletOperation, unitPriceWithoutTax, unitPriceWithTax, countryId, tCurrency);
+		log.info("After  rateBareWalletOperation:" + (System.currentTimeMillis() - startDate));
 		log.debug(" wo amountWithoutTax={}", walletOperation.getAmountWithoutTax());
 		return walletOperation;
 
@@ -364,7 +387,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 	// used to rate or rerate a bareWalletOperation
 	public void rateBareWalletOperation(WalletOperation bareWalletOperation,
 			BigDecimal unitPriceWithoutTax, BigDecimal unitPriceWithTax, Long countryId, TradingCurrency tcurrency) throws BusinessException {
-
+		long startDate = System.currentTimeMillis();
 		PricePlanMatrix ratePrice = null;
 
 		if (unitPriceWithoutTax == null) {
@@ -390,6 +413,9 @@ public class RatingService extends BusinessService<WalletOperation>{
 						unitPriceWithoutTax);
 			}
 		}
+		
+		log.info("After unitPriceWithoutTax:" + (System.currentTimeMillis() - startDate));
+		
 		// if the wallet operation correspond to a recurring charge that is
 		// shared, we divide the price by the number of
 		// shared charges
@@ -413,6 +439,8 @@ public class RatingService extends BusinessService<WalletOperation>{
 				}
 			}
 		}
+		
+		log.info("After getChargeInstance:" + (System.currentTimeMillis() - startDate));
 
 		BigDecimal priceWithoutTax = bareWalletOperation.getQuantity().multiply(unitPriceWithoutTax);
 		BigDecimal priceWithTax = null;
@@ -448,6 +476,8 @@ public class RatingService extends BusinessService<WalletOperation>{
 		bareWalletOperation.setAmountWithTax(priceWithTax);
 		bareWalletOperation.setAmountTax(amountTax);
 		
+		
+		log.info("After bareWalletOperation:" + (System.currentTimeMillis() - startDate));
 	
 		if(ratePrice!=null && ratePrice.getScriptInstance()!=null){
 			log.debug("start to execute script instance for ratePrice {}",ratePrice); 			
@@ -470,7 +500,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 			Long countryId, TradingCurrency tcurrency, Long sellerId) throws BusinessException {
 		// FIXME: the price plan properties could be null !
 
-		log.info("ratePrice rate " + bareOperation);
+		//log.info("ratePrice rate " + bareOperation);
 		for (PricePlanMatrix pricePlan : listPricePlan) {
 			boolean sellerAreEqual = pricePlan.getSeller() == null || pricePlan.getSeller().getId().equals(sellerId);
 			if (!sellerAreEqual) {

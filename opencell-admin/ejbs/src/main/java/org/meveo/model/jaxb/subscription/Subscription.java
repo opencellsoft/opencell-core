@@ -81,6 +81,8 @@ public class Subscription {
 	protected String userAccountId;
 	@XmlAttribute(name = "offerCode")
 	protected String offerCode;
+	@XmlAttribute(name = "ignoreCheck")
+	protected Boolean ignoreCheck;
 	protected Accesses accesses;
 
 	public Subscription() {
@@ -252,6 +254,20 @@ public class Subscription {
 	 */
 	public void setOfferCode(String value) {
 		this.offerCode = value;
+	}
+
+	/**
+	 * @return the ignoreCheck
+	 */
+	public Boolean getIgnoreCheck() {
+		return ignoreCheck;
+	}
+
+	/**
+	 * @param ignoreCheck the ignoreCheck to set
+	 */
+	public void setIgnoreCheck(Boolean ignoreCheck) {
+		this.ignoreCheck = ignoreCheck;
 	}
 
 	public Accesses getAccesses() {
