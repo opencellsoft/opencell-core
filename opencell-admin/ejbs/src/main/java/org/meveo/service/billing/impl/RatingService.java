@@ -272,7 +272,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 			walletOperation.setSeller(seller);
         }
         
-        log.info("Before setWallet:" + (System.currentTimeMillis() - startDate));
+        log.debug("Before setWallet:" + (System.currentTimeMillis() - startDate));
 		// TODO:check that setting the principal wallet at this stage is correct
 		walletOperation.setWallet(userAccount.getWallet());
 		if(chargeInstance.getSubscription() != null) {
@@ -285,9 +285,9 @@ public class RatingService extends BusinessService<WalletOperation>{
 		if (unitPriceWithoutTax != null) {
 			unitPriceWithTax = amountWithTax;
 		}
-		log.info("Before  rateBareWalletOperation:" + (System.currentTimeMillis() - startDate));
+		log.debug("Before  rateBareWalletOperation:" + (System.currentTimeMillis() - startDate));
 		rateBareWalletOperation(walletOperation, unitPriceWithoutTax, unitPriceWithTax, countryId, tCurrency);
-		log.info("After  rateBareWalletOperation:" + (System.currentTimeMillis() - startDate));
+		log.debug("After  rateBareWalletOperation:" + (System.currentTimeMillis() - startDate));
 		log.debug(" wo amountWithoutTax={}", walletOperation.getAmountWithoutTax());
 		return walletOperation;
 
@@ -414,7 +414,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 			}
 		}
 		
-		log.info("After unitPriceWithoutTax:" + (System.currentTimeMillis() - startDate));
+		log.debug("After unitPriceWithoutTax:" + (System.currentTimeMillis() - startDate));
 		
 		// if the wallet operation correspond to a recurring charge that is
 		// shared, we divide the price by the number of
@@ -440,7 +440,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 			}
 		}
 		
-		log.info("After getChargeInstance:" + (System.currentTimeMillis() - startDate));
+		log.debug("After getChargeInstance:" + (System.currentTimeMillis() - startDate));
 
 		BigDecimal priceWithoutTax = bareWalletOperation.getQuantity().multiply(unitPriceWithoutTax);
 		BigDecimal priceWithTax = null;
@@ -477,7 +477,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 		bareWalletOperation.setAmountTax(amountTax);
 		
 		
-		log.info("After bareWalletOperation:" + (System.currentTimeMillis() - startDate));
+		log.debug("After bareWalletOperation:" + (System.currentTimeMillis() - startDate));
 	
 		if(ratePrice!=null && ratePrice.getScriptInstance()!=null){
 			log.debug("start to execute script instance for ratePrice {}",ratePrice); 			

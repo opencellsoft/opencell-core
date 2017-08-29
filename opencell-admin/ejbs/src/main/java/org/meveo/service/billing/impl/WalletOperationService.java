@@ -849,7 +849,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			throw new IncorrectChargeTemplateException("invoiceSubCategory is null for chargeTemplate code=" + recurringChargeTemplate.getCode());
 		}
 		
-		log.info("After invoiceSubCategory applyReccuringCharge:" + (System.currentTimeMillis() - startDate));
+		log.debug("After invoiceSubCategory applyReccuringCharge:" + (System.currentTimeMillis() - startDate));
 
 		TradingCurrency currency = chargeInstance.getCurrency();
 		if (currency == null) {
@@ -869,7 +869,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					+ country.getCountryCode());
 		}
 		
-		log.info("After invoiceSubcategoryCountry applyReccuringCharge:" + (System.currentTimeMillis() - startDate));
+		log.debug("After invoiceSubcategoryCountry applyReccuringCharge:" + (System.currentTimeMillis() - startDate));
 
 		Tax tax = invoiceSubcategoryCountry.getTax();
 		if (tax == null) {
@@ -879,7 +879,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			}
 		}
 		
-		log.info("After tax applyReccuringCharge:" + (System.currentTimeMillis() - startDate));
+		log.debug("After tax applyReccuringCharge:" + (System.currentTimeMillis() - startDate));
 
 		log.debug("next step for {}, applicationDate={}, nextApplicationDate={}, nextApplicationDate={}", chargeInstance.getId(), applicationDate, nextApplicationDate,
 				nextApplicationDate);
@@ -887,7 +887,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		List<WalletOperation> walletOperations = new ArrayList<>();
 		
 		while (nextApplicationDate != null && applicationDate.getTime() < nextApplicationDate.getTime()) {
-			log.info("Inside nextApplicationDate applyReccuringCharge:" + (System.currentTimeMillis() - startDate));
+			log.debug("Inside nextApplicationDate applyReccuringCharge:" + (System.currentTimeMillis() - startDate));
 			Date nextapplicationDate = cal.nextCalendarDate(applicationDate);
 			log.debug("next step for {}, applicationDate={}, nextApplicationDate={}, nextApplicationDate={}", chargeInstance.getId(), applicationDate, nextapplicationDate,
 					nextApplicationDate);
@@ -902,14 +902,14 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			quantity = NumberUtil.getInChargeUnit(quantity, recurringChargeTemplate.getUnitMultiplicator(), recurringChargeTemplate.getUnitNbDecimal(),recurringChargeTemplate.getRoundingMode());
 			
 			log.debug("applyReccuringCharge : nextapplicationDate={}, param2={} -> quantity={}", nextapplicationDate, param2, quantity);
-			log.info("Before walletOperation applyReccuringCharge:" + (System.currentTimeMillis() - startDate));
+			log.debug("Before walletOperation applyReccuringCharge:" + (System.currentTimeMillis() - startDate));
 			WalletOperation walletOperation = chargeApplicationRatingService.rateChargeApplication(chargeInstance,
 					reimbursement ? ApplicationTypeEnum.PRORATA_TERMINATION : ApplicationTypeEnum.RECURRENT, applicationDate, chargeInstance
 					.getAmountWithoutTax(), chargeInstance.getAmountWithTax(), inputQuantity, quantity, currency, countryId, tax.getPercent(), null, nextapplicationDate,
 					invoiceSubCategory, chargeInstance.getCriteria1(), chargeInstance.getCriteria2(), chargeInstance.getCriteria3(), chargeInstance.getOrderNumber(),
 					applicationDate, DateUtils.addDaysToDate(
 							nextapplicationDate, -1), reimbursement ? ChargeApplicationModeEnum.REIMBURSMENT : ChargeApplicationModeEnum.SUBSCRIPTION, forSchedule, false);
-			log.info("After walletOperation applyReccuringCharge:" + (System.currentTimeMillis() - startDate));
+			log.debug("After walletOperation applyReccuringCharge:" + (System.currentTimeMillis() - startDate));
 			walletOperations.add(walletOperation);
 			
 			walletOperation.setSubscriptionDate(chargeInstance.getServiceInstance().getSubscriptionDate());
@@ -918,9 +918,9 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				walletOperation.setStatus(WalletOperationStatusEnum.SCHEDULED);
 			}
 			
-			log.info("Before chargeWalletOperation applyReccuringCharge:" + (System.currentTimeMillis() - startDate));
+			log.debug("Before chargeWalletOperation applyReccuringCharge:" + (System.currentTimeMillis() - startDate));
 			chargeWalletOperation(walletOperation);
-			log.info("Before chargeWalletOperation applyReccuringCharge:" + (System.currentTimeMillis() - startDate));
+			log.debug("Before chargeWalletOperation applyReccuringCharge:" + (System.currentTimeMillis() - startDate));
           
 			// create(chargeApplication);
 			chargeInstance.setChargeDate(applicationDate);
@@ -929,7 +929,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 		chargeInstance.setNextChargeDate(nextApplicationDate);
 		
-		log.info("Before return applyReccuringCharge:" + (System.currentTimeMillis() - startDate));
+		log.debug("Before return applyReccuringCharge:" + (System.currentTimeMillis() - startDate));
 		return walletOperations;
 	}
 
@@ -1027,7 +1027,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			throw new IncorrectChargeTemplateException("InvoiceSubCategory is null for chargeTemplate code=" + recurringChargeTemplate.getCode());
 		}
 		
-		log.info("After invoiceSubCategory:" + (System.currentTimeMillis() - startDate));
+		log.debug("After invoiceSubCategory:" + (System.currentTimeMillis() - startDate));
 
 		TradingCurrency currency = chargeInstance.getCurrency();
 		if (currency == null) {
@@ -1047,7 +1047,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					+ country.getCountryCode());
 		}
 		
-		log.info("After invoiceSubcategoryCountry:" + (System.currentTimeMillis() - startDate));
+		log.debug("After invoiceSubcategoryCountry:" + (System.currentTimeMillis() - startDate));
 
 		Tax tax = invoiceSubcategoryCountry.getTax();
 		if (tax == null) {
@@ -1057,9 +1057,9 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			}
 		}
 		
-		log.info("After tax:" + (System.currentTimeMillis() - startDate));
+		log.debug("After tax:" + (System.currentTimeMillis() - startDate));
 		while (applicationDate.getTime() < nextChargeDate.getTime()) {
-			log.info("Inside applicationDate:" + (System.currentTimeMillis() - startDate));
+			log.debug("Inside applicationDate:" + (System.currentTimeMillis() - startDate));
 			Date nextapplicationDate = cal.nextCalendarDate(applicationDate);
 			log.debug("ApplyNotAppliedinAdvanceReccuringCharge next step for {}, applicationDate={}, nextApplicationDate={},nextApplicationDate={}", chargeInstance.getId(),
 					applicationDate, nextapplicationDate, nextChargeDate);
@@ -1105,7 +1105,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				quantity = quantity.negate();
 			}
 			
-			log.info("Before walletOperation:" + (System.currentTimeMillis() - startDate));
+			log.debug("Before walletOperation:" + (System.currentTimeMillis() - startDate));
 
 			WalletOperation walletOperation = chargeApplicationRatingService.rateChargeApplication( 
 					chargeInstance, reimbursement ? ApplicationTypeEnum.PRORATA_TERMINATION : applicationTypeEnum, nextapplicationDate, chargeInstance.getAmountWithoutTax(),
@@ -1114,13 +1114,13 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					applicationDate, DateUtils.addDaysToDate(nextapplicationDate, -1),
 					reimbursement ? ChargeApplicationModeEnum.REIMBURSMENT : ChargeApplicationModeEnum.SUBSCRIPTION, false, false);
 			
-			log.info("After walletOperation:" + (System.currentTimeMillis() - startDate));
+			log.debug("After walletOperation:" + (System.currentTimeMillis() - startDate));
 			
 			walletOperation.setSubscriptionDate(chargeInstance.getServiceInstance().getSubscriptionDate());
 
 			List<WalletOperation> oprations = chargeWalletOperation(walletOperation);
 			
-			log.info("After chargeWalletOperation:" + (System.currentTimeMillis() - startDate));
+			log.debug("After chargeWalletOperation:" + (System.currentTimeMillis() - startDate));
 			
 			// create(walletOperation);
 			// em.flush();
@@ -1141,7 +1141,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		chargeInstance.setNextChargeDate(nextapplicationDate);
 		chargeInstance.setChargeDate(applicationDate);
 		
-		log.info("Before exit:" + (System.currentTimeMillis() - startDate));
+		log.debug("Before exit:" + (System.currentTimeMillis() - startDate));
 	}
 
 	public void applyChargeAgreement(RecurringChargeInstance chargeInstance, RecurringChargeTemplate recurringChargeTemplate,Date endAgreementDate)
@@ -1413,29 +1413,29 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		
 		List<WalletOperation> result = new ArrayList<>();
 		ChargeInstance chargeInstance = op.getChargeInstance();
-		log.info("After chargeInstance:" + (System.currentTimeMillis() - startDate));
+		log.debug("After chargeInstance:" + (System.currentTimeMillis() - startDate));
 		Long id = chargeInstance.getId();
 		log.debug("chargeWalletOperation on chargeInstanceId:{}", id);
 		//case of scheduled operation (for revenue recognition)
 		UserAccount userAccount = chargeInstance.getUserAccount();
-		log.info("After userAccount:" + (System.currentTimeMillis() - startDate));
+		log.debug("After userAccount:" + (System.currentTimeMillis() - startDate));
 		if (id == null) {
-			log.info("Inside null:" + (System.currentTimeMillis() - startDate));
+			log.debug("Inside null:" + (System.currentTimeMillis() - startDate));
 			op.setWallet(userAccount.getWallet());
 			log.debug("chargeWalletOperation is create schedule on wallet {}", op.getWallet());
 			result.add(op);
 			create(op);
-			log.info("After create:" + (System.currentTimeMillis() - startDate));
+			log.debug("After create:" + (System.currentTimeMillis() - startDate));
 		} else if (walletCacheContainerProvider.isWalletIdsCached(id)) {
-			log.info("Inside isWalletIdsCached:" + (System.currentTimeMillis() - startDate));
+			log.debug("Inside isWalletIdsCached:" + (System.currentTimeMillis() - startDate));
 			List<Long> walletIds = walletCacheContainerProvider.getWallets(id);
-			log.info("After walletIds:" + (System.currentTimeMillis() - startDate));
+			log.debug("After walletIds:" + (System.currentTimeMillis() - startDate));
 			log.debug("chargeWalletOperation chargeInstanceId found in usageCache with {} wallet ids", walletIds.size());
 			result = chargeOnWalletIds(walletIds, op);
-			log.info("After chargeOnWalletIds:" + (System.currentTimeMillis() - startDate));
+			log.debug("After chargeOnWalletIds:" + (System.currentTimeMillis() - startDate));
 
 		} else if (chargeInstance.getPrepaid() && (chargeInstance instanceof RecurringChargeInstance || chargeInstance instanceof OneShotChargeInstance)) {
-			log.info("Inside getPrepaid:" + (System.currentTimeMillis() - startDate));
+			log.debug("Inside getPrepaid:" + (System.currentTimeMillis() - startDate));
 			List<Long> walletIds = new ArrayList<>();
 			List<WalletInstance> walletInstances = chargeInstance.getWalletInstances();
 			for (WalletInstance wallet : walletInstances) {
@@ -1443,16 +1443,16 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			}
 			log.debug("chargeWalletOperation is recurring or oneshot, and associated to {} wallet ids", walletIds.size());
 			result = chargeOnWalletIds(walletIds, op);
-			log.info("After chargeOnWalletIds:" + (System.currentTimeMillis() - startDate));
+			log.debug("After chargeOnWalletIds:" + (System.currentTimeMillis() - startDate));
 		} else if (!chargeInstance.getPrepaid()) {
-			log.info("Inside not getPrepaid:" + (System.currentTimeMillis() - startDate));
+			log.debug("Inside not getPrepaid:" + (System.currentTimeMillis() - startDate));
 			op.setWallet(userAccount.getWallet());
 			log.debug("chargeWalletOperation is postpaid, set wallet to {}", op.getWallet());
 			result.add(op);
 			create(op);
 			walletCacheContainerProvider.updateBalanceCache(op);
 			
-			log.info("After updateBalanceCache:" + (System.currentTimeMillis() - startDate));
+			log.debug("After updateBalanceCache:" + (System.currentTimeMillis() - startDate));
 		} else {
 			log.error("chargeWalletOperation wallet not found for chargeInstance {} ", id);
 			throw new BusinessException("WALLET_NOT_FOUND");

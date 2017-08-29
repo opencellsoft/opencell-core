@@ -87,7 +87,7 @@ public class ServiceSingleton {
 		if (currentValObj == null) {
 			currentValObj = customFieldInstanceService.getCFValue(seller, cfName, invoiceDate);
 		}
-		log.info("After currentValObj : " + (System.currentTimeMillis() - startDate));
+		log.debug("After currentValObj : " + (System.currentTimeMillis() - startDate));
 		
 		//Object currentValObj = customFieldInstanceService.getCFValue(seller, cfName, invoiceDate);
 		if (currentValObj != null) {
@@ -108,15 +108,15 @@ public class ServiceSingleton {
 			}
 		}
 		
-		log.info("Before invoiceTypeService : " + (System.currentTimeMillis() - startDate));
+		log.debug("Before invoiceTypeService : " + (System.currentTimeMillis() - startDate));
 
 		InvoiceType invoiceType = invoiceTypeService.findById(invoiceTypeId);
 		
-		log.info("After invoiceTypeService : " + (System.currentTimeMillis() - startDate));
+		log.debug("After invoiceTypeService : " + (System.currentTimeMillis() - startDate));
 		
 		Sequence sequence = invoiceType.getSellerSequenceSequenceByType(seller);
 		
-		log.info("After sequence : " + (System.currentTimeMillis() - startDate));
+		log.debug("After sequence : " + (System.currentTimeMillis() - startDate));
 		
 		if (sequence == null) {
 			sequence = invoiceType.getSequence();
@@ -126,7 +126,7 @@ public class ServiceSingleton {
 			sequence.setCurrentInvoiceNb(currentNbFromCF != null ? currentNbFromCF
 					: ((currentInvoiceNb == null ? 0L : currentInvoiceNb) + step));
 			invoiceType = invoiceTypeService.update(invoiceType);
-			log.info("After update : " + (System.currentTimeMillis() - startDate));
+			log.debug("After update : " + (System.currentTimeMillis() - startDate));
 		} else {
 			sequence = new Sequence();
 			sequence.setCurrentInvoiceNb(1L);
@@ -134,7 +134,7 @@ public class ServiceSingleton {
 			sequence.setPrefixEL("");
 			invoiceType.setSequence(sequence);
 			invoiceTypeService.update(invoiceType);
-			log.info("After update else : " + (System.currentTimeMillis() - startDate));
+			log.debug("After update else : " + (System.currentTimeMillis() - startDate));
 		}
 
 		return sequence;

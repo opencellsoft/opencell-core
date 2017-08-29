@@ -229,9 +229,9 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     	long startDate = System.currentTimeMillis();
         log.debug("updateBillingAccountTotalAmounts  billingAccount:" + billingAccountId);
         BillingAccount billingAccount = findById(billingAccountId, true);
-        log.info("Before  invoiceAmount:" + (System.currentTimeMillis() - startDate));
+        log.debug("Before  invoiceAmount:" + (System.currentTimeMillis() - startDate));
         BigDecimal invoiceAmount = computeBaInvoiceAmount(billingAccount, billingRun.getLastTransactionDate());
-        log.info("after  invoiceAmount:" + (System.currentTimeMillis() - startDate));
+        log.debug("After  invoiceAmount:" + (System.currentTimeMillis() - startDate));
         if (invoiceAmount != null) {
 
             BillingCycle billingCycle = billingRun.getBillingCycle();
@@ -257,15 +257,15 @@ public class BillingAccountService extends AccountService<BillingAccount> {
             log.debug("updateBillingAccountTotalAmounts invoiceAmount is null");
         }
         
-        log.info("Before setBillingRun:" + (System.currentTimeMillis() - startDate));
+        log.debug("Before setBillingRun:" + (System.currentTimeMillis() - startDate));
         
         billingAccount.setBillingRun(getEntityManager().getReference(BillingRun.class, billingRun.getId()));
         
-        log.info("Before  updateNoCheck:" + (System.currentTimeMillis() - startDate));
+        log.debug("Before  updateNoCheck:" + (System.currentTimeMillis() - startDate));
         
         updateNoCheck(billingAccount);
         
-        log.info("After  updateNoCheck:" + (System.currentTimeMillis() - startDate));
+        log.debug("After  updateNoCheck:" + (System.currentTimeMillis() - startDate));
         return true;
     }
 

@@ -268,7 +268,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		BigDecimal nonEnterprisePriceWithTax = BigDecimal.ZERO;
 		String languageCode = billingAccount.getTradingLanguage().getLanguage().getLanguageCode();
 		List<UserAccount> userAccounts = userAccountService.listByBillingAccount(billingAccount);		
-		log.info("After userAccounts:" + (System.currentTimeMillis() - startDate));
+		log.debug("After userAccounts:" + (System.currentTimeMillis() - startDate));
 		boolean isExonerated = billingAccountService.isExonerated(billingAccount);
         if (ratedTransactionFilter != null) {
             ratedTransactions = (List<RatedTransaction>) filterService.filteredListAsObjects(ratedTransactionFilter);
@@ -276,9 +276,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             	throw new BusinessException(resourceMessages.getString("error.invoicing.noTransactions"));
             }            	
         }
-        log.info("After  ratedTransactionFilter:" + (System.currentTimeMillis() - startDate));
+        log.debug("After  ratedTransactionFilter:" + (System.currentTimeMillis() - startDate));
         for (UserAccount userAccount : userAccounts) {
-        	log.info("Inside  userAccounts:" + (System.currentTimeMillis() - startDate));
+        	log.debug("Inside  userAccounts:" + (System.currentTimeMillis() - startDate));
             WalletInstance wallet = userAccount.getWallet();
             List<Object[]> invoiceSubCats = new ArrayList<>();
 	
@@ -395,7 +395,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                
             }
 	        
-	        log.info("After  invoiceSubCats:" + (System.currentTimeMillis() - startDate));
+	        log.debug("After  invoiceSubCats:" + (System.currentTimeMillis() - startDate));
 
             List<InvoiceAgregate> invoiceAgregateSubcatList = new ArrayList<InvoiceAgregate>();
 
@@ -414,17 +414,17 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 log.info("invoice subcategory {}, amountWithoutTax {}, amountWithTax {}, amountTax {}", object[0], object[1], object[2], object[3]);
                 Long invoiceSubCategoryId = (Long) object[0];
                 InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findById(invoiceSubCategoryId);
-                log.info("After  InvoiceSubCategory:" + (System.currentTimeMillis() - startDate));
+                log.debug("After  InvoiceSubCategory:" + (System.currentTimeMillis() - startDate));
                 List<Tax> taxes = new ArrayList<Tax>();
                 List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries = invoiceSubCategory.getInvoiceSubcategoryCountries();
-                log.info("After  invoiceSubcategoryCountries:" + (System.currentTimeMillis() - startDate));
+                log.debug("After  invoiceSubcategoryCountries:" + (System.currentTimeMillis() - startDate));
 				for (InvoiceSubcategoryCountry invoicesubcatCountry : invoiceSubcategoryCountries) {
-					log.info("Inside  InvoiceSubcategoryCountry:" + (System.currentTimeMillis() - startDate));
+					log.debug("Inside  InvoiceSubcategoryCountry:" + (System.currentTimeMillis() - startDate));
                     if (invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode())
                             && invoiceSubCategoryService.matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(), billingAccount, invoice)) {
 						Tax tax = invoiceSubCategoryCountryService.isInvoiceSubCategoryTaxValid(invoicesubcatCountry,
 								userAccount, billingAccount, invoice, new Date());
-						log.info("After  tax:" + (System.currentTimeMillis() - startDate));
+						log.debug("After  tax:" + (System.currentTimeMillis() - startDate));
 						if (tax != null) {
 							taxes.add(tax);
 						}
@@ -437,7 +437,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 	invSubCatDescTranslated = catMessagesService.getMessageDescription(invoiceSubCategory, languageCode);
                 	descriptionMap.put(code, invSubCatDescTranslated);
                 }
-                log.info("After  invSubCatDescTranslated:" + (System.currentTimeMillis() - startDate));
+                log.debug("After  invSubCatDescTranslated:" + (System.currentTimeMillis() - startDate));
                 SubCategoryInvoiceAgregate invoiceAgregateSubcat = new SubCategoryInvoiceAgregate();
                 invoiceAgregateSubcat.setAuditable(billingAccount.getAuditable());
                 invoiceAgregateSubcat.setInvoice(invoice);
@@ -519,7 +519,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     catInvoiceAgregateMap.put(invoiceCategoryId, invoiceAgregateCat);
                 }
                 
-                log.info("Before invoiceAgregateService:" + (System.currentTimeMillis() - startDate));
+                log.debug("Before invoiceAgregateService:" + (System.currentTimeMillis() - startDate));
                 fillAgregates(invoiceAgregateCat, userAccount);
                 if (invoiceAgregateCat.getId() == null) {
                     if (!isVirtual){
@@ -527,7 +527,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     }
                 }
                 
-                log.info("After  invoiceAgregateService:" + (System.currentTimeMillis() - startDate));
+                log.debug("After  invoiceAgregateService:" + (System.currentTimeMillis() - startDate));
 
                 invoiceAgregateSubcat.setCategoryInvoiceAgregate(invoiceAgregateCat);
 
@@ -545,7 +545,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 						RoundingMode.HALF_UP));
                 // add it to taxAggregate and CategoryAggregate
 				
-				log.info("Before  invoiceAgregateSubcat:" + (System.currentTimeMillis() - startDate));
+				log.debug("Before  invoiceAgregateSubcat:" + (System.currentTimeMillis() - startDate));
                 for (Tax tax : invoiceAgregateSubcat.getSubCategoryTaxes()) {
                     if (tax.getPercent().compareTo(BigDecimal.ZERO) != 0 && !isExonerated) {
                         TaxInvoiceAgregate taxInvoiceAgregate = taxInvoiceAgregateMap.get(tax.getId());
@@ -556,7 +556,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
                 }
                 
-                log.info("After  invoiceAgregateSubcat:" + (System.currentTimeMillis() - startDate));
+                log.debug("After  invoiceAgregateSubcat:" + (System.currentTimeMillis() - startDate));
 
 				invoiceAgregateSubcat.getCategoryInvoiceAgregate().addAmountWithoutTax(
 						invoiceAgregateSubcat.getAmountWithoutTax());
@@ -566,11 +566,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     biggestAmount = invoiceAgregateSubcat.getAmountWithoutTax();
                     biggestSubCat = invoiceAgregateSubcat;
                 }
-                log.info("Before  invoiceAgregateService:" + (System.currentTimeMillis() - startDate));
+                log.debug("Before  invoiceAgregateService:" + (System.currentTimeMillis() - startDate));
                 if (!isVirtual){
                     invoiceAgregateService.create(invoiceAgregateSubcat);
                 }
-                log.info("After  invoiceAgregateService:" + (System.currentTimeMillis() - startDate));
+                log.debug("After  invoiceAgregateService:" + (System.currentTimeMillis() - startDate));
             }
 
             // compute the tax
@@ -633,11 +633,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             
             log.info("Bedore  createInvoiceDiscountAggregates.entrySet():" + (System.currentTimeMillis() - startDate));
             createInvoiceDiscountAggregates(userAccount, invoice, taxInvoiceAgregateMap, isVirtual);
-            log.info("After  createInvoiceDiscountAggregates.entrySet():" + (System.currentTimeMillis() - startDate));
+            log.debug("After  createInvoiceDiscountAggregates.entrySet():" + (System.currentTimeMillis() - startDate));
 
         }
         
-        log.info("Before  isVirtual:" + (System.currentTimeMillis() - startDate));
+        log.debug("Before  isVirtual:" + (System.currentTimeMillis() - startDate));
         
         BigDecimal discountAmountWithoutTax = BigDecimal.ZERO;
         BigDecimal discountAmountTax = BigDecimal.ZERO;
@@ -649,11 +649,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             discountAmountWithoutTax = (BigDecimal) object[0];
             discountAmountTax = (BigDecimal) object[1];
             discountAmountWithTax = (BigDecimal) object[2];
-            log.info("After  invoiceAgregateService:" + (System.currentTimeMillis() - startDate));
+            log.debug("After  invoiceAgregateService:" + (System.currentTimeMillis() - startDate));
         } else {
-        	log.info("Before  invoice.getInvoiceAgregates():" + (System.currentTimeMillis() - startDate));
+        	log.debug("Before  invoice.getInvoiceAgregates():" + (System.currentTimeMillis() - startDate));
             for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
-            	log.info("Inside  invoice.getInvoiceAgregates():" + (System.currentTimeMillis() - startDate));
+            	log.debug("Inside  invoice.getInvoiceAgregates():" + (System.currentTimeMillis() - startDate));
                 if (invoiceAgregate instanceof SubCategoryInvoiceAgregate && invoiceAgregate.isDiscountAggregate()) {
                     discountAmountWithoutTax.add(invoiceAgregate.getAmountWithoutTax());
                     discountAmountTax.add(invoiceAgregate.getAmountTax());
@@ -1052,19 +1052,19 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         BigDecimal unitAmountWithTax = walletOperation.getUnitAmountWithTax();
         BigDecimal unitAmountTax = walletOperation.getUnitAmountTax();
         
-        log.info("Before walletInvoiceSubCategory:" + (System.currentTimeMillis() - startDate));
+        log.debug("Before walletInvoiceSubCategory:" + (System.currentTimeMillis() - startDate));
         
         InvoiceSubCategory walletInvoiceSubCategory = walletOperation.getInvoiceSubCategory();
         
-        log.info("Before chargeInstance:" + (System.currentTimeMillis() - startDate));
+        log.debug("Before chargeInstance:" + (System.currentTimeMillis() - startDate));
 		
         ChargeInstance chargeInstance = walletOperation.getChargeInstance();
 		
-        log.info("Before chargeTemplate:" + (System.currentTimeMillis() - startDate));
+        log.debug("Before chargeTemplate:" + (System.currentTimeMillis() - startDate));
 		
 		ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
 		
-		log.info("Before chargeTemplate:" + (System.currentTimeMillis() - startDate));
+		log.debug("Before chargeTemplate:" + (System.currentTimeMillis() - startDate));
 		
 		InvoiceSubCategory invoiceSubCategory = walletInvoiceSubCategory != null ? walletInvoiceSubCategory : chargeTemplate.getInvoiceSubCategory();
         /*if (walletOperation.getChargeInstance().getSubscription().getUserAccount().getBillingAccount()

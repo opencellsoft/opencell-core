@@ -50,7 +50,7 @@ public class UnitRecurringRatingJobBean implements Serializable {
 			} else {
 				result.registerWarning(ID_activeRecurringChargeInstance+" not rated");
 			}
-			log.info("After registerWarning:" + (System.currentTimeMillis() - startDate));	
+			log.debug("After registerWarning:" + (System.currentTimeMillis() - startDate));	
 		} catch(BusinessException e){
             result.registerError(ID_activeRecurringChargeInstance, e.getMessage());
 		}
