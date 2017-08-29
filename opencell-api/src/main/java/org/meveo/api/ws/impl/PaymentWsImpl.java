@@ -27,6 +27,7 @@ import org.meveo.api.payment.DDRequestLotOpApi;
 import org.meveo.api.payment.PaymentApi;
 import org.meveo.api.ws.PaymentWs;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
+import org.meveo.model.payments.PaymentMethodEnum;
 
 @WebService(serviceName = "PaymentWs", endpointInterface = "org.meveo.api.ws.PaymentWs")
 @Interceptors({ WsRestApiInterceptor.class })
@@ -114,8 +115,8 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
     public CardPaymentMethodTokenDto addCardPaymentMethod(CardPaymentMethodDto cardPaymentMethodDto) {
         PaymentMethodTokenDto response = new PaymentMethodTokenDto();
         try {
-            Long tokenId = paymentMethodApi.create(new PaymentMethodDto(cardPaymentMethodDto));
-            response.setPaymentMethod(paymentMethodApi.find(tokenId));
+            Long pmId = paymentMethodApi.create(new PaymentMethodDto(cardPaymentMethodDto));
+            response.setPaymentMethod(paymentMethodApi.find(pmId));
 
         } catch (Exception e) {
             processException(e, response.getActionStatus());
@@ -159,7 +160,7 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
         PaymentMethodTokensDto response = new PaymentMethodTokensDto();
 
         try {
-            response.setPaymentMethods(paymentMethodApi.list(customerAccountId, customerAccountCode));
+            response.setPaymentMethods(paymentMethodApi.list(customerAccountId, customerAccountCode,PaymentMethodEnum.CARD));
         } catch (Exception e) {
             processException(e, response.getActionStatus());
         }

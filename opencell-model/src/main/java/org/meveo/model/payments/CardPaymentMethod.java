@@ -68,7 +68,7 @@ public class CardPaymentMethod extends PaymentMethod {
     }
 
     public CardPaymentMethod(CustomerAccount customerAccount, String alias, String cardNumber, String owner,
-			boolean preferred, String issueNumber, Integer yearExpiration, Integer monthExpiration) {
+			boolean preferred, String issueNumber, Integer yearExpiration, Integer monthExpiration,CreditCardTypeEnum cardType) {
         super();
         setPaymentType(PaymentMethodEnum.CARD);
         setAlias(alias);
@@ -80,6 +80,7 @@ public class CardPaymentMethod extends PaymentMethod {
         this.issueNumber = issueNumber;
         this.yearExpiration = yearExpiration ;
         this.monthExpiration = monthExpiration;
+        this.cardType = cardType;
 	}
 
 	public String getTokenId() {

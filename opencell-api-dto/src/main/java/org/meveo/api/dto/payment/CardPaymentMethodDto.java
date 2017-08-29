@@ -49,7 +49,9 @@ public class CardPaymentMethodDto extends PaymentMethodDto {
 
 
     public CardPaymentMethodDto(PaymentMethodDto paymentMethod) {
+    	if(paymentMethod == null) return;
 		setAlias(paymentMethod.getAlias());
+		setPreferred(paymentMethod.isPreferred());
 		setCardNumber(paymentMethod.getCardNumber());
 		setCardType(paymentMethod.getCardType());
 		setCustomerAccountCode(paymentMethod.getCustomerAccountCode());
@@ -57,7 +59,8 @@ public class CardPaymentMethodDto extends PaymentMethodDto {
 		setIssueNumber(paymentMethod.getIssueNumber());
 		setMonthExpiration(paymentMethod.getMonthExpiration());
 		setYearExpiration(paymentMethod.getYearExpiration());
-		
+		setTokenId(paymentMethod.getTokenId());
+		setOwner(paymentMethod.getOwner());
 	}
 
 	public CardPaymentMethod fromDto() {

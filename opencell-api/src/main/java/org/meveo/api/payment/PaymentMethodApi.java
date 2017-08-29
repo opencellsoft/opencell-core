@@ -17,6 +17,7 @@ import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.PaymentMethodService;
 
@@ -31,35 +32,7 @@ public class PaymentMethodApi extends BaseApi {
 
 	public Long create(PaymentMethodDto paymentMethodDto) throws InvalidParameterException, MissingParameterException, EntityDoesNotExistsException, BusinessException {
 
-		if (paymentMethodDto.getBankCoordinates() != null) {
-			if(StringUtils.isBlank(paymentMethodDto.getBankCoordinates().getAccountNumber())){
-				missingParameters.add("AccountNumber");	
-			}
-			if(StringUtils.isBlank(paymentMethodDto.getBankCoordinates().getAccountOwner())){
-				missingParameters.add("AccountOwner");	
-			}
-			if(StringUtils.isBlank(paymentMethodDto.getBankCoordinates().getBankCode())){
-				missingParameters.add("BankCode");	
-			}   
-			if(StringUtils.isBlank(paymentMethodDto.getBankCoordinates().getBankName())){
-				missingParameters.add("BankName");	
-			}  
-			if(StringUtils.isBlank(paymentMethodDto.getBankCoordinates().getIban())){
-				missingParameters.add("Iban");	
-			}        	
-		}else{
-			if(StringUtils.isBlank(paymentMethodDto.getMandateIdentification())){
-				missingParameters.add("MandateIdentification");	
-			}
-			if(StringUtils.isBlank(paymentMethodDto.getMandateDate())){
-				missingParameters.add("MandateDate");	
-			}
-		}
-
-		if (StringUtils.isBlank(paymentMethodDto.getCustomerAccountCode())) {
-			missingParameters.add("customerAccountCode");
-		}
-		handleMissingParameters();
+		paymentMethodDto.validate(true);
 		CustomerAccount customerAccount = customerAccountService.findByCode(paymentMethodDto.getCustomerAccountCode());
 		if (customerAccount == null) {
 			throw new EntityDoesNotExistsException(CustomerAccount.class, paymentMethodDto.getCustomerAccountCode());
@@ -82,10 +55,6 @@ public class PaymentMethodApi extends BaseApi {
 		}
 
 		paymentMethodService.update(paymentMethodDto.updateFromDto(paymentMethod));
-
-
-
-
 	}
 
 	public void remove(Long id) throws InvalidParameterException, MissingParameterException, EntityDoesNotExistsException, BusinessException {
@@ -93,17 +62,20 @@ public class PaymentMethodApi extends BaseApi {
 			missingParameters.add("id");
 		}
 		handleMissingParameters();
-		DDPaymentMethod ddPaymentMethod = null;
+		PaymentMethod paymentMethod = null;
 		if (id != null) {
-			ddPaymentMethod = (DDPaymentMethod) paymentMethodService.findById(id);
+			paymentMethod = (PaymentMethod) paymentMethodService.findById(id);
 		}		
-		if (ddPaymentMethod == null) {
+		if (paymentMethod == null) {
 			throw new EntityDoesNotExistsException(DDPaymentMethod.class, id);
 		}
-		paymentMethodService.remove(ddPaymentMethod);
+		paymentMethodService.remove(paymentMethod);
 	}
 
 	public List<PaymentMethodDto> list(Long customerAccountId, String customerAccountCode) throws MissingParameterException, EntityDoesNotExistsException {
+		return list(customerAccountId, customerAccountCode, null);
+	}
+	public List<PaymentMethodDto> list(Long customerAccountId, String customerAccountCode,PaymentMethodEnum paymentMethodEnum) throws MissingParameterException, EntityDoesNotExistsException {
 
 		if (StringUtils.isBlank(customerAccountId) && StringUtils.isBlank(customerAccountCode)) {
 			missingParameters.add("customerAccountId or customerAccountCode");
@@ -124,10 +96,16 @@ public class PaymentMethodApi extends BaseApi {
 			throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountId == null ? customerAccountCode : "" + customerAccountId);
 		}
 
-		List<PaymentMethodDto> paymentMethodDtos = new ArrayList<PaymentMethodDto>();
+		List<PaymentMethodDto> paymentMethodDtos = new ArrayList<PaymentMethodDto>();		
+		if(paymentMethodEnum != null && paymentMethodEnum == PaymentMethodEnum.CARD){
+			for (CardPaymentMethod paymentMethod : customerAccount.getCardPaymentMethods(false)) {
+				paymentMethodDtos.add(new PaymentMethodDto(paymentMethod));
+			}
+		}else{
 
-		for (DDPaymentMethod paymentMethod : customerAccount.getDDPaymentMethods()) {
+		for (PaymentMethod paymentMethod : customerAccount.getPaymentMethods()) {
 			paymentMethodDtos.add(new PaymentMethodDto(paymentMethod));
+		}
 		}
 
 		return paymentMethodDtos;
@@ -137,13 +115,13 @@ public class PaymentMethodApi extends BaseApi {
 		if (id == null) {
 			missingParameters.add("id");
 		}
-		handleMissingParameters();
-		PaymentMethodDto paymentMethodDto = null;
-		try{
-			paymentMethodDto =  new PaymentMethodDto(paymentMethodService.findById(id)) ;
-			return paymentMethodDto;
-		}catch (Exception e) {
-			throw new EntityDoesNotExistsException(CardPaymentMethod.class, id);
+		handleMissingParameters();		
+		PaymentMethod paymentMethod = paymentMethodService.findById(id);
+		if(paymentMethod == null){
+			throw new EntityDoesNotExistsException(PaymentMethod.class, id);
 		}
+		return new PaymentMethodDto(paymentMethod) ;
+
+
 	}
 }

@@ -122,7 +122,7 @@ public class PaymentMethodDto extends BaseDto {
 	public PaymentMethodDto(PaymentMethod paymentMethod) {
 		this.id = paymentMethod.getId();
 		this.alias = paymentMethod.getAlias();
-		this.preferred = paymentMethod.isPreferred();
+		this.preferred = paymentMethod.isPreferred();		
 		this.userId = paymentMethod.getUserId();
 		this.info1 = paymentMethod.getInfo1();
 		this.info2 = paymentMethod.getInfo2();
@@ -140,7 +140,7 @@ public class PaymentMethodDto extends BaseDto {
 			this.setPaymentMethodType(PaymentMethodEnum.TIP);
 			this.bankCoordinates = new BankCoordinatesDto(((TipPaymentMethod)paymentMethod).getBankCoordinates());
 		}
-		if(paymentMethod instanceof CardPaymentMethod){
+		if(paymentMethod instanceof CardPaymentMethod){			
 			this.setPaymentMethodType(PaymentMethodEnum.CARD);        	
 			this.cardNumber = ((CardPaymentMethod)paymentMethod).getHiddenCardNumber();
 			this.owner = ((CardPaymentMethod)paymentMethod).getOwner();
@@ -148,6 +148,7 @@ public class PaymentMethodDto extends BaseDto {
 			this.monthExpiration = ((CardPaymentMethod)paymentMethod).getMonthExpiration();
 			this.yearExpiration = ((CardPaymentMethod)paymentMethod).getYearExpiration();
 			this.issueNumber = ((CardPaymentMethod)paymentMethod).getIssueNumber();
+			this.tokenId = ((CardPaymentMethod)paymentMethod).getTokenId();
 		}
 		if(paymentMethod instanceof CheckPaymentMethod){
 			this.setPaymentMethodType(PaymentMethodEnum.CHECK);           
@@ -175,6 +176,7 @@ public class PaymentMethodDto extends BaseDto {
 		this.monthExpiration = cardPaymentMethodDto.getMonthExpiration();
 		this.yearExpiration = cardPaymentMethodDto.getYearExpiration();
 		this.issueNumber = cardPaymentMethodDto.getIssueNumber();
+		this.tokenId = cardPaymentMethodDto.getTokenId();
 		validate();
 	}
 
@@ -182,7 +184,7 @@ public class PaymentMethodDto extends BaseDto {
 		PaymentMethod pmEntity = null;
 		switch (getPaymentMethodType()) {
 		case CARD:
-			pmEntity = new CardPaymentMethod(customerAccount,getAlias(),getCardNumber(),getOwner(),isPreferred(),getIssueNumber(),getYearExpiration(),getMonthExpiration());
+			pmEntity = new CardPaymentMethod(customerAccount,getAlias(),getCardNumber(),getOwner(),isPreferred(),getIssueNumber(),getYearExpiration(),getMonthExpiration(),getCardType());
 			break;
 
 		case DIRECTDEBIT:
@@ -207,73 +209,72 @@ public class PaymentMethodDto extends BaseDto {
 	public PaymentMethod updateFromDto(PaymentMethod paymentMethod) {
 		if (isPreferred()) {
 			paymentMethod.setPreferred(true);
+		}else{
+			paymentMethod.setPreferred(false);
 		}
 
 		if (!StringUtils.isBlank(getAlias())) {
 			paymentMethod.setAlias(getAlias());
 		}
 		switch (getPaymentMethodType()) {
-		case CARD:
-
-			break;
-
+	
 		case DIRECTDEBIT:
 
 			if (!StringUtils.isBlank(getMandateIdentification())) {
 				((DDPaymentMethod)paymentMethod).setMandateIdentification(getMandateIdentification());
 			}
 
-			//			if (paymentMethodDto.isPreferred()) {
-			//				ddPaymentMethod.setPreferred(true);
-			//			}
-			//
-			//			if (!StringUtils.isBlank(paymentMethodDto.getAlias())) {
-			//				ddPaymentMethod.setAlias(paymentMethodDto.getAlias());
-			//			}
-			//			if (!StringUtils.isBlank(paymentMethodDto.getMandateIdentification())) {
-			//				ddPaymentMethod.setMandateIdentification(paymentMethodDto.getMandateIdentification());
-			//			}
-			//			if (!StringUtils.isBlank(paymentMethodDto.getMandateDate())) {
-			//				ddPaymentMethod.setMandateDate(paymentMethodDto.getMandateDate());
-			//			}
-			//			if(paymentMethodDto.getBankCoordinates() != null){
-			//				if (!StringUtils.isBlank(paymentMethodDto.getBankCoordinates().getAccountNumber())) {
-			//					ddPaymentMethod.getBankCoordinates().setAccountNumber(paymentMethodDto.getBankCoordinates().getAccountNumber());
-			//				}
-			//				if (!StringUtils.isBlank(paymentMethodDto.getBankCoordinates().getAccountOwner())) {
-			//					ddPaymentMethod.getBankCoordinates().setAccountNumber(paymentMethodDto.getBankCoordinates().getAccountOwner());
-			//				}	
-			//				if (!StringUtils.isBlank(paymentMethodDto.getBankCoordinates().getBankCode())) {
-			//					ddPaymentMethod.getBankCoordinates().setAccountNumber(paymentMethodDto.getBankCoordinates().getBankCode());
-			//				}
-			//				if (!StringUtils.isBlank(paymentMethodDto.getBankCoordinates().getBankId())) {
-			//					ddPaymentMethod.getBankCoordinates().setAccountNumber(paymentMethodDto.getBankCoordinates().getBankId());
-			//				}
-			//				if (!StringUtils.isBlank(paymentMethodDto.getBankCoordinates().getBankName())) {
-			//					ddPaymentMethod.getBankCoordinates().setAccountNumber(paymentMethodDto.getBankCoordinates().getBankName());
-			//				}
-			//				if (!StringUtils.isBlank(paymentMethodDto.getBankCoordinates().getBic())) {
-			//					ddPaymentMethod.getBankCoordinates().setAccountNumber(paymentMethodDto.getBankCoordinates().getBic());
-			//				}			
-			//				if (!StringUtils.isBlank(paymentMethodDto.getBankCoordinates().getBranchCode())) {
-			//					ddPaymentMethod.getBankCoordinates().setAccountNumber(paymentMethodDto.getBankCoordinates().getBranchCode());
-			//				}	
-			//				if (!StringUtils.isBlank(paymentMethodDto.getBankCoordinates().getIban())) {
-			//					ddPaymentMethod.getBankCoordinates().setAccountNumber(paymentMethodDto.getBankCoordinates().getIban());
-			//				}	
-			//				if (!StringUtils.isBlank(paymentMethodDto.getBankCoordinates().getIcs())) {
-			//					ddPaymentMethod.getBankCoordinates().setAccountNumber(paymentMethodDto.getBankCoordinates().getIcs());
-			//				}	
-			//				if (!StringUtils.isBlank(paymentMethodDto.getBankCoordinates().getIssuerName())) {
-			//					ddPaymentMethod.getBankCoordinates().setAccountNumber(paymentMethodDto.getBankCoordinates().getIssuerName());
-			//				}	
-			//				if (!StringUtils.isBlank(paymentMethodDto.getBankCoordinates().getIssuerNumber())) {
-			//					ddPaymentMethod.getBankCoordinates().setAccountNumber(paymentMethodDto.getBankCoordinates().getIssuerNumber());
-			//				}
-			//				if (!StringUtils.isBlank(paymentMethodDto.getBankCoordinates().getKey())) {
-			//					ddPaymentMethod.getBankCoordinates().setAccountNumber(paymentMethodDto.getBankCoordinates().getKey());
-			//				}		
-			//			}
+			if (isPreferred()) {
+				((DDPaymentMethod)paymentMethod).setPreferred(true);
+			}
+
+			if (!StringUtils.isBlank(getAlias())) {
+				((DDPaymentMethod)paymentMethod).setAlias(getAlias());
+			}
+			if (!StringUtils.isBlank(getMandateIdentification())) {
+				((DDPaymentMethod)paymentMethod).setMandateIdentification(getMandateIdentification());
+			}
+			if (!StringUtils.isBlank(getMandateDate())) {
+				((DDPaymentMethod)paymentMethod).setMandateDate(getMandateDate());
+			}
+			if(getBankCoordinates() != null){
+				if (!StringUtils.isBlank(getBankCoordinates().getAccountNumber())) {
+					((DDPaymentMethod)paymentMethod).getBankCoordinates().setAccountNumber(getBankCoordinates().getAccountNumber());
+				}
+				if (!StringUtils.isBlank(getBankCoordinates().getAccountOwner())) {
+					((DDPaymentMethod)paymentMethod).getBankCoordinates().setAccountNumber(getBankCoordinates().getAccountOwner());
+				}	
+				if (!StringUtils.isBlank(getBankCoordinates().getBankCode())) {
+					((DDPaymentMethod)paymentMethod).getBankCoordinates().setAccountNumber(getBankCoordinates().getBankCode());
+				}
+				if (!StringUtils.isBlank(getBankCoordinates().getBankId())) {
+					((DDPaymentMethod)paymentMethod).getBankCoordinates().setAccountNumber(getBankCoordinates().getBankId());
+				}
+				if (!StringUtils.isBlank(getBankCoordinates().getBankName())) {
+					((DDPaymentMethod)paymentMethod).getBankCoordinates().setAccountNumber(getBankCoordinates().getBankName());
+				}
+				if (!StringUtils.isBlank(getBankCoordinates().getBic())) {
+					((DDPaymentMethod)paymentMethod).getBankCoordinates().setAccountNumber(getBankCoordinates().getBic());
+				}			
+				if (!StringUtils.isBlank(getBankCoordinates().getBranchCode())) {
+					((DDPaymentMethod)paymentMethod).getBankCoordinates().setAccountNumber(getBankCoordinates().getBranchCode());
+				}	
+				if (!StringUtils.isBlank(getBankCoordinates().getIban())) {
+					((DDPaymentMethod)paymentMethod).getBankCoordinates().setAccountNumber(getBankCoordinates().getIban());
+				}	
+				if (!StringUtils.isBlank(getBankCoordinates().getIcs())) {
+					((DDPaymentMethod)paymentMethod).getBankCoordinates().setAccountNumber(getBankCoordinates().getIcs());
+				}	
+				if (!StringUtils.isBlank(getBankCoordinates().getIssuerName())) {
+					((DDPaymentMethod)paymentMethod).getBankCoordinates().setAccountNumber(getBankCoordinates().getIssuerName());
+				}	
+				if (!StringUtils.isBlank(getBankCoordinates().getIssuerNumber())) {
+					((DDPaymentMethod)paymentMethod).getBankCoordinates().setAccountNumber(getBankCoordinates().getIssuerNumber());
+				}
+				if (!StringUtils.isBlank(getBankCoordinates().getKey())) {
+					((DDPaymentMethod)paymentMethod).getBankCoordinates().setAccountNumber(getBankCoordinates().getKey());
+				}		
+			}
 			break;
 		}
 		return paymentMethod;
@@ -470,6 +471,7 @@ public class PaymentMethodDto extends BaseDto {
 			if (StringUtils.isBlank(getMonthExpiration()) || StringUtils.isBlank(getYearExpiration())) {
 				throw new InvalidDTOException("Missing expiryDate");
 			} 
+			return;
 		}
 		if(getPaymentMethodType() == PaymentMethodEnum.DIRECTDEBIT){
 			if (getBankCoordinates() == null && StringUtils.isBlank(getMandateIdentification())) {
@@ -485,11 +487,13 @@ public class PaymentMethodDto extends BaseDto {
 					throw new InvalidDTOException("Missing MandateDate");	
 				}
 			}
-
-			if(getPaymentMethodType() == PaymentMethodEnum.TIP){
-				validateBankCoordinates(getBankCoordinates());
-			}
+			return;
 		}
+		if(getPaymentMethodType() == PaymentMethodEnum.TIP){
+			validateBankCoordinates(getBankCoordinates());
+			return;
+		}
+
 	}
 
 	private void validateBankCoordinates(BankCoordinatesDto bankCoordinatesDto){
@@ -523,5 +527,5 @@ public class PaymentMethodDto extends BaseDto {
 				+ monthExpiration + ", yearExpiration=" + yearExpiration + ", tokenId=" + tokenId + ", cardNumber="
 				+ StringUtils.hideCardNumber(cardNumber) + ", issueNumber=" + issueNumber + ", userId=" + userId + "]";
 	}
-	
+
 }
