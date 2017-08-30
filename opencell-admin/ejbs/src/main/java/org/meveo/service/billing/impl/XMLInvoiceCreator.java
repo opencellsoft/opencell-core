@@ -1805,7 +1805,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			subCategoryInvoiceAgregates = invoice.getDiscountAgregates();
 
 		} else {
-			//subCategoryInvoiceAgregates = invoiceAgregateService.findDiscountAggregates(invoice);
+			subCategoryInvoiceAgregates = invoiceAgregateService.findDiscountAggregates(invoice);
 		}
 		
 		log.debug("Before billingTemplateName:" + (System.currentTimeMillis() - startDate));
