@@ -17,6 +17,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -33,6 +34,7 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
+import org.meveo.model.order.Order;
 
 @Entity
 @ExportIdentifier({ "code" })
@@ -78,8 +80,7 @@ public class Quote extends BusinessCFEntity {
     /**
      * Quote validity dates
      */
-    @AttributeOverrides({ @AttributeOverride(name = "from", column = @Column(name = "valid_from")),
-            @AttributeOverride(name = "to", column = @Column(name = "valid_to")) })
+    @AttributeOverrides({ @AttributeOverride(name = "from", column = @Column(name = "valid_from")), @AttributeOverride(name = "to", column = @Column(name = "valid_to")) })
     private DatePeriod validity = new DatePeriod();
 
     /**
@@ -145,6 +146,9 @@ public class Quote extends BusinessCFEntity {
      */
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "quote", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Invoice> invoices = new ArrayList<Invoice>();
+
+    @OneToOne(mappedBy = "quote", fetch = FetchType.LAZY)
+    private Order order;
 
     public String getExternalId() {
         return externalId;
@@ -302,4 +306,11 @@ public class Quote extends BusinessCFEntity {
         this.invoices = invoices;
     }
 
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
 }

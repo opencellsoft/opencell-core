@@ -90,6 +90,10 @@ public class ActionStatus {
         this.errorCode = errorCode;
     }
 
+    public String getjson(){
+        return "{\"status\":\"" + status + "\",\"errorCode\": \"" + errorCode + "\",\"message\": \"" + message + "\"}";    
+    }
+    
     @Override
     public String toString() {
         return "ActionStatus [status=" + status + ", errorCode=" + errorCode + ", message=" + message + "]";
