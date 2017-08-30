@@ -250,51 +250,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
     }
 
-    public void setInvoiceNumber(Invoice invoice) throws BusinessException {
-        invoice.setInvoiceNumber(generateInvoiceNumber(invoice));
-    }
-
-    public String generateInvoiceNumber(Invoice invoice) throws BusinessException {
-    	long startDate = System.currentTimeMillis();
-        InvoiceType invoiceType = invoice.getInvoiceType();
-		String code = invoiceType.getCode();
-		String cfName = "INVOICE_SEQUENCE_" + code.toUpperCase();
-        if (invoiceTypeService.getAdjustementCode().equals(code)) {
-            cfName = "INVOICE_ADJUSTMENT_SEQUENCE";
-        }
-        if (invoiceTypeService.getCommercialCode().equals(code)) {
-            cfName = "INVOICE_SEQUENCE";
-        }
-        log.debug("Before billingAccount : " + (System.currentTimeMillis() - startDate));
-        BillingAccount billingAccount = invoice.getBillingAccount();
-		CustomerAccount customerAccount = billingAccount.getCustomerAccount();
-		Customer customer = customerAccount.getCustomer();
-		//Customer cust = customerService.refreshOrRetrieve(customer);
-		log.debug("After Customer : " + (System.currentTimeMillis() - startDate));
-        //InvoiceType refeshInvoiceType = invoiceTypeService.refreshOrRetrieve(invoiceType);
-        log.debug("After refeshInvoiceType : " + (System.currentTimeMillis() - startDate));
-		Object currentValObj = null;
-        Seller seller = chooseSeller(customer.getSeller(), cfName, invoice.getInvoiceDate(), invoiceType, currentValObj);
-        log.debug("After Seller : " + (System.currentTimeMillis() - startDate));
-
-        Sequence sequence = serviceSingleton.getInvoiceNumberSequence(invoice.getInvoiceDate(), invoiceType.getId(), seller, cfName, 1, currentValObj);
-        log.debug("After serviceSingleton : " + (System.currentTimeMillis() - startDate));
-        String prefix = sequence.getPrefixEL();
-        int sequenceSize = sequence.getSequenceSize();
-
-        if (prefix != null && !StringUtils.isBlank(prefix)) {
-            prefix = evaluatePrefixElExpression(prefix, invoice);
-        }
-
-        long nextInvoiceNb = sequence.getCurrentInvoiceNb();
-        String invoiceNumber = StringUtils.getLongAsNChar(nextInvoiceNb, sequenceSize);
-        // request to store invoiceNo in alias field
-        invoice.setAlias(invoiceNumber);
-        invoice.setInvoiceNumber(prefix + invoiceNumber);
-        return prefix + invoiceNumber;
-    }
-
-
     public void assignInvoiceNumber(Invoice invoice) throws BusinessException {
         String cfName = invoiceTypeService.getCustomFieldCode(invoice.getInvoiceType());
         Customer cust = customerService.refreshOrRetrieve(invoice.getBillingAccount().getCustomerAccount().getCustomer());
@@ -1139,31 +1094,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return pdfFileName;
     }
 
-    /**
-     * if the sequence not found on cust.seller, we try in seller.parent (until seller.parent=null)
-     * 
-     * @param seller
-     * @param cfName
-     * @param date
-     * @param invoiceType
-     * @return
-     */
-    private Seller chooseSeller(Seller seller, String cfName, Date date, InvoiceType invoiceType, Object currentValObj ) {
-        if (seller.getSeller() == null) {
-            return seller;
-        }
-        currentValObj = customFieldInstanceService.getCFValue(seller, cfName, date);
-        if (currentValObj != null) {
-            return seller;
-        }
-        if (invoiceType.getSellerSequence() != null && invoiceType.isContainsSellerSequence(seller)) {
-            return seller;
-        }
-
-        return chooseSeller(seller.getSeller(), cfName, date, invoiceType, currentValObj);
-
-    }
-
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void produceInvoiceXmlInNewTransaction(Long invoiceId) throws BusinessException {
     	long startDate = System.currentTimeMillis();
@@ -1543,18 +1473,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return getEntityManager().createNamedQuery("Invoice.byBR", Long.class).setParameter("billingRunId", billingRunId).getResultList();
     }
     
-    public List<InvoiceAgregate> listByInvoice(Invoice invoice) {
-		QueryBuilder qb = new QueryBuilder(InvoiceAgregate.class, "c");
-		qb.addCriterionEntity("invoice", invoice);
-
-		try {
-			return (List<InvoiceAgregate>) qb.getQuery(getEntityManager()).getResultList();
-		} catch (NoResultException e) {
-			log.warn("error while getting user account list by billing account",e);
-			return null;
-		}
-	}
-
     /**
      * Get a summarized information for invoice numbering. Contains grouping by invoice type, seller, invoice date and a number of invoices
      * 

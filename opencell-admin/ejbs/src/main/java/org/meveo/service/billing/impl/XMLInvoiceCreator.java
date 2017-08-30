@@ -275,7 +275,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 		String billingAccountLanguage = billingAccount.getTradingLanguage().getLanguage()
 				.getLanguageCode();
 		log.debug("Before listByInvoice:" + (System.currentTimeMillis() - startDate));
-		List<InvoiceAgregate> invoiceAgregates = invoiceService.listByInvoice(invoice);
+		List<InvoiceAgregate> invoiceAgregates = invoice.getInvoiceAgregates();
 		
 		ratedTransactions = ratedTransactionService.getRatedTransactionsForXmlInvoice(invoice);
 		subCategoryInvoiceAgregates = userAccountService.listByInvoice(invoice);
@@ -304,7 +304,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 		if (!isInvoiceAdjustment && billingRun != null
 				&& BillingRunStatusEnum.VALIDATED.equals(billingRun.getStatus())
 				&& invoiceNumber == null) {
-			invoiceService.setInvoiceNumber(invoice);
+			//invoiceService.setInvoiceNumber(invoice);
 			invoiceService.assignInvoiceNumber(invoice);
 		}
 		
@@ -1221,7 +1221,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 				log.debug("Before SubCategoryInvoiceAgregate:" + (System.currentTimeMillis() - startDate));
 				for (SubCategoryInvoiceAgregate subCatInvoiceAgregate : subCategoryInvoiceAgregates) {
 					CategoryInvoiceAgregate categoryInvoiceAgregate2 = subCatInvoiceAgregate.getCategoryInvoiceAgregate();
-					if (categoryInvoiceAgregate2.getId().longValue() != categoryInvoiceAgregate.getId()) {
+					if (categoryInvoiceAgregate2 != null && categoryInvoiceAgregate != null && categoryInvoiceAgregate2.getId().longValue() != categoryInvoiceAgregate.getId() || (categoryInvoiceAgregate2 == null || categoryInvoiceAgregate == null )) {
 						continue;
 					}
 					log.debug("Inside SubCategoryInvoiceAgregate:" + (System.currentTimeMillis() - startDate));
