@@ -685,4 +685,12 @@
         <!--     <dropTable tableName="crm_custom_field_inst"/> // NOTE: Drop table after you are sure that CF values were migrated correctly -->
     </changeSet>
 
+    <changeSet id="#2757_20170829" author="AndriusKarpavicius">
+        <addColumn tableName="ord_order">
+            <column name="quote_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="quote_id" baseTableName="ord_order" constraintName="fk_order_quote" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ord_quote" />
+    </changeSet>
+    
 </databaseChangeLog> 

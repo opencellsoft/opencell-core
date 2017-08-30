@@ -48,6 +48,7 @@ import org.meveo.model.order.Order;
 import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.model.order.OrderItemProductOffering;
 import org.meveo.model.order.OrderStatusEnum;
+import org.meveo.model.quote.Quote;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.ProductInstanceService;
@@ -108,7 +109,6 @@ public class OrderApi extends BaseApi {
     @Inject
     private TerminationReasonService terminationReasonService;
 
-
     /**
      * Register an order from TMForumApi
      * 
@@ -118,7 +118,7 @@ public class OrderApi extends BaseApi {
      * @throws BusinessException
      * @throws MeveoApiException
      */
-    public ProductOrder createProductOrder(ProductOrder productOrder) throws BusinessException, MeveoApiException {
+    public ProductOrder createProductOrder(ProductOrder productOrder, Long quoteId) throws BusinessException, MeveoApiException {
 
         if (productOrder.getOrderItem() == null || productOrder.getOrderItem().isEmpty()) {
             missingParameters.add("orderItem");
@@ -130,6 +130,9 @@ public class OrderApi extends BaseApi {
         handleMissingParameters();
 
         Order order = new Order();
+        if (quoteId != null) {
+            order.setQuote(orderService.getEntityManager().getReference(Quote.class, quoteId));
+        }
         order.setCode(UUID.randomUUID().toString());
         order.setCategory(productOrder.getCategory());
         // order.setDeliveryInstructions("");
@@ -139,7 +142,7 @@ public class OrderApi extends BaseApi {
         order.setDueDateDelayEL(productOrder.getDueDateDelayEL());
 
         if (productOrder.getPaymentMethods() != null && !productOrder.getPaymentMethods().isEmpty()) {
-        	 order.setPaymentMethod(productOrder.getPaymentMethods().get(0).fromDto(null));
+            order.setPaymentMethod(productOrder.getPaymentMethods().get(0).fromDto(null));
         }
 
         order.setOrderDate(productOrder.getOrderDate() != null ? productOrder.getOrderDate() : new Date());
@@ -599,9 +602,9 @@ public class OrderApi extends BaseApi {
 
         String code = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.PRODUCT_INSTANCE_CODE.getCharacteristicName(), String.class,
             UUID.randomUUID().toString());
-        String criteria1 = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.CRITERIA_1.getCharacteristicName(), String.class,null);
-        String criteria2 = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.CRITERIA_2.getCharacteristicName(), String.class,null);
-        String criteria3 = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.CRITERIA_3.getCharacteristicName(), String.class,null);
+        String criteria1 = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.CRITERIA_1.getCharacteristicName(), String.class, null);
+        String criteria2 = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.CRITERIA_2.getCharacteristicName(), String.class, null);
+        String criteria3 = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.CRITERIA_3.getCharacteristicName(), String.class, null);
         ProductInstance productInstance = new ProductInstance(orderItem.getUserAccount(), subscription, productTemplate, quantity, chargeDate, code,
             productTemplate.getDescription(), orderNumber);
 
@@ -833,7 +836,7 @@ public class OrderApi extends BaseApi {
         productOrder.setDueDateDelayEL(order.getDueDateDelayEL());
         if (order.getPaymentMethod() != null) {
             productOrder.setPaymentMethods(new ArrayList<>());
-            PaymentMethodDto pmDto = new PaymentMethodDto(order.getPaymentMethod());           
+            PaymentMethodDto pmDto = new PaymentMethodDto(order.getPaymentMethod());
             productOrder.getPaymentMethods().add(pmDto);
 
         }
