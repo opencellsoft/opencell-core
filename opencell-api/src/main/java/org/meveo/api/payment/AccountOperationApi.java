@@ -17,6 +17,8 @@ import org.meveo.api.dto.payment.MatchOperationRequestDto;
 import org.meveo.api.dto.payment.MatchingAmountDto;
 import org.meveo.api.dto.payment.MatchingAmountsDto;
 import org.meveo.api.dto.payment.MatchingCodeDto;
+import org.meveo.api.dto.payment.PaymentDto;
+import org.meveo.api.dto.payment.RecordedInvoiceDto;
 import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -27,13 +29,17 @@ import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingAmount;
 import org.meveo.model.payments.MatchingCode;
+import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OtherCreditAndCharge;
+import org.meveo.model.payments.Payment;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.payments.RejectedPayment;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.MatchingAmountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
+import org.meveo.service.payments.impl.PaymentService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 
 /**
@@ -56,6 +62,9 @@ public class AccountOperationApi extends BaseApi {
 
     @Inject
     private RecordedInvoiceService recordedInvoiceService;
+    
+    @Inject
+    private PaymentService paymentService;
 
     public Long create(AccountOperationDto postData) throws MeveoApiException, BusinessException {
 
@@ -193,40 +202,7 @@ public class AccountOperationApi extends BaseApi {
         List<AccountOperation> accountOperations = accountOperationService.listAccountOperationByCustomerAccount(customerAccount);
 
         for (AccountOperation accountOp : accountOperations) {
-            AccountOperationDto accountOperationDto = new AccountOperationDto();
-            accountOperationDto.setId(accountOp.getId());
-            accountOperationDto.setDueDate(accountOp.getDueDate());
-            accountOperationDto.setType(accountOp.getType());
-            accountOperationDto.setTransactionDate(accountOp.getTransactionDate());
-            accountOperationDto.setTransactionCategory(accountOp.getTransactionCategory());
-            accountOperationDto.setReference(accountOp.getReference());
-            accountOperationDto.setAccountCode(accountOp.getAccountCode());
-            accountOperationDto.setAccountCodeClientSide(accountOp.getAccountCodeClientSide());
-            accountOperationDto.setAmount(accountOp.getAmount());
-            accountOperationDto.setMatchingAmount(accountOp.getMatchingAmount());
-            accountOperationDto.setUnMatchingAmount(accountOp.getUnMatchingAmount());
-            accountOperationDto.setMatchingStatus(accountOp.getMatchingStatus());
-            accountOperationDto.setOccCode(accountOp.getOccCode());
-            accountOperationDto.setOccDescription(accountOp.getOccDescription());
-            accountOperationDto.setCustomFields(entityToDtoConverter.getCustomFieldsWithInheritedDTO(accountOp, true));
-            accountOperationDto.setBankLot(accountOp.getBankLot());
-            accountOperationDto.setBankReference(accountOp.getBankReference());
-            accountOperationDto.setDepositDate(accountOp.getDepositDate());
-            accountOperationDto.setBankCollectionDate(accountOp.getBankCollectionDate());
-
-            List<MatchingAmount> matchingAmounts = accountOp.getMatchingAmounts();
-            MatchingAmountDto matchingAmountDto = null;
-            MatchingAmountsDto matchingAmountsDto = new MatchingAmountsDto();
-            for (MatchingAmount matchingAmount : matchingAmounts) {
-                matchingAmountDto = new MatchingAmountDto();
-				if (matchingAmount.getMatchingCode() != null) {
-					matchingAmountDto.setMatchingCode(matchingAmount.getMatchingCode().getCode());
-				}
-                matchingAmountDto.setMatchingAmount(matchingAmount.getMatchingAmount());
-                matchingAmountsDto.getMatchingAmount().add(matchingAmountDto);
-            }
-            accountOperationDto.setMatchingAmounts(matchingAmountsDto);
-
+            AccountOperationDto accountOperationDto = accountOperationToDto(accountOp);
             result.getAccountOperations().getAccountOperation().add(accountOperationDto);
         }
         return result;
@@ -344,5 +320,105 @@ public class AccountOperationApi extends BaseApi {
         checkingLitigation(postData);
         recordedInvoiceService.cancelLitigation(postData.getAccountOperationId());
     }
+
+	public AccountOperationDto find(Long id) throws MeveoApiException {
+		AccountOperationDto result = new AccountOperationDto();
+		AccountOperation ao = accountOperationService.findById(id);
+		if(ao != null) {
+			result = accountOperationToDto(ao);
+		} else {
+			throw new EntityDoesNotExistsException(AccountOperation.class, id);
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Update payment method for all customerAccount AO's if customerAccountCode is set.Or single AO if aoId is set.
+	 * 
+	 * @param customerAccountCode
+	 * @param aoId
+	 * @param paymentMethod
+	 * @throws MissingParameterException
+	 * @throws EntityDoesNotExistsException
+	 * @throws BusinessException
+	 */
+	public void updatePaymentMethod(String customerAccountCode, Long aoId, PaymentMethodEnum paymentMethod) throws MissingParameterException, EntityDoesNotExistsException, BusinessException{
+        if (StringUtils.isBlank(customerAccountCode) && StringUtils.isBlank(aoId)) {
+            missingParameters.add("customerAccountCode or aoId");
+        }
+        if (StringUtils.isBlank(paymentMethod)) {
+            missingParameters.add("paymentMethod");
+        }
+        handleMissingParameters();
+
+        if(!StringUtils.isBlank(customerAccountCode)){
+            CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
+            if (customerAccount == null) {
+                throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
+            }
+	        for(AccountOperation ao : customerAccount.getAccountOperations() ){
+	        	updatePaymentMethod(ao, paymentMethod);
+	        }
+        }else{
+        	AccountOperation ao = accountOperationService.findById(aoId);
+        	if(ao == null) {    			
+    			throw new EntityDoesNotExistsException(AccountOperation.class, aoId);
+    		}
+        	updatePaymentMethod(ao, paymentMethod);
+        }
+        
+	}
+	
+	private void updatePaymentMethod(AccountOperation ao,PaymentMethodEnum paymentMethod) throws BusinessException{
+    	if(MatchingStatusEnum.O == ao.getMatchingStatus()){
+        	if(ao instanceof RecordedInvoice){
+        		RecordedInvoice recordedInvoice = (RecordedInvoice)ao;
+        		recordedInvoice.setPaymentMethod(paymentMethod);
+        		recordedInvoiceService.update(recordedInvoice);
+        	}
+        	if(ao instanceof Payment){
+        		Payment payment = (Payment)ao;
+        		payment.setPaymentMethod(paymentMethod);
+        		paymentService.update(payment);
+        	}
+    	}
+	}
+	
+	private AccountOperationDto accountOperationToDto(AccountOperation accountOp) {
+		AccountOperationDto accountOperationDto = new AccountOperationDto();
+		accountOperationDto.setId(accountOp.getId());
+        accountOperationDto.setDueDate(accountOp.getDueDate());
+        accountOperationDto.setType(accountOp.getType());
+        accountOperationDto.setTransactionDate(accountOp.getTransactionDate());
+        accountOperationDto.setTransactionCategory(accountOp.getTransactionCategory());
+        accountOperationDto.setReference(accountOp.getReference());
+        accountOperationDto.setAccountCode(accountOp.getAccountCode());
+        accountOperationDto.setAccountCodeClientSide(accountOp.getAccountCodeClientSide());
+        accountOperationDto.setAmount(accountOp.getAmount());
+        accountOperationDto.setMatchingAmount(accountOp.getMatchingAmount());
+        accountOperationDto.setUnMatchingAmount(accountOp.getUnMatchingAmount());
+        accountOperationDto.setMatchingStatus(accountOp.getMatchingStatus());
+        accountOperationDto.setOccCode(accountOp.getOccCode());
+        accountOperationDto.setOccDescription(accountOp.getOccDescription());
+        accountOperationDto.setCustomFields(entityToDtoConverter.getCustomFieldsWithInheritedDTO(accountOp, true));
+        accountOperationDto.setBankLot(accountOp.getBankLot());
+        accountOperationDto.setBankReference(accountOp.getBankReference());
+        accountOperationDto.setDepositDate(accountOp.getDepositDate());
+        accountOperationDto.setBankCollectionDate(accountOp.getBankCollectionDate());       
+        List<MatchingAmount> matchingAmounts = accountOp.getMatchingAmounts();
+        MatchingAmountDto matchingAmountDto = null;
+        MatchingAmountsDto matchingAmountsDto = new MatchingAmountsDto();
+        for (MatchingAmount matchingAmount : matchingAmounts) {
+            matchingAmountDto = new MatchingAmountDto();
+			if (matchingAmount.getMatchingCode() != null) {
+				matchingAmountDto.setMatchingCode(matchingAmount.getMatchingCode().getCode());
+			}
+            matchingAmountDto.setMatchingAmount(matchingAmount.getMatchingAmount());
+            matchingAmountsDto.getMatchingAmount().add(matchingAmountDto);
+        }
+        accountOperationDto.setMatchingAmounts(matchingAmountsDto);
+        return accountOperationDto;
+	}
 
 }

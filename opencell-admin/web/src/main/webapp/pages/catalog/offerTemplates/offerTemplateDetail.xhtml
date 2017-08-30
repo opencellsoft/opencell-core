@@ -105,45 +105,28 @@
 
 				<p:tab title="#{messages['menu.serviceTemplates']}" id="tab1">
 
-					<p:dataTable id="offerServices" var="entity"
-						value="#{offerTemplateBean.entity.offerServiceTemplates}"
-						paginator="false" rows="30" lazy="false" styleClass="custom-grid"
-						rowIndexVar="rowIndex" resizableColumns="true">
-						<hftl:column
-							label="#{messages['offerServiceTemplate.serviceTemplate']}"
-							field="serviceTemplate.code" entityView="serviceTemplateDetail"
-							valueIdField="serviceTemplate.id" />
-						<hftl:column label="#{messages['offerServiceTemplate.mandatory']}"
-							field="mandatory" isMessage="true" />
-						<hftl:column
-							label="#{messages['offerServiceTemplate.incompatibleServices']}"
-							field="incompatibleServices" isList="true" valueLabelField="code"
-							valueIdField="id" />
-						<p:column styleClass="actions-column"
-							rendered="#{offerTemplateBean.edit}">
-							<f:facet name="header">
-								<h:outputText value="#{messages['commons.actions']}" />
-							</f:facet>
-							<p:commandButton
-								update=":offerForm:messages :offerForm:tabView:offerServiceMessages :offerForm:tabView:offerServiceDetails"
-								action="#{offerTemplateBean.editOfferServiceTemplate(entity)}"
-								icon="ui-icon-document" process="@this" />
-							<p:commandButton
-								action="#{offerTemplateBean.deleteOfferServiceTemplate(entity)}"
-								rendered="#{offerTemplateBean.canUserUpdateEntity()}"
-								icon="ui-icon-trash"
-								update=":offerForm:messages :offerForm:tabView:offerServiceMessages :offerForm:tabView:offerServices :offerForm:tabView:offerServiceDetails"
-								process="@this" />
-						</p:column>
-						<f:facet name="footer">
-							<p:commandButton value="#{messages['commons.addNew']}"
-								action="#{offerTemplateBean.newOfferServiceTemplate()}"
-								update=":offerForm:messages :offerForm:tabView:offerServiceMessages :offerForm:tabView:offerServiceDetails"
-								rendered="#{offerTemplateBean.edit}" process="@this" />
-						</f:facet>
-					</p:dataTable>
+                    <p:dataTable id="offerServices" var="entity" value="#{offerTemplateBean.entity.offerServiceTemplates}" rows="20" lazy="false" styleClass="custom-grid" rowIndexVar="rowIndex"
+                        resizableColumns="true" paginator="true" rowsPerPageTemplate="10,15,20,50" reflow="true" paginatorAlwaysVisible="false"
+                        paginatorTemplate="${prePaginatorControls} {RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}">
+                        <hftl:column label="#{messages['offerServiceTemplate.serviceTemplate']}" field="serviceTemplate.code" entityView="serviceTemplateDetail" valueIdField="serviceTemplate.id" />
+                        <hftl:column label="#{messages['offerServiceTemplate.mandatory']}" field="mandatory" isMessage="true" />
+                        <hftl:column label="#{messages['offerServiceTemplate.incompatibleServices']}" field="incompatibleServices" isList="true" valueLabelField="code" valueIdField="id" />
+                        <p:column styleClass="actions-column" rendered="#{offerTemplateBean.edit}">
+                            <f:facet name="header">
+                                <h:outputText value="#{messages['commons.actions']}" />
+                            </f:facet>
+                            <p:commandButton update=":offerForm:messages :offerForm:tabView:offerServiceMessages :offerForm:tabView:offerServiceDetails"
+                                action="#{offerTemplateBean.editOfferServiceTemplate(entity)}" icon="ui-icon-document" process="@this" />
+                            <p:commandButton action="#{offerTemplateBean.deleteOfferServiceTemplate(entity)}" rendered="#{offerTemplateBean.canUserUpdateEntity()}" icon="ui-icon-trash"
+                                update=":offerForm:messages :offerForm:tabView:offerServiceMessages :offerForm:tabView:offerServices :offerForm:tabView:offerServiceDetails" process="@this" />
+                        </p:column>
+                        <f:facet name="footer">
+                            <p:commandButton value="#{messages['commons.addNew']}" action="#{offerTemplateBean.newOfferServiceTemplate()}"
+                                update=":offerForm:messages :offerForm:tabView:offerServiceMessages :offerForm:tabView:offerServiceDetails" rendered="#{offerTemplateBean.edit}" process="@this" />
+                        </f:facet>
+                    </p:dataTable>
 
-					<p:messages id="offerServiceMessages" redisplay="false" />
+                    <p:messages id="offerServiceMessages" redisplay="false" />
 
 					<h:panelGroup id="offerServiceDetails">
 

@@ -33,6 +33,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
@@ -59,9 +60,11 @@ public class OfferTemplate extends ProductOffering {
 	private BusinessOfferModel businessOfferModel;
 
 	@OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade=CascadeType.ALL, orphanRemoval=true)
+	@OrderBy("id")
 	private List<OfferServiceTemplate> offerServiceTemplates = new ArrayList<OfferServiceTemplate>();
 
 	@OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade=CascadeType.ALL, orphanRemoval=true)
+	@OrderBy("id")
 	private List<OfferProductTemplate> offerProductTemplates = new ArrayList<OfferProductTemplate>();
 
 	@Size(max = 2000)

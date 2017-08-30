@@ -57,6 +57,7 @@ import org.meveo.api.dto.response.account.TitlesResponseDto;
 import org.meveo.api.dto.response.account.UserAccountsResponseDto;
 import org.meveo.api.dto.response.billing.GetCountersInstancesResponseDto;
 import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
+import org.meveo.api.dto.response.payment.AccountOperationResponseDto;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.module.MeveoModuleApi;
@@ -64,6 +65,7 @@ import org.meveo.api.payment.AccountOperationApi;
 import org.meveo.api.ws.AccountWs;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.crm.BusinessAccountModel;
+import org.meveo.model.payments.PaymentMethodEnum;
 
 @WebService(serviceName = "AccountWs", endpointInterface = "org.meveo.api.ws.AccountWs")
 @Interceptors({ WsRestApiInterceptor.class })
@@ -1084,5 +1086,28 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
 
         return result;
     }
+
+	@Override
+	public AccountOperationResponseDto findAccountOperation(Long id) {
+		AccountOperationResponseDto result = new AccountOperationResponseDto();
+		try {
+			result.setAccountOperation(accountOperationApi.find(id));
+		} catch (Exception e) {
+			processException(e, result.getActionStatus());
+		}
+
+		return result;
+	}
+
+	@Override
+	public ActionStatus updatePaymentMethod(String customerAccountCode, Long aoId, PaymentMethodEnum paymentMethod) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            accountOperationApi.updatePaymentMethod(customerAccountCode, aoId, paymentMethod);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+	}
 
 }

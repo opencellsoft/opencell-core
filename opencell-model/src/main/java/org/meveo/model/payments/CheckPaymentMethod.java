@@ -15,9 +15,16 @@ public class CheckPaymentMethod extends PaymentMethod {
 
     public CheckPaymentMethod(String alias, boolean preferred, CustomerAccount customerAccount) {
         super();
+        this.paymentType = PaymentMethodEnum.CHECK;
         this.alias = alias;
         this.preferred = preferred;
         this.customerAccount = customerAccount;
+    }
+    public CheckPaymentMethod(String alias, boolean preferred) {
+        super();
+        this.paymentType = PaymentMethodEnum.CHECK;
+        this.alias = alias;
+        this.preferred = preferred;
     }
 
     @Override

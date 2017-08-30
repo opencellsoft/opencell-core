@@ -20,7 +20,7 @@ import org.meveo.api.dto.response.GetTradingCurrencyResponse;
  * 
  * @author Edward P. Legaspi
  **/
-@Path("/currency")
+@Path("/tradingCurrency")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 

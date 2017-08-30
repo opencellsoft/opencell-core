@@ -146,8 +146,8 @@ public class ProductInstanceService extends BusinessService<ProductInstance> {
         for (ProductChargeTemplate productChargeTemplate : productInstance.getProductTemplate().getProductChargeTemplates()) {
             ProductChargeInstance productChargeInstance = new ProductChargeInstance(productInstance, productChargeTemplate);
             productChargeInstance.setCriteria1(criteria1);
-            productChargeInstance.setCriteria1(criteria2);
-            productChargeInstance.setCriteria1(criteria3);
+            productChargeInstance.setCriteria2(criteria2);
+            productChargeInstance.setCriteria3(criteria3);
             productChargeInstance.setOrderNumber(productInstance.getOrderNumber());
             if (!isVirtual) {
                 productChargeInstanceService.create(productChargeInstance);

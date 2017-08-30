@@ -69,9 +69,9 @@ public class InvoiceAgregateService extends PersistenceService<InvoiceAgregate> 
 
 	@SuppressWarnings("unchecked")
 	public List<SubCategoryInvoiceAgregate> findDiscountAggregates(Invoice invoice) {
-		QueryBuilder qb = new QueryBuilder("from " + SubCategoryInvoiceAgregate.class.getSimpleName());
-		qb.addBooleanCriterion("discountAggregate", true);
-		qb.addCriterionEntity("invoice", invoice);
+		QueryBuilder qb = new QueryBuilder(SubCategoryInvoiceAgregate.class, "s");
+		qb.addBooleanCriterion("s.discountAggregate", true);
+		qb.addCriterionEntity("s.invoice", invoice);
 		List<SubCategoryInvoiceAgregate> result = (List<SubCategoryInvoiceAgregate>) qb.getQuery(getEntityManager())
 				.getResultList();
 		return result;

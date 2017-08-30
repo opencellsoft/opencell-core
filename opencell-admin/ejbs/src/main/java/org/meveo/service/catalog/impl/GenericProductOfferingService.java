@@ -5,13 +5,11 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.ProductOffering;
 import org.meveo.service.base.MultilanguageEntityService;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
 
 /**
  * @author Andrius Karpavicius
@@ -20,9 +18,6 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
 public class GenericProductOfferingService<T extends ProductOffering> extends MultilanguageEntityService<T> {
 
     private static String FIND_CODE_BY_DATE_CLAUSE = "((be.validity.from IS NULL and be.validity.to IS NULL) or (be.validity.from<=:date and :date<be.validity.to) or (be.validity.from<=:date and be.validity.to IS NULL) or (be.validity.from IS NULL and :date<be.validity.to))";
-
-    @Inject
-    protected CustomFieldInstanceService customFieldInstanceService;
 
     /**
      * Find matching or overlapping versions for a given Product offering code and date range
@@ -265,7 +260,7 @@ public class GenericProductOfferingService<T extends ProductOffering> extends Mu
      * @return Product offering
      */
     public T findByCodeBestValidityMatch(String code, Date from, Date to) {
-        
+
         // Strict match by noth dates
         T offering = findByCode(code, from, to);
 

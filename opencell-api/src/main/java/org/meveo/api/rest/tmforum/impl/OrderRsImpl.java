@@ -36,7 +36,7 @@ public class OrderRsImpl extends BaseRs implements OrderRs {
         Response.ResponseBuilder responseBuilder = null;
 
         try {
-            productOrder = orderApi.createProductOrder(productOrder);
+            productOrder = orderApi.createProductOrder(productOrder, null);
             responseBuilder = Response.status(Response.Status.CREATED).entity(productOrder);
 
         } catch (Exception e) {
@@ -88,9 +88,9 @@ public class OrderRsImpl extends BaseRs implements OrderRs {
 
             responseBuilder = Response.ok().entity(orders);
 
-//        } catch (MeveoApiException e) {
-//            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-//            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
+            // } catch (MeveoApiException e) {
+            // responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            // responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
             processException(e, result);
             responseBuilder.entity(result);

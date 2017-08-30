@@ -132,32 +132,32 @@ public class ProviderApi extends BaseApi {
     private TitleService titleService;
 
     public void create(ProviderDto postData) throws MeveoApiException, BusinessException {
-        
+
         throw new BusinessException("There should already be a provider setup");
-//        if (StringUtils.isBlank(postData.getCode())) {
-//            missingParameters.add("code");
-//        }
-//
-//        handleMissingParameters();
-//        if (!currentUser.hasRole("superAdminManagement")) {
-//            throw new ActionForbiddenException("User has no permission to create new providers");
-//        }
-//
-//        Provider provider = providerService.findById(appProvider.getId());
-//
-//        provider=fromDto(postData,provider);
-//        providerService.create(provider);
-//
-//        // populate customFields
-//        try {
-//            populateCustomFields(postData.getCustomFields(), provider, true);
-//        } catch (MissingParameterException e) {
-//            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
-//            throw e;
-//        } catch (Exception e) {
-//            log.error("Failed to associate custom field instance to an entity", e);
-//            throw e;
-//        }
+        // if (StringUtils.isBlank(postData.getCode())) {
+        // missingParameters.add("code");
+        // }
+        //
+        // handleMissingParameters();
+        // if (!currentUser.hasRole("superAdminManagement")) {
+        // throw new ActionForbiddenException("User has no permission to create new providers");
+        // }
+        //
+        // Provider provider = providerService.findById(appProvider.getId());
+        //
+        // provider=fromDto(postData,provider);
+        // providerService.create(provider);
+        //
+        // // populate customFields
+        // try {
+        // populateCustomFields(postData.getCustomFields(), provider, true);
+        // } catch (MissingParameterException e) {
+        // log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+        // throw e;
+        // } catch (Exception e) {
+        // log.error("Failed to associate custom field instance to an entity", e);
+        // throw e;
+        // }
 
     }
 
@@ -173,15 +173,14 @@ public class ProviderApi extends BaseApi {
 
     public void update(ProviderDto postData) throws MeveoApiException, BusinessException {
 
-
         // search for provider
         Provider provider = providerService.findById(appProvider.getId(), Arrays.asList("currency", "country", "language"));
-       
+
         if (!(currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationManagement")))) {
             throw new ActionForbiddenException("User has no permission to manage provider " + provider.getCode());
         }
 
-        provider=fromDto(postData, provider);
+        provider = fromDto(postData, provider);
 
         // populate customFields
         try {
@@ -200,12 +199,12 @@ public class ProviderApi extends BaseApi {
     /**
      * Return a list of all the countryCode, currencyCode and languageCode of the provider.
      * 
-
+     * 
      * @return
      * @throws MeveoApiException
      */
     public GetTradingConfigurationResponseDto getTradingConfiguration() throws MeveoApiException {
-       
+
         if (!(currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationVisualization")))) {
             throw new ActionForbiddenException("User has no permission to access provider");
         }
@@ -239,15 +238,13 @@ public class ProviderApi extends BaseApi {
     /**
      * Return a list of all the calendar, tax, invoice categories, invoice subcategories, billingCycle and termination reason of the provider.
      * 
-
+     * 
      * @return
      */
     public GetInvoicingConfigurationResponseDto getInvoicingConfiguration() throws MeveoApiException {
 
-
-
-        if (!(currentUser.hasRole("superAdminManagement") || ((currentUser.hasRole("administrationVisualization")
-                || currentUser.hasRole("billingVisualization") || currentUser.hasRole("catalogVisualization"))))) {
+        if (!(currentUser.hasRole("superAdminManagement")
+                || ((currentUser.hasRole("administrationVisualization") || currentUser.hasRole("billingVisualization") || currentUser.hasRole("catalogVisualization"))))) {
             throw new ActionForbiddenException("User has no permission to access provider");
         }
 
@@ -265,7 +262,7 @@ public class ProviderApi extends BaseApi {
         List<Tax> taxes = taxService.list();
         if (taxes != null) {
             for (Tax tax : taxes) {
-                result.getTaxes().getTax().add(new TaxDto(tax,entityToDtoConverter.getCustomFieldsWithInheritedDTO(tax, true)));
+                result.getTaxes().getTax().add(new TaxDto(tax, entityToDtoConverter.getCustomFieldsWithInheritedDTO(tax, true)));
             }
         }
 
@@ -273,7 +270,8 @@ public class ProviderApi extends BaseApi {
         List<InvoiceCategory> invoiceCategories = invoiceCategoryService.list();
         if (invoiceCategories != null) {
             for (InvoiceCategory invoiceCategory : invoiceCategories) {
-                result.getInvoiceCategories().getInvoiceCategory().add(new InvoiceCategoryDto(invoiceCategory, entityToDtoConverter.getCustomFieldsWithInheritedDTO(invoiceCategory, true)));
+                result.getInvoiceCategories().getInvoiceCategory()
+                    .add(new InvoiceCategoryDto(invoiceCategory, entityToDtoConverter.getCustomFieldsWithInheritedDTO(invoiceCategory, true)));
             }
         }
 
@@ -290,7 +288,7 @@ public class ProviderApi extends BaseApi {
         List<BillingCycle> billingCycles = billingCycleService.list();
         if (billingCycles != null) {
             for (BillingCycle billingCycle : billingCycles) {
-                result.getBillingCycles().getBillingCycle().add(new BillingCycleDto(billingCycle,entityToDtoConverter.getCustomFieldsWithInheritedDTO(billingCycle, true)));
+                result.getBillingCycles().getBillingCycle().add(new BillingCycleDto(billingCycle, entityToDtoConverter.getCustomFieldsWithInheritedDTO(billingCycle, true)));
             }
         }
 
@@ -306,7 +304,6 @@ public class ProviderApi extends BaseApi {
     }
 
     public GetCustomerConfigurationResponseDto getCustomerConfiguration() throws MeveoApiException {
-
 
         GetCustomerConfigurationResponseDto result = new GetCustomerConfigurationResponseDto();
 
@@ -349,16 +346,16 @@ public class ProviderApi extends BaseApi {
         return result;
     }
 
-
-    public void updateProviderCF(ProviderDto postData) throws MeveoApiException {
+    public void updateProviderCF(ProviderDto postData) throws MeveoApiException, BusinessException {
 
         if (!(currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationManagement")))) {
             throw new ActionForbiddenException("User has no permission to manage provider ");
         }
 
+        Provider provider = providerService.findById(appProvider.getId());
         // populate customFields
         try {
-            populateCustomFields(postData.getCustomFields(), appProvider, false);
+            populateCustomFields(postData.getCustomFields(), provider, false);
         } catch (MissingParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
@@ -366,35 +363,36 @@ public class ProviderApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+
+        provider = providerService.update(provider);
     }
 
     public ProviderDto findProviderCF() throws MeveoApiException {
 
         Provider provider = providerService.findById(appProvider.getId());
-        if (currentUser.hasRole("superAdminManagement")
-                || (currentUser.hasRole("administrationVisualization"))) {
+        if (currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationVisualization"))) {
             return new ProviderDto(provider, entityToDtoConverter.getCustomFieldsWithInheritedDTO(provider, true), false);
         } else {
             throw new ActionForbiddenException("User has no permission to access provider");
         }
     }
-    
-    public Provider fromDto(ProviderDto postData,Provider entity)throws MeveoApiException{
 
-    	Provider provider=null;
+    public Provider fromDto(ProviderDto postData, Provider entity) throws MeveoApiException {
+
+        Provider provider = null;
         if (entity == null) {
             provider = new Provider();
         } else {
             provider = entity;
         }
-    	if (!StringUtils.isBlank(postData.getCode())){
+        if (!StringUtils.isBlank(postData.getCode())) {
             provider.setCode(postData.getCode().toUpperCase());
-    	}
-    	
-    	if(!StringUtils.isBlank(postData.getDescription())){
-    		provider.setDescription(postData.getDescription());
-    	}
-    	// search for currency
+        }
+
+        if (!StringUtils.isBlank(postData.getDescription())) {
+            provider.setDescription(postData.getDescription());
+        }
+        // search for currency
         if (!StringUtils.isBlank(postData.getCurrency())) {
             Currency currency = currencyService.findByCode(postData.getCurrency());
             if (currency == null) {
@@ -418,37 +416,37 @@ public class ProviderApi extends BaseApi {
             }
             provider.setLanguage(language);
         }
-    	if(postData.isMultiCurrency()!=null){
-    		provider.setMulticurrencyFlag(postData.isMultiCurrency());
-    	}
-    	if(postData.isMultiCountry()!=null){
-    		provider.setMulticountryFlag(postData.isMultiCountry());
-    	}
-    	if(postData.isMultiLanguage()!=null){
-    		provider.setMultilanguageFlag(postData.isMultiLanguage());
-    	}
-    	if (!StringUtils.isBlank(postData.getUserAccount())) {
+        if (postData.isMultiCurrency() != null) {
+            provider.setMulticurrencyFlag(postData.isMultiCurrency());
+        }
+        if (postData.isMultiCountry() != null) {
+            provider.setMulticountryFlag(postData.isMultiCountry());
+        }
+        if (postData.isMultiLanguage() != null) {
+            provider.setMultilanguageFlag(postData.isMultiLanguage());
+        }
+        if (!StringUtils.isBlank(postData.getUserAccount())) {
             UserAccount ua = userAccountService.findByCode(postData.getUserAccount());
             provider.setUserAccount(ua);
         }
-    	if(postData.isEnterprise()!=null){
-        	provider.setEntreprise(postData.isEnterprise());
+        if (postData.isEnterprise() != null) {
+            provider.setEntreprise(postData.isEnterprise());
         }
-        if(postData.isLevelDuplication()!=null){
-        	provider.setLevelDuplication(postData.isLevelDuplication());
+        if (postData.isLevelDuplication() != null) {
+            provider.setLevelDuplication(postData.isLevelDuplication());
         }
-    	if(postData.getRounding()!=null){
-    		provider.setRounding(postData.getRounding());
-    	}
-    	if(postData.getPrepaidReservationExpirationDelayinMillisec()!=null){
-    		provider.setPrepaidReservationExpirationDelayinMillisec(postData.getPrepaidReservationExpirationDelayinMillisec());
-    	}
-    	if(!StringUtils.isBlank(postData.getDiscountAccountingCode())){
-    		provider.setDiscountAccountingCode(postData.getDiscountAccountingCode());
-    	}
-    	if(!StringUtils.isBlank(postData.getEmail())){
-    		provider.setEmail(postData.getEmail());
-    	}
+        if (postData.getRounding() != null) {
+            provider.setRounding(postData.getRounding());
+        }
+        if (postData.getPrepaidReservationExpirationDelayinMillisec() != null) {
+            provider.setPrepaidReservationExpirationDelayinMillisec(postData.getPrepaidReservationExpirationDelayinMillisec());
+        }
+        if (!StringUtils.isBlank(postData.getDiscountAccountingCode())) {
+            provider.setDiscountAccountingCode(postData.getDiscountAccountingCode());
+        }
+        if (!StringUtils.isBlank(postData.getEmail())) {
+            provider.setEmail(postData.getEmail());
+        }
         BankCoordinates bankCoordinates = provider.getBankCoordinates() == null ? new BankCoordinates() : provider.getBankCoordinates();
         if (!StringUtils.isBlank(postData.getBankCoordinates().getBankCode())) {
             bankCoordinates.setBankCode(postData.getBankCoordinates().getBankCode());
@@ -486,56 +484,56 @@ public class ProviderApi extends BaseApi {
         if (!StringUtils.isBlank(postData.getBankCoordinates().getIcs())) {
             bankCoordinates.setIcs(postData.getBankCoordinates().getIcs());
         }
-        if(provider.getBankCoordinates()==null){
-        	provider.setBankCoordinates(bankCoordinates);
+        if (provider.getBankCoordinates() == null) {
+            provider.setBankCoordinates(bankCoordinates);
         }
-        if(postData.isRecognizeRevenue()!=null){
-        	provider.setRecognizeRevenue(postData.isRecognizeRevenue());
+        if (postData.isRecognizeRevenue() != null) {
+            provider.setRecognizeRevenue(postData.isRecognizeRevenue());
         }
         InvoiceConfiguration invoiceConfiguration = (provider.getInvoiceConfiguration() == null) ? new InvoiceConfiguration() : provider.getInvoiceConfiguration();
-        InvoiceConfigurationDto invoiceConfigurationDto=postData.getInvoiceConfiguration();
-        if(invoiceConfigurationDto!=null){
-        	if (invoiceConfigurationDto.getDisplaySubscriptions()!=null) {
+        InvoiceConfigurationDto invoiceConfigurationDto = postData.getInvoiceConfiguration();
+        if (invoiceConfigurationDto != null) {
+            if (invoiceConfigurationDto.getDisplaySubscriptions() != null) {
                 invoiceConfiguration.setDisplaySubscriptions(invoiceConfigurationDto.getDisplaySubscriptions());
             }
-            if (invoiceConfigurationDto.getDisplayServices()!=null) {
+            if (invoiceConfigurationDto.getDisplayServices() != null) {
                 invoiceConfiguration.setDisplayServices(invoiceConfigurationDto.getDisplayServices());
             }
-            if (invoiceConfigurationDto.getDisplayOffers()!=null) {
+            if (invoiceConfigurationDto.getDisplayOffers() != null) {
                 invoiceConfiguration.setDisplayOffers(invoiceConfigurationDto.getDisplayOffers());
             }
-            if (invoiceConfigurationDto.getDisplayEdrs()!=null) {
+            if (invoiceConfigurationDto.getDisplayEdrs() != null) {
                 invoiceConfiguration.setDisplayEdrs(invoiceConfigurationDto.getDisplayEdrs());
             }
-            if (invoiceConfigurationDto.getDisplayProvider()!=null) {
+            if (invoiceConfigurationDto.getDisplayProvider() != null) {
                 invoiceConfiguration.setDisplayProvider(invoiceConfigurationDto.getDisplayProvider());
             }
-            if (invoiceConfigurationDto.getDisplayCfAsXML()!=null) {
+            if (invoiceConfigurationDto.getDisplayCfAsXML() != null) {
                 invoiceConfiguration.setDisplayCfAsXML(invoiceConfigurationDto.getDisplayCfAsXML());
             }
-            if (invoiceConfigurationDto.getDisplayPricePlans()!=null) {
+            if (invoiceConfigurationDto.getDisplayPricePlans() != null) {
                 invoiceConfiguration.setDisplayPricePlans(invoiceConfigurationDto.getDisplayPricePlans());
             }
-            if (invoiceConfigurationDto.getDisplayDetail()!=null) {
+            if (invoiceConfigurationDto.getDisplayDetail() != null) {
                 invoiceConfiguration.setDisplayDetail(invoiceConfigurationDto.getDisplayDetail());
             }
-            if (invoiceConfigurationDto.getDisplayChargesPeriods()!=null) {
+            if (invoiceConfigurationDto.getDisplayChargesPeriods() != null) {
                 invoiceConfiguration.setDisplayChargesPeriods(invoiceConfigurationDto.getDisplayChargesPeriods());
             }
-            if(provider.getInvoiceConfiguration()==null||provider.getInvoiceConfiguration().isTransient()){
-            	provider.setInvoiceConfiguration(invoiceConfiguration);
-            	provider.getInvoiceConfiguration().setProvider(provider);
+            if (provider.getInvoiceConfiguration() == null || provider.getInvoiceConfiguration().isTransient()) {
+                provider.setInvoiceConfiguration(invoiceConfiguration);
+                provider.getInvoiceConfiguration().setProvider(provider);
             }
-            if(invoiceConfigurationDto.getDisplayFreeTransacInInvoice()!=null){
-            	provider.setDisplayFreeTransacInInvoice(invoiceConfigurationDto.getDisplayFreeTransacInInvoice());
+            if (invoiceConfigurationDto.getDisplayFreeTransacInInvoice() != null) {
+                provider.setDisplayFreeTransacInInvoice(invoiceConfigurationDto.getDisplayFreeTransacInInvoice());
             }
-            if(invoiceConfigurationDto.getDisplayBillingCycle()!=null){
+            if (invoiceConfigurationDto.getDisplayBillingCycle() != null) {
                 provider.getInvoiceConfiguration().setDisplayBillingCycle(invoiceConfigurationDto.getDisplayBillingCycle());
             }
-            if(invoiceConfigurationDto.getDisplayOrders()!=null){
+            if (invoiceConfigurationDto.getDisplayOrders() != null) {
                 provider.getInvoiceConfiguration().setDisplayOrders(invoiceConfigurationDto.getDisplayOrders());
             }
         }
         return provider;
-    }    
+    }
 }

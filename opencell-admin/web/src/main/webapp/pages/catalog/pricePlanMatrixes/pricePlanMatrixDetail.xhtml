@@ -195,12 +195,12 @@
 							label="#{messages['pricePlanMatrix.amountWithTax']}"
 							newLine="true" field="amountWithTax"
 							converter="bigDecimal4DigitsConverter"
-							rendered="#{!pricePlanMatrixBean.provider.entreprise}"
+							rendered="#{!appProvider.entreprise}"
 							required="true" />
 						<hftl:formField
 							label="#{messages['pricePlanMatrix.amountWithTax']} EL"
 							field="amountWithTaxEL" textArea="true" rows="1" maxlength="2000"
-							rendered="#{!pricePlanMatrixBean.provider.entreprise}" />
+							rendered="#{!appProvider.entreprise}" />
 					
 						<hftl:formField id="scriptSelectId"
     							label="#{messages['pricePlanMatrix.scriptCode']}"

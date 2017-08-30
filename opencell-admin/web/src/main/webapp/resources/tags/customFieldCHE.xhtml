@@ -42,7 +42,7 @@
     <c:if test="#{!cc.attrs.cft.versionable}">
         <c:if test="#{cc.attrs.cft.storageType eq CustomFieldStorageTypeEnum.SINGLE }">
             <hftl:decorateFormField label="#{cc.attrs.cft.description}#{cc.attrs.cft.valueRequired?' *':''}" componentWidth="25" displayOneLine="false">
-                <hftl:customFieldValueField edit="#{cc.attrs.edit}" cft="#{cc.attrs.cft}" field="#{cc.attrs.cfValueHolder.getFirstValue(cc.attrs.cft.code).cfValue}"
+                <hftl:customFieldValueField edit="#{cc.attrs.edit}" cft="#{cc.attrs.cft}" field="#{cc.attrs.cfValueHolder.getFirstValue(cc.attrs.cft.code)}"
                     entity="#{cc.attrs.entity}" datePattern="#{cc.attrs.datePattern}" disabled="#{cc.attrs.disabled}" />
             </hftl:decorateFormField>
         </c:if>
@@ -50,7 +50,7 @@
         <c:if
             test="#{(cc.attrs.cft.storageType eq CustomFieldStorageTypeEnum.MAP or cc.attrs.cft.storageType eq CustomFieldStorageTypeEnum.LIST or cc.attrs.cft.storageType eq CustomFieldStorageTypeEnum.MATRIX) }">
             <hftl:customFieldListTable edit="#{cc.attrs.edit}" cft="#{cc.attrs.cft}" entity="#{cc.attrs.entity}" clientGuiId="#{cc.clientId}" prefix="#{cc.attrs.prefix}"
-                datePattern="#{cc.attrs.datePattern}" field="#{cc.attrs.cfValueHolder.getFirstValue(cc.attrs.cft.code).cfValue}" messagesId="#{cc.attrs.messagesId}"
+                datePattern="#{cc.attrs.datePattern}" field="#{cc.attrs.cfValueHolder.getFirstValue(cc.attrs.cft.code)}" messagesId="#{cc.attrs.messagesId}"
                 disabled="#{cc.attrs.disabled}" />
         </c:if>
 

@@ -94,11 +94,9 @@ import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.XStreamCDATAConverter;
 import org.meveo.model.ExportIdentifier;
-import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.IJPAVersionedEntity;
 import org.meveo.model.communication.MeveoInstance;
-import org.meveo.model.crm.CustomFieldInstance;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.security.Permission;
@@ -312,21 +310,6 @@ public class EntityExportImportService implements Serializable {
         Class clazz = exportTemplate.getEntityToExport();
         if (clazz == null) {
             return;
-        }
-
-        // Automatically export custom fields for CF related entities
-        if (ICustomFieldEntity.class.isAssignableFrom(clazz)) {
-
-            String cfSelect = "select cfi from CustomFieldInstance cfi where cfi.disabled=false and cfi.appliesToEntity=:uuid";
-            Map<String, String> cfParameters = new HashMap<String, String>();
-            cfParameters.put("uuid", "#{entity.uuid}");
-
-            exportTemplate.addRelatedEntity(null, null, cfSelect, cfParameters, CustomFieldInstance.class);
-
-            if (exportTemplate.getClassesToExportAsFull() == null) {
-                exportTemplate.setClassesToExportAsFull(new ArrayList<Class<? extends IEntity>>());
-            }
-            exportTemplate.getClassesToExportAsFull().add(CustomFieldInstance.class);
         }
 
         // If template is marked as exportAllClassesAsFull add to export provider and permission as short version
@@ -1772,8 +1755,8 @@ public class EntityExportImportService implements Serializable {
             log.trace("Will ommit {}.{} attribute from export", classFieldInfo[0], ((Field) classFieldInfo[1]).getName());
             xstream.omitField((Class) classFieldInfo[0], ((Field) classFieldInfo[1]).getName());
         }
-//        xstream.omitField(Auditable.class, "creator");
-//        xstream.omitField(Auditable.class, "updater");
+        // xstream.omitField(Auditable.class, "creator");
+        // xstream.omitField(Auditable.class, "updater");
     }
 
     /**

@@ -35,8 +35,8 @@ import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.util.ApplicationProvider;
 
 /**
- * Show a picture from a rest URI like /meveo/picture/provider/module/tmp/filename.suffix or /meveo/picture/provider/offerCategory/offerCategoryCode or
- * /meveo/picture/provider/offer/offerCode or /meveo/picture/provider/service/serviceCode or /meveo/picture/provider/product/productCode
+ * Show a picture from a rest URI like /meveo/picture/provider/module/tmp/filename.suffix or /meveo/picture/provider/offerCategory/offerCategoryID or
+ * /meveo/picture/provider/offer/offerId or /meveo/picture/provider/service/serviceId or /meveo/picture/provider/product/productId
  * <p>
  * 3 provider code 4 group : module or offerCategory or offer or service or product 5 tmp, read pictures from tmp folder 6 picture filename like entity's code with suffix png, gif,
  * jpeg, jpg. In case no extension is provided it is assumed as entity's ID.

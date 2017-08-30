@@ -14,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.LanguageIsoDto;
 import org.meveo.api.dto.response.GetLanguageIsoResponse;
+import org.meveo.api.dto.response.GetLanguagesIsoResponse;
 
 /**
  * * Web service for managing {@link org.meveo.model.billing.Language}
@@ -75,4 +76,12 @@ public interface LanguageIsoRs extends IBaseRs {
     @POST
     @Path("/createOrUpdate")
     public ActionStatus createOrUpdate(LanguageIsoDto languageIsoDto);
+    
+    /**
+     * List all languages.
+     * @return
+     */
+    @GET
+    @Path("/")
+    GetLanguagesIsoResponse list();
 }

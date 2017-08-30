@@ -30,7 +30,7 @@ import org.apache.commons.lang3.StringUtils;
 public class BusinessEntity extends EnableEntity {
 
     private static final long serialVersionUID = 1L;
-    
+
     @Column(name = "code", nullable = false, length = 255)
     // TODO : Create sql script to ad index. @Index(name = "CODE_IDX")
     @Size(max = 255, min = 1)
@@ -44,7 +44,7 @@ public class BusinessEntity extends EnableEntity {
     @Transient
     protected boolean appendGeneratedCode = false;
 
-    public String getCode() {    	
+    public String getCode() {
         return code;
     }
 
@@ -81,41 +81,47 @@ public class BusinessEntity extends EnableEntity {
             return code;
         }
     }
-    
-	/**
-	 * This method can be overridden to allow child entities to identify their
-	 * parent entity.
-	 * 
-	 * @return The parent entity.
-	 */
-	public BusinessEntity getParentEntity() {
-		return null;
-	}
-	
-	/**
-	 * This method can be overridden to allow child entities to identify their
-	 * parent entity's type.
-	 * 
-	 * @return The parent entity's type.
-	 */
-	public Class<? extends BusinessEntity> getParentEntityType() {
-		if(getParentEntity() != null){
-			return getParentEntity().getClass();
-		}
-		return null;
-	}
- 
+
+    public String getDescriptionAndCode() {
+        if (!StringUtils.isBlank(description)) {
+            return code + " - " + description;
+        } else {
+            return code;
+        }
+    }
+
+    /**
+     * This method can be overridden to allow child entities to identify their parent entity.
+     * 
+     * @return The parent entity.
+     */
+    public BusinessEntity getParentEntity() {
+        return null;
+    }
+
+    /**
+     * This method can be overridden to allow child entities to identify their parent entity's type.
+     * 
+     * @return The parent entity's type.
+     */
+    public Class<? extends BusinessEntity> getParentEntityType() {
+        if (getParentEntity() != null) {
+            return getParentEntity().getClass();
+        }
+        return null;
+    }
+
     @Override
-    public int hashCode() {    	
+    public int hashCode() {
         final int prime = 31;
-        int result = prime * 1; //super.hashCode();
-        result = prime * result + ((code == null) ? 0 : (this.getClass().getName()+code).hashCode());
+        int result = prime * 1; // super.hashCode();
+        result = prime * result + ((code == null) ? 0 : (this.getClass().getName() + code).hashCode());
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        
+
         if (this == obj) {
             return true;
         } else if (obj == null) {
@@ -127,7 +133,7 @@ public class BusinessEntity extends EnableEntity {
         BusinessEntity other = (BusinessEntity) obj;
 
         if (id != null && other.getId() != null && id.equals(other.getId())) {
-             return true;
+            return true;
         }
         if (code == null) {
             if (other.getCode() != null) {
@@ -143,9 +149,9 @@ public class BusinessEntity extends EnableEntity {
     public String toString() {
         return String.format("%s[%s, code=%s]", this.getClass().getName(), super.toString(), code);
     }
-    
+
     public void setDescriptionOrCode(String val) {
-    	setDescription(val);
+        setDescription(val);
     }
-    
+
 }

@@ -18,102 +18,96 @@
  */
 package org.meveo.service.billing.impl;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.service.base.BusinessService;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 
 @Stateless
 public class InvoiceTypeService extends BusinessService<InvoiceType> {
 
-	@Inject
-	CustomFieldInstanceService customFieldInstanceService;
+    @EJB
+    private ServiceSingleton serviceSingleton;
 
-	@Inject
-	OCCTemplateService oCCTemplateService;
-	
-	ParamBean param  = ParamBean.getInstance();
+    @Inject
+    OCCTemplateService oCCTemplateService;
 
-	public InvoiceType getDefaultType(String invoiceTypeCode) throws BusinessException {
-		InvoiceType defaultInvoiceType = findByCode(invoiceTypeCode);
-		if (defaultInvoiceType != null) {
-			return defaultInvoiceType;
-		}
+    ParamBean param = ParamBean.getInstance();
 
-		OCCTemplate occTemplate = null;
+    public InvoiceType getDefaultType(String invoiceTypeCode) throws BusinessException {
 
-		String occCode = "accountOperationsGenerationJob.occCode";
-		String occCodeDefaultValue = "FA_FACT";
-		OperationCategoryEnum operationCategory = OperationCategoryEnum.DEBIT;
-		if (getAdjustementCode().equals(invoiceTypeCode)) {
-			occCode = "accountOperationsGenerationJob.occCodeAdjustement";
-			occCodeDefaultValue = "FA_ADJ";
-			operationCategory = OperationCategoryEnum.CREDIT;
-		}
-		String occTemplateCode = null;
-		try {
-			occTemplateCode = (String) customFieldInstanceService.getOrCreateCFValueFromParamValue(occCode, occCodeDefaultValue, appProvider, true);
-			log.debug("occTemplateCode:" + occTemplateCode);
-			occTemplate = oCCTemplateService.findByCode(occTemplateCode);
-		} catch (Exception e) {
-			log.error("error while getting occ template ", e);
-			throw new BusinessException("Cannot found OCC Template for invoice");
-		}
+        InvoiceType defaultInvoiceType = findByCode(invoiceTypeCode);
+        if (defaultInvoiceType != null) {
+            return defaultInvoiceType;
+        }
 
-		if (occTemplate == null) {
-			occTemplate = new OCCTemplate();
-			occTemplate.setCode(occTemplateCode);
-			occTemplate.setDescription(occTemplateCode);
-			occTemplate.setOccCategory(operationCategory);
-			oCCTemplateService.create(occTemplate);			
-		}
+        String occCode = "accountOperationsGenerationJob.occCode";
+        String occCodeDefaultValue = "FA_FACT";
+        OperationCategoryEnum operationCategory = OperationCategoryEnum.DEBIT;
+        if (getAdjustementCode().equals(invoiceTypeCode)) {
+            occCode = "accountOperationsGenerationJob.occCodeAdjustement";
+            occCodeDefaultValue = "FA_ADJ";
+            operationCategory = OperationCategoryEnum.CREDIT;
+        }
 
-		defaultInvoiceType = new InvoiceType();
-		defaultInvoiceType.setCode(invoiceTypeCode);
-		defaultInvoiceType.setOccTemplate(occTemplate);
-		create(defaultInvoiceType);
-		return defaultInvoiceType;
-	}
-	
-	public Long getMaxCurrentInvoiceNumber( String invoiceTypeCode) throws BusinessException {
-		Long max = getEntityManager()
-				.createNamedQuery("InvoiceType.currentInvoiceNb", Long.class)
-				
-				.setParameter("invoiceTypeCode", invoiceTypeCode)
-				.getSingleResult();
-		
-		return max == null ? 0 : max;
-		
-	}
+        defaultInvoiceType = serviceSingleton.createInvoiceType(occCode, occCodeDefaultValue, invoiceTypeCode, operationCategory);
 
-	public InvoiceType getDefaultAdjustement() throws BusinessException {
-		return getDefaultType(getAdjustementCode());
-	}
+        return defaultInvoiceType;
+    }
 
-	public InvoiceType getDefaultCommertial() throws BusinessException {
-		return getDefaultType(getCommercialCode());
-	}
+    public Long getMaxCurrentInvoiceNumber(String invoiceTypeCode) throws BusinessException {
+        Long max = getEntityManager().createNamedQuery("InvoiceType.currentInvoiceNb", Long.class)
+
+            .setParameter("invoiceTypeCode", invoiceTypeCode).getSingleResult();
+
+        return max == null ? 0 : max;
+
+    }
+
+    public InvoiceType getDefaultAdjustement() throws BusinessException {
+        return getDefaultType(getAdjustementCode());
+    }
+
+    public InvoiceType getDefaultCommertial() throws BusinessException {
+        return getDefaultType(getCommercialCode());
+    }
 
     public InvoiceType getDefaultQuote() throws BusinessException {
         return getDefaultType(getQuoteCode());
     }
 
-	public String getCommercialCode() {
-		return param.getProperty("invoiceType.commercial.code", "COM");
-	}
-	
-	public String getAdjustementCode() {
-		return param.getProperty("invoiceType.adjustement.code", "ADJ");
-	}
+    public String getCommercialCode() {
+        return param.getProperty("invoiceType.commercial.code", "COM");
+    }
+
+    public String getAdjustementCode() {
+        return param.getProperty("invoiceType.adjustement.code", "ADJ");
+    }
 
     public String getQuoteCode() {
         return param.getProperty("invoiceType.quote.code", "QUOTE");
+    }
+
+    /**
+     * Get a custom field code to track invoice numbering sequence for a given invoice type
+     * 
+     * @param invoiceType Invoice type
+     * @return A custom field code
+     */
+    public String getCustomFieldCode(InvoiceType invoiceType) {
+        String cfName = "INVOICE_SEQUENCE_" + invoiceType.getCode().toUpperCase();
+        if (getAdjustementCode().equals(invoiceType.getCode())) {
+            cfName = "INVOICE_ADJUSTMENT_SEQUENCE";
+        }
+        if (getCommercialCode().equals(invoiceType.getCode())) {
+            cfName = "INVOICE_SEQUENCE";
+        }
+        return cfName;
     }
 }

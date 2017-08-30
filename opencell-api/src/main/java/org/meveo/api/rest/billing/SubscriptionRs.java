@@ -1,6 +1,7 @@
 package org.meveo.api.rest.billing;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -111,18 +112,12 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @GET
     @Path("/list")
-    SubscriptionsResponseDto listByUserAccount(@QueryParam("userAccountCode") String userAccountCode);
+    SubscriptionsResponseDto listByUserAccount(@QueryParam("userAccountCode") String userAccountCode, @DefaultValue("false") @QueryParam("mergedCF") boolean mergedCF );
 
-    /**
-     * List All Subscriptions with pagination
-     * 
-     * @param pageSize Page size integer
-     * @param pageNumber Page number integer
-     * @return Subscriptions List
-     */
+
     @GET
     @Path("/listAll")
-    SubscriptionsListResponseDto listAll(@QueryParam("pageSize") int pageSize, @QueryParam("pageNumber") int pageNumber);
+    SubscriptionsListResponseDto listAll(@QueryParam("pageSize") int pageSize, @QueryParam("pageNumber") int pageNumber, @DefaultValue("false") @QueryParam("mergedCF") boolean mergedCF );
 
     /**
      * Search for a subscription with a given code 
@@ -132,7 +127,7 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @GET
     @Path("/")
-    GetSubscriptionResponseDto findSubscription(@QueryParam("subscriptionCode") String subscriptionCode);
+    GetSubscriptionResponseDto findSubscription(@QueryParam("subscriptionCode") String subscriptionCode, @DefaultValue("false") @QueryParam("mergedCF") boolean mergedCF );
     
     
     

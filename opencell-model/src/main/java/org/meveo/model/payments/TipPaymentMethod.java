@@ -22,11 +22,21 @@ public class TipPaymentMethod extends PaymentMethod {
 
     public TipPaymentMethod(String alias, boolean preferred) {
         super();
+        this.paymentType = PaymentMethodEnum.TIP;
         this.alias = alias;
         this.preferred = preferred;
     }
 
-    public BankCoordinates getBankCoordinates() {
+    public TipPaymentMethod(CustomerAccount customerAccount, String alias, BankCoordinates bankCoordinates) {
+        super();
+        this.paymentType = PaymentMethodEnum.TIP;
+        setAlias(alias);
+        setPreferred(preferred);
+        this.customerAccount = customerAccount;
+        this.bankCoordinates = bankCoordinates;
+	}
+
+	public BankCoordinates getBankCoordinates() {
         return bankCoordinates;
     }
 

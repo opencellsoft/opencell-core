@@ -15,7 +15,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.api.BaseApi;
-import org.meveo.api.account.CustomerAccountApi;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.billing.ActivateServicesRequestDto;
@@ -23,11 +22,7 @@ import org.meveo.api.dto.billing.ServiceToActivateDto;
 import org.meveo.api.dto.billing.SubscriptionRenewalDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
-import org.meveo.api.dto.payment.CardPaymentMethodDto;
-import org.meveo.api.dto.payment.DDPaymentMethodDto;
-import org.meveo.api.dto.payment.OtherPaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
-import org.meveo.api.dto.payment.TipPaymentMethodDto;
 import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidEnumValueException;
@@ -53,9 +48,7 @@ import org.meveo.model.order.Order;
 import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.model.order.OrderItemProductOffering;
 import org.meveo.model.order.OrderStatusEnum;
-import org.meveo.model.payments.CardPaymentMethod;
-import org.meveo.model.payments.DDPaymentMethod;
-import org.meveo.model.payments.TipPaymentMethod;
+import org.meveo.model.quote.Quote;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.ProductInstanceService;
@@ -116,9 +109,6 @@ public class OrderApi extends BaseApi {
     @Inject
     private TerminationReasonService terminationReasonService;
 
-    @Inject
-    private CustomerAccountApi customerAccountApi;
-
     /**
      * Register an order from TMForumApi
      * 
@@ -128,7 +118,7 @@ public class OrderApi extends BaseApi {
      * @throws BusinessException
      * @throws MeveoApiException
      */
-    public ProductOrder createProductOrder(ProductOrder productOrder) throws BusinessException, MeveoApiException {
+    public ProductOrder createProductOrder(ProductOrder productOrder, Long quoteId) throws BusinessException, MeveoApiException {
 
         if (productOrder.getOrderItem() == null || productOrder.getOrderItem().isEmpty()) {
             missingParameters.add("orderItem");
@@ -140,6 +130,9 @@ public class OrderApi extends BaseApi {
         handleMissingParameters();
 
         Order order = new Order();
+        if (quoteId != null) {
+            order.setQuote(orderService.getEntityManager().getReference(Quote.class, quoteId));
+        }
         order.setCode(UUID.randomUUID().toString());
         order.setCategory(productOrder.getCategory());
         // order.setDeliveryInstructions("");
@@ -149,7 +142,7 @@ public class OrderApi extends BaseApi {
         order.setDueDateDelayEL(productOrder.getDueDateDelayEL());
 
         if (productOrder.getPaymentMethods() != null && !productOrder.getPaymentMethods().isEmpty()) {
-            order.setPaymentMethod(customerAccountApi.paymentMethodFromDto(productOrder.getPaymentMethods().get(0), null));
+            order.setPaymentMethod(productOrder.getPaymentMethods().get(0).fromDto(null));
         }
 
         order.setOrderDate(productOrder.getOrderDate() != null ? productOrder.getOrderDate() : new Date());
@@ -609,6 +602,9 @@ public class OrderApi extends BaseApi {
 
         String code = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.PRODUCT_INSTANCE_CODE.getCharacteristicName(), String.class,
             UUID.randomUUID().toString());
+        String criteria1 = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.CRITERIA_1.getCharacteristicName(), String.class, null);
+        String criteria2 = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.CRITERIA_2.getCharacteristicName(), String.class, null);
+        String criteria3 = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.CRITERIA_3.getCharacteristicName(), String.class, null);
         ProductInstance productInstance = new ProductInstance(orderItem.getUserAccount(), subscription, productTemplate, quantity, chargeDate, code,
             productTemplate.getDescription(), orderNumber);
 
@@ -623,7 +619,7 @@ public class OrderApi extends BaseApi {
             throw new BusinessException("Failed to associate custom field instance to an entity", e);
         }
 
-        productInstanceService.applyProductInstance(productInstance, null, null, null, true);
+        productInstanceService.applyProductInstance(productInstance, criteria1, criteria2, criteria3, true);
 
         return productInstance;
     }
@@ -840,23 +836,7 @@ public class OrderApi extends BaseApi {
         productOrder.setDueDateDelayEL(order.getDueDateDelayEL());
         if (order.getPaymentMethod() != null) {
             productOrder.setPaymentMethods(new ArrayList<>());
-
-            PaymentMethodDto pmDto = null;
-            switch (order.getPaymentMethod().getPaymentType()) {
-            case CARD:
-                pmDto = new CardPaymentMethodDto((CardPaymentMethod) order.getPaymentMethod());
-                break;
-            case DIRECTDEBIT:
-                pmDto = new DDPaymentMethodDto((DDPaymentMethod) order.getPaymentMethod());
-                break;
-            case TIP:
-                pmDto = new TipPaymentMethodDto((TipPaymentMethod) order.getPaymentMethod());
-                break;
-            case CHECK:
-            case WIRETRANSFER:
-                pmDto = new OtherPaymentMethodDto(order.getPaymentMethod());
-                break;
-            }
+            PaymentMethodDto pmDto = new PaymentMethodDto(order.getPaymentMethod());
             productOrder.getPaymentMethods().add(pmDto);
 
         }

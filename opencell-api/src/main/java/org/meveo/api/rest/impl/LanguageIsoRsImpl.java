@@ -9,6 +9,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.LanguageIsoDto;
 import org.meveo.api.dto.response.GetLanguageIsoResponse;
+import org.meveo.api.dto.response.GetLanguagesIsoResponse;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.LanguageIsoRs;
 
@@ -86,4 +87,17 @@ public class LanguageIsoRsImpl extends BaseRs implements LanguageIsoRs {
 
         return result;
     }
+
+	@Override
+	public GetLanguagesIsoResponse list() {
+		GetLanguagesIsoResponse result = new GetLanguagesIsoResponse();
+
+        try {
+            result.setLanguages(languageIsoApi.list());
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+	}
 }

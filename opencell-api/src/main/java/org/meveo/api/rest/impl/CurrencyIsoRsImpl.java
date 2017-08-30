@@ -8,6 +8,7 @@ import org.meveo.api.CurrencyIsoApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.CurrencyIsoDto;
+import org.meveo.api.dto.response.GetCurrenciesIsoResponse;
 import org.meveo.api.dto.response.GetCurrencyIsoResponse;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.CurrencyIsoRs;
@@ -86,5 +87,18 @@ public class CurrencyIsoRsImpl extends BaseRs implements CurrencyIsoRs {
 
         return result;
     }
+
+	@Override
+	public GetCurrenciesIsoResponse list() {
+		GetCurrenciesIsoResponse result = new GetCurrenciesIsoResponse();
+
+        try {
+            result.setCurrencies(currencyIsoApi.list());
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+	}
 
 }

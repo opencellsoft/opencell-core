@@ -146,10 +146,6 @@
                                         <!-- 													valueLabelField="descriptionEn" valueField="countryCode" -->
                                         <!-- 													listBean="#{countryBean}"/> -->
                                     </p:fieldset>
-                                    <p:fieldset legend="#{messages['customerAccount.sepaDebit']}">
-                                        <hftl:formField label="#{messages['customerAccount.mandateIdentification']}" field="mandateIdentification" />
-                                        <hftl:formField label="#{messages['customerAccount.mandateDate']}" field="mandateDate" isDate="true" />
-                                    </p:fieldset>
 
                                     <p:fieldset legend="#{messages['customerAccount.paymentMethods']}">
                                         <p:dataTable id="paymentMethods" var="entity" value="#{customerAccountBean.entity.paymentMethods}" paginator="false" rows="10" lazy="false"
@@ -226,9 +222,12 @@
                                                             <p:inputMask id="cardNr" mask="9999 9999 9999 9999" value="#{customerAccountBean.selectedPaymentMethod.cardNumber}" required="true" />
                                                         </hftl:decorateFormField>
                                                     </c:if>
-
-                                                    <c:if
-                                                        test="#{customerAccountBean.selectedPaymentMethod.paymentType == PaymentMethodEnum.DIRECTDEBIT or customerAccountBean.selectedPaymentMethod.paymentType == PaymentMethodEnum.TIP}">
+                                    
+                                                    <c:if test="#{customerAccountBean.selectedPaymentMethod.paymentType == PaymentMethodEnum.DIRECTDEBIT or customerAccountBean.selectedPaymentMethod.paymentType == PaymentMethodEnum.TIP}">
+                                                        <c:if test="#{customerAccountBean.selectedPaymentMethod.paymentType == PaymentMethodEnum.DIRECTDEBIT }">
+		                                                        <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['customerAccount.mandateIdentification']}" field="mandateIdentification" />
+		                                                        <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['customerAccount.mandateDate']}" field="mandateDate" isDate="true" />
+                                                          </c:if>
                                                         <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.bankName']}" field="bankCoordinates"
                                                             childField="bankName" size="55" required="true" />
                                                         <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.bankCode']}" id="bankCode"
@@ -245,6 +244,7 @@
                                                             childField="bic" size="15" required="true" />
                                                         <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.iban']}" field="bankCoordinates"
                                                             childField="iban" size="45" required="true" />
+                                                            
                                                     </c:if>
 
                                                 </p:outputPanel>

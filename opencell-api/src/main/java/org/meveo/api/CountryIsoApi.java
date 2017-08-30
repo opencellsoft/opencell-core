@@ -1,5 +1,8 @@
 package org.meveo.api;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -157,4 +160,17 @@ public class CountryIsoApi extends BaseApi {
             update(postData);
         }
     }
+    
+	public List<CountryIsoDto> list() {
+		List<CountryIsoDto> result = new ArrayList<>();
+
+		List<Country> countries = countryService.list();
+		if (countries != null) {
+			for (Country country : countries) {
+				result.add(new CountryIsoDto(country));
+			}
+		}
+
+		return result;
+	}
 }

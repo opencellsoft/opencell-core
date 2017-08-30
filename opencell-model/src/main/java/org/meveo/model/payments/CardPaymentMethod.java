@@ -12,7 +12,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-import org.apache.commons.lang3.StringUtils;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.shared.DateUtils;
 
 @Entity
@@ -50,24 +50,6 @@ public class CardPaymentMethod extends PaymentMethod {
     @NotNull
     private String hiddenCardNumber;
 
-    @Column(name = "USER_ID")
-    private String userId;
-
-    @Column(name = "INFO_1")
-    private String info1;
-
-    @Column(name = "INFO_2")
-    private String info2;
-
-    @Column(name = "INFO_3")
-    private String info3;
-
-    @Column(name = "INFO_4")
-    private String info4;
-
-    @Column(name = "INFO_5")
-    private String info5;
-
     @Transient
     private String cardNumber;
 
@@ -80,11 +62,28 @@ public class CardPaymentMethod extends PaymentMethod {
 
     public CardPaymentMethod(String alias, boolean preferred) {
         super();
+        this.paymentType = PaymentMethodEnum.CARD;
         this.alias = alias;
         this.preferred = preferred;
     }
 
-    public String getTokenId() {
+    public CardPaymentMethod(CustomerAccount customerAccount, String alias, String cardNumber, String owner,
+			boolean preferred, String issueNumber, Integer yearExpiration, Integer monthExpiration,CreditCardTypeEnum cardType) {
+        super();
+        setPaymentType(PaymentMethodEnum.CARD);
+        setAlias(alias);
+        setPreferred(preferred);
+        this.customerAccount = customerAccount;
+        this.cardNumber = cardNumber;
+        this.hiddenCardNumber = org.meveo.commons.utils.StringUtils.hideCardNumber(cardNumber);
+        this.owner = owner;
+        this.issueNumber = issueNumber;
+        this.yearExpiration = yearExpiration ;
+        this.monthExpiration = monthExpiration;
+        this.cardType = cardType;
+	}
+
+	public String getTokenId() {
         return tokenId;
     }
 
@@ -146,54 +145,6 @@ public class CardPaymentMethod extends PaymentMethod {
 
     public void setHiddenCardNumber(String hiddenCardNumber) {
         this.hiddenCardNumber = hiddenCardNumber;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getInfo1() {
-        return info1;
-    }
-
-    public void setInfo1(String info1) {
-        this.info1 = info1;
-    }
-
-    public String getInfo2() {
-        return info2;
-    }
-
-    public void setInfo2(String info2) {
-        this.info2 = info2;
-    }
-
-    public String getInfo3() {
-        return info3;
-    }
-
-    public void setInfo3(String info3) {
-        this.info3 = info3;
-    }
-
-    public String getInfo4() {
-        return info4;
-    }
-
-    public void setInfo4(String info4) {
-        this.info4 = info4;
-    }
-
-    public String getInfo5() {
-        return info5;
-    }
-
-    public void setInfo5(String info5) {
-        this.info5 = info5;
     }
 
     @Override
@@ -265,7 +216,7 @@ public class CardPaymentMethod extends PaymentMethod {
     @Override
     public String toString() {
         return "CardPaymentMethod [tokenId=" + tokenId + ", cardType=" + cardType + ", owner=" + owner + ", monthExpiration=" + monthExpiration + ", yearExpiration="
-                + yearExpiration + ", hiddenCardNumber=" + hiddenCardNumber + ", userId=" + userId + ", info1=" + info1 + ", info2=" + info2 + ", info3=" + info3 + ", info4="
-                + info4 + ", info5=" + info5 + ", cardNumber=" + cardNumber + ", issueNumber=" + issueNumber + "]";
+                + yearExpiration + ", hiddenCardNumber=" + hiddenCardNumber + ", userId=" + getUserId() + ", info1=" + getInfo1() + ", info2=" + getInfo2() + ", info3=" + getInfo3() + ", info4="
+                + getInfo4() + ", info5=" + getInfo5() + ", cardNumber=" + cardNumber + ", issueNumber=" + issueNumber + "]";
     }
 }

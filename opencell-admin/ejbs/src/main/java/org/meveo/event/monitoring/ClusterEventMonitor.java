@@ -23,10 +23,12 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
 
+import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.security.Role;
 import org.meveo.security.keycloak.CurrentUserProvider;
+import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.slf4j.Logger;
@@ -54,6 +56,9 @@ public class ClusterEventMonitor implements MessageListener {
 
     @Inject
     private CurrentUserProvider currentUserProvider;
+
+    @Inject
+    private ProviderService providerService;
 
     /**
      * @see MessageListener#onMessage(Message)
@@ -86,10 +91,13 @@ public class ClusterEventMonitor implements MessageListener {
 
         } else if (eventDto.getClazz().equals(JobInstance.class.getSimpleName())) {
             jobInstanceService.scheduleUnscheduleJob(eventDto.getId());
-        
-        } else if (eventDto.getClazz().equals(Role.class.getSimpleName())){
+
+        } else if (eventDto.getClazz().equals(Role.class.getSimpleName())) {
             currentUserProvider.invalidateRoleToPermissionMapping();
+
+        } else if (eventDto.getClazz().equals(Provider.class.getSimpleName())) {
+            providerService.refreshAppProvider();
         }
-        
+
     }
 }

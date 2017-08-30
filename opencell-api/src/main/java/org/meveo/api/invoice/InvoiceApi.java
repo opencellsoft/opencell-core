@@ -647,8 +647,8 @@ public class InvoiceApi extends BaseApi {
         if (invoice == null) {
             throw new EntityDoesNotExistsException(Invoice.class, invoiceId);
         }
-        invoice.setInvoiceNumber(invoiceService.getInvoiceNumber(invoice));
-        invoiceService.update(invoice);
+        invoiceService.assignInvoiceNumber(invoice);
+        invoice = invoiceService.update(invoice);
         return invoice.getInvoiceNumber();
     }
 

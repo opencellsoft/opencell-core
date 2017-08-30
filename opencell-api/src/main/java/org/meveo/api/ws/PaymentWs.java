@@ -14,6 +14,9 @@ import org.meveo.api.dto.payment.DDRequestLotOpDto;
 import org.meveo.api.dto.payment.PayByCardDto;
 import org.meveo.api.dto.payment.PayByCardResponseDto;
 import org.meveo.api.dto.payment.PaymentDto;
+import org.meveo.api.dto.payment.PaymentMethodDto;
+import org.meveo.api.dto.payment.PaymentMethodTokenDto;
+import org.meveo.api.dto.payment.PaymentMethodTokensDto;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
 import org.meveo.api.dto.response.payment.DDRequestLotOpsResponseDto;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
@@ -47,7 +50,21 @@ public interface PaymentWs extends IBaseWs {
     @WebMethod
     DDRequestLotOpsResponseDto listDDRequestLotops(@WebParam(name = "fromDueDate") Date fromDueDate, @WebParam(name = "toDueDate") Date toDueDate,
             @WebParam(name = "status") DDRequestOpStatusEnum status);
+    
+    
+    /**
+     * Make a payment by card. Either with a provided card information, or an existing and preferred card payment method
+     * 
+     * @param payByCardDto Payment by card information
+     * @return Payment by card information
+     */
+    @WebMethod
+    public PayByCardResponseDto payByCard(@WebParam(name = "payByCard") PayByCardDto payByCardDto);
 
+    /************************************************************************************************/
+    /****                                 Card Payment Method                                    ****/
+    /************************************************************************************************/
+    
     /**
      * Add a new card payment method. It will be marked as preferred.
      * 
@@ -55,6 +72,7 @@ public interface PaymentWs extends IBaseWs {
      * @return Card payment DTO with Token id from payment gateway
      */
     @WebMethod
+    @Deprecated // Use addPaymentMthod operation
     public CardPaymentMethodTokenDto addCardPaymentMethod(@WebParam(name = "cardPaymentMethod") CardPaymentMethodDto cardPaymentMethod);
 
     /**
@@ -63,6 +81,7 @@ public interface PaymentWs extends IBaseWs {
      * @param cardPaymentMethod Card payment method DTO
      * @return Action status
      */
+    @Deprecated // Use updatePaymentMthod operation
     public ActionStatus updateCardPaymentMethod(@WebParam(name = "cardPaymentMethod") CardPaymentMethodDto cardPaymentMethod);
 
     /**
@@ -72,6 +91,7 @@ public interface PaymentWs extends IBaseWs {
      * @return Action status
      */
     @WebMethod
+    @Deprecated // Use removePaymentMthod operation
     public ActionStatus removeCardPaymentMethod(@WebParam(name = "id") Long id);
 
     /**
@@ -82,6 +102,7 @@ public interface PaymentWs extends IBaseWs {
      * @return A list of card payment methods
      */
     @WebMethod
+    @Deprecated // Use listPaymentMthod operation
     public CardPaymentMethodTokensDto listCardPaymentMethods(@WebParam(name = "customerAccountId") Long customerAccountId,
             @WebParam(name = "customerAccountCode") String customerAccountCode);
 
@@ -92,14 +113,58 @@ public interface PaymentWs extends IBaseWs {
      * @return Card payment DTO
      */
     @WebMethod
+    @Deprecated // Use findPaymentMthod operation
     public CardPaymentMethodTokenDto findCardPaymentMethod(@WebParam(name = "id") Long id);
 
+
+    
+    /************************************************************************************************/
+    /****                                  Payment Methods                                        ****/
+    /************************************************************************************************/
+    
     /**
-     * Make a payment by card. Either with a provided card information, or an existing and preferred card payment method
+     * Add a new  payment method. It will be marked as preferred.
      * 
-     * @param payByCardDto Payment by card information
-     * @return Payment by card information
+     * @param ddPaymentMethod DD payment method DTO
+     * @return DD payment DTO with Token id from payment gateway
      */
     @WebMethod
-    public PayByCardResponseDto payByCard(@WebParam(name = "payByCard") PayByCardDto payByCardDto);
-}
+    public PaymentMethodTokenDto addPaymentMethod(@WebParam(name = "paymentMethod") PaymentMethodDto paymentMethod);
+
+    /**
+     * Update existing payment method.
+     * 
+     * @param ddPaymentMethod DD payment method DTO
+     * @return Action status
+     */
+    public ActionStatus updatePaymentMethod(@WebParam(name = "paymentMethod") PaymentMethodDto paymentMethod);
+
+    /**
+     * Remove  payment method. If it was marked as preferred, some other payment method will be marked as preferred
+     * 
+     * @param id Id
+     * @return Action status
+     */
+    @WebMethod
+    public ActionStatus removePaymentMethod(@WebParam(name = "id") Long id);
+
+    /**
+     * List available payment methods for a given customer account identified either by id or by code
+     * 
+     * @param customerAccountId Customer account id
+     * @param customerAccountCode Customer account code
+     * @return A list of dd payment methods
+     */
+    @WebMethod
+    public PaymentMethodTokensDto listPaymentMethods(@WebParam(name = "customerAccountId") Long customerAccountId,
+            @WebParam(name = "customerAccountCode") String customerAccountCode);
+
+    /**
+     * Retrieve payment method by its id
+     * 
+     * @param id Id
+     * @return DD payment DTO
+     */
+    @WebMethod
+    public PaymentMethodTokenDto findPaymentMethod(@WebParam(name = "id") Long id);
+   }

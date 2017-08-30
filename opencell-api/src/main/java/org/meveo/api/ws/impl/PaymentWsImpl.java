@@ -11,18 +11,23 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.payment.CardPaymentMethodDto;
 import org.meveo.api.dto.payment.CardPaymentMethodTokenDto;
 import org.meveo.api.dto.payment.CardPaymentMethodTokensDto;
+import org.meveo.api.dto.payment.PaymentMethodTokenDto;
+import org.meveo.api.dto.payment.PaymentMethodTokensDto;
 import org.meveo.api.dto.payment.DDRequestLotOpDto;
 import org.meveo.api.dto.payment.PayByCardDto;
 import org.meveo.api.dto.payment.PayByCardResponseDto;
 import org.meveo.api.dto.payment.PaymentDto;
+import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
 import org.meveo.api.dto.response.payment.DDRequestLotOpsResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
-import org.meveo.api.payment.CardPaymentMethodApi;
+
+import org.meveo.api.payment.PaymentMethodApi;
 import org.meveo.api.payment.DDRequestLotOpApi;
 import org.meveo.api.payment.PaymentApi;
 import org.meveo.api.ws.PaymentWs;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
+import org.meveo.model.payments.PaymentMethodEnum;
 
 @WebService(serviceName = "PaymentWs", endpointInterface = "org.meveo.api.ws.PaymentWs")
 @Interceptors({ WsRestApiInterceptor.class })
@@ -32,8 +37,8 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
     private PaymentApi paymentApi;
 
     @Inject
-    private CardPaymentMethodApi cardPaymentMethodApi;
-
+    private PaymentMethodApi paymentMethodApi;
+   
     @Inject
     private DDRequestLotOpApi ddrequestLotOpApi;
 
@@ -102,26 +107,31 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
         return response;
     }
 
+    /************************************************************************************************/
+    /****                                 Card Payment Method                                    ****/
+    /************************************************************************************************/
     @Override
+    @Deprecated // Use addPaymentMthod operation
     public CardPaymentMethodTokenDto addCardPaymentMethod(CardPaymentMethodDto cardPaymentMethodDto) {
-        CardPaymentMethodTokenDto response = new CardPaymentMethodTokenDto();
+        PaymentMethodTokenDto response = new PaymentMethodTokenDto();
         try {
-            String tokenId = cardPaymentMethodApi.create(cardPaymentMethodDto);
-            response.setCardPaymentMethod(cardPaymentMethodApi.find(null, tokenId));
+            Long pmId = paymentMethodApi.create(new PaymentMethodDto(cardPaymentMethodDto));
+            response.setPaymentMethod(paymentMethodApi.find(pmId));
 
         } catch (Exception e) {
             processException(e, response.getActionStatus());
         }
 
-        return response;
+        return new CardPaymentMethodTokenDto(response);
     }
 
     @Override
+    @Deprecated // Use updatePaymentMthod operation
     public ActionStatus updateCardPaymentMethod(CardPaymentMethodDto cardPaymentMethod) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            cardPaymentMethodApi.update(cardPaymentMethod);
+            paymentMethodApi.update(new PaymentMethodDto(cardPaymentMethod));
         } catch (Exception e) {
             processException(e, result);
         }
@@ -130,11 +140,12 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
     }
 
     @Override
+    @Deprecated // Use removePaymentMthod operation
     public ActionStatus removeCardPaymentMethod(Long id) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            cardPaymentMethodApi.remove(id, null);
+            paymentMethodApi.remove(id);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -143,12 +154,44 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
     }
 
     @Override
+    @Deprecated // Use listPaymentMthod operation
     public CardPaymentMethodTokensDto listCardPaymentMethods(Long customerAccountId, String customerAccountCode) {
 
-        CardPaymentMethodTokensDto response = new CardPaymentMethodTokensDto();
+        PaymentMethodTokensDto response = new PaymentMethodTokensDto();
 
         try {
-            response.setCardPaymentMethods(cardPaymentMethodApi.list(customerAccountId, customerAccountCode));
+            response.setPaymentMethods(paymentMethodApi.list(customerAccountId, customerAccountCode,PaymentMethodEnum.CARD));
+        } catch (Exception e) {
+            processException(e, response.getActionStatus());
+        }
+
+        return new CardPaymentMethodTokensDto(response);
+    }
+
+    @Override
+    @Deprecated // Use findPaymentMthod operation
+    public CardPaymentMethodTokenDto findCardPaymentMethod(Long id) {
+
+        PaymentMethodTokenDto response = new PaymentMethodTokenDto();
+
+        try {
+            response.setPaymentMethod(paymentMethodApi.find(id));
+        } catch (Exception e) {
+            processException(e, response.getActionStatus());
+        }
+
+        return new CardPaymentMethodTokenDto(response);
+    }
+    /************************************************************************************************/
+    /****                                  Payment Methods                                       ****/
+    /************************************************************************************************/
+    @Override
+    public PaymentMethodTokenDto addPaymentMethod(PaymentMethodDto paymentMethodDto) {
+        PaymentMethodTokenDto response = new PaymentMethodTokenDto();
+        try {
+            Long paymentMethodId = paymentMethodApi.create(paymentMethodDto);
+            response.setPaymentMethod(paymentMethodApi.find(paymentMethodId));
+
         } catch (Exception e) {
             processException(e, response.getActionStatus());
         }
@@ -157,12 +200,52 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
     }
 
     @Override
-    public CardPaymentMethodTokenDto findCardPaymentMethod(Long id) {
-
-        CardPaymentMethodTokenDto response = new CardPaymentMethodTokenDto();
+    public ActionStatus updatePaymentMethod(PaymentMethodDto paymentMethod) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            response.setCardPaymentMethod(cardPaymentMethodApi.find(id, null));
+            paymentMethodApi.update(paymentMethod);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus removePaymentMethod(Long id) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            paymentMethodApi.remove(id);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public PaymentMethodTokensDto listPaymentMethods(Long customerAccountId, String customerAccountCode) {
+
+        PaymentMethodTokensDto response = new PaymentMethodTokensDto();
+
+        try {
+            response.setPaymentMethods(paymentMethodApi.list(customerAccountId, customerAccountCode));
+        } catch (Exception e) {
+            processException(e, response.getActionStatus());
+        }
+
+        return response;
+    }
+
+    @Override
+    public PaymentMethodTokenDto findPaymentMethod(Long id) {
+
+        PaymentMethodTokenDto response = new PaymentMethodTokenDto();
+
+        try {
+            response.setPaymentMethod(paymentMethodApi.find(id));
         } catch (Exception e) {
             processException(e, response.getActionStatus());
         }

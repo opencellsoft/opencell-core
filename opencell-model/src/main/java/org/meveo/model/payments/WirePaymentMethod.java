@@ -16,9 +16,15 @@ public class WirePaymentMethod extends PaymentMethod {
 
     public WirePaymentMethod(String alias, boolean preferred, CustomerAccount customerAccount) {
         super();
+        this.paymentType = PaymentMethodEnum.WIRETRANSFER;
         this.alias = alias;
         this.preferred = preferred;
         this.customerAccount = customerAccount;
+    }
+    public WirePaymentMethod(String alias, boolean preferred) {
+        super();
+        this.alias = alias;
+        this.preferred = preferred;
     }
 
     @Override

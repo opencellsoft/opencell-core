@@ -18,15 +18,17 @@
  */
 package org.meveo.service.crm.impl;
 
-import javax.ejb.Stateless;
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Produces;
-import javax.inject.Named;
+import java.lang.reflect.InvocationTargetException;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
+import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
+import org.meveo.event.monitoring.ClusterEventPublisher;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.util.ApplicationProvider;
 
 /**
  * Provider service implementation.
@@ -34,17 +36,13 @@ import org.meveo.util.ApplicationProvider;
 @Stateless
 public class ProviderService extends PersistenceService<Provider> {
 
-    /**
-     * Expose application provider
-     * 
-     * @return
-     */
-    @Produces
-    @ApplicationScoped
-    @Named("appProvider")
-    @ApplicationProvider
+    @Inject
+    private ClusterEventPublisher clusterEventPublisher;
+
     public Provider getProvider() {
+
         Provider provider = list().get(0);
+
         if (provider.getCurrency() != null) {
             provider.getCurrency().getCurrencyCode();
         }
@@ -58,21 +56,43 @@ public class ProviderService extends PersistenceService<Provider> {
             provider.getInvoiceConfiguration().getDisplayBillingCycle();
         }
 
-        detach(provider);
         return provider;
     }
 
     @Override
-    public Provider update(Provider entity) throws BusinessException {
-        entity = super.update(entity);
+    public Provider update(Provider provider) throws BusinessException {
+        provider = super.update(provider);
 
         // Refresh appProvider application scope variable
-        Provider detachedProvider = getProvider();
-        appProvider.setCurrency(detachedProvider.getCurrency() != null ? detachedProvider.getCurrency() : null);
-        appProvider.setCountry(detachedProvider.getCountry() != null ? detachedProvider.getCountry() : null);
-        appProvider.setLanguage(detachedProvider.getLanguage() != null ? detachedProvider.getLanguage() : null);
-        appProvider.setInvoiceConfiguration(detachedProvider.getInvoiceConfiguration() != null ? detachedProvider.getInvoiceConfiguration() : null);
+        refreshAppProvider(provider);
+        clusterEventPublisher.publishEvent(provider, CrudActionEnum.update);
+        return provider;
+    }
 
-        return entity;
+    /**
+     * Refresh appProvider application scope variable
+     * 
+     * @param provider New provider data to refresh with
+     */
+    private void refreshAppProvider(Provider provider) {
+
+        try {
+            BeanUtils.copyProperties(appProvider, provider);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            log.error("Failed to update alProvider fields");
+        }
+
+        appProvider.setCurrency(provider.getCurrency() != null ? provider.getCurrency() : null);
+        appProvider.setCountry(provider.getCountry() != null ? provider.getCountry() : null);
+        appProvider.setLanguage(provider.getLanguage() != null ? provider.getLanguage() : null);
+        appProvider.setInvoiceConfiguration(provider.getInvoiceConfiguration() != null ? provider.getInvoiceConfiguration() : null);
+
+    }
+
+    /**
+     * Refresh appProvider application scope variable with provider data from DB
+     */
+    public void refreshAppProvider() {
+        refreshAppProvider(getProvider());
     }
 }

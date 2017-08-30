@@ -27,7 +27,6 @@ import org.meveo.model.jaxb.customer.CustomerAccounts;
 import org.meveo.model.jaxb.customer.Customers;
 import org.meveo.model.jaxb.customer.Sellers;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
@@ -35,44 +34,41 @@ import org.slf4j.Logger;
 @Stateless
 public class ExportCustomersJobBean {
 
-	SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_hhmmss");
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_hhmmss");
 
-	@Inject
-	private Logger log;
-
-	@Inject
-	private CustomerService customerService;
-	
     @Inject
-    private CustomFieldInstanceService customFieldInstanceService;
-    
+    private Logger log;
+
+    @Inject
+    private CustomerService customerService;
+
     @Inject
     @ApplicationProvider
     protected Provider appProvider;
 
-	Sellers sellers;
-	ParamBean param = ParamBean.getInstance();
+    Sellers sellers;
+    ParamBean param = ParamBean.getInstance();
 
-	int nbSellers;
+    int nbSellers;
 
-	int nbCustomers;
+    int nbCustomers;
 
-	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void execute(JobExecutionResultImpl result, String parameter) {
+    public void execute(JobExecutionResultImpl result, String parameter) {
 
-		String exportDir = param.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode()
-				+ File.separator + "exports" + File.separator + "customers" + File.separator;
-		log.info("exportDir=" + exportDir);
-		File dir = new File(exportDir);
-		if (!dir.exists()) {
-			dir.mkdirs();
-		}
+        String exportDir = param.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator + "exports" + File.separator
+                + "customers" + File.separator;
+        log.info("exportDir=" + exportDir);
+        File dir = new File(exportDir);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
 
         String timestamp = sdf.format(new Date());
         List<Seller> sellersInDB = customerService.listSellersWithCustomers();
         sellers = new Sellers(sellersInDB);// ,param.getProperty("connectorCRM.dateFormat",
-                                                               // "yyyy-MM-dd"));
+                                           // "yyyy-MM-dd"));
         for (org.meveo.model.jaxb.customer.Seller seller : sellers.getSeller()) {
             List<Customer> customers = customerService.listBySellerCode(seller.getCode());
             seller.setCustomers(customersToDto(customers));
@@ -87,12 +83,12 @@ public class ExportCustomersJobBean {
 
     private Customers customersToDto(List<org.meveo.model.crm.Customer> customerList) {
         Customers dto = new Customers();
-        if(customerList!=null){
-            for(org.meveo.model.crm.Customer cust:customerList){
+        if (customerList != null) {
+            for (org.meveo.model.crm.Customer cust : customerList) {
                 dto.getCustomer().add(customerToDto(cust));
             }
         }
-        
+
         return dto;
     }
 
@@ -103,16 +99,16 @@ public class ExportCustomersJobBean {
             dto.setCode(cust.getCode());
             dto.setCustomerCategory(cust.getCustomerCategory() == null ? "" : cust.getCustomerCategory().getCode());
             dto.setCustomerBrand(cust.getCustomerBrand() == null ? "" : cust.getCustomerBrand().getCode());
-            dto.setCustomFields(CustomFields.toDTO(customFieldInstanceService.getCustomFieldInstances(cust)));
+            if (cust.getCfValues() != null) {
+                dto.setCustomFields(CustomFields.toDTO(cust.getCfValues().getValuesByCode()));
+            }
             dto.setAddress(new Address(cust.getAddress()));
             dto.setName(new Name(cust.getName()));
-            dto.setMandateDate(cust.getMandateDate());
-            dto.setMandateIdentification(cust.getMandateIdentification());
             dto.setCustomerAccounts(customerAccountsToDto(cust.getCustomerAccounts()));
         }
         return dto;
     }
-    
+
     private CustomerAccounts customerAccountsToDto(List<org.meveo.model.payments.CustomerAccount> customerAccounts) {
         CustomerAccounts dto = new CustomerAccounts();
         if (customerAccounts != null) {
@@ -134,7 +130,9 @@ public class ExportCustomersJobBean {
             dto.setAddress(new Address(ca.getAddress()));
             dto.setTradingCurrencyCode(ca.getTradingCurrency() == null ? null : ca.getTradingCurrency().getCurrencyCode());
             dto.setTradingLanguageCode(ca.getTradingLanguage() == null ? null : ca.getTradingLanguage().getLanguageCode());
-            dto.setCustomFields(CustomFields.toDTO(customFieldInstanceService.getCustomFieldInstances(ca)));
+            if (ca.getCfValues() != null) {
+                dto.setCustomFields(CustomFields.toDTO(ca.getCfValues().getValuesByCode()));
+            }
             dto.setCreditCategory(ca.getCreditCategory() == null ? null : ca.getCreditCategory().getCode());
             if (ca.getContactInformation() != null) {
                 dto.setEmail(ca.getContactInformation().getEmail());

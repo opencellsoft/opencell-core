@@ -46,7 +46,9 @@ import org.meveo.api.dto.response.account.TitlesResponseDto;
 import org.meveo.api.dto.response.account.UserAccountsResponseDto;
 import org.meveo.api.dto.response.billing.GetCountersInstancesResponseDto;
 import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
+import org.meveo.api.dto.response.payment.AccountOperationResponseDto;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
+import org.meveo.model.payments.PaymentMethodEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -396,6 +398,12 @@ public interface AccountWs extends IBaseWs {
 
     @WebMethod
     ActionStatus cancelLitigation(@WebParam(name = "cancelLitigationRequest") LitigationRequestDto postData);
+    
+    @WebMethod
+	AccountOperationResponseDto findAccountOperation(@WebParam(name = "id") Long id);
+    
+    @WebMethod
+    ActionStatus updatePaymentMethod(@WebParam(name = "customerAccountCode")String customerAccountCode,@WebParam(name = "aoId") Long aoId,@WebParam(name = "paymentMethod") PaymentMethodEnum paymentMethod);
 
     // dunning
 

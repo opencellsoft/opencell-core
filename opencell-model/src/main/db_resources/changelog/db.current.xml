@@ -10,6 +10,8 @@
     <property name="type.byte" value="tinyint(1)" dbms="mysql" />
     <property name="type.longText" value="text" dbms="postgresql" />
     <property name="type.longText" value="longtext" dbms="mysql" />
+    <property name="type.json" value="text" dbms="postgresql" /> <!-- could also be json, but mysql allows text only and as columnDefinition has to be the same, need to use text instead see #2751 -->
+    <property name="type.json" value="text" dbms="mysql" />
     <property name="cast.long" value="bigint" dbms="postgresql" />
     <property name="cast.long" value="UNSIGNED " dbms="mysql" />
     <property name="id.auto" value="false" dbms="postgresql" />

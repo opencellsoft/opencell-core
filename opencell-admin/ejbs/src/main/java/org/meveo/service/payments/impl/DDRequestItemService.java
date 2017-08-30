@@ -24,6 +24,7 @@ import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AutomatedPayment;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.DDRequestFileFormatEnum;
 import org.meveo.model.payments.DDRequestItem;
 import org.meveo.model.payments.DDRequestLOT;
@@ -32,6 +33,7 @@ import org.meveo.model.payments.MatchingCode;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OCCTemplate;
+import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.shared.DateUtils;
@@ -225,6 +227,7 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
 			accountOperationService.updateNoCheck(accountOperation);
 			
 			MatchingAmount matchingAmountSingle = new MatchingAmount();
+            matchingAmountSingle.updateAudit(currentUser);
 			matchingAmountSingle.setAccountOperation(accountOperation);
 			matchingAmountSingle.setMatchingCode(matchingCode);
 			matchingAmountSingle.setMatchingAmount(amountToMatch);
@@ -313,6 +316,21 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
 	public String getMissingField(RecordedInvoice recordedInvoice) {
         BankCoordinates providerBC = appProvider.getBankCoordinates();
         CustomerAccount ca = recordedInvoice.getCustomerAccount();
+        if (ca == null) {
+            return "recordedInvoice.ca";
+        }
+        PaymentMethod preferedPaymentMethod = ca.getPreferredPaymentMethod();
+        if (preferedPaymentMethod != null && preferedPaymentMethod instanceof DDPaymentMethod) {
+            if (((DDPaymentMethod)preferedPaymentMethod).getMandateIdentification() == null) {
+                return "paymentMethod.mandateIdentification";
+            }
+            if (((DDPaymentMethod)preferedPaymentMethod).getMandateDate() == null) {
+                return "paymentMethod.mandateDate";
+            }
+        }else{
+        	return "DDPaymentMethod";
+        }
+
         if (recordedInvoice == null || recordedInvoice.getAmount() == null) {
             return "invoice.amount";
         }
@@ -333,15 +351,6 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
         }
         if (recordedInvoice.getReference() == null) {
             return "recordedInvoice.reference";
-        }
-        if (ca == null) {
-            return "recordedInvoice.ca";
-        }
-        if (ca.getMandateIdentification() == null) {
-            return "ca.mandateIdentification";
-        }
-        if (ca.getMandateDate() == null) {
-            return "ca.mandateDate";
         }
         if (ca.getDescription() == null) {
             return "ca.description";

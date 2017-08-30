@@ -107,7 +107,7 @@ public interface CustomerAccountRs extends IBaseRs {
      * @return Request processing status
      */
     @DELETE
-    @Path("/creditCategory")
+    @Path("/creditCategory/{creditCategoryCode}")
     ActionStatus removeCreditCategory(@PathParam("creditCategoryCode") String creditCategoryCode);
 
     /**

@@ -11,10 +11,14 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.PaymentActionStatus;
 import org.meveo.api.dto.payment.CardPaymentMethodDto;
 import org.meveo.api.dto.payment.CardPaymentMethodTokenDto;
 import org.meveo.api.dto.payment.CardPaymentMethodTokensDto;
 import org.meveo.api.dto.payment.PaymentDto;
+import org.meveo.api.dto.payment.PaymentMethodDto;
+import org.meveo.api.dto.payment.PaymentMethodTokenDto;
+import org.meveo.api.dto.payment.PaymentMethodTokensDto;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
 import org.meveo.api.rest.IBaseRs;
 
@@ -28,11 +32,11 @@ public interface PaymentRs extends IBaseRs {
      * Creates automated payment. It also process if a payment is matching or not
      * 
      * @param postData Payment's data
-     * @return
+     * @return payment action status
      */
     @POST
     @Path("/create")
-    public ActionStatus create(PaymentDto postData);
+    public PaymentActionStatus create(PaymentDto postData);
 
     /**
      * Returns a list of account operations along with the balance of a customer
@@ -43,7 +47,11 @@ public interface PaymentRs extends IBaseRs {
     @GET
     @Path("/customerPayment")
     public CustomerPaymentsResponse list(@QueryParam("customerAccountCode") String customerAccountCode);
-
+    
+    /************************************************************************************************/
+    /****                                 Card Payment Method                                    ****/
+    /************************************************************************************************/
+    
     /**
      * Add a new card payment method. It will be marked as preferred.
      * 
@@ -94,4 +102,58 @@ public interface PaymentRs extends IBaseRs {
     @GET
     @Path("/cardPaymentMethod")
     public CardPaymentMethodTokenDto findCardPaymentMethod(@QueryParam("id") Long id);
-}
+    
+    /************************************************************************************************/
+    /****                                 Payment Methods                                         ****/
+    /************************************************************************************************/
+    /**
+     * Add a new payment method. It will be marked as preferred.
+     * 
+     * @param paymentMethod  payment method DTO
+     * @return Token id in payment gateway
+     */
+    @POST
+    @Path("/paymentMethod")
+    public PaymentMethodTokenDto addPaymentMethod(PaymentMethodDto paymentMethod);
+
+    /**
+     * Update existing payment method.
+     * 
+     * @param paymentMethod  payment method DTO
+     * @return Action status
+     */
+    @PUT
+    @Path("/paymentMethod")
+    public ActionStatus updatePaymentMethod(PaymentMethodDto ddPaymentMethod);
+
+    /**
+     * Remove payment method. If it was marked as preferred, some other payment method will be marked as preferred
+     * 
+     * @param id Id
+     * @return Action status
+     */
+    @DELETE
+    @Path("/paymentMethod")
+    public ActionStatus removePaymentMethod(@QueryParam("id") Long id);
+
+    /**
+     * List available payment methods for a given customer account identified either by id or by code
+     * 
+     * @param customerAccountId Customer account id
+     * @param customerAccountCode Customer account code
+     * @return A list of directDebit payment methods
+     */
+    @GET
+    @Path("/paymentMethod/list")
+    public PaymentMethodTokensDto listPaymentMethods(@QueryParam("customerAccountId") Long customerAccountId, @QueryParam("customerAccountCode") String customerAccountCode);
+
+    /**
+     * Retrieve payment method by its id
+     * 
+     * @param id Id
+     * @return  payment DTO
+     */
+    @GET
+    @Path("/paymentMethod")
+    public PaymentMethodTokenDto findPaymentMethod(@QueryParam("id") Long id);
+  }

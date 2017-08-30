@@ -22,6 +22,8 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.AccountImportHisto;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.admin.SubscriptionImportHisto;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jaxb.account.BillingAccount;
@@ -32,8 +34,10 @@ import org.meveo.model.jaxb.account.Errors;
 import org.meveo.model.jaxb.account.WarningBillingAccount;
 import org.meveo.model.jaxb.account.WarningUserAccount;
 import org.meveo.model.jaxb.account.Warnings;
+import org.meveo.model.jaxb.subscription.Subscriptions;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.admin.impl.AccountImportHistoService;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.crm.impl.AccountImportService;
@@ -48,16 +52,19 @@ public class ImportAccountsJobBean {
 	private Logger log;
 
 	@Inject
-	private BillingAccountService billingAccountService;
-
-	@Inject
-	private UserAccountService userAccountService;
-
-	@Inject
 	private AccountImportHistoService accountImportHistoService;
 
 	@Inject
 	private AccountImportService accountImportService;
+	
+	@Inject
+	private BillingAccountService billingAccountService;
+	
+	@Inject
+	private UserAccountService userAccountService;
+	
+    @Inject
+	private SellerService sellerService;
 	
     @Inject
     @ApplicationProvider
@@ -81,6 +88,19 @@ public class ImportAccountsJobBean {
 	int nbUserAccountsUpdated;
 	int nbUserAccountsCreated;
 	AccountImportHisto accountImportHisto;
+	
+	
+	ParamBean paramBean = ParamBean.getInstance();
+    
+    Subscriptions subscriptionsError;
+	Subscriptions subscriptionsWarning;
+
+	int nbSubscriptions;
+	int nbSubscriptionsError;
+	int nbSubscriptionsTerminated;
+	int nbSubscriptionsIgnored;
+	int nbSubscriptionsCreated;
+	SubscriptionImportHisto subscriptionImportHisto;
 
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
@@ -188,7 +208,16 @@ public class ImportAccountsJobBean {
 		nbBillingAccounts = billingAccounts.getBillingAccount().size();
 		if (nbBillingAccounts == 0) {
 			createBillingAccountWarning(null, "Fichier vide");
+		
 		}
+		
+		org.meveo.model.admin.Seller seller = null;
+		try {
+			seller = sellerService.findByCode("JOB_SELLER0");
+		} catch (Exception e) {
+			log.warn("error while getting seller ",e);
+		}
+		
 		for (org.meveo.model.jaxb.account.BillingAccount billAccount : billingAccounts.getBillingAccount()) {
 			nbUserAccounts += billAccount.getUserAccounts().getUserAccount().size();
 		}
@@ -203,7 +232,7 @@ public class ImportAccountsJobBean {
 				continue;
 			}
 
-			createBillingAccount(billingAccountDto, fileName, i);
+			createBillingAccount(seller, billingAccountDto, fileName, i);
 		}
 
 		generateReport(fileName);
@@ -238,16 +267,21 @@ public class ImportAccountsJobBean {
 	}
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	private void createBillingAccount(org.meveo.model.jaxb.account.BillingAccount billingAccountDto, String fileName,
+	private void createBillingAccount(Seller seller, org.meveo.model.jaxb.account.BillingAccount billingAccountDto, String fileName,
 			int i) throws BusinessException, ImportWarningException {
 		int j = -1;
 		org.meveo.model.billing.BillingAccount billingAccount = null;
 		try {
 			try {
-				billingAccount = billingAccountService.findByCode(billingAccountDto.getCode());
+				boolean ignoreCheck = billingAccountDto.getIgnoreCheck() != null && billingAccountDto.getIgnoreCheck().booleanValue();
+				if (!ignoreCheck) {
+					billingAccount = billingAccountService.findByCode(billingAccountDto.getCode());
+				}
+				
+				
 				if (billingAccount == null) {
 					billingAccount = accountImportService
-							.importBillingAccount(billingAccountDto);
+							.importBillingAccount(billingAccountDto, null);
 					log.info("file6:" + fileName + ", typeEntity:BillingAccount, index:" + i + ", code:"
 							+ billingAccountDto.getCode() + ", status:Created");
 					nbBillingAccountsCreated++;
@@ -316,9 +350,12 @@ public class ImportAccountsJobBean {
 			) throws BusinessException, ImportWarningException {
 		UserAccount userAccount = null;
 		log.debug("userAccount found code:" + uAccount.getCode());
-
+		boolean ignoreCheck = uAccount.getIgnoreCheck() != null && uAccount.getIgnoreCheck();
 		try {
-			userAccount = userAccountService.findByCode(uAccount.getCode());
+			if (!ignoreCheck) {
+				userAccount = userAccountService.findByCode(uAccount.getCode());
+			}
+			
 		} catch (Exception e) {
 			log.error("error while getting user account",e);
 		}
@@ -330,7 +367,10 @@ public class ImportAccountsJobBean {
 			accountImportService.updateUserAccount(billingAccount, billingAccountDto, uAccount);
 		} else {
 			try {
-				accountImportService.importUserAccount(billingAccount, billingAccountDto, uAccount);
+				userAccount = accountImportService.importUserAccount(billingAccount, billingAccountDto, uAccount);
+				
+				 
+				
 				log.info("file:" + fileName + ", typeEntity:UserAccount,  indexBillingAccount:" + i + ", index:" + j
 						+ " code:" + uAccount.getCode() + ", status:Created");
 				nbUserAccountsCreated++;
@@ -348,7 +388,7 @@ public class ImportAccountsJobBean {
 			}
 		}
 	}
-
+	
 	private void createBillingAccountError(org.meveo.model.jaxb.account.BillingAccount billAccount, String cause) {
 		String generateFullCrmReject = param.getProperty("connectorCRM.generateFullCrmReject", "true");
 		ErrorBillingAccount errorBillingAccount = new ErrorBillingAccount();

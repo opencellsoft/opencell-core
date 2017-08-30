@@ -194,8 +194,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
     }
 
     private QueryBuilder getFindQuery(String jobName, PaginationConfiguration configuration) {
-        String sql = "select distinct t from JobExecutionResultImpl t";
-        QueryBuilder qb = new QueryBuilder(sql);// FIXME:.cacheable();
+        QueryBuilder qb = new QueryBuilder("select distinct t from JobExecutionResultImpl t");// FIXME:.cacheable();
 
         if (!StringUtils.isEmpty(jobName)) {
             qb.addCriterion("t.jobInstance.code", "=", jobName, false);
@@ -214,8 +213,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
     public long countJobExecutionHistoryToDelete(String jobName, Date date) {
         long result = 0;
         if (date != null) {
-            String sql = "select t from JobExecutionResultImpl t";
-            QueryBuilder qb = new QueryBuilder(sql);// FIXME:.cacheable();
+            QueryBuilder qb = new QueryBuilder(JobExecutionResultImpl.class, "t");// FIXME:.cacheable();
             if (!StringUtils.isEmpty(jobName)) {
                 qb.addCriterion("t.jobInstance.code", "=", jobName, false);
             }
@@ -240,7 +238,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 
         List<JobInstance> jobInstances = null;
         if (jobName != null) {
-            QueryBuilder qb = new QueryBuilder("select ji from JobInstance ji");
+            QueryBuilder qb = new QueryBuilder(JobInstance.class, "ji");
             qb.addCriterion("ji.code", "=", jobName, false);
             jobInstances = qb.getQuery(getEntityManager()).getResultList();
             if (jobInstances.isEmpty()) {
@@ -249,8 +247,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
             }
         }
 
-        String sql = "delete from JobExecutionResultImpl t";
-        QueryBuilder qb = new QueryBuilder(sql);
+        QueryBuilder qb = new QueryBuilder("delete from JobExecutionResultImpl t", null);
         if (jobName != null) {
             qb.addSqlCriterion("t.jobInstance in :jis", "jis", jobInstances);
         }

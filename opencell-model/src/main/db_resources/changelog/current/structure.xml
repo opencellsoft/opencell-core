@@ -1,226 +1,696 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
-    <changeSet id="#450_20170420" author="EdwardPLegaspi">
-        <addColumn tableName="billing_inv_sub_cat_country">
-            <column name="start_validity_date" type="DATE" />
-            <column name="end_validity_date" type="DATE" />
-            <column defaultValueNumeric="0" name="priority" type="INT4" />
-        </addColumn>
-        <addUniqueConstraint columnNames="invoice_sub_category_id, selling_country_id, trading_country_id, start_validity_date, end_validity_date" constraintName="uk_billing_inv_sub_cat_country"
-            deferrable="false" disabled="false" initiallyDeferred="false" tableName="billing_inv_sub_cat_country" />
+    <changeSet id="#2406_20170731" author="AndriusKarpavicius">
+        <dropColumn tableName="billing_billing_account" columnName="payment_method" />
     </changeSet>
 
-    <changeSet id="#2716_20170627" author="TienLanPHUNG">
-        <modifyDataType tableName="com_meveo_instance" columnName="url" newDataType="varchar(255)" />
-    </changeSet>
-
-
-    <changeSet id="#2416_20170307-1" author="AndriusKarpavicius" dbms="mysql">
-        <createTable tableName="ar_payment_token_seq">
-            <column name="next_val" type="BIGINT">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_payment_token_seq_pk" />
-            </column>
-        </createTable>
-        <sql>insert into ar_payment_token_seq values(1)</sql>
-    </changeSet>
-
-
-    <changeSet id="#2553_20170621" author="AndriusKarpavicius">
-        <createSequence sequenceName="dwh_chart_seq" startValue="1000" />
-    </changeSet>
-
-    <changeSet id="#2553_20170621-1" author="AndriusKarpavicius" dbms="mysql">
-        <createTable tableName="dwh_chart_seq">
-            <column name="next_val" type="BIGINT">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="dwh_chart_seq_pk" />
-            </column>
-        </createTable>
-        <sql>insert into dwh_chart_seq (select IFNULL(max(id),0)+1 from dwh_chart)</sql>
-    </changeSet>
-
-    <changeSet id="#2408_20170623-Override payment method and due date delay in order" author="EdwardLegaspi">
-        <addColumn tableName="ord_order">
-            <column name="due_date_delay_el" type="varchar(2000)" />
-            <column name="payment_method" type="varchar(20)" />
+    <changeSet id="#2781_20170810" author="anasseh">
+        <modifyDataType tableName="ar_payment_token" columnName="info_1" newDataType="text" />
+        <modifyDataType tableName="ar_payment_token" columnName="info_2" newDataType="text" />
+        <modifyDataType tableName="ar_payment_token" columnName="info_3" newDataType="text" />
+        <modifyDataType tableName="ar_payment_token" columnName="info_4" newDataType="text" />
+        <modifyDataType tableName="ar_payment_token" columnName="info_5" newDataType="text" />
+     </changeSet>
+     
+    <changeSet id="#2777_20170814" author="anasseh">
+        <dropColumn tableName="ar_customer_account" columnName="mandate_date" />
+        <dropColumn tableName="ar_customer_account" columnName="mandate_identification" />
+        <dropColumn tableName="crm_customer" columnName="mandate_date" />
+        <dropColumn tableName="crm_customer" columnName="mandate_identification" />        
+        <addColumn tableName="ar_payment_token">
+            <column name="mandate_date" type="date" />
+            <column name="mandate_identification" type="varchar(255)" />            
         </addColumn>
     </changeSet>
-
-    <changeSet id="#2665_20170710-Add guiPosition to custom action" author="EdwardLegaspi">
-        <addColumn tableName="crm_custom_action">
-            <column name="gui_position" type="varchar(100)" />
+     
+    <changeSet id="#2751_20170801" author="AndriusKarpavicius">
+        <addColumn tableName="crm_provider">
+            <column name="cf_values" type="${type.json}"></column>
         </addColumn>
-    </changeSet>
-
-    <changeSet id="#2433_20170627" author="AndriusKarpavicius">
-        <addColumn tableName="billing_invoice_type">
-            <column name="billing_template_name" type="varchar(50)" />
+        <addColumn tableName="account_entity">
+            <column name="cf_values" type="${type.json}"></column>
         </addColumn>
-    </changeSet>
-
-    <changeSet id="#2361_20170628" author="AndriusKarpavicius">
+        <addColumn tableName="adm_user">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="ar_account_operation">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="billing_cycle">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="billing_invoice">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="billing_invoice_cat">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="billing_invoice_sub_cat">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="billing_service_instance">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>
         <addColumn tableName="billing_subscription">
-            <column name="subscribed_till_date" type="datetime" />
-            <column name="auto_renew" type="${type.boolean}" defaultValueNumeric="0">
-                <constraints nullable="false" />
-            </column>
-            <column name="days_notify_renew" type="INT4" />
-            <column name="end_of_term_action" type="varchar(10)" />
-            <column name="auto_termin_reason_id" type="bigint" />
-            <column name="init_active_unit" type="varchar(5)" />
-            <column name="init_active" type="INT4" />
-            <column name="match_end_aggr_date" type="${type.boolean}" defaultValueNumeric="0">
-                <constraints nullable="false" />
-            </column>
-            <column name="renew_for_unit" type="varchar(5)" />
-            <column name="renew_for" type="INT4" />
-            <column name="renewed" type="${type.boolean}" defaultValueNumeric="0">
-                <constraints nullable="false" />
-            </column>
-            <column name="notify_of_renewal_date" type="datetime" />
-            <column name="renewal_notified_date" type="datetime" />
+            <column name="cf_values" type="${type.json}"></column>
         </addColumn>
-        <addForeignKeyConstraint baseColumnNames="auto_termin_reason_id" baseTableName="billing_subscription" constraintName="fk_sub_auto_tr_id" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_subscrip_termin_reason" />
-    </changeSet>
-
-    <changeSet id="#2361_20170701" author="AndriusKarpavicius">
-        <addColumn tableName="billing_subscrip_termin_reason">
-            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
-                <constraints nullable="false" />
-            </column>
-            <column name="created" type="datetime">
-                <!-- <constraints nullable="false" /> -->
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
+        <addColumn tableName="billing_tax">
+            <column name="cf_values" type="${type.json}"></column>
         </addColumn>
-        <sql>update billing_subscrip_termin_reason set created=now()</sql>
-    </changeSet>
-
-    <changeSet id="#2691_20170616" author="TienLanPHUNG">
-        <modifyDataType tableName="account_entity" columnName="external_ref_1" newDataType="varchar(255)" />
-        <modifyDataType tableName="account_entity" columnName="external_ref_2" newDataType="varchar(255)" />
-    </changeSet>
-
-    <changeSet id="#2698_20170622" author="TienLanPHUNG">
-        <addColumn tableName="rating_edr">
-            <column name="extra_parameter" type="text" />
+        <addColumn tableName="cat_charge_template">
+            <column name="cf_values" type="${type.json}"></column>
         </addColumn>
-    </changeSet>
-
-    <changeSet id="#2743 - add extra field on  ar_payment_token" author="anasseh">
-        <addColumn tableName="ar_payment_token">
-            <column name="user_id" type="varchar(256)" />
-            <column name="info_1" type="varchar(256)" />
-            <column name="info_2" type="varchar(256)" />
-            <column name="info_3" type="varchar(256)" />
-            <column name="info_4" type="varchar(256)" />
-            <column name="info_5" type="varchar(256)" />
-
+        <addColumn tableName="cat_offer_template">
+            <column name="cf_values" type="${type.json}"></column>
         </addColumn>
-    </changeSet>
-    <changeSet id="#2406_20170710" author="AndriusKarpavicius">
-        <addColumn tableName="ar_payment_token">
-            <column name="bank_code" type="varchar(5)" />
-            <column name="branch_code" type="varchar(5)" />
-            <column name="account_number" type="varchar(11)" />
-            <column name="hash_key" type="varchar(2)" />
-            <column name="iban" type="varchar(34)" />
-            <column name="bic" type="varchar(11)" />
-            <column name="account_owner" type="varchar(50)" />
-            <column name="bank_id" type="varchar(50)" />
-            <column name="bank_name" type="varchar(50)" />
-            <column name="issuer_name" type="varchar(50)" />
-            <column name="issuer_number" type="varchar(50)" />
-            <column name="ics" type="varchar(35)" />
+        <addColumn tableName="cat_price_plan_matrix">
+            <column name="cf_values" type="${type.json}"></column>
         </addColumn>
-        <dropNotNullConstraint tableName="ar_payment_token" columnName="card_type" />
-        <dropNotNullConstraint tableName="ar_payment_token" columnName="owner" />
-        <dropNotNullConstraint tableName="ar_payment_token" columnName="month_expiration" />
-        <dropNotNullConstraint tableName="ar_payment_token" columnName="year_expiration" />
-        <dropNotNullConstraint tableName="ar_payment_token" columnName="card_type" />
-        <dropColumn tableName="billing_billing_account" columnName="payment_term" />
-        <dropColumn tableName="ar_customer_account" columnName="payment_method" />
-    </changeSet>
-
-    <changeSet id="#2406_20170710-1" author="AndriusKarpavicius" dbms="postgresql">
-
-        <sql>insert into ar_payment_token (id, version,created, token_type, customer_account_id, bank_code,branch_code,account_number, hash_key, iban, bic, account_owner, bank_id, bank_name, issuer_name, issuer_number,
-            ics) (select nextval('ar_payment_token_seq'), 0, now(), 'DIRECTDEBIT', customer_account_id, bank_code,branch_code,account_number, hash_key, iban, bic, account_owner, bank_id, bank_name, issuer_name,
-            issuer_number, ics from
-            (select distinct customer_account_id, bank_code,branch_code,account_number, hash_key, iban, bic, account_owner, bank_id, bank_name, issuer_name, issuer_number, ics
-            from
-            billing_billing_account where payment_method='DIRECTDEBIT' and (iban is not null or bic is not null)) as dis)
-        </sql>
-        <sql>insert into ar_payment_token (id, version,created, token_type, customer_account_id, bank_code,branch_code,account_number, hash_key, iban, bic, account_owner, bank_id, bank_name, issuer_name, issuer_number,
-            ics) (select nextval('ar_payment_token_seq'), 0, now(), 'TIP', customer_account_id, bank_code,branch_code,account_number, hash_key, iban, bic, account_owner, bank_id, bank_name, issuer_name, issuer_number,
-            ics from
-            (select distinct customer_account_id, bank_code,branch_code,account_number, hash_key, iban, bic, account_owner, bank_id, bank_name, issuer_name, issuer_number, ics
-            from billing_billing_account where
-            payment_method='TIP' and (iban is not null or bic is not null)) as dis)
-        </sql>
-        <sql>insert into ar_payment_token (id, version,created, token_type, customer_account_id) (select nextval('ar_payment_token_seq'), 0, now(), 'CHECK', customer_account_id from (select distinct customer_account_id
-            from billing_billing_account where payment_method='CHECK') dis)
-        </sql>
-        <sql>insert into ar_payment_token (id, version,created, token_type, customer_account_id) (select nextval('ar_payment_token_seq'), 0, now(), 'WIRETRANSFER', customer_account_id from (select distinct
-            customer_account_id from billing_billing_account where payment_method='WIRETRANSFER') dis)
-        </sql>
-    </changeSet>
-
-    <changeSet id="#2406_20170710-2" author="AndriusKarpavicius" dbms="mysql">
-
-        <sql>insert into ar_payment_token (id, version,created, token_type, customer_account_id, bank_code,branch_code,account_number, hash_key, iban, bic, account_owner, bank_id, bank_name, issuer_name, issuer_number,
-            ics) (select id*(-1), 0, now(), 'DIRECTDEBIT', customer_account_id, bank_code,branch_code,account_number, hash_key, iban, bic, account_owner, bank_id, bank_name, issuer_name, issuer_number, ics from
-            billing_billing_account where payment_method='DIRECTDEBIT' and (iban is not null or bic is not null))
-        </sql>
-        <sql>insert into ar_payment_token (id, version,created, token_type, customer_account_id, bank_code,branch_code,account_number, hash_key, iban, bic, account_owner, bank_id, bank_name, issuer_name, issuer_number,
-            ics) (select id*(-1), 0, now(), 'TIP', customer_account_id, bank_code,branch_code,account_number, hash_key, iban, bic, account_owner, bank_id, bank_name, issuer_name, issuer_number, ics from
-            billing_billing_account where payment_method='TIP' and (iban is not null or bic is not null))
-        </sql>
-        <sql>insert into ar_payment_token (id, version,created, token_type, customer_account_id) (select id*(-1), 0, now(), 'CHECK', customer_account_id from billing_billing_account where payment_method='CHECK')</sql>
-        <sql>insert into ar_payment_token (id, version,created, token_type, customer_account_id) (select id*(-1), 0, now(), 'WIRETRANSFER', customer_account_id from billing_billing_account where
-            payment_method='WIRETRANSFER')
-        </sql>
-    </changeSet>
-
-    <changeSet id="#2406_20170710-3" author="AndriusKarpavicius">
-        <sql>update ar_payment_token set is_default=1 where id in (select max(id)from ar_payment_token group by customer_account_id)</sql>
-        <dropColumn tableName="billing_billing_account" columnName="bank_code" />
-        <dropColumn tableName="billing_billing_account" columnName="branch_code" />
-        <dropColumn tableName="billing_billing_account" columnName="account_number" />
-        <dropColumn tableName="billing_billing_account" columnName="hash_key" />
-        <dropColumn tableName="billing_billing_account" columnName="iban" />
-        <dropColumn tableName="billing_billing_account" columnName="bic" />
-        <dropColumn tableName="billing_billing_account" columnName="account_owner" />
-        <dropColumn tableName="billing_billing_account" columnName="bank_id" />
-        <dropColumn tableName="billing_billing_account" columnName="bank_name" />
-        <dropColumn tableName="billing_billing_account" columnName="issuer_name" />
-        <dropColumn tableName="billing_billing_account" columnName="issuer_number" />
-        <dropColumn tableName="billing_billing_account" columnName="ics" />
-    </changeSet>
-
-    <changeSet id="#2406_20170710-4" author="AndriusKarpavicius">
-        <dropColumn tableName="ar_payment_token" columnName="disabled" />
-        <dropColumn tableName="ar_payment_token" columnName="created" />
-        <dropColumn tableName="ar_payment_token" columnName="creator" />
-        <dropColumn tableName="ar_payment_token" columnName="updated" />
-        <dropColumn tableName="ar_payment_token" columnName="updater" />
-    </changeSet>
-
-    <changeSet id="#2406_20170714" author="AndriusKarpavicius">
-        <modifyDataType tableName="meveo_module_item" columnName="item_code" newDataType="varchar(255)" />
-    </changeSet>
-
-    <changeSet id="#2406_20170715" author="AndriusKarpavicius">
-        <dropNotNullConstraint tableName="ar_payment_token" columnName="customer_account_id" />
+        <addColumn tableName="cat_service_template">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="crm_seller">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="medina_access">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="meveo_job_instance">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="meveo_filter">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="cust_cei">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="cat_offer_template_category">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>
+        <addColumn tableName="billing_product_instance">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>
         <addColumn tableName="ord_order">
-            <column name="payment_method_id" type="BIGINT" />
+            <column name="cf_values" type="${type.json}"></column>
         </addColumn>
-        <dropColumn tableName="ord_order" columnName="payment_method" />
-        <addForeignKeyConstraint baseColumnNames="payment_method_id" baseTableName="ord_order" constraintName="fk_order_payment_method" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_payment_token" />
+        <addColumn tableName="ord_quote">
+            <column name="cf_values" type="${type.json}"></column>
+        </addColumn>
     </changeSet>
 
+    <changeSet id="#2751_20170802" author="AndriusKarpavicius">
+        <dropColumn tableName="crm_custom_field_tmpl" columnName="cache_value_for" />
+        <dropColumn tableName="crm_custom_field_tmpl" columnName="cache_value" />
+    </changeSet>
+
+    <changeSet id="#2751_migration_1" author="AndriusKarpavicius">
+        <createTable tableName="tmp_cfi_copy">
+            <column name="id" type="bigint" />
+            <column name="code" type="varchar(255)" />
+            <column name="date_value" type="datetime" />
+            <column name="double_value" type="float8" />
+            <column name="long_value" type="bigint" />
+            <column name="string_value" type="text" />
+            <column name="serialized_value" type="${type.longtext}" />
+            <column name="applies_to_uuid" type="varchar(60)" />
+            <column name="priority" type="int4" defaultValue="0" />
+            <column name="period_end_date" type="datetime" />
+            <column name="period_start_date" type="datetime" />
+        </createTable>
+
+        <sql>insert into tmp_cfi_copy (id,code,date_value,double_value,long_value,string_value,serialized_value,applies_to_uuid,priority,period_end_date,period_start_date) (select
+            id,code,date_value,double_value,long_value,string_value,serialized_value,applies_to_uuid,priority,period_end_date,period_start_date from crm_custom_field_inst)
+        </sql>
+
+        <createTable tableName="tmp_cf_values">
+            <column name="uuid" type="varchar(60)" />
+            <column name="cf_values_txt" type="text" />
+        </createTable>
+    </changeSet>
+
+    <changeSet id="#2751_migration_P1" author="AndriusKarpavicius" dbms="postgresql">
+
+        <sql>update tmp_cfi_copy set serialized_value = new_value from (select id, 'list_Date|['|| string_agg(new_date,',')||']' as new_value from (select id, old_date, substr(old_date,1,5) || substring(old_date,9,3)||
+            substring(old_date,6,3) || substring(old_date,12) as new_date from (select id, unnest(string_to_array(substring(left(serialized_value,length(serialized_value)-1), strpos(serialized_value,'|')+2),',')) as
+            old_date from crm_custom_field_inst where left(serialized_value,9)='list_Date') old_dates_array) new_dates_array group by id) new_values where tmp_cfi_copy.id=new_values.id
+        </sql>
+
+        <sql>update tmp_cfi_copy set serialized_value = new_value from (select id, string_agg(new_date,',') as new_value from (
+            select id, old_date, key||substr(old_date,1,5) || substring(old_date,9,3)||
+            substring(old_date,6,3) || substring(old_date,12) as new_date from (
+            select id, substr(old_date_w_key,1, strpos(old_date_w_key,'":"')+1) as key, substr(old_date_w_key,strpos(old_date_w_key,'":"')+2) as
+            old_date from (
+            select id, unnest(string_to_array(serialized_value,',')) as old_date_w_key from crm_custom_field_inst where left(serialized_value,8)='map_Date') old_dates_array
+            ) old_dates_split_key
+            )
+            new_dates_array group by id) new_values where tmp_cfi_copy.id=new_values.id
+        </sql>
+
+        <sql>update tmp_cfi_copy set serialized_value = new_value from (select id, string_agg(new_date,',') as new_value from (
+            select id, old_date, key||substr(old_date,1,5) || substring(old_date,9,3)||
+            substring(old_date,6,3) || substring(old_date,12) as new_date from (
+            select id, substr(old_date_w_key,1, strpos(old_date_w_key,'":"')+1) as key, substr(old_date_w_key,strpos(old_date_w_key,'":"')+2) as
+            old_date from (
+            select id, unnest(string_to_array(serialized_value,',')) as old_date_w_key from crm_custom_field_inst where left(serialized_value,11)='matrix_Date'
+            ) old_dates_array
+            ) old_dates_split_key
+            )
+            new_dates_array group by id) new_values where tmp_cfi_copy.id=new_values.id
+        </sql>
+
+        <sql>delete from tmp_cf_values</sql>
+        <sql>insert into tmp_cf_values (uuid, cf_values_txt) (select applies_to_uuid, cf_value_by_uuid from (select applies_to_uuid, '{'||STRING_AGG('"'||code||'":['|| cf_value_by_code ||']',',')||'}' as cf_value_by_uuid
+            from (select applies_to_uuid, code, STRING_AGG(cf_opening || cf_content ||'}',',') as cf_value_by_code from (select applies_to_uuid, code, '{"priority":'||priority|| case when period_start_date is null then
+            '' else ',"from":"'||to_char(period_start_date,'YYYY-MM-DD')||'T'||to_char(period_start_date,'HH24:MI:SSTZ') ||'"' end ||case when period_end_date is null then '' else
+            ',"to":"'||to_char(period_end_date,'YYYY-MM-DD')||'T'||to_char(period_end_date,'HH24:MI:SSTZ') ||'"' end as cf_opening, case when double_value is not null then ',"double":'||double_value else case when
+            date_value is not null then ',"date":"'||to_char(date_value,'YYYY-MM-DD')||'T'||to_char(date_value,'HH24:MI:SSTZ')||'"' else case when long_value is not null then ',"long":'||long_value else case when
+            string_value is not null then ',"string":"'||string_value||'"' else case when left(serialized_value,6) != 'matrix' then replace(replace(replace(replace(replace(replace(
+            replace(replace(replace(replace(replace(serialized_value,'list_String|',',"listString":'),'list_Double|',',"listDouble":'),'list_Long|',',"listLong":'),'list_Date|',',"listDate":'),'list_EntityReferenceWrapper|',',"listEntity":')
+            ,'map_String|',',"mapString":'),'map_Double|',',"mapDouble":'),'map_Long|',',"mapLong":'),'map_Date|',',"mapDate":'),'map_EntityReferenceWrapper|',',"mapEntity":'),'entity|',',"entity":') else case
+            left(serialized_value,strpos(serialized_value, '|')-1) when 'matrix_String' then ',"mapString":' when 'matrix_Long' then ',"mapLong":' when 'matrix_Double' then ',"mapDouble":' when 'matrix_Date' then
+            ',"mapDate":' when 'matrix_EntityReferenceWrapper' then ',"mapEntity":' end || substr(substr(serialized_value, strpos(serialized_value, '|')+1), strpos(substr(serialized_value, strpos(serialized_value,
+            '|')+1), '|')+1) end end end end end as cf_content from tmp_cfi_copy) cf_data group by applies_to_uuid, code) cf_values_by_code group by cf_values_by_code.applies_to_uuid) cf_values_by_uuid)
+        </sql>
+
+		<!-- NOTE: here need to change appropriate timezones for the server. This is for argentina -->
+        <sql>update tmp_cf_values set cf_values_txt = replace(cf_values_txt,' 00:00:00 ART','T00:00:00-03:00')</sql>
+        <sql>update tmp_cf_values set cf_values_txt = replace(cf_values_txt,'T00:00:00"','T00:00:00-03:00"')</sql>
+
+        <sql>update crm_seller set cf_values = null</sql>
+        <sql>update crm_seller set cf_values = cf_values_txt from tmp_cf_values where crm_seller.uuid = tmp_cf_values.uuid</sql>
+        <sql>update crm_provider set cf_values = null</sql>
+        <sql>update crm_provider set cf_values = cf_values_txt from tmp_cf_values where crm_provider.uuid = tmp_cf_values.uuid</sql>
+        <sql>update account_entity set cf_values = null</sql>
+        <sql>update account_entity set cf_values = cf_values_txt from tmp_cf_values where account_entity.uuid = tmp_cf_values.uuid</sql>
+        <sql>update adm_user set cf_values = null</sql>
+        <sql>update adm_user set cf_values = cf_values_txt from tmp_cf_values where adm_user.uuid = tmp_cf_values.uuid</sql>
+        <sql>update ar_account_operation set cf_values = null</sql>
+        <sql>update ar_account_operation set cf_values = cf_values_txt from tmp_cf_values where ar_account_operation.uuid = tmp_cf_values.uuid</sql>
+        <sql>update billing_cycle set cf_values = null</sql>
+        <sql>update billing_cycle set cf_values = cf_values_txt from tmp_cf_values where billing_cycle.uuid = tmp_cf_values.uuid</sql>
+        <sql>update billing_invoice set cf_values = null</sql>
+        <sql>update billing_invoice set cf_values = cf_values_txt from tmp_cf_values where billing_invoice.uuid = tmp_cf_values.uuid</sql>
+        <sql>update billing_invoice_cat set cf_values = null</sql>
+        <sql>update billing_invoice_cat set cf_values = cf_values_txt from tmp_cf_values where billing_invoice_cat.uuid = tmp_cf_values.uuid</sql>
+        <sql>update billing_invoice_sub_cat set cf_values = null</sql>
+        <sql>update billing_invoice_sub_cat set cf_values = cf_values_txt from tmp_cf_values where billing_invoice_sub_cat.uuid = tmp_cf_values.uuid</sql>
+        <sql>update billing_service_instance set cf_values = null</sql>
+        <sql>update billing_service_instance set cf_values = cf_values_txt from tmp_cf_values where billing_service_instance.uuid = tmp_cf_values.uuid</sql>
+        <sql>update billing_subscription set cf_values = null</sql>
+        <sql>update billing_subscription set cf_values = cf_values_txt from tmp_cf_values where billing_subscription.uuid = tmp_cf_values.uuid</sql>
+        <sql>update billing_tax set cf_values = null</sql>
+        <sql>update billing_tax set cf_values = cf_values_txt from tmp_cf_values where billing_tax.uuid = tmp_cf_values.uuid</sql>
+        <sql>update cat_charge_template set cf_values = null</sql>
+        <sql>update cat_charge_template set cf_values = cf_values_txt from tmp_cf_values where cat_charge_template.uuid = tmp_cf_values.uuid</sql>
+        <sql>update cat_offer_template set cf_values = null</sql>
+        <sql>update cat_offer_template set cf_values = cf_values_txt from tmp_cf_values where cat_offer_template.uuid = tmp_cf_values.uuid</sql>
+        <sql>update cat_price_plan_matrix set cf_values = null</sql>
+        <sql>update cat_price_plan_matrix set cf_values = cf_values_txt from tmp_cf_values where cat_price_plan_matrix.uuid = tmp_cf_values.uuid</sql>
+        <sql>update cat_service_template set cf_values = null</sql>
+        <sql>update cat_service_template set cf_values = cf_values_txt from tmp_cf_values where cat_service_template.uuid = tmp_cf_values.uuid</sql>
+        <sql>update medina_access set cf_values = null</sql>
+        <sql>update medina_access set cf_values = cf_values_txt from tmp_cf_values where medina_access.uuid = tmp_cf_values.uuid</sql>
+        <sql>update meveo_job_instance set cf_values = null</sql>
+        <sql>update meveo_job_instance set cf_values = cf_values_txt from tmp_cf_values where meveo_job_instance.uuid = tmp_cf_values.uuid</sql>
+        <sql>update meveo_filter set cf_values = null</sql>
+        <sql>update meveo_filter set cf_values = cf_values_txt from tmp_cf_values where meveo_filter.uuid = tmp_cf_values.uuid</sql>
+        <sql>update cust_cei set cf_values = null</sql>
+        <sql>update cust_cei set cf_values = cf_values_txt from tmp_cf_values where cust_cei.uuid = tmp_cf_values.uuid</sql>
+        <sql>update cat_offer_template_category set cf_values = null</sql>
+        <sql>update cat_offer_template_category set cf_values = cf_values_txt from tmp_cf_values where cat_offer_template_category.uuid = tmp_cf_values.uuid</sql>
+        <sql>update billing_product_instance set cf_values = null</sql>
+        <sql>update billing_product_instance set cf_values = cf_values_txt from tmp_cf_values where billing_product_instance.uuid = tmp_cf_values.uuid</sql>
+        <sql>update ord_order set cf_values = null</sql>
+        <sql>update ord_order set cf_values = cf_values_txt from tmp_cf_values where ord_order.uuid = tmp_cf_values.uuid</sql>
+        <sql>update ord_quote set cf_values = null</sql>
+        <sql>update ord_quote set cf_values = cf_values_txt from tmp_cf_values where ord_quote.uuid = tmp_cf_values.uuid</sql>
+    </changeSet>
+
+    <changeSet id="#2751_migration_M1" author="AndriusKarpavicius" dbms="mysql">
+
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-01-01','-AKKR01-01') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-01-02','-AKKR02-01') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-01-03','-AKKR03-01') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-01-04','-AKKR04-01') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-01-05','-AKKR05-01') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-01-06','-AKKR06-01') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-01-07','-AKKR07-01') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-01-08','-AKKR08-01') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-01-09','-AKKR09-01') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-01-10','-AKKR10-01') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-01-11','-AKKR11-01') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-01-12','-AKKR12-01') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-02-01','-AKKR01-02') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-02-02','-AKKR02-02') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-02-03','-AKKR03-02') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-02-04','-AKKR04-02') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-02-05','-AKKR05-02') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-02-06','-AKKR06-02') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-02-07','-AKKR07-02') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-02-08','-AKKR08-02') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-02-09','-AKKR09-02') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-02-10','-AKKR10-02') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-02-11','-AKKR11-02') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-02-12','-AKKR12-02') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-03-01','-AKKR01-03') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-03-02','-AKKR02-03') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-03-03','-AKKR03-03') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-03-04','-AKKR04-03') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-03-05','-AKKR05-03') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-03-06','-AKKR06-03') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-03-07','-AKKR07-03') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-03-08','-AKKR08-03') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-03-09','-AKKR09-03') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-03-10','-AKKR10-03') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-03-11','-AKKR11-03') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-03-12','-AKKR12-03') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-04-01','-AKKR01-04') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-04-02','-AKKR02-04') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-04-03','-AKKR03-04') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-04-04','-AKKR04-04') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-04-05','-AKKR05-04') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-04-06','-AKKR06-04') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-04-07','-AKKR07-04') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-04-08','-AKKR08-04') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-04-09','-AKKR09-04') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-04-10','-AKKR10-04') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-04-11','-AKKR11-04') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-04-12','-AKKR12-04') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-05-01','-AKKR01-05') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-05-02','-AKKR02-05') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-05-03','-AKKR03-05') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-05-04','-AKKR04-05') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-05-05','-AKKR05-05') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-05-06','-AKKR06-05') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-05-07','-AKKR07-05') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-05-08','-AKKR08-05') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-05-09','-AKKR09-05') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-05-10','-AKKR10-05') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-05-11','-AKKR11-05') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-05-12','-AKKR12-05') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-06-01','-AKKR01-06') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-06-02','-AKKR02-06') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-06-03','-AKKR03-06') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-06-04','-AKKR04-06') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-06-05','-AKKR05-06') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-06-06','-AKKR06-06') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-06-07','-AKKR07-06') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-06-08','-AKKR08-06') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-06-09','-AKKR09-06') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-06-10','-AKKR10-06') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-06-11','-AKKR11-06') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-06-12','-AKKR12-06') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-07-01','-AKKR01-07') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-07-02','-AKKR02-07') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-07-03','-AKKR03-07') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-07-04','-AKKR04-07') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-07-05','-AKKR05-07') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-07-06','-AKKR06-07') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-07-07','-AKKR07-07') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-07-08','-AKKR08-07') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-07-09','-AKKR09-07') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-07-10','-AKKR10-07') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-07-11','-AKKR11-07') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-07-12','-AKKR12-07') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-08-01','-AKKR01-08') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-08-02','-AKKR02-08') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-08-03','-AKKR03-08') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-08-04','-AKKR04-08') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-08-05','-AKKR05-08') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-08-06','-AKKR06-08') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-08-07','-AKKR07-08') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-08-08','-AKKR08-08') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-08-09','-AKKR09-08') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-08-10','-AKKR10-08') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-08-11','-AKKR11-08') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-08-12','-AKKR12-08') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-09-01','-AKKR01-09') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-09-02','-AKKR02-09') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-09-03','-AKKR03-09') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-09-04','-AKKR04-09') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-09-05','-AKKR05-09') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-09-06','-AKKR06-09') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-09-07','-AKKR07-09') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-09-08','-AKKR08-09') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-09-09','-AKKR09-09') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-09-10','-AKKR10-09') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-09-11','-AKKR11-09') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-09-12','-AKKR12-09') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-10-01','-AKKR01-10') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-10-02','-AKKR02-10') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-10-03','-AKKR03-10') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-10-04','-AKKR04-10') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-10-05','-AKKR05-10') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-10-06','-AKKR06-10') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-10-07','-AKKR07-10') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-10-08','-AKKR08-10') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-10-09','-AKKR09-10') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-10-10','-AKKR10-10') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-10-11','-AKKR11-10') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-10-12','-AKKR12-10') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-11-01','-AKKR01-11') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-11-02','-AKKR02-11') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-11-03','-AKKR03-11') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-11-04','-AKKR04-11') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-11-05','-AKKR05-11') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-11-06','-AKKR06-11') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-11-07','-AKKR07-11') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-11-08','-AKKR08-11') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-11-09','-AKKR09-11') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-11-10','-AKKR10-11') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-11-11','-AKKR11-11') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-11-12','-AKKR12-11') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-12-01','-AKKR01-12') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-12-02','-AKKR02-12') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-12-03','-AKKR03-12') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-12-04','-AKKR04-12') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-12-05','-AKKR05-12') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-12-06','-AKKR06-12') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-12-07','-AKKR07-12') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-12-08','-AKKR08-12') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-12-09','-AKKR09-12') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-12-10','-AKKR10-12') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-12-11','-AKKR11-12') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-12-12','-AKKR12-12') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-13-01','-AKKR01-13') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-13-02','-AKKR02-13') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-13-03','-AKKR03-13') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-13-04','-AKKR04-13') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-13-05','-AKKR05-13') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-13-06','-AKKR06-13') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-13-07','-AKKR07-13') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-13-08','-AKKR08-13') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-13-09','-AKKR09-13') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-13-10','-AKKR10-13') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-13-11','-AKKR11-13') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-13-12','-AKKR12-13') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-14-01','-AKKR01-14') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-14-02','-AKKR02-14') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-14-03','-AKKR03-14') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-14-04','-AKKR04-14') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-14-05','-AKKR05-14') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-14-06','-AKKR06-14') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-14-07','-AKKR07-14') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-14-08','-AKKR08-14') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-14-09','-AKKR09-14') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-14-10','-AKKR10-14') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-14-11','-AKKR11-14') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-14-12','-AKKR12-14') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-15-01','-AKKR01-15') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-15-02','-AKKR02-15') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-15-03','-AKKR03-15') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-15-04','-AKKR04-15') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-15-05','-AKKR05-15') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-15-06','-AKKR06-15') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-15-07','-AKKR07-15') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-15-08','-AKKR08-15') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-15-09','-AKKR09-15') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-15-10','-AKKR10-15') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-15-11','-AKKR11-15') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-15-12','-AKKR12-15') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-16-01','-AKKR01-16') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-16-02','-AKKR02-16') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-16-03','-AKKR03-16') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-16-04','-AKKR04-16') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-16-05','-AKKR05-16') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-16-06','-AKKR06-16') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-16-07','-AKKR07-16') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-16-08','-AKKR08-16') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-16-09','-AKKR09-16') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-16-10','-AKKR10-16') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-16-11','-AKKR11-16') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-16-12','-AKKR12-16') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-17-01','-AKKR01-17') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-17-02','-AKKR02-17') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-17-03','-AKKR03-17') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-17-04','-AKKR04-17') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-17-05','-AKKR05-17') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-17-06','-AKKR06-17') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-17-07','-AKKR07-17') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-17-08','-AKKR08-17') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-17-09','-AKKR09-17') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-17-10','-AKKR10-17') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-17-11','-AKKR11-17') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-17-12','-AKKR12-17') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-18-01','-AKKR01-18') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-18-02','-AKKR02-18') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-18-03','-AKKR03-18') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-18-04','-AKKR04-18') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-18-05','-AKKR05-18') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-18-06','-AKKR06-18') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-18-07','-AKKR07-18') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-18-08','-AKKR08-18') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-18-09','-AKKR09-18') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-18-10','-AKKR10-18') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-18-11','-AKKR11-18') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-18-12','-AKKR12-18') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-19-01','-AKKR01-19') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-19-02','-AKKR02-19') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-19-03','-AKKR03-19') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-19-04','-AKKR04-19') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-19-05','-AKKR05-19') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-19-06','-AKKR06-19') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-19-07','-AKKR07-19') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-19-08','-AKKR08-19') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-19-09','-AKKR09-19') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-19-10','-AKKR10-19') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-19-11','-AKKR11-19') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-19-12','-AKKR12-19') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-20-01','-AKKR01-20') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-20-02','-AKKR02-20') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-20-03','-AKKR03-20') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-20-04','-AKKR04-20') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-20-05','-AKKR05-20') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-20-06','-AKKR06-20') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-20-07','-AKKR07-20') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-20-08','-AKKR08-20') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-20-09','-AKKR09-20') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-20-10','-AKKR10-20') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-20-11','-AKKR11-20') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-20-12','-AKKR12-20') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-21-01','-AKKR01-21') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-21-02','-AKKR02-21') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-21-03','-AKKR03-21') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-21-04','-AKKR04-21') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-21-05','-AKKR05-21') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-21-06','-AKKR06-21') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-21-07','-AKKR07-21') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-21-08','-AKKR08-21') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-21-09','-AKKR09-21') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-21-10','-AKKR10-21') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-21-11','-AKKR11-21') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-21-12','-AKKR12-21') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-22-01','-AKKR01-22') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-22-02','-AKKR02-22') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-22-03','-AKKR03-22') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-22-04','-AKKR04-22') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-22-05','-AKKR05-22') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-22-06','-AKKR06-22') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-22-07','-AKKR07-22') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-22-08','-AKKR08-22') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-22-09','-AKKR09-22') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-22-10','-AKKR10-22') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-22-11','-AKKR11-22') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-22-12','-AKKR12-22') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-23-01','-AKKR01-23') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-23-02','-AKKR02-23') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-23-03','-AKKR03-23') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-23-04','-AKKR04-23') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-23-05','-AKKR05-23') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-23-06','-AKKR06-23') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-23-07','-AKKR07-23') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-23-08','-AKKR08-23') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-23-09','-AKKR09-23') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-23-10','-AKKR10-23') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-23-11','-AKKR11-23') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-23-12','-AKKR12-23') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-24-01','-AKKR01-24') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-24-02','-AKKR02-24') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-24-03','-AKKR03-24') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-24-04','-AKKR04-24') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-24-05','-AKKR05-24') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-24-06','-AKKR06-24') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-24-07','-AKKR07-24') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-24-08','-AKKR08-24') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-24-09','-AKKR09-24') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-24-10','-AKKR10-24') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-24-11','-AKKR11-24') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-24-12','-AKKR12-24') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-25-01','-AKKR01-25') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-25-02','-AKKR02-25') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-25-03','-AKKR03-25') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-25-04','-AKKR04-25') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-25-05','-AKKR05-25') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-25-06','-AKKR06-25') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-25-07','-AKKR07-25') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-25-08','-AKKR08-25') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-25-09','-AKKR09-25') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-25-10','-AKKR10-25') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-25-11','-AKKR11-25') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-25-12','-AKKR12-25') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-26-01','-AKKR01-26') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-26-02','-AKKR02-26') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-26-03','-AKKR03-26') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-26-04','-AKKR04-26') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-26-05','-AKKR05-26') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-26-06','-AKKR06-26') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-26-07','-AKKR07-26') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-26-08','-AKKR08-26') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-26-09','-AKKR09-26') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-26-10','-AKKR10-26') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-26-11','-AKKR11-26') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-26-12','-AKKR12-26') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-27-01','-AKKR01-27') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-27-02','-AKKR02-27') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-27-03','-AKKR03-27') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-27-04','-AKKR04-27') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-27-05','-AKKR05-27') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-27-06','-AKKR06-27') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-27-07','-AKKR07-27') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-27-08','-AKKR08-27') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-27-09','-AKKR09-27') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-27-10','-AKKR10-27') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-27-11','-AKKR11-27') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-27-12','-AKKR12-27') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-28-01','-AKKR01-28') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-28-02','-AKKR02-28') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-28-03','-AKKR03-28') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-28-04','-AKKR04-28') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-28-05','-AKKR05-28') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-28-06','-AKKR06-28') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-28-07','-AKKR07-28') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-28-08','-AKKR08-28') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-28-09','-AKKR09-28') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-28-10','-AKKR10-28') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-28-11','-AKKR11-28') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-28-12','-AKKR12-28') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-29-01','-AKKR01-29') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-29-02','-AKKR02-29') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-29-03','-AKKR03-29') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-29-04','-AKKR04-29') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-29-05','-AKKR05-29') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-29-06','-AKKR06-29') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-29-07','-AKKR07-29') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-29-08','-AKKR08-29') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-29-09','-AKKR09-29') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-29-10','-AKKR10-29') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-29-11','-AKKR11-29') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-29-12','-AKKR12-29') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-30-01','-AKKR01-30') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-30-02','-AKKR02-30') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-30-03','-AKKR03-30') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-30-04','-AKKR04-30') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-30-05','-AKKR05-30') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-30-06','-AKKR06-30') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-30-07','-AKKR07-30') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-30-08','-AKKR08-30') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-30-09','-AKKR09-30') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-30-10','-AKKR10-30') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-30-11','-AKKR11-30') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-30-12','-AKKR12-30') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-31-01','-AKKR01-31') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-31-02','-AKKR02-31') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-31-03','-AKKR03-31') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-31-04','-AKKR04-31') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-31-05','-AKKR05-31') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-31-06','-AKKR06-31') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-31-07','-AKKR07-31') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-31-08','-AKKR08-31') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-31-09','-AKKR09-31') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-31-10','-AKKR10-31') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-31-11','-AKKR11-31') where serialized_value like '%_Date|%'</sql>
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-31-12','-AKKR12-31') where serialized_value like '%_Date|%'</sql>
+
+        <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-AKKR','-') where serialized_value like '%_Date|%'</sql>
+ 
+        <sql>SET group_concat_max_len =300000</sql>
+        <sql>delete from tmp_cf_values</sql>
+        <sql>insert into tmp_cf_values (uuid, cf_values_txt) (
+                select applies_to_uuid, cf_value_by_uuid from (select applies_to_uuid, concat('{',GROUP_CONCAT(concat('"',code,'":[', cf_value_by_code ,']')),'}') as cf_value_by_uuid
+            from (
+                select applies_to_uuid, code, GROUP_CONCAT(concat(cf_opening, cf_content,'}')) as cf_value_by_code from (
+                select applies_to_uuid, code, concat('{"priority":',priority, 
+                  case when period_start_date is null then '' else concat(',"from":"',date_format(period_start_date,'%Y-%m-%dT%T'), TIME_FORMAT( NOW() - UTC_TIMESTAMP(), '%H:%i'), '"') end,
+                  case when period_end_date is null then '' else concat(',"to":"',date_format(period_end_date,'%Y-%m-%dT%T'), TIME_FORMAT( NOW() - UTC_TIMESTAMP(), '%H:%i'), '"') end) as cf_opening, 
+                case when double_value is not null then concat(',"double":',double_value) 
+                 else case when date_value is not null then concat(',"date":"',date_format(date_value,'%Y-%m-%dT%T'), TIME_FORMAT( NOW() - UTC_TIMESTAMP(), '%H:%i'), '"')          
+                 else case when long_value is not null then concat(',"long":', long_value) 
+                 else case when string_value is not null then concat(',"string":"',string_value,'"')
+                 else case when left(serialized_value,6) != 'matrix' then replace(replace(replace(replace(replace(replace(
+            replace(replace(replace(replace(replace(serialized_value,'list_String|',',"listString":'),'list_Double|',',"listDouble":'),'list_Long|',',"listLong":'),'list_Date|',',"listDate":'),'list_EntityReferenceWrapper|',',"listEntity":')
+            ,'map_String|',',"mapString":'),'map_Double|',',"mapDouble":'),'map_Long|',',"mapLong":'),'map_Date|',',"mapDate":'),'map_EntityReferenceWrapper|',',"mapEntity":'),'entity|',',"entity":') 
+                else concat(case left(serialized_value,INSTR(serialized_value, '|')-1) when 'matrix_String' then ',"mapString":' when 'matrix_Long' then ',"mapLong":' when 'matrix_Double' then ',"mapDouble":' when 'matrix_Date' then
+            ',"mapDate":' when 'matrix_EntityReferenceWrapper' then ',"mapEntity":' end, substr(substr(serialized_value, INSTR(serialized_value, '|')+1), INSTR(substr(serialized_value, INSTR(serialized_value,
+            '|')+1), '|')+1)) end end end end end as cf_content from tmp_cfi_copy) cf_data group by applies_to_uuid, code) cf_values_by_code group by cf_values_by_code.applies_to_uuid) cf_values_by_uuid
+            )
+            </sql>
+            
+		<!-- NOTE: here need to change appropriate timezone for the server. This is for argentina -->
+        <sql>update tmp_cf_values set cf_values_txt = replace(cf_values_txt,' 00:00:00 ART','T00:00:00-03:00')</sql>
+
+        <sql>update crm_seller set cf_values = null</sql>
+        <sql>update crm_seller join tmp_cf_values on crm_seller.uuid = tmp_cf_values.uuid set cf_values = cf_values_txt </sql>
+        <sql>update crm_provider set cf_values = null</sql>
+        <sql>update crm_provider join tmp_cf_values on crm_provider.uuid = tmp_cf_values.uuid set cf_values = cf_values_txt</sql>
+        <sql>update account_entity set cf_values = null</sql>
+        <sql>update account_entity join tmp_cf_values on account_entity.uuid = tmp_cf_values.uuid set cf_values = cf_values_txt</sql>
+        <sql>update adm_user set cf_values = null</sql>
+        <sql>update adm_user join tmp_cf_values on adm_user.uuid = tmp_cf_values.uuid set cf_values = cf_values_txt</sql>
+        <sql>update ar_account_operation set cf_values = null</sql>
+        <sql>update ar_account_operation join tmp_cf_values on ar_account_operation.uuid = tmp_cf_values.uuid set cf_values = cf_values_txt</sql>
+        <sql>update billing_cycle set cf_values = null</sql>
+        <sql>update billing_cycle join tmp_cf_values on billing_cycle.uuid = tmp_cf_values.uuid set cf_values = cf_values_txt</sql>
+        <sql>update billing_invoice set cf_values = null</sql>
+        <sql>update billing_invoice join tmp_cf_values on billing_invoice.uuid = tmp_cf_values.uuid set cf_values = cf_values_txt</sql>
+        <sql>update billing_invoice_cat set cf_values = null</sql>
+        <sql>update billing_invoice_cat join tmp_cf_values on billing_invoice_cat.uuid = tmp_cf_values.uuid set cf_values = cf_values_txt</sql>
+        <sql>update billing_invoice_sub_cat set cf_values = null</sql>
+        <sql>update billing_invoice_sub_cat join tmp_cf_values on billing_invoice_sub_cat.uuid = tmp_cf_values.uuid set cf_values = cf_values_txt</sql>
+        <sql>update billing_service_instance set cf_values = null</sql>
+        <sql>update billing_service_instance join tmp_cf_values on billing_service_instance.uuid = tmp_cf_values.uuid set cf_values = cf_values_txt</sql>
+        <sql>update billing_subscription set cf_values = null</sql>
+        <sql>update billing_subscription join tmp_cf_values on billing_subscription.uuid = tmp_cf_values.uuid set cf_values = cf_values_txt</sql>
+        <sql>update billing_tax set cf_values = null</sql>
+        <sql>update billing_tax join tmp_cf_values on billing_tax.uuid = tmp_cf_values.uuid set cf_values = cf_values_txt</sql>
+        <sql>update cat_charge_template set cf_values = null</sql>
+        <sql>update cat_charge_template join tmp_cf_values on cat_charge_template.uuid = tmp_cf_values.uuid set cf_values = cf_values_txt</sql>
+        <sql>update cat_offer_template set cf_values = null</sql>
+        <sql>update cat_offer_template join tmp_cf_values on cat_offer_template.uuid = tmp_cf_values.uuid set cf_values = cf_values_txt</sql>
+        <sql>update cat_price_plan_matrix set cf_values = null</sql>
+        <sql>update cat_price_plan_matrix join tmp_cf_values on cat_price_plan_matrix.uuid = tmp_cf_values.uuid set cf_values = cf_values_txt</sql>
+        <sql>update cat_service_template set cf_values = null</sql>
+        <sql>update cat_service_template join tmp_cf_values on cat_service_template.uuid = tmp_cf_values.uuid set cf_values = cf_values_txt</sql>
+        <sql>update medina_access set cf_values = null</sql>
+        <sql>update medina_access join tmp_cf_values on medina_access.uuid = tmp_cf_values.uuid set cf_values = cf_values_txt</sql>
+        <sql>update meveo_job_instance set cf_values = null</sql>
+        <sql>update meveo_job_instance join tmp_cf_values on meveo_job_instance.uuid = tmp_cf_values.uuid set cf_values = cf_values_txt</sql>
+        <sql>update meveo_filter set cf_values = null</sql>
+        <sql>update meveo_filter join tmp_cf_values on meveo_filter.uuid = tmp_cf_values.uuid set cf_values = cf_values_txt</sql>
+        <sql>update cust_cei set cf_values = null</sql>
+        <sql>update cust_cei join tmp_cf_values on cust_cei.uuid = tmp_cf_values.uuid set cf_values = cf_values_txt</sql>
+        <sql>update cat_offer_template_category set cf_values = null</sql>
+        <sql>update cat_offer_template_category join tmp_cf_values on cat_offer_template_category.uuid = tmp_cf_values.uuid set cf_values = cf_values_txt</sql>
+        <sql>update billing_product_instance set cf_values = null</sql>
+        <sql>update billing_product_instance join tmp_cf_values on billing_product_instance.uuid = tmp_cf_values.uuid set cf_values = cf_values_txt</sql>
+        <sql>update ord_order set cf_values = null</sql>
+        <sql>update ord_order join tmp_cf_values on ord_order.uuid = tmp_cf_values.uuid set cf_values = cf_values_txt</sql>
+        <sql>update ord_quote set cf_values = null</sql>
+        <sql>update ord_quote join tmp_cf_values on ord_quote.uuid = tmp_cf_values.uuid set cf_values = cf_values_txt</sql>
+    </changeSet>
+
+    <changeSet id="#2751_migration_end" author="AndriusKarpavicius">
+        <dropTable tableName="tmp_cfi_copy" />
+        <dropTable tableName="tmp_cf_values" />
+        <!--     <dropTable tableName="crm_custom_field_inst"/> // NOTE: Drop table after you are sure that CF values were migrated correctly -->
+    </changeSet>
+
+    <changeSet id="#2757_20170829" author="AndriusKarpavicius">
+        <addColumn tableName="ord_order">
+            <column name="quote_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="quote_id" baseTableName="ord_order" constraintName="fk_order_quote" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ord_quote" />
+    </changeSet>
+    
 </databaseChangeLog> 

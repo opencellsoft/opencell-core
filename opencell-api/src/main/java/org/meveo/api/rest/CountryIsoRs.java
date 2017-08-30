@@ -13,6 +13,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.CountryIsoDto;
+import org.meveo.api.dto.response.GetCountriesIsoResponse;
 import org.meveo.api.dto.response.GetCountryIsoResponse;
 
 /**
@@ -69,5 +70,13 @@ public interface CountryIsoRs extends IBaseRs {
     @POST
     @Path("/createOrUpdate")
     public ActionStatus createOrUpdate(CountryIsoDto countryIsoDto);
+    
+    /**
+     * List all countries.
+     * @return
+     */
+    @GET
+    @Path("/list")
+    GetCountriesIsoResponse list();
 
 }
