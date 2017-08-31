@@ -1232,7 +1232,10 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 				log.debug("Before SubCategoryInvoiceAgregate:" + (System.currentTimeMillis() - startDate));
 				for (SubCategoryInvoiceAgregate subCatInvoiceAgregate : subCategoryInvoiceAgregates) {
 					CategoryInvoiceAgregate categoryInvoiceAgregate2 = subCatInvoiceAgregate.getCategoryInvoiceAgregate();
-					if (categoryInvoiceAgregate2 != null && categoryInvoiceAgregate != null && categoryInvoiceAgregate2.getId().longValue() != categoryInvoiceAgregate.getId() || (categoryInvoiceAgregate2 == null || categoryInvoiceAgregate == null )) {
+					if (categoryInvoiceAgregate2 != null && categoryInvoiceAgregate != null
+							&& categoryInvoiceAgregate2.getId() != null && categoryInvoiceAgregate.getId() != null
+							&& categoryInvoiceAgregate2.getId().longValue() != categoryInvoiceAgregate.getId().longValue()
+							|| (categoryInvoiceAgregate2 == null || categoryInvoiceAgregate == null)) {
 						continue;
 					}
 					log.debug("Inside SubCategoryInvoiceAgregate:" + (System.currentTimeMillis() - startDate));
