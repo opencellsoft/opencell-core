@@ -58,14 +58,13 @@ public class CustomerAccountDto extends AccountDto {
     private String dueDateDelayEL;
 
     @XmlElementWrapper(name = "paymentMethods")  
-    @XmlElement(name="paymentMethod")
+    @XmlElement(name="paymentMtd")
     private List<PaymentMethodDto> paymentMethods;
 
     /**
      * Field was deprecated in 4.6 version. Use 'paymentMethods' field instead
      */
     @Deprecated
-    @XmlElement(name="paymentMethodEnum")
     private PaymentMethodEnum paymentMethod;
 
     /**
