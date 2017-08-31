@@ -276,8 +276,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 				.getLanguageCode();
 		log.debug("Before listByInvoice:" + (System.currentTimeMillis() - startDate));
 		List<InvoiceAgregate> invoiceAgregates = invoice.getInvoiceAgregates();
-		
-		ratedTransactions = ratedTransactionService.getRatedTransactionsForXmlInvoice(invoice);
+		if (!isVirtual) {
+			ratedTransactions = ratedTransactionService.getRatedTransactionsForXmlInvoice(invoice);
+		}
 		subCategoryInvoiceAgregates = userAccountService.listByInvoice(invoice);
 		
 		//Session session = this.getEntityManager().unwrap(Session.class);
