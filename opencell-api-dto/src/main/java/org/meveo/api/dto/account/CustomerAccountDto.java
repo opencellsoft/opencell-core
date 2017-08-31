@@ -65,6 +65,7 @@ public class CustomerAccountDto extends AccountDto {
      * Field was deprecated in 4.6 version. Use 'paymentMethods' field instead
      */
     @Deprecated
+    @XmlElement(name="paymentMethodEnum")
     private PaymentMethodEnum paymentMethod;
 
     /**
