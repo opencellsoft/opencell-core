@@ -692,5 +692,78 @@
         <addForeignKeyConstraint baseColumnNames="quote_id" baseTableName="ord_order" constraintName="fk_order_quote" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ord_quote" />
     </changeSet>
+
+	<changeSet id="performance_20170830" author="TienLanPHUNG">
+	    <sql>DROP INDEX IF EXISTS invoice_billing_run_index</sql>
+		<sql>CREATE INDEX invoice_billing_run_index ON billing_invoice_agregate(billing_run_id)</sql>
+		<sql>DROP INDEX IF EXISTS transaction_billing_index</sql>
+		<sql>CREATE INDEX transaction_billing_index ON billing_rated_transaction(billing_account__id, invoice_id,wallet_id, invoice_sub_category_id)</sql>
+		<sql>DROP INDEX IF EXISTS invoice_agre_index</sql>
+		<sql>CREATE INDEX invoice_agre_index ON billing_invoice_agregate(invoice_id)</sql>
+		<sql>DROP INDEX IF EXISTS billing_recurring_charge_inst_index</sql>
+		<sql>CREATE INDEX billing_recurring_charge_inst_index ON billing_recurring_charge_inst(service_instance_id)</sql>
+		<sql>DROP INDEX IF EXISTS billing_chrginst_wallet_index</sql>
+		<sql>CREATE INDEX billing_chrginst_wallet_index ON billing_chrginst_wallet(wallet_instance_id)</sql>
+		<sql>DROP INDEX IF EXISTS billing_wallet_index</sql>
+		<sql>CREATE INDEX billing_wallet_index ON billing_wallet(user_account_id)</sql>
+		<sql>DROP INDEX IF EXISTS ar_customer_account_index</sql>
+		<sql>CREATE INDEX ar_customer_account_index ON ar_customer_account(credit_category_id)</sql>
+		<sql>DROP INDEX IF EXISTS meveo_module_index</sql>
+		<sql>CREATE INDEX meveo_module_index ON meveo_module(script_instance_id)</sql>
+		<sql>DROP INDEX IF EXISTS account_entity_index</sql>
+		<sql>CREATE INDEX account_entity_index ON account_entity(primary_contact, title_id, bam_id)</sql>
+		<sql>DROP INDEX IF EXISTS meveo_module_item_index</sql>
+		<sql>CREATE INDEX meveo_module_item_index ON meveo_module_item(module_id)</sql>
+		<sql>DROP INDEX IF EXISTS billing_charge_instance_index</sql>
+		<sql>CREATE INDEX billing_charge_instance_index ON billing_charge_instance (invoicing_calendar_id)</sql>
+		<sql>DROP INDEX IF EXISTS billing_service_instance_index</sql>
+		<sql>CREATE INDEX billing_service_instance_index ON billing_service_instance(subscription_id)</sql>
+		<sql>DROP INDEX IF EXISTS billing_user_account_index</sql>
+		<sql>CREATE INDEX billing_user_account_index ON billing_user_account(billing_account_id)</sql>
+		<sql>DROP INDEX IF EXISTS billing_billing_account_index</sql>
+		<sql>CREATE INDEX billing_billing_account_index ON billing_billing_account(customer_account_id)</sql>
+		<sql>DROP INDEX IF EXISTS crm_customer_index </sql>
+		<sql>CREATE INDEX crm_customer_index ON crm_customer(customer_brand_id)</sql>
+		<sql>DROP INDEX IF EXISTS ar_payment_customer_index</sql>
+		<sql>CREATE INDEX ar_payment_customer_index ON ar_payment_token(customer_account_id)</sql>
+		<sql>DROP INDEX IF EXISTS billing_subscription_index</sql>
+		<sql>CREATE INDEX billing_subscription_index ON billing_subscription(user_account_id)</sql>
+		<sql>DROP INDEX IF EXISTS cat_chrg_edr_index</sql>
+		<sql>CREATE INDEX cat_chrg_edr_index ON cat_chrg_edr(charge_tmpl_id,trigg_edr_id)</sql>
+		<sql>DROP INDEX IF EXISTS adm_messages_index</sql>
+		<sql>CREATE INDEX adm_messages_index ON adm_messages ((lower(entity_code)) , (lower(language_code)) )</sql>
+		<sql>DROP INDEX IF EXISTS adm_title_index</sql>
+		<sql>CREATE INDEX adm_title_index ON adm_title((lower(code)))</sql>
+		<sql>DROP INDEX IF EXISTS crm_customer_brand_index</sql>
+		<sql>CREATE INDEX crm_customer_brand_index ON crm_customer_brand((lower(code)))</sql>
+		<sql>DROP INDEX IF EXISTS crm_customer_category_index</sql>
+		<sql>CREATE INDEX crm_customer_category_index ON crm_customer_category((lower(code)))</sql>
+		<sql>DROP INDEX IF EXISTS cat_serv_trm_charge_template_index</sql>
+		<sql>CREATE INDEX cat_serv_trm_charge_template_index ON cat_serv_trm_charge_template(service_template_id)</sql>
+		<sql>DROP INDEX IF EXISTS cat_serv_usage_charge_template_index</sql>
+		<sql>CREATE INDEX cat_serv_usage_charge_template_index ON cat_serv_usage_charge_template(service_template_id)</sql>
+		<sql>DROP INDEX IF EXISTS cat_serv_usage_wallet_template_index</sql>
+		<sql>CREATE INDEX cat_serv_usage_wallet_template_index ON cat_serv_usage_wallet_template(service_usage_templt_id)</sql>
+		<sql>DROP INDEX IF EXISTS cat_calendar_days_index</sql>
+		<sql>CREATE INDEX cat_calendar_days_index ON cat_calendar_days(calendar_id)</sql>
+		<sql>DROP INDEX IF EXISTS cat_triggered_edr_index</sql>
+		<sql>CREATE INDEX cat_triggered_edr_index ON cat_triggered_edr(meveo_instance_id)</sql>
+		<sql>DROP INDEX IF EXISTS cat_chrg_edr_index</sql>
+		<sql>CREATE INDEX cat_chrg_edr_index ON cat_chrg_edr(charge_tmpl_id,trigg_edr_id)</sql>
+		<sql>DROP INDEX IF EXISTS billing_charge_instance_index</sql>
+		<sql>CREATE INDEX billing_charge_instance_index ON billing_charge_instance (invoicing_calendar_id, lower(code))</sql>
+		<sql>DROP INDEX IF EXISTS billing_invoice_index</sql>
+		<sql>CREATE INDEX billing_invoice_index ON billing_invoice(invoice_id, invoice_type_id)</sql>
+		<sql>DROP INDEX IF EXISTS billing_wallet_operation_index</sql>
+		<sql>CREATE INDEX billing_wallet_operation_index ON billing_wallet_operation(invoicing_date,status, wallet_id, charge_instance_id)</sql>
+		<sql>DROP INDEX IF EXISTS billing_wallet_index</sql>
+		<sql>CREATE INDEX billing_wallet_index ON billing_wallet(user_account_id,cat_wallet_template_id)</sql>
+		<sql>DROP INDEX IF EXISTS billing_charge_instance_index</sql>
+		<sql>CREATE INDEX billing_charge_instance_index ON billing_charge_instance(invoicing_calendar_id, lower(code), charge_template_id)</sql>
+		<sql>DROP INDEX IF EXISTS billing_reservation_index</sql>
+		<sql>CREATE INDEX billing_reservation_index ON billing_reservation(subscription_id, user_account_id,wallet_id)</sql>
+	</changeSet>
+
+    
     
 </databaseChangeLog> 

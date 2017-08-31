@@ -1229,10 +1229,10 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 					//List<RatedTransaction> transactions = null;
 					WalletInstance wallet = subCatInvoiceAgregate.getWallet();
 					log.debug("Before transactions:" + (System.currentTimeMillis() - startDate));
-					/**
+					
 					if (isVirtual) {
-						transactions = invoice.getRatedTransactionsForCategory(wallet, invoiceSubCat);
-					} else {
+						ratedTransactions = invoice.getRatedTransactionsForCategory(wallet, invoiceSubCat);
+					}/* else {
 						transactions = ratedTransactionService.getRatedTransactionsForXmlInvoice(
 								wallet, invoice,
 								invoiceSubCat);
