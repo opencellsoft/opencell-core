@@ -668,8 +668,7 @@ public class QuoteApi extends BaseApi {
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw new BusinessException("Failed to associate custom field instance to an entity", e);
-        }
-        log.info("\n\n\n\n\n criteria1:" + criteria1 + " \n\n\n\n");
+        }        
         productInstanceService.instantiateProductInstance(productInstance, criteria1, criteria2, criteria3, true);
 
         return productInstance;
