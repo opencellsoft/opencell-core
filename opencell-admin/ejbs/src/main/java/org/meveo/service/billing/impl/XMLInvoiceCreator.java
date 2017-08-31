@@ -278,8 +278,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 		List<InvoiceAgregate> invoiceAgregates = invoice.getInvoiceAgregates();
 		if (!isVirtual) {
 			ratedTransactions = ratedTransactionService.getRatedTransactionsForXmlInvoice(invoice);
+			subCategoryInvoiceAgregates = userAccountService.listByInvoice(invoice);
 		}
-		subCategoryInvoiceAgregates = userAccountService.listByInvoice(invoice);
+		
 		
 		//Session session = this.getEntityManager().unwrap(Session.class);
 		//session.createCriteria(InvoiceAgregate.class).setFetchMode("InvoiceAgregates", FetchMode.EAGER).Add(Expression.("invoice", invoice)).List();
@@ -1214,6 +1215,15 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			// amountWithTax.appendChild(amountWithTaxTxt);
 			// category.appendChild(amountWithTax);
 			// }
+			
+			if (isVirtual) {
+				Set<SubCategoryInvoiceAgregate> tmpSubCategoryInvoiceAgregates = categoryInvoiceAgregate.getSubCategoryInvoiceAgregates();
+				subCategoryInvoiceAgregates = new ArrayList<>();
+				for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : tmpSubCategoryInvoiceAgregates) {
+					subCategoryInvoiceAgregates.add(subCategoryInvoiceAgregate);
+				}
+			}
+			
 			log.debug("Before generateSubCat:" + (System.currentTimeMillis() - startDate));
 			if (generateSubCat) {
 				Element subCategories = doc.createElement("subCategories");
