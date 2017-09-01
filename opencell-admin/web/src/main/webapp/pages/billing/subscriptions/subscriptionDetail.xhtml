@@ -94,7 +94,8 @@
 			column4Label="#{messages['commons.validTo']}" column4="validity" column4Child="to"
 			selection="#{subscriptionBean.entity.offer}" width="1000"
 			lazy="false" dataModel="#{offerTemplateBean.listActiveByDate(subscriptionBean.entity.subscriptionDate)}"
-			updateField=":subscriptionTab:subscriptionFormId:informationTab:offerSelectId :subscriptionTab:subscriptionFormId:informationTab:offerSelectId_text">
+			updateField=":subscriptionTab:subscriptionFormId:informationTab:offerSelectId :subscriptionTab:subscriptionFormId:informationTab:offerSelectId_text :subscriptionTab:subscriptionFormId:informationTab:subscriptionAndRenewalDates"
+            selectionListenerBean="#{subscriptionBean}"  selectionListenerMethod="copySubscriptionRenewalInfo">
 		</hftl:entityPopup>
 
 <!-- 		<hftl:entityPopup id="chargeTemplatePopup" -->

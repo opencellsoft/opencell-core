@@ -5,7 +5,6 @@ import java.util.Map;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.payment.PayByCardResponseDto;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
@@ -100,7 +99,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 
             CreateTokenResponse response = getClient().merchant(merchantId).tokens().create(body);
             if (!response.getIsNewToken()) {
-                throw new BusinessException("A token already exist for card:" + StringUtils.hideCardNumber(cardNumber));
+                throw new BusinessException("A token already exist for card:" + CardPaymentMethod.hideCardNumber(cardNumber));
             }
             return response.getToken();
         } catch (ApiException ev) {

@@ -352,10 +352,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 
             if (selectedPaymentMethod instanceof CardPaymentMethod) {
                 if (((CardPaymentMethod) selectedPaymentMethod).getTokenId() == null && ((CardPaymentMethod) selectedPaymentMethod).getCardNumber() != null) {
-                    String cardNumber = ((CardPaymentMethod) selectedPaymentMethod).getCardNumber();
-                    cardNumber = cardNumber.trim();
-                    cardNumber = cardNumber.substring(cardNumber.length() - 4);
-                    ((CardPaymentMethod) selectedPaymentMethod).setHiddenCardNumber(cardNumber);
+                    ((CardPaymentMethod) selectedPaymentMethod).setHiddenCardNumber(CardPaymentMethod.hideCardNumber(((CardPaymentMethod) selectedPaymentMethod).getCardNumber()));
                 }
             }
 

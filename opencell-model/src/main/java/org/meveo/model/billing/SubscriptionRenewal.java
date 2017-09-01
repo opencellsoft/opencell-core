@@ -197,4 +197,20 @@ public class SubscriptionRenewal implements Serializable {
     public void setRenewFor(Integer renewFor) {
         this.renewFor = renewFor;
     }
+
+    public void setDefaultInitialyActiveForUnit() {
+        if (initialyActiveFor != null && initialyActiveForUnit == null) {
+            initialyActiveForUnit = RenewalPeriodUnitEnum.MONTH;
+        } else if (initialyActiveFor == null) {
+            initialyActiveForUnit = null;
+        }
+    }
+
+    public void setDefaultRenewForUnit() {
+        if (renewFor != null && renewForUnit == null) {
+            renewForUnit = RenewalPeriodUnitEnum.MONTH;
+        } else if (renewFor == null) {
+            renewForUnit = null;
+        }
+    }
 }

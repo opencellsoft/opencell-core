@@ -37,10 +37,8 @@ public class StringUtils {
     /**
      * Checks if string is in array of strings.
      * 
-     * @param value
-     *            String value to look for.
-     * @param stringArray
-     *            String array where value is searched.
+     * @param value String value to look for.
+     * @param stringArray String array where value is searched.
      * 
      * @return True if array contain string.
      */
@@ -138,16 +136,16 @@ public class StringUtils {
      * @return
      */
     public static String getLongAsNChar(long value, int nbChar) {
-    	String firstChar ="0";
-    	if(value < 0){
-    		firstChar="-";
-    		value = value * -1;
-    	}
+        String firstChar = "0";
+        if (value < 0) {
+            firstChar = "-";
+            value = value * -1;
+        }
         String buildString = "" + value;
         while (buildString.length() < nbChar) {
             buildString = "0" + buildString;
         }
-        buildString= buildString.replaceFirst("0", firstChar);
+        buildString = buildString.replaceFirst("0", firstChar);
         return buildString;
     }
 
@@ -170,35 +168,35 @@ public class StringUtils {
             }
         return sb.toString();
     }
-    
+
     public static String enleverAccent(String value) {
-		if (StringUtils.isBlank(value)) {
-			return value;
-		}
-		return Normalizer.normalize(value, Normalizer.Form.NFD).replaceAll("[\u0300-\u036F]", "");
-	}
-    
-	public static String normalizeHierarchyCode(String value) {
-		if (StringUtils.isBlank(value)) {
-			return value;
-		}
-
-		String newValue = enleverAccent(value) ;
-
-		newValue = newValue.replaceAll("[^\\-A-Za-z0-9.@-]", "_");
-		return newValue;
-	}
-    
-    public static String patternMacher(String regex, String text){
-    	String result=null;
-    	Pattern pattern = Pattern.compile(regex);
-    	Matcher matcher = pattern.matcher(text);
-    	if(matcher.find()) {
-    		result = matcher.group(1);
-    	}
-    	return result;
+        if (StringUtils.isBlank(value)) {
+            return value;
+        }
+        return Normalizer.normalize(value, Normalizer.Form.NFD).replaceAll("[\u0300-\u036F]", "");
     }
-    
+
+    public static String normalizeHierarchyCode(String value) {
+        if (StringUtils.isBlank(value)) {
+            return value;
+        }
+
+        String newValue = enleverAccent(value);
+
+        newValue = newValue.replaceAll("[^\\-A-Za-z0-9.@-]", "_");
+        return newValue;
+    }
+
+    public static String patternMacher(String regex, String text) {
+        String result = null;
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(text);
+        if (matcher.find()) {
+            result = matcher.group(1);
+        }
+        return result;
+    }
+
     /**
      * Compares two strings. Handles null values without exception
      * 
@@ -220,8 +218,4 @@ public class StringUtils {
 
         return 0;
     }
-
-	public static String hideCardNumber(String cardNumber) {		
-		return (cardNumber != null && cardNumber.length() == 16) ? "************"+cardNumber.substring(12, 15): "invalid" ;
-	}
 }

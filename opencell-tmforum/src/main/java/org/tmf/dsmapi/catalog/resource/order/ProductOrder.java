@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -57,6 +58,7 @@ public class ProductOrder implements Serializable {
      * Payment methods requested. Note: only the first one will be used.
      */
     @XmlElementWrapper(name = "paymentMethods")
+    @XmlElement(name = "methodOfPayment")
     private List<PaymentMethodDto> paymentMethods;
 
     private String dueDateDelayEL;

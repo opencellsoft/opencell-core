@@ -1,109 +1,110 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-	xmlns:f="http://xmlns.jcp.org/jsf/core"
-	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
-	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
-	template="/layout/template.xhtml">	
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui" template="/layout/template.xhtml">
 
-	<ui:define name="metadata">
-		<f:metadata>
-			<f:viewParam name="objectId" value="#{offerTemplateBean.objectId}" />
-			<f:viewParam name="tab" value="#{offerTemplateBean.activeTab}" />
-			<f:viewParam name="newVersion" value="#{offerTemplateBean.newVersion}" />
-		</f:metadata>		
-	</ui:define>
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{offerTemplateBean.objectId}" />
+            <f:viewParam name="tab" value="#{offerTemplateBean.activeTab}" />
+            <f:viewParam name="newVersion" value="#{offerTemplateBean.newVersion}" />
+        </f:metadata>
+    </ui:define>
 
-	<ui:define name="body">
-		<o:importFunctions type="org.meveo.admin.action.admin.custom.CustomFieldDataEntryBean" var="cfde" />
+    <ui:define name="body">
+        <o:importFunctions type="org.meveo.admin.action.admin.custom.CustomFieldDataEntryBean" var="cfde" />
+        <p:importEnum type="org.meveo.model.billing.SubscriptionRenewal$EndOfTermActionEnum" var="EndOfTermActionEnum" />
+        <p:importEnum type="org.meveo.model.billing.SubscriptionRenewal$RenewalPeriodUnitEnum" var="RenewalPeriodUnitEnum" />
 
-		<hftl:entityPopup id="searchServiceTemplatePopup"
-			header="#{messages['offerServiceTemplate.serviceTemplate']}"
-			updateField=":offerForm:tabView:serviceTemplateCode :offerForm:tabView:serviceTemplateCode_text"
-			selection="#{offerTemplateBean.offerServiceTemplate.serviceTemplate}"
-			backingBean="#{serviceTemplateBean}"
-			searchField1Label="#{messages['BusinessEntity.code']}"
-			searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
-			column1="code"></hftl:entityPopup>
+        <hftl:entityPopup id="searchServiceTemplatePopup" header="#{messages['offerServiceTemplate.serviceTemplate']}"
+            updateField=":offerForm:tabView:serviceTemplateCode :offerForm:tabView:serviceTemplateCode_text" selection="#{offerTemplateBean.offerServiceTemplate.serviceTemplate}"
+            backingBean="#{serviceTemplateBean}" searchField1Label="#{messages['BusinessEntity.code']}" searchField1="code" column1Label="#{messages['BusinessEntity.code']}" column1="code"></hftl:entityPopup>
 
-		<h:form id="crumbmenuForm">
-			<p:breadCrumb homeDisplay="text" id="crumbmenu">
-				<p:menuitem value="#{messages['menu.catalog']}" disabled="true"
-					styleClass="no-text-decoration" />
-				<p:menuitem value="#{messages['menu.offers']}"
-					outcome="offerTemplates" />
-				<p:menuitem value="#{messages['offerTemplate.new']}" disabled="true"
-					rendered="#{offerTemplateBean.entity.transient}" />
-				<p:menuitem
-					value="#{messages['offerTemplate.editView']} - #{offerTemplateBean.entity.descriptionOrCode}"
-					disabled="true" rendered="#{!offerTemplateBean.entity.transient}" />
-			</p:breadCrumb>
-		</h:form>
-		
-		<hftl:formPanel formId="offerForm" ajaxSubmit="true"
-			submitPartialProcess=":offerForm:tabView:offerInfo #{cfde:getCFComponentIds(':offerForm:tabView:cf_panel_group_',null, customFieldDataEntryBean.getGroupedFieldTemplates(offerTemplateBean.entity).children.size())}"
-			backingBean="#{offerTemplateBean}" showEnableDisableButton="true"
-			updateConfirmationMessage="#{offerTemplateBean.usedInSubscription ? messages['confirmationMessage.confirmUpdate'] : ''}"
-			enctype="multipart/form-data">
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.catalog']}" disabled="true" styleClass="no-text-decoration" />
+                <p:menuitem value="#{messages['menu.offers']}" outcome="offerTemplates" />
+                <p:menuitem value="#{messages['offerTemplate.new']}" disabled="true" rendered="#{offerTemplateBean.entity.transient}" />
+                <p:menuitem value="#{messages['offerTemplate.editView']} - #{offerTemplateBean.entity.descriptionOrCode}" disabled="true" rendered="#{!offerTemplateBean.entity.transient}" />
+            </p:breadCrumb>
+        </h:form>
 
-			<p:tabView id="tabView" activeIndex="#{offerTemplateBean.activeTab}">
-				<p:tab title="#{messages['commons.tab.information']}">
+        <hftl:formPanel formId="offerForm" ajaxSubmit="true"
+            submitPartialProcess=":offerForm:tabView:offerInfo #{cfde:getCFComponentIds(':offerForm:tabView:cf_panel_group_',null, customFieldDataEntryBean.getGroupedFieldTemplates(offerTemplateBean.entity).children.size())}"
+            backingBean="#{offerTemplateBean}" showEnableDisableButton="true" updateConfirmationMessage="#{offerTemplateBean.usedInSubscription ? messages['confirmationMessage.confirmUpdate'] : ''}"
+            enctype="multipart/form-data">
 
-					<hf:namingContainer id="offerInfo">
+            <p:tabView id="tabView" activeIndex="#{offerTemplateBean.activeTab}">
+                <p:tab title="#{messages['commons.tab.information']}">
 
-						<p:panelGrid columns="2"
-							columnClasses="Wid20 Responsive100 VAlignTop, Wid80 Responsive100 VAlignTop"
-							styleClass="ui-panelgrid-blank">
+                    <hf:namingContainer id="offerInfo">
 
-							<h:panelGroup>
-								<hftl:formField label="#{messages['commons.image']}"
-									field="imagePath" required="false" pictureGroupName="offer" />
-								<hftl:formField label="#{messages['offerTemplate.code']}"
-									field="code" required="true"
-									actionListenerBean="#{offerTemplateBean}"
-									actionListenerMethod="onCodeChange" listenerUpdate="name" />
-								<hftl:formField id="name"
-									label="#{messages['offerTemplate.name']}" field="name"
-									required="true" />
-								<hftl:formField label="#{messages['commons.valid']}" field="validity" />
+                        <p:panelGrid columns="3" columnClasses="Wid10 Responsive100, Wid30 Responsive100 VAlignTop, Wid30 Responsive100 VAlignTop" styleClass="ui-panelgrid-blank">
+                            <p:panel>
+                                <hftl:formField label="#{messages['commons.image']}" field="imagePath" required="false" pictureGroupName="offer" />
+                            </p:panel>
+                            <p:panel>
+                                <h:panelGrid columns="1" styleClass="ui-panelgrid-blank Wid100" columnClasses="Wid100">
 
-								<o:validateMultiple components=":offerForm:tabView:offerInfo:code_txt :offerForm:tabView:offerInfo:validity_date :offerForm:tabView:offerInfo:validity_date_toRange"
-									validator="#{offerTemplateBean.validateUniqueVersion}" message="#{messages['offerTemplate.version.exists.short']}" />
+                                    <hftl:formField label="#{messages['offerTemplate.code']}" field="code" required="true" actionListenerBean="#{offerTemplateBean}" actionListenerMethod="onCodeChange"
+                                        listenerUpdate="name" />
+                                    <hftl:formField id="name" label="#{messages['offerTemplate.name']}" field="name" required="true" />
+                                    <hftl:formField label="#{messages['commons.valid']}" field="validity" />
 
-								<!--                                 <hftl:formField label="#{messages['offerTemplate.description']}" field="description" useConverter="false" id="description" /> -->
-                                <hftl:formLanguageFields backingBean="#{offerTemplateBean}" entity="#{offerTemplateBean.entity}" multiLang="true" />
-                                <hftl:formField
-									label="#{messages['offerTemplate.longDescription']}"
-									field="longDescription" textArea="true" id="longDescription"
-									rows="1" componentWidth="100" />
-								<hftl:formField id="offerTemplateCategories"
-									label="#{messages['offerTemplate.category']}"
-									field="offerTemplateCategories" listType="selectCheckbox"
-									valueLabelField="descriptionOrCode"
-									listBean="#{offerTemplateCategoryListBean}" componentWidth="30" />
-								<hftl:formField id="channels"
-									label="#{messages['channels.title']}" field="channels"
-									listType="selectCheckbox" valueLabelField="descriptionOrCode"
-									listBean="#{channelListBean}" componentWidth="30" />
-								<hftl:formField id="businessAccountModels"
-									label="#{messages['marketingManager.catalog.targetSegment']}"
-									field="businessAccountModels" listType="selectCheckbox"
-									valueLabelField="descriptionOrCode"
-									listBean="#{businessAccountModelListBean}" componentWidth="30" />
+                                    <o:validateMultiple components=":offerForm:tabView:offerInfo:code_txt :offerForm:tabView:offerInfo:validity_date :offerForm:tabView:offerInfo:validity_date_toRange"
+                                        validator="#{offerTemplateBean.validateUniqueVersion}" message="#{messages['offerTemplate.version.exists.short']}" />
+                                </h:panelGrid>
+                            </p:panel>
+                            <h:panelGrid columns="1" styleClass="ui-panelgrid-blank Wid100">
+                                <hftl:formField id="offerTemplateCategories" label="#{messages['offerTemplate.category']}" field="offerTemplateCategories" listType="selectCheckbox"
+                                    valueLabelField="descriptionOrCode" listBean="#{offerTemplateCategoryListBean}" componentWidth="30" />
+                                <hftl:formField id="channels" label="#{messages['channels.title']}" field="channels" listType="selectCheckbox" valueLabelField="descriptionOrCode"
+                                    listBean="#{channelListBean}" componentWidth="30" />
+                                <hftl:formField id="businessAccountModels" label="#{messages['marketingManager.catalog.targetSegment']}" field="businessAccountModels" listType="selectCheckbox"
+                                    valueLabelField="descriptionOrCode" listBean="#{businessAccountModelListBean}" componentWidth="30" />
+                            </h:panelGrid>
+                        </p:panelGrid>
 
 
-								<hftl:formField label="#{messages['enableEntity.disabled']}"
-									doNotShowOnNew="true" allowEdit="false" field="disabled"
-									isMessage="true" />
-							</h:panelGroup>
-						</p:panelGrid>
-					</hf:namingContainer>
-				</p:tab>
 
-				<hftl:customFields backingBean="#{offerTemplateBean}"
-					messagesId="offerForm:messages" />
+                        <hftl:formLanguageFields backingBean="#{offerTemplateBean}" entity="#{offerTemplateBean.entity}" multiLang="true" />
+                        <hftl:formField label="#{messages['offerTemplate.longDescription']}" field="longDescription" textArea="true" id="longDescription" rows="1" componentWidth="100" />
 
-				<p:tab title="#{messages['menu.serviceTemplates']}" id="tab1">
+                        <p:fieldset legend="#{messages['subscription.renewal']}" styleClass="clearLeft">
+                            <h:panelGroup id="subscriptionRenewal">
+                                <hftl:formField label="#{messages['subscription.initialyActiveFor']}" field="subscriptionRenewal" childField="initialyActiveFor" size="2" minValue="1"
+                                    componentWidth="15" listenerUpdate="subscriptionRenewal" actionListenerBean="#{offerTemplateBean.entity.subscriptionRenewal}"
+                                    actionListenerMethod="setDefaultInitialyActiveForUnit" />
+                                <hftl:formField label="#{messages['subscription.initialyActiveForUnit']}" field="subscriptionRenewal" childField="initialyActiveForUnit"
+                                    required="#{offerTemplateBean.entity.subscriptionRenewal.initialyActiveFor!=null}"
+                                    disabled="#{offerTemplateBean.entity.subscriptionRenewal.initialyActiveFor==null}" listenerUpdate="subscriptionRenewal" />
+                                <h:panelGroup rendered="#{offerTemplateBean.entity.subscriptionRenewal.initialyActiveFor!=null}">
+                                    <hftl:formField label="#{messages['subscription.autoRenew']}" field="subscriptionRenewal" childField="autoRenew" required="true"
+                                        listenerUpdate="subscriptionRenewal" newLine="true" />
+                                    <hftl:formField label="#{messages['subscription.renewFor']}" field="subscriptionRenewal" childField="renewFor" size="2" required="true"
+                                        rendered="#{offerTemplateBean.entity.subscriptionRenewal.autoRenew}" listenerUpdate="subscriptionRenewal"
+                                        actionListenerBean="#{offerTemplateBean.entity.subscriptionRenewal}" actionListenerMethod="setDefaultRenewForUnit" />
+                                    <hftl:formField label="#{messages['subscription.renewForUnit']}" field="subscriptionRenewal" childField="renewForUnit" required="true"
+                                        rendered="#{offerTemplateBean.entity.subscriptionRenewal.autoRenew}" listenerUpdate="subscriptionRenewal" />
+                                    <hftl:formField label="#{messages['subscription.renewNotifyBefore']}" field="subscriptionRenewal" childField="daysNotifyRenewal" size="2" minValue="1"
+                                        rendered="#{offerTemplateBean.entity.subscriptionRenewal.autoRenew}" />
+                                    <hftl:formField label="#{messages['subscription.extendAgreementPeriod']}" field="subscriptionRenewal" childField="extendAgreementPeriodToSubscribedTillDate"
+                                        rendered="#{offerTemplateBean.entity.subscriptionRenewal.autoRenew}" />
+                                    <hftl:formField label="#{messages['subscription.endOfTermAction']}" field="subscriptionRenewal" childField="endOfTermAction" required="true"
+                                        listenerUpdate="subscriptionRenewal" />
+                                    <hftl:formField label="#{messages['subscription.endOfTermTerminationReason']}" field="subscriptionRenewal" childField="terminationReason" required="true"
+                                        rendered="#{offerTemplateBean.entity.subscriptionRenewal.endOfTermAction eq 'TERMINATE'}" valueLabelField="descriptionOrCode"
+                                        listElements="#{subscriptionTerminationReasonService.listReasons()}" />
+                                </h:panelGroup>
+                            </h:panelGroup>
+                        </p:fieldset>
+
+                        <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" />
+
+                    </hf:namingContainer>
+                </p:tab>
+
+                <hftl:customFields backingBean="#{offerTemplateBean}" messagesId="offerForm:messages" />
+
+                <p:tab title="#{messages['menu.serviceTemplates']}" id="tab1">
 
                     <p:dataTable id="offerServices" var="entity" value="#{offerTemplateBean.entity.offerServiceTemplates}" rows="20" lazy="false" styleClass="custom-grid" rowIndexVar="rowIndex"
                         resizableColumns="true" paginator="true" rowsPerPageTemplate="10,15,20,50" reflow="true" paginatorAlwaysVisible="false"
@@ -128,70 +129,44 @@
 
                     <p:messages id="offerServiceMessages" redisplay="false" />
 
-					<h:panelGroup id="offerServiceDetails">
+                    <h:panelGroup id="offerServiceDetails">
 
-						<p:separator
-							rendered="#{offerTemplateBean.offerServiceTemplate!=null}" />
+                        <p:separator rendered="#{offerTemplateBean.offerServiceTemplate!=null}" />
 
-						<p:panel header="#{messages['offerTemplate.serviceTemplate']}"
-							rendered="#{offerTemplateBean.offerServiceTemplate!=null}">
+                        <p:panel header="#{messages['offerTemplate.serviceTemplate']}" rendered="#{offerTemplateBean.offerServiceTemplate!=null}">
 
-							<p:outputPanel
-								styleClass="form-panel-fields #{edit?'':' form-panel-fields-view'}">
-								<hftl:formField
-									entity="#{offerTemplateBean.offerServiceTemplate}"
-									label="#{messages['offerServiceTemplate.serviceTemplate']}"
-									id="serviceTemplateCode" field="serviceTemplate"
-									valueLabelField="code" popup="true"
-									popupId="searchServiceTemplatePopup"
-									required="true"
-									disabled="#{!offerTemplateBean.offerServiceTemplate.transient}" />
-								<hftl:formField
-									entity="#{offerTemplateBean.offerServiceTemplate}"
-									label="#{messages['offerServiceTemplate.mandatory']}"
-									id="mandatory" field="mandatory" />
-								<hftl:formField
-									entity="#{offerTemplateBean.offerServiceTemplate}"
-									id="incompServices"
-									label="#{messages['offerServiceTemplate.incompatibleServices']}"
-									field="incompatibleServices" listType="pickUpList"
-									valueLabelField="code" required="false"
-									dualListModel="#{offerTemplateBean.incompatibleServices}"
-									newLine="true" />
-								<hftl:formField
-									entity="#{offerTemplateBean.offerServiceTemplate}"
-									label="#{messages['commons.validFrom']}" field="validity" childField="from" />
-								<hftl:formField
-									entity="#{offerTemplateBean.offerServiceTemplate}"
-									label="#{messages['commons.validTo']}" field="validity" childField="to"  />
+                            <p:outputPanel styleClass="form-panel-fields #{edit?'':' form-panel-fields-view'}">
+                                <hftl:formField entity="#{offerTemplateBean.offerServiceTemplate}" label="#{messages['offerServiceTemplate.serviceTemplate']}" id="serviceTemplateCode"
+                                    field="serviceTemplate" valueLabelField="code" popup="true" popupId="searchServiceTemplatePopup" required="true"
+                                    disabled="#{!offerTemplateBean.offerServiceTemplate.transient}" />
+                                <hftl:formField entity="#{offerTemplateBean.offerServiceTemplate}" label="#{messages['offerServiceTemplate.mandatory']}" id="mandatory" field="mandatory" />
+                                <hftl:formField entity="#{offerTemplateBean.offerServiceTemplate}" id="incompServices" label="#{messages['offerServiceTemplate.incompatibleServices']}"
+                                    field="incompatibleServices" listType="pickUpList" valueLabelField="code" required="false" dualListModel="#{offerTemplateBean.incompatibleServices}" newLine="true" />
+                                <hftl:formField entity="#{offerTemplateBean.offerServiceTemplate}" label="#{messages['commons.validFrom']}" field="validity" childField="from" />
+                                <hftl:formField entity="#{offerTemplateBean.offerServiceTemplate}" label="#{messages['commons.validTo']}" field="validity" childField="to" />
 
-								<h:panelGroup layout="block" styleClass="form-panel-actions">
-									<p:commandButton
-										value="#{messages[offerTemplateBean.offerServiceTemplate.id==null?'action.addSave':'action.update']}"
-										action="#{offerTemplateBean.saveOfferServiceTemplate()}"
-										update="offerServiceMessages :offerForm:tabView:offerServices :offerForm:tabView:offerServiceDetails"
-										rendered="#{offerTemplateBean.edit and offerTemplateBean.canUserUpdateEntity()}"
-										process="offerServiceDetails" />
+                                <h:panelGroup layout="block" styleClass="form-panel-actions">
+                                    <p:commandButton value="#{messages[offerTemplateBean.offerServiceTemplate.id==null?'action.addSave':'action.update']}"
+                                        action="#{offerTemplateBean.saveOfferServiceTemplate()}" update="offerServiceMessages :offerForm:tabView:offerServices :offerForm:tabView:offerServiceDetails"
+                                        rendered="#{offerTemplateBean.edit and offerTemplateBean.canUserUpdateEntity()}" process="offerServiceDetails" />
 
-									<p:commandButton value="#{messages['action.cancel']}"
-										action="#{offerTemplateBean.cancelOfferServiceTemplateEdit}"
-										update="offerServiceMessages :offerForm:tabView:offerServices :offerForm:tabView:offerServiceDetails"
-										rendered="#{offerTemplateBean.edit}" process="@this" />
-								</h:panelGroup>
+                                    <p:commandButton value="#{messages['action.cancel']}" action="#{offerTemplateBean.cancelOfferServiceTemplateEdit}"
+                                        update="offerServiceMessages :offerForm:tabView:offerServices :offerForm:tabView:offerServiceDetails" rendered="#{offerTemplateBean.edit}" process="@this" />
+                                </h:panelGroup>
 
-							</p:outputPanel>
-						</p:panel>
-					</h:panelGroup>
-				</p:tab>
+                            </p:outputPanel>
+                        </p:panel>
+                    </h:panelGroup>
+                </p:tab>
 
-				<p:tab title="#{messages['menu.productTemplates']}">
-					<ui:include src="productTemplateTab.xhtml">
-						<ui:param name="backingBean" value="#{offerTemplateBean}" />
-						<ui:param name="formId" value=":offerForm" />
-					</ui:include>
-				</p:tab>
-			</p:tabView>
-		</hftl:formPanel>
+                <p:tab title="#{messages['menu.productTemplates']}">
+                    <ui:include src="productTemplateTab.xhtml">
+                        <ui:param name="backingBean" value="#{offerTemplateBean}" />
+                        <ui:param name="formId" value=":offerForm" />
+                    </ui:include>
+                </p:tab>
+            </p:tabView>
+        </hftl:formPanel>
 
-	</ui:define>
+    </ui:define>
 </ui:composition>

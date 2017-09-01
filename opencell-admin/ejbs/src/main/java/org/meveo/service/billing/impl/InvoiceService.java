@@ -93,9 +93,7 @@ import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.RejectedBillingAccount;
 import org.meveo.model.billing.Sequence;
-import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
-import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.crm.Customer;
@@ -107,7 +105,6 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.order.OrderService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -171,15 +168,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @Inject
     private ServiceSingleton serviceSingleton;
-    
-    @Inject 
-    private CustomFieldInstanceService customFieldInstanceService;
 
     private String PDF_DIR_NAME = "pdf";
     private String ADJUSTEMENT_DIR_NAME = "invoiceAdjustmentPdf";
     private String INVOICE_TEMPLATE_FILENAME = "invoice.jasper";
     private String DATE_PATERN = "yyyy.MM.dd";
-    
+
     private Map<String, JasperReport> jasperReportMap = new HashMap<>();
 
     public Invoice getInvoice(String invoiceNumber, CustomerAccount customerAccount) throws BusinessException {
@@ -275,7 +269,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     private void assignInvoiceNumberFromReserve(Invoice invoice, InvoicesToNumberInfo invoicesToNumberInfo) throws BusinessException {
 
-    	long startDate = System.currentTimeMillis();
+        long startDate = System.currentTimeMillis();
         String prefix = invoicesToNumberInfo.getNumberingSequence().getPrefixEL();
         log.debug("After prefix:" + (System.currentTimeMillis() - startDate));
         if (prefix != null && !StringUtils.isBlank(prefix)) {
@@ -322,9 +316,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Invoice createAgregatesAndInvoice(Long billingAccountId, BillingRun billingRun, Filter ratedTransactionFilter, String orderNumber, Date invoiceDate,
             Date lastTransactionDate) throws BusinessException {
-       	long startDate = System.currentTimeMillis();
-        
-        
+        long startDate = System.currentTimeMillis();
+
         Invoice invoice = null;
 
         log.debug("createAgregatesAndInvoice billingAccount={} , billingRunId={} , ratedTransactionFilter={} , orderNumber{}, lastTransactionDate={} ,invoiceDate={} ",
@@ -357,7 +350,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         try {
 
-            
             BillingCycle billingCycle = billingRun == null ? billingAccount.getBillingCycle() : billingRun.getBillingCycle();
             if (billingCycle == null) {
                 billingCycle = billingAccount.getBillingCycle();
@@ -376,15 +368,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
             if (billingRun != null) {
                 invoice.setBillingRun(em.getReference(BillingRun.class, billingRun.getId()));
             }
-            
+
             log.debug("After  billingRun:" + (System.currentTimeMillis() - startDate));
-            
+
             invoice.setInvoiceDate(invoiceDate);
 
             PaymentMethod paymentMethod = null;
             Order order = null;
             if (orderNumber != null) {
-            	log.debug("Before  findByCodeOrExternalId:" + (System.currentTimeMillis() - startDate));
+                log.debug("Before  findByCodeOrExternalId:" + (System.currentTimeMillis() - startDate));
                 order = orderService.findByCodeOrExternalId(orderNumber);
                 log.debug("After  findByCodeOrExternalId:" + (System.currentTimeMillis() - startDate));
                 if (order != null) {
@@ -393,14 +385,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
             log.debug("Before  paymentMethod:" + (System.currentTimeMillis() - startDate));
             if (paymentMethod == null) {
-            	
-            	List<PaymentMethod> paymentMethods = customerAccountService.getPaymentMethods(billingAccount);
-            	if (paymentMethods != null && paymentMethods.size() > 0) {
-            		paymentMethod = paymentMethods.get(0);
-            		
-            	}
-            	//paymentMethod = billingAccount.getCustomerAccount().getPreferredPaymentMethod();
-                
+
+                List<PaymentMethod> paymentMethods = customerAccountService.getPaymentMethods(billingAccount);
+                if (paymentMethods != null && paymentMethods.size() > 0) {
+                    paymentMethod = paymentMethods.get(0);
+
+                }
+                // paymentMethod = billingAccount.getCustomerAccount().getPreferredPaymentMethod();
+
             }
             log.debug("After  paymentMethod:" + (System.currentTimeMillis() - startDate));
             if (paymentMethod != null) {
@@ -411,7 +403,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             if (order != null && !StringUtils.isBlank(order.getDueDateDelayEL())) {
                 delay = evaluateIntegerExpression(order.getDueDateDelayEL(), billingAccount, invoice, order);
             } else {
-            	log.debug("After  else:" + (System.currentTimeMillis() - startDate));
+                log.debug("After  else:" + (System.currentTimeMillis() - startDate));
                 if (!StringUtils.isBlank(billingAccount.getCustomerAccount().getDueDateDelayEL())) {
                     delay = evaluateIntegerExpression(billingAccount.getCustomerAccount().getDueDateDelayEL(), billingAccount, invoice, null);
                 } else if (!StringUtils.isBlank(billingCycle.getDueDateDelayEL())) {
@@ -433,14 +425,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
             // Note that rated transactions get updated in
             // ratedTransactionservice in case of Filter or orderNumber not empty
             if (ratedTransactionFilter == null && StringUtils.isBlank(orderNumber)) {
-            	log.debug("Before  RatedTransaction invoice:" + (System.currentTimeMillis() - startDate));
+                log.debug("Before  RatedTransaction invoice:" + (System.currentTimeMillis() - startDate));
                 Query query = em.createNamedQuery("RatedTransaction.updateInvoiced" + (billingRun == null ? "NoBR" : "")).setParameter("billingAccount", billingAccount)
                     .setParameter("lastTransactionDate", lastTransactionDate).setParameter("invoice", invoice);
                 if (billingRun != null) {
                     query = query.setParameter("billingRun", billingRun);
                 }
                 query.executeUpdate();
-                
+
                 log.debug("After  RatedTransaction invoice:" + (System.currentTimeMillis() - startDate));
             }
 
@@ -461,7 +453,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 orderNums = new ArrayList<String>();
                 orderNums.add(orderNumber);
             } else {
-            	log.debug("Before  commit:" + (System.currentTimeMillis() - startDate));
+                log.debug("Before  commit:" + (System.currentTimeMillis() - startDate));
                 ratedTransactionService.commit();
                 log.debug("After  commit:" + (System.currentTimeMillis() - startDate));
                 orderNums = (List<String>) getEntityManager().createNamedQuery("RatedTransaction.getDistinctOrderNumsByInvoice", String.class).setParameter("invoice", invoice)
@@ -470,9 +462,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 if (orderNums != null && orderNums.size() == 1 && orderNums.get(0) == null) {
                     orderNums = null;
                 }
-                
+
             }
-            
+
             log.debug("After  orderNums:" + (System.currentTimeMillis() - startDate));
             if (orderNums != null && !orderNums.isEmpty()) {
                 List<Order> orders = new ArrayList<Order>();
@@ -562,7 +554,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @throws BusinessException
      */
     public void produceInvoicePdfNoUpdate(Invoice invoice) throws BusinessException {
-    	long startDate = System.currentTimeMillis();
+        long startDate = System.currentTimeMillis();
         String meveoDir = paramBean.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator;
         String invoiceXmlFileName = getFullXmlFilePath(invoice, false);
         Map<String, Object> parameters = pDFParametersConstruction.constructParameters(invoice);
@@ -577,7 +569,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (!invoiceXmlFile.exists()) {
             throw new InvoiceXmlNotFoundException("The xml invoice file " + invoiceXmlFileName + " doesn't exist.");
         }
-        
+
         log.debug("Before BillingAccount:" + (System.currentTimeMillis() - startDate));
         BillingAccount billingAccount = invoice.getBillingAccount();
         log.debug("After BillingAccount:" + (System.currentTimeMillis() - startDate));
@@ -585,7 +577,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (billingAccount != null && billingAccount.getBillingCycle() != null) {
             billingCycle = billingAccount.getBillingCycle();
         }
-        
+
         log.debug("After billingCycle:" + (System.currentTimeMillis() - startDate));
 
         String billingTemplateName = InvoiceService.getInvoiceTemplateName(billingCycle, invoice.getInvoiceType());
@@ -595,7 +587,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         String pdfFileName = getFullPdfFilePath(invoice, true);
 
         try {
-        	log.debug("After pdfFileName:" + (System.currentTimeMillis() - startDate));
+            log.debug("After pdfFileName:" + (System.currentTimeMillis() - startDate));
             File destDir = new File(resDir + File.separator + billingTemplateName + File.separator + "pdf");
 
             if (!destDir.exists()) {
@@ -612,23 +604,23 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     sourceFile = new File(vfPath.getPath());
 
                     if (!sourceFile.exists()) {
-                    	
-                    	sourcePath = Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath() + "/default/invoice" ;
+
+                        sourcePath = Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath() + "/default/invoice";
                         sourceFile = new File(sourcePath);
-                    	
+
                         if (!sourceFile.exists()) {
-                        	throw new BusinessException("embedded jasper report for invoice is missing..");
+                            throw new BusinessException("embedded jasper report for invoice is missing..");
                         }
                     }
                 }
                 destDir.mkdirs();
                 FileUtils.copyDirectory(sourceFile, destDir);
-                
+
                 log.debug("After FileUtils:" + (System.currentTimeMillis() - startDate));
             }
             File destDirInvoiceAdjustment = new File(resDir + File.separator + billingTemplateName + File.separator + "invoiceAdjustmentPdf");
             if (!destDirInvoiceAdjustment.exists()) {
-            	log.debug("Inside destDirInvoiceAdjustment:" + (System.currentTimeMillis() - startDate));
+                log.debug("Inside destDirInvoiceAdjustment:" + (System.currentTimeMillis() - startDate));
                 destDirInvoiceAdjustment.mkdirs();
                 String sourcePathInvoiceAdjustment = Thread.currentThread().getContextClassLoader().getResource("./jasper/" + billingTemplateName + "/invoiceAdjustment").getPath();
                 File sourceFileInvoiceAdjustment = new File(sourcePathInvoiceAdjustment);
@@ -638,31 +630,31 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     URL vfPath = VFSUtils.getPhysicalURL(vfDir);
                     sourceFileInvoiceAdjustment = new File(vfPath.getPath());
                     if (!sourceFileInvoiceAdjustment.exists()) {
-                    	
-                    	URL resource = Thread.currentThread().getContextClassLoader().getResource("./jasper/" + billingTemplateName + "/invoiceAdjustment");
-                        
-                        if(resource == null)
-                        	resource = Thread.currentThread().getContextClassLoader().getResource("./jasper/default/invoiceAdjustment");
-                        
-                        if(resource == null)
-                        	throw new BusinessException("embedded InvoiceAdjustment jasper report for invoice is missing!");
-                      
+
+                        URL resource = Thread.currentThread().getContextClassLoader().getResource("./jasper/" + billingTemplateName + "/invoiceAdjustment");
+
+                        if (resource == null)
+                            resource = Thread.currentThread().getContextClassLoader().getResource("./jasper/default/invoiceAdjustment");
+
+                        if (resource == null)
+                            throw new BusinessException("embedded InvoiceAdjustment jasper report for invoice is missing!");
+
                         sourcePathInvoiceAdjustment = resource.getPath();
-                        
+
                         if (!sourceFileInvoiceAdjustment.exists()) {
-                        	throw new BusinessException("embedded jasper report for invoice is missing.");
+                            throw new BusinessException("embedded jasper report for invoice is missing.");
                         }
-                        
+
                     }
                 }
                 FileUtils.copyDirectory(sourceFileInvoiceAdjustment, destDirInvoiceAdjustment);
-                
+
             }
 
             log.debug("Before customerAccount:" + (System.currentTimeMillis() - startDate));
             CustomerAccount customerAccount = billingAccount.getCustomerAccount();
             log.debug("After customerAccount:" + (System.currentTimeMillis() - startDate));
-			PaymentMethod preferedPaymentMethod = customerAccount.getPreferredPaymentMethod();
+            PaymentMethod preferedPaymentMethod = customerAccount.getPreferredPaymentMethod();
             PaymentMethodEnum paymentMethodEnum = null;
             if (preferedPaymentMethod != null) {
                 paymentMethodEnum = preferedPaymentMethod.getPaymentType();
@@ -680,7 +672,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             Document xmlDocument = db.parse(invoiceXmlFile);
             xmlDocument.getDocumentElement().normalize();
             Node invoiceNode = xmlDocument.getElementsByTagName(INVOICE_TAG_NAME).item(0);
-            
+
             log.debug("After invoiceNode:" + (System.currentTimeMillis() - startDate));
 
             Transformer trans = TransformerFactory.newInstance().newTransformer();
@@ -701,20 +693,20 @@ public class InvoiceService extends PersistenceService<Invoice> {
             } else {
                 dataSource = new JRXmlDataSource(new ByteArrayInputStream(getNodeXmlString(invoiceNode).getBytes(StandardCharsets.UTF_8)), "/invoice");
             }
-            
+
             log.debug("After dataSource:" + (System.currentTimeMillis() - startDate));
 
             String path = jasperFile.getPath();
-			JasperReport jasperReport = jasperReportMap.get(path);
+            JasperReport jasperReport = jasperReportMap.get(path);
             if (jasperReport == null) {
-            	jasperReport = (JasperReport) JRLoader.loadObject(reportTemplate);
-            	jasperReportMap.put(path, jasperReport);
+                jasperReport = (JasperReport) JRLoader.loadObject(reportTemplate);
+                jasperReportMap.put(path, jasperReport);
             }
-            
+
             log.debug("After loadObject:" + (System.currentTimeMillis() - startDate));
 
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
-            
+
             log.debug("After jasperPrint:" + (System.currentTimeMillis() - startDate));
 
             JasperExportManager.exportReportToPdfFile(jasperPrint, pdfFileName);
@@ -723,9 +715,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 PdfWaterMark.add(pdfFileName, paramBean.getProperty("invoice.pdf.waterMark", "PROFORMA"), null);
             }
             invoice.setPdfGenerated(true);
-            
+
             log.debug("After setPdfGenerated:" + (System.currentTimeMillis() - startDate));
-            
+
         } catch (IOException | JRException | XPathExpressionException | TransformerException | ParserConfigurationException | SAXException e) {
             throw new BusinessException("Failed to generate a PDF file " + pdfFileName, e);
         }
@@ -1096,7 +1088,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void produceInvoiceXmlInNewTransaction(Long invoiceId) throws BusinessException {
-    	long startDate = System.currentTimeMillis();
+        long startDate = System.currentTimeMillis();
         Invoice invoice = findById(invoiceId);
         log.debug("Before produceInvoiceXml:" + (System.currentTimeMillis() - startDate));
         produceInvoiceXml(invoice);
@@ -1441,14 +1433,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void assignInvoiceNumberAndIncrementBAInvoiceDate(Long invoiceId, InvoicesToNumberInfo invoicesToNumberInfo) throws BusinessException {
 
-    	long startDate = System.currentTimeMillis();
+        long startDate = System.currentTimeMillis();
         Invoice invoice = findById(invoiceId);
         log.debug("After findById:" + (System.currentTimeMillis() - startDate));
         assignInvoiceNumberFromReserve(invoice, invoicesToNumberInfo);
         log.debug("After assignInvoiceNumberFromReserve:" + (System.currentTimeMillis() - startDate));
 
         BillingAccount billingAccount = invoice.getBillingAccount();
-        
+
         log.debug("After billingAccount:" + (System.currentTimeMillis() - startDate));
         Date initCalendarDate = billingAccount.getSubscriptionDate();
         if (initCalendarDate == null) {
@@ -1472,7 +1464,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public List<Long> getInvoiceIdsByBR(Long billingRunId) {
         return getEntityManager().createNamedQuery("Invoice.byBR", Long.class).setParameter("billingRunId", billingRunId).getResultList();
     }
-    
+
     /**
      * Get a summarized information for invoice numbering. Contains grouping by invoice type, seller, invoice date and a number of invoices
      * 

@@ -766,4 +766,23 @@
 
     
     
+    <changeSet id="#2761_20170831" author="AndriusKarpavicius">    
+        <addColumn tableName="cat_offer_template">
+            <column name="auto_renew" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="days_notify_renew" type="INT4" />
+            <column name="end_of_term_action" type="varchar(10)" />
+            <column name="auto_termin_reason_id" type="bigint" />
+            <column name="init_active_unit" type="varchar(5)" />
+            <column name="init_active" type="INT4" />
+            <column name="match_end_aggr_date" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="renew_for_unit" type="varchar(5)" />
+            <column name="renew_for" type="INT4" />   
+        </addColumn>
+    </changeSet>
+    
+     
 </databaseChangeLog> 

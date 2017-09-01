@@ -25,6 +25,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -34,6 +35,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -98,16 +100,19 @@ public class Subscription extends BusinessCFEntity {
     private Date subscribedTillDate;
 
     @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
+    @OrderBy("id")
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     private List<ServiceInstance> serviceInstances = new ArrayList<ServiceInstance>();
 
     @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
+    @OrderBy("id")
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     private List<ProductInstance> productInstances = new ArrayList<ProductInstance>();
 
     @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
+    @OrderBy("id")
     private List<Access> accessPoints = new ArrayList<Access>();
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -127,6 +132,7 @@ public class Subscription extends BusinessCFEntity {
     @Column(name = "default_level")
     private Boolean defaultLevel = true;
 
+    @Embedded
     private SubscriptionRenewal subscriptionRenewal = new SubscriptionRenewal();
 
     /**
