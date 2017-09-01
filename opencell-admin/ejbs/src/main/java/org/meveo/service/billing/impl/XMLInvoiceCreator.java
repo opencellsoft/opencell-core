@@ -1473,10 +1473,11 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 						}
 						
 						log.debug("Before walletOperation:" + (System.currentTimeMillis() - startDate));
-						ChargeInstance chargeInstance = walletOperation.getChargeInstance();
+						
 						if (!isVirtual) {
 							if (walletOperation != null) {
 								// Retrieve Service Instance
+								ChargeInstance chargeInstance = walletOperation.getChargeInstance();
 								ServiceInstance serviceInstance = null;
 								if (chargeInstance instanceof RecurringChargeInstance) {
 									serviceInstance = ((RecurringChargeInstance) walletOperation.getChargeInstance())
