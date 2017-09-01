@@ -128,8 +128,10 @@ public class PaymentMethodDto extends BaseDto {
 		this.info2 = paymentMethod.getInfo2();
 		this.info3 = paymentMethod.getInfo3();
 		this.info4 = paymentMethod.getInfo4();
-		this.info5 = paymentMethod.getInfo5();		
-		this.customerAccountCode = paymentMethod.getCustomerAccount().getCode();
+		this.info5 = paymentMethod.getInfo5();	
+		if(paymentMethod.getCustomerAccount() != null){
+			this.customerAccountCode = paymentMethod.getCustomerAccount().getCode();
+		}
 		if(paymentMethod instanceof DDPaymentMethod){
 			this.setPaymentMethodType(PaymentMethodEnum.DIRECTDEBIT);
 			this.mandateDate = ((DDPaymentMethod) paymentMethod).getMandateDate();
