@@ -156,7 +156,7 @@ public class AccountHierarchyDto implements Serializable {
     private int index;
 
     @XmlElementWrapper(name = "paymentMethods")
-    @XmlElement(name="paymentMethod")
+    @XmlElement(name="methodOfPayment")
     private List<PaymentMethodDto> paymentMethods;
 
     /**

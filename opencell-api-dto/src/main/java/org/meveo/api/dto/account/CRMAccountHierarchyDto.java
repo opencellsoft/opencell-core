@@ -72,7 +72,7 @@ public class CRMAccountHierarchyDto extends BaseDto {
     private DunningLevelEnum dunningLevel;
 
     @XmlElementWrapper(name = "paymentMethods")
-    @XmlElement(name="paymentMethod")
+    @XmlElement(name="methodOfPayment")
     private List<PaymentMethodDto> paymentMethods;
 
     /**
