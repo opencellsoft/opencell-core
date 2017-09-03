@@ -53,7 +53,7 @@ public class PricePlanMatrixDto extends BusinessDto {
 
     private String scriptInstance;
     
-    private CustomFieldsDto customFields = new CustomFieldsDto();
+    private CustomFieldsDto customFields;
     
     public PricePlanMatrixDto() {
 

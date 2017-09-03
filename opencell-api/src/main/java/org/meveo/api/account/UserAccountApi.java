@@ -342,7 +342,7 @@ public class UserAccountApi extends AccountEntityApi {
 				}
 
 				accountHierarchyApi.populateNameAddress(existedUserAccountDto, postData);
-				if(!StringUtils.isBlank(postData.getCustomFields())){
+				if (postData.getCustomFields()!=null && !postData.getCustomFields().isEmpty()) {
 					existedUserAccountDto.setCustomFields(postData.getCustomFields());
 				}
 				update(existedUserAccountDto);

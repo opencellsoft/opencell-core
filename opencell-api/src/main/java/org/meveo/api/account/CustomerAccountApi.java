@@ -626,7 +626,7 @@ public class CustomerAccountApi extends AccountEntityApi {
                 }
             }
             accountHierarchyApi.populateNameAddress(existedCustomerAccountDto, customerAccountDto);
-            if (StringUtils.isBlank(customerAccountDto.getCustomFields())) {
+            if (customerAccountDto.getCustomFields()!=null && !customerAccountDto.getCustomFields().isEmpty()) {
                 existedCustomerAccountDto.setCustomFields(customerAccountDto.getCustomFields());
             }
             update(existedCustomerAccountDto);

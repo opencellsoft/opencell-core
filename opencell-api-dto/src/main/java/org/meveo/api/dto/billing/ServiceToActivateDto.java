@@ -32,7 +32,7 @@ public class ServiceToActivateDto implements Serializable {
     private Date subscriptionDate;
     private ChargeInstanceOverridesDto chargeInstanceOverrides;
     
-    private CustomFieldsDto customFields = new CustomFieldsDto();
+    private CustomFieldsDto customFields;
 
     @XmlTransient
     // @ApiModelProperty(hidden = true)

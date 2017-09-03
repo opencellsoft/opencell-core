@@ -1019,7 +1019,7 @@ public class SubscriptionApi extends BaseApi {
                     existedSubscriptionDto.setEndAgreementDate(subscriptionDto.getEndAgreementDate());
                 }
 
-                if (!StringUtils.isBlank(subscriptionDto.getCustomFields())) {
+                if (subscriptionDto.getCustomFields()!=null && !subscriptionDto.getCustomFields().isEmpty()) {
                     existedSubscriptionDto.setCustomFields(subscriptionDto.getCustomFields());
                 }
                 update(existedSubscriptionDto);

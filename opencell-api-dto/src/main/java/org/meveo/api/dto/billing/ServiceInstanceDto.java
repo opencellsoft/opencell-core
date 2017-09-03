@@ -37,7 +37,7 @@ public class ServiceInstanceDto extends BusinessDto {
 
 	private Date endAgreementDate;
 
-	private CustomFieldsDto customFields = new CustomFieldsDto();
+	private CustomFieldsDto customFields;
 
 	@XmlElementWrapper(name = "recurringChargeInstances")
 	@XmlElement(name = "recurringChargeInstance")

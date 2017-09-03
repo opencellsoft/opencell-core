@@ -38,7 +38,7 @@ public class SubscriptionDto extends BusinessDto {
     private Date statusDate;
 
     @XmlElement(required = false)
-    private CustomFieldsDto customFields = new CustomFieldsDto();
+    private CustomFieldsDto customFields;
 
     @XmlElement(required = false)
     private AccessesDto accesses = new AccessesDto();

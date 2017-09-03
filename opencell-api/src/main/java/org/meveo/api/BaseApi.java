@@ -357,6 +357,10 @@ public abstract class BaseApi {
     protected void validateAndConvertCustomFields(Map<String, CustomFieldTemplate> customFieldTemplates, List<CustomFieldDto> customFieldDtos, boolean checkCustomFields,
             boolean isNewEntity, ICustomFieldEntity entity) throws MeveoApiException {
 
+        if (customFieldDtos==null){
+            return;
+        }
+        
         for (CustomFieldDto cfDto : customFieldDtos) {
             CustomFieldTemplate cft = customFieldTemplates.get(cfDto.getCode());
 

@@ -109,7 +109,7 @@ public class CRMAccountHierarchyDto extends BaseDto {
     private CustomFieldDto cfToAdd = new CustomFieldDto();
     private CustomFieldDto cfMapToAdd = new CustomFieldDto();
 
-    private CustomFieldsDto customFields = new CustomFieldsDto();
+    private CustomFieldsDto customFields;
 
     public String getCrmAccountType() {
         return crmAccountType;

@@ -27,7 +27,7 @@ public abstract class AccountDto extends BusinessDto {
 
 	@XmlElement(name = "businessAccountModel")
 	private BusinessEntityDto businessAccountModel;
-	private CustomFieldsDto customFields = new CustomFieldsDto();
+	private CustomFieldsDto customFields;
 	
 	@XmlTransient
 	protected boolean loaded = false;
