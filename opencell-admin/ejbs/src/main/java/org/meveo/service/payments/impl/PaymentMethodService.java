@@ -118,24 +118,36 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         if (!StringUtils.isBlank(cardPaymentMethod.getTokenId())) {
             return;
         }
-
-        cardPaymentMethod.setHiddenCardNumber(StringUtils.hideCardNumber(cardPaymentMethod.getCardNumber()));
-
-        String coutryCode = null;
-        Country country = countryService.findByName(customerAccount.getAddress() != null ? customerAccount.getAddress().getCountry() : null);
-        if (country != null) {
-            coutryCode = country.getCountryCode();
-        }
-        GatewayPaymentInterface gatewayPaymentInterface = gatewayPaymentFactory
-            .getInstance(GatewayPaymentNamesEnum.valueOf(ParamBean.getInstance().getProperty("meveo.gatewayPayment", "CUSTOM_API")));
-
         String cardNumber = cardPaymentMethod.getCardNumber();
         cardNumber = cardNumber.replaceAll(" ", "");
-        String tockenID = gatewayPaymentInterface.createCardToken(customerAccount, cardPaymentMethod.getAlias(), cardNumber, cardPaymentMethod.getOwner(),
-            StringUtils.getLongAsNChar(cardPaymentMethod.getMonthExpiration(), 2) + StringUtils.getLongAsNChar(cardPaymentMethod.getYearExpiration(), 2),
-            cardPaymentMethod.getIssueNumber(), cardPaymentMethod.getCardType().getId(), coutryCode);
 
-        cardPaymentMethod.setTokenId(tockenID);
+        cardPaymentMethod.setHiddenCardNumber(StringUtils.hideCardNumber(cardNumber));
+
+        String coutryCode = null;       
+    	if(customerAccount.getBillingAccounts() != null && !customerAccount.getBillingAccounts().isEmpty()){
+    		if(customerAccount.getBillingAccounts().get(0).getTradingCountry() != null){
+    			coutryCode = customerAccount.getBillingAccounts().get(0).getTradingCountry().getCountryCode();
+    		}
+    	}
+        
+        GatewayPaymentInterface gatewayPaymentInterface = null;
+        try{
+        
+         gatewayPaymentInterface = gatewayPaymentFactory
+            .getInstance(GatewayPaymentNamesEnum.valueOf(ParamBean.getInstance().getProperty("meveo.gatewayPayment", "CUSTOM_API")));
+        }catch (Exception e) {
+        	log.warn("Cant find payment gateway");
+		}
+
+        if(gatewayPaymentInterface != null){
+	        String tockenID = gatewayPaymentInterface.createCardToken(customerAccount, cardPaymentMethod.getAlias(), cardNumber, cardPaymentMethod.getOwner(),
+	            StringUtils.getLongAsNChar(cardPaymentMethod.getMonthExpiration(), 2) + StringUtils.getLongAsNChar(cardPaymentMethod.getYearExpiration(), 2),
+	            cardPaymentMethod.getIssueNumber(), cardPaymentMethod.getCardType().getId(), coutryCode);
+	
+	        cardPaymentMethod.setTokenId(tockenID);
+        }else{
+        	cardPaymentMethod.setTokenId("no token");
+        }
     }
 
     public CardPaymentMethod findByTokenId(String tokenId) {

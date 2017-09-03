@@ -34,9 +34,9 @@ public class GatewayPaymentFactory implements Serializable {
      * @param gatewayPaymentName
      * @return
      * @throws InvalidScriptException
-     * @throws ElementNotFoundException
+     * @throws Exception
      */
-    public GatewayPaymentInterface getInstance(GatewayPaymentNamesEnum gatewayPaymentName) throws ElementNotFoundException, InvalidScriptException {
+    public GatewayPaymentInterface getInstance(GatewayPaymentNamesEnum gatewayPaymentName) throws Exception, InvalidScriptException {
         GatewayPaymentInterface gatewayPaymentInterface = null;
         if (GatewayPaymentNamesEnum.INGENICO_GC.name().equals(gatewayPaymentName.name())) {
             gatewayPaymentInterface = new IngenicoGatewayPayment();
@@ -48,7 +48,7 @@ public class GatewayPaymentFactory implements Serializable {
             }
         }
         if (gatewayPaymentInterface == null) {
-            throw new ElementNotFoundException(gatewayPaymentName.name(), "Payment gateway");
+            throw new Exception("Payment gateway with code=" + gatewayPaymentName.name() + " not found" );
         }
         return gatewayPaymentInterface;
 
