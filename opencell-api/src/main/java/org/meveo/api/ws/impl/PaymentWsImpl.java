@@ -53,7 +53,7 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            paymentApi.createPayment(postData);
+        	result.setMessage(""+paymentApi.createPayment(postData));
         } catch (Exception e) {
             processException(e, result);
         }
