@@ -55,7 +55,6 @@ public class CatalogApi extends BaseApi {
         for (OfferTemplate offerTemplate : offerTemplates) {
             List<ProductOfferingPrice> offerPrices = getOfferPrices(offerTemplate);
             ProductOffering productOffering = new ProductOffering(offerTemplate, uriInfo, category, offerPrices);
-            productOffering.setProductOfferingPrice(getOfferPrices(offerTemplate));
             productOfferings.add(productOffering);
         }
         return productOfferings;
@@ -70,9 +69,11 @@ public class CatalogApi extends BaseApi {
             ServiceTemplate serviceTemplate = offerServiceTemplate.getServiceTemplate();
             offerPrices.addAll(getProductOfferingPricesFromSubscriptionCharges(offerTemplate, serviceTemplate));
             offerPrices.addAll(getProductOfferingPricesFromRecurringCharges(offerTemplate, serviceTemplate));
-            offerPrices.addAll(getProductOfferingPricesFromOfferProducts(offerTemplate, serviceTemplate));
         }
-
+        for (OfferProductTemplate offerProductTemplate : offerTemplate.getOfferProductTemplates()) {
+            ProductTemplate productTemplate = offerProductTemplate.getProductTemplate();
+            offerPrices.addAll(getProductOfferingPricesFromOfferProducts(offerTemplate, productTemplate));
+        }
         return offerPrices;
     }
 
@@ -83,9 +84,9 @@ public class CatalogApi extends BaseApi {
             price.setDutyFreeAmount(new BigDecimal(0));
             price.setTaxIncludedAmount(new BigDecimal(0));
 
-			String chargeCode = null;
+            String chargeCode = null;
             for (ServiceChargeTemplateSubscription serviceChargeTemplateSubscription : serviceTemplate.getServiceSubscriptionCharges()) {
-				
+
                 if (serviceChargeTemplateSubscription.getChargeTemplate().getInvoiceSubCategory().getInvoiceSubcategoryCountries() != null
                         && serviceChargeTemplateSubscription.getChargeTemplate().getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax() != null) {
                     price.setTaxRate(serviceChargeTemplateSubscription.getChargeTemplate().getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax().getPercent());
@@ -132,7 +133,7 @@ public class CatalogApi extends BaseApi {
         if (serviceTemplate.getServiceRecurringCharges() != null) {
             ProductOfferingPrice offerPrice = null;
             Price price = null;
-			String chargeCode = null;
+            String chargeCode = null;
             for (ServiceChargeTemplateRecurring serviceChargeTemplateRecurring : serviceTemplate.getServiceRecurringCharges()) {
 
                 price = new Price();
@@ -140,7 +141,7 @@ public class CatalogApi extends BaseApi {
                 price.setTaxIncludedAmount(new BigDecimal(0));
 
                 chargeCode = serviceChargeTemplateRecurring.getChargeTemplate().getCode();
-                
+
                 if (serviceChargeTemplateRecurring.getChargeTemplate().getInvoiceSubCategory().getInvoiceSubcategoryCountries() != null
                         && serviceChargeTemplateRecurring.getChargeTemplate().getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax() != null) {
                     price.setTaxRate(serviceChargeTemplateRecurring.getChargeTemplate().getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax().getPercent());
@@ -183,44 +184,34 @@ public class CatalogApi extends BaseApi {
         return offerPrices;
     }
 
-    private List<ProductOfferingPrice> getProductOfferingPricesFromOfferProducts(OfferTemplate offerTemplate, ServiceTemplate serviceTemplate) {
-        List<ProductOfferingPrice> productOfferingPrices = new ArrayList<>();
-        List<OfferProductTemplate> offerProductTemplates = offerTemplate.getOfferProductTemplates();
-
-        if (offerProductTemplates == null || offerProductTemplates.isEmpty()) {
-            return productOfferingPrices;
-        }
-
-        for (OfferProductTemplate offerProductTemplate : offerProductTemplates) {
-
-            // load all prices from the offer template
-            OfferTemplate productOfferTemplate = offerProductTemplate.getOfferTemplate();
-            productOfferingPrices.addAll(getOfferPrices(productOfferTemplate));
-
-            // load the prices form the product template
-            ProductTemplate productTemplate = offerProductTemplate.getProductTemplate();
-            List<ProductChargeTemplate> productChargeTemplates = productTemplate.getProductChargeTemplates();
-
-            Price price = new Price();
-            price.setDutyFreeAmount(new BigDecimal(0));
-            price.setTaxIncludedAmount(new BigDecimal(0));
-
+    private List<ProductOfferingPrice> getProductOfferingPricesFromOfferProducts(OfferTemplate offerTemplate, ProductTemplate productTemplate) {
+        List<ProductOfferingPrice> offerPrices = new ArrayList<>();
+        if (productTemplate.getProductChargeTemplates() != null) {
+            ProductOfferingPrice offerPrice = null;
+            Price price = null;
             String chargeCode = null;
-            for (ProductChargeTemplate productChargeTemplate : productChargeTemplates) {
+            for (ProductChargeTemplate productChargeTemplate : productTemplate.getProductChargeTemplates()) {
+
+                price = new Price();
+                price.setDutyFreeAmount(new BigDecimal(0));
+                price.setTaxIncludedAmount(new BigDecimal(0));
+
                 chargeCode = productChargeTemplate.getCode();
+
                 if (productChargeTemplate.getInvoiceSubCategory().getInvoiceSubcategoryCountries() != null
                         && productChargeTemplate.getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax() != null) {
                     price.setTaxRate(productChargeTemplate.getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax().getPercent());
                 }
-				
-				List<PricePlanMatrix> pricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(offerTemplate.getCode(), chargeCode);
+
+                List<PricePlanMatrix> pricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(offerTemplate.getCode(), chargeCode);
                 if (pricePlans == null || pricePlans.isEmpty()) {
                     pricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(null, chargeCode);
                 }
                 if (pricePlans != null && !pricePlans.isEmpty()) {
                     price.setDutyFreeAmount(price.getDutyFreeAmount().add(pricePlans.get(0).getAmountWithoutTax()));
                     if (!appProvider.isEntreprise()) {
-                        price.setTaxIncludedAmount(price.getTaxIncludedAmount().add(pricePlans.get(0).getAmountWithTax()));
+                        price.setTaxIncludedAmount(
+                            price.getTaxIncludedAmount().add(pricePlans.get(0).getAmountWithTax() != null ? pricePlans.get(0).getAmountWithTax() : BigDecimal.ZERO));
                     }
                 }
 
@@ -234,16 +225,16 @@ public class CatalogApi extends BaseApi {
                         price.setTaxIncludedAmount(new BigDecimal(0));
                     }
                 }
+
+                offerPrice = new ProductOfferingPrice();
+                offerPrice.setPriceName(productTemplate.getCode());
+                offerPrice.setPriceType(ProductOfferingPriceType.ONE_TIME);
+                offerPrice.setPrice(price);
+                offerPrice.setPriceDescription(productTemplate.getDescriptionOrCode());
+                offerPrices.add(offerPrice);
             }
-
-            ProductOfferingPrice productOfferingPrice = new ProductOfferingPrice();
-            productOfferingPrice.setPriceName(serviceTemplate.getCode());
-            productOfferingPrice.setPriceType(ProductOfferingPriceType.ONE_TIME);
-            productOfferingPrice.setPrice(price);
-            productOfferingPrice.setPriceDescription(serviceTemplate.getDescriptionOrCode());
         }
-
-        return productOfferingPrices;
+        return offerPrices;
     }
 
     public ProductSpecification findProductSpecification(String code, Date validFrom, Date validTo, UriInfo uriInfo) throws EntityDoesNotExistsException {
