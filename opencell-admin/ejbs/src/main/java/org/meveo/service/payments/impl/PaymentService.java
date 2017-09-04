@@ -31,7 +31,6 @@ import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.api.dto.payment.PayByCardResponseDto;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.billing.Country;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
@@ -41,7 +40,6 @@ import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentStatusEnum;
-import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -58,9 +56,6 @@ public class PaymentService extends PersistenceService<Payment> {
 
     @Inject
     private MatchingCodeService matchingCodeService;
-
-    @Inject
-    private CountryService countryService;
 
     @Inject
     private GatewayPaymentFactory gatewayPaymentFactory;
@@ -177,12 +172,14 @@ public class PaymentService extends PersistenceService<Payment> {
             throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
 
     	String coutryCode = null;
-    	if(customerAccount.getBillingAccounts() != null && !customerAccount.getBillingAccounts().isEmpty()){
-    		if(customerAccount.getBillingAccounts().get(0).getTradingCountry() != null){
-    			coutryCode = customerAccount.getBillingAccounts().get(0).getTradingCountry().getCountryCode();
-    		}
+    	if(!customerAccount.isTransient()){
+	    	customerAccount =  customerAccountService.refreshOrRetrieve(customerAccount);
+	    	if(customerAccount.getBillingAccounts() != null && !customerAccount.getBillingAccounts().isEmpty()){
+	    		if(customerAccount.getBillingAccounts().get(0).getTradingCountry() != null){
+	    			coutryCode = customerAccount.getBillingAccounts().get(0).getTradingCountry().getCountryCode();
+	    		}
+	    	}
     	}
-        
         GatewayPaymentInterface gatewayPaymentInterface = null;
         try{        
 	         gatewayPaymentInterface = gatewayPaymentFactory

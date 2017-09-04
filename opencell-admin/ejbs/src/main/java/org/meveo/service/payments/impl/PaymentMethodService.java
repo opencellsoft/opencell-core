@@ -28,11 +28,9 @@ import org.meveo.admin.exception.ValidationException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.billing.Country;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
-import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -42,7 +40,7 @@ import org.meveo.service.base.PersistenceService;
 public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 
     @Inject
-    private CountryService countryService;
+    private CustomerAccountService customerAccountService;
 
     @Inject
     private GatewayPaymentFactory gatewayPaymentFactory;
@@ -123,12 +121,15 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 
         cardPaymentMethod.setHiddenCardNumber(StringUtils.hideCardNumber(cardNumber));
 
-        String coutryCode = null;       
-    	if(customerAccount.getBillingAccounts() != null && !customerAccount.getBillingAccounts().isEmpty()){
-    		if(customerAccount.getBillingAccounts().get(0).getTradingCountry() != null){
-    			coutryCode = customerAccount.getBillingAccounts().get(0).getTradingCountry().getCountryCode();
-    		}
-    	}
+        String coutryCode = null;  
+        if(!customerAccount.isTransient()){        	       
+	        customerAccount =  customerAccountService.refreshOrRetrieve(customerAccount);
+	    	if(customerAccount.getBillingAccounts() != null && !customerAccount.getBillingAccounts().isEmpty()){
+	    		if(customerAccount.getBillingAccounts().get(0).getTradingCountry() != null){
+	    			coutryCode = customerAccount.getBillingAccounts().get(0).getTradingCountry().getCountryCode();
+	    		}
+	    	}
+        }
         
         GatewayPaymentInterface gatewayPaymentInterface = null;
         try{
