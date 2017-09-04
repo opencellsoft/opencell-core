@@ -8,23 +8,26 @@ import javax.jws.WebService;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.payment.CardPaymentMethodDto;
 import org.meveo.api.dto.payment.CardPaymentMethodTokenDto;
 import org.meveo.api.dto.payment.CardPaymentMethodTokensDto;
-import org.meveo.api.dto.payment.PaymentMethodTokenDto;
-import org.meveo.api.dto.payment.PaymentMethodTokensDto;
 import org.meveo.api.dto.payment.DDRequestLotOpDto;
 import org.meveo.api.dto.payment.PayByCardDto;
 import org.meveo.api.dto.payment.PayByCardResponseDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
+import org.meveo.api.dto.payment.PaymentMethodTokenDto;
+import org.meveo.api.dto.payment.PaymentMethodTokensDto;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
+import org.meveo.api.dto.response.payment.CreditCategoriesResponseDto;
+import org.meveo.api.dto.response.payment.CreditCategoryResponseDto;
 import org.meveo.api.dto.response.payment.DDRequestLotOpsResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
-
-import org.meveo.api.payment.PaymentMethodApi;
+import org.meveo.api.payment.CreditCategoryApi;
 import org.meveo.api.payment.DDRequestLotOpApi;
 import org.meveo.api.payment.PaymentApi;
+import org.meveo.api.payment.PaymentMethodApi;
 import org.meveo.api.ws.PaymentWs;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -41,6 +44,9 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
    
     @Inject
     private DDRequestLotOpApi ddrequestLotOpApi;
+    
+    @Inject
+    private CreditCategoryApi creditCategoryApi;
 
     @Override
     public ActionStatus create(PaymentDto postData) {
@@ -252,4 +258,82 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
 
         return response;
     }
+
+	@Override
+	public ActionStatus createCreditCategory(CreditCategoryDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			creditCategoryApi.create(postData);
+		} catch (Exception e) {
+			processException(e, result);
+		}
+
+		return result;
+	}
+
+	@Override
+	public ActionStatus updateCreditCategory(CreditCategoryDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			creditCategoryApi.update(postData);
+		} catch (Exception e) {
+			processException(e, result);
+		}
+
+		return result;
+	}
+	
+	@Override
+	public ActionStatus createOrUpdateCreditCategory(CreditCategoryDto postData) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			creditCategoryApi.createOrUpdate(postData);
+		} catch (Exception e) {
+			processException(e, result);
+		}
+
+		return result;
+	}
+
+	@Override
+	public CreditCategoryResponseDto findCreditCategory(String creditCategoryCode) {
+		CreditCategoryResponseDto result = new CreditCategoryResponseDto();
+
+		try {
+			result.setCreditCategory(creditCategoryApi.find(creditCategoryCode));
+		} catch (Exception e) {
+			processException(e, result.getActionStatus());
+		}
+
+		return result;
+	}
+
+	@Override
+	public CreditCategoriesResponseDto listCreditCategory() {
+		CreditCategoriesResponseDto result = new CreditCategoriesResponseDto();
+
+		try {
+			result.setCreditCategories(creditCategoryApi.list());
+		} catch (Exception e) {
+			processException(e, result.getActionStatus());
+		}
+
+		return result;
+	}
+	
+	@Override
+	public ActionStatus removeCreditCategory(String creditCategoryCode) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		try {
+			creditCategoryApi.remove(creditCategoryCode);
+		} catch (Exception e) {
+			processException(e, result);
+		}
+
+		return result;
+	}
 }

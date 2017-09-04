@@ -7,6 +7,7 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 
 import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.payment.CardPaymentMethodDto;
 import org.meveo.api.dto.payment.CardPaymentMethodTokenDto;
 import org.meveo.api.dto.payment.CardPaymentMethodTokensDto;
@@ -18,6 +19,8 @@ import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokenDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
+import org.meveo.api.dto.response.payment.CreditCategoriesResponseDto;
+import org.meveo.api.dto.response.payment.CreditCategoryResponseDto;
 import org.meveo.api.dto.response.payment.DDRequestLotOpsResponseDto;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
 
@@ -167,4 +170,27 @@ public interface PaymentWs extends IBaseWs {
      */
     @WebMethod
     public PaymentMethodTokenDto findPaymentMethod(@WebParam(name = "id") Long id);
-   }
+    
+    /**
+     * Credit Category
+     */
+	@WebMethod
+	ActionStatus createCreditCategory(@WebParam(name = "postData") CreditCategoryDto postData);
+
+	@WebMethod
+	ActionStatus updateCreditCategory(@WebParam(name = "postData") CreditCategoryDto postData);
+
+	@WebMethod
+	ActionStatus createOrUpdateCreditCategory(@WebParam(name = "postData") CreditCategoryDto postData);
+	
+	@WebMethod
+	CreditCategoryResponseDto findCreditCategory(@WebParam(name = "creditCategoryCode") String creditCategoryCode);
+
+	@WebMethod
+	CreditCategoriesResponseDto listCreditCategory();
+	
+	@WebMethod
+	ActionStatus removeCreditCategory(@WebParam(name = "creditCategoryCode") String creditCategoryCode);
+    
+}
+
