@@ -218,4 +218,7 @@ public class StringUtils {
 
         return 0;
     }
+	public static String hideCardNumber(String cardNumber) {		
+		return (cardNumber != null && cardNumber.length() == 16) ? "************"+cardNumber.substring(12, 15): "invalid" ;
+	}
 }
