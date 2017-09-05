@@ -18,13 +18,10 @@
  */
 package org.meveo.service.billing.impl;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
-import javax.persistence.Query;
 
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.model.billing.TradingLanguage;
@@ -41,13 +38,11 @@ public class TradingLanguageService extends PersistenceService<TradingLanguage> 
      */
     public TradingLanguage findByTradingLanguageCode(String tradingLanguageCode) {
         try {
-            log.debug("findByTradingLanguageCode tradingLanguageCode={}", tradingLanguageCode);
-            Query query = getEntityManager().createQuery("select b from TradingLanguage b where b.language.languageCode = :tradingLanguageCode ");
-            query.setParameter("tradingLanguageCode", tradingLanguageCode);
-            return (TradingLanguage) query.getSingleResult();
+            return getEntityManager().createNamedQuery("TradingLanguage.getByCode", TradingLanguage.class).setParameter("tradingLanguageCode", tradingLanguageCode)
+                .getSingleResult();
 
         } catch (NoResultException e) {
-            log.warn("findByTradingLanguageCode not found : tradingLanguageCode={}", tradingLanguageCode);
+            log.warn("Trading language not found : language={}", tradingLanguageCode);
             return null;
         }
     }
@@ -60,9 +55,7 @@ public class TradingLanguageService extends PersistenceService<TradingLanguage> 
         return (List<TradingLanguage>) getEntityManager().createNamedQuery("TradingLanguage.getLanguagesNotAssociated", TradingLanguage.class).getResultList();
     }
 
-    public Set<String> listLanguageCodes() {
-        Set<String> codes = new HashSet<>();
-        codes.addAll(getEntityManager().createNamedQuery("TradingLanguage.languageCode", String.class).getResultList());
-        return codes;
+    public List<String> listLanguageCodes() {
+        return getEntityManager().createNamedQuery("TradingLanguage.languageCodes", String.class).getResultList();
     }
 }

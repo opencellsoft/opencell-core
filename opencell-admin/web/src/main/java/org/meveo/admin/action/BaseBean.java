@@ -898,7 +898,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         objectId = null;
     }
 
-    public Set<String> getProviderLanguages() {
+    public List<String> getProviderLanguages() {
         return tradingLanguageService.listLanguageCodes();
     }
 

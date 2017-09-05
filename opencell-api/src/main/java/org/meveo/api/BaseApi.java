@@ -976,7 +976,7 @@ public abstract class BaseApi {
             return null;
         }
 
-        Set<String> supportedLanguages = tradingLanguageService.listLanguageCodes();
+        List<String> supportedLanguages = tradingLanguageService.listLanguageCodes();
 
         Map<String, String> values = null;
         if (currentValues == null) {

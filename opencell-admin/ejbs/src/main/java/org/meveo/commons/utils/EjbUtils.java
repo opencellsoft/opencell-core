@@ -24,7 +24,6 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,6 +119,7 @@ public class EjbUtils {
     }
 
     public static boolean isRunningInClusterMode() {
-        return System.getProperty("jboss.node.name") != null;
+        String nodeName = System.getProperty("jboss.node.name");
+        return  nodeName!= null && nodeName.startsWith("opencell");
     }
 }

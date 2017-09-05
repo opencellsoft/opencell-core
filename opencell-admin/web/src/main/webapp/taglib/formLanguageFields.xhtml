@@ -72,7 +72,7 @@
         </div>
 
         <c:if test="#{multiLang}">
-            <ui:repeat var="languageCode" value="#{backingBean.getProviderLanguages().toArray()}">
+            <ui:repeat var="languageCode" value="#{backingBean.providerLanguages}">
                 <div style="float: left">
                     <h:graphicImage value="/img/img#{languageCode}.png" style="height:17px; width:33px; margin-right:3px" />
                 </div>
