@@ -26,6 +26,7 @@ import java.util.Map;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -39,6 +40,7 @@ import javax.validation.constraints.Size;
 
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.annotation.ImageType;
+import org.meveo.model.billing.SubscriptionRenewal;
 import org.meveo.model.catalog.ChargeTemplate.ChargeTypeEnum;
 
 @Entity
@@ -46,96 +48,97 @@ import org.meveo.model.catalog.ChargeTemplate.ChargeTypeEnum;
 @DiscriminatorValue("OFFER")
 @ImageType
 @NamedQueries({ @NamedQuery(name = "OfferTemplate.countActive", query = "SELECT COUNT(*) FROM OfferTemplate WHERE disabled=false and businessOfferModel is not null"),
-		@NamedQuery(name = "OfferTemplate.countDisabled", query = "SELECT COUNT(*) FROM OfferTemplate WHERE disabled=true and businessOfferModel is not null"),
-		@NamedQuery(name = "OfferTemplate.countExpiring", query = "SELECT COUNT(*) FROM OfferTemplate WHERE :nowMinus1Day<validity.to and validity.to > NOW() and businessOfferModel is not null") })
+        @NamedQuery(name = "OfferTemplate.countDisabled", query = "SELECT COUNT(*) FROM OfferTemplate WHERE disabled=true and businessOfferModel is not null"),
+        @NamedQuery(name = "OfferTemplate.countExpiring", query = "SELECT COUNT(*) FROM OfferTemplate WHERE :nowMinus1Day<validity.to and validity.to > NOW() and businessOfferModel is not null") })
 public class OfferTemplate extends ProductOffering {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-//	@ManyToOne
-//	@JoinColumn(name = "cat_offer_template_cat_id")
-//	private OfferTemplateCategory offerTemplateCategory;
+    // @ManyToOne
+    // @JoinColumn(name = "cat_offer_template_cat_id")
+    // private OfferTemplateCategory offerTemplateCategory;
 
-	@ManyToOne
-	@JoinColumn(name = "business_offer_model_id")
-	private BusinessOfferModel businessOfferModel;
+    @ManyToOne
+    @JoinColumn(name = "business_offer_model_id")
+    private BusinessOfferModel businessOfferModel;
 
-	@OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade=CascadeType.ALL, orphanRemoval=true)
-	@OrderBy("id")
-	private List<OfferServiceTemplate> offerServiceTemplates = new ArrayList<OfferServiceTemplate>();
+    @OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id")
+    private List<OfferServiceTemplate> offerServiceTemplates = new ArrayList<OfferServiceTemplate>();
 
-	@OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade=CascadeType.ALL, orphanRemoval=true)
-	@OrderBy("id")
-	private List<OfferProductTemplate> offerProductTemplates = new ArrayList<OfferProductTemplate>();
+    @OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id")
+    private List<OfferProductTemplate> offerProductTemplates = new ArrayList<OfferProductTemplate>();
 
-	@Size(max = 2000)
-	@Column(name = "long_description", columnDefinition = "TEXT")
-	private String longDescription;
+    @Size(max = 2000)
+    @Column(name = "long_description", columnDefinition = "TEXT")
+    private String longDescription;
 
-	@Transient
-	public String prefix;
-	
-	@Transient
-	public Map<ChargeTypeEnum, List<ServiceTemplate>> serviceTemplatesByChargeType;
-	
-	@Transient
-	public List<ProductTemplate> productTemplates;
-	
-	@Transient
-	private String transientCode;
+    @Embedded
+    private SubscriptionRenewal subscriptionRenewal = new SubscriptionRenewal();
 
-	public List<OfferServiceTemplate> getOfferServiceTemplates() {
-		return offerServiceTemplates;
-	}
+    @Transient
+    public String prefix;
 
-	public void setOfferServiceTemplates(List<OfferServiceTemplate> offerServiceTemplates) {
-		this.offerServiceTemplates = offerServiceTemplates;
-	}
+    @Transient
+    public Map<ChargeTypeEnum, List<ServiceTemplate>> serviceTemplatesByChargeType;
 
-	public void addOfferServiceTemplate(OfferServiceTemplate offerServiceTemplate) {
-		if (getOfferServiceTemplates() == null) {
-			offerServiceTemplates = new ArrayList<OfferServiceTemplate>();
-		}
-		offerServiceTemplate.setOfferTemplate(this);
-		offerServiceTemplates.add(offerServiceTemplate);
-	}
-	
-	public void updateOfferServiceTemplate(OfferServiceTemplate offerServiceTemplate) {
-		int index = offerServiceTemplates.indexOf(offerServiceTemplate);
-		if (index >= 0) {
-			offerServiceTemplates.set(index, offerServiceTemplate);
-		}
-	}
+    @Transient
+    public List<ProductTemplate> productTemplates;
 
-	public BusinessOfferModel getBusinessOfferModel() {
-		return businessOfferModel;
-	}
+    @Transient
+    private String transientCode;
 
-	public void setBusinessOfferModel(BusinessOfferModel businessOfferModel) {
-		this.businessOfferModel = businessOfferModel;
-	}
+    public List<OfferServiceTemplate> getOfferServiceTemplates() {
+        return offerServiceTemplates;
+    }
 
-	/**
-	 * Check if offer contains a given service template
-	 *
-	 * @param serviceTemplate
-	 *            Service template to match
-	 * @return True if offer contains a given service template
-	 */
-	public boolean containsServiceTemplate(ServiceTemplate serviceTemplate) {
+    public void setOfferServiceTemplates(List<OfferServiceTemplate> offerServiceTemplates) {
+        this.offerServiceTemplates = offerServiceTemplates;
+    }
 
-		for (OfferServiceTemplate offerServiceTemplate : offerServiceTemplates) {
-			if (offerServiceTemplate.getServiceTemplate().equals(serviceTemplate)) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
+    public void addOfferServiceTemplate(OfferServiceTemplate offerServiceTemplate) {
+        if (getOfferServiceTemplates() == null) {
+            offerServiceTemplates = new ArrayList<OfferServiceTemplate>();
+        }
+        offerServiceTemplate.setOfferTemplate(this);
+        offerServiceTemplates.add(offerServiceTemplate);
+    }
+
+    public void updateOfferServiceTemplate(OfferServiceTemplate offerServiceTemplate) {
+        int index = offerServiceTemplates.indexOf(offerServiceTemplate);
+        if (index >= 0) {
+            offerServiceTemplates.set(index, offerServiceTemplate);
+        }
+    }
+
+    public BusinessOfferModel getBusinessOfferModel() {
+        return businessOfferModel;
+    }
+
+    public void setBusinessOfferModel(BusinessOfferModel businessOfferModel) {
+        this.businessOfferModel = businessOfferModel;
+    }
+
+    /**
+     * Check if offer contains a given service template
+     *
+     * @param serviceTemplate Service template to match
+     * @return True if offer contains a given service template
+     */
+    public boolean containsServiceTemplate(ServiceTemplate serviceTemplate) {
+
+        for (OfferServiceTemplate offerServiceTemplate : offerServiceTemplates) {
+            if (offerServiceTemplate.getServiceTemplate().equals(serviceTemplate)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Check if offer contains a given product template
      *
-     * @param productTemplate
-     *            Product template to match
+     * @param productTemplate Product template to match
      * @return True if offer contains a given product template
      */
     public boolean containsProductTemplate(ProductTemplate productTemplate) {
@@ -146,23 +149,23 @@ public class OfferTemplate extends ProductOffering {
             }
         }
         return false;
-    }	
+    }
 
-	public List<OfferProductTemplate> getOfferProductTemplates() {
-		return offerProductTemplates;
-	}
+    public List<OfferProductTemplate> getOfferProductTemplates() {
+        return offerProductTemplates;
+    }
 
-	public void setOfferProductTemplates(List<OfferProductTemplate> offerProductTemplates) {
-		this.offerProductTemplates = offerProductTemplates;
-	}
+    public void setOfferProductTemplates(List<OfferProductTemplate> offerProductTemplates) {
+        this.offerProductTemplates = offerProductTemplates;
+    }
 
-	public void addOfferProductTemplate(OfferProductTemplate offerProductTemplate) {
-		if (getOfferProductTemplates() == null) {
-			offerProductTemplates = new ArrayList<OfferProductTemplate>();
-		}
-		offerProductTemplate.setOfferTemplate(this);
-		offerProductTemplates.add(offerProductTemplate);
-	}
+    public void addOfferProductTemplate(OfferProductTemplate offerProductTemplate) {
+        if (getOfferProductTemplates() == null) {
+            offerProductTemplates = new ArrayList<OfferProductTemplate>();
+        }
+        offerProductTemplate.setOfferTemplate(this);
+        offerProductTemplates.add(offerProductTemplate);
+    }
 
     public void updateOfferProductTemplate(OfferProductTemplate offerProductTemplate) {
 
@@ -172,29 +175,37 @@ public class OfferTemplate extends ProductOffering {
         }
     }
 
-	public String getPrefix() {
-		return prefix;
-	}
+    public String getPrefix() {
+        return prefix;
+    }
 
-	public void setPrefix(String prefix) {
-		this.prefix = prefix;
-	}
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+    }
 
-	public String getLongDescription() {
-		return longDescription;
-	}
+    public String getLongDescription() {
+        return longDescription;
+    }
 
-	public void setLongDescription(String longDescription) {
-		this.longDescription = longDescription;
-	}
+    public void setLongDescription(String longDescription) {
+        this.longDescription = longDescription;
+    }
+
+    public SubscriptionRenewal getSubscriptionRenewal() {
+        return subscriptionRenewal;
+    }
+
+    public void setSubscriptionRenewal(SubscriptionRenewal subscriptionRenewal) {
+        this.subscriptionRenewal = subscriptionRenewal;
+    }
 
     @SuppressWarnings("rawtypes")
     public Map<ChargeTypeEnum, List<ServiceTemplate>> getServiceTemplatesByChargeType() {
-        
-        if (serviceTemplatesByChargeType!=null){
+
+        if (serviceTemplatesByChargeType != null) {
             return serviceTemplatesByChargeType;
         }
-        
+
         serviceTemplatesByChargeType = new HashMap<>();
 
         for (OfferServiceTemplate service : offerServiceTemplates) {
@@ -233,27 +244,27 @@ public class OfferTemplate extends ProductOffering {
 
         return serviceTemplatesByChargeType;
     }
-    
-	public List<ProductTemplate> getProductTemplates() {
-		if (productTemplates != null) {
-			return productTemplates;
-		}
 
-		productTemplates = new ArrayList<>();
+    public List<ProductTemplate> getProductTemplates() {
+        if (productTemplates != null) {
+            return productTemplates;
+        }
 
-		for (OfferProductTemplate prodTemplate : offerProductTemplates) {
-			prodTemplate.getProductTemplate().getProductChargeTemplates();
-			productTemplates.add(prodTemplate.getProductTemplate());
-		}
+        productTemplates = new ArrayList<>();
 
-		return productTemplates;
-	}
+        for (OfferProductTemplate prodTemplate : offerProductTemplates) {
+            prodTemplate.getProductTemplate().getProductChargeTemplates();
+            productTemplates.add(prodTemplate.getProductTemplate());
+        }
 
-	public String getTransientCode() {
-		return null;
-	}
+        return productTemplates;
+    }
 
-	public void setTransientCode(String transientCode) {
-		code = transientCode;
-	}
+    public String getTransientCode() {
+        return null;
+    }
+
+    public void setTransientCode(String transientCode) {
+        code = transientCode;
+    }
 }

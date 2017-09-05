@@ -26,7 +26,7 @@ public class TaxDto extends BusinessDto {
 	private String accountingCode;
 	private List<LanguageDescriptionDto> languageDescriptions;
 	
-	private CustomFieldsDto customFields = new CustomFieldsDto();
+	private CustomFieldsDto customFields;
 
 	public TaxDto() {
 

@@ -47,7 +47,7 @@ public class JobInstanceDto extends BusinessDto {
     /**
      * Custom fields
      */
-    private CustomFieldsDto customFields = new CustomFieldsDto();
+    private CustomFieldsDto customFields;
 
     /**
      * Job scheduling timer code

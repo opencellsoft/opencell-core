@@ -655,7 +655,7 @@ public class AccountHierarchyApi extends BaseApi {
 
         if (customers != null) {
             for (Customer cust : customers) {
-                if (postData.getCustomFields() == null || postData.getCustomFields().getCustomField() == null) {
+                if (postData.getCustomFields() == null || postData.getCustomFields().isEmpty()) {
                     result.getCustomer().add(customerToDto(cust));
                 } else {
                     for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
@@ -943,7 +943,7 @@ public class AccountHierarchyApi extends BaseApi {
             sellerDto.setLanguageCode(postData.getLanguage());
 
             CustomFieldsDto cfsDto = new CustomFieldsDto();
-            if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
+            if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
                 Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(Seller.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
                 for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
                     if (cfts.containsKey(cfDto.getCode())) {
@@ -980,7 +980,7 @@ public class AccountHierarchyApi extends BaseApi {
             customerDto.setExternalRef2(postData.getExternalRef2());
 
             CustomFieldsDto cfsDto = new CustomFieldsDto();
-            if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
+            if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
                 Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(Customer.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
                 for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
                     if (cfts.containsKey(cfDto.getCode())) {
@@ -1029,7 +1029,7 @@ public class AccountHierarchyApi extends BaseApi {
             // End compatibility with pre-4.6 versions
 
             CustomFieldsDto cfsDto = new CustomFieldsDto();
-            if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
+            if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
                 Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(CustomerAccount.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
                 for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
                     if (cfts.containsKey(cfDto.getCode())) {
@@ -1074,7 +1074,7 @@ public class AccountHierarchyApi extends BaseApi {
             billingAccountDto.setExternalRef2(postData.getExternalRef2());
 
             CustomFieldsDto cfsDto = new CustomFieldsDto();
-            if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
+            if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
                 Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(BillingAccount.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
                 for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
                     if (cfts.containsKey(cfDto.getCode())) {
@@ -1109,7 +1109,7 @@ public class AccountHierarchyApi extends BaseApi {
             userAccountDto.setExternalRef2(postData.getExternalRef2());
 
             CustomFieldsDto cfsDto = new CustomFieldsDto();
-            if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
+            if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
                 Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(UserAccount.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
                 for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
                     if (cfts.containsKey(cfDto.getCode())) {
@@ -1203,7 +1203,7 @@ public class AccountHierarchyApi extends BaseApi {
             sellerDto.setLanguageCode(postData.getLanguage());
 
             CustomFieldsDto cfsDto = new CustomFieldsDto();
-            if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
+            if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
                 Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(Seller.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
                 for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
                     if (cfts.containsKey(cfDto.getCode())) {
@@ -1240,7 +1240,7 @@ public class AccountHierarchyApi extends BaseApi {
             customerDto.setExternalRef2(postData.getExternalRef2());
 
             CustomFieldsDto cfsDto = new CustomFieldsDto();
-            if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
+            if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
                 Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(Customer.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
                 for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
                     if (cfts.containsKey(cfDto.getCode())) {
@@ -1290,7 +1290,7 @@ public class AccountHierarchyApi extends BaseApi {
             // End compatibility with pre-4.6 versions
 
             CustomFieldsDto cfsDto = new CustomFieldsDto();
-            if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
+            if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
                 Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(CustomerAccount.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
                 for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
                     if (cfts.containsKey(cfDto.getCode())) {
@@ -1333,7 +1333,7 @@ public class AccountHierarchyApi extends BaseApi {
             billingAccountDto.setExternalRef2(postData.getExternalRef2());
 
             CustomFieldsDto cfsDto = new CustomFieldsDto();
-            if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
+            if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
                 Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(BillingAccount.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
                 for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
                     if (cfts.containsKey(cfDto.getCode())) {
@@ -1368,7 +1368,7 @@ public class AccountHierarchyApi extends BaseApi {
             userAccountDto.setExternalRef2(postData.getExternalRef2());
 
             CustomFieldsDto cfsDto = new CustomFieldsDto();
-            if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
+            if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
                 Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(UserAccount.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
                 for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
                     if (cfts.containsKey(cfDto.getCode())) {

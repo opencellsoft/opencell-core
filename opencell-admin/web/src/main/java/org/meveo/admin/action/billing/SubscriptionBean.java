@@ -1041,4 +1041,12 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     public void updateSubscribedTillDate() {
         entity.updateSubscribedTillAndRenewalNotifyDates();
     }
+
+    /**
+     * Copy subscription renewal information from offer
+     */
+    public void copySubscriptionRenewalInfo() {
+        entity.setSubscriptionRenewal(entity.getOffer().getSubscriptionRenewal());
+        updateSubscribedTillDate();
+    }
 }

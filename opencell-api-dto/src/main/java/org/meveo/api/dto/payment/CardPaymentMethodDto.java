@@ -4,7 +4,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CreditCardTypeEnum;
 
@@ -21,8 +20,6 @@ public class CardPaymentMethodDto extends PaymentMethodDto {
 
     private static final long serialVersionUID = 1937059617391182742L;
 
-   
-    
     public CardPaymentMethodDto() {
 
     }
@@ -38,7 +35,7 @@ public class CardPaymentMethodDto extends PaymentMethodDto {
 
     public CardPaymentMethodDto(CardPaymentMethod paymentMethod) {
         super(paymentMethod);
-        setCardNumber(paymentMethod.getHiddenCardNumber());
+        setCardNumber("********" + paymentMethod.getHiddenCardNumber());
         setCardType(paymentMethod.getCardType());
         setMonthExpiration(paymentMethod.getMonthExpiration());
         setOwner(paymentMethod.getOwner());
@@ -47,30 +44,31 @@ public class CardPaymentMethodDto extends PaymentMethodDto {
         setUserId(paymentMethod.getUserId());
     }
 
-
     public CardPaymentMethodDto(PaymentMethodDto paymentMethod) {
-    	if(paymentMethod == null) return;
-		setAlias(paymentMethod.getAlias());
-		setPreferred(paymentMethod.isPreferred());
-		setCardNumber(paymentMethod.getCardNumber());
-		setCardType(paymentMethod.getCardType());
-		setCustomerAccountCode(paymentMethod.getCustomerAccountCode());
-		setId(paymentMethod.getId());
-		setIssueNumber(paymentMethod.getIssueNumber());
-		setMonthExpiration(paymentMethod.getMonthExpiration());
-		setYearExpiration(paymentMethod.getYearExpiration());
-		setTokenId(paymentMethod.getTokenId());
-		setOwner(paymentMethod.getOwner());
-	}
+        if (paymentMethod == null) {
+            return;
+        }
+        setAlias(paymentMethod.getAlias());
+        setPreferred(paymentMethod.isPreferred());
+        setCardNumber(paymentMethod.getCardNumber());
+        setCardType(paymentMethod.getCardType());
+        setCustomerAccountCode(paymentMethod.getCustomerAccountCode());
+        setId(paymentMethod.getId());
+        setIssueNumber(paymentMethod.getIssueNumber());
+        setMonthExpiration(paymentMethod.getMonthExpiration());
+        setYearExpiration(paymentMethod.getYearExpiration());
+        setTokenId(paymentMethod.getTokenId());
+        setOwner(paymentMethod.getOwner());
+    }
 
-	public CardPaymentMethod fromDto() {
+    public CardPaymentMethod fromDto() {
         CardPaymentMethod paymentMethod = new CardPaymentMethod(getAlias(), isPreferred());
 
         if (getTokenId() == null) {
             paymentMethod.setCardNumber(getCardNumber());
             paymentMethod.setIssueNumber(getIssueNumber());
         }
-        paymentMethod.setHiddenCardNumber(StringUtils.hideCardNumber(getCardNumber()));
+        paymentMethod.setHiddenCardNumber(CardPaymentMethod.hideCardNumber(getCardNumber()));
         paymentMethod.setOwner(getOwner());
         paymentMethod.setCardType(getCardType());
         paymentMethod.setPreferred(isPreferred());
@@ -79,5 +77,5 @@ public class CardPaymentMethodDto extends PaymentMethodDto {
         paymentMethod.setUserId(getUserId());
 
         return paymentMethod;
-    }   
+    }
 }

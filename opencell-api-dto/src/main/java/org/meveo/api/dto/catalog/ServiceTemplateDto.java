@@ -33,7 +33,7 @@ public class ServiceTemplateDto extends BusinessDto {
     private ServiceChargeTemplateTerminationsDto serviceChargeTemplateTerminations;
     private ServiceChargeTemplateUsagesDto serviceChargeTemplateUsages;
 
-    private CustomFieldsDto customFields = new CustomFieldsDto();
+    private CustomFieldsDto customFields;
 
     @Deprecated
     private boolean mandatory;

@@ -67,23 +67,23 @@ public class CardPaymentMethod extends PaymentMethod {
         this.preferred = preferred;
     }
 
-    public CardPaymentMethod(CustomerAccount customerAccount, String alias, String cardNumber, String owner,
-			boolean preferred, String issueNumber, Integer yearExpiration, Integer monthExpiration,CreditCardTypeEnum cardType) {
+    public CardPaymentMethod(CustomerAccount customerAccount, String alias, String cardNumber, String owner, boolean preferred, String issueNumber, Integer yearExpiration,
+            Integer monthExpiration, CreditCardTypeEnum cardType) {
         super();
         setPaymentType(PaymentMethodEnum.CARD);
         setAlias(alias);
         setPreferred(preferred);
         this.customerAccount = customerAccount;
         this.cardNumber = cardNumber;
-        this.hiddenCardNumber = org.meveo.commons.utils.StringUtils.hideCardNumber(cardNumber);
+        this.hiddenCardNumber = CardPaymentMethod.hideCardNumber(cardNumber);
         this.owner = owner;
         this.issueNumber = issueNumber;
-        this.yearExpiration = yearExpiration ;
+        this.yearExpiration = yearExpiration;
         this.monthExpiration = monthExpiration;
         this.cardType = cardType;
-	}
+    }
 
-	public String getTokenId() {
+    public String getTokenId() {
         return tokenId;
     }
 
@@ -186,7 +186,7 @@ public class CardPaymentMethod extends PaymentMethod {
         setCardNumber(otherPaymentMethod.getCardNumber());
         setIssueNumber(otherPaymentMethod.getIssueNumber());
 
-        setHiddenCardNumber(otherPaymentMethod.getCardNumber().substring(cardNumber.length() - 4));
+        setHiddenCardNumber(CardPaymentMethod.hideCardNumber(otherPaymentMethod.getCardNumber()));
         setOwner(otherPaymentMethod.getOwner());
         setCardType(otherPaymentMethod.getCardType());
         setPreferred(otherPaymentMethod.isPreferred());
@@ -216,7 +216,18 @@ public class CardPaymentMethod extends PaymentMethod {
     @Override
     public String toString() {
         return "CardPaymentMethod [tokenId=" + tokenId + ", cardType=" + cardType + ", owner=" + owner + ", monthExpiration=" + monthExpiration + ", yearExpiration="
-                + yearExpiration + ", hiddenCardNumber=" + hiddenCardNumber + ", userId=" + getUserId() + ", info1=" + getInfo1() + ", info2=" + getInfo2() + ", info3=" + getInfo3() + ", info4="
-                + getInfo4() + ", info5=" + getInfo5() + ", cardNumber=" + cardNumber + ", issueNumber=" + issueNumber + "]";
+                + yearExpiration + ", hiddenCardNumber=" + hiddenCardNumber + ", userId=" + getUserId() + ", info1=" + getInfo1() + ", info2=" + getInfo2() + ", info3="
+                + getInfo3() + ", info4=" + getInfo4() + ", info5=" + getInfo5() + ", cardNumber=" + cardNumber + ", issueNumber=" + issueNumber + "]";
+    }
+
+    public static String hideCardNumber(String cardNumber) {
+        if (cardNumber == null) {
+            return "invalid";
+        }
+        cardNumber = cardNumber.trim();
+        if (cardNumber.length() == 4 || cardNumber.length() == 16) {
+            return cardNumber.substring(cardNumber.length() - 4);
+        }
+        return "invalid";
     }
 }

@@ -1,6 +1,7 @@
 package org.meveo.service.script.service;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -46,8 +47,7 @@ public class ServiceModelScriptService implements Serializable {
         scriptInterface.activateServiceInstance(scriptContext);
     }
 
-    public void suspendServiceInstance(ServiceInstance entity, String scriptCode, Date suspensionDate) throws ElementNotFoundException, InvalidScriptException,
-            BusinessException {
+    public void suspendServiceInstance(ServiceInstance entity, String scriptCode, Date suspensionDate) throws ElementNotFoundException, InvalidScriptException, BusinessException {
         ServiceScriptInterface scriptInterface = (ServiceScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
         Map<String, Object> scriptContext = new HashMap<>();
         scriptContext.put(ServiceScript.CONTEXT_SUSPENSION_DATE, suspensionDate);
@@ -55,8 +55,8 @@ public class ServiceModelScriptService implements Serializable {
         scriptInterface.suspendServiceInstance(scriptContext);
     }
 
-    public void reactivateServiceInstance(ServiceInstance entity, String scriptCode, Date reactivationDate) throws ElementNotFoundException,
-            InvalidScriptException, BusinessException {
+    public void reactivateServiceInstance(ServiceInstance entity, String scriptCode, Date reactivationDate)
+            throws ElementNotFoundException, InvalidScriptException, BusinessException {
         ServiceScriptInterface scriptInterface = (ServiceScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
         Map<String, Object> scriptContext = new HashMap<>();
         scriptContext.put(ServiceScript.CONTEXT_ACTIVATION_DATE, reactivationDate);
@@ -74,20 +74,28 @@ public class ServiceModelScriptService implements Serializable {
         scriptContext.put(Script.CONTEXT_ENTITY, entity);
         scriptInterface.terminateServiceInstance(scriptContext);
     }
-    
+
     public void beforeCreateServiceFromBSM(List<CustomFieldDto> customFields, String scriptCode) throws ElementNotFoundException, InvalidScriptException, BusinessException {
         ServiceScriptInterface scriptInterface = (ServiceScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
         Map<String, Object> scriptContext = new HashMap<>();
-        scriptContext.put(ServiceScript.CONTEXT_PARAMETERS, customFields);
+        if (customFields != null) {
+            scriptContext.put(ServiceScript.CONTEXT_PARAMETERS, customFields);
+        } else {
+            scriptContext.put(ServiceScript.CONTEXT_PARAMETERS, new ArrayList<CustomFieldDto>());
+        }
         scriptInterface.beforeCreateServiceFromBSM(scriptContext);
     }
 
-    public void afterCreateServiceFromBSM(ServiceTemplate entity, List<CustomFieldDto> customFields, String scriptCode) throws ElementNotFoundException, InvalidScriptException, BusinessException {
+    public void afterCreateServiceFromBSM(ServiceTemplate entity, List<CustomFieldDto> customFields, String scriptCode)
+            throws ElementNotFoundException, InvalidScriptException, BusinessException {
         ServiceScriptInterface scriptInterface = (ServiceScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
         Map<String, Object> scriptContext = new HashMap<>();
         scriptContext.put(Script.CONTEXT_ENTITY, entity);
-        scriptContext.put(ServiceScript.CONTEXT_PARAMETERS, customFields);
+        if (customFields != null) {
+            scriptContext.put(ServiceScript.CONTEXT_PARAMETERS, customFields);
+        } else {
+            scriptContext.put(ServiceScript.CONTEXT_PARAMETERS, new ArrayList<CustomFieldDto>());
+        }
         scriptInterface.afterCreateServiceFromBSM(scriptContext);
     }
-    
 }

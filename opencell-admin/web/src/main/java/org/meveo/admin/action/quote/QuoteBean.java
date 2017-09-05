@@ -451,11 +451,30 @@ public class QuoteBean extends CustomFieldBean<Quote> {
 
         ProductOffering mainOffering = productOfferingService.refreshOrRetrieve(this.selectedQuoteItem.getMainOffering());
 
-        // Take offer characteristics from DTO
+        // Take offer characteristics from DTO or default them from offer
         Map<OrderProductCharacteristicEnum, Object> mainOfferCharacteristics = new HashMap<>();
         Subscription subscriptionEntity = null;
         if (quoteItemDto != null && quoteItemDto.getProduct() != null) {
             mainOfferCharacteristics = productCharacteristicsToMap(quoteItemDto.getProduct().getProductCharacteristic());
+        
+            // Default values from offer template if entering data for the first time
+        } else if (mainOffering instanceof OfferTemplate) {
+
+            OfferTemplate selectedOffer = (OfferTemplate) mainOffering;
+
+            mainOfferCharacteristics.put(OrderProductCharacteristicEnum.SUBSCRIPTION_INITIALLY_ACTIVE_FOR, selectedOffer.getSubscriptionRenewal().getInitialyActiveFor());
+            mainOfferCharacteristics.put(OrderProductCharacteristicEnum.SUBSCRIPTION_INITIALLY_ACTIVE_FOR_UNIT, selectedOffer.getSubscriptionRenewal().getInitialyActiveForUnit());
+            mainOfferCharacteristics.put(OrderProductCharacteristicEnum.SUBSCRIPTION_AUTO_RENEW, selectedOffer.getSubscriptionRenewal().isAutoRenew());
+            mainOfferCharacteristics.put(OrderProductCharacteristicEnum.SUBSCRIPTION_DAYS_NOTIFY_RENEWAL, selectedOffer.getSubscriptionRenewal().getDaysNotifyRenewal());
+            mainOfferCharacteristics.put(OrderProductCharacteristicEnum.SUBSCRIPTION_END_OF_TERM_ACTION, selectedOffer.getSubscriptionRenewal().getEndOfTermAction());
+            mainOfferCharacteristics.put(OrderProductCharacteristicEnum.SUBSCRIPTION_EXTEND_AGREEMENT_PERIOD,
+                selectedOffer.getSubscriptionRenewal().isExtendAgreementPeriodToSubscribedTillDate());
+            mainOfferCharacteristics.put(OrderProductCharacteristicEnum.SUBSCRIPTION_RENEW_FOR, selectedOffer.getSubscriptionRenewal().getRenewFor());
+            mainOfferCharacteristics.put(OrderProductCharacteristicEnum.SUBSCRIPTION_RENEW_FOR_UNIT, selectedOffer.getSubscriptionRenewal().getRenewForUnit());
+            if (selectedOffer.getSubscriptionRenewal().getTerminationReason() != null) {
+                mainOfferCharacteristics.put(OrderProductCharacteristicEnum.SUBSCRIPTION_RENEW_TERMINATION_REASON,
+                    selectedOffer.getSubscriptionRenewal().getTerminationReason().getCode());
+            }
         }
 
         // Default subscription date field to quote date

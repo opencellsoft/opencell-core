@@ -213,27 +213,25 @@ public class QuoteApi extends BaseApi {
 
             handleMissingParameters();
 
-            // Validate subscription renewal fields
-            orderApi.validateSubscriptionRenewalFields(productQuoteItem.getProduct());
-
             QuoteItem quoteItem = new QuoteItem();
             List<QuoteItemProductOffering> productOfferings = new ArrayList<>();
+            ProductOffering mainProductOffering = null;
 
             // For modify and delete actions, product offering might not be specified
             if (productQuoteItem.getProductOffering() != null) {
                 Date subscriptionDate = ((Date) getProductCharacteristic(productQuoteItem.getProduct(), OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(),
                     Date.class, DateUtils.setTimeToZero(quote.getQuoteDate())));
 
-                ProductOffering productOfferingInDB = productOfferingService.findByCode(productQuoteItem.getProductOffering().getId(), subscriptionDate);
-                if (productOfferingInDB == null) {
+                mainProductOffering = productOfferingService.findByCode(productQuoteItem.getProductOffering().getId(), subscriptionDate);
+                if (mainProductOffering == null) {
                     throw new EntityDoesNotExistsException(ProductOffering.class,
                         productQuoteItem.getProductOffering().getId() + " / " + DateUtils.formatDateWithPattern(subscriptionDate, ParamBean.getInstance().getDateTimeFormat()));
                 }
-                productOfferings.add(new QuoteItemProductOffering(quoteItem, productOfferingInDB, 0));
+                productOfferings.add(new QuoteItemProductOffering(quoteItem, mainProductOffering, 0));
 
                 if (productQuoteItem.getProductOffering().getBundledProductOffering() != null) {
                     for (BundledProductReference bundledProductOffering : productQuoteItem.getProductOffering().getBundledProductOffering()) {
-                        productOfferingInDB = productOfferingService.findByCode(bundledProductOffering.getReferencedId(), subscriptionDate);
+                        ProductOffering productOfferingInDB = productOfferingService.findByCode(bundledProductOffering.getReferencedId(), subscriptionDate);
                         if (productOfferingInDB == null) {
                             throw new EntityDoesNotExistsException(ProductOffering.class,
                                 bundledProductOffering.getReferencedId() + " / " + DateUtils.formatDateWithPattern(subscriptionDate, ParamBean.getInstance().getDateTimeFormat()));
@@ -244,6 +242,11 @@ public class QuoteApi extends BaseApi {
             } else {
                 // We need productOffering so we know if product is subscription or productInstance - NEED TO FIX IT
                 throw new MissingParameterException("productOffering");
+            }
+
+            // Validate or supplement if not provided subscription renewal fields
+            if (mainProductOffering instanceof OfferTemplate) {
+                orderApi.validateOrSupplementSubscriptionRenewalFields(productQuoteItem.getProduct(), (OfferTemplate) mainProductOffering);
             }
 
             quoteItem.setItemId(productQuoteItem.getId());
@@ -668,7 +671,7 @@ public class QuoteApi extends BaseApi {
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw new BusinessException("Failed to associate custom field instance to an entity", e);
-        }        
+        }
         productInstanceService.instantiateProductInstance(productInstance, criteria1, criteria2, criteria3, true);
 
         return productInstance;

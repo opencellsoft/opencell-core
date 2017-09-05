@@ -33,7 +33,7 @@ public class ServiceToInstantiateDto implements Serializable {
 
     private ChargeInstanceOverridesDto chargeInstanceOverrides;
 
-    private CustomFieldsDto customFields = new CustomFieldsDto();
+    private CustomFieldsDto customFields;
 
     @XmlTransient
     // @ApiModelProperty(hidden = true)

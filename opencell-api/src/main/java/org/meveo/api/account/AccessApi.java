@@ -228,7 +228,7 @@ public class AccessApi extends BaseApi {
 			if (!StringUtils.isBlank(accessDto.getEndDate())) {
 				existedAccessDto.setEndDate(accessDto.getEndDate());
 			}
-			if(!StringUtils.isBlank(accessDto.getCustomFields())){
+			if(accessDto.getCustomFields()!=null && !accessDto.getCustomFields().isEmpty()){
 				existedAccessDto.setCustomFields(accessDto.getCustomFields());
 			}
 			update(existedAccessDto);

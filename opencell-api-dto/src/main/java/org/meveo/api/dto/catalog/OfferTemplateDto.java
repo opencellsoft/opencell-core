@@ -1,6 +1,5 @@
 package org.meveo.api.dto.catalog;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -11,10 +10,9 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.billing.SubscriptionRenewalDto;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.OfferTemplateCategory;
 
 /**
  * @author Edward P. Legaspi
@@ -25,7 +23,7 @@ public class OfferTemplateDto extends ProductOfferingDto {
 
     private static final long serialVersionUID = 9156372453581362595L;
 
-    //@XmlTransient
+    // @XmlTransient
     @XmlAttribute()
     private Long id;
 
@@ -43,13 +41,8 @@ public class OfferTemplateDto extends ProductOfferingDto {
     @XmlElementWrapper(name = "offerProductTemplates")
     @XmlElement(name = "offerProductTemplate")
     private List<OfferProductTemplateDto> offerProductTemplates;
-    
-    @XmlElement
-    private List<ChannelDto> channels;
-    
-    @XmlElementWrapper(name = "offerTemplateCategories")
-    @XmlElement(name = "offerTemplateCategory")
-    private List<OfferTemplateCategoryDto> offerTemplateCategories;
+
+    private SubscriptionRenewalDto renewalRule;
 
     public OfferTemplateDto() {
 
@@ -84,18 +77,9 @@ public class OfferTemplateDto extends ProductOfferingDto {
         if (offerTemplate.getBusinessOfferModel() != null) {
             setBomCode(offerTemplate.getBusinessOfferModel().getCode());
         }
-		if (offerTemplate.getChannels() != null) {
-			channels = new ArrayList<>();
-			for (Channel channel : offerTemplate.getChannels()) {
-				channels.add(new ChannelDto(channel));
-			}
-		}
-		if (offerTemplate.getOfferTemplateCategories() != null) {
-			offerTemplateCategories = new ArrayList<>();
-			for (OfferTemplateCategory offerTemplateCategory : offerTemplate.getOfferTemplateCategories()) {
-				offerTemplateCategories.add(new OfferTemplateCategoryDto(offerTemplateCategory));
-			}
-		}
+        if (!asLink) {
+            setRenewalRule(new SubscriptionRenewalDto(offerTemplate.getSubscriptionRenewal()));
+        }
     }
 
     public boolean isDisabled() {
@@ -166,19 +150,11 @@ public class OfferTemplateDto extends ProductOfferingDto {
         this.longDescription = longDescription;
     }
 
-	public List<OfferTemplateCategoryDto> getOfferTemplateCategories() {
-		return offerTemplateCategories;
-	}
+    public SubscriptionRenewalDto getRenewalRule() {
+        return renewalRule;
+    }
 
-	public void setOfferTemplateCategories(List<OfferTemplateCategoryDto> offerTemplateCategories) {
-		this.offerTemplateCategories = offerTemplateCategories;
-	}
-
-	public List<ChannelDto> getChannels() {
-		return channels;
-	}
-
-	public void setChannels(List<ChannelDto> channels) {
-		this.channels = channels;
-	}
+    public void setRenewalRule(SubscriptionRenewalDto renewalRule) {
+        this.renewalRule = renewalRule;
+    }
 }

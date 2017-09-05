@@ -32,7 +32,7 @@ public class ProductDto extends BaseDto {
 	private String criteria2;
 	private String criteria3;
 
-    private CustomFieldsDto customFields = new CustomFieldsDto();
+    private CustomFieldsDto customFields;
 
     public ProductDto() {
 

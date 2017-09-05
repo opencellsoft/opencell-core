@@ -510,7 +510,7 @@ public class BillingAccountApi extends AccountEntityApi {
                 }
                 //
                 accountHierarchyApi.populateNameAddress(existedBillingAccountDto, postData);
-                if (!StringUtils.isBlank(postData.getCustomFields())) {
+                if (postData.getCustomFields()!=null && !postData.getCustomFields().isEmpty()) {
                     existedBillingAccountDto.setCustomFields(postData.getCustomFields());
                 }
                 update(existedBillingAccountDto);

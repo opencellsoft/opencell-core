@@ -66,7 +66,7 @@ public class InvoiceDto extends BaseDto {
     @XmlElement(required = true)
     private InvoiceModeEnum invoiceMode;
 
-    private CustomFieldsDto customFields = new CustomFieldsDto();
+    private CustomFieldsDto customFields;
 
     public InvoiceDto() {
     }
