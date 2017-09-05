@@ -677,10 +677,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
             
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
 
-            log.debug("After loadObject:" + (System.currentTimeMillis() - startDate));
-
-            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
-
             log.debug("After jasperPrint:" + (System.currentTimeMillis() - startDate));
 
             JasperExportManager.exportReportToPdfFile(jasperPrint, pdfFileName);
