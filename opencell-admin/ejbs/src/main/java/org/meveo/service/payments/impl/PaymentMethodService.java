@@ -116,20 +116,6 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         if (!StringUtils.isBlank(cardPaymentMethod.getTokenId())) {
             return;
         }
-<<<<<<< HEAD
-
-        cardPaymentMethod.setHiddenCardNumber(CardPaymentMethod.hideCardNumber(cardPaymentMethod.getCardNumber()));
-
-        String coutryCode = null;
-        Country country = countryService.findByName(customerAccount.getAddress() != null ? customerAccount.getAddress().getCountry() : null);
-        if (country != null) {
-            coutryCode = country.getCountryCode();
-        }
-        GatewayPaymentInterface gatewayPaymentInterface = gatewayPaymentFactory
-            .getInstance(GatewayPaymentNamesEnum.valueOf(ParamBean.getInstance().getProperty("meveo.gatewayPayment", "CUSTOM_API")));
-
-=======
->>>>>>> refs/heads/ticket_2782
         String cardNumber = cardPaymentMethod.getCardNumber();
         cardNumber = cardNumber.replaceAll(" ", "");
 
