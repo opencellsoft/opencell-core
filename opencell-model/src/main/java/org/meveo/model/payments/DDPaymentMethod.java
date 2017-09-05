@@ -41,7 +41,7 @@ public class DDPaymentMethod extends PaymentMethod {
         this.preferred = preferred;
     }
 
-    public DDPaymentMethod(CustomerAccount customerAccount, String alias, Date mandateDate,
+    public DDPaymentMethod(CustomerAccount customerAccount, String alias,boolean preferred, Date mandateDate,
 			String mandateIdentification, BankCoordinates bankCoordinates) {
         super();
         setPaymentType(PaymentMethodEnum.CARD);

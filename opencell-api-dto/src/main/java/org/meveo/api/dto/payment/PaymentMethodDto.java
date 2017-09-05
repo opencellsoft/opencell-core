@@ -189,7 +189,7 @@ public class PaymentMethodDto extends BaseDto {
             break;
 
         case DIRECTDEBIT:
-            pmEntity = new DDPaymentMethod(customerAccount, getAlias(), getMandateDate(), getMandateIdentification(),
+            pmEntity = new DDPaymentMethod(customerAccount, getAlias(),isPreferred(), getMandateDate(), getMandateIdentification(),
                 getBankCoordinates() != null ? getBankCoordinates().fromDto() : null);
             break;
 
