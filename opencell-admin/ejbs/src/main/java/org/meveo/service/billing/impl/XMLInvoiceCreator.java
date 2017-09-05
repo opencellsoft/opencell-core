@@ -1495,84 +1495,12 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 								}
 
 								log.debug("Before serviceInstance:" + (System.currentTimeMillis() - startDate));
+								
 								if (serviceInstance != null) {
 									addService(serviceInstance, doc, ratedTransaction.getOfferCode(), line);
 								}
 
-								// ServiceInstance serviceInstance =
-								// chargeInstanceService.getServiceInstanceFromChargeInstance(chargeInstance);
-								// for (ServiceInstance serviceInstance :
-								// allServiceInstances) {
-								log.debug("Before serviceInstance:" + (System.currentTimeMillis() - startDate));
-								if (serviceInstance != null) {
-									addService(serviceInstance, doc, ratedTransaction.getOfferCode(), line);
-								}
 								log.debug("After serviceInstance:" + (System.currentTimeMillis() - startDate));
-								// }
-
-				            	/**
-				            	for (ServiceInstance serviceInstance : allServiceInstances) {
-				            		ServiceInstance serviceInstance = chargeInstanceService.getServiceInstanceFromChargeInstance(chargeInstance);
-				            	
-				            		log.debug("Inside serviceInstance:" + (System.currentTimeMillis() - startDate));
-				            		List<UsageChargeInstance> usageChargeInstances = serviceInstance.getUsageChargeInstances();
-				            		
-									for (UsageChargeInstance usageChargeInstance : usageChargeInstances) {
-										if (usageChargeInstance.getId().longValue() == longValue) {
-											foundServiceInstance = serviceInstance;
-											break;
-										}
-									}
-				            		
-				            		if (foundServiceInstance == null) {
-				            			List<RecurringChargeInstance> recurringChargeInstances = serviceInstance.getRecurringChargeInstances();
-				            			for (RecurringChargeInstance recurringChargeInstance : recurringChargeInstances) {
-				            				if (recurringChargeInstance.getId().longValue() == longValue) {
-												foundServiceInstance = serviceInstance;
-												break;
-											}
-										}
-				            		}
-				            		
-				            		if (foundServiceInstance == null) {
-				            			List<OneShotChargeInstance> subscriptionChargeInstances = serviceInstance.getSubscriptionChargeInstances();
-				            			for (OneShotChargeInstance oneShotChargeInstance : subscriptionChargeInstances) {
-				            				if (oneShotChargeInstance.getId().longValue() == longValue) {
-												foundServiceInstance = serviceInstance;
-												break;
-											}
-										}
-				            		}
-				            		
-				            		if (foundServiceInstance == null) {
-				            			List<OneShotChargeInstance> terminationChargeInstances = serviceInstance.getTerminationChargeInstances();
-				            			for (OneShotChargeInstance oneShotChargeInstance : terminationChargeInstances) {
-				            				if (oneShotChargeInstance.getId().longValue() == longValue) {
-												foundServiceInstance = serviceInstance;
-												break;
-											}
-										}
-				            		}
-				            		
-				            		if (foundServiceInstance != null) {
-				            			log.debug("Before serviceInstance:" + (System.currentTimeMillis() - startDate));
-				            			if(serviceInstance != null){								
-				            				addService(foundServiceInstance, doc, ratedTransaction.getOfferCode(), line);
-				            			} 
-				            			log.debug("After serviceInstance:" + (System.currentTimeMillis() - startDate));
-				            		}
-				            		
-				            		
-				            		
-				            		if (foundServiceInstance != null) {
-				            			log.debug("Before serviceInstance:" + (System.currentTimeMillis() - startDate));
-				            			if(serviceInstance != null){								
-				            				addService(foundServiceInstance, doc, ratedTransaction.getOfferCode(), line);
-				            			} 
-				            			log.debug("After serviceInstance:" + (System.currentTimeMillis() - startDate));
-				            		}
-				            		
-								}*/
 				            	
 				            }
 						}
@@ -1692,7 +1620,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 		boolean entreprise = appProvider.isEntreprise();
 		LinkedHashMap<String, XMLInvoiceHeaderCategoryDTO> headerCategories = new LinkedHashMap<String, XMLInvoiceHeaderCategoryDTO>();
 		List<CategoryInvoiceAgregate> categoryInvoiceAgregates = new ArrayList<CategoryInvoiceAgregate>();
-		/**
+		
 		if (!invoiceAgregates.isEmpty()) {
 			log.debug("After isEmpty :" + (System.currentTimeMillis() - startDate));
 			for (InvoiceAgregate invoiceAgregate : invoiceAgregates) {
@@ -1703,7 +1631,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 				}
 				log.debug("After invoiceAgregate :" + (System.currentTimeMillis() - startDate));
 			}
-		}*/
+		}
 		
 		
 		log.debug("Before  sort :" + (System.currentTimeMillis() - startDate));
