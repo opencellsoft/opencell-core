@@ -1632,6 +1632,7 @@ public class AccountHierarchyApi extends BaseApi {
         dto.setExternalRef2(account.getExternalRef2());
         dto.setName(new NameDto(account.getName()));
         dto.setAddress(new AddressDto(account.getAddress()));
+        dto.setCreated(account.getAuditable().getCreated());
 
         BusinessAccountModel businessAccountModel = account.getBusinessAccountModel();
 

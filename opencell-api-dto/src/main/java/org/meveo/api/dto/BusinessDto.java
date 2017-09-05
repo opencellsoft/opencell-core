@@ -14,7 +14,7 @@ import org.meveo.model.BusinessEntity;
  **/
 @XmlTransient
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class BusinessDto extends BaseDto {
+public abstract class BusinessDto extends AuditableDto {
 
 	private static final long serialVersionUID = 4451119256601996946L;
 
