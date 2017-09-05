@@ -272,7 +272,6 @@ public class RatingService extends BusinessService<WalletOperation>{
 			walletOperation.setSeller(seller);
         }
         
-        log.debug("Before setWallet:" + (System.currentTimeMillis() - startDate));
 		// TODO:check that setting the principal wallet at this stage is correct
 		walletOperation.setWallet(userAccount.getWallet());
 		if(chargeInstance.getSubscription() != null) {
@@ -477,7 +476,7 @@ public class RatingService extends BusinessService<WalletOperation>{
 		bareWalletOperation.setAmountTax(amountTax);
 		
 		
-		log.debug("After bareWalletOperation:" + (System.currentTimeMillis() - startDate));
+
 	
 		if(ratePrice!=null && ratePrice.getScriptInstance()!=null){
 			log.debug("start to execute script instance for ratePrice {}",ratePrice); 			
@@ -492,6 +491,8 @@ public class RatingService extends BusinessService<WalletOperation>{
                 throw new BusinessException("failed when run script " + ratePrice.getScriptInstance().getCode() + ", info " + e.getMessage());
             }
         }
+		
+		log.debug("After bareWalletOperation:" + (System.currentTimeMillis() - startDate));
 	}
 
 	

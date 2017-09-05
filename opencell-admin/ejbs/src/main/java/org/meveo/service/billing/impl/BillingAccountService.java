@@ -229,11 +229,8 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     	long startDate = System.currentTimeMillis();
         log.debug("updateBillingAccountTotalAmounts  billingAccount:" + billingAccountId);
         BillingAccount billingAccount = findById(billingAccountId, true);
-        log.debug("Before  invoiceAmount:" + (System.currentTimeMillis() - startDate));
         BigDecimal invoiceAmount = computeBaInvoiceAmount(billingAccount, billingRun.getLastTransactionDate());
-        log.debug("After  invoiceAmount:" + (System.currentTimeMillis() - startDate));
         if (invoiceAmount != null) {
-
             BillingCycle billingCycle = billingRun.getBillingCycle();
 			BigDecimal invoicingThreshold = billingCycle == null ? null : billingCycle.getInvoicingThreshold();
 
@@ -253,19 +250,12 @@ public class BillingAccountService extends AccountService<BillingAccount> {
             billingAccount.setBrAmountWithoutTax(invoiceAmount);
 
             log.debug("set brAmount {} in BA {}", invoiceAmount, billingAccount.getId());
-        } else {
-            log.debug("updateBillingAccountTotalAmounts invoiceAmount is null");
         }
-        
-        log.debug("Before setBillingRun:" + (System.currentTimeMillis() - startDate));
         
         billingAccount.setBillingRun(getEntityManager().getReference(BillingRun.class, billingRun.getId()));
         
-        log.debug("Before  updateNoCheck:" + (System.currentTimeMillis() - startDate));
-        
         updateNoCheck(billingAccount);
         
-        log.debug("After  updateNoCheck:" + (System.currentTimeMillis() - startDate));
         return true;
     }
 

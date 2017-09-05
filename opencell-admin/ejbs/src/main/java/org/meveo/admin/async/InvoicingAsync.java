@@ -48,7 +48,6 @@ public class InvoicingAsync {
             }
         }
         log.info("WorkSet billableBA:" + count);
-        log.debug("Before  AsyncResult:" + (System.currentTimeMillis() - startDate));
         return new AsyncResult<Integer>(new Integer(count));
     }
 
@@ -107,7 +106,6 @@ public class InvoicingAsync {
             try {
                 invoiceService.produceInvoiceXmlInNewTransaction(invoiceId);
                 result.registerSucces();
-                log.debug("Before catch :" + (System.currentTimeMillis() - startDate));
             } catch (Exception e) {
                 result.registerError(invoiceId, e.getMessage());
                 allOk = false;

@@ -485,7 +485,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     	long startDate = System.currentTimeMillis();
         List<Long> billingAccountIds = getEntityManager().createNamedQuery("BillingAccount.listIdsByBillingRunId", Long.class).setParameter("billingRunId", billingRun.getId())
             .getResultList();
-        log.debug("Before  SubListCreator:" + (System.currentTimeMillis() - startDate));
         SubListCreator subListCreator = null;
 
         try {
@@ -520,22 +519,17 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     public void assignInvoiceNumberAndIncrementBAInvoiceDates(BillingRun billingRun, long nbRuns, long waitingMillis) throws BusinessException {
     	long startDate = System.currentTimeMillis();
         List<InvoicesToNumberInfo> invoiceSummary = invoiceService.getInvoicesToNumberSummary(billingRun.getId());
-        log.debug("After getInvoicesToNumberSummary:" + (System.currentTimeMillis() - startDate));
         // Reserve invoice number for each invoice type/seller/invoice date combination
         for (InvoicesToNumberInfo invoicesToNumberInfo : invoiceSummary) {
-        	log.debug("Inside InvoicesToNumberInfo:" + (System.currentTimeMillis() - startDate));
             Sequence sequence = serviceSingleton.reserveInvoiceNumbers(invoicesToNumberInfo.getInvoiceTypeId(), invoicesToNumberInfo.getSellerId(),
                 invoicesToNumberInfo.getInvoiceDate(), invoicesToNumberInfo.getNrOfInvoices());
-            log.debug("After sequence:" + (System.currentTimeMillis() - startDate));
             invoicesToNumberInfo.setNumberingSequence(sequence);
         }
 
         // Find and process invoices
         for (InvoicesToNumberInfo invoicesToNumberInfo : invoiceSummary) {
-        	log.debug("Before getInvoiceIds:" + (System.currentTimeMillis() - startDate));
             List<Long> invoices = invoiceService.getInvoiceIds(billingRun.getId(), invoicesToNumberInfo.getInvoiceTypeId(), invoicesToNumberInfo.getSellerId(),
                 invoicesToNumberInfo.getInvoiceDate());
-            log.debug("After getInvoiceIds:" + (System.currentTimeMillis() - startDate));
             // Validate that what was retrieved as summary matches the details
             if (invoices.size() != invoicesToNumberInfo.getNrOfInvoices().intValue()) {
                 throw new BusinessException(
@@ -653,18 +647,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
                 log.info("Total billableBA:" + billableBA);
                 
-                log.debug("Before  PREINVOICED:" + (System.currentTimeMillis() - startDate));
-
                 billingRunExtensionService.updateBillingRun(billingRun, billingAccountIds.size(), billableBA, BillingRunStatusEnum.PREINVOICED, new Date());
 
                 if (billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC || appProvider.isAutomaticInvoicing()) {
-                	log.debug("Before  createAgregatesAndInvoice:" + (System.currentTimeMillis() - startDate));
                     createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis);
-                    log.debug("After  createAgregatesAndInvoice:" + (System.currentTimeMillis() - startDate));
                     billingRunExtensionService.updateBillingRun(billingRun, null, null, BillingRunStatusEnum.POSTINVOICED, null);
                 }
-                
-                log.debug("After  PREINVOICED:" + (System.currentTimeMillis() - startDate));
             }
 
         } else if (BillingRunStatusEnum.PREVALIDATED.equals(billingRun.getStatus())) {
